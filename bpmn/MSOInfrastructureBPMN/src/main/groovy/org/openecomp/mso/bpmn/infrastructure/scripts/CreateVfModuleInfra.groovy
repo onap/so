@@ -306,9 +306,9 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 	}
 	
 	/**
-	 * Query AAI for vnf orchestration status to determine if health check and config scaling should be run
+	 * Query AAI for vnf orchestration status to determine if health check and config scaling should be run. Get l3InterfaceIpV4Address for health check.
 	 */
-	public void queryAAIForVnfOrchestrationStatus(DelegateExecution execution) {
+	public void queryAAIForVnf(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		def vnfId = execution.getVariable("CVFMI_vnfId")
 		execution.setVariable("runHealthCheck", false);
@@ -320,6 +320,12 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			if("active".equalsIgnoreCase(vnfOrchestrationStatus)){
 				execution.setVariable("runHealthCheck", true);
 				execution.setVariable("runConfigScaleOut", true);
+			}
+			try{
+				def l3InterfaceIpV4Address = vnf.get().getLInterfaces().getLInterface().get(0).getL3InterfaceIpv4AddressList().get(0).getL3InterfaceIpv4Address();
+				execution.setVariable("vnfHostIpAddress", l3InterfaceIpV4Address);
+			} catch (Exception ex){
+				execution.setVariable("vnfHostIpAddress", "");
 			}
 		}
 	}

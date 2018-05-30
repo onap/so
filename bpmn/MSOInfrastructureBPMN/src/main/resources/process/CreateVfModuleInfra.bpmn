@@ -222,6 +222,7 @@ exceptionUtil.processJavaException(execution)]]></bpmn2:script>
         <camunda:out source="errorText" target="errorText" />
         <camunda:out source="workStep" target="workStep" />
         <camunda:out source="failedActivity" target="failedActivity" />
+        <camunda:in source="vnfHostIpAddress" target="vnfHostIpAddress" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1xggje5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_07llpjo</bpmn2:outgoing>
@@ -293,12 +294,12 @@ exceptionUtil.processJavaException(execution)]]></bpmn2:script>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_0u8zesf" name="no" sourceRef="ExclusiveGateway_0c8x2mq" targetRef="PrepareMSOCompletionHandler" />
     <bpmn2:sequenceFlow id="SequenceFlow_1b7348f" sourceRef="Task_1o3z68c" targetRef="ExclusiveGateway_1qozral" />
-    <bpmn2:scriptTask id="Task_1o3z68c" name="Query AAI For Orchestration Status" scriptFormat="groovy">
+    <bpmn2:scriptTask id="Task_1o3z68c" name="Query AAI For Vnf" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0e2ta6w</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1b7348f</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
 def createVfModule = new CreateVfModuleInfra()
-createVfModule.queryAAIForVnfOrchestrationStatus(execution)]]></bpmn2:script>
+createVfModule.queryAAIForVnf(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_09i6f7t" sourceRef="Task_09om99x" targetRef="CallActivity_17ukiqm" />
     <bpmn2:scriptTask id="Task_09om99x" name="Retreive Data for Config ScaleOut" scriptFormat="groovy">
