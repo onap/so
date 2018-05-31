@@ -145,8 +145,8 @@ public class ApplicationControllerClient {
 		
 		properties.put("topic.read", globalProperties.get("appc.client.topic.read"));
 		properties.put("topic.write", globalProperties.get("appc.client.topic.write"));
-		properties.put("sdnc-topic.read", globalProperties.get("appc.client.topic.sdnc.read"));
-		properties.put("sdnc-topic.write", globalProperties.get("appc.client.topic.sdnc.write"));
+		properties.put("SDNC-topic.read", globalProperties.get("appc.client.topic.sdnc.read"));
+		properties.put("SDNC-topic.write", globalProperties.get("appc.client.topic.sdnc.write"));
 		properties.put("topic.read.timeout", globalProperties.get("appc.client.topic.read.timeout"));
 		properties.put("client.response.timeout", globalProperties.get("appc.client.response.timeout"));
 		properties.put("poolMembers", globalProperties.get("appc.client.poolMembers"));
