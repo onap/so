@@ -86,6 +86,9 @@ public class ApplicationControllerClient {
 	 * @param controllerType the controller type: "appc" or "sdnc".
 	 */
 	public ApplicationControllerClient(String controllerType) {
+		if (controllerType == null) {
+			controllerType = DEFAULT_CONTROLLER_TYPE;
+		}
 		this.controllerType = controllerType;
 		appCSupport = new ApplicationControllerSupport();
 	}
@@ -109,6 +112,9 @@ public class ApplicationControllerClient {
 
 	protected LifeCycleManagerStateful createAppCClient(String controllerType) {
 		try {
+			if (controllerType == null) {
+				controllerType = DEFAULT_CONTROLLER_TYPE;
+			}
 			return AppcClientServiceFactoryProvider.getFactory(AppcLifeCycleManagerServiceFactory.class)
 					.createLifeCycleManagerStateful(new ApplicationContext(), getLCMProperties(controllerType));
 		} catch (AppcClientException e) {
