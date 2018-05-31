@@ -99,8 +99,8 @@ public class ApplicationControllerClientTest {
 		Properties properties = client.getLCMProperties();
 		assertEquals(properties.get("topic.read"), "APPC-TEST-AMDOCS2");
 		assertEquals(properties.get("topic.write"), "APPC-TEST-AMDOCS1-DEV3");
-		assertEquals(properties.get("sdnc-topic.read"), "SDNC-LCM-READ");
-		assertEquals(properties.get("sdnc-topic.write"), "SDNC-LCM-WRITE");
+		assertEquals(properties.get("SDNC-topic.read"), "SDNC-LCM-READ");
+		assertEquals(properties.get("SDNC-topic.write"), "SDNC-LCM-WRITE");
 		assertEquals(properties.get("topic.read.timeout"), "120000");
 		assertEquals(properties.get("client.response.timeout"), "120000");
 		assertEquals(properties.get("poolMembers"),

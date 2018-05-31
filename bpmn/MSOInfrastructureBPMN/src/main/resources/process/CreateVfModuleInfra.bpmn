@@ -249,6 +249,7 @@ exceptionUtil.processJavaException(execution)]]></bpmn2:script>
         <camunda:in source="CVFMI_requestId" target="msoRequestId" />
         <camunda:in source="CVFMI_vnfName" target="vnfName" />
         <camunda:in source="CVFMO_controllerType" target="controllerType" />
+        <camunda:in source="payload" target="payload" />
         <camunda:in source="healthCheckIndex0" target="healthCheckIndex" />
         <camunda:out source="errorCode" target="errorConfigScaleOutCode" />
         <camunda:out source="errorText" target="errorText" />
