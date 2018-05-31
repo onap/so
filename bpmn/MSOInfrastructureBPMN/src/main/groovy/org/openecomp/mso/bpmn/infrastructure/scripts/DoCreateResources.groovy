@@ -245,10 +245,19 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
 		 //String requestAction = resourceInput.getOperationType()
 		 String requestAction = "createInstance"
 		 JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceModelInfo().getModelUuid(), requestAction)
-         String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + resourceRecipe.getString("orchestrationUri")
-		 int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
-		 String recipeParamXsd = resourceRecipe.get("paramXSD")
-		 HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+
+         if (resourceRecipe != null) {
+             String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + resourceRecipe.getString("orchestrationUri")
+             int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
+             String recipeParamXsd = resourceRecipe.get("paramXSD")
+             HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+         } else {
+             String exceptionMessage = "Resource receipe is not found for resource modeluuid: " +
+                     resourceInput.getResourceModelInfo().getModelUuid()
+             utils.log("ERROR", exceptionMessage, isDebugEnabled)
+             exceptionUtil.buildAndThrowWorkflowException(execution, 500, exceptionMessage)
+         }
+
          utils.log("INFO", "======== end executeResourceRecipe Process ======== ", isDebugEnabled)
 	 }
     
