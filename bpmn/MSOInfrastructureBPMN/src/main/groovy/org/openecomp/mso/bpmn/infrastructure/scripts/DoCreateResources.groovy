@@ -105,7 +105,10 @@ public class DoCreateResources extends AbstractServiceTaskProcessor
         List<NetworkResource> networkResourceList = new ArrayList<NetworkResource>()
 
         List<Resource> sequencedResourceList = new ArrayList<Resource>()
-        def resourceSequence = BPMNProperties.getResourceSequenceProp()
+        
+        String serviceDecompose = execution.getVariable("serviceDecomposition")
+        String serviceModelName = jsonUtil.getJsonValue(serviceDecompose, "serviceResources.modelInfo.modelName")
+        def resourceSequence = BPMNProperties.getResourceSequenceProp(serviceModelName)
 
         if(resourceSequence != null) {
             // sequence is defined in config file

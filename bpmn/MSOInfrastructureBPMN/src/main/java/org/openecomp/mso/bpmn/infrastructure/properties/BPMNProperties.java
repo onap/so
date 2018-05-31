@@ -47,8 +47,8 @@ public class BPMNProperties {
         return value;
     }
 
-    public static List<String> getResourceSequenceProp() {
-        String resourceSequence = getProperty("mso.workflow.custom.VolTE.resource.sequence", null);
+    public static List<String> getResourceSequenceProp(String input) {
+        String resourceSequence = getProperty("mso.workflow.custom." + input + ".resource.sequence", null);
         if (resourceSequence != null) {
             return Arrays.asList(resourceSequence.split(","));
         }
