@@ -89,7 +89,6 @@ class SacleCustomE2EServiceInstanceTest{
                             <ns:updateServiceOperationStatus xmlns:ns="http://org.openecomp.mso/requestsdb">
                             <serviceId>56c881ad-6c9d-4b79-aacc-401e5640b47f</serviceId>
                             <operationId>0a5b1651-c56e-4263-8c26-c8f8a6ef72d8</operationId>
-                            <serviceName>XXXX</serviceName>
                             <operationType>SCALE</operationType>
                             <userId></userId>
                             <result>processing</result>
@@ -163,7 +162,7 @@ class SacleCustomE2EServiceInstanceTest{
         ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 
         when(mockExecution.getVariable("serviceInstanceId")).thenReturn("56c881ad-6c9d-4b79-aacc-401e5640b47f")
-        when(mockExecution.getVariable("serviceInstanceName")).thenReturn("XXXX")
+        //when(mockExecution.getVariable("serviceInstanceName")).thenReturn("XXXX")
         when(mockExecution.getVariable("operationId")).thenReturn("0a5b1651-c56e-4263-8c26-c8f8a6ef72d8")
 
         ScaleCustomE2EServiceInstance scaleCustomE2EServiceInstance = new ScaleCustomE2EServiceInstance()
