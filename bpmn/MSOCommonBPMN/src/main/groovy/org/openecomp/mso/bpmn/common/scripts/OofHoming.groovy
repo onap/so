@@ -28,6 +28,7 @@ import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.domain.CloudFlavor
 import org.openecomp.mso.bpmn.core.domain.InventoryType
 import org.openecomp.mso.bpmn.core.domain.Resource
+import org.openecomp.mso.bpmn.core.domain.ResourceType
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.Subscriber
 import org.openecomp.mso.bpmn.core.domain.VnfResource
@@ -210,9 +211,16 @@ class OofHoming extends AbstractServiceTaskProcessor {
                     JSONObject placement = arrSol.getJSONObject(j)
                     utils.log("DEBUG", "****** JSONObject is: " + placement + " *****", "true")
                     String jsonServiceResourceId = placement.getString("serviceResourceId")
+                    String jsonResourceModuleName = placement.getString("resourceModuleName")
                     for (Resource resource : resourceList) {
                         String serviceResourceId = resource.getResourceId()
-                        if (serviceResourceId.equalsIgnoreCase(jsonServiceResourceId)) {
+                        String resourceModuleName = ""
+                        if (resource.getResourceType() == ResourceType.ALLOTTED_RESOURCE ||
+                            resource.getResourceType() == ResourceType.VNF) {
+                            resourceModuleName = resource.getNfFunction()
+                            }
+                        if (serviceResourceId.equalsIgnoreCase(jsonServiceResourceId) ||
+                            resourceModuleName.equalsIgnoreCase(jsonResourceModuleName)) {
                             JSONObject solution = placement.getJSONObject("solution")
                             String solutionType = solution.getString("identifierType")
                             String inventoryType = ""
@@ -249,9 +257,10 @@ class OofHoming extends AbstractServiceTaskProcessor {
                                     flavorsArrayList.add(cloudFlavor)
                                 }
                             }
-                            Map<String, String> assignmentMap = jsonUtil.entryArrayToMap(execution, assignmentArr.toString(), "key", "value")
+                            Map<String, String> assignmentMap = jsonUtil.entryArrayToMap(execution,
+                                    assignmentArr.toString(), "key", "value")
                             String cloudOwner = assignmentMap.get("cloudOwner")
-                            String cloudRegionId = assignmentMap.get("cloudRegionId")
+                            String cloudRegionId = assignmentMap.get("locationId")
                             resource.getHomingSolution().setCloudOwner(cloudOwner)
                             resource.getHomingSolution().setCloudRegionId(cloudRegionId)
                             if (flavorsArrayList != null && flavorsArrayList.size != 0) {
