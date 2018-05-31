@@ -51,7 +51,7 @@ import com.att.eelf.configuration.EELFManager;
 
 public class ApplicationControllerClient {
 	
-	public static final String DEFAULT_CONTROLLER_TYPE = "appc";
+	public static final String DEFAULT_CONTROLLER_TYPE = "APPC";
 
 	private static final String CLIENT_NAME = "MSO";
 
@@ -89,7 +89,7 @@ public class ApplicationControllerClient {
 		if (controllerType == null) {
 			controllerType = DEFAULT_CONTROLLER_TYPE;
 		}
-		this.controllerType = controllerType;
+		this.controllerType = controllerType.toUpperCase();
 		appCSupport = new ApplicationControllerSupport();
 	}
 	
@@ -115,6 +115,7 @@ public class ApplicationControllerClient {
 			if (controllerType == null) {
 				controllerType = DEFAULT_CONTROLLER_TYPE;
 			}
+			controllerType = controllerType.toUpperCase();
 			return AppcClientServiceFactoryProvider.getFactory(AppcLifeCycleManagerServiceFactory.class)
 					.createLifeCycleManagerStateful(new ApplicationContext(), getLCMProperties(controllerType));
 		} catch (AppcClientException e) {
