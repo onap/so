@@ -125,9 +125,7 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
             String operationId = execution.getVariable("operationId")
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
             // RESTResponse for API Handler (APIH) Reply Task
-            String scaleServiceRestRequest = """{"service":{"serviceId":"${serviceInstanceId}","operationId":"${
-                operationId
-            }"}}""".trim()
+            String scaleServiceRestRequest = """{"operationId":"${operationId}"}""".trim()
             utils.log("DEBUG", " sendSyncResponse to APIH:" + "\n" + scaleServiceRestRequest, isDebugEnabled)
             sendWorkflowResponse(execution, 202, scaleServiceRestRequest)
             execution.setVariable("sentSyncResponse", true)
@@ -256,7 +254,7 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
         utils.log("INFO", " ======== STARTED prepareInitServiceOperationStatus Process ======== ", isDebugEnabled)
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
-            String serviceName = execution.getVariable("serviceInstanceName")
+            //String serviceName = execution.getVariable("serviceInstanceName")
             String operationId = execution.getVariable("operationId")
             String operationType = "SCALE"
             String userId = ""
@@ -280,7 +278,6 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
                             <ns:updateServiceOperationStatus xmlns:ns="http://org.openecomp.mso/requestsdb">
                             <serviceId>${serviceId}</serviceId>
                             <operationId>${operationId}</operationId>
-                            <serviceName>${serviceName}</serviceName>
                             <operationType>${operationType}</operationType>
                             <userId>${userId}</userId>
                             <result>${result}</result>
