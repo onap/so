@@ -266,6 +266,8 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             if (flavorsArrayList != null && flavorsArrayList.size != 0) {
                                 resource.getHomingSolution().setFlavors(flavorsArrayList)
                                 execution.setVariable(cloudRegionId + "_flavorList", flavorsArrayList)
+                                utils.log("DEBUG", "***** _flavorList is: " + flavorsArrayList.toString() +
+                                        " *****", "true")
                             }
 
                             if (inventoryType.equalsIgnoreCase("service")) {
