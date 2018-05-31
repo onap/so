@@ -103,6 +103,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         for (int i = 0; i < nsReqStr.length; i++) {
             JSONObject reqBodyJsonObj = new JSONObject(nsReqStr[i])
             String nsInstanceId = reqBodyJsonObj.getJSONObject("nsScaleParameters").getString("nsInstanceId")
+            String nodeTemplateUUID = reqBodyJsonObj.getJSONObject("nsOperationKey").getString("nodeTemplateUUID")
             reqBodyJsonObj.getJSONObject("nsScaleParameters").remove("nsInstanceId")
             String reqBody = reqBodyJsonObj.toString()
 
@@ -112,15 +113,19 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
 
             String returnCode = apiResponse.getStatusCode()
             String aaiResponseAsString = apiResponse.getResponseBodyAsString()
-            String jobId = "";
+            String jobId = ""
             if (returnCode == "200" || returnCode == "202") {
                 jobId = jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
             }
             utils.log("INFO", "scaleNetworkService get a ns scale job Id:" + jobId, isDebugEnabled)
             execution.setVariable("jobId", jobId)
+            execution.setVariable("nodeTemplateUUID", nodeTemplateUUID)
 
             String isScaleFinished = ""
 
+            if(jobId =="" || jobId == null){
+                continue
+            }
             // query the requested network service scale status, if finished, then start the next one, otherwise, wait
             while (isScaleFinished != "finished" && isScaleFinished != "error"){
                 timeDelay()
