@@ -44,13 +44,13 @@ public class ApplicationControllerClientTest {
 	@Test
 	public void testClientCreation() {
 		ApplicationControllerClient client = new ApplicationControllerClient("appc");
-		assertEquals(client.getControllerType(), "appc");
+		assertEquals(client.getControllerType(), "APPC");
 		assertNotNull(client.getAppCClient());
 	}
 
 	@Test
 	public void createRequest_CheckLock_RequestBuilt() {
-		ApplicationControllerClient client = new ApplicationControllerClient("appc");
+		ApplicationControllerClient client = new ApplicationControllerClient("APPC");
 		ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
 		actionIdentifiers.setVnfId("vnfId");
 		CheckLockInput checkLockInput = (CheckLockInput) client.createRequest(Action.CheckLock, actionIdentifiers, null,
@@ -95,7 +95,7 @@ public class ApplicationControllerClientTest {
 
 	@Test
 	public void test_getLCMPropertiesHelper() {
-		ApplicationControllerClient client = new ApplicationControllerClient("appc");
+		ApplicationControllerClient client = new ApplicationControllerClient();
 		Properties properties = client.getLCMProperties();
 		assertEquals(properties.get("topic.read"), "APPC-TEST-AMDOCS2");
 		assertEquals(properties.get("topic.write"), "APPC-TEST-AMDOCS1-DEV3");
