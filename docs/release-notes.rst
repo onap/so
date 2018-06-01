@@ -16,6 +16,7 @@ Version: 1.2.2
 The Beijing release is the second release of the Service Orchestrator (SO) project.
 
 **New Features**
+
 * Enhance Platform maturity by improving CLAMP maturity matrix see `Wiki <https://wiki.onap.org/display/DW/Beijing+Release+Platform+Maturity>`_.
 * Manual scaling of network services and VNFs.
 * Homing and placement capabiliities through OOF interaction. 
@@ -26,7 +27,7 @@ The Beijing release is the second release of the Service Orchestrator (SO) proje
  
 Bug Fixes
 ---------
-The defects fixed in this release could be found `here<https://jira.onap.org/issues/?jql=project%20%3D%20SO%20AND%20affectedVersion%20%3D%20%22Beijing%20Release%22%20AND%20status%20%3D%20Closed%20>`_.
+The defects fixed in this release could be found `here <https://jira.onap.org/issues/?jql=project%20%3D%20SO%20AND%20affectedVersion%20%3D%20%22Beijing%20Release%22%20AND%20status%20%3D%20Closed%20>`_.
 
 **Known Issues**
 	NA
