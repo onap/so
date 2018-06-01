@@ -64,19 +64,18 @@ public class CamundaTaskClient extends RequestClient{
 	@Override
 	public HttpResponse post(String camundaReqXML, String requestId,
 			String requestTimeout, String schemaVersion, String serviceInstanceId, String action) {
-		msoLogger.debug("Method not supported");
-		return null;
+		throw new UnsupportedOperationException("Method not supported.");
 	}
 
 	@Override
 	public HttpResponse post(RequestClientParamater params) {
-		return null;
+		throw new UnsupportedOperationException("Method not supported.");
 	}
 
 	@Override
-	public HttpResponse get() throws IOException{
+	public HttpResponse get() throws IOException {
 		HttpGet get = new HttpGet(url);
-		msoLogger.debug("Camunda Task url is: "+ url);	
+		msoLogger.debug("Camunda Task url is: "+ url);
 		String encryptedCredentials;
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH,null);
