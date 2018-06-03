@@ -364,7 +364,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			}
 		}
 
-		String payload = "{\"request-parameters\":{\"vnf-host-ip-address\":" + vnfHostIpAddress + ",\"vf-module-id\":" + vfModuleId + "},\"configuration-parameters\":{\"ip-addr\":" + ipAddress +", \"oam-ip-addr\":"+ oamIpAddress +",\"enabled\":\"true\"}}"
+		String payload = "{\"request-parameters\":{\"vnf-host-ip-address\":\"" + vnfHostIpAddress + "\",\"vf-module-id\":\"" + vfModuleId + "\"},\"configuration-parameters\":{\"ip-addr\":\"" + ipAddress +"\", \"oam-ip-addr\":\""+ oamIpAddress +"\",\"enabled\":\"true\"}}"
 		execution.setVariable("payload", payload);
 	}
 
