@@ -232,6 +232,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			execution.setVariable(prefix + 'vfModuleId', newVfModuleId)
 			execution.setVariable('actionHealthCheck', Action.HealthCheck)
 			execution.setVariable('actionConfigScaleOut', Action.ConfigScaleOut)
+			execution.setVariable('controllerType', "APPC")
 			def controllerType = execution.getVariable('controllerType')
 			execution.setVariable(prefix + 'controllerType', controllerType)
 			execution.setVariable('healthCheckIndex0', 0)
