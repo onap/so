@@ -30,7 +30,8 @@ Bug Fixes
 The defects fixed in this release could be found `here <https://jira.onap.org/issues/?jql=project%20%3D%20SO%20AND%20affectedVersion%20%3D%20%22Beijing%20Release%22%20AND%20status%20%3D%20Closed%20>`_.
 
 **Known Issues**
-	NA
+SO docker image is still on ecmop and not onap in the repository. 
+This will be addressed in the next release.
 
 **Security Notes**
 
