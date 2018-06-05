@@ -1771,33 +1771,65 @@ Service Object
 +------------------------------+-----------------+------------------------------------+
 |Attribute                     |Content          |Description                         |
 +==============================+=================+====================================+
-|modelName                     |String           |Service instance name.              |
+|name                          |String           |Service instance name.              |
 +------------------------------+-----------------+------------------------------------+
 |description                   |String           |Service instance description        |
 +------------------------------+-----------------+------------------------------------+
-|modelUUID                     |String           |Model UUID                          |
+|serviceUuid                   |String           |Model UUID                          |
 +------------------------------+-----------------+------------------------------------+
-|modelInvariantUUID            |String           |Model Invariant UUID                |
+|serviceInvariantUuid          |String           |Model Invariant UUID                |
 +------------------------------+-----------------+------------------------------------+
-|created                       |Timestamp        |Cretaed Timestamp                   |
-+------------------------------+-----------------+------------------------------------+
-|toscaCsarArtifactUUID         |String           |tosca Csar Artifact UUID            |
-+------------------------------+-----------------+------------------------------------+
-|modelVersion                  |String           |Model Version                       |
-+------------------------------+-----------------+------------------------------------+
-|category                      |String           |category                            |
+|gloabalSubscriberId           |String           |Customer Id                         |
 +------------------------------+-----------------+------------------------------------+
 |serviceType                   |String           |service Type                        |
 +------------------------------+-----------------+------------------------------------+
-|serviceRole                   |String           |service Role                        |
+|parameters                    |Object           |Parameter Object                    |
 +------------------------------+-----------------+------------------------------------+
-|environmentContext            |String           |environment Context                 |
+
+Parameter Object
+
 +------------------------------+-----------------+------------------------------------+
-|workloadContext               |String           |workload Context                    |
+|Attribute                     |Content          |Description                         |
++==============================+=================+====================================+
+|locationConstraints           |List of object   |location infor for each vnf         |
 +------------------------------+-----------------+------------------------------------+
-|recipes                       |Object           |recipes                             |
+|resource                      |List of Resource |resource of service/resource        |
 +------------------------------+-----------------+------------------------------------+
-|serviceResourceCustomizations |Object           |serviceResourceCustomizations       |
+|requestInputs                 |key-value map    |input of service/resource
++------------------------------+-----------------+------------------------------------+
+
+LocationConstraint Object
+
++------------------------------+-----------------+------------------------------------+
+|Attribute                     |Content          |Description                         |
++==============================+=================+====================================+
+|vnfProfileId                  |String           |Customization id for VNF            |
++------------------------------+-----------------+------------------------------------+
+|locationConstraints           |Object           |DC location info of VNF             |
++------------------------------+-----------------+------------------------------------+
+
+VnfLocationConstraint Object
+
++------------------------------+-----------------+------------------------------------+
+|Attribute                     |Content          |Description                         |
++==============================+=================+====================================+
+|vimId                         |String           |VIM id from ESR definition          |
++------------------------------+-----------------+------------------------------------+
+
+Resource Object
+
++------------------------------+-----------------+------------------------------------+
+|Attribute                     |Content          |Description                         |
++==============================+=================+====================================+
+|resourceName                  |String           |The resource name                   |
++------------------------------+-----------------+------------------------------------+
+|resourceInvariantUuid         |String           |The resource invariant UUID.        |
++------------------------------+-----------------+------------------------------------+
+|resourceUuid                  |String           |The resource UUID.                  |
++------------------------------+-----------------+------------------------------------+
+|resourceCustomizationUuid     |String           |The resource customization UUID.    |
++------------------------------+-----------------+------------------------------------+
+|parameters                    |Object           |Parameter of resource               |
 +------------------------------+-----------------+------------------------------------+
 
 Response:
