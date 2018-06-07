@@ -22,8 +22,9 @@ package org.openecomp.mso.bpmn.infrastructure.pnf.dmaap;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -40,8 +41,10 @@ import org.openecomp.mso.logger.MsoLogger;
 public class PnfEventReadyDmaapClient implements DmaapClient {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+    private static final String DMAAP_HOST_ENV_NAME = "DMAAP_HOST";
+    private static final String DMAAP_PORT_ENV_NAME = "DMAAP_PORT";
 
-    private static final String JSON_PATH_CORRELATION_ID = "$.pnfRegistrationFields.correlationId";
+    private static final String JSON_PATH_CORRELATION_ID = "$..pnfRegistrationFields.correlationId";
     private HttpClient httpClient;
     private String dmaapHost;
     private int dmaapPort;
@@ -56,13 +59,12 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
     private int dmaapClientDelayInSeconds;
     private volatile boolean dmaapThreadListenerIsRunning;
 
-    public PnfEventReadyDmaapClient() {
+    public void init() {
         httpClient = HttpClientBuilder.create().build();
         pnfCorrelationIdToThreadMap = new ConcurrentHashMap<>();
+        dmaapHost = SystemUtility.getEnv(DMAAP_HOST_ENV_NAME);
+        dmaapPort = Integer.parseInt(SystemUtility.getEnv(DMAAP_PORT_ENV_NAME));
         executor = null;
-    }
-
-    public void init() {
         getRequest = new HttpGet(buildURI());
     }
 
@@ -108,14 +110,6 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
                 .path(consumerGroup).path(consumerId).build();
     }
 
-    public void setDmaapHost(String dmaapHost) {
-        this.dmaapHost = dmaapHost;
-    }
-
-    public void setDmaapPort(int dmaapPort) {
-        this.dmaapPort = dmaapPort;
-    }
-
     public void setDmaapProtocol(String dmaapProtocol) {
         this.dmaapProtocol = dmaapProtocol;
     }
@@ -146,20 +140,20 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         public void run() {
             try {
                 HttpResponse response = httpClient.execute(getRequest);
-                getCorrelationIdFromResponse(response).ifPresent(this::informAboutPnfReadyIfCorrelationIdFound);
+                getCorrelationIdListFromResponse(response).forEach(this::informAboutPnfReadyIfCorrelationIdFound);
             } catch (IOException e) {
                 LOGGER.error("Exception caught during sending rest request to dmaap for listening event topic", e);
             }
         }
 
-        private Optional<String> getCorrelationIdFromResponse(HttpResponse response) throws IOException {
+        private List<String> getCorrelationIdListFromResponse(HttpResponse response) throws IOException {
             if (response.getStatusLine().getStatusCode() == 200) {
                 String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
                 if (responseString != null) {
-                    return JsonPathUtil.getInstance().locateResult(responseString, JSON_PATH_CORRELATION_ID);
+                    return JsonPathUtil.getInstance().locateResultList(responseString, JSON_PATH_CORRELATION_ID);
                 }
             }
-            return Optional.empty();
+            return Collections.emptyList();
         }
 
         private synchronized void informAboutPnfReadyIfCorrelationIdFound(String correlationId) {

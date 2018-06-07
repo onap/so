@@ -42,15 +42,35 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.PnfEventReadyDmaapClient.DmaapTopicListenerThread;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({SystemUtility.class})
+@PowerMockIgnore("javax.net.ssl.*")
 public class PnfEventReadyDmaapClientTest {
 
     private static final String CORRELATION_ID = "corrTestId";
     private static final String CORRELATION_ID_NOT_FOUND_IN_MAP = "otherCorrId";
-    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID =
-            "{\"pnfRegistrationFields\":{\"correlationId\":\"%s\"}}";
+    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID = "[\n"
+            + "    {\n"
+            + "        \"pnfRegistrationFields\" : {\n"
+            + "        \"correlationId\" : \"%s\",\n"
+            + "        \"value\" : \"value1\"\n"
+            + "        }\n"
+            + "    },\n"
+            + "    {\n"
+            + "        \"pnfRegistrationFields\" : {\n"
+            + "        \"correlationId\" : \"corr\",\n"
+            + "        \"value\" : \"value2\"\n"
+            + "        }\n"
+            + "    }\n"
+            + "]";
     private static final String JSON_EXAMPLE_WITH_NO_CORRELATION_ID =
             "{\"pnfRegistrationFields\":{\"field\":\"value\"}}";
 
@@ -70,9 +90,10 @@ public class PnfEventReadyDmaapClientTest {
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException {
+        PowerMockito.mockStatic(SystemUtility.class);
+        PowerMockito.when(SystemUtility.getEnv("DMAAP_HOST")).thenReturn(HOST);
+        PowerMockito.when(SystemUtility.getEnv("DMAAP_PORT")).thenReturn(String.valueOf(PORT));
         testedObject = new PnfEventReadyDmaapClient();
-        testedObject.setDmaapHost(HOST);
-        testedObject.setDmaapPort(PORT);
         testedObject.setDmaapProtocol(PROTOCOL);
         testedObject.setDmaapUriPathPrefix(URI_PATH_PREFIX);
         testedObject.setDmaapTopicName(EVENT_TOPIC_TEST);
