@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -42,15 +43,36 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.openecomp.mso.bpmn.core.PropertyConfiguration;
 import org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.PnfEventReadyDmaapClient.DmaapTopicListenerThread;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({PropertyConfiguration.class})
+@PowerMockIgnore("javax.net.ssl.*")
 public class PnfEventReadyDmaapClientTest {
 
     private static final String CORRELATION_ID = "corrTestId";
     private static final String CORRELATION_ID_NOT_FOUND_IN_MAP = "otherCorrId";
-    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID =
-            "{\"pnfRegistrationFields\":{\"correlationId\":\"%s\"}}";
+    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID = "[\n"
+            + "    {\n"
+            + "        \"pnfRegistrationFields\" : {\n"
+            + "        \"correlationId\" : \"%s\",\n"
+            + "        \"value\" : \"value1\"\n"
+            + "        }\n"
+            + "    },\n"
+            + "    {\n"
+            + "        \"pnfRegistrationFields\" : {\n"
+            + "        \"correlationId\" : \"corr\",\n"
+            + "        \"value\" : \"value2\"\n"
+            + "        }\n"
+            + "    }\n"
+            + "]";
     private static final String JSON_EXAMPLE_WITH_NO_CORRELATION_ID =
             "{\"pnfRegistrationFields\":{\"field\":\"value\"}}";
 
@@ -70,9 +92,12 @@ public class PnfEventReadyDmaapClientTest {
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException {
+        PowerMockito.mockStatic(PropertyConfiguration.class);
+        PropertyConfiguration propertyConfigurationMock = mock(PropertyConfiguration.class);
+        PowerMockito.when(PropertyConfiguration.getInstance()).thenReturn(propertyConfigurationMock);
+        when(propertyConfigurationMock.getProperties(PropertyConfiguration.MSO_BPMN_URN_PROPERTIES)).thenReturn(
+                createProperties());
         testedObject = new PnfEventReadyDmaapClient();
-        testedObject.setDmaapHost(HOST);
-        testedObject.setDmaapPort(PORT);
         testedObject.setDmaapProtocol(PROTOCOL);
         testedObject.setDmaapUriPathPrefix(URI_PATH_PREFIX);
         testedObject.setDmaapTopicName(EVENT_TOPIC_TEST);
@@ -91,8 +116,8 @@ public class PnfEventReadyDmaapClientTest {
      * Test run method, where the are following conditions:
      * <p> - DmaapThreadListener is running, flag is set to true
      * <p> - map is filled with one entry with the key that we get from response
-     * <p> run method should invoke thread from map to notify camunda process, remove element from the map (map is empty)
-     * and shutdown the executor because of empty map
+     * <p> run method should invoke thread from map to notify camunda process, remove element from the map (map is
+     * empty) and shutdown the executor because of empty map
      */
     @Test
     public void correlationIdIsFoundInHttpResponse_notifyAboutPnfReady()
@@ -113,8 +138,8 @@ public class PnfEventReadyDmaapClientTest {
      * Test run method, where the are following conditions:
      * <p> - DmaapThreadListener is running, flag is set to true
      * <p> - map is filled with one entry with the correlationId that does not match to correlationId
-     * taken from http response. run method should not do anything with the map not run any thread to
-     * notify camunda process
+     * taken from http response. run method should not do anything with the map not run any thread to notify camunda
+     * process
      */
     @Test
     public void correlationIdIsFoundInHttpResponse_NotFoundInMap()
@@ -162,6 +187,13 @@ public class PnfEventReadyDmaapClientTest {
         threadRunFlag.setAccessible(true);
         threadRunFlag.set(testedObject, true);
         threadRunFlag.setAccessible(false);
+    }
+
+    private Map<String, String> createProperties() {
+        Map<String, String> map = new HashMap<>();
+        map.put("dmaapHost", HOST);
+        map.put("dmaapPort", String.valueOf(PORT));
+        return map;
     }
 
     private HttpResponse createResponse(String json) throws UnsupportedEncodingException {
