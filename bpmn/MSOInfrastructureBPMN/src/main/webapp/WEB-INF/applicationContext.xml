@@ -24,8 +24,6 @@
 
   <bean id="pnfEventReadyDmaapClient" class="org.openecomp.mso.bpmn.infrastructure.pnf.dmaap.PnfEventReadyDmaapClient"
     init-method="init">
-    <property name="dmaapHost" value="${host}"/>
-    <property name="dmaapPort" value="${port}"/>
     <property name="dmaapProtocol" value="${protocol}"/>
     <property name="dmaapUriPathPrefix" value="${uriPathPrefix}"/>
     <property name="dmaapTopicName" value="${eventReadyTopicName}"/>
