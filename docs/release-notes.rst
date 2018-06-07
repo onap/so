@@ -1,6 +1,6 @@
 .. This work is licensed under a Creative Commons Attribution 4.0 International License.
 .. http://creativecommons.org/licenses/by/4.0
-.. Copyright 2017 Huawei Intellectual Property.  All rights reserved.
+.. Copyright 2018 Huawei Intellectual Property.  All rights reserved.
 
 
 Service Orchestrator Release Notes
@@ -27,15 +27,16 @@ The Beijing release is the second release of the Service Orchestrator (SO) proje
  
 **Bug Fixes**
 
-The defects fixed in this release could be found `here <https://jira.onap.org/issues/?jql=project%20%3D%20SO%20AND%20affectedVersion%20%3D%20%22Beijing%20Release%22%20AND%20status%20%3D%20Closed%20>`_.
+	The defects fixed in this release could be found `here <https://jira.onap.org/issues/?jql=project%20%3D%20SO%20AND%20affectedVersion%20%3D%20%22Beijing%20Release%22%20AND%20status%20%3D%20Closed%20>`_.
 
 **Known Issues**
-SO docker image is still on ecmop and not onap in the repository. 
-This will be addressed in the next release.
+
+	SO docker image is still on ecmop and not onap in the repository. 
+	This will be addressed in the next release.
 
 **Security Notes**
 
-SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28377799>`_.
+	SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28377799>`_.
 
 Quick Links:
 
