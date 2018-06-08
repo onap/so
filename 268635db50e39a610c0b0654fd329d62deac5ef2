@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_98a0f1a6",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/groovy/org/openecomp/mso/bpmn/vcpe/scripts/CreateVcpeResCustService.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-06-08T17:58:55Z",
+      "side": 1,
+      "message": "This is test line and will be abandoned.",
+      "revId": "268635db50e39a610c0b0654fd329d62deac5ef2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
