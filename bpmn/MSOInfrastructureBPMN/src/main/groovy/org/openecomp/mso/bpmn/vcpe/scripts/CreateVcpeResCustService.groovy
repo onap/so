@@ -124,6 +124,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             if ((serviceInstanceId == null) || (serviceInstanceId.isEmpty())) {
                 serviceInstanceId = UUID.randomUUID().toString()
                 utils.log("DEBUG", " Generated new Service Instance: " + serviceInstanceId, isDebugEnabled)
+                
             } else {
                 utils.log("DEBUG", "Using provided Service Instance ID: " + serviceInstanceId, isDebugEnabled)
             }
