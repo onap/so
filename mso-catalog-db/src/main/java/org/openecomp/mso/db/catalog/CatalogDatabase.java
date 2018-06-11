@@ -95,6 +95,7 @@ public class CatalogDatabase implements Closeable {
     private static final String MODEL_CUSTOMIZATION_UUID = "modelCustomizationUuid";
     private static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUId";
     private static final String NETWORK_SERVICE = "network service";
+    private static final String TEMPLATE_NAME = "template_name";
 
     protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
@@ -198,7 +199,7 @@ public class CatalogDatabase implements Closeable {
 
         String hql = "FROM HeatTemplate WHERE templateName = :template_name";
         Query query = getSession().createQuery (hql);
-        query.setParameter("template_name", templateName);
+        query.setParameter(TEMPLATE_NAME, templateName);
 
         @SuppressWarnings("unchecked")
         List <HeatTemplate> resultList = query.list();
@@ -231,7 +232,7 @@ public class CatalogDatabase implements Closeable {
 
         String hql = "FROM HeatTemplate WHERE templateName = :template_name AND version = :version";
         Query query = getSession().createQuery(hql);
-        query.setParameter("template_name", templateName);
+        query.setParameter(TEMPLATE_NAME,templateName);
         query.setParameter("version", version);
 
         @SuppressWarnings("unchecked")
@@ -3490,7 +3491,7 @@ public class CatalogDatabase implements Closeable {
 
         String hql = "FROM HeatTemplate WHERE templateName = :template_name AND version = :version AND asdcResourceName = :asdcResourceName";
         Query query = getSession ().createQuery (hql);
-        query.setParameter ("template_name", templateName);
+        query.setParameter (TEMPLATE_NAME, templateName);
         query.setParameter ("version", version);
         query.setParameter ("asdcResourceName", asdcResourceName);
 
