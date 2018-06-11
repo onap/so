@@ -96,7 +96,8 @@ public class CatalogDatabase implements Closeable {
     private static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUId";
     private static final String NETWORK_SERVICE = "network service";
     private static final String TEMPLATE_NAME = "template_name";
-
+    private static final String GET_VNF_RECIPE = "getVnfRecipe";
+    
     protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
 
     protected Session session = null;
@@ -124,6 +125,7 @@ public class CatalogDatabase implements Closeable {
         return session;
     }
 
+    
     /**
      * Close an open Catalog Database session.
      * This method should always be called when a client is finished using a
@@ -1122,14 +1124,14 @@ public class CatalogDatabase implements Closeable {
         List <VnfRecipe> resultList = query.list();
 
         if (resultList.isEmpty()) {
-            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", GET_VNF_RECIPE, null);
             return null;
         }
 
         resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", GET_VNF_RECIPE, null);
         return resultList.get(0);
     }
 
@@ -1157,14 +1159,14 @@ public class CatalogDatabase implements Closeable {
         List <VnfRecipe> resultList = query.list();
 
         if (resultList.isEmpty()) {
-            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", GET_VNF_RECIPE, null);
             return null;
         }
 
         resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", GET_VNF_RECIPE, null);
         return resultList.get(0);
     }
     
@@ -1190,14 +1192,14 @@ public class CatalogDatabase implements Closeable {
         List <VnfRecipe> resultList = query.list();
 
         if (resultList.isEmpty()) {
-            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", GET_VNF_RECIPE, null);
             return null;
         }
 
         resultList.sort(new MavenLikeVersioningComparator());
         Collections.reverse(resultList);
 
-        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", GET_VNF_RECIPE, null);
         return resultList.get(0);
     }
     
@@ -1238,11 +1240,11 @@ public class CatalogDatabase implements Closeable {
         List <VnfRecipe> resultList = query.list();
 
         if (resultList.isEmpty()) {
-            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", "getVnfRecipe", null);
+            LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully. VNF recipe not found", "CatalogDB", GET_VNF_RECIPE, null);
             return null;
         }
 
-        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", "getVnfRecipe", null);
+        LOGGER.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully", "CatalogDB", GET_VNF_RECIPE, null);
         return resultList.get(0);
     }
 
