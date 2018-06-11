@@ -215,10 +215,7 @@ public class E2EServiceInstances {
 			return response;
 		}
 
-		Response returnResp = runCompareModelBPMWorkflow(e2eCompareModelReq, msoRequest, requestJSON, requestId,
-				startTime, action);
-
-		return returnResp;
+		return runCompareModelBPMWorkflow(e2eCompareModelReq, msoRequest, requestJSON, requestId, startTime, action);
 
 	}
 
