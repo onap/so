@@ -1,9 +1,0 @@
-{
-	"requestError": {
-		"policyException": {
-		  "requestId": "ae81d9a8-c949-493a-999c-f76c80503233",
-		  "text": "Message content size exceeds the allowable limit",
-		  "messageId": "SVC0001"
-		}
-	}
-}

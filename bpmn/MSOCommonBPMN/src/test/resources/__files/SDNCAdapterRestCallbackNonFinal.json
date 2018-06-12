@@ -1,8 +1,0 @@
-{
-  "SDNCServiceResponse": {
-    "sdncRequestId": "((REQUEST-ID))",
-    "responseCode": "200",
-    "responseMessage": "OK",
-    "ackFinalIndicator": "N"
-  }
-}
