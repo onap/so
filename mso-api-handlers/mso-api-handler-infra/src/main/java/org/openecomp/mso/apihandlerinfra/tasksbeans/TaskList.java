@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.apihandlerinfra.tasksbeans;
 
-import org.json.JSONArray;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -37,7 +37,7 @@ public class TaskList {
     protected String errorMessage;    
     protected String buildingBlockName;   
     protected String buildingBlockStep;    
-    protected JSONArray validResponses;
+    protected List<String> validResponses;
 
     /**
      * Gets the value of the taskId property.
@@ -311,7 +311,7 @@ public class TaskList {
      *     {@link ValidResponses }
      *     
      */
-    public JSONArray getValidResponses() {
+    public List<String> getValidResponses() {
         return validResponses;
     }
 
@@ -323,7 +323,7 @@ public class TaskList {
      *     {@link ValidResponses }
      *     
      */
-    public void setValidResponses(JSONArray value) {
+    public void setValidResponses(List<String> value) {
         this.validResponses = value;
     }
 

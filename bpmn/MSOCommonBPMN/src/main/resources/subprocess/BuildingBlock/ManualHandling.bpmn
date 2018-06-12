@@ -54,7 +54,7 @@ mh.setTaskVariables(task)]]></camunda:script>
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
             <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("setUpdateDBstatusPayload")}]]></camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -90,7 +90,7 @@ mh.prepareRequestsDBStatusUpdate(execution, "IN_PROGRESS")]]></bpmn2:script>
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
             <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("setUpdateDBstatusPayload")}]]></camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>

@@ -43,98 +43,82 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.openecomp.mso.utils.CryptoUtils;
 import org.openecomp.mso.adapters.sdnc.SDNCAdapterRequest;
 import org.openecomp.mso.adapters.sdnc.client.CallbackHeader;
 import org.openecomp.mso.adapters.sdnc.client.SDNCAdapterCallbackRequest;
 import org.openecomp.mso.adapters.sdnc.client.SDNCCallbackAdapterPortType;
 import org.openecomp.mso.adapters.sdnc.client.SDNCCallbackAdapterService;
-import org.openecomp.mso.adapters.sdnc.util.SDNCRequestIdUtil;
+import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-//SDNCAdapter to SDNC Rest Client
-public class SDNCRestClient implements Runnable {
 
-	private MsoPropertiesFactory msoPropertiesFactory;
+@Component
+public class SDNCRestClient{
+
+	@Autowired
+	private Environment env;
 	
-	private SDNCAdapterRequest bpelRequest;
+	@Autowired
+	private MapRequestTunables tunablesMapper;
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SDNCRestClient.class);
 	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
-	public static final String MSO_PROP_SDNC_ADAPTER="MSO_PROP_SDNC_ADAPTER";
 
-
-	public SDNCRestClient(SDNCAdapterRequest bpelRequest,MsoPropertiesFactory msoPropFactory) {
-		this.bpelRequest = bpelRequest;
-		msoPropertiesFactory = msoPropFactory;
-	}
-
-	@Override
-	public void run()
+	@Async
+	public void executeRequest(SDNCAdapterRequest bpelRequest)
 	{
+		
+		msoLogger.debug("BPEL Request:" + bpelRequest.toString());
 
 		String action = bpelRequest.getRequestHeader().getSvcAction();
 		String operation = bpelRequest.getRequestHeader().getSvcOperation();
 		String bpelReqId = bpelRequest.getRequestHeader().getRequestId();
 		String callbackUrl = bpelRequest.getRequestHeader().getCallbackUrl();
-		MsoLogger.setLogContext(SDNCRequestIdUtil.getSDNCOriginalRequestId (bpelReqId), bpelRequest.getRequestHeader().getSvcInstanceId());
-		MsoLogger.setServiceName("SDNCRestClient");
 
 		String sdncReqBody = null;
 
-		msoLogger.debug("BPEL Request:" + bpelRequest.toString());
+	
 
 		RequestTunables rt = new RequestTunables(bpelReqId,
 				bpelRequest.getRequestHeader().getMsoAction(),
 				bpelRequest.getRequestHeader().getSvcOperation(),
-				bpelRequest.getRequestHeader().getSvcAction(),msoPropertiesFactory);
-		rt.setTunables();
-		rt.setSdncaNotificationUrl(SDNCAdapterPortTypeImpl.getProperty(Constants.MY_URL_PROP, Constants.DEFAULT_MY_URL,msoPropertiesFactory));
+				bpelRequest.getRequestHeader().getSvcAction());		
+		rt = tunablesMapper.setTunables(rt);
+		rt.setSdncaNotificationUrl(env.getProperty(Constants.MY_URL_PROP));
 
 
 		if ("POST".equals(rt.getReqMethod()))
 		{
-			/* TODO Hibernate
-			try {
-				RequestsDatabase.updateBpelUrl(bpelReqId, callbackUrl);
-			}
-			catch (Exception e1)
-			{
-				logger.error("Failed to update DB ActiveRequests with SDNC_CALLBACK_BPEL_URL. Default CallbackUrl will be used for SDNC async notifications", e1);
-			}
-			*/
-
 			Node node = (Node) 	bpelRequest.getRequestData();
     		Document reqDoc = node.getOwnerDocument();
 			sdncReqBody = Utils.genSdncReq(reqDoc, rt);
-
 		}
-		//should be more generic if we do RPC then we add the input tags etc, if it is pure REST this is not needed
 		else if("PUT".equals(rt.getReqMethod())){
 			Node node = (Node) 	bpelRequest.getRequestData();
     		Document reqDoc = node.getOwnerDocument();
 			sdncReqBody = Utils.genSdncPutReq(reqDoc, rt);
 		}
 		long sdncStartTime = System.currentTimeMillis();
-		SDNCResponse sdncResp = getSdncResp(sdncReqBody, rt, msoPropertiesFactory);
+		SDNCResponse sdncResp = getSdncResp(sdncReqBody, rt);
 		msoLogger.recordMetricEvent (sdncStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from SDNC", "SDNC", action + "." + operation, null);
-
 		msoLogger.debug ("Got the SDNC Response: " + sdncResp.getSdncRespXml());
-		msoLogger.debug("Sending reponse to bpel from SDNC rest client");
 		long bpelStartTime = System.currentTimeMillis();
-		sendRespToBpel(callbackUrl, sdncResp,msoPropertiesFactory);
+		sendRespToBpel(callbackUrl, sdncResp);
 		msoLogger.recordMetricEvent (bpelStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully send reauest to BPEL", "BPMN", callbackUrl, null);
 		return;
 	}
 
-	public static SDNCResponse getSdncResp(String sdncReqBody, RequestTunables rt, MsoPropertiesFactory msoPropertiesFactoryp)
+	public SDNCResponse getSdncResp(String sdncReqBody, RequestTunables rt)
 	{
 
 		URL url;
@@ -144,18 +128,18 @@ public class SDNCRestClient implements Runnable {
 		SDNCResponse sdncResp = new SDNCResponse(rt.getReqId());
 		StringBuilder response = new StringBuilder();
 
-		msoLogger.info(MessageEnum.RA_SEND_REQUEST_SDNC, rt.toString(), "SDNC", "");
-		msoLogger.debug("SDNC Request Body:\n" + sdncReqBody);
+		msoLogger.info(MessageEnum.RA_SEND_REQUEST_SDNC.name() + ":\n" + rt.toString(), "SDNC", "");
+		msoLogger.trace("SDNC Request Body:\n" + sdncReqBody);
 
 		try {
 
 			url = new URL(rt.getSdncUrl());
 
 			con = (HttpURLConnection) url.openConnection();
-		    con.setConnectTimeout(Integer.parseInt(SDNCAdapterPortTypeImpl.getProperty(Constants.SDNC_CONNECTTIME_PROP, "2000",msoPropertiesFactoryp)));
+		    con.setConnectTimeout(Integer.parseInt(env.getProperty(Constants.SDNC_CONNECTTIME_PROP)));
 		    con.setReadTimeout(Integer.parseInt(rt.getTimeout()));
 			con.setRequestProperty("Accept", "application/yang.data+xml"); //for response in xml
-			String userCredentials = msoPropertiesFactoryp.getMsoJavaProperties(MSO_PROP_SDNC_ADAPTER).getEncryptedProperty(Constants.SDNC_AUTH_PROP, Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
+			String userCredentials = CryptoUtils.decryptProperty(env.getProperty(Constants.SDNC_AUTH_PROP), Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
 
 			String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 			con.setRequestProperty ("Authorization", basicAuth);
@@ -188,7 +172,7 @@ public class SDNCRestClient implements Runnable {
 			}
 			
 			sdncResp.setSdncRespXml(response.toString());
-			msoLogger.info(MessageEnum.RA_RESPONSE_FROM_SDNC, sdncResp.toString(), "SDNC", "");
+			msoLogger.info(MessageEnum.RA_RESPONSE_FROM_SDNC.name() + ":\n" + sdncResp.toString(), "SDNC", "");
 			return(sdncResp);
 		}
 		catch (Exception e)
@@ -217,6 +201,8 @@ public class SDNCRestClient implements Runnable {
 					    XPath xpath = xpathFactory.newXPath();
 						DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                         dbf.setFeature (XMLConstants.FEATURE_SECURE_PROCESSING, true);
+						dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+						dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 						DocumentBuilder db;
 						Document doc = null;
 						try { //e2
@@ -278,7 +264,7 @@ public class SDNCRestClient implements Runnable {
 		}
 	}
 
-	public static void sendRespToBpel(String bpelUrl, SDNCResponse sdncResp,MsoPropertiesFactory msoPropertiesFactoryp)
+	public void sendRespToBpel(String bpelUrl, SDNCResponse sdncResp)
 	{
 		String error;
 		try
@@ -289,7 +275,7 @@ public class SDNCRestClient implements Runnable {
 			{
 				cbReq.setRequestData(sdncResp.getSdncRespXml());
 			}
-			msoLogger.info(MessageEnum.RA_CALLBACK_BPEL, cbReq.toString(), "Camunda", "");
+			msoLogger.info(MessageEnum.RA_CALLBACK_BPEL.name() + ":\n" + cbReq.toString(), "Camunda", "");
 
 			URL wsdlUrl = null;
 			try {
@@ -318,7 +304,7 @@ public class SDNCRestClient implements Runnable {
 			{
 				Map<String, Object> reqCtx = bp.getRequestContext();
 				Map<String, List<String>> headers = new HashMap<>();
-				String userCredentials = msoPropertiesFactoryp.getMsoJavaProperties(MSO_PROP_SDNC_ADAPTER).getEncryptedProperty(Constants.BPEL_AUTH_PROP, Constants.DEFAULT_BPEL_AUTH, Constants.ENCRYPTION_KEY);
+				String userCredentials = CryptoUtils.decryptProperty(env.getProperty(Constants.BPEL_AUTH_PROP), Constants.DEFAULT_BPEL_AUTH, Constants.ENCRYPTION_KEY);
 
 				String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 				reqCtx.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
@@ -337,10 +323,10 @@ public class SDNCRestClient implements Runnable {
 		catch (Exception e)
 		{
 			error = "Error sending BpelCallback request" + e.getMessage();
-			msoLogger.error(MessageEnum.RA_CALLBACK_BPEL_EXC, "Camunda", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception sending BpelCallback request", e);
+			msoLogger.error("Error " + MsoLogger.ErrorCode.BusinessProcesssError + " - " + MessageEnum.RA_CALLBACK_BPEL_EXC + " - " + error, e);
 			alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, error);
 		}
-		msoLogger.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE, "Camunda", "");
+		msoLogger.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE.name(), "Camunda", "");
 		return;
 	}
 

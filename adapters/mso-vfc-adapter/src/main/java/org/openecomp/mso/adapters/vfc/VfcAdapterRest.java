@@ -36,6 +36,8 @@ import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
 import org.openecomp.mso.adapters.vfc.util.JsonUtil;
 import org.openecomp.mso.adapters.vfc.util.ValidateUtil;
 import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * The rest class for VF-c Adapter <br>
@@ -45,12 +47,14 @@ import org.openecomp.mso.logger.MsoLogger;
  * @author
  * @version ONAP Amsterdam Release 2017-08-28
  */
+@Component
 @Path("/v1/vfcadapter")
 public class VfcAdapterRest {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, VfcAdapterRest.class);
 
-    private final VfcManager driverMgr = new VfcManager();
+    @Autowired
+    private VfcManager driverMgr ;
 
     public VfcAdapterRest() {
 
@@ -59,7 +63,7 @@ public class VfcAdapterRest {
     /**
      * Create a NS <br>
      * 
-     * @param data the http request
+     * @param data http request
      * @return
      * @since ONAP Amsterdam Release
      */
@@ -83,7 +87,8 @@ public class VfcAdapterRest {
     /**
      * Delete NS instance<br>
      *
-     * @param servletReq http request
+     * @param data The http request
+     * @param  nsInstanceId The NS instance id
      * @return response
      * @since ONAP Amsterdam Release
      */
@@ -108,7 +113,7 @@ public class VfcAdapterRest {
     /**
      * Query Operation job status <br>
      * 
-     * @param servletReq The Http Request
+     * @param data The Http Request
      * @param jobId The job id
      * @return
      * @since ONAP Amsterdam Release
@@ -133,7 +138,7 @@ public class VfcAdapterRest {
     /**
      * Instantiate NS instance <br>
      * 
-     * @param servletReq The http request
+     * @param data The http request
      * @param nsInstanceId The NS instance id
      * @return
      * @since ONAP Amsterdam Release
@@ -158,7 +163,7 @@ public class VfcAdapterRest {
     /**
      * Terminate NS instance <br>
      * 
-     * @param servletReq The http request
+     * @param data The http request
      * @param nsInstanceId The NS instance id
      * @return
      * @since ONAP Amsterdam Release
@@ -179,33 +184,6 @@ public class VfcAdapterRest {
             return e.buildErrorResponse();
         }
     }
-
-	  /**
-     * Scale NS instance
-     * <br>
-     * 
-     * @param servletReq The http request
-     * @param nsInstanceId The NS instance id
-     * @return
-     * @since ONAP Amsterdam Release
-     */
-    @POST
-    @Path("/ns/{nsInstanceId}/scale")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Response scaleNfvoNs(String data, @PathParam("nsInstanceId") String nsInstanceId) {
-    	try {
-    		ValidateUtil.assertObjectNotNull(data);
-            LOGGER.debug("Scale Ns Request Received.Body from request is {}" + data);
-    		NSResourceInputParameter nsInput = JsonUtil.unMarshal(data, NSResourceInputParameter.class);
-    		RestfulResponse rsp = driverMgr.scaleNs(nsInstanceId, nsInput);
-    		return buildResponse(rsp);
-    	} catch(ApplicationException e) {
-		    LOGGER.debug("ApplicationException: ", e);
-    		return e.buildErrorResponse();
-    	}
-    }
-
 
     /**
      * build response from restful response <br>

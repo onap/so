@@ -1,0 +1,14 @@
+<input>
+ <configuration-event> 
+         <event-type>UCPE-ACTIVATION</event-type> 
+         <event-correlator-type>UCPE-HOST-NAME</event-correlator-type> 
+         <event-correlator>USUCPMGO4AD0101UJZZ01</event-correlator> 
+         <event-parameters> 
+                 <event-parameter> 
+                         <sequence-number>1</sequence-number> 
+                         <tag-name>success-indicator</tag-name> 
+                         <tag-value>Y</tag-value> 
+                 </event-parameter> 
+         </event-parameters> 
+  </configuration-event> 
+ </input>

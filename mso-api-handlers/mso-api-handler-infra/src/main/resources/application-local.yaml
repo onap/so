@@ -1,0 +1,191 @@
+# will be used as entry in DB to say SITE OFF/ON for healthcheck
+
+server:
+    port: 8080
+    tomcat:
+        max-threads: 50
+ssl-enable: false
+
+apih-healthcheck-urn: /ecomp/mso/healthcheck,/ecomp/mso/homing/healthcheck,/ecomp/mso/infra/healthcheck,/asdc/healthcheck,/dbadapters/healthcheck,/ecomp/mso/catalog/v2/healthcheck
+jra-healthcheck-urn: /networks/rest/healthcheck,/adapters/rest/healthcheck,/vnfs/rest/healthcheck,/tenants/rest/healthcheck,/appc/rest/healthcheck,/workflows/messages/healthcheck
+camunda-healthcheck-urn: /mso/healthcheck
+
+apih-nodehealthcheck-urn: /ecomp/mso/infra/nodehealthcheck
+jra-nodehealthcheck-urn: /adapters/rest/nodehealthcheck
+camunda-nodehealthcheck-urn: /mso/nodehealthcheck
+
+
+
+mso:
+  logPath: logs
+  site-name: mtanj
+  config: 
+    path: /src/main/resources/
+  infra:
+    default:
+      alacarte:
+        orchestrationUri: /mso/async/services/ALaCarteOrchestrator
+        recipeTimeout: 180
+        testApi: VNF_API
+      service:
+        macro:
+          default:
+            testApi: GR_API
+  apih:
+    homing:
+      sdna:
+        url: http://localhost:8089/
+        password: 4112B789E942B161228F7D5AFC654C0F  
+  bpelURL: http://mtanjv9mobp01-eth2-0.aic.cip.att.com:8080/
+  bpelAuth: 786864AA53D0DCD881AED1154230C0C3058D58B9339D2EFB6193A0F0D82530E1
+  camundaURL: http://localhost:8089/
+  camundaAuth: F8E9452B55DDE4CCE77547B0E748105C54CF5EF1351B4E2CBAABF2981EFE776D
+  async:
+    core-pool-size: 50
+    max-pool-size: 50
+    queue-capacity: 500
+  sdc:
+    client:
+      auth: F3473596C526938329DF877495B494DC374D1C4198ED3AD305EA3ADCBBDA1862
+    activate:
+      instanceid: test
+      userid: cs0008
+    endpoint: http://localhost:28090
+  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
+  tenant:
+    isolation:
+      retry:
+        count: 3
+  aai:
+    endpoint: http://localhost:28090
+    auth: 26AFB797A6A57960D5D718491925C50F77CDC22AC394B3DBA09950D8FD1C0764
+  grm:
+    endpoint: http://localhost:28090
+    username: gmruser
+    password: test
+  so:
+    operational-environment:
+      dmaap:
+        username: m97898@mso.ecomp.att.com
+        password: VjR5NDcxSzA=
+        host: http://localhost:28090
+      publisher:
+        topic: org.onap.ecomp.mso.operationalEnvironmentEvent
+  avpn:
+    bpel:
+      uri: /mso/async/services/AVPNWorkflowActionBB
+      timeout: 180
+
+# controls what actions the infra API (APIH) allows sent in on REST request
+vnf:
+  v1:
+    ApiAllowableActions: 
+  v2:
+    ApiAllowableActions: 
+  v3:
+    ApiAllowableActions: 
+  
+network:
+  v1:
+    ApiAllowableActions: 
+  v2:
+    ApiAllowableActions: 
+  v3:
+    ApiAllowableActions: 
+  
+volume:
+  v1:
+    ApiAllowableActions: 
+  v2:
+    ApiAllowableActions: 
+  v3:
+    ApiAllowableActions: 
+
+
+
+
+
+
+# H2
+spring:
+  datasource:
+    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+    intialize: true
+  h2:
+    console:
+      enabled: true
+      path: /h2
+
+  jpa:
+      show-sql: true
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        ddl-auto: validate
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        enable_lazy_load_no_trans: true
+  jersey:
+    type: filter
+  security:
+    usercredentials:
+    -  
+      username: csi
+      password: '$2a$12$D6dXesEdOAK9h1pY0WMymuSPHi.eKKpyHj3SM2iZvQHymzx653kt6'
+      role: CSI-Client
+    -  
+      username: sitecontrol
+      password: '$2a$12$VBUF.qBmeK1FNyO2MqTpD.P2M1tvlesZlhCkAjjHvF9hmYNVdMDmu'
+      role: SiteControl-Client 
+    -  
+      username: gui
+      password: '$2a$12$9Y4daXavh.oX5fz6t/e7TuCdj7EKW5B5ibqq425fN3/xpp0/Fhyti'
+      role: GUI-Client  
+    -  
+      username: ccd
+      password: '$2a$12$J6tM1eWqDA6btes6ZU17Y.3IGj5ZTKOGjjkpWQNkED7lAU1gu.QY2'
+      role: CCD-Client 
+    -  
+      username: infraportal
+      password: '$2a$12$IpUEhQijWTNbq0fGYVkA9upZrDvdIK6QfblIaKAiwi0vBQRE.C6Ri'
+      role: InfraPortal-Client
+    -  
+      username: scheduler
+      password: '$2a$12$hEH.QqtdI9jILHXH8MrHM.xOal1kFfXDXuEfQ5qMdj8zVTuasbFha'
+      role: Scheduler-Client
+    -  
+      username: m13877
+      password: '$2a$12$hEH.QqtdI9jILHXH8MrHM.xOal1kFfXDXuEfQ5qMdj8zVTuasbFha'
+      role: Scheduler-Client         
+    -  
+      username: polo
+      password: '$2a$12$Zbqk9Zz/23nZGn4F22Sq9uUWNerOLsLk7lDP.Hi9ZUM0VD0/W2jyC'
+      role: Polo-Client
+    -  
+      username: bpel
+      password: '$2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO'
+      role: BPEL-Client
+    -  
+      username: m24226
+      password: '$2a$12$XBGEZNXHLDiPaCKH75qaE.hKYUQN3M068hs4.TRmj7jYH/fGXivoK'
+      role: SDMP-Client
+    -  
+      username: m13631
+      password: '$2a$12$.L0FisZJWLZ/azEoOaTUguw8qu6UpWDQCqcAsDOP.nx54CtGZjCIa'
+      role: SPP-Client
+    -  
+      username: mso_admin
+      password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
+      role: ACTUATOR      
+request:
+  datasource:
+    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+    intialize: true 
+
+#Actuator
+management: 
+  context-path: /manage

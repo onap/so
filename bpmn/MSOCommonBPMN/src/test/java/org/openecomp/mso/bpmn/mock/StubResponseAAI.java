@@ -1,24 +1,26 @@
-/*
- * ============LICENSE_START======================================================= 
- * ONAP - SO 
- * ================================================================================ 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
+ *      http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
- * ============LICENSE_END========================================================= 
- */ 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
 package org.openecomp.mso.bpmn.mock;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -94,6 +96,16 @@ public class StubResponseAAI {
 						.withBodyFile(responseFile)));
 	}
 
+
+	/**
+	 * Service Instance Mock StubResponses below
+	 */
+	public static void MockGetServiceInstance(String globalCustId, String subscriptionType, String serviceInstanceId) {
+		stubFor(get(urlMatching("/aai/v[0-9]+/business/customers/customer/" + globalCustId + "/service-subscriptions/service-subscription/" + subscriptionType + "/service-instances/service-instance/" + serviceInstanceId))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/xml")));
+	}
 
 	/**
 	 * Service Instance Mock StubResponses below
@@ -178,8 +190,8 @@ public class StubResponseAAI {
 				  .withStatus(statusCode)));
 	}
 	
-	public static void MockGetServiceInstance(String customer, String serviceSubscription, String resourceVersion, int statusCode){
-		stubFor(get(urlMatching("/aai/v[0-9]+/business/customers/customer/" + customer + "/service-subscriptions/service-subscription/" + serviceSubscription + "[?]resource-version=" + resourceVersion))
+	public static void MockGetServiceInstance(String customer, String serviceSubscription, int statusCode){
+		stubFor(get(urlMatching("/aai/v[0-9]+/business/customers/customer/" + customer + "/service-subscriptions/service-subscription/" + serviceSubscription))
 				  .willReturn(aResponse()
 				  .withStatus(200)
 				  .withHeader("Content-Type", "text/xml")));
@@ -341,7 +353,8 @@ public class StubResponseAAI {
 	}
 
 	public static void MockGetGenericVnfById_500(String vnfId){
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId))
+		stubFor(get(urlMatching("/aai/v9/network/generic-vnfs/generic-vnf/" + vnfId + "[?]depth=1"))
+				.withQueryParam("depth", equalTo("1"))
 				.willReturn(aResponse()
 						.withStatus(500)));
 	}
@@ -765,9 +778,13 @@ public class StubResponseAAI {
 	 * Volume Group StubResponse below
 	 */
 	public static void MockGetVolumeGroupById(String cloudRegionId, String volumeGroupId, String responseFile) {
+		MockGetVolumeGroupById(cloudRegionId, volumeGroupId, responseFile, 200);
+	}
+	
+	public static void MockGetVolumeGroupById(String cloudRegionId, String volumeGroupId, String responseFile, int responseCode) {
 		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/" + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId))
 				.willReturn(aResponse()
-						.withStatus(200)
+						.withStatus(responseCode)
 						.withHeader("Content-Type", "text/xml")
 						.withBodyFile(responseFile)));
 	}

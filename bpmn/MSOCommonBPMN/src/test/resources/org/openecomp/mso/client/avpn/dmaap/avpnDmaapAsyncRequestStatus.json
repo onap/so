@@ -1,0 +1,21 @@
+{
+  "asyncRequestStatus" : {
+    "requestId" : "rq1234d1-5a33-55df-13ab-12abad84e331",
+    "clientSource" : "SPP",
+    "correlator" : "myClientId123",
+    "instanceReferences" : {
+      "serviceInstanceId" : "bc305d54-75b4-431b-adb2-eb6b9e546014"
+    },
+    "startTime" : "2017-11-17T09:30:47Z",
+    "finishTime" : "2017-11-17T09:30:47Z",
+    "requestScope" : "service",
+    "requestType" : "createInstance",
+    "requestStatus" : {
+      "timestamp" : "2017-11-17T09:30:47Z",
+      "requestState" : "COMPLETE",
+      "statusMessage" : "Success",
+      "percentProgress" : "100",
+      "wasRolledBack" : true
+    }
+  }
+}

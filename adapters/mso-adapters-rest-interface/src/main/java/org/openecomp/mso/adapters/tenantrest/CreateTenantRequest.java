@@ -22,10 +22,12 @@ package org.openecomp.mso.adapters.tenantrest;
 
 
 
-import org.openecomp.mso.entity.MsoRequest;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.openecomp.mso.entity.MsoRequest;
 
 @XmlRootElement(name = "createTenantRequest")
 public class CreateTenantRequest extends TenantRequestCommon {

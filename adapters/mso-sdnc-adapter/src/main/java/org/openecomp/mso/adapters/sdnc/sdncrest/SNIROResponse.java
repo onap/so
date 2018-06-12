@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,17 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.sdnc.sdncrest;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.openecomp.mso.adapters.sdnc.impl.Constants;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 /**
  * A temporary interface to support notifications from SNIRO to BPMN.
@@ -35,9 +43,16 @@ import javax.ws.rs.core.Response;
  * develop a SNIRO adapter in 1702.
  */
 @Path("/")
+@Component
 public class SNIROResponse {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SNIROResponse.class);
 	private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
+	
+	@Autowired
+	private Environment env;
+	
+	@Autowired
+	private BPRestCallback callback;
 
 	@POST
 	@Path("/SDNCNotify/SNIROResponse/{correlator}")
@@ -48,9 +63,9 @@ public class SNIROResponse {
 
 		long startTime = System.currentTimeMillis();
 
-		String bpUrl = SDNCAdapterProperties.getProperty(Constants.BPEL_REST_URL_PROP, null);
+		String bpUrl = env.getProperty(Constants.BPEL_REST_URL_PROP, ""); 
 
-		if (bpUrl == null) {
+		if (bpUrl == null || bpUrl.equals("")) {
 			String error = "Missing configuration for: " + Constants.BPEL_REST_URL_PROP;
 			LOGGER.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, Constants.BPEL_REST_URL_PROP, "SDNC", "",
 				MsoLogger.ErrorCode.DataError, "Missing config param");
@@ -59,7 +74,6 @@ public class SNIROResponse {
 		}
 
 		long bpStartTime = System.currentTimeMillis();
-		BPRestCallback callback = new BPRestCallback();
 		boolean callbackSuccess = callback.send(bpUrl, "SNIROResponse", correlator, content);
 
 		if (callbackSuccess) {

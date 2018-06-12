@@ -11,7 +11,12 @@
   <xs:element name="model-name" type="xs:string"/>
   <xs:element name="service-id" type="xs:string"/>
   <xs:element name="subscription-service-type" type="xs:string"/>
-  <xs:element name="ecomp-model-information">
+  <xs:element name="vnf-id" type="xs:string"/>
+  <xs:element name="vnf-type" type="xs:string"/>
+  <xs:element name="tenant" type="xs:string"/>
+  <xs:element name="aic-cloud-region" type="xs:string"/>
+  <xs:element name="vnf-name" type="xs:string"/>
+  <xs:element name="onap-model-information">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="v1:model-invariant-uuid" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
@@ -42,7 +47,7 @@
       <xs:sequence>
         <xs:element ref="v1:service-id" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
         <xs:element ref="v1:subscription-service-type" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
-        <xs:element ref="v1:ecomp-model-information" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:onap-model-information" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
         <xs:element ref="v1:service-instance-id" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
         <xs:element ref="v1:subscriber-name" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
         <xs:element ref="v1:global-customer-id" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
@@ -56,12 +61,32 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+   <xs:element name="vnf-information">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="v1:vnf-id" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:vnf-type" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:onap-model-information" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+    <xs:element name="vnf-request-input">
+    <xs:complexType>
+      <xs:sequence>        
+        <xs:element ref="v1:vnf-name" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:tenant" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:aic-cloud-region" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="SDNCServiceInstanceRequestData">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="v1:request-information" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
         <xs:element ref="v1:service-information" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
         <xs:element ref="v1:service-request-input" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:vnf-information" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
+        <xs:element ref="v1:vnf-request-input" xmlns:v1="http://org.openecomp/mso/workflow/schema/v1"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>

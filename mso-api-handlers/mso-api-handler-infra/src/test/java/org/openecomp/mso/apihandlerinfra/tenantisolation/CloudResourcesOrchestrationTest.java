@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,234 +22,294 @@ package org.openecomp.mso.apihandlerinfra.tenantisolation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.MediaType;
 
-import org.jboss.resteasy.spi.ResteasyUriInfo;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.openecomp.mso.requestsdb.InfraActiveRequests;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
+import org.openecomp.mso.apihandlerinfra.BaseTest;
+import org.openecomp.mso.db.request.beans.InfraActiveRequests;
+import org.openecomp.mso.db.request.data.repository.InfraActiveRequestsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 
-public class CloudResourcesOrchestrationTest {
+
+public class CloudResourcesOrchestrationTest extends BaseTest{
 	
-	private String requestJSON = "{\"requestDetails\":{\"requestInfo\":{\"source\":\"VID\",\"requestorId\":\"zz9999\" } } }";
+	@Autowired
+	private InfraActiveRequestsRepository iarRepo;
+	private String requestJSON = "{\"requestDetails\":{\"requestInfo\":{\"source\":\"VID\",\"requestorId\":\"xxxxxx\" } } }";
+	private static final String path = "/onap/so/infra/cloudResourcesRequests";
+	
+	@LocalServerPort
+	private int port;
+
+
+
+	HttpHeaders headers = new HttpHeaders();
 
 	@Test
 	public void testUnlockFailObjectMapping() {
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		Response response = cor.unlockOrchestrationRequest(null, null, null);
-		String body = response.getEntity().toString();
-		assertTrue(body.contains("Mapping of request to JSON object failed."));
-		assertEquals(400, response.getStatus());
-	}
+		
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 	
-	@Test
-	public void testUnlockFailObjectMapping2() {
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		Response response = cor.unlockOrchestrationRequest(null, "requestId", null);
-		String body = response.getEntity().toString();
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1/test/unlock");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.POST, entity, String.class);
+		
+		String body = response.getBody();
 		assertTrue(body.contains("Mapping of request to JSON object failed."));
-		assertEquals(400, response.getStatus());
+		assertEquals(400, response.getStatusCodeValue());
 	}
 	
 	@Test
 	public void testParseOrchestrationError1() {
 		String requestJSON = "{\"requestDetails\": null }";
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		Response response = cor.unlockOrchestrationRequest(requestJSON, "requestId", null);
-		String body = response.getEntity().toString();
-		assertTrue(body.contains("Error parsing request."));
-		assertEquals(400, response.getStatus());
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
+		
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1/test/unlock");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.POST, entity, String.class);
+		String body = response.getBody();
+		assertTrue(body.contains("No valid requestDetails is specified"));
+		assertEquals(400, response.getStatusCodeValue());
 	}
 	
 	@Test
 	public void testParseOrchestrationError2() {
-		String requestJSON = "{\"requestDetails\":{\"requestInfo\":{\"source\":\"\",\"requestorId\":\"zz9999\" } } }";
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		Response response = cor.unlockOrchestrationRequest(requestJSON, "requestId", null);
-		String body = response.getEntity().toString();
-		assertTrue(body.contains("Error parsing request."));
-		assertEquals(400, response.getStatus());
+		String requestJSON = "{\"requestDetails\":{\"requestInfo\":{\"source\":\"\",\"requestorId\":\"xxxxxx\" } } }";
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1/test/unlock");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.POST, entity, String.class);
+		String body = response.getBody();
+		assertTrue(body.contains("No valid source is specified"));
+		assertEquals(400, response.getStatusCodeValue());
 	}
 	
 	@Test
 	public void testParseOrchestrationError3() {
 		String requestJSON = "{\"requestDetails\":{\"requestInfo\":{\"source\":\"VID\",\"requestorId\":\"\" } } }";
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		Response response = cor.unlockOrchestrationRequest(requestJSON, "requestId", null);
-		String body = response.getEntity().toString();
-		assertTrue(body.contains("Error parsing request."));
-		assertEquals(400, response.getStatus());
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1/test/unlock");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.POST, entity, String.class);
+		String body = response.getBody();
+		assertTrue(body.contains("No valid requestorId is specified"));
+		assertEquals(400, response.getStatusCodeValue());
 	}
 	
 	@Test
 	public void testGetInfraActiveRequestNull() {
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		RequestsDatabase reqDB = mock(RequestsDatabase.class);
-		cor.setRequestsDB(reqDB);
-		when(reqDB.getRequestFromInfraActive("requestId")).thenReturn(null);
 		
-		Response response = cor.unlockOrchestrationRequest(requestJSON, "requestId", null);
-		String body = response.getEntity().toString();
-		assertTrue(body.contains("Orchestration RequestId requestId is not found in DB"));
-		assertEquals(404, response.getStatus());
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1/request-id-null-check/unlock");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.POST, entity, String.class);
+		String body = response.getBody();
+		assertTrue(body.contains("Orchestration RequestId request-id-null-check is not found in DB"));
+		assertEquals(400, response.getStatusCodeValue());
+
 	}
 	
 	@Test
 	public void testUnlockError() {
 		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestId");
+		iar.setRequestId("requestIdtestUnlockError");
 		iar.setRequestScope("requestScope");
 		iar.setRequestType("requestType");
 		iar.setOperationalEnvId("operationalEnvironmentId");
 		iar.setOperationalEnvName("operationalEnvName");
-		iar.setRequestorId("ma920e");
+		iar.setRequestorId("xxxxxx");
 		iar.setRequestBody("");
 		iar.setRequestStatus("IN_PROGRESS");
+		iar.setRequestAction("TEST");
 		
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		RequestsDatabase reqDB = mock(RequestsDatabase.class);
-		cor.setRequestsDB(reqDB);
-		when(reqDB.getRequestFromInfraActive("requestId")).thenReturn(iar);
-		when(reqDB.updateInfraStatus("requestId", "UNLOCKED", "APIH")).thenReturn(1);
+		iarRepo.saveAndFlush(iar);
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<>(requestJSON, headers);
+	
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1/requestId/unlock");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.POST, entity, String.class);
 		
-		Response response = cor.unlockOrchestrationRequest(requestJSON, "requestId", null);
-		assertEquals(404, response.getStatus());
+		assertEquals(400, response.getStatusCodeValue());
 	}
 	
 	@Test
 	public void testUnlock() throws ParseException {
 		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestId");
+		iar.setRequestId("requestIdtestUnlock");
 		iar.setRequestScope("requestScope");
 		iar.setRequestType("requestType");
 		iar.setOperationalEnvId("operationalEnvironmentId");
 		iar.setOperationalEnvName("operationalEnvName");
-		iar.setRequestorId("ma920e");
-		iar.setRequestBody("");
+		iar.setRequestorId("xxxxxx");
+		iar.setRequestBody("{}");
 		iar.setRequestStatus("IN_PROGRESS");
+		iar.setRequestAction("TEST");
 		
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = dateFormat.parse("23/09/2007");
 		long time = date.getTime();
 		iar.setStartTime(new Timestamp(time));
 		
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		RequestsDatabase reqDB = mock(RequestsDatabase.class);
-		cor.setRequestsDB(reqDB);
-		when(reqDB.getRequestFromInfraActive("requestId")).thenReturn(iar);
-		when(reqDB.updateInfraStatus("requestId", "UNLOCKED", "APIH")).thenReturn(1);
+		iarRepo.saveAndFlush(iar);
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<>(requestJSON, headers);
+	
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1/requestIdtestUnlock/unlock");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.POST, entity, String.class);
 		
-		Response response = cor.unlockOrchestrationRequest(requestJSON, "requestId", null);
-		assertEquals(204, response.getStatus());
+		assertEquals(204, response.getStatusCodeValue());
 	}
 	
 	@Test
 	public void testUnlockComplete() throws ParseException {
 		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestId");
+		iar.setRequestId("requestIdtestUnlockComplete");
 		iar.setRequestScope("requestScope");
 		iar.setRequestType("requestType");
 		iar.setOperationalEnvId("operationalEnvironmentId");
 		iar.setOperationalEnvName("operationalEnvName");
-		iar.setRequestorId("ma920e");
-		iar.setRequestBody("");
+		iar.setRequestorId("xxxxxx");
+		iar.setRequestBody("{}");
 		iar.setRequestStatus("COMPLETE");
+		iar.setRequestAction("TEST");
 		
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = dateFormat.parse("23/09/2007");
 		long time = date.getTime();
 		iar.setStartTime(new Timestamp(time));
 		
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		RequestsDatabase reqDB = mock(RequestsDatabase.class);
-		cor.setRequestsDB(reqDB);
-		when(reqDB.getRequestFromInfraActive("requestId")).thenReturn(iar);
-		when(reqDB.updateInfraStatus("requestId", "UNLOCKED", "APIH")).thenReturn(1);
-		
-		Response response = cor.unlockOrchestrationRequest(requestJSON, "requestId", null);
-		String body = response.getEntity().toString();
-		assertTrue(body.contains("Orchestration RequestId requestId has a status of COMPLETE and can not be unlocked"));
-		assertEquals(400, response.getStatus());
+		iarRepo.saveAndFlush(iar);
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<>(requestJSON, headers);
+	
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1/requestIdtestUnlockComplete/unlock");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.POST, entity, String.class);
+		String body = response.getBody().toString();
+		assertTrue(body.contains("Orchestration RequestId requestIdtestUnlockComplete has a status of COMPLETE and can not be unlocked"));
+		assertEquals(400, response.getStatusCodeValue());
 	}
 	
 	@Test
 	public void testGetOperationalEnvFilter() {
-		ResteasyUriInfo uriInfo = new ResteasyUriInfo("", "requestId=89c56827-1c78-4827-bc4d-6afcdb37a51f", "");
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		RequestsDatabase reqDB = mock(RequestsDatabase.class);
-		cor.setRequestsDB(reqDB);
-		when(reqDB.getRequestFromInfraActive("89c56827-1c78-4827-bc4d-6afcdb37a51f")).thenReturn(null);
 		
-		Response response = cor.getOperationEnvironmentStatusFilter(uriInfo, null);
-		String body = response.getEntity().toString();
-		
-		assertTrue(body.contains("Orchestration RequestId 89c56827-1c78-4827-bc4d-6afcdb37a51f is not found in DB"));
-		assertEquals(204, response.getStatus());
-	}
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<>(null, headers);
 	
-	@Test
-	public void testGetOperationalEnvFilterException() {
-		ResteasyUriInfo uriInfo = new ResteasyUriInfo("", "requestId=89c56827-1c78-4827-bc4d-6afcdb37a51f", "");
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1");
 		
-		Response response = cor.getOperationEnvironmentStatusFilter(uriInfo, null);
-		assertEquals(404, response.getStatus());
+		builder.queryParam("requestId", "not-there");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.GET, entity, String.class);
+		
+		//204s cannot have a body
+		//assertTrue(response.getBody().contains("Orchestration RequestId not-there is not found in DB"));
+		assertEquals(204, response.getStatusCodeValue());
 	}
 	
 	@Test
 	public void testGetOperationalEnvSuccess() throws ParseException {
 		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestId");
+		iar.setRequestId("90c56827-1c78-4827-bc4d-6afcdb37a51f");
 		iar.setRequestScope("requestScope");
 		iar.setRequestType("requestType");
 		iar.setOperationalEnvId("operationalEnvironmentId");
 		iar.setOperationalEnvName("operationalEnvName");
-		iar.setRequestorId("ma920e");
-		iar.setRequestBody("");
+		iar.setRequestorId("xxxxxx");
+		iar.setRequestBody("{}");
 		iar.setRequestStatus("COMPLETE");
+		iar.setRequestAction("TEST");
 		
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = dateFormat.parse("23/09/2007");
 		long time = date.getTime();
 		iar.setStartTime(new Timestamp(time));
 		
-		ResteasyUriInfo uriInfo = new ResteasyUriInfo("", "requestId=89c56827-1c78-4827-bc4d-6afcdb37a51f", "");
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		RequestsDatabase reqDB = mock(RequestsDatabase.class);
-		cor.setRequestsDB(reqDB);
-		when(reqDB.getRequestFromInfraActive("89c56827-1c78-4827-bc4d-6afcdb37a51f")).thenReturn(iar);
+		iarRepo.saveAndFlush(iar);
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<>("", headers);
+	
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1");
 		
-		Response response = cor.getOperationEnvironmentStatusFilter(uriInfo, null);
-		assertEquals(200, response.getStatus());
+		builder.queryParam("requestId", "90c56827-1c78-4827-bc4d-6afcdb37a51f");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.GET, entity, String.class);
+		
+		assertEquals(200, response.getStatusCodeValue());
+        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
+        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+        assertEquals("1.0.0", response.getHeaders().get("X-LatestVersion").get(0));
+        assertEquals("90c56827-1c78-4827-bc4d-6afcdb37a51f", response.getHeaders().get("X-TransactionID").get(0));
 	}
 	
 	@Test
 	public void testGetOperationalEnvFilterSuccess() throws ParseException {
 		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestId");
+		iar.setRequestId("requestIdtestGetOperationalEnvFilterSuccess");
 		iar.setRequestScope("requestScope");
 		iar.setRequestType("requestType");
 		iar.setOperationalEnvId("operationalEnvironmentId");
-		iar.setOperationalEnvName("operationalEnvName");
-		iar.setRequestorId("ma920e");
+		iar.setOperationalEnvName("myVnfOpEnv");
+		iar.setRequestorId("xxxxxx");
 		iar.setRequestBody("");
 		iar.setRequestStatus("COMPLETE");
 		iar.setStatusMessage("status Message");
 		iar.setProgress(20L);
+		iar.setRequestAction("TEST");
 		
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = dateFormat.parse("23/09/2007");
@@ -257,77 +317,85 @@ public class CloudResourcesOrchestrationTest {
 		iar.setStartTime(new Timestamp(time));
 		iar.setEndTime(new Timestamp(time));
 		
-		List<InfraActiveRequests> requests = new ArrayList<>();
-		requests.add(iar);
+		iarRepo.saveAndFlush(iar);
+
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<>(null, headers);
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1");
 		
-		Map<String, String> map = new HashMap<>();
-		map.put("operationalEnvironmentName", "myVnfOpEnv");
+		builder.queryParam("requestId", "requestIdtestGetOperationalEnvFilterSuccess");
+		builder.queryParam("operationalEnvironmentName", "myVnfOpEnv");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.GET, entity, String.class);
 		
-		ResteasyUriInfo uriInfo = new ResteasyUriInfo("", "operationalEnvironmentName=myVnfOpEnv&requestorId=test", "");
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		RequestsDatabase reqDB = mock(RequestsDatabase.class);
-		cor.setRequestsDB(reqDB);
-		when(reqDB.getCloudOrchestrationFiltersFromInfraActive(map)).thenReturn(requests);
-		
-		Response response = cor.getOperationEnvironmentStatusFilter(uriInfo, null);
-		assertEquals(200, response.getStatus());
+		assertEquals(200, response.getStatusCodeValue());
+        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
+        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+        assertEquals("1.0.0", response.getHeaders().get("X-LatestVersion").get(0));
+
 	}
 	
-	@Ignore // 1802 merge
 	@Test
 	public void testGetOperationalEnvFilterException1() throws ParseException {
 		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestId");
+		iar.setRequestId("requestId-getOpEnvFilterEx1");
 		iar.setRequestScope("requestScope");
 		iar.setRequestType("requestType");
 		iar.setOperationalEnvId("operationalEnvironmentId");
 		iar.setOperationalEnvName("operationalEnvName");
-		iar.setRequestorId("ma920e");
+		iar.setRequestorId("xxxxxx");
 		iar.setRequestBody("");
 		iar.setRequestStatus("COMPLETE");
+		iar.setRequestAction("TEST");
 		
-		List<InfraActiveRequests> requests = new ArrayList<>();
-		requests.add(iar);
+		iarRepo.saveAndFlush(iar);
+
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<>("", headers);
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1");
 		
-		Map<String, String> map = new HashMap<>();
-		map.put("operationalEnvironmentName", "myVnfOpEnv");
-		
-		ResteasyUriInfo uriInfo = new ResteasyUriInfo("", "filter=operationalEnvironmentName:EQUALS:myVnfOpEnv", "");
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		RequestsDatabase reqDB = mock(RequestsDatabase.class);
-		cor.setRequestsDB(reqDB);
-		when(reqDB.getCloudOrchestrationFiltersFromInfraActive(map)).thenReturn(requests);
-		
-		Response response = cor.getOperationEnvironmentStatusFilter(uriInfo, null);
-		assertEquals(500, response.getStatus());
+		builder.queryParam("filter", "operationalEnvironmentName:EQUALS:myVnfOpEnv");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.GET, entity, String.class);
+		assertEquals(500, response.getStatusCodeValue());
 	}
 	
 	@Test
 	public void testGetOperationalEnvFilterException2() throws ParseException {
 		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestId");
+		iar.setRequestId("requestIdFilterException2");
 		iar.setRequestScope("requestScope");
 		iar.setRequestType("requestType");
 		iar.setOperationalEnvId("operationalEnvId");
 		iar.setOperationalEnvName("operationalEnvName");
-		iar.setRequestorId("ma920e");
+		iar.setRequestorId("xxxxxx");
 		iar.setRequestBody("");
 		iar.setRequestStatus("COMPLETE");
+		iar.setRequestAction("TEST");
 		
-		List<InfraActiveRequests> requests = new ArrayList<>();
-		requests.add(iar);
+		iarRepo.saveAndFlush(iar);
+
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<>(null, headers);
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1");
 		
-		Map<String, String> map = new HashMap<>();
-		map.put("operationalEnvironmentName", "myVnfOpEnv");
+		builder.queryParam("operationalEnvironmentName", "");
+		       
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.GET, entity, String.class);
 		
-		ResteasyUriInfo uriInfo = new ResteasyUriInfo("", "operationalEnvironmentName=", "");
-		CloudResourcesOrchestration cor = new CloudResourcesOrchestration();
-		RequestsDatabase reqDB = mock(RequestsDatabase.class);
-		cor.setRequestsDB(reqDB);
-		when(reqDB.getCloudOrchestrationFiltersFromInfraActive(map)).thenReturn(requests);
 		
-		Response response = cor.getOperationEnvironmentStatusFilter(uriInfo, null);
-		assertEquals(500, response.getStatus());
-		assertTrue(response.getEntity().toString().contains("No valid operationalEnvironmentName value is specified"));
+		assertEquals(500, response.getStatusCodeValue());
+		assertTrue(response.getBody().toString().contains("No valid operationalEnvironmentName value is specified"));
 	}
+
 }

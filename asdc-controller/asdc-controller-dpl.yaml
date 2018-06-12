@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: asdc-controller
+  namespace: com-att-mso-dev
+  labels:
+    app: asdc-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: asdc-controller
+  template:
+    metadata:
+      labels:
+        app: asdc-controller
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: asdc-controller
+          image: ${docker_repository}/org.onap.mso/asdc-controller:${project_version}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+      imagePullSecrets: 
+        - name: msoregistrykey

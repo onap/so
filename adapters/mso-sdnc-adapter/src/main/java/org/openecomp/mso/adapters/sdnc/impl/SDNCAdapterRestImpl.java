@@ -22,49 +22,63 @@ package org.openecomp.mso.adapters.sdnc.impl;
 
 
 import java.io.StringReader;
+import java.net.UnknownHostException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.openecomp.mso.HealthCheckUtils;
-import org.openecomp.mso.utils.UUIDChecker;
+import org.apache.http.HttpStatus;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
-import org.openecomp.mso.logger.MessageEnum;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 @Path("/")
+@Component
+@Api(value = "/", description = "Root of SDNCAdapterRestImpl")
 public class SDNCAdapterRestImpl {
 
-	private MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-	public static final String MSO_PROP_ADAPTER = "MSO_PROP_SDNC_ADAPTER";
-
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
-
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, SDNCAdapterRestImpl.class);
+	
+	private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
+	 
+	public static final Response HEALTH_CHECK_RESPONSE = Response.status (HttpStatus.SC_OK)
+	            .entity (CHECK_HTML)
+	            .build ();
+	
 	@Context
 	private HttpHeaders headers;
 	@Context HttpServletRequest request;
 
+	@Autowired
+	private MapRequestTunables tunablesMapper;
+	
+	@Autowired
+	private SDNCRestClient sdncClient;
+	
 	@POST
 	@Path("/MSORequest")
 	@Consumes("application/xml")
 	@Produces("application/xml")
+	@ApiOperation(value="Calls SDNC with an MSORequest object in SDNCRestImpl",response = Response.class)
 	public Response MSORequest(String reqXML) {
 	    msoLogger.debug("***Received MSO Rest Request. XML:" + reqXML);
 
@@ -73,7 +87,7 @@ public class SDNCAdapterRestImpl {
     	RequestTunables rt = null;
     	String reqId = "";
     	long startTime = System.currentTimeMillis();
-    	MsoLogger.setServiceName("UNKNOWN");
+    	MsoLogger.setServiceName("/MSORequest");
 		String action = "";
 		String operation = "";
 	    try {
@@ -85,11 +99,13 @@ public class SDNCAdapterRestImpl {
 	    	MsoLogger.setLogContext(reqId, "");
 
 	    	msoLogger.debug ("Received MSO Rest Request XML: " + reqXML);
-			rt = new RequestTunables(reqId, "", operation, action, msoPropertiesFactory);
-	    	rt.setTunables();
+			rt = new RequestTunables(reqId, "", operation, action);
+			rt = tunablesMapper.setTunables(rt);
 
 	    	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	        dbf.setFeature (XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 	    	DocumentBuilder db = dbf.newDocumentBuilder();
 
 	    	InputSource source = new InputSource(new StringReader(reqXML));
@@ -104,7 +120,7 @@ public class SDNCAdapterRestImpl {
 		if (reqDoc != null) {
 			msoLogger.debug("***Getting response from sdnc***");
 			long subStartTime = System.currentTimeMillis ();
-			sdncResp = SDNCRestClient.getSdncResp(Utils.genSdncReq(reqDoc, rt), rt,msoPropertiesFactory);
+			sdncResp = sdncClient.getSdncResp(Utils.genSdncReq(reqDoc, rt), rt);
 			msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from SDNC", "SDNC", action + "." + operation, null);
 		}
 
@@ -123,69 +139,55 @@ public class SDNCAdapterRestImpl {
 	}
 	
     @HEAD
+    @Path("/healthcheck")
+    @Produces("text/html")
+    @ApiOperation(value="HealthCheck for SDNCRestImpl",response = Response.class)
+    public Response headHealthcheck (@QueryParam("requestId") String requestId) {
+    	MsoLogger.setServiceName("Healthcheck");	
+		return HEALTH_CHECK_RESPONSE;
+    }
+    
     @GET
     @Path("/healthcheck")
     @Produces("text/html")
+    @ApiOperation(value="HealthCheck for SDNCRestImpl",response = Response.class)
     public Response healthcheck (@QueryParam("requestId") String requestId) {
-		long startTime = System.currentTimeMillis ();
-		MsoLogger.setServiceName ("Healthcheck");
-		UUIDChecker.verifyOldUUID(requestId, msoLogger);
-		HealthCheckUtils healthCheck = new HealthCheckUtils ();
-		if (!healthCheck.siteStatusCheck(msoLogger)) {
-			return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-		}
-
-		if (!healthCheck.configFileCheck(msoLogger, startTime, MSO_PROP_ADAPTER)) {
-			return HealthCheckUtils.NOT_STARTED_RESPONSE;
-		}
-		msoLogger.debug("healthcheck - Successful");
-		return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
+    	MsoLogger.setServiceName("Healthcheck");		
+		return HEALTH_CHECK_RESPONSE;
     }
 
 	@HEAD
+	@Path("/globalhealthcheck")
+	@Produces("text/html")
+	public Response headGlobalHealthcheck (@DefaultValue("true") @QueryParam("enableBpmn") boolean enableBpmn) {
+		MsoLogger.setServiceName("Healthcheck");		
+		return HEALTH_CHECK_RESPONSE;
+	}
+	
 	@GET
 	@Path("/globalhealthcheck")
 	@Produces("text/html")
 	public Response globalHealthcheck (@DefaultValue("true") @QueryParam("enableBpmn") boolean enableBpmn) {
-		long startTime = System.currentTimeMillis ();
-		MsoLogger.setServiceName ("GlobalHealthcheck");
-		// Generate a Request Id
-		String requestId = UUIDChecker.generateUUID(msoLogger);
-		HealthCheckUtils healthCheck = new HealthCheckUtils ();
-		if (!healthCheck.siteStatusCheck (msoLogger)) {
-			return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-		}
-
-		if (healthCheck.verifyGlobalHealthCheck(enableBpmn, requestId)) {
-			msoLogger.debug("globalHealthcheck - Successful");
-			return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
-		} else {
-			msoLogger.debug("globalHealthcheck - At leaset one of the sub-modules is not available.");
-			return  HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-		}
+		MsoLogger.setServiceName("Healthcheck");		
+		return HEALTH_CHECK_RESPONSE;
 	}
 
 	@HEAD
+	@Path("/nodehealthcheck")
+	@Produces("text/html")
+	@ApiOperation(value="NodeHealthCheck for SDNCRestImpl",response = Response.class)
+	public Response headNodeHealthcheck () throws UnknownHostException {
+		MsoLogger.setServiceName("Healthcheck");		
+		return HEALTH_CHECK_RESPONSE;
+	}
+	
 	@GET
 	@Path("/nodehealthcheck")
 	@Produces("text/html")
+	@ApiOperation(value="NodeHealthCheck for SDNCRestImpl",response = Response.class)
 	public Response nodeHealthcheck () {
-		long startTime = System.currentTimeMillis ();
-		MsoLogger.setServiceName ("NodeHealthcheck");
-		// Generate a Request Id
-		String requestId = UUIDChecker.generateUUID(msoLogger);
-		HealthCheckUtils healthCheck = new HealthCheckUtils ();
-		if (!healthCheck.siteStatusCheck (msoLogger)) {
-			return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-		}
-
-		if (healthCheck.verifyNodeHealthCheck(HealthCheckUtils.NodeType.RA, requestId)) {
-			msoLogger.debug("nodeHealthcheck - Successful");
-			return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
-		} else {
-			msoLogger.debug("nodeHealthcheck - At leaset one of the sub-modules is not available.");
-			return  HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-		}
+		MsoLogger.setServiceName("Healthcheck");		
+		return HEALTH_CHECK_RESPONSE;
 	}
 
 }

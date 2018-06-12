@@ -57,6 +57,7 @@ public class VnfResource extends Resource {
 	private String nfRole;
 	private String nfNamingCode;
 	private String multiStageDesign;
+	private String orchestrationStatus;
 
 	/*
 	 * GET and SET
@@ -114,6 +115,14 @@ public class VnfResource extends Resource {
 	 * GET accessors per design requirements
 	 */
 
+
+	public String getOrchestrationStatus(){
+		return orchestrationStatus;
+	}
+
+	public void setOrchestrationStatus(String orchestrationStatus){
+		this.orchestrationStatus = orchestrationStatus;
+	}
 	/**
 	 * Returns a list of all VfModule objects.
 	 * Base module is first entry in the list

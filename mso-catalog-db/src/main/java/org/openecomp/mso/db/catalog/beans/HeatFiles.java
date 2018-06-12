@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,28 +21,84 @@
 package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.text.DateFormat;
+import java.util.Date;
 
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-public class HeatFiles extends MavenLikeVersioning implements Serializable {
-	
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.openpojo.business.annotation.BusinessKey;
+
+@Entity
+@Table(name = "heat_files")
+public class HeatFiles implements Serializable {
+
 	private static final long serialVersionUID = 768026109321305392L;
 
-	private String artifactUuid = null;
-	private String description = null;
-	private String fileName = null;
-	private String fileBody = null;
-	private Timestamp created = null;
-	private String version = null;
-	private String artifactChecksum = null;
+	@BusinessKey
+	@Id
+	@Column(name = "ARTIFACT_UUID")
+	private String artifactUuid;
 
-	public HeatFiles() {}
+	@Column(name = "DESCRIPTION")
+	private String description = null;
+
+	@Column(name = "NAME")
+	private String fileName;
+
+	@Lob
+	@Column(name = "BODY", columnDefinition = "LONGTEXT")
+	private String fileBody;
+
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@Column(name = "ARTIFACT_CHECKSUM")
+	private String artifactChecksum;
+
+	@Column(name = "VERSION")
+	private String version;
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("artifactUuid", artifactUuid).append("description", description)
+				.append("fileName", fileName).append("fileBody", fileBody).append("created", created)
+				.append("artifactChecksum", artifactChecksum).toString();
+	}
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof HeatFiles)) {
+			return false;
+		}
+		HeatFiles castOther = (HeatFiles) other;
+		return new EqualsBuilder().append(artifactUuid, castOther.artifactUuid).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(artifactUuid).toHashCode();
+	}
 
 	public String getArtifactUuid() {
 		return this.artifactUuid;
 	}
+
 	public void setArtifactUuid(String artifactUuid) {
 		this.artifactUuid = artifactUuid;
 	}
@@ -50,6 +106,7 @@ public class HeatFiles extends MavenLikeVersioning implements Serializable {
 	public String getDescription() {
 		return this.description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -57,6 +114,7 @@ public class HeatFiles extends MavenLikeVersioning implements Serializable {
 	public String getFileName() {
 		return this.fileName;
 	}
+
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
@@ -64,66 +122,36 @@ public class HeatFiles extends MavenLikeVersioning implements Serializable {
 	public String getFileBody() {
 		return this.fileBody;
 	}
+
 	public void setFileBody(String fileBody) {
 		this.fileBody = fileBody;
 	}
 
-	public Timestamp getCreated() {
+	public Date getCreated() {
 		return created;
-	}
-
-	public void setCreated(Timestamp created) {
-		this.created = created;
 	}
 
 	public String getAsdcUuid() {
 		return this.artifactUuid;
 	}
+
 	public void setAsdcUuid(String artifactUuid) {
 		this.artifactUuid = artifactUuid;
-	}
-
-	@Override
-	public String getVersion() {
-		return version;
-	}
-
-	@Override
-	public void setVersion(String version) {
-		this.version = version;
 	}
 
 	public String getArtifactChecksum() {
 		return artifactChecksum;
 	}
+
 	public void setArtifactChecksum(String artifactChecksum) {
 		this.artifactChecksum = artifactChecksum;
 	}
 
-	@Override
-	public String toString () {
-		StringBuilder sb = new StringBuilder();
-		sb.append("artifactUuid=").append(this.artifactUuid);
-		if (this.description == null) {
-			sb.append(", description=null");
-		} else {
-			sb.append(", description=").append(this.description);
-		}
-		if (this.fileName == null) {
-			sb.append(", fileName=null");
-		} else {
-			sb.append(",fileName=").append(this.fileName);
-		}
-		if (this.fileBody == null) {
-			sb.append(", fileBody=null");
-		} else {
-			sb.append(",fileBody=").append(this.fileBody);
-		}
-		sb.append(", artifactChecksum=").append(this.artifactChecksum);
-		if (created != null) {
-	        sb.append (",created=");
-	        sb.append (DateFormat.getInstance().format(created));
-	    }
-		return sb.toString();
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
 	}
 }

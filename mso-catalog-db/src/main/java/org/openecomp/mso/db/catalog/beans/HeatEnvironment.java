@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,43 +21,103 @@
 package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.util.Date;
 
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-public class HeatEnvironment extends MavenLikeVersioning implements Serializable {
-	
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import com.openpojo.business.annotation.BusinessKey;
+
+@Entity
+@Table(name = "heat_environment")
+public class HeatEnvironment implements Serializable {
+
 	private static final long serialVersionUID = 768026109321305392L;
 
-	private String artifactUuid = null;
+	@BusinessKey
+	@Id
+	@Column(name = "ARTIFACT_UUID")
+	private String artifactUuid;
+
+	@Column(name = "NAME")
 	private String name = null;
+
+	@Column(name = "DESCRIPTION")
 	private String description = null;
+
+	@Lob
+	@Column(name = "BODY", columnDefinition = "LONGTEXT")
 	private String environment = null;
-	private String artifactChecksum = null;
 
-	private Timestamp created = null;
+	@Column(name = "ARTIFACT_CHECKSUM")
+	private String artifactChecksum;
 
-	public HeatEnvironment() {}
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@BusinessKey
+	@Column(name = "VERSION")
+	private String version;
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
+	}
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof HeatEnvironment)) {
+			return false;
+		}
+		HeatEnvironment castOther = (HeatEnvironment) other;
+		return new EqualsBuilder().append(artifactUuid, castOther.artifactUuid).append(version, castOther.version)
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(artifactUuid).append(version).toHashCode();
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
 	public String getArtifactUuid() {
 		return this.artifactUuid;
 	}
+
 	public void setArtifactUuid(String artifactUuid) {
 		this.artifactUuid = artifactUuid;
 	}
 
-    public String getName () {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName (String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getDescription() {
+	public String getDescription() {
 		return this.description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -65,6 +125,7 @@ public class HeatEnvironment extends MavenLikeVersioning implements Serializable
 	public String getEnvironment() {
 		return this.environment;
 	}
+
 	public void setEnvironment(String environment) {
 		this.environment = environment;
 	}
@@ -77,30 +138,26 @@ public class HeatEnvironment extends MavenLikeVersioning implements Serializable
 		this.artifactChecksum = artifactChecksum;
 	}
 
-	public Timestamp getCreated() {
+	public Date getCreated() {
 		return created;
 	}
 
-	public void setCreated(Timestamp created) {
-		this.created = created;
-	}
-
-    @Override
-	public String toString () {
+	@Override
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Artifact UUID=").append(this.artifactUuid);
-        sb.append (", name=");
-        sb.append (name);
-        sb.append (", version=");
-        sb.append (version);
-        sb.append(", description=");
-        sb.append (this.description == null ? "null" : this.description);
-        sb.append(", body=");
-        sb.append (this.environment == null ? "null" : this.environment);
+		sb.append("Artifact UUID=" + this.artifactUuid);
+		sb.append(", name=");
+		sb.append(name);
+		sb.append(", version=");
+		sb.append(version);
+		sb.append(", description=");
+		sb.append(this.description == null ? "null" : this.description);
+		sb.append(", body=");
+		sb.append(this.environment == null ? "null" : this.environment);
 		if (this.created != null) {
-	        sb.append (",creationTimestamp=");
-	        sb.append (DateFormat.getInstance().format(this.created));
-	    }
+			sb.append(",creationTimestamp=");
+			sb.append(DateFormat.getInstance().format(this.created));
+		}
 		return sb.toString();
 	}
 }

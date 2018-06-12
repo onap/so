@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,6 @@
 package org.openecomp.mso.apihandlerinfra.tenantisolation.dmaap;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.spy;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,12 +28,18 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 
 import org.junit.Test;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.dmaap.CreateEcompOperationEnvironmentBean;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.dmaap.DmaapOperationalEnvClient;
+import org.junit.runner.RunWith;
+import org.openecomp.mso.apihandlerinfra.ApiHandlerApplication;
+import org.openecomp.mso.apihandlerinfra.BaseTest;
+import org.openecomp.mso.apihandlerinfra.exceptions.ApiException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DmaapOperationalEnvClientTest {
+public class DmaapOperationalEnvClientTest extends BaseTest{
 	
 	private final String fileLocation = "src/test/resources/org/openecomp/mso/client/asdc/create-ecompoe/";
 	private static final String operationalEnvironmentId = "28122015552391";
@@ -43,17 +48,16 @@ public class DmaapOperationalEnvClientTest {
 	private static final String tenantContext = "Test";
 	private static final String workloadContext = "VNF_E2E-IST";
 	private static final String action = "Create";
-	
+	@Autowired
+	private DmaapOperationalEnvClient client;
 	
 	@Test
-	public void verifyCreateEcompOperationEnvironmentRequest() throws IOException, ParseException{
+	public void verifyCreateEcompOperationEnvironmentRequest() throws IOException, ApiException {
 		String content = this.getJson("ecomp-openv-request.json");
 		ObjectMapper mapper = new ObjectMapper();
 		CreateEcompOperationEnvironmentBean expected = mapper.readValue(content, CreateEcompOperationEnvironmentBean.class);
-		DmaapOperationalEnvClient client = new DmaapOperationalEnvClient();
-		DmaapOperationalEnvClient spy = spy(client);
 		
-		String actual = spy.buildRequest(operationalEnvironmentId, operationalEnvironmentName, operationalEnvironmentType, 
+		String actual = client.buildRequest(operationalEnvironmentId, operationalEnvironmentName, operationalEnvironmentType, 
 				tenantContext, workloadContext, action);
 		
 		assertEquals("payloads are equal", mapper.writeValueAsString(expected), actual);

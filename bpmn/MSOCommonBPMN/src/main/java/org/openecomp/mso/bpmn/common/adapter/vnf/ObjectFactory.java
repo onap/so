@@ -42,12 +42,12 @@ import javax.xml.namespace.QName;
  */
 @XmlRegistry
 public class ObjectFactory {
-
-    private final static QName _RollbackVnfNotification_QNAME = new QName("http://org.openecomp.mso/vnfNotify", "rollbackVnfNotification");
-    private final static QName _DeleteVnfNotification_QNAME = new QName("http://org.openecomp.mso/vnfNotify", "deleteVnfNotification");
-    private final static QName _CreateVnfNotification_QNAME = new QName("http://org.openecomp.mso/vnfNotify", "createVnfNotification");
-    private final static QName _UpdateVnfNotification_QNAME = new QName("http://org.openecomp.mso/vnfNotify", "updateVnfNotification");
-    private final static QName _QueryVnfNotification_QNAME = new QName("http://org.openecomp.mso/vnfNotify", "queryVnfNotification");
+	private static final String VNF_NOTIFY = "http://org.openecomp.mso/vnfNotify";
+    private static final QName _RollbackVnfNotification_QNAME = new QName(VNF_NOTIFY, "rollbackVnfNotification");
+    private static final QName _DeleteVnfNotification_QNAME = new QName(VNF_NOTIFY, "deleteVnfNotification");
+    private static final QName _CreateVnfNotification_QNAME = new QName(VNF_NOTIFY, "createVnfNotification");
+    private static final QName _UpdateVnfNotification_QNAME = new QName(VNF_NOTIFY, "updateVnfNotification");
+    private static final QName _QueryVnfNotification_QNAME = new QName(VNF_NOTIFY, "queryVnfNotification");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openecomp.mso.adapters.vnf.async.client

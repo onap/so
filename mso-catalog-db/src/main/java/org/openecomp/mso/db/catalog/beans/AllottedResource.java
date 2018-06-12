@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,73 +21,159 @@
 package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-public class AllottedResource extends MavenLikeVersioning implements Serializable {
-	
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.openpojo.business.annotation.BusinessKey;
+
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
+
+@Entity
+@Table(name = "allotted_resource")
+public class AllottedResource implements Serializable {
+
 	private static final long serialVersionUID = 768026109321305392L;
-	
-	private String modelUuid = null;
-	private String modelInvariantUuid = null;
-	private String modelVersion = null; 
-	private String modelName = null;
-	private String toscaNodeType = null;
-	private String subcategory = null;
-	private String description = null;
-	private Timestamp created = null;
+	@BusinessKey
+	@Id
+	@Column(name = "MODEL_UUID")
+	private String modelUUID;
 
-	public AllottedResource() {
+	@Column(name = "MODEL_INVARIANT_UUID")
+	private String modelInvariantUUID;
+
+	@Column(name = "MODEL_VERSION")
+	private String modelVersion;
+
+	@Column(name = "MODEL_NAME")
+	private String modelName;
+
+	@Column(name = "TOSCA_NODE_TYPE")
+	private String toscaNodeType;
+
+	@Column(name = "SUBCATEGORY")
+	private String subcategory;
+
+	@Column(name = "DESCRIPTION")
+	private String description;
+
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "allottedResource")
+	private Set<AllottedResourceCustomization> allotedResourceCustomization;
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
+				.append("modelVersion", modelVersion).append("modelName", modelName)
+				.append("toscaNodeType", toscaNodeType).append("subcategory", subcategory)
+				.append("description", description).append("created", created)
+				.append("allotedResourceCustomization", allotedResourceCustomization).toString();
 	}
-	
-	public String getModelUuid() {
-		return this.modelUuid;
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof AllottedResource)) {
+			return false;
+		}
+		AllottedResource castOther = (AllottedResource) other;
+		return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
 	}
-	public void setModelUuid(String modelUuid) {
-		this.modelUuid = modelUuid;
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(modelUUID).toHashCode();
 	}
-	public String getModelInvariantUuid() {
-		return this.modelInvariantUuid;
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
 	}
-	public void setModelInvariantUuid(String modelInvariantUuid) {
-		this.modelInvariantUuid = modelInvariantUuid;
+
+	@LinkedResource
+	public Set<AllottedResourceCustomization> getAllotedResourceCustomization() {
+		if (allotedResourceCustomization == null)
+			allotedResourceCustomization = new HashSet<>();
+		return allotedResourceCustomization;
 	}
+
+	public void setAllotedResourceCustomization(Set<AllottedResourceCustomization> allotedResourceCustomization) {
+		this.allotedResourceCustomization = allotedResourceCustomization;
+	}
+
+	public String getModelUUID() {
+		return this.modelUUID;
+	}
+
+	public void setModelUUID(String modelUUID) {
+		this.modelUUID = modelUUID;
+	}
+
+	public String getModelInvariantUUID() {
+		return this.modelInvariantUUID;
+	}
+
+	public void setModelInvariantUUID(String modelInvariantUUID) {
+		this.modelInvariantUUID = modelInvariantUUID;
+	}
+
 	public String getModelVersion() {
 		return this.modelVersion;
 	}
+
 	public void setModelVersion(String modelVersion) {
 		this.modelVersion = modelVersion;
 	}
+
 	public String getModelName() {
 		return this.modelName;
 	}
+
 	public void setModelName(String modelName) {
 		this.modelName = modelName;
 	}
+
 	public String getToscaNodeType() {
 		return this.toscaNodeType;
 	}
+
 	public void setToscaNodeType(String toscaNodeType) {
 		this.toscaNodeType = toscaNodeType;
-	}	
+	}
+
 	public String getSubcategory() {
 		return this.subcategory;
 	}
+
 	public void setSubcategory(String subcategory) {
 		this.subcategory = subcategory;
-	}	
+	}
+
 	public String getDescription() {
 		return this.description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Timestamp getCreated() {
+
+	public Date getCreated() {
 		return created;
 	}
-	public void setCreated(Timestamp created) {
-		this.created = created;
-	}	
-
 }

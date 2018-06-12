@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,159 +20,103 @@
 
 package org.openecomp.mso.apihandlerinfra.tenantisolation.process;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.junit.After;
-import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.openecomp.mso.apihandlerinfra.Constants;
-import org.openecomp.mso.apihandlerinfra.MsoPropertiesUtils;
+import org.junit.runner.RunWith;
+import org.openecomp.mso.apihandlerinfra.ApiHandlerApplication;
+import org.openecomp.mso.apihandlerinfra.BaseTest;
 import org.openecomp.mso.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.exceptions.SDCClientCallFailed;
 import org.openecomp.mso.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.helpers.AsdcClientHelper;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.Manifest;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.RecoveryAction;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.RequestDetails;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.RequestParameters;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.ServiceModelList;
 import org.openecomp.mso.client.aai.entities.AAIResultWrapper;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
-import org.openecomp.mso.requestsdb.OperationalEnvDistributionStatusDb;
-import org.openecomp.mso.requestsdb.OperationalEnvServiceModelStatusDb;
-import org.openecomp.mso.requestsdb.RequestsDBHelper;
-import org.openecomp.mso.rest.APIResponse;
-import org.openecomp.mso.rest.RESTClient;
-import org.openecomp.mso.rest.RESTConfig;
+import org.openecomp.mso.client.aai.objects.AAIOperationalEnvironment;
+import org.openecomp.mso.db.request.beans.InfraActiveRequests;
+import org.openecomp.mso.db.request.beans.OperationalEnvDistributionStatus;
+import org.openecomp.mso.db.request.beans.OperationalEnvServiceModelStatus;
+import org.openecomp.mso.db.request.data.repository.InfraActiveRequestsRepository;
+import org.openecomp.mso.db.request.data.repository.OperationalEnvDistributionStatusRepository;
+import org.openecomp.mso.db.request.data.repository.OperationalEnvServiceModelStatusRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
-public class ActivateVnfOperationalEnvironmentTest {
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
-	MsoJavaProperties properties = MsoPropertiesUtils.loadMsoProperties();
-	AsdcClientHelper asdcClientUtils = new AsdcClientHelper(properties);
+
+public class ActivateVnfOperationalEnvironmentTest extends BaseTest{
+
+	@Autowired
+	private OperationalEnvDistributionStatusRepository distributionDbRepository;
+	@Autowired
+	private OperationalEnvServiceModelStatusRepository serviceModelDbRepository;
+	@Autowired
+	private ActivateVnfOperationalEnvironment activateVnf;
+	@Autowired
+	private InfraActiveRequestsRepository infraActiveRequestsRepository;	
+	@Autowired
+	private AAIClientHelper clientHelper;
+	
+	@Rule
+	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(28090));
 	
 	String requestId = "TEST_requestId";
-	String operationalEnvironmentId = "TEST_operationalEnvironmentId";	
+	String operationalEnvironmentId = "EMOE-001";	
 	CloudOrchestrationRequest request = new CloudOrchestrationRequest();
-	String workloadContext = "TEST_workloadContext";
-	String recoveryAction  = "RETRY";
+	String workloadContext = "PVT";
+	String recoveryActionRetry  = "RETRY";
 	String serviceModelVersionId = "TEST_serviceModelVersionId";	
 	int retryCount = 3;
-	String distributionId = "TEST_distributionId";
-	
-	@BeforeClass
-	public static void setUp() throws Exception {
-		MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-		msoPropertiesFactory.removeAllMsoProperties();
-		msoPropertiesFactory.initializeMsoProperties(Constants.MSO_PROP_APIHANDLER_INFRA, "src/test/resources/mso.apihandler-infra.properties");
-	}	
-	
+	String sdcDistributionId = "TEST_distributionId";
+	String statusSent = "SENT";
+
 	@After
-	public void tearDown() throws Exception {
-		
+	public void after() throws Exception {
+		distributionDbRepository.deleteAll();
+		serviceModelDbRepository.deleteAll();		
 	}
 
-	@Test
-	public void getAAIClientHelperTest() throws Exception {
-		
-		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		ActivateVnfOperationalEnvironment activateVnf = new ActivateVnfOperationalEnvironment(request, requestId);
-		AAIClientHelper aaiHelper = activateVnf.getAaiHelper();
-		
-		Assert.assertNotNull(aaiHelper);
-		
-	}
-	
 	@Test
 	public void getAAIOperationalEnvironmentTest() throws Exception {
 
-		// prepare return data
-		JSONObject aaiJsonResponse = new JSONObject();
-		aaiJsonResponse.put("operational-environment-id", "testASDCDistributionId");
-		aaiJsonResponse.put("operational-environment-name", "testASDCDistributionIName");
-		aaiJsonResponse.put("operational-environment-type", "VNF");
-		aaiJsonResponse.put("operational-environment-status", "ACTIVE");
-		aaiJsonResponse.put("tenant-context", "Test");
-		aaiJsonResponse.put("workload-context", "PVT");
-		aaiJsonResponse.put("resource-version", "1505228226913");
-		String mockGetResponseJson = aaiJsonResponse.toString();  
-		
-		AAIResultWrapper aaiREsultWrapperObj = new AAIResultWrapper(mockGetResponseJson);  
-		
-		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		AAIClientHelper aaiClientHelperMock = Mockito.mock(AAIClientHelper.class);
-		
-		ActivateVnfOperationalEnvironment activateVnfMock = Mockito.mock(ActivateVnfOperationalEnvironment.class);
-		ActivateVnfOperationalEnvironment activateVnf = new ActivateVnfOperationalEnvironment(request, requestId);
+		AAIOperationalEnvironment aaiOpEnv = null;
 
-		Mockito.when(aaiClientHelperMock.getAaiOperationalEnvironment(operationalEnvironmentId)).thenReturn(aaiREsultWrapperObj);		
+		wireMockRule.stubFor(get(urlPathMatching("/aai/v12/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
-		activateVnfMock = spy(activateVnf);
-		activateVnfMock.setAaiHelper(aaiClientHelperMock);
-		activateVnfMock.getAAIOperationalEnvironment(operationalEnvironmentId);
-
-		verify(activateVnfMock, times(1)).getAaiHelper();
-		verify(aaiClientHelperMock, times(1)).getAaiOperationalEnvironment( any(String.class) );
+		AAIResultWrapper wrapper = clientHelper.getAaiOperationalEnvironment("EMOE-001");
+		aaiOpEnv = wrapper.asBean(AAIOperationalEnvironment.class).get();
+		assertEquals("EMOE-001", aaiOpEnv.getOperationalEnvironmentId());			
+		assertNotNull(activateVnf.getAAIOperationalEnvironment(operationalEnvironmentId));	
+		assertEquals( "EMOE-001", activateVnf.getAAIOperationalEnvironment(operationalEnvironmentId).getOperationalEnvironmentId());		
 		
 	}	
-	
-	@Test
-	public void processActivateASDCRequestTest() throws Exception {
-
-		String jsonPayload = asdcClientUtils.buildJsonWorkloadContext(workloadContext);
-		String distributionId = "TEST_distributionId";
 		
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("statusCode", "202");
-		jsonObject.put("message", "Success");
-		jsonObject.put("distributionId", distributionId);
-		
-		List<ServiceModelList> serviceModelVersionIdList = new ArrayList<ServiceModelList>();
-		ServiceModelList serviceModelList1 = new ServiceModelList(); 
-		serviceModelList1.setRecoveryAction(RecoveryAction.retry);
-		serviceModelList1.setServiceModelVersionId(serviceModelVersionId);
-		serviceModelVersionIdList.add(serviceModelList1);
-		
-		ActivateVnfOperationalEnvironment activate = new ActivateVnfOperationalEnvironment(request, requestId);
-		ActivateVnfOperationalEnvironment activateVnfMock = spy(activate);
-
-		// Mockito mock
-		OperationalEnvDistributionStatusDb distributionDb = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		OperationalEnvServiceModelStatusDb serviceModelDb = Mockito.mock(OperationalEnvServiceModelStatusDb.class);
-		AsdcClientHelper asdcClientHelperMock = Mockito.mock(AsdcClientHelper.class);
-		RESTConfig configMock = Mockito.mock(RESTConfig.class);
-		RESTClient clientMock = Mockito.mock(RESTClient.class);
-		APIResponse apiResponseMock = Mockito.mock(APIResponse.class);
-		
-		activateVnfMock.setOperationalEnvDistributionStatusDb(distributionDb);
-		activateVnfMock.setOperationalEnvServiceModelStatusDb(serviceModelDb);
-		activateVnfMock.setAsdcClientHelper(asdcClientHelperMock);
-		
-		Mockito.when(asdcClientHelperMock.setRestClient(configMock)).thenReturn(clientMock);
-		Mockito.when(asdcClientHelperMock.setHttpPostResponse(clientMock, jsonPayload)).thenReturn(apiResponseMock);
-		Mockito.when(asdcClientHelperMock.enhanceJsonResponse(jsonObject, 202)).thenReturn(jsonObject);
-		Mockito.when(asdcClientHelperMock.postActivateOperationalEnvironment(serviceModelVersionId, operationalEnvironmentId, workloadContext)).thenReturn(jsonObject);		
-		
-		activateVnfMock.processActivateASDCRequest(requestId, operationalEnvironmentId, serviceModelVersionIdList, workloadContext);
-		
-		verify(serviceModelDb, times(1)).insertOperationalEnvServiceModelStatus(requestId, operationalEnvironmentId, serviceModelVersionId, "SENT", "RETRY", retryCount, workloadContext);
-		
-	}	
-	
 	@Test
 	public void executionTest() throws Exception {
 
-		// prepare request detail
 		List<ServiceModelList> serviceModelVersionIdList = new ArrayList<ServiceModelList>();
 		ServiceModelList serviceModelList1 = new ServiceModelList(); 
 		serviceModelList1.setRecoveryAction(RecoveryAction.retry);
@@ -187,63 +131,121 @@ public class ActivateVnfOperationalEnvironmentTest {
 		requestParameters.setWorkloadContext(workloadContext);
 		requestDetails.setRequestParameters(requestParameters);
 		
-		// prepare aai return data
-		JSONObject aaiJsonResponse = new JSONObject();
-		aaiJsonResponse.put("operational-environment-id", "testASDCDistributionId");
-		aaiJsonResponse.put("operational-environment-name", "testASDCDistributionIName");
-		aaiJsonResponse.put("operational-environment-type", "VNF");
-		aaiJsonResponse.put("operational-environment-status", "ACTIVE");
-		aaiJsonResponse.put("tenant-context", "Test");
-		aaiJsonResponse.put("workload-context", workloadContext);
-		aaiJsonResponse.put("resource-version", "1505228226913");
-		String mockGetResponseJson = aaiJsonResponse.toString();  
-		AAIResultWrapper aaiREsultWrapperObj = new AAIResultWrapper(mockGetResponseJson);  
+		request.setOperationalEnvironmentId(operationalEnvironmentId);
+		request.setRequestDetails(requestDetails);
 		
-		// prepare asdc return data
-		String jsonPayload = asdcClientUtils.buildJsonWorkloadContext(workloadContext);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("statusCode", "202");
+		jsonObject.put("message", "Success");
+		jsonObject.put("distributionId", sdcDistributionId);
+		
+		wireMockRule.stubFor(get(urlPathMatching("/aai/v12/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
+		wireMockRule.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
+		
+		
+		activateVnf.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);
+		
+		// insert record, status sent
+		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId);
+		assertNotNull(distStatus);
+		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
+		assertEquals(statusSent, distStatus.getDistributionIdStatus());
+		
+		// insert record, status sent		
+		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
+		assertNotNull(servStatus);
+		assertEquals(statusSent, servStatus.getServiceModelVersionDistrStatus());
+		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
+
+	}			
 	
+	@Test
+	public void processActivateSDCRequestTest_202() throws Exception {
+
+		String distributionId = "TEST_distributionId";
+		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("statusCode", "202");
 		jsonObject.put("message", "Success");
 		jsonObject.put("distributionId", distributionId);
 		
-		// Mockito mock
-		OperationalEnvDistributionStatusDb distributionDb = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		OperationalEnvServiceModelStatusDb serviceModelDb = Mockito.mock(OperationalEnvServiceModelStatusDb.class);
-		RequestsDBHelper dbUtils = mock(RequestsDBHelper.class);
-		AsdcClientHelper asdcClientHelperMock = Mockito.mock(AsdcClientHelper.class);
-		RESTConfig configMock = Mockito.mock(RESTConfig.class);
-		RESTClient clientMock = Mockito.mock(RESTClient.class);
-		APIResponse apiResponseMock = Mockito.mock(APIResponse.class);		
-	
-		Mockito.when(asdcClientHelperMock.setRestClient(configMock)).thenReturn(clientMock);
-		Mockito.when(asdcClientHelperMock.setHttpPostResponse(clientMock, jsonPayload)).thenReturn(apiResponseMock);
-		Mockito.when(asdcClientHelperMock.enhanceJsonResponse(jsonObject, 202)).thenReturn(jsonObject);		
+		// prepare request detail
+		List<ServiceModelList> serviceModelVersionIdList = new ArrayList<ServiceModelList>();
+		ServiceModelList serviceModelList1 = new ServiceModelList(); 
+		serviceModelList1.setRecoveryAction(RecoveryAction.retry);
+		serviceModelList1.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelVersionIdList.add(serviceModelList1);
 		
-		AAIClientHelper aaiClientHelperMock = Mockito.mock(AAIClientHelper.class);
-		Mockito.when(aaiClientHelperMock.getAaiOperationalEnvironment(operationalEnvironmentId)).thenReturn(aaiREsultWrapperObj);		
-		Mockito.when(asdcClientHelperMock.postActivateOperationalEnvironment(serviceModelVersionId, operationalEnvironmentId, workloadContext)).thenReturn(jsonObject);		
+		wireMockRule.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
 		
-		doNothing().when(serviceModelDb).insertOperationalEnvServiceModelStatus(requestId, operationalEnvironmentId, serviceModelVersionId, "SENT", recoveryAction, retryCount, workloadContext);
-		doNothing().when(distributionDb).insertOperationalEnvDistributionStatus(distributionId, operationalEnvironmentId, serviceModelVersionId, "SENT", requestId);
+		activateVnf.processActivateSDCRequest(requestId, operationalEnvironmentId, serviceModelVersionIdList, workloadContext, 
+													distributionDbRepository, serviceModelDbRepository);
+		
+		// insert record, status sent		
+		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId);
+		assertNotNull(distStatus);
+		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
+		assertEquals(statusSent, distStatus.getDistributionIdStatus());		
+		
+		// insert record, status sent		
+		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
+		assertNotNull(servStatus);
+		assertEquals(statusSent, servStatus.getServiceModelVersionDistrStatus());
+		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
+		
+	}	
 	
-		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		request.setRequestDetails(requestDetails);
-		ActivateVnfOperationalEnvironment activate = new ActivateVnfOperationalEnvironment(request, requestId);
-		ActivateVnfOperationalEnvironment activateVnfMock = spy(activate);
-		activateVnfMock.setOperationalEnvDistributionStatusDb(distributionDb);
-		activateVnfMock.setOperationalEnvServiceModelStatusDb(serviceModelDb);
-		activateVnfMock.setRequestsDBHelper(dbUtils);		
-		activateVnfMock.setAsdcClientHelper(asdcClientHelperMock);
-		activateVnfMock.setAaiHelper(aaiClientHelperMock);
+	@Test 
+	public void processActivateSDCRequestTest_409() throws Exception {
 
-		activateVnfMock.execute();		
+		// ERROR in asdc
+		JSONObject jsonMessages = new JSONObject();
+		jsonMessages.put("message", "Failure");
+		jsonMessages.put("messageId", "SVC4675");
+		jsonMessages.put("text", "Error: Service state is invalid for this action.");
+		JSONObject jsonServException = new JSONObject();
+		jsonServException.put("policyException", jsonMessages);
+		//jsonServException.put("serviceException", jsonMessages);
+		JSONObject jsonErrorResponse = new JSONObject();
+		jsonErrorResponse.put("requestError", jsonServException);
 		
-		verify(serviceModelDb, times(1)).insertOperationalEnvServiceModelStatus(requestId, operationalEnvironmentId, serviceModelVersionId, "SENT", recoveryAction, retryCount, workloadContext);
-		verify(distributionDb, times(1)).insertOperationalEnvDistributionStatus(distributionId, operationalEnvironmentId, serviceModelVersionId, "SENT", requestId);		
+		// prepare request detail
+		List<ServiceModelList> serviceModelVersionIdList = new ArrayList<ServiceModelList>();
+		ServiceModelList serviceModelList1 = new ServiceModelList(); 
+		serviceModelList1.setRecoveryAction(RecoveryAction.retry);
+		serviceModelList1.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelVersionIdList.add(serviceModelList1);
 		
+		InfraActiveRequests iar = new InfraActiveRequests();
+		iar.setRequestId(requestId);
+		iar.setRequestStatus("PENDING");
+		infraActiveRequestsRepository.saveAndFlush(iar);
 		
-	}			
-	
+		wireMockRule.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonErrorResponse.toString()).withStatus(HttpStatus.SC_CONFLICT)));
+		
+		try {
+			activateVnf.processActivateSDCRequest(requestId, operationalEnvironmentId, serviceModelVersionIdList, workloadContext, 
+													distributionDbRepository, serviceModelDbRepository);
+			
+		} catch (Exception  ex) {
+			
+			// insert record, status sent
+			OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
+			assertNotNull(servStatus);
+			assertEquals(statusSent, servStatus.getServiceModelVersionDistrStatus());
+			
+			InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestId);
+			assertNotNull(infraActiveRequest);
+			assertTrue(infraActiveRequest.getStatusMessage().contains("FAILURE"));
+			assertTrue(infraActiveRequest.getRequestStatus().contains("FAILED"));			
+			
+		}  
+		
+		infraActiveRequestsRepository.delete(requestId);
+	}		
 	
 }

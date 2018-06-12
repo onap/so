@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -204,29 +204,6 @@ public class MsoCloudifyUtilsTest2 {
 		MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
 
 		VduStatus actual = cloudify.deploymentStatusToVduStatus(deployment);
-
-		assertThat(actual, sameBeanAs(expected));
-	}
-
-	@Test
-	public void getOpenstackConfigTest() {
-		OpenstackConfig expected = new OpenstackConfig();
-		expected.setRegion("regionId");
-		expected.setAuthUrl("identityUrl");
-		expected.setUsername("msoId");
-		expected.setPassword("msoPass");
-		expected.setTenantName("tenantId");
-
-		MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
-		CloudSite cloudSite = Mockito.mock(CloudSite.class);
-		CloudIdentity cloudIdentity = Mockito.mock(CloudIdentity.class);
-		when(cloudSite.getIdentityService()).thenReturn(cloudIdentity);
-		when(cloudSite.getRegionId()).thenReturn("regionId");
-		when(cloudIdentity.getIdentityUrl()).thenReturn("identityUrl");
-		when(cloudIdentity.getMsoId()).thenReturn("msoId");
-		when(cloudIdentity.getMsoPass()).thenReturn("msoPass");
-		String tenantId = "tenantId";
-		OpenstackConfig actual = cloudify.getOpenstackConfig(cloudSite, tenantId);
 
 		assertThat(actual, sameBeanAs(expected));
 	}

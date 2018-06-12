@@ -1,0 +1,472 @@
+heat_template_version: 2015-04-30
+#Nimbus 2.0 MSP LB// Contrail 3.0 Version 2 Template
+# Nimbus Release 3.2: Removed Fat flow, ECMP, F5 startup script parameters 
+description: >
+  HOT child template to create PortTuple//VirtualMachineInterface//InstanceIp//NovaServer:
+
+#####################
+parameters:
+#####################
+
+## GLOBAL//Basic Parameters
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+
+
+## GLOBAL//Network Parameters
+
+  oam_protected_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  sgi_protected_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  int_imbl_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  nimbus_hsl_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  oam_protected_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+  sgi_protected_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+  int_imbl_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+  nimbus_hsl_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+
+## PT//PortTuple Parameters
+  msp_lb_si_name_fqdn:
+    type: string
+    description: fq_name for the ServiceInstance in PortTuple Resource
+#   For manual spinups, value must be in the ENV file.  Must be removed from ENV before uploading to ASDC
+
+## VMI//VirtualMachineInterface Fat flow Parameters
+#  msp_lb_fat_flow_protocol_0:
+#    type: string
+#    description: Fat flow protocol
+#  msp_lb_fat_flow_protocol_1:
+#    type: string
+#    description: Fat flow protocol
+#  msp_lb_fat_flow_port_0:
+#    type: number
+#    description: Fat flow protocol
+#    constraints:
+#      - range: { min: 0, max: 66000 }
+#        description: Must be a number between 0 and 66000
+#  msp_lb_fat_flow_port_1:
+#    type: number
+#    description: Fat flow protocol
+#    constraints:
+#      - range: { min: 0, max: 66000 }
+#        description: Must be a number between 0 and 66000
+
+
+## VMI//VirtualMachineInterface ECMP Parameters
+#  msp_lb_vmi_ecmp_configured:
+#    type: boolean
+#    description: hashing_configured for the VirtualMachineInterface
+#  msp_lb_vmi_ecmp_src_ip:
+#    type: boolean
+#    description: source_ip for the VirtualMachineInterface
+#  msp_lb_vmi_ecmp_dst_ip:
+#    type: boolean
+#    description: destination_ip for the VirtualMachineInterface
+#  msp_lb_vmi_ecmp_ip_protocol:
+#    type: boolean
+#    description: ip_protocol for the VirtualMachineInterface
+#  msp_lb_vmi_ecmp_src_port:
+#    type: boolean
+#    description: source_port for the VirtualMachineInterface
+#  msp_lb_vmi_ecmp_dst_port:
+#    type: boolean
+#    description: destination_port for the VirtualMachineInterface
+
+## II//InstanceIp
+  sgi_protected_family_v6:
+    type: string
+    description: IP Family Address for InstanceIp
+  sgi_protected_subnet_id:
+    type: string
+    description: Subnet UUID for InstanceIp
+  sgi_protected_v6_subnet_id:
+    type: string
+    description: Subnet UUID for InstanceIp
+  int_imbl_family_v6:
+    type: string
+    description: IP Family Address for InstanceIp
+  int_imbl_subnet_id:
+    type: string
+    description: Subnet UUID for InstanceIp
+  int_imbl_v6_subnet_id:
+    type: string
+    description: Subnet UUID for InstanceIp
+  msp_lb_oam_protected_ips:
+    type: comma_delimited_list
+    description: the ips of the management network 
+
+## VM//NovaServer Parameters
+  msp_lb_image_name:
+    type: string
+    description: image_name for the ServiceInstance VM
+  msp_lb_flavor_name:
+    type: string
+    description: flavor for the ServiceInstance VM
+  availability_zone_0:
+    type: string
+    description: availability_zone for the ServiceInstance
+  msp_lb_names:
+    type: comma_delimited_list
+    description: Comma Delimited List of Names for ServiceInstance VMs
+
+## Security Group Parameters
+  msp_lb_sec_grp_id:
+    type: string
+    description: uuid of the security group
+#   For manual spinups, value must be in the ENV file.  Must be removed from ENV before uploading to ASDC
+
+## Server Group Parameters
+  msp_lb_srv_grp_id:
+    type: string
+    description: uuid of the server group
+#   For manual spinups, value must be in the ENV file.  Must be removed from ENV before uploading to ASDC
+
+## RHRG//Resource:HEATResourceGroup Parameters
+  msp_lb_hrg_vmsi_count_1:
+    type: number
+    description: Iteration Count of Child Template for Heat::ResourceGroup
+    constraints:
+      - range: { min: 0, max: 99 }
+        description: Must be a number between 0 and 99
+
+  index:
+    type: number
+    description: index of the VM
+    constraints:
+      - range: { min: 0, max: 99 }
+        description: Must be a number between 0 and 99
+
+## F5 user data
+  msp_lb_admin_password:
+    type: string
+    label: F5 VE Admin User Password
+    description: Password used to perform image import services
+    hidden: true  
+  msp_lb_root_password:
+    type: string
+    label: F5 VE Root User Password
+    description: Password used to perform image import services
+    hidden: true
+
+#####################
+resources:
+#####################
+
+## RPT//Resource:PortTuple
+#### MSP_LB ServiceInstance VM 1 PortTuple Mapping for ServiceChaining
+  MSP_LB_RPT:
+    type: OS::ContrailV2::PortTuple
+    properties:
+      service_instance: { get_param: msp_lb_si_name_fqdn }
+
+
+## RVMI//Resource:VirtualMachineInterface
+#### MSP_LB VirtualMachineInterface for 1st Interface // MGMT // oam_protected_NET_1
+  MSP_LB_OAM_PROTECTED_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_1
+          params:
+            VM_NAME: { get_param: [ msp_lb_names, get_param: index ] }
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: { get_param: oam_protected_interface_type }
+      virtual_network_refs:
+        - get_param: oam_protected_net_fqdn
+      security_group_refs:
+        - get_param: msp_lb_sec_grp_id
+
+#### MSP_LB VirtualMachineInterface for 2nd Interface // LEFT // PROTECTED_NET_1 (ServiceChain)
+  MSP_LB_SGI_PROTECTED_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    depends_on:
+      - MSP_LB_RPT
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_2
+          params:
+            VM_NAME: { get_param: [ msp_lb_names, get_param: index ] }
+#      ecmp_hashing_include_fields:
+#        ecmp_hashing_include_fields_hashing_configured:
+#          get_param: msp_lb_vmi_ecmp_configured
+#        ecmp_hashing_include_fields_source_ip:
+#          get_param: msp_lb_vmi_ecmp_src_ip
+#        ecmp_hashing_include_fields_destination_ip:
+#          get_param: msp_lb_vmi_ecmp_dst_ip
+#        ecmp_hashing_include_fields_ip_protocol:
+#          get_param: msp_lb_vmi_ecmp_ip_protocol
+#        ecmp_hashing_include_fields_source_port:
+#          get_param: msp_lb_vmi_ecmp_src_port
+#       ecmp_hashing_include_fields_destination_port:
+#          get_param: msp_lb_vmi_ecmp_dst_port
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: { get_param: sgi_protected_interface_type }
+      port_tuple_refs:
+        - get_resource: MSP_LB_RPT
+      virtual_network_refs:
+        - get_param: sgi_protected_net_fqdn
+      security_group_refs:
+        - get_param: msp_lb_sec_grp_id
+#      virtual_machine_interface_fat_flow_protocols:
+#        virtual_machine_interface_fat_flow_protocols_fat_flow_protocol:
+#          - 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol: 
+#              get_param: msp_lb_fat_flow_protocol_0 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port: 
+#              get_param: msp_lb_fat_flow_port_0 
+#          - 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol: 
+#              get_param: msp_lb_fat_flow_protocol_0 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port: 
+#              get_param: msp_lb_fat_flow_port_1
+#          - 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol: 
+#              get_param: msp_lb_fat_flow_protocol_1
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port: 
+#              get_param: msp_lb_fat_flow_port_0 
+#          - 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol: 
+#              get_param: msp_lb_fat_flow_protocol_1 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port: 
+#              get_param: msp_lb_fat_flow_port_1
+
+
+#### MSP_LB VirtualMachineInterface for 3rd Interface // RIGHT // DIRECT_NET_1 (ServiceChain)
+  MSP_LB_INT_IMBL_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    depends_on:
+      - MSP_LB_RPT
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_3
+          params:
+            VM_NAME: { get_param: [ msp_lb_names, get_param: index ] }
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: { get_param: int_imbl_interface_type }
+      port_tuple_refs:
+        - get_resource: MSP_LB_RPT
+      virtual_network_refs:
+        - get_param: int_imbl_net_fqdn
+      security_group_refs:
+        - get_param: msp_lb_sec_grp_id
+#      virtual_machine_interface_fat_flow_protocols:
+#        virtual_machine_interface_fat_flow_protocols_fat_flow_protocol:
+#          - 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol: 
+#              get_param: msp_lb_fat_flow_protocol_0 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port: 
+#              get_param: msp_lb_fat_flow_port_0 
+#          - 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol: 
+#              get_param: msp_lb_fat_flow_protocol_0 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port: 
+#              get_param: msp_lb_fat_flow_port_1
+#          - 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol: 
+#              get_param: msp_lb_fat_flow_protocol_1
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port: 
+#              get_param: msp_lb_fat_flow_port_0 
+#          - 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol: 
+#              get_param: msp_lb_fat_flow_protocol_1 
+#            virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port: 
+#              get_param: msp_lb_fat_flow_port_1
+
+
+#### MSP_LB VirtualMachineInterface for 4th Interface // OTHER // HSL_NET_1
+  MSP_LB_NIMBUS_HSL_RVMI:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_4
+          params:
+            VM_NAME: { get_param: [ msp_lb_names, get_param: index ] }
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: { get_param: nimbus_hsl_interface_type }
+      virtual_network_refs:
+        - get_param: nimbus_hsl_net_fqdn
+      security_group_refs:
+        - get_param: msp_lb_sec_grp_id
+
+
+## RII//Resource:InstanceIp
+#### MSP_LB InstanceIp for 1st Interface // MGMT // oam_protected_net
+  MSP_LB_OAM_PROTECTED_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - MSP_LB_OAM_PROTECTED_RVMI
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: MSP_LB_OAM_PROTECTED_RVMI
+      virtual_network_refs:
+        - get_param: oam_protected_net_fqdn
+      instance_ip_address: { get_param: [msp_lb_oam_protected_ips, get_param: index ] }
+
+#### MSP_LB InstanceIp for 2nd Interface // LEFT // PROTECTED_NET_1
+  MSP_LB_SGI_PROTECTED_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - MSP_LB_SGI_PROTECTED_RVMI
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: MSP_LB_SGI_PROTECTED_RVMI
+      virtual_network_refs:
+        - get_param: sgi_protected_net_fqdn
+      subnet_uuid: { get_param: sgi_protected_subnet_id  }
+
+#### MSP_LB InstanceIp for 2nd Interface // LEFT // PROTECTED_NET_1 IPv6
+  MSP_LB_SGI_PROTECTED_V6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - MSP_LB_SGI_PROTECTED_RVMI
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: MSP_LB_SGI_PROTECTED_RVMI
+      virtual_network_refs:
+        - get_param: sgi_protected_net_fqdn
+      subnet_uuid: { get_param: sgi_protected_v6_subnet_id }
+      instance_ip_family: { get_param: sgi_protected_family_v6 }
+
+
+#### MSP_LB InstanceIp for 3rd Interface // RIGHT // DIRECT_NET_1
+  MSP_LB_INT_IMBL_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - MSP_LB_INT_IMBL_RVMI
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: MSP_LB_INT_IMBL_RVMI
+      virtual_network_refs:
+        - get_param: int_imbl_net_fqdn
+      subnet_uuid: { get_param: int_imbl_subnet_id }
+
+#### MSP_LB InstanceIp for 3rd Interface // RIGHT // DIRECT_NET_1 IPv6
+  MSP_LB_INT_IMBL_V6_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - MSP_LB_INT_IMBL_RVMI
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: MSP_LB_INT_IMBL_RVMI
+      virtual_network_refs:
+        - get_param: int_imbl_net_fqdn
+      subnet_uuid: { get_param: int_imbl_v6_subnet_id }
+      instance_ip_family: { get_param: int_imbl_family_v6 }
+
+#### MSP_LB InstanceIp for 4th Interface // OTHER // HSL_NET_1
+  MSP_LB_NIMBUS_HSL_RII:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - MSP_LB_NIMBUS_HSL_RVMI
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: MSP_LB_NIMBUS_HSL_RVMI
+      virtual_network_refs:
+        - get_param: nimbus_hsl_net_fqdn
+
+## RNS//Resource:NovaServer
+#### MSP_LB ServiceInstance OS::Nova::Server VM 1
+  MSP_LB_SERVER:
+    type: OS::Nova::Server
+    depends_on:
+      - MSP_LB_OAM_PROTECTED_RII
+      - MSP_LB_SGI_PROTECTED_RII
+      - MSP_LB_SGI_PROTECTED_V6_RII
+      - MSP_LB_INT_IMBL_RII
+      - MSP_LB_INT_IMBL_V6_RII
+      - MSP_LB_NIMBUS_HSL_RII
+    properties:
+      name: {get_param: [ msp_lb_names, get_param: index ]}
+      image: { get_param:  msp_lb_image_name }
+      flavor: { get_param: msp_lb_flavor_name }
+      availability_zone: { get_param: availability_zone_0 }
+      scheduler_hints: {group: {get_param: msp_lb_srv_grp_id}}
+      config_drive: "true"
+      networks:
+        - port: { get_resource: MSP_LB_OAM_PROTECTED_RVMI }
+        - port: { get_resource: MSP_LB_SGI_PROTECTED_RVMI }
+        - port: { get_resource: MSP_LB_INT_IMBL_RVMI }
+        - port: { get_resource: MSP_LB_NIMBUS_HSL_RVMI }
+      metadata:
+        vnf_name: { get_param: vnf_name }
+        vnf_id: { get_param: vnf_id }
+        vf_module_id:  { get_param: vf_module_id }
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            $admin_password: { get_param: msp_lb_admin_password }
+            $root_password: { get_param: msp_lb_root_password }
+          template: |
+            #!/bin/bash -xv
+            mkdir /config/cloud
+            cat <<EOT >> /config/cloud/ppinit.sh
+            LOGGER_TAG="cloud-init"
+            LOGGER_CMD="logger -t \$LOGGER_TAG"
+            STATUS_CHECK_RETRIES=20
+            STATUS_CHECK_INTERVAL=10
+            # insert tag and log
+            function log() {
+              echo "\$1" | eval "\$LOGGER_CMD"
+            }
+            function wait_mcp_running {  
+              failed=0
+              while true; do
+                mcp_started=\$(bigstart_wb mcpd start)
+                if [[ \$mcp_started == released ]]; then
+                  # this will log an error when mcpd is not up
+                  tmsh -a show sys mcp-state field-fmt | grep -q running
+                  if [[ \$? == 0 ]]; then
+                     log "Successfully connected to mcpd..."
+                     return 0
+                  fi
+                fi
+                failed=\$((\$failed + 1))
+                if [[ \$failed -ge \$STATUS_CHECK_RETRIES ]]; then
+                   log "Failed to connect to mcpd after \$failed attempts, quitting..."
+                   return 1
+                fi
+                log "Could not connect to mcpd (attempt \$failed/\$STATUS_CHECK_RETRIES), retrying in $STATUS_CHECK_INTERVAL seconds..."
+                sleep \$STATUS_CHECK_INTERVAL
+              done
+            }
+            wait_mcp_running
+            sleep 5
+            tmsh save sys config user-only
+            sed '/auth user root/a encrypted-password $root_password' -i /config/bigip_user.conf
+            sed '/auth user admin/a encrypted-password $admin_password' -i /config/bigip_user.conf
+            
+            tmsh load sys config user-only 2>&1 | eval \$LOGGER_CMD
+            tmsh save sys config
+            EOT
+        
+            bash /config/cloud/ppinit.sh &

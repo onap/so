@@ -11,12 +11,11 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Version: 1.2.2
 --------------
 
-:Release Date: 2018-06-07
+:Release Date: 2018-05-24
 
 The Beijing release is the second release of the Service Orchestrator (SO) project.
 
 **New Features**
-
 * Enhance Platform maturity by improving CLAMP maturity matrix see `Wiki <https://wiki.onap.org/display/DW/Beijing+Release+Platform+Maturity>`_.
 * Manual scaling of network services and VNFs.
 * Homing and placement capabiliities through OOF interaction. 
@@ -25,29 +24,20 @@ The Beijing release is the second release of the Service Orchestrator (SO) proje
 * Integrated to OOF 
 * Integrated to OOM
  
-**Bug Fixes**
-
-The defects fixed in this release could be found `here <https://jira.onap.org/issues/?jql=project%20%3D%20SO%20AND%20affectedVersion%20%3D%20%22Beijing%20Release%22%20AND%20status%20%3D%20Closed%20>`_.
+Bug Fixes
+---------
+The defects fixed in this release could be found `here<https://jira.onap.org/issues/?jql=project%20%3D%20SO%20AND%20affectedVersion%20%3D%20%22Beijing%20Release%22%20AND%20status%20%3D%20Closed%20>`_.
 
 **Known Issues**
-SO docker image is still on ecmop and not onap in the repository. 
-This will be addressed in the next release.
-
-**Security Notes**
-
-SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28377799>`_.
-
-Quick Links:
-
-- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
-- `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
-- `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=28377799>`_
+ 
+**Security Issues**
+SO CII Badging details can be found `here<https://bestpractices.coreinfrastructure.org/en/projects/1702>`_. 
+The remaining security issues and their workarounds are captured `here <https://wiki.onap.org/pages/viewpage.action?pageId=28377799>`_.
 
 **Upgrade Notes**
-	NA
 
 **Deprecation Notes**
-	NA
+
 
 Version: 1.1.2
 --------------
@@ -103,7 +93,6 @@ Following are the deprecated SO projects in gerrit repo:
 - mso/mso-config
 	
 **Other**
-	NA
 
 ===========
 

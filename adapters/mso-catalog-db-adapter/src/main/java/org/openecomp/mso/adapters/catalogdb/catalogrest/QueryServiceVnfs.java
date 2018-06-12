@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+ 
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 /* should be called QueryVnfResource.java */
 
@@ -92,15 +93,15 @@ public class QueryServiceVnfs extends CatalogQuery {
 		for (VnfResourceCustomization o : serviceVnfs) {
 			if (first) sb.append("\n"); first = false;
 
-			boolean vrNull = o.getVnfResource() == null ? true : false;
+			boolean vrNull = o.getVnfResources() == null ? true : false;
 
-		    put(valueMap, "MODEL_NAME",               vrNull ? null : o.getVnfResource().getModelName());
-		    put(valueMap, "MODEL_UUID",               vrNull ? null : o.getVnfResource().getModelUuid());
-		    put(valueMap, "MODEL_INVARIANT_ID",       vrNull ? null : o.getVnfResource().getModelInvariantId());
-		    put(valueMap, "MODEL_VERSION",            vrNull ? null : o.getVnfResource().getVersion());
-		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUuid());
+		    put(valueMap, "MODEL_NAME",               vrNull ? null : o.getVnfResources().getModelName());
+		    put(valueMap, "MODEL_UUID",               vrNull ? null : o.getVnfResources().getModelUUID());
+		    put(valueMap, "MODEL_INVARIANT_ID",       vrNull ? null : o.getVnfResources().getModelInvariantId());
+		    put(valueMap, "MODEL_VERSION",            vrNull ? null : o.getVnfResources().getModelVersion());
+		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUUID());
 		    put(valueMap, "MODEL_INSTANCE_NAME",      o.getModelInstanceName());
-		    put(valueMap, "TOSCA_NODE_TYPE",          vrNull ? null : o.getVnfResource().getToscaNodeType());
+		    put(valueMap, "TOSCA_NODE_TYPE",          vrNull ? null : o.getVnfResources().getToscaNodeType());
 		    put(valueMap, "NF_FUNCTION",              o.getNfFunction());
 		    put(valueMap, "NF_TYPE",                  o.getNfType());
 		    put(valueMap, "NF_ROLE",                  o.getNfRole());

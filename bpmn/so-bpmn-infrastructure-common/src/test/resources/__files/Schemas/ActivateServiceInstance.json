@@ -1,0 +1,7 @@
+{
+	"ActivateServiceInstance": {
+		"serviceInstance": {
+			"@class": "inventory.aai.onap.org.v12.ServiceInstance"
+		}
+	}
+}

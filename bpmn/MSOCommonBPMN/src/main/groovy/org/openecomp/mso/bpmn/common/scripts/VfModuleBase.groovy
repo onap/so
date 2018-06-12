@@ -33,9 +33,15 @@ import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 
 public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VfModuleBase.class);
+
 	
 	protected XmlParser xmlParser = new XmlParser()
 	
@@ -107,7 +113,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (Exception e) {
-			logWarn('Exception transforming \'_network\' params to vnfNetworks', e)
+			msoLogger.warn(MessageEnum.BPMN_GENERAL_WARNING, 'Exception transforming network params to vnfNetworks', "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, 'Exception is: \n' + e);
 		}
 		return vnfNetworks
 	}
@@ -144,7 +150,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				entries = entries + entry
 			}
 		} catch (Exception e) {
-			logWarn('Exception transforming params to entries', e)
+			msoLogger.warn(MessageEnum.BPMN_GENERAL_WARNING, 'Exception transforming params to entries', "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, 'Exception transforming params to entries', e);
 		}
 		return entries
 	}
@@ -183,7 +189,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (Exception e) {
-			logWarn('Exception transforming params to entries', e)
+			msoLogger.warn(MessageEnum.BPMN_GENERAL_WARNING, 'Exception transforming params to entries', "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, 'Exception transforming params to entries', e);
 		}
 		return entries
 	}
@@ -287,7 +293,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				paramsMap.put("availability_zone_${aZonePosition}", "${aZoneValue}")
 			}
 		}
-		
+
 		// Map of network-roles and network-tags from vm-networks
 		
 		NodeList vmNetworksListGlobal = responseXml.getElementsByTagNameNS("*", "vm-networks")
@@ -313,7 +319,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 		for (int x = 0; x < vnfNetworkList.getLength(); x++) {
 			Node node = vnfNetworkList.item(x)
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				Element eElement = (Element) node				
+				Element eElement = (Element) node
 				String vnfNetworkKey = utils.getElementText(eElement, "network-role-tag")
 				String networkRole = utils.getElementText(eElement, "network-role")
 				if (vnfNetworkKey.isEmpty()) {
@@ -596,7 +602,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							paramsMap.put("availability_zone_${aZonePosition}", "${aZoneValue}")
 						}
 					}
-					
+		
 					//Get SDNC Response Data for VF Module
 					
 					String vfModuleData = utils.getNodeXml(vfmoduleSdncGetResponse, "response-data")
@@ -639,7 +645,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 					for (int x = 0; x < vnfNetworkList.getLength(); x++) {
 						Node node = vnfNetworkList.item(x)
 						if (node.getNodeType() == Node.ELEMENT_NODE) {
-							Element eElement = (Element) node							
+							Element eElement = (Element) node
 							String vnfNetworkKey = utils.getElementText(eElement, "network-role-tag")
 							String networkRole = utils.getElementText(eElement, "network-role")
 							if (vnfNetworkKey.isEmpty()) {
@@ -681,7 +687,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							}
 					}
 					
-					
+		
 				
 					// VMS Data
 					
@@ -920,7 +926,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				<value>${vfModuleName}</value>
 			</entry>"""
 	
-		utils.logAudit("vnfInfo: " + vnfInfo)
+		msoLogger.debug("vnfInfo: " + vnfInfo)
 		InputSource source = new InputSource(new StringReader(data));
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		docFactory.setNamespaceAware(true)
@@ -947,7 +953,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				aZones = sbAZone.append(aZoneXml)
 			}
 		}
-		
+	
 		// Map of network-roles and network-tags from vm-networks
 		
 		NodeList vmNetworksListGlobal = responseXml.getElementsByTagNameNS("*", "vm-networks")

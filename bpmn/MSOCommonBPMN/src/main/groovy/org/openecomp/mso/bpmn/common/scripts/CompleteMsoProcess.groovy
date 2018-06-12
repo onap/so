@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,9 +23,11 @@ package org.openecomp.mso.bpmn.common.scripts
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
 
 public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CompleteMsoProcess.class);
 
 	String Prefix="CMSO_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -34,8 +36,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 	public initializeProcessVariables(DelegateExecution execution){
 
 		def method = getClass().getSimpleName() + '.initializeProcessVariables(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 		try {
 
 			/* Initialize all the process request variables in this block */
@@ -70,7 +71,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 		}
 
@@ -80,17 +81,16 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 
 		initializeProcessVariables(execution)
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-//		utils.log("DEBUG", "*** Started CompleteMsoProcess preProcessRequest Method ***", isDebugLogEnabled);
-		logDebug('Entered ' + method, isDebugLogEnabled)
-
-		setBasicDBAuthHeader(execution, isDebugLogEnabled)
+		//		msoLogger.trace("Started CompleteMsoProcess preProcessRequest Method ");
+		msoLogger.trace('Entered ' + method)
+		
+		setBasicDBAuthHeader(execution, execution.getVariable('isDebugLogEnabled'))
 
 		try {
 			def xml = execution.getVariable("CompleteMsoProcessRequest")
 
-			utils.logAudit("CompleteMsoProcess Request: " + xml)
-			utils.log("DEBUG", "Incoming Request is: "+ xml, isDebugLogEnabled)
+			msoLogger.debug("CompleteMsoProcess Request: " + xml)
+			msoLogger.debug("Incoming Request is: "+ xml)
 
 			//mso-bpel-name from the incoming request
 			def msoBpelName = utils.getNodeText1(xml,"mso-bpel-name")
@@ -143,18 +143,18 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 				execution.setVariable("CMSO_source",utils.getNodeText(xml,"source"))
 			}
 
-			utils.log("DEBUG", "CMSO_notification-url-Ok --> " + execution.getVariable("CMSO_notification-url-Ok"), isDebugLogEnabled)
-			utils.log("DEBUG", "CMSO_request_id-Ok --> " + execution.getVariable("CMSO_request_id-Ok"), isDebugLogEnabled)
+			msoLogger.trace("--> " + execution.getVariable(""))
+			msoLogger.trace("--> " + execution.getVariable(""))
 
 			// set the DHV/Service Instantiation values if specified in the request
 			execution.setVariable("CMSO_is_srv_inst_req", String.valueOf("true".equals(utils.getNodeText1(xml, "is-srv-inst-req"))))
-			utils.log("DEBUG", "CMSO_is_srv_inst_req --> " + execution.getVariable("CMSO_is_srv_inst_req"), isDebugLogEnabled)
+			msoLogger.trace("--> " + execution.getVariable(""))
 			execution.setVariable("CMSO_is_json_content", String.valueOf("JSON".equals(utils.getNodeText1(xml, "resp-content-type"))))
-			utils.log("DEBUG", "CMSO_is_json_content --> " + execution.getVariable("CMSO_is_json_content"), isDebugLogEnabled)
+			msoLogger.trace("--> " + execution.getVariable(""))
 			execution.setVariable("CMSO_service_inst_id", utils.getNodeText1(xml, "service-instance-id"))
-			utils.log("DEBUG", "CMSO_service_inst_id --> " + execution.getVariable("CMSO_service_inst_id"), isDebugLogEnabled)
+			msoLogger.trace("--> " + execution.getVariable(""))
 			execution.setVariable("CMSO_start_time", utils.getNodeText1(xml, "start-time"))
-			utils.log("DEBUG", "CMSO_start_time --> " + execution.getVariable("CMSO_start_time"), isDebugLogEnabled)
+			msoLogger.trace("--> " + execution.getVariable(""))
 			// this variable is used by the camunda flow to set the Content-Type for the async response
 			if (execution.getVariable("CMSO_is_srv_inst_req").equals("true") &&
 				execution.getVariable("CMSO_is_json_content").equals("true")) {
@@ -163,22 +163,21 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 				execution.setVariable("CMSO_content_type", "text/xml")
 			}
 
-			logDebug('Exited ' + method, isDebugLogEnabled)
+			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			utils.log("DEBUG", "Exception Occured During PreProcessRequest: " + e, isDebugLogEnabled);
+			msoLogger.debug("Exception Occured During PreProcessRequest: " + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 
-//		utils.log("DEBUG", "*** Completed CompleteMsoProcess preProcessRequest Method ***", isDebugLogEnabled);
+//		msoLogger.trace("Completed CompleteMsoProcess preProcessRequest Method ");
 	}
 
 	public void setUpdateDBstatustoSuccessPayload (DelegateExecution execution){
 
 		def method = getClass().getSimpleName() + '.setUpdateDBstatustoSuccessPayload(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		try {
 
@@ -210,7 +209,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 				idXml = ""
 			}
 			idXml = utils.removeXmlPreamble(idXml)
-			utils.log("DEBUG", "Incoming Instance Id Xml: " + idXml, isDebugLogEnabled)
+			msoLogger.debug("Incoming Instance Id Xml: " + idXml)
 
 			String payload = """
 						<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="http://org.openecomp.mso/requestsdb">
@@ -228,23 +227,22 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 						</soapenv:Envelope>"""
 
 			execution.setVariable("CMSO_setUpdateDBstatustoSuccessPayload", payload)
-			utils.log("DEBUG", "Outgoing Update Mso Request Payload is: " + payload, isDebugLogEnabled)
-			utils.logAudit("setUpdateDBstatustoSuccessPayload: " + payload)
+			msoLogger.debug("Outgoing Update Mso Request Payload is: " + payload)
+			msoLogger.debug("setUpdateDBstatustoSuccessPayload: " + payload)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 		}
-		logDebug('Exited ' + method, isDebugLogEnabled)
+		msoLogger.trace('Exited ' + method)
 	}
 
 	public void buildDataError (DelegateExecution execution, String message) {
 
 		def method = getClass().getSimpleName() + '.buildDataError(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 		try {
 
 			def msoCompletionResponse = """
@@ -256,17 +254,17 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 			// Format Response
 			def xmlMsoCompletionResponse = utils.formatXml(msoCompletionResponse)
 			String buildMsoCompletionResponseAsString = xmlMsoCompletionResponse.drop(38).trim()
-			utils.logAudit("CompleteMsoProcess Response: " + buildMsoCompletionResponseAsString)
+			msoLogger.debug("CompleteMsoProcess Response: " + buildMsoCompletionResponseAsString)
 			execution.setVariable("CompleteMsoProcessResponse", buildMsoCompletionResponseAsString)
-			utils.log("DEBUG", "@@ CompleteMsoProcess Response @@ " + "\n" + execution.getVariable("CompletionHandlerResponse"), isDebugLogEnabled)
+			msoLogger.debug("@@ CompleteMsoProcess Response @@ " + "\n" + execution.getVariable("CompletionHandlerResponse"))
 
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, message)
 
 		} catch (BpmnError e) {
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugLogEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 		}
 
@@ -275,9 +273,8 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 	public void postProcessResponse (DelegateExecution execution) {
 
 				def method = getClass().getSimpleName() + '.postProcessResponse(' +'execution=' + execution.getId() +')'
-				def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-				logDebug('Entered ' + method, isDebugLogEnabled)
-		//		utils.log("DEBUG", "*** Started CompleteMsoProcess PostProcessRequest Method ***", isDebugLogEnabled);
+				msoLogger.trace('Entered ' + method)
+		//		msoLogger.trace("Started CompleteMsoProcess PostProcessRequest Method ");
 				try {
 
 					def msoCompletionResponse = """
@@ -291,22 +288,22 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 					String buildMsoCompletionResponseAsString = xmlMsoCompletionResponse.drop(38).trim()
 					// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead
 					execution.setVariable("WorkflowResponse", buildMsoCompletionResponseAsString)
-					utils.logAudit("CompleteMsoProcess Response: " + buildMsoCompletionResponseAsString)
+					msoLogger.debug("CompleteMsoProcess Response: " + buildMsoCompletionResponseAsString)
 					execution.setVariable("CompleteMsoProcessResponse", buildMsoCompletionResponseAsString)
 					execution.setVariable("CMSO_ResponseCode", "200")
 
 					setSuccessIndicator(execution, true)
 
-					utils.log("DEBUG", "@@ CompleteMsoProcess Response @@ " + "\n" + execution.getVariable("CompleteMsoProcessResponse"), isDebugLogEnabled)
+					msoLogger.debug("@@ CompleteMsoProcess Response @@ " + "\n" + execution.getVariable("CompleteMsoProcessResponse"))
 
-					logDebug('Exited ' + method, isDebugLogEnabled)
+					msoLogger.trace('Exited ' + method)
 				} catch (BpmnError e) {
 					throw e;
 				} catch (Exception e) {
-					logError('Caught exception in ' + method, e)
+					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 				}
-		//		utils.log("DEBUG", "*** Completed CompleteMsoProcess PostProcessRequest Method ***", isDebugLogEnabled);
+		//		msoLogger.trace("Completed CompleteMsoProcess PostProcessRequest Method ");
 
 	}
 

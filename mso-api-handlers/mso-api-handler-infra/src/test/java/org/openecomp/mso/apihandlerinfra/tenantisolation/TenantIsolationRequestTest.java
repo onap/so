@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,22 +23,29 @@ package org.openecomp.mso.apihandlerinfra.tenantisolation;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
-import org.apache.commons.io.IOUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openecomp.mso.apihandler.common.ValidationException;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.TenantIsolationRequest;
+import org.junit.rules.ExpectedException;
+import org.openecomp.mso.apihandlerinfra.BaseTest;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.Action;
+import org.openecomp.mso.exceptions.ValidationException;
+import org.springframework.test.context.ActiveProfiles;
 
-public class TenantIsolationRequestTest {
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+public class TenantIsolationRequestTest extends BaseTest{
+
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
+	
 	@Test
 	public void testParseCloudResourceECOMP() throws Exception{
 		try {
-			String requestJSON = IOUtils.toString (ClassLoader.class.getResourceAsStream ("/ECOMPOperationEnvironmentCreate.json"));
+			String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/TenantIsolation/ECOMPOperationEnvironmentCreate.json")));
 			ObjectMapper mapper = new ObjectMapper();
 			HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 			CloudOrchestrationRequest cor  = mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
@@ -53,7 +60,7 @@ public class TenantIsolationRequestTest {
 	@Test
 	public void testParseCloudResourceVNF() throws Exception{
 		try {
-			String requestJSON = IOUtils.toString (ClassLoader.class.getResourceAsStream ("/VNFOperationEnvironmentCreate.json"));
+			String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/TenantIsolation/VNFOperationEnvironmentCreate.json")));
 			ObjectMapper mapper = new ObjectMapper();
 			HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 			CloudOrchestrationRequest cor  = mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
@@ -65,9 +72,11 @@ public class TenantIsolationRequestTest {
 		}
 	}
 	
-	@Test(expected=ValidationException.class)
+	@Test
 	public void testParseCloudResourceVNFInvalid() throws Exception {
-		String requestJSON = IOUtils.toString (ClassLoader.class.getResourceAsStream ("/VNFOperationEnvironmentCreateInvalid.json"));
+		expectedException.expect(ValidationException.class);
+		
+		String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/TenantIsolation/VNFOperationEnvironmentCreateInvalid.json")));
 		ObjectMapper mapper = new ObjectMapper();
 		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		CloudOrchestrationRequest cor  = mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
@@ -79,7 +88,7 @@ public class TenantIsolationRequestTest {
 	@Test
 	public void testParseActivateCloudResource() throws Exception{
 		try {
-			String requestJSON = IOUtils.toString (ClassLoader.class.getResourceAsStream ("/ActivateOperationEnvironment.json"));
+			String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/TenantIsolation/ActivateOperationEnvironment.json")));
 			ObjectMapper mapper = new ObjectMapper();
 			HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 			CloudOrchestrationRequest cor  = mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
@@ -91,9 +100,11 @@ public class TenantIsolationRequestTest {
 		}
 	}
 	
-	@Test(expected = ValidationException.class)
+	@Test
 	public void testParseActivateCloudResourceInvalid() throws Exception{
-		String requestJSON = IOUtils.toString (ClassLoader.class.getResourceAsStream ("/ActivateOperationEnvironmentInvalid.json"));
+		expectedException.expect(ValidationException.class);
+		
+		String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/TenantIsolation/ActivateOperationEnvironmentInvalid.json")));
 		ObjectMapper mapper = new ObjectMapper();
 		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		CloudOrchestrationRequest cor  = mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
@@ -105,7 +116,7 @@ public class TenantIsolationRequestTest {
 	@Test
 	public void testParseDeactivateCloudResource() throws Exception{
 		try {
-			String requestJSON = IOUtils.toString (ClassLoader.class.getResourceAsStream ("/DeactivateOperationEnvironment.json"));
+			String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/TenantIsolation/DeactivateOperationEnvironment.json")));
 			ObjectMapper mapper = new ObjectMapper();
 			HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 			CloudOrchestrationRequest cor  = mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
@@ -117,9 +128,11 @@ public class TenantIsolationRequestTest {
 		}
 	}
 	
-	@Test(expected= ValidationException.class)
+	@Test
 	public void testParseDeactivateCloudResourceInvalid() throws Exception{
-		String requestJSON = IOUtils.toString (ClassLoader.class.getResourceAsStream ("/DeactivateOperationEnvironmentInvalid.json"));
+		expectedException.expect(ValidationException.class);
+		
+		String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/TenantIsolation/DeactivateOperationEnvironmentInvalid.json")));
 		ObjectMapper mapper = new ObjectMapper();
 		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
 		CloudOrchestrationRequest cor  = mapper.readValue(requestJSON, CloudOrchestrationRequest.class);

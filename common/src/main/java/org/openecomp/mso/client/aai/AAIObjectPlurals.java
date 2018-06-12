@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,12 @@ import com.google.common.base.CaseFormat;
 public enum AAIObjectPlurals implements AAIObjectName, AAIObjectUriTemplate, AAIObjectUriPartial {
 
 	GENERIC_VNF(AAINamespaceConstants.NETWORK, "/generic-vnfs"),
-	PSERVER(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/pservers");
+	PSERVER(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/pservers"),
+	L3_NETWORK(AAINamespaceConstants.NETWORK, "/l3-networks"),
+	SERVICE_INSTANCE(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), "/service-instances"),
+	OWNING_ENTITIES(AAINamespaceConstants.BUSINESS, "/owning-entities"),
+	VOLUME_GROUP(AAIObjectType.CLOUD_REGION.uriTemplate(), "/volume-groups/");
+	
 	
 	private final String uriTemplate;
 	private final String partialUri;
@@ -55,11 +60,6 @@ public enum AAIObjectPlurals implements AAIObjectName, AAIObjectUriTemplate, AAI
 	}
 	@Override
 	public String typeName(CaseFormat format) {
-		String enumName = this.name();
-		if (this.equals(AAIObjectType.DEFAULT_CLOUD_REGION) || this.equals(AAIObjectType.DEFAULT_TENANT)) {
-			enumName = enumName.replace("DEFAULT_", "");
-		}
-		
-		return CaseFormat.UPPER_UNDERSCORE.to(format, enumName);
+		return CaseFormat.UPPER_UNDERSCORE.to(format, this.name());
 	}
 }

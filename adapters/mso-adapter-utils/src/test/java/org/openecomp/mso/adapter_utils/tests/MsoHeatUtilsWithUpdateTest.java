@@ -23,6 +23,7 @@ package org.openecomp.mso.adapter_utils.tests;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,39 +36,36 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openecomp.mso.cloud.CloudConfig;
-import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
-import org.openecomp.mso.cloud.CloudIdentity.IdentityServerType;
 import org.openecomp.mso.cloud.CloudSite;
+import org.openecomp.mso.cloud.ServerType;
 import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoException;
 import org.openecomp.mso.openstack.exceptions.MsoIOException;
 import org.openecomp.mso.openstack.utils.MsoHeatUtilsWithUpdate;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
+import org.openecomp.mso.utils.CryptoUtils;
 
 import com.woorea.openstack.base.client.OpenStackConnectException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MsoHeatUtilsWithUpdateTest {
 
-	public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-	public static CloudConfigFactory cloudConfigFactory = new CloudConfigFactory();
 	
     @Mock
-    CloudConfig cloudConfig;
+    private CloudConfig cloudConfig;
     @InjectMocks
-    MsoHeatUtilsWithUpdate util=new MsoHeatUtilsWithUpdate("NO_PROP",msoPropertiesFactory,cloudConfigFactory);
+    private MsoHeatUtilsWithUpdate util=new MsoHeatUtilsWithUpdate();
 
     private CloudSite cloudSite;
 
     @Before
     public void init () {
         cloudSite = new CloudSite ();
-        cloudSite.setId ("cloud");
+        cloudSite.setRegionId("cloud");
         CloudIdentity cloudIdentity = new CloudIdentity ();
-        cloudIdentity.setIdentityServerType(IdentityServerType.KEYSTONE);
-        cloudIdentity.setKeystoneUrl ("toto");
-        cloudIdentity.setMsoPass (CloudIdentity.encryptPassword ("mockId"));
+        cloudIdentity.setIdentityServerType(ServerType.KEYSTONE);
+        cloudIdentity.setIdentityUrl("toto");
+        cloudIdentity.setMsoPass (CryptoUtils.encryptCloudConfigPassword("mockId"));
         cloudSite.setIdentityService (cloudIdentity);
         when(cloudConfig.getCloudSite("cloud")).thenReturn (Optional.of(cloudSite));
         when(cloudConfig.getCloudSite("none")).thenReturn (Optional.empty());

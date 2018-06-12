@@ -34,6 +34,8 @@ import org.slf4j.MDC
 import org.w3c.dom.Element
 
 class MsoUtils {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, MsoUtils.class);
+	
 	def initializeEndPoints(execution){
 		// use this placeholder to initialize end points, if called independently, this need to be set
 		execution.setVariable("AAIEndPoint","http://localhost:28080/SoapUIMocks")			
@@ -296,7 +298,6 @@ class MsoUtils {
 
 	
 	def log(logmode,logtxt,isDebugLogEnabled="false"){
-		MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 		if ("INFO"==logmode) {
 			msoLogger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN", MsoLogger.getServiceName());
 		} else if ("WARN"==logmode) {
@@ -312,22 +313,19 @@ class MsoUtils {
 	}
 	
 	def logContext(requestId, serviceInstanceId){
-	    MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 		msoLogger.setLogContext(requestId, serviceInstanceId);
 	}
 	
 	def logMetrics(elapsedTime, logtxt){
-		MsoLogger metricsLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 		
-		metricsLogger.recordMetricEvent (elapsedTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+		msoLogger.recordMetricEvent (elapsedTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
 			logtxt, "BPMN", MsoLogger.getServiceName(), null);
 	}
 	
 	def logAudit(logtxt){
-		MsoLogger auditLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 		long startTime = System.currentTimeMillis();
 		
-		auditLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, logtxt);
+		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, logtxt);
 	}
 	
 	// headers: header - name-value
@@ -486,7 +484,7 @@ class MsoUtils {
 	
 	// Build l2-homing-information
 	def buildL2HomingInformation(xmlInput) {
-		def elementsL2HomingList = ["evc-name", "topology", "preferred-aic-clli"]
+		def elementsL2HomingList = ["evc-name", "topology", "preferred-aic-clli","aic-version"]
 		def rebuildL2Home = ''
 		if (xmlInput != null) {
 			rebuildL2Home = buildElements(xmlInput, elementsL2HomingList, "l2-homing-information")
@@ -545,6 +543,8 @@ class MsoUtils {
 				rebuildInternetServiceChangeDetails = "<tns:internet-service-change-details>"
 				rebuildInternetServiceChangeDetails += buildElements(internetServiceChangeDetails, ["internet-evc-speed-value"], "")
 				rebuildInternetServiceChangeDetails += buildElements(internetServiceChangeDetails, ["internet-evc-speed-units"], "")
+				rebuildInternetServiceChangeDetails += buildElements(internetServiceChangeDetails, ["v4-vr-lan-address"], "")
+				rebuildInternetServiceChangeDetails += buildElements(internetServiceChangeDetails, ["v4-vr-lan-prefix-length"], "")
 				try { // optional
 				   def tProvidedV4LanPublicPrefixesChangesList = ["request-index", "v4-next-hop-address", "v4-lan-public-prefix", "v4-lan-public-prefix-length"]
 				   rebuildInternetServiceChangeDetails += buildElementsUnbounded(internetServiceChangeDetails, tProvidedV4LanPublicPrefixesChangesList, "t-provided-v4-lan-public-prefixes")

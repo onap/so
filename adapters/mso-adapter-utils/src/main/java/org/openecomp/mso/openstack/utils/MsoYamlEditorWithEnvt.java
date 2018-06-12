@@ -29,18 +29,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
-import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Set;
 
+import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
+import org.openecomp.mso.logger.MsoLogger;
 import org.yaml.snakeyaml.Yaml;
 
-import org.openecomp.mso.logger.MsoLogger;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MsoYamlEditorWithEnvt {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoYamlEditorWithEnvt.class);
     
     private Map <String, Object> yml;
     private Yaml yaml = new Yaml ();

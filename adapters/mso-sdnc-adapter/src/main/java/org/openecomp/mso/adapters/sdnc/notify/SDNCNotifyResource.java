@@ -42,27 +42,32 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.openecomp.mso.adapters.sdnc.impl.Constants;
+import org.openecomp.mso.adapters.sdnc.impl.SDNCResponse;
+import org.openecomp.mso.adapters.sdnc.impl.SDNCRestClient;
+import org.openecomp.mso.adapters.sdnc.util.SDNCRequestIdUtil;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.utils.UUIDChecker;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import org.openecomp.mso.adapters.sdnc.impl.Constants;
-import org.openecomp.mso.adapters.sdnc.impl.SDNCAdapterPortTypeImpl;
-import org.openecomp.mso.adapters.sdnc.impl.SDNCResponse;
-import org.openecomp.mso.adapters.sdnc.impl.SDNCRestClient;
-import org.openecomp.mso.adapters.sdnc.util.SDNCRequestIdUtil;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
-import org.openecomp.mso.logger.MessageEnum;
 
-//SDNC to SDNC Async Notifcations
 @Path("/")
+@Component
 public class SDNCNotifyResource {
-
-	private MsoPropertiesFactory msoPropertiesFactory=new MsoPropertiesFactory();
 	
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,SDNCNotifyResource.class);
+    
+	@Autowired
+	private SDNCRestClient sdncClient;
+	
+	@Autowired
+	private Environment env;
 
     @GET()
     public Response printMessage () {
@@ -105,6 +110,8 @@ public class SDNCNotifyResource {
 
         try {
             dbf.setFeature (XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             db = dbf.newDocumentBuilder ();
         } catch (ParserConfigurationException e) {
             msoLogger.error (MessageEnum.RA_PARSING_REQUEST_ERROR, "SDNC", "SDNCNotify", MsoLogger.ErrorCode.SchemaError, "Exception - Invalid XML request format", e);
@@ -172,18 +179,9 @@ public class SDNCNotifyResource {
         }
 
         String bpelUrl;
-        /*
-         * TODO Hibernate
-         * try {
-         * bpelUrl = RequestsDatabase.getBpelUrl(reqId);
-         * }
-         * catch (Exception e)
-         * {
-         * logger.error("Unable to get SDNC_CALLBACK_URL from ActiveRequests, using default for reqid:" + reqId, e);
-         * }
-         */
+       
         
-        bpelUrl = SDNCAdapterPortTypeImpl.getProperty (Constants.BPEL_URL_PROP, Constants.DEFAULT_BPEL_URL,msoPropertiesFactory);
+        bpelUrl = env.getProperty(Constants.BPEL_URL_PROP, Constants.DEFAULT_BPEL_URL);
         if (bpelUrl == null) {
             msoLogger.debug("bpelUrl is NULL:");
         }
@@ -193,7 +191,7 @@ public class SDNCNotifyResource {
         sdncResp.setRespMsg (respMsg);
         sdncResp.setSdncRespXml (reqXML);
         long subStartTime = System.currentTimeMillis ();
-        SDNCRestClient.sendRespToBpel (bpelUrl, sdncResp,msoPropertiesFactory);
+        sdncClient.sendRespToBpel (bpelUrl, sdncResp);
         msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully send request to BPMN", "BPMN", bpelUrl, null);
 
         msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");

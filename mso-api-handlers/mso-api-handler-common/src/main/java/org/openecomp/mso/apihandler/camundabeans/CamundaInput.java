@@ -21,6 +21,8 @@
 package org.openecomp.mso.apihandler.camundabeans;
 
 
+
+
 import org.openecomp.mso.apihandler.common.CommonConstants;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -36,19 +38,27 @@ public class CamundaInput {
 	
 	@JsonProperty(CommonConstants.CAMUNDA_VALUE)
 	private String value;
+	
+	
 	@JsonProperty(CommonConstants.CAMUNDA_TYPE)
-	private final String type = "String";
-
-
-	public CamundaInput() {
-		/* Empty constructor */
-	}
+	private String type = "String";
+	
 	
 	@JsonProperty(CommonConstants.CAMUNDA_VALUE)
 	public String getValue() {
 		return value;
 	}
 	
+	@JsonProperty(CommonConstants.CAMUNDA_TYPE)
+	public String getType() {
+		return type;
+	}
+
+	@JsonProperty(CommonConstants.CAMUNDA_TYPE)
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	@JsonProperty(CommonConstants.CAMUNDA_VALUE)
 	public void setValue(String value) {
 		this.value = value;

@@ -20,6 +20,9 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 
+import org.junit.Before
+import org.mockito.MockitoAnnotations
+
 import static org.mockito.Mockito.*
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import static org.junit.Assert.*;
@@ -49,13 +52,14 @@ class NetworkUtilsTest {
       <param name="vnf_name2">US1117MTSNJVBR0246</param>
     </volume-params>
 </volume-request>"""
-	
+
+
 	@Test
 	public void testIsRollbackEnabled() {
 		
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("URN_mso_rollback")).thenReturn(true)
+		when(mockExecution.getVariable("mso.rollback")).thenReturn(true)
 
 		NetworkUtils networkUtils = new NetworkUtils()
 		def rollbackEnabled = networkUtils.isRollbackEnabled(mockExecution, volumeRequestXml)
@@ -69,7 +73,7 @@ class NetworkUtilsTest {
 		
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("URN_mso_rollback")).thenReturn(false)
+		when(mockExecution.getVariable("mso.rollback")).thenReturn(false)
 
 		NetworkUtils networkUtils = new NetworkUtils()
 		def rollbackEnabled = networkUtils.isRollbackEnabled(mockExecution, volumeRequestXml)

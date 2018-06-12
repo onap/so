@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,8 +32,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.openecomp.mso.bpmn.common.workflow.service.CallbackHandlerService.CallbackError;
+import org.openecomp.mso.bpmn.common.workflow.service.CallbackHandlerService.CallbackResult;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Generalized REST interface that injects a message event into a waiting BPMN process.
@@ -44,12 +51,21 @@ import org.openecomp.mso.logger.MsoLogger;
  * </pre>
  */
 @Path("/")
-public class WorkflowMessageResource extends AbstractCallbackService {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+@Api(description = "Provides a generic service to inject messages into a waiting BPMN Proccess")
+@Component
+public class WorkflowMessageResource{
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, WorkflowMessageResource.class);
 	private static final String LOGMARKER = "[WORKFLOW-MESSAGE]";
+	
+	@Autowired
+	CallbackHandlerService callback;
 	
 	@POST
 	@Path("/WorkflowMessage/{messageType}/{correlator}")
+	@ApiOperation(
+	        value = "Workflow message correlator",
+	        notes = ""
+	    )
 	@Consumes("*/*")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response deliver(
@@ -96,7 +112,7 @@ public class WorkflowMessageResource extends AbstractCallbackService {
 			variables.put(contentTypeVariable, contentType);
 		}
 
-		CallbackResult result = handleCallback(method, message, messageEventName,
+		CallbackResult result = callback.handleCallback(method, message, messageEventName,
 			messageVariable, correlationVariable, correlationValue, LOGMARKER, variables);
 
 		if (result instanceof CallbackError) {

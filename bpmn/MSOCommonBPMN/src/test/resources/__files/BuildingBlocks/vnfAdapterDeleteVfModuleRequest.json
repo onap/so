@@ -1,0 +1,11 @@
+{	
+		"cloudSiteId" : "cloudRegionId",
+		"tenantId" : "tenantId",		
+		"vnfId"	:	"vnfId",
+		"vfModuleId" : "vfModuleId",      		
+		"skipAAI" : true,
+		"msoRequest" : {
+			"requestId" : "requestId",
+			"serviceInstanceId" : "serviceInstanceId" 
+		}
+}

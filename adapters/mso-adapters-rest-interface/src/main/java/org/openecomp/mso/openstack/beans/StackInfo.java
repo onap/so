@@ -21,10 +21,8 @@
 package org.openecomp.mso.openstack.beans;
 
 
-import java.util.Map;
 import java.util.HashMap;
-
-import com.woorea.openstack.heat.model.Stack;
+import java.util.Map;
 
 /*
  * This Java bean class relays Heat stack status information to ActiveVOS processes.
@@ -40,20 +38,6 @@ public class StackInfo {
 	private String statusMessage = "";
 	private Map<String,Object> outputs = new HashMap<>();
 	private Map<String,Object> parameters = new HashMap<>();
-	
-	static Map<String,HeatStatus> HeatStatusMap;
-	static {
-		HeatStatusMap = new HashMap<>();
-		HeatStatusMap.put("CREATE_IN_PROGRESS", HeatStatus.BUILDING);
-		HeatStatusMap.put("CREATE_COMPLETE", HeatStatus.CREATED);
-		HeatStatusMap.put("CREATE_FAILED", HeatStatus.FAILED);
-		HeatStatusMap.put("DELETE_IN_PROGRESS", HeatStatus.DELETING);
-		HeatStatusMap.put("DELETE_COMPLETE", HeatStatus.NOTFOUND);
-		HeatStatusMap.put("DELETE_FAILED", HeatStatus.FAILED);
-		HeatStatusMap.put("UPDATE_IN_PROGRESS", HeatStatus.UPDATING);
-		HeatStatusMap.put("UPDATE_FAILED", HeatStatus.FAILED);
-		HeatStatusMap.put("UPDATE_COMPLETE", HeatStatus.UPDATED);
-	}
 
 	public StackInfo () {
 	}
@@ -71,36 +55,6 @@ public class StackInfo {
 		this.name = name;
 		this.canonicalName = name;	// Don't have an ID, so just use name
 		this.status = status;
-	}
-	
-	public StackInfo (Stack stack)
-	{
-		if (stack == null) {
-			this.status = HeatStatus.NOTFOUND;
-			return;
-		}
-	
-		this.name = stack.getStackName();
-		this.canonicalName = stack.getStackName() + "/" + stack.getId();
-
-		if (stack.getStackStatus() == null) {
-			this.status = HeatStatus.INIT;
-		} else if (HeatStatusMap.containsKey(stack.getStackStatus())) {
-			this.status = HeatStatusMap.get(stack.getStackStatus());
-		} else {
-			this.status = HeatStatusMap.getOrDefault(stack.getStackStatus(), HeatStatus.UNKNOWN);
-		}
-		
-		this.statusMessage = stack.getStackStatusReason();
-		
-		if (stack.getOutputs() != null) {
-			this.outputs = new HashMap<>();
-			for (Stack.Output output : stack.getOutputs()) {
-				this.outputs.put(output.getOutputKey(), output.getOutputValue());
-			}
-		}
-		
-		this.parameters = stack.getParameters();
 	}
 	
 	public String getName() {

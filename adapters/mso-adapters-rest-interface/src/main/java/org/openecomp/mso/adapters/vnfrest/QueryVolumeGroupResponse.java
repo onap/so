@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 @XmlRootElement(name = "queryVolumeGroupResponse")
 public class QueryVolumeGroupResponse {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, QueryVolumeGroupResponse.class);
 	private String volumeGroupId;
 	private String volumeGroupStackId;
 	private VnfStatus volumeGroupStatus;

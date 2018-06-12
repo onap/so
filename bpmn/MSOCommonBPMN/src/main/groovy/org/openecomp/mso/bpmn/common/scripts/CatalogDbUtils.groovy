@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,8 @@ package org.openecomp.mso.bpmn.common.scripts
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-import org.json.XML;
+import org.json.XML
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader;
 import org.springframework.web.util.UriUtils;
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
@@ -39,6 +40,8 @@ import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.rest.APIResponse;
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
+import org.openecomp.mso.logger.MessageEnum
+
 
 
 /***
@@ -47,10 +50,11 @@ import org.openecomp.mso.rest.RESTConfig
  */
 
 class CatalogDbUtils {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CatalogDbUtils.class);
+
 
 	MsoUtils utils = new MsoUtils()
 	JsonUtils jsonUtils = new JsonUtils()
-	MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
 	static private String defaultDbAdapterVersion = "v2"
 
 	public JSONArray getAllNetworksByServiceModelUuid(DelegateExecution execution, String serviceModelUuid) {
@@ -65,7 +69,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return networksList
@@ -89,7 +94,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return networksList
@@ -107,7 +113,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return networksList
@@ -131,7 +138,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return networksList
@@ -149,7 +157,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return networksList
@@ -173,7 +182,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return networksList
@@ -191,7 +201,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return networksList
@@ -215,7 +226,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return networksList
@@ -233,7 +245,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return networksList
@@ -257,7 +270,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return networksList
@@ -277,7 +291,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -302,7 +317,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -321,7 +337,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -346,7 +363,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -365,7 +383,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -390,7 +409,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -409,7 +429,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -436,7 +457,8 @@ class CatalogDbUtils {
 				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs", defaultDbAdapterVersion)
 			}
 		}catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 		return vnfsList
 	}
@@ -460,7 +482,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -488,7 +511,8 @@ class CatalogDbUtils {
 			}
 		}
 		catch(Exception e){
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vfModule
@@ -517,7 +541,8 @@ class CatalogDbUtils {
 			}
 		}
 		catch(Exception e){
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vfModule
@@ -536,7 +561,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -560,7 +586,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -578,7 +605,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -602,8 +630,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.getStackTrace())
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.getStackTrace());
+			throw e
 		}
 
 		return vnfsList
@@ -621,7 +649,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -645,7 +674,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -664,7 +694,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -688,7 +719,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return vnfsList
@@ -708,6 +740,7 @@ class CatalogDbUtils {
 		}
 		catch (Exception e) {
 		    utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			throw e
 		}
 
 		return resources
@@ -730,6 +763,7 @@ class CatalogDbUtils {
 		}
 		catch (Exception e) {
 			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			throw e
 		}
 
 		return resources
@@ -748,7 +782,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return resources
@@ -767,7 +802,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return resources
@@ -790,7 +826,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return resources
@@ -810,7 +847,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return resources
@@ -833,7 +871,8 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			throw e
 		}
 
 		return resources
@@ -882,7 +921,7 @@ class CatalogDbUtils {
 			msoLogger.debug("Returning networks JSON: " + modelInfosString)
 
 		} catch (Exception e) {
-			utils.log("ERROR", "Exception in parsing Catalog DB Response: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
 		}
 
 		return modelInfos
@@ -974,7 +1013,7 @@ class CatalogDbUtils {
 			msoLogger.debug("Returning vnfs JSON: " + modelInfosString)
 
 		} catch (Exception e) {
-			utils.log("ERROR", "Exception in parsing Catalog DB Response: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
 		}
 
 		return modelInfos
@@ -1026,7 +1065,7 @@ class CatalogDbUtils {
 			}
 			msoLogger.debug("Completed Parsing Vf Module: " + vfModulelJson.toString())
 		}catch (Exception e){
-			utils.log("DEBUG", "Exception while parsing Vf Modules from Catalog DB Response: " + e.message)
+			msoLogger.debug("Exception while parsing Vf Modules from Catalog DB Response: " + e.message)
 		}
 
 		return vfModulelJson
@@ -1078,7 +1117,7 @@ class CatalogDbUtils {
 			msoLogger.debug("Returning allottedResources JSON: " + modelInfosString)
 
 		} catch (Exception e) {
-			utils.log("ERROR", "Exception in parsing Catalog DB Response: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
 		}
 
 		return modelInfos
@@ -1105,7 +1144,7 @@ class CatalogDbUtils {
 			msoLogger.debug("Returning serviceResources JSON: " + serviceResourcesString)
 
 		} catch (Exception e) {
-			utils.log("ERROR", "Exception in parsing Catalog DB Response: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
 		}
 
 		return serviceResources
@@ -1135,7 +1174,7 @@ class CatalogDbUtils {
 			msoLogger.debug("Returning serviceResources JSON: " + serviceResourcesString)
 
 		} catch (Exception e) {
-			utils.log("ERROR", "Exception in parsing Catalog DB Response: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
 		}
 
 		return serviceResourcesObject
@@ -1181,14 +1220,15 @@ class CatalogDbUtils {
 			modelJson.put("modelInfo", modelInfo)
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception while parsing model information: " + e.message)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception while parsing model information", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
 		}
 		return modelInfo
 	}
 
 	private String getResponseFromCatalogDb (DelegateExecution execution, String endPoint) {
 		try {
-			String catalogDbEndpoint = execution.getVariable("URN_mso_catalog_db_endpoint")
+
+			String catalogDbEndpoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint",execution)
 			String queryEndpoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + endPoint
 			RESTConfig config = new RESTConfig(queryEndpoint);
 			def responseData = ''
@@ -1202,6 +1242,8 @@ class CatalogDbUtils {
 			String basicAuthCred = execution.getVariable("BasicAuthHeaderValueDB")
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 					client.addAuthorizationHeader(basicAuthCred)
+			}else {
+				client.addAuthorizationHeader(getBasicDBAuthHeader(execution))
 			}
 			msoLogger.debug('sending GET to Catalog DB endpoint: ' + endPoint)
 			APIResponse response = client.httpGet()
@@ -1223,7 +1265,7 @@ class CatalogDbUtils {
 		}
 		catch (Exception e) {
 			msoLogger.debug("ERROR WHILE QUERYING CATALOG DB: " + e.message)
-			return null
+			throw e
 		}
 
 	}
@@ -1244,8 +1286,26 @@ class CatalogDbUtils {
 		}
 		catch (Exception e) {
 			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			throw e
 		}
 
 		return responseJson
 	}
+	
+	private String getBasicDBAuthHeader(DelegateExecution execution) {
+		
+		String encodedString = null
+		try {
+			String basicAuthValueDB = UrnPropertiesReader.getVariable("mso.adapters.db.auth", execution)
+			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB)
+			
+			encodedString = utils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
+			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
+		} catch (IOException ex) {
+			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
+			utils.log("ERROR", dataErrorMessage)
+		}
+		return encodedString
+	}
+	
 }

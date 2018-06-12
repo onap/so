@@ -24,12 +24,12 @@
 			<service-id>serviceId-test</service-id>
 			<subscription-service-type>subscriptionServiceType-test
 			</subscription-service-type>
-			<ecomp-model-information>
+			<onap-model-information>
 				<model-invariant-uuid>modelInvariantUuid-test</model-invariant-uuid>
 				<model-uuid>modelUuid-test</model-uuid>
 				<model-version>modelVersion-test</model-version>
 				<model-name>modelName-test</model-name>
-			</ecomp-model-information>
+			</onap-model-information>
 			<service-instance-id>serviceInstanceId-test</service-instance-id>
 			<subscriber-name />
 			<global-customer-id>globalSubscriberId-test</global-customer-id>

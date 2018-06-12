@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,14 +22,15 @@ package org.openecomp.mso.client.dmaap.rest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.UriBuilder;
 
+import org.openecomp.mso.client.RestClient;
 import org.openecomp.mso.client.dmaap.Consumer;
-import org.openecomp.mso.client.policy.RestClient;
 
 public class RestConsumer implements Consumer {
 
@@ -54,7 +55,7 @@ public class RestConsumer implements Consumer {
 	@Override
 	public Iterable<String> fetch() {
 		
-		return client.get(new GenericType<List<String>>() {});
+		return client.get(new GenericType<List<String>>() {}).orElse(new ArrayList<>());
 	}
 
 }

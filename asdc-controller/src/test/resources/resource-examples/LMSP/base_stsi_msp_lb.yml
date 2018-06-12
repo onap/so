@@ -1,0 +1,200 @@
+heat_template_version: 2015-04-30
+#Nimbus 2.0 MSP LB // Contrail 3.0 Version 2 Template
+description: >
+  HOT template to create ServiceTemplate//ServiceInstance//InterfaceRouteTable:
+# Release 1.0
+#####################
+parameters:
+#####################
+
+## GLOBAL//Basic Parameters
+  msp_lb_domain:
+    type: string
+    description: domain for the ServiceTemplate
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+
+
+## GLOBAL//Network Parameters
+
+
+
+  sgi_protected_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  int_imbl_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+
+  sgi_protected_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+  int_imbl_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+
+
+## ST//ServiceTemplate Parameters
+  msp_lb_st_version:
+    type: number
+    description: version for the ServiceTemplate
+    constraints:
+      - range: { min: 0, max: 99 }
+        description: Must be a number between 0 and 99
+  msp_lb_st_mode:
+    type: string
+    description: service_mode for the ServiceTemplate
+  msp_lb_st_type:
+    type: string
+    description: service_type for the ServiceTemplate
+  msp_lb_st_virtualization_type:
+    type: string
+    description: service_virtualization_type for the ServiceTemplate
+## IRT//InterfaceRouteTable Parameters
+  msp_lb_int_imbl_route_prefixes:
+    type: json
+    description: prefix for the ServiceInstance InterfaceRouteTable
+
+## SI//ServiceInstance Parameters
+  msp_lb_si_ha_mode:
+    type: string
+    description: ha_mode for the ServiceInstance
+
+## Health Check Parameters
+  msp_lb_shc_enabled:
+    type: boolean
+    description: enabled for the ServiceHealthCheck
+  msp_lb_shc_monitor_type:
+    type: string
+    description: monitor_type for the ServiceHealthCheck
+  msp_lb_shc_delay:
+    type: number
+    description: delay for the ServiceHealthCheck
+    constraints:
+      - range: { min: 0, max: 99 }
+        description: Must be a number between 0 and 99
+  msp_lb_shc_timeout:
+    type: number
+    description: timeout for the ServiceHealthCheck
+    constraints:
+      - range: { min: 0, max: 99 }
+        description: Must be a number between 0 and 99
+  msp_lb_shc_max_retries:
+    type: number
+    description: max_retries for the ServiceHealthCheck
+    constraints:
+      - range: { min: 0, max: 99 }
+        description: Must be a number between 0 and 99
+  msp_lb_shc_url_path:
+    type: string
+    description: url_path for the ServiceHealthCheck
+
+
+#####################
+resources:
+#####################
+
+
+## RST//Resource:ServiceTemplate
+  MSP_LB_RST_1:
+    type: OS::ContrailV2::ServiceTemplate
+    properties:
+      name:
+        str_replace:
+            template:  VF_NAME_st_msp_lb
+            params:
+              VF_NAME:  { get_param: vnf_name }
+      service_template_properties:
+        service_template_properties_version: { get_param: msp_lb_st_version }
+        service_template_properties_service_mode: { get_param: msp_lb_st_mode }
+        service_template_properties_service_type: { get_param: msp_lb_st_type }
+        service_template_properties_interface_type:
+          - service_template_properties_interface_type_service_interface_type: { get_param: sgi_protected_interface_type }
+          - service_template_properties_interface_type_service_interface_type: { get_param: int_imbl_interface_type }
+        service_template_properties_service_virtualization_type: { get_param: msp_lb_st_virtualization_type }
+      domain: { get_param: msp_lb_domain }
+
+
+
+## RSI//Resource:ServiceInstance
+#### MSP_LB ServiceInstance
+  MSP_LB_RSI_1:
+    type: OS::ContrailV2::ServiceInstance
+    properties:
+      name:
+        str_replace:
+            template:  VF_NAME_si_msp_lb
+            params:
+              VF_NAME:  { get_param: vnf_name }
+      service_instance_properties:
+        service_instance_properties_interface_list:
+            - service_instance_properties_interface_list_virtual_network: { get_param: sgi_protected_net_fqdn }
+            - service_instance_properties_interface_list_virtual_network: { get_param: int_imbl_net_fqdn }
+        service_instance_properties_ha_mode: { get_param: msp_lb_si_ha_mode }
+      service_template_refs:
+        - get_resource: MSP_LB_RST_1
+
+## RIRT//Resource:InterfaceRouteTable
+  MSP_LB_RIRT_SI_STATIC:
+    type: OS::ContrailV2::InterfaceRouteTable
+    depends_on: [ MSP_LB_RSI_1 ]
+    properties:
+      name:
+        str_replace:
+          template: VF_NAME_irt_si_static
+          params:
+            VF_NAME: { get_param: vnf_name }
+      interface_route_table_routes:
+        interface_route_table_routes_route: { get_param: msp_lb_int_imbl_route_prefixes }
+      service_instance_refs:
+       - get_resource: MSP_LB_RSI_1
+      service_instance_refs_data:
+        - service_instance_refs_data_interface_type: { get_param: int_imbl_interface_type }
+
+## RHC//Resource:Health Check
+  MSP_LB_RSHC_SI_LEFT:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name:
+        str_replace:
+            template:  VF_NAME_hc_left_msp_lb
+            params:
+             VF_NAME:  { get_param: vnf_name }
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: msp_lb_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: msp_lb_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: msp_lb_shc_delay }
+        service_health_check_properties_timeout: { get_param: msp_lb_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: msp_lb_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: msp_lb_shc_url_path }
+      service_instance_refs:
+        - get_resource: MSP_LB_RSI_1
+      service_instance_refs_data:
+        - service_instance_refs_data_interface_type: { get_param: sgi_protected_interface_type }
+
+  MSP_LB_RSHC_SI_RIGHT:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name:
+        str_replace:
+            template:  VF_NAME_hc_right_msp_lb
+            params:
+             VF_NAME:  { get_param: vnf_name }
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: msp_lb_shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: msp_lb_shc_monitor_type }
+        service_health_check_properties_delay: { get_param: msp_lb_shc_delay }
+        service_health_check_properties_timeout: { get_param: msp_lb_shc_timeout }
+        service_health_check_properties_max_retries: { get_param: msp_lb_shc_max_retries }
+        service_health_check_properties_url_path: { get_param: msp_lb_shc_url_path }
+      service_instance_refs:
+        - get_resource: MSP_LB_RSI_1
+      service_instance_refs_data:
+        - service_instance_refs_data_interface_type: { get_param: int_imbl_interface_type }
+
+outputs:
+  msp_lb_si_name_fqdn:
+    description:  FQDN of the MSP_LB ServiceInstance
+    value: {list_join: [':', { get_attr: [ MSP_LB_RSI_1, fq_name ] } ] }

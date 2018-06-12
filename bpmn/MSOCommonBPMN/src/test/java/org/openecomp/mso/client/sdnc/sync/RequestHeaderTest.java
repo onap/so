@@ -22,8 +22,10 @@ package org.openecomp.mso.client.sdnc.sync;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.openecomp.mso.BaseTest;
+import org.openecomp.mso.bpmn.common.adapter.sdnc.RequestHeader;
 
-public class RequestHeaderTest {
+public class RequestHeaderTest{
 	RequestHeader rh = new RequestHeader();
 
 	@Test

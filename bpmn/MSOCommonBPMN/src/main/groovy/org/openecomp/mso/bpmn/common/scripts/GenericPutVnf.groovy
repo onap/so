@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
+
 import static org.apache.commons.lang3.StringUtils.*
 
 import org.apache.commons.lang3.*
@@ -27,6 +29,10 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 /**
  * TODO: Support Putting vnf type = vpe and vce
@@ -58,6 +64,8 @@ import org.springframework.web.util.UriUtils
  * @param - WorkflowException
  */
 class GenericPutVnf  extends AbstractServiceTaskProcessor{
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, GenericPutVnf.class);
+
 
 	String Prefix = "GENPV_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -69,9 +77,8 @@ class GenericPutVnf  extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void preProcessRequest(DelegateExecution execution) {
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericPutVnf PreProcessRequest Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericPutVnf PreProcessRequest Process")
 
 		execution.setVariable("GENPV_SuccessIndicator", false)
 		execution.setVariable("GENPV_FoundIndicator", false)
@@ -79,32 +86,32 @@ class GenericPutVnf  extends AbstractServiceTaskProcessor{
 		try{
 			// Get Variables
 			String payload = execution.getVariable("GENPV_vnfPayload")
-			utils.log("DEBUG", "Incoming Vnf Payload is: " + payload, isDebugEnabled)
+			msoLogger.debug("Incoming Vnf Payload is: " + payload)
 			String type = execution.getVariable("GENPV_type")
-			utils.log("DEBUG", "Incoming Type of Vnf is: " + type, isDebugEnabled)
+			msoLogger.debug("Incoming Type of Vnf is: " + type)
 
 			if(isBlank(payload) || isBlank(type)){
-				utils.log("ERROR", "Incoming Vnf Payload and/or Type is null. These Variables are required!", isDebugEnabled)
+				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Incoming Vnf Payload and/or Type is null. These Variables are required!", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming Vnf Payload and/or Type is null. These Variables are required!")
 			}else{
 				String vnfId = execution.getVariable("GENPV_vnfId")
 				if(isBlank(vnfId)){
 					vnfId = UUID.randomUUID().toString()
-					utils.log("DEBUG", "Generated Vnf Id is: " + vnfId, isDebugEnabled)
+					msoLogger.debug("Generated Vnf Id is: " + vnfId)
 					execution.setVariable("GENPV_vnfId", vnfId)
 				}else{
-					utils.log("DEBUG", "Incoming Vnf Id is: " + vnfId, isDebugEnabled)
+					msoLogger.debug("Incoming Vnf Id is: " + vnfId)
 				}
 			}
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("ERROR", " Error encountered within GenericPutVnf PreProcessRequest method!" + e, isDebugEnabled)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Error encountered within GenericPutVnf PreProcessRequest method!" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in GenericPutVnf PreProcessRequest")
 
 		}
-		utils.log("DEBUG", "*** COMPLETED GenericPutVnf PreProcessRequest Process ***", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericPutVnf PreProcessRequest Process ")
 	}
 
 	/**
@@ -114,9 +121,8 @@ class GenericPutVnf  extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void putVnf(DelegateExecution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericPutVnf PutVnf Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericPutVnf PutVnf Process")
 		try {
 			String vnfId = execution.getVariable("GENPV_vnfId")
 			String payload = execution.getVariable("GENPV_vnfPayload")
@@ -131,42 +137,42 @@ class GenericPutVnf  extends AbstractServiceTaskProcessor{
 			}else if(type.equals("vpe")){
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "GenericPutVnf does not yet support getting type of vnf = vpe")
 			}else{
-				utils.log("DEBUG", "Invalid Incoming GENGV_type", isDebugEnabled)
+				msoLogger.debug("Invalid Incoming GENGV_type")
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Invalid Incoming GENPV_type")
 			}
-			utils.log("DEBUG", "Using AAI Uri: " + aai_uri, isDebugEnabled)
+			msoLogger.debug("Using AAI Uri: " + aai_uri)
 
 			String path = "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8")
-			utils.log("DEBUG", "PUT Vnf Endpoint is: " + path, isDebugEnabled)
+			msoLogger.debug("PUT Vnf Endpoint is: " + path)
 
-			String putVnfAAIPath = execution.getVariable("URN_aai_endpoint") + path
+			String putVnfAAIPath = UrnPropertiesReader.getVariable("aai.endpoint", execution) + path
 			execution.setVariable("GENPV_putVnfAAIPath", putVnfAAIPath)
-			utils.logAudit("PUT Vnf Url is: " + putVnfAAIPath)
+			msoLogger.debug("PUT Vnf Url is: " + putVnfAAIPath)
 
 			APIResponse apiResponse = aaiUtil.executeAAIPutCall(execution, putVnfAAIPath, payload)
 			int responseCode = apiResponse.getStatusCode()
 			execution.setVariable("GENPV_putVnfResponseCode", responseCode)
-			utils.logAudit("AAI Response Code: " + responseCode)
+			msoLogger.debug("AAI Response Code: " + responseCode)
 			String aaiResponse = apiResponse.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 			execution.setVariable("GENPV_putVnfResponse", aaiResponse)
-			utils.logAudit("AAI Response: " + aaiResponse)
+			msoLogger.debug("AAI Response: " + aaiResponse)
 
 			if(responseCode == 200 || responseCode == 201){
-				utils.log("DEBUG", "PUT Vnf Received a Good Response Code.", isDebugEnabled)
+				msoLogger.debug("PUT Vnf Received a Good Response Code.")
 			}else{
-				utils.log("DEBUG", "PUT Vnf Received a Bad Response Code. Response Code is: " + responseCode, isDebugEnabled)
+				msoLogger.debug("PUT Vnf Received a Bad Response Code. Response Code is: " + responseCode)
 				exceptionUtil.MapAAIExceptionToWorkflowExceptionGeneric(execution, aaiResponse, responseCode)
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("ERROR", " Error encountered within GenericPutVnf PutVnf method!" + e, isDebugEnabled)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Error encountered within GenericPutVnf PutVnf method!" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured During PutVnf")
 		}
-		utils.log("DEBUG", " *** COMPLETED GenericPutVnf PutVnf Process*** ", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericPutVnf PutVnf Process")
 	}
 
 }

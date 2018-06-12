@@ -23,6 +23,7 @@ package org.openecomp.mso.adapters.sdnc.impl;
 
 import java.io.StringWriter;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -30,16 +31,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.logger.MessageEnum;
 public class Utils {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, Utils.class);
 
 	private Utils() {
 	}
@@ -116,8 +116,7 @@ public class Utils {
 			//RequestData
 			NodeList nodes = reqDoc.getDocumentElement().getChildNodes();
 			
-			
-			Element root = newdoc.createElement(nodes.item(0).getNodeName());
+			Element root = newdoc.createElementNS(nodes.item(0).getNamespaceURI(), nodes.item(0).getNodeName());
 			newdoc.appendChild(root);
 
 			NodeList childNodes = nodes.item(0).getChildNodes();
@@ -181,6 +180,8 @@ public class Utils {
 				StringWriter sw = new StringWriter();
 				StreamResult sr = new StreamResult(sw);
 				TransformerFactory tf = TransformerFactory.newInstance();
+				tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+				tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
 				Transformer t = tf.newTransformer();
 				//t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");//<?xml version="1.0" encoding="UTF-8"?>
 				t.transform(ds, sr);

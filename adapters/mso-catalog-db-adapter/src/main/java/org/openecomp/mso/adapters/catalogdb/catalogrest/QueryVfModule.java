@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+ 
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.openecomp.mso.db.catalog.beans.HeatEnvironment;
 import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
 
 @XmlRootElement(name = "vfModules")
@@ -93,20 +95,20 @@ public class QueryVfModule extends CatalogQuery {
 
 			boolean vfNull = o.getVfModule() == null ? true : false;
 			boolean hasVolumeGroup = false;
-			String envt = o.getHeatEnvironmentArtifactUuid();
-			if (envt != null && !"".equals(envt)) {
+			HeatEnvironment envt = o.getVolumeHeatEnv();
+			if (envt != null) {
 				hasVolumeGroup = true;
 			}
 
 		    put(valueMap, "MODEL_NAME",               vfNull ? null : o.getVfModule().getModelName());
 		    put(valueMap, "MODEL_UUID",               vfNull ? null : o.getVfModule().getModelUUID());
-		    put(valueMap, "MODEL_INVARIANT_ID",       vfNull ? null : o.getVfModule().getModelInvariantUuid());
-		    put(valueMap, "MODEL_VERSION",            vfNull ? null : o.getVfModule().getVersion());
-		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUuid());
-			put(valueMap, "IS_BASE", vfNull ? false : o.getVfModule().isBase() ? true : false);
+		    put(valueMap, "MODEL_INVARIANT_ID",       vfNull ? null : o.getVfModule().getModelInvariantUUID());
+		    put(valueMap, "MODEL_VERSION",            vfNull ? null : o.getVfModule().getModelVersion());
+		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUUID());
+			put(valueMap, "IS_BASE", vfNull ? false : o.getVfModule().getIsBase() ? true : false);
 			put(valueMap, "VF_MODULE_LABEL",          o.getLabel());
 		    put(valueMap, "INITIAL_COUNT",            o.getInitialCount());
-		    put(valueMap, "HAS_VOLUME_GROUP", hasVolumeGroup);
+			put(valueMap, "HAS_VOLUME_GROUP", new Boolean(hasVolumeGroup));
 
             sb.append(sep).append(this.setTemplate(template, valueMap));
             sep = ",\n";

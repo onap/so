@@ -34,6 +34,7 @@ import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 
 import org.openecomp.mso.bpmn.mock.FileUtil
 
+@Ignore
 public class SDNCAdapterUtilsTest {
 	
 	private def map
@@ -125,7 +126,7 @@ public class SDNCAdapterUtilsTest {
 		assertEquals("200", map.get("mypfx-sdncRequestDataResponseCode"))		
 		assertFalse(map.containsKey("WorkflowException"))
 	}
-
+				  								
 	@Ignore // 1802 merge				  								
 	@Test
 	public void testValidateSDNCResponse_408_200_WithEmbeddedLt() {

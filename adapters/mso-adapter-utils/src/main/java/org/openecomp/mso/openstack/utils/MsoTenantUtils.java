@@ -22,40 +22,23 @@ package org.openecomp.mso.openstack.utils;
 
 
 import java.util.Map;
-import org.openecomp.mso.cloud.CloudConfigFactory;
+
+import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudIdentity;
-import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.beans.MsoTenant;
 import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoException;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoPropertiesException;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public abstract class MsoTenantUtils extends MsoCommonUtils {
 
-    private CloudConfigFactory cloudConfigFactory;
-	protected MsoPropertiesFactory msoPropFactory;
-	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-	protected MsoJavaProperties msoProps;
-
-    public MsoTenantUtils (String msoPropID, CloudConfigFactory cloudConfigFactory) {
-    	this.cloudConfigFactory = cloudConfigFactory;
-    	msoPropFactory = new MsoPropertiesFactory();
-
-    	LOGGER.debug("msoTenantUtils:" + msoPropID);
-		
-    	try {
-			msoProps = msoPropFactory.getMsoJavaProperties (msoPropID);
-		} catch (MsoPropertiesException e) {
-			LOGGER.error (MessageEnum.LOAD_PROPERTIES_FAIL, "Unknown. Mso Properties ID not found in cache: " + msoPropID, "", "", MsoLogger.ErrorCode.DataError, "Exception - Mso Properties ID not found in cache", e);
-		}
-    }
-
-    public CloudConfigFactory getCloudConfigFactory() {
-    	return cloudConfigFactory;
-    }
+	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoTenantUtils.class);
+	
+	@Autowired
+    protected CloudConfig cloudConfig;
 
     public abstract String createTenant (String tenantName, String cloudSiteId, Map <String, String> metadata, boolean backout) 
     		throws MsoException;
@@ -69,7 +52,7 @@ public abstract class MsoTenantUtils extends MsoCommonUtils {
     public abstract boolean deleteTenant (String tenantId, String cloudSiteId) 
     		throws MsoException;
 
-    public abstract String getKeystoneUrl (String regionId, String msoPropID, CloudIdentity cloudIdentity)
+    public abstract String getKeystoneUrl (String regionId, CloudIdentity cloudIdentity)
     		throws MsoException;
 
 }

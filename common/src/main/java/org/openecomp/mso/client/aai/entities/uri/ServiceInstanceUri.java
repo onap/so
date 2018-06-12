@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.core.UriBuilder;
 
 import org.openecomp.mso.client.aai.AAIObjectType;
@@ -60,12 +59,9 @@ public class ServiceInstanceUri extends SimpleUri {
 			String resultJson;
 			try {
 				resultJson = this.getQueryClient().query(Format.PATHED, query);
-			} catch (ResponseProcessingException e) {
-				if (e.getCause() instanceof BadRequestException) {
-					throw new AAIUriNotFoundException("Service instance " + id + " not found at: " + serviceInstanceUri.build());
-				} else {
-					throw e;
-				}
+			} catch (BadRequestException e) {
+				throw new AAIUriNotFoundException("Service instance " + id + " not found at: " + serviceInstanceUri.build());
+				
 			}
 			try {
 				cachedValue = extractRelatedLink(resultJson);
@@ -75,27 +71,26 @@ public class ServiceInstanceUri extends SimpleUri {
 			} catch (IOException e) {
 				throw new AAIPayloadException("could not map payload: " + resultJson, e);
 			}
-			
 		}
-		
-		return this.getCachedValue().get();
+		Optional<String> cachedValueOpt = this.getCachedValue();
+		return cachedValueOpt.isPresent() ? cachedValueOpt.get() : "";
 	}
 	
 	protected Optional<String> extractRelatedLink(String jsonString) throws IOException {
 		Optional<String> result;
 		ObjectMapper mapper = new ObjectMapper();
 		
-			Results<Map<String, String>> results = mapper.readValue(jsonString, new TypeReference<Results<Map<String, String>>>(){});
-			if (results.getResult().size() == 1) {
-				String uriString = results.getResult().get(0).get("resource-link");
-				URI uri = UriBuilder.fromUri(uriString).build();
-				String rawPath = uri.getRawPath();
+		Results<Map<String, String>> results = mapper.readValue(jsonString, new TypeReference<Results<Map<String, String>>>(){});
+		if (results.getResult().size() == 1) {
+			String uriString = results.getResult().get(0).get("resource-link");
+			URI uri = UriBuilder.fromUri(uriString).build();
+			String rawPath = uri.getRawPath();
 			result = Optional.of(rawPath.replaceAll("/aai/v\\d+", ""));
-			} else if (results.getResult().isEmpty()) {
+		} else if (results.getResult().isEmpty()) {
 			result = Optional.empty();
-			} else {
-				throw new IllegalStateException("more than one result returned");
-			}
+		} else {
+			throw new IllegalStateException("more than one result returned");
+		}
 	
 		return result;
 	}
@@ -107,11 +102,11 @@ public class ServiceInstanceUri extends SimpleUri {
 	@Override
 	public URI build() {
 		try {
-		if (this.values.length == 1) {
-			String uri = getSerivceInstance(this.values[0]);
-			Map<String, String> map = getURIKeys(uri);
-			return super.build(map.values().toArray(values));
-		}
+			if (this.values.length == 1) {
+				String uri = getSerivceInstance(this.values[0]);
+				Map<String, String> map = getURIKeys(uri);
+				return super.build(map.values().toArray(values));
+			}
 		} catch (AAIUriNotFoundException | AAIPayloadException e) {
 			throw new AAIUriComputationException(e);
 		}

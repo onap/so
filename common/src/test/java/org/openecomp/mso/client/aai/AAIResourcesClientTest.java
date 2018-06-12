@@ -24,29 +24,42 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.openecomp.mso.client.aai.entities.AAIResultWrapper;
 import org.openecomp.mso.client.aai.entities.uri.AAIResourceUri;
 import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
 
+import com.github.tomakehurst.wiremock.admin.NotFoundException;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 public class AAIResourcesClientTest {
 
-	
-	
+
 	@Rule
 	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(8443));
+	
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+	@BeforeClass
+	public static void setUp() {
+		System.setProperty("mso.config.path", "src/test/resources");
+	}
 	
 	@Test
 	public void verifyNotExists() {
 		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
 		wireMockRule.stubFor(get(
-				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
 				.willReturn(
 					aResponse()
 					.withHeader("Content-Type", "text/plain")
@@ -61,14 +74,14 @@ public class AAIResourcesClientTest {
 	public void verifyDelete() {
 		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
 		wireMockRule.stubFor(get(
-				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
 				.willReturn(
 					aResponse()
 					.withHeader("Content-Type", "application/json")
 					.withBodyFile("aai/resources/mockObject.json")
 					.withStatus(200)));
 		wireMockRule.stubFor(delete(
-				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
 				.withQueryParam("resource-version", equalTo("1234"))
 				.willReturn(
 					aResponse()
@@ -97,7 +110,7 @@ public class AAIResourcesClientTest {
 		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
 		AAIResourceUri path2 = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
 		wireMockRule.stubFor(put(
-				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString() + "/relationship-list/relationship"))
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build() + "/relationship-list/relationship"))
 				.willReturn(
 					aResponse()
 					.withHeader("Content-Type", "application/json")
@@ -107,5 +120,68 @@ public class AAIResourcesClientTest {
 		AAIResourcesClient client = new AAIResourcesClient();
 		client.connect(path, path2);
 		assertEquals("uri not modified", pathClone.build().toString(), path.build().toString());
+	}
+	
+	@Test
+	public void verifyDisconnect() {
+		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
+		AAIResourceUri path2 = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
+		
+		wireMockRule.stubFor(post(
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build() + "/relationship-list/relationship"))
+				.willReturn(
+					aResponse()
+					.withStatus(204)));
+		
+		AAIResourceUri pathClone = path.clone();
+		AAIResourcesClient client = new AAIResourcesClient();
+		client.disconnect(path, path2);
+		assertEquals("uri not modified", pathClone.build().toString(), path.build().toString());
+	}
+	
+	@Test
+	public void verifyPatch() {
+		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
+		
+		wireMockRule.stubFor(post(
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
+				.willReturn(
+					aResponse()
+					.withStatus(200)));
+		
+		AAIResourcesClient client = new AAIResourcesClient();
+
+		client.update(path, "{}");
+	}
+	
+	@Test
+	public void verifyNotExistsGet() {
+		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
+		wireMockRule.stubFor(get(
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
+				.willReturn(
+					aResponse()
+					.withHeader("Content-Type", "text/plain")
+					.withBody("hello")
+					.withStatus(404)));
+		AAIResourcesClient client = new AAIResourcesClient();
+		AAIResultWrapper result = client.get(path);
+		assertEquals("is empty", true, result.isEmpty());
+	}
+	
+	@Test
+	public void verifyNotExistsGetException() {
+		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
+		wireMockRule.stubFor(get(
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
+				.willReturn(
+					aResponse()
+					.withHeader("Content-Type", "text/plain")
+					.withBody("hello")
+					.withStatus(404)));
+		AAIResourcesClient client = new AAIResourcesClient();
+		thrown.expect(NotFoundException.class);
+		thrown.expectMessage(containsString(path.build() + " not found in A&AI"));
+		AAIResultWrapper result = client.get(path, NotFoundException.class);
 	}
 }

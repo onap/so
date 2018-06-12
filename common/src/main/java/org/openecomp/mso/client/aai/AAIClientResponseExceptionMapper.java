@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,41 +21,43 @@
 package org.openecomp.mso.client.aai;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Optional;
-import java.util.UUID;
+
+import javax.annotation.Priority;
+import javax.ws.rs.ext.Provider;
 
 import javax.annotation.Priority;
 import javax.ws.rs.ext.Provider;
 
 import org.openecomp.mso.client.ResponseExceptionMapper;
 import org.openecomp.mso.client.aai.entities.AAIError;
+import org.openecomp.mso.logger.MsoLogger;
+import org.slf4j.MDC;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Provider
 @Priority(Integer.MIN_VALUE)
 public class AAIClientResponseExceptionMapper extends ResponseExceptionMapper {
 
-	private final UUID requestId;
-	public AAIClientResponseExceptionMapper(UUID requestId) {
-		this.requestId = requestId;
+	private final String requestId;
+	public AAIClientResponseExceptionMapper() {
+		this.requestId = MDC.get(MsoLogger.REQUEST_ID);
 	}
 	@Override
-	public Optional<String> extractMessage(InputStream stream) throws IOException {
+	public Optional<String> extractMessage(String entity) {
 		
 		String errorString = "Error calling A&AI. Request-Id=" + this.getRequestId() + " ";
 		try {
-			AAIError error = new ObjectMapper().readValue(stream, AAIError.class);
+			AAIError error = new ObjectMapper().readValue(entity, AAIError.class);
 			AAIErrorFormatter formatter = new AAIErrorFormatter(error);
 			return Optional.of(errorString + formatter.getMessage());
-		} catch (JsonParseException e) {
-			return Optional.of(errorString);
+		} catch (IOException e) {
+			return Optional.of(errorString + entity);
 		}
 	}
 	
-	protected UUID getRequestId() {
+	protected String getRequestId() {
 		return this.requestId;
 	}
 }

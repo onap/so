@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,6 +39,10 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName("updateNetworkRequest")
 @XmlRootElement(name = "updateNetworkRequest")
 public class UpdateNetworkRequest extends NetworkRequestCommon {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1219693235726357143L;
 	private String cloudSiteId;
 	private String tenantId;
 	private String networkId;
@@ -54,7 +58,7 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 	private Boolean backout = true;
 	private Map<String,String> networkParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, UpdateNetworkRequest.class);
 	@JsonProperty
 	private boolean contrailRequest;
 	public UpdateNetworkRequest() {
@@ -125,16 +129,13 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 		this.networkTypeVersion = networkTypeVersion;
 	}
 
-	public String getNetworkTechnology() {
-		return networkTechnology.toString();
+	public NetworkTechnology getNetworkTechnology() {
+		return networkTechnology;
 	}
 
-	public void setNetworkTechnology(String networkTechnology) {
-		try {
-			this.networkTechnology = NetworkTechnology.valueOf(networkTechnology.toUpperCase());
-		} catch (IllegalArgumentException e) {
-		    LOGGER.debug("Exception:", e);
-		}
+	public void setNetworkTechnology(NetworkTechnology networkTechnology) {
+		this.networkTechnology = networkTechnology;
+		this.contrailRequest = determineContrail();
 	}
 
 	public List<Subnet> getSubnets() {
@@ -159,6 +160,7 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 
 	public void setContrailNetwork(ContrailNetwork contrailNetwork) {
 		this.contrailNetwork = contrailNetwork;
+		this.contrailRequest = determineContrail();
 	}
 
 	public Boolean getBackout() {
@@ -184,13 +186,16 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 	public void setMsoRequest(MsoRequest msoRequest) {
 		this.msoRequest = msoRequest;
 	}
-
-	public boolean isContrailRequest() {
-		return (networkTechnology == NetworkTechnology.CONTRAIL) && (contrailNetwork != null);
-	}
-	
 	@JsonIgnore
-	public void setContrailRequest() {
+	protected void setContrailRequest(boolean contrailRequest) {
 		this.contrailRequest = contrailRequest;
 	}
+	public boolean isContrailRequest() {
+		return contrailRequest;
+	}
+	
+	private boolean determineContrail() {
+		return (networkTechnology == NetworkTechnology.CONTRAIL && (contrailNetwork != null));
+	}
+	
 }

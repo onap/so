@@ -21,8 +21,9 @@
 
 package org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans;
 
+import org.openecomp.mso.db.request.beans.OperationStatus;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.openecomp.mso.requestsdb.OperationStatus;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
 public class GetE2EServiceInstanceResponse {

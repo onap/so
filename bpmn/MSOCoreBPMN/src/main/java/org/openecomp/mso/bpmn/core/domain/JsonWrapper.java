@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,77 +48,73 @@ import org.openecomp.mso.logger.MsoLogger;
  */
 @JsonInclude(Include.NON_NULL)
 public abstract class JsonWrapper implements Serializable  {
-	
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, JsonWrapper.class);
 	@JsonInclude(Include.NON_NULL)
 	public String toJsonString(){
-		
+
 		String jsonString = "";
 		//convert with Jackson
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-		
+
 		mapper.setSerializationInclusion(Include.NON_NULL);
-		
+
 		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 		try {
 			jsonString = ow.writeValueAsString(this);
-//		} catch (JsonGenerationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (JsonMappingException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		} catch (Exception e){
 
 			LOGGER.debug("Exception :",e);
 		}
 		return jsonString;
 	}
-	
+
 	@JsonInclude(Include.NON_NULL)
 	public JSONObject toJsonObject(){
 
-        ObjectMapper mapper = new ObjectMapper();
-       // mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-        //mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
-
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-       // mapper.enable(com.fasterxml.jackson.map.DeserializationFeature.UNWRAP_ROOT_VALUE);
-        JSONObject json = new JSONObject();
-         try {
+		ObjectMapper mapper = new ObjectMapper();   
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);    
+		JSONObject json = new JSONObject();
+		try {
 			json = new JSONObject(mapper.writeValueAsString(this));
-		} catch (JSONException | IOException e) {
+		} catch (JsonGenerationException e) {
+			LOGGER.debug("Exception :",e);
+		} catch (JsonMappingException e) {
+			LOGGER.debug("Exception :",e);
+		} catch (JSONException e) {
+			LOGGER.debug("Exception :",e);
+		} catch (IOException e) {
 			LOGGER.debug("Exception :",e);
 		}
-        return json;
+		return json; 
 	}
-	
+
 	public String listToJson(List list) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-        
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+
 		String jsonString = "";
 		try {
 			jsonString = mapper.writeValueAsString(list);
+		} catch (JsonGenerationException e) {
+			LOGGER.debug("Exception :",e);
+		} catch (JsonMappingException e) {
+			LOGGER.debug("Exception :",e);
 		} catch (IOException e) {
 			LOGGER.debug("Exception :",e);
 		}
 		return jsonString;
 	}
-	
+
 	@JsonInclude(Include.NON_NULL)
 	public String toJsonStringNoRootName(){
-		
+
 		String jsonString = "";
 		//convert with Jackson
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setSerializationInclusion(Include.NON_NULL);
-		
+
 		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 		try {
 			jsonString = ow.writeValueAsString(this);
@@ -128,11 +124,10 @@ public abstract class JsonWrapper implements Serializable  {
 		}
 		return jsonString;
 	}
-	
+
 	/**
 	 * Returns a string representation of this object.
 	 */
-	 @Override
 	public String toString() {
 		return this.toJsonString();
 	}

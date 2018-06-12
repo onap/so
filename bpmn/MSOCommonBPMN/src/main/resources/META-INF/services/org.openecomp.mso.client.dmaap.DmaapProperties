@@ -1,1 +1,2 @@
-org.openecomp.mso.client.dmaaproperties.DefaultDmaapPropertiesImpl
+org.openecomp.mso.client.dmaapproperties.GlobalDmaapPropertiesImpl
+org.openecomp.mso.client.dmaapproperties.DefaultDmaapPropertiesImpl

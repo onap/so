@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
+
 import static org.apache.commons.lang3.StringUtils.*
 
 import org.apache.commons.lang3.*
@@ -27,6 +29,10 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 
 /**
@@ -74,6 +80,8 @@ import org.springframework.web.util.UriUtils
  *
  */
 class GenericDeleteVnf extends AbstractServiceTaskProcessor{
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, GenericDeleteVnf.class);
+
 
 	String Prefix = "GENDV_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -85,9 +93,8 @@ class GenericDeleteVnf extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void preProcessRequest(DelegateExecution execution) {
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericDeleteVnf PreProcessRequest Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericDeleteVnf PreProcessRequest Process")
 
 		execution.setVariable("GENDV_resourceVersionProvided", true)
 		execution.setVariable("GENDV_SuccessIndicator", false)
@@ -99,28 +106,28 @@ class GenericDeleteVnf extends AbstractServiceTaskProcessor{
 			String type = execution.getVariable("GENDV_type")
 
 			if(isBlank(type) || isBlank(vnfId)){
-				utils.log("ERROR", "Incoming Required Variable is null!", isDebugEnabled)
+				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Incoming Required Variable is null!", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming Required Variable is Missing or Null!")
 			}else{
-				utils.log("DEBUG", "Incoming Vnf Id is: " + vnfId, isDebugEnabled)
+				msoLogger.debug("Incoming Vnf Id is: " + vnfId)
 
 				String resourceVersion = execution.getVariable("GENDV_resourceVersion")
 				if(isBlank(resourceVersion)){
-					utils.log("DEBUG", "Vnf Resource Version is NOT Provided", isDebugEnabled)
+					msoLogger.debug("Vnf Resource Version is NOT Provided")
 					execution.setVariable("GENDV_resourceVersionProvided", false)
 				}else{
-					utils.log("DEBUG", "Incoming Vnf Resource Version is: " + resourceVersion, isDebugEnabled)
+					msoLogger.debug("Incoming Vnf Resource Version is: " + resourceVersion)
 				}
 			}
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("ERROR", " Error encountered within GenericDeleteVnf PreProcessRequest method!" + e, isDebugEnabled)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Error encountered within GenericDeleteVnf PreProcessRequest method!" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in GenericDeleteVnf PreProcessRequest")
 
 		}
-		utils.log("DEBUG", "*** COMPLETED GenericDeleteVnf PreProcessRequest Process ***", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericDeleteVnf PreProcessRequest Process ")
 	}
 
 	/**
@@ -131,15 +138,14 @@ class GenericDeleteVnf extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void getVnfResourceVersion(DelegateExecution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericDeleteVnf GetVnfResourceVersion Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericDeleteVnf GetVnfResourceVersion Process")
 		try {
 			String vnfId = execution.getVariable("GENDV_vnfId")
 			String type = execution.getVariable("GENDV_type")
-			utils.log("DEBUG", "Type of Vnf Getting is: " + type, isDebugEnabled)
+			msoLogger.debug("Type of Vnf Getting is: " + type)
 
-			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 
 			//Determine Type of Vnf Querying For
@@ -149,57 +155,57 @@ class GenericDeleteVnf extends AbstractServiceTaskProcessor{
 			}else if(type.equals("vce")){
 				aai_uri = aaiUriUtil.getNetworkVceUri(execution)
 			}else{
-				utils.log("DEBUG", "Invalid Incoming GENDV_type", isDebugEnabled)
+				msoLogger.debug("Invalid Incoming GENDV_type")
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Invalid Incoming GENDV_type")
 			}
 
 			String getVnfPath = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8")
 
 			execution.setVariable("GENDV_getVnfPath", getVnfPath)
-			utils.logAudit("Get Vnf Resource Version Url is: " + getVnfPath)
+			msoLogger.debug("Get Vnf Resource Version Url is: " + getVnfPath)
 
 			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, getVnfPath)
 			int responseCode = response.getStatusCode()
 			execution.setVariable("GENDV_getVnfResponseCode", responseCode)
-			utils.log("DEBUG", "  GET Vnf response code is: " + responseCode, isDebugEnabled)
+			msoLogger.debug("  GET Vnf response code is: " + responseCode)
 
-			utils.logAudit("GenericDeleteVnf Get VNF Response Code: " + responseCode)
+			msoLogger.debug("GenericDeleteVnf Get VNF Response Code: " + responseCode)
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 			execution.setVariable("GENDV_getVnfResponse", aaiResponse)
 
-			utils.logAudit("GenericDeleteVnf Get VNF Response: " + aaiResponse)
+			msoLogger.debug("GenericDeleteVnf Get VNF Response: " + aaiResponse)
 			//Process Response
 			if(responseCode == 200 || responseCode == 202){
-				utils.log("DEBUG", "GET Vnf Received a Good Response: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("GET Vnf Received a Good Response: \n" + aaiResponse)
 				execution.setVariable("GENDV_FoundIndicator", true)
 				if(utils.nodeExists(aaiResponse, "resource-version")){
 					String resourceVersion = utils.getNodeText1(aaiResponse, "resource-version")
 					execution.setVariable("GENDV_resourceVersion", resourceVersion)
-					utils.log("DEBUG", "SI Resource Version is: " + resourceVersion, isDebugEnabled)
+					msoLogger.debug("SI Resource Version is: " + resourceVersion)
 				}else{
-					utils.log("DEBUG", "GET Vnf for Resource Version Response Does NOT Contain a resource-version", isDebugEnabled)
+					msoLogger.debug("GET Vnf for Resource Version Response Does NOT Contain a resource-version")
 					exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Unable to obtain Vnf resource-version. GET Vnf Response Does NOT Contain a resource-version")
 				}
 
 			}else if(responseCode == 404){
-				utils.log("DEBUG", "GET Vnf Received a Not Found (404) Response", isDebugEnabled)
+				msoLogger.debug("GET Vnf Received a Not Found (404) Response")
 				execution.setVariable("GENDV_SuccessIndicator", true)
 				execution.setVariable("WorkflowResponse", "  ") // for junits
 			}
 			else{
-				utils.log("DEBUG", "  GET Vnf Received a Bad Response: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("  GET Vnf Received a Bad Response: \n" + aaiResponse)
 				exceptionUtil.MapAAIExceptionToWorkflowExceptionGeneric(execution, aaiResponse, responseCode)
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("DEBUG", " Error encountered within GenericDeleteVnf GetVnfResourceVersion method!" + e, isDebugEnabled)
+			msoLogger.debug(" Error encountered within GenericDeleteVnf GetVnfResourceVersion method!" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured During GetVnfResourceVersion")
 		}
-		utils.log("DEBUG", " *** COMPLETED GenericDeleteVnf GetVnfResourceVersion Process*** ", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericDeleteVnf GetVnfResourceVersion Process")
 	}
 
 	/**
@@ -209,17 +215,16 @@ class GenericDeleteVnf extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void deleteVnf(DelegateExecution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericDeleteVnf DeleteVnf Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericDeleteVnf DeleteVnf Process")
 		try {
 			String vnfId = execution.getVariable("GENDV_vnfId")
 			String type = execution.getVariable("GENDV_type")
-			utils.log("DEBUG", "Type of Vnf Getting is: " + type, isDebugEnabled)
+			msoLogger.debug("Type of Vnf Getting is: " + type)
 			String resourceVersion = execution.getVariable("GENDV_resourceVersion")
-			utils.log("DEBUG", "Incoming Vnf Resource Version is: " + resourceVersion, isDebugEnabled)
+			msoLogger.debug("Incoming Vnf Resource Version is: " + resourceVersion)
 
-			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 
 			//Determine Type of Vnf Querying For
@@ -229,48 +234,48 @@ class GenericDeleteVnf extends AbstractServiceTaskProcessor{
 			}else if(type.equals("vce")){
 				aai_uri = aaiUriUtil.getNetworkVceUri(execution)
 			}else{
-				utils.log("DEBUG", "Invalid Incoming GENDV_type", isDebugEnabled)
+				msoLogger.debug("Invalid Incoming GENDV_type")
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Invalid Incoming GENDV_type")
 			}
 
 			String deleteVnfPath = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") +'?resource-version=' + UriUtils.encode(resourceVersion,"UTF-8")
 
 			execution.setVariable("GENDV_deleteVnfPath", deleteVnfPath)
-			utils.logAudit("Delete Vnf Url is: " + deleteVnfPath)
+			msoLogger.debug("Delete Vnf Url is: " + deleteVnfPath)
 
 			APIResponse response = aaiUriUtil.executeAAIDeleteCall(execution, deleteVnfPath)
 			int responseCode = response.getStatusCode()
 			execution.setVariable("GENDV_deleteVnfResponseCode", responseCode)
-			utils.log("DEBUG", "  DELETE Vnf response code is: " + responseCode, isDebugEnabled)
+			msoLogger.debug("  DELETE Vnf response code is: " + responseCode)
 
-			utils.logAudit("GenericDeleteVnf Delete VNF Response Code: " + responseCode)
+			msoLogger.debug("GenericDeleteVnf Delete VNF Response Code: " + responseCode)
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 			execution.setVariable("GENDV_deleteVnfResponse", aaiResponse)
 
-			utils.logAudit("GenericDeleteVnf Delete VNF Response: " + aaiResponse)
+			msoLogger.debug("GenericDeleteVnf Delete VNF Response: " + aaiResponse)
 			//Process Response
 			if(responseCode == 204){
-				utils.log("DEBUG", "  DELETE Vnf Received a Good Response", isDebugEnabled)
+				msoLogger.debug("  DELETE Vnf Received a Good Response")
 				execution.setVariable("GENDV_FoundIndicator", true)
 			}else if(responseCode == 404){
-				utils.log("DEBUG", "  DELETE Vnf Received a Not Found (404) Response", isDebugEnabled)
+				msoLogger.debug("  DELETE Vnf Received a Not Found (404) Response")
 			}else if(responseCode == 412){
-				utils.log("DEBUG", "DELETE Vnf Received a Resource Version Mismatch Error: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("DELETE Vnf Received a Resource Version Mismatch Error: \n" + aaiResponse)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 412, "Delete Vnf Received a resource-version Mismatch Error Response from AAI")
 			}else{
-				utils.log("DEBUG", "DELETE Vnf Received a BAD REST Response: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("DELETE Vnf Received a BAD REST Response: \n" + aaiResponse)
 				exceptionUtil.MapAAIExceptionToWorkflowExceptionGeneric(execution, aaiResponse, responseCode)
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("DEBUG", " Error encountered within GenericDeleteVnf DeleteVnf method!" + e, isDebugEnabled)
+			msoLogger.debug(" Error encountered within GenericDeleteVnf DeleteVnf method!" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured During Delete Vnf")
 		}
-		utils.log("DEBUG", " *** COMPLETED GenericDeleteVnf DeleteVnf Process*** ", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericDeleteVnf DeleteVnf Process")
 	}
 
 

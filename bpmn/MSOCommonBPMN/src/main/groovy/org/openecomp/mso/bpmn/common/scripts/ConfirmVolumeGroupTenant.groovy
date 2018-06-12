@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
+
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -33,7 +35,8 @@ import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
-
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
 
 /**
  * Vnf Module Subflow for confirming the volume group belongs
@@ -44,27 +47,27 @@ import org.xml.sax.InputSource
  *
  */
 class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ConfirmVolumeGroupTenant.class);
 
 	String Prefix="CVGT_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 	public void preProcessRequest(DelegateExecution execution){
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
-		utils.log("DEBUG", " ======== STARTED Confirm Volume Group Tenant Subflow ======== ", isDebugEnabled)
+		msoLogger.trace("STARTED Confirm Volume Group Tenant Subflow ")
 		String processKey = getProcessKey(execution);
 		try{
-			utils.log("DEBUG", " === Started QueryAAIForVolumeGroup Process === ", isDebugEnabled)
+			msoLogger.trace("Started QueryAAIForVolumeGroup Process ")
 
 			String volumeGroupId = execution.getVariable("volumeGroupId")
 			String incomingGroupName = execution.getVariable("volumeGroupName")
 			String incomingTenantId = execution.getVariable("tenantId")
 			def aicCloudRegion = execution.getVariable("aicCloudRegion")
-			String aai = execution.getVariable("URN_aai_endpoint")
+			String aai = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			def aai_uri = aaiUriUtil.getCloudInfrastructureCloudRegionUri(execution)
-			logDebug('AAI URI is: ' + aai_uri, isDebugEnabled)
+			msoLogger.debug('AAI URI is: ' + aai_uri)
 
 			String path = aai + "${aai_uri}/${aicCloudRegion}/volume-groups/volume-group/" + volumeGroupId
 
@@ -75,12 +78,12 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 			String response = queryAAIForVolumeGroupResponse.getResponseBodyAsString()
 			response = StringEscapeUtils.unescapeXml(response)
 
-			utils.logAudit("ConfirmVolumeGroup Response: " + response)
-			utils.logAudit("ConfirmVolumeGroup Response Code: " + responseCode)
+			msoLogger.debug("ConfirmVolumeGroup Response: " + response)
+			msoLogger.debug("ConfirmVolumeGroup Response Code: " + responseCode)
 
 			if(responseCode == 200 && response != null){
 				execution.setVariable("queryAAIVolumeGroupResponse", response)
-				utils.log("DEBUG", "QueryAAIForVolumeGroup Received a Good REST Response is: \n" + response, isDebugEnabled)
+				msoLogger.debug("QueryAAIForVolumeGroup Received a Good REST Response is: \n" + response)
 
 				String volumeGroupTenantId = ""
 				InputSource source = new InputSource(new StringReader(response));
@@ -112,47 +115,46 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 
 				//Determine if Tenant Ids match
 				if(incomingTenantId.equals(volumeGroupTenantId)){
-					utils.log("DEBUG", "Tenant Ids Match", isDebugEnabled)
+					msoLogger.debug("Tenant Ids Match")
 					execution.setVariable("tenantIdsMatch", true)
 				}else{
-					utils.log("DEBUG", "Tenant Ids DO NOT Match", isDebugEnabled)
+					msoLogger.debug("Tenant Ids DO NOT Match")
 					execution.setVariable("tenantIdsMatch", false)
 				}
 
 				//Determine if Volume Group Names match
 				String volumeGroupName = utils.getNodeText1(response, "volume-group-name")
 				if(incomingGroupName == null || incomingGroupName.length() < 1){
-					utils.log("DEBUG", "Incoming Volume Group Name is NOT Provided.", isDebugEnabled)
+					msoLogger.debug("Incoming Volume Group Name is NOT Provided.")
 					execution.setVariable("groupNamesMatch", true)
 				}else{
-					utils.log("DEBUG", "Incoming Volume Group Name is: " + incomingGroupName, isDebugEnabled)
+					msoLogger.debug("Incoming Volume Group Name is: " + incomingGroupName)
 					if(volumeGroupName.equals(incomingGroupName)){
-						utils.log("DEBUG", "Volume Group Names Match.", isDebugEnabled)
+						msoLogger.debug("Volume Group Names Match.")
 						execution.setVariable("groupNamesMatch", true)
 					}else{
-						utils.log("DEBUG", "Volume Group Names DO NOT Match.", isDebugEnabled)
+						msoLogger.debug("Volume Group Names DO NOT Match.")
 						execution.setVariable("groupNamesMatch", false)
 					}
 				}
 			}else{
-				utils.log("DEBUG", "QueryAAIForVolumeGroup Bad REST Response!", isDebugEnabled)
+				msoLogger.debug("QueryAAIForVolumeGroup Bad REST Response!")
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1, "Error Searching AAI for Volume Group. Received a Bad Response.")
 			}
 
 		}catch(BpmnError b){
 			throw b
 		}catch(Exception e){
-			utils.log("ERROR", "Exception Occured Processing queryAAIForVolumeGroup. Exception is:\n" + e, isDebugEnabled)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing queryAAIForVolumeGroup.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in preProcessRequest.")
 		}
-		utils.log("DEBUG", "=== COMPLETED queryAAIForVolumeGroup Process === ", isDebugEnabled)
+		msoLogger.trace("COMPLETED queryAAIForVolumeGroup Process ")
 	}
 
 	public void assignVolumeHeatId(DelegateExecution execution){
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		try{
-			utils.log("DEBUG", " === Started assignVolumeHeatId Process === ", isDebugEnabled)
+			msoLogger.trace("Started assignVolumeHeatId Process ")
 
 			String response = execution.getVariable("queryAAIVolumeGroupResponse")
 			String heatStackId = utils.getNodeText1(response, "heat-stack-id")
@@ -160,21 +162,20 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 			execution.setVariable("ConfirmVolumeGroupTenantResponse", heatStackId)
 			// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead
 			execution.setVariable("WorkflowResponse", heatStackId)
-			utils.log("DEBUG", "Volume Heat Stack Id is: " + heatStackId, isDebugEnabled)
+			msoLogger.debug("Volume Heat Stack Id is: " + heatStackId)
 
 		}catch(Exception e){
-		utils.log("ERROR", "Exception Occured Processing assignVolumeHeatId. Exception is:\n" + e, isDebugEnabled)
+		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing assignVolumeHeatId.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e);
 		exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in assignVolumeHeatId.")
 	}
-	utils.log("DEBUG", "=== COMPLETED assignVolumeHeatId Process === ", isDebugEnabled)
-	utils.log("DEBUG", "======== COMPLETED Confirm Volume Group Tenant Subflow ======== ", isDebugEnabled)
+	msoLogger.trace("COMPLETED assignVolumeHeatId Process ")
+	msoLogger.trace("COMPLETED Confirm Volume Group Tenant Subflow ")
 }
 
 	public void assignWorkflowException(DelegateExecution execution, String message){
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 		String processKey = getProcessKey(execution);
-		utils.log("DEBUG", " === STARTED Assign Workflow Exception === ", isDebugEnabled)
+		msoLogger.trace("STARTED Assign Workflow Exception ")
 		try{
 			String volumeGroupId = execution.getVariable("volumeGroupId")
 			int errorCode = 1
@@ -182,9 +183,9 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 
 			exceptionUtil.buildWorkflowException(execution, errorCode, errorMessage)
 		}catch(Exception e){
-			utils.log("ERROR", "Exception Occured Processing assignWorkflowException. Exception is:\n" + e, isDebugEnabled)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing assignWorkflowException.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e);
 		}
-		utils.log("DEBUG", "=== COMPLETED Assign Workflow Exception ==== ", isDebugEnabled)
+		msoLogger.trace("COMPLETED Assign Workflow Exception =")
 	}
 
 

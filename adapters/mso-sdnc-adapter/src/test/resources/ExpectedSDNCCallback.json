@@ -1,0 +1,10 @@
+{
+    "SDNCEvent":{
+       "eventType":"UCPE-ACTIVATION",
+       "eventCorrelatorType":"UCPE-HOST-NAME",
+       "eventCorrelator":"USUCPM063AD0101UJZZ01",
+       "params":{
+          "success-indicator":"Y"
+       }
+    }
+ }

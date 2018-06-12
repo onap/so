@@ -31,6 +31,10 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @XmlRootElement(name = "rollbackNetworkResponse")
 public class RollbackNetworkResponse extends NetworkResponseCommon {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3115905123337163846L;
 	private Boolean networkRolledBack;
 
 	public RollbackNetworkResponse() {

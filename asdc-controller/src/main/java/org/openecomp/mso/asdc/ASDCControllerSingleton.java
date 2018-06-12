@@ -20,63 +20,48 @@
 
 package org.openecomp.mso.asdc;
 
-
 import javax.annotation.PreDestroy;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 
-import org.openecomp.mso.asdc.client.ASDCGlobalController;
-import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.asdc.client.ASDCController;
+import org.openecomp.mso.asdc.client.exceptions.ASDCControllerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
-@Singleton(name = "ASDCController")
-@Lock(LockType.READ)
-@Startup
-@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+import java.security.SecureRandom;
+
+@Component
+@Profile("!test")
 public class ASDCControllerSingleton {
+   
+   
+    @Autowired
+    private ASDCController asdcController;    
+  
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC);
-    private static boolean working = false;
 
-    private ASDCGlobalController globalController = new ASDCGlobalController ();
+    @Scheduled (fixedRate = 50000)
+	public void periodicControllerTask() {
+       
+		try {
+            int randomNumber = new SecureRandom().nextInt(Integer.MAX_VALUE);
+			asdcController.setControllerName("mso-controller"+randomNumber);
+			asdcController.initASDC();
+		} catch (ASDCControllerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+   
+   @PreDestroy
+   private void terminate () {
+	   try {
+		asdcController.closeASDC ();
+	} catch (ASDCControllerException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+   }
 
-    /**
-     * Main Constructor of the ASDC Singleton
-     */
-    public ASDCControllerSingleton () {
-    }
-
-    @Schedule(second ="30", minute = "*", hour = "*", persistent = false)
-    public void periodicControllerTask () {
-        if (isWorking ()) {
-            LOGGER.debug ("Another thread is already trying to init ASDC, cancel this periodic call");
-            return;
-        }
-        try {
-            setWorking (true);
-            
-            globalController.updateControllersConfigIfNeeded();
-            globalController.checkInStoppedState();
-
-        } finally {
-            setWorking (false);
-        }
-    }
-
-    @PreDestroy
-    private void terminate () {
-        globalController.closeASDC ();
-    }
-
-    private static synchronized boolean isWorking () {
-        return ASDCControllerSingleton.working;
-    }
-
-    private static synchronized void setWorking (boolean working) {
-        ASDCControllerSingleton.working = working;
-    }
 }

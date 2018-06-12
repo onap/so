@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.sdnc.sdncrest;
 
-import org.openecomp.mso.HealthCheckUtils;
+import java.text.ParseException;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.http.HttpStatus;
 import org.openecomp.mso.adapters.sdnc.impl.Constants;
 import org.openecomp.mso.adapters.sdncrest.SDNCEvent;
 import org.openecomp.mso.adapters.sdncrest.SDNCResponseCommon;
@@ -29,45 +45,57 @@ import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.utils.UUIDChecker;
-import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.text.ParseException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * SDNC REST adapter interface added in 1702 to support the SDNC "agnostic" API.
  */
+@Component
 @Path("/")
+@Api(value = "/", description = "Root of SDNCAdapterRest")
 public class SDNCAdapterRest {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, SDNCAdapterRest.class);
 	private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
 
-	private static final String MSO_PROPERTIES_ID = "MSO_PROP_SDNC_ADAPTER";
+	private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
+	 
+	public static final Response HEALTH_CHECK_RESPONSE = Response.status (HttpStatus.SC_OK)
+	            .entity (CHECK_HTML)
+	            .build ();
 
-	@HEAD
+	@Autowired
+	private Environment env;
+	
+	
+	@Autowired
+	private SDNCServiceRequestTask sdncServiceTask;
+	
+	@Autowired
+	private BPRestCallback bpRestCallback;
+	
 	@GET
 	@Path("/v1/sdnc/healthcheck")
+	@ApiOperation(value="Healthcheck for SDNCAdapter",response = Response.class)
 	@Produces(MediaType.TEXT_HTML)
-	public Response healthcheck(@QueryParam("requestId") String requestId) {
-		long startTime = System.currentTimeMillis();
+	public Response healthcheck(@QueryParam("requestId") String requestId) {		
 		MsoLogger.setServiceName("Healthcheck");
 		UUIDChecker.verifyOldUUID(requestId, LOGGER);
-		HealthCheckUtils healthCheck = new HealthCheckUtils();
-
-		if (!healthCheck.siteStatusCheck(LOGGER)) {
-			return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-		}
-
-		if (!healthCheck.configFileCheck(LOGGER, startTime, MSO_PROPERTIES_ID)) {
-			return HealthCheckUtils.NOT_STARTED_RESPONSE;
-		}
-
-		LOGGER.debug("healthcheck - Successful");
-		return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
+		return HEALTH_CHECK_RESPONSE;
+	}
+	
+	@HEAD
+	@Path("/v1/sdnc/healthcheck")
+	@ApiOperation(value="Healthcheck for SDNCAdapter",response = Response.class)
+	@Produces(MediaType.TEXT_HTML)
+	public Response headHealthcheck(@QueryParam("requestId") String requestId) {
+		MsoLogger.setServiceName("Healthcheck");
+		UUIDChecker.verifyOldUUID(requestId, LOGGER);
+		return HEALTH_CHECK_RESPONSE;
 	}
 
 	/**
@@ -77,7 +105,8 @@ public class SDNCAdapterRest {
 	 * @param msoServiceInstanceId the top-level service-instance-id (used for logging only)
 	 */
 	@POST
-	@Path("/v1/sdnc/services")
+	@Path("/v1/sdnc")
+	@ApiOperation(value="Processes an SDNCServiceRequest from BP",response = Response.class)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response service(
@@ -91,25 +120,8 @@ public class SDNCAdapterRest {
 			LOGGER.debug(getClass().getSimpleName() + ".service(request)"
 				+ " entered with request: " + request.toJson());
 
-			SDNCServiceRequestTask task = new SDNCServiceRequestTask(request, msoRequestId,
-					msoServiceInstanceId, "/services");
-
-	    	try {
-	    		Thread thread = new Thread(task);
-	    		thread.start();
-	    	} catch (Exception e) {
-	    		String msg = "Failed to start thread to run SDNCServiceTask";
-	    		LOGGER.error(MessageEnum.RA_SEND_REQUEST_SDNC_ERR, "SDNC", "", MsoLogger.ErrorCode.BusinessProcesssError, msg, e);
-	    		ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, msg);
-	    		SDNCServiceError error = new SDNCServiceError(request.getSDNCRequestId(),
-	    			String.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR), e.toString(), "Y");
-	    		LOGGER.debug(getClass().getSimpleName() + ".service(request)"
-	    			+ " exited with error: " + msg);
-	    		return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-	    			.entity(new GenericEntity<SDNCServiceError>(error){})
-	    			.build();
-	    	}
-
+			sdncServiceTask.runRequest(request, msoRequestId,msoServiceInstanceId, "/attservices");
+	    
 	    	// Send sync response to caller
     		LOGGER.debug(getClass().getSimpleName() + ".service(request)"
     			+ " exited successfully");
@@ -119,7 +131,7 @@ public class SDNCAdapterRest {
 			LOGGER.error(MessageEnum.RA_SEND_REQUEST_SDNC_ERR, "SDNC", "", MsoLogger.ErrorCode.BusinessProcesssError, msg, e);
     		LOGGER.debug(getClass().getSimpleName() + ".service(request)"
     			+ " exited with error: " + msg);
-			SDNCServiceError error = new SDNCServiceError(request.getSDNCRequestId(),
+			SDNCServiceError error = new SDNCServiceError(request.getSdncRequestId(),
 				String.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR), e.toString(), "Y");
 			return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
 				.entity(new GenericEntity<SDNCServiceError>(error){})
@@ -135,7 +147,8 @@ public class SDNCAdapterRest {
 	 * @param content the notification content
 	 */
 	@POST
-	@Path("/SDNCNotify/services")
+	@Path("/SDNCNotify/attservices")
+	@ApiOperation(value="Processes a notification from SDNC for agnostic API services",response = Response.class)
 	@Consumes({MediaType.APPLICATION_XML})
 	@Produces({MediaType.APPLICATION_XML})
 	public Response serviceNotification(String content) {
@@ -148,9 +161,9 @@ public class SDNCAdapterRest {
 			// a synchronous response, we can use the same code to parse it.
 			SDNCResponseCommon response = SDNCServiceRequestConnector.parseResponseContent(content);
 
-			String bpUrl = SDNCAdapterProperties.getProperty(Constants.BPEL_REST_URL_PROP, null);
+			String bpUrl = env.getProperty(Constants.BPEL_REST_URL_PROP, "");
 
-			if (bpUrl == null) {
+			if (bpUrl == null || bpUrl.equals("")) {
 				String error = "Missing configuration for: " + Constants.BPEL_REST_URL_PROP;
 				LOGGER.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, Constants.BPEL_REST_URL_PROP, "SDNC", "",
 					MsoLogger.ErrorCode.DataError, "Missing config param");
@@ -158,9 +171,8 @@ public class SDNCAdapterRest {
 				return Response.status(HttpServletResponse.SC_BAD_REQUEST).entity(error).build();
 			}
 
-			long bpStartTime = System.currentTimeMillis();
-			BPRestCallback callback = new BPRestCallback();
-			boolean callbackSuccess = callback.send(bpUrl, "SDNCAResponse", response.getSDNCRequestId(), response.toJson());
+			long bpStartTime = System.currentTimeMillis();		
+			boolean callbackSuccess = bpRestCallback.send(bpUrl, "SDNCAResponse", response.getSdncRequestId(), response.toJson());
 
 			if (callbackSuccess) {
 				LOGGER.recordMetricEvent(bpStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
@@ -175,12 +187,18 @@ public class SDNCAdapterRest {
 
 			return Response.ok().build();
 		} catch (ParseException e) {
+			LOGGER.error(e);
 			LOGGER.error(MessageEnum.RA_PARSING_REQUEST_ERROR, "SDNC", "SDNCNotify/services",
 				MsoLogger.ErrorCode.SchemaError, e.getMessage());
 			LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
 				MsoLogger.ResponseCode.SchemaError, e.getMessage());
 			return Response.status(HttpServletResponse.SC_BAD_REQUEST).entity(e.getMessage()).build();
-		}
+		}catch (Exception e) {
+				LOGGER.error(e);
+				LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
+					MsoLogger.ResponseCode.SchemaError, e.getMessage());
+				return Response.status(HttpServletResponse.SC_BAD_REQUEST).entity(e.getMessage()).build();
+			}
 	}
 
 	/**
@@ -188,23 +206,25 @@ public class SDNCAdapterRest {
 	 * Note that the "myurl" configuration property specifies the path
 	 * up to and including /SDNCNotify. The /activate part of the path
 	 * is added by this class.
+	 * Used By UCPE callbacks
 	 * @param content the notification content
 	 */
 	@POST
 	@Path("/SDNCNotify/event")
+	@ApiOperation(value="Processes an event notification from SDNC",response = Response.class)
 	@Consumes({MediaType.APPLICATION_XML})
 	@Produces({MediaType.APPLICATION_XML})
 	public Response eventNotification(String content) {
 		LOGGER.info(MessageEnum.RA_RECEIVE_SDNC_NOTIF, content, "SDNC", "SDNCNotify/event");
 
-		long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis(); 
 
 		try {
 			SDNCEvent event = SDNCEventParser.parse(content);
 
-			String bpUrl = SDNCAdapterProperties.getProperty(Constants.BPEL_REST_URL_PROP, null);
+			String bpUrl = env.getProperty(Constants.BPEL_REST_URL_PROP, "");
 
-			if (bpUrl == null) {
+			if (bpUrl == null || bpUrl.equals("")) {
 				String error = "Missing configuration for: " + Constants.BPEL_REST_URL_PROP;
 				LOGGER.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, Constants.BPEL_REST_URL_PROP, "SDNC", "",
 					MsoLogger.ErrorCode.DataError, "Missing config param");
@@ -212,9 +232,8 @@ public class SDNCAdapterRest {
 				return Response.status(HttpServletResponse.SC_BAD_REQUEST).entity(error).build();
 			}
 
-			long bpStartTime = System.currentTimeMillis();
-			BPRestCallback callback = new BPRestCallback();
-			boolean callbackSuccess = callback.send(bpUrl, "SDNCAEvent", event.getEventCorrelator(), event.toJson());
+			long bpStartTime = System.currentTimeMillis();		
+			boolean callbackSuccess = bpRestCallback.send(bpUrl, "SDNCAEvent", event.getEventCorrelator(), event.toJson());
 
 			if (callbackSuccess) {
 				LOGGER.recordMetricEvent(bpStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,

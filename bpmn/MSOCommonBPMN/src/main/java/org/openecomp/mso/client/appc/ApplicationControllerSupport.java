@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,15 +32,12 @@ import org.springframework.stereotype.Component;
 import org.onap.appc.client.lcm.api.LifeCycleManagerStateful;
 import org.onap.appc.client.lcm.api.ResponseHandler;
 import org.onap.appc.client.lcm.model.Status;
-import com.att.eelf.configuration.EELFLogger;
-import com.att.eelf.configuration.EELFManager;
-import com.att.eelf.configuration.EELFLogger.Level;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.springframework.stereotype.Service;
 
-@Component
 public class ApplicationControllerSupport {
 
 	private static final int ACCEPT_SERIES = 100;

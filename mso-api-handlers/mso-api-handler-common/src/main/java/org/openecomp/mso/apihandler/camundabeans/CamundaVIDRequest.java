@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,7 @@
  */
 
 package org.openecomp.mso.apihandler.camundabeans;
+
 
 import org.openecomp.mso.apihandler.common.CommonConstants;
 
@@ -34,12 +35,12 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 	CommonConstants.REQUEST_ID_HEADER,
 	CommonConstants.IS_BASE_VF_MODULE_VARIABLE, CommonConstants.RECIPE_TIMEOUT_VARIABLE,
 	CommonConstants.REQUEST_ACTION_VARIABLE, CommonConstants.SERVICE_INSTANCE_ID_VARIABLE,
-	CommonConstants.CORRELATION_ID, CommonConstants.VNF_ID_VARIABLE, CommonConstants.VF_MODULE_ID_VARIABLE,
+	CommonConstants.VNF_ID_VARIABLE, CommonConstants.VF_MODULE_ID_VARIABLE,
 	CommonConstants.VOLUME_GROUP_ID_VARIABLE, CommonConstants.NETWORK_ID_VARIABLE,
 	CommonConstants.CONFIGURATION_ID_VARIABLE, CommonConstants.SERVICE_TYPE_VARIABLE, 
 	CommonConstants.VNF_TYPE_VARIABLE, CommonConstants.VF_MODULE_TYPE_VARIABLE, 
-	CommonConstants.NETWORK_TYPE_VARIABLE, CommonConstants.CAMUNDA_SERVICE_INPUT,
-	CommonConstants.CAMUNDA_SERVICE_INPUT, CommonConstants.RECIPE_PARAMS})
+	CommonConstants.NETWORK_TYPE_VARIABLE, CommonConstants.CAMUNDA_SERVICE_INPUT})
+
 @JsonRootName(CommonConstants.CAMUNDA_ROOT_INPUT)
 public class CamundaVIDRequest {
 
@@ -55,6 +56,7 @@ public class CamundaVIDRequest {
 	@JsonProperty(CommonConstants.REQUEST_ID_HEADER)
 	private CamundaInput msoRequestId;
 
+
 	@JsonProperty(CommonConstants.IS_BASE_VF_MODULE_VARIABLE)
 	private CamundaBooleanInput isBaseVfModule;
 
@@ -66,9 +68,6 @@ public class CamundaVIDRequest {
 
 	@JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_VARIABLE)
 	private CamundaInput serviceInstanceId;
-
-	@JsonProperty(CommonConstants.CORRELATION_ID)
-	private CamundaInput correlationId;
 
 	@JsonProperty(CommonConstants.VNF_ID_VARIABLE)
 	private CamundaInput vnfId;
@@ -96,10 +95,16 @@ public class CamundaVIDRequest {
 
 	@JsonProperty(CommonConstants.NETWORK_TYPE_VARIABLE)
 	private CamundaInput networkType;
-
-	@JsonProperty(CommonConstants.RECIPE_PARAMS)
-	private CamundaInput recipeParams;
 	
+	@JsonProperty(CommonConstants.API_VERSION)
+	private CamundaInput apiVersion;
+	
+	@JsonProperty(CommonConstants.ALACARTE)
+	private CamundaBooleanInput aLaCarte;
+	
+	@JsonProperty(CommonConstants.REQUEST_URI)
+	private CamundaInput requestUri;
+
 	@JsonProperty(CommonConstants.CAMUNDA_SERVICE_INPUT)
 	public CamundaInput getServiceInput() {
 		return serviceInput;
@@ -177,16 +182,6 @@ public class CamundaVIDRequest {
 	@JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_VARIABLE)
 	public void setServiceInstanceId(CamundaInput serviceInstanceId) {
 		this.serviceInstanceId = serviceInstanceId;
-	}
-
-	@JsonProperty(CommonConstants.CORRELATION_ID)
-	public CamundaInput getCorrelationId() {
-		return correlationId;
-	}
-
-	@JsonProperty(CommonConstants.CORRELATION_ID)
-	public void setCorrelationId(CamundaInput correlationId) {
-		this.correlationId = correlationId;
 	}
 
 	@JsonProperty(CommonConstants.VNF_ID_VARIABLE)
@@ -278,15 +273,35 @@ public class CamundaVIDRequest {
 	public void setNetworkType(CamundaInput networkType) {
 		this.networkType = networkType;
 	}
-
-	@JsonProperty(CommonConstants.RECIPE_PARAMS)
-	public CamundaInput getRecipeParams() {
-		return recipeParams;
+	
+	@JsonProperty(CommonConstants.API_VERSION)
+	public CamundaInput getApiVersion() {
+		return apiVersion;
+	}
+	
+	@JsonProperty(CommonConstants.API_VERSION)
+	public void setApiVersion(CamundaInput apiVersion) {
+		this.apiVersion = apiVersion;
 	}
 
-	@JsonProperty(CommonConstants.RECIPE_PARAMS)
-	public void setRecipeParams(CamundaInput recipeParams) {
-		this.recipeParams = recipeParams;
+	@JsonProperty(CommonConstants.ALACARTE)
+	public CamundaBooleanInput getaLaCarte() {
+		return aLaCarte;
+	}
+	
+	@JsonProperty(CommonConstants.ALACARTE)
+	public void setaLaCarte(CamundaBooleanInput aLaCarte) {
+		this.aLaCarte = aLaCarte;
+	}
+	
+	@JsonProperty(CommonConstants.REQUEST_URI)
+	public CamundaInput getRequestUri() {
+		return requestUri;
+	}
+
+	@JsonProperty(CommonConstants.REQUEST_URI)
+	public void setRequestUri(CamundaInput requestUri) {
+		this.requestUri = requestUri;
 	}
 
 	@Override

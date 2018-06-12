@@ -1,0 +1,13 @@
+{
+	"outputs" : [{
+		"outputKey": "key1",
+		"outputValue": "value1"
+	},{
+		"outputKey": "key2",
+		"outputValue": "value2"
+	},{
+		"outputKey": "key3",
+		"outputValue": "value3"
+	}]
+
+}

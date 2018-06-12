@@ -21,7 +21,14 @@
 package org.openecomp.mso.cloud;
 
 
+import java.util.Comparator;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.openpojo.business.annotation.BusinessKey;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * JavaBean JSON class for a CloudSite.  This bean represents a cloud location
@@ -35,32 +42,39 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class CloudSite {
 	@JsonProperty
+	@BusinessKey
 	private String id;
 	@JsonProperty("region_id")
+	@BusinessKey
 	private String regionId;
 	@JsonProperty("identity_service_id")
+	@BusinessKey
 	private String identityServiceId;
 	@JsonProperty("aic_version")
-	private String aic_version;
+	@BusinessKey
+	private String aicVersion;
 	@JsonProperty("clli")
+	@BusinessKey
 	private String clli;
 	@JsonProperty("cloudify_id")
+	@BusinessKey
 	private String cloudifyId;
 	@JsonProperty("platform")
+	@BusinessKey
 	private String platform;
 	@JsonProperty("orchestrator")
+	@BusinessKey
 	private String orchestrator;
-
+	
 	// Derived property (set by CloudConfig loader based on identityServiceId)
 	private CloudIdentity identityService;
 	// Derived property (set by CloudConfig loader based on cloudifyId)
 	private CloudifyManager cloudifyManager;
-
-	public CloudSite() {}
 	
 	public String getId() {
-		return id;
+		return this.id;
 	}
+	
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -76,21 +90,16 @@ public class CloudSite {
 	public String getIdentityServiceId() {
 		return identityServiceId;
 	}
-
-	public CloudIdentity getIdentityService () {
-		return identityService;
-	}
-
-	public void setIdentityService (CloudIdentity identity) {
-		this.identityService = identity;
-	}
 	
-	public String getAic_version() {
-		return aic_version;
+	public void setIdentityServiceId(String identityServiceId) {
+		this.identityServiceId = identityServiceId;
+	}
+	public String getAicVersion() {
+		return aicVersion;
 	}
 
-	public void setAic_version(String aic_version) {
-		this.aic_version = aic_version;
+	public void setAicVersion(String aicVersion) {
+		this.aicVersion = aicVersion;
 	}
 
 	public String getClli() {
@@ -107,14 +116,6 @@ public class CloudSite {
 
 	public void setCloudifyId (String id) {
 		this.cloudifyId = id;
-	}
-
-	public CloudifyManager getCloudifyManager () {
-		return cloudifyManager;
-	}
-
-	public void setCloudifyManager (CloudifyManager cloudify) {
-		this.cloudifyManager = cloudify;
 	}
 	
 	public String getPlatform() {
@@ -133,76 +134,47 @@ public class CloudSite {
 		this.orchestrator = orchestrator;
 	}
 
-	@Override
-	public String toString() {
-		return "CloudSite: id=" + id +
-			", regionId=" + regionId +
-			", identityServiceId=" + identityServiceId +
-			", aic_version=" + aic_version +
-			", clli=" + clli +
-			", cloudifyId=" + cloudifyId +
-			", platform=" + platform +
-			", orchestrator=" + orchestrator;
+	public CloudIdentity getIdentityService () {
+		return identityService;
+	}
+
+	public void setIdentityService (CloudIdentity identity) {
+		this.identityService = identity;
+	}
+	
+	public CloudifyManager getCloudifyManager () {
+		return cloudifyManager;
+	}
+
+	public void setCloudifyManager (CloudifyManager cloudify) {
+		this.cloudifyManager = cloudify;
 	}
 
 	@Override
-	public CloudSite clone() {
-		CloudSite cloudSiteCopy = new CloudSite();
-		cloudSiteCopy.id = this.id;
-		cloudSiteCopy.regionId = this.regionId;
-		cloudSiteCopy.identityServiceId = this.identityServiceId;
-		cloudSiteCopy.aic_version = this.aic_version;
-		cloudSiteCopy.clli = this.clli;
-		cloudSiteCopy.identityService = this.identityService.clone();
-		cloudSiteCopy.cloudifyId = this.cloudifyId;
-		if (this.cloudifyManager != null)  cloudSiteCopy.cloudifyManager = this.cloudifyManager.clone();
-		cloudSiteCopy.platform = this.platform;
-		cloudSiteCopy.orchestrator = this.orchestrator;
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("regionId", getRegionId())
+				.append("identityServiceId", getIdentityServiceId()).append("aicVersion", getAicVersion())
+				.append("clli", getClli()).append("cloudifyId", getCloudifyId()).append("platform", getPlatform())
+				.append("orchestrator", getOrchestrator()).toString();
+	}
 
-		return cloudSiteCopy;
+	@Override
+	public boolean equals(final Object other) {
+		if (other == null) {
+			return false;
+		}
+		if (!getClass().equals(other.getClass())) {
+			return false;
+		}
+		CloudSite castOther = (CloudSite) other;
+		return new EqualsBuilder().append(getRegionId(), castOther.getRegionId())
+				.append(getIdentityServiceId(), castOther.getIdentityServiceId())
+				.append(getAicVersion(), castOther.getAicVersion()).append(getClli(), castOther.getClli()).isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((identityService == null) ? 0 : identityService.hashCode());
-		result = prime * result + ((identityServiceId == null) ? 0 : identityServiceId.hashCode());
-		result = prime * result + ((regionId == null) ? 0 : regionId.hashCode());
-		result = prime * result + ((aic_version == null) ? 0 : aic_version.hashCode());
-		result = prime * result + ((clli == null) ? 0 : clli.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CloudSite other = (CloudSite) obj;
-		if (!cmp(id, other.id))
-			return false;
-		if (!cmp(regionId, other.regionId))
-			return false;
-		if (!cmp(identityServiceId, other.identityServiceId))
-			return false;
-		if (!cmp(aic_version, other.aic_version))
-			return false;
-		if (!cmp(clli, other.clli))
-			return false;
-		if (!cmp(identityService, other.identityService))
-			return false;
-		return true;
-	}
-	private boolean cmp(Object a, Object b) {
-		if (a == null) {
-			return (b == null);
-		} else {
-			return a.equals(b);
-		}
+		return new HashCodeBuilder(1, 31).append(getRegionId()).append(getIdentityServiceId()).append(getAicVersion())
+				.append(getClli()).toHashCode();
 	}
 }

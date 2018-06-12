@@ -1,0 +1,21 @@
+<input xmlns="com:att:sdnctl:northbound-api:v1">
+	<configuration-response-common>
+		<service-information>
+			<service-type>vRouter</service-type>
+			<service-instance-id>f44ea42a-a936-4b47-8848-f7b4ef218457
+			</service-instance-id>
+			<subscriber-name>1802_FLEX_1206_05132018_NIK_0052</subscriber-name>
+		</service-information>
+		<svc-request-id>27fa0fec-4b44-48da-a69b-eadcbfa93780-1526587067790
+		</svc-request-id>
+		<response-code>200</response-code>
+		<response-message>200: ActivateVnfVrouterSuccess</response-message>
+		<ack-final-indicator>Y</ack-final-indicator>
+		<response-parameters>
+			<sequence-number>1</sequence-number>
+			<tag-name>vnf-name</tag-name>
+			<tag-value>USUCPM072AD0101UJRT01</tag-value>
+		</response-parameters>
+	</configuration-response-common>
+</input>
+ 

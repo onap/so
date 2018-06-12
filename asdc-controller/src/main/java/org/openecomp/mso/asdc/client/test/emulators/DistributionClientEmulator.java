@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,14 +20,14 @@
 
 package org.openecomp.mso.asdc.client.test.emulators;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.openecomp.mso.asdc.installer.IVfModuleData;
+import org.openecomp.mso.logger.MsoLogger;
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IComponentDoneStatusMessage;
 import org.onap.sdc.api.consumer.IConfiguration;
@@ -51,8 +51,13 @@ public class DistributionClientEmulator implements IDistributionClient {
 	
 	private List<IDistributionStatusMessage> distributionMessageReceived = new LinkedList<>();
 	
-	public DistributionClientEmulator(String notifFolderInResource) {
-		
+	
+	private static final MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC,DistributionClientEmulator.class );
+	
+	public DistributionClientEmulator() {			
+	}
+	
+	public DistributionClientEmulator(String notifFolderInResource) {		
 		resourcePath = notifFolderInResource;
 	}
 
@@ -64,58 +69,37 @@ public class DistributionClientEmulator implements IDistributionClient {
 	public List<IVfModuleMetadata> decodeVfModuleArtifact(byte[] arg0) {
 		return null;
 	}
-
-	/* @Override
-	public List<IVfModuleData> decodeVfModuleArtifact(byte[] arg0) {
-		try {
-			listVFModuleMetaData = new ObjectMapper().readValue(arg0, new TypeReference<List<JsonVfModuleMetaData>>(){});
-			return listVFModuleMetaData;
-			 
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	} */
 	
+	public String getResourcePath() {
+		return resourcePath;
+	}
+
+	public void setResourcePath(String resourcePath) {
+		this.resourcePath = resourcePath;
+	}
+
 	public List<IVfModuleData> getListVFModuleMetaData() {
 		return listVFModuleMetaData;
 	}
 
 	@Override
-	public IDistributionClientDownloadResult download (IArtifactInfo arg0) {
+	public IDistributionClientDownloadResult download (IArtifactInfo arg0) {		
 		
-		
-		//String filename = resourcePath+"/artifacts/"+arg0.getArtifactURL();
 		String filename = arg0.getArtifactURL();
-		System.out.println("Emulating the download from resources files:"+filename);
-		
-		InputStream inputStream = null;
-		
-		if(arg0.getArtifactName().equals("service_PortMirroringContainer_csar.csar")){
-			try{
-				inputStream = new FileInputStream("C://Users//JM5423//git//mso//asdc-tosca-1712-test3//openecomp-mso//asdc-controller//src//main//resources//resource-examples//service_PortMirroringContainer_csar.csar");
-			}catch(Exception e){
-				System.out.println("Error " + e.getMessage());
-			}
-		}else{
-		
-			inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath + filename);
-		}
-		
-		if (inputStream == null) {
-			System.out.println("InputStream is NULL for:"+filename);
-		}
-		try {	
-			return new DistributionClientDownloadResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name(),arg0.getArtifactName(),IOUtils.toByteArray(inputStream));
-		} catch (IOException e) {
-			
+	
+		byte[] inputStream=null;
+		try {
+			inputStream = getData(filename);
+		} catch (IOException e) {			
 			e.printStackTrace();
-		}
-		return null;
+			logger.debug("InputStream is NULL for:"+ resourcePath + filename);
+		}		
+	
+		return new DistributionClientDownloadResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name(),arg0.getArtifactName(),inputStream);		
+	}
+	
+	private byte[] getData(String filename) throws IOException {
+		 return Files.readAllBytes(Paths.get(resourcePath + filename));
 	}
 
 	@Override

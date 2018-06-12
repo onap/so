@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */
+ */ 
 
 package org.openecomp.mso.bpmn.common.scripts
 
@@ -62,8 +62,8 @@ class CompleteMsoProcessTest {
 
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 		when(mockExecution.getVariable("CompleteMsoProcessRequest")).thenReturn(completeMsoProcessRequest)
-		when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
-		when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
+		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
+		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
 
 		CompleteMsoProcess completeMsoProcess = new CompleteMsoProcess()
 		completeMsoProcess.preProcessRequest(mockExecution)
@@ -127,9 +127,9 @@ class CompleteMsoProcessTest {
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 		when(mockExecution.getVariable("CMSO_request_id")).thenReturn("testReqId")
 		when(mockExecution.getVariable("CMSO_mso-bpel-name")).thenReturn("BPEL")
-		when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
-		when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
-
+		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
+		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
+		
 		CompleteMsoProcess completeMsoProcess = new CompleteMsoProcess()
 		completeMsoProcess.setUpdateDBstatustoSuccessPayload(mockExecution)
 

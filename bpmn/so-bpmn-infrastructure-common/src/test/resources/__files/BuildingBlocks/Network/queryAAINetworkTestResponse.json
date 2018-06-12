@@ -1,0 +1,141 @@
+{
+	"network-id": "467e3349-bec1-4922-bcb1-d0bb041bce30",
+	"network-name": "vprobes_pktinternal_net_4_1806",
+	"network-type": "CONTRAIL30_BASIC",
+	"network-role": "NetworkPktinternalInt2.pktinternal_int",
+	"network-technology": "",
+	"is-bound-to-vpn": false,
+	"service-id": "eb68dedb-840d-4bd4-a745-d9fcd8fc8468",
+	"network-role-instance": 0,
+	"resource-version": "1527285069624",
+	"orchestration-status": "Assigned",
+	"physical-network-name": "tbd",
+	"is-provider-network": false,
+	"is-shared-network": false,
+	"is-external-network": false,
+	"selflink": "restconf/config/GENERIC-RESOURCE-API:services/service/eb68dedb-840d-4bd4-a745-d9fcd8fc8468/service-data/networks/network/467e3349-bec1-4922-bcb1-d0bb041bce30/network-data/network-topology/",
+	"subnets": {
+		"subnet": [
+			{
+				"subnet-id": "46aee427-3aa0-4c1f-beb6-edf6caae2dc1",
+				"subnet-name": "vprobes_pktinternal_net_4_1806_subnet_1",
+				"gateway-address": "107.20.224.1",
+				"network-start-address": "107.20.224.0",
+				"cidr-mask": "21",
+				"ip-version": "4",
+				"orchestration-status": "PendingCreate",
+				"dhcp-enabled": false,
+				"dhcp-start": "107.20.224.3",
+				"dhcp-end": "107.20.224.5",
+				"subnet-role": "DHCP",
+				"ip-assignment-direction": "true",
+				"resource-version": "1527285068387",
+				"host-routes": {
+					"host-route": [
+						{
+							"host-route-id": "1de02743-580a-4f99-8285-3ba6eadb0892",
+							"route-prefix": "",
+							"next-hop": "",
+							"resource-version": "1527285059650"
+						}
+					]
+				}
+			}
+		]
+	},
+	"relationship-list": {
+		"relationship": [
+			{
+				"related-to": "service-instance",
+				"relationship-label": "org.onap.relationships.inventory.ComposedOf",
+				"related-link": "/aai/v12/business/customers/customer/a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb/service-subscriptions/service-subscription/Mobility/service-instances/service-instance/eb68dedb-840d-4bd4-a745-d9fcd8fc8468",
+				"relationship-data": [
+					{
+						"relationship-key": "customer.global-customer-id",
+						"relationship-value": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb"
+					},
+					{
+						"relationship-key": "service-subscription.service-type",
+						"relationship-value": "Mobility"
+					},
+					{
+						"relationship-key": "service-instance.service-instance-id",
+						"relationship-value": "eb68dedb-840d-4bd4-a745-d9fcd8fc8468"
+					}
+				],
+				"related-to-property": [
+					{
+						"property-key": "service-instance.service-instance-name",
+						"property-value": "eb68dedb-840d-4bd4-a745-d9fcd8fc8468"
+					}
+				]
+			},
+			{
+				"related-to": "cloud-region",
+				"relationship-label": "org.onap.relationships.inventory.Uses",
+				"related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/att-aic/DYH1A",
+				"relationship-data": [
+					{
+						"relationship-key": "cloud-region.cloud-owner",
+						"relationship-value": "att-aic"
+					},
+					{
+						"relationship-key": "cloud-region.cloud-region-id",
+						"relationship-value": "DYH1A"
+					}
+				],
+				"related-to-property": [
+					{
+						"property-key": "cloud-region.owner-defined-type",
+						"property-value": "lcp"
+					}
+				]
+			},
+			{
+				"related-to": "tenant",
+				"relationship-label": "org.onap.relationships.inventory.Uses",
+				"related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/att-aic/DYH1A/tenants/tenant/2871503957144f72b3cf481b379828ec",
+				"relationship-data": [
+					{
+						"relationship-key": "cloud-region.cloud-owner",
+						"relationship-value": "att-aic"
+					},
+					{
+						"relationship-key": "cloud-region.cloud-region-id",
+						"relationship-value": "DYH1A"
+					},
+					{
+						"relationship-key": "tenant.tenant-id",
+						"relationship-value": "2871503957144f72b3cf481b379828ec"
+					}
+				],
+				"related-to-property": [
+					{
+						"property-key": "tenant.tenant-name",
+						"property-value": "APP-C-24595-T-IST-04A"
+					}
+				]
+			},
+			{
+				"related-to": "vpn-binding",
+				"relationship-label": "org.onap.relationships.inventory.Uses",
+				"related-link": "/aai/v12/network/vpn-bindings/vpn-binding/13e94b71-3ce1-4988-ab0e-61208fc91f1c",
+				"relationship-data": [
+					{
+						"relationship-key": "vpn-binding.vpn-id",
+						"relationship-value": "13e94b71-3ce1-4988-ab0e-61208fc91f1c"
+					}
+				],
+				"related-to-property": [
+					{
+						"property-key": "vpn-binding.vpn-name",
+						"property-value": "vMDNS"
+					},
+					{
+						"property-key": "vpn-binding.vpn-type"
+					}
+				]
+			}
+		]
+	}
+}

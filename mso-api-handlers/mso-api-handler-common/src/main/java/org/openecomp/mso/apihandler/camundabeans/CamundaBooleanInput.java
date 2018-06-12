@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.apihandler.camundabeans;
 
+
+
 import org.openecomp.mso.apihandler.common.CommonConstants;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,7 +37,7 @@ public class CamundaBooleanInput {
     @JsonProperty(CommonConstants.CAMUNDA_VALUE)
     private boolean value;
     @JsonProperty(CommonConstants.CAMUNDA_TYPE)
-    private final String type = "Boolean";
+    private String type = "Boolean";
 
 
     public CamundaBooleanInput() {
@@ -51,7 +53,17 @@ public class CamundaBooleanInput {
         this.value = value;
     }
 
-    @Override
+    @JsonProperty(CommonConstants.CAMUNDA_TYPE)
+    public String getType() {
+		return type;
+	}
+
+    @JsonProperty(CommonConstants.CAMUNDA_TYPE)
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	@Override
     public String toString() {
         return "CamundaInput [value=" + value + ", type=" + type + "]";
     }

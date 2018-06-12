@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,7 @@ package org.openecomp.mso.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
@@ -33,24 +34,30 @@ import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientResponseContext;
-import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.core.Response;
 
-public abstract class ResponseExceptionMapper implements ClientResponseFilter {
+import org.apache.commons.io.IOUtils;
 
-	@Override
-	public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
-		if (responseContext.getStatus() >= 300) {
+public abstract class ResponseExceptionMapper {
+
+	public void map(Response response) {
+		
+		response.bufferEntity();
+		if (response.getStatus() >= 300) {
 			String message = "empty message";
-			if (responseContext.hasEntity()) {
-				Optional<String> result = this.extractMessage(responseContext.getEntityStream());
+			if (response.hasEntity()) {
+				StringWriter writer = new StringWriter();
+				try {
+					IOUtils.copy((InputStream)response.getEntity(), writer, "UTF-8");
+				} catch (IOException e) {
+					writer.append("failed to read entity stream");
+				}
+				Optional<String> result = this.extractMessage(writer.toString());
 				if (result.isPresent()) {
 					message = result.get();
 				}
 			}
-			Response.Status status = Response.Status.fromStatusCode(responseContext.getStatus());
+			Response.Status status = Response.Status.fromStatusCode(response.getStatus());
 			WebApplicationException webAppException;
 			switch (status) {
 			case BAD_REQUEST:
@@ -90,5 +97,5 @@ public abstract class ResponseExceptionMapper implements ClientResponseFilter {
 		}
 	}
 	
-	public abstract Optional<String> extractMessage(InputStream stream) throws IOException;
+	public abstract Optional<String> extractMessage(String entity);
 }

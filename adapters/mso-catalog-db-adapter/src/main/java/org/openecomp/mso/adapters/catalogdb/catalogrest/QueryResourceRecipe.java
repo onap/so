@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,14 +52,13 @@ public class QueryResourceRecipe extends CatalogQuery{
     }
 
     @Override
-    public String JSON2(boolean isArray, boolean isEmbed) {    	
-    	
-        Map<String, String> valueMap = new HashMap<>();
+    public String JSON2(boolean isArray, boolean isEmbed) {
+       Map<String, String> valueMap = new HashMap<>();
         valueMap.put("id",  null == resourceRecipe ? null :String.valueOf(resourceRecipe.getId()));
         valueMap.put("action",  null == resourceRecipe ? null :resourceRecipe.getAction());
         valueMap.put("orchestrationUri", null == resourceRecipe ? null : resourceRecipe.getOrchestrationUri());
         valueMap.put("recipeTimeout", null == resourceRecipe ? null : String.valueOf(resourceRecipe.getRecipeTimeout()));
-        valueMap.put("paramXSD", null == resourceRecipe ? null : resourceRecipe.getParamXSD());
+        valueMap.put("paramXSD", null == resourceRecipe ? null : resourceRecipe.getParamXsd());
         valueMap.put("description", null == resourceRecipe ? null : resourceRecipe.getDescription());
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);

@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,9 +35,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
-import org.openecomp.mso.apihandler.common.ValidationException;
 //import org.openecomp.mso.bpmn.core.BPMNLogger;
 import org.openecomp.mso.bpmn.core.xml.XmlTool;
+import org.openecomp.mso.exceptions.ValidationException;
 import org.openecomp.mso.logger.MsoLogger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -49,9 +49,9 @@ import com.github.fge.jsonschema.main.JsonValidator;
 
 /**
  * Utility class for JSON processing
- * 
+ *
  * @version 1.0
- * 
+ *
  * Note: It was observed, that depending on the JSON implementation, an org.json.JSONException or a
  *       java.util.NoSuchElementException will be thrown in the event of the key value being "not found"
  *       in a JSON document. A general check has been added to the applicable catch blocks for this
@@ -61,7 +61,7 @@ import com.github.fge.jsonschema.main.JsonValidator;
 
 public class JsonUtils {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, JsonUtils.class);
 	private static int MSOJsonIndentFactor = 3;
 
 	/**
@@ -72,7 +72,6 @@ public class JsonUtils {
 	 * @return String containing the JSON translation
 	 */
 	public static String xml2json(String xml, Boolean pretty) {
-//		String isDebugLogEnabled = "true";
 		try {
 			// name spaces cause problems, so just remove them
 			JSONObject jsonObj = XML.toJSONObject(XmlTool.removeNamespaces(xml));
@@ -403,7 +402,7 @@ public class JsonUtils {
 					return 0;
 				} else {
 					if (rawValue instanceof Integer) {
-						msoLogger.debug("getJsonValue(): the raw value is an Integer Object=" + rawValue);
+						msoLogger.debug("getJsonIntValue(): the raw value is an Integer Object=" + ((String) rawValue).toString());
 						return (Integer) rawValue;
 					} else {
 						msoLogger.debug("getJsonIntValue(): the raw value is NOT an Integer Object=" + rawValue.toString());
@@ -516,7 +515,7 @@ public class JsonUtils {
 		} catch (Exception e) {
 			// JSONObject::get() throws a "not found" exception if one of the specified keys is not found
 			if (e.getMessage().contains("not found")) {
-				msoLogger.debug("getJsonParamValue(): failed to retrieve param value for keys:" + keys + ", name=" + name + ": " + e.getMessage());				
+				msoLogger.debug("getJsonParamValue(): failed to retrieve param value for keys:" + keys + ", name=" + name + ": " + e.getMessage());
 			} else {
 				msoLogger.debug("getJsonParamValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString(), e);
 			}
@@ -585,7 +584,7 @@ public class JsonUtils {
 		} catch (Exception e) {
 			// JSONObject::get() throws a "not found" exception if one of the specified keys is not found
 			if (e.getMessage().contains("not found")) {
-				msoLogger.debug("getJsonValueForKey(): failed to retrieve param value for key=" + key + ": " + e.getMessage());				
+				msoLogger.debug("getJsonValueForKey(): failed to retrieve param value for key=" + key + ": " + e.getMessage());
 			} else {
 				msoLogger.debug("getJsonValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString(), e);
 			}
@@ -631,7 +630,7 @@ public class JsonUtils {
 		} catch (Exception e) {
 			// JSONObject::get() throws a "not found" exception if one of the specified keys is not found
 			if (e.getMessage().contains("not found")) {
-				msoLogger.debug("getJsonIntValueForKey(): failed to retrieve param value for key=" + key + ": " + e.getMessage());				
+				msoLogger.debug("getJsonIntValueForKey(): failed to retrieve param value for key=" + key + ": " + e.getMessage());
 			} else {
 				msoLogger.debug("getJsonIntValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString(),e);
 			}
@@ -653,7 +652,7 @@ public class JsonUtils {
 		try {
 			if (jsonObj.has(key)) {
 				Boolean value = (Boolean) jsonObj.get(key);
-				msoLogger.debug("getJsonBooleanValueForKey(): found value=" + value + ", for key=" + key);				
+				msoLogger.debug("getJsonBooleanValueForKey(): found value=" + value + ", for key=" + key);
 				return value;
 			} else {
 //				msoLogger.debug("getJsonBooleanValueForKey(): iterating over the keys");
@@ -676,7 +675,7 @@ public class JsonUtils {
 		} catch (Exception e) {
 			// JSONObject::get() throws a "not found" exception if one of the specified keys is not found
 			if (e.getMessage().contains("not found")) {
-				msoLogger.debug("getJsonBooleanValueForKey(): failed to retrieve param value for key=" + key + ": " + e.getMessage());				
+				msoLogger.debug("getJsonBooleanValueForKey(): failed to retrieve param value for key=" + key + ": " + e.getMessage());
 			} else {
 				msoLogger.debug("getJsonBooleanValueForKey(): unable to parse json to retrieve value for field=" + key + ". Exception was: " + e.toString(),e);
 			}
@@ -825,7 +824,7 @@ public class JsonUtils {
 		} catch (Exception e) {
 			// JSONObject::get() throws a "not found" exception if one of the specified keys is not found
 			if (e.getMessage().contains("not found")) {
-				msoLogger.debug("getJsonRawValue(): failed to retrieve param value for key=" + keyStr + ": " + e.getMessage());				
+				msoLogger.debug("getJsonRawValue(): failed to retrieve param value for key=" + keyStr + ": " + e.getMessage());
 			} else {
 				msoLogger.debug("getJsonRawValue(): unable to parse json to retrieve value for field=" + keys + ". Exception was: " + e.toString(),e);
 			}
@@ -869,7 +868,7 @@ public class JsonUtils {
 		} catch (Exception e) {
 			// JSONObject::get() throws a "not found" exception if one of the specified keys is not found
 			if (e.getMessage().contains("not found")) {
-				msoLogger.debug("putJsonValue(): failed to put param value for key=" + keyStr + ": " + e.getMessage());				
+				msoLogger.debug("putJsonValue(): failed to put param value for key=" + keyStr + ": " + e.getMessage());
 			} else {
 				msoLogger.debug("putJsonValue(): unable to parse json to put value for key=" + keys + ". Exception was: " + e.toString(),e);
 			}
@@ -878,13 +877,12 @@ public class JsonUtils {
 	}
 
 	/**
-	 * This json util method converts a json array of Key Value
-	 * pair objects into a Java Map.
+	 * This json util method converts a json object into a map
 	 *
 	 * @param execution
-	 * @param entryArray - the getJsonValue of a json Array of key/value pairs
+	 * @param entryArray - the getJsonValue of a json object
 	 *
-	 * @return Map - a Map containing the entries
+	 * @return Map - a java map of the json object
 	 */
 	public Map<String, String> jsonStringToMap(DelegateExecution execution, String entry) {
 		msoLogger.debug("Started Json String To Map Method");
@@ -893,7 +891,7 @@ public class JsonUtils {
 
 		//Populate Map
 		JSONObject obj = new JSONObject(entry);
-		
+
 		/* Wildfly is pushing a version of org.json which does not
 		 * auto cast to string. Leaving it as an object prevents
 		 * a method not found exception at runtime.
@@ -916,15 +914,14 @@ public class JsonUtils {
 	 * @param entryArray - the getJsonValue of a json Array of key/value pairs
 	 * @param keyNode - the name of the node that represents the key
 	 * @param valueNode - the name of the node that represents the value
-	 *
 	 * @return Map - a Map containing the entries
+	 * @author cb645j
 	 *
 	 */
 	public Map<String, String> entryArrayToMap(DelegateExecution execution, String entryArray, String keyNode, String valueNode) {
 		msoLogger.debug("Started Entry Array To Map Util Method");
 
 		Map<String, String> map = new HashMap<>();
-		//Populate Map
 		String entryListJson = "{ \"wrapper\":" + entryArray + "}";
 		JSONObject obj = new JSONObject(entryListJson);
 		JSONArray arr = obj.getJSONArray("wrapper");
@@ -934,32 +931,57 @@ public class JsonUtils {
 			String value = jo.getString(valueNode);
 			map.put(key, value);
 		}
-		msoLogger.debug("Outgoing Map is: " + map);
 		msoLogger.debug("Completed Entry Array To Map Util Method");
 		return map;
 	}
 
 	/**
-	 * This json util method converts a json Array of Strings
-	 * to a Java List. It takes each String in the json Array
-	 * and puts it in a Java List<String>.
+	 * This json util method converts a json array of Key Value pair objects into a Java Map.
 	 *
-	 * @param execution
-	 * @param jsonArrayOfStrings - the getJsonValue of a json array of strings
-	 *
-	 * @return List - a java list containing the strings
-	 *
+	 * @param entryArray - the json Array of key/value pairs objects
+	 * @param keyNode - the name of the node that represents the key
+	 * @param valueNode - the name of the node that represents the value
+	 * @return Map - a Map containing the entries
+	 * @author cb645j
 	 *
 	 */
-	public List<String> StringArrayToList(Execution execution, String jsonArrayOfStrings) {
+	public Map<String, String> entryArrayToMap(String entryArray, String keyNode, String valueNode){
+		msoLogger.debug("Started Entry Array To Map Util Method");
+
+		Map<String, String> map = new HashMap<>();
+		String entryListJson = "{ \"wrapper\":" + entryArray + "}";
+		JSONObject obj = new JSONObject(entryListJson); // TODO just put in json array
+		JSONArray arr = obj.getJSONArray("wrapper");
+		for(int i = 0; i < arr.length(); i++){
+			JSONObject jo = arr.getJSONObject(i);
+			String key = jo.getString(keyNode);
+			String value = jo.getString(valueNode);
+			map.put(key, value);
+		}
+		msoLogger.debug("Completed Entry Array To Map Util Method");
+		return map;
+	}
+
+	/**
+	 * This json util method converts a json Array of Strings to a Java List. It takes each
+	 * String in the json Array and puts it in a Java List<String>.
+	 *
+	 * @param execution
+	 * @param jsonArray - string value of a json array
+	 * @return List - a java list containing the strings
+	 *
+	 * @author cb645j
+	 */
+	public List<String> StringArrayToList(Execution execution, String jsonArray){
 		msoLogger.debug("Started  String Array To List Util Method");
 
 		List<String> list = new ArrayList<>();
-		//Populate List
-		String stringListJson = "{ \"strings\":" + jsonArrayOfStrings + "}";
+		// Populate List
+		// TODO
+		String stringListJson = "{ \"strings\":" + jsonArray + "}";
 		JSONObject obj = new JSONObject(stringListJson);
 		JSONArray arr = obj.getJSONArray("strings");
-		for (int i = 0; i < arr.length(); i++){
+		for(int i = 0; i < arr.length(); i++){
 			String s = arr.get(i).toString();
 			list.add(s);
 		}
@@ -969,26 +991,67 @@ public class JsonUtils {
 	}
 
 	/**
+	 * This json util method converts a json Array of Strings to a Java List. It takes each
+	 * String in the json Array and puts it in a Java List<String>.
 	 *
-	 * Invokes the getJsonRawValue() method to determine if the
-	 * json element/variable exist. Returns true if the
-	 * json element exist
+	 * @param jsonArray - string value of a json array
+	 * @return List - a java list containing the strings
 	 *
-	 * @param  jsonStr	String containing the JSON doc
-	 * @param  keys		full key path to the target value in the format of "key1.key2.key3..."
+	 * @author cb645j
+	 */
+	public List<String> StringArrayToList(String jsonArray){
+		msoLogger.debug("Started Json Util String Array To List");
+		List<String> list = new ArrayList<>();
+
+		JSONArray arr = new JSONArray(jsonArray);
+		for(int i = 0; i < arr.length(); i++){
+			String s = arr.get(i).toString();
+			list.add(s);
+		}
+		msoLogger.debug("Completed Json Util String Array To List");
+		return list;
+	}
+
+	/**
+	 * This json util method converts a json Array of Strings to a Java List. It takes each
+	 * String in the json Array and puts it in a Java List<String>.
+	 *
+	 * @param jsonArray - json array
+	 * @return List - a java list containing the strings
+	 *
+	 * @author cb645j
+	 */
+	public List<String> StringArrayToList(JSONArray jsonArray){
+		msoLogger.debug("Started Json Util String Array To List");
+		List<String> list = new ArrayList<>();
+
+		for(int i = 0; i < jsonArray.length(); i++){
+			String s = jsonArray.get(i).toString();
+			list.add(s);
+		}
+		msoLogger.debug("Completed Json Util String Array To List");
+		return list;
+	}
+
+	/**
+	 *
+	 * Invokes the getJsonRawValue() method to determine if the json element/variable exist.
+	 * Returns true if the json element exist
+	 *
+	 * @param jsonStr - String containing the JSON doc
+	 * @param keys - full key path to the target value in the format of "key1.key2.key3..."
 	 * @return boolean field value associated with keys
 	 *
-	 *
 	 */
-	public static boolean jsonElementExist(String jsonStr, String keys) {
+	public static boolean jsonElementExist(String jsonStr, String keys){
 
-		try {
+		try{
 			Object rawValue = getJsonRawValue(jsonStr, keys);
 
 			return !(rawValue == null);
 
-		} catch (Exception e) {
-				msoLogger.debug("jsonElementExist(): unable to determine if json element exist. Exception is: " + e.toString(),e);
+		} catch(Exception e){
+			msoLogger.debug("jsonElementExist(): unable to determine if json element exist. Exception is: " + e.toString(), e);
 		}
 		return true;
 	}
@@ -999,8 +1062,6 @@ public class JsonUtils {
 	 *
 	 * @param  jsonStr	String containing the JSON doc
 	 * @param  jsonSchemaPath full path to a valid JSON schema file
-	 * @return String the validation results/report
-	 *
 	 *
 	 */
     public static String jsonSchemaValidation(String jsonStr, String jsonSchemaPath) throws ValidationException {

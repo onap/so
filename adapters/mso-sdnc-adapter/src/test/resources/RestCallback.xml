@@ -1,0 +1,10 @@
+<input>
+        <service-information>
+                <service-type>uCPE-VMS</service-type>
+                <service-instance-id>USUCPM882MA0101UJZZ01</service-instance-id>
+        </service-information>
+        <svc-request-id>8ac1f688-70d1-4eb7-8422-5bf3ffe5c1ff-1525453645560</svc-request-id>
+        <response-code>200</response-code>
+        <response-message>Success: Ucpe Activation Success</response-message>
+        <ack-final-indicator>Y</ack-final-indicator>
+</input>

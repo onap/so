@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,12 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.UUID;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
 import org.onap.aai.domain.yang.Relationship;
+import org.openecomp.mso.client.RestClient;
 import org.openecomp.mso.client.aai.entities.AAIError;
 import org.openecomp.mso.client.aai.entities.bulkprocess.OperationBody;
 import org.openecomp.mso.client.aai.entities.bulkprocess.Transaction;
@@ -41,7 +42,6 @@ import org.openecomp.mso.client.aai.entities.uri.AAIResourceUri;
 import org.openecomp.mso.client.aai.entities.uri.AAIUri;
 import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
 import org.openecomp.mso.client.aai.exceptions.BulkProcessFailed;
-import org.openecomp.mso.client.policy.RestClient;
 import org.openecomp.mso.jsonpath.JsonPathUtil;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -54,8 +54,8 @@ public class AAITransactionalClient extends AAIClient {
 	private Transaction currentTransaction;
 	private final AAIVersion version;
 	private int actionCount = 0;
-	protected AAITransactionalClient(AAIVersion version, UUID requestId) {
-		super(requestId);
+	protected AAITransactionalClient(AAIVersion version) {
+		super();
 		this.version = version;
 		this.transactions = new Transactions();
 		startTransaction();
@@ -164,7 +164,8 @@ public class AAITransactionalClient extends AAIClient {
 	public AAITransactionalClient delete(AAIResourceUri uri) {
 		AAIResourcesClient client = new AAIResourcesClient();
 		AAIResourceUri clone = uri.clone();
-		Map<String, Object> result = client.get(new GenericType<Map<String, Object>>(){}, clone);
+		Map<String, Object> result = client.get(new GenericType<Map<String, Object>>(){}, clone)
+				.orElseThrow(() -> new NotFoundException(clone.build() + " does not exist in A&AI"));
 		String resourceVersion = (String) result.get("resource-version");
 		currentTransaction.getDelete().add(new OperationBody().withUri(clone.resourceVersion(resourceVersion).build().toString()).withBody(""));
 		incrementActionAmount();
@@ -196,7 +197,7 @@ public class AAITransactionalClient extends AAIClient {
 			if (response.hasEntity()) {
 				final Optional<String> errorMessage = this.locateErrorMessages(response.readEntity(String.class));
 				if (errorMessage.isPresent()) {
-					throw new BulkProcessFailed("One or more transactions failed in A&AI. Request-id=" + this.getRequestId() + ". Check logs for payloads.\nMessages:\n" + errorMessage.get());
+					throw new BulkProcessFailed("One or more transactions failed in A&AI. Check logs for payloads.\nMessages:\n" + errorMessage.get());
 				}
 			} else {
 				throw new BulkProcessFailed("Transactions acccepted by A&AI, but there was no response. Unsure of result.");

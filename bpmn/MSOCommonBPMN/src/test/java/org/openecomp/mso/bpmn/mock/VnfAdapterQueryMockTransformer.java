@@ -1,46 +1,48 @@
-/* 
- * ============LICENSE_START======================================================= 
- * ONAP - SO 
- * ================================================================================ 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
+ *      http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
- * ============LICENSE_END========================================================= 
- */ 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
 package org.openecomp.mso.bpmn.mock;
 
 
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
+import org.openecomp.mso.client.HttpClient;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.utils.TargetEntity;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.common.FileSource;
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import com.github.tomakehurst.wiremock.extension.Parameters;
+import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
-import org.openecomp.mso.logger.MsoLogger;
 /**
  * Please describe the VnfAdapterQueryMockTransformer.java class
  *
  */
 
 
-public class VnfAdapterQueryMockTransformer extends ResponseTransformer{
+public class VnfAdapterQueryMockTransformer extends ResponseDefinitionTransformer{
 	
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VnfAdapterQueryMockTransformer.class);
 	
 	private String notifyCallbackResponse;
 	private String ackResponse;
@@ -55,13 +57,13 @@ public class VnfAdapterQueryMockTransformer extends ResponseTransformer{
 	}
 
 	@Override
-	public String name() {
+	public String getName() {
 		return "vnf-adapter-query-transformer";
 	}
 	
 	@Override
 	public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition,
-			FileSource fileSource) {
+			FileSource fileSource, Parameters parameters) {
 
 		String requestBody = request.getBodyAsString();
 
@@ -144,12 +146,10 @@ public class VnfAdapterQueryMockTransformer extends ResponseTransformer{
 			} catch (InterruptedException e1) {
 				LOGGER.debug("Exception :",e1);
 			}
-			ClientRequest request = new ClientRequest(callbackUrl);
-			request.body("text/xml", payLoad);
-			//System.err.println(payLoad);
+
 			try {
-				ClientResponse result = request.post();
-				//System.err.println("Successfully posted callback:" + result.getStatus());
+				HttpClient client = new HttpClient(UriBuilder.fromUri(callbackUrl).build().toURL(), "text/xml", TargetEntity.VNF_ADAPTER);
+				client.post(payLoad);
 			} catch (Exception e) {
 				LOGGER.debug("Exception :",e);
 			}

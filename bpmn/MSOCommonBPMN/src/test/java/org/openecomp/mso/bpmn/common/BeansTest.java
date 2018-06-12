@@ -21,20 +21,19 @@
 package org.openecomp.mso.bpmn.common;
 
 import org.junit.Test;
+import org.openecomp.mso.openpojo.rules.ToStringTester;
 
+import com.openpojo.reflection.PojoClass;
+import com.openpojo.reflection.PojoClassFilter;
+import com.openpojo.reflection.filters.FilterEnum;
+import com.openpojo.reflection.filters.FilterNonConcrete;
+import com.openpojo.reflection.filters.FilterPackageInfo;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
 import com.openpojo.validation.rule.impl.GetterMustExistRule;
 import com.openpojo.validation.rule.impl.SetterMustExistRule;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
-import com.openpojo.reflection.PojoClass;
-import com.openpojo.reflection.PojoClassFilter;
-import com.openpojo.reflection.filters.FilterEnum;
-import com.openpojo.reflection.filters.FilterNonConcrete;
-import com.openpojo.reflection.filters.FilterPackageInfo;
-import org.openecomp.mso.openpojo.rules.HasToStringRule;
-import org.openecomp.mso.openpojo.rules.ToStringTester;
 
 public class BeansTest {
 
@@ -47,7 +46,9 @@ public class BeansTest {
 	@Test
 	public void pojoStructure() {	
 		test("org.openecomp.mso.bpmn.appc.payload.beans");		
-		test("org.openecomp.mso.client.sdnc.beans");	
+		test("org.openecomp.mso.client.sdnc.beans");
+		test("org.openecomp.mso.bpmn.common.adapter.sdnc");
+		
 	}
 
 	private void test(String pojoPackage) {
@@ -68,6 +69,7 @@ public class BeansTest {
 		validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses,enumFilter,new FilterNonConcrete());
 	}
 	private static class FilterTestClasses implements PojoClassFilter {
+		@Override
 		public boolean include(PojoClass pojoClass) {
 			return !pojoClass.getSourcePath().contains("/test-classes/");
 		}

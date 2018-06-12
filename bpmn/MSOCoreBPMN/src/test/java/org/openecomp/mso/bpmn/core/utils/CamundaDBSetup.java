@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,7 @@ import org.openecomp.mso.logger.MsoLogger;
  */
 public class CamundaDBSetup {
 	private static boolean isDBConfigured = false;
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CamundaDBSetup.class);
 	
 	private CamundaDBSetup() {
 	}
@@ -48,51 +48,10 @@ public class CamundaDBSetup {
 		PreparedStatement stmt = null;
 
 		try {
-			connection = DriverManager.getConnection(
-				"jdbc:h2:mem:camunda;DB_CLOSE_DELAY=-1", "sa", "");
 
-			stmt = connection.prepareStatement("delete from ACT_HI_VARINST");
-			stmt.executeUpdate();
-			stmt.close();
-			stmt = null;
-
-			stmt = connection.prepareStatement("ALTER TABLE ACT_HI_VARINST alter column TEXT_ clob");
-			stmt.executeUpdate();
-			stmt.close();
-			stmt = null;
-			
-//			stmt = connection.prepareStatement("ALTER TABLE ACT_HI_VARINST alter column NAME_ clob");
-//			stmt.executeUpdate();
-//			stmt.close();
-//			stmt = null;
-
-			stmt = connection.prepareStatement("delete from ACT_HI_DETAIL");
-			stmt.executeUpdate();
-			stmt.close();
-			stmt = null;
-
-			stmt = connection.prepareStatement("ALTER TABLE ACT_HI_DETAIL alter column TEXT_ clob");
-			stmt.executeUpdate();
-			stmt.close();
-			stmt = null;
-
-//			stmt = connection.prepareStatement("ALTER TABLE ACT_HI_DETAIL alter column NAME_ clob");
-//			stmt.executeUpdate();
-//			stmt.close();
-//			stmt = null;
-
-			stmt = connection.prepareStatement("ALTER TABLE ACT_RU_VARIABLE alter column TEXT_ clob");
-			stmt.executeUpdate();
-			stmt.close();
-			stmt = null;
-
-			connection.close();
-			connection = null;
 
 			isDBConfigured = true;
-		} catch (SQLException e) {
-		    LOGGER.debug ("CamundaDBSetup caught " + e.getClass().getSimpleName());
-			LOGGER.debug("SQLException :",e);
+		
 		} finally {
 			if (stmt != null) {
 				try {

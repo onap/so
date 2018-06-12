@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,66 +21,111 @@
 package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.util.Date;
 
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
-import org.openecomp.mso.logger.MsoLogger;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-public class ServiceRecipe extends MavenLikeVersioning implements Serializable {
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.openpojo.business.annotation.BusinessKey;
+
+@Entity
+@Table(name = "service_recipe")
+public class ServiceRecipe implements Serializable, Recipe {
 	
 	private static final long serialVersionUID = 768026109321305392L;
-	
-	private int id;
-	private String serviceModelUUID = null;
-	private String action = null;
-	private String description = null;
-	private String orchestrationUri = null;
-	private String serviceParamXSD = null;
-	private int recipeTimeout;
-	private Integer serviceTimeoutInterim;
-	private Timestamp created = null;
 
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
-	
-	// This 'default' CTR is now needed for backward compatibility since a new CTR was added below
+	@Id
+	@Column(name = "id")
+	private Integer id;
+
+	@BusinessKey
+	@Column(name = "SERVICE_MODEL_UUID")
+	private String serviceModelUUID;
+
+	@BusinessKey
+	@Column(name = "ACTION")
+	private String action;
+
+	@Column(name = "description")
+	private String description;
+
+	@BusinessKey
+	@Column(name = "ORCHESTRATION_URI")
+	private String orchestrationUri;
+
+	@Column(name = "SERVICE_PARAM_XSD")
+	private String paramXsd;
+
+	@Column(name = "RECIPE_TIMEOUT")
+	private Integer recipeTimeout;
+
+	@Column(name = "SERVICE_TIMEOUT_INTERIM")
+	private Integer serviceTimeoutInterim;
+
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("id", id).append("serviceModelUUID", serviceModelUUID)
+				.append("action", action).append("description", description)
+				.append("orchestrationUri", orchestrationUri).append("serviceParamXSD", paramXsd)
+				.append("recipeTimeout", recipeTimeout).append("serviceTimeoutInterim", serviceTimeoutInterim)
+				.append("created", created).toString();
+	}
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof ServiceRecipe)) {
+			return false;
+		}
+		ServiceRecipe castOther = (ServiceRecipe) other;
+		return new EqualsBuilder().append(serviceModelUUID, castOther.serviceModelUUID).append(action, castOther.action)
+				.append(orchestrationUri, castOther.orchestrationUri).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(serviceModelUUID).append(action).append(orchestrationUri).toHashCode();
+	}
+
+	// This 'default' CTR is now needed for backward compatibility since a new
+	// CTR was added below
 	public ServiceRecipe() {
 		super();
 	}
-	
-	// This CTR is needed by the HQL SELECT JOIN between the SERVICE and SERVICE_RECIPE tables
-	// in CatalogDatabase::getServiceRecipe()
-	public ServiceRecipe(int id, String serviceModelUUID, String action,
-			String description, String orchestrationUri,
-			String serviceParamXSD, int recipeTimeout,
-			int serviceTimeoutInterim, Date created) {
-		super();
-		LOGGER.debug("ServiceRecipe id=" + id + ", serviceModelUUID=" + serviceModelUUID + ", action=" + action + ", description=" + description +
-				", orchestrationUri=" + orchestrationUri + ", serviceParamXSD=" + serviceParamXSD +
-				", recipeTimeout=" + recipeTimeout + ", serviceTimeoutInterim=" + serviceTimeoutInterim + ", created=" + created);
-		this.id = id;
-		this.serviceModelUUID = serviceModelUUID;
-		this.action = action;
-		this.description = description;
-		this.orchestrationUri = orchestrationUri;
-		this.serviceParamXSD = serviceParamXSD;
-		this.recipeTimeout = recipeTimeout;
-		this.serviceTimeoutInterim = serviceTimeoutInterim;
-		long date = created.getTime();
-		this.created = new Timestamp(date);
-	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(int id) {
+
+	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
 	}
 
 	public String getServiceModelUUID() {
 		return serviceModelUUID;
 	}
+
 	public void setServiceModelUUID(String serviceModelUUID) {
 		this.serviceModelUUID = serviceModelUUID;
 	}
@@ -88,6 +133,7 @@ public class ServiceRecipe extends MavenLikeVersioning implements Serializable {
 	public String getAction() {
 		return action;
 	}
+
 	public void setAction(String action) {
 		this.action = action;
 	}
@@ -95,6 +141,7 @@ public class ServiceRecipe extends MavenLikeVersioning implements Serializable {
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -102,21 +149,24 @@ public class ServiceRecipe extends MavenLikeVersioning implements Serializable {
 	public String getOrchestrationUri() {
 		return orchestrationUri;
 	}
+
 	public void setOrchestrationUri(String orchestrationUri) {
 		this.orchestrationUri = orchestrationUri;
 	}
 
-	public String getServiceParamXSD() {
-		return serviceParamXSD;
-	}
-	public void setServiceParamXSD(String serviceParamXSD) {
-		this.serviceParamXSD = serviceParamXSD;
+	public String getParamXsd() {
+		return paramXsd;
 	}
 
-	public int getRecipeTimeout() {
+	public void setParamXsd(String paramXsd) {
+		this.paramXsd = paramXsd;
+	}
+
+	public Integer getRecipeTimeout() {
 		return recipeTimeout;
 	}
-	public void setRecipeTimeout(int recipeTimeout) {
+
+	public void setRecipeTimeout(Integer recipeTimeout) {
 		this.recipeTimeout = recipeTimeout;
 	}
 
@@ -127,24 +177,8 @@ public class ServiceRecipe extends MavenLikeVersioning implements Serializable {
 	public void setServiceTimeoutInterim(Integer serviceTimeoutInterim) {
 		this.serviceTimeoutInterim = serviceTimeoutInterim;
 	}
-	
-	public Timestamp getCreated() {
+
+	public Date getCreated() {
 		return created;
-	}
-
-	public void setCreated(Timestamp created) {
-		this.created = created;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("RECIPE: ").append(action);
-		sb.append(",uri=").append(orchestrationUri);
-        if (created != null) {
-	        sb.append (",created=");
-	        sb.append (DateFormat.getInstance().format(created));
-	    }
-		return sb.toString();
 	}
 }

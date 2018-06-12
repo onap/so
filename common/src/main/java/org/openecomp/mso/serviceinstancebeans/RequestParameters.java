@@ -1,15 +1,15 @@
 /*-
  * ============LICENSE_START=======================================================
- * ONAP - SO
+ * OPENECOMP - MSO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -41,18 +43,22 @@ public class RequestParameters implements Serializable {
 	private List<Map<String, Object>> userParams = new ArrayList<>();
 	@JsonProperty("aLaCarte")
 	private Boolean aLaCarte;
+	
+	// DONOT USE. It is intended to handle older VID requests(prior to 1802)
+	@JsonProperty("alaCarte")
+	private Boolean alaCarte;
 	@JsonProperty("autoBuildVfModules")
 	private Boolean autoBuildVfModules;
 	@JsonProperty("cascadeDelete")
 	private Boolean cascadeDelete;
+	@JsonProperty("testApi")
+	private String testApi; // usePreload would always be true for Update
 	@JsonProperty("usePreload")
 	private Boolean usePreload; // usePreload would always be true for Update
 	@JsonProperty("rebuildVolumeGroups")
 	private Boolean rebuildVolumeGroups;
 	@JsonProperty("payload")
 	private String payload;
-	@JsonProperty("controllerType")
-	private String controllerType;
 
 	public String getSubscriptionServiceType() {
 		return subscriptionServiceType;
@@ -61,11 +67,11 @@ public class RequestParameters implements Serializable {
 	public void setSubscriptionServiceType(String subscriptionServiceType) {
 		this.subscriptionServiceType = subscriptionServiceType;
 	}
-
+	@JsonProperty("aLaCarte")
 	public Boolean getALaCarte() {
 		return aLaCarte;
 	}
-
+	@JsonProperty("aLaCarte")
 	public void setaLaCarte(Boolean aLaCarte) {
 		this.aLaCarte = aLaCarte;
 	}
@@ -73,7 +79,26 @@ public class RequestParameters implements Serializable {
 	public Boolean isaLaCarte() {
 		return aLaCarte;
 	}
+	
+	@Transient
+	@JsonProperty("alaCarte")
+	public Boolean getAlaCarte() {
+		return alaCarte;
+	}
 
+	@JsonProperty("alaCarte")
+	public void setAlaCarte(Boolean alaCarte) {
+		this.alaCarte = alaCarte;
+	}
+
+	public String getTestApi() {
+		return testApi;
+	}
+
+	public void setTestApi(String testApi) {
+		this.testApi = testApi;
+	}
+	
 	public List<Map<String, Object>> getUserParams() {
 		return userParams;
 	}
@@ -92,11 +117,11 @@ public class RequestParameters implements Serializable {
 		}
 		return null;
 	}
-
+	
 	public Boolean getAutoBuildVfModules() {
 		return autoBuildVfModules;
 	}
-
+	
 	public void setAutoBuildVfModules(Boolean autoBuildVfModules) {
 		this.autoBuildVfModules = autoBuildVfModules;
 	}
@@ -117,13 +142,10 @@ public class RequestParameters implements Serializable {
 		this.usePreload = usePreload;
 	}
 	
-	public Boolean rebuildVolumeGroups() {
+	public Boolean getRebuildVolumeGroups() {
 		return rebuildVolumeGroups;
 	}
 
-	public Boolean isRebuildVolumeGroups() {
-		return rebuildVolumeGroups;
-	}
 	public void setRebuildVolumeGroups(Boolean rebuildVolumeGroups) {
 		this.rebuildVolumeGroups = rebuildVolumeGroups;
 	}
@@ -134,19 +156,13 @@ public class RequestParameters implements Serializable {
 		this.payload = value;
 	}
 	
-	public String getControllerType() {
-		return controllerType;
-	}
-
-	public void setControllerType(String controllerType) {
-		this.controllerType = controllerType;
-	}
-
 	@Override
 	public String toString() {
-		return "RequestParameters [subscriptionServiceType=" + subscriptionServiceType + ", userParams=" + userParams
-				+ ", aLaCarte=" + aLaCarte + ", autoBuildVfModules=" + autoBuildVfModules + ", cascadeDelete="
-				+ cascadeDelete + ", usePreload=" + usePreload + ", rebuildVolumeGroups=" + rebuildVolumeGroups
-				+ ", payload=" + payload + ", controllerType=" + controllerType + "]";
+		return "RequestParameters [subscriptionServiceType="
+				+ subscriptionServiceType + ", userParams=" + userParams
+				+ ", aLaCarte=" + aLaCarte + ", testApi= " + testApi + ", autoBuildVfModules="
+				+ autoBuildVfModules + ", usePreload="
+				+ usePreload + ", rebuildVolumeGroups="
+				+ rebuildVolumeGroups + ", payload=" + payload + "]";
 	}
 }

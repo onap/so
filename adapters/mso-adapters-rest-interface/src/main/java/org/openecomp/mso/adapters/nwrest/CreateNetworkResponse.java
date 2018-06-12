@@ -34,6 +34,11 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @XmlRootElement(name = "createNetworkResponse")
 
 public class CreateNetworkResponse extends NetworkResponseCommon {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7730406297031948309L;
+	
 	private String networkId;
 	private String neutronNetworkId;
 	private String networkStackId;

@@ -11,6 +11,18 @@
 	<name>mso-adapter-utils</name>
 	<description>Common MSO utilities, including Openstack client wrappers.</description>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<!-- Import dependency management from Spring Boot -->
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${springboot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<sourceDirectory>src/main/java</sourceDirectory>
@@ -39,6 +51,10 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+			  </plugin>
 		</plugins>
 	</build>
 
@@ -49,33 +65,13 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>mso-catalog-db</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.so.libs.openstack-java-sdk</groupId>
-			<artifactId>keystone-client</artifactId>
-			<version>${openstack.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.so.libs.openstack-java-sdk</groupId>
-			<artifactId>heat-client</artifactId>
-			<version>${openstack.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.so.libs.openstack-java-sdk</groupId>
-			<artifactId>quantum-client</artifactId>
-			<version>${openstack.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.so.libs.openstack-java-sdk.client-connectors</groupId>
-			<artifactId>http-connector</artifactId>
-			<version>${openstack.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.so</groupId>
-			<artifactId>common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -113,25 +109,14 @@
 			<version>1.15</version>
 		</dependency>
 		<dependency>
-                        <groupId>org.onap.so</groupId>
-                        <artifactId>aria-client</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	        <dependency>
-			<groupId>com.shazam</groupId>
-			<artifactId>shazamcrest</artifactId>
-			<version>0.11</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				</exclusion>
-				<exclusion>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

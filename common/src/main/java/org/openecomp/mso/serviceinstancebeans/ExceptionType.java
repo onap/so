@@ -30,11 +30,13 @@ package org.openecomp.mso.serviceinstancebeans;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
@@ -153,15 +155,14 @@ public class ExceptionType {
         }
         return this.variables;
     }
-    
-    public void setVariables(List<String> variables) {
-    	this.variables = variables;
-    }
+
+	public void setVariables(List<String> variables) {
+		this.variables = variables;
+	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).append("messageId", messageId).append("text", text)
 				.append("variables", variables).toString();
 	}
-
 }

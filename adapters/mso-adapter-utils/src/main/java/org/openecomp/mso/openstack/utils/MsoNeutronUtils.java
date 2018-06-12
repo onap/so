@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,21 +21,20 @@
 package org.openecomp.mso.openstack.utils;
 
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.openecomp.mso.cloud.CloudConfig;
-import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
+import org.openecomp.mso.cloud.authentication.AuthenticationMethodFactory;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.beans.NetworkInfo;
+import org.openecomp.mso.openstack.beans.NeutronCacheEntry;
 import org.openecomp.mso.openstack.exceptions.MsoAdapterException;
 import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoException;
@@ -43,19 +42,25 @@ import org.openecomp.mso.openstack.exceptions.MsoIOException;
 import org.openecomp.mso.openstack.exceptions.MsoNetworkAlreadyExists;
 import org.openecomp.mso.openstack.exceptions.MsoNetworkNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoOpenstackException;
+import org.openecomp.mso.openstack.exceptions.MsoTenantNotFound;
+import org.openecomp.mso.openstack.mappers.NetworkInfoMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.woorea.openstack.base.client.OpenStackBaseException;
 import com.woorea.openstack.base.client.OpenStackConnectException;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.keystone.Keystone;
 import com.woorea.openstack.keystone.model.Access;
+import com.woorea.openstack.keystone.model.Authentication;
 import com.woorea.openstack.keystone.utils.KeystoneUtils;
 import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.Network;
 import com.woorea.openstack.quantum.model.Networks;
 import com.woorea.openstack.quantum.model.Segment;
-import com.woorea.openstack.keystone.model.Authentication;
 
+@Component
 public class MsoNeutronUtils extends MsoCommonUtils
 {
 	// Cache Neutron Clients statically.  Since there is just one MSO user, there is no
@@ -65,23 +70,21 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	// The cache key is "tenantId:cloudId"
 	private static Map<String,NeutronCacheEntry> neutronClientCache = new HashMap<>();
 
-	private CloudConfigFactory cloudConfigFactory;
+	// Fetch cloud configuration each time (may be cached in CloudConfig class)
+	@Autowired
+	private CloudConfig cloudConfig;
 
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-	private String msoPropID;
-
+	@Autowired
+    private AuthenticationMethodFactory authenticationMethodFactory;
+	
+	@Autowired
+	private MsoTenantUtilsFactory tenantUtilsFactory;
+	
+	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoNeutronUtils.class);
+	
 	public enum NetworkType {
 		BASIC, PROVIDER, MULTI_PROVIDER
 	};
-
-	public MsoNeutronUtils(String msoPropID, CloudConfigFactory cloudConfigFactory) {
-		this.cloudConfigFactory = cloudConfigFactory;
-		this.msoPropID = msoPropID;
-	}
-	
-	protected CloudConfigFactory getCloudConfigFactory() {
-		return cloudConfigFactory;
-	}
 
 	/**
 	 * Create a network with the specified parameters in the given cloud/tenant.
@@ -104,7 +107,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
             throws MsoException
 	{
 		// Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
 
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
@@ -148,7 +151,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		try {
 			OpenStackRequest<Network> request = neutronClient.networks().create(network);
 			Network newNetwork = executeAndRecordOpenstackRequest(request);
-			return new NetworkInfo(newNetwork);
+			return new NetworkInfoMapper(newNetwork).map();
 		}
 		catch (OpenStackBaseException e) {
 			// Convert Neutron exception to an MsoOpenstackException
@@ -182,10 +185,11 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		LOGGER.debug("In queryNetwork");
 
 		// Obtain the cloud site information
-        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
 
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
+
 		// Check if the network exists and return its info
 		try {
 			Network network = findNetworkByNameOrId (neutronClient, networkNameOrId);
@@ -193,7 +197,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 				LOGGER.debug ("Query Network: " + networkNameOrId + " not found in tenant " + tenantId);
 				return null;
 			}
-			return new NetworkInfo(network);
+			return new NetworkInfoMapper(network).map();
 		}
 		catch (OpenStackBaseException e) {
 			// Convert Neutron exception to an MsoOpenstackException
@@ -222,9 +226,10 @@ public class MsoNeutronUtils extends MsoCommonUtils
     public boolean deleteNetwork(String networkId, String tenantId, String cloudSiteId) throws MsoException
 	{
 		// Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
+
 		try {
 			// Check that the network exists.
 			Network network = findNetworkById (neutronClient, networkId);
@@ -279,9 +284,10 @@ public class MsoNeutronUtils extends MsoCommonUtils
             throws MsoException
 	{
 		// Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
 		Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
+
 		// Check that the network exists
 		Network network = findNetworkById (neutronClient, networkId);
 
@@ -316,7 +322,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		try {
 			OpenStackRequest<Network> request = neutronClient.networks().update(network);
 			Network newNetwork = executeAndRecordOpenstackRequest(request);
-			return new NetworkInfo(newNetwork);
+			return new NetworkInfoMapper(newNetwork).map();
 		}
 		catch (OpenStackBaseException e) {
 			// Convert Neutron exception to an MsoOpenstackException
@@ -357,7 +363,9 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		if (neutronClientCache.containsKey(cacheKey)) {
 			if (! neutronClientCache.get(cacheKey).isExpired()) {
 				LOGGER.debug ("Using Cached HEAT Client for " + cacheKey);
-				Quantum neutronClient = neutronClientCache.get(cacheKey).getNeutronClient();
+				NeutronCacheEntry cacheEntry = neutronClientCache.get(cacheKey);
+				Quantum neutronClient = new Quantum(cacheEntry.getNeutronUrl());
+				neutronClient.token(cacheEntry.getToken());
 				return neutronClient;
 			}
 			else {
@@ -368,11 +376,13 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		}
 
 		// Obtain an MSO token for the tenant from the identity service
-		CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-		Keystone keystoneTenantClient = new Keystone (cloudIdentity.getKeystoneUrl(cloudId, msoPropID));
+		CloudIdentity cloudIdentity = cloudConfig.getIdentityService(cloudSite.getIdentityServiceId());
+		MsoTenantUtils tenantUtils = tenantUtilsFactory.getTenantUtilsByServerType(cloudIdentity.getIdentityServerType());
+        final String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
+		Keystone keystoneTenantClient = new Keystone(keystoneUrl);
 		Access access = null;
 		try {
-			Authentication credentials = cloudIdentity.getAuthentication ();
+			Authentication credentials = authenticationMethodFactory.getAuthenticationFor(cloudIdentity);
 			OpenStackRequest<Access> request = keystoneTenantClient.tokens().authenticate(credentials).withTenantId(tenantId);
 			access = executeAndRecordOpenstackRequest(request);
 		}
@@ -428,8 +438,11 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 * the KeystoneClient in case where a tenant is deleted.  In that case,
 	 * all cached credentials must be purged so that fresh authentication is
 	 * done on subsequent calls.
+	 * <p>
+	 * @param tenantName
+	 * @param cloudId
 	 */
-	public static void expireNeutronClient (String tenantId, String cloudId) {
+	public void expireNeutronClient (String tenantId, String cloudId) {
 		String cacheKey = cloudId + ":" + tenantId;
 		if (neutronClientCache.containsKey(cacheKey)) {
 			neutronClientCache.remove(cacheKey);
@@ -468,7 +481,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 * @param networkId the network ID to query
 	 * @return a Network object or null if not found
 	 */
-	private static Network findNetworkById (Quantum neutronClient, String networkId)
+	private Network findNetworkById (Quantum neutronClient, String networkId)
 	{
 		if (networkId == null) {
             return null;
@@ -535,41 +548,10 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		}
 	}
 
-
-	/*
-	 * An entry in the Neutron Client Cache.  It saves the Neutron client object
-	 * along with the token expiration.  After this interval, this cache
-	 * item will no longer be used.
-	 */
-	private static class NeutronCacheEntry implements Serializable
-	{
-		private static final long serialVersionUID = 1L;
-
-		private String neutronUrl;
-		private String token;
-		private Calendar expires;
-
-		public NeutronCacheEntry (String neutronUrl, String token, Calendar expires) {
-			this.neutronUrl = neutronUrl;
-			this.token = token;
-			this.expires = expires;
-		}
-
-		public Quantum getNeutronClient () {
-			Quantum neutronClient = new Quantum(neutronUrl);
-			neutronClient.token(token);
-			return neutronClient;
-		}
-
-		public boolean isExpired() {
-			return expires == null || System.currentTimeMillis() > expires.getTimeInMillis();
-		}
-	}
-
 	/**
 	 * Clean up the Neutron client cache to remove expired entries.
 	 */
-	public static void neutronCacheCleanup () {
+	public void neutronCacheCleanup () {
 		for (String cacheKey : neutronClientCache.keySet()) {
 			if (neutronClientCache.get(cacheKey).isExpired()) {
 				neutronClientCache.remove(cacheKey);
@@ -582,7 +564,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 * Reset the Neutron client cache.
 	 * This may be useful if cached credentials get out of sync.
 	 */
-	public static void neutronCacheReset () {
-		neutronClientCache = new HashMap<>();
+	public void neutronCacheReset () {
+		MsoNeutronUtils.neutronClientCache = new HashMap<>();
 	}
 }

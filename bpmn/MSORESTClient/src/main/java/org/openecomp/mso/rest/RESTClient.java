@@ -21,7 +21,6 @@
 
 package org.openecomp.mso.rest;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -30,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.net.ssl.SSLSocketFactory;
@@ -37,7 +37,7 @@ import javax.net.ssl.SSLSocketFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
@@ -54,7 +54,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.AbstractHttpMessage;
 import org.apache.http.util.EntityUtils;
-
 import org.openecomp.mso.logger.MsoLogger;
 /**
  * Client used to send RESTFul requests.
@@ -85,14 +84,16 @@ import org.openecomp.mso.logger.MsoLogger;
  */
 public class RESTClient {
 	
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,RESTClient.class);
     private final String proxyHost;
     private final int proxyPort;
 
-    private final String URL;
+    private final String url;
 
-    private final LinkedHashMap<String, List<String>> headers;
-    private final LinkedHashMap<String, List<String>> parameters;
+    private final Map<String, List<String>> headers;
+    private final Map<String, List<String>> parameters;
+    
+    
     
     private HttpEntity httpEntity;
 
@@ -183,22 +184,17 @@ public class RESTClient {
      * @throws RESTException if unable to create http client.
      */
     private CloseableHttpClient createClient() throws RESTException {
-        //TODO - we may want to trust self signed certificate at some point - add implementation here
-        HttpClientBuilder clientBuilder;
-
-		try {
+       HttpClientBuilder clientBuilder;
+       try {
 			SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
 					(SSLSocketFactory) SSLSocketFactory.getDefault(),
 					new HostNameVerifier());
 			Registry<ConnectionSocketFactory> registry = RegistryBuilder
 					.<ConnectionSocketFactory> create()
-					.register("http",
-							PlainConnectionSocketFactory.getSocketFactory())
+					.register("http", PlainConnectionSocketFactory.getSocketFactory())
 					.register("https", sslSocketFactory).build();
-			PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(
-					registry);
-			clientBuilder = HttpClientBuilder.create().setConnectionManager(
-					manager);
+			PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(registry);
+			clientBuilder = HttpClientBuilder.create().setConnectionManager(manager);
 		} catch (Exception ex) {
 			LOGGER.debug("Exception :", ex);
 			throw new RESTException(ex.getMessage());
@@ -209,34 +205,41 @@ public class RESTClient {
 			HttpHost proxy = new HttpHost(this.proxyHost, this.proxyPort);
 			clientBuilder.setProxy(proxy);
 		}
-
-		return clientBuilder.build();
+		int timeoutInSeconds = 300;
+		RequestConfig requestConfig = RequestConfig.custom()
+				  .setConnectTimeout(timeoutInSeconds * 1000)
+				  .setConnectionRequestTimeout(timeoutInSeconds * 1000)
+				  .setSocketTimeout(timeoutInSeconds * 1000).build();
+		return clientBuilder.setDefaultRequestConfig(requestConfig).build();
     }
+    
+    
+
+
 
     /**
      * Creates a RESTClient with the specified URL, proxy host, and proxy port.
      *
-     * @param URL URL to send request to
+     * @param url URL to send request to
      * @param proxyHost proxy host to use for sending request
      * @param proxyPort proxy port to use for sendin request
      *
      * @throws RESTException if unable to create a RESTClient
      */
-    public RESTClient(String URL, String proxyHost, int proxyPort)
-            throws RESTException {
-        this(new RESTConfig(URL, proxyHost, proxyPort));
+    public RESTClient(String url, String proxyHost, int proxyPort) {
+        this(new RESTConfig(url, proxyHost, proxyPort));
     }
 
     /**
      * Creates a RESTClient with the specified URL. No proxy host nor port will
      * be used. 
      *
-     * @param URL URL to send request to
+     * @param url URL to send request to
      *
      * @throws RESTException if unable to create a RESTClient
      */
-    public RESTClient(String URL) throws RESTException {
-        this(new RESTConfig(URL));
+    public RESTClient(String url) {
+        this(new RESTConfig(url));
     }
     
     /**
@@ -246,10 +249,10 @@ public class RESTClient {
      *
      * @throws RESTException if unable to create a RESTClient
      */
-    public RESTClient(RESTConfig restConfig) throws RESTException {
+    public RESTClient(RESTConfig restConfig) {
         this.headers = new LinkedHashMap<>();
         this.parameters = new LinkedHashMap<>();
-        this.URL = restConfig.getURL();
+        this.url = restConfig.getURL();
         this.proxyHost = restConfig.getProxyHost();
         this.proxyPort = restConfig.getProxyPort();
     }
@@ -375,10 +378,11 @@ public class RESTClient {
             HttpGet httpGet = new HttpGet(this.getURL() + query);
             addInternalHeaders(httpGet);
 
+            LOGGER.debug(" *** url (GET): " + this.getURL() + query);            
+            
             response = httpClient.execute(httpGet);
 
-            APIResponse apiResponse = buildResponse(response);
-            return apiResponse;
+            return buildResponse(response);
         } catch (IOException ioe) {
             throw new RESTException(ioe);
         } finally {
@@ -407,8 +411,7 @@ public class RESTClient {
      * @throws RESTException if POST was unsuccessful
      */
     public APIResponse httpPost() throws RESTException {
-            APIResponse response = httpPost(buildQuery()); 
-            return response;
+    	return httpPost(buildQuery()); 
     }
 
     /**
@@ -428,9 +431,13 @@ public class RESTClient {
                 httpPost.setEntity(new StringEntity(body));
             }
 
+            LOGGER.debug(" *** url (POST): " + this.getURL());            
+            LOGGER.debug(" *** payload : "  + body);
+            
             response = httpClient.execute(httpPost);
-
+            
             return buildResponse(response);
+            
         } catch (IOException e) {
             throw new RESTException(e);
         } finally {
@@ -461,6 +468,9 @@ public class RESTClient {
                 httpPut.setEntity(httpEntity);
             }
 
+            LOGGER.debug(" *** url (PUT): " + this.getURL() + query);            
+            LOGGER.debug(" *** payload : "  + body);
+            
             response = httpClient.execute(httpPut);
 
             return buildResponse(response);
@@ -502,6 +512,9 @@ public class RESTClient {
                 httpPatch.setEntity(httpEntity);
             }
 
+            LOGGER.debug(" *** url (PATCH): " + this.getURL() + query);            
+            LOGGER.debug(" *** payload : "  + body);
+            
             response = httpClient.execute(httpPatch);
 
             return buildResponse(response);
@@ -560,10 +573,12 @@ public class RESTClient {
                 httpDelete.setEntity(httpEntity);
             }
 
+            LOGGER.debug(" *** url (DELETE): " + this.getURL() + query);            
+            LOGGER.debug(" *** payload : "  + body);
+
             response = httpClient.execute(httpDelete);
 
-            APIResponse apiResponse = buildResponse(response);
-            return apiResponse;
+            return buildResponse(response);
         } catch (IOException ioe) {
             throw new RESTException(ioe);
         } finally {
@@ -574,12 +589,12 @@ public class RESTClient {
     }
 
     public String getURL() {
-        return URL;
+        return url;
     }
-    public LinkedHashMap<String,List<String>> getHeaders() {
+    public Map<String,List<String>> getHeaders() {
         return headers;
     }
-    public LinkedHashMap<String,List<String>> getParameters() {
+    public Map<String,List<String>> getParameters() {
         return parameters;
     }
     public HttpEntity getHttpEntity() {
@@ -593,7 +608,8 @@ public class RESTClient {
 	private class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
 	    public static final String METHOD_NAME = "DELETE";
 	 
-	    public String getMethod() {
+	    @Override
+		public String getMethod() {
 	        return METHOD_NAME;
 	    }
 	 

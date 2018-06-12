@@ -21,19 +21,13 @@
 package org.openecomp.mso.adapters.sdnc.impl;
 
 
-import org.openecomp.mso.logger.MsoAlarmLogger;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoPropertiesException;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
 
-import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
 public class RequestTunables {
 
-	private MsoPropertiesFactory msoPropertiesFactory;
 	
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
-	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
-	public static final String MSO_PROP_SDNC_ADAPTER="MSO_PROP_SDNC_ADAPTER";
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,RequestTunables.class);
+
 	public static final String GENERATED_KEY = "Generated key: ";
 
 	//criteria
@@ -52,9 +46,8 @@ public class RequestTunables {
 
 	private String sdncaNotificationUrl = null;
 
-	public RequestTunables(String reqId, String msoAction, String operation, String action, MsoPropertiesFactory msoPropFactory) {
+	public RequestTunables(String reqId, String msoAction, String operation, String action) {
 		super();
-		msoPropertiesFactory = msoPropFactory;
 		if (reqId != null) {
             this.reqId = reqId;
         }
@@ -67,6 +60,20 @@ public class RequestTunables {
 		if (action != null) {
             this.action = action;
         }
+	}
+	
+	public RequestTunables(RequestTunables original) {
+		this.reqId = original.reqId;
+		this.action = original.action;
+		this.msoAction = original.msoAction;
+		this.operation = original.operation;
+		this.reqMethod = original.reqMethod;
+		this.sdncUrl = original.sdncUrl;
+		this.timeout = original.timeout;
+		this.headerName = original.headerName;
+		this.namespace = original.namespace;
+		this.asyncInd = original.asyncInd;
+		this.sdncaNotificationUrl = original.sdncaNotificationUrl;		
 	}
 
 	public String getReqId() {
@@ -150,74 +157,5 @@ public class RequestTunables {
 				+ ", sdncaNotificationUrl=" + sdncaNotificationUrl
 				+ ", namespace=" + namespace + "]";
 	}
-
-	public void setTunables()
-	{
-		String error = null;
-		String key;
-		if ("query".equals(action)) { //due to variable format for operation eg services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
-			key = Constants.REQUEST_TUNABLES + "." + msoAction + ".." + action;
-			msoLogger.debug(GENERATED_KEY + key);
-		}
-		else if ("put".equals(action)  || "restdelete".equals(action)) { //due to variable format for operation eg services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
-			key = Constants.REQUEST_TUNABLES + "..." + action;
-			msoLogger.debug(GENERATED_KEY + key);
-		} else {
-			key = Constants.REQUEST_TUNABLES + "." + msoAction + "." + operation +"."  + action;
-			msoLogger.debug(GENERATED_KEY + key);
-		}
-
-		String value;
-		try {
-			value = msoPropertiesFactory.getMsoJavaProperties(MSO_PROP_SDNC_ADAPTER).getProperty(key, "");
-		} catch (MsoPropertiesException e) {
-			msoLogger.error (MessageEnum.LOAD_PROPERTIES_FAIL, "Unknown. Mso Properties ID not found in cache: " + MSO_PROP_SDNC_ADAPTER, "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception - Mso Properties ID not found in cache", e);
-			value="";
-		}
-
-		if (value != null && value.length() > 0) {
-
-			String[] parts = value.split("\\|"); //escape pipe
-			if (parts.length < 3) {
-				msoLogger.warn(MessageEnum.RA_SDNC_INVALID_CONFIG, key, value, "SDNC", "", MsoLogger.ErrorCode.DataError, "Invalid config");
-			}
-
-			for (int i = 0; i < parts.length; i++) {
-				if (i == 0) {
-					reqMethod = parts[i];
-					msoLogger.debug("Request Method is set to: " + reqMethod);
-				} else if (i == 1) {
-					timeout = parts[i];
-					msoLogger.debug("Timeout is set to: " + timeout);
-				} else if (i == 2) {
-					sdncUrl = SDNCAdapterPortTypeImpl.getProperty(Constants.REQUEST_TUNABLES + "." + parts[i], "",msoPropertiesFactory);
-					if (operation != null && sdncUrl != null) {
-						sdncUrl = sdncUrl  + operation;
-					}
-					msoLogger.debug("SDNC Url is set to: " + sdncUrl);
-				} else if  (i == 3) {
-					headerName = parts[i];
-					msoLogger.debug("HeaderName is set to: " + headerName);
-				} else if  (i == 4) {
-					namespace = parts[i];
-					msoLogger.debug("NameSpace is set to: " + namespace);
-				} else if  (i == 5) {
-					asyncInd = parts[i];
-					msoLogger.debug("AsyncInd is set to: " + asyncInd);
-				}
-			}
-
-			if (sdncUrl == null) {
-				error = "Invalid configuration, sdncUrl required for:" + key + " value:" + value;
-			}
-		} else {
-			error = "Missing configuration for:" + key;
-		}
-		if (error != null) {
-			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, key, "SDNC", "", MsoLogger.ErrorCode.DataError, "Missing config param");
-			alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, error);
-		}
-		msoLogger.debug ("RequestTunables Key:" + key + " Value:" + value + " Tunables:" + this.toString());
-		return;
-	}
+	
 }

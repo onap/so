@@ -1,0 +1,44 @@
+{
+	"serviceInstanceId": "serviceInstanceId",
+	"serviceInstanceName": "serviceInstanceName",
+	"serviceType": null,
+	"serviceRole": null,
+	"environmentContext": null,
+	"workloadContext": null,
+	"modelInvariantId": null,
+	"modelVersionId": null,
+	"personaModelVersion": null,
+	"widgetModelId": null,
+	"widgetModelVersion": null,
+	"bandwidthTotal": "bandwidthTotal",
+	"bandwidthUpWan1": "bandwidthUpWan1",
+	"bandwidthDownWan1": "bandwidthDownWan1",
+	"bandwidthUpWan2": "bandwidthUpWan2",
+	"bandwidthDownWan2": "bandwidthDownWan2",
+	"vhnPortalUrl": "vhnPortalUrl",
+	"serviceInstanceLocationId": "serviceInstanceLocId",
+	"resourceVersion": null,
+	"selflink": "selfLink",
+	"orchestrationStatus": "Created",
+	"relationshipList": null,
+	"metadata": null,
+	"allottedResources": {
+		"allottedResource": [
+			{
+				"id": "allottedID",
+				"tunnelXconnects" : {
+				    "tunnelXconnect" : [ 
+				        {
+				            "id" : "tunnelXConnectId",
+                            "bandwidthUpWan1" : "bandwidthUpWan1",
+                            "bandwidthDownWan1" : "bandwidthDownWan1",
+                            "bandwidthUpWan2" : "bandwidthUpWan2",
+                            "bandwidthDownWan2" : "bandwidthDownWan2",
+                            "resourceVersion" : "resourceVersion"
+				        }
+				    ]
+				}
+			}
+		]
+	}
+}

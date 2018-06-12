@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.ws.rs.NotFoundException;
 
 import org.onap.aai.domain.yang.GenericVnf;
 import org.openecomp.mso.client.aai.AAIObjectType;
@@ -42,24 +44,34 @@ import org.openecomp.mso.client.sdno.dmaap.SDNOHealthCheckDmaapPublisher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 public class SDNOValidatorImpl implements SDNOValidator {
 
 	private final static String clientName = "MSO";
 
 	@Override
-	public void healthDiagnostic(String vnfId, UUID uuid, String requestingUserId) throws IOException, Exception {
+	public boolean healthDiagnostic(String vnfId, UUID uuid, String requestingUserId) throws IOException, Exception {
 		
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
-		AAIResourcesClient client = new AAIResourcesClient(AAIVersion.V10, uuid);
-		GenericVnf vnf = client.get(GenericVnf.class, uri);
+		AAIResourcesClient client = new AAIResourcesClient(AAIVersion.V10);
+		GenericVnf vnf = client.get(GenericVnf.class, uri).orElseThrow(() -> new NotFoundException(vnfId + " not found in A&AI"));
 		
 		SDNO requestDiagnostic = buildRequestDiagnostic(vnf, uuid, requestingUserId);
 		ObjectMapper mapper = new ObjectMapper();
 		String json = mapper.writeValueAsString(requestDiagnostic);
 		this.submitRequest(json);
-		this.pollForResponse(uuid.toString());
+		boolean status = this.pollForResponse(uuid.toString());
+		return status;		
+	}
+	
+	@Override
+	public boolean healthDiagnostic(GenericVnf genericVnf, UUID uuid, String requestingUserId) throws IOException, Exception {
 		
+		SDNO requestDiagnostic = buildRequestDiagnostic(genericVnf, uuid, requestingUserId);
+		ObjectMapper mapper = new ObjectMapper();
+		String json = mapper.writeValueAsString(requestDiagnostic);
+		this.submitRequest(json);
+		boolean status = this.pollForResponse(uuid.toString());
+		return status;		
 	}
 
 	protected SDNO buildRequestDiagnostic(GenericVnf vnf, UUID uuid, String requestingUserId) {
@@ -80,8 +92,10 @@ public class SDNOValidatorImpl implements SDNOValidator {
 		body.setInput(input);
 		
 		RequestHealthDiagnostic request = new RequestHealthDiagnostic();
+
 		request.setRequestClientName(clientName);
 		request.setRequestNodeName(vnf.getVnfName());
+		request.setRequestNodeUuid(vnf.getVnfId());
 		request.setRequestNodeIp(vnf.getIpv4OamAddress()); //generic-vnf oam ip
 		request.setRequestUserId(requestingUserId); //mech id?
 		request.setRequestId(uuid.toString()); //something to identify this request by for polling

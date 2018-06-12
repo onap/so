@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aetgt:SDNCAdapterRequest xmlns:aetgt="http://org.openecomp/workflow/sdnc/adapter/schema/v1" xmlns:sdncadaptersc="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+   <sdncadapter:RequestHeader xmlns:sdncadapter="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+      <sdncadapter:RequestId>0460ba40-60c8-4b07-8878-c8e8d87cde04-1527983610512</sdncadapter:RequestId>
+      <sdncadapter:SvcInstanceId />
+      <sdncadapter:SvcAction>put</sdncadapter:SvcAction>
+      <sdncadapter:SvcOperation>/L3SDN-API:services/layer3-service-list/MIS%2F1806%2F25057%2FSW_INTERNET/service-data/feature-list/FIREWALL-LITE/</sdncadapter:SvcOperation>
+      <sdncadapter:CallbackUrl>https://mso-bpmn-e2e-s1.ecomp.idns.aic.cip.att.com:30252/mso/SDNCAdapterCallbackService</sdncadapter:CallbackUrl>
+   </sdncadapter:RequestHeader>
+   <sdncadaptersc:RequestData>
+      <feature-list  xmlns="com:att:sdnctl:l3api">
+         <feature-type>FIREWALL-LITE</feature-type>
+         <feature-instance-id>mtjnj40evbc0eceb</feature-instance-id>
+         <feature-sub-type>SHARED</feature-sub-type>
+         <feature-instance-xpath>/restconf/config/Firewall-API:feature-model/feature-list/FIREWALL-LITE/mtjnj40evbc0eceb/</feature-instance-xpath>
+      </feature-list>
+   </sdncadaptersc:RequestData>
+</aetgt:SDNCAdapterRequest>

@@ -24,12 +24,17 @@ package org.openecomp.mso.adapters.nwrest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openecomp.mso.openstack.beans.NetworkRollback;
+
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("rollbackNetworkRequest")
 @XmlRootElement(name = "rollbackNetworkRequest")
 public class RollbackNetworkRequest extends NetworkRequestCommon {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8705660877263749940L;
 	private NetworkRollback networkRollback;
 
 	public RollbackNetworkRequest() {

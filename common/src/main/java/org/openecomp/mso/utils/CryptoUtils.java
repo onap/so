@@ -22,12 +22,14 @@ package org.openecomp.mso.utils;
 
 
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
 
 
 /**
@@ -36,8 +38,10 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public final class CryptoUtils {
 
-    public static final String AES = "AES";
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, CryptoUtils.class);
 
+    public static final String AES = "AES";
+    private static final String CLOUD_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
     /**
      * encrypt a value and generate a keyfile
      * if the keyfile is not found then a new one is created
@@ -65,6 +69,36 @@ public final class CryptoUtils {
         return new String (decrypted);
     }
 
+    /**
+     * decrypt a value or return defaultValue
+     * 
+     */
+    public static String decryptProperty (String prop, String defaultValue, String encryptionKey) {
+		 try {
+			 return CryptoUtils.decrypt(prop, encryptionKey);			
+		 }	
+		 catch (GeneralSecurityException e) {
+			 LOGGER.debug("Security exception", e);
+		 }
+		 return defaultValue;
+	}
+    
+    public static String encryptCloudConfigPassword(String message) {
+    	try {
+	    	return CryptoUtils.encrypt(message, CryptoUtils.CLOUD_KEY);
+	    } catch (GeneralSecurityException e) {
+	        LOGGER.error (MessageEnum.RA_GENERAL_EXCEPTION, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in encryptPassword", e);
+	        return null;
+	    }
+    }
+    public static String decryptCloudConfigPassword(String message) {
+    	try {
+	    	return CryptoUtils.decrypt(message, CryptoUtils.CLOUD_KEY);
+	    } catch (GeneralSecurityException e) {
+	        LOGGER.error (MessageEnum.RA_GENERAL_EXCEPTION, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in encryptPassword", e);
+	        return null;
+	    }
+    }
     private static SecretKeySpec getSecretKeySpec (String keyString) throws NoSuchAlgorithmException {
         byte[] key = hexStringToByteArray (keyString);
         SecretKeySpec sks = new SecretKeySpec (key, CryptoUtils.AES);

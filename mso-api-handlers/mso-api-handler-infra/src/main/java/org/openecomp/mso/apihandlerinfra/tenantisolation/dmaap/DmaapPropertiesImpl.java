@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,20 +20,30 @@
 
 package org.openecomp.mso.apihandlerinfra.tenantisolation.dmaap;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.openecomp.mso.apihandlerinfra.MsoPropertiesUtils;
+import org.openecomp.mso.apihandlerinfra.SpringContextHelper;
 import org.openecomp.mso.client.dmaap.DmaapProperties;
-import org.openecomp.mso.properties.MsoJavaProperties;
+import org.springframework.context.ApplicationContext;
 
 public class DmaapPropertiesImpl implements DmaapProperties {
 
-	private final Map<String, String> props;
-	
+	private final Map<String, String> props  = new HashMap<>();
+	private static final String[] propertyNames = {
+			"mso.so.operational-environment.dmaap.username",
+			"mso.so.operational-environment.dmaap.password",
+			"mso.so.operational-environment.publisher.topic",
+			"mso.so.operational-environment.dmaap.host"
+	};
 	public DmaapPropertiesImpl () {
+		ApplicationContext context = SpringContextHelper.getAppContext();
 		
-		MsoJavaProperties properties = MsoPropertiesUtils.loadMsoProperties();
-		this.props = properties.asMap();
+		for (String name : propertyNames) {
+			this.props.put(name, context.getEnvironment().getProperty(name));
+
+		}
+
 	}
 	
 	@Override

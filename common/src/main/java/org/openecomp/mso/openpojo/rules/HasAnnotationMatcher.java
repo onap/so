@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,18 +29,20 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
-public class HasAnnotationMatcher<T extends Annotation> extends TypeSafeDiagnosingMatcher<AnnotatedElement> {
-	private final Class<T> annotationType;
+import com.openpojo.reflection.PojoField;
+
+public class HasAnnotationMatcher<T extends PojoField> extends TypeSafeDiagnosingMatcher<T> {
+	private final Class<? extends Annotation> annotationType;
 	private final Matcher<? super T> annotationMatcher;
 
-	public HasAnnotationMatcher(final Class<T> annotationType, final Matcher<? super T> annotationMatcher) {
+	public HasAnnotationMatcher(final Class<? extends Annotation> annotationType, final Matcher<? super T> annotationMatcher) {
 		this.annotationType = annotationType;
 		this.annotationMatcher = annotationMatcher;
 	}
 
 	@Override
-	protected boolean matchesSafely(final AnnotatedElement item, final Description mismatchDescription) {
-		final T annotation = item.getAnnotation(this.annotationType);
+	protected boolean matchesSafely(final PojoField item, final Description mismatchDescription) {
+		final Annotation annotation = item.getAnnotation(this.annotationType);
 		if (annotation == null) {
 			mismatchDescription.appendText("does not have annotation ").appendText(this.annotationType.getName());
 			return false;
@@ -59,11 +61,11 @@ public class HasAnnotationMatcher<T extends Annotation> extends TypeSafeDiagnosi
 		// Intentionally left blank.
 	}
 
-	public static Matcher<AnnotatedElement> hasAnnotation(final Class<? extends Annotation> annotationType) {
+	public static <T extends PojoField> Matcher<T> hasAnnotation(final Class<? extends Annotation> annotationType) {
 		return hasAnnotation(annotationType, anything(""));
 	}
 
-	public static <T extends Annotation> Matcher<AnnotatedElement> hasAnnotation(final Class<T> annotationType, final Matcher<? super T> annotationMatcher) {
+	public static <T extends PojoField> Matcher<T> hasAnnotation(final Class<? extends Annotation> annotationType, final Matcher<? super T> annotationMatcher) {
 		return new HasAnnotationMatcher<T>(annotationType, annotationMatcher);
 	}
 }

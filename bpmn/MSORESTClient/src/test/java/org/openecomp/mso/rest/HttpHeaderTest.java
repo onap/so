@@ -21,6 +21,7 @@
 package org.openecomp.mso.rest;
 
 import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 public class HttpHeaderTest {
@@ -31,4 +32,9 @@ public class HttpHeaderTest {
 		assertEquals("name", hth.getName());
 		assertEquals("value", hth.getValue());
 	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void testException() {
+		HttpHeader httpHeader = new HttpHeader(null, "value");  //null
+	}	
 }

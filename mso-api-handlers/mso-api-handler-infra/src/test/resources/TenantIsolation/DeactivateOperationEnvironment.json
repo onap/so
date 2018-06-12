@@ -1,0 +1,12 @@
+{
+	"requestDetails": {
+		"requestInfo": {
+			"resourceType": "operationalEnvironment",
+			"source": "VID",
+			"requestorId": "xxxxxx"
+		},
+		"requestParameters": {
+			"operationalEnvironmentType": "VNF"
+		}
+	}
+}

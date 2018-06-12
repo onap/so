@@ -20,11 +20,18 @@
 
 package org.openecomp.mso.bpmn.core.plugins;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.ExecutionListener;
 import org.camunda.bpm.engine.impl.bpmn.parser.AbstractBpmnParseListener;
@@ -40,21 +47,36 @@ import org.camunda.bpm.engine.impl.pvm.process.ScopeImpl;
 import org.camunda.bpm.engine.impl.pvm.process.TransitionImpl;
 import org.camunda.bpm.engine.impl.util.xml.Element;
 import org.camunda.bpm.engine.impl.variable.VariableDeclaration;
-
+import org.camunda.bpm.model.bpmn.impl.instance.FlowNodeImpl;
+import org.camunda.bpm.model.bpmn.instance.EndEvent;
+import org.camunda.bpm.model.bpmn.instance.FlowNode;
+import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.openecomp.mso.bpmn.core.BPMNLogger;
-import org.openecomp.mso.bpmn.core.PropertyConfiguration;
-import org.openecomp.mso.bpmn.core.mybatis.CustomMyBatisSessionFactory;
-import org.openecomp.mso.bpmn.core.mybatis.URNMapping;
+
+
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.PropertySource;
+import org.springframework.stereotype.Component;
+
+
 
 /**
  * Plugin for MSO logging and URN mapping.
  */
+@Component
 public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, LoggingAndURNMappingPlugin.class);
 	private static final String FSPROPKEY = "URNMapping.FileSystemLoading.Enabled";
-
+	
+	@Autowired
+	private LoggingParseListener loggingParseListener;
+	
 	@Override
 	public void preInit(
 			ProcessEngineConfigurationImpl processEngineConfiguration) {
@@ -64,13 +86,16 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 			preParseListeners = new ArrayList<>();
 			processEngineConfiguration.setCustomPreBPMNParseListeners(preParseListeners);
 		}
-		preParseListeners.add(new LoggingParseListener());
+		preParseListeners.add(loggingParseListener);
 	}
 	
 	/**
 	 * Called when a process flow is parsed so we can inject listeners.
 	 */
-	public static class LoggingParseListener extends AbstractBpmnParseListener {
+	@Component
+	public class LoggingParseListener extends AbstractBpmnParseListener {		
+		
+		
 		private void injectLogExecutionListener(ActivityImpl activity) {
 			activity.addListener(
 					ExecutionListener.EVENTNAME_END,
@@ -91,11 +116,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 
                 @Override
 		public void parseStartEvent(Element startEventElement, ScopeImpl scope, ActivityImpl startEventActivity) {
-			// Inject these listeners only on the main start event for the flow, not on any embedded subflow start events
-			if (scope instanceof ProcessDefinitionEntity) {
-				startEventActivity.addListener(ExecutionListener.EVENTNAME_START, new URNMappingInitializerListener("START"));
-				startEventActivity.addListener(ExecutionListener.EVENTNAME_START, new LoggingInitializerListener("START"));
-			}
+			// Inject these listeners only on the main start event for the flow, not on any embedded subflow start events			
 
 			injectLogExecutionListener(startEventActivity);
 		}
@@ -255,158 +276,30 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 			injectLogExecutionListener(messageActivity);
 		}
 	}
-
-	/**
-	 * Initializes URN mapping variables on process entry.
-	 */
-	public static class URNMappingInitializerListener implements ExecutionListener {
-		private String event;
-
-		public URNMappingInitializerListener(String eventData) {
-			this.event = eventData;
-		}
-
-		public String getEvent() {
-			return event;
-		}
-
-                @Override
-		public void notify(DelegateExecution execution) throws Exception {
-			ProcessEngineConfigurationImpl processEngineConfiguration =
-				Context.getProcessEngineConfiguration();
-			loadURNProperties(execution, processEngineConfiguration);
-		}
-
-		private void loadURNProperties(DelegateExecution execution,
-				ProcessEngineConfigurationImpl processEngineConfiguration) {
-			Map<String,String> bpmnProps = PropertyConfiguration.getInstance().getProperties("mso.bpmn.properties");
-			if (bpmnProps == null) {
-				LOGGER.debug("Unable to load mso.bpmn.properties; loading URN Mapping from DB");
-				
-				LOGGER.error (MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, 
-					"Unable to load mso.bpmn.properties; loading URN Mapping from DB");
-				
-				loadFromDB(execution, processEngineConfiguration);
-			} else {
-				String fsEnabled = bpmnProps.get(FSPROPKEY);
-				if (fsEnabled != null) {
-					if (Boolean.parseBoolean(fsEnabled)) {
-						LOGGER.debug("File system loading is enabled; loading URN properties from File system");
-						LOGGER.info(MessageEnum.BPMN_GENERAL_INFO,  "BPMN",  "File system loading is enabled; loading URN properties from File System");
-						loadFromFileSystem(execution);
-					} else {
-						LOGGER.debug("File system loading is disabled; loading URN properties from DB");
-						LOGGER.info (MessageEnum.BPMN_GENERAL_INFO, "BPMN", "File system loading is disabled; loading URN properties from DB");
-						
-						loadFromDB(execution, processEngineConfiguration);
-					}
-				} else {
-					
-					LOGGER.error (MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, 
-						"Unable to retrieve URNMapping.FileSystemLoading.Enabled from mso.bpmn.properties; loading URN Mapping from DB");
-					
-					loadFromDB(execution, processEngineConfiguration);
-				}
-			}
-		}
-
-		private void loadFromFileSystem(DelegateExecution execution) {
-			PropertyConfiguration propertyConfiguration = PropertyConfiguration.getInstance();
-			Map<String,String> props = propertyConfiguration.getProperties("mso.bpmn.urn.properties");
-			for (String key : props.keySet()) {
-				String varName = URNMapping.createIdentifierFromURN(key);
-				String varValue = props.get(key);
-				execution.setVariable(varName, varValue);
-			}
-		}
-
-		private void loadFromDB(DelegateExecution execution, ProcessEngineConfigurationImpl processEngineConfiguration) {
-			Command<List<URNMapping>> command = commandContext -> (List<URNMapping>) commandContext.getDbSqlSession()
-				.selectList("mso.urnMapping.selectAll", null);
-
-			CustomMyBatisSessionFactory sessionFactory = new CustomMyBatisSessionFactory();
-			sessionFactory.initFromProcessEngineConfiguration(processEngineConfiguration,
-				"customMyBatisConfiguration.xml");
-
-			List<URNMapping> mappings = sessionFactory.getCommandExecutorTxRequired().execute(command);
-
-			if (mappings != null && !mappings.isEmpty()) {
-				for (URNMapping mapping : mappings) {
-					String varName = URNMapping.createIdentifierFromURN(mapping.getName());
-					String varValue = mapping.getValue();
-
-					LOGGER.debug("URN Mapping = '" + mapping.getName()
-						+ "', setting variable '" + varName + "' to '" + varValue + "'");
-
-					execution.setVariable(varName, varValue);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Sets the isDebugLogEnabled variable on process entry.
-	 */
-	public static class LoggingInitializerListener implements ExecutionListener {
-		private String event;
-
-		public LoggingInitializerListener(String eventData) {
-			this.event = eventData;
-		}
-
-		public String getEvent() {
-			return event;
-		}
-
-                @Override
-		public void notify(DelegateExecution execution) throws Exception {
-			String processKey = execution.getProcessEngineServices().getRepositoryService()
-				.getProcessDefinition(execution.getProcessDefinitionId()).getKey();
-
-			// If a "true" value is already injected, e.g. from a top-level flow, it SHOULD NOT be
-			// overridden by the value in the URN mapping. This allows a top-level flow and all
-			// invoked subflows to be debugged by turning on the debug flag for just the top-level
-			// flow, assuming the isDebugEnabled flag variable is passed from the top-level flow to
-			// its subflows.
-
-			// If a "false" value is already injected, e.g. from a top-level flow, it SHOULD be
-			// overridden by the value in the URN mapping.  This allows a subflow to be debugged
-			// without turning on the the debug flag for the top-level flow.
-
-			String injectedValue = (String) execution.getVariable("isDebugLogEnabled");
-			String urnValue = "true".equals(execution.getVariable("URN_log_debug_" + processKey)) ? "true" : "false";
-
-			if ("true".equals(injectedValue)) {
-				LOGGER.debug("Setting isDebugLogEnabled to \"" + injectedValue + "\" for process: " + processKey + " (injected value)");
-				execution.setVariable("isDebugLogEnabled", injectedValue);
-			} else {
-				LOGGER.debug("Setting isDebugLogEnabled to \"" + urnValue + "\" for process: " + processKey + " (from URN mapping)");
-				execution.setVariable("isDebugLogEnabled", urnValue);
-			}
-		}
-	}
 	
 	/**
 	 * Logs details about the current activity.
-	 */
-	public static class LoggingExecutionListener implements ExecutionListener {
-		private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
-		private static ConcurrentHashMap<String, Long> startTimes = new ConcurrentHashMap<>();
+	 */	
+	public class LoggingExecutionListener implements ExecutionListener {
+		private final MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,LoggingExecutionListener.class);	
 
 		private String event;
+		
+		public LoggingExecutionListener() {
+			this.event = "";
+		}
 
 		public LoggingExecutionListener(String event) {
 			this.event = event;
 		}
-
+		
 		public String getEvent() {
 			return event;
 		}
 
+		@Override
 		public void notify(DelegateExecution execution) throws Exception {
-			BPMNLogger.debug(
-				(String) execution.getVariable("isDebugLogEnabled"),
-				"Logging for activity---------------:" + event + ":"
+			logger.trace("Logging for activity---------------:" + event + ":"
 						+ execution.getCurrentActivityName()
 						+ ", processDefinitionId="
 						+ execution.getProcessDefinitionId() + ", activtyId="
@@ -416,33 +309,39 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 						+ execution.getProcessInstanceId() + ", businessKey="
 						+ execution.getProcessBusinessKey() + ", executionId="
 						+ execution.getId());
-
+			//required for legacy groovy processing in camunda
+			execution.setVariable("isDebugLogEnabled", "true");
 			if (!isBlank(execution.getCurrentActivityName())) {
 				try {
+				
 					String id = execution.getId();
-					if ("START".equals(event) && id != null ) {
-						startTimes.put(id, System.currentTimeMillis());
-					} else if ("END".equals(event) && id != null) {
-						String prefix = (String) execution.getVariable("prefix");
-
-						if (prefix != null ) {
-							MsoLogger.setServiceName("MSO." + prefix.substring(0,prefix.length()-1));
+					if (id != null ) {				
+						RepositoryService repositoryService = execution.getProcessEngineServices().getRepositoryService();
+						String processName = repositoryService.createProcessDefinitionQuery()
+						  .processDefinitionId(execution.getProcessDefinitionId())
+						  .singleResult()
+						  .getName();
+						
+						if (execution.getBpmnModelElementInstance() instanceof StartEvent) {
+							logger.debug("Starting process: " + processName);
 						}
-
+						if (execution.getBpmnModelElementInstance() instanceof EndEvent) {
+							logger.debug("Ending process: " + processName);
+						}
+						
+						String serviceName = MDC.get(MsoLogger.SERVICE_NAME);
+						
+						if(serviceName != null && !serviceName.contains(processName))
+							MsoLogger.setServiceName( serviceName + "." + processName);
+						else if(serviceName == null)
+							MsoLogger.setServiceName(processName);
+						
 						String requestId = (String) execution.getVariable("mso-request-id");
 						String svcid = (String) execution.getVariable("mso-service-instance-id");
-						MsoLogger.setLogContext(requestId, svcid);
-						long startTime = startTimes.remove(id);
-
-						if (startTime != 0) {
-							
-							LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-									event + ": " + execution.getCurrentActivityName(), "BPMN", execution.getCurrentActivityName(), null);
-							
-						}
+						MsoLogger.setLogContext(requestId, svcid);							
 					}
-				} catch(Exception e) {
-					LOGGER.debug("Exception at notify: " + e);
+				} catch(Exception e) {					
+					logger.error(e);
 				}
 			}
 		}

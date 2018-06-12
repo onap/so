@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,111 +20,186 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
-
-
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-public class VfModule extends MavenLikeVersioning implements Serializable {
-	
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.openpojo.business.annotation.BusinessKey;
+
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
+
+@Entity
+@Table(name = "vf_module")
+public class VfModule implements Serializable {
+
 	private static final long serialVersionUID = 768026109321305392L;
 
-	private String modelInvariantUUID = null;
-	private String modelName = null;
-	private String modelVersion = null;
-	private String description = null;
-	private int isBase;
-	private String heatTemplateArtifactUUId = null;
-	private String volHeatTemplateArtifactUUId = null;
-    private Timestamp created = null;
-	private String modelUUID = null;
-	private String vnfResourceModelUUId = null;
+	@Id
+	@BusinessKey
+	@Column(name = "MODEL_UUID")
+	private String modelUUID;
 
-    public VfModule() {
-		super();
+	@Column(name = "MODEL_INVARIANT_UUID")
+	private String modelInvariantUUID;
+
+	@Column(name = "MODEL_NAME")
+	private String modelName;
+
+	@Column(name = "MODEL_VERSION")
+	private String modelVersion;
+
+	@Column(name = "DESCRIPTION")
+	private String description;
+
+	@Column(name = "IS_BASE")
+	private Boolean isBase;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "VOL_HEAT_TEMPLATE_ARTIFACT_UUID")
+	private HeatTemplate volumeHeatTemplate;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "HEAT_TEMPLATE_ARTIFACT_UUID")
+	private HeatTemplate moduleHeatTemplate;
+
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "vf_module_to_heat_files", joinColumns = @JoinColumn(name = "VF_MODULE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "HEAT_FILES_ARTIFACT_UUID"))
+	private List<HeatFiles> heatFiles;
+
+	@OneToMany(mappedBy = "vfModule")
+	private List<VfModuleCustomization> vfModuleCustomization;
+
+	@ManyToOne
+	@JoinColumn(name = "VNF_RESOURCE_MODEL_UUID")
+	private VnfResource vnfResources;
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
+				.append("modelName", modelName).append("modelVersion", modelVersion).append("description", description)
+				.append("isBase", isBase).append("volumeHeatTemplate", volumeHeatTemplate)
+				.append("moduleHeatTemplate", moduleHeatTemplate).append("created", created)
+				.append("heatFiles", heatFiles).append("vfModuleCustomization", vfModuleCustomization)
+				.append("vnfResources", vnfResources).toString();
 	}
 
-	public String getVnfResourceModelUUId() {
-		return this.vnfResourceModelUUId;
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof VfModule)) {
+			return false;
+		}
+		VfModule castOther = (VfModule) other;
+		return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
 	}
 
-	public void setVnfResourceModelUUId(String vnfResourceModelUUId) {
-		this.vnfResourceModelUUId = vnfResourceModelUUId;
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(modelUUID).toHashCode();
+	}
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
+	}
+
+	public String getModelInvariantUUID() {
+		return modelInvariantUUID;
+	}
+
+	public void setModelInvariantUUID(String modelInvariantUUID) {
+		this.modelInvariantUUID = modelInvariantUUID;
+	}
+
+	@LinkedResource
+	public List<VfModuleCustomization> getVfModuleCustomization() {
+		if (vfModuleCustomization == null)
+			vfModuleCustomization = new ArrayList<>();
+
+		return vfModuleCustomization;
+	}
+
+	public void setVfModuleCustomization(List<VfModuleCustomization> vfModuleCustomization) {
+		this.vfModuleCustomization = vfModuleCustomization;
 	}
 
 	public String getModelName() {
 		return this.modelName;
 	}
-	
+
 	public void setModelName(String modelName) {
 		this.modelName = modelName;
 	}
 
-	public int getIsBase() {
-		return this.isBase;
+	public Boolean getIsBase() {
+		return isBase;
 	}
-	
-	public void setIsBase(int isBase) {
+
+	public void setIsBase(Boolean isBase) {
 		this.isBase = isBase;
 	}
-	
-	public boolean isBase() {
-		if (this.isBase == 0) {
-			return false;
-		} else {
-			return true;
-		}
+
+	public Boolean getIsBaseBoolean() {
+		return isBase;
 	}
 
-	public String getHeatTemplateArtifactUUId() {
-		return this.heatTemplateArtifactUUId;
+	@LinkedResource
+	public List<HeatFiles> getHeatFiles() {
+		if (heatFiles == null)
+			heatFiles = new ArrayList<>();
+		return heatFiles;
 	}
 
-	public void setHeatTemplateArtifactUUId(String heatTemplateArtifactUUId) {
-		this.heatTemplateArtifactUUId = heatTemplateArtifactUUId;
+	public void setHeatFiles(List<HeatFiles> heatFiles) {
+		this.heatFiles = heatFiles;
+	}
+
+	@LinkedResource
+	public VnfResource getVnfResources() {
+		return vnfResources;
+	}
+
+	public void setVnfResources(VnfResource vnfResources) {
+		this.vnfResources = vnfResources;
 	}
 
 	public String getDescription() {
 		return this.description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	public Timestamp getCreated() {
+	public Date getCreated() {
 		return created;
 	}
 
-	public void setCreated(Timestamp created) {
-		this.created = created;
-	}
-	
-	public String getModelInvariantUuid() {
-		return this.modelInvariantUUID;
-	}
-	public void setModelInvariantUuid(String modelInvariantUuid) {
-		this.modelInvariantUUID = modelInvariantUuid;
-	}
-	public String getModelInvariantUUID() {
-		return this.modelInvariantUUID;
-	}
-	public void setModelInvariantUUID(String modelInvariantUuid) {
-		this.modelInvariantUUID = modelInvariantUuid;
-	}
-	
-	public String getVolHeatTemplateArtifactUUId() {
-		return this.volHeatTemplateArtifactUUId;
-	}
-	
-	public void setVolHeatTemplateArtifactUUId(String volHeatTemplateArtifactUUId) {
-		this.volHeatTemplateArtifactUUId = volHeatTemplateArtifactUUId;
-	}
-
-    public String getModelUUID() {
+	public String getModelUUID() {
 		return modelUUID;
 	}
 
@@ -140,36 +215,21 @@ public class VfModule extends MavenLikeVersioning implements Serializable {
 		this.modelVersion = modelVersion;
 	}
 
-	@Override
-	public String toString () {
-       StringBuilder buf = new StringBuilder();
+	@LinkedResource
+	public HeatTemplate getVolumeHeatTemplate() {
+		return volumeHeatTemplate;
+	}
 
-       buf.append("VFModule:");
-       buf.append("modelName=");
-       buf.append(modelName);
-       buf.append(",modelVersion=");
-       buf.append(modelVersion);
-       buf.append(",vnfResourceModelUUId=");
-       buf.append(this.vnfResourceModelUUId);
-       buf.append(",heatTemplateArtifactUUId=");
-       buf.append(this.heatTemplateArtifactUUId);
-       buf.append(", description=");
-       buf.append(this.description);
-       buf.append(",volHeatTemplateArtifactUUId=");
-       buf.append(this.volHeatTemplateArtifactUUId);
-       buf.append(",isBase=");
-       buf.append(this.isBase);
-       buf.append(",modelInvariantUUID=");
-       buf.append(this.modelInvariantUUID);
-       buf.append(",modelUUID=");
-       buf.append(this.modelUUID);
+	public void setVolumeHeatTemplate(HeatTemplate volumeHeatTemplate) {
+		this.volumeHeatTemplate = volumeHeatTemplate;
+	}
 
-    	 if (this.created != null) {
-    		 buf.append (",created=");
-    		 buf.append (DateFormat.getInstance().format(this.created));
-         }
-		 
-    	return buf.toString();
-    }
+	@LinkedResource
+	public HeatTemplate getModuleHeatTemplate() {
+		return moduleHeatTemplate;
+	}
 
+	public void setModuleHeatTemplate(HeatTemplate moduleHeatTemplate) {
+		this.moduleHeatTemplate = moduleHeatTemplate;
+	}
 }

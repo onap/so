@@ -20,7 +20,7 @@
 
 package org.openecomp.mso.client.aai;
 
-import javax.ws.rs.ext.ContextResolver;
+import org.openecomp.mso.client.policy.CommonObjectMapperProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -33,9 +33,7 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 
-public class AAICommonObjectMapperProvider implements ContextResolver<ObjectMapper> {
-
-	final ObjectMapper mapper;
+public class AAICommonObjectMapperProvider extends CommonObjectMapperProvider {
 
 	public AAICommonObjectMapperProvider() {
 		mapper = new ObjectMapper();
@@ -51,12 +49,4 @@ public class AAICommonObjectMapperProvider implements ContextResolver<ObjectMapp
         mapper.setAnnotationIntrospector(AnnotationIntrospector.pair(aiJaxb, aiJackson));
 	}
 
-	@Override
-	public ObjectMapper getContext(Class<?> type) {
-		return mapper;
-	}
-	
-	public ObjectMapper getMapper() {
-		return mapper;
-	}
 }

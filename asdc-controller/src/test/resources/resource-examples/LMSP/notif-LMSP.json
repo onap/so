@@ -1,0 +1,140 @@
+{
+	"distributionID": "12411e7c-403a-4795-b846-b5c3f0f18fd1",
+	"serviceName": "LMSP_1806_ap7134_SVC",
+	"serviceVersion": "2.0",
+	"serviceUUID": "7821682f-2bd8-4db6-85d0-4da9c0576fd1",
+	"serviceInvariantUUID": "40bff8f4-8375-47c8-baa9-b695785cad8f",
+	"serviceDescription": "LMSP_1806_ap7134_SVC just updated verison",
+	"serviceArtifacts": [
+		{
+			"artifactName": "service_Lmsp1806Ap7134Svc_csar__1_.csar",
+			"artifactVersion": "2",
+			"artifactType": "TOSCA_CSAR",
+			"artifactDescription": "TOSCA definition package of the asset",
+			"artifactTimeout": "0",
+			"artifactURL": "service_Lmsp1806Ap7134Svc_csar__1_.csar",
+			"artifactUUID": "04cbf5f5-9a7f-4a55-a27e-09fd6a0be390",
+			"artifactChecksum": "YTQ2ZTdmNWQxMWI3YWJmNjVhZDllOGU1MGY5YzdlY2M=",
+			"generatedArtifact": {
+				
+			}
+		}
+	],
+	"resources": [
+		{
+			"resourceInstanceName": "LMSP_1806_ap7134_VSP 0",
+			"resourceCustomizationUUID": "5df07b28-04ee-4850-9990-a4727499f4c4",
+			"resourceInvariantUUID": "8e9e72fe-bd33-4dc5-904f-7b51e75b0151",
+			"resourceName": "LMSP_1806_ap7134_VSP",
+			"resourceType": "VF",
+			"resourceUUID": "aa45f014-a47f-44cb-bce4-909f4b464af5",
+			"resourceVersion": "1.0",
+			"category": "Generic",
+			"subCategory": "Network Elements",
+			"artifacts": [
+				{
+					"artifactName": "mod_vmsi_msp_lb_child.yaml",
+					"artifactVersion": "1",
+					"artifactType": "HEAT_NESTED",
+					"artifactDescription": "created from csar",
+					"artifactTimeout": "120",
+					"artifactURL": "mod_vmsi_msp_lb_child.yaml",
+					"artifactUUID": "d0c4cddb-d7a6-405e-a904-f028ce290f28",
+					"artifactChecksum": "ZmEwNjZhMjY1YzZlZmNkOTk0NmUyOWRlNzc1ZmJkZmU=",
+					"generatedArtifact": {
+						
+					}
+				},
+				{
+					"artifactName": "lmsp_1806_ap7134_vsp0_modules.json",
+					"artifactVersion": "2",
+					"artifactType": "VF_MODULES_METADATA",
+					"artifactDescription": "Auto-generated VF Modules information artifact",
+					"artifactTimeout": "120",
+					"artifactURL": "lmsp_1806_ap7134_vsp0_modules.json",
+					"artifactUUID": "5d363dc2-19b6-402b-8976-3685f84d5a50",
+					"artifactChecksum": "ODY5YjQ0NWY4NmU2OTU5ZGZiNWMyYWUzMDljYmQ5M2M=",
+					"generatedArtifact": {
+						
+					}
+				},
+				{
+					"artifactName": "mod_vmsi_msp_lb_parent.yml",
+					"artifactVersion": "2",
+					"artifactType": "HEAT",
+					"artifactDescription": "created from csar",
+					"artifactTimeout": "120",
+					"artifactURL": "mod_vmsi_msp_lb_parent.yml",
+					"artifactUUID": "6786e6ff-344b-4e02-9dfb-39e635b1dafb",
+					"artifactChecksum": "MTEwZmNjMGNmMjQ0YzZiZWU5NTEwNDNjMzc3ODhiM2I=",
+					"generatedArtifact": {
+						"artifactInfo": {
+							"artifactName": "mod_vmsi_msp_lb_parent.env",
+							"artifactVersion": "3",
+							"artifactType": "HEAT_ENV",
+							"artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+							"artifactTimeout": "120",
+							"artifactURL": "mod_vmsi_msp_lb_parent.env",
+							"artifactUUID": "f64dd1e9-ed81-4aa2-8da5-bca88dda0155",
+							"artifactChecksum": "NzJjNzhhMGYwYTNlYTVkMzJlNzQ0OWRkMmJlZDI1N2M=",
+							"generatedArtifact": {
+								
+							}
+						}
+					}
+				},
+				{
+					"artifactName": "base_stsi_msp_lb.yml",
+					"artifactVersion": "2",
+					"artifactType": "HEAT",
+					"artifactDescription": "created from csar",
+					"artifactTimeout": "120",
+					"artifactURL": "base_stsi_msp_lb.yml",
+					"artifactUUID": "4c52134d-bdc6-4f7d-b780-8472f2e6d259",
+					"artifactChecksum": "NDVjNzA0NzA5NGM0ODFmZDI2YWIxODU0YzAwZmRjNTg=",
+					"generatedArtifact": {
+						"artifactInfo": {
+							"artifactName": "base_stsi_msp_lb.env",
+							"artifactVersion": "3",
+							"artifactType": "HEAT_ENV",
+							"artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+							"artifactTimeout": "120",
+							"artifactURL": "base_stsi_msp_lb.env",
+							"artifactUUID": "21c04671-ead4-483c-bece-83a63f4aa35f",
+							"artifactChecksum": "MzkxNTc4YTRhZjJiZmIwMmRiNzQxOTg5MTZhZTE5ODM=",
+							"generatedArtifact": {
+								
+							}
+						}
+					}
+				},
+				{
+					"artifactName": "base_stsi_msp_lb.env",
+					"artifactVersion": "3",
+					"artifactType": "HEAT_ENV",
+					"artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+					"artifactTimeout": "120",
+					"artifactURL": "base_stsi_msp_lb.env",
+					"artifactUUID": "21c04671-ead4-483c-bece-83a63f4aa35f",
+					"artifactChecksum": "MzkxNTc4YTRhZjJiZmIwMmRiNzQxOTg5MTZhZTE5ODM=",
+					"generatedArtifact": {
+						
+					}
+				},
+				{
+					"artifactName": "mod_vmsi_msp_lb_parent.env",
+					"artifactVersion": "3",
+					"artifactType": "HEAT_ENV",
+					"artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+					"artifactTimeout": "120",
+					"artifactURL": "mod_vmsi_msp_lb_parent.env",
+					"artifactUUID": "f64dd1e9-ed81-4aa2-8da5-bca88dda0155",
+					"artifactChecksum": "NzJjNzhhMGYwYTNlYTVkMzJlNzQ0OWRkMmJlZDI1N2M=",
+					"generatedArtifact": {
+						
+					}
+				}
+			]
+		}
+	]
+}

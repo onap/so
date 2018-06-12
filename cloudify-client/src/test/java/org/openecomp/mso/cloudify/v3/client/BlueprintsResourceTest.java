@@ -54,7 +54,7 @@ public class BlueprintsResourceTest {
 
 	@Test
 	public void cloudifyClientBlueprintFromStream() {
-		wireMockRule.stubFor(put(urlPathEqualTo("/api/v3/blueprints/")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+		wireMockRule.stubFor(put(urlPathEqualTo("/api/v3/blueprints/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody("{\"id\": \"123\"}")
 				.withStatus(HttpStatus.SC_OK)));
 		
@@ -70,7 +70,7 @@ public class BlueprintsResourceTest {
 
 	@Test
 	public void cloudifyClientBlueprintFromUrl() {
-		wireMockRule.stubFor(put(urlPathEqualTo("/api/v3/blueprints/")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+		wireMockRule.stubFor(put(urlPathEqualTo("/api/v3/blueprints/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody("{\"id\": \"123\"}")
 				.withStatus(HttpStatus.SC_OK)));
 		
@@ -85,7 +85,7 @@ public class BlueprintsResourceTest {
 
 	@Test
 	public void cloudifyClientBlueprintDelete() {
-		wireMockRule.stubFor(delete(urlPathEqualTo("/api/v3/blueprints/")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+		wireMockRule.stubFor(delete(urlPathEqualTo("/api/v3/blueprints/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody("{\"id\": \"123\"}")
 				.withStatus(HttpStatus.SC_OK)));
 		
@@ -115,7 +115,7 @@ public class BlueprintsResourceTest {
 
 	@Test
 	public void cloudifyClientBlueprintGetById() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/blueprints/")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/blueprints/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody("{\"id\": \"123\"}")
 				.withStatus(HttpStatus.SC_OK)));
 		
@@ -130,7 +130,7 @@ public class BlueprintsResourceTest {
 
 	@Test
 	public void cloudifyClientBlueprintGetMetadataById() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/blueprints/")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/blueprints/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody("{\"id\": \"123\"}")
 				.withStatus(HttpStatus.SC_OK)));
 		

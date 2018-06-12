@@ -21,744 +21,605 @@
 
 package org.openecomp.mso.asdc.installer.heat;
 
-import java.sql.SQLIntegrityConstraintViolationException;
+
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.Comparator;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
-import org.onap.sdc.api.consumer.IComponentDoneStatusMessage;
-//import org.openecomp.generic.tosca.parser.model.Metadata;
-//import org.openecomp.generic.tosca.parser.model.NodeTemplate;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.IStatusData;
-import org.onap.sdc.api.notification.IVfModuleMetadata;
-import org.onap.sdc.api.results.IDistributionClientResult;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.tosca.parser.impl.SdcTypes;
+import org.onap.sdc.toscaparser.api.CapabilityAssignment;
+import org.onap.sdc.toscaparser.api.CapabilityAssignments;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
-import org.onap.sdc.toscaparser.api.Property;
+import org.onap.sdc.toscaparser.api.RequirementAssignment;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
-import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.sdc.utils.DistributionStatusEnum;
+import org.openecomp.mso.apihandler.beans.avpnbondingbeans.AVPNServiceNames;
 import org.openecomp.mso.asdc.client.ASDCConfiguration;
 import org.openecomp.mso.asdc.client.exceptions.ArtifactInstallerException;
 import org.openecomp.mso.asdc.installer.ASDCElementInfo;
 import org.openecomp.mso.asdc.installer.BigDecimalVersion;
 import org.openecomp.mso.asdc.installer.IVfModuleData;
-import org.openecomp.mso.asdc.installer.IVfResourceInstaller;
 import org.openecomp.mso.asdc.installer.ToscaResourceStructure;
 import org.openecomp.mso.asdc.installer.VfModuleArtifact;
 import org.openecomp.mso.asdc.installer.VfModuleStructure;
 import org.openecomp.mso.asdc.installer.VfResourceStructure;
-import org.openecomp.mso.asdc.tenantIsolation.DistributionStatus;
-import org.openecomp.mso.asdc.tenantIsolation.WatchdogDistribution;
-import org.openecomp.mso.asdc.util.ASDCNotificationLogging;
 import org.openecomp.mso.asdc.util.YamlEditor;
-import org.openecomp.mso.db.catalog.CatalogDatabase;
 import org.openecomp.mso.db.catalog.beans.AllottedResource;
+import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.CollectionNetworkResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.CollectionResource;
+import org.openecomp.mso.db.catalog.beans.CollectionResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
+import org.openecomp.mso.db.catalog.beans.ConfigurationResource;
+import org.openecomp.mso.db.catalog.beans.ConfigurationResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.ExternalServiceToInternalService;
 import org.openecomp.mso.db.catalog.beans.HeatEnvironment;
 import org.openecomp.mso.db.catalog.beans.HeatFiles;
 import org.openecomp.mso.db.catalog.beans.HeatTemplate;
 import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
+import org.openecomp.mso.db.catalog.beans.InstanceGroupType;
+import org.openecomp.mso.db.catalog.beans.NetworkCollectionResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.NetworkInstanceGroup;
 import org.openecomp.mso.db.catalog.beans.NetworkResource;
 import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
-import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
 import org.openecomp.mso.db.catalog.beans.Service;
-import org.openecomp.mso.db.catalog.beans.ServiceToAllottedResources;
-import org.openecomp.mso.db.catalog.beans.ServiceToNetworks;
-import org.openecomp.mso.db.catalog.beans.ServiceToResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.ServiceProxyResource;
+import org.openecomp.mso.db.catalog.beans.ServiceProxyResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.SubType;
 import org.openecomp.mso.db.catalog.beans.TempNetworkHeatTemplateLookup;
 import org.openecomp.mso.db.catalog.beans.ToscaCsar;
+import org.openecomp.mso.db.catalog.beans.VFCInstanceGroup;
 import org.openecomp.mso.db.catalog.beans.VfModule;
 import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
-import org.openecomp.mso.db.catalog.beans.VfModuleToHeatFiles;
-import org.openecomp.mso.db.catalog.beans.VnfResCustomToVfModuleCustom;
 import org.openecomp.mso.db.catalog.beans.VnfResource;
 import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.VnfcInstanceGroupCustomization;
+import org.openecomp.mso.db.catalog.data.repository.AllottedResourceCustomizationRepository;
+import org.openecomp.mso.db.catalog.data.repository.AllottedResourceRepository;
+import org.openecomp.mso.db.catalog.data.repository.CollectionResourceCustomizationRepository;
+import org.openecomp.mso.db.catalog.data.repository.CollectionResourceRepository;
+import org.openecomp.mso.db.catalog.data.repository.ConfigurationResourceCustomizationRepository;
+import org.openecomp.mso.db.catalog.data.repository.ExternalServiceToInternalServiceRepository;
+import org.openecomp.mso.db.catalog.data.repository.HeatTemplateRepository;
+import org.openecomp.mso.db.catalog.data.repository.InstanceGroupRepository;
+import org.openecomp.mso.db.catalog.data.repository.NetworkResourceCustomizationRepository;
+import org.openecomp.mso.db.catalog.data.repository.NetworkResourceRepository;
+import org.openecomp.mso.db.catalog.data.repository.ServiceProxyResourceCustomizationRepository;
+import org.openecomp.mso.db.catalog.data.repository.ServiceRepository;
+import org.openecomp.mso.db.catalog.data.repository.TempNetworkHeatTemplateRepository;
+import org.openecomp.mso.db.catalog.data.repository.VFModuleCustomizationRepository;
+import org.openecomp.mso.db.catalog.data.repository.VFModuleRepository;
+import org.openecomp.mso.db.catalog.data.repository.VnfCustomizationRepository;
+import org.openecomp.mso.db.catalog.data.repository.VnfResourceRepository;
+import org.openecomp.mso.db.catalog.data.repository.VnfcInstanceGroupCustomizationRepository;
+import org.openecomp.mso.db.request.beans.WatchdogComponentDistributionStatus;
+import org.openecomp.mso.db.request.beans.WatchdogDistributionStatus;
+import org.openecomp.mso.db.request.beans.WatchdogServiceModVerIdLookup;
+import org.openecomp.mso.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
+import org.openecomp.mso.db.request.data.repository.WatchdogDistributionStatusRepository;
+import org.openecomp.mso.db.request.data.repository.WatchdogServiceModVerIdLookupRepository;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.requestsdb.WatchdogComponentDistributionStatusDb;
-import org.openecomp.mso.requestsdb.WatchdogDistributionStatusDb;
-import org.openecomp.mso.requestsdb.WatchdogServiceModVerIdLookupDb;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 
-	private MsoLogger logger;
+@Component
+public class ToscaResourceInstaller {
+
+	private static final String ALLOTTED_RESOURCE = "Allotted Resource";
+
+	private static final String MULTI_STAGE_DESIGN = "multi_stage_design";
+
+	private static final String SCALABLE = "scalable";
+
+	private static final String BASIC = "BASIC";
+
+	private static final String PROVIDER = "PROVIDER";
+
+	private static final String HEAT = "HEAT";
+
+	private static final String MANUAL_RECORD = "MANUAL_RECORD";
+
+	private static final String MSO = "SO";
+
+	public static final String IP_FLEXIBLE_REACH = "IP-FLEXIBLE-REACH";
+	public static final String IP_TOLL_FREE = "IP-TOLL-FREE";
+	public static final String COLLABORATE = "COLLABORATE";
+	public static final String SERVICE_TYPE_BONDING = "BONDING";
+
+	@Autowired
+	private ServiceRepository serviceRepo;
 	
-	private static final Pattern lastDigit = Pattern.compile("(\\d+)$");
+	@Autowired
+	private InstanceGroupRepository instanceGroupRepo;
+	
+	@Autowired
+	private ServiceProxyResourceCustomizationRepository serviceProxyCustomizationRepo;
+	
+	@Autowired
+	private CollectionResourceRepository collectionRepo;
+	
+	@Autowired
+	private CollectionResourceCustomizationRepository collectionCustomizationRepo;
+	
+	@Autowired
+	private ConfigurationResourceCustomizationRepository configCustomizationRepo;
 
-	public ToscaResourceInstaller()  {
-		logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.ASDC);
-	}
+	@Autowired
+	private VnfResourceRepository vnfRepo;
 
-	//@Override
-	public boolean isResourceAlreadyDeployed(VfResourceStructure vfResourceStruct)
-			throws ArtifactInstallerException {
+	@Autowired
+	private VnfCustomizationRepository vnfCustomizationRepo;
+	
+	@Autowired
+	private VFModuleRepository vfModuleRepo;
+
+	@Autowired
+	private VFModuleCustomizationRepository vfModuleCustomizationRepo;	
+	
+	@Autowired
+	private VnfcInstanceGroupCustomizationRepository vnfcInstanceGroupCustomizationRepo;	
+
+	@Autowired
+	private AllottedResourceRepository allottedRepo;
+
+	@Autowired
+	private AllottedResourceCustomizationRepository allottedCustomizationRepo;
+
+	@Autowired
+	private NetworkResourceRepository networkRepo;
+	 
+	@Autowired
+	private HeatTemplateRepository heatRepo;
+
+	@Autowired
+	private NetworkResourceCustomizationRepository networkCustomizationRepo;
+
+	@Autowired
+	private WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository;
+	@Autowired
+	private WatchdogDistributionStatusRepository watchdogDistributionStatusRepository;
+	@Autowired
+	private WatchdogServiceModVerIdLookupRepository watchdogModVerIdLookupRepository;	
+	
+	@Autowired
+	private TempNetworkHeatTemplateRepository tempNetworkLookupRepo;
+	
+	@Autowired
+	private ExternalServiceToInternalServiceRepository externalServiceToInternalServiceRepository;
+	
+	protected static final MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC,ToscaResourceInstaller.class);
+
+	public boolean isResourceAlreadyDeployed(VfResourceStructure vfResourceStruct) throws ArtifactInstallerException {
 		boolean status = false;
-		VfResourceStructure vfResourceStructure = (VfResourceStructure)vfResourceStruct;
+		VfResourceStructure vfResourceStructure = vfResourceStruct;
 		try {
 		    status = vfResourceStructure.isDeployedSuccessfully();
 		} catch (RuntimeException e) {
 		    status = false;
 		}
-		
-		try {
-			
-			String serviceUUID = vfResourceStruct.getNotification().getServiceUUID();			
-
+		try {					
+			Service existingService = serviceRepo.findOneByModelUUID(vfResourceStructure.getNotification().getServiceUUID()); 
+			if(existingService != null)
+				status = true;
 			if (status) {
-				logger.info(MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED_DETAIL,
-						vfResourceStructure.getResourceInstance().getResourceInstanceName(),
+				logger.info(vfResourceStructure.getResourceInstance().getResourceInstanceName(),
 						vfResourceStructure.getResourceInstance().getResourceCustomizationUUID(),
 						vfResourceStructure.getNotification().getServiceName(),
 						BigDecimalVersion.castAndCheckNotificationVersionToString(
 								vfResourceStructure.getNotification().getServiceVersion()),
 						vfResourceStructure.getNotification().getServiceUUID(),
-						vfResourceStructure.getResourceInstance().getResourceName(),"", "");
-			} else {
-				logger.info(MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL,
-						vfResourceStructure.getResourceInstance().getResourceInstanceName(),
+						vfResourceStructure.getResourceInstance().getResourceName(), "", "");
+				WatchdogComponentDistributionStatus wdStatus = new WatchdogComponentDistributionStatus(vfResourceStruct.getNotification().getDistributionID(), MSO);
+				wdStatus.setComponentDistributionStatus(DistributionStatusEnum.COMPONENT_DONE_OK.name());
+				watchdogCDStatusRepository.saveAndFlush(wdStatus);
+			} else {			
+				logger.info(vfResourceStructure.getResourceInstance().getResourceInstanceName(),
 						vfResourceStructure.getResourceInstance().getResourceCustomizationUUID(),
 						vfResourceStructure.getNotification().getServiceName(),
 						BigDecimalVersion.castAndCheckNotificationVersionToString(
 								vfResourceStructure.getNotification().getServiceVersion()),
-						vfResourceStructure.getNotification().getServiceUUID(), 
-						vfResourceStructure.getResourceInstance().getResourceName(),"", "");
+						vfResourceStructure.getNotification().getServiceUUID(),
+						vfResourceStructure.getResourceInstance().getResourceName(), "", "");
 			}
-
 			return status;
-
 		} catch (Exception e) {
-			logger.error(MessageEnum.ASDC_ARTIFACT_CHECK_EXC, "", "", MsoLogger.ErrorCode.SchemaError, "Exception - isResourceAlreadyDeployed");
+			logger.error(MessageEnum.ASDC_ARTIFACT_CHECK_EXC, "", "", MsoLogger.ErrorCode.SchemaError,
+					"Exception - isResourceAlreadyDeployed");
 			throw new ArtifactInstallerException("Exception caught during checking existence of the VNF Resource.", e);
 		}
 	}
-	
-	public void installTheComponentStatus(IStatusData iStatus) throws ArtifactInstallerException {
-		
-		logger.debug("Entering installTheComponentStatus for distributionId " + iStatus.getDistributionID() + " and ComponentName " + iStatus.getComponentName());
-		
-		WatchdogComponentDistributionStatusDb wdComponentDistributionStatus = WatchdogComponentDistributionStatusDb.getInstance();
-		
-		WatchdogDistributionStatusDb wdDistributionStatus = WatchdogDistributionStatusDb.getInstance();
-		
-		
-		try{
-			//Check to make sure the distributionId exists in the Distribution Status table first.  If not then we'll need to add it
-			String distributionId = wdDistributionStatus.getWatchdogDistributionId(iStatus.getDistributionID());
-			
-			if(distributionId == null){
-				// Insert the record into the parent table first - WatchDogDistributionStatus
-				wdDistributionStatus.insertWatchdogDistributionId(iStatus.getDistributionID());  
-			}
-		
-			wdComponentDistributionStatus.insertWatchdogComponentDistributionStatus(iStatus.getDistributionID(), iStatus.getComponentName(), iStatus.getStatus().toString());
-		
-		
-			WatchdogDistribution wd = new WatchdogDistribution();
 
-			String distributionStatus = wd.getOverallDistributionStatus(iStatus.getDistributionID());
-	
-			logger.debug("Distribution status in installTheComponentStatus is : " + distributionStatus);					
-						
-		}catch (Exception e){
+	public void installTheComponentStatus(IStatusData iStatus) throws ArtifactInstallerException {
+		logger.debug("Entering installTheComponentStatus for distributionId " + iStatus.getDistributionID()
+				+ " and ComponentName " + iStatus.getComponentName());
+
+		try {
+			WatchdogComponentDistributionStatus cdStatus = new WatchdogComponentDistributionStatus(iStatus.getDistributionID(),
+					iStatus.getComponentName());
+			cdStatus.setComponentDistributionStatus(iStatus.getStatus().toString());
+			watchdogCDStatusRepository.save(cdStatus);
+
+		} catch (Exception e) {
 			logger.debug("Exception caught in installTheComponentStatus " + e.getMessage());
 			throw new ArtifactInstallerException("Exception caught in installTheComponentStatus " + e.getMessage());
 		}
+	}
 
-	} 
+	@Transactional(rollbackFor = { ArtifactInstallerException.class })
+	public void installTheResource(ToscaResourceStructure toscaResourceStruct, VfResourceStructure vfResourceStruct)
+			throws ArtifactInstallerException {		
+		VfResourceStructure vfResourceStructure = vfResourceStruct;
+		extractHeatInformation(toscaResourceStruct, vfResourceStructure);	
+
+		// PCLO: in case of deployment failure, use a string that will represent
+		// the type of artifact that failed...
+		List<ASDCElementInfo> artifactListForLogging = new ArrayList<>();
+		try {
+			createToscaCsar(toscaResourceStruct);			
+			createService(toscaResourceStruct, vfResourceStruct);			
+			Service service = toscaResourceStruct.getCatalogService();				
+			List<NodeTemplate> vfNodeTemplatesList = toscaResourceStruct.getSdcCsarHelper().getServiceVfList();
+			
+			processAvpnService(service);
+			for (NodeTemplate nodeTemplate : vfNodeTemplatesList) {	
+				
+				Metadata metadata = nodeTemplate.getMetaData();		
+				String serviceType = toscaResourceStruct.getCatalogService().getServiceType();
+				processFlexware(toscaResourceStruct, service, nodeTemplate, serviceType);
+				String vfCustomizationCategory = toscaResourceStruct.getSdcCsarHelper()
+						.getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_CATEGORY);
+				processVfModules(toscaResourceStruct, vfResourceStructure, service, nodeTemplate, metadata,
+						vfCustomizationCategory);
+			}
+
+			List<NodeTemplate> allottedResourceList = toscaResourceStruct.getSdcCsarHelper().getAllottedResources();
+			processAllottedResources(toscaResourceStruct, service, allottedResourceList);
+			processNetworks(toscaResourceStruct, service);	
+			// process Network Collections
+			processNetworkCollections(toscaResourceStruct, service);
+			// Process Service Proxy & Configuration
+			processServiceProxyAndConfiguration(toscaResourceStruct, service);
+			
+			serviceRepo.save(service);
+			
+			WatchdogComponentDistributionStatus status = new WatchdogComponentDistributionStatus(vfResourceStruct.getNotification().getDistributionID(), MSO);
+			status.setComponentDistributionStatus(DistributionStatusEnum.COMPONENT_DONE_OK.name());
+			watchdogCDStatusRepository.save(status);
+
+			toscaResourceStruct.setSuccessfulDeployment();
+
+		} catch (Exception e) {
+			logger.debug("Exception :", e);
+			WatchdogComponentDistributionStatus status = new WatchdogComponentDistributionStatus(vfResourceStruct.getNotification().getDistributionID(), MSO);
+			status.setComponentDistributionStatus(DistributionStatusEnum.COMPONENT_DONE_ERROR.name());
+			watchdogCDStatusRepository.save(status);
+			Throwable dbExceptionToCapture = e;
+			while (!(dbExceptionToCapture instanceof ConstraintViolationException
+					|| dbExceptionToCapture instanceof LockAcquisitionException)
+					&& (dbExceptionToCapture.getCause() != null)) {
+				dbExceptionToCapture = dbExceptionToCapture.getCause();
+			}
+
+			if (dbExceptionToCapture instanceof ConstraintViolationException
+					|| dbExceptionToCapture instanceof LockAcquisitionException) {
+				logger.warn(MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED,
+						vfResourceStructure.getResourceInstance().getResourceName(),
+						vfResourceStructure.getNotification().getServiceVersion(), "", MsoLogger.ErrorCode.DataError, "Exception - ASCDC Artifact already deployed", e);
+			} else {
+				String elementToLog = (!artifactListForLogging.isEmpty()
+						? artifactListForLogging.get(artifactListForLogging.size() - 1).toString()
+						: "No element listed");
+				logger.error(MessageEnum.ASDC_ARTIFACT_INSTALL_EXC, elementToLog, "", "", MsoLogger.ErrorCode.DataError,
+						"Exception caught during installation of "
+								+ vfResourceStructure.getResourceInstance().getResourceName()
+								+ ". Transaction rollback",
+						e);
+				throw new ArtifactInstallerException("Exception caught during installation of "
+						+ vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback.", e);
+			}
+		}
+	}
+
+	private void processNetworks(ToscaResourceStructure toscaResourceStruct, Service service)
+			throws ArtifactInstallerException {
+		List<NodeTemplate> nodeTemplatesVLList = toscaResourceStruct.getSdcCsarHelper().getServiceVlList();
+
+		if (nodeTemplatesVLList != null) {
+			for (NodeTemplate vlNode : nodeTemplatesVLList) {
+				String networkResourceModelName = vlNode.getMetaData()
+						.getValue(SdcPropertyNames.PROPERTY_NAME_NAME);
+				
+				TempNetworkHeatTemplateLookup tempNetworkLookUp = tempNetworkLookupRepo.findFirstBynetworkResourceModelName(networkResourceModelName);
+				
+				if (tempNetworkLookUp != null ) {					
+						HeatTemplate heatTemplate =  heatRepo.findByArtifactUuid(tempNetworkLookUp.getHeatTemplateArtifactUuid());
+						if (heatTemplate != null ) {
+						NetworkResourceCustomization networkCustomization = createNetwork(vlNode, toscaResourceStruct, heatTemplate,tempNetworkLookUp.getAicVersionMax(),
+							tempNetworkLookUp.getAicVersionMin(),service);
+						service.getNetworkCustomizations()
+						.add(networkCustomization);
+					}
+					else{
+						throw new ArtifactInstallerException(					
+							"No HeatTemplate found for artifactUUID: "
+									+ tempNetworkLookUp.getHeatTemplateArtifactUuid());
+					}
+				} else {
+					throw new ArtifactInstallerException(
+							"No NetworkResourceName found in TempNetworkHeatTemplateLookup for "
+									+ networkResourceModelName);
+				}					
+				
+			}
+		}
+	}
+
+	private void processAllottedResources(ToscaResourceStructure toscaResourceStruct, Service service,
+			List<NodeTemplate> allottedResourceList) {
+		if (allottedResourceList != null) {
+			for (NodeTemplate allottedNode : allottedResourceList) {									
+				service.getAllottedCustomizations()
+						.add(createAllottedResource(allottedNode, toscaResourceStruct, service));				
+			}
+		}
+	}
 	
-
-	public void installTheResource(ToscaResourceStructure toscaResourceStruct, VfResourceStructure vfResourceStruct) throws ArtifactInstallerException {
+	private void processServiceProxyAndConfiguration(ToscaResourceStructure toscaResourceStruct, Service service) {
 		
-		logger.debug("installTheResource is called");
+		List<NodeTemplate> serviceProxyResourceList = toscaResourceStruct.getSdcCsarHelper().getServiceNodeTemplateBySdcType(SdcTypes.SERVICE_PROXY);
 		
-		VfResourceStructure vfResourceStructure = (VfResourceStructure)vfResourceStruct;
+		List<NodeTemplate> configurationNodeTemplatesList = toscaResourceStruct.getSdcCsarHelper().getServiceNodeTemplateBySdcType(SdcTypes.CONFIGURATION);
+		
+		if (serviceProxyResourceList != null) {
+			for (NodeTemplate spNode : serviceProxyResourceList) {
+				createServiceProxy(spNode, service, toscaResourceStruct);
+				serviceProxyCustomizationRepo.saveAndFlush(toscaResourceStruct.getCatalogServiceProxyResourceCustomization());	
 
+				for (NodeTemplate configNode : configurationNodeTemplatesList) {
+					
+						List<RequirementAssignment> requirementsList = toscaResourceStruct.getSdcCsarHelper().getRequirementsOf(configNode).getAll();
+						for (RequirementAssignment requirement :  requirementsList) {
+							if (requirement.getNodeTemplateName().equals(spNode.getName())) {
+								createConfiguration(configNode, toscaResourceStruct, toscaResourceStruct.getCatalogServiceProxyResourceCustomization());
+								configCustomizationRepo.saveAndFlush(toscaResourceStruct.getCatalogConfigurationResourceCustomization());	
+								break;
+							}
+						}
+				}
+	
+			}
+		}
+	}
+	
+	private void processNetworkCollections(ToscaResourceStructure toscaResourceStruct, Service service) {
+		
+		List<NodeTemplate> networkCollectionList = toscaResourceStruct.getSdcCsarHelper().getServiceNodeTemplateBySdcType(SdcTypes.CR);
+		
+		if (networkCollectionList != null) {
+			for (NodeTemplate crNode : networkCollectionList) {	
+				
+				createNetworkCollection(crNode, toscaResourceStruct, service);
+				collectionRepo.saveAndFlush(toscaResourceStruct.getCatalogCollectionResource());
+				
+				List<NetworkInstanceGroup> networkInstanceGroupList = toscaResourceStruct.getCatalogNetworkInstanceGroup();
+				for(NetworkInstanceGroup networkInstanceGroup : networkInstanceGroupList){
+					instanceGroupRepo.saveAndFlush(networkInstanceGroup);
+				}
+	
+			}
+		}
+	}
+
+	private void processVfModules(ToscaResourceStructure toscaResourceStruct, VfResourceStructure vfResourceStructure,
+			Service service, NodeTemplate nodeTemplate, Metadata metadata, String vfCustomizationCategory) throws Exception {
+		if (!vfCustomizationCategory.equalsIgnoreCase(ALLOTTED_RESOURCE)) 
+		{
+
+			String vfCustomizationUUID = toscaResourceStruct.getSdcCsarHelper()
+					.getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+			logger.debug("vfCustomizationUUID=" + vfCustomizationUUID);					
+			
+			VnfResourceCustomization vnfResource = createVnfResource(nodeTemplate, toscaResourceStruct, service);	
+			
+			for (VfModuleStructure vfModuleStructure : vfResourceStructure.getVfModuleStructure()) {			
+				logger.debug("vfModuleStructure:" + vfModuleStructure.toString());
+				List<org.onap.sdc.toscaparser.api.Group> vfGroups = toscaResourceStruct
+						.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
+				IVfModuleData vfMetadata = vfModuleStructure.getVfModuleMetadata();		
+				Optional<org.onap.sdc.toscaparser.api.Group> matchingObject = vfGroups.stream().
+					    filter(group -> group.getMetadata().getValue("vfModuleModelCustomizationUUID").equals(vfMetadata.getVfModuleModelCustomizationUUID())).
+					    findFirst();
+				if(matchingObject.isPresent()){
+					VfModuleCustomization vfModuleCustomization = createVFModuleResource(matchingObject.get(), nodeTemplate, toscaResourceStruct, vfResourceStructure,vfMetadata, vnfResource);
+					vfModuleCustomization.getVfModule().setVnfResources(vnfResource.getVnfResources());
+				}else
+					throw (new Exception("Cannot find matching VFModule Customization"));
+				
+			}
+			service.getVnfCustomizations().add(vnfResource);
+		}
+	}
+
+	private void processFlexware(ToscaResourceStructure toscaResourceStruct, Service service, NodeTemplate nodeTemplate,
+			String serviceType) {
+		if (serviceType != null && serviceType.equalsIgnoreCase("Flexware")) {
+
+			createVnfResource(nodeTemplate, toscaResourceStruct, service);
+			String modelName = toscaResourceStruct.getVnfResourceCustomization().getVnfResources().getModelName();
+			
+			String modelVersion = BigDecimalVersion.castAndCheckNotificationVersionToString(
+					toscaResourceStruct.getCatalogVnfResourceCustomization().getVnfResources().getModelVersion());
+			// check for duplicate record already in the database
+			VnfResource vnfResource = vnfRepo.findByModelNameAndModelVersion(modelName, modelVersion);
+
+			if (vnfResource != null) {
+				toscaResourceStruct.setVnfAlreadyInstalled(true);
+			}
+
+			vnfCustomizationRepo.saveAndFlush(toscaResourceStruct.getCatalogVnfResourceCustomization());					
+		}
+	}
+
+	private void processAvpnService(Service service) {
+		String serviceType = service.getServiceType();
+		String serviceRole = service.getServiceRole();
+		String serviceName = "";
+		if (serviceType != null && serviceType.equalsIgnoreCase(SERVICE_TYPE_BONDING)) {
+			if(serviceRole.equalsIgnoreCase(COLLABORATE)){
+				serviceName = AVPNServiceNames.AVPN_BONDING_TO_COLLABORATE.getServiceName();
+			}else if(serviceRole.equalsIgnoreCase(IP_FLEXIBLE_REACH)){
+				serviceName = AVPNServiceNames.AVPN_BONDING_TO_IP_FLEX_REACH.getServiceName();
+			}else if(serviceRole.equalsIgnoreCase(IP_TOLL_FREE)){
+				serviceName = AVPNServiceNames.AVPN_BONDING_TO_IP_TOLL_FREE.getServiceName();
+			}else {
+				return;
+			}
+		
+			ExternalServiceToInternalService serviceToInternalService;
+		
+			// check for duplicate record already in the database
+			serviceToInternalService = externalServiceToInternalServiceRepository.findByServiceNameAndSubscriptionServiceType(serviceName, serviceRole);
+			
+			if(serviceToInternalService != null){
+				serviceToInternalService.setServiceModelUUID(service.getModelUUID());
+			}else{
+				serviceToInternalService = new ExternalServiceToInternalService();
+				serviceToInternalService.setServiceName(serviceName);
+				serviceToInternalService.setSubscriptionServiceType(serviceRole);
+				serviceToInternalService.setServiceModelUUID(service.getModelUUID());	
+			}
+			externalServiceToInternalServiceRepository.save(serviceToInternalService);
+		}
+	}
+
+	public void processWatchdog(String distributionId, String servideUUID) {
+		WatchdogServiceModVerIdLookup modVerIdLookup = new WatchdogServiceModVerIdLookup(distributionId,servideUUID);
+		watchdogModVerIdLookupRepository.saveAndFlush(modVerIdLookup);
+		
+		WatchdogDistributionStatus distributionStatus = new WatchdogDistributionStatus(distributionId);
+		watchdogDistributionStatusRepository.saveAndFlush(distributionStatus);
+	}
+
+	private void extractHeatInformation(ToscaResourceStructure toscaResourceStruct,
+			VfResourceStructure vfResourceStructure) {
 		for (VfModuleArtifact vfModuleArtifact : vfResourceStructure.getArtifactsMapByUUID().values()) {
 
 			switch (vfModuleArtifact.getArtifactInfo().getArtifactType()) {
 			case ASDCConfiguration.HEAT:
-			case ASDCConfiguration.HEAT_VOL:
 			case ASDCConfiguration.HEAT_NESTED:
-				ToscaResourceInstaller.createHeatTemplateFromArtifact(vfResourceStructure, toscaResourceStruct, vfModuleArtifact);
+				createHeatTemplateFromArtifact(vfResourceStructure, toscaResourceStruct,
+						vfModuleArtifact);
+				break;
+			case ASDCConfiguration.HEAT_VOL:
+				createHeatTemplateFromArtifact(vfResourceStructure, toscaResourceStruct,
+						vfModuleArtifact);
+				VfModuleArtifact envModuleArtifact = getHeatEnvArtifactFromGeneratedArtifact(vfResourceStructure, vfModuleArtifact);
+				createHeatEnvFromArtifact(vfResourceStructure, envModuleArtifact);
 				break;
 			case ASDCConfiguration.HEAT_ENV:
-				ToscaResourceInstaller.createHeatEnvFromArtifact(vfResourceStructure, vfModuleArtifact);
+				createHeatEnvFromArtifact(vfResourceStructure, vfModuleArtifact);
 				break;
 			case ASDCConfiguration.HEAT_ARTIFACT:
-				ToscaResourceInstaller.createHeatFileFromArtifact(vfResourceStructure, vfModuleArtifact, toscaResourceStruct);
+				createHeatFileFromArtifact(vfResourceStructure, vfModuleArtifact,
+						toscaResourceStruct);
 				break;
 			case ASDCConfiguration.HEAT_NET:
 			case ASDCConfiguration.OTHER:
-				logger.warn(MessageEnum.ASDC_ARTIFACT_TYPE_NOT_SUPPORT, vfModuleArtifact.getArtifactInfo().getArtifactType()+"(Artifact Name:"+vfModuleArtifact.getArtifactInfo().getArtifactName()+")", "", "", MsoLogger.ErrorCode.DataError, "Artifact type not supported");
+				logger.warn(MessageEnum.ASDC_ARTIFACT_TYPE_NOT_SUPPORT,
+						vfModuleArtifact.getArtifactInfo().getArtifactType() + "(Artifact Name:"
+								+ vfModuleArtifact.getArtifactInfo().getArtifactName() + ")",
+						"", "", MsoLogger.ErrorCode.DataError, "Artifact type not supported");
 				break;
 			default:
 				break;
 
 			}
 		}
-		// Those objects could be reused by different VfModule
-		
+	}
 
-		
-		// PCLO: in case of deployment failure, use a string that will represent the type of artifact that failed...
-		List<ASDCElementInfo> artifactListForLogging = new ArrayList<>();
-		
-		CatalogDatabase catalogDB = CatalogDatabase.getInstance();
-		
-		WatchdogServiceModVerIdLookupDb wdLookupDB = WatchdogServiceModVerIdLookupDb.getInstance();
-		
-		WatchdogDistributionStatusDb wdDistributionStatus = WatchdogDistributionStatusDb.getInstance();
-		
-		WatchdogComponentDistributionStatusDb wdComponentDistributionStatus = WatchdogComponentDistributionStatusDb.getInstance();
-		// 2. Create the VFModules/VNFResource objects by linking them to the
-		// objects created before and store them in Resource/module structure
-		// Opening a DB transaction, starting from here
-		try {
-
-			
-			createToscaCsar(toscaResourceStruct);
-			
-			catalogDB.saveToscaCsar(toscaResourceStruct.getCatalogToscaCsar());
-			
-			ToscaResourceInstaller.createService(toscaResourceStruct, vfResourceStruct);
-			
-			catalogDB.saveService(toscaResourceStruct.getCatalogService());
-			
-			wdLookupDB.insertWatchdogServiceModVerIdLookup(vfResourceStructure.getNotification().getDistributionID(), vfResourceStructure.getNotification().getServiceUUID());
-			
-			wdDistributionStatus.insertWatchdogDistributionId(vfResourceStructure.getNotification().getDistributionID());
-
-			
-			/* VNF POPULATION
-			 * ************************************************************************************************************
-			 */
-			
-            // Ingest (VNF) Data - 1707
-            List<NodeTemplate> vfNodeTemplatesList = toscaResourceStruct.getSdcCsarHelper().getServiceVfList();
-            int outerLoop = 0;
-            logger.debug("**vfMondeTEmplatesList.size()=" + vfNodeTemplatesList.size());
-            for (NodeTemplate nodeTemplate :  vfNodeTemplatesList) {
-            	logger.debug("nodeTemplate outerLoop=" + outerLoop++);
-            	// extract VF metadata
-             	
-				Metadata metadata = nodeTemplate.getMetaData();
-				
-				
-				
-				//************************Flexware code*******************************************
-								
-				String serviceType = toscaResourceStruct.getCatalogService().getServiceType();
-		
-				
-				if(serviceType != null && serviceType.equalsIgnoreCase("Flexware")){
-					
-					createVnfResource(nodeTemplate, toscaResourceStruct);
-					
-		         	// check for duplicate record already in the database
-					VnfResource vnfResource = catalogDB.getVnfResource(toscaResourceStruct.getCatalogVnfResource().getModelName(),
-							BigDecimalVersion.castAndCheckNotificationVersionToString(
-									toscaResourceStruct.getCatalogVnfResource().getVersion()));
-
-					if (vnfResource != null) {
-						toscaResourceStruct.setVnfAlreadyInstalled(true);
-					}
-		      	
-		  	
-					if(!toscaResourceStruct.isVnfAlreadyInstalled()) {
-		    
-						 catalogDB.saveOrUpdateVnfResource(toscaResourceStruct.getCatalogVnfResource());
-						
-					}
-					
-					
-					boolean saveVnfCustomization = catalogDB.saveVnfResourceCustomization(toscaResourceStruct.getCatalogVnfResourceCustomization());
-					
-					if(saveVnfCustomization){
-					   catalogDB.saveServiceToResourceCustomization(toscaResourceStruct.getCatalogVfServiceToResourceCustomization());
-					}
-					
-
-				}
-				
-				
-			// *************************** END of FLEXWARE CODE ****************************************************
-					
-			String vfCustomizationCategory = toscaResourceStruct.getSdcCsarHelper().getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_CATEGORY);
-					
-			if(!vfCustomizationCategory.equalsIgnoreCase("Allotted Resource")) // Do not treat Allotted Resources as VNF resources
-			{
-
-				String vfCustomizationUUID = toscaResourceStruct.getSdcCsarHelper().getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
-				logger.debug("vfCustomizationUUID=" + vfCustomizationUUID);
-
-			
-			/* HEAT TABLE POPULATION
-			 * *******************************************************************************************************
-			 */
-			
-				int nextLoop = 0;
-			for (VfModuleStructure vfModuleStructure : vfResourceStructure.getVfModuleStructure()) {
-				logger.debug("vfResourceStructure.getVfModuleStructure() loop, nextLoop = " + nextLoop++);
-				logger.debug("vfModuleStructure:" + vfModuleStructure.toString());
-				
-				// Here we set the right db structure according to the Catalog
-				// DB
-
-				// We expect only one MAIN HEAT per VFMODULE
-				// we can also obtain from it the Env ArtifactInfo, that's why
-				// we
-				// get the Main IArtifactInfo
-
-				HeatTemplate heatMainTemplate = null;
-				HeatEnvironment heatEnv;
-				
-				HeatTemplate heatVolumeTemplate = null;
-				HeatEnvironment heatVolumeEnv;
-				
-				
-				IVfModuleData vfMetadata = vfModuleStructure.getVfModuleMetadata();
-							
-				
-				if (vfModuleStructure.getArtifactsMap().containsKey(ASDCConfiguration.HEAT)) {
-					
-					List<VfModuleArtifact> artifacts = vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT);
-					logger.debug("there are " + artifacts.size() + " artifacts");
-					IArtifactInfo mainEnvArtifactInfo = null;
-					for (VfModuleArtifact vfma : artifacts) {
-						logger.debug("vmfa=" + vfma.toString());
-						mainEnvArtifactInfo = 
-								vfma.getArtifactInfo().getGeneratedArtifact();
-						
-						// MAIN HEAT
-						heatMainTemplate = (HeatTemplate) vfma.getCatalogObject(); 
-						
-						// Set HeatTemplateArtifactUUID to use later when setting the VfModule and NetworkResource
-						toscaResourceStruct.setHeatTemplateUUID(heatMainTemplate.getArtifactUuid());
-
-						// Add this one for logging
-						artifactListForLogging.add(ASDCElementInfo
-								.createElementFromVfArtifactInfo(vfma.getArtifactInfo()));
-						
-						catalogDB.saveHeatTemplate(heatMainTemplate, heatMainTemplate.getParameters());
-						// Indicate we have deployed it in the DB
-						vfma.incrementDeployedInDB();
-					}
-					
-					
-					// VOLUME HEAT
-					// We expect only one VOL HEAT per VFMODULE
-					// we can also obtain from it the Env ArtifactInfo, that's why
-					// we get the Volume IArtifactInfo
-				
-					if (vfModuleStructure.getArtifactsMap().containsKey(ASDCConfiguration.HEAT_VOL)) {
-						IArtifactInfo volEnvArtifactInfo = vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL).get(0)
-								.getArtifactInfo().getGeneratedArtifact();
-		
-						heatVolumeTemplate = (HeatTemplate) vfModuleStructure.getArtifactsMap()
-								.get(ASDCConfiguration.HEAT_VOL).get(0).getCatalogObject();
-						
-						// Set VolHeatTemplate ArtifactUUID to use later when setting the VfModule 
-						toscaResourceStruct.setVolHeatTemplateUUID(heatVolumeTemplate.getArtifactUuid());
-						
-						
-						// Add this one for logging
-						artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL).get(0).getArtifactInfo()));
-
-						catalogDB.saveHeatTemplate(heatVolumeTemplate, heatVolumeTemplate.getParameters());
-						// Indicate we have deployed it in the DB
-						vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL).get(0).incrementDeployedInDB();
-						
-						if (volEnvArtifactInfo != null) {
-							heatVolumeEnv = (HeatEnvironment) vfResourceStructure.getArtifactsMapByUUID()
-									.get(volEnvArtifactInfo.getArtifactUUID()).getCatalogObject();
-							
-							// Set VolHeatTemplate ArtifactUUID to use later when setting the VfModule 
-							toscaResourceStruct.setVolHeatEnvTemplateUUID(heatVolumeEnv.getArtifactUuid());
-
-							// Add this one for logging
-							artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(volEnvArtifactInfo));
-														
-							catalogDB.saveHeatEnvironment(heatVolumeEnv);
-							// Indicate we have deployed it in the DB
-							vfResourceStructure.getArtifactsMapByUUID().get(volEnvArtifactInfo.getArtifactUUID()).incrementDeployedInDB();
-						}
-						
-					}
-					
-					// NESTED HEAT
-					// Here we expect many HEAT_NESTED template to be there
-					// XXX FIX BY PCLO: Defect# -36643 -US666034 - check first if we really have nested heat templates
-					if (vfModuleStructure.getArtifactsMap().containsKey(ASDCConfiguration.HEAT_NESTED)) {
-						for (VfModuleArtifact heatNestedArtifact : vfModuleStructure.getArtifactsMap()
-								.get(ASDCConfiguration.HEAT_NESTED)) {
-	
-							// Check if this nested is well referenced by the MAIN HEAT
-							String parentArtifactType = ToscaResourceInstaller.identifyParentOfNestedTemplate(vfModuleStructure,heatNestedArtifact);
-							HeatTemplate heatNestedTemplate = (HeatTemplate) heatNestedArtifact.getCatalogObject();
-							
-							if (parentArtifactType != null) {
-														
-								switch (parentArtifactType) {
-									case ASDCConfiguration.HEAT:
-										
-										// Add this one for logging
-										artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(heatNestedArtifact.getArtifactInfo()));
-								
-										catalogDB.saveNestedHeatTemplate (heatMainTemplate.getArtifactUuid(), heatNestedTemplate, heatNestedTemplate.getTemplateName());
-										// Indicate we have deployed it in the DB
-										heatNestedArtifact.incrementDeployedInDB();
-										break;
-									case ASDCConfiguration.HEAT_VOL:
-										
-										// Add this one for logging
-										artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(heatNestedArtifact.getArtifactInfo()));
-										catalogDB.saveNestedHeatTemplate (heatVolumeTemplate.getArtifactUuid(), heatNestedTemplate, heatNestedTemplate.getTemplateName());
-										// Indicate we have deployed it in the DB
-										heatNestedArtifact.incrementDeployedInDB();
-										break;
-										
-									default:
-										break;
-
-								}
-							} else { // Assume it belongs to HEAT MAIN
-								// Add this one for logging
-								artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(heatNestedArtifact.getArtifactInfo()));
-						
-								catalogDB.saveNestedHeatTemplate (heatMainTemplate.getArtifactUuid(), heatNestedTemplate, heatNestedTemplate.getTemplateName());
-								// Indicate we have deployed it in the DB
-								heatNestedArtifact.incrementDeployedInDB();
-							}
-						}
-					}
-					
-					if (mainEnvArtifactInfo != null) {
-						heatEnv = (HeatEnvironment) vfResourceStructure.getArtifactsMapByUUID()
-								.get(mainEnvArtifactInfo.getArtifactUUID()).getCatalogObject();
-						
-						// Set HeatEnvironmentArtifactUUID to use later when setting the VfModule 
-						toscaResourceStruct.setEnvHeatTemplateUUID(heatEnv.getArtifactUuid());
-
-						// Add this one for logging
-						artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(mainEnvArtifactInfo));
-												
-						catalogDB.saveHeatEnvironment(heatEnv);
-						// Indicate we have deployed it in the DB
-						vfResourceStructure.getArtifactsMapByUUID().get(mainEnvArtifactInfo.getArtifactUUID()).incrementDeployedInDB();
-					}
-					
-					// here we expect one VFModule to be there
-					//VfResourceInstaller.createVfModule(vfModuleStructure,heatMainTemplate, heatVolumeTemplate, heatEnv, heatVolumeEnv);
-					//VfModule vfModule = vfModuleStructure.getCatalogVfModule();
-
-					// Add this one for logging
-					//artifactListForLogging.add(ASDCElementInfo.createElementFromVfModuleStructure(vfModuleStructure));
-					
-					//catalogDB.saveOrUpdateVfModule(vfModule);
-					
-					
-	                // extract VF metadata          	
-					createVnfResource(nodeTemplate, toscaResourceStruct);
-					
-		         	// check for duplicate record already in the database
-					VnfResource vnfResource = catalogDB.getVnfResource(toscaResourceStruct.getCatalogVnfResource().getModelName(),
-							BigDecimalVersion.castAndCheckNotificationVersionToString(
-									toscaResourceStruct.getCatalogVnfResource().getVersion()));
-
-					if (vnfResource != null) {
-						toscaResourceStruct.setVnfAlreadyInstalled(true);
-					}
-		      	
-		  	
-					if(!toscaResourceStruct.isVnfAlreadyInstalled()) {
-		    
-						 catalogDB.saveOrUpdateVnfResource(toscaResourceStruct.getCatalogVnfResource());
-						
-					}
-					
-								
-					catalogDB.saveVnfResourceCustomization(toscaResourceStruct.getCatalogVnfResourceCustomization()); 			
-
-					catalogDB.saveServiceToResourceCustomization(toscaResourceStruct.getCatalogVfServiceToResourceCustomization());
-
-
-						List<org.onap.sdc.toscaparser.api.Group> vfGroups = toscaResourceStruct.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
-						logger.debug("vfGroups:" + vfGroups.toString());
-						
-						vfGroups.sort((group1, group2) -> {
-								//Field name1Field = group1.class.getDeclaredField("name");
-								//name1Field.setAccessible(true);
-								String thisName = group1.getName(); //(String) name1Field.get(group1);
-								String thatName = group2.getName(); // (String) name1Field.get(group2);
-								
-								Matcher m = lastDigit.matcher(thisName);
-								Matcher m2 = lastDigit.matcher(thatName);
-								
-								String thisDigit = "0";
-								String thatDigit = "0";
-								if (m.find()) {
-									thisDigit = m.group();
-								} else {
-									return -1;
-								}
-								if (m2.find()) {
-									thatDigit = m2.group();
-								} else {
-									return 1;
-								}
-								
-								return new Integer(thisDigit).compareTo(new Integer(thatDigit));
-							});
-						
-						logger.debug("vfGroupsAfter:" + vfGroups.toString());
-
-						
-						for(Group group : vfGroups){
-							
-				
-							//boolean saveVFModule = createVFModule(group, nodeTemplate, toscaResourceStruct, vfMetadata);
-							if (vfMetadata.getVfModuleModelCustomizationUUID() == null) {
-								logger.debug("NULL 1");
-							} else {
-								logger.debug("vfMetadata.getMCU=" + vfMetadata.getVfModuleModelCustomizationUUID());
-							}
-							if (group.getMetadata() == null) {
-								logger.debug("NULL 3");
-							} else {
-								logger.debug("group.getMetadata().getValue() = " + group.getMetadata().getValue("vfModuleModelCustomizationUUID"));
-							}
-							if (vfMetadata.getVfModuleModelCustomizationUUID().equals(group.getMetadata().getValue("vfModuleModelCustomizationUUID"))) {
-								logger.debug("Found a match at " + vfMetadata.getVfModuleModelCustomizationUUID());
-							   createVFModule(group, nodeTemplate, toscaResourceStruct, vfResourceStructure, vfMetadata);
-				
-								catalogDB.saveOrUpdateVfModule(toscaResourceStruct.getCatalogVfModule());
-				
-								catalogDB.saveOrUpdateVfModuleCustomization(toscaResourceStruct.getCatalogVfModuleCustomization());
-								
-								catalogDB.saveVnfResourceToVfModuleCustomization(toscaResourceStruct.getCatalogVnfResourceCustomization(), toscaResourceStruct.getCatalogVfModuleCustomization());
-				
-
-							} else {
-								if(toscaResourceStruct.getCatalogVfModuleCustomization() != null){
-									logger.debug("No match for " + toscaResourceStruct.getCatalogVfModuleCustomization().getModelCustomizationUuid());
-								} else {
-									logger.debug("No match for vfModuleModelCustomizationUUID");
-								}
-							}
-				
-						}
-						       	   
-					} //Commented out to process VFModules each time 
-					
-					// Here we expect many HEAT_TEMPLATE files to be there
-					if (vfModuleStructure.getArtifactsMap().containsKey(ASDCConfiguration.HEAT_ARTIFACT)) {
-						for (VfModuleArtifact heatArtifact : vfModuleStructure.getArtifactsMap()
-								.get(ASDCConfiguration.HEAT_ARTIFACT)) {
-		
-							HeatFiles heatFile = (HeatFiles) heatArtifact.getCatalogObject();
-												
-							// Add this one for logging
-							artifactListForLogging.add(ASDCElementInfo.createElementFromVfArtifactInfo(heatArtifact.getArtifactInfo()));
-						
-							if(toscaResourceStruct.getCatalogVfModule() != null && heatFile != null){
-								catalogDB.saveVfModuleToHeatFiles (toscaResourceStruct.getCatalogVfModule().getModelUUID(), heatFile);
-							}
-							// Indicate we will deploy it in the DB
-							heatArtifact.incrementDeployedInDB();
-						}
-					}
-					
-				  }
-				}
+	protected VfModuleArtifact getHeatEnvArtifactFromGeneratedArtifact(VfResourceStructure vfResourceStructure,
+			VfModuleArtifact vfModuleArtifact) {
+		String artifactName = vfModuleArtifact.getArtifactInfo().getArtifactName();
+		artifactName = artifactName.substring(0, artifactName.indexOf('.'));
+		for (VfModuleArtifact moduleArtifact : vfResourceStructure.getArtifactsMapByUUID().values()) {
+			if (moduleArtifact.getArtifactInfo().getArtifactName().contains(artifactName)
+					&& moduleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_ENV)) {
+				return moduleArtifact;
+			}
 		}
-				
-				/* END OF HEAT TABLE POPULATION
-				 * ***************************************************************************************************
-				 */
-            
-            
-          //  throw new ArtifactInstallerException("TESTING");
-            
-            
-            List<NodeTemplate> allottedResourceList = toscaResourceStruct.getSdcCsarHelper().getAllottedResources();
-        	
-			if(allottedResourceList != null){
+		return null;
+	}
 
-				for(NodeTemplate allottedNode : allottedResourceList){
-
-					createAllottedResource(allottedNode, toscaResourceStruct);
-
-					catalogDB.saveAllottedResource(toscaResourceStruct.getAllottedResource());
-
-					catalogDB.saveAllottedResourceCustomization(toscaResourceStruct.getCatalogAllottedResourceCustomization());
-
-					catalogDB.saveServiceToResourceCustomization(toscaResourceStruct.getCatalogAllottedServiceToResourceCustomization());
-
-				}
-			}
-
-			// handle VF resource
-			List<NodeTemplate> serviceVfList = toscaResourceStruct.getSdcCsarHelper().getServiceVfList();
-			if (serviceVfList != null) {
-				for (NodeTemplate vfNode : serviceVfList) {
-					createVnfResource(vfNode, toscaResourceStruct);
-					catalogDB.saveVnfResource(toscaResourceStruct.getCatalogVnfResource());
-					catalogDB.saveVnfResourceCustomization(toscaResourceStruct.getCatalogVnfResourceCustomization());
-					catalogDB.saveServiceToResourceCustomization(toscaResourceStruct.getCatalogVfServiceToResourceCustomization());
-				}
-			}
-
-
-			List<NodeTemplate> nodeTemplatesVLList = toscaResourceStruct.getSdcCsarHelper().getServiceVlList();
-				
-        		if(nodeTemplatesVLList != null){
-				
-        			for(NodeTemplate vlNode : nodeTemplatesVLList){
-        				
-        				String networkResourceModelName = vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME);
-
-        				List<TempNetworkHeatTemplateLookup> networkHeatTemplateLookup = catalogDB.getTempNetworkHeatTemplateLookup(networkResourceModelName);
-        				
-        				if(networkHeatTemplateLookup != null && networkHeatTemplateLookup.size() > 0 ){
-					
-        					createNetworkResource(vlNode, toscaResourceStruct, networkHeatTemplateLookup.get(0));
-        				
-        				} else {
-                            logger.info(MessageEnum.ASDC_GENERAL_INFO,
-                                    "No NetworkResourceName found in TempNetworkHeatTemplateLookup for" + networkResourceModelName, "ASDC",
-                                    "createVfModuleStructures");
-                            createNetworkResource(vlNode, toscaResourceStruct, null);
-        				}
-					
-										
-		   		 		catalogDB.saveNetworkResource(toscaResourceStruct.getCatalogNetworkResource());
-						
-		   		 		catalogDB.saveNetworkResourceCustomization(toscaResourceStruct.getCatalogNetworkResourceCustomization());
-						
-						catalogDB.saveServiceToResourceCustomization(toscaResourceStruct.getCatalogVlServiceToResourceCustomization());
-
-        			}
-        		} 	
-            
-		
-        	   //createServiceToResourceCustomization(toscaResourceStruct.getCatalogService(), toscaResourceStruct.getCatalogVnfResourceCustomization(), toscaResourceStruct);
-        	   
-           // catalogDB.saveToscaCsar(toscaResourceStruct.getCatalogToscaCsar());
-        	wdComponentDistributionStatus.insertWatchdogComponentDistributionStatus(vfResourceStruct.getNotification().getDistributionID(), "SO", DistributionStatusEnum.COMPONENT_DONE_OK.name());        	
- 
-			catalogDB.commit();	
-			toscaResourceStruct.setSuccessfulDeployment();
-			
-		}catch(Exception e){
-			logger.debug("Exception :",e);
-			
-			wdDistributionStatus.insertWatchdogDistributionId(vfResourceStructure.getNotification().getDistributionID());
-			
-			wdComponentDistributionStatus.insertWatchdogComponentDistributionStatus(vfResourceStruct.getNotification().getDistributionID(), "SO", DistributionStatusEnum.COMPONENT_DONE_ERROR.name());
-			
-			wdDistributionStatus.updateWatchdogDistributionIdStatus(vfResourceStruct.getNotification().getDistributionID(), DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name());         	
-			
-			Throwable dbExceptionToCapture = e;
-			while (!(dbExceptionToCapture instanceof ConstraintViolationException || dbExceptionToCapture instanceof LockAcquisitionException)
-					&& (dbExceptionToCapture.getCause() != null)) {
-				dbExceptionToCapture = dbExceptionToCapture.getCause();
-			}
-
-			if (dbExceptionToCapture instanceof ConstraintViolationException || dbExceptionToCapture instanceof LockAcquisitionException) {
-				logger.warn(MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED, vfResourceStructure.getResourceInstance().getResourceName(),
-						vfResourceStructure.getNotification().getServiceVersion(), "", "", MsoLogger.ErrorCode.DataError, "Exception - ASCDC Artifact already deployed", e);
-			} else {
-				String elementToLog = (artifactListForLogging.size() > 0 ? artifactListForLogging.get(artifactListForLogging.size()-1).toString() : "No element listed");
-				logger.error(MessageEnum.ASDC_ARTIFACT_INSTALL_EXC, elementToLog, "", "", MsoLogger.ErrorCode.DataError, "Exception caught during installation of " + vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback", e);
-				catalogDB.rollback();
-				throw new ArtifactInstallerException(
-						"Exception caught during installation of " + vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback.", e);
-			}
-
-		} finally {
-			catalogDB.close();
-		}
-				
-	}		
-
-		
-	public static String verifyTheFilePrefixInArtifacts(String filebody, VfResourceStructure vfResourceStructure, List<String> listTypes) {
+	public String verifyTheFilePrefixInArtifacts(String filebody, VfResourceStructure vfResourceStructure,
+			List<String> listTypes) {
 		String newFileBody = filebody;
-		for (VfModuleArtifact moduleArtifact:vfResourceStructure.getArtifactsMapByUUID().values()) {
-			
+		for (VfModuleArtifact moduleArtifact : vfResourceStructure.getArtifactsMapByUUID().values()) {
+
 			if (listTypes.contains(moduleArtifact.getArtifactInfo().getArtifactType())) {
-				
-				newFileBody = verifyTheFilePrefixInString(newFileBody,moduleArtifact.getArtifactInfo().getArtifactName());
+
+				newFileBody = verifyTheFilePrefixInString(newFileBody,
+						moduleArtifact.getArtifactInfo().getArtifactName());
 			}
 		}
 		return newFileBody;
 	}
-	
-	public static String verifyTheFilePrefixInString(final String body, final String filenameToVerify) {
-		
+
+	public String verifyTheFilePrefixInString(final String body, final String filenameToVerify) {
+
 		String needlePrefix = "file:///";
-		String prefixedFilenameToVerify = needlePrefix+filenameToVerify;
-		
-		if ((body == null) || (body.length() == 0) || (filenameToVerify == null) || (filenameToVerify.length() == 0)) { 
-			return body; 
-		} 
- 
+		String prefixedFilenameToVerify = needlePrefix + filenameToVerify;
+
+		if ((body == null) || (body.length() == 0) || (filenameToVerify == null) || (filenameToVerify.length() == 0)) {
+			return body;
+		}
+
 		StringBuilder sb = new StringBuilder(body.length());
- 
-		int currentIndex = 0; 
-		int startIndex = 0; 
- 
-		while (currentIndex != -1) { 
-			startIndex = currentIndex; 
-			currentIndex = body.indexOf(prefixedFilenameToVerify, startIndex); 
- 
-			if (currentIndex == -1) { 
-				break; 
-			} 
- 
-			// We append from the startIndex up to currentIndex (start of File Name) 
-			sb.append(body.substring(startIndex, currentIndex)); 
-			sb.append(filenameToVerify); 
- 
-			currentIndex += prefixedFilenameToVerify.length(); 
-		} 
- 
-		sb.append(body.substring(startIndex)); 
- 
+
+		int currentIndex = 0;
+		int startIndex = 0;
+
+		while (currentIndex != -1) {
+			startIndex = currentIndex;
+			currentIndex = body.indexOf(prefixedFilenameToVerify, startIndex);
+
+			if (currentIndex == -1) {
+				break;
+			}
+			// We append from the startIndex up to currentIndex (start of File
+			// Name)
+			sb.append(body.substring(startIndex, currentIndex));
+			sb.append(filenameToVerify);
+
+			currentIndex += prefixedFilenameToVerify.length();
+		}
+
+		sb.append(body.substring(startIndex));
+
 		return sb.toString();
 	}
-	
-	
-	private static void createHeatTemplateFromArtifact(VfResourceStructure vfResourceStructure,ToscaResourceStructure toscaResourceStruct,
-			VfModuleArtifact vfModuleArtifact) {
-		HeatTemplate heatTemplate = new HeatTemplate();
 
-		// TODO Set the label
-//		heatTemplate.setAsdcLabel("label");
-		// Use the ResourceName of the ASDC template because the HEAT could be
-		// reused
-//		heatTemplate.setAsdcResourceName(vfResourceStructure.getResourceInstance().getResourceName());
-		heatTemplate.setAsdcUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-		
+	private void createHeatTemplateFromArtifact(VfResourceStructure vfResourceStructure,
+			ToscaResourceStructure toscaResourceStruct, VfModuleArtifact vfModuleArtifact) {
+		HeatTemplate heatTemplate = new HeatTemplate();
 		List<String> typeList = new ArrayList<>();
 		typeList.add(ASDCConfiguration.HEAT_NESTED);
 		typeList.add(ASDCConfiguration.HEAT_ARTIFACT);
-		
-		heatTemplate.setTemplateBody(verifyTheFilePrefixInArtifacts(vfModuleArtifact.getResult(),vfResourceStructure,typeList));
+
+		heatTemplate.setTemplateBody(
+				verifyTheFilePrefixInArtifacts(vfModuleArtifact.getResult(), vfResourceStructure, typeList));
 		heatTemplate.setTemplateName(vfModuleArtifact.getArtifactInfo().getArtifactName());
 
 		if (vfModuleArtifact.getArtifactInfo().getArtifactTimeout() != null) {
@@ -766,454 +627,932 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		} else {
 			heatTemplate.setTimeoutMinutes(240);
 		}
-		
-		//toscaResourceStruct.setHeatFilesUUID(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
 
 		heatTemplate.setDescription(vfModuleArtifact.getArtifactInfo().getArtifactDescription());
 		heatTemplate.setVersion(BigDecimalVersion
 				.castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
 		heatTemplate.setArtifactUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-		
-		if(vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null){
+
+		if (vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null) {
 			heatTemplate.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
 		} else {
-			heatTemplate.setArtifactChecksum("MANUAL_RECORD");
+			heatTemplate.setArtifactChecksum(MANUAL_RECORD);
 		}
-		
-		Set<HeatTemplateParam> heatParam = ToscaResourceInstaller
-				.extractHeatTemplateParameters(vfModuleArtifact.getResult(), vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-		heatTemplate.setParameters(heatParam);
-		//heatTemplate.setCreated(getCurrentTimeStamp());
 
-		vfModuleArtifact.setCatalogObject(heatTemplate);
+		Set<HeatTemplateParam> heatParam = extractHeatTemplateParameters(
+				vfModuleArtifact.getResult(), vfModuleArtifact.getArtifactInfo().getArtifactUUID());
+		heatTemplate.setParameters(heatParam);	
+		vfModuleArtifact.setHeatTemplate(heatTemplate);
 	}
 
-	private static void createHeatEnvFromArtifact(VfResourceStructure vfResourceStructure,
+	private void createHeatEnvFromArtifact(VfResourceStructure vfResourceStructure,
 			VfModuleArtifact vfModuleArtifact) {
 		HeatEnvironment heatEnvironment = new HeatEnvironment();
-
 		heatEnvironment.setName(vfModuleArtifact.getArtifactInfo().getArtifactName());
-		// TODO Set the label
-//		heatEnvironment.setAsdcLabel("Label");
-		
 		List<String> typeList = new ArrayList<>();
 		typeList.add(ASDCConfiguration.HEAT);
 		typeList.add(ASDCConfiguration.HEAT_VOL);
-		
-		heatEnvironment.setEnvironment(verifyTheFilePrefixInArtifacts(vfModuleArtifact.getResult(),vfResourceStructure,typeList));
-//		heatEnvironment.setAsdcUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
+		heatEnvironment.setEnvironment(
+				verifyTheFilePrefixInArtifacts(vfModuleArtifact.getResult(), vfResourceStructure, typeList));
 		heatEnvironment.setDescription(vfModuleArtifact.getArtifactInfo().getArtifactDescription());
 		heatEnvironment.setVersion(BigDecimalVersion
-				.castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
-//		heatEnvironment.setAsdcResourceName(VfResourceInstaller.createVNFName(vfResourceStructure));
+				.castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));	
 		heatEnvironment.setArtifactUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-		
-		if(vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null){
-			heatEnvironment.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
-		} else{
-			heatEnvironment.setArtifactChecksum("MANUAL_RECORD");
-		}
-		//heatEnvironment.setCreated(getCurrentTimeStamp());
 
-		vfModuleArtifact.setCatalogObject(heatEnvironment);
-		
+		if (vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null) {
+			heatEnvironment.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
+		} else {
+			heatEnvironment.setArtifactChecksum(MANUAL_RECORD);
+		}		
+		vfModuleArtifact.setHeatEnvironment(heatEnvironment);
 	}
 
-	private static void createHeatFileFromArtifact(VfResourceStructure vfResourceStructure,
-			VfModuleArtifact vfModuleArtifact, ToscaResourceStructure toscaResourceStruct) {
-
-		HeatFiles heatFile = new HeatFiles();
-		// TODO Set the label
-//		heatFile.setAsdcLabel("Label");
+	private void createHeatFileFromArtifact(VfResourceStructure vfResourceStructure,
+		VfModuleArtifact vfModuleArtifact, ToscaResourceStructure toscaResourceStruct) {
+		
+		HeatFiles heatFile = new HeatFiles();	
 		heatFile.setAsdcUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
 		heatFile.setDescription(vfModuleArtifact.getArtifactInfo().getArtifactDescription());
 		heatFile.setFileBody(vfModuleArtifact.getResult());
 		heatFile.setFileName(vfModuleArtifact.getArtifactInfo().getArtifactName());
 		heatFile.setVersion(BigDecimalVersion
 				.castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
-		
 		toscaResourceStruct.setHeatFilesUUID(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-		//heatFile.setCreated(getCurrentTimeStamp());
-
-//		heatFile.setAsdcResourceName(vfResourceStructure.getResourceInstance().getResourceName());
-		
-		
-		if(vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null){
+		if (vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null) {
 			heatFile.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
 		} else {
-			heatFile.setArtifactChecksum("MANUAL_RECORD");
+			heatFile.setArtifactChecksum(MANUAL_RECORD);
 		}
-		
-		vfModuleArtifact.setCatalogObject(heatFile);
-		
+		vfModuleArtifact.setHeatFiles(heatFile);
 	}
 
-	private static void createService(ToscaResourceStructure toscaResourceStructure, VfResourceStructure vfResourceStructure) {
-		
+	private Service createService(ToscaResourceStructure toscaResourceStructure,
+			VfResourceStructure vfResourceStructure) {
+
 		toscaResourceStructure.getServiceMetadata();
-		
+
 		Metadata serviceMetadata = toscaResourceStructure.getServiceMetadata();
-			
+
 		Service service = new Service();
-		
-		//  Service	
-		if(serviceMetadata != null) {	
-			
-			if(toscaResourceStructure.getServiceVersion() != null){
-				service.setVersion(toscaResourceStructure.getServiceVersion());
+
+		if (serviceMetadata != null) {
+
+			if (toscaResourceStructure.getServiceVersion() != null) {
+				service.setModelVersion(toscaResourceStructure.getServiceVersion());
 			}
-						
+
 			service.setServiceType(serviceMetadata.getValue("serviceType"));
 			service.setServiceRole(serviceMetadata.getValue("serviceRole"));
-			
+
 			service.setDescription(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
 			service.setModelName(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
 			service.setModelUUID(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 			service.setEnvironmentContext(serviceMetadata.getValue("environmentContext"));
-			
-			
-			if(vfResourceStructure != null){
+
+			if (vfResourceStructure != null) 
 				service.setWorkloadContext(vfResourceStructure.getNotification().getWorkloadContext());
-			}
-			//service.setVersion(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+						
 			service.setModelInvariantUUID(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
-			service.setCategory(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
-			service.setToscaCsarArtifactUUID(toscaResourceStructure.getToscaArtifact().getArtifactUUID());
-			//service.setCreated(getCurrentTimeStamp());
+			service.setCsar(toscaResourceStructure.getCatalogToscaCsar());			
 		}
-				
-		toscaResourceStructure.setCatalogService(service);
+		
+		
+		toscaResourceStructure.setCatalogService(service); 
+		return service;
 	}
 	
-	private static void createToscaCsar(ToscaResourceStructure toscaResourceStructure) {
+	private ServiceProxyResourceCustomization createServiceProxy(NodeTemplate nodeTemplate, Service service, ToscaResourceStructure toscaResourceStructure) {
+
+		Metadata spMetadata = nodeTemplate.getMetaData();
 		
+		ServiceProxyResource spResource = new ServiceProxyResource();
+		
+		spResource.setModelName(spMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+		spResource.setModelInvariantUUID(spMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+		spResource.setModelUUID(spMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+		spResource.setModelVersion(spMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+		spResource.setDescription(spMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));	
+		
+		ServiceProxyResourceCustomization spCustomizationResource = new ServiceProxyResourceCustomization();
+		
+		Set<ServiceProxyResourceCustomization> serviceProxyCustomizationSet = new HashSet<>();
+		
+		spCustomizationResource.setModelCustomizationUUID(spMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+		spCustomizationResource.setModelInstanceName(nodeTemplate.getName());
+		spCustomizationResource.setToscaNodeType(nodeTemplate.getType());
+		spCustomizationResource.setSourceService(service);
+		spCustomizationResource.setServiceProxyResource(spResource);
+		spCustomizationResource.setToscaNodeType(nodeTemplate.getType());
+		spCustomizationResource.setServiceProxyResource(spResource);
+		serviceProxyCustomizationSet.add(spCustomizationResource);
+
+		
+		spResource.setServiceProxyCustomization(serviceProxyCustomizationSet); 		
+		
+		toscaResourceStructure.setCatalogServiceProxyResource(spResource);
+		
+		toscaResourceStructure.setCatalogServiceProxyResourceCustomization(spCustomizationResource);
+		
+		return spCustomizationResource;
+	}
+	
+	private ConfigurationResourceCustomization createConfiguration(NodeTemplate nodeTemplate, ToscaResourceStructure toscaResourceStructure, ServiceProxyResourceCustomization spResourceCustomization) {
+
+		Metadata metadata = nodeTemplate.getMetaData();
+		
+		ConfigurationResource configResource = new ConfigurationResource();
+		
+		configResource.setModelName(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+		configResource.setModelInvariantUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+		configResource.setModelUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+		configResource.setModelVersion(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+		configResource.setDescription(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
+		configResource.setToscaNodeType(nodeTemplate.getType());
+		
+		ConfigurationResourceCustomization configCustomizationResource = new ConfigurationResourceCustomization();
+		
+		Set<ConfigurationResourceCustomization> configResourceCustomizationSet = new HashSet<>();
+		
+		configCustomizationResource.setModelCustomizationUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+		configCustomizationResource.setModelInstanceName(nodeTemplate.getName());
+		
+		configCustomizationResource.setNfFunction(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
+		configCustomizationResource.setNfRole(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE));
+		configCustomizationResource.setNfType(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
+		configCustomizationResource.setServiceProxyResourceCustomization(spResourceCustomization);
+		configCustomizationResource.setConfigResourceCustomization(configCustomizationResource);
+		configCustomizationResource.setConfigurationResource(configResource);
+		configResourceCustomizationSet.add(configCustomizationResource);
+
+		configResource.setConfigurationResourceCustomization(configResourceCustomizationSet); 	
+		
+		toscaResourceStructure.setCatalogConfigurationResource(configResource);
+		
+		toscaResourceStructure.setCatalogConfigurationResourceCustomization(configCustomizationResource);
+		
+		return configCustomizationResource;
+	}
+
+
+	private void createToscaCsar(ToscaResourceStructure toscaResourceStructure) {
 		ToscaCsar toscaCsar = new ToscaCsar();
-		if(toscaResourceStructure.getToscaArtifact().getArtifactChecksum() != null){
+		if (toscaResourceStructure.getToscaArtifact().getArtifactChecksum() != null) {
 			toscaCsar.setArtifactChecksum(toscaResourceStructure.getToscaArtifact().getArtifactChecksum());
 		} else {
-			toscaCsar.setArtifactChecksum("MANUAL_RECORD");
+			toscaCsar.setArtifactChecksum(MANUAL_RECORD);
 		}
 		toscaCsar.setArtifactUUID(toscaResourceStructure.getToscaArtifact().getArtifactUUID());
 		toscaCsar.setName(toscaResourceStructure.getToscaArtifact().getArtifactName());
 		toscaCsar.setVersion(toscaResourceStructure.getToscaArtifact().getArtifactVersion());
 		toscaCsar.setDescription(toscaResourceStructure.getToscaArtifact().getArtifactDescription());
 		toscaCsar.setUrl(toscaResourceStructure.getToscaArtifact().getArtifactURL());
-				
+
 		toscaResourceStructure.setCatalogToscaCsar(toscaCsar);
 	}
-	
-	private static void createNetworkResource(NodeTemplate networkNodeTemplate, ToscaResourceStructure toscaResourceStructure, TempNetworkHeatTemplateLookup networkHeatTemplateLookup) {
-		NetworkResourceCustomization networkResourceCustomization = new NetworkResourceCustomization();
+
+	private  NetworkResourceCustomization createNetwork(NodeTemplate networkNodeTemplate,
+			ToscaResourceStructure toscaResourceStructure, HeatTemplate heatTemplate, String aicMax, String aicMin,Service service) {
 		
+		NetworkResourceCustomization networkResourceCustomization=networkCustomizationRepo.findOneByModelCustomizationUUID(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+				if(networkResourceCustomization==null){
+			networkResourceCustomization = createNetworkResourceCustomization(networkNodeTemplate,
+					toscaResourceStructure);
+					
+			NetworkResource networkResource = findExistingNetworkResource(service,
+					networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+					if(networkResource == null)
+				networkResource = createNetworkResource(networkNodeTemplate, toscaResourceStructure, heatTemplate,
+						aicMax, aicMin);
+
+					networkResource.addNetworkResourceCustomization(networkResourceCustomization);		
+					networkResourceCustomization.setNetworkResource(networkResource);
+				}
+		return networkResourceCustomization;
+	}
+	
+	private  NetworkResource findExistingNetworkResource(Service service, String modelUUID) {
+		NetworkResource networkResource = null;
+		for(NetworkResourceCustomization networkCustom : service.getNetworkCustomizations()){
+			if (networkCustom.getNetworkResource() != null
+					&& networkCustom.getNetworkResource().getModelUUID().equals(modelUUID)) {
+					networkResource = networkCustom.getNetworkResource();
+			}
+		}
+		if(networkResource==null)
+			networkResource = networkRepo.findResourceByModelUUID(modelUUID);
+		
+		return networkResource;
+	}
+	
+	private NetworkResourceCustomization createNetworkResourceCustomization(NodeTemplate networkNodeTemplate,
+			ToscaResourceStructure toscaResourceStructure) {
+		NetworkResourceCustomization networkResourceCustomization = new NetworkResourceCustomization();
+		networkResourceCustomization.setModelInstanceName(
+				testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
+		networkResourceCustomization.setModelCustomizationUUID(
+				testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));		
+
+		networkResourceCustomization.setNetworkTechnology(
+				testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
+						SdcPropertyNames.PROPERTY_NAME_NETWORKTECHNOLOGY)));
+		networkResourceCustomization.setNetworkType(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(networkNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKTYPE)));
+		networkResourceCustomization.setNetworkRole(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(networkNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKROLE)));
+		networkResourceCustomization.setNetworkScope(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(networkNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKSCOPE)));
+		return networkResourceCustomization;
+	}
+
+	private NetworkResource createNetworkResource(NodeTemplate networkNodeTemplate,
+			ToscaResourceStructure toscaResourceStructure, HeatTemplate heatTemplate, String aicMax, String aicMin) {
+		NetworkResource networkResource = new NetworkResource();
+		String providerNetwork = toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(
+				networkNodeTemplate, SdcPropertyNames.PROPERTY_NAME_PROVIDERNETWORK_ISPROVIDERNETWORK);
+
+		if ("true".equalsIgnoreCase(providerNetwork)) {
+			networkResource.setNeutronNetworkType(PROVIDER);
+		} else {
+			networkResource.setNeutronNetworkType(BASIC);
+		}
+
+		networkResource.setModelName(
+				testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
+
+		networkResource.setModelInvariantUUID(
+				testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID)));
+		networkResource.setModelUUID(
+				testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
+		networkResource.setModelVersion(
+				testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
+
+		networkResource.setAicVersionMax(aicMax);		
+		networkResource.setAicVersionMin(aicMin);
+		networkResource.setToscaNodeType(networkNodeTemplate.getType());
+		networkResource.setDescription(
+				testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
+		networkResource.setOrchestrationMode(HEAT);	
+		networkResource.setHeatTemplate(heatTemplate); 
+		return networkResource;
+	}
+	
+	private  CollectionNetworkResourceCustomization createNetworkCollection(NodeTemplate networkNodeTemplate,
+			ToscaResourceStructure toscaResourceStructure, Service service) {
+
+		CollectionNetworkResourceCustomization collectionNetworkResourceCustomization = new CollectionNetworkResourceCustomization();
+
+		// CollectionResource existingCollectionResource =
+		// collectionRepo.findResourceByModelUUID(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+		
+		
+		//**** Build Object to populate Collection_Resource table
+		CollectionResource collectionResource = new CollectionResource();
+
+		//if(existingCollectionResource == null){
+		collectionResource
+				.setModelName(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+		collectionResource.setModelInvariantUUID(
+				networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+		collectionResource
+				.setModelUUID(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+		collectionResource
+				.setModelVersion(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+		collectionResource
+				.setDescription(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
+		collectionResource.setToscaNodeType(networkNodeTemplate.getType());
+
+		toscaResourceStructure.setCatalogCollectionResource(collectionResource);
+		
+	//	}
+		
+		//**** Build object to populate Collection_Resource_Customization table
+		NetworkCollectionResourceCustomization ncfc = new NetworkCollectionResourceCustomization();
+		
+		ncfc.setFunction(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
+				"cr_function"));
+		ncfc.setRole(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
+				"cr_role"));
+		ncfc.setType(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
+				"cr_type"));
+
+		ncfc.setModelInstanceName(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+		ncfc.setModelCustomizationUUID(
+				networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+		
+		Set<CollectionNetworkResourceCustomization> networkResourceCustomizationSet = new HashSet<>();
+		networkResourceCustomizationSet.add(collectionNetworkResourceCustomization);
+
+		ncfc.setNetworkResourceCustomization(networkResourceCustomizationSet);
+
+		//if(existingCollectionResource != null){
+		//	ncfc.setCollectionResource(existingCollectionResource);
+		//} else {
+			ncfc.setCollectionResource(collectionResource);
+		//}
+		
+		//*** Build object to populate the Instance_Group table
+		List<Group> groupList = toscaResourceStructure.getSdcCsarHelper()
+				.getGroupsOfOriginOfNodeTemplateByToscaGroupType(networkNodeTemplate,
+						"org.openecomp.groups.NetworkCollection");
+		
+		List<NetworkInstanceGroup> networkInstanceGroupList = new ArrayList<>();
+
+		List<CollectionResourceInstanceGroupCustomization> collectionResourceInstanceGroupCustomizationList = new ArrayList<CollectionResourceInstanceGroupCustomization>();
+
+		for (Group group : groupList) { 
+			
+			NetworkInstanceGroup networkInstanceGroup = new NetworkInstanceGroup();
+			Metadata instanceMetadata = group.getMetadata();
+			networkInstanceGroup.setModelName(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+			networkInstanceGroup
+					.setModelInvariantUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+			networkInstanceGroup.setModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+			networkInstanceGroup.setModelVersion(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+			networkInstanceGroup.setToscaNodeType(networkNodeTemplate.getType());
+			networkInstanceGroup.setRole(SubType.SUB_INTERFACE.toString()); // Set
+																			// Role
+			networkInstanceGroup.setType(InstanceGroupType.L3_NETWORK); // Set
+																		// type
+			networkInstanceGroup.setCollectionResource(collectionResource);
+		
+			// ****Build object to populate
+			// Collection_Resource_Instance_Group_Customization table
+			CollectionResourceInstanceGroupCustomization crInstanceGroupCustomization = new CollectionResourceInstanceGroupCustomization();
+			crInstanceGroupCustomization.setInstanceGroup(networkInstanceGroup);
+			crInstanceGroupCustomization.setModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+			crInstanceGroupCustomization.setModelCustomizationUUID(
+					networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+		
+			if (toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
+					instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME)
+							+ "_subinterface_network_quantity") != null) {
+				crInstanceGroupCustomization.setSubInterfaceNetworkQuantity(
+						Integer.getInteger(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(
+								networkNodeTemplate, instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME)
+										+ "_subinterface_network_quantity")));
+			}
+		
+			crInstanceGroupCustomization.setDescription(
+					toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
+							instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME)
+									+ "_network_collection_description"));
+			crInstanceGroupCustomization.setFunction(
+					toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
+							instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME)
+									+ "_network_collection_function"));
+			crInstanceGroupCustomization.setCollectionResourceCust(ncfc);
+			collectionResourceInstanceGroupCustomizationList.add(crInstanceGroupCustomization);
+
+			networkInstanceGroup
+					.setCollectionInstanceGroupCustomizations(collectionResourceInstanceGroupCustomizationList);
+
+			networkInstanceGroupList.add(networkInstanceGroup);
+		}
+
+		toscaResourceStructure.setCatalogNetworkInstanceGroup(networkInstanceGroupList);
+
+		List<NodeTemplate> vlNodeList = toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplateBySdcType(networkNodeTemplate, SdcTypes.VL);
+		
+		List<CollectionNetworkResourceCustomization> collectionNetworkResourceCustomizationList = new ArrayList<>();
+		
+		//*****Build object to populate the NetworkResource table
 		NetworkResource networkResource = new NetworkResource();
 		
-		String providerNetwork = toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate, SdcPropertyNames.PROPERTY_NAME_PROVIDERNETWORK_ISPROVIDERNETWORK);
-		
-		if("true".equalsIgnoreCase(providerNetwork)){
-			networkResource.setNeutronNetworkType("PROVIDER");
-		} else {
-			networkResource.setNeutronNetworkType("BASIC");
+		for(NodeTemplate vlNodeTemplate : vlNodeList){
+
+			String providerNetwork = toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(
+					vlNodeTemplate, SdcPropertyNames.PROPERTY_NAME_PROVIDERNETWORK_ISPROVIDERNETWORK);
+
+			if ("true".equalsIgnoreCase(providerNetwork)) {
+				networkResource.setNeutronNetworkType(PROVIDER);
+			} else {
+				networkResource.setNeutronNetworkType(BASIC);
+			}
+
+			networkResource.setModelName(vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+
+			networkResource.setModelInvariantUUID(
+					vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+			networkResource.setModelUUID(vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+			networkResource
+					.setModelVersion(vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+
+			networkResource.setAicVersionMax(
+					vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES));
+			
+			TempNetworkHeatTemplateLookup tempNetworkLookUp = tempNetworkLookupRepo.findFirstBynetworkResourceModelName(
+					vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+			
+			if (tempNetworkLookUp != null ) {	
+					
+				HeatTemplate heatTemplate = heatRepo
+						.findByArtifactUuid(tempNetworkLookUp.getHeatTemplateArtifactUuid());
+					networkResource.setHeatTemplate(heatTemplate);
+					
+					networkResource.setAicVersionMin(tempNetworkLookUp.getAicVersionMin());
+					
+			}
+
+			networkResource.setToscaNodeType(vlNodeTemplate.getType());
+			networkResource
+					.setDescription(vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
+			networkResource.setOrchestrationMode(HEAT);
+			
+			// Build object to populate the
+			// Collection_Network_Resource_Customization table
+			collectionNetworkResourceCustomization
+					.setModelInstanceName(vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+			collectionNetworkResourceCustomization.setModelCustomizationUUID(
+					vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+
+			collectionNetworkResourceCustomization.setNetworkTechnology(
+					toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vlNodeTemplate,
+							SdcPropertyNames.PROPERTY_NAME_NETWORKTECHNOLOGY));
+			collectionNetworkResourceCustomization.setNetworkType(toscaResourceStructure.getSdcCsarHelper()
+					.getNodeTemplatePropertyLeafValue(vlNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKTYPE));
+			collectionNetworkResourceCustomization.setNetworkRole(toscaResourceStructure.getSdcCsarHelper()
+					.getNodeTemplatePropertyLeafValue(vlNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKROLE));
+			collectionNetworkResourceCustomization.setNetworkScope(toscaResourceStructure.getSdcCsarHelper()
+					.getNodeTemplatePropertyLeafValue(vlNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKSCOPE));
+			collectionNetworkResourceCustomization.setNetworkResource(networkResource);
+			collectionNetworkResourceCustomization.setNetworkResourceCustomization(ncfc);
+			
+			collectionNetworkResourceCustomizationList.add(collectionNetworkResourceCustomization);
+
 		}
 		
-		networkResource.setModelName(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
-		
-		networkResource.setModelInvariantUUID(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID)));
-		networkResource.setModelUUID(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
-		networkResource.setModelVersion(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
-		
-		networkResource.setAicVersionMax(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
-		String aicVersionMin = networkHeatTemplateLookup != null ? networkHeatTemplateLookup.getAicVersionMin() : "2.5";
-		networkResource.setAicVersionMin(aicVersionMin);
-		networkResource.setToscaNodeType(networkNodeTemplate.getType());
-		networkResource.setDescription(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
-		networkResource.setOrchestrationMode("HEAT");
-		networkResource.setCategory(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
-		networkResource.setSubCategory(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY));
-		//for tosca NS ,there is no heat for network VL
-		String heatTemplateArtifactUUID = networkHeatTemplateLookup != null ? networkHeatTemplateLookup.getHeatTemplateArtifactUuid() : "null";
-		networkResource.setHeatTemplateArtifactUUID(heatTemplateArtifactUUID);
-			
-		toscaResourceStructure.setCatalogNetworkResource(networkResource); 
-		
-		networkResourceCustomization.setModelInstanceName(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
-		networkResourceCustomization.setModelCustomizationUuid(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
-		networkResourceCustomization.setNetworkResourceModelUuid(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
-		
-				
-		networkResourceCustomization.setNetworkTechnology(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKTECHNOLOGY)));
-		networkResourceCustomization.setNetworkType(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKTYPE)));
-		networkResourceCustomization.setNetworkRole(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKSCOPE)));
-		networkResourceCustomization.setNetworkScope(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKSCOPE)));
-			
-		toscaResourceStructure.setCatalogNetworkResourceCustomization(networkResourceCustomization);
-		
-		ServiceToResourceCustomization serviceToResourceCustomization = new ServiceToResourceCustomization();
-		serviceToResourceCustomization.setServiceModelUUID(toscaResourceStructure.getCatalogService().getModelUUID());
-		serviceToResourceCustomization.setResourceModelCustomizationUUID(testNull(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
-		serviceToResourceCustomization.setModelType("network");
-
-		toscaResourceStructure.setCatalogVlServiceToResourceCustomization(serviceToResourceCustomization);
-		
-		
+		return collectionNetworkResourceCustomization;
 	}
 	
-	private static void createVFModule(Group group, NodeTemplate nodeTemplate, ToscaResourceStructure toscaResourceStructure, VfResourceStructure vfResourceStructure, IVfModuleData vfModuleData) {
-		VfModule vfModule = new VfModule();
-		
-		Metadata vfMetadata = group.getMetadata();
-		
-		String vfModuleModelUUID = vfModuleData.getVfModuleModelUUID();
-		
-		
-		if(vfModuleModelUUID != null && vfModuleModelUUID.contains(".")){
-			vfModuleModelUUID = vfModuleModelUUID.substring(0, vfModuleModelUUID.indexOf("."));
-		}
-					
-			
-			for (VfModuleStructure vfModuleStructure : vfResourceStructure.getVfModuleStructure()){
-				
-				String vfModelUUID = vfModuleStructure.getVfModuleMetadata().getVfModuleModelUUID();
-												
-				if(vfModelUUID != null && vfModelUUID.equalsIgnoreCase(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID))){
-					
-					List<String> artifacts = vfModuleStructure.getVfModuleMetadata().getArtifacts();
-					
-					for(String artifact: artifacts){
+	protected VnfcInstanceGroupCustomization createVNFCInstanceGroup(NodeTemplate vnfcNodeTemplate, Group group,
+			VnfResourceCustomization vnfResourceCustomization) {
 
-						
-						for (VfModuleArtifact vfModuleArtifact : vfResourceStructure.getArtifactsMapByUUID().values()) {
-							
-							
-							if(artifact.equals(vfModuleArtifact.getArtifactInfo().getArtifactUUID())){
-								//if(vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_ARTIFACT)){
-								if(vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT)){
-									vfModule.setHeatTemplateArtifactUUId(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-								}
-								
-								if(vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_VOL)){
-									vfModule.setVolHeatTemplateArtifactUUId(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-									
-								}
-							}
-							
-						}
-						
-						
-					}
-					
+			Metadata instanceMetadata = group.getMetadata();
+			// Populate InstanceGroup
+			VFCInstanceGroup vfcInstanceGroup = new VFCInstanceGroup();
+			
+			vfcInstanceGroup.setModelName(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+			vfcInstanceGroup.setModelInvariantUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+			vfcInstanceGroup.setModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+			vfcInstanceGroup.setModelVersion(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+			vfcInstanceGroup.setToscaNodeType(vnfcNodeTemplate.getType());
+			vfcInstanceGroup.setRole("SUB-INTERFACE");   // Set Role
+			vfcInstanceGroup.setType(InstanceGroupType.VNFC);  // Set type	
+			
+			//Populate VNFCInstanceGroupCustomization
+			VnfcInstanceGroupCustomization vfcInstanceGroupCustom = new VnfcInstanceGroupCustomization();
+			
+			vfcInstanceGroupCustom.setModelCustomizationUUID(vnfResourceCustomization.getModelCustomizationUUID());
+			vfcInstanceGroupCustom.setModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+			vfcInstanceGroupCustom.setDescription(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
+			vfcInstanceGroupCustom.setFunction("FUNCTION");
+			vfcInstanceGroupCustom.setInstanceGroup(vfcInstanceGroup);
+			vfcInstanceGroupCustom.setVnfResourceCust(vnfResourceCustomization);		
+			
+		return vfcInstanceGroupCustom;
+
+	}
 	
+	private VFCInstanceGroup findExistingVnfcInstanceGroup(VnfResourceCustomization vnfResourceCustomization,
+			String modelUUID) {
+		VFCInstanceGroup vfcInstanceGroup = null;
+		List<VnfcInstanceGroupCustomization> vnfInstanceGroupCustomizations = vnfResourceCustomization
+				.getVnfcInstanceGroupCustomizations();
+		if(vnfInstanceGroupCustomizations != null){
+			for (VnfcInstanceGroupCustomization vnfcInstanceGroupCustom : vnfResourceCustomization
+					.getVnfcInstanceGroupCustomizations()) {
+				if (vnfcInstanceGroupCustom.getInstanceGroup() != null
+						&& vnfcInstanceGroupCustom.getInstanceGroup().getModelUUID().equals(modelUUID)) {
+					vfcInstanceGroup = (VFCInstanceGroup)vnfcInstanceGroupCustom.getInstanceGroup();
+				}
+			}
+		}
+		if(vfcInstanceGroup==null)
+			vfcInstanceGroup = (VFCInstanceGroup)instanceGroupRepo.findResourceByModelUUID(modelUUID);
+		
+		return vfcInstanceGroup;
+	}
+	
+	protected VfModuleCustomization createVFModuleResource(Group group, NodeTemplate nodeTemplate,
+			ToscaResourceStructure toscaResourceStructure, VfResourceStructure vfResourceStructure,
+			IVfModuleData vfModuleData, VnfResourceCustomization vnfResource) {
+		VfModuleCustomization vfModuleCustomization = findExistingVfModuleCustomization(vnfResource,
+				vfModuleData.getVfModuleModelCustomizationUUID());
+		if(vfModuleCustomization == null){		
+			VfModule vfModule = findExistingVfModule(vnfResource,
+					nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID));
+			Metadata vfMetadata = group.getMetadata();
+			if(vfModule==null)
+				vfModule=createVfModule(group, toscaResourceStructure, vfModuleData, vfMetadata);
+			
+			vfModuleCustomization = createVfModuleCustomzation(group, toscaResourceStructure, vfModule, vfModuleData);
+			setHeatInformationForVfModule(toscaResourceStructure, vfResourceStructure, vfModule, vfModuleCustomization,
+					vfMetadata);
+			vfModuleCustomization.setVfModule(vfModule);
+			vfModule.getVfModuleCustomization().add(vfModuleCustomization);
+			vnfResource.getVfModuleCustomizations().add(vfModuleCustomization);
+		} else{
+			vfResourceStructure.setAlreadyDeployed(true);
+		}
+		return vfModuleCustomization;
+	}
+	
+	private VfModuleCustomization findExistingVfModuleCustomization(VnfResourceCustomization vnfResource,
+			String vfModuleModelCustomizationUUID) {
+		VfModuleCustomization vfModuleCustomization = null;
+		for(VfModuleCustomization vfModuleCustom : vnfResource.getVfModuleCustomizations()){
+			if(vfModuleCustom.getModelCustomizationUUID().equalsIgnoreCase(vfModuleModelCustomizationUUID)){
+				vfModuleCustomization = vfModuleCustom;
+			}
+		}
+		if(vfModuleCustomization==null)
+			vfModuleCustomization = vfModuleCustomizationRepo
+					.findByModelCustomizationUUID(vfModuleModelCustomizationUUID);
+		
+		return vfModuleCustomization;
+	}
+
+	private VfModule findExistingVfModule(VnfResourceCustomization vnfResource, String modelUUID) {
+		VfModule vfModule = null;
+		for(VfModuleCustomization vfModuleCustom : vnfResource.getVfModuleCustomizations()){
+			if(vfModuleCustom.getVfModule() != null && vfModuleCustom.getVfModule().getModelUUID().equals(modelUUID)){
+				vfModule = vfModuleCustom.getVfModule();
+			}
+		}
+		if(vfModule==null)
+			vfModule = vfModuleRepo.findByModelUUID(modelUUID);
+		
+		return vfModule;
+	}
+
+	protected VfModuleCustomization createVfModuleCustomzation(Group group,
+			ToscaResourceStructure toscaResourceStructure, VfModule vfModule, IVfModuleData vfModuleData) {
+		VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+		
+		vfModuleCustomization.setModelCustomizationUUID(vfModuleData.getVfModuleModelCustomizationUUID());
+
+		vfModuleCustomization.setVfModule(vfModule);
+
+		String initialCount = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group,
+				SdcPropertyNames.PROPERTY_NAME_INITIALCOUNT);
+		if (initialCount != null && initialCount.length() > 0) {
+			vfModuleCustomization.setInitialCount(Integer.valueOf(initialCount));
+		}
+
+		vfModuleCustomization.setInitialCount(Integer.valueOf(toscaResourceStructure.getSdcCsarHelper()
+				.getGroupPropertyLeafValue(group, SdcPropertyNames.PROPERTY_NAME_INITIALCOUNT)));
+
+		String availabilityZoneCount = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group,
+				SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT);
+		if (availabilityZoneCount != null && availabilityZoneCount.length() > 0) {
+			vfModuleCustomization.setAvailabilityZoneCount(Integer.valueOf(availabilityZoneCount));
+		}
+
+		vfModuleCustomization.setLabel(toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group,
+				SdcPropertyNames.PROPERTY_NAME_VFMODULELABEL));
+
+		String maxInstances = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group,
+				SdcPropertyNames.PROPERTY_NAME_MAXVFMODULEINSTANCES);
+		if (maxInstances != null && maxInstances.length() > 0) {
+			vfModuleCustomization.setMaxInstances(Integer.valueOf(maxInstances));
+		}
+
+		String minInstances = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group,
+				SdcPropertyNames.PROPERTY_NAME_MINVFMODULEINSTANCES);
+		if (minInstances != null && minInstances.length() > 0) {
+			vfModuleCustomization.setMinInstances(Integer.valueOf(minInstances));
+		}
+		return vfModuleCustomization;
+	}
+
+	protected VfModule createVfModule(Group group, ToscaResourceStructure toscaResourceStructure,
+			IVfModuleData vfModuleData, Metadata vfMetadata) {
+		VfModule vfModule = new VfModule();
+		String vfModuleModelUUID = vfModuleData.getVfModuleModelUUID();
+
+		if(vfModuleModelUUID == null) {
+			vfModuleModelUUID = testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata,
+					SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID));
+		} else if (vfModuleModelUUID.indexOf('.') > -1) {
+			vfModuleModelUUID = vfModuleModelUUID.substring(0, vfModuleModelUUID.indexOf('.'));
+		}
+
+		vfModule.setModelInvariantUUID(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELINVARIANTUUID)));
+		vfModule.setModelName(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata,
+				SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELNAME)));
+		vfModule.setModelUUID(vfModuleModelUUID);
+		vfModule.setModelVersion(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata,
+				SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELVERSION)));
+		vfModule.setDescription(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata,
+				SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
+
+		String vfModuleType = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group,
+				SdcPropertyNames.PROPERTY_NAME_VFMODULETYPE);
+		if (vfModuleType != null && "Base".equalsIgnoreCase(vfModuleType)) {
+			vfModule.setIsBase(true);
+		} else {
+			vfModule.setIsBase(false);
+		}
+		return vfModule;
+	}
+
+	protected void setHeatInformationForVfModule(ToscaResourceStructure toscaResourceStructure,
+			VfResourceStructure vfResourceStructure, VfModule vfModule, VfModuleCustomization vfModuleCustomization,
+			Metadata vfMetadata) {
+		Optional<VfModuleStructure> matchingObject = vfResourceStructure.getVfModuleStructure().stream()
+				.filter(vfModuleStruct -> vfModuleStruct.getVfModuleMetadata().getVfModuleModelUUID()
+						.equalsIgnoreCase(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata,
+								SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID)))
+				.findFirst();
+
+		if (matchingObject.isPresent()) {
+			List<HeatFiles> heatFilesList = new ArrayList<>();
+			List<HeatTemplate> childNestedHeatTemplates = new ArrayList<HeatTemplate>();
+			HeatTemplate parentHeatTemplate = new HeatTemplate();
+			String parentArtifactType = null;
+			Set<String> artifacts = new HashSet<>(matchingObject.get().getVfModuleMetadata().getArtifacts());
+			for (VfModuleArtifact vfModuleArtifact : vfResourceStructure.getArtifactsMapByUUID().values()) {
+				if (artifacts.contains(vfModuleArtifact.getArtifactInfo().getArtifactUUID())) {
+					checkVfModuleArtifactType(vfModule, vfModuleCustomization, heatFilesList, vfModuleArtifact,
+							childNestedHeatTemplates, parentHeatTemplate, vfResourceStructure);
 				}
 				
+				if(vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_NESTED)){
+					parentArtifactType = identifyParentOfNestedTemplate(matchingObject.get(), vfModuleArtifact);
+				}
+			}
+			if(!heatFilesList.isEmpty()){
+				vfModule.setHeatFiles(heatFilesList);
+			}
+			
+			if(!childNestedHeatTemplates.isEmpty()){
+			
+				if(parentArtifactType != null && parentArtifactType.equalsIgnoreCase(ASDCConfiguration.HEAT_VOL)){
+					vfModule.getVolumeHeatTemplate().setChildTemplates(childNestedHeatTemplates);
+				} else {
+					vfModule.getModuleHeatTemplate().setChildTemplates(childNestedHeatTemplates);
+				}  
+			}
+		}
+	}
+
+	protected void checkVfModuleArtifactType(VfModule vfModule, VfModuleCustomization vfModuleCustomization,
+			List<HeatFiles> heatFilesList, VfModuleArtifact vfModuleArtifact, List<HeatTemplate> nestedHeatTemplates,
+			HeatTemplate parentHeatTemplate, VfResourceStructure vfResourceStructure) {
+		if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT)) {
+			vfModuleArtifact.incrementDeployedInDB();
+			vfModule.setModuleHeatTemplate(vfModuleArtifact.getHeatTemplate());
+		} else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_VOL)) {
+			vfModule.setVolumeHeatTemplate(vfModuleArtifact.getHeatTemplate());
+			VfModuleArtifact volVfModuleArtifact = this.getHeatEnvArtifactFromGeneratedArtifact(vfResourceStructure, vfModuleArtifact);
+			vfModuleCustomization.setVolumeHeatEnv(volVfModuleArtifact.getHeatEnvironment());
+			vfModuleArtifact.incrementDeployedInDB();
+		} else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_ENV)) {
+			vfModuleCustomization.setHeatEnvironment(vfModuleArtifact.getHeatEnvironment());
+			vfModuleArtifact.incrementDeployedInDB();
+		} else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_ARTIFACT)) {
+			heatFilesList.add(vfModuleArtifact.getHeatFiles());							
+			vfModuleArtifact.incrementDeployedInDB();
+		} else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_NESTED)) {
+			nestedHeatTemplates.add(vfModuleArtifact.getHeatTemplate());				
+			vfModuleArtifact.incrementDeployedInDB();
+		}
+	}
+
+	private VnfResourceCustomization createVnfResource(NodeTemplate vfNodeTemplate,
+			ToscaResourceStructure toscaResourceStructure, Service service) {
+		VnfResourceCustomization vnfResourceCustomization = vnfCustomizationRepo.findOneByModelCustomizationUUID(
+				vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+		if(vnfResourceCustomization == null){		
+			VnfResource vnfResource = findExistingVnfResource(service,
+					vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+			
+			if(vnfResource==null)
+				vnfResource=createVnfResource(vfNodeTemplate);
+			
+			vnfResourceCustomization = createVnfResourceCustomization(vfNodeTemplate, toscaResourceStructure,
+					vnfResource);
+			vnfResourceCustomization.setVnfResources(vnfResource);
+			vnfResource.getVnfResourceCustomizations().add(vnfResourceCustomization);
+			
+			// Fetch VNFC Instance Group Info				
+			List<Group> groupList = toscaResourceStructure.getSdcCsarHelper()
+					.getGroupsOfOriginOfNodeTemplateByToscaGroupType(vfNodeTemplate,
+							"org.openecomp.groups.VfcInstanceGroup");
 				
-			}
-							
-			vfModule.setModelInvariantUuid(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELINVARIANTUUID)));
-			vfModule.setModelName(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELNAME)));
-			vfModule.setModelUUID(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID)));
-			vfModule.setVersion(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELVERSION)));
-			vfModule.setDescription(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
-			//vfModule.setHeatTemplateArtifactUUId(toscaResourceStructure.getHeatTemplateUUID());
-			//vfModule.setVolHeatTemplateArtifactUUId(toscaResourceStructure.getVolHeatTemplateUUID());
-						
-			vfModule.setVnfResourceModelUUId(toscaResourceStructure.getCatalogVnfResource().getModelUuid());		
-			
-			String vfModuleType = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group, SdcPropertyNames.PROPERTY_NAME_VFMODULETYPE);
-			if(vfModuleType != null && "Base".equalsIgnoreCase(vfModuleType)){
-				vfModule.setIsBase(1);	
-			}else {
-				vfModule.setIsBase(0);
+			for (Group group : groupList) { 
+				
+				VFCInstanceGroup vfcInstanceGroup = findExistingVnfcInstanceGroup(vnfResourceCustomization,
+						group.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+				if(vfcInstanceGroup == null){
+					VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization = createVNFCInstanceGroup(
+							vfNodeTemplate, group, vnfResourceCustomization);
+				
+					vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);
+				}
 			}
 			
-
-			VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
-			vfModuleCustomization.setModelCustomizationUuid(vfModuleData.getVfModuleModelCustomizationUUID());
-		
-			
-			vfModuleCustomization.setVfModuleModelUuid(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata,SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID));
-			
-			vfModuleCustomization.setHeatEnvironmentArtifactUuid(toscaResourceStructure.getEnvHeatTemplateUUID());
-			
-
-			vfModuleCustomization.setVolEnvironmentArtifactUuid(toscaResourceStructure.getVolHeatEnvTemplateUUID());
-			
-			String initialCount = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group, SdcPropertyNames.PROPERTY_NAME_INITIALCOUNT);
-			if(initialCount != null && initialCount.length() > 0){
-				vfModuleCustomization.setInitialCount(Integer.valueOf(initialCount));
-			}
-		
-			vfModuleCustomization.setInitialCount(Integer.valueOf(toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group, SdcPropertyNames.PROPERTY_NAME_INITIALCOUNT)));
-			
-			String availabilityZoneCount = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group, SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT);
-			if(availabilityZoneCount != null && availabilityZoneCount.length() > 0){
-				vfModuleCustomization.setAvailabilityZoneCount(Integer.valueOf(availabilityZoneCount));
-			}
-			
-
-			vfModuleCustomization.setLabel(toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group, SdcPropertyNames.PROPERTY_NAME_VFMODULELABEL));
-			
-			String maxInstances = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group, SdcPropertyNames.PROPERTY_NAME_MAXVFMODULEINSTANCES);
-			if(maxInstances != null && maxInstances.length() > 0){
-				vfModuleCustomization.setMaxInstances(Integer.valueOf(maxInstances));
-			}
-			
-			String minInstances = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group, SdcPropertyNames.PROPERTY_NAME_MINVFMODULEINSTANCES);
-			if(minInstances != null && minInstances.length() > 0){
-				vfModuleCustomization.setMinInstances(Integer.valueOf(minInstances));
-			}
-	
-			toscaResourceStructure.setCatalogVfModule(vfModule); 
-		
-			toscaResourceStructure.setCatalogVfModuleCustomization(vfModuleCustomization);
-			
+		}
+		return vnfResourceCustomization;
 	}
 	
-	private static void createVnfResourceToVfModuleCustomization(VnfResourceCustomization vnfResourceCustomization, 
-			                                                     VfModuleCustomization vfModuleCustomization, 
-			                                                     ToscaResourceStructure toscaResourceStructure) {
+	private VnfResource findExistingVnfResource(Service service, String modelUUID) {
+		VnfResource vnfResource = null;
+		for(VnfResourceCustomization vnfResourceCustom : service.getVnfCustomizations()){
+			if (vnfResourceCustom.getVnfResources() != null
+					&& vnfResourceCustom.getVnfResources().getModelUUID().equals(modelUUID)) {
+				vnfResource = vnfResourceCustom.getVnfResources();
+			}
+		}
+		if(vnfResource==null)
+			vnfResource = vnfRepo.findResourceByModelUUID(modelUUID);
 		
-		VnfResCustomToVfModuleCustom vnfResCustomToVfModuleCustom = new VnfResCustomToVfModuleCustom();
-		
-		vnfResCustomToVfModuleCustom.setVfModuleCustModelCustomizationUuid(vfModuleCustomization.getModelCustomizationUuid());
-		vnfResCustomToVfModuleCustom.setVnfResourceCustModelCustomizationUuid(vnfResourceCustomization.getModelCustomizationUuid());
-		
-		toscaResourceStructure.setCatalogVnfResCustomToVfModuleCustom(vnfResCustomToVfModuleCustom);
-		
-
-			
+		return vnfResource;
 	}
-	
-	
-	private static void createTempNetworkHeatTemplateLookup(NetworkResource networkResource, 
-            VfModule vfModule, 
-            ToscaResourceStructure toscaResourceStructure) {
-		
-			TempNetworkHeatTemplateLookup tempNetworkHeatTemplateLookup = new TempNetworkHeatTemplateLookup();
 
-			tempNetworkHeatTemplateLookup.setNetworkResourceModelName(networkResource.getModelName());
-			tempNetworkHeatTemplateLookup.setHeatTemplateArtifactUuid(vfModule.getHeatTemplateArtifactUUId());
-			tempNetworkHeatTemplateLookup.setAicVersionMin("1");
-
-			toscaResourceStructure.setCatalogTempNetworkHeatTemplateLookup(tempNetworkHeatTemplateLookup);
-
-
-
-	}
-	
-	private static void createVnfResource(NodeTemplate vfNodeTemplate, ToscaResourceStructure toscaResourceStructure) {
-		VnfResource vnfResource = new VnfResource();
-		
-		
-		//toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT)
-		
-		vnfResource.setModelInvariantUuid(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID)));
-		vnfResource.setModelName(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
-		vnfResource.setModelUuid(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
-
-		vnfResource.setVersion(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
-		vnfResource.setDescription(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
-		vnfResource.setOrchestrationMode("HEAT");
-		vnfResource.setToscaNodeType(testNull(vfNodeTemplate.getType()));
-		vnfResource.setAicVersionMax(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
-		vnfResource.setAicVersionMin(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
-		vnfResource.setCategory(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
-		vnfResource.setSubCategory(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY));
-		//vnfResource.setHeatTemplateArtifactUUId(toscaResourceStructure.getHeatTemplateUUID());
-		
-	//	vfNodeTemplate.getProperties()
-		toscaResourceStructure.setCatalogVnfResource(vnfResource); 
-		
+	private VnfResourceCustomization createVnfResourceCustomization(NodeTemplate vfNodeTemplate,
+			ToscaResourceStructure toscaResourceStructure, VnfResource vnfResource) {
 		VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
-		vnfResourceCustomization.setModelCustomizationUuid(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
+		vnfResourceCustomization.setModelCustomizationUUID(
+				testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
 		vnfResourceCustomization.setModelInstanceName(vfNodeTemplate.getName());
-		
-		vnfResourceCustomization.setNfFunction(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vfNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION)));
-		vnfResourceCustomization.setNfNamingCode(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vfNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFCODE)));
-		vnfResourceCustomization.setNfRole(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vfNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE)));
-		vnfResourceCustomization.setNfType(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vfNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE)));
-		
-		
-		vnfResourceCustomization.setMultiStageDesign(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vfNodeTemplate, "multi_stage_design"));
-		
-		
-		vnfResourceCustomization.setVnfResourceModelUuid(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
-		vnfResourceCustomization.setAvailabilityZoneMaxCount(Integer.getInteger(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT)));
-		
-		//vnfResourceCustomization.setMultiStageDesign(vfNodeTemplate.getMetaData().getValue("multi_stage_design"));
-		//vnfResourceCustomization.setMultiStageDesign(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT).trim());
-				
 
-		vnfResourceCustomization.setMaxInstances(Integer.getInteger(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
-		vnfResourceCustomization.setMinInstances(Integer.getInteger(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
+		vnfResourceCustomization.setNfFunction(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(vfNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION)));
+		vnfResourceCustomization.setNfNamingCode(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(vfNodeTemplate, "nf_naming_code")));
+		vnfResourceCustomization.setNfRole(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(vfNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE)));
+		vnfResourceCustomization.setNfType(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(vfNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE)));
 
+		vnfResourceCustomization.setMultiStageDesign(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(vfNodeTemplate, MULTI_STAGE_DESIGN));
 
+		vnfResourceCustomization.setVnfResources(vnfResource);
+		vnfResourceCustomization.setAvailabilityZoneMaxCount(Integer.getInteger(
+				vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT)));	
+
+		CapabilityAssignments vnfCustomizationCapability = toscaResourceStructure.getSdcCsarHelper()
+				.getCapabilitiesOf(vfNodeTemplate);
+
+		if (vnfCustomizationCapability != null) {
+			CapabilityAssignment capAssign = vnfCustomizationCapability.getCapabilityByName(SCALABLE);
+
+			if (capAssign != null) {
+				vnfResourceCustomization.setMinInstances(Integer.getInteger(toscaResourceStructure.getSdcCsarHelper()
+						.getCapabilityPropertyLeafValue(capAssign, SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
+				vnfResourceCustomization.setMaxInstances(Integer.getInteger(toscaResourceStructure.getSdcCsarHelper()
+						.getCapabilityPropertyLeafValue(capAssign, SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
+			}
+
+		}
 		
 		toscaResourceStructure.setCatalogVnfResourceCustomization(vnfResourceCustomization);
 		
-		
-		ServiceToResourceCustomization serviceToResourceCustomization = new ServiceToResourceCustomization();
-		serviceToResourceCustomization.setServiceModelUUID(toscaResourceStructure.getCatalogService().getModelUUID());
-		serviceToResourceCustomization.setResourceModelCustomizationUUID(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
-		serviceToResourceCustomization.setModelType("vnf");
-
-		toscaResourceStructure.setCatalogVfServiceToResourceCustomization(serviceToResourceCustomization);
-		
-		
+		return vnfResourceCustomization;
 	}
-		
-	private static void createAllottedResource(NodeTemplate nodeTemplate, ToscaResourceStructure toscaResourceStructure) {
-		AllottedResource allottedResource = new AllottedResource();
-		
-		allottedResource.setModelUuid(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
-		allottedResource.setModelInvariantUuid(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID)));
-		allottedResource.setModelName(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
-		allottedResource.setModelVersion(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
-		allottedResource.setToscaNodeType(testNull(nodeTemplate.getType()));
-		allottedResource.setSubcategory(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY)));
-		allottedResource.setDescription(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
-		
-		toscaResourceStructure.setAllottedResource(allottedResource);
-		
-		AllottedResourceCustomization allottedResourceCustomization = new AllottedResourceCustomization();
-		allottedResourceCustomization.setModelCustomizationUuid(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
-		allottedResourceCustomization.setModelInstanceName(nodeTemplate.getName());
-		allottedResourceCustomization.setArModelUuid(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
-		
-		
-		allottedResourceCustomization.setProvidingServiceModelInvariantUuid(toscaResourceStructure.getCatalogService().getModelInvariantUUID());
-		allottedResourceCustomization.setProvidingServiceModelUuid(toscaResourceStructure.getCatalogService().getModelUUID());
-		allottedResourceCustomization.setProvidingServiceModelName(toscaResourceStructure.getCatalogService().getModelName());
-		allottedResourceCustomization.setNfFunction(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION)));
-		allottedResourceCustomization.setNfNamingCode(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFCODE)));
-		allottedResourceCustomization.setNfRole(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE)));
-		allottedResourceCustomization.setNfType(testNull(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE)));
-		allottedResourceCustomization.setMinInstances(Integer.getInteger(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
-		allottedResourceCustomization.setMaxInstances(Integer.getInteger(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
-		allottedResourceCustomization.setTargetNetworkRole(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NETWORKROLE));
-		
-		toscaResourceStructure.setCatalogAllottedResourceCustomization(allottedResourceCustomization);
-		
-		ServiceToResourceCustomization serviceToResourceCustomization = new ServiceToResourceCustomization();
-		serviceToResourceCustomization.setServiceModelUUID(toscaResourceStructure.getCatalogService().getModelUUID());
-		serviceToResourceCustomization.setResourceModelCustomizationUUID(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
-		serviceToResourceCustomization.setModelType("allottedResource");
 
-		toscaResourceStructure.setCatalogAllottedServiceToResourceCustomization(serviceToResourceCustomization);
+	private VnfResource createVnfResource(NodeTemplate vfNodeTemplate) {
+		VnfResource vnfResource = new VnfResource();
+		vnfResource.setModelInvariantUUID(
+				testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID)));
+		vnfResource.setModelName(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
+		vnfResource.setModelUUID(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
+
+		vnfResource.setModelVersion(
+				testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
+		vnfResource.setDescription(
+				testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
+		vnfResource.setOrchestrationMode(HEAT);
+		vnfResource.setToscaNodeType(testNull(vfNodeTemplate.getType()));
+		vnfResource.setAicVersionMax(
+				testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
+		vnfResource.setAicVersionMin(
+				testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
 		
+		return vnfResource;
+	}
+
+	private AllottedResourceCustomization createAllottedResource(NodeTemplate nodeTemplate,
+			ToscaResourceStructure toscaResourceStructure, Service service) {
+		AllottedResourceCustomization allottedResourceCustomization = allottedCustomizationRepo
+				.findOneByModelCustomizationUUID(
+				nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+			
+		if(allottedResourceCustomization == null){			
+			AllottedResource allottedResource = findExistingAllottedResource(service,
+					nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+			
+			if(allottedResource==null)
+				allottedResource=createAR(nodeTemplate);
+			
+			toscaResourceStructure.setAllottedResource(allottedResource);			
+			allottedResourceCustomization = createAllottedResourceCustomization(nodeTemplate, toscaResourceStructure);
+			allottedResourceCustomization.setAllottedResource(allottedResource);
+			allottedResource.getAllotedResourceCustomization().add(allottedResourceCustomization);
+		}
+		return allottedResourceCustomization;
 	}
 	
-	private static Set<HeatTemplateParam> extractHeatTemplateParameters(String yamlFile, String artifactUUID) {
+	private AllottedResource findExistingAllottedResource(Service service, String modelUUID) {
+		AllottedResource allottedResource = null;
+		for(AllottedResourceCustomization allottedResourceCustom : service.getAllottedCustomizations()){
+			if (allottedResourceCustom.getAllottedResource() != null
+					&& allottedResourceCustom.getAllottedResource().getModelUUID().equals(modelUUID)) {
+				allottedResource = allottedResourceCustom.getAllottedResource();
+			}
+		}
+		if(allottedResource==null)
+			allottedResource = allottedRepo.findResourceByModelUUID(modelUUID);
+		
+		return allottedResource;
+	}
+	
+	private AllottedResourceCustomization createAllottedResourceCustomization(NodeTemplate nodeTemplate,
+			ToscaResourceStructure toscaResourceStructure) {
+		AllottedResourceCustomization allottedResourceCustomization = new AllottedResourceCustomization();
+		allottedResourceCustomization.setModelCustomizationUUID(
+				testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
+		allottedResourceCustomization.setModelInstanceName(nodeTemplate.getName());
+		
 
+		allottedResourceCustomization.setProvidingServiceModelInvariantUUID(
+				toscaResourceStructure.getCatalogService().getModelInvariantUUID());
+		allottedResourceCustomization.setNfFunction(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION)));
+		allottedResourceCustomization.setNfNamingCode(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(nodeTemplate, "nf_naming_code")));
+		allottedResourceCustomization.setNfRole(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE)));
+		allottedResourceCustomization.setNfType(testNull(toscaResourceStructure.getSdcCsarHelper()
+				.getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE)));
+
+		CapabilityAssignments arCustomizationCapability = toscaResourceStructure.getSdcCsarHelper()
+				.getCapabilitiesOf(nodeTemplate);
+
+		if (arCustomizationCapability != null) {
+			CapabilityAssignment capAssign = arCustomizationCapability.getCapabilityByName(SCALABLE);
+
+			if (capAssign != null) {
+				allottedResourceCustomization.setMinInstances(
+						Integer.getInteger(toscaResourceStructure.getSdcCsarHelper().getCapabilityPropertyLeafValue(
+								capAssign, SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
+				allottedResourceCustomization.setMaxInstances(
+						Integer.getInteger(toscaResourceStructure.getSdcCsarHelper().getCapabilityPropertyLeafValue(
+								capAssign, SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
+			}
+		}
+		return allottedResourceCustomization;
+	}
+
+	private AllottedResource createAR(NodeTemplate nodeTemplate) {
+		AllottedResource allottedResource = new AllottedResource();
+		allottedResource
+		.setModelUUID(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
+		allottedResource.setModelInvariantUUID(
+				testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID)));
+		allottedResource
+		.setModelName(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
+		allottedResource
+		.setModelVersion(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
+		allottedResource.setToscaNodeType(testNull(nodeTemplate.getType()));
+		allottedResource.setSubcategory(
+				testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY)));
+		allottedResource
+		.setDescription(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
+		return allottedResource;
+	}
+
+	private Set<HeatTemplateParam> extractHeatTemplateParameters(String yamlFile, String artifactUUID) {
 		// Scan the payload downloadResult and extract the HeatTemplate
 		// parameters
 		YamlEditor yamlEditor = new YamlEditor(yamlFile.getBytes());
 		return yamlEditor.getParameterList(artifactUUID);
+	}	
 
+	private String testNull(Object object) {
+
+		if (object == null) {
+			return null;
+		} else if (object.equals("NULL")) {
+			return null;
+		} else if (object instanceof Integer) {
+			return object.toString();
+		} else if (object instanceof String) {
+			return (String) object;
+		} else {
+			return "Type not recognized";
+		}
 	}
 	
-	private static String identifyParentOfNestedTemplate(VfModuleStructure vfModuleStructure,VfModuleArtifact heatNestedArtifact) {
+	private static String identifyParentOfNestedTemplate(VfModuleStructure vfModuleStructure,
+			VfModuleArtifact heatNestedArtifact) {
 
-		if (vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT) != null 
-				&& vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT).get(0).getArtifactInfo().getRelatedArtifacts() != null) {
+		if (vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT) != null && vfModuleStructure
+				.getArtifactsMap().get(ASDCConfiguration.HEAT).get(0).getArtifactInfo().getRelatedArtifacts() != null) {
 			for (IArtifactInfo unknownArtifact : vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT).get(0)
 					.getArtifactInfo().getRelatedArtifacts()) {
 				if (heatNestedArtifact.getArtifactInfo().getArtifactUUID().equals(unknownArtifact.getArtifactUUID())) {
@@ -1224,8 +1563,10 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		} 
 		
 		if (vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL) != null 
-				&& vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL).get(0).getArtifactInfo().getRelatedArtifacts() != null) {
-			for (IArtifactInfo unknownArtifact:vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL).get(0).getArtifactInfo().getRelatedArtifacts()) {
+				&& vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL).get(0).getArtifactInfo()
+						.getRelatedArtifacts() != null) {
+			for (IArtifactInfo unknownArtifact : vfModuleStructure.getArtifactsMap().get(ASDCConfiguration.HEAT_VOL)
+					.get(0).getArtifactInfo().getRelatedArtifacts()) {
 				if (heatNestedArtifact.getArtifactInfo().getArtifactUUID().equals(unknownArtifact.getArtifactUUID())) {
 					return ASDCConfiguration.HEAT_VOL;
 				}
@@ -1238,30 +1579,16 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 			
 	}
 	
-	private static String testNull(Object object) {
-		
-		
-		if(object == null){
-			return null;
-		}else if (object != null && object.equals("NULL")) {
-			return null;
-		}else if (object != null && object instanceof Integer) {
-			return object.toString();
-		} else if (object != null && object instanceof String) {
-			return (String)object;
-		} else {
-			return "Type not recognized";
-		}
-	}
-		
 	private static String createVNFName(VfResourceStructure vfResourceStructure) {
 
-		return vfResourceStructure.getNotification().getServiceName() + "/" + vfResourceStructure.getResourceInstance().getResourceInstanceName();
+		return vfResourceStructure.getNotification().getServiceName() + "/"
+				+ vfResourceStructure.getResourceInstance().getResourceInstanceName();
 	}
 
 	private static String createVfModuleName(VfModuleStructure vfModuleStructure) {
 		
-		return createVNFName(vfModuleStructure.getParentVfResource())+"::"+vfModuleStructure.getVfModuleMetadata().getVfModuleModelName();
+		return createVNFName(vfModuleStructure.getParentVfResource()) + "::"
+				+ vfModuleStructure.getVfModuleMetadata().getVfModuleModelName();
 	}
 	
 	
@@ -1269,4 +1596,5 @@ public class ToscaResourceInstaller {// implements IVfResourceInstaller {
 		
 		return new Timestamp(new Date().getTime());
 	}
+
 }

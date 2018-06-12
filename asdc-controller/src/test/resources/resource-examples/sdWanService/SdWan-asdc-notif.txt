@@ -1,0 +1,191 @@
+DistributionID:ac2f990c-43b6-44dc-aec5-057fca3817b1
+ServiceName:SD-WAN service 1806
+ServiceVersion:1.0
+ServiceUUID:5b3d8a4a-94ee-4b08-bb73-f52f23905e83
+ServiceInvariantUUID:8756c428-301d-4b8c-932a-e3ed89211d87
+ServiceDescription:SD-WAN service 1806-For DHV testing
+Service Artifacts List:
+{
+Service Artifacts Info:
+ArtifactName:service-SdWanService1806-csar.csar
+ArtifactVersion:1
+ArtifactType:TOSCA_CSAR
+ArtifactDescription:TOSCA definition package of the asset
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/SdWanService1806/1.0/artifacts/service-SdWanService1806-csar.csar
+ArtifactUUID:a5fada01-b97d-4502-8c07-a93e8c32cb46
+ArtifactChecksum:NGE1ZmQyNDE4YjljMjE3OTMzMjk3NGQ5NDMyMWVkYjM=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+
+}
+
+Resource Instances List:
+{
+Resource Instance Info:
+ResourceInstanceName:Secondary IP_MUX_DEMUX IST 1806
+ResourceCustomizationUUID:439c3c9d-17ac-4da7-a105-951fb256beec
+ResourceInvariantUUID:cff8e3ed-0c0d-41c4-b481-698d11544320
+ResourceName:IP_MUX_DEMUX IST 1806
+ResourceType:VF
+ResourceUUID:11c80fbf-9fb9-44a7-9c3f-6ccb14d68465
+ResourceVersion:1.0
+Category:Allotted Resource
+SubCategory:IP Mux Demux
+Resource Artifacts List:{NULL
+}
+
+,
+Resource Instance Info:
+ResourceInstanceName:Secondary Tunnel_XConn IST 1806
+ResourceCustomizationUUID:b61a3873-b6a3-41a7-8b62-ddac9a02b4a4
+ResourceInvariantUUID:183bff46-6f79-4a86-b586-f395e144deaa
+ResourceName:Tunnel_XConn IST 1806
+ResourceType:VF
+ResourceUUID:5074f069-54db-4b9b-9fe3-72d299e66a6e
+ResourceVersion:1.0
+Category:Allotted Resource
+SubCategory:Tunnel XConnect
+Resource Artifacts List:{NULL
+}
+
+,
+Resource Instance Info:
+ResourceInstanceName:Primary IP_MUX_DEMUX IST 1806
+ResourceCustomizationUUID:c2d4aedf-c79a-4114-a78b-c17da5283406
+ResourceInvariantUUID:cff8e3ed-0c0d-41c4-b481-698d11544320
+ResourceName:IP_MUX_DEMUX IST 1806
+ResourceType:VF
+ResourceUUID:11c80fbf-9fb9-44a7-9c3f-6ccb14d68465
+ResourceVersion:1.0
+Category:Allotted Resource
+SubCategory:IP Mux Demux
+Resource Artifacts List:{NULL
+}
+
+,
+Resource Instance Info:
+ResourceInstanceName:Primary Tunnel_XConn IST 1806
+ResourceCustomizationUUID:e002d117-6217-4ede-b0e0-71b5f3d9f6e5
+ResourceInvariantUUID:183bff46-6f79-4a86-b586-f395e144deaa
+ResourceName:Tunnel_XConn IST 1806
+ResourceType:VF
+ResourceUUID:5074f069-54db-4b9b-9fe3-72d299e66a6e
+ResourceVersion:1.0
+Category:Allotted Resource
+SubCategory:Tunnel XConnect
+Resource Artifacts List:{NULL
+}
+
+,
+Resource Instance Info:
+ResourceInstanceName:vHNF for DHV test  IST 1806 0
+ResourceCustomizationUUID:31d39b47-638a-41b8-a61f-5ef109d31a39
+ResourceInvariantUUID:5ee6eb2e-040f-404d-a858-80ba00f4bce3
+ResourceName:vHNF for DHV test  IST 1806
+ResourceType:VF
+ResourceUUID:57e63623-ef1c-4375-b329-2f6704933ed7
+ResourceVersion:1.0
+Category:Network L2-3
+SubCategory:Router
+Resource Artifacts List:
+{
+Service Artifacts Info:
+ArtifactName:vhnffordhvtestist18060_modules.json
+ArtifactVersion:1
+ArtifactType:VF_MODULES_METADATA
+ArtifactDescription:Auto-generated VF Modules information artifact
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/SdWanService1806/1.0/resourceInstances/vhnffordhvtestist18060/artifacts/vhnffordhvtestist18060_modules.json
+ArtifactUUID:f0ffafed-f018-4cd6-8767-ae523ef10433
+ArtifactChecksum:ZjM1MzVkM2M0YTNlYzNjMTVkN2RjZmY5MmIzNjZlZmY=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:base_TEST.yaml
+ArtifactVersion:1
+ArtifactType:HEAT
+ArtifactDescription:created from csar
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/SdWanService1806/1.0/resourceInstances/vhnffordhvtestist18060/artifacts/base_TEST.yaml
+ArtifactUUID:afdb3aa0-0290-422d-9393-2273e9330615
+ArtifactChecksum:MDJlOTUwMDY0YzU3YjRjZTM0ZmZmYTM5NTE5ZThkNDI=
+GeneratedArtifact:{Service Artifacts Info:
+ArtifactName:base_TEST.env
+ArtifactVersion:2
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/SdWanService1806/1.0/resourceInstances/vhnffordhvtestist18060/artifacts/base_TEST.env
+ArtifactUUID:39702c62-9c04-4ec1-8279-34937802ebb9
+ArtifactChecksum:YWQ2MmE0Y2NjNGE4YmJlOTk0YmZhYmIxYTc1YWZkY2M=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+}
+RelatedArtifacts:{
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:base_TEST.env
+ArtifactVersion:2
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/SdWanService1806/1.0/resourceInstances/vhnffordhvtestist18060/artifacts/base_TEST.env
+ArtifactUUID:39702c62-9c04-4ec1-8279-34937802ebb9
+ArtifactChecksum:YWQ2MmE0Y2NjNGE4YmJlOTk0YmZhYmIxYTc1YWZkY2M=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+
+}
+
+
+,
+Resource Instance Info:
+ResourceInstanceName:Secondary Service_Admin IST 1806
+ResourceCustomizationUUID:05f5ee3b-4920-4d39-8b9e-35863586b45e
+ResourceInvariantUUID:c7a4f48f-7c39-4d2a-8fa9-4bc7df7d5168
+ResourceName:Service_Admin IST 1806
+ResourceType:VF
+ResourceUUID:d9ce5300-1b18-486e-a01f-aa3d944a426e
+ResourceVersion:1.0
+Category:Allotted Resource
+SubCategory:Service Admin
+Resource Artifacts List:{NULL
+}
+
+,
+Resource Instance Info:
+ResourceInstanceName:Primary Service_Admin IST 1806
+ResourceCustomizationUUID:d8f1dc0e-7781-4acf-993c-4750f97b762c
+ResourceInvariantUUID:c7a4f48f-7c39-4d2a-8fa9-4bc7df7d5168
+ResourceName:Service_Admin IST 1806
+ResourceType:VF
+ResourceUUID:d9ce5300-1b18-486e-a01f-aa3d944a426e
+ResourceVersion:1.0
+Category:Allotted Resource
+SubCategory:Service Admin
+Resource Artifacts List:{NULL
+}
+
+
+}

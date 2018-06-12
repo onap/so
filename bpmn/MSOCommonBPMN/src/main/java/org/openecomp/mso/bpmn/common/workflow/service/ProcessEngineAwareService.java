@@ -23,13 +23,17 @@ package org.openecomp.mso.bpmn.common.workflow.service;
 
 import java.util.Optional;
 
+import javax.ws.rs.ext.Provider;
+
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.ProcessEngines;
+import org.springframework.stereotype.Service;
 
 /**
  * Base class for services that must be process-engine aware. The only
  * process engine currently supported is the "default" process engine.
  */
+@Service
 public class ProcessEngineAwareService {
 	
 	private final String processEngineName = "default";

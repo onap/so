@@ -24,19 +24,23 @@ package org.openecomp.mso.adapters.nwrest;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.openecomp.mso.logger.MsoLogger;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.openecomp.mso.logger.MsoLogger;
 /**
  * Everything that is common between all Volume Group Responses, except for QueryVolumeGroupResponse.
  */
-public abstract class NetworkResponseCommon {
+public abstract class NetworkResponseCommon implements Serializable {
+
+	private static final long serialVersionUID = 1233520856935129726L;
 	private String messageId;
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, NetworkResponseCommon.class);
 
 	public NetworkResponseCommon() {
 		messageId = null;

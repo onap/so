@@ -42,6 +42,7 @@ import org.camunda.bpm.engine.impl.util.xml.Element;
 
 import org.openecomp.mso.bpmn.core.BPMNLogger;
 import org.openecomp.mso.bpmn.core.WorkflowException;
+import org.springframework.stereotype.Component;
 
 /**
  * This plugin does the following:
@@ -57,6 +58,7 @@ import org.openecomp.mso.bpmn.core.WorkflowException;
  * </li>
  * </ol>
  */
+@Component
 public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
 	
 	@Override

@@ -20,13 +20,16 @@
 
 package org.openecomp.mso.bpmn.mock;
 
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
+import javax.ws.rs.core.UriBuilder;
+
+import org.openecomp.mso.client.HttpClient;
+import org.openecomp.mso.utils.TargetEntity;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.common.BinaryFile;
 import com.github.tomakehurst.wiremock.common.FileSource;
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import com.github.tomakehurst.wiremock.extension.Parameters;
+import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
@@ -35,7 +38,7 @@ import com.github.tomakehurst.wiremock.http.ResponseDefinition;
  * Simulates SDNC Adapter Callback response
  *
  */
-public class SDNCAdapterAsyncTransformer extends ResponseTransformer {
+public class SDNCAdapterAsyncTransformer extends ResponseDefinitionTransformer {
 
 	private String syncResponse;
 	private String callbackResponseWrapper;
@@ -44,8 +47,9 @@ public class SDNCAdapterAsyncTransformer extends ResponseTransformer {
 		syncResponse = FileUtil.readResourceFile("__files/StandardSDNCSynchResponse.xml");
 		callbackResponseWrapper = FileUtil.readResourceFile("__files/sdncCallbackSoapWrapper.xml");
 	}
-
-	public String name() {
+	
+	@Override
+	public String getName() {
 		return "sdnc-adapter-vf-module-assign";
 	}
 
@@ -58,7 +62,7 @@ public class SDNCAdapterAsyncTransformer extends ResponseTransformer {
 	 */
 	@Override
 	public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition,
-			FileSource fileSource) {
+			FileSource fileSource, Parameters parameters) {
 		
 		String requestBody = request.getBodyAsString();
 		
@@ -140,13 +144,9 @@ public class SDNCAdapterAsyncTransformer extends ResponseTransformer {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			System.out.println("Sending callback response:" + callbackUrl);
-			ClientRequest request = new ClientRequest(callbackUrl);
-			request.body("text/xml", payLoad);
-			System.err.println(payLoad);
 			try {
-				ClientResponse result = request.post();
-				//System.err.println("Successfully posted callback:" + result.getStatus());
+				HttpClient client = new HttpClient(UriBuilder.fromUri(callbackUrl).build().toURL(), "text/xml", TargetEntity.SDNC_ADAPTER);
+				client.post(payLoad);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

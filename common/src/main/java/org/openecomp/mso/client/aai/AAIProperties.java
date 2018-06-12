@@ -27,4 +27,8 @@ public interface AAIProperties extends RestProperties {
 	public AAIVersion getDefaultVersion();
 	public String getAuth();
 	public String getKey();
+	@Override
+	public default boolean mapNotFoundToEmpty() {
+		return true;
+	}
 }

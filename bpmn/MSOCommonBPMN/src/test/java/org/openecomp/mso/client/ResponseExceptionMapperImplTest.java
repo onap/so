@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.google.common.base.Charsets;
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
@@ -35,16 +38,18 @@ import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.ClientResponseContext;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import org.apache.commons.io.IOUtils;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openecomp.mso.BaseTest;
+
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 
 @RunWith(JUnitParamsRunner.class)
-public class ResponseExceptionMapperImplTest {
+public class ResponseExceptionMapperImplTest{
 
     private static final ResponseExceptionMapperImpl mapper = new ResponseExceptionMapperImpl();
 
@@ -68,42 +73,42 @@ public class ResponseExceptionMapperImplTest {
     @Parameters(method = "statusesAndCorrespondingExceptions")
     public void shouldThrowExceptionWhenStatusIsNotOk(Status status, Class<Exception> expectedException) {
         // given
-        ClientResponseContext responseContext = createMockResponseContext(status);
+    	Response response = createMockResponse(status);
         // when, then
-        assertThatThrownBy(() -> mapper.filter(null, responseContext)).isInstanceOf(expectedException);
+        assertThatThrownBy(() -> mapper.map(response)).isInstanceOf(expectedException);
     }
 
     @Test
     public void shouldNotThrowExceptionWhenStatusIsOk() {
         // given
-        ClientResponseContext responseContext = createMockResponseContext(Status.OK);
+    	Response response = createMockResponse(Status.OK);
         // when, then
-        assertThatCode(() -> mapper.filter(null, responseContext)).doesNotThrowAnyException();
+        assertThatCode(() -> mapper.map(response)).doesNotThrowAnyException();
     }
 
     @Test
-    public void shouldThrowExceptionWithCustomMessageWhenResponseHasEntity() {
+    public void shouldThrowExceptionWithCustomMessageWhenResponseHasEntity() throws UnsupportedEncodingException {
         // given
-        ClientResponseContext responseContext = createMockResponseContext(Status.BAD_REQUEST);
-        when(responseContext.hasEntity()).thenReturn(true);
-        when(responseContext.getEntityStream()).thenReturn(IOUtils.toInputStream("test message", Charsets.UTF_8));
+    	Response response = createMockResponse(Status.BAD_REQUEST);
+        when(response.hasEntity()).thenReturn(true);
+        when(response.getEntity()).thenReturn(new ByteArrayInputStream("test message".getBytes(StandardCharsets.UTF_8)));
         // when, then
-        assertThatThrownBy(() -> mapper.filter(null, responseContext)).isInstanceOf(BadRequestException.class)
+        assertThatThrownBy(() -> mapper.map(response)).isInstanceOf(BadRequestException.class)
                 .hasMessage("test message");
     }
 
     @Test
     public void shouldThrowExceptionWithDefaultMessageWhenResponseHasNoEntity() {
         // given
-        ClientResponseContext responseContext = createMockResponseContext(Status.BAD_REQUEST);
-        when(responseContext.hasEntity()).thenReturn(false);
+    	Response response = createMockResponse(Status.BAD_REQUEST);
+        when(response.hasEntity()).thenReturn(false);
         // when, then
-        assertThatThrownBy(() -> mapper.filter(null, responseContext)).isInstanceOf(BadRequestException.class)
+        assertThatThrownBy(() -> mapper.map(response)).isInstanceOf(BadRequestException.class)
                 .hasMessage("empty message");
     }
 
-    private static ClientResponseContext createMockResponseContext(Status status) {
-        ClientResponseContext responseContext = mock(ClientResponseContext.class);
+    private static Response createMockResponse(Status status) {
+    	Response responseContext = mock(Response.class);
         when(responseContext.getStatusInfo()).thenReturn(status);
         when(responseContext.getStatus()).thenReturn(status.getStatusCode());
         return responseContext;

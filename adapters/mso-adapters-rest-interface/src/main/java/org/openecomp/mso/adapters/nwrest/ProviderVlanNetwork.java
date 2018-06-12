@@ -22,9 +22,14 @@ package org.openecomp.mso.adapters.nwrest;
 
 
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ProviderVlanNetwork {
+public class ProviderVlanNetwork implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6744949861614446315L;
 	private String physicalNetworkName;
 	private List<Integer> vlans;
 	

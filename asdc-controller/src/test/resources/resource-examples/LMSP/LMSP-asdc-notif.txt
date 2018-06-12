@@ -1,0 +1,185 @@
+DistributionID:12411e7c-403a-4795-b846-b5c3f0f18fd1
+ServiceName:LMSP_1806_ap7134_SVC
+ServiceVersion:2.0
+ServiceUUID:7821682f-2bd8-4db6-85d0-4da9c0576fd1
+ServiceInvariantUUID:40bff8f4-8375-47c8-baa9-b695785cad8f
+ServiceDescription:LMSP_1806_ap7134_SVC just updated verison
+Service Artifacts List:
+{
+Service Artifacts Info:
+ArtifactName:service-Lmsp1806Ap7134Svc-csar.csar
+ArtifactVersion:2
+ArtifactType:TOSCA_CSAR
+ArtifactDescription:TOSCA definition package of the asset
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/Lmsp1806Ap7134Svc/2.0/artifacts/service-Lmsp1806Ap7134Svc-csar.csar
+ArtifactUUID:04cbf5f5-9a7f-4a55-a27e-09fd6a0be390
+ArtifactChecksum:YTQ2ZTdmNWQxMWI3YWJmNjVhZDllOGU1MGY5YzdlY2M=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+
+}
+
+Resource Instances List:
+{
+Resource Instance Info:
+ResourceInstanceName:LMSP_1806_ap7134_VSP 0
+ResourceCustomizationUUID:5df07b28-04ee-4850-9990-a4727499f4c4
+ResourceInvariantUUID:8e9e72fe-bd33-4dc5-904f-7b51e75b0151
+ResourceName:LMSP_1806_ap7134_VSP
+ResourceType:VF
+ResourceUUID:aa45f014-a47f-44cb-bce4-909f4b464af5
+ResourceVersion:1.0
+Category:Generic
+SubCategory:Network Elements
+Resource Artifacts List:
+{
+Service Artifacts Info:
+ArtifactName:mod_vmsi_msp_lb_child.yaml
+ArtifactVersion:1
+ArtifactType:HEAT_NESTED
+ArtifactDescription:created from csar
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/Lmsp1806Ap7134Svc/2.0/resourceInstances/lmsp_1806_ap7134_vsp0/artifacts/mod_vmsi_msp_lb_child.yaml
+ArtifactUUID:d0c4cddb-d7a6-405e-a904-f028ce290f28
+ArtifactChecksum:ZmEwNjZhMjY1YzZlZmNkOTk0NmUyOWRlNzc1ZmJkZmU=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:lmsp_1806_ap7134_vsp0_modules.json
+ArtifactVersion:2
+ArtifactType:VF_MODULES_METADATA
+ArtifactDescription:Auto-generated VF Modules information artifact
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/Lmsp1806Ap7134Svc/2.0/resourceInstances/lmsp_1806_ap7134_vsp0/artifacts/lmsp_1806_ap7134_vsp0_modules.json
+ArtifactUUID:5d363dc2-19b6-402b-8976-3685f84d5a50
+ArtifactChecksum:ODY5YjQ0NWY4NmU2OTU5ZGZiNWMyYWUzMDljYmQ5M2M=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:mod_vmsi_msp_lb_parent.yml
+ArtifactVersion:2
+ArtifactType:HEAT
+ArtifactDescription:created from csar
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/Lmsp1806Ap7134Svc/2.0/resourceInstances/lmsp_1806_ap7134_vsp0/artifacts/mod_vmsi_msp_lb_parent.yml
+ArtifactUUID:6786e6ff-344b-4e02-9dfb-39e635b1dafb
+ArtifactChecksum:MTEwZmNjMGNmMjQ0YzZiZWU5NTEwNDNjMzc3ODhiM2I=
+GeneratedArtifact:{Service Artifacts Info:
+ArtifactName:mod_vmsi_msp_lb_parent.env
+ArtifactVersion:3
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/Lmsp1806Ap7134Svc/2.0/resourceInstances/lmsp_1806_ap7134_vsp0/artifacts/mod_vmsi_msp_lb_parent.env
+ArtifactUUID:f64dd1e9-ed81-4aa2-8da5-bca88dda0155
+ArtifactChecksum:NzJjNzhhMGYwYTNlYTVkMzJlNzQ0OWRkMmJlZDI1N2M=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+}
+RelatedArtifacts:{
+Service Artifacts Info:
+ArtifactName:mod_vmsi_msp_lb_child.yaml
+ArtifactVersion:1
+ArtifactType:HEAT_NESTED
+ArtifactDescription:created from csar
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/Lmsp1806Ap7134Svc/2.0/resourceInstances/lmsp_1806_ap7134_vsp0/artifacts/mod_vmsi_msp_lb_child.yaml
+ArtifactUUID:d0c4cddb-d7a6-405e-a904-f028ce290f28
+ArtifactChecksum:ZmEwNjZhMjY1YzZlZmNkOTk0NmUyOWRlNzc1ZmJkZmU=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:base_stsi_msp_lb.yml
+ArtifactVersion:2
+ArtifactType:HEAT
+ArtifactDescription:created from csar
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/Lmsp1806Ap7134Svc/2.0/resourceInstances/lmsp_1806_ap7134_vsp0/artifacts/base_stsi_msp_lb.yml
+ArtifactUUID:4c52134d-bdc6-4f7d-b780-8472f2e6d259
+ArtifactChecksum:NDVjNzA0NzA5NGM0ODFmZDI2YWIxODU0YzAwZmRjNTg=
+GeneratedArtifact:{Service Artifacts Info:
+ArtifactName:base_stsi_msp_lb.env
+ArtifactVersion:3
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/Lmsp1806Ap7134Svc/2.0/resourceInstances/lmsp_1806_ap7134_vsp0/artifacts/base_stsi_msp_lb.env
+ArtifactUUID:21c04671-ead4-483c-bece-83a63f4aa35f
+ArtifactChecksum:MzkxNTc4YTRhZjJiZmIwMmRiNzQxOTg5MTZhZTE5ODM=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+}
+RelatedArtifacts:{
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:base_stsi_msp_lb.env
+ArtifactVersion:3
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/Lmsp1806Ap7134Svc/2.0/resourceInstances/lmsp_1806_ap7134_vsp0/artifacts/base_stsi_msp_lb.env
+ArtifactUUID:21c04671-ead4-483c-bece-83a63f4aa35f
+ArtifactChecksum:MzkxNTc4YTRhZjJiZmIwMmRiNzQxOTg5MTZhZTE5ODM=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:mod_vmsi_msp_lb_parent.env
+ArtifactVersion:3
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/Lmsp1806Ap7134Svc/2.0/resourceInstances/lmsp_1806_ap7134_vsp0/artifacts/mod_vmsi_msp_lb_parent.env
+ArtifactUUID:f64dd1e9-ed81-4aa2-8da5-bca88dda0155
+ArtifactChecksum:NzJjNzhhMGYwYTNlYTVkMzJlNzQ0OWRkMmJlZDI1N2M=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+
+}
+
+
+
+}

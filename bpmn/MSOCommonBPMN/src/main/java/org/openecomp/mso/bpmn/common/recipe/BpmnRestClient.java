@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,11 +32,12 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
 import org.openecomp.mso.utils.CryptoUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Support to call resource recipes from the BPMN workflow.
@@ -48,6 +49,7 @@ import org.openecomp.mso.utils.CryptoUtils;
  * @author
  * @version ONAP Beijing Release 2018-02-27
  */
+@Component
 public class BpmnRestClient {
 
     public static final String DEFAULT_BPEL_AUTH = "admin:admin";
@@ -59,38 +61,16 @@ public class BpmnRestClient {
     public static final String CAMUNDA_AUTH = "camundaAuth";
 
     private static final  String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
-
-    private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+    @Autowired
+    private UrnPropertiesReader urnPropertiesReader;
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, BpmnRestClient.class);
 
     private static boolean noProperties = true;
-    
+
     //because for NS it will take a long time the time out of the resouce will be 2 hours.
     private static final String DEFAULT_TIME_OUT = "7200";
 
-    public synchronized static MsoJavaProperties loadMsoProperties() {
-        MsoJavaProperties msoProperties;
-        try {
-            msoProperties = msoPropertiesFactory.getMsoJavaProperties(MSO_PROP_APIHANDLER_INFRA);
-        } catch(Exception e) {
-            msoLogger.error(MessageEnum.APIH_LOAD_PROPERTIES_FAIL, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError,
-                    "Exception when loading MSO Properties", e);
-            return null;
-        }
-
-        if(msoProperties != null && msoProperties.size() > 0) {
-            noProperties = false;
-            msoLogger.info(MessageEnum.APIH_PROPERTY_LOAD_SUC, "", "");
-            return msoProperties;
-        } else {
-            msoLogger.error(MessageEnum.APIH_NO_PROPERTIES, MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError,
-                    "No MSO APIH_INFRA Properties found");
-            return null;
-        }
-    }
-
-    public synchronized static final boolean getNoPropertiesState() {
+    public synchronized final boolean getNoPropertiesState() {
         return noProperties;
     }
 
@@ -111,28 +91,29 @@ public class BpmnRestClient {
      * @throws IOException
      * @since ONAP Beijing Release
      */
-    public static HttpResponse post(String recipeUri, String requestId, int recipeTimeout, String requestAction, String serviceInstanceId, String serviceType,
+    public HttpResponse post(String recipeUri, String requestId, int recipeTimeout, String requestAction, String serviceInstanceId, String serviceType,
             String requestDetails, String recipeParamXsd) throws ClientProtocolException, IOException {
 
         HttpClient client = HttpClientBuilder.create().build();
 
         HttpPost post = new HttpPost(recipeUri);
-        MsoJavaProperties props = loadMsoProperties();
+        RequestConfig requestConfig =
+                RequestConfig.custom().setSocketTimeout(recipeTimeout).setConnectTimeout(recipeTimeout).setConnectionRequestTimeout(recipeTimeout).build();
+        post.setConfig(requestConfig);
         msoLogger.debug("call the bpmn,  url:" + recipeUri);
         String jsonReq = wrapResourceRequest(requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType, requestDetails, recipeParamXsd);
 
         StringEntity input = new StringEntity(jsonReq);
         input.setContentType(CONTENT_TYPE_JSON);
         String encryptedCredentials;
-        if(props != null) {
-            encryptedCredentials = props.getProperty(CAMUNDA_AUTH, null);
-            if(encryptedCredentials != null) {
-                String userCredentials = getEncryptedPropValue(encryptedCredentials, DEFAULT_BPEL_AUTH, ENCRYPTION_KEY);
-                if(userCredentials != null) {
-                    post.addHeader("Authorization", "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes()));
-                }
+        encryptedCredentials = urnPropertiesReader.getVariable(CAMUNDA_AUTH);
+        if(encryptedCredentials != null) {
+            String userCredentials = getEncryptedPropValue(encryptedCredentials, DEFAULT_BPEL_AUTH, ENCRYPTION_KEY);
+            if(userCredentials != null) {
+                post.addHeader("Authorization", "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes()));
             }
         }
+        
         post.setEntity(input);
         return client.execute(post);
     }
@@ -151,7 +132,7 @@ public class BpmnRestClient {
      * @return
      * @since ONAP Beijing Release
      */
-    private static String wrapResourceRequest(String requestId, int recipeTimeout, String requestAction, String serviceInstanceId, String serviceType,
+    private String wrapResourceRequest(String requestId, int recipeTimeout, String requestAction, String serviceInstanceId, String serviceType,
             String requestDetails, String recipeParams) {
         String jsonReq = null;
         if(requestId == null) {
@@ -177,8 +158,8 @@ public class BpmnRestClient {
             BpmnParam serviceInstanceIdInput = new BpmnParam();
             BpmnParam serviceTypeInput = new BpmnParam();
             BpmnParam recipeParamsInput = new BpmnParam();
-            BpmnParam recipeTimeoutInput = new BpmnParam();
-            recipeTimeoutInput.setValue(DEFAULT_TIME_OUT);
+            BpmnIntegerParam recipeTimeoutInput = new BpmnIntegerParam();
+            recipeTimeoutInput.setValue(recipeTimeout);
             // host.setValue(parseURL());
             requestIdInput.setValue(requestId);
             requestActionInput.setValue(requestAction);
@@ -195,7 +176,7 @@ public class BpmnRestClient {
             recipeRequest.setResourceInput(resourceInput);
             recipeRequest.setRecipeTimeout(recipeTimeoutInput);
             jsonReq = recipeRequest.toString();
-            msoLogger.debug("request body is " + jsonReq);
+            msoLogger.trace("request body is " + jsonReq);
         } catch(Exception e) {
             msoLogger.error(MessageEnum.APIH_WARP_REQUEST, "Camunda", "wrapVIDRequest", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH Warp request",
                     e);
@@ -212,7 +193,7 @@ public class BpmnRestClient {
      * @return
      * @since ONAP Beijing Release
      */
-    protected static String getEncryptedPropValue(String prop, String defaultValue, String encryptionKey) {
+    protected String getEncryptedPropValue(String prop, String defaultValue, String encryptionKey) {
         try {
             return CryptoUtils.decrypt(prop, encryptionKey);
         } catch(GeneralSecurityException e) {

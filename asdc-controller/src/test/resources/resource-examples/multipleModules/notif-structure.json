@@ -1,0 +1,96 @@
+{
+    "serviceName": "Vf zrdm5bpxmc02092017-Service",
+    "serviceInvariantUUID": "b16a9398-ffa3-4041-b78c-2956b8ad9c7b",
+    "serviceUUID": "bad955c3-29b2-4a27-932e-28e942cc6480",
+    "serviceVersion": "1.0",
+    "serviceArtifacts": 
+    [{
+		"artifactName": "service-VfZrdm5bpxmc02092017Service-csar.csar",
+		"artifactType": "TOSCA_CSAR",
+		"artifactURL": "service-VfZrdm5bpxmc02092017Service-csar.csar",
+		"artifactChecksum": "MWQ3Y2FmMWExNDQyYWI2N2YwNjEwZGUzN2IzMzI3NjE=",
+		"artifactDescription": "TOSCA definition package of the asset",
+		"artifactTimeout": 0,
+		"artifactUUID": "396cfd49-0f4b-4fec-9f33-0fd7e90d5a22",
+		"artifactVersion": "1"
+    }],
+    "resources": 
+    [	
+        {
+            "resourceInstanceName": "Vf zrdm5bpxmc02092017-VF 0",
+            "resourceInvariantUUID": "23122c9b-dd7f-483f-bf0a-e069303db2f7",
+            "resourceCustomizationUUID": "96c23a4a-6887-4b2c-9cce-1e4ea35eaade", 
+            "resourceName": "Vf zrdm5bpxmc02092017-VF",
+            "resourceType": "VF",
+            "resourceUUID": "14ba5d1e-3862-407c-a236-1cbaebccce77",
+            "resourceVersion": "1.0",
+            "category": "Generic",
+            "subcategory": "Network Elements",
+            "artifacts": 
+            [
+                {
+                    "artifactChecksum": "NmEyZjc1Y2UwZDMwYjFhNGRlMTMzN2JhNzdiMThjMGU=",
+                    "artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+                    "artifactName": "pxmc_mmn_volume.env",                    
+                    "artifactType": "HEAT_ENV",
+                    "artifactURL": "pxmc_mmn_volume.env",
+                    "artifactUUID": "c1ae6284-48d9-4437-a195-b2cf2ba23070",
+                    "artifactTimeout": 0,
+                    "artifactVersion": "2"
+                },
+                {
+                    "artifactChecksum": "OGM2MWIzZTA2OTc5YjQwNTM1NGVhODA0YTFkNzM4ZTg==",
+                    "artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+                    "artifactName": "pxmc_base.env",
+                    "artifactTimeout": 0,
+                    "artifactType": "HEAT_ENV",
+                    "artifactURL": "pxmc_base.env",
+                    "artifactUUID": "6dd99c31-c52e-4c45-b99b-d223c877a296",
+                    "artifactVersion": "2.0"                 
+                },                
+                {
+                    "artifactChecksum": "MzJmZjgyZWYwOTBjMTg5M2ExNWZhMmMwNzc1NWY1YjQ=",
+                    "artifactDescription": "created from csar",
+                    "artifactName": "user_data_zrdm5bpxmc02vmt001.txt",
+                    "artifactTimeout": 0,
+                    "artifactType": "HEAT_ARTIFACT",
+                    "artifactURL": "user_data_zrdm5bpxmc02vmt001.txt",
+                    "artifactUUID": "53acdabe-689f-45e5-8578-f1514d3529da",
+                    "artifactVersion": "1"                   
+                },                
+                {
+                    "artifactChecksum": "MjY0NzcxMjJkZGI4YzQ1MDU2NjhkNWYyM2IwNmYzYmU=",
+                    "artifactDescription": "Auto-generated VF Modules information artifact",
+                    "artifactName": "vfzrdm5bpxmc02092017vf0_modules.json",
+                    "artifactTimeout": 0,
+                    "artifactType": "VF_MODULES_METADATA",
+                    "artifactURL": "vfzrdm5bpxmc02092017vf0_modules.json",
+                    "artifactUUID": "e3b82cd6-485e-4d56-8d2c-17ccf6a59533",
+                    "artifactVersion": "1"                   
+                },                
+                {
+                    "artifactChecksum": "YWQ2MmE0Y2NjNGE4YmJlOTk0YmZhYmIxYTc1YWZkY2M=",
+                    "artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+                    "artifactName": "base_TEST.env",
+                    "artifactTimeout": 0,
+                    "artifactType": "HEAT_ENV",
+                    "artifactURL": "base_TEST.env",
+                    "artifactUUID": "57f6520b-fa65-4544-90de-95c8190c2e6c",
+                    "artifactVersion": "1.0"                   
+                },                
+                {
+                    "artifactChecksum": "YWQ2MmE0Y2NjNGE4YmJlOTk0YmZhYmIxYTc1YWZkY2M=",
+                    "artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+                    "artifactName": "base_TEST.env",
+                    "artifactTimeout": 0,
+                    "artifactType": "HEAT_ENV",
+                    "artifactURL": "base_TEST.env",
+                    "artifactUUID": "57f6520b-fa65-4544-90de-95c8190c2e6c",
+                    "artifactVersion": "1.0"                   
+                }
+            ]
+        }
+    ],
+    "serviceDescription": "Demo",
+    "distributionID": "a2872f55-8628-4486-8548-7b132c9a47db"
+}

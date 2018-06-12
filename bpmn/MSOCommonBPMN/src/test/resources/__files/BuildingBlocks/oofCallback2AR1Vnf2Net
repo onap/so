@@ -55,7 +55,7 @@
                     { "key": "cloudOwner", "value": "aic" },
                     { "key": "vnfHostName", "value": "MDTNJ01" },
                     { "key": "isRehome", "value": "False" },
-                    { "key": "locationId", "value": "dfwtx" }
+                    { "key": "cloudRegionId", "value": "dfwtx" }
                 ]
             },
             {
@@ -69,7 +69,7 @@
                     { "key": "cloudOwner", "value": "aic" },
                     { "key": "vnfHostName", "value": "testVnfHostname2" },
                     { "key": "isRehome", "value": "False" },
-                    { "key": "locationId", "value": "testCloudRegionId2" }
+                    { "key": "cloudRegionId", "value": "testCloudRegionId2" }
                 ]
             },
             {
@@ -83,7 +83,7 @@
                     { "key": "cloudOwner", "value": "aic" },
                     { "key": "vnfHostName", "value": "testVnfHostNameNet" },
                     { "key": "isRehome", "value": "False" },
-                    { "key": "locationId", "value": "testCloudRegionIdNet" }
+                    { "key": "cloudRegionId", "value": "testCloudRegionIdNet" }
                 ]
             },
             {
@@ -96,7 +96,7 @@
                 },
                 "assignmentInfo": [
                     { "key": "cloudOwner", "value": "aic" },
-                    { "key": "locationId", "value": "testCloudRegionIdNet2" }
+                    { "key": "cloudRegionId", "value": "testCloudRegionIdNet2" }
                 ]
             },
             {
@@ -109,7 +109,7 @@
                 },
                 "assignmentInfo": [
                     { "key": "cloudOwner", "value": "aic" },
-                    { "key": "locationId", "value": "testCloudRegionId3" },
+                    { "key": "cloudRegionId", "value": "testCloudRegionId3" },
                     { "key":"flavors", "value":{ "flavorLabel1xxx":"vimFlavorxxx", "flavorLabel2xxx":"vimFlavorxxx"}}
                 ]
             }

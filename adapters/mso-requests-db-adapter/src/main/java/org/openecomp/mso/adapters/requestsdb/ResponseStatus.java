@@ -20,14 +20,9 @@
 
 package org.openecomp.mso.adapters.requestsdb;
 
-
-
 /*
  * Enum for Status values returned by API Handler to Tail-F
 */
 public enum ResponseStatus {
-	SENDING_FINAL_NOTIFY,
-	SUCCESS,
-	FAILED,
-	TIMEOUT	
+	SENDING_FINAL_NOTIFY, SUCCESS, FAILED, TIMEOUT
 }

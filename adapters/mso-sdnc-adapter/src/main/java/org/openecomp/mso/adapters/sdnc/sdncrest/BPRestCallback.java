@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,12 +18,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.sdnc.sdncrest;
 
-import org.openecomp.mso.adapters.sdnc.impl.Constants;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoAlarmLogger;
-import org.openecomp.mso.logger.MsoLogger;
+import javax.xml.bind.DatatypeConverter;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -32,15 +31,25 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-
-import javax.xml.bind.DatatypeConverter;
+import org.openecomp.mso.adapters.sdnc.impl.Constants;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoAlarmLogger;
+import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.openecomp.mso.utils.CryptoUtils;
+import org.springframework.core.env.Environment;
 
 /**
  * Sends asynchronous messages to the BPMN WorkflowMessage service.
  */
+@Component
 public class BPRestCallback {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,BPRestCallback.class);
 	private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
+	
+	@Autowired
+	private Environment env;
 
 	/**
 	 * Sends a message to the BPMN workflow message service. The URL path is
@@ -87,8 +96,7 @@ public class BPRestCallback {
 		HttpPost method = null;
 		HttpResponse httpResponse = null;
 
-		try {
-			// TODO: configurable timeout?
+		try {		
 			int timeout = 60 * 1000;
 
 			RequestConfig requestConfig = RequestConfig.custom()
@@ -107,11 +115,8 @@ public class BPRestCallback {
 
 			boolean error = false;
 
-			try {
-				// AAF Integration, disabled for now due to the constrains from other party
-				// String userCredentials = CredentialConstants.getDecryptedCredential(Constants.DEFAULT_BPEL_AUTH);
-				// Once AAF enabled, the credential shall be get by triggering the CredentialConstants.getDecryptedCredential -- remove line
-				String  userCredentials = SDNCAdapterProperties.getEncryptedProperty(Constants.BPEL_AUTH_PROP,
+			try {	
+				String userCredentials = CryptoUtils.decryptProperty(env.getProperty(Constants.BPEL_AUTH_PROP),
 					Constants.DEFAULT_BPEL_AUTH, Constants.ENCRYPTION_KEY);
 				String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 				method.setHeader("Authorization", authorization);
@@ -163,8 +168,7 @@ public class BPRestCallback {
 					LOGGER.debug("Exception:", e);
 				}
 			}
-
-			LOGGER.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE, "Camunda", "");
+			LOGGER.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE, "Camunda", "","");
 		}
 	}
 }

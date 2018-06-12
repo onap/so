@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,73 +20,70 @@
 
 package org.openecomp.mso.apihandlerinfra.tenantisolation.process;
 
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
+import org.openecomp.mso.apihandler.common.ErrorNumbers;
+import org.openecomp.mso.apihandlerinfra.exceptions.ApiException;
+import org.openecomp.mso.apihandlerinfra.exceptions.ValidateException;
+import org.openecomp.mso.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.openecomp.mso.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.exceptions.TenantIsolationException;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
 import org.openecomp.mso.client.aai.entities.AAIResultWrapper;
 import org.openecomp.mso.client.aai.objects.AAIOperationalEnvironment;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.requestsdb.RequestsDBHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class DeactivateVnfOperationalEnvironment extends OperationalEnvironmentProcess {
+@Component
+public class DeactivateVnfOperationalEnvironment {
 
-	private static final String SERVICE_NAME = "DeactivateVnfOperationalEnvironment"; 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
-	private String className = this.getClass().getName();
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, DeactivateVnfOperationalEnvironment.class);
 	
-	public DeactivateVnfOperationalEnvironment(CloudOrchestrationRequest request, String requestId) {
-		super(request, requestId);
-		MsoLogger.setServiceName (getRequestId());
-        MsoLogger.setLogContext(getRequestId(), getRequest().getOperationalEnvironmentId());
-	}
-
-	@Override
-	public void execute() {
-		String methodName = "deactivateOperationalEnvironment() method.";
-		String classMethodMessage = className + " " + methodName;
+    @Autowired 
+    private AAIClientHelper aaiHelper;
+    @Autowired 
+    private RequestsDBHelper requestDb;
+	
+	public void execute(String requestId, CloudOrchestrationRequest request) throws ApiException {
+		String operationalEnvironmentId = request.getOperationalEnvironmentId();
 		
-		msoLogger.debug("Begin of execute method in " + SERVICE_NAME);		
-		
-		String operationalEnvironmentId = getRequest().getOperationalEnvironmentId();
-		msoLogger.debug("Deactivate OperationalEnvironment on " + operationalEnvironmentId);
-		try {
-			msoLogger.debug("Start of AA&I Get client call in " + classMethodMessage);
-			
-			AAIResultWrapper aaiResult = getAaiHelper().getAaiOperationalEnvironment(operationalEnvironmentId);
-			AAIOperationalEnvironment aaiOpEnv = aaiResult.asBean(AAIOperationalEnvironment.class).get();
+		AAIOperationalEnvironment aaiOpEnv = getAAIOperationalEnvironment(operationalEnvironmentId);
+		if (aaiOpEnv != null) {
 			String operationalEnvironmentStatus = aaiOpEnv.getOperationalEnvironmentStatus();
-
-			msoLogger.debug("OperationalEnvironmentStatus is :" + operationalEnvironmentStatus);
-			msoLogger.debug(" End of AA&I Get client call in " + classMethodMessage);
-			
-			if(operationalEnvironmentStatus == null) {
-				String error = "OperationalEnvironmentStatus is null on OperationalEnvironmentId: " + operationalEnvironmentId;
-				throw new TenantIsolationException(error);
+	
+			if(StringUtils.isBlank(operationalEnvironmentStatus)) {
+	            String error = "OperationalEnvironmentStatus is null on OperationalEnvironmentId: " + operationalEnvironmentId;
+	            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+	            throw new ValidateException.Builder(error, HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
+	            							.errorInfo(errorLoggerInfo)
+	            							.build();
 			}
 			
 			if(operationalEnvironmentStatus.equalsIgnoreCase("ACTIVE")) {
-				msoLogger.debug("Start of AA&I UPDATE client call in " + classMethodMessage);
-				
+	
 				aaiOpEnv.setOperationalEnvironmentStatus("INACTIVE");
-				getAaiHelper().updateAaiOperationalEnvironment(operationalEnvironmentId, aaiOpEnv);
+				aaiHelper.updateAaiOperationalEnvironment(operationalEnvironmentId, aaiOpEnv);
 				
-				msoLogger.debug(" End of AA&I UPDATE client call in " + classMethodMessage);
 			} else if(!operationalEnvironmentStatus.equalsIgnoreCase("INACTIVE")) {
-				String error = "Invalid OperationalEnvironmentStatus on OperationalEnvironmentId: " + operationalEnvironmentId;
-				throw new TenantIsolationException(error);
+	            String error = "Invalid OperationalEnvironmentStatus on OperationalEnvironmentId: " + operationalEnvironmentId;
+	            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+	            ValidateException validateException = new ValidateException.Builder(error,
+	                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+	            requestDb.updateInfraFailureCompletion(error, requestId, operationalEnvironmentId);
+	            throw validateException;
 			}
 			
-			getRequestDb().updateInfraSuccessCompletion("SUCCESSFULLY Deactivated OperationalEnvironment", requestId, operationalEnvironmentId);
-			
-		} catch(Exception e) {
-			msoLogger.error (MessageEnum.APIH_GENERAL_EXCEPTION, "", "", "", MsoLogger.ErrorCode.DataError, e.getMessage());
-			getRequestDb().updateInfraFailureCompletion(e.getMessage(), requestId, operationalEnvironmentId);
+			requestDb.updateInfraSuccessCompletion("SUCCESSFULLY Deactivated OperationalEnvironment", requestId, operationalEnvironmentId);
 		}
-		
-		msoLogger.debug("End of " + classMethodMessage);		
 	}
 	
-	@Override
-	protected String getServiceName() {
-		return DeactivateVnfOperationalEnvironment.SERVICE_NAME;
+	private AAIOperationalEnvironment getAAIOperationalEnvironment(String operationalEnvironmentId) {
+		AAIResultWrapper aaiResult = aaiHelper.getAaiOperationalEnvironment(operationalEnvironmentId);
+		Optional<AAIOperationalEnvironment> operationalEnvironmentOpt = aaiResult.asBean(AAIOperationalEnvironment.class);
+		return operationalEnvironmentOpt.isPresent() ? operationalEnvironmentOpt.get() : null;
 	}
 }

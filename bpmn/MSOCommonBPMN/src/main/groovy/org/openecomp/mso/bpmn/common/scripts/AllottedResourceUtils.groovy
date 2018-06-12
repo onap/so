@@ -1,9 +1,30 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.mso.bpmn.common.scripts
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
 import org.openecomp.mso.rest.APIResponse;
 
 
@@ -14,8 +35,14 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import groovy.util.XmlParser
 import groovy.util.Node
 import static org.apache.commons.lang3.StringUtils.*;
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 class AllottedResourceUtils {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AllottedResourceUtils.class);
+
 
 	private AbstractServiceTaskProcessor taskProcessor
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -36,8 +63,7 @@ class AllottedResourceUtils {
 	*/
 	public String getAROrchStatus (DelegateExecution execution) {
 
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG"," ***** getAROrchStatus *****", isDebugEnabled)
+		msoLogger.trace("getAROrchStatus ")
 		String msg = ""
 		String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		String arType = execution.getVariable("allottedResourceType")
@@ -46,7 +72,7 @@ class AllottedResourceUtils {
 		String ar = null
 		String orchStatus = null
 		XmlParser xmlParser = new XmlParser()
-		utils.log("DEBUG","getAROrchStatus siXml:" + siXml, isDebugEnabled)
+		msoLogger.debug("getAROrchStatus siXml:" + siXml)
 		try {
 			if (!isBlank(siXml)) {
 				def groovy.util.Node siNode = xmlParser.parseText(siXml)
@@ -56,7 +82,7 @@ class AllottedResourceUtils {
 					for (groovy.util.Node relationship in relationships) {
 						def groovy.util.Node relatedTo = utils.getChildNode(relationship, 'related-to')
 						if ((relatedTo != null) && (relatedTo.text().equals('allotted-resource'))) {
-							utils.log("DEBUG","getARORchStatus AR found", isDebugEnabled)
+							msoLogger.debug("getARORchStatus AR found")
 							def groovy.util.Node relatedLink = utils.getChildNode(relationship, 'related-link')
 							if (relatedLink != null){
 								ar = getARbyLink(execution, relatedLink.text(), arRole)
@@ -71,10 +97,10 @@ class AllottedResourceUtils {
 				}
 			}
 		}catch(Exception e){
-			utils.log("DEBUG", " Error encountered in getAROrchStatus" + e.getMessage(), isDebugEnabled)
+			msoLogger.debug(" Error encountered in getAROrchStatus" + e.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error in getAROrchStatus" + e.getMessage())
 		}
-		utils.log("DEBUG"," *****Exit getAROrchStatus **** OrchStatus:" + orchStatus, isDebugEnabled)
+		msoLogger.trace(" Exit getAROrchStatus - OrchStatus:" + orchStatus)
 		return orchStatus
 	}
 
@@ -82,71 +108,68 @@ class AllottedResourceUtils {
 	// used on Delete - called from doDeleteAR
 	// setsVariable aaiARGetResponse
 	public String getARbyId (DelegateExecution execution, String allottedResourceId) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " ***** getARbyId ***** ", isDebugEnabled)
+		msoLogger.trace("getARbyId ")
 		String arLink = getARLinkbyId(execution, allottedResourceId)
 		String ar = null
 		if (!isBlank(arLink))
 		{
 			ar = getARbyLink(execution, arLink, "")
 		}
-		utils.log("DEBUG", " ***** Exit GetARbyId ***** AR:" + ar, isDebugEnabled)
+		msoLogger.trace(" Exit GetARbyId - AR:" + ar)
 		return ar;
 	}
 	
 	public String getPSIFmARLink(DelegateExecution execution, String arLink)
 	{
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		// Path: /aai/{version}/business/customers/customer/{cust}/service-subscriptions/service-subscription/{subs}/service-instances/service-instance/{psiid}/allotted-resources/allotted-resource/{arid}
-		utils.log("DEBUG", " ***** getPSIFmARLink ***** path:" + arLink, isDebugEnabled)
+		msoLogger.trace(" getPSIFmARLink - path:" + arLink)
 		String[] split = arLink.split("/service-instance/")
 		String[] splitB =  split[1].split("/allotted-resources/")
 		String siId = splitB[0]
-		utils.log("DEBUG", " ***** Exit getARLinkbyId ***** parentServiceInstanceId:" + siId , isDebugEnabled)
+		msoLogger.trace(" Exit getARLinkbyId - parentServiceInstanceId:" + siId )
 		return siId
 	}
 
 	// get Allotted Resource Link by AllottedResourceId using Nodes Query
 	// used on Delete - called from getARbyId
 	public String getARLinkbyId (DelegateExecution execution, String allottedResourceId) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " ***** getARLinkbyId ***** ", isDebugEnabled)
+		msoLogger.trace("getARLinkbyId ")
 		String arLink = null
 		try {
 			AaiUtil aaiUriUtil = new AaiUtil(taskProcessor)
 			String aaiNQUri = aaiUriUtil.getSearchNodesQueryEndpoint(execution)
-			String aaiEndpoint = execution.getVariable("URN_aai_endpoint")
+			String aaiEndpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			String aaiUrl = "${aaiNQUri}?search-node-type=allotted-resource&filter=id:EQUALS:${allottedResourceId}"
 
-			utils.log("DEBUG", "getARLinkbyId url: \n" + aaiUrl, isDebugEnabled)
+			msoLogger.debug("getARLinkbyId url: \n" + aaiUrl)
 
 			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, aaiUrl)
 			int responseCode = response.getStatusCode()
-			utils.log("DEBUG", "  GET AR response code is: " + responseCode, isDebugEnabled)
+			msoLogger.debug("  GET AR response code is: " + responseCode)
 
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
-			utils.log("DEBUG", "GET AR:" + aaiResponse, isDebugEnabled)
+			msoLogger.debug("GET AR:" + aaiResponse)
 			if(responseCode == 200 || responseCode == 202){
-				utils.log("DEBUG", "GET AR Received a Good Response Code", isDebugEnabled)
+				msoLogger.debug("GET AR Received a Good Response Code")
 				if(utils.nodeExists(aaiResponse, "result-data")){
-					utils.log("DEBUG", "Query for AllottedResource Url Response Does Contain Data" , isDebugEnabled)
+					msoLogger.debug("Query for AllottedResource Url Response Does Contain Data" )
 					arLink = utils.getNodeText1(aaiResponse, "resource-link")
 				}else{
-					utils.log("DEBUG", "GET AR Response Does NOT Contain Data" , isDebugEnabled)
+					msoLogger.debug("GET AR Response Does NOT Contain Data" )
 				}
 			}else if(responseCode == 404){
-				utils.log("DEBUG", "GET AR received a Not Found (404) Response", isDebugEnabled)
+				msoLogger.debug("GET AR received a Not Found (404) Response")
 			}
 			else{
-				utils.log("DEBUG", "  GET AR received a Bad Response: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("  GET AR received a Bad Response: \n" + aaiResponse)
 				buildAAIErrorResponse(execution, aaiResponse, "Error retrieving AR from AAI")
 			}
 		}catch(Exception e){
-			utils.log("DEBUG", " Error encountered within GetAaiAR" + e.getMessage(), isDebugEnabled)
+			msoLogger.debug(" Error encountered within GetAaiAR" + e.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error in GetARbyId" + e.getMessage())
 		}
-		utils.log("DEBUG", " ***** Exit GetARLinkbyId ***** Link:" + arLink, isDebugEnabled)
+		msoLogger.trace(" Exit GetARLinkbyId - Link:" + arLink)
 		return arLink
 	}
 
@@ -155,41 +178,40 @@ class AllottedResourceUtils {
 	// used on Delete called from getARbyId
 	// setsVariable aaiARPath - used for Patch in create
 	public String getARbyLink (DelegateExecution execution, String link, String role) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " ***** getARbyLink ***** ", isDebugEnabled)
+		msoLogger.trace("getARbyLink ")
 		String ar = null
 		String arUrl = null
 		try {
 			AaiUtil aaiUriUtil = new AaiUtil(taskProcessor)
-			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			String arEndpoint = ""
 
 			if(!isBlank(link)) {
-				utils.log("DEBUG", "Incoming AR Resource Link is: " + link, isDebugEnabled)
+				msoLogger.debug("Incoming AR Resource Link is: " + link)
 				String[] split = link.split("/aai/")
 				arEndpoint = "/aai/" + split[1]
 			}
 
 			arUrl = "${aai_endpoint}" + arEndpoint
 		
-			utils.log("DEBUG", "GET AR Aai Path is: \n" + arUrl, isDebugEnabled)
+			msoLogger.debug("GET AR Aai Path is: \n" + arUrl)
 
 			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, arUrl)
 			int responseCode = response.getStatusCode()
-			utils.log("DEBUG", "  GET AR response code is: " + responseCode, isDebugEnabled)
+			msoLogger.debug("  GET AR response code is: " + responseCode)
 
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
-			utils.log("DEBUG", "GET AR:" + aaiResponse, isDebugEnabled)
+			msoLogger.debug("GET AR:" + aaiResponse)
 			if(responseCode == 200 || responseCode == 202){
-				utils.log("DEBUG", "GET AR Received a Good Response Code", isDebugEnabled)
+				msoLogger.debug("GET AR Received a Good Response Code")
 				if(utils.nodeExists(aaiResponse, "allotted-resource")){
 					if (!isBlank(role))
 					{
 						if (utils.nodeExists(aaiResponse, "role") && role.equals(utils.getNodeText1(aaiResponse, "role"))) {
 							ar = aaiResponse
 						}else{
-							utils.log("DEBUG", "AAI AR does not match input role:" + role, isDebugEnabled)
+							msoLogger.debug("AAI AR does not match input role:" + role)
 						}
 					}
 					else
@@ -199,17 +221,17 @@ class AllottedResourceUtils {
 				}
 				else
 				{
-					utils.log("DEBUG", "GET AR Does NOT Contain Data" , isDebugEnabled)
+					msoLogger.debug("GET AR Does NOT Contain Data" )
 				}
 			}else if(responseCode == 404){
-				utils.log("DEBUG", "GET AR received a Not Found (404) Response", isDebugEnabled)
+				msoLogger.debug("GET AR received a Not Found (404) Response")
 			}
 			else{
-				utils.log("DEBUG", "  GET AR received a Bad Response: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("  GET AR received a Bad Response: \n" + aaiResponse)
 				buildAAIErrorResponse(execution, aaiResponse, "Error retrieving AR from AAI")
 			}
 		}catch(Exception e){
-			utils.log("DEBUG", " Error encountered within GetAaiAR" + e.getMessage(), isDebugEnabled)
+			msoLogger.debug(" Error encountered within GetAaiAR" + e.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error in GetAaiAR" + e.getMessage())
 		}
 		if (!isBlank(ar))
@@ -233,13 +255,12 @@ class AllottedResourceUtils {
 			}
 			execution.setVariable("aaiAROrchStatus", orchStatus)
 		}
-		utils.log("DEBUG", " ***** Exit GetARbyLink ***** AR:" + ar, isDebugEnabled)
+		msoLogger.trace(" Exit GetARbyLink - AR:" + ar)
 		return ar
 	}
 
 	public void updateAROrchStatus(DelegateExecution execution, String status, String aaiARPath){
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " *** updaAROrchStatus *** ", isDebugEnabled)
+		msoLogger.trace("updaAROrchStatus ")
 		try{
 
 			String updateReq =	"""
@@ -248,76 +269,75 @@ class AllottedResourceUtils {
 					}
 					"""
 
-			utils.log("DEBUG", 'AAI AR URI: ' + aaiARPath, isDebugEnabled)
+			msoLogger.debug('AAI AR URI: ' + aaiARPath)
 
 			AaiUtil aaiUriUtil = new AaiUtil(taskProcessor)
 			APIResponse apiResponse = aaiUriUtil.executeAAIPatchCall(execution, aaiARPath, updateReq)
 			def aaiResponse = StringEscapeUtils.unescapeXml(apiResponse.getResponseBodyAsString())
 			def responseCode = apiResponse.getStatusCode()
 
-			utils.logAudit("AAI Response Code: " + responseCode)
-			utils.logAudit("AAI Response: " + aaiResponse)
+			msoLogger.debug("AAI Response Code: " + responseCode)
+			msoLogger.debug("AAI Response: " + aaiResponse)
 			if(responseCode == 200){
-				utils.log("DEBUG", "UpdateAR Good REST Response is: " + "\n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("UpdateAR Good REST Response is: " + "\n" + aaiResponse)
 			}else{
-				utils.log("DEBUG", "UpdateAROrchStatus Bad REST Response!", isDebugEnabled)
+				msoLogger.debug("UpdateAROrchStatus Bad REST Response!")
 				buildAAIErrorResponse(execution, aaiResponse, "Error updating AR OrchStatus in AAI")
 			}
 
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException ", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException ")
 			throw b
 		}catch(Exception e){
-			utils.log("ERROR", "Exception in updateAR. Exception is:\n" + e.getMessage(), isDebugEnabled)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in updateAR.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.getMessage());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, 'Internal Error in updateAROrchStatus.' + e.getMessage())
 		}
-		utils.log("DEBUG", " *** Exit updateAROrchStatus *** ", isDebugEnabled)
+		msoLogger.trace("Exit updateAROrchStatus ")
 	}
 	
 	//Sets Variable "wasDeleted"
 	public void deleteAR(DelegateExecution execution, String aaiARPath){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " *** deleteAR *** aaiARPath:" + aaiARPath, isDebugEnabled)
+		msoLogger.trace(" deleteAR - aaiARPath:" + aaiARPath)
 		try {
 			AaiUtil aaiUriUtil = new AaiUtil(taskProcessor)
 			APIResponse response = aaiUriUtil.executeAAIDeleteCall(execution, aaiARPath)
 			int responseCode = response.getStatusCode()
 			execution.setVariable("deleteARResponseCode", responseCode)
 			
-			utils.log("DEBUG", "  Delete AR response code:" + responseCode, isDebugEnabled)
+			msoLogger.debug("  Delete AR response code:" + responseCode)
 
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 			execution.setVariable("aaiARDeleteResponse", aaiResponse)
 
-			utils.log("DEBUG", "Delete AR Response:" + aaiResponse)
+			msoLogger.debug("Delete AR Response:" + aaiResponse)
+			
 			//Process Response
 			if(responseCode == 204){
-				utils.log("DEBUG", "  Delete AR Received a Good Response", isDebugEnabled)
+				msoLogger.debug("  Delete AR Received a Good Response")
 				execution.setVariable("wasDeleted", "true")
 			}else if(responseCode == 404){
-				utils.log("DEBUG", "  Delete AR Received a Not Found (404) Response", isDebugEnabled)
+				msoLogger.debug("  Delete AR Received a Not Found (404) Response")
 			}else if(responseCode == 412){
-				utils.log("DEBUG", "Delete AR Received a Resource Version Mismatch Error: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("Delete AR Received a Resource Version Mismatch Error: \n" + aaiResponse)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 412, "DeleteAR Received a resource-version Mismatch Error Response from AAI")
 			}else{
-				utils.log("DEBUG", "Delete AR Received a BAD REST Response: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("Delete AR Received a BAD REST Response: \n" + aaiResponse)
 				buildAAIErrorResponse(execution, aaiResponse, "Error deleting AR in AAI")
 				exceptionUtil.MapAAIExceptionToWorkflowExceptionGeneric(execution, aaiResponse, responseCode)
 			}
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("DEBUG", " Error encountered in deleteAR!" + e, isDebugEnabled)
+			msoLogger.debug(" Error encountered in deleteAR!" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured During Delete AR")
 		}
-		utils.log("DEBUG", " *** Exit deleteAR *** ", isDebugEnabled)
+		msoLogger.trace("Exit deleteAR ")
 	}
 
 	public void buildAAIErrorResponse(DelegateExecution execution, String response, String errorMessage){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " *** BuildAAIErrorResponse*** ", isDebugEnabled)
+		msoLogger.trace("BuildAAIErrorResponse")
 
 		if((response != null) && (response.contains("Fault") || response.contains("RESTFault"))){
 			WorkflowException workflowException = exceptionUtil.MapAAIExceptionToWorkflowException(response, execution)
@@ -326,7 +346,7 @@ class AllottedResourceUtils {
 			exceptionUtil.buildWorkflowException(execution, 500, errorMessage)
 		}
 
-		utils.log("DEBUG", " *** Exit BuildAAIErrorResponse Process*** ", isDebugEnabled)
+		msoLogger.trace("Exit BuildAAIErrorResponse Process")
 		throw new BpmnError("MSOWorkflowException")
 	}
 

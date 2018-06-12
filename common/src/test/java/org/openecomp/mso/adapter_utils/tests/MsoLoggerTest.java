@@ -50,7 +50,7 @@ import java.util.List;
  */
 public class MsoLoggerTest {
 
-	static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
+	static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, MsoLoggerTest.class);
 
 	/**
 	 * This method is called before any test occurs. It creates a fake tree from

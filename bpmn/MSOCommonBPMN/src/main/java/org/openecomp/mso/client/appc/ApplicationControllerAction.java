@@ -30,9 +30,6 @@ import org.openecomp.mso.client.appc.ApplicationControllerOrchestrator;
 import java.util.Optional;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.appc.client.lcm.model.Status;
-import com.att.eelf.configuration.EELFLogger;
-import com.att.eelf.configuration.EELFManager;
-import com.att.eelf.configuration.EELFLogger.Level;
 import java.lang.NoSuchMethodError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -84,7 +81,6 @@ public class ApplicationControllerAction {
 					}
 					break;
 				case ConfigModify:
-				case ConfigScaleOut:
 					appCStatus = payloadAction(action, msoRequestId, vnfId, payload, controllerType);
 					break;
 				case UpgradePreCheck:

@@ -18,7 +18,8 @@
  * ============LICENSE_END========================================================= 
  */ 
 
-package org.openecomp.mso.bpmn.common.scripts;
+package org.openecomp.mso.bpmn.common.scripts
+
 
 import static org.mockito.Mockito.*
 
@@ -816,11 +817,12 @@ def sdncAdapterResponseError =
 
 		String sdncAdapterWorkflowRequest = FileUtil.readResourceFile("__files/SDN-ETHERNET-INTERNET/SDNCAdapterV1/sdncadapterworkflowrequest.xml");
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-		when(mockExecution.getVariable("URN_mso_adapters_po_auth")).thenReturn("3141634BF7E070AA289CF2892C986C0B")
-		when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
+		when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("3141634BF7E070AA289CF2892C986C0B")
+		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 		when(mockExecution.getVariable("sdncAdapterWorkflowRequest")).thenReturn(sdncAdapterWorkflowRequest)
-		when(mockExecution.getVariable("URN_mso_workflow_sdncadapter_callback")).thenReturn("http://someurl.someting.com:28080/mso/sdncAdapterCallbackServiceImpl")
-		when(mockExecution.getVariable("URN_mso_use_qualified_host")).thenReturn("true")
+		when(mockExecution.getVariable("mso.workflow.sdncadapter.callback")).thenReturn("http://someurl.someting.com:28080/mso/sdncAdapterCallbackServiceImpl")
+		when(mockExecution.getVariable("mso.use.qualified.host")).thenReturn("true")
+
 		when(mockExecution.getProcessInstanceId()).thenReturn("745b1b50-e39e-4685-9cc8-c71f0bde8bf0")
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 	
@@ -841,7 +843,8 @@ def sdncAdapterResponseError =
 		verify(mockExecution).setVariable("SDNCA_requestId", "745b1b50-e39e-4685-9cc8-c71f0bde8bf0")
 		verify(mockExecution).setVariable("SDNCA_SuccessIndicator",false)
 		verify(mockExecution).setVariable("source","")
-		verify(mockExecution).setVariable("sdncAdapterRequest", sdncAdapterRequest)	
+		verify(mockExecution).setVariable("SDNCA_InterimNotify",false)
+		verify(mockExecution).setVariable("sdncAdapterRequest", sdncAdapterRequest)
 	}
 	
 	@Test
@@ -856,7 +859,6 @@ def sdncAdapterResponseError =
 //		MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
 //		debugger.printInvocations(mockExecution)
 		
-		verify(mockExecution).getVariable("isDebugLogEnabled")
 		verify(mockExecution,times(2)).getVariable("sdncAdapterCallbackRequest")
 		verify(mockExecution).setVariable("sdncAdapterResponse",workflowResponse)
 		verify(mockExecution).setVariable("enhancedCallbackRequestData",enhancedCallbackRequestData)
@@ -873,7 +875,6 @@ def sdncAdapterResponseError =
 		SDNCAdapter sdncAdapter = new SDNCAdapter()
 		sdncAdapter.postProcessResponse(mockExecution)
 		
-		verify(mockExecution, times(1)).getVariable("isDebugLogEnabled")
 		verify(mockExecution,times(2)).getVariable("sdncAdapterCallbackRequest")
 		verify(mockExecution).setVariable("sdncAdapterResponse", sdncAdapterResponseError)
 		verify(mockExecution).setVariable("enhancedCallbackRequestData", "")
@@ -889,7 +890,6 @@ def sdncAdapterResponseError =
 		SDNCAdapter sdncAdapter = new SDNCAdapter()
 		sdncAdapter.postProcessResponse(mockExecution)
 		
-		verify(mockExecution).getVariable("isDebugLogEnabled")
 		verify(mockExecution,times(2)).getVariable("sdncAdapterCallbackRequest")
 		verify(mockExecution).setVariable("sdncAdapterResponse", sdncAdapterResponseEmpty)
 		verify(mockExecution).setVariable("enhancedCallbackRequestData", "")
@@ -937,7 +937,6 @@ def sdncAdapterResponseError =
 		SDNCAdapter sdncAdapter = new SDNCAdapter()
 		sdncAdapter.postProcessResponse(mockExecution)
 		
-		verify(mockExecution).getVariable("isDebugLogEnabled")
 		verify(mockExecution,times(2)).getVariable("sdncAdapterCallbackRequest")
 		verify(mockExecution).setVariable("sdncAdapterResponse", sdncAdapterResponse)
 		verify(mockExecution).setVariable("enhancedCallbackRequestData", "")

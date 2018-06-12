@@ -22,8 +22,9 @@ package org.openecomp.mso.adapters.tenantrest;
 
 
 
-import org.openecomp.mso.entity.MsoRequest;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.openecomp.mso.entity.MsoRequest;
 
 @XmlRootElement(name = "deleteTenantRequest")
 public class DeleteTenantRequest extends TenantRequestCommon {

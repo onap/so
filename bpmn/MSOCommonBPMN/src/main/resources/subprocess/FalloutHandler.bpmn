@@ -64,7 +64,7 @@ falloutHandler.postProcessResponse(execution)]]></bpmn2:script>
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_adapters_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.db.endpoint", execution)}]]></camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -133,7 +133,7 @@ falloutHandler.buildDBWorkflowException(execution, "FH_updateRequestInfraRespons
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -207,7 +207,7 @@ execution.setVariable("FH_WorkflowException", wfe)]]></bpmn2:script>
       <bpmn2:terminateEventDefinition />
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_0m7gwor" sourceRef="Task_0ixuwt5" targetRef="ParallelGateway_4" />
-    <bpmn2:callActivity id="Task_0ixuwt5" name="Call Notification Service" calledElement="${URN_mso_workflow_notification_name}">
+    <bpmn2:callActivity id="Task_0ixuwt5" name="Call Notification Service" calledElement="${UrnPropertiesReader.getVariable(&#34;mso.workflow.notification.name&#34;, execution)}">
       <bpmn2:extensionElements>
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />

@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  * except for QueryVfModuleResponse and QueryVolumeGroupResponse.
  */
 public abstract class VfResponseCommon {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, VfResponseCommon.class);
 	private String messageId;
 
 	public VfResponseCommon() {

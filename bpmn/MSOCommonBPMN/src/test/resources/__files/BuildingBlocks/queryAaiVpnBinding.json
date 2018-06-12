@@ -1,0 +1,106 @@
+{
+   "vpn-id": "9a7b327d9-287aa00-82c4b0-100001",
+   "vpn-name": "MSO_VPN_TEST",
+   "resource-version": "1515683690339",
+   "route-targets": {"route-target":    [
+            {
+         "global-route-target": "2001:051111",
+         "route-target-role": "EXPORT",
+         "resource-version": "1515683690360"
+      },
+            {
+         "global-route-target": "1000:051113",
+         "route-target-role": "IMPORT",
+         "resource-version": "1515683690372"
+      },
+            {
+         "global-route-target": "1000:051112",
+         "route-target-role": "BOTH",
+         "resource-version": "1515683690384"
+      },
+            {
+         "global-route-target": "1000:051115",
+         "route-target-role": "EXPORT",
+         "resource-version": "1515683690408"
+      },
+            {
+         "global-route-target": "1000:051114",
+         "route-target-role": "IMPORT",
+         "resource-version": "1515683690396"
+      }
+   ]},
+   "relationship-list": {"relationship":    [
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/51e3b192-31e3-4c3e-89a9-e1f2592e15fc",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "51e3b192-31e3-4c3e-89a9-e1f2592e15fc"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_Bindings_1802_1311"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/fc0ae18f-0a1f-4773-b387-5aed5b58fffb",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "fc0ae18f-0a1f-4773-b387-5aed5b58fffb"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_Bindings_1802_021618"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/0384d743-f69b-4cc8-9aa8-c3ae66662c44",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "0384d743-f69b-4cc8-9aa8-c3ae66662c44"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_Bindings_1802_020118"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/b11eb5fc-082d-424a-a14c-f356d1ce611d",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "b11eb5fc-082d-424a-a14c-f356d1ce611d"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "DEV-1Binding-1710-0814-1000A"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/da89d739-be28-4061-bf62-4a1a9171cbfb",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "da89d739-be28-4061-bf62-4a1a9171cbfb"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_Bindings_1806_BB_it2_1"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/1635f3ea-5821-4e1c-acad-a87a36b160b1",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "1635f3ea-5821-4e1c-acad-a87a36b160b1"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_Bindings_1806_BB_it2_2"
+         }]
+      }
+   ]}
+}

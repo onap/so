@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,18 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
-import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
-
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
+import org.openecomp.mso.logger.MsoLogger;
+
 @XmlRootElement(name = "serviceNetworks")
 public class QueryServiceNetworks extends CatalogQuery {
+	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,QueryServiceNetworks.class);
 	private List<NetworkResourceCustomization> serviceNetworks;
 	private final String template =
 		"\t{\n"+
@@ -93,8 +97,8 @@ public class QueryServiceNetworks extends CatalogQuery {
 		    put(valueMap, "MODEL_NAME",               nrNull ? null : o.getNetworkResource().getModelName());
 		    put(valueMap, "MODEL_UUID",               nrNull ? null : o.getNetworkResource().getModelUUID());
 		    put(valueMap, "MODEL_INVARIANT_ID",       nrNull ? null : o.getNetworkResource().getModelInvariantUUID());
-		    put(valueMap, "MODEL_VERSION",            nrNull ? null : o.getNetworkResource().getVersion());
-		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUuid());
+		    put(valueMap, "MODEL_VERSION",            nrNull ? null : o.getNetworkResource().getModelVersion());
+		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUUID());
 		    put(valueMap, "MODEL_INSTANCE_NAME",      o.getModelInstanceName());
 		    put(valueMap, "TOSCA_NODE_TYPE",             nrNull ? null : o.getNetworkResource().getToscaNodeType());
 		    put(valueMap, "NETWORK_TYPE",             o.getNetworkType());

@@ -33,5 +33,8 @@ public class RESTExceptionTest {
 		RESTException recpt=new RESTException(200, "Error");
 		assert(rex.getErrorMessage().equals("Error"));
 		assertEquals(200,recpt.getStatusCode());		
+		Throwable throwable = mock(Throwable.class);
+		RESTException restException = new RESTException(throwable);
+		assertEquals(-1, restException.getStatusCode());
 	}
 }

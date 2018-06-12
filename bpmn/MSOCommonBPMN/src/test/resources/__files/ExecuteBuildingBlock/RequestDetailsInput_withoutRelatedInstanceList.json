@@ -1,0 +1,17 @@
+{
+	"modelInfo":{
+		"modelType":"service",
+		"modelVersionId":"modelUUID",
+		"modelUuid":"modelUUID"
+	},	
+	"relatedInstanceList":[{
+		"relatedInstance":{
+			"instanceId":"instanceId",	
+			"modelInfo":{
+				"modelType":"service",	
+				"modelVersionId":"modelUUID",	
+				"modelUuid":"modelUUID"
+			}
+		}
+	}]
+}

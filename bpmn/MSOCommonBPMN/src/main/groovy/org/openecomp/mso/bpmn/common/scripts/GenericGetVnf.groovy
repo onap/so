@@ -20,6 +20,7 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
 import static org.openecomp.mso.bpmn.common.scripts.GenericUtils.*;
 
 import org.apache.commons.lang3.*
@@ -27,6 +28,10 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 
 /**
@@ -73,6 +78,8 @@ import org.springframework.web.util.UriUtils
  *
  */
 class GenericGetVnf extends AbstractServiceTaskProcessor{
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, GenericGetVnf.class);
+
 
 	String Prefix = "GENGV_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -85,9 +92,8 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void preProcessRequest(DelegateExecution execution) {
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericGetVnf PreProcessRequest Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericGetVnf PreProcessRequest Process")
 
 		execution.setVariable("GENGV_getVnfByName", false)
 		execution.setVariable("GENGV_SuccessIndicator", false)
@@ -96,12 +102,12 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 		try{
 			// Get Variables
 			String vnfId = execution.getVariable("GENGV_vnfId")
-			utils.log("DEBUG", "Incoming Vnf Id is: " + vnfId, isDebugEnabled)
+			msoLogger.debug("Incoming Vnf Id is: " + vnfId)
 			String vnfName = execution.getVariable("GENGV_vnfName")
-			utils.log("DEBUG", "Incoming Vnf Name is: " + vnfName, isDebugEnabled)
+			msoLogger.debug("Incoming Vnf Name is: " + vnfName)
 
 			if(isBlank(vnfId) && isBlank(vnfName)){
-				utils.log("DEBUG", "Incoming Vnf Name and Vnf Id are null. At least one is required!", isDebugEnabled)
+				msoLogger.debug("Incoming Vnf Name and Vnf Id are null. At least one is required!")
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming Vnf Name and Vnf Id are null. At least one is required.")
 			}else{
 				if(isBlank(vnfId)){
@@ -110,14 +116,14 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 			}
 
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("DEBUG", " Error encountered within GenericGetVnf PreProcessRequest method!" + e, isDebugEnabled)
+			msoLogger.debug(" Error encountered within GenericGetVnf PreProcessRequest method!" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in GenericGetVnf PreProcessRequest")
 
 		}
-		utils.log("DEBUG", "*** COMPLETED GenericGetVnf PreProcessRequest Process ***", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericGetVnf PreProcessRequest Process ")
 	}
 
 	/**
@@ -127,16 +133,15 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void getVnfByName(DelegateExecution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericGetVnf GetVnfByName Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericGetVnf GetVnfByName Process")
 		try {
 			String vnfName = execution.getVariable("GENGV_vnfName")
-			utils.log("DEBUG", "Getting Vnf by Vnf Name: " + vnfName, isDebugEnabled)
+			msoLogger.debug("Getting Vnf by Vnf Name: " + vnfName)
 			String type = execution.getVariable("GENGV_type")
-			utils.log("DEBUG", "Type of Vnf Getting is: " + type, isDebugEnabled)
+			msoLogger.debug("Type of Vnf Getting is: " + type)
 
-			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 
 			//Determine Type of Vnf Querying For.
@@ -146,19 +151,19 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 			}else if(type.equals("vce")){
 				aai_uri = aaiUriUtil.getNetworkVceUri(execution)
 			}else{
-				utils.log("DEBUG", "Invalid Incoming GENGV_type", isDebugEnabled)
+				msoLogger.debug("Invalid Incoming GENGV_type")
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Invalid Incoming GENGV_type")
 			}
 
 			String getVnfPath = "${aai_endpoint}${aai_uri}?vnf-name=" + UriUtils.encode(vnfName, "UTF-8") + "&depth=1"
 
 			execution.setVariable("GENGV_getVnfPath", getVnfPath)
-			utils.logAudit("Get Vnf Url is: " + getVnfPath)
+			msoLogger.debug("Get Vnf Url is: " + getVnfPath)
 
 			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, getVnfPath)
 			int responseCode = response.getStatusCode()
 			execution.setVariable("GENGV_getVnfResponseCode", responseCode)
-			utils.log("DEBUG", "  GET Vnf response code is: " + responseCode, isDebugEnabled)
+			msoLogger.debug("  GET Vnf response code is: " + responseCode)
 
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
@@ -166,31 +171,31 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 
 			//Process Response
 			if(responseCode == 200){
-				utils.log("DEBUG", "GET Vnf Received a Good Response", isDebugEnabled)
+				msoLogger.debug("GET Vnf Received a Good Response")
 					if(utils.nodeExists(aaiResponse, type)){
-						utils.log("DEBUG", "GET Vnf Response Contains a Vnf", isDebugEnabled)
+						msoLogger.debug("GET Vnf Response Contains a Vnf")
 						execution.setVariable("GENGV_FoundIndicator", true)
 						execution.setVariable("GENGV_vnf", aaiResponse)
 						execution.setVariable("WorkflowResponse", aaiResponse)
 					}else{
-						utils.log("DEBUG", "GET Vnf Response Does NOT Contain a Vnf", isDebugEnabled)
+						msoLogger.debug("GET Vnf Response Does NOT Contain a Vnf")
 					}
 
 			}else if(responseCode == 404){
-				utils.log("DEBUG", "GET Vnf Received a Not Found (404) Response", isDebugEnabled)
+				msoLogger.debug("GET Vnf Received a Not Found (404) Response")
 			}else{
-				utils.log("DEBUG", "GET Vnf Received a Bad Response: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("GET Vnf Received a Bad Response: \n" + aaiResponse)
 				exceptionUtil.MapAAIExceptionToWorkflowExceptionGeneric(execution, aaiResponse, responseCode)
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("ERROR", " Error encountered within GenericGetVnf GetVnfByName method!" + e, isDebugEnabled)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Error encountered within GenericGetVnf GetVnfByName method!" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured During GetVnfByName")
 		}
-		utils.log("DEBUG", " *** COMPLETED GenericGetVnf GetVnfByName Process*** ", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericGetVnf GetVnfByName Process")
 	}
 
 	/**
@@ -200,16 +205,15 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void getVnfById(DelegateExecution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericGetVnf GetVnfById Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericGetVnf GetVnfById Process")
 		try {
 			String vnfId = execution.getVariable("GENGV_vnfId")
-			utils.log("DEBUG", "Getting Vnf by Vnf Id: " + vnfId, isDebugEnabled)
+			msoLogger.debug("Getting Vnf by Vnf Id: " + vnfId)
 			String type = execution.getVariable("GENGV_type")
-			utils.log("DEBUG", "Type of Vnf Getting is: " + type, isDebugEnabled)
+			msoLogger.debug("Type of Vnf Getting is: " + type)
 
-			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 
 			//Determine Type of Vnf Querying For.
@@ -221,21 +225,21 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 			}else if(type.equals("vpe")){
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "GenericGetVnf does not yet support getting type of vnf = vpe")
 			}else{
-				utils.log("DEBUG", "Invalid Incoming GENGV_type", isDebugEnabled)
+				msoLogger.debug("Invalid Incoming GENGV_type")
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Invalid Incoming GENGV_type")
 			}
-			utils.log("DEBUG", "Using AAI Uri: " + aai_uri, isDebugEnabled)
+			msoLogger.debug("Using AAI Uri: " + aai_uri)
 
 			String getVnfPath = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
-			utils.log("DEBUG", "GET Vnf Endpoint is: " + getVnfPath, isDebugEnabled)
+			msoLogger.debug("GET Vnf Endpoint is: " + getVnfPath)
 
 			execution.setVariable("GENGV_getVnfPath", getVnfPath)
-			utils.logAudit("Get Vnf Url is: " + getVnfPath)
+			msoLogger.debug("Get Vnf Url is: " + getVnfPath)
 
 			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, getVnfPath)
 			int responseCode = response.getStatusCode()
 			execution.setVariable("GENGV_getVnfResponseCode", responseCode)
-			utils.log("DEBUG", "  GET Vnf response code is: " + responseCode, isDebugEnabled)
+			msoLogger.debug("  GET Vnf response code is: " + responseCode)
 
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
@@ -243,31 +247,31 @@ class GenericGetVnf extends AbstractServiceTaskProcessor{
 
 			//Process Response
 			if(responseCode == 200){
-				utils.log("DEBUG", "GET Vnf Received a Good Response", isDebugEnabled)
+				msoLogger.debug("GET Vnf Received a Good Response")
 					if(utils.nodeExists(aaiResponse, type)){
-						utils.log("DEBUG", "GET Vnf Response Contains a Vnf", isDebugEnabled)
+						msoLogger.debug("GET Vnf Response Contains a Vnf")
 						execution.setVariable("GENGV_FoundIndicator", true)
 						execution.setVariable("GENGV_vnf", aaiResponse)
 						execution.setVariable("WorkflowResponse", aaiResponse)
 					}else{
-						utils.log("DEBUG", "GET Vnf Response Does NOT Contain a Vnf", isDebugEnabled)
+						msoLogger.debug("GET Vnf Response Does NOT Contain a Vnf")
 					}
 
 			}else if(responseCode == 404){
-				utils.log("DEBUG", "GET Vnf Received a Not Found (404) Response", isDebugEnabled)
+				msoLogger.debug("GET Vnf Received a Not Found (404) Response")
 			}else{
-				utils.log("DEBUG", "GET Vnf Received a BAD REST Response: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("GET Vnf Received a BAD REST Response: \n" + aaiResponse)
 				exceptionUtil.MapAAIExceptionToWorkflowExceptionGeneric(execution, aaiResponse, responseCode)
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("ERROR", " Error encountered within GenericGetVnf GetVnfById method!" + e, isDebugEnabled)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Error encountered within GenericGetVnf GetVnfById method!" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured During GetVnfById")
 		}
-		utils.log("DEBUG", " *** COMPLETED GenericGetVnf GetVnfById Process*** ", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericGetVnf GetVnfById Process")
 	}
 
 }

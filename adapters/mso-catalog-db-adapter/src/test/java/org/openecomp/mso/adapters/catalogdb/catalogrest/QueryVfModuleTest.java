@@ -24,7 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.Test;
+import org.openecomp.mso.db.catalog.beans.HeatEnvironment;
 import org.openecomp.mso.db.catalog.beans.VfModule;
 import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
 import org.openecomp.mso.jsonpath.JsonPathUtil;
@@ -74,13 +76,13 @@ public class QueryVfModuleTest {
         VfModule vfModule = new VfModule();
         vfModule.setModelName(VF_MODULE_MODEL_NAME);
         vfModule.setModelUUID(VF_MODEL_UUID);
-        vfModule.setModelInvariantUuid(VF_MODULE_INVARIANT_UUID);
-        vfModule.setVersion(VF_MODULE_VERSION);
-        vfModule.setIsBase(1);
+        vfModule.setModelInvariantUUID(VF_MODULE_INVARIANT_UUID);
+        vfModule.setModelVersion(VF_MODULE_VERSION);
+        vfModule.setIsBase(true);
 
         VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
         vfModuleCustomization.setVfModule(vfModule);
-        vfModuleCustomization.setModelCustomizationUuid(VF_MODEL_CUSTOMIZATION_UUID);
+        vfModuleCustomization.setModelCustomizationUUID(VF_MODEL_CUSTOMIZATION_UUID);
         vfModuleCustomization.setLabel(VF_MODEL_CUSTOMIZATION_LABEL);
         vfModuleCustomization.setInitialCount(VF_MODEL_CUSTOMIZATION_INITIAL_COUNT);
         list.add(vfModuleCustomization);
@@ -89,7 +91,9 @@ public class QueryVfModuleTest {
 
     private List<VfModuleCustomization> createListWithHeatEnvironmentArtifactUuid() {
         List<VfModuleCustomization> list = createList();
-        list.get(0).setHeatEnvironmentArtifactUuid("heatEnvTest");
+        HeatEnvironment he = new HeatEnvironment();
+        he.setArtifactUuid("heatEnvTest");
+        list.get(0).setVolumeHeatEnv(he);
         return list;
     }
 

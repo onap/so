@@ -20,16 +20,10 @@
 
 package org.openecomp.mso.client.aai;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class AAIResourcesObjectMapperProvider extends AAICommonObjectMapperProvider {
 
 	public AAIResourcesObjectMapperProvider() {
 		super();
 	}
 
-	@Override
-	public ObjectMapper getContext(Class<?> type) {
-		return mapper;
-	}
 }

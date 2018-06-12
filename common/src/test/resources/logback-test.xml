@@ -21,6 +21,7 @@
 <configuration scan="false" debug="true">
   <!--<jmxConfigurator /> -->
   <!-- directory path for all other type logs -->
+
   <property name="logDir" value="./target" />
   
   <!-- directory path for debugging type logs -->
@@ -44,15 +45,8 @@
 
   <property name="logDirectory" value="${logDir}/${componentName}/${subComponentName}" />
   <property name="debugLogDirectory" value="${debugDir}/${componentName}/${subComponentName}" />
-  
 
-  <!-- Example evaluator filter applied against console appender -->
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>${defaultPattern}</pattern>
-    </encoder>
-  </appender>
-
+  <appender name="test" class="org.openecomp.mso.utils.TestAppender"/>
   <!-- ============================================================================ -->
   <!-- EELF Appenders -->
   <!-- ============================================================================ -->
@@ -148,24 +142,24 @@
     <includeCallerData>true</includeCallerData>
   </appender>
  
-  
+  	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] |%X{RequestId}| %-5level
+				%logger{1024} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
   <!-- ============================================================================ -->
   <!--  EELF loggers -->
   <!-- ============================================================================ -->
 
-  <logger name="com.att.eelf.audit" level="info" additivity="false">
-    <appender-ref ref="asyncEELFAudit" />
-  </logger>
-  
-  <logger name="com.att.eelf.metrics" level="info" additivity="false">
-        <appender-ref ref="asyncEELFMetrics" />
-  </logger>
-
-  <logger name="com.att.eelf.error" level="debug" additivity="false">
-    <appender-ref ref="asyncEELFError" />
-  </logger> 
-  <root level="INFO">
+    
+    
+  <root level="${so.log.level:-DEBUG}">
     <appender-ref ref="asyncEELFDebug" />
+    <appender-ref ref="STDOUT" />
   </root>
+
 
 </configuration>

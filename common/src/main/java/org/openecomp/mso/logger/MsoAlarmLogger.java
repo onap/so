@@ -22,6 +22,7 @@ package org.openecomp.mso.logger;
 
 
 import java.io.File;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -145,6 +146,11 @@ public class MsoAlarmLogger implements ServletContextListener {
         alarmLogger.setAdditive (false);
     }
 
+    public void resetAppender() {
+    	synchronized (MsoAlarmLogger.class) {
+    		fileAppender = null;
+    	}
+    }
 
     private static RollingFileAppender<ILoggingEvent> getAppender (String msoAlarmFile) {
         // Create a Logger for alarms. Just use a default Pattern that outputs

@@ -22,21 +22,34 @@ package org.openecomp.mso.bpmn.common.util;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.openecomp.mso.BaseTest;
 
 public class CryptoHandlerTest {
-
-	@Test
-	public void test()  throws Exception {
-		String plainPswd = "mso0206";
-		String encryptPwd = "C1FC4A39E16419DD41DFC1212843F440";
-		CryptoHandler cryptoHandler = new CryptoHandler();
-		String aaiPassword = cryptoHandler.getMsoAaiPassword();
-		assertEquals(plainPswd, aaiPassword);
-		String encryptPassword = cryptoHandler.encryptMsoPassword(plainPswd);
-		assertEquals(encryptPwd, encryptPassword);
-		String decryptPassword = cryptoHandler.decryptMsoPassword(encryptPwd);
-		assertEquals(plainPswd, decryptPassword);
+	private static final String plainPswd = "mso0206";
+	private static final String encryptPwd = "C1FC4A39E16419DD41DFC1212843F440";
+	private CryptoHandler cryptoHandler;
+	
+	@Before
+	public void setup() {
+		cryptoHandler = new CryptoHandler();
 	}
-
+	
+	@Test
+	@Ignore // ignored until we can mock the properties file.
+	public void getMsoAaiPasswordTest() {
+		assertEquals(plainPswd, cryptoHandler.getMsoAaiPassword());
+	}
+	
+	@Test
+	public void encryptMsoPasswordTest() {
+		assertEquals(encryptPwd, cryptoHandler.encryptMsoPassword(plainPswd));
+	}
+	
+	@Test
+	public void decryptMsoPasswordTest() {
+		assertEquals(plainPswd, cryptoHandler.decryptMsoPassword(encryptPwd));
+	}
 }

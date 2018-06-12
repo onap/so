@@ -35,17 +35,21 @@ import org.openecomp.mso.adapters.vfc.model.NsInstantiateReq;
 import org.openecomp.mso.adapters.vfc.model.NsOperationKey;
 import org.openecomp.mso.adapters.vfc.model.NsParameters;
 import org.openecomp.mso.adapters.vfc.model.NsProgressStatus;
+import org.openecomp.mso.adapters.vfc.model.NsScaleParameters;
 import org.openecomp.mso.adapters.vfc.model.ResponseDescriptor;
 import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
-import org.openecomp.mso.adapters.vfc.model.*;
+import org.openecomp.mso.adapters.vfc.model.VFCScaleData;
 import org.openecomp.mso.adapters.vfc.util.JsonUtil;
 import org.openecomp.mso.adapters.vfc.util.RestfulUtil;
 import org.openecomp.mso.adapters.vfc.util.ValidateUtil;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
+import org.openecomp.mso.db.request.beans.ResourceOperationStatus;
+import org.openecomp.mso.db.request.data.repository.ResourceOperationStatusRepository;
 import org.openecomp.mso.requestsdb.RequestsDbConstant;
-import org.openecomp.mso.requestsdb.ResourceOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.stereotype.Component;
 
 /**
  * VF-C Manager <br>
@@ -55,6 +59,7 @@ import org.slf4j.LoggerFactory;
  * @author
  * @version ONAP Amsterdam Release 2017-08-28
  */
+@Component
 public class VfcManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(VfcManager.class);
@@ -63,7 +68,12 @@ public class VfcManager {
    * nfvo url map
    */
   private static Map<String, String> nfvoUrlMap;
-
+  @Autowired
+  private ResourceOperationStatusRepository resourceOperationStatusRepository;
+  
+  @Autowired
+  private RestfulUtil restfulUtil;
+  
   static {
     nfvoUrlMap = new HashMap<>();
     nfvoUrlMap.put(Step.CREATE, CommonConstant.NFVO_CREATE_URL);
@@ -90,7 +100,7 @@ public class VfcManager {
     // Step1: get service template by node type
     String csarId = segInput.getNsServiceModelUUID();
     // nsdId for NFVO is "id" in the response, while for SDNO is "servcice template id"
-    LOGGER.info("serviceTemplateId is {}, id is {}", csarId);
+    LOGGER.info("serviceTemplateId is {}, id is {}", csarId, csarId);
 
     LOGGER.info("create ns -> begin");
     // Step2: Prepare url and method type
@@ -109,26 +119,22 @@ public class VfcManager {
     String createReq = JsonUtil.marshal(oRequest);
 
     // Step4: Call NFVO or SDNO lcm to create ns
-    RestfulResponse createRsp = RestfulUtil.send(url, methodType, createReq);
+    RestfulResponse createRsp = restfulUtil.send(url, methodType, createReq);
     ValidateUtil.assertObjectNotNull(createRsp);
     LOGGER.info("create ns response status is : {}", createRsp.getStatus());
     LOGGER.info("create ns response content is : {}", createRsp.getResponseContent());
 
     // Step 5: save resource operation information
-    ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance())
-        .getResourceOperationStatus(segInput.getNsOperationKey().getServiceId(),
-            segInput.getNsOperationKey().getOperationId(),
-            segInput.getNsOperationKey().getNodeTemplateUUID());
-    nsOperInfo.setStatus(RequestsDbConstant.Status.PROCESSING);
-    nsOperInfo.setProgress("40");
-    nsOperInfo.setStatusDescription("NS is created");
-    (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
-
+    ResourceOperationStatus status = new ResourceOperationStatus(segInput.getNsOperationKey().getServiceId(), segInput.getNsOperationKey().getOperationId(), segInput.getNsOperationKey().getNodeTemplateUUID());
+    status.setStatus(RequestsDbConstant.Status.PROCESSING);
+    status = resourceOperationStatusRepository.save(status);
     if (!HttpCode.isSucess(createRsp.getStatus())) {
       LOGGER.error("update segment operation status : fail to create ns");
-      nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-      nsOperInfo.setErrorCode(String.valueOf(createRsp.getStatus()));
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+      status.setProgress("40");
+      status.setStatusDescription("NS is created");
+      status.setStatus(RequestsDbConstant.Status.ERROR);
+      status.setErrorCode(String.valueOf(createRsp.getStatus()));
+      resourceOperationStatusRepository.save(status);
       throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
           DriverExceptionID.FAIL_TO_CREATE_NS);
     }
@@ -166,21 +172,20 @@ public class VfcManager {
     String methodType = CommonConstant.MethodType.DELETE;
 
     // Step2: prepare restful parameters and options
-    RestfulResponse deleteRsp = RestfulUtil.send(url, methodType, "");
+    RestfulResponse deleteRsp = restfulUtil.send(url, methodType, "");
     ValidateUtil.assertObjectNotNull(deleteRsp);
     LOGGER.info("delete ns response status is : {}", deleteRsp.getStatus());
     LOGGER.info("delete ns response content is : {}", deleteRsp.getResponseContent());
     LOGGER.info("delete ns -> end");
-    ResourceOperationStatus nsOperInfo =
-        (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
-            nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
+
+    ResourceOperationStatus status = new ResourceOperationStatus(nsOperationKey.getServiceId(), nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
     if (!HttpCode.isSucess(deleteRsp.getStatus())) {
       LOGGER.error("fail to delete ns");
 
-      nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-      nsOperInfo.setErrorCode(String.valueOf(deleteRsp.getStatus()));
-      nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.TERMINATE_NS_FAILED);
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+      status.setStatus(RequestsDbConstant.Status.ERROR);
+      status.setErrorCode(String.valueOf(deleteRsp.getStatus()));
+      status.setStatusDescription(CommonConstant.StatusDesc.TERMINATE_NS_FAILED);
+      resourceOperationStatusRepository.save(status);
       throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
           DriverExceptionID.FAIL_TO_DELETE_NS);
     }
@@ -191,11 +196,11 @@ public class VfcManager {
     LOGGER.info("delete segment information -> end");
 
     // Step4: update service segment operation status
-    nsOperInfo.setStatus(RequestsDbConstant.Status.FINISHED);
-    nsOperInfo.setErrorCode(String.valueOf(deleteRsp.getStatus()));
-    nsOperInfo.setProgress("100");
-    nsOperInfo.setStatusDescription("VFC resource deletion finished");
-    (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+    status.setStatus(RequestsDbConstant.Status.FINISHED);
+    status.setErrorCode(String.valueOf(deleteRsp.getStatus()));
+    status.setProgress("100");
+    status.setStatusDescription("VFC resource deletion finished");
+    resourceOperationStatusRepository.save(status);
     LOGGER.info("update segment operaton status for delete -> end");
 
     return deleteRsp;
@@ -226,18 +231,15 @@ public class VfcManager {
     String url = getUrl(nsInstanceId, CommonConstant.Step.INSTANTIATE);
     String methodType = CommonConstant.MethodType.POST;
 
-    RestfulResponse instRsp = RestfulUtil.send(url, methodType, instReq);    
-    ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance())
-            .getResourceOperationStatus(segInput.getNsOperationKey().getServiceId(),
-                segInput.getNsOperationKey().getOperationId(),
-                segInput.getNsOperationKey().getNodeTemplateUUID());
+    RestfulResponse instRsp = restfulUtil.send(url, methodType, instReq);
+    ResourceOperationStatus status = new ResourceOperationStatus(segInput.getNsOperationKey().getServiceId(), segInput.getNsOperationKey().getOperationId(), segInput.getNsOperationKey().getNodeTemplateUUID());
     ValidateUtil.assertObjectNotNull(instRsp);
     if (!HttpCode.isSucess(instRsp.getStatus())) {
         LOGGER.error("update segment operation status : fail to instantiate ns");
-        nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-        nsOperInfo.setErrorCode(String.valueOf(instRsp.getStatus()));
-        nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.INSTANTIATE_NS_FAILED);
-        (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+        status.setStatus(RequestsDbConstant.Status.ERROR);
+        status.setErrorCode(String.valueOf(instRsp.getStatus()));
+        status.setStatusDescription(CommonConstant.StatusDesc.INSTANTIATE_NS_FAILED);
+        resourceOperationStatusRepository.save(status);
         throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
             DriverExceptionID.FAIL_TO_INSTANTIATE_NS);
       }
@@ -249,20 +251,20 @@ public class VfcManager {
     String jobId = rsp.get(CommonConstant.JOB_ID);
     if (ValidateUtil.isStrEmpty(jobId)) {
       LOGGER.error("Invalid jobId from instantiate operation");
-      nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-      nsOperInfo.setErrorCode(String.valueOf(instRsp.getStatus()));
-      nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.INSTANTIATE_NS_FAILED);
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+      status.setStatus(RequestsDbConstant.Status.ERROR);
+      status.setErrorCode(String.valueOf(instRsp.getStatus()));
+      status.setStatusDescription(CommonConstant.StatusDesc.INSTANTIATE_NS_FAILED);
+      resourceOperationStatusRepository.save(status);
       throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
           DriverExceptionID.INVALID_RESPONSE_FROM_INSTANTIATE_OPERATION);
     }
     LOGGER.info("instantiate ns -> end");
     // Step 3: update segment operation job id
     LOGGER.info("update resource operation status job id -> begin");
-    nsOperInfo.setJobId(jobId);
-    nsOperInfo.setProgress("100");
-    nsOperInfo.setStatusDescription("NS initiation completed.");
-    (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+    status.setJobId(jobId);
+    status.setProgress("100");
+    status.setStatusDescription("NS initiation completed.");
+    resourceOperationStatusRepository.save(status);
     LOGGER.info("update segment operation job id -> end");
 
     return instRsp;
@@ -280,11 +282,9 @@ public class VfcManager {
       throws ApplicationException {
     // Step1: save segment operation info for delete process
     LOGGER.info("save segment operation for delete process");
-    ResourceOperationStatus nsOperInfo =
-        (RequestsDatabase.getInstance()).getResourceOperationStatus(nsOperationKey.getServiceId(),
-            nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
-    nsOperInfo.setStatus(RequestsDbConstant.Status.PROCESSING);
-    (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+    ResourceOperationStatus status = new ResourceOperationStatus(nsOperationKey.getServiceId(), nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
+    status.setStatus(RequestsDbConstant.Status.PROCESSING);
+    resourceOperationStatusRepository.save(status);
 
     LOGGER.info("terminate ns -> begin");
     // Step2: prepare url and method type
@@ -298,17 +298,17 @@ public class VfcManager {
     reqBody.put("gracefulTerminationTimeout", "60");
 
     // Step4: Call the NFVO or SDNO service to terminate service
-    RestfulResponse terminateRsp = RestfulUtil.send(url, methodType, JsonUtil.marshal(reqBody));
+    RestfulResponse terminateRsp = restfulUtil.send(url, methodType, JsonUtil.marshal(reqBody));
     ValidateUtil.assertObjectNotNull(terminateRsp);
     LOGGER.info("terminate ns response status is : {}", terminateRsp.getStatus());
     LOGGER.info("terminate ns response content is : {}", terminateRsp.getResponseContent());
     // Step 3: update segment operation
     if (!HttpCode.isSucess(terminateRsp.getStatus())) {
       LOGGER.error("fail to instantiate ns");
-      nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-      nsOperInfo.setErrorCode(String.valueOf(terminateRsp.getStatus()));
-      nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.TERMINATE_NS_FAILED);
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+      status.setStatus(RequestsDbConstant.Status.ERROR);
+      status.setErrorCode(String.valueOf(terminateRsp.getStatus()));
+      status.setStatusDescription(CommonConstant.StatusDesc.TERMINATE_NS_FAILED);
+      resourceOperationStatusRepository.save(status);
 
       throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
           DriverExceptionID.FAIL_TO_TERMINATE_NS);
@@ -318,20 +318,20 @@ public class VfcManager {
     String jobId = rsp.get(CommonConstant.JOB_ID);
     if (ValidateUtil.isStrEmpty(jobId)) {
       LOGGER.error("Invalid jobId from terminate operation");
-      nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
-      nsOperInfo.setErrorCode(String.valueOf(terminateRsp.getStatus()));
-      nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.TERMINATE_NS_FAILED);
-      (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+      status.setStatus(RequestsDbConstant.Status.ERROR);
+      status.setErrorCode(String.valueOf(terminateRsp.getStatus()));
+      status.setStatusDescription(CommonConstant.StatusDesc.TERMINATE_NS_FAILED);
+      resourceOperationStatusRepository.save(status);
       throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
           DriverExceptionID.INVALID_RESPONSE_FROM_TERMINATE_OPERATION);
     }
     LOGGER.info("terminate ns -> end");
 
     LOGGER.info("update segment job id -> begin");
-    nsOperInfo.setProgress("60");
-    nsOperInfo.setStatusDescription("NS is termination completed");
-    nsOperInfo.setJobId(jobId);
-    (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+    status.setProgress("60");
+    status.setStatusDescription("NS is termination completed");
+    status.setJobId(jobId);
+    resourceOperationStatusRepository.save(status);
     LOGGER.info("update segment job id -> end");
 
     return terminateRsp;
@@ -345,65 +345,68 @@ public class VfcManager {
    * @return
    * @since ONAP Amsterdam Release
    */
-    public RestfulResponse getNsProgress (NsOperationKey nsOperationKey, String jobId) throws ApplicationException {
+  public RestfulResponse getNsProgress(NsOperationKey nsOperationKey, String jobId)
+      throws ApplicationException {
 
-        ValidateUtil.assertObjectNotNull (jobId);
-        // Step 1: query the current resource operation status
-        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance ()).getResourceOperationStatus (
-            nsOperationKey.getServiceId (), nsOperationKey.getOperationId (), nsOperationKey.getNodeTemplateUUID ());
-
-        // Step 2: start query
-        LOGGER.info ("query ns status -> begin");
-        String url = getUrl (jobId, CommonConstant.Step.QUERY);
-        String methodType = CommonConstant.MethodType.GET;
-        // prepare restful parameters and options
-        RestfulResponse rsp = RestfulUtil.send (url, methodType, "");
-        ValidateUtil.assertObjectNotNull (rsp);
-        LOGGER.info ("query ns progress response status is : {}", rsp.getStatus ());
-        LOGGER.info ("query ns progress response content is : {}", rsp.getResponseContent ());
-        // Step 3:check the response staus
-        if (!HttpCode.isSucess (rsp.getStatus ())) {
-            LOGGER.info ("fail to query job status");
-            nsOperInfo.setErrorCode (String.valueOf (rsp.getStatus ()));
-            nsOperInfo.setStatus (RequestsDbConstant.Status.ERROR);
-            nsOperInfo.setStatusDescription (CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
-            (RequestsDatabase.getInstance ()).updateResOperStatus (nsOperInfo);
-            throw new ApplicationException (HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.FAIL_TO_QUERY_JOB_STATUS);
-        }
-        // Step 4: Process Network Service Instantiate Response
-        NsProgressStatus nsProgress = JsonUtil.unMarshal (rsp.getResponseContent (), NsProgressStatus.class);
-        ResponseDescriptor rspDesc = nsProgress.getResponseDescriptor ();
-        // Step 5: update segment operation progress
-
-        nsOperInfo.setProgress (rspDesc.getProgress ());
-        nsOperInfo.setStatusDescription (rspDesc.getStatusDescription ());
-        (RequestsDatabase.getInstance ()).updateResOperStatus (nsOperInfo);
-
-        // Step 6: update segment operation status
-        if (RequestsDbConstant.Progress.ONE_HUNDRED.equals (rspDesc.getProgress ())
-            && RequestsDbConstant.Status.FINISHED.equals (rspDesc.getStatus ())) {
-            LOGGER.info ("job result is succeeded, operType is {}", nsOperInfo.getOperType ());
-            nsOperInfo.setErrorCode (String.valueOf (rsp.getStatus ()));
-            String operType = nsOperInfo.getOperType ();
-            if (RequestsDbConstant.OperationType.CREATE.equalsIgnoreCase (operType)
-                || "createInstance".equalsIgnoreCase (operType)) {
-                nsOperInfo.setStatus (RequestsDbConstant.Status.FINISHED);
-            }
-            (RequestsDatabase.getInstance ()).updateResOperStatus (nsOperInfo);
-        } else if (RequestsDbConstant.Status.ERROR.equals (rspDesc.getStatus ())) {
-            LOGGER.error ("job result is failed, operType is {}", nsOperInfo.getOperType ());
-            nsOperInfo.setErrorCode (String.valueOf (rsp.getStatus ()));
-            nsOperInfo.setStatusDescription (CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
-            nsOperInfo.setStatus (RequestsDbConstant.Status.ERROR);
-            (RequestsDatabase.getInstance ()).updateResOperStatus (nsOperInfo);
-            throw new ApplicationException (HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.JOB_STATUS_ERROR);
-        } else {
-            LOGGER.error ("unexcepted response status");
-        }
-        LOGGER.info ("query ns status -> end");
-
-        return rsp;
+    ValidateUtil.assertObjectNotNull(jobId);
+    // Step 1: query the current resource operation status
+    ResourceOperationStatus status = new ResourceOperationStatus(nsOperationKey.getServiceId(), nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
+    status = resourceOperationStatusRepository.findOne(Example.of(status));
+    // Step 2: start query
+    LOGGER.info("query ns status -> begin");
+    String url = getUrl(jobId, CommonConstant.Step.QUERY);
+    String methodType = CommonConstant.MethodType.GET;
+    // prepare restful parameters and options
+    RestfulResponse rsp = restfulUtil.send(url, methodType, "");
+    ValidateUtil.assertObjectNotNull(rsp);
+    LOGGER.info("query ns progress response status is : {}", rsp.getStatus());
+    LOGGER.info("query ns progress response content is : {}", rsp.getResponseContent());
+    // Step 3:check the response staus
+    if (!HttpCode.isSucess(rsp.getStatus())) {
+      LOGGER.info("fail to query job status");
+      status.setErrorCode(String.valueOf(rsp.getStatus()));
+      status.setStatus(RequestsDbConstant.Status.ERROR);
+      status.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
+      resourceOperationStatusRepository.save(status);
+      throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
+          DriverExceptionID.FAIL_TO_QUERY_JOB_STATUS);
     }
+    // Step 4: Process Network Service Instantiate Response
+    NsProgressStatus nsProgress =
+        JsonUtil.unMarshal(rsp.getResponseContent(), NsProgressStatus.class);
+    ResponseDescriptor rspDesc = nsProgress.getResponseDescriptor();
+    // Step 5: update segment operation progress
+
+    status.setProgress(rspDesc.getProgress());
+    status.setStatusDescription(rspDesc.getStatusDescription());
+    resourceOperationStatusRepository.save(status);
+
+    // Step 6: update segment operation status
+    if (RequestsDbConstant.Progress.ONE_HUNDRED.equals(rspDesc.getProgress())
+        && RequestsDbConstant.Status.FINISHED.equals(rspDesc.getStatus())) {
+      LOGGER.info("job result is succeeded, operType is {}", status.getOperType());
+      status.setErrorCode(String.valueOf(rsp.getStatus()));
+      status.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
+
+      if(RequestsDbConstant.OperationType.CREATE.equalsIgnoreCase(status.getOperType())) {
+        status.setStatus(RequestsDbConstant.Status.FINISHED);
+      }
+      resourceOperationStatusRepository.save(status);
+    } else if (RequestsDbConstant.Status.ERROR.equals(rspDesc.getStatus())) {
+      LOGGER.error("job result is failed, operType is {}", status.getOperType());
+      status.setErrorCode(String.valueOf(rsp.getStatus()));
+      status.setStatusDescription(CommonConstant.StatusDesc.QUERY_JOB_STATUS_FAILED);
+      status.setStatus(RequestsDbConstant.Status.ERROR);
+      resourceOperationStatusRepository.save(status);
+      throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
+          DriverExceptionID.JOB_STATUS_ERROR);
+    } else {
+      LOGGER.error("unexcepted response status");
+    }
+    LOGGER.info("query ns status -> end");
+
+    return rsp;
+  }
 
     /**
      * Scale NS instance
@@ -432,17 +435,17 @@ public class VfcManager {
         String methodType = CommonConstant.MethodType.POST;
         LOGGER.info("scale ns request is {}", scaleReq);
         // Step3: Call NFVO lcm to scale ns
-        RestfulResponse scaleRsp = RestfulUtil.send(url, methodType, scaleReq);
-        ResourceOperationStatus nsOperInfo = (RequestsDatabase.getInstance()).getResourceOperationStatus(
-                segInput.getNsOperationKey().getServiceId(), segInput.getNsOperationKey().getOperationId(),
-                segInput.getNsOperationKey().getNodeTemplateUUID());
+        RestfulResponse scaleRsp = restfulUtil.send(url, methodType, scaleReq);
+        
+        ResourceOperationStatus status = new ResourceOperationStatus(segInput.getNsOperationKey().getServiceId(), segInput.getNsOperationKey().getOperationId(), segInput.getNsOperationKey().getNodeTemplateUUID());
+        ResourceOperationStatus nsOperInfo = resourceOperationStatusRepository.findOne(Example.of(status));
         ValidateUtil.assertObjectNotNull(scaleRsp);
         if(!HttpCode.isSucess(scaleRsp.getStatus())) {
             LOGGER.error("update segment operation status : fail to scale ns");
             nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
             nsOperInfo.setErrorCode(String.valueOf(scaleRsp.getStatus()));
             nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.SCALE_NS_FAILED);
-            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+            resourceOperationStatusRepository.save(nsOperInfo);
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.FAIL_TO_SCALE_NS);
         }
         LOGGER.info("scale ns response status is {}", scaleRsp.getStatus());
@@ -457,7 +460,7 @@ public class VfcManager {
             nsOperInfo.setStatus(RequestsDbConstant.Status.ERROR);
             nsOperInfo.setErrorCode(String.valueOf(scaleRsp.getStatus()));
             nsOperInfo.setStatusDescription(CommonConstant.StatusDesc.SCALE_NS_FAILED);
-            (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+            resourceOperationStatusRepository.save(nsOperInfo);
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR,
                     DriverExceptionID.INVALID_RESPONSE_FROM_SCALE_OPERATION);
         }
@@ -465,7 +468,7 @@ public class VfcManager {
         LOGGER.info("update resource operation status job id -> begin");
         // Step 4: update segment operation job id
         nsOperInfo.setJobId(jobId);
-        (RequestsDatabase.getInstance()).updateResOperStatus(nsOperInfo);
+        resourceOperationStatusRepository.save(nsOperInfo);
         LOGGER.info("update segment operation job id -> end");
         LOGGER.info("scale ns -> end");
 		
@@ -484,7 +487,7 @@ public class VfcManager {
 
     String url;
     String originalUrl;
-    originalUrl = (String) nfvoUrlMap.get(step);
+    originalUrl = nfvoUrlMap.get(step);
     url = String.format(originalUrl, variable);
     return url;
 

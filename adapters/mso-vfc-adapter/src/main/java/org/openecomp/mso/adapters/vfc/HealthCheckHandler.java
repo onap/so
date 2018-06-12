@@ -20,16 +20,16 @@
 
 package org.openecomp.mso.adapters.vfc;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HttpStatus;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.HealthCheckUtils;
 import org.openecomp.mso.utils.UUIDChecker;
+import org.springframework.stereotype.Component;
 
 /**
  * Health Check
@@ -41,34 +41,25 @@ import org.openecomp.mso.utils.UUIDChecker;
  * @version     ONAP Amsterdam Release  2017-08-28
  */
 @Path("/")
+@Component
 public class HealthCheckHandler {
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, HealthCheckHandler.class);
 
-    private static final String MSO_PROP_VFC_ADAPTER = "MSO_PROP_VFC_ADAPTER";
+    
+    private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
+
+	public static final Response HEALTH_CHECK_RESPONSE = Response.status (HttpStatus.SC_OK)
+            .entity (CHECK_HTML)
+            .build ();
 
     @HEAD
-    @GET
     @Path("/healthcheck")
     @Produces("text/html")
     public Response healthcheck(@QueryParam("requestId") String requestId) {
-        long startTime = System.currentTimeMillis();
         MsoLogger.setServiceName("Healthcheck");
         UUIDChecker.verifyOldUUID(requestId, msoLogger);
-        HealthCheckUtils healthCheck = new HealthCheckUtils();
-        if(!healthCheck.siteStatusCheck(msoLogger)) {
-            return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-        }
-
-        if(!healthCheck.configFileCheck(msoLogger, startTime, MSO_PROP_VFC_ADAPTER)) {
-            return HealthCheckUtils.NOT_STARTED_RESPONSE;
-        }
-
-        if(!healthCheck.catalogDBCheck(msoLogger, startTime)) {
-            return HealthCheckUtils.NOT_STARTED_RESPONSE;
-        }
-        msoLogger.debug("healthcheck - Successful");
-        return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
+        return HEALTH_CHECK_RESPONSE;
     }
 
 }

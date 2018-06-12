@@ -1,0 +1,118 @@
+[
+  {
+    "vfModuleModelName": "201673MowAvpnVpeBvY..AVPN_base_vPE_BV_v4..module-0",
+    "vfModuleModelInvariantUUID": "eb903121-a9bf-4087-95e1-7e92cdd2b465",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "d2f4b769-3192-4cca-9368-b48274f8fd9a",
+    "vfModuleModelCustomizationUUID": "670e1186-9dce-4e9a-9fe4-abb8dee08174",
+    "isBase": true,
+    "artifacts": [
+      "ed3265a3-880f-42be-a38d-0e3f6a1e819a",
+      "c0628be2-b9fc-4a10-914b-0183df8b4283"
+    ],
+    "properties": {
+      "min_vf_module_instances": "1",
+      "vf_module_label": "AVPN_base_vPE_BV_v4",
+      "max_vf_module_instances": "1",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Base",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "1"
+    }
+  },
+  {
+    "vfModuleModelName": "201673MowAvpnVpeBvY..AVPN_vRE_BV_volume_v4..module-1",
+    "vfModuleModelInvariantUUID": "bbbc9c65-abce-4422-85e7-321cea03fdf2",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "9d19e14d-c0be-4621-bab7-42c348fbb704",
+    "vfModuleModelCustomizationUUID": "338c6436-52a4-4b18-857e-dcfb5c47d672",
+    "isBase": false,
+    "artifacts": [
+      "f7a039a5-60f0-4a00-8b29-d65891dddd44",
+      "5819e096-65cb-4688-ab72-2f3c53eedcb2"
+    ],
+    "properties": {
+      "min_vf_module_instances": "0",
+      "vf_module_label": "AVPN_vRE_BV_volume_v4",
+      "max_vf_module_instances": "",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Expansion",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "0"
+    }
+  },
+  {
+    "vfModuleModelName": "201673MowAvpnVpeBvY..AVPN_vRE_BV_v4..module-2",
+    "vfModuleModelInvariantUUID": "d5eb7361-70c9-45cb-a3e1-be785a848d25",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "1b0e6ac8-54d6-4f5b-9cc2-eeed2214e60b",
+    "vfModuleModelCustomizationUUID": "87d27cc9-3d14-4304-a071-6e63df9ee5a2",
+    "isBase": false,
+    "artifacts": [
+      "6572c705-0066-49e8-831a-ce1691458649",
+      "08b7e90e-2643-4840-9db8-fc0fe2555719",
+      "3dc5a4ec-7bc8-4e12-a000-b448870a919a"
+    ],
+    "properties": {
+      "min_vf_module_instances": "0",
+      "vf_module_label": "AVPN_vRE_BV_v4",
+      "max_vf_module_instances": "",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Expansion",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "0"
+    }
+  },
+  {
+    "vfModuleModelName": "201673MowAvpnVpeBvY..AVPN_vPFE_BV_volume_v4..module-3",
+    "vfModuleModelInvariantUUID": "534d4f43-264f-42f2-ace2-a9d48e8943c1",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "308f9175-01c3-42d9-94f7-cc923251ae0d",
+    "vfModuleModelCustomizationUUID": "8d2a6738-df9b-4d91-8a4f-a6371b472810",
+    "isBase": false,
+    "artifacts": [
+      "d586a9f6-bba7-4d31-8d92-e9d52ac2e276",
+      "789fdf92-53a2-464e-9e02-1ed8f47b5fb2"
+    ],
+    "properties": {
+      "min_vf_module_instances": "0",
+      "vf_module_label": "AVPN_vPFE_BV_volume_v4",
+      "max_vf_module_instances": "",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Expansion",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "0"
+    }
+  },
+  {
+    "vfModuleModelName": "201673MowAvpnVpeBvY..AVPN_vPFE_BV_v4..module-4",
+    "vfModuleModelInvariantUUID": "f9df0645-d695-4730-a141-062bf541a0e6",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "fa70da78-08ca-45ea-b698-96798d0ee5f1",
+    "vfModuleModelCustomizationUUID": "65b3c1e2-6fc7-495a-9710-7cde05f14ae5",
+    "isBase": false,
+    "artifacts": [
+      "cb3707fb-ac85-49c6-8bb7-22aec355c977",
+      "4acace9d-e5d5-4e4c-a654-9f2c4bedc573"
+    ],
+    "properties": {
+      "min_vf_module_instances": "0",
+      "vf_module_label": "AVPN_vPFE_BV_v4",
+      "max_vf_module_instances": "",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Expansion",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "0"
+    }
+  }
+]

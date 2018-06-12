@@ -20,8 +20,6 @@
 
 package org.openecomp.mso.client.aai;
 
-import com.att.eelf.configuration.EELFLogger;
-import com.att.eelf.configuration.EELFManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -43,7 +41,7 @@ import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
 import org.springframework.stereotype.Service;
 
 
-@Service
+
 public class AAIRestClientImpl implements AAIRestClientI {
 
     private static final EELFLogger logger = EELFManager.getInstance().getMetricsLogger();
@@ -79,8 +77,8 @@ public class AAIRestClientImpl implements AAIRestClientI {
             logger.warn("could not parse uuid: " + uuid + " creating valid uuid automatically");
             requestId = UUID.randomUUID();
         }
-        return new AAIResourcesClient(ENDPOINT_VERSION, requestId)
-                .get(Pservers.class, AAIUriFactory.createResourceUri(AAIObjectPlurals.PSERVER));
+        return new AAIResourcesClient(ENDPOINT_VERSION)
+                .get(Pservers.class, AAIUriFactory.createResourceUri(AAIObjectPlurals.PSERVER)).orElse(null);
     }
 
     @Override
@@ -94,7 +92,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
         }
         List<AAIResourceUri> startNodes = new ArrayList<>();
         startNodes.add(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId));
-        String jsonInput = new AAIQueryClient(ENDPOINT_VERSION, requestId)
+        String jsonInput = new AAIQueryClient(ENDPOINT_VERSION)
                 .query(Format.RESOURCE, new CustomQuery(startNodes, PSERVER_VNF_QUERY));
 
         return this.getListOfPservers(jsonInput);
@@ -102,7 +100,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
     }
 
     protected List<Pserver> getListOfPservers(String jsonInput) throws IOException {
-        ObjectMapper mapper = new AAICommonObjectMapperProvider().getContext(Object.class);
+        ObjectMapper mapper = new AAICommonObjectMapperProvider().getMapper();
         Results<Map<String, Pserver>> resultsFromJson = mapper.readValue(jsonInput,
                 new TypeReference<Results<Map<String, Pserver>>>() {
                 });
@@ -122,8 +120,8 @@ public class AAIRestClientImpl implements AAIRestClientI {
             logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically");
             requestId = UUID.randomUUID();
         }
-        GenericVnfs genericVnfs = new AAIResourcesClient(ENDPOINT_VERSION, requestId).get(GenericVnfs.class,
-                AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName));
+        GenericVnfs genericVnfs = new AAIResourcesClient(ENDPOINT_VERSION).get(GenericVnfs.class,
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName)).orElse(null);
         if (genericVnfs.getGenericVnf().size() > 1) {
             throw new IndexOutOfBoundsException("Multiple Generic Vnfs Returned");
         }
@@ -144,7 +142,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
         }
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setInMaint(inMaint);
-        new AAIResourcesClient(ENDPOINT_VERSION, requestId)
+        new AAIResourcesClient(ENDPOINT_VERSION)
                 .update(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId), genericVnf);
 
     }
@@ -158,8 +156,8 @@ public class AAIRestClientImpl implements AAIRestClientI {
             logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically");
             requestId = UUID.randomUUID();
         }
-        return new AAIResourcesClient(ENDPOINT_VERSION, requestId)
-                .get(GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId));
+        return new AAIResourcesClient(ENDPOINT_VERSION)
+                .get(GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)).orElse(null);
     }
 
     @Override
@@ -171,7 +169,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
             logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically", e);
             requestId = UUID.randomUUID();
         }
-        Response response = new AAIResourcesClient(ENDPOINT_VERSION, requestId)
+        Response response = new AAIResourcesClient(ENDPOINT_VERSION)
                 .getFullResponse(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId));
         if (response.getStatus() != 200) {
             return Optional.empty();
@@ -189,7 +187,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
             logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically", e);
             requestId = UUID.randomUUID();
         }
-        new AAIResourcesClient(ENDPOINT_VERSION, requestId)
+        new AAIResourcesClient(ENDPOINT_VERSION)
                 .createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId), Optional.of(pnf));
     }
 }

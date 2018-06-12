@@ -31,40 +31,43 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.openecomp.mso.logger.MsoAlarmLogger;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoPropertiesException;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
+
 
 /**
  * This junit test very roughly the alarm logger
  *
  */
 public class MsoAlarmLoggerTest {
-
-	public static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+	
 	public static MsoAlarmLogger msoAlarmLogger;
 
 	@BeforeClass
-	public static final void createObjects() throws MsoPropertiesException
+	public static final void createObjects() throws IOException
 	{
 	
-		File outputFile = new File ("target/alarm-test.log");
+		File outputFile = new File ("./target/alarm-test.log");
 		if (outputFile.exists()) {
 			outputFile.delete();
+		} else {
+			outputFile.createNewFile();
 		}
-		msoAlarmLogger = new MsoAlarmLogger("target/alarm-test.log");
+		msoAlarmLogger = new MsoAlarmLogger("./target/alarm-test.log");
 	}
 
+	@AfterClass
+	public static void tearDown() {
+		msoAlarmLogger.resetAppender();
+	}
 	@Test
-	public void testAlarmConfig() throws MsoPropertiesException, IOException {
+	public void testAlarmConfig() throws IOException {
 
 		msoAlarmLogger.sendAlarm("test", 0, "detail message");
 
-		FileInputStream inputStream = new FileInputStream("target/alarm-test.log");
+		FileInputStream inputStream = new FileInputStream("./target/alarm-test.log");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
 		String line = reader.readLine();
@@ -80,7 +83,7 @@ public class MsoAlarmLoggerTest {
 		inputStream.close();
 
 		// Reset the file for others tests
-		PrintWriter writer = new PrintWriter(new File("target/alarm-test.log"));
+		PrintWriter writer = new PrintWriter(new File("./target/alarm-test.log"));
 		writer.print("");
 		writer.close();
 
@@ -93,7 +96,7 @@ public class MsoAlarmLoggerTest {
 		msoAlarmLogger.sendAlarm("test2", 1, "detail message2");
 		msoAlarmLogger.sendAlarm("test3", 2, "detail message3");
 
-		FileInputStream inputStream = new FileInputStream("target/alarm-test.log");
+		FileInputStream inputStream = new FileInputStream("./target/alarm-test.log");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
 		String line = reader.readLine();
@@ -123,7 +126,7 @@ public class MsoAlarmLoggerTest {
 		inputStream.close();
 
 		// Reset the file for others tests
-		PrintWriter writer = new PrintWriter(new File("target/alarm-test.log"));
+		PrintWriter writer = new PrintWriter(new File("./target/alarm-test.log"));
 		writer.print("");
 		writer.close();
 

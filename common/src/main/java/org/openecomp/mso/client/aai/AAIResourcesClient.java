@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,38 +20,33 @@
 
 package org.openecomp.mso.client.aai;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.core.GenericType;
-
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import org.onap.aai.domain.yang.Relationship;
+import org.openecomp.mso.client.RestClient;
 import org.openecomp.mso.client.aai.entities.AAIResultWrapper;
 import org.openecomp.mso.client.aai.entities.uri.AAIResourceUri;
 import org.openecomp.mso.client.aai.entities.uri.AAIUri;
 import org.openecomp.mso.client.aai.entities.uri.Depth;
-import org.openecomp.mso.client.policy.RestClient;
 
 public class AAIResourcesClient extends AAIClient {
 	
 	private final AAIVersion version;
 		
 	public AAIResourcesClient() {
-		super(UUID.randomUUID());
+		super();
 		this.version = super.getVersion();
 	}
 	
 	public AAIResourcesClient(AAIVersion version) {
-		super(UUID.randomUUID());
-		this.version = version;
-	}
-	
-	public AAIResourcesClient(AAIVersion version, UUID requestId) {
-		super(requestId);
+		super();
 		this.version = version;
 	}
 	
@@ -89,16 +84,8 @@ public class AAIResourcesClient extends AAIClient {
 	public boolean exists(AAIResourceUri uri) {
 		AAIUri forceMinimal = this.addParams(Optional.of(Depth.ZERO), true, uri);
 		RestClient aaiRC = this.createClient(forceMinimal);
-		try{
-			aaiRC.get();	
-		} catch(ResponseProcessingException e) {
-			if (e.getCause() instanceof NotFoundException) {
-				return false;
-			} else {
-				throw e;
-			}
-		}
-		return true;
+		
+		return aaiRC.get().getStatus() == Status.OK.getStatusCode();
 	}
 	
 	/**
@@ -137,7 +124,8 @@ public class AAIResourcesClient extends AAIClient {
 	public void delete(AAIResourceUri uri) {
 		AAIResourceUri clone = uri.clone();
 		RestClient aaiRC = this.createClient(clone);
-		Map<String, Object> result = aaiRC.get(new GenericType<Map<String, Object>>(){});
+		Map<String, Object> result = aaiRC.get(new GenericType<Map<String, Object>>(){})
+				.orElseThrow(() -> new NotFoundException(clone.build() + " does not exist in A&AI"));
 		String resourceVersion = (String) result.get("resource-version");
 		aaiRC = this.createClient(clone.resourceVersion(resourceVersion));
 		aaiRC.delete();
@@ -154,17 +142,17 @@ public class AAIResourcesClient extends AAIClient {
 		aaiRC.patch(obj);
 		return;
 	}
-
+	
 	/**
 	 * Retrieves an object from A&AI and unmarshalls it into the Class specified
 	 * @param clazz
 	 * @param uri
 	 * @return
 	 */
-	public <T> T get(Class<T> clazz, AAIResourceUri uri) {
+	public <T> Optional<T> get(Class<T> clazz, AAIResourceUri uri) {
 		return this.createClient(uri).get(clazz);
 	}
-
+	
 	/**
 	 * Retrieves an object from A&AI and returns complete response
 	 * @param uri
@@ -180,7 +168,7 @@ public class AAIResourcesClient extends AAIClient {
 	 * @param uri
 	 * @return
 	 */
-	public <T> T get(GenericType<T> resultClass, AAIResourceUri uri) {
+	public <T> Optional<T> get(GenericType<T> resultClass, AAIResourceUri uri) {
 		return this.createClient(uri).get(resultClass);
 	}
 	
@@ -191,11 +179,31 @@ public class AAIResourcesClient extends AAIClient {
 	 * @return
 	 */
 	public AAIResultWrapper get(AAIResourceUri uri) {
-		String json = this.createClient(uri).get(String.class);
-		
+		String json = this.createClient(uri).get(String.class).orElse(null);
 		return new AAIResultWrapper(json);
-
 	}
+	
+	/**
+	 * Retrieves an object from A&AI wrapped in a helper class which offer additional features
+	 * If the object cannot be found in A&AI the method will throw the runtime exception
+	 * included as an argument
+	 * @param uri
+	 * @return
+	 */
+	public AAIResultWrapper get(AAIResourceUri uri, Class<? extends RuntimeException> c) {
+		
+		RuntimeException e;
+		try {
+			e = c.getConstructor(String.class).newInstance(uri.build() + " not found in A&AI");
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e1) {
+			throw new IllegalArgumentException("could not create instance for " + c.getName());
+		}
+		String json = this.createClient(uri).get(String.class)
+				.orElseThrow(() -> e);
+		return new AAIResultWrapper(json);
+	}
+	
 	private Relationship buildRelationship(AAIResourceUri uri) {
 		final Relationship result = new Relationship();
 		result.setRelatedLink(uri.build().toString());
@@ -227,7 +235,7 @@ public class AAIResourcesClient extends AAIClient {
 	 * @return
 	 */
 	public AAITransactionalClient beginTransaction() {
-		return new AAITransactionalClient(this.version, this.requestId);
+		return new AAITransactionalClient(this.version);
 	}
 
 	@Override

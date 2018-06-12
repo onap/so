@@ -42,16 +42,16 @@ public class NotificationLogging implements InvocationHandler {
 	
 	private static Map<Object, List<Method>> objectMethodsToLog = new HashMap<>();
 
-	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC);
-
+	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC, NotificationLogging.class);
+	
 	private static InvocationHandler handler = (arg0, arg1, arg2) -> {
-		List<Method> methods = objectMethodsToLog.get(arg0);
-		if ((methods == null) || (methods.isEmpty())) {
-			// Do nothing for now...
-			return null;
-		}
-		methods.add(arg1);
-		return arg1.invoke(arg0, arg2);
+			List<Method> methods = objectMethodsToLog.get(arg0);
+			if ((methods == null) || (methods.isEmpty())) {
+				// Do nothing for now...
+				return null;
+			}
+			methods.add(arg1);
+			return arg1.invoke(arg0, arg2);
 	};
 	
 	public static InvocationHandler getHandler() {
@@ -158,7 +158,7 @@ public class NotificationLogging implements InvocationHandler {
 	private static <T> void methodToLog(T methodCall) {
 		//
 	}
-
+	
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {

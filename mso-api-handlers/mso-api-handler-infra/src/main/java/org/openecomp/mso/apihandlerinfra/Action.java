@@ -37,6 +37,10 @@ public enum Action {
 	removeRelationships,
 	inPlaceSoftwareUpdate,
 	applyUpdatedConfig,
+	completeTask,
+	assignInstance, 
+	unassignInstance,
 	compareModel,
-	scaleInstance
+	scaleInstance,
+	deactivateAndCloudDelete
 }

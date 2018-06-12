@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 
 package org.openecomp.mso.cloudify.utils;
 
@@ -43,7 +42,6 @@ import org.openecomp.mso.adapters.vdu.VduPlugin;
 import org.openecomp.mso.adapters.vdu.VduStateType;
 import org.openecomp.mso.adapters.vdu.VduStatus;
 import org.openecomp.mso.cloud.CloudConfig;
-import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.cloud.CloudifyManager;
 import org.openecomp.mso.cloudify.base.client.CloudifyBaseException;
@@ -78,6 +76,7 @@ import org.openecomp.mso.cloudify.v3.model.Execution;
 import org.openecomp.mso.cloudify.v3.model.Executions;
 import org.openecomp.mso.cloudify.v3.model.OpenstackConfig;
 import org.openecomp.mso.cloudify.v3.model.StartExecutionParams;
+import org.openecomp.mso.config.beans.PoConfig;
 import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
@@ -89,69 +88,45 @@ import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 import org.openecomp.mso.openstack.exceptions.MsoIOException;
 import org.openecomp.mso.openstack.exceptions.MsoOpenstackException;
 import org.openecomp.mso.openstack.utils.MsoCommonUtils;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoPropertiesException;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
+import org.openecomp.mso.utils.CryptoUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Component
 public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
-
-	private MsoPropertiesFactory msoPropertiesFactory;
-	private CloudConfigFactory cloudConfigFactory;
 	
     private static final String CLOUDIFY_ERROR = "CloudifyError";
-
+    private static final String CLOUDIFY = "Cloudify";
     private static final String CREATE_DEPLOYMENT = "CreateDeployment";
     private static final String DELETE_DEPLOYMENT = "DeleteDeployment";
+    private static final String TERMINATED = "terminated";
+    private static final String CANCELLED = "cancelled";
 
     // Fetch cloud configuration each time (may be cached in CloudConfig class)
+    @Autowired
     protected CloudConfig cloudConfig;
+    
+    @Autowired
+    private Environment environment;
+    
+    @Autowired
+    private PoConfig poConfig;
 
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-
-    protected MsoJavaProperties msoProps = null;
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoCloudifyUtils.class);
 
     // Properties names and variables (with default values)
-    protected String createPollIntervalProp = "ecomp.mso.adapters.heat.create.pollInterval";
-    private String deletePollIntervalProp = "ecomp.mso.adapters.heat.delete.pollInterval";
+    protected String createPollIntervalProp = "ecomp.mso.adapters.po.pollInterval";
+    private String deletePollIntervalProp = "ecomp.mso.adapters.po.pollInterval";
 
-    protected int createPollIntervalDefault = 15;
-    private int deletePollIntervalDefault = 15;
+    protected String createPollIntervalDefault = "15";
+    private String deletePollIntervalDefault = "15";
     
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-
-    /**
-     * This constructor MUST be used ONLY in the JUNIT tests, not for real code.
-     */
-    public MsoCloudifyUtils() {
-    	
-    }
-    /**
-     * This constructor MUST be used ONLY in the JUNIT tests, not for real code.
-     * The MsoPropertiesFactory will be added by EJB injection.
-     *
-     * @param msoPropID ID of the mso pro config as defined in web.xml
-     * @param msoPropFactory The mso properties factory instanciated by EJB injection
-     * @param cloudConfFactory the Cloud Config instantiated by EJB injection
-     */
-    public MsoCloudifyUtils (String msoPropID, MsoPropertiesFactory msoPropFactory, CloudConfigFactory cloudConfFactory) {
-    	msoPropertiesFactory = msoPropFactory;
-    	cloudConfigFactory = cloudConfFactory;
-    	// Dynamically get properties each time (in case reloaded).
-
-    	try {
-			msoProps = msoPropertiesFactory.getMsoJavaProperties (msoPropID);
-		} catch (MsoPropertiesException e) {
-			LOGGER.error (MessageEnum.LOAD_PROPERTIES_FAIL, "Unknown. Mso Properties ID not found in cache: " + msoPropID, "", "", MsoLogger.ErrorCode.DataError, "Exception - Mso Properties ID not found in cache", e);
-		}
-        cloudConfig = cloudConfigFactory.getCloudConfig ();
-        LOGGER.debug("MsoCloudifyUtils:" + msoPropID);
-        
-    }
-
 
     /**
      * Create a new Deployment from a specified blueprint, and install it in the specified
@@ -226,7 +201,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         // Build up the parameters to create a new deployment
     	CreateDeploymentParams deploymentParams = new CreateDeploymentParams();
     	deploymentParams.setBlueprintId(blueprintId);
-    	deploymentParams.setInputs((Map<String,Object>)expandedInputs);
+    	deploymentParams.setInputs(expandedInputs);
 
     	Deployment deployment = null;
     	try {
@@ -252,8 +227,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
             }
         } catch (CloudifyConnectException e) {
             // Error connecting to Cloudify instance. Convert to an MsoException
-            MsoException me = cloudifyExceptionToMsoException (e, CREATE_DEPLOYMENT);
-            throw me;
+            throw cloudifyExceptionToMsoException (e, CREATE_DEPLOYMENT);
         } catch (RuntimeException e) {
             // Catch-all
             throw runtimeExceptionToMsoException (e, CREATE_DEPLOYMENT);
@@ -264,15 +238,13 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	 * on the deployment.  Sleep 30 seconds based on observation of behavior
     	 * in a Cloudify VM instance (delay due to "create_deployment_environment").
     	 */
-    	try {
-    		Thread.sleep(30000);
-    	} catch (InterruptedException e) {}
+    	sleep(30000);
     	
     	/*
     	 * Next execute the "install" workflow.
     	 * Note - this assumes there are no additional parameters required for the workflow.
     	 */
-        int createPollInterval = msoProps.getIntProperty (createPollIntervalProp, createPollIntervalDefault);
+        int createPollInterval = Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
         int pollTimeout = (timeoutMinutes * 60) + createPollInterval;
         
         Execution installWorkflow = null;
@@ -280,12 +252,11 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         try {
         	installWorkflow = executeWorkflow (cloudify, deploymentId, "install", null, pollForCompletion, pollTimeout, createPollInterval);
 
-        	if (installWorkflow.getStatus().equals("terminated")) {
+        	if (installWorkflow.getStatus().equals(TERMINATED)) {
 	        	//  Success!
 	        	//  Create and return a DeploymentInfo structure.  Include the Runtime outputs
                 DeploymentOutputs outputs = getDeploymentOutputs (cloudify, deploymentId);
-	        	DeploymentInfo deploymentInfo = new DeploymentInfo (deployment, outputs, installWorkflow);
-	        	return deploymentInfo;
+	        	return new DeploymentInfo (deployment, outputs, installWorkflow);
 	        }
         	else {
         		// The workflow completed with errors.  Must try to back it out.
@@ -302,7 +273,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	            	// Run the uninstall to undo the install
     	            	Execution uninstallWorkflow = executeWorkflow (cloudify, deploymentId, "uninstall", null, pollForCompletion, deletePollTimeout, deletePollInterval);
     	        	
-    	            	if (uninstallWorkflow.getStatus().equals("terminated"))
+    	            	if (uninstallWorkflow.getStatus().equals(TERMINATED))
     	            	{
     	            		//  The uninstall completed.  Delete the deployment itself
     	            		DeleteDeployment deleteRequest = cloudify.deployments().deleteByName(deploymentId);
@@ -376,7 +347,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     		GetDeploymentOutputs queryDeploymentOutputs = cloudify.deployments().outputsById(deploymentId);
     		LOGGER.debug (queryDeploymentOutputs.toString());
     		
-    		deploymentOutputs = executeAndRecordCloudifyRequest(queryDeploymentOutputs, msoProps);
+    		deploymentOutputs = executeAndRecordCloudifyRequest(queryDeploymentOutputs);
     	}
     	catch (CloudifyConnectException ce) {
     		// Couldn't connect to Cloudify
@@ -440,7 +411,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 			GetExecution queryExecution = cloudify.executions().byId(executionId);
 			command = "query";
 			
-			while (!timedOut && !(status.equals("terminated") || status.equals("failed") || status.equals("cancelled")))
+			while (!timedOut && !(status.equals(TERMINATED) || status.equals("failed") || status.equals(CANCELLED)))
 			{
 				// workflow is still running; check for timeout
 				if (pollTimeout <= 0) {
@@ -449,9 +420,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 					continue;
 				}
 				
-				try {
-					Thread.sleep (pollInterval * 1000L);
-				} catch (InterruptedException e) {}
+				sleep(pollInterval * 1000L);
 
 				pollTimeout -= pollInterval;
 				LOGGER.debug("pollTimeout remaining: " + pollTimeout);
@@ -461,7 +430,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 			}
 
 			// Broke the loop.  Check again for a terminal state
-			if (status.equals("terminated")){
+			if (status.equals(TERMINATED)){
 				// Success!
 	    		LOGGER.debug ("Workflow '" + workflowId + "' completed successfully on deployment '" + deploymentId + "'");
 				return execution;
@@ -471,7 +440,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 	    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Cloudify workflow failure: " + execution.getError(), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow: Failed: " + execution.getError());
 	    		return execution;
 			}
-			else if (status.equals("cancelled")){
+			else if (status.equals(CANCELLED)){
 				// Workflow was cancelled, leaving the deployment in an indeterminate state.  Log it and return the execution object (don't throw exception here)
 	    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Cloudify workflow cancelled.  Deployment is in an indeterminate state", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow cancelled: " + workflowId);
 	    		return execution;
@@ -518,7 +487,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 			// Poll for completion.  Create a reusable cloudify query request
 			GetExecution queryExecution = cloudify.executions().byId(executionId);
 			
-			while (!timedOut && !status.equals("cancelled"))
+			while (!timedOut && !status.equals(CANCELLED))
 			{
 				// workflow is still running; check for timeout
 				if (cancelTimeout <= 0) {
@@ -527,9 +496,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 					continue;
 				}
 				
-				try {
-					Thread.sleep (pollInterval * 1000L);
-				} catch (InterruptedException e) {}
+				sleep(pollInterval * 1000L);
 
 				cancelTimeout -= pollInterval;
 				LOGGER.debug("pollTimeout remaining: " + cancelTimeout);
@@ -539,7 +506,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 			}
 
 			// Broke the loop.  Check again for a terminal state
-			if (status.equals("cancelled")){
+			if (status.equals(CANCELLED)){
 				// Finished cancelling.  Return the original exception
 				LOGGER.debug ("Cancel workflow " + workflowId + " completed on deployment " + deploymentId);                    
 				throw new MsoCloudifyException (-1, "", "", savedException);
@@ -596,7 +563,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     		LOGGER.debug (queryDeployment.toString());
     		
 //    		deployment = queryDeployment.execute();
-    		deployment = executeAndRecordCloudifyRequest(queryDeployment, msoProps);
+    		deployment = executeAndRecordCloudifyRequest(queryDeployment);
 
             outputs = getDeploymentOutputs (cloudify, deploymentId);
 
@@ -694,8 +661,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
             }
         } catch (CloudifyConnectException e) {
             // Error connecting to Cloudify instance. Convert to an MsoException
-        	MsoException me = cloudifyExceptionToMsoException (e, DELETE_DEPLOYMENT);
-            throw me;
+        	throw cloudifyExceptionToMsoException (e, DELETE_DEPLOYMENT);
         } catch (RuntimeException e) {
             // Catch-all
             throw runtimeExceptionToMsoException (e, DELETE_DEPLOYMENT);
@@ -711,7 +677,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	 * Note - this assumes there are no additional parameters required for the workflow.
     	 */
     	// TODO: No deletePollInterval that I'm aware of.  Use the create interval
-        int deletePollInterval = msoProps.getIntProperty (deletePollIntervalProp, deletePollIntervalDefault);
+        int deletePollInterval = Integer.parseInt(this.environment.getProperty (deletePollIntervalProp, deletePollIntervalDefault));
         int pollTimeout = (timeoutMinutes * 60) + deletePollInterval;
         
         Execution uninstallWorkflow = null;
@@ -719,7 +685,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         try {
         	uninstallWorkflow = executeWorkflow (cloudify, deploymentId, "uninstall", null, true, pollTimeout, deletePollInterval);
 
-        	if (uninstallWorkflow.getStatus().equals("terminated")) {
+        	if (uninstallWorkflow.getStatus().equals(TERMINATED)) {
 	        	//  Successful uninstall.
         		LOGGER.debug("Uninstall successful for deployment " + deploymentId);
 	        }
@@ -896,30 +862,22 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 		LOGGER.debug ("Blueprint zip file size: " + zipBuffer.size());
 		
 		// Ready to upload the blueprint zip
-    	InputStream blueprintStream = new ByteArrayInputStream (zipBuffer.toByteArray());
-    	try {
+    	
+    	try (InputStream blueprintStream = new ByteArrayInputStream (zipBuffer.toByteArray())) {
     		UploadBlueprint uploadRequest = cloudify.blueprints().uploadFromStream(blueprintId,  mainFileName,  blueprintStream);
     		Blueprint blueprint = uploadRequest.execute();
     		System.out.println("Successfully uploaded blueprint " + blueprint.getId());
     	}
-    	catch (CloudifyResponseException e) {
-    		MsoException me = cloudifyExceptionToMsoException (e, "UPLOAD_BLUEPRINT");
-    		throw me;
-    	}
-    	catch (CloudifyConnectException e) {
-    		MsoException me = cloudifyExceptionToMsoException (e, "UPLOAD_BLUEPRINT");
-    		throw me;
+    	catch (CloudifyResponseException | CloudifyConnectException e) {
+    		throw cloudifyExceptionToMsoException (e, "UPLOAD_BLUEPRINT");
     	}
     	catch (RuntimeException e) {
     		// Catch-all
-    		MsoException me = runtimeExceptionToMsoException (e, "UPLOAD_BLUEPRINT");
-    		throw me;
-    	}
-    	finally {
-    		try {
-    			blueprintStream.close();
-    		} catch (IOException e) {}
-    	}
+    		throw runtimeExceptionToMsoException (e, "UPLOAD_BLUEPRINT");
+    	} catch (IOException e) {
+    		// for try-with-resources
+			throw ioExceptionToMsoException(e, "UPLOAD_BLUEPRINT");
+		}
 
     	return true;
     }
@@ -938,16 +896,16 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
      */
     public Cloudify getCloudifyClient (CloudSite cloudSite) throws MsoException
     {
-        CloudifyManager cloudifyConfig = cloudSite.getCloudifyManager();
+        CloudifyManager cloudifyConfig = cloudConfig.getCloudifyManager(cloudSite.getCloudifyId());
         if (cloudifyConfig == null) {
-        	throw new MsoCloudifyManagerNotFound (cloudSite.getId());
+        	throw new MsoCloudifyManagerNotFound (cloudConfig.getCloudSiteId(cloudSite));
         }
 
         // Get a Cloudify client
     	// Set a Token Provider to fetch tokens from Cloudify itself.
         String cloudifyUrl = cloudifyConfig.getCloudifyUrl();
         Cloudify cloudify = new Cloudify (cloudifyUrl);
-    	cloudify.setTokenProvider(new CloudifyClientTokenProvider(cloudifyUrl, cloudifyConfig.getUsername(), cloudifyConfig.getPassword()));
+    	cloudify.setTokenProvider(new CloudifyClientTokenProvider(cloudifyUrl, cloudifyConfig.getUsername(), CryptoUtils.decryptCloudConfigPassword(cloudifyConfig.getPassword())));
 
     	return cloudify;
     }
@@ -974,7 +932,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         }
         try {
             GetDeployment request = cloudify.deployments().byId (deploymentId);
-            return executeAndRecordCloudifyRequest (request, msoProps);
+            return executeAndRecordCloudifyRequest (request);
         } catch (CloudifyResponseException e) {
             if (e.getStatus () == 404) {
                 LOGGER.debug ("queryDeployment - not found: " + deploymentId);
@@ -994,38 +952,34 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 			Map<String, Object> otherStackOutputs, boolean overWrite) {
 		if (inputs == null || otherStackOutputs == null)
 			return;
-		for (String key : otherStackOutputs.keySet()) {
-			if (!inputs.containsKey(key)) {
-				Object obj = otherStackOutputs.get(key);
-				if (obj instanceof String) {
-					inputs.put(key, (String) otherStackOutputs.get(key));
-				} else if (obj instanceof JsonNode ){
-					// This is a bit of mess - but I think it's the least impacting
-					// let's convert it BACK to a string - then it will get converted back later
-					try {
-						String str = this.convertNode((JsonNode) obj);
-						inputs.put(key, str);
-					} catch (Exception e) {
-						LOGGER.debug("WARNING: unable to convert JsonNode output value for "+ key);
-						//effect here is this value will not have been copied to the inputs - and therefore will error out downstream
-					}
-				} else if (obj instanceof java.util.LinkedHashMap) {
-					LOGGER.debug("LinkedHashMap - this is showing up as a LinkedHashMap instead of JsonNode");
-					try {
-						String str = JSON_MAPPER.writeValueAsString(obj);
-						inputs.put(key, str);
-					} catch (Exception e) {
-						LOGGER.debug("WARNING: unable to convert LinkedHashMap output value for "+ key);
-					}
-				} else {
-					// just try to cast it - could be an integer or some such
-					try {
-						String str = (String) obj;
-						inputs.put(key, str);
-					} catch (Exception e) {
-						LOGGER.debug("WARNING: unable to convert output value for "+ key);
-						//effect here is this value will not have been copied to the inputs - and therefore will error out downstream
-					}
+		
+		for (Map.Entry<String, Object> entry : otherStackOutputs.entrySet()) {
+			String key = entry.getKey();
+			Object value = entry.getValue();
+			
+			if (value instanceof JsonNode) {
+				// This is a bit of mess - but I think it's the least impacting
+				// let's convert it BACK to a string - then it will get converted back later
+				try {
+					inputs.put(key, this.convertNode((JsonNode) value));
+				} catch (Exception e) {
+					LOGGER.debug("WARNING: unable to convert JsonNode output value for "+ key);
+					//effect here is this value will not have been copied to the inputs - and therefore will error out downstream
+				}
+			} else if (value instanceof java.util.LinkedHashMap) {
+				LOGGER.debug("LinkedHashMap - this is showing up as a LinkedHashMap instead of JsonNode");
+				try {
+					inputs.put(key, JSON_MAPPER.writeValueAsString(value));
+				} catch (Exception e) {
+					LOGGER.debug("WARNING: unable to convert LinkedHashMap output value for "+ key);
+				}
+			} else {
+				// just try to cast it - could be an integer or some such
+				try {
+					inputs.put(key, (String) value);
+				} catch (Exception e) {
+					LOGGER.debug("WARNING: unable to convert output value for "+ key);
+					//effect here is this value will not have been copied to the inputs - and therefore will error out downstream
 				}
 			}
 		}
@@ -1051,8 +1005,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 			}
 		} else if (type.equalsIgnoreCase("json")) {
 			try {
-				JsonNode jsonNode = new ObjectMapper().readTree(inputValue);
-				return jsonNode;
+				return new ObjectMapper().readTree(inputValue);
 			}
 			catch (Exception e) {
 				LOGGER.debug("Unable to convert " + inputValue + " to a JsonNode!");
@@ -1070,8 +1023,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 	private String convertNode(final JsonNode node) {
 		try {
 			final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
-			final String json = JSON_MAPPER.writeValueAsString(obj);
-			return json;
+			return JSON_MAPPER.writeValueAsString(obj);
 		} catch (JsonParseException jpe) {
 			LOGGER.debug("Error converting json to string " + jpe.getMessage());
 		} catch (Exception e) {
@@ -1088,28 +1040,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
      * cloudify-client classname of the CloudifyRequest<T> parameter).
      */
     
-    protected static <T> T executeAndRecordCloudifyRequest (CloudifyRequest <T> request)
-    {
-    	return executeAndRecordCloudifyRequest (request, null);
-    }
-    protected static <T> T executeAndRecordCloudifyRequest (CloudifyRequest <T> request, MsoJavaProperties msoProps) {
-    	
-    	int limit;
-        // Get the name and method name of the parent class, which triggered this method
-        StackTraceElement[] classArr = new Exception ().getStackTrace ();
-        if (classArr.length >=2) {
-        	limit = 3;
-        } else {
-        	limit = classArr.length;
-        }
-    	String parentServiceMethodName = classArr[0].getClassName () + "." + classArr[0].getMethodName ();
-    	for (int i = 1; i < limit; i++) {
-            String className = classArr[i].getClassName ();
-            if (!className.equals (MsoCommonUtils.class.getName ())) {
-            	parentServiceMethodName = className + "." + classArr[i].getMethodName ();
-            	break;
-            }
-        }
+
+    protected <T> T executeAndRecordCloudifyRequest (CloudifyRequest <T> request) {
 
     	String requestType;
         if (request.getClass ().getEnclosingClass () != null) {
@@ -1119,15 +1051,9 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
             requestType = request.getClass ().getSimpleName ();
         }
         
-        int retryDelay = retryDelayDefault;
-        int retryCount = retryCountDefault;
-        String retryCodes  = retryCodesDefault;
-        if (msoProps != null) //extra check to avoid NPE
-        {
-        	retryDelay = msoProps.getIntProperty (retryDelayProp, retryDelayDefault);
-        	retryCount = msoProps.getIntProperty (retryCountProp, retryCountDefault);
-        	retryCodes = msoProps.getProperty (retryCodesProp, retryCodesDefault);
-        }
+        int retryDelay = poConfig.getRetryDelay();
+        int retryCount = poConfig.getRetryCount();
+        String retryCodes  = poConfig.getRetryCodes();
     	
         // Run the actual command. All exceptions will be propagated
         while (true)
@@ -1146,7 +1072,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         					{
         						retryCount--;
         						retry = true;
-        						LOGGER.debug ("CloudifyResponseException ResponseCode:" + code +  " at:" + parentServiceMethodName + " request:" + requestType +  " Retry indicated. Attempts remaining:" + retryCount);
+        						LOGGER.debug ("CloudifyResponseException ResponseCode:" + code +  " request:" + requestType +  " Retry indicated. Attempts remaining:" + retryCount);
         						break;
         					}
         				} catch (NumberFormatException e1) {
@@ -1157,11 +1083,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         		}
         		if (retry)
     			{
-    				try {
-    					Thread.sleep (retryDelay * 1000L);
-    				} catch (InterruptedException e1) {
-    					LOGGER.debug ("Thread interrupted while sleeping", e1);
-    				}
+    				sleep(retryDelay * 1000L);
     			}
         		else
         			throw e; // exceeded retryCount or code is not retryable
@@ -1171,12 +1093,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         		if (retryCount > 0)
         		{
         			retryCount--;
-        			LOGGER.debug ("CloudifyConnectException at:" + parentServiceMethodName + " request:" + requestType + " Retry indicated. Attempts remaining:" + retryCount);
-        			try {
-        				Thread.sleep (retryDelay * 1000L);
-        			} catch (InterruptedException e1) {
-        				LOGGER.debug ("Thread interrupted while sleeping", e1);
-        			}
+        			LOGGER.debug (" request:" + requestType + " Retry indicated. Attempts remaining:" + retryCount);
+        			sleep(retryDelay * 1000L);
         		}
         		else
         			throw e;
@@ -1197,7 +1115,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
             try {
                 // Failed Cloudify calls return an error entity body.
                 CloudifyError error = re.getResponse ().getErrorEntity (CloudifyError.class);
-                LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "Cloudify", "Cloudify Error on " + context + ": " + error.getErrorCode(), "Cloudify", "", MsoLogger.ErrorCode.DataError, "Exception - Cloudify Error on " + context);
+                LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, CLOUDIFY, "Cloudify Error on " + context + ": " + error.getErrorCode(), CLOUDIFY, "", MsoLogger.ErrorCode.DataError, "Exception - Cloudify Error on " + context);
                 String fullError = error.getErrorCode() + ": " + error.getMessage();
                 LOGGER.debug(fullError);
 				me = new MsoCloudifyException (re.getStatus(),
@@ -1205,7 +1123,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
                                                 fullError);
             } catch (Exception e2) {
                 // Couldn't parse the body as a "CloudifyError". Report the original HTTP error.
-            	LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "Cloudify", "HTTP Error on " + context + ": " + re.getStatus() + "," + e.getMessage(), "Cloudify", "", MsoLogger.ErrorCode.DataError, "Exception - HTTP Error on " + context, e2);
+            	LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, CLOUDIFY, "HTTP Error on " + context + ": " + re.getStatus() + "," + e.getMessage(), CLOUDIFY, "", MsoLogger.ErrorCode.DataError, "Exception - HTTP Error on " + context, e2);
 				me = new MsoCloudifyException (re.getStatus (), re.getMessage (), "");
             }
 
@@ -1214,7 +1132,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 
             // Generate an alarm for 5XX and higher errors.
             if (re.getStatus () >= 500) {
-                alarmLogger.sendAlarm ("CloudifyError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+                alarmLogger.sendAlarm (CLOUDIFY_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage ());
             }
         } else if (e instanceof CloudifyConnectException) {
         	CloudifyConnectException ce = (CloudifyConnectException) e;
@@ -1224,7 +1142,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 
             // Generate an alarm for all connection errors.
             alarmLogger.sendAlarm ("CloudifyIOError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
-            LOGGER.error(MessageEnum.RA_CONNECTION_EXCEPTION, "Cloudify", "Cloudify connection error on " + context + ": " + e, "Cloudify", "", MsoLogger.ErrorCode.DataError, "Cloudify connection error on " + context);
+            LOGGER.error(MessageEnum.RA_CONNECTION_EXCEPTION, CLOUDIFY, "Cloudify connection error on " + context + ": " + e, CLOUDIFY, "", MsoLogger.ErrorCode.DataError, "Cloudify connection error on " + context);
     	}
 
         return me;
@@ -1249,7 +1167,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
      * The basic MsoCloudifyUtils separates blueprint management from deploument actions,
      * but the VduPlugin does not declare blueprint management operations.
      */
-    public VduInstance instantiateVdu (
+    @Override
+	public VduInstance instantiateVdu (
 			CloudInfo cloudInfo,
 			String instanceName,
 			Map<String,Object> inputs,
@@ -1317,9 +1236,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
                     vduModel.getTimeoutMinutes(),
                     rollbackOnFailure);
     		
-        	VduInstance vduInstance = deploymentInfoToVduInstance(deployment);
-        	
-        	return vduInstance;
+        	return deploymentInfoToVduInstance(deployment);
     	}
     	catch (Exception e) {
     		throw new VduException ("CloudifyUtils (instantiateVDU): Create-and-install-deployment Exception", e);
@@ -1330,7 +1247,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     /**
      * VduPlugin interface for query function.
      */
-    public VduInstance queryVdu (CloudInfo cloudInfo, String instanceId)
+    @Override
+	public VduInstance queryVdu (CloudInfo cloudInfo, String instanceId)
     	throws VduException
     {
     	String cloudSiteId = cloudInfo.getCloudSiteId();
@@ -1340,9 +1258,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     		// Query the Cloudify Deployment object and  populate a VduInstance
     		DeploymentInfo deployment = queryDeployment (cloudSiteId, tenantId, instanceId);
     		
-        	VduInstance vduInstance = deploymentInfoToVduInstance(deployment);
-        	
-        	return vduInstance;
+        	return deploymentInfoToVduInstance(deployment);
     	}
     	catch (Exception e) {
     		throw new VduException ("Query VDU Exception", e);
@@ -1353,7 +1269,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     /**
      * VduPlugin interface for delete function.
      */
-    public VduInstance deleteVdu (CloudInfo cloudInfo, String instanceId, int timeoutMinutes)
+    @Override
+	public VduInstance deleteVdu (CloudInfo cloudInfo, String instanceId, int timeoutMinutes)
     	throws VduException
     {
     	String cloudSiteId = cloudInfo.getCloudSiteId();
@@ -1364,9 +1281,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     		DeploymentInfo deployment = uninstallAndDeleteDeployment (cloudSiteId, tenantId, instanceId, timeoutMinutes);
     		
     		// Populate a VduInstance based on the deleted Cloudify Deployment object
-        	VduInstance vduInstance = deploymentInfoToVduInstance(deployment);
-        	
-        	return vduInstance;
+        	return deploymentInfoToVduInstance(deployment);
     	}
     	catch (Exception e) {
     		throw new VduException ("Delete VDU Exception", e);
@@ -1381,7 +1296,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
      * Just return a VduException.
      * 
      */
-    public VduInstance updateVdu (
+    @Override
+	public VduInstance updateVdu (
 			CloudInfo cloudInfo,
 			String instanceId,
 			Map<String,Object> inputs,
@@ -1460,9 +1376,9 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     protected OpenstackConfig getOpenstackConfig (CloudSite cloudSite, String tenantId) {
         OpenstackConfig openstackConfig = new OpenstackConfig();
         openstackConfig.setRegion (cloudSite.getRegionId());
-        openstackConfig.setAuthUrl (cloudSite.getIdentityService().getIdentityUrl());
-        openstackConfig.setUsername (cloudSite.getIdentityService().getMsoId());
-        openstackConfig.setPassword (cloudSite.getIdentityService().getMsoPass());
+        openstackConfig.setAuthUrl (cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getIdentityUrl());
+        openstackConfig.setUsername (cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getMsoId());
+        openstackConfig.setPassword (CryptoUtils.decryptCloudConfigPassword(cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getMsoPass()));
         openstackConfig.setTenantName (tenantId);
         return openstackConfig;
     }
@@ -1479,5 +1395,14 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         azureConfig.setClientId (cloudSite.getIdentityService().getMsoId());
         azureConfig.setClientSecret (cloudSite.getIdentityService().getMsoPass());
         return azureConfig;
+    }
+    
+    private void sleep(long time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			LOGGER.debug("Thread interrupted while sleeping!", e);
+			Thread.currentThread().interrupt();
+		}
     }
 }

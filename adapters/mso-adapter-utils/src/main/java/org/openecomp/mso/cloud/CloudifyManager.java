@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,12 +21,18 @@
 package org.openecomp.mso.cloud;
 
 import java.security.GeneralSecurityException;
+import java.util.Comparator;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.openecomp.mso.utils.CryptoUtils;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.utils.CryptoUtils;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.openpojo.business.annotation.BusinessKey;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 /**
  * JavaBean JSON class for a Cloudify Manager.  This bean represents a Cloudify
@@ -44,20 +50,27 @@ import org.openecomp.mso.logger.MsoLogger;
  */
 public class CloudifyManager {
 	
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, CloudifyManager.class);
 
+	@BusinessKey
 	@JsonProperty
 	private String id;
+	
+	@BusinessKey
 	@JsonProperty ("cloudify_url")
 	private String cloudifyUrl;
+	
+	@BusinessKey
 	@JsonProperty("username")
 	private String username;
+	
+	@BusinessKey
 	@JsonProperty("password")
 	private String password;
+	
+	@BusinessKey
 	@JsonProperty("version")
 	private String version;
-
-    private static String cloudKey = "aa3871669d893c7fb8abbcda31b88b4f";
 
 	public CloudifyManager() {}
 	
@@ -85,12 +98,7 @@ public class CloudifyManager {
 	}
 
 	public String getPassword() {
-        try {
-            return CryptoUtils.decrypt (password, cloudKey);
-        } catch (GeneralSecurityException e) {
-            LOGGER.error (MessageEnum.RA_GENERAL_EXCEPTION, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in getMsoPass", e);
-            return null;
-        }
+        return password;
 	}
 
 	public void setPassword(String password) {
@@ -105,16 +113,6 @@ public class CloudifyManager {
 		this.version = version;
 	}
 
-
-	@Override
-	public String toString() {
-		return "CloudifyManager: id=" + id +
-			", cloudifyUrl=" + cloudifyUrl +
-			", username=" + username +
-			", password=" + password +
-			", version=" + version;
-	}
-
 	@Override
 	public CloudifyManager clone() {
 		CloudifyManager cloudifyManagerCopy = new CloudifyManager();
@@ -127,43 +125,29 @@ public class CloudifyManager {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((cloudifyUrl == null) ? 0 : cloudifyUrl.hashCode());
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((version == null) ? 0 : version.hashCode());
-		return result;
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
+				.append("cloudifyUrl", getCloudifyUrl()).append("username", getUsername())
+				.append("password", getPassword()).append("version", getVersion()).toString();
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
+	public boolean equals(final Object other) {
+		if (other == null) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CloudifyManager other = (CloudifyManager) obj;
-		if (!cmp(id, other.id))
-			return false;
-		if (!cmp(cloudifyUrl, other.cloudifyUrl))
-			return false;
-		if (!cmp(username, other.username))
-			return false;
-		if (!cmp(version, other.version))
-			return false;
-		if (!cmp(password, other.password))
-			return false;
-		return true;
-	}
-	private boolean cmp(Object a, Object b) {
-		if (a == null) {
-			return (b == null);
-		} else {
-			return a.equals(b);
 		}
+		if (!getClass().equals(other.getClass())) {
+			return false;
+		}
+		CloudifyManager castOther = (CloudifyManager) other;
+		return new EqualsBuilder().append(getId(), castOther.getId())
+				.append(getCloudifyUrl(), castOther.getCloudifyUrl()).append(getUsername(), castOther.getUsername())
+				.append(getPassword(), castOther.getPassword()).append(getVersion(), castOther.getVersion()).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(1, 31).append(getId()).append(getCloudifyUrl()).append(getUsername())
+				.append(getPassword()).append(getVersion()).toHashCode();
 	}
 }

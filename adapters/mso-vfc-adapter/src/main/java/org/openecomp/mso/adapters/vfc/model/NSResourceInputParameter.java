@@ -18,6 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.vfc.model;
 
 import java.io.ByteArrayOutputStream;
@@ -25,9 +26,10 @@ import java.io.ByteArrayOutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.openecomp.mso.logger.MsoLogger;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.openecomp.mso.logger.MsoLogger;
 
 /**
  * NS Create Input Parameter For VFC Adapter<br>
@@ -38,7 +40,7 @@ import org.openecomp.mso.logger.MsoLogger;
  */
 public class NSResourceInputParameter {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, NSResourceInputParameter.class);
     
     private NsOperationKey nsOperationKey;
 
@@ -52,7 +54,7 @@ public class NSResourceInputParameter {
 
     private NsScaleParameters nsScaleParameters;
 
-
+    
     /**
      * @return Returns the nsServiceName.
      */

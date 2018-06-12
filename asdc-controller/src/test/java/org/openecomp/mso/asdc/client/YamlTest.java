@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-
-import org.openecomp.mso.asdc.installer.heat.VfResourceInstaller;
 import org.openecomp.mso.asdc.util.YamlEditor;
 import org.openecomp.mso.db.catalog.beans.HeatTemplateParam;
 
@@ -151,15 +149,5 @@ public class YamlTest {
 		    	
 		    	assertTrue(check1);
 		    	assertTrue(check2);
-	}
-	
-	@Test
-	public void VfResourceInstallerTest() throws Exception {
-		
-		assertTrue("mon ami toto, est dans le bois: toto ici".equals(VfResourceInstaller.verifyTheFilePrefixInString("mon ami toto, est dans le bois: toto ici","toto")));
-		assertTrue("mon ami toto, est dans le bois: toto ici".equals(VfResourceInstaller.verifyTheFilePrefixInString("mon ami file:///toto, est dans le bois: file:///toto ici","toto")));
-		assertTrue("mon ami toto, est dans le bois: toto ici".equals(VfResourceInstaller.verifyTheFilePrefixInString("mon ami file:///toto, est dans le bois: toto ici","toto")));
-		assertTrue("mon ami toto, est dans le bois: toto ici".equals(VfResourceInstaller.verifyTheFilePrefixInString("mon ami toto, est dans le bois: file:///toto ici","toto")));
-		
 	}
 }

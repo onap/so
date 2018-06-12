@@ -47,7 +47,7 @@ vnfAdapterRestV1.vnfAdapterWorkflowException(execution, res)]]></bpmn2:script>
     <bpmn2:boundaryEvent id="BoundaryEvent_1" name="Timeout" attachedToRef="waitForAsyncMessage">
       <bpmn2:outgoing>SequenceFlow_27</bpmn2:outgoing>
       <bpmn2:timerEventDefinition id="TimerEventDefinition_1">
-        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression">${URN_mso_po_timeout}</bpmn2:timeDuration>
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression"><![CDATA[${UrnPropertiesReader.getVariable("mso.po.timeout", execution)}]]></bpmn2:timeDuration>
       </bpmn2:timerEventDefinition>
     </bpmn2:boundaryEvent>
     <bpmn2:subProcess id="waitForAsyncMessage" name="Wait for Callback">

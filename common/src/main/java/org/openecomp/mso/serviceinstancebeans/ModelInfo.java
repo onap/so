@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,6 +46,8 @@ public class ModelInfo implements Serializable {
     protected String modelInvariantId;
 	@JsonProperty("modelType")
 	protected ModelType modelType;
+	@JsonProperty("modelId")
+	protected String modelId;
 	//v2
 	@JsonProperty("modelNameVersionId")
     protected String modelNameVersionId;
@@ -60,6 +62,7 @@ public class ModelInfo implements Serializable {
     protected String modelVersionId;
 	@JsonProperty("modelCustomizationId")
     protected String modelCustomizationId;
+	
     //Decomposition fields
 	@JsonProperty("modelUuid")
     protected String modelUuid;
@@ -72,6 +75,7 @@ public class ModelInfo implements Serializable {
 		return modelCustomizationName;
 	}
 	public void setModelCustomizationName(String modelCustomizationName) {
+		modelInstanceName = modelCustomizationName;
 		this.modelCustomizationName = modelCustomizationName;
 	}
 	public String getModelNameVersionId() {
@@ -102,6 +106,7 @@ public class ModelInfo implements Serializable {
 		return modelInvariantId;
 	}
 	public void setModelInvariantId(String modelInvariantId) {
+		this.modelInvariantUuid = modelInvariantId;
 		this.modelInvariantId = modelInvariantId;
 	}
 	public String getModelCustomizationUuid() {
@@ -114,19 +119,29 @@ public class ModelInfo implements Serializable {
 		return modelVersionId;
 	}
 	public void setModelVersionId(String modelVersionId) {
+		this.modelUuid=modelVersionId;
 		this.modelVersionId = modelVersionId;
 	}
 	public String getModelCustomizationId() {
 		return modelCustomizationId;
 	}
 	public void setModelCustomizationId(String modelCustomizationId) {
+		this.modelCustomizationUuid = modelCustomizationId;
 		this.modelCustomizationId = modelCustomizationId;
 	}
     public String getModelUuid() {
 		return modelUuid;
 	}
+    public String getModelId() {
+    	return modelId;
+    }
 	public void setModelUuid(String modelUuid) {
+		this.modelId = modelUuid;
 		this.modelUuid = modelUuid;
+		
+	}
+	public void setModelId(String modelId) {
+		this.modelId = modelId;
 	}
 	public String getModelInvariantUuid() {
 		return modelInvariantUuid;

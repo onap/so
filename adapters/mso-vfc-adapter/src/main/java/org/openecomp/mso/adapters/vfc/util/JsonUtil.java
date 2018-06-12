@@ -45,7 +45,7 @@ public class JsonUtil {
   /**
    * Log service
    */
-  private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+  private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, JsonUtil.class);
 
   /**
    * Mapper.

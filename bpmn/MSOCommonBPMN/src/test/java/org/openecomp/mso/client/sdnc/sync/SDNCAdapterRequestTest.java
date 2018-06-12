@@ -22,6 +22,8 @@ package org.openecomp.mso.client.sdnc.sync;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.openecomp.mso.bpmn.common.adapter.sdnc.RequestHeader;
+import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterRequest;
 
 public class SDNCAdapterRequestTest {
 	

@@ -23,11 +23,18 @@ package org.openecomp.mso.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 
 public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, UpdateAAIGenericVnf.class);
+
 
 	private XmlParser xmlParser = new XmlParser()
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -60,13 +67,12 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		try {
 			def xml = execution.getVariable('UpdateAAIGenericVnfRequest')
-			logDebug('Received request xml:\n' + xml, isDebugLogEnabled)
-			utils.logAudit("UpdateAAIGenericVnf Request XML: " + xml)
+			msoLogger.debug('Received request xml:\n' + xml)
+			msoLogger.debug("UpdateAAIGenericVnf Request XML: " + xml)
 			initProcessVariables(execution)
 
 			def vnfId = getRequiredNodeText(execution, xml,'vnf-id')
@@ -97,11 +103,11 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 				execution.setVariable('UAAIGenVnf_orchestrationStatus', orchestrationStatus)
 			}
 
-			logDebug('Exited ' + method, isDebugLogEnabled)
+			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
@@ -116,8 +122,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.getGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('UAAIGenVnf_vnfId')
@@ -125,31 +130,31 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			// Construct endpoint
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			logDebug('AAI URI is: ' + aai_uri, isDebugLogEnabled)
-			String endPoint = execution.getVariable('URN_aai_endpoint') + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
+			msoLogger.debug('AAI URI is: ' + aai_uri)
+			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
 
 			try {
-				logDebug('sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
-				utils.logAudit("Sending GET to AAI endpoint: " + endPoint)
+				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
+				msoLogger.debug("Sending GET to AAI endpoint: " + endPoint)
 
 				APIResponse response = aaiUriUtil.executeAAIGetCall(execution, endPoint)
 				def responseData = response.getResponseBodyAsString()
 				execution.setVariable('UAAIGenVnf_getGenericVnfResponseCode', response.getStatusCode())
 				execution.setVariable('UAAIGenVnf_getGenericVnfResponse', responseData)
-				utils.logAudit("UpdateAAIGenericVnf Response data: " + responseData)
-				logDebug('Response code:' + response.getStatusCode(), isDebugLogEnabled)
-				logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
+				msoLogger.debug("UpdateAAIGenericVnf Response data: " + responseData)
+				msoLogger.debug('Response code:' + response.getStatusCode())
+				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
 			} catch (Exception ex) {
-				ex.printStackTrace()
-				logDebug('Exception occurred while executing AAI GET:' + ex.getMessage(),isDebugLogEnabled)
+				msoLogger.error(e);
+				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				execution.setVariable('UAAIGenVnf_getGenericVnfResponseCode', 500)
 				execution.setVariable('UAAIGenVnf_getGenericVnfResponse', 'AAI GET Failed:' + ex.getMessage())
 			}
-			logDebug('Exited ' + method, isDebugLogEnabled)
+			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getGenericVnf(): ' + e.getMessage())
 		}
 	}
@@ -163,20 +168,19 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.updateGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('UAAIGenVnf_vnfId')
 			def genericVnf = execution.getVariable('UAAIGenVnf_getGenericVnfResponse')
 			def origRequest = execution.getVariable('UpdateAAIGenericVnfRequest')
 
-			utils.logAudit("UpdateGenericVnf Request: " + origRequest)
+			msoLogger.debug("UpdateGenericVnf Request: " + origRequest)
 			// Confirm resource-version is in retrieved Generic VNF
 			def Node genericVnfNode = xmlParser.parseText(genericVnf)
 			if (utils.getChildNode(genericVnfNode, 'resource-version') == null) {
 				def msg = 'Can\'t update Generic VNF ' + vnfId + ' since \'resource-version\' is missing'
-				logError(msg)
+				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 				throw new Exception(msg)
 			}
 
@@ -199,7 +203,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 				}
 				if (!newPersonaModelId.equals(currPersonaModelId)) {
 					def msg = 'Can\'t update Generic VNF ' + vnfId + ' since there is \'persona-model-id\' mismatch between the current and new values'
-					logError(msg)
+					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 					throw new Exception(msg)
 				}
 
@@ -243,31 +247,31 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			// Construct endpoint
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			logDebug('AAI URI is: ' + aai_uri, isDebugLogEnabled)
-			String endPoint = execution.getVariable('URN_aai_endpoint') + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8")
+			msoLogger.debug('AAI URI is: ' + aai_uri)
+			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8")
 
 			try {
-				logDebug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload, isDebugLogEnabled)
-				utils.logAudit("Sending PATCH to AAI endpoint: " + endPoint)
+				msoLogger.debug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload)
+				msoLogger.debug("Sending PATCH to AAI endpoint: " + endPoint)
 
 				APIResponse response = aaiUriUtil.executeAAIPatchCall(execution, endPoint, payload)
 				def responseData = response.getResponseBodyAsString()
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponseCode', response.getStatusCode())
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', responseData)
-				utils.logAudit("UpdateAAIGenericVnf Response Data: " + responseData)
-				logDebug('Response code:' + response.getStatusCode(), isDebugLogEnabled)
-				logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
+				msoLogger.debug("UpdateAAIGenericVnf Response Data: " + responseData)
+				msoLogger.debug('Response code:' + response.getStatusCode())
+				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
 			} catch (Exception ex) {
 				ex.printStackTrace()
-				logDebug('Exception occurred while executing AAI PATCH:' + ex.getMessage(),isDebugLogEnabled)
+				msoLogger.debug('Exception occurred while executing AAI PATCH:' + ex.getMessage())
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponseCode', 500)
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', 'AAI PATCH Failed:' + ex.getMessage())
 			}
-			logDebug('Exited ' + method, isDebugLogEnabled)
+			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateGenericVnf(): ' + e.getMessage())
 		}
 	}
@@ -305,19 +309,16 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.handleAAIQueryFailure(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
-		logError('Error occurred attempting to query AAI, Response Code ' +
-			execution.getVariable('UAAIGenVnf_getGenericVnfResponseCode') + ', Error Response ' +
-			execution.getVariable('UAAIGenVnf_getGenericVnfResponse'))
+		msoLogger.error( 'Error occurred attempting to query AAI, Response Code ' + execution.getVariable('UAAIGenVnf_getGenericVnfResponseCode'));
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIGenVnf_getGenericVnfResponse'))
 		execution.setVariable('WorkflowException', exception)
 
-		utils.logAudit("Workflow Exception occurred when handling Quering AAI: " + exception.getErrorMessage())
-		logDebug('Exited ' + method, isDebugLogEnabled)
+		msoLogger.debug("Workflow Exception occurred when handling Quering AAI: " + exception.getErrorMessage())
+		msoLogger.trace('Exited ' + method)
 	}
 
 	/**
@@ -329,19 +330,16 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.handleUpdateGenericVnfFailure(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
-		logError('Error occurred attempting to update Generic VNF in AAI, Response Code ' +
-			execution.getVariable('UAAIGenVnf_updateGenericVnfResponseCode') + ', Error Response ' +
-			execution.getVariable('UAAIGenVnf_updateGenericVnfResponse'))
+		msoLogger.error('Error occurred attempting to update Generic VNF in AAI, Response Code ' + execution.getVariable('UAAIGenVnf_updateGenericVnfResponseCode'));
 
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIGenVnf_updateGenericVnfResponse'))
 		execution.setVariable('WorkflowException', exception)
 
-		utils.logAudit("Workflow Exception occurred when Updating GenericVnf: " + exception.getErrorMessage())
-		logDebug('Exited ' + method, isDebugLogEnabled)
+		msoLogger.debug("Workflow Exception occurred when Updating GenericVnf: " + exception.getErrorMessage())
+		msoLogger.trace('Exited ' + method)
 	}
 }

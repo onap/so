@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,21 +25,27 @@ import java.net.URL;
 
 import javax.ws.rs.core.MediaType;
 
-import org.openecomp.mso.apihandlerinfra.MsoPropertiesUtils;
+import org.openecomp.mso.apihandlerinfra.SpringContextHelper;
 import org.openecomp.mso.client.grm.GRMProperties;
-import org.openecomp.mso.properties.MsoJavaProperties;
+import org.springframework.context.ApplicationContext;
 
 public class GrmClientPropertiesImpl implements GRMProperties {
 
-	final MsoJavaProperties props;
+	private String grmEndpoint;
+	private String grmUsername;
+	private String grmPassword;
 	
 	public GrmClientPropertiesImpl() {
-		this.props = MsoPropertiesUtils.loadMsoProperties ();
+		ApplicationContext context = SpringContextHelper.getAppContext();
+		
+		grmEndpoint = context.getEnvironment().getProperty("mso.grm.endpoint");
+		grmUsername = context.getEnvironment().getProperty("mso.grm.username");
+		grmPassword = context.getEnvironment().getProperty("mso.grm.password");
 	}
-
+	
 	@Override
 	public URL getEndpoint() throws MalformedURLException {
-		return new URL(props.getProperty("grm.endpoint", null));
+		return new URL(grmEndpoint);
 	}
 
 	@Override
@@ -54,12 +60,12 @@ public class GrmClientPropertiesImpl implements GRMProperties {
 
 	@Override
 	public String getUsername() {
-		return props.getProperty("grm.username", null);
+		return grmUsername;
 	}
 
 	@Override
 	public String getPassword() {
-		return props.getProperty("grm.password", null);
+		return grmPassword;
 	}
 
 	@Override

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,9 @@
 
 package org.openecomp.mso.client.policy;
 
+import java.util.List;
+
+import org.openecomp.mso.client.RestClient;
 import org.openecomp.mso.client.RestPropertiesLoader;
 import org.openecomp.mso.client.defaultproperties.PolicyRestPropertiesImpl;
 import org.openecomp.mso.client.policy.entities.AllowedTreatments;
@@ -33,9 +36,6 @@ import org.openecomp.mso.client.policy.entities.PolicyDecisionRequest;
 import org.openecomp.mso.client.policy.entities.PolicyServiceType;
 import org.openecomp.mso.client.policy.entities.Workstep;
 
-import java.util.List;
-import com.att.eelf.configuration.EELFLogger;
-import com.att.eelf.configuration.EELFManager;
 
 public class PolicyClientImpl implements PolicyClient {
 
@@ -52,8 +52,8 @@ public class PolicyClientImpl implements PolicyClient {
 			String errorCode) {
 		DecisionAttributes decisionAttributes = new DecisionAttributes();
 		decisionAttributes.setServiceType(serviceType);
-		decisionAttributes.setVNFType(vnfType);
-		decisionAttributes.setBBID(bbID);
+		decisionAttributes.setvNFType(vnfType);
+		decisionAttributes.setBbID(bbID);
 		decisionAttributes.setWorkStep(workStep);
 		decisionAttributes.setErrorCode(errorCode);
 

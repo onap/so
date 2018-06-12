@@ -1,0 +1,21 @@
+{
+	"configurationId" : "configurationId",
+    "managementOption" : "managementOption",
+    "configurationName" : "configurationName",
+    "configurationType" : "configurationType",
+    "configurationSubType" : "configurationSubType",
+    "modelInvariantId" : "modelInvariantId",
+    "modelVersionId" : "modelVersionId",
+    "personaModelVersion" : "personaModelVersion",
+    "orchestrationStatus" : "PRECREATED",
+    "operationalStatus" : "operationalStatus",
+    "configurationSelflink" : "configurationSelflink",
+    "modelCustomizationId" : "modelCustomizationId",
+    "tunnelBandwidth" : "tunnelBandwidth",
+    "vendorAllowedMaxBandwidth" : "vendorAllowedMaxBandwidth",
+    "resourceVersion" : "resourceVersion",
+    "relationshipList" : {},
+    "metadata" : {},
+    "forwarderEvcs" : {},
+    "evcs" : {}
+}

@@ -21,13 +21,15 @@
 package org.openecomp.mso.bpmn.core;
 
 import org.openecomp.mso.logger.MsoLogger;
+import org.jboss.logging.MDC;
 
 public class BPMNLogger {
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, BPMNLogger.class);
 	
-	public static void debug (String isDebugLogEnabled, String LogText) {
-		if (("true").equalsIgnoreCase(isDebugLogEnabled))
+	public static void debug (String isDebugLogEnabled, String LogText) {	
 			msoLogger.debug(LogText);
-	}
+	}	
+
+	
 }	
 

@@ -28,6 +28,9 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.rest.APIResponse
 import org.springframework.web.util.UriUtils
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
 
 
 /**
@@ -90,6 +93,7 @@ import org.springframework.web.util.UriUtils
  *    @param - WorkflowException
  */
 class CustomE2EGetService extends AbstractServiceTaskProcessor{
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CustomE2EGetService.class);
 
 	String Prefix = "GENGS_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -103,9 +107,8 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 	 *
 	 */
 	public void preProcessRequest(DelegateExecution execution) {
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericGetService PreProcessRequest Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericGetService PreProcessRequest Process")
 
 		execution.setVariable("GENGS_obtainObjectsUrl", false)
 		execution.setVariable("GENGS_obtainServiceInstanceUrlByName", false)
@@ -124,45 +127,45 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 			String type = execution.getVariable("GENGS_type")
 
 			if(type != null){
-				utils.log("DEBUG", "Incoming GENGS_type is: " + type, isDebugEnabled)
+				msoLogger.debug("Incoming GENGS_type is: " + type)
 				if(type.equalsIgnoreCase("allotted-resource")){
 					if(isBlank(allottedResourceId)){
-						utils.log("DEBUG", "Incoming allottedResourceId is null. Allotted Resource Id is required to Get an allotted-resource.", isDebugEnabled)
+						msoLogger.debug("Incoming allottedResourceId is null. Allotted Resource Id is required to Get an allotted-resource.")
 						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming allottedResourceId is null. Allotted Resource Id is required to Get an allotted-resource.")
 					}else{
-						utils.log("DEBUG", "Incoming Allotted Resource Id is: " + allottedResourceId, isDebugEnabled)
+						msoLogger.debug("Incoming Allotted Resource Id is: " + allottedResourceId)
 						if(isBlank(globalCustomerId) || isBlank(serviceType) || isBlank(serviceInstanceId)){
 							execution.setVariable("GENGS_obtainObjectsUrl", true)
 						}else{
-							utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
-							utils.log("DEBUG", "Incoming Service Type is: " + serviceType, isDebugEnabled)
-							utils.log("DEBUG", "Incoming Global Customer Id is: " + globalCustomerId, isDebugEnabled)
+							msoLogger.debug("Incoming Service Instance Id is: " + serviceInstanceId)
+							msoLogger.debug("Incoming Service Type is: " + serviceType)
+							msoLogger.debug("Incoming Global Customer Id is: " + globalCustomerId)
 						}
 					}
 				}else if(type.equalsIgnoreCase("service-instance")){
 					if(isBlank(serviceInstanceId) && isBlank(serviceInstanceName)){
-						utils.log("DEBUG", "Incoming serviceInstanceId and serviceInstanceName are null. ServiceInstanceId or ServiceInstanceName is required to Get a service-instance.", isDebugEnabled)
+						msoLogger.debug("Incoming serviceInstanceId and serviceInstanceName are null. ServiceInstanceId or ServiceInstanceName is required to Get a service-instance.")
 						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming serviceInstanceId and serviceInstanceName are null. ServiceInstanceId or ServiceInstanceName is required to Get a service-instance.")
 					}else{
-						utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
-						utils.log("DEBUG", "Incoming Service Instance Name is: " + serviceInstanceName, isDebugEnabled)
+						msoLogger.debug("Incoming Service Instance Id is: " + serviceInstanceId)
+						msoLogger.debug("Incoming Service Instance Name is: " + serviceInstanceName)
 						if(isBlank(globalCustomerId) || isBlank(serviceType)){
 							execution.setVariable("GENGS_obtainObjectsUrl", true)
 							if(isBlank(serviceInstanceId)){
 								execution.setVariable("GENGS_obtainServiceInstanceUrlByName", true)
 							}
 						}else{
-							utils.log("DEBUG", "Incoming Global Customer Id is: " + globalCustomerId, isDebugEnabled)
-							utils.log("DEBUG", "Incoming Service Type is: " + serviceType, isDebugEnabled)
+							msoLogger.debug("Incoming Global Customer Id is: " + globalCustomerId)
+							msoLogger.debug("Incoming Service Type is: " + serviceType)
 						}
 					}
 				}else if(type.equalsIgnoreCase("service-subscription")){
 					if(isBlank(serviceType) || isBlank(globalCustomerId)){
-						utils.log("DEBUG", "Incoming ServiceType or GlobalCustomerId is null. These variables are required to Get a service-subscription.", isDebugEnabled)
+						msoLogger.debug("Incoming ServiceType or GlobalCustomerId is null. These variables are required to Get a service-subscription.")
 						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming ServiceType or GlobalCustomerId is null. These variables are required to Get a service-subscription.")
 					}else{
-						utils.log("DEBUG", "Incoming Service Type is: " + serviceType, isDebugEnabled)
-						utils.log("DEBUG", "Incoming Global Customer Id is: " + globalCustomerId, isDebugEnabled)
+						msoLogger.debug("Incoming Service Type is: " + serviceType)
+						msoLogger.debug("Incoming Global Customer Id is: " + globalCustomerId)
 					}
 				}else{
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming Type is Invalid. Please Specify Type as service-instance or service-subscription")
@@ -172,14 +175,14 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 			}
 
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("DEBUG", "Internal Error encountered within GenericGetService PreProcessRequest method!" + e, isDebugEnabled)
+			msoLogger.debug("Internal Error encountered within GenericGetService PreProcessRequest method!" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in GenericGetService PreProcessRequest")
 
 		}
-		utils.log("DEBUG", "*** COMPLETED GenericGetService PreProcessRequest Process ***", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericGetService PreProcessRequest Process ")
 	}
 
 	/**
@@ -189,28 +192,27 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void obtainServiceInstanceUrlById(DelegateExecution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericGetService ObtainServiceInstanceUrlById Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericGetService ObtainServiceInstanceUrlById Process")
 		try {
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getSearchNodesQueryEndpoint(execution)
-			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 
 			String type = execution.getVariable("GENGS_type")
 			String path = ""
 			if(type.equalsIgnoreCase("service-instance")){
 				String serviceInstanceId = execution.getVariable("GENGS_serviceInstanceId")
-				utils.log("DEBUG", " Querying Node for Service-Instance URL by using Service-Instance Id: " + serviceInstanceId, isDebugEnabled)
+				msoLogger.debug(" Querying Node for Service-Instance URL by using Service-Instance Id: " + serviceInstanceId)
 				path = "${aai_uri}?search-node-type=service-instance&filter=service-instance-id:EQUALS:${serviceInstanceId}"
-				utils.logAudit("Service Instance Node Query Url is: " + path)
-				utils.log("DEBUG", "Service Instance Node Query Url is: " + path, isDebugEnabled)
+				msoLogger.debug("Service Instance Node Query Url is: " + path)
+				msoLogger.debug("Service Instance Node Query Url is: " + path)
 			}else if(type.equalsIgnoreCase("allotted-resource")){
 				String allottedResourceId = execution.getVariable("GENGS_allottedResourceId")
-				utils.log("DEBUG", " Querying Node for Service-Instance URL by using Allotted Resource Id: " + allottedResourceId, isDebugEnabled)
+				msoLogger.debug(" Querying Node for Service-Instance URL by using Allotted Resource Id: " + allottedResourceId)
 				path = "${aai_uri}?search-node-type=allotted-resource&filter=id:EQUALS:${allottedResourceId}"
-				utils.logAudit("Allotted Resource Node Query Url is: " + path)
-				utils.log("DEBUG", "Allotted Resource Node Query Url is: " + path, isDebugEnabled)
+				msoLogger.debug("Allotted Resource Node Query Url is: " + path)
+				msoLogger.debug("Allotted Resource Node Query Url is: " + path)
 			}
 
 			//String url = "${aai_endpoint}${path}"  host name needs to be removed from property
@@ -220,48 +222,48 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, url)
 			int responseCode = response.getStatusCode()
 			execution.setVariable("GENGS_genericQueryResponseCode", responseCode)
-			utils.log("DEBUG", "  GET Service Instance response code is: " + responseCode, isDebugEnabled)
-			utils.logAudit("GenericGetService AAI GET Response Code: " + responseCode)
+			msoLogger.debug("  GET Service Instance response code is: " + responseCode)
+			msoLogger.debug("GenericGetService AAI GET Response Code: " + responseCode)
 
 			String aaiResponse = response.getResponseBodyAsString()
 			execution.setVariable("GENGS_obtainSIUrlResponseBeforeUnescaping", aaiResponse)
-			utils.log("DEBUG", "GenericGetService AAI Response before unescaping: " + aaiResponse, isDebugEnabled)
+			msoLogger.debug("GenericGetService AAI Response before unescaping: " + aaiResponse)
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 			execution.setVariable("GENGS_genericQueryResponse", aaiResponse)
-			utils.logAudit("GenericGetService AAI Response: " + aaiResponse)
-			utils.log("DEBUG", "GenericGetService AAI Response: " + aaiResponse, isDebugEnabled)
+			msoLogger.debug("GenericGetService AAI Response: " + aaiResponse)
+			msoLogger.debug("GenericGetService AAI Response: " + aaiResponse)
 
 			//Process Response
 			if(responseCode == 200){
-				utils.log("DEBUG", "Generic Query Received a Good Response Code", isDebugEnabled)
+				msoLogger.debug("Generic Query Received a Good Response Code")
 				execution.setVariable("GENGS_SuccessIndicator", true)
 				if(utils.nodeExists(aaiResponse, "result-data")){
-					utils.log("DEBUG", "Generic Query Response Does Contain Data" , isDebugEnabled)
+					msoLogger.debug("Generic Query Response Does Contain Data" )
 					execution.setVariable("GENGS_FoundIndicator", true)
 					String resourceLink = utils.getNodeText1(aaiResponse, "resource-link")
 					execution.setVariable("GENGS_resourceLink", resourceLink)
 					execution.setVariable("GENGS_siResourceLink", resourceLink)
 				}else{
-					utils.log("DEBUG", "Generic Query Response Does NOT Contains Data" , isDebugEnabled)
+					msoLogger.debug("Generic Query Response Does NOT Contains Data" )
 					execution.setVariable("WorkflowResponse", "  ") //for junits
 				}
 			}else if(responseCode == 404){
-				utils.log("DEBUG", "Generic Query Received a Not Found (404) Response", isDebugEnabled)
+				msoLogger.debug("Generic Query Received a Not Found (404) Response")
 				execution.setVariable("GENGS_SuccessIndicator", true)
 				execution.setVariable("WorkflowResponse", "  ") //for junits
 			}else{
-				utils.log("DEBUG", "Generic Query Received a BAD REST Response: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("Generic Query Received a BAD REST Response: \n" + aaiResponse)
 				exceptionUtil.MapAAIExceptionToWorkflowExceptionGeneric(execution, aaiResponse, responseCode)
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("ERROR", " Error encountered within GenericGetService ObtainServiceInstanceUrlById method!" + e, isDebugEnabled)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Error encountered within GenericGetService ObtainServiceInstanceUrlById method!" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured During ObtainServiceInstanceUrlById")
 		}
-		utils.log("DEBUG", " *** COMPLETED GenericGetService ObtainServiceInstanceUrlById Process*** ", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericGetService ObtainServiceInstanceUrlById Process")
 	}
 
 	/**
@@ -271,64 +273,63 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void obtainServiceInstanceUrlByName(DelegateExecution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericGetService ObtainServiceInstanceUrlByName Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericGetService ObtainServiceInstanceUrlByName Process")
 		try {
 			String serviceInstanceName = execution.getVariable("GENGS_serviceInstanceName")
-			utils.log("DEBUG", " Querying Node for Service-Instance URL by using Service-Instance Name " + serviceInstanceName, isDebugEnabled)
+			msoLogger.debug(" Querying Node for Service-Instance URL by using Service-Instance Name " + serviceInstanceName)
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getSearchNodesQueryEndpoint(execution)
-			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			String path = "${aai_uri}?search-node-type=service-instance&filter=service-instance-name:EQUALS:${serviceInstanceName}"
 
 			//String url = "${aai_endpoint}${path}"  host name needs to be removed from property
 			String url = "${path}"
 			execution.setVariable("GENGS_obtainSIUrlPath", url)
 
-			utils.logAudit("GenericGetService AAI Endpoint: " + aai_endpoint)
+			msoLogger.debug("GenericGetService AAI Endpoint: " + aai_endpoint)
 			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, url)
 			int responseCode = response.getStatusCode()
 			execution.setVariable("GENGS_obtainSIUrlResponseCode", responseCode)
-			utils.log("DEBUG", "  GET Service Instance response code is: " + responseCode, isDebugEnabled)
-			utils.logAudit("GenericGetService AAI Response Code: " + responseCode)
+			msoLogger.debug("  GET Service Instance response code is: " + responseCode)
+			msoLogger.debug("GenericGetService AAI Response Code: " + responseCode)
 
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 			execution.setVariable("GENGS_obtainSIUrlResponse", aaiResponse)
-			utils.logAudit("GenericGetService AAI Response: " + aaiResponse)
+			msoLogger.debug("GenericGetService AAI Response: " + aaiResponse)
 			//Process Response
 			if(responseCode == 200){
-				utils.log("DEBUG", "  Query for Service Instance Url Received a Good Response Code", isDebugEnabled)
+				msoLogger.debug("  Query for Service Instance Url Received a Good Response Code")
 				execution.setVariable("GENGS_SuccessIndicator", true)
 				if(utils.nodeExists(aaiResponse, "result-data")){
-					utils.log("DEBUG", "Query for Service Instance Url Response Does Contain Data" , isDebugEnabled)
+					msoLogger.debug("Query for Service Instance Url Response Does Contain Data" )
 					execution.setVariable("GENGS_FoundIndicator", true)
 					String resourceLink = utils.getNodeText1(aaiResponse, "resource-link")
 					execution.setVariable("GENGS_resourceLink", resourceLink)
 					execution.setVariable("GENGS_siResourceLink", resourceLink)
 				}else{
-					utils.log("DEBUG", "Query for Service Instance Url Response Does NOT Contains Data" , isDebugEnabled)
+					msoLogger.debug("Query for Service Instance Url Response Does NOT Contains Data" )
 					execution.setVariable("WorkflowResponse", "  ") //for junits
 				}
 			}else if(responseCode == 404){
-				utils.log("DEBUG", "  Query for Service Instance Received a Not Found (404) Response", isDebugEnabled)
+				msoLogger.debug("  Query for Service Instance Received a Not Found (404) Response")
 				execution.setVariable("GENGS_SuccessIndicator", true)
 				execution.setVariable("WorkflowResponse", "  ") //for junits
 			}else{
-				utils.log("DEBUG", "Query for Service Instance Received a BAD REST Response: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("Query for Service Instance Received a BAD REST Response: \n" + aaiResponse)
 				exceptionUtil.MapAAIExceptionToWorkflowExceptionGeneric(execution, aaiResponse, responseCode)
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("ERROR", " Error encountered within GenericGetService ObtainServiceInstanceUrlByName method!" + e, isDebugEnabled)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Error encountered within GenericGetService ObtainServiceInstanceUrlByName method!" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured During ObtainServiceInstanceUrlByName")
 		}
-		utils.log("DEBUG", " *** COMPLETED GenericGetService ObtainServiceInstanceUrlByName Process*** ", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericGetService ObtainServiceInstanceUrlByName Process")
 	}
 
 
@@ -339,31 +340,30 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 	 * @param - execution
 	 */
 	public void getServiceObject(DelegateExecution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		utils.log("DEBUG", " *** STARTED GenericGetService GetServiceObject Process*** ", isDebugEnabled)
+		msoLogger.trace("STARTED GenericGetService GetServiceObject Process")
 		try {
 			String type = execution.getVariable("GENGS_type")
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			String serviceEndpoint = ""
 
-			utils.logAudit("GenericGetService getServiceObject AAI Endpoint: " + aai_endpoint)
+			msoLogger.debug("GenericGetService getServiceObject AAI Endpoint: " + aai_endpoint)
 			if(type.equalsIgnoreCase("service-instance")){
 				String siResourceLink = execution.getVariable("GENGS_resourceLink")
 				if(isBlank(siResourceLink)){
 					String serviceInstanceId = execution.getVariable("GENGS_serviceInstanceId")
-					utils.log("DEBUG", " Incoming GENGS_serviceInstanceId is: " + serviceInstanceId, isDebugEnabled)
+					msoLogger.debug(" Incoming GENGS_serviceInstanceId is: " + serviceInstanceId)
 					String serviceType = execution.getVariable("GENGS_serviceType")
-					utils.log("DEBUG", " Incoming GENGS_serviceType is: " + serviceType, isDebugEnabled)
+					msoLogger.debug(" Incoming GENGS_serviceType is: " + serviceType)
 					String globalCustomerId = execution.getVariable("GENGS_globalCustomerId")
-					utils.log("DEBUG", "Incoming Global Customer Id is: " + globalCustomerId, isDebugEnabled)
+					msoLogger.debug("Incoming Global Customer Id is: " + globalCustomerId)
 
 					String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
-					logDebug('AAI URI is: ' + aai_uri, isDebugEnabled)
+					msoLogger.debug('AAI URI is: ' + aai_uri)
 					serviceEndpoint = "${aai_uri}/" + UriUtils.encode(globalCustomerId,"UTF-8") + "/service-subscriptions/service-subscription/" + UriUtils.encode(serviceType,"UTF-8") + "/service-instances/service-instance/" + UriUtils.encode(serviceInstanceId,"UTF-8")
 				}else{
-					utils.log("DEBUG", "Incoming Service Instance Url is: " + siResourceLink, isDebugEnabled)
+					msoLogger.debug("Incoming Service Instance Url is: " + siResourceLink)
 					String[] split = siResourceLink.split("/aai/")
 					serviceEndpoint = "/aai/" + split[1]
 				}
@@ -371,19 +371,19 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 				String siResourceLink = execution.getVariable("GENGS_resourceLink")
 				if(isBlank(siResourceLink)){
 					String allottedResourceId = execution.getVariable("GENGS_allottedResourceId")
-					utils.log("DEBUG", " Incoming GENGS_allottedResourceId is: " + allottedResourceId, isDebugEnabled)
+					msoLogger.debug(" Incoming GENGS_allottedResourceId is: " + allottedResourceId)
 					String serviceInstanceId = execution.getVariable("GENGS_serviceInstanceId")
-					utils.log("DEBUG", " Incoming GENGS_serviceInstanceId is: " + serviceInstanceId, isDebugEnabled)
+					msoLogger.debug(" Incoming GENGS_serviceInstanceId is: " + serviceInstanceId)
 					String serviceType = execution.getVariable("GENGS_serviceType")
-					utils.log("DEBUG", " Incoming GENGS_serviceType is: " + serviceType, isDebugEnabled)
+					msoLogger.debug(" Incoming GENGS_serviceType is: " + serviceType)
 					String globalCustomerId = execution.getVariable("GENGS_globalCustomerId")
-					utils.log("DEBUG", "Incoming Global Customer Id is: " + globalCustomerId, isDebugEnabled)
+					msoLogger.debug("Incoming Global Customer Id is: " + globalCustomerId)
 
 					String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
-					logDebug('AAI URI is: ' + aai_uri, isDebugEnabled)
+					msoLogger.debug('AAI URI is: ' + aai_uri)
 					serviceEndpoint = "${aai_uri}/" + UriUtils.encode(globalCustomerId,"UTF-8") + "/service-subscriptions/service-subscription/" + UriUtils.encode(serviceType,"UTF-8") + "/service-instances/service-instance/" + UriUtils.encode(serviceInstanceId,"UTF-8") +  "/allotted-resources/allotted-resource/" + UriUtils.encode(allottedResourceId,"UTF-8")
 				}else{
-					utils.log("DEBUG", "Incoming Allotted-Resource Url is: " + siResourceLink, isDebugEnabled)
+					msoLogger.debug("Incoming Allotted-Resource Url is: " + siResourceLink)
 					String[] split = siResourceLink.split("/aai/")
 					serviceEndpoint = "/aai/" + split[1]
 				}
@@ -397,47 +397,47 @@ class CustomE2EGetService extends AbstractServiceTaskProcessor{
 			String serviceUrl = "${aai_endpoint}" + serviceEndpoint
 
 			execution.setVariable("GENGS_getServiceUrl", serviceUrl)
-			utils.log("DEBUG", "GET Service AAI Path is: \n" + serviceUrl, isDebugEnabled)
+			msoLogger.debug("GET Service AAI Path is: \n" + serviceUrl)
 
 			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, serviceUrl)
 			int responseCode = response.getStatusCode()
 			execution.setVariable("GENGS_getServiceResponseCode", responseCode)
-			utils.log("DEBUG", "  GET Service response code is: " + responseCode, isDebugEnabled)
-			utils.logAudit("GenericGetService AAI Response Code: " + responseCode)
+			msoLogger.debug("  GET Service response code is: " + responseCode)
+			msoLogger.debug("GenericGetService AAI Response Code: " + responseCode)
 
 			String aaiResponse = response.getResponseBodyAsString()
 			aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 			execution.setVariable("GENGS_getServiceResponse", aaiResponse)
-			utils.logAudit("GenericGetService AAI Response: " + aaiResponse)
+			msoLogger.debug("GenericGetService AAI Response: " + aaiResponse)
 			//Process Response
 			if(responseCode == 200 || responseCode == 202){
-				utils.log("DEBUG", "GET Service Received a Good Response Code", isDebugEnabled)
+				msoLogger.debug("GET Service Received a Good Response Code")
 				if(utils.nodeExists(aaiResponse, "service-instance") || utils.nodeExists(aaiResponse, "service-subscription")){
-					utils.log("DEBUG", "GET Service Response Contains a service-instance" , isDebugEnabled)
+					msoLogger.debug("GET Service Response Contains a service-instance" )
 					execution.setVariable("GENGS_FoundIndicator", true)
 					execution.setVariable("GENGS_service", aaiResponse)
 					execution.setVariable("WorkflowResponse", aaiResponse)
 
 				}else{
-					utils.log("DEBUG", "GET Service Response Does NOT Contain Data" , isDebugEnabled)
+					msoLogger.debug("GET Service Response Does NOT Contain Data" )
 				}
 			}else if(responseCode == 404){
-				utils.log("DEBUG", "GET Service Received a Not Found (404) Response", isDebugEnabled)
+				msoLogger.debug("GET Service Received a Not Found (404) Response")
 				execution.setVariable("WorkflowResponse", "  ") //for junits
 			}
 			else{
-				utils.log("DEBUG", "  GET Service Received a Bad Response: \n" + aaiResponse, isDebugEnabled)
+				msoLogger.debug("  GET Service Received a Bad Response: \n" + aaiResponse)
 				exceptionUtil.MapAAIExceptionToWorkflowExceptionGeneric(execution, aaiResponse, responseCode)
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(BpmnError b){
-			utils.log("DEBUG", "Rethrowing MSOWorkflowException", isDebugEnabled)
+			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			utils.log("DEBUG", " Error encountered within GenericGetService GetServiceObject method!" + e, isDebugEnabled)
+			msoLogger.debug(" Error encountered within GenericGetService GetServiceObject method!" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured During GenericGetService")
 		}
-		utils.log("DEBUG", " *** COMPLETED GenericGetService GetServiceObject Process*** ", isDebugEnabled)
+		msoLogger.trace("COMPLETED GenericGetService GetServiceObject Process")
 	}
 
 }

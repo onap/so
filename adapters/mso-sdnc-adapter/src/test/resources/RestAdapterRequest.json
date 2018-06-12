@@ -1,0 +1,22 @@
+{
+	"SDNCServiceRequest": {
+		"bpNotificationUrl": "http://135.21.104.36:30252/mso/WorkflowMessage/SDNCAResponse/53c22a94-2dc7-4c9d-8cc7-e23261471f65-1524326585887",
+		"sdncRequestId": "53c22a94-2dc7-4c9d-8cc7-e23261471f65-1524326585887",
+		"requestInformation": {
+			"requestId": "53c22a94-2dc7-4c9d-8cc7-e23261471f65",
+			"source": "CCD",
+			"notificationUrl": "http://mtsnjv9ccdb01.aic.cip.att.com:9191/d880e6a9-68e2-4c23-bafb-989b1b359607"
+		},
+		"serviceInformation": {
+			"serviceType": "UCPE",
+			"serviceInstanceId": "b1932e26-9659-447f-abb9-b18027a65ecd",
+			"subscriberName": "1806_SDNGC_SSB_SHR_02506",
+			"subscriberGlobalId": "1806_SDNGC_GBL_SHR_02133"
+		},
+		"sdncService": "ucpe",
+		"sdncOperation": "service-topology-assign-operation",
+		"sdncServiceDataType": "XML",
+		"sdncServiceData": "<ucpe-request-information><ucpe-host-name>USUCPMPUNOR0165UJZZ01</ucpe-host-name><ucpe-alias-host-name>USUCPMPUNOR0165UJZZ01</ucpe-alias-host-name><ucpe-activation-code>22L-JJ8-AT0</ucpe-activation-code><ucpe-part-number>JPR76H-2018-04202</ucpe-part-number><out-of-band-management-modem>BROADBAND</out-of-band-management-modem><internet-topology>WAN</internet-topology><tenant-id>b1932e26-9659-447f-abb9-b18027a65ecd::uCPE</tenant-id><tenant-name>b1932e26-9659-447f-abb9-b18027a65ecd::uCPE</tenant-name><wan-list><wan-information><wan-port-number>WAN1</wan-port-number><wan-type>3RDPARTYINTERNET</wan-type><circuit-id>1017C.1806.210420018.SHR03</circuit-id><transport-management-option>ATT</transport-management-option><transport-provider-name>ATT</transport-provider-name><media-type>ELECTRICAL</media-type><interface-type>10/100/1000BASE-T</interface-type><transport-vendor-total-bandwidth>100</transport-vendor-total-bandwidth></wan-information><wan-information><wan-port-number>WAN2</wan-port-number><wan-type>3RDPARTYINTERNET</wan-type><circuit-id>1017C.1806.210420018.SHR0352</circuit-id><transport-management-option>ATT</transport-management-option><transport-provider-name>ATT</transport-provider-name><media-type>ELECTRICAL</media-type><interface-type>10/100/1000BASE-T</interface-type><transport-vendor-total-bandwidth>100</transport-vendor-total-bandwidth></wan-information></wan-list><node-list><node-information><node-id>USUCPMPUNOR0165UJRT01</node-id><node-type>VNF</node-type></node-information><node-information><node-id>USUCPMPUNOR0165UJFW01</node-id><node-type>VNF</node-type></node-information><node-information><node-id>WAN1</node-id><node-type>Port</node-type></node-information><node-information><node-id>WAN2</node-id><node-type>Port</node-type></node-information></node-list><link-list><link-information><link-name>1</link-name><a-end-node-id>USUCPMPUNOR0165UJRT01</a-end-node-id><z-end-node-id>WAN1</z-end-node-id></link-information><link-information><link-name>2</link-name><a-end-node-id>USUCPMPUNOR0165UJRT01</a-end-node-id><z-end-node-id>USUCPMPUNOR0165UJFW01</z-end-node-id></link-information><link-information><link-name>3</link-name><a-end-node-id>USUCPMPUNOR0165UJFW01</a-end-node-id><z-end-node-id>WAN2</z-end-node-id></link-information></link-list></ucpe-request-information>"
+	}
+} 
+ 

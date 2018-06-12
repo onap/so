@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -68,13 +68,13 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	@JsonProperty("owningEntity")
 	private OwningEntity owningEntity;
 	@JsonProperty("vnfResource")
-	private List <VnfResource>  vnfResources;
+	private List <VnfResource> vnfResources;
 	@JsonProperty("networkResource")
-	private List <NetworkResource>  networkResources;
+	private List <NetworkResource> networkResources;
 	@JsonProperty("allottedResource")
-	private List <AllottedResource>  allottedResources;
+	private List <AllottedResource> allottedResources;
 	@JsonProperty("configResource")
-	private List <ConfigResource>  configResources;
+	private List <ConfigResource> configResources;
 
 	public ServiceDecomposition () {
 		super();
@@ -83,12 +83,12 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	public ServiceDecomposition (String catalogRestOutput) throws JsonDecomposingException {
 		ServiceDecomposition serviceDecomposition = DecomposeJsonUtil.jsonToServiceDecomposition(catalogRestOutput);
 		this.modelInfo = serviceDecomposition.getModelInfo();
-		this.vnfResources = serviceDecomposition.getServiceVnfs();
-		this.allottedResources = serviceDecomposition.getServiceAllottedResources();
-		this.networkResources = serviceDecomposition.getServiceNetworks();
+		this.vnfResources = serviceDecomposition.getVnfResources();
+		this.allottedResources = serviceDecomposition.getAllottedResources();
+		this.networkResources = serviceDecomposition.getNetworkResources();
 		this.serviceRole = serviceDecomposition.getServiceRole();
 		this.serviceType = serviceDecomposition.getServiceType();
-		this.configResources = serviceDecomposition.getServiceConfigResources();
+		this.configResources = serviceDecomposition.getConfigResources();
 	}
 
 	/**
@@ -99,10 +99,10 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	public ServiceDecomposition (String catalogRestOutput, String serviceInstanceId) throws JsonDecomposingException {
 		ServiceDecomposition serviceDecomposition = DecomposeJsonUtil.jsonToServiceDecomposition(catalogRestOutput);
 		this.modelInfo = serviceDecomposition.getModelInfo();
-		this.vnfResources = serviceDecomposition.getServiceVnfs();
-		this.allottedResources = serviceDecomposition.getServiceAllottedResources();
-		this.configResources = serviceDecomposition.getServiceConfigResources();
-		this.networkResources = serviceDecomposition.getServiceNetworks();
+		this.vnfResources = serviceDecomposition.getVnfResources();
+		this.allottedResources = serviceDecomposition.getAllottedResources();
+		this.configResources = serviceDecomposition.getConfigResources();
+		this.networkResources = serviceDecomposition.getNetworkResources();
 
 		this.serviceRole = serviceDecomposition.getServiceRole();
 		this.serviceType = serviceDecomposition.getServiceType();
@@ -155,35 +155,29 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	public void setOwningEntity(OwningEntity owningEntity) {
 		this.owningEntity = owningEntity;
 	}
-	public List<VnfResource> getServiceVnfs() {
+	public List<VnfResource> getVnfResources() {
 		return vnfResources;
 	}
-	public void setServiceVnfs(List<VnfResource> vnfResources) {
+	public void setVnfResources(List<VnfResource> vnfResources) {
 		this.vnfResources = vnfResources;
 	}
-	public List<NetworkResource> getServiceNetworks() {
-		return networkResources;
-	}
-	public void setServiceConfigs(List<ConfigResource> configResources) {
+	public void setConfigResources(List<ConfigResource> configResources) {
 		this.configResources = configResources;
 	}
-	public List<ConfigResource> getServiceConfigs() {
+	public List<ConfigResource> getConfigResources() {
 		return configResources;
 	}
-	public void setServiceNetworks(List<NetworkResource> networkResources) {
+	public void setNetworkResources(List<NetworkResource> networkResources) {
 		this.networkResources = networkResources;
 	}
-	public List<AllottedResource> getServiceAllottedResources() {
+	public List<NetworkResource> getNetworkResources() {
+		return networkResources;
+	}
+	public List<AllottedResource> getAllottedResources() {
 		return allottedResources;
 	}
-	public void setServiceAllottedResources(List<AllottedResource> allottedResources) {
+	public void setAllottedResources(List<AllottedResource> allottedResources) {
 		this.allottedResources = allottedResources;
-	}
-	public List<ConfigResource> getServiceConfigResources() {
-		return configResources;
-	}
-	public void setServiceConfigResources(List<ConfigResource> configResources) {
-		this.configResources = configResources;
 	}
 	public String getServiceType() {
 		return serviceType;
@@ -220,7 +214,6 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	public void setCallbackURN(String callbackURN) {
 		this.callbackURN = callbackURN;
 	}
-
 	public String getSdncVersion() {
 		return sdncVersion;
 	}
@@ -242,17 +235,17 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	@JsonIgnore
 	public List<Resource> getServiceResources(){
 		ArrayList serviceResources = new ArrayList();
-		if(this.getServiceAllottedResources() != null){
-			serviceResources.addAll(this.getServiceAllottedResources());
+		if(this.getAllottedResources() != null){
+			serviceResources.addAll(this.getAllottedResources());
 		}
-		if(this.getServiceNetworks() != null){
-			serviceResources.addAll(this.getServiceNetworks());
+		if(this.getNetworkResources() != null){
+			serviceResources.addAll(this.getNetworkResources());
 		}
-		if(this.getServiceVnfs() != null){
-			serviceResources.addAll(this.getServiceVnfs());
+		if(this.getVnfResources() != null){
+			serviceResources.addAll(this.getVnfResources());
 		}
-		if(this.getServiceConfigResources() != null){
-			serviceResources.addAll(this.getServiceConfigResources());
+		if(this.getConfigResources() != null){
+			serviceResources.addAll(this.getConfigResources());
 		}
 		return serviceResources;
 	}
@@ -262,10 +255,10 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	@JsonIgnore
 	public String getServiceResourcesJsonString() {
-		return listToJson((this.getServiceNetworks())) +
-			listToJson((this.getServiceVnfs())) +
-			listToJson((this.getServiceAllottedResources())) +
-			listToJson((this.getServiceConfigResources()));
+		return getServiceNetworksJson() +
+				getServiceVnfsJson() +
+				getServiceAllottedResourcesJson() +
+				getServiceConfigResourcesJson();
 	}
 
 	/**
@@ -274,7 +267,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	@JsonIgnore
 	public String getServiceNetworksJson(){
-		return listToJson(this.getServiceNetworks());
+		return listToJson(this.getNetworkResources());
 	}
 	/**
 	 * Returns a JSON list of all VnfResource structures (i.e. the serialized VnfResource objects).
@@ -282,7 +275,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	@JsonIgnore
 	public String getServiceVnfsJson(){
-		return listToJson(this.getServiceVnfs());
+		return listToJson(this.getVnfResources());
 	}
 	/**
 	 * Returns a JSON list of all Allotted Resource structures (i.e. the serialized AllottedResource objects).
@@ -290,7 +283,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	@JsonIgnore
 	public String getServiceAllottedResourcesJson(){
-		return listToJson(this.getServiceAllottedResources());
+		return listToJson(this.getAllottedResources());
 	}
 	/**
 	 * Returns a JSON list of all Config Resource structures (i.e. the serialized ConfigResource objects).
@@ -298,7 +291,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 */
 	@JsonIgnore
 	public String getServiceConfigResourcesJson(){
-		return listToJson(this.getServiceConfigResources());
+		return listToJson(this.getConfigResources());
 	}
 
 	//TODO - define Resource Object ID
@@ -398,7 +391,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	public void addNetworkResource(String jsonResource) throws JsonDecomposingException {
 		NetworkResource networkResource = null;
 		networkResource = DecomposeJsonUtil.jsonToNetworkResource(jsonResource);
-		this.addVnfResource(networkResource);
+		this.addNetworkResource(networkResource);
 	}
 	/**
 	 * Add resource to the list
@@ -407,7 +400,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	public void addAllottedResource(String jsonResource) throws JsonDecomposingException {
 		AllottedResource allottedResource = null;
 		allottedResource = DecomposeJsonUtil.jsonToAllottedResource(jsonResource);
-		this.addVnfResource(allottedResource);
+		this.addAllottedResource(allottedResource);
 	}
 	/**
 	 * Add resource to the list
@@ -416,7 +409,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	public void addConfigResource(String jsonResource) throws JsonDecomposingException {
 		ConfigResource configResource = null;
 		configResource = DecomposeJsonUtil.jsonToConfigResource(jsonResource);
-		this.addVnfResource(configResource);
+		this.addConfigResource(configResource);
 	}
 	/**
 	 * Given a ResourceDecomposition (subclass) object, locate it in the Service Decomposition by its unique ID, and replace the current version with the new one.
@@ -425,21 +418,20 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 * @return TRUE if replacement was a success
 	 */
 	public boolean replaceResource(Resource newResource){
+		List resources = getResourceList(newResource);
+		
 		boolean result = false;
-		List serviceResources = getServiceResources();
-		for (Resource resource : (Iterable<Resource>) serviceResources) {
+		for (Resource resource : (Iterable<Resource>) resources) {
 			System.out.println("resource found");
 			if (resource.resourceType == newResource.resourceType) {
 				System.out.println("resource type matches");
 				if (resource.getResourceId().equalsIgnoreCase(newResource.getResourceId())) {
 					System.out.println("resource id matches");
 					//returns TRUE if replacement is a success
-					result = Collections.replaceAll(serviceResources, resource, newResource);
+					result = Collections.replaceAll(resources, resource, newResource);
 				}
 			}
 		}
-		//set updated list into ServiceDecomposition
-		this.setResourceList(serviceResources);
 		return result;
 	}
 
@@ -460,17 +452,43 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 * @return TRUE if delete was a success
 	 */
 	public boolean deleteResource(Resource resource){
-		List serviceResources = getServiceResources();
-		for (Resource item : (Iterable<Resource>) serviceResources) {
+		List serviceResourceList = getResourceList(resource);
+		for (Resource item : (Iterable<Resource>) serviceResourceList) {
 			if (item.resourceType == resource.resourceType) {
 				if (item.getResourceId().equalsIgnoreCase(resource.getResourceId())) {
 					//returns TRUE if replacement is a success
-					return serviceResources.remove(resource);
+					return serviceResourceList.remove(resource);
 				}
 			}
 		}
 
 		return false;
+	}
+	
+	/**
+	 * Generic method to get List of Resource objects based on input resource's resourceType
+	 * @param resource
+	 * @return List matching the resourceType of resource
+	 */
+	public List getResourceList(Resource resource) {
+		List resourceList;
+		switch(resource.getResourceType()) {
+			case VNF:
+				resourceList = getVnfResources();
+				break;
+			case NETWORK:
+				resourceList = getNetworkResources();
+				break;
+			case ALLOTTED_RESOURCE:
+				resourceList = getAllottedResources();
+				break;
+			case CONFIGURATION:
+				resourceList = getConfigResources();
+				break;
+			default:
+				resourceList = new ArrayList<>();
+		}
+		return resourceList;
 	}
 
 	/**
@@ -479,23 +497,25 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	 * @return
 	 */
 	public boolean setResourceList(List<Resource> resources){
-		//create resource based upon type
-		switch (resources.get(0).resourceType) {
-		case VNF:
-			this.setServiceVnfs((List<VnfResource>)(List<?>)resources);
-			break;
-		case NETWORK:
-			this.setServiceNetworks((List<NetworkResource>)(List<?>)resources);
-		    break;
-		case ALLOTTED_RESOURCE:
-			this.setServiceAllottedResources((List<AllottedResource>)(List<?>)resources);
-		    break;
-		case CONFIGURATION:
-			this.setServiceConfigResources((List<ConfigResource>)(List<?>)resources);
-		    break;
-		default:
-		     throw new IllegalArgumentException("Invalid resource type: " + resources.get(0).resourceType);
-		 }
+		if(resources != null && !resources.isEmpty()) {
+			//create resource based upon type
+			switch (resources.get(0).resourceType) {
+				case VNF:
+					this.setVnfResources((List<VnfResource>)(List<?>)resources);
+					break;
+				case NETWORK:
+					this.setNetworkResources((List<NetworkResource>)(List<?>)resources);
+				    break;
+				case ALLOTTED_RESOURCE:
+					this.setAllottedResources((List<AllottedResource>)(List<?>)resources);
+				    break;
+				case CONFIGURATION:
+					this.setConfigResources((List<ConfigResource>)(List<?>)resources);
+				    break;
+				default:
+				     throw new IllegalArgumentException("Invalid resource type: " + resources.get(0).resourceType);
+			}
+		}
 
 		return false;
 	}
@@ -520,5 +540,4 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 		}
 		return null;
 	}
-
 }

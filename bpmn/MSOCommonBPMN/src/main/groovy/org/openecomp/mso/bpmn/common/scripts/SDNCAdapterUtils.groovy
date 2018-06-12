@@ -23,10 +23,14 @@ package org.openecomp.mso.bpmn.common.scripts;
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-
 import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
 import org.springframework.web.util.UriUtils
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 
 /**
@@ -34,6 +38,8 @@ import org.springframework.web.util.UriUtils
  *
  */
 class SDNCAdapterUtils {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SDNCAdapterUtils.class);
+
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
@@ -45,7 +51,6 @@ class SDNCAdapterUtils {
 	}
 
 	String SDNCAdapterFeatureRequest(DelegateExecution execution, String requestName, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
-
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -91,7 +96,6 @@ class SDNCAdapterUtils {
 	}
 
 	String SDNCAdapterActivateVnfRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String msoAction, String timeoutValueInMinutes) {
-
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -135,7 +139,6 @@ class SDNCAdapterUtils {
 	}
 
 	String SDNCAdapterL3ToHigherLayerRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
-
 		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
@@ -235,7 +238,6 @@ class SDNCAdapterUtils {
 
 
 	private void SDNCAdapterActivateRequest(DelegateExecution execution, String resultVar, String svcAction,
-
 			String svcOperation, String additionalData) {
 			def utils=new MsoUtils()
 
@@ -253,11 +255,11 @@ class SDNCAdapterUtils {
 			def svcInstanceId = execution.getVariable("mso-service-instance-id")
 			def msoAction = 'gammainternet'
 
-			def timeoutInMinutes = execution.getVariable('URN_mso_sdnc_timeout_firewall_minutes')
+			def timeoutInMinutes = UrnPropertiesReader.getVariable('mso.sdnc.timeout.firewall.minutes',execution)
 
-			def callbackUrl = (String) execution.getVariable('URN_mso_workflow_sdncadapter_callback')
+			def callbackUrl = (String)UrnPropertiesReader.getVariable('mso.workflow.sdncadapter.callback',execution)
 			if (callbackUrl == null || callbackUrl.trim() == "") {
-				logError('mso:workflow:sdncadapter:callback URN is not set')
+				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'mso:workflow:sdncadapter:callback URN is not set', "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 				workflowException(execution, 'Internal Error', 9999) // TODO: what message and error code?
 			}
 
@@ -335,7 +337,6 @@ class SDNCAdapterUtils {
 	 * @param isAic3 boolean to indicate whether request is for AIC3.0
 	 */
 	public void sdncReservePrep(DelegateExecution execution, String action, String resultVar, boolean isAic3) {
-
 		sdncPrep(execution, resultVar, action , 'service-configuration-operation', null, isAic3, this.taskProcessor)
 	}
 
@@ -363,7 +364,6 @@ class SDNCAdapterUtils {
 	 * @param isAic3 boolean to indicate whether request is for AIC3.0
 	 */
 	public void sdncPrep(DelegateExecution execution, String resultVar, String svcAction,
-
 			String svcOperation, String additionalData, boolean isAic3, AbstractServiceTaskProcessor taskProcessor) {
 		def method = getClass().getSimpleName() + '.sdncPrep(' +
 			'execution=' + execution.getId() +
@@ -373,8 +373,7 @@ class SDNCAdapterUtils {
 			', additionalData=' + (additionalData == null ? "no" : "yes") +
 			')'
 
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		taskProcessor.logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 		MsoUtils utils = taskProcessor.utils
 		try {
 			def prefix = execution.getVariable('prefix')
@@ -384,7 +383,7 @@ class SDNCAdapterUtils {
 			def serviceParameters = utils.getChildNodes(request, 'service-parameters')
 			def requestAction = utils.getNodeText1(request, 'request-action')
 
-			def timeoutInMinutes = execution.getVariable('URN_mso_sdnc_timeout_firewall_minutes')
+			def timeoutInMinutes = UrnPropertiesReader.getVariable('mso.sdnc.timeout.firewall.minutes',execution)
 
 			def requestId = execution.getVariable('testReqId') // for junits
 			if(requestId==null){
@@ -394,9 +393,9 @@ class SDNCAdapterUtils {
 			def svcInstanceId = execution.getVariable("mso-service-instance-id")
 			def msoAction = 'gammainternet'
 
-			def callbackUrl = (String) execution.getVariable('URN_mso_workflow_sdncadapter_callback')
+			def callbackUrl = (String)UrnPropertiesReader.getVariable('mso.workflow.sdncadapter.callback',execution)
 			if (callbackUrl == null || callbackUrl.trim() == "") {
-				taskProcessor.logError('mso:workflow:sdncadapter:callback URN is not set')
+				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'mso:workflow:sdncadapter:callback URN is not set', "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Internal Error - During PreProcess Request")
 			}
 
@@ -461,13 +460,13 @@ class SDNCAdapterUtils {
 
 			content = utils.removeXmlPreamble(utils.formatXML(content))
 			execution.setVariable(resultVar, content)
-			taskProcessor.logDebug(resultVar + ' = ' + System.lineSeparator() + content, isDebugLogEnabled)
+			msoLogger.debug(resultVar + ' = ' + System.lineSeparator() + content)
 
-			taskProcessor.logDebug('Exited ' + method, isDebugLogEnabled)
+			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			taskProcessor.logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error")
 		}
 	}
@@ -497,7 +496,6 @@ class SDNCAdapterUtils {
 	 *   RequestData element (may be null)
 	 */
 	 public String sdncTopologyRequestV2 (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String queryAAIResponse, String additionalData) {
-
 		 def utils=new MsoUtils()
 
 		 // SNDC is expecting request Id for header as unique each call.
@@ -536,7 +534,11 @@ class SDNCAdapterUtils {
 			 serviceId = utils.getNodeText1(requestXML, "service-id")
 		 }
 		 String networkName = ""
-		 if (utils.nodeExists(requestXML, "network-name")) {
+		 // Replace/Use the value of network-name from aai query (vs input) if it was already set in AAI
+		 if (queryAAIResponse != null) {
+			 networkName = utils.getNodeText1(queryAAIResponse, "network-name")
+		 }
+		 if (networkName.isEmpty() && utils.nodeExists(requestXML, "network-name")) {
 			 networkName = utils.getNodeText1(requestXML, "network-name")
 		 }
 		 String source = ""
@@ -616,7 +618,6 @@ class SDNCAdapterUtils {
 	  *   RequestData element (may be null)
 	  */
 	  public String sdncTopologyRequestRsrc (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String additionalData) {
-
 		  def utils=new MsoUtils()
 
 		  // SNDC is expecting request Id for header as unique each call.
@@ -779,19 +780,17 @@ class SDNCAdapterUtils {
 			 * @param workflowException the WorkflowException Object returned from sdnc call
 			 */
 	public void validateSDNCResponse(DelegateExecution execution, String response, WorkflowException workflowException, boolean successIndicator){
-
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		taskProcessor.utils.log("DEBUG", "SDNC Response is: " + response, isDebugLogEnabled)
-		taskProcessor.utils.log("DEBUG", "SuccessIndicator is: " + successIndicator, isDebugLogEnabled)
+		msoLogger.debug("SDNC Response is: " + response)
+		msoLogger.debug("SuccessIndicator is: " + successIndicator)
 
 		try {
 			def prefix = execution.getVariable('prefix')
 			execution.setVariable(prefix+'sdncResponseSuccess', false)
-			taskProcessor.utils.log("DEBUG", "Response" + ' = ' + (response == null ? "" : System.lineSeparator()) + response, isDebugLogEnabled)
+			msoLogger.debug("Response" + ' = ' + (response == null ? "" : System.lineSeparator()) + response)
 
 			if (successIndicator){
 				if (response == null || response.trim().equals("")) {
-					taskProcessor.utils.log("DEBUG", response + ' is empty');
+					msoLogger.debug(response + ' is empty');
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, "SDNCAdapter Workflow Response is Empty")
 				}else{
 
@@ -802,7 +801,7 @@ class SDNCAdapterUtils {
 					// change '&' to "&amp; (if present as data, ex: subscriber-name = 'FOUR SEASONS HEATING & COOLING_8310006378683'
 					decodedXml = decodedXml.replace("&", "&amp;")
 
-					taskProcessor.utils.log("DEBUG","decodedXml:\n" + decodedXml, isDebugLogEnabled)
+					msoLogger.debug("decodedXml:\n" + decodedXml)
 
 					int requestDataResponseCode = 200
 					def String requestDataResponseMessage = ''
@@ -814,33 +813,33 @@ class SDNCAdapterUtils {
 							requestDataResponseMessage = taskProcessor.utils.getNodeText(decodedXml, "ResponseMessage")
 						}
 					}catch(Exception e){
-						taskProcessor.utils.log("DEBUG", 'Error caught while decoding resposne ' + e.getMessage(), isDebugLogEnabled)
+						msoLogger.debug('Error caught while decoding resposne ' + e.getMessage())
 					}
 
 					if(taskProcessor.utils.nodeExists(decodedXml, "response-code")) {
-						taskProcessor.utils.log("DEBUG","response-code node Exist ", isDebugLogEnabled)
+						msoLogger.debug("response-code node Exist ")
 						String code = taskProcessor.utils.getNodeText1(decodedXml, "response-code")
 						if(code.isEmpty() || code.equals("")){
 							// if response-code is blank then Success
-							taskProcessor.utils.log("DEBUG","response-code node is empty", isDebugLogEnabled)
+							msoLogger.debug("response-code node is empty")
 							requestDataResponseCode = 0
 						}else{
 							requestDataResponseCode  = code.toInteger()
-							taskProcessor.utils.log("DEBUG","response-code is: " + requestDataResponseCode, isDebugLogEnabled)
+							msoLogger.debug("response-code is: " + requestDataResponseCode)
 						}
 					}else if(taskProcessor.utils.nodeExists(decodedXml, "ResponseCode")){
-						taskProcessor.utils.log("DEBUG","ResponseCode node Exist ", isDebugLogEnabled)
+						msoLogger.debug("ResponseCode node Exist ")
 						String code = taskProcessor.utils.getNodeText1(decodedXml, "ResponseCode")
 						if(code.isEmpty() || code.equals("")){
 							// if ResponseCode blank then Success
-							taskProcessor.utils.log("DEBUG","ResponseCode node is empty", isDebugLogEnabled)
+							msoLogger.debug("ResponseCode node is empty")
 							requestDataResponseCode = 0
 						}else{
 							requestDataResponseCode  = code.toInteger()
-							taskProcessor.utils.log("DEBUG","ResponseCode is: " + requestDataResponseCode, isDebugLogEnabled)
+							msoLogger.debug("ResponseCode is: " + requestDataResponseCode)
 						}
 					}else{
-						taskProcessor.utils.log("DEBUG","A Response Code DOES NOT Exist.", isDebugLogEnabled)
+						msoLogger.debug("A Response Code DOES NOT Exist.")
 						// if a response code does not exist then Success
 						requestDataResponseCode = 0
 					}
@@ -850,8 +849,8 @@ class SDNCAdapterUtils {
 						// if a response code is 0 or 2XX then Success
 						if ((requestDataResponseCode >= 200 && requestDataResponseCode <= 299) || requestDataResponseCode == 0) {
 							execution.setVariable(prefix+'sdncResponseSuccess', true)
-							taskProcessor.utils.log("DEBUG", "Setting sdncResponseSuccess to True ", isDebugLogEnabled)
-							taskProcessor.utils.log("DEBUG", "Exited ValidateSDNCResponse Method", isDebugLogEnabled)
+							msoLogger.debug("Setting sdncResponseSuccess to True ")
+							msoLogger.debug("Exited ValidateSDNCResponse Method")
 						}else{
 							ExceptionUtil exceptionUtil = new ExceptionUtil()
 							String convertedCode = exceptionUtil.MapSDNCResponseCodeToErrorCode(requestDataResponseCode.toString())
@@ -864,12 +863,12 @@ class SDNCAdapterUtils {
 						requestDataResponseCode = 500
 					}
 
-					taskProcessor.utils.log("DEBUG", "SDNC callback response-code: " + requestDataResponseCode, isDebugLogEnabled)
-					taskProcessor.utils.log("DEBUG", "SDNC callback response-message: " + requestDataResponseMessage, isDebugLogEnabled)
+					msoLogger.debug("SDNC callback response-code: " + requestDataResponseCode)
+					msoLogger.debug("SDNC callback response-message: " + requestDataResponseMessage)
 				}
 
 			}else {
-				taskProcessor.utils.log("DEBUG", 'SDNCAdapter Subflow did NOT complete Successfully.  SuccessIndicator is False. ')
+				msoLogger.debug('SDNCAdapter Subflow did NOT complete Successfully.  SuccessIndicator is False. ')
 				if(workflowException != null){
 					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
 				}else{
@@ -881,7 +880,7 @@ class SDNCAdapterUtils {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			taskProcessor.utils.log("DEBUG", 'END of Validate SDNC Response', isDebugLogEnabled)
+			msoLogger.debug('END of Validate SDNC Response')
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, 'Internal Error- Unable to validate SDNC Response ');
 		}
 	}
@@ -894,26 +893,24 @@ class SDNCAdapterUtils {
 			 * @param errorResponseVar the execution variable in which the error response is stored
 			 */
 			public void validateL3BondingSDNCResp(DelegateExecution execution, String response, WorkflowException workflowException, boolean success) {
-
 				def method = getClass().getSimpleName() + '.validateL3BondingSDNCResp(' +
 					'execution=' + execution.getId() +
 					', response=' + response +
 					')'
-				def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-				taskProcessor.logDebug('Entered ' + method, isDebugLogEnabled)
+				msoLogger.trace('Entered ' + method)
 				def prefix = execution.getVariable('prefix')
 				TrinityExceptionUtil trinityExceptionUtil = new TrinityExceptionUtil()
 
 				try {
 					execution.setVariable(prefix+'sdncResponseSuccess', false)
 
-					taskProcessor.utils.log("sdncAdapter Success Indicator is: " + success, isDebugLogEnabled)
+					msoLogger.debug("sdncAdapter Success Indicator is: " + success)
 					if (success) {
 
 						// we need to look inside the request data for error
 						def String callbackRequestData = taskProcessor.utils.getNodeXml(response, 'RequestData', false)
 						def String decodedXml = decodeXML(callbackRequestData)
-						taskProcessor.utils.log("DEBUG","decodedXml:\n" + decodedXml, isDebugLogEnabled)
+						msoLogger.debug("decodedXml:\n" + decodedXml)
 
 						def requestDataResponseCode = '200'
 						def requestDataResponseMessage = ''
@@ -932,29 +929,29 @@ class SDNCAdapterUtils {
 							requestDataResponseMessage  = taskProcessor.utils.getNodeText(response, "ResponseMessage")
 						}
 
-						taskProcessor.utils.log("DEBUG", "SDNC callback response-code: " + requestDataResponseCode, isDebugLogEnabled)
-						taskProcessor.utils.log("DEBUG", "SDNC callback response-message: " + requestDataResponseMessage, isDebugLogEnabled)
+						msoLogger.debug("SDNC callback response-code: " + requestDataResponseCode)
+						msoLogger.debug("SDNC callback response-message: " + requestDataResponseMessage)
 
 						// Get the AAI Status to determine if rollback is needed on ASSIGN
 						def aai_status = ''
 						if (taskProcessor.utils.nodeExists(decodedXml, "aai-status")) {
 							aai_status = ((String) taskProcessor.utils.getNodeText(decodedXml, "aai-status"))
-							taskProcessor.utils.log("DEBUG", "SDNC sent AAI STATUS code: " + aai_status, isDebugLogEnabled)
+							msoLogger.debug("SDNC sent AAI STATUS code: " + aai_status)
 						}
 						if (aai_status != null && !aai_status.equals("")) {
 							execution.setVariable(prefix+"AaiStatus",aai_status)
-							taskProcessor.utils.log("DEBUG", "Set variable " + prefix + "AaiStatus: " + execution.getVariable(prefix+"AaiStatus"), isDebugLogEnabled)
+							msoLogger.debug("Set variable " + prefix + "AaiStatus: " + execution.getVariable(prefix+"AaiStatus"))
 						}
 
 						// Get the result string to determine if rollback is needed on ASSIGN in Add Bonding flow only
 						def sdncResult = ''
 						if (taskProcessor.utils.nodeExists(decodedXml, "result")) {
 							sdncResult = ((String) taskProcessor.utils.getNodeText(decodedXml, "result"))
-							taskProcessor.utils.log("DEBUG", "SDNC sent result: " + sdncResult, isDebugLogEnabled)
+							msoLogger.debug("SDNC sent result: " + sdncResult)
 						}
 						if (sdncResult != null && !sdncResult.equals("")) {
 							execution.setVariable(prefix+"SdncResult",sdncResult)
-							taskProcessor.utils.log("DEBUG", "Set variable " + prefix + "SdncResult: " + execution.getVariable(prefix+"SdncResult"), isDebugLogEnabled)
+							msoLogger.debug("Set variable " + prefix + "SdncResult: " + execution.getVariable(prefix+"SdncResult"))
 						}
 
 						try{
@@ -963,7 +960,7 @@ class SDNCAdapterUtils {
 							intDataResponseCode = 400
 						}
 
-						taskProcessor.utils.log("DEBUG", "intDataResponseCode " + intDataResponseCode , isDebugLogEnabled)
+						msoLogger.debug("intDataResponseCode " + intDataResponseCode )
 
 						// if response-code is not Success (200, 201, etc) we need to throw an exception
 						if ((intDataResponseCode < 200 || intDataResponseCode > 299) && intDataResponseCode != 0) {
@@ -974,25 +971,25 @@ class SDNCAdapterUtils {
 
 						}
 					}else {
-						taskProcessor.logWarn('sdncAdapter did not complete successfully, sdncAdapter Success Indicator was false ')
+						msoLogger.warn(MessageEnum.BPMN_GENERAL_WARNING, 'sdncAdapter did not complete successfully, sdncAdapter Success Indicator was false ', "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, 'sdncAdapter did not complete successfully, sdncAdapter Success Indicator was false ');
 						execution.setVariable("L3HLAB_rollback", true)
-						def msg = trinityExceptionUtil.mapSDNCAdapterExceptionToErrorResponse(response, execution)
-						exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, msg)
+						def msg = trinityExceptionUtil.intDataResponseCode(response, execution)
+						exceptionUtil.buildAndThrowWorkflowException(execution, intDataResponseCode, msg)
 					}
 
 					if (response == null || response.trim().equals("")) {
-						taskProcessor.logWarn('sdncAdapter workflow response is empty');
+						msoLogger.warn(MessageEnum.BPMN_GENERAL_WARNING, 'sdncAdapter workflow response is empty', "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, 'sdncAdapter workflow response is empty');;
 						execution.setVariable("L3HLAB_rollback", true)
 						def msg = trinityExceptionUtil.buildException("Exception occurred while validating SDNC response " , execution)
 						exceptionUtil.buildAndThrowWorkflowException(execution, intResponseCode, msg)
 					}
 
 					execution.setVariable(prefix+'sdncResponseSuccess', true)
-					taskProcessor.logDebug('Exited ' + method, isDebugLogEnabled)
+					msoLogger.trace('Exited ' + method)
 				} catch (BpmnError e) {
 					throw e;
 				} catch (Exception e) {
-					taskProcessor.logError('Caught exception in ' + method, e)
+					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 					execution.setVariable(prefix+"ResponseCode",400)
 					execution.setVariable("L3HLAB_rollback", true)
 					def msg = trinityExceptionUtil.buildException("Exception occurred while validating SDNC response: " + e.getMessage(), execution)

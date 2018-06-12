@@ -32,7 +32,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.openecomp.mso.adapters.vdu.CloudInfo;
 import org.openecomp.mso.adapters.vdu.PluginAction;
 import org.openecomp.mso.adapters.vdu.VduArtifact;
@@ -42,19 +47,22 @@ import org.openecomp.mso.adapters.vdu.VduModelInfo;
 import org.openecomp.mso.adapters.vdu.VduStateType;
 import org.openecomp.mso.adapters.vdu.VduStatus;
 import org.openecomp.mso.cloud.CloudConfig;
-import org.openecomp.mso.cloud.CloudConfigFactory;
 import org.openecomp.mso.cloud.CloudSite;
-import org.openecomp.mso.cloudify.beans.DeploymentInfo;
-import org.openecomp.mso.cloudify.beans.DeploymentStatus;
-import org.openecomp.mso.cloudify.utils.MsoCloudifyUtils;
 import org.openecomp.mso.openstack.beans.HeatStatus;
 import org.openecomp.mso.openstack.beans.StackInfo;
 import org.openecomp.mso.openstack.exceptions.MsoException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+@RunWith(MockitoJUnitRunner.class)
 public class MsoHeatUtilsTest2 {
 
+	@Mock
+	private CloudConfig cloudConfig;
+	
+	@Spy
+	@InjectMocks
+	private MsoHeatUtils heatUtils;
 	@Test
 	public void instantiateVduTest() throws MsoException, JsonProcessingException {
 		VduInstance expected = new VduInstance();
@@ -65,13 +73,9 @@ public class MsoHeatUtilsTest2 {
 		status.setLastAction((new PluginAction("create", "complete", "")));
 		expected.setStatus(status);
 
-		MsoHeatUtils heatUtils = Mockito.spy(MsoHeatUtils.class);
 		CloudSite site = new CloudSite();
 		Optional<CloudSite> opSite = Optional.ofNullable(site);
-		CloudConfig config = Mockito.mock(CloudConfig.class);
-		CloudConfigFactory cloudConfigFactory = Mockito.mock(CloudConfigFactory.class);
-		when(cloudConfigFactory.getCloudConfig()).thenReturn(config);
-		when(heatUtils.getCloudConfigFactory()).thenReturn(cloudConfigFactory);
+
 		CloudInfo cloudInfo = new CloudInfo();
 		cloudInfo.setCloudSiteId("cloudSiteId");
 		cloudInfo.setTenantId("tenantId");
@@ -92,7 +96,7 @@ public class MsoHeatUtilsTest2 {
 		Map<String, Object> inputs = new HashMap<>();
 		boolean rollbackOnFailure = true;
 		String heatTemplate = new String(artifact.getContent());
-		when(config.getCloudSite(cloudInfo.getCloudSiteId())).thenReturn(opSite);
+		when(cloudConfig.getCloudSite(cloudInfo.getCloudSiteId())).thenReturn(opSite);
 		Map<String, Object> nestedTemplates = new HashMap<String, Object>();
 		Map<String, Object> files = new HashMap<String, Object>();
 

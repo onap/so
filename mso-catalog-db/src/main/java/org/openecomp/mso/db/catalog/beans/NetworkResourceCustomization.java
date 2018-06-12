@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,60 +17,118 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.db.catalog.beans;
 
-import java.sql.Timestamp;
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.openpojo.business.annotation.BusinessKey;
 
-import java.io.Serializable;
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
-public class NetworkResourceCustomization implements Serializable{
-
-	// modelCustomizationUuid and networkResourceModelUuid form a composite primary key
-	@BusinessKey
-	private String modelCustomizationUuid = null;
-	@BusinessKey
-	private String networkResourceModelUuid = null;
+@Entity
+@Table(name = "network_resource_customization")
+public class NetworkResourceCustomization implements Serializable {
 	public static final long serialVersionUID = -1322322139926390329L;
-	private String modelInstanceName = null;
-	private Timestamp created = null;
-	private String networkTechnology = null;
-	private String networkType = null;
-	private String networkScope = null;
-	private String networkRole = null;
 
-	// These fields are not in the table directly - but I'm adding them here for storage in the objects we're dealing with
-	private NetworkResource networkResource = null;
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
+				.append("modelInstanceName", modelInstanceName).append("created", created)
+				.append("networkTechnology", networkTechnology).append("networkType", networkType)
+				.append("networkScope", networkScope).append("networkRole", networkRole)
+				.append("networkResource", networkResource).toString();
+	}
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof NetworkResourceCustomization)) {
+			return false;
+		}
+		NetworkResourceCustomization castOther = (NetworkResourceCustomization) other;
+		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
+	}
 
 	public NetworkResourceCustomization() {
 		super();
 	}
 
-	public String getModelCustomizationUuid() {
-		return this.modelCustomizationUuid;
-	}
-	public void setModelCustomizationUuid(String modelCustomizationUuid) {
-		this.modelCustomizationUuid = modelCustomizationUuid;
+	@BusinessKey
+	@Id
+	@Column(name = "MODEL_CUSTOMIZATION_UUID")
+	private String modelCustomizationUUID = null;
+
+	@Column(name = "MODEL_INSTANCE_NAME")
+	private String modelInstanceName;
+
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@Column(name = "NETWORK_TECHNOLOGY")
+	private String networkTechnology;
+
+	@Column(name = "NETWORK_TYPE")
+	private String networkType = null;
+
+	@Column(name = "NETWORK_SCOPE")
+	private String networkScope;
+
+	@Column(name = "NETWORK_ROLE")
+	private String networkRole;
+
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "NETWORK_RESOURCE_MODEL_UUID")
+	private NetworkResource networkResource = null;
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
 	}
 
-	public String getNetworkResourceModelUuid() {
-		return this.networkResourceModelUuid;
+	public String getModelCustomizationUUID() {
+		return this.modelCustomizationUUID;
 	}
-	public void setNetworkResourceModelUuid(String networkResourceModelUuid) {
-		this.networkResourceModelUuid = networkResourceModelUuid;
+
+	public void setModelCustomizationUUID(String modelCustomizationUUID) {
+		this.modelCustomizationUUID = modelCustomizationUUID;
 	}
 
 	public String getModelInstanceName() {
-		return  this.modelInstanceName;
+		return this.modelInstanceName;
 	}
+
 	public void setModelInstanceName(String modelInstanceName) {
 		this.modelInstanceName = modelInstanceName;
 	}
 
+	@LinkedResource
 	public NetworkResource getNetworkResource() {
 		return this.networkResource;
 	}
+
 	public void setNetworkResource(NetworkResource networkResource) {
 		this.networkResource = networkResource;
 	}
@@ -78,69 +136,36 @@ public class NetworkResourceCustomization implements Serializable{
 	public String getNetworkType() {
 		return this.networkType;
 	}
+
 	public void setNetworkType(String networkType) {
 		this.networkType = networkType;
 	}
-	public Timestamp getCreated() {
+
+	public Date getCreated() {
 		return this.created;
-	}
-	public void setCreated(java.sql.Timestamp timestamp) {
-		this.created = timestamp;
 	}
 
 	public String getNetworkTechnology() {
 		return this.networkTechnology;
 	}
+
 	public void setNetworkTechnology(String networkTechnology) {
 		this.networkTechnology = networkTechnology;
 	}
+
 	public String getNetworkScope() {
 		return this.networkScope;
 	}
+
 	public void setNetworkScope(String networkScope) {
 		this.networkScope = networkScope;
 	}
+
 	public void setNetworkRole(String networkRole) {
 		this.networkRole = networkRole;
 	}
+
 	public String getNetworkRole() {
 		return this.networkRole;
 	}
-
-	@Override
-	public String toString() {
-		return "modelCustomizationUuid=" + this.modelCustomizationUuid +
-			"networkResourceModelUuid=" + this.networkResourceModelUuid +
-			"modelInstanceName=" + this.modelInstanceName +
-			"networkType=" + this.networkType +
-			"networkTechnology=" + this.networkTechnology +
-			"networkScope=" + this.networkScope +
-			"networkRole=" + this.networkRole;
-	}
-
-    @Override
-    public boolean equals (Object o) {
-        if (!(o instanceof NetworkResourceCustomization)) {
-            return false;
-        }
-        if (this == o) {
-            return true;
-        }
-        NetworkResourceCustomization nrc = (NetworkResourceCustomization) o;
-        if (nrc.getModelCustomizationUuid().equals(this.getModelCustomizationUuid()) 
-        		&& nrc.getNetworkResourceModelUuid().equals(this.getNetworkResourceModelUuid())) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode () {
-        // hash code does not have to be a unique result - only that two objects that should be treated as equal
-        // return the same value. so this should work.
-        int result;
-        result = (this.modelCustomizationUuid != null ? this.modelCustomizationUuid.hashCode() : 0) + (this.networkResourceModelUuid != null ? this.networkResourceModelUuid.hashCode() : 0);
-        return result;
-    }
-
 }

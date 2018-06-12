@@ -427,7 +427,7 @@ public class CreateVnfNotification {
     	       "   <key>"+key+"</key>" + '\n' +
     	       "   <value>"+value+"</value>" + '\n' +
     	       "</entry>";
-            	return entrystr; 
+            	return entrystr;
             }
 
         }

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  labels:
+    app: mso-sdnc-adapter 
+  name: mso-sdnc-adapter
+  namespace: com-att-mso-dev
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: mso-sdnc-adapter 
+  type: NodePort

@@ -1,0 +1,22 @@
+{
+	"serviceResources" : {
+		"modelInfo" : {
+			"modelName" : "modelName",
+			"modelUuid" : "modelUuid",
+			"modelInvariantUuid" : "modelInvariantUuid",
+			"modelVersion" : "modelVersion",
+			"modelCustomizationUuid" : "modelCustomizationUuid",
+			"modelCustomizationName" : "modelCustomizationName",
+			"modelInstanceName" : "modelInstanceName",
+			"modelType" : "modelType"
+		},
+		"serviceType" : "serviceType",
+		"serviceRole" : "serviceRole",
+		"project" : {},
+		"owningEntity" : {},
+		"vnfResource" : [],
+		"networkResource" : [],
+		"allottedResource" : [],
+		"configResource" : []
+	}
+}

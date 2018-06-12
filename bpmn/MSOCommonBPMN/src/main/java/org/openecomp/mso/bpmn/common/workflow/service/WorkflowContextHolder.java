@@ -23,24 +23,25 @@ package org.openecomp.mso.bpmn.common.workflow.service;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.core.Response;
-
-import org.jboss.resteasy.spi.AsynchronousResponse;
-import org.slf4j.MDC;
-
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.stereotype.Component;
 
 /**
  * Workflow Context Holder instance which can be accessed elsewhere either in groovy scripts or Java
  * @version 1.0
  *
  */
+
+@Component
 public class WorkflowContextHolder {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,WorkflowContextHolder.class);
 	private static final String logMarker = "[WORKFLOW-CONTEXT-HOLDER]";
 	private static WorkflowContextHolder instance = null;
+	
+	
+	private long defaultContextTimeout=60000;
 
 	/**
 	 * Delay Queue which holds workflow context holder objects
@@ -97,70 +98,34 @@ public class WorkflowContextHolder {
 	 * @param callbackResponse
 	 * @return
 	 */
-	public Response processCallback(String processKey, String processInstanceId,
-			String requestId, WorkflowCallbackResponse callbackResponse) {
+	public void processCallback(String processKey, String processInstanceId,
+			String requestId, WorkflowCallbackResponse callbackResponse) {		
 		WorkflowResponse workflowResponse = new WorkflowResponse();
-		WorkflowContext workflowContext = getWorkflowContext(requestId);
-
-		if (workflowContext == null) {
-			msoLogger.debug("Unable to correlate workflow context for request id: " + requestId
-				+ ":processInstance Id:" + processInstanceId
-				+ ":process key:" + processKey);
-			workflowResponse.setMessage("Fail");
-			workflowResponse.setMessageCode(400);
-			workflowResponse.setContent("Unable to correlate workflow context, bad request. Request Id: " + requestId);
-			return Response.serverError().entity(workflowResponse).build();
-		}
-
-		responseQueue.remove(workflowContext);
-
-		msoLogger.debug("Using callback response for request id: " + requestId);
-		workflowResponse.setContent(callbackResponse.getResponse());
-		workflowResponse.setProcessInstanceId(processInstanceId);
+		workflowResponse.setResponse(callbackResponse.getResponse());
+		workflowResponse.setProcessInstanceID(processInstanceId);
 		workflowResponse.setMessageCode(callbackResponse.getStatusCode());
 		workflowResponse.setMessage(callbackResponse.getMessage());
-		sendWorkflowResponseToClient(processKey, workflowContext, workflowResponse);
-		return Response.ok().entity(workflowResponse).build();
+		WorkflowContext context = new WorkflowContext(processKey, requestId, defaultContextTimeout,workflowResponse);
+		put(context);
 	}
-	
-	/**
-	 * Send the response to client asynchronously when invoked by the BPMN process
-	 * @param processKey
-	 * @param workflowContext
-	 * @param workflowResponse
-	 */
-	private void sendWorkflowResponseToClient(String processKey, WorkflowContext workflowContext,
-			WorkflowResponse workflowResponse) {
-		msoLogger.debug(logMarker + "Sending the response for request id: " + workflowContext.getRequestId());
-		recordEvents(processKey, workflowResponse, workflowContext.getStartTime());
-		Response response = Response.status(workflowResponse.getMessageCode()).entity(workflowResponse).build();
-		AsynchronousResponse asyncResp = workflowContext.getAsynchronousResponse();
-		asyncResp.setResponse(response);
-	}
+
 
 	/**
 	 * Timeout thread which monitors the delay queue for expired context and send timeout response
 	 * to client
-	 *git review -R
+	 *
 	 * */
 	private class TimeoutThread extends Thread {
+		@Override
 		public void run() {
 			while (!isInterrupted()) {
 				try {
 					WorkflowContext requestObject = responseQueue.take();
+					MsoLogger.setLogContext(requestObject.getRequestId(), null);
 					msoLogger.debug("Time remaining for request id: " + requestObject.getRequestId() + ":" + requestObject.getDelay(TimeUnit.MILLISECONDS));
 					msoLogger.debug("Preparing timeout response for " + requestObject.getProcessKey() + ":" + ":" + requestObject.getRequestId());
-					WorkflowResponse response = new WorkflowResponse();
-					response.setMessage("Fail");
-					response.setContent("Request timedout, request id:" + requestObject.getRequestId());
-					//response.setProcessInstanceID(requestObject.getProcessInstance().getProcessInstanceId());
-					recordEvents(requestObject.getProcessKey(), response, requestObject.getStartTime());
-					response.setMessageCode(500);
-					Response result = Response.status(500).entity(response).build();
-					requestObject.getAsynchronousResponse().setResponse(result);
-					msoLogger.debug("Sending timeout response for request id:" + requestObject.getRequestId() + ":response:" + response);
 				} catch (InterruptedException e) {
-					break;
+					Thread.currentThread().interrupt();
 				} catch (Exception e) {
 					msoLogger.debug("WorkflowContextHolder timeout thread caught exception: " + e);
 				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), 
@@ -168,21 +133,7 @@ public class WorkflowContextHolder {
 				
 				}
 			}
-
 			msoLogger.debug("WorkflowContextHolder timeout thread interrupted, quitting");
 		}
-	}
-	
-	private static void recordEvents(String processKey, WorkflowResponse response,
-			long startTime) {
-
-		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				logMarker + response.getMessage() + " for processKey: "
-				+ processKey + " with content: " + response.getContent(), "BPMN", MDC.get(processKey), null);
-		
-		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, logMarker 
-				+ response.getMessage() + " for processKey: " 
-				+ processKey + " with content: " + response.getContent());
-		
 	}
 }

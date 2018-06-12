@@ -20,19 +20,24 @@
 
 package org.openecomp.mso.bpmn.common.scripts
 
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
+
 import java.text.SimpleDateFormat
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
 
 public class FalloutHandler extends AbstractServiceTaskProcessor {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, FalloutHandler.class);
+
 	String Prefix="FH_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	
 	public initializeProcessVariables(DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.initializeProcessVariables(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 	
 		try {
 			execution.setVariable("prefix",Prefix)
@@ -88,26 +93,25 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			execution.setVariable("FH_ResponseCode", "")
 	
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
 	
 	public void preProcessRequest (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 	
 		// Initialize flow variables
 		initializeProcessVariables(execution)
 		setSuccessIndicator(execution, false)
 	
-		setBasicDBAuthHeader(execution, isDebugLogEnabled)
+		setBasicDBAuthHeader(execution, execution.getVariable('isDebugLogEnabled'))
 		
 		try {
 			def xml = execution.getVariable("FalloutHandlerRequest")
-			utils.log("DEBUG", " XML --> " + xml, isDebugLogEnabled)
-			utils.logAudit("FalloutHandler request: " + xml)
+			msoLogger.debug(" XML --> " + xml)
+			msoLogger.debug("FalloutHandler request: " + xml)
 	
 			//Check the incoming request type
 			//Incoming request can be ACTIVE_REQUESTS (request-information node) or  INFRA_ACTIVE_REQUESTS (request-info node)
@@ -122,7 +126,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			if (utils.nodeExists(xml, "notification-url")) {
 				notificationurl = utils.getNodeText(xml,"notification-url")
 				if(notificationurl != null && !notificationurl.isEmpty()) {
-					utils.log("DEBUG", "********** Incoming notification Url is: " + notificationurl,isDebugLogEnabled);
+					msoLogger.debug("********** Incoming notification Url is: " + notificationurl);
 					execution.setVariable("FH_notification-url-Ok", true)
 					execution.setVariable("FH_notification-url",notificationurl)
 				}
@@ -135,7 +139,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			if (utils.nodeExists(xml, "request-id")) {
 				execution.setVariable("FH_request_id",utils.getNodeText(xml,"request-id"))
 			}
-			utils.logAudit("FH_request_id: " + execution.getVariable("FH_request_id"))
+			msoLogger.debug("FH_request_id: " + execution.getVariable("FH_request_id"))
 	
 			// INFRA_ACTIVE_REQUESTS	 have "action" element ... mandatory
 			// ACTIVE_REQUEST have "request-action" ... mandatory
@@ -162,7 +166,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 					execution.setVariable("FH_ErrorCode", errorCode)
 				}
 			}
-			utils.logAudit("FH_ErrorCode: " + errorCode)
+			msoLogger.debug("FH_ErrorCode: " + errorCode)
 	
 			//Check if ErrorMessage node exists. If yes, initialize it from request xml, if no, it will stay with defaulf value already set in initializeProcessVariables() method above.
 			def errorMessage = ""
@@ -180,18 +184,18 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 				execution.setVariable("FH_parameterList", parameterList)
 			}
 	
-			utils.log("DEBUG","FH_notification-url-Ok --> " + execution.getVariable("FH_notification-url-Ok"),isDebugLogEnabled)
-			utils.log("DEBUG","FH_request_id-OK --> " + execution.getVariable("FH_request_id-Ok"),isDebugLogEnabled)
+			msoLogger.trace("--> " + execution.getVariable(""))
+			msoLogger.debug("FH_request_id-OK --> " + execution.getVariable("FH_request_id-Ok"))
 	
 			// set the DHV/Service Instantiation values if specified in the request
 			execution.setVariable("FH_is_srv_inst_req", String.valueOf("true".equals(utils.getNodeText1(xml, "is-srv-inst-req"))))
-			utils.log("DEBUG", "FH_is_srv_inst_req --> " + execution.getVariable("FH_is_srv_inst_req"), isDebugLogEnabled)
+			msoLogger.trace("--> " + execution.getVariable(""))
 			execution.setVariable("FH_is_json_content", String.valueOf("JSON".equals(utils.getNodeText1(xml, "resp-content-type"))))
-			utils.log("DEBUG", "FH_is_json_content --> " + execution.getVariable("FH_is_json_content"), isDebugLogEnabled)
+			msoLogger.trace("--> " + execution.getVariable(""))
 			execution.setVariable("FH_service_inst_id", utils.getNodeText1(xml, "service-instance-id"))
-			utils.log("DEBUG", "FH_service_inst_id --> " + execution.getVariable("FH_service_inst_id"), isDebugLogEnabled)
+			msoLogger.trace("--> " + execution.getVariable(""))
 			execution.setVariable("FH_start_time", utils.getNodeText1(xml, "start-time"))
-			utils.log("DEBUG", "FH_start_time --> " + execution.getVariable("FH_start_time"), isDebugLogEnabled)
+			msoLogger.trace("--> " + execution.getVariable(""))
 			// this variable is used by the camunda flow to set the Content-Type for the async response
 			if (execution.getVariable("FH_is_srv_inst_req").equals("true") &&
 				execution.getVariable("FH_is_json_content").equals("true")) {
@@ -200,17 +204,16 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 				execution.setVariable("FH_content_type", "text/xml")
 			}
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 		}
 	
-		utils.log("DEBUG","OUTOF --> Initialize Variables Fallout Handler #########",isDebugLogEnabled);
+		msoLogger.debug("OUTOF --> Initialize Variables Fallout Handler #########");
 	}
 	
 	public String updateRequestPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateRequestPayload(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 	
 		try {
 			String payload = """
@@ -229,19 +232,18 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 					</soapenv:Envelope>
 				"""
 	
-			utils.logAudit("updateRequestPayload: " + payload)
+			msoLogger.debug("updateRequestPayload: " + payload)
 			execution.setVariable("FH_updateRequestPayload", payload)
 			return execution.getVariable("FH_updateRequestPayload")
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
 	
 	public String updateRequestInfraPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateRequestInfraPayload(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 	
 		try {
 			String payload = """
@@ -260,22 +262,21 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 				"""
 	
 			execution.setVariable("FH_updateRequestInfraPayload", payload)
-			utils.logAudit("updateRequestInfraPayload: " + payload)
+			msoLogger.debug("updateRequestInfraPayload: " + payload)
 			return execution.getVariable("FH_updateRequestInfraPayload")
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
 	
 	public String updateRequestGammaPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateRequestGammaPayload(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 	
 		try {
 			String payload = """
-					<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="${execution.getVariable("URN_mso_default_adapter_namespace")}/requestsdb">
+					<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="${UrnPropertiesReader.getVariable("mso.default.adapter.namespace", execution)}/requestsdb">
 					<soapenv:Header/>
 					<soapenv:Body>
 						<req:updateRequest>
@@ -290,18 +291,17 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 				"""
 	
 			execution.setVariable("FH_updateRequestGammaPayload", payload)
-			utils.logAudit("updateRequestGammaPayload: " + payload)
+			msoLogger.debug("updateRequestGammaPayload: " + payload)
 			return execution.getVariable("FH_updateRequestGammaPayload")
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
 	
 	public String updateResponseStatusPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateResponseStatusPayload(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 	
 		try {
 			String payload = """
@@ -318,10 +318,10 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 				"""
 	
 			execution.setVariable("FH_updateResponseStatusPayload", payload)
-			utils.logAudit("updateResponseStatusPayload: " + payload)
+			msoLogger.debug("updateResponseStatusPayload: " + payload)
 			return execution.getVariable("FH_updateResponseStatusPayload")
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
@@ -330,8 +330,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.buildDBWorkflowException(' +
 			'execution=' + execution.getId() +
 			', responseCodeVariable=' + responseCodeVariable + ')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 	
 		try {
 			def responseCode = execution.getVariable(responseCodeVariable)
@@ -340,7 +339,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			def errorCode = responseCode == null ? 7000 : 7020
 		//	exceptionUtil.buildWorkflowException(execution, errorCode, errorMessage)
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
@@ -350,8 +349,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 	 */
 	public void postProcessResponse (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessResponse(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 	
 		try {
 			Boolean success = (Boolean) execution.getVariable("FH_success")
@@ -364,17 +362,17 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 				"""
 	
 			falloutHandlerResponse = utils.formatXml(falloutHandlerResponse)
-			utils.logAudit("FalloutHandler Response: " + falloutHandlerResponse);
+			msoLogger.debug("FalloutHandler Response: " + falloutHandlerResponse);
 	
 			execution.setVariable("FalloutHandlerResponse", falloutHandlerResponse)
 			execution.setVariable("WorkflowResponse", falloutHandlerResponse)
 			execution.setVariable("FH_ResponseCode", success ? "200" : "500")
 			setSuccessIndicator(execution, success)
 	
-			logDebug("FalloutHandlerResponse =\n" + falloutHandlerResponse, isDebugLogEnabled)
+			msoLogger.debug("FalloutHandlerResponse =\n" + falloutHandlerResponse)
 		} catch (Exception e) {
 			// Do NOT throw WorkflowException!
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 		}
 	}
 }

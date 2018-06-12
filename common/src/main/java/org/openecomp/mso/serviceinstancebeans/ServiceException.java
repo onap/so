@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 
 /**
  * <p>Java class for serviceException complex type.
@@ -51,6 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "serviceException")
+@JsonRootName(value = "serviceException")
 public class ServiceException
     extends ExceptionType
 {

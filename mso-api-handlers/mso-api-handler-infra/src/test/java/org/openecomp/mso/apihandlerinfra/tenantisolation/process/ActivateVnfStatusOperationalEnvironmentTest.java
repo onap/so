@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,478 +20,428 @@
 
 package org.openecomp.mso.apihandlerinfra.tenantisolation.process;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.junit.After;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.openecomp.mso.apihandlerinfra.Constants;
-import org.openecomp.mso.apihandlerinfra.MsoPropertiesUtils;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.openecomp.mso.apihandler.common.ErrorNumbers;
+import org.openecomp.mso.apihandlerinfra.ApiHandlerApplication;
+import org.openecomp.mso.apihandlerinfra.BaseTest;
+import org.openecomp.mso.apihandlerinfra.exceptions.ApiException;
+import org.openecomp.mso.apihandlerinfra.exceptions.RecipeNotFoundException;
+import org.openecomp.mso.apihandlerinfra.exceptions.ValidateException;
 import org.openecomp.mso.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.helpers.AsdcClientHelper;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.helpers.ActivateVnfDBHelper;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.Distribution;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.DistributionStatus;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.Status;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
-import org.openecomp.mso.requestsdb.OperationalEnvDistributionStatus;
-import org.openecomp.mso.requestsdb.OperationalEnvDistributionStatusDb;
-import org.openecomp.mso.requestsdb.OperationalEnvServiceModelStatus;
-import org.openecomp.mso.requestsdb.OperationalEnvServiceModelStatusDb;
-import org.openecomp.mso.requestsdb.RequestsDBHelper;
-import org.openecomp.mso.rest.APIResponse;
-import org.openecomp.mso.rest.RESTClient;
-import org.openecomp.mso.rest.RESTConfig;
+import org.openecomp.mso.db.request.beans.InfraActiveRequests;
+import org.openecomp.mso.db.request.beans.OperationalEnvDistributionStatus;
+import org.openecomp.mso.db.request.beans.OperationalEnvServiceModelStatus;
+import org.openecomp.mso.db.request.data.repository.InfraActiveRequestsRepository;
+import org.openecomp.mso.db.request.data.repository.OperationalEnvDistributionStatusRepository;
+import org.openecomp.mso.db.request.data.repository.OperationalEnvServiceModelStatusRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
-public class ActivateVnfStatusOperationalEnvironmentTest {
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
-	MsoJavaProperties properties = MsoPropertiesUtils.loadMsoProperties();
-	AsdcClientHelper asdcClientUtils = new AsdcClientHelper(properties);	
+import java.io.IOException;
+
+public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
+
+	@Autowired
+	private OperationalEnvDistributionStatusRepository distributionDbRepository;
+	@Autowired
+	private OperationalEnvServiceModelStatusRepository serviceModelDbRepository;
+	@Autowired
+	private ActivateVnfStatusOperationalEnvironment activateVnfStatus;
+	@Autowired
+	private InfraActiveRequestsRepository infraActiveRequestsRepository;
+	@Autowired
+	private ActivateVnfDBHelper dbHelper;
 	
-	String requestId = "TEST_requestId";
-	String operationalEnvironmentId = "TEST_operationalEnvironmentId";	
-	CloudOrchestrationRequest request = new CloudOrchestrationRequest();
-	String workloadContext = "TEST_workloadContext";
-	String recoveryAction  = "RETRY";
-	String serviceModelVersionId = "TEST_serviceModelVersionId";
-	int retryCount = 3;
-	String asdcDistributionId = "TEST_distributionId";
-	
-	@BeforeClass
-	public static void setUp() throws Exception {
-		MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-		msoPropertiesFactory.removeAllMsoProperties();
-		msoPropertiesFactory.initializeMsoProperties(Constants.MSO_PROP_APIHANDLER_INFRA, "src/test/resources/mso.apihandler-infra.properties");
-	}	
-	
+	@Rule
+	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(28090));
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+	private String requestId = "TEST_requestId";
+	private String requestIdOrig = "TEST_requestIdOrig";	
+	private String operationalEnvironmentId = "TEST_operationalEnvironmentId";	
+	private CloudOrchestrationRequest request = new CloudOrchestrationRequest();
+	private String workloadContext = "TEST_workloadContext";
+	private String recoveryActionRetry  = "RETRY";
+	private String recoveryActionAbort  = "ABORT";
+	private String recoveryActionSkip  = "SKIP";
+	private String serviceModelVersionId = "TEST_serviceModelVersionId";
+	private String serviceModelVersionId1 = "TEST_serviceModelVersionId1";	
+	private int retryCountThree = 3;
+	private int retryCountTwo = 2;	
+	private int retryCountZero = 0;	
+	private String sdcDistributionId = "TEST_distributionId";
+	private String sdcDistributionId1 = "TEST_distributionId1";	
+	private String statusOk = Status.DISTRIBUTION_COMPLETE_OK.toString();
+	private String statusError = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
+	private String statusSent = "SENT";
+	 
 	@After
-	public void tearDown() throws Exception {
-		
+	public void after() throws Exception {
+		distributionDbRepository.deleteAll();
+		serviceModelDbRepository.deleteAll();		
 	}
 
-
-	@Ignore // 1802 merge
 	@Test
 	public void checkOrUpdateOverallStatusTest_Ok() throws Exception {
 		
-		int retryCount = 0;
+		// two entries, both status Ok & retry 0
+		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
+		serviceModelDb.setRequestId(requestIdOrig);
+		serviceModelDb.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelDb.setWorkloadContext(workloadContext);
+		serviceModelDb.setRecoveryAction(recoveryActionRetry);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setRetryCount(retryCountZero);
+		serviceModelDb.setServiceModelVersionDistrStatus(statusOk);
+		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 		
-		ActivateVnfStatusOperationalEnvironment activateVnfStatus = spy(new ActivateVnfStatusOperationalEnvironment(request, requestId));
-
-		// Mockito mock
-		OperationalEnvDistributionStatusDb distributionDb = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		OperationalEnvServiceModelStatusDb serviceModelDb = Mockito.mock(OperationalEnvServiceModelStatusDb.class);
-		RequestsDBHelper requestDb = mock(RequestsDBHelper.class);
+		serviceModelDb.setRequestId(requestIdOrig);
+		serviceModelDb.setServiceModelVersionId(serviceModelVersionId1);
+		serviceModelDb.setWorkloadContext(workloadContext);
+		serviceModelDb.setRecoveryAction(recoveryActionRetry);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setRetryCount(retryCountZero);
+		serviceModelDb.setServiceModelVersionDistrStatus(statusOk);
+		serviceModelDbRepository.saveAndFlush(serviceModelDb);	
 		
-		// Prepare data		
-		OperationalEnvServiceModelStatus modelStatus = new OperationalEnvServiceModelStatus();
-		modelStatus.setWorkloadContext(workloadContext);
-		modelStatus.setRecoveryAction(recoveryAction);
-		modelStatus.setOperationalEnvId(operationalEnvironmentId);
-		modelStatus.setRetryCount(retryCount);
-		modelStatus.setServiceModelVersionDistrStatus(DistributionStatus.DISTRIBUTION_COMPLETE_OK.toString());
+		InfraActiveRequests iar = new InfraActiveRequests();
+		iar.setRequestId(requestIdOrig);
+		iar.setRequestStatus("PENDING");
+		infraActiveRequestsRepository.saveAndFlush(iar);
 		
-		OperationalEnvServiceModelStatus modelStatus1 = new OperationalEnvServiceModelStatus();
-		modelStatus1.setWorkloadContext(workloadContext);
-		modelStatus1.setRecoveryAction(recoveryAction);
-		modelStatus1.setOperationalEnvId(operationalEnvironmentId);
-		modelStatus1.setRetryCount(retryCount);
-		modelStatus1.setServiceModelVersionDistrStatus(DistributionStatus.DISTRIBUTION_COMPLETE_OK.toString());
+		activateVnfStatus.checkOrUpdateOverallStatus(operationalEnvironmentId, requestIdOrig, serviceModelDbRepository);
 		
-		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = new ArrayList<OperationalEnvServiceModelStatus>();
-		queryServiceModelResponseList.add(modelStatus);
-		queryServiceModelResponseList.add(modelStatus1);
+		// overall is success
+		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
+		assertNotNull(infraActiveRequest);
+		assertTrue(infraActiveRequest.getStatusMessage().contains("SUCCESSFUL"));
+		assertTrue(infraActiveRequest.getRequestStatus().contains("COMPLETE"));
 		
-		Mockito.when(serviceModelDb.getOperationalEnvIdStatus(operationalEnvironmentId, requestId)).thenReturn(queryServiceModelResponseList);
-		doNothing().when(requestDb).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		
-		activateVnfStatus.setOperationalEnvDistributionStatusDb(distributionDb);
-		activateVnfStatus.setOperationalEnvServiceModelStatusDb(serviceModelDb);
-		activateVnfStatus.setRequestsDBHelper(requestDb);
-		activateVnfStatus.checkOrUpdateOverallStatus(requestId, operationalEnvironmentId);
-		
-		verify(requestDb, times(0)).updateInfraFailureCompletion(any(String.class), any(String.class), any(String.class));
-		verify(requestDb, times(1)).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-	    
+		// cleanup
+		infraActiveRequestsRepository.delete(requestIdOrig);		
 	}
-	
+
 	@Test
 	public void checkOrUpdateOverallStatusTest_Error() throws Exception {
 		
+		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
+		serviceModelDb.setRequestId(requestIdOrig);
+		serviceModelDb.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelDb.setWorkloadContext(workloadContext);
+		serviceModelDb.setRecoveryAction(recoveryActionRetry);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setRetryCount(retryCountZero);
+		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDbRepository.saveAndFlush(serviceModelDb);
+		
+		InfraActiveRequests iar = new InfraActiveRequests();
+		iar.setRequestId(requestIdOrig);
+		iar.setRequestStatus("PENDING");
+		infraActiveRequestsRepository.saveAndFlush(iar);
 
-		int retryCount = 0;  // no more retry
+        try {
+            activateVnfStatus.checkOrUpdateOverallStatus(operationalEnvironmentId, requestIdOrig, serviceModelDbRepository);
+        }catch(ApiException e){
+            assertThat(e.getMessage(), startsWith("Overall Activation process is a Failure. "));
+            assertEquals(e.getHttpResponseCode(), HttpStatus.SC_BAD_REQUEST);
+            assertEquals(e.getMessageID(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
+        }
 		
-		ActivateVnfStatusOperationalEnvironment activateVnfStatus = spy(new ActivateVnfStatusOperationalEnvironment(request, requestId));
-
-		// Mockito mock
-		OperationalEnvDistributionStatusDb distributionDb = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		OperationalEnvServiceModelStatusDb serviceModelDb = Mockito.mock(OperationalEnvServiceModelStatusDb.class);
-		RequestsDBHelper requestDb = mock(RequestsDBHelper.class);
+		// overall is failure
+		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
+		assertNotNull(infraActiveRequest);
+		assertTrue(infraActiveRequest.getStatusMessage().contains("FAILURE"));
+		assertTrue(infraActiveRequest.getRequestStatus().contains("FAILED"));
 		
-		// Prepare data
-		OperationalEnvServiceModelStatus modelStatus = new OperationalEnvServiceModelStatus();
-		modelStatus.setWorkloadContext(workloadContext);
-		modelStatus.setRecoveryAction(recoveryAction);
-		modelStatus.setOperationalEnvId(operationalEnvironmentId);
-		modelStatus.setRetryCount(retryCount);
-		modelStatus.setServiceModelVersionDistrStatus(DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString());
-
-		OperationalEnvServiceModelStatus modelStatus1 = new OperationalEnvServiceModelStatus();
-		modelStatus1.setWorkloadContext(workloadContext);
-		modelStatus1.setRecoveryAction(recoveryAction);
-		modelStatus1.setOperationalEnvId(operationalEnvironmentId);
-		modelStatus1.setRetryCount(retryCount);
-		modelStatus1.setServiceModelVersionDistrStatus(DistributionStatus.DISTRIBUTION_COMPLETE_OK.toString());
-		
-		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = new ArrayList<OperationalEnvServiceModelStatus>();
-		queryServiceModelResponseList.add(modelStatus);
-		queryServiceModelResponseList.add(modelStatus1);
-		
-		Mockito.when(serviceModelDb.getOperationalEnvIdStatus(operationalEnvironmentId, requestId)).thenReturn(queryServiceModelResponseList);
-		doNothing().when(requestDb).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		
-		activateVnfStatus.setOperationalEnvDistributionStatusDb(distributionDb);
-		activateVnfStatus.setOperationalEnvServiceModelStatusDb(serviceModelDb);
-		activateVnfStatus.setRequestsDBHelper(requestDb);
-		activateVnfStatus.checkOrUpdateOverallStatus(requestId, operationalEnvironmentId);
-		
-		verify(requestDb, times(0)).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		verify(requestDb, times(1)).updateInfraFailureCompletion(any(String.class), any(String.class), any(String.class));
-	    
+		// cleanup		
+		infraActiveRequestsRepository.delete(requestIdOrig);
 	}	
 	
 	@Test
 	public void checkOrUpdateOverallStatusTest_Waiting() throws Exception {
 		
-		int retryCount = 2;  // 2 more retry
+		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
+		serviceModelDb.setRequestId(requestIdOrig);
+		serviceModelDb.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelDb.setWorkloadContext(workloadContext);
+		serviceModelDb.setRecoveryAction(recoveryActionRetry);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setRetryCount(retryCountTwo);
+		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 		
-		ActivateVnfStatusOperationalEnvironment activateVnfStatus = spy(new ActivateVnfStatusOperationalEnvironment(request, requestId));
-
-		// Mockito mock
-		OperationalEnvDistributionStatusDb distributionDb = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		OperationalEnvServiceModelStatusDb serviceModelDb = Mockito.mock(OperationalEnvServiceModelStatusDb.class);
-		RequestsDBHelper requestDb = mock(RequestsDBHelper.class);
-
-		OperationalEnvServiceModelStatus modelStatus1 = spy(new OperationalEnvServiceModelStatus());
-		modelStatus1.setWorkloadContext(workloadContext);
-		modelStatus1.setRecoveryAction(recoveryAction);
-		modelStatus1.setOperationalEnvId(operationalEnvironmentId);
-		modelStatus1.setRetryCount(0);
-		modelStatus1.setServiceModelVersionDistrStatus(DistributionStatus.DISTRIBUTION_COMPLETE_OK.toString());
+		activateVnfStatus.checkOrUpdateOverallStatus(operationalEnvironmentId, requestIdOrig, serviceModelDbRepository);
 		
-		OperationalEnvServiceModelStatus modelStatus2 = spy(new OperationalEnvServiceModelStatus());
-		modelStatus2.setWorkloadContext(workloadContext);
-		modelStatus2.setRecoveryAction(recoveryAction);
-		modelStatus2.setOperationalEnvId(operationalEnvironmentId);
-		modelStatus2.setRetryCount(retryCount);
-		modelStatus2.setServiceModelVersionDistrStatus(DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString());
-		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = new ArrayList<OperationalEnvServiceModelStatus>();
-		queryServiceModelResponseList.add(modelStatus1);
-		queryServiceModelResponseList.add(modelStatus2);
-		
-		Mockito.when(serviceModelDb.getOperationalEnvIdStatus(operationalEnvironmentId, requestId)).thenReturn(queryServiceModelResponseList);
-		doNothing().when(requestDb).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		
-		activateVnfStatus.setOperationalEnvDistributionStatusDb(distributionDb);
-		activateVnfStatus.setOperationalEnvServiceModelStatusDb(serviceModelDb);
-		activateVnfStatus.setRequestsDBHelper(requestDb);
-		activateVnfStatus.checkOrUpdateOverallStatus(requestId, operationalEnvironmentId);
-		
-		verify(requestDb, times(0)).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		verify(requestDb, times(0)).updateInfraFailureCompletion(any(String.class), any(String.class), any(String.class));
-	    
+		// do nothing, waiting for more
+		assertNull(infraActiveRequestsRepository.findOne(requestIdOrig));
 	}		
 	
 	@Test
-	public void executionTest() throws Exception {
-
-		// Prepare db query mock response data
-		OperationalEnvDistributionStatus operEnvDistStatusObj = new OperationalEnvDistributionStatus();
-		operEnvDistStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		operEnvDistStatusObj.setDistributionId(asdcDistributionId);
-		operEnvDistStatusObj.setOperationalEnvId( operationalEnvironmentId);
-		operEnvDistStatusObj.setDistributionIdStatus(DistributionStatus.DISTRIBUTION_COMPLETE_OK.toString());
-		operEnvDistStatusObj.setRequestId(requestId);
+	public void executionTest_Ok() throws Exception {
 		
-		// ServiceModelStatus - getOperationalEnvServiceModelStatus
-		OperationalEnvServiceModelStatus operEnvServiceModelStatusObj = new OperationalEnvServiceModelStatus();
-		operEnvServiceModelStatusObj.setRequestId(requestId);
-		operEnvServiceModelStatusObj.setOperationalEnvId(operationalEnvironmentId);
-		operEnvServiceModelStatusObj.setServiceModelVersionDistrStatus(DistributionStatus.DISTRIBUTION_COMPLETE_OK.toString());
-		operEnvServiceModelStatusObj.setRecoveryAction(recoveryAction);
-		operEnvServiceModelStatusObj.setRetryCount(retryCount);
-		operEnvServiceModelStatusObj.setWorkloadContext(workloadContext);
-		operEnvServiceModelStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = new ArrayList<OperationalEnvServiceModelStatus>();
-		queryServiceModelResponseList.add(operEnvServiceModelStatusObj);
+		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
+		serviceModelDb.setRequestId(requestIdOrig);
+		serviceModelDb.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelDb.setWorkloadContext(workloadContext);
+		serviceModelDb.setRecoveryAction(recoveryActionRetry);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setRetryCount(retryCountThree);
+		serviceModelDb.setServiceModelVersionDistrStatus(statusSent);
+		serviceModelDbRepository.saveAndFlush(serviceModelDb);
+
+		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
+		distributionDb.setDistributionId(sdcDistributionId);
+		distributionDb.setRequestId(requestIdOrig);
+		distributionDb.setOperationalEnvId(operationalEnvironmentId);
+		distributionDb.setDistributionIdStatus(statusSent);
+		distributionDb.setServiceModelVersionId(serviceModelVersionId);
+		distributionDb.setDistributionIdErrorReason(null);
+		distributionDbRepository.saveAndFlush(distributionDb);
+		
+		
 		
 		// prepare distribution obj
 		Distribution distribution = new Distribution();
 		distribution.setStatus(Status.DISTRIBUTION_COMPLETE_OK);
 		request.setDistribution(distribution);
-		request.setDistributionId(asdcDistributionId);
-		
-		// prepare asdc return data
-		String jsonPayload = asdcClientUtils.buildJsonWorkloadContext(workloadContext);
-	
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("statusCode", "202");
-		jsonObject.put("message", "Success");
-		jsonObject.put("distributionId", asdcDistributionId);
-		
-		// Mockito mock
-		OperationalEnvDistributionStatusDb distributionDb = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		OperationalEnvServiceModelStatusDb serviceModelDb = Mockito.mock(OperationalEnvServiceModelStatusDb.class);
-		RequestsDBHelper dbUtils = mock(RequestsDBHelper.class);
-		AsdcClientHelper asdcClientHelperMock = Mockito.mock(AsdcClientHelper.class);
-		RESTConfig configMock = Mockito.mock(RESTConfig.class);
-		RESTClient clientMock = Mockito.mock(RESTClient.class);
-		APIResponse apiResponseMock = Mockito.mock(APIResponse.class);		
-	
-		Mockito.when(asdcClientHelperMock.setRestClient(configMock)).thenReturn(clientMock);
-		Mockito.when(asdcClientHelperMock.setHttpPostResponse(clientMock, jsonPayload)).thenReturn(apiResponseMock);
-		Mockito.when(asdcClientHelperMock.enhanceJsonResponse(jsonObject, 202)).thenReturn(jsonObject);		
-		Mockito.when(asdcClientHelperMock.postActivateOperationalEnvironment(serviceModelVersionId, operationalEnvironmentId, workloadContext)).thenReturn(jsonObject);		
-		
-		Mockito.when(distributionDb.getOperationalEnvDistributionStatus(asdcDistributionId)).thenReturn(operEnvDistStatusObj);
-		Mockito.when(serviceModelDb.getOperationalEnvServiceModelStatus(operationalEnvironmentId, serviceModelVersionId)).thenReturn(operEnvServiceModelStatusObj);		
-		Mockito.when(serviceModelDb.getOperationalEnvIdStatus(operationalEnvironmentId, requestId)).thenReturn(queryServiceModelResponseList);		
-		
-		int row = 1;
-		Mockito.when(distributionDb.updateOperationalEnvDistributionStatus(distribution.getStatus().toString(), asdcDistributionId, operationalEnvironmentId, serviceModelVersionId)).thenReturn(row);
-		Mockito.when(serviceModelDb.updateOperationalEnvRetryCountStatus(operationalEnvironmentId, serviceModelVersionId, distribution.getStatus().toString(), 0)).thenReturn(row);
-		
-		doNothing().when(dbUtils).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		
+		request.setDistributionId(sdcDistributionId);
 		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatus = new ActivateVnfStatusOperationalEnvironment(request, requestId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatusMock = spy(activateVnfStatus);
-		activateVnfStatusMock.setOperationalEnvDistributionStatusDb(distributionDb);
-		activateVnfStatusMock.setOperationalEnvServiceModelStatusDb(serviceModelDb);
-		activateVnfStatusMock.setRequestsDBHelper(dbUtils);		
-		activateVnfStatusMock.setAsdcClientHelper(asdcClientHelperMock);
-
-		activateVnfStatusMock.execute();		
 		
-		verify(distributionDb, times(1)).updateOperationalEnvDistributionStatus(distribution.getStatus().toString(), asdcDistributionId, operationalEnvironmentId, serviceModelVersionId);
-		verify(serviceModelDb, times(1)).updateOperationalEnvRetryCountStatus(operationalEnvironmentId, serviceModelVersionId, distribution.getStatus().toString(), 0);		
+		InfraActiveRequests iar = new InfraActiveRequests();
+		iar.setRequestId(requestIdOrig);
+		iar.setRequestStatus("PENDING");
+		infraActiveRequestsRepository.saveAndFlush(iar);
 		
+		activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);		
+		
+		// status ok
+		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId);
+		assertNotNull(distStatus);
+		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
+		assertEquals(statusOk, distStatus.getDistributionIdStatus());
+		assertEquals("", distStatus.getDistributionIdErrorReason());		
+		
+		// status ok		
+		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
+		assertNotNull(servStatus);
+		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
+		assertEquals(statusOk, servStatus.getServiceModelVersionDistrStatus());		
+		assertEquals(new Integer(retryCountZero), servStatus.getRetryCount());
+		
+		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
+		assertNotNull(infraActiveRequest);
+		assertTrue(infraActiveRequest.getStatusMessage().contains("SUCCESSFUL"));
+		assertTrue(infraActiveRequest.getRequestStatus().contains("COMPLETE"));
+		
+		// cleanup		
+		infraActiveRequestsRepository.delete(requestIdOrig);
 		
 	}				
 	
 	@Test
 	public void executionTest_ERROR_Status_And_RETRY() throws Exception {
-
-		int retryCnt = 3;
-		String distributionStatus = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
-		String recoverAction = "RETRY";
 		
-		// Prepare db query mock response data
-		OperationalEnvDistributionStatus operEnvDistStatusObj = new OperationalEnvDistributionStatus();
-		operEnvDistStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		operEnvDistStatusObj.setDistributionId(asdcDistributionId);
-		operEnvDistStatusObj.setOperationalEnvId(operationalEnvironmentId);
-		operEnvDistStatusObj.setDistributionIdStatus(distributionStatus);
-		operEnvDistStatusObj.setRequestId(requestId);
+		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
+		serviceModelDb.setRequestId(requestIdOrig);
+		serviceModelDb.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelDb.setWorkloadContext(workloadContext);
+		serviceModelDb.setRecoveryAction(recoveryActionRetry);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setRetryCount(retryCountThree);
+		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 		
-		// ServiceModelStatus - getOperationalEnvServiceModelStatus
-		OperationalEnvServiceModelStatus operEnvServiceModelStatusObj = new OperationalEnvServiceModelStatus();
-		operEnvServiceModelStatusObj.setRequestId(requestId);
-		operEnvServiceModelStatusObj.setOperationalEnvId(operationalEnvironmentId);
-		operEnvServiceModelStatusObj.setServiceModelVersionDistrStatus(distributionStatus);
-		operEnvServiceModelStatusObj.setRecoveryAction(recoverAction);
-		operEnvServiceModelStatusObj.setRetryCount(retryCnt);
-		operEnvServiceModelStatusObj.setWorkloadContext(workloadContext);
-		operEnvServiceModelStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = new ArrayList<OperationalEnvServiceModelStatus>();
-		queryServiceModelResponseList.add(operEnvServiceModelStatusObj);
+		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
+		distributionDb.setDistributionId(sdcDistributionId);
+		distributionDb.setRequestId(requestIdOrig);
+		distributionDb.setOperationalEnvId(operationalEnvironmentId);
+		distributionDb.setDistributionIdStatus(statusError);
+		distributionDb.setServiceModelVersionId(serviceModelVersionId);
+		distributionDb.setDistributionIdErrorReason(null);
+		distributionDbRepository.saveAndFlush(distributionDb);
 		
-		// prepare distribution obj
+		
+		
+		// prepare new distribution obj
 		Distribution distribution = new Distribution();
 		distribution.setStatus(Status.DISTRIBUTION_COMPLETE_ERROR);
+		distribution.setErrorReason("Unable to process.");
 		request.setDistribution(distribution);
-		request.setDistributionId(asdcDistributionId);
+		request.setDistributionId(sdcDistributionId);
+		request.setOperationalEnvironmentId(operationalEnvironmentId);
 		
-		// prepare asdc return data
-		String jsonPayload = asdcClientUtils.buildJsonWorkloadContext(workloadContext);
-
+		// prepare sdc return data
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("statusCode", "202");
 		jsonObject.put("message", "Success");
-		jsonObject.put("distributionId", asdcDistributionId);
+		jsonObject.put("distributionId", sdcDistributionId1);
 		
-		// Mockito mock
-		OperationalEnvDistributionStatusDb distributionDb = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		OperationalEnvServiceModelStatusDb serviceModelDb = Mockito.mock(OperationalEnvServiceModelStatusDb.class);
-		RequestsDBHelper dbUtils = mock(RequestsDBHelper.class);
-		AsdcClientHelper asdcClientHelperMock = Mockito.mock(AsdcClientHelper.class);
-		RESTConfig configMock = Mockito.mock(RESTConfig.class);
-		RESTClient clientMock = Mockito.mock(RESTClient.class);
-		APIResponse apiResponseMock = Mockito.mock(APIResponse.class);		
-	
-		Mockito.when(asdcClientHelperMock.setRestClient(configMock)).thenReturn(clientMock);
-		Mockito.when(asdcClientHelperMock.setHttpPostResponse(clientMock, jsonPayload)).thenReturn(apiResponseMock);
-		Mockito.when(asdcClientHelperMock.enhanceJsonResponse(jsonObject, 202)).thenReturn(jsonObject);		
-		Mockito.when(asdcClientHelperMock.postActivateOperationalEnvironment(serviceModelVersionId, operationalEnvironmentId, workloadContext)).thenReturn(jsonObject);		
+		wireMockRule.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
 		
-		Mockito.when(distributionDb.getOperationalEnvDistributionStatus(asdcDistributionId)).thenReturn(operEnvDistStatusObj);
-		Mockito.when(serviceModelDb.getOperationalEnvServiceModelStatus(operationalEnvironmentId, serviceModelVersionId)).thenReturn(operEnvServiceModelStatusObj);		
-		Mockito.when(serviceModelDb.getOperationalEnvIdStatus(operationalEnvironmentId, requestId)).thenReturn(queryServiceModelResponseList);		
+		activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);	
 		
-		int row = 1;
-		Mockito.when(distributionDb.updateOperationalEnvDistributionStatus(distribution.getStatus().toString(), asdcDistributionId, operationalEnvironmentId, serviceModelVersionId)).thenReturn(row);
-		Mockito.when(serviceModelDb.updateOperationalEnvRetryCountStatus(operationalEnvironmentId, serviceModelVersionId, distribution.getStatus().toString(), 0)).thenReturn(row);
+		// old distributionId, status error
+		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId);
+		assertNotNull(distStatus);
+		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
+		assertEquals(statusError, distStatus.getDistributionIdStatus());
+		assertEquals("Unable to process.", distStatus.getDistributionIdErrorReason());		
 		
-		doNothing().when(dbUtils).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		
-		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatus = new ActivateVnfStatusOperationalEnvironment(request, requestId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatusMock = spy(activateVnfStatus);
-		activateVnfStatusMock.setOperationalEnvDistributionStatusDb(distributionDb);
-		activateVnfStatusMock.setOperationalEnvServiceModelStatusDb(serviceModelDb);
-		activateVnfStatusMock.setRequestsDBHelper(dbUtils);		
-		activateVnfStatusMock.setAsdcClientHelper(asdcClientHelperMock);
+		// new distributionId, status sent
+		OperationalEnvDistributionStatus newDistStatus = distributionDbRepository.findOne(sdcDistributionId1);
+		assertNotNull(distStatus);
+		assertEquals(operationalEnvironmentId, newDistStatus.getOperationalEnvId());
+		assertEquals(statusSent, newDistStatus.getDistributionIdStatus());
+		assertEquals("", newDistStatus.getDistributionIdErrorReason());		
 
-		activateVnfStatusMock.execute();		
+		// count is less 1, status sent
+		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
+		assertNotNull(servStatus);
+		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
+		assertEquals(statusSent, servStatus.getServiceModelVersionDistrStatus());		
+		assertEquals(new Integer(retryCountTwo), servStatus.getRetryCount());		
 		
-		// waiting
-		verify(dbUtils, times(0)).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		verify(dbUtils, times(0)).updateInfraFailureCompletion(any(String.class), any(String.class), any(String.class));
-		assertEquals(false, activateVnfStatusMock.isSuccess());
+		// no update 
+		assertNull(infraActiveRequestsRepository.findOne(requestIdOrig));
 		
 	}
 
 	@Test
 	public void executionTest_ERROR_Status_And_RETRY_And_RetryZero() throws Exception {
-
-		int retryCnt = 0;
-		String distributionStatus = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
-		String recoverAction = "RETRY";
 		
-		// Prepare db query mock response data
-		OperationalEnvDistributionStatus operEnvDistStatusObj = new OperationalEnvDistributionStatus();
-		operEnvDistStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		operEnvDistStatusObj.setDistributionId(asdcDistributionId);
-		operEnvDistStatusObj.setOperationalEnvId(operationalEnvironmentId);
-		operEnvDistStatusObj.setDistributionIdStatus(distributionStatus);
-		operEnvDistStatusObj.setRequestId(requestId);
+		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
+		serviceModelDb.setRequestId(requestIdOrig);
+		serviceModelDb.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelDb.setWorkloadContext(workloadContext);
+		serviceModelDb.setRecoveryAction(recoveryActionRetry);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setRetryCount(retryCountZero);
+		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 		
-		// ServiceModelStatus - getOperationalEnvServiceModelStatus
-		OperationalEnvServiceModelStatus operEnvServiceModelStatusObj = new OperationalEnvServiceModelStatus();
-		operEnvServiceModelStatusObj.setRequestId(requestId);
-		operEnvServiceModelStatusObj.setOperationalEnvId(operationalEnvironmentId);
-		operEnvServiceModelStatusObj.setServiceModelVersionDistrStatus(distributionStatus);
-		operEnvServiceModelStatusObj.setRecoveryAction(recoverAction);
-		operEnvServiceModelStatusObj.setRetryCount(retryCnt);
-		operEnvServiceModelStatusObj.setWorkloadContext(workloadContext);
-		operEnvServiceModelStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = new ArrayList<OperationalEnvServiceModelStatus>();
-		queryServiceModelResponseList.add(operEnvServiceModelStatusObj);
+		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
+		distributionDb.setDistributionId(sdcDistributionId);
+		distributionDb.setRequestId(requestIdOrig);
+		distributionDb.setOperationalEnvId(operationalEnvironmentId);
+		distributionDb.setDistributionIdStatus(statusError);
+		distributionDb.setServiceModelVersionId(serviceModelVersionId);
+		distributionDb.setDistributionIdErrorReason(null);
+		distributionDbRepository.saveAndFlush(distributionDb);
+		
+	
 		
 		// prepare distribution obj
 		Distribution distribution = new Distribution();
 		distribution.setStatus(Status.DISTRIBUTION_COMPLETE_ERROR);
 		request.setDistribution(distribution);
-		request.setDistributionId(asdcDistributionId);
+		request.setDistributionId(sdcDistributionId);
+		request.setOperationalEnvironmentId(operationalEnvironmentId);
 		
-		// prepare asdc return data
-		String jsonPayload = asdcClientUtils.buildJsonWorkloadContext(workloadContext);
-
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("statusCode", "202");
 		jsonObject.put("message", "Success");
-		jsonObject.put("distributionId", asdcDistributionId);
+		jsonObject.put("distributionId", sdcDistributionId);
 		
-		// Mockito mock
-		OperationalEnvDistributionStatusDb distributionDb = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		OperationalEnvServiceModelStatusDb serviceModelDb = Mockito.mock(OperationalEnvServiceModelStatusDb.class);
-		RequestsDBHelper dbUtils = mock(RequestsDBHelper.class);
-		AsdcClientHelper asdcClientHelperMock = Mockito.mock(AsdcClientHelper.class);
-		RESTConfig configMock = Mockito.mock(RESTConfig.class);
-		RESTClient clientMock = Mockito.mock(RESTClient.class);
-		APIResponse apiResponseMock = Mockito.mock(APIResponse.class);		
-	
-		Mockito.when(asdcClientHelperMock.setRestClient(configMock)).thenReturn(clientMock);
-		Mockito.when(asdcClientHelperMock.setHttpPostResponse(clientMock, jsonPayload)).thenReturn(apiResponseMock);
-		Mockito.when(asdcClientHelperMock.enhanceJsonResponse(jsonObject, 202)).thenReturn(jsonObject);		
-		Mockito.when(asdcClientHelperMock.postActivateOperationalEnvironment(serviceModelVersionId, operationalEnvironmentId, workloadContext)).thenReturn(jsonObject);		
+		InfraActiveRequests iar = new InfraActiveRequests();
+		iar.setRequestId(requestIdOrig);
+		iar.setRequestStatus("PENDING");
+		infraActiveRequestsRepository.saveAndFlush(iar);
 		
-		Mockito.when(distributionDb.getOperationalEnvDistributionStatus(asdcDistributionId)).thenReturn(operEnvDistStatusObj);
-		Mockito.when(serviceModelDb.getOperationalEnvServiceModelStatus(operationalEnvironmentId, serviceModelVersionId)).thenReturn(operEnvServiceModelStatusObj);		
-		Mockito.when(serviceModelDb.getOperationalEnvIdStatus(operationalEnvironmentId, requestId)).thenReturn(queryServiceModelResponseList);		
-		
-		int row = 1;
-		Mockito.when(distributionDb.updateOperationalEnvDistributionStatus(distribution.getStatus().toString(), asdcDistributionId, operationalEnvironmentId, serviceModelVersionId)).thenReturn(row);
-		Mockito.when(serviceModelDb.updateOperationalEnvRetryCountStatus(operationalEnvironmentId, serviceModelVersionId, distribution.getStatus().toString(), 0)).thenReturn(row);
-		
-		doNothing().when(dbUtils).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		
-		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatus = new ActivateVnfStatusOperationalEnvironment(request, requestId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatusMock = spy(activateVnfStatus);
-		activateVnfStatusMock.setOperationalEnvDistributionStatusDb(distributionDb);
-		activateVnfStatusMock.setOperationalEnvServiceModelStatusDb(serviceModelDb);
-		activateVnfStatusMock.setRequestsDBHelper(dbUtils);		
-		activateVnfStatusMock.setAsdcClientHelper(asdcClientHelperMock);
+		wireMockRule.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
 
-		activateVnfStatusMock.execute();		
+        try {
+            activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);
+        }catch(ApiException e){
+            assertThat(e.getMessage(), startsWith("Overall Activation process is a Failure. "));
+            assertEquals(e.getHttpResponseCode(), HttpStatus.SC_BAD_REQUEST);
+            assertEquals(e.getMessageID(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
+        }
+
+		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId);
+		assertNotNull(distStatus);
+		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
+		assertEquals(statusError, distStatus.getDistributionIdStatus());
+		assertEquals(null, distStatus.getDistributionIdErrorReason());		
 		
-		// waiting
-		verify(dbUtils, times(0)).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		verify(dbUtils, times(1)).updateInfraFailureCompletion(any(String.class), any(String.class), any(String.class));
-		assertEquals(false, activateVnfStatusMock.isSuccess());
+		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
+		assertNotNull(servStatus);
+		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
+		assertEquals(statusError, servStatus.getServiceModelVersionDistrStatus());		
+		assertEquals(new Integer(retryCountZero), servStatus.getRetryCount());		
+
+		// Retry count is zero, no more retry. all retry failed. 
+		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
+		assertNotNull(infraActiveRequest);
+		assertTrue(infraActiveRequest.getStatusMessage().contains("FAILURE"));
+		assertTrue(infraActiveRequest.getRequestStatus().contains("FAILED"));
+		
+		// cleanup		
+		infraActiveRequestsRepository.delete(requestIdOrig);		
 		
 	}	
 	
 	@Test
-	public void executionTest_ERROR_Status_And_RETRY_And_ErrorAsdc() throws Exception {
-
-		int retryCnt = 3;
-		String distributionStatus = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
-		String recoverAction = "RETRY";
+	public void executionTest_ERROR_Status_And_RETRY_And_ErrorSdc() throws Exception {
 		
-		// Prepare db query mock response data
-		OperationalEnvDistributionStatus operEnvDistStatusObj = new OperationalEnvDistributionStatus();
-		operEnvDistStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		operEnvDistStatusObj.setDistributionId(asdcDistributionId);
-		operEnvDistStatusObj.setOperationalEnvId(operationalEnvironmentId);
-		operEnvDistStatusObj.setDistributionIdStatus(distributionStatus);
-		operEnvDistStatusObj.setRequestId(requestId);
+		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
+		serviceModelDb.setRequestId(requestIdOrig);
+		serviceModelDb.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelDb.setWorkloadContext(workloadContext);
+		serviceModelDb.setRecoveryAction(recoveryActionRetry);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setRetryCount(retryCountThree);
+		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 		
-		// ServiceModelStatus - getOperationalEnvServiceModelStatus
-		OperationalEnvServiceModelStatus operEnvServiceModelStatusObj = new OperationalEnvServiceModelStatus();
-		operEnvServiceModelStatusObj.setRequestId(requestId);
-		operEnvServiceModelStatusObj.setOperationalEnvId(operationalEnvironmentId);
-		operEnvServiceModelStatusObj.setServiceModelVersionDistrStatus(distributionStatus);
-		operEnvServiceModelStatusObj.setRecoveryAction(recoverAction);
-		operEnvServiceModelStatusObj.setRetryCount(retryCnt);
-		operEnvServiceModelStatusObj.setWorkloadContext(workloadContext);
-		operEnvServiceModelStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = new ArrayList<OperationalEnvServiceModelStatus>();
-		queryServiceModelResponseList.add(operEnvServiceModelStatusObj);
+		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
+		distributionDb.setDistributionId(sdcDistributionId);
+		distributionDb.setRequestId(requestIdOrig);
+		distributionDb.setOperationalEnvId(operationalEnvironmentId);
+		distributionDb.setDistributionIdStatus(statusError);
+		distributionDb.setServiceModelVersionId(serviceModelVersionId);
+		distributionDb.setDistributionIdErrorReason(null);
+		distributionDbRepository.saveAndFlush(distributionDb);
+		
+		
 		
 		// prepare distribution obj
 		Distribution distribution = new Distribution();
 		distribution.setStatus(Status.DISTRIBUTION_COMPLETE_ERROR);
+		distribution.setErrorReason("Unable to process.");
 		request.setDistribution(distribution);
-		request.setDistributionId(asdcDistributionId);
+		request.setDistributionId(sdcDistributionId);
+		request.setOperationalEnvironmentId(operationalEnvironmentId);
 		
-		// prepare asdc return data
-		String jsonPayload = asdcClientUtils.buildJsonWorkloadContext(workloadContext);
-
-		// ERROR in asdc
+		// ERROR in sdc
 		JSONObject jsonMessages = new JSONObject();
 		jsonMessages.put("statusCode", "409");
 		jsonMessages.put("message", "Undefined Error Message!");
@@ -502,169 +452,203 @@ public class ActivateVnfStatusOperationalEnvironmentTest {
 		JSONObject jsonErrorRequest = new JSONObject();
 		jsonErrorRequest.put("requestError", jsonServException);
 		
-		// Mockito mock
-		OperationalEnvDistributionStatusDb distributionDb = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		OperationalEnvServiceModelStatusDb serviceModelDb = Mockito.mock(OperationalEnvServiceModelStatusDb.class);
-		RequestsDBHelper dbUtils = mock(RequestsDBHelper.class);
-		AsdcClientHelper asdcClientHelperMock = Mockito.mock(AsdcClientHelper.class);
-		RESTConfig configMock = Mockito.mock(RESTConfig.class);
-		RESTClient clientMock = Mockito.mock(RESTClient.class);
-		APIResponse apiResponseMock = Mockito.mock(APIResponse.class);		
-	
-		Mockito.when(asdcClientHelperMock.setRestClient(configMock)).thenReturn(clientMock);
-		Mockito.when(asdcClientHelperMock.setHttpPostResponse(clientMock, jsonPayload)).thenReturn(apiResponseMock);
-		Mockito.when(asdcClientHelperMock.enhanceJsonResponse(jsonMessages, 202)).thenReturn(jsonMessages);		
-		Mockito.when(asdcClientHelperMock.postActivateOperationalEnvironment(serviceModelVersionId, operationalEnvironmentId, workloadContext)).thenReturn(jsonMessages);		
+		InfraActiveRequests iar = new InfraActiveRequests();
+		iar.setRequestId(requestIdOrig);
+		iar.setRequestStatus("PENDING");
+		infraActiveRequestsRepository.saveAndFlush(iar);
 		
-		Mockito.when(distributionDb.getOperationalEnvDistributionStatus(asdcDistributionId)).thenReturn(operEnvDistStatusObj);
-		Mockito.when(serviceModelDb.getOperationalEnvServiceModelStatus(operationalEnvironmentId, serviceModelVersionId)).thenReturn(operEnvServiceModelStatusObj);		
-		Mockito.when(serviceModelDb.getOperationalEnvIdStatus(operationalEnvironmentId, requestId)).thenReturn(queryServiceModelResponseList);		
-		
-		int row = 1;
-		Mockito.when(distributionDb.updateOperationalEnvDistributionStatus(distribution.getStatus().toString(), asdcDistributionId, operationalEnvironmentId, serviceModelVersionId)).thenReturn(row);
-		Mockito.when(serviceModelDb.updateOperationalEnvRetryCountStatus(operationalEnvironmentId, serviceModelVersionId, distribution.getStatus().toString(), 0)).thenReturn(row);
-		
-		doNothing().when(dbUtils).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		
-		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatus = new ActivateVnfStatusOperationalEnvironment(request, requestId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatusMock = spy(activateVnfStatus);
-		activateVnfStatusMock.setOperationalEnvDistributionStatusDb(distributionDb);
-		activateVnfStatusMock.setOperationalEnvServiceModelStatusDb(serviceModelDb);
-		activateVnfStatusMock.setRequestsDBHelper(dbUtils);		
-		activateVnfStatusMock.setAsdcClientHelper(asdcClientHelperMock);
+		wireMockRule.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonMessages.toString()).withStatus(HttpStatus.SC_CONFLICT)));
 
-		activateVnfStatusMock.execute();		
+		try {
+            activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);
+        }catch(ApiException e){
+            assertThat(e.getMessage(), startsWith("Failure calling SDC: statusCode: "));
+            assertEquals(e.getHttpResponseCode(), HttpStatus.SC_BAD_REQUEST);
+            assertEquals(e.getMessageID(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
+        }
+		// status as-is / no changes
+		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId);
+		assertNotNull(distStatus);
+		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
+		assertEquals(statusError, distStatus.getDistributionIdStatus());
+		assertEquals(null, distStatus.getDistributionIdErrorReason());		
 		
-		// waiting
-		verify(dbUtils, times(0)).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		verify(dbUtils, times(1)).updateInfraFailureCompletion(any(String.class), any(String.class), any(String.class));
-		assertEquals(false, activateVnfStatusMock.isSuccess());
+		// status as-is / no changes		
+		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
+		assertNotNull(servStatus);
+		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
+		assertEquals(statusError, servStatus.getServiceModelVersionDistrStatus());		
+		assertEquals(new Integer(retryCountThree), servStatus.getRetryCount());
+		
+		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
+		assertNotNull(infraActiveRequest);
+		assertTrue(infraActiveRequest.getStatusMessage().contains("FAILURE"));
+		assertTrue(infraActiveRequest.getRequestStatus().contains("FAILED"));	
+		assertTrue(infraActiveRequest.getStatusMessage().contains("Undefined Error Message!"));
+		
+		// cleanup		
+		infraActiveRequestsRepository.delete(requestIdOrig);
 		
 	}	
 	
 	@Test
 	public void executionTest_ERROR_Status_And_SKIP() throws Exception {
-
-		int retryCnt = 3;
-		String distributionStatus = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
-		String recoverAction = "SKIP";
 		
-		// Prepare db query mock response data
-		OperationalEnvDistributionStatus operEnvDistStatusObj = new OperationalEnvDistributionStatus();
-		operEnvDistStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		operEnvDistStatusObj.setDistributionId(asdcDistributionId);
-		operEnvDistStatusObj.setOperationalEnvId( operationalEnvironmentId);
-		operEnvDistStatusObj.setDistributionIdStatus(distributionStatus);
-		operEnvDistStatusObj.setRequestId(requestId);
+		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
+		serviceModelDb.setRequestId(requestIdOrig);
+		serviceModelDb.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelDb.setWorkloadContext(workloadContext);
+		serviceModelDb.setRecoveryAction(recoveryActionSkip);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setRetryCount(retryCountThree);
+		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 		
-		// ServiceModelStatus - getOperationalEnvServiceModelStatus
-		OperationalEnvServiceModelStatus operEnvServiceModelStatusObj = new OperationalEnvServiceModelStatus();
-		operEnvServiceModelStatusObj.setRequestId(requestId);
-		operEnvServiceModelStatusObj.setOperationalEnvId(operationalEnvironmentId);
-		operEnvServiceModelStatusObj.setServiceModelVersionDistrStatus(distributionStatus);
-		operEnvServiceModelStatusObj.setRecoveryAction(recoverAction);
-		operEnvServiceModelStatusObj.setRetryCount(retryCnt);
-		operEnvServiceModelStatusObj.setWorkloadContext(workloadContext);
-		operEnvServiceModelStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = new ArrayList<OperationalEnvServiceModelStatus>();
-		queryServiceModelResponseList.add(operEnvServiceModelStatusObj);
+		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
+		distributionDb.setDistributionId(sdcDistributionId);
+		distributionDb.setRequestId(requestIdOrig);
+		distributionDb.setOperationalEnvId(operationalEnvironmentId);
+		distributionDb.setDistributionIdStatus(statusError);
+		distributionDb.setServiceModelVersionId(serviceModelVersionId);
+		distributionDb.setDistributionIdErrorReason(null);
+		distributionDbRepository.saveAndFlush(distributionDb);
+		
+		
 		
 		// prepare distribution obj
 		Distribution distribution = new Distribution();
 		distribution.setStatus(Status.DISTRIBUTION_COMPLETE_ERROR);
 		request.setDistribution(distribution);
-		request.setDistributionId(asdcDistributionId);
-		
-		// Mockito mock
-		OperationalEnvDistributionStatusDb distributionDb = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		OperationalEnvServiceModelStatusDb serviceModelDb = Mockito.mock(OperationalEnvServiceModelStatusDb.class);
-		RequestsDBHelper dbUtils = mock(RequestsDBHelper.class);
-	
-		Mockito.when(distributionDb.getOperationalEnvDistributionStatus(asdcDistributionId)).thenReturn(operEnvDistStatusObj);
-		Mockito.when(serviceModelDb.getOperationalEnvServiceModelStatus(operationalEnvironmentId, serviceModelVersionId)).thenReturn(operEnvServiceModelStatusObj);		
-		Mockito.when(serviceModelDb.getOperationalEnvIdStatus(operationalEnvironmentId, requestId)).thenReturn(queryServiceModelResponseList);		
-		
-		int row = 1;
-		Mockito.when(distributionDb.updateOperationalEnvDistributionStatus(distribution.getStatus().toString(), asdcDistributionId, operationalEnvironmentId, serviceModelVersionId)).thenReturn(row);
-		Mockito.when(serviceModelDb.updateOperationalEnvRetryCountStatus(operationalEnvironmentId, serviceModelVersionId, distribution.getStatus().toString(), 0)).thenReturn(row);
-		
-		doNothing().when(dbUtils).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		
+		request.setDistributionId(sdcDistributionId);
 		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatus = new ActivateVnfStatusOperationalEnvironment(request, requestId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatusMock = spy(activateVnfStatus);
-		activateVnfStatusMock.setOperationalEnvDistributionStatusDb(distributionDb);
-		activateVnfStatusMock.setOperationalEnvServiceModelStatusDb(serviceModelDb);
-		activateVnfStatusMock.setRequestsDBHelper(dbUtils);	
 		
-		activateVnfStatusMock.execute();		
+		InfraActiveRequests iar = new InfraActiveRequests();
+		iar.setRequestId(requestIdOrig);
+		iar.setRequestStatus("PENDING");
+		infraActiveRequestsRepository.saveAndFlush(iar);
+
+		activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);			
+
+		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
+		assertNotNull(infraActiveRequest);
+		assertTrue(infraActiveRequest.getStatusMessage().contains("SUCCESSFUL"));
+		assertTrue(infraActiveRequest.getRequestStatus().contains("COMPLETE"));	
 		
-		// waiting
-		verify(dbUtils, times(0)).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		verify(dbUtils, times(0)).updateInfraFailureCompletion(any(String.class), any(String.class), any(String.class));
-		assertEquals(false, activateVnfStatusMock.isSuccess());
+		// cleanup		
+		infraActiveRequestsRepository.delete(requestIdOrig);
 		
 	}	
 	
 	@Test
 	public void executionTest_ERROR_Status_And_ABORT() throws Exception {
-
-		int retryCnt = 3;
-		String distributionStatus = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
-		String recoverAction = "ABORT";
 		
-		// Prepare db query mock response data
-		OperationalEnvDistributionStatus operEnvDistStatusObj = new OperationalEnvDistributionStatus();
-		operEnvDistStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		operEnvDistStatusObj.setDistributionId(asdcDistributionId);
-		operEnvDistStatusObj.setOperationalEnvId( operationalEnvironmentId);
-		operEnvDistStatusObj.setDistributionIdStatus(distributionStatus);
-		operEnvDistStatusObj.setRequestId(requestId);
+		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
+		serviceModelDb.setRequestId(requestIdOrig);
+		serviceModelDb.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelDb.setWorkloadContext(workloadContext);
+		serviceModelDb.setRecoveryAction(recoveryActionAbort);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setRetryCount(retryCountThree);
+		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 		
-		// ServiceModelStatus - getOperationalEnvServiceModelStatus
-		OperationalEnvServiceModelStatus operEnvServiceModelStatusObj = new OperationalEnvServiceModelStatus();
-		operEnvServiceModelStatusObj.setRequestId(requestId);
-		operEnvServiceModelStatusObj.setOperationalEnvId(operationalEnvironmentId);
-		operEnvServiceModelStatusObj.setServiceModelVersionDistrStatus(distributionStatus);
-		operEnvServiceModelStatusObj.setRecoveryAction(recoverAction);
-		operEnvServiceModelStatusObj.setRetryCount(retryCnt);
-		operEnvServiceModelStatusObj.setWorkloadContext(workloadContext);
-		operEnvServiceModelStatusObj.setServiceModelVersionId(serviceModelVersionId);
-		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = new ArrayList<OperationalEnvServiceModelStatus>();
-		queryServiceModelResponseList.add(operEnvServiceModelStatusObj);
+		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
+		distributionDb.setDistributionId(sdcDistributionId);
+		distributionDb.setRequestId(requestIdOrig);
+		distributionDb.setOperationalEnvId(operationalEnvironmentId);
+		distributionDb.setDistributionIdStatus(statusError);
+		distributionDb.setServiceModelVersionId(serviceModelVersionId);
+		distributionDb.setDistributionIdErrorReason(null);
+		distributionDbRepository.saveAndFlush(distributionDb);
+		
+		
 		
 		// prepare distribution obj
 		Distribution distribution = new Distribution();
 		distribution.setStatus(Status.DISTRIBUTION_COMPLETE_ERROR);
 		request.setDistribution(distribution);
-		request.setDistributionId(asdcDistributionId);
-		
-		// Mockito mock
-		OperationalEnvDistributionStatusDb distributionDb = Mockito.mock(OperationalEnvDistributionStatusDb.class);
-		OperationalEnvServiceModelStatusDb serviceModelDb = Mockito.mock(OperationalEnvServiceModelStatusDb.class);
-		RequestsDBHelper dbUtils = mock(RequestsDBHelper.class);
-		
-		Mockito.when(distributionDb.getOperationalEnvDistributionStatus(asdcDistributionId)).thenReturn(operEnvDistStatusObj);
-		Mockito.when(serviceModelDb.getOperationalEnvServiceModelStatus(operationalEnvironmentId, serviceModelVersionId)).thenReturn(operEnvServiceModelStatusObj);		
-		Mockito.when(serviceModelDb.getOperationalEnvIdStatus(operationalEnvironmentId, requestId)).thenReturn(queryServiceModelResponseList);		
-		
-		int row = 1;
-		Mockito.when(distributionDb.updateOperationalEnvDistributionStatus(distribution.getStatus().toString(), asdcDistributionId, operationalEnvironmentId, serviceModelVersionId)).thenReturn(row);
-		Mockito.when(serviceModelDb.updateOperationalEnvRetryCountStatus(operationalEnvironmentId, serviceModelVersionId, distribution.getStatus().toString(), 0)).thenReturn(row);
-		
-		doNothing().when(dbUtils).updateInfraSuccessCompletion(any(String.class), any(String.class), any(String.class));
-		
+		request.setDistributionId(sdcDistributionId);
 		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatus = new ActivateVnfStatusOperationalEnvironment(request, requestId);
-		ActivateVnfStatusOperationalEnvironment activateVnfStatusMock = spy(activateVnfStatus);
-		activateVnfStatusMock.setOperationalEnvDistributionStatusDb(distributionDb);
-		activateVnfStatusMock.setOperationalEnvServiceModelStatusDb(serviceModelDb);
-		activateVnfStatusMock.setRequestsDBHelper(dbUtils);	
-		activateVnfStatusMock.execute();		
 		
-		assertEquals(false, activateVnfStatusMock.isSuccess());
+		InfraActiveRequests iar = new InfraActiveRequests();
+		iar.setRequestId(requestIdOrig);
+		iar.setRequestStatus("PENDING");
+		infraActiveRequestsRepository.saveAndFlush(iar);
+
+        try {
+            activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);
+        }catch(ApiException e){
+            assertThat(e.getMessage(), startsWith("Overall Activation process is a Failure. "));
+            assertEquals(e.getHttpResponseCode(), HttpStatus.SC_BAD_REQUEST);
+            assertEquals(e.getMessageID(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
+        }
+		
+		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
+		assertNotNull(infraActiveRequest);
+		assertTrue(infraActiveRequest.getStatusMessage().contains("FAILURE"));
+		assertTrue(infraActiveRequest.getRequestStatus().contains("FAILED"));
+		
+		// cleanup		
+		infraActiveRequestsRepository.delete(requestIdOrig);
 		
 	}		
+	
+	@Test
+	@Ignore
+	public void callSDClientForRetryTest_202() throws Exception {
+		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
+		serviceModelDb.setRequestId(requestIdOrig);
+		serviceModelDb.setServiceModelVersionId(serviceModelVersionId);
+		serviceModelDb.setWorkloadContext(workloadContext);
+		serviceModelDb.setRecoveryAction(recoveryActionRetry);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setRetryCount(retryCountThree);
+		serviceModelDb.setServiceModelVersionDistrStatus(statusSent);
 
+		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
+		distributionDb.setDistributionId(sdcDistributionId);
+		distributionDb.setRequestId(requestIdOrig);
+		distributionDb.setOperationalEnvId(operationalEnvironmentId);
+		distributionDb.setDistributionIdStatus(statusSent);
+		distributionDb.setServiceModelVersionId(serviceModelVersionId);
+		distributionDb.setDistributionIdErrorReason(null);		
+		
+	
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("statusCode", "202");
+		jsonObject.put("message", "Success");
+		jsonObject.put("distributionId", sdcDistributionId1);
+	
+		// prepare distribution obj
+		Distribution distribution = new Distribution();
+		distribution.setStatus(Status.DISTRIBUTION_COMPLETE_OK);
+		request.setDistribution(distribution);
+		request.setDistributionId(sdcDistributionId);
+		request.setOperationalEnvironmentId(operationalEnvironmentId);		
+		
+		wireMockRule.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
+		
+		JSONObject jsonResponse = activateVnfStatus.callSDClientForRetry(distributionDb, serviceModelDb, distribution,
+															distributionDbRepository, serviceModelDbRepository); 
+		
+		assertEquals("TEST_distributionId1", jsonResponse.get("distributionId")); 
+		assertEquals("Success", jsonResponse.get("message"));
+		assertEquals("202", jsonResponse.get("statusCode"));		
+
+		// insert new record, status sent
+		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId1);
+		assertNotNull(distStatus);
+		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
+		assertEquals(statusSent, distStatus.getDistributionIdStatus());		
+		
+		// insert new record, status sent		
+		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
+		assertNotNull(servStatus);
+		assertEquals(statusSent, servStatus.getServiceModelVersionDistrStatus());
+		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
+		
+	}		
 }

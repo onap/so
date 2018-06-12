@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName("queryVfModuleResponse")
 @XmlRootElement(name = "queryVfModuleResponse")
 public class QueryVfModuleResponse extends VfResponseCommon{
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, QueryVfModuleResponse.class);
 	private String vnfId;
 	private String vfModuleId;
 	private String vfModuleStackId;

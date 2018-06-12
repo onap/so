@@ -1,0 +1,12 @@
+{
+	"model-name": "modelName",
+	"description": "description",
+	"created": null,
+	"model-uuid": "modelUUID",
+	"model-invariant-uuid": "modelInvariantUUID",
+	"model-version": "modelVersion",
+	"service-type": "serviceType",
+	"service-role": "serviceRole",
+	"environment-context": "environmentContext",
+	"workload-context": "workloadContext"
+}

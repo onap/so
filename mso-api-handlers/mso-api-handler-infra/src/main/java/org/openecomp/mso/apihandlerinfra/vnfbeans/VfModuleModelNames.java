@@ -31,6 +31,7 @@ package org.openecomp.mso.apihandlerinfra.vnfbeans;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -97,7 +98,7 @@ public class VfModuleModelNames {
     }
     
     public void setVfModuleModelName(List<VfModuleModelName> vfModuleModelName) {
-       this.vfModuleModelName=vfModuleModelName;
+        this.vfModuleModelName=vfModuleModelName;
     }
 
 }

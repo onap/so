@@ -7,6 +7,7 @@
 				"request-id": "test-request-id",
 				"health-diagnostic-code": "VROUTER000003",
 				"operation-type": "mirroring_check",
+				"send-detailed-cmd-response": "false",
 				"aai-param-list": [
 					{
 						"key": "configuration-id",

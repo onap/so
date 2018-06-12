@@ -1,0 +1,43 @@
+{
+	"requestDetails": {
+		"modelInfo": {
+			"modelInvariantId": "2dc308b5-9f85-495e-8cf3-1c241d9f63af",
+			"modelVersionId": "b4b1177c-4b1f-48b9-85fd-a57804dUCPE2",
+			"modelType": "service"
+		},
+		"requestInfo": {
+			"billingAccountNumber": "58863",
+			"callbackUrl": "http://mtsnjv9ccdb01.aic.cip.att.com:9191/d880e6a9-68e2-4c23-bafb-989b1b359607",
+			"instanceName": "USUCPMRABAL0195UJZZ01",
+			"productFamilyId": "5c0202c3-79a9-42b5-bb03-e0758bb94814",
+			"source": "CCD",
+			"suppressRollback": false
+		},
+		"subscriberInfo": {
+			"globalSubscriberId": "1802_2.1_0512_SBK_7575",
+			"subscriberCommonSiteId": "DALTX0101",
+			"subscriberName": "1802_2.1_0512_SBK_5757"
+		},
+		"requestParameters": {
+				"nodeList": [{
+ 					"nodeInformation": {
+ 						"nodeId": "USUCPMMOBAL0147UJRT01",
+ 						"nodeType": "VNF"
+ 					}
+ 				}, {
+ 					"nodeInformation": {
+ 						"nodeId": "WAN1",
+ 						"nodeType": "Port"
+ 					}
+ 				}
+ 			],
+			"linkList":[ {
+				"linkInformation": {
+					"linkName": "6",
+					"aEndNodeId": "USUCPMRABAL0195UJFW01",
+					"zEndNodeId": "WAN2"
+				}
+			}]
+		}
+	}
+}

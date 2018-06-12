@@ -32,14 +32,11 @@ http://host:port/adapters/rest/logging/setLevel//{logContext}/{level}") - change
  e.g
 	http://192.20.205.182:8380/adapters/rest/logging/setLevel/ROOT/INFO
 		log Level set to: INFO for 
-	http://192.20.205.182:8380/adapters/rest/logging/setLevel/ROOT/INFO
-		log Level set to: DEBUG for com.att
 	http://192.20.205.182:8380/adapters/rest/logging/setLevel/garbage/DEBUG
 		Unknown logger: garbage
 		
 http://host:port/adapters/rest/logging/loggers - shows all the loggers  
 	:DEBUG (DEBUG)
-	com.att:INFO (INFO)
 	org.openecomp.mso:DEBUG (DEBUG)
 	org.openecomp.mso.adapters.sdnc.impl.SDNCAdapterPortTypeImpl:null (DEBUG)
 	org.openecomp.mso.adapters.sdnc.impl.SDNCRestClient:null (DEBUG)

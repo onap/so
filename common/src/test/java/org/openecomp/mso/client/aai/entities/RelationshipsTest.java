@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,22 +40,22 @@ public class RelationshipsTest {
 	@Test
 	public void run() throws IOException {
 		final String content = new String(Files.readAllBytes(Paths.get(AAI_JSON_FILE_LOCATION + "e2e-complex.json")));
-
+		
 		AAIResultWrapper wrapper = new AAIResultWrapper(content);
 		Relationships relationships = wrapper.getRelationships().get();
-
+		
 		List<AAIResourceUri> test = relationships.getRelatedAAIUris(AAIObjectType.VCE);
-
+		
 		System.out.println(test.get(0).build());
 		List<AAIResourceUri> uris = Arrays.asList(
 				AAIUriFactory.createResourceUri(AAIObjectType.VCE, "a9fec18e-1ea3-40e4-a6c0-a89b3de07053"),
 				AAIUriFactory.createResourceUri(AAIObjectType.VCE, "8ae1e5f8-61f1-4c71-913a-b40cc4593cb9"),
 				AAIUriFactory.createResourceUri(AAIObjectType.VCE, "a2935fa9-b743-49f4-9813-a127f13c4e93"),
 				AAIUriFactory.createResourceUri(AAIObjectType.VCE, "c7fe7698-8063-4e26-8bd3-ca3edde0b0d4"));
-
-
+		
+		
 		assertTrue(uris.containsAll(test) && test.containsAll(uris));
-
-	}
+		
+	}	
 
 }

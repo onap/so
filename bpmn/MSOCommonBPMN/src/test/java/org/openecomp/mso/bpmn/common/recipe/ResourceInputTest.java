@@ -22,9 +22,10 @@ package org.openecomp.mso.bpmn.common.recipe;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.openecomp.mso.BaseTest;
 import org.openecomp.mso.bpmn.core.domain.ModelInfo;
 
-public class ResourceInputTest {
+public class ResourceInputTest extends BaseTest{
    
 	ResourceInput ri=new ResourceInput();
 	@Test

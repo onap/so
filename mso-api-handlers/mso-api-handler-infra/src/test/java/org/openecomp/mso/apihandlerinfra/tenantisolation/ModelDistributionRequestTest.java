@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,74 +20,95 @@
 
 package org.openecomp.mso.apihandlerinfra.tenantisolation;
 
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.contains;
+import static org.mockito.Mockito.doNothing;
 
+import javax.inject.Provider;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.openecomp.mso.apihandler.common.ErrorNumbers;
+import org.openecomp.mso.apihandlerinfra.ApiHandlerApplication;
+import org.openecomp.mso.apihandlerinfra.BaseTest;
+import org.openecomp.mso.apihandlerinfra.exceptions.ApiException;
+import org.openecomp.mso.apihandlerinfra.exceptions.ValidateException;
+import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.Action;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-public class ModelDistributionRequestTest {
+
+public class ModelDistributionRequestTest extends BaseTest{
 
 	private static final String requestJSON = "{\"status\": \"DISTRIBUTION_COMPLETE_ERROR\", \"errorReason\": \"Distribution failed in AAI\" }";
-	
-	@Test
-	public void testUpdateModelDistributionStatus() {
-		final Response okResponse = Response.status(HttpStatus.SC_OK).build();
 
-		try {
-			ModelDistributionRequest mdr = Mockito.mock(ModelDistributionRequest.class);
-			Mockito.when(mdr.updateModelDistributionStatus(requestJSON, "v1", "ff3514e3-5a33-55df-13ab-12abad84e7ff")).thenReturn(okResponse);
-			Response resp = mdr.updateModelDistributionStatus(requestJSON, "v1", "ff3514e3-5a33-55df-13ab-12abad84e7ff");
-			assertEquals(resp.getStatus(), HttpStatus.SC_OK);
-		} catch (Exception e) {
-			fail("Exception caught: " + e.getMessage());
-		}
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+	@Mock
+	private Provider<TenantIsolationRunnable> thread;
+	@InjectMocks
+	@Spy
+	private ModelDistributionRequest request = new ModelDistributionRequest();
+	@Mock
+	private TenantIsolationRunnable runnable = new TenantIsolationRunnable();
+	
+	@Before
+	public void beforeTest() {
+		Mockito.when(thread.get()).thenReturn(runnable);
 	}
 	
 	@Test
-	public void testObjectMapperError() {
-		ModelDistributionRequest request = new ModelDistributionRequest();
-		Response response = request.updateModelDistributionStatus(null, null, null);
-		String body = response.getEntity().toString();
-		assertTrue(body.contains("Mapping of request to JSON object failed."));
-		assertEquals(400, response.getStatus());
+	public void testObjectMapperError() throws ApiException{
+        thrown.expect(ValidateException.class);
+        thrown.expectMessage(startsWith("Mapping of request to JSON object failed"));
+        thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_BAD_REQUEST)));
+        thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
+        request.updateModelDistributionStatus("", null, null);
 	}
 	
 	@Test
-	public void testParseError1() {
-		String requestErrorJSON = "{\"errorReason\": \"Distribution failed in AAI\" }";
-
-		ModelDistributionRequest request = new ModelDistributionRequest();
-		Response response = request.updateModelDistributionStatus(requestErrorJSON, null, null);
-		String body = response.getEntity().toString();
-		assertTrue(body.contains("Error parsing request."));
-		assertEquals(400, response.getStatus());
+	public void testParseError1() throws ApiException{
+        thrown.expect(ValidateException.class);
+        thrown.expectMessage(startsWith("No valid status is specified"));
+        thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_BAD_REQUEST)));
+        thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
+        String requestErrorJSON = "{\"errorReason\": \"Distribution failed in AAI\" }";
+        request.updateModelDistributionStatus(requestErrorJSON, null, null);
 	}
 	
 	@Test
-	public void testParseError2() {
-		String requestErrorJSON = "{\"status\": \"DISTRIBUTION_COMPLETE_ERROR\"}";
-
-		ModelDistributionRequest request = new ModelDistributionRequest();
-		Response response = request.updateModelDistributionStatus(requestErrorJSON, null, null);
-		String body = response.getEntity().toString();
-		assertTrue(body.contains("Error parsing request."));
-		assertEquals(400, response.getStatus());
+	public void testParseError2() throws ApiException{
+        thrown.expect(ValidateException.class);
+        thrown.expectMessage(startsWith("No valid errorReason is specified"));
+        thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_BAD_REQUEST)));
+        thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
+        String requestErrorJSON = "{\"status\": \"DISTRIBUTION_COMPLETE_ERROR\"}";
+        request.updateModelDistributionStatus(requestErrorJSON, null, null);
 	}
 	
 	@Test
-	public void testSuccess() {
-		ModelDistributionRequest request = new ModelDistributionRequest();
-		TenantIsolationRunnable thread = mock(TenantIsolationRunnable.class);
-		request.setThread(thread);
+	public void testSuccess() throws ApiException{
+		doNothing().when(runnable).run(any(Action.class), anyString(), any(CloudOrchestrationRequest.class), anyString());
 		
 		Response response = request.updateModelDistributionStatus(requestJSON, null, null);
 		
 		assertEquals(200, response.getStatus());
 	}
+
 }

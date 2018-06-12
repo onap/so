@@ -20,323 +20,281 @@
 
 package org.openecomp.mso.apihandlerinfra.tenantisolation.process;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
+import org.apache.http.HttpStatus;
 import org.json.JSONObject;
-import org.openecomp.mso.apihandlerinfra.MsoPropertiesUtils;
+import org.openecomp.mso.apihandler.common.ErrorNumbers;
+import org.openecomp.mso.apihandlerinfra.exceptions.ApiException;
+import org.openecomp.mso.apihandlerinfra.exceptions.ValidateException;
+import org.openecomp.mso.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.openecomp.mso.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.exceptions.AsdcClientCallFailed;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.exceptions.TenantIsolationException;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.helpers.AsdcClientHelper;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.helpers.ActivateVnfDBHelper;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.helpers.SDCClientHelper;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.Distribution;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.DistributionStatus;
+import org.openecomp.mso.db.request.beans.OperationalEnvDistributionStatus;
+import org.openecomp.mso.db.request.beans.OperationalEnvServiceModelStatus;
+import org.openecomp.mso.db.request.data.repository.OperationalEnvDistributionStatusRepository;
+import org.openecomp.mso.db.request.data.repository.OperationalEnvServiceModelStatusRepository;
+import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.requestsdb.OperationalEnvDistributionStatus;
-import org.openecomp.mso.requestsdb.OperationalEnvDistributionStatusDb;
-import org.openecomp.mso.requestsdb.OperationalEnvServiceModelStatus;
-import org.openecomp.mso.requestsdb.OperationalEnvServiceModelStatusDb;
+import org.openecomp.mso.requestsdb.RequestsDBHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
+public class ActivateVnfStatusOperationalEnvironment {
 
-public class ActivateVnfStatusOperationalEnvironment extends OperationalEnvironmentProcess {
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, ActivateVnfStatusOperationalEnvironment.class);
+	private String origRequestId = "";
+	private String errorMessage = ""; 
+	private OperationalEnvDistributionStatus queryDistributionDbResponse = null;
+	private OperationalEnvServiceModelStatus queryServiceModelResponse = null;		
 
-	private static final String SERVICE_NAME = "ActivateVnfStatusOperationalEnvironment"; 
-	private AsdcClientHelper asdcClientHelper = null;
+	private final int RETRY_COUNT_ZERO = 0;	
+	private final String ERROR_REASON_ABORTED = "ABORTED";
+	private final String RECOVERY_ACTION_RETRY  = "RETRY";
+	private final String RECOVERY_ACTION_ABORT  = "ABORT";
+	private final String RECOVERY_ACTION_SKIP  = "SKIP";	
+	private final String DISTRIBUTION_STATUS_OK = DistributionStatus.DISTRIBUTION_COMPLETE_OK.toString();
+	private final String DISTRIBUTION_STATUS_ERROR = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
+	private final String DISTRIBUTION_STATUS_SENT = "SENT";	
+
+	private final String MESSAGE_UNDEFINED_ID = "Undefined Error Message!";
 	
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
-	private String className = this.getClass().getSimpleName();
-	private String methodName = "";
-	private String classMethodMessage = "";
-	private String errorMessage = "";
-	
-	private String operationalEnvironmentId = "";
-	private boolean successIndicator = false;
-	
-	MsoJavaProperties properties; 
-	OperationalEnvDistributionStatusDb activateDistributionDb = null;
-	OperationalEnvDistributionStatus queryDistributionDbResponse = null;
-	OperationalEnvServiceModelStatusDb activateServiceModelDb = null; 
-	OperationalEnvServiceModelStatus queryServiceModelResponse = null;
+	@Autowired
+	private ActivateVnfDBHelper dbHelper;
+	@Autowired
+	private RequestsDBHelper requestDb;
+	@Autowired 
+	private SDCClientHelper sdcClientHelper;		
 	
 	/**
-	 * The class constructor with loadProperties()
-	 * @param CloudOrchestrationRequest - object   
-	 * @param requestId - string 	  
-	 */		
-	public ActivateVnfStatusOperationalEnvironment(CloudOrchestrationRequest request, String requestId) {
-		super(request, requestId);
-		MsoLogger.setServiceName (getRequestId());
-        MsoLogger.setLogContext(getRequestId(), getRequest().getOperationalEnvironmentId());		
-		this.properties = MsoPropertiesUtils.loadMsoProperties();
-		asdcClientHelper = new AsdcClientHelper(properties);
-	}
-	
-	@Override
-	protected String getServiceName() {
-		return ActivateVnfStatusOperationalEnvironment.SERVICE_NAME;
-	}	
-	
-
-	/**
-	 * The Point-Of-Entry from APIH with activate status from ASDC
+	 * The Point-Of-Entry from APIH with activate status from SDC
+	 * @param requestId - String
+	 * @param request - CloudOrchestrationRequest - object
+	 * @param distributionStatusRepository - OperationalEnvDistributionStatusRepository - object 
+	 * @param modelStatusRepository - OperationalEnvServiceModelStatusRepository - object 
 	 * @return void - nothing 
 	 */
-	@Override
-	public void execute() {
-	
-		methodName = "execute() method. ";
-		classMethodMessage = className + " " + methodName;
-		msoLogger.debug("Begin of " + classMethodMessage);	
+	public void execute(String requestId, CloudOrchestrationRequest request, OperationalEnvDistributionStatusRepository distributionStatusRepository,
+						OperationalEnvServiceModelStatusRepository modelStatusRepository) throws ApiException {
 
-		activateDistributionDb = getOperationalEnvDistributionStatusDb();		
-		activateServiceModelDb = getOperationalEnvServiceModelStatusDb();
-		
-		try {
-			
-			String asdcDistributionId = request.getDistributionId();
-			Distribution distributionObject = request.getDistribution();
-			msoLogger.debug(" ** asdcDistributionId: " + asdcDistributionId + ";" +  " status: " +  request.getDistribution().getStatus());
-			
+
+		String operationalEnvironmentId = "";
+
+			String sdcDistributionId = request.getDistributionId();
+			Distribution sdcStatus = request.getDistribution();
+
 			// Distribution, Query for operationalEnvironmentId, serviceModelVersionId
-			queryDistributionDbResponse = activateDistributionDb.getOperationalEnvDistributionStatus(asdcDistributionId);
+			this.queryDistributionDbResponse = distributionStatusRepository.findOne(sdcDistributionId);
+			operationalEnvironmentId = this.queryDistributionDbResponse.getOperationalEnvId();
 			
-			if(queryDistributionDbResponse == null) {
-				throw new TenantIsolationException("DistributionId doesn't exist in the DB: " + asdcDistributionId);
-			}
-			
-			String operationalEnvironmentId = queryDistributionDbResponse.getOperationalEnvId();
-			this.operationalEnvironmentId = operationalEnvironmentId;
-			String serviceModelVersionId = queryDistributionDbResponse.getServiceModelVersionId();
-
 			// ServiceModel, Query for dbRequestId, recoveryAction, retryCountString
-			queryServiceModelResponse =  activateServiceModelDb.getOperationalEnvServiceModelStatus(operationalEnvironmentId, serviceModelVersionId);
-			String origRequestId = queryServiceModelResponse.getRequestId();		
-			this.requestId = origRequestId;
+			this.queryServiceModelResponse = modelStatusRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, queryDistributionDbResponse.getServiceModelVersionId());
+			this.origRequestId = this.queryServiceModelResponse.getRequestId();
 			
-			msoLogger.debug("Start of processing activation status.");
-			processActivateASDCStatus(asdcDistributionId, distributionObject);
-			msoLogger.debug("End of processing activation status.");
+			processActivateSDCStatus(sdcDistributionId, sdcStatus, this.queryDistributionDbResponse, this.queryServiceModelResponse, distributionStatusRepository, modelStatusRepository);
 			
 			// After EVERY status processed, need to query the status of all service modelId 
 			//  to determine the OVERALL status if "COMPLETE" or "FAILURE":
-			checkOrUpdateOverallStatus(origRequestId, operationalEnvironmentId);			
+			checkOrUpdateOverallStatus(operationalEnvironmentId, this.origRequestId, modelStatusRepository);			
 
-			msoLogger.debug("End of " + classMethodMessage);
-			
-		} catch (Exception ex) {
-			errorMessage = "** OVERALL status of flow: " + methodName + ex.getMessage();
-			msoLogger.debug(errorMessage);
-			getRequestDb().updateInfraFailureCompletion(errorMessage, requestId, operationalEnvironmentId);
-
-		}
-		
 	}
 	
 	/**
-	 * The Method to process the Activation Status from ASDC
-	 * @param asdcDistributionId - string
-	 * @param Distribution - object    
-	 * @return void - nothing 
-	 */			
-	public void processActivateASDCStatus(String asdcDistributionId, Distribution asdcStatus) throws TenantIsolationException { 
-		
-		String operationalEnvironmentId = queryDistributionDbResponse.getOperationalEnvId();
-		String serviceModelVersionId = queryDistributionDbResponse.getServiceModelVersionId();		
-		
-		String origRequestId = queryServiceModelResponse.getRequestId();		
+	 * The Method to process the Activation Status from SDC
+	 * @param sdcDistributionId - string
+	 * @param sdcStatus - Distribution object
+	 * @param queryDistributionDbResponse - OperationalEnvDistributionStatus object
+	 * @param queryServiceModelResponse - OperationalEnvServiceModelStatus object
+	 * @param distributionStatusRepository - OperationalEnvDistributionStatusRepository object    
+ 	 * @param modelStatusRepository - OperationalEnvServiceModelStatusRepository object
+	 * @return void - nothing  
+	 */		
+	public void processActivateSDCStatus(String sdcDistributionId, Distribution sdcStatus, OperationalEnvDistributionStatus queryDistributionDbResponse, 
+			OperationalEnvServiceModelStatus queryServiceModelResponse, OperationalEnvDistributionStatusRepository distributionStatusRepository, 
+			OperationalEnvServiceModelStatusRepository modelStatusRepository) throws ApiException {
+
+		String sdcStatusValue = sdcStatus.getStatus().toString();
 		String recoveryAction = queryServiceModelResponse.getRecoveryAction();
 		int retryCount = queryServiceModelResponse.getRetryCount();
-		String workloadContext  = queryServiceModelResponse.getWorkloadContext();
-
-		// Validate/process status
-		if (asdcStatus.getStatus().toString().equals(DistributionStatus.DISTRIBUTION_COMPLETE_OK.toString())) {
-			// should update 1 row, update status to "DISTRIBUTION_COMPLETE_OK"
-			activateDistributionDb.updateOperationalEnvDistributionStatus(asdcStatus.getStatus().toString(), asdcDistributionId, operationalEnvironmentId, serviceModelVersionId);
-			// should update 1 row, update status and retryCount = 0 (ie, serviceModelVersionId is DONE!)
-			activateServiceModelDb.updateOperationalEnvRetryCountStatus(operationalEnvironmentId, serviceModelVersionId, asdcStatus.getStatus().toString(), 0);
 		
+		// Validate/process status
+		if (sdcStatus.getStatus().toString().equals(DISTRIBUTION_STATUS_OK)) {
+			// should update 1 row, update status to "DISTRIBUTION_COMPLETE_OK"
+			OperationalEnvDistributionStatus updateDistStatusOk = 
+					dbHelper.updateStatusInOperationalEnvDistributionStatus(queryDistributionDbResponse, 
+																			sdcStatusValue,
+																			"");				
+			distributionStatusRepository.save(updateDistStatusOk);
+			// should update 1 row, update status and retryCount = 0 (ie, serviceModelVersionId is DONE!)
+			OperationalEnvServiceModelStatus updateRetryCountZeroAndStatusOk = 
+					dbHelper.updateRetryCountAndStatusInOperationalEnvServiceModelStatus(queryServiceModelResponse, 
+																						 sdcStatusValue,
+																						 RETRY_COUNT_ZERO);			
+			modelStatusRepository.save(updateRetryCountZeroAndStatusOk);				
 		} else {
 			
 			  // "DISTRIBUTION_COMPLETE_ERROR", Check if recoveryAction is "RETRY" 
-			  if (recoveryAction.equals("RETRY") & retryCount > 0) {
-					// RESEND / RETRY serviceModelVersionId to ASDC    
-					JSONObject jsonResponse = null;
-					String newDistributionId = "";
-					try {
-						jsonResponse = asdcClientHelper.postActivateOperationalEnvironment(serviceModelVersionId, operationalEnvironmentId, workloadContext);
-						String statusCode = jsonResponse.get("statusCode").toString();
-						if (statusCode.equals("202")) {
-							newDistributionId = jsonResponse.get("distributionId").toString();
-							
-							// should insert 1 row, NEW distributionId for old serviceModelServiceId
-							activateDistributionDb.insertOperationalEnvDistributionStatus(newDistributionId, operationalEnvironmentId, serviceModelVersionId, "SENT", origRequestId);  					
-									
-							// update retryCount (less 1) for the serviceModelServiceId
-							retryCount = retryCount - 1;
-							// should update 1 row, original insert
-							activateServiceModelDb.updateOperationalEnvRetryCountStatusPerReqId(operationalEnvironmentId, serviceModelVersionId, asdcStatus.getStatus().toString(), retryCount, origRequestId);
-				
-							// should update 1 row, OLD distributionId set to status error (ie, old distributionId is DONE!).  
-							activateDistributionDb.updateOperationalEnvDistributionStatus(DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString(), asdcDistributionId, operationalEnvironmentId, serviceModelVersionId);
-							
-						} else {					
-							errorMessage = " Failure calling ASDC: statusCode: " + statusCode + 
-		                                                         "; messageId: " + jsonResponse.get("messageId") +
-		                                                         "; message: " + jsonResponse.get("message"); 
-							msoLogger.debug(errorMessage);
-							throw new AsdcClientCallFailed(errorMessage);
-							
-						} 
-						
-					} catch (Exception ex) {
-						errorMessage = " Encountered Exception in " + methodName + " Exception: " + ex.getMessage();
-						msoLogger.debug(errorMessage);
-						throw new TenantIsolationException(errorMessage);	
-					}
+			  if (recoveryAction.equals(RECOVERY_ACTION_RETRY) & retryCount > RETRY_COUNT_ZERO) {
 					
-		
+				    // RESEND / RETRY serviceModelVersionId to SDC  
+
+				  JSONObject jsonResponse = callSDClientForRetry(queryDistributionDbResponse, queryServiceModelResponse, sdcStatus,
+						  distributionStatusRepository, modelStatusRepository);
+
 			 } else { // either RETRY & Count = 0, or 'ABORT', or 'SKIP' 
 
-				 	if (recoveryAction.equals("SKIP") || recoveryAction.equals("ABORT")) {
+				 	if (recoveryAction.equals(RECOVERY_ACTION_SKIP) || recoveryAction.equals(RECOVERY_ACTION_ABORT)) {
 					 	String modifiedStatus = "";
-				 		if (recoveryAction.equals("SKIP")) {  // considered SUCCESS
-				 			modifiedStatus = DistributionStatus.DISTRIBUTION_COMPLETE_OK.toString();
+					 	String errorReason = "";
+				 		if (recoveryAction.equals(RECOVERY_ACTION_SKIP)) {  // considered SUCCESS
+				 			modifiedStatus = DISTRIBUTION_STATUS_OK;
 				 		} else { 
-				 			if (recoveryAction.equals("ABORT")) {
-				 				modifiedStatus = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();  // ABORT, error
+				 			if (recoveryAction.equals(RECOVERY_ACTION_ABORT)) {
+				 				modifiedStatus = DISTRIBUTION_STATUS_ERROR;  // ABORT, error
+				 				errorReason = ERROR_REASON_ABORTED;
 				 			}
-				 		}	
-				 		// should update 1 row, modified status & retryCount set 0
-				 		activateServiceModelDb.updateOperationalEnvRetryCountStatus(operationalEnvironmentId, serviceModelVersionId, modifiedStatus, 0);
-				 		// should update 1 row, modified status
-				 		activateDistributionDb.updateOperationalEnvDistributionStatus(modifiedStatus, asdcDistributionId, operationalEnvironmentId, serviceModelVersionId);
+				 		}
 				 		
+					 	sdcStatusValue = modifiedStatus;
+					    // should update 1 row, modified status & retryCount set 0
+						OperationalEnvServiceModelStatus updateRetryCountZeroAndStatus = 
+								dbHelper.updateRetryCountAndStatusInOperationalEnvServiceModelStatus(queryServiceModelResponse, 
+																									 modifiedStatus, 
+																									 RETRY_COUNT_ZERO);				 		
+						modelStatusRepository.save(updateRetryCountZeroAndStatus);
+				 		// should update 1 row, modified status
+						OperationalEnvDistributionStatus updateDistStatus = 
+								dbHelper.updateStatusInOperationalEnvDistributionStatus(queryDistributionDbResponse, 
+																						modifiedStatus,
+																						errorReason);
+						distributionStatusRepository.save(updateDistStatus);
 			 		} else {
 			 			// RETRY & Count = 0 (do nothing!)
-			 		}	
+			 		}
 			  }		
-		
 		} 
-
 	}
 	
 	/**
+	 * The Method to call SDC for recoveryActioin RETRY
+	 * @param queryDistributionDbResponse - OperationalEnvDistributionStatus object
+	 * @param queryServiceModelResponse - OperationalEnvServiceModelStatus object   
+	 * @param sdcStatus - Distribution object
+	 * @param distributionStatusRepository - OperationalEnvDistributionStatusRepository object
+	 * @param modelStatusRepository - OperationalEnvServiceModelStatusRepository object
+	 * @return JSONObject object 
+	 */			
+	public JSONObject callSDClientForRetry(OperationalEnvDistributionStatus queryDistributionDbResponse, 
+											OperationalEnvServiceModelStatus queryServiceModelResponse,
+								            Distribution sdcStatus,
+								            OperationalEnvDistributionStatusRepository distributionStatusRepository, 
+											OperationalEnvServiceModelStatusRepository modelStatusRepository) throws ApiException {
+
+		JSONObject jsonResponse = null;		
+		
+		String operEnvironmentId = queryDistributionDbResponse.getOperationalEnvId();
+		String serviceModelVersionId = queryDistributionDbResponse.getServiceModelVersionId();		
+		String originalRequestId = queryServiceModelResponse.getRequestId();		
+		int retryCount = queryServiceModelResponse.getRetryCount();
+		String workloadContext  = queryServiceModelResponse.getWorkloadContext();		
+
+
+		jsonResponse = sdcClientHelper.postActivateOperationalEnvironment(serviceModelVersionId, operEnvironmentId, workloadContext);
+		String statusCode = jsonResponse.get("statusCode").toString();
+		if (statusCode.equals(String.valueOf(Response.Status.ACCEPTED.getStatusCode()))) {
+			String newDistributionId = jsonResponse.get("distributionId").toString();
+			// should insert 1 row, NEW distributionId for replacement of the serviceModelServiceId record
+			OperationalEnvDistributionStatus insertNewDistributionId =
+					dbHelper.insertRecordToOperationalEnvDistributionStatus(newDistributionId,
+							operEnvironmentId,
+							serviceModelVersionId,
+							originalRequestId,
+							DISTRIBUTION_STATUS_SENT,
+							"");
+			distributionStatusRepository.save(insertNewDistributionId);
+						
+			// update retryCount (less 1) for the serviceModelServiceId
+			retryCount = retryCount - 1;
+			// should update 1 row, original insert
+			OperationalEnvServiceModelStatus updateRetryCountAndStatus =
+					dbHelper.updateRetryCountAndStatusInOperationalEnvServiceModelStatus(queryServiceModelResponse,
+							DISTRIBUTION_STATUS_SENT,
+							retryCount);
+			modelStatusRepository.save(updateRetryCountAndStatus);
+	
+			// should update 1 row, OLD distributionId set to status error (ie, old distributionId is DONE!).
+			OperationalEnvDistributionStatus updateStatus =
+					dbHelper.updateStatusInOperationalEnvDistributionStatus(queryDistributionDbResponse,
+							DISTRIBUTION_STATUS_ERROR,
+							sdcStatus.getErrorReason());
+			distributionStatusRepository.save(updateStatus);
+		} else {
+            String dbErrorMessage = "Failure calling SDC: statusCode: " + statusCode +
+                    "; messageId: " + jsonResponse.get("messageId") +
+                    "; message: " + jsonResponse.get("message");
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
+			ValidateException validateException = new ValidateException.Builder(dbErrorMessage,
+					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+                    requestDb.updateInfraFailureCompletion(dbErrorMessage, this.origRequestId, operEnvironmentId);
+			throw validateException;
+			}
+
+		return jsonResponse;
+		
+	}
+	
+	
+	/**
 	 * The Method to check the overall status of the Activation for an operationalEnvironmentId
+	 * @param operationalEnvironmentId - string
 	 * @param origRequestId - string
-	 * @param operationalEnvironmentId - string   
+	 * @param  modelStatusRepository - OperationalEnvServiceModelStatusRepository object
 	 * @return void - nothing 
-	 * @throws Exception 
-	 */		
-	public void checkOrUpdateOverallStatus(String origRequestId, String operationalEnvironmentId) throws Exception {
-		
-		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = activateServiceModelDb.getOperationalEnvIdStatus(operationalEnvironmentId, origRequestId);
-		msoLogger.debug(" **** queryServiceModelResponseList.size(): " + queryServiceModelResponseList.size());
-		
+	 */			
+	public void checkOrUpdateOverallStatus(String operationalEnvironmentId, String origRequestId, OperationalEnvServiceModelStatusRepository modelStatusRepository) throws ApiException{
+
+		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = modelStatusRepository.findAllByOperationalEnvIdAndRequestId(operationalEnvironmentId, origRequestId);
+
 		String status = "Waiting";
 		int count = 0;
 		// loop through the statuses of the service model
-		for (OperationalEnvServiceModelStatus  queryServiceModelResponse : queryServiceModelResponseList) {
-				status = queryServiceModelResponse.getServiceModelVersionDistrStatus();
+		for (OperationalEnvServiceModelStatus  querySrvModelResponse : queryServiceModelResponseList) {
+				status = querySrvModelResponse.getServiceModelVersionDistrStatus();
 				// all should be OK to be completed.
 				if ((status.equals(DistributionStatus.DISTRIBUTION_COMPLETE_OK.toString()) &&
-					(queryServiceModelResponse.getRetryCount() == 0))) {
+					(querySrvModelResponse.getRetryCount() == 0))) {
 					status = "Completed";
 					count ++;					
 				} 
 				// one error with zero retry, means all are failures.
 				if ((status.equals(DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString()) &&
-					(queryServiceModelResponse.getRetryCount() == 0))) {
+					(querySrvModelResponse.getRetryCount() == 0))) {
 					status = "Failure";
 					count = queryServiceModelResponseList.size();
 					break;
 				} 
-				
 		}
 		
-		//  "DISTRIBUTION_COMPLETE_OK"    : Completed / Successful
-		if (status == "Completed" && queryServiceModelResponseList.size() == count) {
-			executeAAIPatch(operationalEnvironmentId);
+		if (status.equals("Completed") && queryServiceModelResponseList.size() == count) {
 			String messageStatus = "Overall Activation process is complete. " + status;
-			successIndicator = true;
-			msoLogger.debug(messageStatus);
-			//	Update DB to COMPLETION
-			getRequestDb().updateInfraSuccessCompletion(messageStatus, origRequestId, operationalEnvironmentId);
+			requestDb.updateInfraSuccessCompletion(messageStatus, origRequestId, operationalEnvironmentId);
 		} else {	
-			//  "DISTRIBUTION_COMPLETE_ERROR"  : Failure
-			if (status == "Failure" && queryServiceModelResponseList.size() == count) {
-				errorMessage = "Overall Activation process is a Failure. " + status;
-				msoLogger.debug(errorMessage);
-				getRequestDb().updateInfraFailureCompletion(errorMessage, requestId, operationalEnvironmentId);
-			} else {	
-			  msoLogger.debug(" **** Still waiting for more distribution status!"); // 1+ rows
+			if (status.equals("Failure") && queryServiceModelResponseList.size() == count) {
+				this.errorMessage = "Overall Activation process is a Failure. " + status;
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
+				ValidateException validateException = new ValidateException.Builder(this.errorMessage,
+						HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+                requestDb.updateInfraFailureCompletion(this.errorMessage, origRequestId, operationalEnvironmentId);
+				throw validateException;
 			} 
+			
 		}	
-
-	}	
-	
-	private void executeAAIPatch(String operationalEnvironmentId) throws Exception {
-		msoLogger.debug("Start of AA&I UPDATE client call in ActivateVnfStatusOperationalEnvironment");
-		
-		Map<String, String> payload = new HashMap<>();
-		payload.put("operational-environment-status", "ACTIVE");
-		getAaiHelper().updateAaiOperationalEnvironment(operationalEnvironmentId, payload);
-		
-		msoLogger.debug("End of AA&I UPDATE client call in ActivateVnfStatusOperationalEnvironment");
 	}
-	
-	/**
-	 * Overall Success indicator 
-	 * @return true or false
-	 */	
-	public boolean isSuccess() {
-		return successIndicator;
-	}
-	
-	/**
-	 * Set to new OperationalEnvDistributionStatusDb 
-	 * @return void
-	 */	
-	public void setOperationalEnvDistributionStatusDb (OperationalEnvDistributionStatusDb activateDistributionDb) {
-		this.activateDistributionDb = activateDistributionDb;
-	}
-	
-	/**
-	 * Set to new OperationalEnvServiceModelStatusDb 
-	 * @return void
-	 */	
-	public void setOperationalEnvServiceModelStatusDb (OperationalEnvServiceModelStatusDb activateServiceModelDb) {
-		this.activateServiceModelDb = activateServiceModelDb;
-	}
-
-	
-	/**
-	 * Set to new AsdcClientHelper 
-	 * @return void
-	 */	
-	public void setAsdcClientHelper (AsdcClientHelper asdcClientHelper) {
-		this.asdcClientHelper = asdcClientHelper;
-	}		
-	
-	/**
-	 * get OperationalEnvDistributionStatusDb instance 
-	 */	
-	public OperationalEnvDistributionStatusDb getOperationalEnvDistributionStatusDb() {
-		if(this.activateDistributionDb == null) {
-			this.activateDistributionDb = OperationalEnvDistributionStatusDb.getInstance();
-		}
-		return this.activateDistributionDb;
-	}	
-	
-	/**
-	 * get OperationalEnvServiceModelStatusDb instance 
-	 */	
-	public OperationalEnvServiceModelStatusDb getOperationalEnvServiceModelStatusDb() {
-		if(this.activateServiceModelDb == null) {
-			this.activateServiceModelDb = OperationalEnvServiceModelStatusDb.getInstance();
-		}
-		return this.activateServiceModelDb;
-	}			
-	
 }

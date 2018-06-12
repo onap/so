@@ -33,7 +33,7 @@ import org.openecomp.mso.logger.MsoLogger;
  */
 public class HostNameVerifier extends AbstractVerifier {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, HostNameVerifier.class);
     
     public final void verify(
             final String host,

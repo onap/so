@@ -1,0 +1,27 @@
+{
+  "requestDetails": {
+      "modelInfo": {
+         "modelType": "service",
+         "modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+         "modelName": "Test",
+         "modelVersion": "1.0"
+      },
+      "cloudConfiguration": {
+          "lcpCloudRegionId": "mdt1",
+          "tenantId": "88a6ca3ee0394ade9403f075db23167e"
+      },
+      "requestInfo": {
+          "source": "VID",
+          "requestorId": "xxxxxx"
+      },
+      "requestParameters": {
+          "aLaCarte": false,
+          "userParams": [
+            {
+              "name": "someUserParam",
+              "value": "someValue"
+            } 
+          ]
+      }
+  }
+}

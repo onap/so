@@ -17,7 +17,7 @@
 			<xs:element name="validResponses">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element minOccurs="0" maxOccurs="unbounded" name="action" type="xs:string"/>       
+						<xs:element minOccurs="0" maxOccurs="255" name="action" type="xs:string"/>       
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>

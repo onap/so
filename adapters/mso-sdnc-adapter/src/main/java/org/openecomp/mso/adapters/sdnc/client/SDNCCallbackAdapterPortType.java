@@ -27,6 +27,7 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlSeeAlso;
+
 import org.openecomp.mso.adapters.sdnc.SDNCAdapterResponse;
 
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,378 +23,304 @@ package org.openecomp.mso.adapters.requestsdb;
 import java.sql.Timestamp;
 
 import javax.jws.WebService;
+import javax.transaction.Transactional;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.openecomp.mso.adapters.requestsdb.exceptions.MsoRequestsDbException;
-import org.openecomp.mso.db.AbstractSessionFactoryManager;
+import org.openecomp.mso.db.request.beans.InfraActiveRequests;
+import org.openecomp.mso.db.request.beans.OperationStatus;
+import org.openecomp.mso.db.request.beans.ResourceOperationStatus;
+import org.openecomp.mso.db.request.beans.ResourceOperationStatusId;
+import org.openecomp.mso.db.request.beans.SiteStatus;
+import org.openecomp.mso.db.request.data.repository.InfraActiveRequestsRepository;
+import org.openecomp.mso.db.request.data.repository.OperationStatusRepository;
+import org.openecomp.mso.db.request.data.repository.ResourceOperationStatusRepository;
+import org.openecomp.mso.db.request.data.repository.SiteStatusRepository;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.requestsdb.InfraActiveRequests;
-import org.openecomp.mso.requestsdb.OperationStatus;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.requestsdb.RequestsDbConstant;
-import org.openecomp.mso.requestsdb.RequestsDbSessionFactoryManager;
-import org.openecomp.mso.requestsdb.ResourceOperationStatus;
-import org.openecomp.mso.requestsdb.SiteStatus;
 import org.openecomp.mso.utils.UUIDChecker;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 
 @WebService(serviceName = "RequestsDbAdapter", endpointInterface = "org.openecomp.mso.adapters.requestsdb.MsoRequestsDbAdapter", targetNamespace = "http://org.openecomp.mso/requestsdb")
+@Component
+@Primary
 public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
-    protected AbstractSessionFactoryManager requestsDbSessionFactoryManager = new RequestsDbSessionFactoryManager ();
-    
-    private static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static final String SUCCESSFUL = "Successful";
 
-    @Override
-    public void updateInfraRequest (String requestId,
-                                    String lastModifiedBy,
-                                    String statusMessage,
-                                    String responseBody,
-                                    RequestStatusType requestStatus,
-                                    String progress,
-                                    String vnfOutputs,
-                                    String serviceInstanceId,
-                                    String networkId,
-                                    String vnfId,
-                                    String vfModuleId,
-                                    String volumeGroupId,
-                                    String serviceInstanceName,
-                                    String configurationId,
-                                    String configurationName,
-                                    String vfModuleName) throws MsoRequestsDbException {
-        MsoLogger.setLogContext (requestId, null);
-        Session session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
-        int result = 0;
-        long startTime = System.currentTimeMillis ();
-        try {
-           	session.beginTransaction ();
-            StringBuilder queryString = new StringBuilder("update InfraActiveRequests set ");
-            if (statusMessage != null) {
-                queryString.append("statusMessage = :statusMessage, ");
-            }
-            if (responseBody != null) {
-                queryString.append("responseBody = :responseBody, ");
-            }
-            if (requestStatus != null) {
-                queryString.append("requestStatus = :requestStatus, ");
-            }
-            if (progress != null) {
-                queryString.append("progress = :progress, ");
-            }
-            if (vnfOutputs != null) {
-                queryString.append("vnfOutputs = :vnfOutputs, ");
-            }
-            if (serviceInstanceId != null) {
-                queryString.append("serviceInstanceId = :serviceInstanceId, ");
-            }
-            if (networkId != null) {
-                queryString.append("networkId = :networkId, ");
-            }
-            if (vnfId != null) {
-                queryString.append("vnfId = :vnfId, ");
-            }
-            if (vfModuleId != null) {
-                queryString.append("vfModuleId = :vfModuleId, ");
-            }
-            if (volumeGroupId != null) {
-                queryString.append("volumeGroupId = :volumeGroupId, ");
-            }
-            if (serviceInstanceName != null) {
-                queryString.append("serviceInstanceName = :serviceInstanceName, ");
-            }
-            if (vfModuleName != null) {
-                queryString.append("vfModuleName = :vfModuleName, ");
-            }
-            if (configurationId != null) {
-                queryString.append("configurationId = :configurationId, ");
-            }
-            if (configurationName != null) {
-                queryString.append("configurationName = :configurationName, ");
-            }
-            if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
-                queryString.append("endTime = :endTime, ");
-            } else {
-                queryString.append("modifyTime = :modifyTime, ");
-            }
-            queryString.append("lastModifiedBy = :lastModifiedBy where requestId = :requestId OR clientRequestId = :requestId");
+	private static final String GET_INFRA_REQUEST = "Get Infra request";
 
-            logger.debug("Executing update: " + queryString.toString());
+	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, MsoRequestsDbAdapterImpl.class);
+	
+	@Autowired
+	private InfraActiveRequestsRepository infraActive;
 
-            Query query = session.createQuery (queryString.toString());
-            query.setParameter ("requestId", requestId);
-            if (statusMessage != null) {
-                query.setParameter ("statusMessage", statusMessage);
-                logger.debug ("StatusMessage in updateInfraRequest is set to: " + statusMessage);
-            }
-            if (responseBody != null) {
-            	query.setParameter ("responseBody", responseBody);
-                logger.debug ("ResponseBody in updateInfraRequest is set to: " + responseBody);
-            }
-            if (requestStatus != null) {
-                query.setParameter ("requestStatus", requestStatus.toString ());
-                logger.debug ("RequestStatus in updateInfraRequest is set to: " + requestStatus.toString());
-            }
+	@Autowired
+	private SiteStatusRepository siteRepo;
 
-            if (progress != null) {
-                query.setParameter ("progress", Long.parseLong (progress));
-                logger.debug ("Progress in updateInfraRequest is set to: " + progress);
-            }
-            if (vnfOutputs != null) {
-                query.setParameter ("vnfOutputs", vnfOutputs);
-                logger.debug ("VnfOutputs in updateInfraRequest is set to: " + vnfOutputs);
-            }
-            if (serviceInstanceId != null) {
-                query.setParameter ("serviceInstanceId", serviceInstanceId);
-                logger.debug ("ServiceInstanceId in updateInfraRequest is set to: " + serviceInstanceId);
-            }
-            if (networkId != null) {
-                query.setParameter ("networkId", networkId);
-                logger.debug ("NetworkId in updateInfraRequest is set to: " + networkId);
-            }
-            if (vnfId != null) {
-                query.setParameter ("vnfId", vnfId);
-                logger.debug ("VnfId in updateInfraRequest is set to: " + vnfId);
-            }
-            if (vfModuleId != null) {
-                query.setParameter ("vfModuleId", vfModuleId);
-                logger.debug ("vfModuleId in updateInfraRequest is set to: " + vfModuleId);
-            }
-            if (volumeGroupId != null) {
-                query.setParameter ("volumeGroupId", volumeGroupId);
-                logger.debug ("VolumeGroupId in updateInfraRequest is set to: " + volumeGroupId);
-            }
-            if (serviceInstanceName != null) {
-                query.setParameter ("serviceInstanceName", serviceInstanceName);
-                logger.debug ("ServiceInstanceName in updateInfraRequest is set to: " + serviceInstanceName);
-            }
-            if (vfModuleName != null) {
-                query.setParameter ("vfModuleName", vfModuleName);
-                logger.debug ("vfModuleName in updateInfraRequest is set to: " + vfModuleName);
-            }
-            if (configurationId != null) {
-                query.setParameter ("configurationId", configurationId);
-                logger.debug ("configurationId in updateInfraRequest is set to: " + configurationId);
-            }
-            if (configurationName != null) {
-                query.setParameter ("configurationName", configurationName);
-                logger.debug ("configurationName in updateInfraRequest is set to: " + configurationName);
-            }
-            if (vfModuleName != null) {
-                query.setParameter ("vfModuleName", vfModuleName);
-                logger.debug ("vfModuleName in updateInfraRequest is set to: " + vfModuleName);
-            }
-            Timestamp nowTimeStamp = new Timestamp (System.currentTimeMillis ());
-            if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
-                query.setParameter ("endTime", nowTimeStamp);
-                logger.debug ("EndTime in updateInfraRequest is set to: " + nowTimeStamp);
-            } else {
-                query.setParameter ("modifyTime", nowTimeStamp);
-                logger.debug ("ModifyTime in updateInfraRequest is set to: " + nowTimeStamp);
-            }
-            query.setParameter ("lastModifiedBy", lastModifiedBy);
-            logger.debug ("LastModifiedBy in updateInfraRequest is set to: " + lastModifiedBy);
-            result = query.executeUpdate ();
-            checkIfExists (result, requestId);
-            session.getTransaction ().commit ();
-        } catch (HibernateException e) {
-            String error = "Unable to update MSO Requests DB: " + e.getMessage ();
-            logger.error (MessageEnum.RA_CANT_UPDATE_REQUEST, "infra request parameters", requestId, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "HibernateException - " + error, e);
-            logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
-            throw new MsoRequestsDbException (error, e);
-        } finally {
-            if (session != null && session.isOpen ()) {
-                session.close ();
-            }
-        }
-        logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
-    }
+	@Autowired
+	private OperationStatusRepository operationStatusRepository;
 
+	@Autowired
+	private ResourceOperationStatusRepository resourceOperationStatusRepository;
 
-    private void checkIfExists (int result, String requestId) throws MsoRequestsDbException {
-        if (result == 0) {
-            String error = "Request ID does not exist in MSO Requests DB: " + requestId;
-            logger.error (MessageEnum.RA_DB_REQUEST_NOT_EXIST, requestId, "", "", MsoLogger.ErrorCode.DataError, error);
-            throw new MsoRequestsDbException (error);
-        }
-    }
+	@Transactional
+	@Override
+	public void updateInfraRequest(String requestId, String lastModifiedBy, String statusMessage, String responseBody,
+			RequestStatusType requestStatus, String progress, String vnfOutputs, String serviceInstanceId,
+			String networkId, String vnfId, String vfModuleId, String volumeGroupId, String serviceInstanceName,
+			String configurationId, String configurationName, String vfModuleName) throws MsoRequestsDbException {
+		MsoLogger.setLogContext(requestId, serviceInstanceId);
+		long startTime = System.currentTimeMillis();
+		try {
+			InfraActiveRequests request = infraActive.findOneByRequestIdOrClientRequestId(requestId, requestId);
+			if (request == null) {
+				String error = "Entity not found. Unable to retrieve MSO Infra Requests DB for Request ID " + requestId;
+				throw new MsoRequestsDbException(error);
+			}
+			if (statusMessage != null) {
+				request.setStatusMessage(statusMessage);
+			}
+			if (responseBody != null) {
+				request.setResponseBody(responseBody);
+			}
+			if (requestStatus != null) {
+				request.setRequestStatus(requestStatus.toString());
+			}
+			if (progress != null) {
+				setProgress(progress, request);
+			}
+			if (vnfOutputs != null) {
+				request.setVnfOutputs(vnfOutputs);
+			}
+			if (serviceInstanceId != null) {
+				request.setServiceInstanceId(serviceInstanceId);
+			}
+			if (networkId != null) {
+				request.setNetworkId(networkId);
+			}
+			if (vnfId != null) {
+				request.setVnfId(vnfId);
+			}
+			if (vfModuleId != null) {
+				request.setVfModuleId(vfModuleId);
+			}
+			if (volumeGroupId != null) {
+				request.setVolumeGroupId(volumeGroupId);
+			}
+			if (serviceInstanceName != null) {
+				request.setServiceInstanceName(serviceInstanceName);
+			}
+			if (vfModuleName != null) {
+				request.setVfModuleName(vfModuleName);
+			}
+			if (configurationId != null) {
+				request.setConfigurationId(configurationId);
+			}
+			if (configurationName != null) {
+				request.setConfigurationName(configurationName);
+			}
+			if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
+				Timestamp nowTimeStamp = new Timestamp(System.currentTimeMillis());
+				request.setEndTime(nowTimeStamp);
+			}
+			request.setLastModifiedBy(lastModifiedBy);
+			infraActive.save(request);
 
+		} catch (Exception e) {
+			String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
+			logger.error("Error " + MsoLogger.ErrorCode.BusinessProcesssError + " for " + GET_INFRA_REQUEST + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
+			logger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
+			throw new MsoRequestsDbException(error, e);
+		}
+		logger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESSFUL);
 
-    @Override
-    public InfraActiveRequests getInfraRequest (String requestId) throws MsoRequestsDbException {
-        long startTime = System.currentTimeMillis ();
-        MsoLogger.setLogContext (requestId, null);
-        Session session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
+	}
 
-        logger.debug ("Call to MSO Infra RequestsDb adapter get method with request Id: " + requestId);
+	private void setProgress(String progress, InfraActiveRequests request) {
+		try {
+			request.setProgress(Long.parseLong(progress));
+		} catch (NumberFormatException e) {
+			logger.warnSimple("UpdateInfraRequest", "Invalid value sent for progress");
+		}
+	}
 
-        InfraActiveRequests request = null;
-        try {
-            session.beginTransaction ();
-            Query query = session.createQuery ("FROM InfraActiveRequests where requestId = :requestId OR clientRequestId = :requestId");
-            query.setParameter ("requestId", requestId);
-            request = (InfraActiveRequests) query.uniqueResult();
-        } catch (HibernateException e) {
-            String error = "Unable to retrieve MSO Infra Requests DB for Request ID "
-                           + requestId;
-            logger.error (MessageEnum.RA_DB_REQUEST_NOT_EXIST, "Get Infra request", requestId, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "HibernateException - " + error, e);
-            logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
-            throw new MsoRequestsDbException (error, e);
-        } finally {
-            if (session != null && session.isOpen ()) {
-                session.close ();
-            }
-        }
-        logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
-        return request;
-    }
+	@Override
+	@Transactional
+	public InfraActiveRequests getInfraRequest(String requestId) throws MsoRequestsDbException {
+		long startTime = System.currentTimeMillis();
+		MsoLogger.setLogContext(requestId, null);
 
+		logger.debug("Call to MSO Infra RequestsDb adapter get method with request Id: " + requestId);
 
-    /**
-     * Get SiteStatus by SiteName.
-     *
-     * @param siteName The unique name of the site
-     * @return Status of that site
-     */
-    @Override
-    public boolean getSiteStatus (String siteName) {
-        UUIDChecker.generateUUID (logger);
-        Session session = requestsDbSessionFactoryManager.getSessionFactory ().openSession ();
+		InfraActiveRequests request = null;
+		try {
 
-        long startTime = System.currentTimeMillis ();
-        SiteStatus siteStatus = null;
-        logger.debug ("Request database - get Site Status with Site name:" + siteName);
-        try {
-            String hql = "FROM SiteStatus WHERE siteName = :site_name";
-            Query query = session.createQuery (hql);
-            query.setParameter ("site_name", siteName);
+			request = infraActive.findOneByRequestIdOrClientRequestId(requestId, requestId);
+			if (request == null) {
+				String error = "Entity not found. Unable to retrieve MSO Infra Requests DB for Request ID " + requestId;
+				throw new MsoRequestsDbException(error);
+			}
+		} catch (Exception e) {
+			String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
+			logger.error("Error " + MsoLogger.ErrorCode.BusinessProcesssError + " for " + GET_INFRA_REQUEST + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
+			logger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
+			throw new MsoRequestsDbException(error, e);
+		}
+		logger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESSFUL);
+		return request;
+	}
 
-            siteStatus = (SiteStatus) query.uniqueResult ();
-        } finally {
-            if (session != null && session.isOpen ()) {
-                session.close ();
-            }
-        }
-        if (siteStatus == null) {
-            // if not exist in DB, it means the site is not disabled, thus return true
-            logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
-            return true;
-        } else {
-            logger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
-            return siteStatus.getStatus();
-        }
-    }
-    
-    /**
-     * update operation status
-     * <br>
-     * 
-     * @param serviceId
-     * @param operationId
-     * @param operationType
-     * @param userId
-     * @param result
-     * @param operationContent
-     * @param progress
-     * @param reason
-     * @throws MsoRequestsDbException
-     * @since   ONAP Amsterdam Release
-     */
-    @Override
-    public void updateServiceOperationStatus(String serviceId, String operationId, String operationType, String userId,
-            String result, String operationContent, String progress, String reason) throws MsoRequestsDbException {
-        OperationStatus operStatus = new OperationStatus();
-        operStatus.setServiceId(serviceId);
-        operStatus.setOperationId(operationId);
-        operStatus.setUserId(userId);
-        operStatus.setOperation(operationType);
-        operStatus.setReason(reason);
-        operStatus.setProgress(progress);
-        operStatus.setResult(result);
-        operStatus.setOperationContent(operationContent);
-        RequestsDatabase.getInstance().updateOperationStatus(operStatus);
-    }
-    
-    /**
-     * init the operation status of  all the resources 
-     * <br>
-     * 
-     * @param serviceId the service Id
-     * @param operationId the operation Id
-     * @param operationType the operationType
-     * @param resourceTemplateUUIDs the resources, the UUID is split by ":"
-     * @throws MsoRequestsDbException
-     * @since   ONAP Amsterdam Release
-     */
-    @Override
-    public void initResourceOperationStatus(String serviceId, String operationId, String operationType,
-            String resourceTemplateUUIDs) throws MsoRequestsDbException{
-        String[] resourceLst = resourceTemplateUUIDs.split(":");
-        for(String resource: resourceLst){
-            if("".equals(resource)){
-                continue;
-            }
-            ResourceOperationStatus resourceStatus = new ResourceOperationStatus();
-            resourceStatus.setOperationId(operationId);
-            resourceStatus.setServiceId(serviceId);
-            resourceStatus.setResourceTemplateUUID(resource);
-            resourceStatus.setOperType(operationType);
-            resourceStatus.setStatus(RequestsDbConstant.Status.PROCESSING);
-            resourceStatus.setStatusDescription("Waiting for start");
-            RequestsDatabase.getInstance().updateResOperStatus(resourceStatus);
-        }     
-    }
-    
-    /**
-     * get resource operation status
-     * <br>
-     * 
-     * @param serviceId
-     * @param operationId
-     * @param resourceTemplateUUID
-     * @return
-     * @throws MsoRequestsDbException
-     * @since   ONAP Amsterdam Release
-     */
-    @Override
-    public ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID)
-            throws MsoRequestsDbException {
-        return RequestsDatabase.getInstance().getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
-    }
-    
-    /**
-     * update resource operation status
-     * <br>
-     * 
-     * @param serviceId
-     * @param operationId
-     * @param resourceTemplateUUID
-     * @param operationType
-     * @param resourceInstanceID
-     * @param jobId
-     * @param status
-     * @param progress
-     * @param errorCode
-     * @param statusDescription
-     * @throws MsoRequestsDbException
-     * @since   ONAP Amsterdam Release
-     */
-    @Override
-    public void updateResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID,
-            String operationType, String resourceInstanceID, String jobId, String status, String progress,
-            String errorCode, String statusDescription) throws MsoRequestsDbException {
-         ResourceOperationStatus resStatus = new ResourceOperationStatus();
-         resStatus.setServiceId(serviceId);
-         resStatus.setOperationId(operationId);
-         resStatus.setResourceTemplateUUID(resourceTemplateUUID);
-         resStatus.setOperType(operationType);
-         resStatus.setResourceInstanceID(resourceInstanceID);
-         resStatus.setJobId(jobId);
-         resStatus.setStatus(status);
-         resStatus.setProgress(progress);
-         resStatus.setErrorCode(errorCode);
-         resStatus.setStatusDescription(statusDescription);
-         RequestsDatabase.getInstance().updateResOperStatus(resStatus);
-    }
+	/**
+	 * Get SiteStatus by SiteName.
+	 *
+	 * @param siteName
+	 *            The unique name of the site
+	 * @return Status of that site
+	 */
+	@Override
+	@Transactional
+	public boolean getSiteStatus(String siteName) {
+		UUIDChecker.generateUUID(logger);
+		long startTime = System.currentTimeMillis();
+		SiteStatus siteStatus;
+		logger.debug("Request database - get Site Status with Site name:" + siteName);
+
+		siteStatus = siteRepo.findOneBySiteName(siteName);
+		if (siteStatus == null) {
+			// if not exist in DB, it means the site is not disabled, thus
+			// return true
+			logger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESSFUL);
+			return true;
+		} else {
+			logger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESSFUL);
+			return siteStatus.getStatus();
+		}
+	}
+
+	/**
+	 * update operation status <br>
+	 * 
+	 * @param serviceId
+	 * @param operationId
+	 * @param operationType
+	 * @param userId
+	 * @param result
+	 * @param operationContent
+	 * @param progress
+	 * @param reason
+	 * @throws MsoRequestsDbException
+	 * @since ONAP Amsterdam Release
+	 */
+	@Override
+	@Transactional
+	public void updateServiceOperationStatus(String serviceId, String operationId, String operationType, String userId,
+			String result, String operationContent, String progress, String reason) throws MsoRequestsDbException {
+		OperationStatus operStatus = operationStatusRepository.findOneByServiceIdAndOperationId(serviceId, operationId);
+		if (operStatus == null) {
+			String error = "Entity not found. Unable to retrieve OperationStatus Object ServiceId: " + serviceId + " operationId: "
+					+ operationId;
+			MsoRequestsDbException e = new MsoRequestsDbException(error);
+			logger.error("Error "+ MsoLogger.ErrorCode.BusinessProcesssError + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
+			throw e;
+		}
+
+		operStatus.setUserId(userId);
+		operStatus.setOperation(operationType);
+		operStatus.setReason(reason);
+		operStatus.setProgress(progress);
+		operStatus.setResult(result);
+		operStatus.setOperationContent(operationContent);
+		operStatus.setResult(result);
+		operationStatusRepository.save(operStatus);
+	}
+
+	/**
+	 * init the operation status of all the resources <br>
+	 * 
+	 * @param serviceId
+	 *            the service Id
+	 * @param operationId
+	 *            the operation Id
+	 * @param operationType
+	 *            the operationType
+	 * @param resourceTemplateUUIDs
+	 *            the resources, the UUID is split by ":"
+	 * @throws MsoRequestsDbException
+	 * @since ONAP Amsterdam Release
+	 */
+	@Override
+	@Transactional
+	public void initResourceOperationStatus(String serviceId, String operationId, String operationType,
+			String resourceTemplateUUIDs) throws MsoRequestsDbException {
+		String[] resourceLst = resourceTemplateUUIDs.split(":");
+		for (String resource : resourceLst) {
+			if ("".equals(resource)) {
+				continue;
+			}
+			ResourceOperationStatus resourceStatus = new ResourceOperationStatus();
+			resourceStatus.setOperationId(operationId);
+			resourceStatus.setServiceId(serviceId);
+			resourceStatus.setResourceTemplateUUID(resource);
+			resourceStatus.setOperType(operationType);
+			resourceStatus.setStatus(RequestsDbConstant.Status.PROCESSING);
+			resourceStatus.setStatusDescription("Waiting for start");
+			resourceOperationStatusRepository.save(resourceStatus);
+
+		}
+	}
+
+	/**
+	 * get resource operation status <br>
+	 * 
+	 * @param serviceId
+	 * @param operationId
+	 * @param resourceTemplateUUID
+	 * @return
+	 * @throws MsoRequestsDbException
+	 * @since ONAP Amsterdam Release
+	 */
+	@Override
+	public ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId,
+			String resourceTemplateUUID) throws MsoRequestsDbException {
+
+		return resourceOperationStatusRepository
+				.findOne(new ResourceOperationStatusId(serviceId, operationId, resourceTemplateUUID));
+	}
+
+	/**
+	 * update resource operation status <br>
+	 * 
+	 * @param serviceId
+	 * @param operationId
+	 * @param resourceTemplateUUID
+	 * @param operationType
+	 * @param resourceInstanceID
+	 * @param jobId
+	 * @param status
+	 * @param progress
+	 * @param errorCode
+	 * @param statusDescription
+	 * @throws MsoRequestsDbException
+	 * @since ONAP Amsterdam Release
+	 */
+	@Override
+	public void updateResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID,
+			String operationType, String resourceInstanceID, String jobId, String status, String progress,
+			String errorCode, String statusDescription) throws MsoRequestsDbException {
+		ResourceOperationStatus resStatus = new ResourceOperationStatus();
+		resStatus.setServiceId(serviceId);
+		resStatus.setOperationId(operationId);
+		resStatus.setResourceTemplateUUID(resourceTemplateUUID);
+		resStatus.setOperType(operationType);
+		resStatus.setResourceInstanceID(resourceInstanceID);
+		resStatus.setJobId(jobId);
+		resStatus.setStatus(status);
+		resStatus.setProgress(progress);
+		resStatus.setErrorCode(errorCode);
+		resStatus.setStatusDescription(statusDescription);
+		resourceOperationStatusRepository.save(resStatus);
+	}
 }

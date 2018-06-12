@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,6 +38,7 @@ public enum AAIObjectType implements AAIObjectName, AAIObjectUriTemplate, AAIObj
 	DEFAULT_TENANT(AAINamespaceConstants.CLOUD_INFRASTRUCTURE + "/cloud-regions/cloud-region/att-aic/AAIAIC25", "/tenants/tenant/{tenant-id}"),
 	VCE(AAINamespaceConstants.NETWORK, "/vces/vce/{vnf-id}"),
 	VPN_BINDING(AAINamespaceConstants.NETWORK, "/vpn-bindings/vpn-binding/{vpn-id}"),
+	VPN_BINDINGS(AAINamespaceConstants.NETWORK, "/vpn-bindings"),
 	CONFIGURATION(AAINamespaceConstants.NETWORK, "/configurations/configuration/{configuration-id}"),
 	PSERVER(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/pservers/pserver/{hostname}"),
 	SERVICE_SUBSCRIPTION(AAIObjectType.CUSTOMER.uriTemplate(), "/service-subscriptions/service-subscription/{service-type}"),
@@ -51,11 +52,14 @@ public enum AAIObjectType implements AAIObjectName, AAIObjectUriTemplate, AAIObj
 	OPERATIONAL_ENVIRONMENT(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/operational-environments/operational-environment/{operational-environment-id}"),
 	CLOUD_REGION(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/cloud-regions/cloud-region/{cloud-owner-id}/{cloud-region-id}"),
 	TENANT(AAIObjectType.CLOUD_REGION.uriTemplate(), "/tenants/tenant/{tenant-id}"),
+	VOLUME_GROUP(AAIObjectType.CLOUD_REGION.uriTemplate(), "/volume-groups/volume-group/{volume-group-id}"),
 	VSERVER(AAIObjectType.TENANT.uriTemplate(), "/vservers/vserver/{vserver-id}"),
 	MODEL_VER(AAINamespaceConstants.SERVICE_DESIGN_AND_CREATION + "/models/model/{model-invariant-id}", "/model-vers/model-ver/{model-version-id}"),
-	TUNNEL_XCONNECT(AAIObjectType.ALLOTTED_RESOURCE.uriTemplate(), "/tunnel-xconnects/tunnel-xconnect/{id}"),
+	TUNNEL_XCONNECT(AAIObjectType.ALLOTTED_RESOURCE.uriTemplate(), "/tunnel-xconnects/tunnel-xconnect/{tunnel-id}"),
 	P_INTERFACE(AAIObjectType.PSERVER.uriTemplate(), "/p-interfaces/p-interface/{interface-name}"),
 	PHYSICAL_LINK(AAINamespaceConstants.NETWORK, "/physical-links/physical-link/{link-name}"),
+	INSTANCE_GROUP(AAINamespaceConstants.NETWORK, "/instance-groups/instance-group/{id}"),
+	COLLECTION(AAINamespaceConstants.NETWORK, "/collections/collection/{collection-id}"),
 	UNKNOWN("", "");
 
 	private final String uriTemplate;

@@ -22,7 +22,7 @@
         {
             "resourceInstanceName": "resource-1",
             "resourceInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f134",
-            "resourceCustomizationUUID": "6402d92d-0050-46a9-8202-623a46680ba7",
+            "resourceCustomizationUUID": "6402d92d-0050-46a9-8202-623a46680ba7", 
             "resourceName": "resourceName-1",
             "resourceType": "VF",
             "resourceUUID": "585822c7-4027-4f84-ba50-e9248606f136",

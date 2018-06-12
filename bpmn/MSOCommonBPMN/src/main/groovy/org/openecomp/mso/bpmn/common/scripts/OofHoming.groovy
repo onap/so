@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,6 @@ import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.domain.CloudFlavor
 import org.openecomp.mso.bpmn.core.domain.InventoryType
 import org.openecomp.mso.bpmn.core.domain.Resource
-import org.openecomp.mso.bpmn.core.domain.ResourceType
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.domain.Subscriber
 import org.openecomp.mso.bpmn.core.domain.VnfResource
@@ -74,8 +73,6 @@ class OofHoming extends AbstractServiceTaskProcessor {
             utils.log("DEBUG", "Incoming Request Id is: " + requestId, isDebugEnabled)
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
             utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
-            String serviceInstanceName = execution.getVariable("serviceInstanceName")
-            utils.log("DEBUG", "Incoming Service Instance Name is: " + serviceInstanceName, isDebugEnabled)
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             utils.log("DEBUG", "Incoming Service Decomposition is: " + serviceDecomposition, isDebugEnabled)
             String subscriberInfo = execution.getVariable("subscriberInfo")
@@ -89,24 +86,21 @@ class OofHoming extends AbstractServiceTaskProcessor {
 
             if (isBlank(requestId) ||
                     isBlank(serviceInstanceId) ||
-                    isBlank(serviceInstanceName) ||
                     isBlank(serviceDecomposition.toString()) ||
-                    isBlank(customerLocation.toString())) {
+                    isBlank(subscriberInfo) ||
+                    isBlank(customerLocation.toString()) ||
+                    isBlank(cloudOwner) ||
+                    isBlank(cloudRegionId)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 4000,
                         "A required input variable is missing or null")
             } else {
-                Subscriber subscriber = null
-                if (isBlank(subscriberInfo)) {
-                    subscriber = new Subscriber("", "", "")
-                } else {
-                    String subId = jsonUtil.getJsonValue(subscriberInfo, "globalSubscriberId")
-                    String subName = jsonUtil.getJsonValue(subscriberInfo, "subscriberName")
-                    String subCommonSiteId = ""
-                    if (jsonUtil.jsonElementExist(subscriberInfo, "subscriberCommonSiteId")) {
-                        subCommonSiteId = jsonUtil.getJsonValue(subscriberInfo, "subscriberCommonSiteId")
-                    }
-                    subscriber = new Subscriber(subId, subName, subCommonSiteId)
+                String subId = jsonUtil.getJsonValue(subscriberInfo, "globalSubscriberId")
+                String subName = jsonUtil.getJsonValue(subscriberInfo, "subscriberName")
+                String subCommonSiteId = ""
+                if (jsonUtil.jsonElementExist(subscriberInfo, "subscriberCommonSiteId")) {
+                    subCommonSiteId = jsonUtil.getJsonValue(subscriberInfo, "subscriberCommonSiteId")
                 }
+                Subscriber subscriber = new Subscriber(subId, subName, subCommonSiteId)
 
                 //Authentication
                 def authHeader = ""
@@ -163,11 +157,14 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 APIResponse response = client.httpPost(oofRequest)
 
                 int responseCode = response.getStatusCode()
-                execution.setVariable("syncResponseCode", responseCode)
                 logDebug("OOF sync response code is: " + responseCode, isDebugEnabled)
                 String syncResponse = response.getResponseBodyAsString()
                 execution.setVariable("syncResponse", syncResponse)
                 logDebug("OOF sync response is: " + syncResponse, isDebugEnabled)
+
+				if(responseCode != 202){
+					exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
+				}
 
                 utils.log("DEBUG", "*** Completed Homing Call OOF ***", isDebugEnabled)
             }
@@ -211,16 +208,9 @@ class OofHoming extends AbstractServiceTaskProcessor {
                     JSONObject placement = arrSol.getJSONObject(j)
                     utils.log("DEBUG", "****** JSONObject is: " + placement + " *****", "true")
                     String jsonServiceResourceId = placement.getString("serviceResourceId")
-                    String jsonResourceModuleName = placement.getString("resourceModuleName")
                     for (Resource resource : resourceList) {
                         String serviceResourceId = resource.getResourceId()
-                        String resourceModuleName = ""
-                        if (resource.getResourceType() == ResourceType.ALLOTTED_RESOURCE ||
-                            resource.getResourceType() == ResourceType.VNF) {
-                            resourceModuleName = resource.getNfFunction()
-                            }
-                        if (serviceResourceId.equalsIgnoreCase(jsonServiceResourceId) ||
-                            resourceModuleName.equalsIgnoreCase(jsonResourceModuleName)) {
+                        if (serviceResourceId.equalsIgnoreCase(jsonServiceResourceId)) {
                             JSONObject solution = placement.getJSONObject("solution")
                             String solutionType = solution.getString("identifierType")
                             String inventoryType = ""
@@ -257,17 +247,14 @@ class OofHoming extends AbstractServiceTaskProcessor {
                                     flavorsArrayList.add(cloudFlavor)
                                 }
                             }
-                            Map<String, String> assignmentMap = jsonUtil.entryArrayToMap(execution,
-                                    assignmentArr.toString(), "key", "value")
+                            Map<String, String> assignmentMap = jsonUtil.entryArrayToMap(execution, assignmentArr.toString(), "key", "value")
                             String cloudOwner = assignmentMap.get("cloudOwner")
-                            String cloudRegionId = assignmentMap.get("locationId")
+                            String cloudRegionId = assignmentMap.get("cloudRegionId")
                             resource.getHomingSolution().setCloudOwner(cloudOwner)
                             resource.getHomingSolution().setCloudRegionId(cloudRegionId)
                             if (flavorsArrayList != null && flavorsArrayList.size != 0) {
                                 resource.getHomingSolution().setFlavors(flavorsArrayList)
                                 execution.setVariable(cloudRegionId + "_flavorList", flavorsArrayList)
-                                utils.log("DEBUG", "***** _flavorList is: " + flavorsArrayList.toString() +
-                                        " *****", "true")
                             }
 
                             if (inventoryType.equalsIgnoreCase("service")) {

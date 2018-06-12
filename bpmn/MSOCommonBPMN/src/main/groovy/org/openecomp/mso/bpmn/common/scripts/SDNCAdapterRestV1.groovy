@@ -1,3 +1,23 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.mso.bpmn.common.scripts
 
 import java.text.SimpleDateFormat
@@ -12,14 +32,22 @@ import groovy.json.*
 
 import org.json.JSONObject
 
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.domain.RollbackData
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 
 class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SDNCAdapterRestV1.class);
+
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
@@ -31,8 +59,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		def prefix="SDNCREST_"
 		execution.setVariable("prefix", prefix)
@@ -44,17 +71,17 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String request = validateRequest(execution, "mso-request-id")
 			String requestType = jsonUtil.getJsonRootProperty(request)
 			execution.setVariable(prefix + 'requestType', requestType)
-			logDebug(getProcessKey(execution) + ': ' + prefix + 'requestType = ' + requestType, isDebugLogEnabled)
-			utils.logAudit('SDNCAdapterRestV1, request: ' + request)
+			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'requestType = ' + requestType)
+			msoLogger.debug('SDNCAdapterRestV1, request: ' + request)
 
 			// Determine the SDNCAdapter endpoint
 
-			String sdncAdapterEndpoint = execution.getVariable("URN_mso_adapters_sdnc_rest_endpoint")
+			String sdncAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.sdnc.rest.endpoint", execution)
 
 			if (sdncAdapterEndpoint == null || sdncAdapterEndpoint.isEmpty()) {
 				String msg = getProcessKey(execution) + ': mso:adapters:sdnc:rest:endpoint URN mapping is not defined'
-				logDebug(msg, isDebugLogEnabled)
-				logError(msg)
+				msoLogger.debug(msg)
+				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -73,13 +100,13 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (sdncRequestId == null || sdncRequestId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no sdncRequestId in ' + requestType
-					logDebug(msg, isDebugLogEnabled)
-					logError(msg)
+					msoLogger.debug(msg)
+					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
 				execution.setVariable('SDNCAResponse_CORRELATOR', sdncRequestId)
-				logDebug(getProcessKey(execution) + ': SDNCAResponse_CORRELATOR = ' + sdncRequestId, isDebugLogEnabled)
+				msoLogger.debug(getProcessKey(execution) + ': SDNCAResponse_CORRELATOR = ' + sdncRequestId)
 
 				// Get the bpNotificationUrl from the request (just to make sure it's there)
 
@@ -87,44 +114,48 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (bpNotificationUrl == null || bpNotificationUrl.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no bpNotificationUrl in ' + requestType
-					logDebug(msg, isDebugLogEnabled)
-					logError(msg)
+					msoLogger.debug(msg)
+					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
 				sdncAdapterMethod = 'POST'
-				sdncAdapterUrl = sdncAdapterEndpoint + '/services'
+				sdncAdapterUrl = sdncAdapterEndpoint
+
+				RollbackData rollbackData = new RollbackData()
+				rollbackData.setRequestId(sdncRequestId)
+				rollbackData.getAdditionalData().put("service", jsonUtil.getJsonValue(request, requestType + ".sdncService"))
+				rollbackData.getAdditionalData().put("operation", jsonUtil.getJsonValue(request, requestType + ".sdncOperation"))
+				execution.setVariable("RollbackData", rollbackData)
 
 			} else {
 				String msg = getProcessKey(execution) + ': Unsupported request type: ' + requestType
-				logDebug(msg, isDebugLogEnabled)
-				logError(msg)
+				msoLogger.debug(msg)
+				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
 			execution.setVariable(prefix + 'sdncAdapterMethod', sdncAdapterMethod)
-			logDebug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterMethod = ' + sdncAdapterMethod, isDebugLogEnabled)
+			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterMethod = ' + sdncAdapterMethod)
 			execution.setVariable(prefix + 'sdncAdapterUrl', sdncAdapterUrl)
-			logDebug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterUrl = ' + sdncAdapterUrl, isDebugLogEnabled)
+			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterUrl = ' + sdncAdapterUrl)
 			execution.setVariable(prefix + 'sdncAdapterRequest', sdncAdapterRequest)
-			logDebug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterRequest = \n' + sdncAdapterRequest, isDebugLogEnabled)
+			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterRequest = \n' + sdncAdapterRequest)
 
 			// Get the Basic Auth credentials for the SDNCAdapter (yes... we ARE using the PO adapters credentials)
 
-			String basicAuthValue = execution.getVariable("URN_mso_adapters_po_auth")
+			String basicAuthValue = UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
 
 			if (basicAuthValue == null || basicAuthValue.isEmpty()) {
-				logDebug(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", isDebugLogEnabled)
-				logError(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined")
+				msoLogger.debug(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined")
+				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			} else {
-				logDebug(getProcessKey(execution) + ": Obtained BasicAuth credentials for SDNCAdapter:" +
-					basicAuthValue, isDebugLogEnabled)
 				try {
-					def encodedString = utils.getBasicAuth(basicAuthValue, execution.getVariable("URN_mso_msoKey"))
+					def encodedString = utils.getBasicAuth(basicAuthValue, UrnPropertiesReader.getVariable("mso.msoKey", execution))
 					execution.setVariable(prefix + 'basicAuthHeaderValue', encodedString)
 				} catch (IOException ex) {
-					logDebug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter", isDebugLogEnabled)
-					logError(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
+					msoLogger.debug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
+					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 				}
 			}
 
@@ -133,18 +164,28 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 			String timeout = jsonUtil.getJsonValue(request, requestType + ".bpTimeout")
 
-			if (timeout == null || timeout.isEmpty()) {
-				timeout = execution.getVariable("URN_mso_sdnc_timeout")
+			// in addition to null/empty, also need to verify that the timer value is a valid duration "P[n]T[n]H|M|S"
+			String timerRegex = "PT[0-9]+[HMS]";
+			if (timeout == null || timeout.isEmpty() || !timeout.matches(timerRegex)) {
+				msoLogger.debug(getProcessKey(execution) + ': preProcessRequest(): null/empty/invalid bpTimeout value. Using "mso.adapters.sdnc.timeout"')
+				timeout = UrnPropertiesReader.getVariable("mso.adapters.sdnc.timeout", execution)
+			}
+
+			// the timeout could still be null at this point if the config parm is missing/undefined
+			// forced to log (so OPs can fix the config) and temporarily use a hard coded value of 10 seconds
+			if (timeout == null) {
+				msoLogger.warnSimple('preProcessRequest()', 'property "mso.adapters.sdnc.timeout" is missing/undefined. Using "PT10S"')
+				timeout = "PT10S"
 			}
 
 			execution.setVariable(prefix + 'timeout', timeout)
-			logDebug(getProcessKey(execution) + ': ' + prefix + 'timeout = ' + timeout, isDebugLogEnabled)
+			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'timeout = ' + timeout)
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
-			logDebug(msg, isDebugLogEnabled)
-			logError(msg)
+			msoLogger.debug(msg)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
@@ -156,8 +197,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.sendRequestToSDNCAdapter(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		String prefix = execution.getVariable('prefix')
 
@@ -165,12 +205,14 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String sdncAdapterMethod = execution.getVariable(prefix + 'sdncAdapterMethod')
 			String sdncAdapterUrl = execution.getVariable(prefix + 'sdncAdapterUrl')
 			String sdncAdapterRequest = execution.getVariable(prefix + 'sdncAdapterRequest')
-			utils.logAudit("Outgoing SDNC Rest Request is: " + sdncAdapterRequest)
+			msoLogger.debug("Outgoing SDNC Rest Request is: " + sdncAdapterRequest)
 
 			RESTConfig config = new RESTConfig(sdncAdapterUrl)
 			RESTClient client = new RESTClient(config).
-				addHeader("Content-Type", "application/json").
-				addAuthorizationHeader(execution.getVariable(prefix + "basicAuthHeaderValue"))
+				addHeader("Content-Type", "application/json")
+					.addHeader("mso-request-id",execution.getVariable("mso-request-id"))
+					.addHeader("mso-service-instance-id",execution.getVariable("mso-service-instance-id"))
+					.addAuthorizationHeader(execution.getVariable(prefix + "basicAuthHeaderValue"))
 
 			APIResponse response
 
@@ -184,8 +226,8 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 				response = client.httpDelete(sdncAdapterRequest)
 			} else {
 				String msg = 'Unsupported HTTP method "' + sdncAdapterMethod + '" in ' + method + ": " + e
-				logDebug(msg, isDebugLogEnabled)
-				logError(msg)
+				msoLogger.debug(msg)
+				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -195,8 +237,8 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			throw e
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
-			logDebug(msg, isDebugLogEnabled)
-			logError(msg)
+			msoLogger.debug(msg)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
@@ -208,15 +250,17 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.processCallback(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		String prefix = execution.getVariable('prefix')
 		String callback = execution.getVariable('SDNCAResponse_MESSAGE')
-		utils.logAudit("Incoming SDNC Rest Callback is: " + callback)
+		String requestId = execution.getVariable("mso-request-id");
+		String serviceInstanceId = execution.getVariable("mso-service-instance-id")
+		utils.logContext(requestId, serviceInstanceId)
+		msoLogger.debug("Incoming SDNC Rest Callback is: " + callback)
 
 		try {
-			logDebug(getProcessKey(execution) + ": received callback:\n" + callback, isDebugLogEnabled)
+			msoLogger.debug(getProcessKey(execution) + ": received callback:\n" + callback)
 
 			int callbackNumber = 1
 			while (execution.getVariable(prefix + 'callback' + callbackNumber) != null) {
@@ -243,7 +287,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			callback = callback == null || String.valueOf(callback).isEmpty() ? "NONE" : callback
 			String msg = "Received error from SDNCAdapter: " + callback
-			logDebug(getProcessKey(execution) + ': ' + msg, isDebugLogEnabled)
+			msoLogger.debug(getProcessKey(execution) + ': ' + msg)
 			exceptionUtil.buildWorkflowException(execution, 5300, msg)
 		}
 	}
@@ -286,8 +330,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.getLastCallback(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		String prefix = execution.getVariable('prefix')
 
@@ -309,8 +352,8 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			return callback
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
-			logDebug(msg, isDebugLogEnabled)
-			logError(msg)
+			msoLogger.debug(msg)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
@@ -322,21 +365,20 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.setTimeoutValue(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		String prefix = execution.getVariable('prefix')
 
 		try {
-			def timeoutValue = execution.getVariable("URN_mso_sdnc_timeout")
+			def timeoutValue = UrnPropertiesReader.getVariable("mso.adapters.sdnc.timeout", execution)
 
 			if (execution.getVariable(prefix + 'callback1') != null) {
 				// Waiting for subsequent notifications
 			}
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
-			logDebug(msg, isDebugLogEnabled)
-			logError(msg)
+			msoLogger.debug(msg)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}

@@ -54,7 +54,7 @@
                         "value": "False"
                     },
                     {
-                        "key": "locationId",
+                        "key": "cloudRegionId",
                         "value": "dfwtx"
                     }
                 ]
@@ -79,7 +79,7 @@
                         "value": "False"
                     },
                     {
-                        "key": "locationId",
+                        "key": "cloudRegionId",
                         "value": "testCloudRegionId2"
                     }
                 ]
@@ -100,7 +100,7 @@
                             "value": "aic"
                         },
                         {
-                            "key": "locationId",
+                            "key": "cloudRegionId",
                             "value": "testCloudRegionId3"
                         },
                         {   "key":"flavors",

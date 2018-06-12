@@ -1,0 +1,12 @@
+{
+	"product-family-id": "productFamilyId",
+	"source": "source",
+	"requestor-id": "requestorId",
+	"subscription-service-type": "subscriptionServiceType",
+	"user-params": null,
+	"action": null,
+	"callback-url": "callbackURL",
+	"requestParameters": {
+		"subscriptionServiceType": "subscriptionServiceType"
+	}
+}

@@ -21,6 +21,9 @@ package org.openecomp.mso.bpmn.common.adapter.vnf;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
+
+
+
 public class MsoRequestTest {
 	private MsoRequest msorequest = new MsoRequest();
 	@Test

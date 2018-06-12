@@ -22,7 +22,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <process-archive name="MSOCommonBPMN">
-        <process-engine>default</process-engine>
         <properties>
             <property name="isDeleteUponUndeploy">false</property>
             <property name="isScanForProcessDefinitions">true</property>

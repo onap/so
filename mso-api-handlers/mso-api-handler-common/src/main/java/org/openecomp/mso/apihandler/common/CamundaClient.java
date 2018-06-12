@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,12 +20,13 @@
 
 package org.openecomp.mso.apihandler.common;
 
+
 import java.io.IOException;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.openecomp.mso.apihandler.camundabeans.CamundaBooleanInput;
@@ -40,8 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class CamundaClient extends RequestClient{
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
-	private static final String CAMUNDA_URL_MESAGE = "Camunda url is: ";
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, CamundaClient.class);
 
 	public CamundaClient() {
 		super(CommonConstants.CAMUNDA);
@@ -50,94 +50,120 @@ public class CamundaClient extends RequestClient{
 
 	@Override
 	public HttpResponse post(String camundaReqXML, String requestId,
-			String requestTimeout, String schemaVersion, String serviceInstanceId, String action) throws IOException {
+			String requestTimeout, String schemaVersion, String serviceInstanceId, String action)
+					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
-		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
+		msoLogger.debug("Camunda url is: "+ url);
 		String jsonReq = wrapRequest(camundaReqXML, requestId, serviceInstanceId, requestTimeout,  schemaVersion);
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
-
-		String encryptedCredentials;
+		msoLogger.info("Camunda Request Content: " + jsonReq);
+		String encryptedCredentials = null;
 		if(props!=null){
-			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH,null);
+			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					post.addHeader("Authorization", "Basic " + DatatypeConverter
-                        .printBase64Binary(userCredentials.getBytes()));
+					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
 				}
 			}
 		}
 
 		post.setEntity(input);
-        return client.execute(post);
+		HttpResponse response = client.execute(post);
+		msoLogger.debug("Response is: " + response);
+		
+		return response;
 	}
 
 	@Override
-	public HttpResponse post(String jsonReq) throws IOException {
+	public HttpResponse post(String jsonReq)
+					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
-		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
+		msoLogger.debug("Camunda url is: "+ url);
+		//String jsonReq = wrapRequest(camundaReqXML, requestId, serviceInstanceId, requestTimeout,  schemaVersion);
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
 
-		String encryptedCredentials;
+		String encryptedCredentials = null;
 		if(props!=null){
-			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH,null);
+			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					post.addHeader("Authorization", "Basic " + DatatypeConverter
-                        .printBase64Binary(userCredentials.getBytes()));
+					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
 				}
 			}
 		}
 
 		post.setEntity(input);
+		HttpResponse response = client.execute(post);
+		msoLogger.debug("Response is: " + response);
 
-        return client.execute(post);
+		return response;
 	}
 
-	@Override
-	public HttpResponse post(RequestClientParamater params) throws IOException {
+	
+
+	
+
+	/**
+	 * @deprecated Use {@link #post(PostParameter)} instead
+	 */
+	public HttpResponse post(String requestId, boolean isBaseVfModule,
+			int recipeTimeout, String requestAction, String serviceInstanceId,
+			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
+			String serviceType, String vnfType, String vfModuleType, String networkType,
+			String requestDetails, String apiVersion, boolean aLaCarte, String requestUri)
+					throws ClientProtocolException, IOException{
+						return post(new PostParameter(requestId, isBaseVfModule, recipeTimeout, requestAction,
+								serviceInstanceId, vnfId, vfModuleId, volumeGroupId, networkId, configurationId,
+								serviceType, vnfType, vfModuleType, networkType, requestDetails, apiVersion, aLaCarte, requestUri));
+					}
+
+
+	public HttpResponse post(PostParameter parameterObject)
+					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
-		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
-		String jsonReq = wrapVIDRequest(params);
+		msoLogger.debug("Camunda url is: "+ url);
+		String jsonReq = wrapVIDRequest(parameterObject.getRequestId(), parameterObject.isBaseVfModule(), parameterObject.getRecipeTimeout(), parameterObject.getRequestAction(),
+				parameterObject.getServiceInstanceId(), parameterObject.getVnfId(), parameterObject.getVfModuleId(), parameterObject.getVolumeGroupId(), parameterObject.getNetworkId(), parameterObject.getConfigurationId(),
+				parameterObject.getServiceType(), parameterObject.getVnfType(), parameterObject.getVfModuleType(), parameterObject.getNetworkType(), parameterObject.getRequestDetails(), parameterObject.getApiVersion(), parameterObject.isaLaCarte(), parameterObject.getRequestUri());
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
-		String encryptedCredentials;
+
+		String encryptedCredentials = null;
 		if(props!=null){
-			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH,null);
+			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
 			if(encryptedCredentials != null){
 				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
 				if(userCredentials != null){
-					post.addHeader("Authorization", "Basic " + DatatypeConverter
-                        .printBase64Binary(userCredentials.getBytes()));
+					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
 				}
 			}
 		}
-		post.setEntity(input);
-        return client.execute(post);
-	}
 
+		post.setEntity(input);
+		HttpResponse response = client.execute(post);
+		msoLogger.debug("Response is: " + response);
+
+		return response;
+	}
+	
 	@Override
     public HttpResponse get() {
         return null;
     }
 
-	private String wrapRequest(String reqXML, String requestId, String serviceInstanceId, String requestTimeout, String schemaVersion){
+	protected String wrapRequest(String reqXML, String requestId, String serviceInstanceId, String requestTimeout, String schemaVersion){
 		String jsonReq = null;
-		if(reqXML == null){
-			reqXML ="";
-		}
-		if(requestTimeout == null){
-			requestTimeout ="";
-		}
-		if(schemaVersion == null){
-			schemaVersion = "";
-		}
+		reqXML = nullCheck(reqXML);
+		requestTimeout = nullCheck(requestTimeout);
+		schemaVersion = nullCheck(schemaVersion);
+
 		try{
 			CamundaRequest camundaRequest = new CamundaRequest();
 			CamundaInput camundaInput = new CamundaInput();
@@ -159,18 +185,40 @@ public class CamundaClient extends RequestClient{
 			camundaRequest.setSchema(schema);
 			camundaRequest.setTimeout(timeout);
 			ObjectMapper mapper = new ObjectMapper();
+
 			mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 
 			jsonReq = mapper.writeValueAsString(camundaRequest);
-			msoLogger.debug("request body is " + jsonReq);
+			msoLogger.trace("request body is " + jsonReq);
 		}catch(Exception e){
 			msoLogger.error(MessageEnum.APIH_WARP_REQUEST, "Camunda", "wrapRequest", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH Warp request", e);
 		}
 		return jsonReq;
-	}
+	}	
+	
 
-	private String wrapVIDRequest(RequestClientParamater requestClientParamater) {
+	protected String wrapVIDRequest(String requestId, boolean isBaseVfModule,
+			int recipeTimeout, String requestAction, String serviceInstanceId,
+			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
+			String serviceType, String vnfType, String vfModuleType, String networkType,
+			String requestDetails, String apiVersion, boolean aLaCarte, String requestUri){
 		String jsonReq = null;
+		requestId = nullCheck(requestId);
+		requestAction = nullCheck(requestAction);
+		serviceInstanceId = nullCheck(serviceInstanceId);
+		vnfId = nullCheck(vnfId);
+		vfModuleId = nullCheck(vfModuleId);
+		volumeGroupId = nullCheck(volumeGroupId);
+		networkId = nullCheck(networkId);
+		configurationId = nullCheck(configurationId);
+		serviceType = nullCheck(serviceType);
+		vnfType = nullCheck(vnfType);
+		vfModuleType = nullCheck(vfModuleType);
+		networkType = nullCheck(networkType);
+		requestDetails = nullCheck(requestDetails);
+		apiVersion = nullCheck(apiVersion);
+		requestUri = nullCheck(requestUri);
+
 		try{
 			CamundaVIDRequest camundaRequest = new CamundaVIDRequest();
 			CamundaInput serviceInput = new CamundaInput();
@@ -180,7 +228,6 @@ public class CamundaClient extends RequestClient{
 			CamundaIntegerInput recipeTimeoutInput = new CamundaIntegerInput();
 			CamundaInput requestActionInput = new CamundaInput();
 			CamundaInput serviceInstanceIdInput = new CamundaInput();
-			CamundaInput correlationIdInput = new CamundaInput();
 			CamundaInput vnfIdInput = new CamundaInput();
 			CamundaInput vfModuleIdInput = new CamundaInput();
 			CamundaInput volumeGroupIdInput = new CamundaInput();
@@ -190,25 +237,30 @@ public class CamundaClient extends RequestClient{
 			CamundaInput vnfTypeInput = new CamundaInput();
 			CamundaInput vfModuleTypeInput = new CamundaInput();
 			CamundaInput networkTypeInput = new CamundaInput();
-			CamundaInput recipeParamsInput = new CamundaInput();
-			host.setValue(parseURL());
-			requestIdInput.setValue(StringUtils.defaultString(requestClientParamater.getRequestId()));
-			isBaseVfModuleInput.setValue(requestClientParamater.isBaseVfModule());
-			recipeTimeoutInput.setValue(requestClientParamater.getRecipeTimeout());
-			requestActionInput.setValue(StringUtils.defaultString(requestClientParamater.getRequestAction()));
-			serviceInstanceIdInput.setValue(StringUtils.defaultString(requestClientParamater.getServiceInstanceId()));
-			correlationIdInput.setValue(StringUtils.defaultString(requestClientParamater.getCorrelationId()));
-			vnfIdInput.setValue(StringUtils.defaultString(requestClientParamater.getVnfId()));
-			vfModuleIdInput.setValue(StringUtils.defaultString(requestClientParamater.getVfModuleId()));
-			volumeGroupIdInput.setValue(StringUtils.defaultString(requestClientParamater.getVolumeGroupId()));
-			networkIdInput.setValue(StringUtils.defaultString(requestClientParamater.getNetworkId()));
-			configurationIdInput.setValue(StringUtils.defaultString(requestClientParamater.getConfigurationId()));
-			serviceTypeInput.setValue(StringUtils.defaultString(requestClientParamater.getServiceType()));
-			vnfTypeInput.setValue(StringUtils.defaultString(requestClientParamater.getVnfType()));
-			vfModuleTypeInput.setValue(StringUtils.defaultString(requestClientParamater.getVfModuleType()));
-			networkTypeInput.setValue(StringUtils.defaultString(requestClientParamater.getNetworkType()));
-			recipeParamsInput.setValue(requestClientParamater.getRecipeParamXsd());
-			serviceInput.setValue(StringUtils.defaultString(requestClientParamater.getRequestDetails()));
+			CamundaBooleanInput aLaCarteInput = new CamundaBooleanInput();
+			CamundaInput apiVersionInput = new CamundaInput();
+			CamundaInput requestUriInput = new CamundaInput();
+			
+			//host.setValue(parseURL());
+			requestIdInput.setValue(requestId);
+			isBaseVfModuleInput.setValue(isBaseVfModule);
+			recipeTimeoutInput.setValue(recipeTimeout);
+			requestActionInput.setValue(requestAction);
+			serviceInstanceIdInput.setValue(serviceInstanceId);
+			vnfIdInput.setValue(vnfId);
+			vfModuleIdInput.setValue(vfModuleId);
+			volumeGroupIdInput.setValue(volumeGroupId);
+			networkIdInput.setValue(networkId);
+			configurationIdInput.setValue(configurationId);
+			serviceTypeInput.setValue(serviceType);
+			vnfTypeInput.setValue(vnfType);
+			vfModuleTypeInput.setValue(vfModuleType);
+			networkTypeInput.setValue(networkType);
+			aLaCarteInput.setValue(aLaCarte);
+			apiVersionInput.setValue(apiVersion);
+			requestUriInput.setValue(requestUri);
+
+			serviceInput.setValue(requestDetails);
 			camundaRequest.setServiceInput(serviceInput);
 			camundaRequest.setHost(host);
 			camundaRequest.setRequestId(requestIdInput);
@@ -217,7 +269,6 @@ public class CamundaClient extends RequestClient{
 			camundaRequest.setRecipeTimeout(recipeTimeoutInput);
 			camundaRequest.setRequestAction(requestActionInput);
 			camundaRequest.setServiceInstanceId(serviceInstanceIdInput);
-			camundaRequest.setCorrelationId(correlationIdInput);
 			camundaRequest.setVnfId(vnfIdInput);
 			camundaRequest.setVfModuleId(vfModuleIdInput);
 			camundaRequest.setVolumeGroupId(volumeGroupIdInput);
@@ -227,16 +278,26 @@ public class CamundaClient extends RequestClient{
 			camundaRequest.setVnfType(vnfTypeInput);
 			camundaRequest.setVfModuleType(vfModuleTypeInput);
 			camundaRequest.setNetworkType(networkTypeInput);
-			camundaRequest.setRecipeParams(recipeParamsInput);
+			camundaRequest.setaLaCarte(aLaCarteInput);
+			camundaRequest.setApiVersion(apiVersionInput);
+			camundaRequest.setRequestUri(requestUriInput);
+
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 
 			jsonReq = mapper.writeValueAsString(camundaRequest);
-			msoLogger.debug("request body is " + jsonReq);
+			msoLogger.trace("request body is " + jsonReq);
 		}catch(Exception e){
 			msoLogger.error(MessageEnum.APIH_WARP_REQUEST, "Camunda", "wrapVIDRequest", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH Warp request", e);
 		}
 		return jsonReq;
+	}
+	
+	private String nullCheck(String input){
+		if(input == null){
+			input = "";
+		}
+		return input;
 	}
 
 	private String parseURL(){
@@ -250,5 +311,4 @@ public class CamundaClient extends RequestClient{
 		}
 		return host;
 	}
-
 }

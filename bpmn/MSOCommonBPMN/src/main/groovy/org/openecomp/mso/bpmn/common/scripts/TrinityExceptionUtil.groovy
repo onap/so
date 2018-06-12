@@ -22,8 +22,14 @@ package org.openecomp.mso.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 class TrinityExceptionUtil {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, TrinityExceptionUtil.class);
+
 	
 	
 	
@@ -67,8 +73,7 @@ class TrinityExceptionUtil {
 			'execution=' + execution.getId() +
 			')'
 
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		utils.log("DEBUG",'Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		
 		def errorCode
@@ -78,12 +83,12 @@ class TrinityExceptionUtil {
 			  errorCode = MapCategoryToErrorCode(utils.getNodeText(response, "category")) 
 			  execution.setVariable(prefix+"err",errorCode)
 			  String message = buildException(response, execution)
-			  utils.log("DEBUG","=========== End MapAdapterExecptionToWorkflowException ===========",isDebugLogEnabled)
+			  msoLogger.trace("End MapAdapterExecptionToWorkflowException ")
 			  return message
 		}catch (Exception ex) {
 			//Ignore the exception - cases include non xml payload
-			utils.log("DEBUG","error mapping error, ignoring: " + ex,isDebugLogEnabled)
-			utils.log("DEBUG","=========== End MapAdapterExecptionToWorkflowException ===========",isDebugLogEnabled)
+			msoLogger.debug("error mapping error, ignoring: " + ex)
+			msoLogger.trace("End MapAdapterExecptionToWorkflowException ")
 			return buildException(response, execution)
 		} 
 	}
@@ -102,8 +107,7 @@ class TrinityExceptionUtil {
 			'execution=' + execution.getId() +
 			')'
 
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		utils.log("DEBUG",'Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 		
 		
 		try {
@@ -118,12 +122,12 @@ class TrinityExceptionUtil {
 			  }
 			  execution.setVariable(prefix+"err",mappedErr)
 			  def message = buildException("Received error from AOTS: " + descr, execution)
-			  utils.log("DEBUG","=========== End MapAOTSExecptionToCommonException ===========",isDebugLogEnabled)
+			  msoLogger.trace("End MapAOTSExecptionToCommonException ")
 			  return message
 		}catch (Exception ex) {
 			//Ignore the exception - cases include non xml payload
-			utils.log("DEBUG","error mapping error, ignoring: " + ex,isDebugLogEnabled)
-			utils.log("DEBUG","=========== End MapAOTSExecptionToCommonException ===========",isDebugLogEnabled)
+			msoLogger.debug("error mapping error, ignoring: " + ex)
+			msoLogger.trace("End MapAOTSExecptionToCommonException ")
 			return buildException(response, execution)
 		}
 	}
@@ -135,12 +139,11 @@ class TrinityExceptionUtil {
 			'execution=' + execution.getId() +
 			')'
 
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		utils.log("DEBUG",'Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 		
 		def sdncResponseCode
 		String responseCode = execution.getVariable(prefix+"ResponseCode")
-		utils.log("DEBUG",'responseCode to map: ' + responseCode, isDebugLogEnabled)
+		msoLogger.debug('responseCode to map: ' + responseCode)
 		def errorMessage
 		
 		try {
@@ -166,12 +169,12 @@ class TrinityExceptionUtil {
 			def message = buildException(modifiedErrorMessage, execution)
 
 			
-			utils.log("DEBUG","=========== End MapSDNCAdapterException ===========",isDebugLogEnabled)
+			msoLogger.trace("End MapSDNCAdapterException ")
 		    return message
 		}catch (Exception ex) {
 			//Ignore the exception - cases include non xml payload
-			utils.log("DEBUG","error mapping sdnc error, ignoring: " + ex,isDebugLogEnabled)
-			utils.log("DEBUG","=========== End MapSDNCAdapterException ===========",isDebugLogEnabled)
+			msoLogger.debug("error mapping sdnc error, ignoring: " + ex)
+			msoLogger.trace("End MapSDNCAdapterException ")
 			return null
 		} 
 		
@@ -185,17 +188,16 @@ class TrinityExceptionUtil {
 	String mapAAIExceptionTCommonException(String response, DelegateExecution execution)
 	{
 		def utils=new MsoUtils()
-		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def prefix=execution.getVariable("prefix")
 		def method = getClass().getSimpleName() + '.mapAAIExceptionTCommonException(' +
 			'execution=' + execution.getId() +
 			')'
 
-		utils.log("DEBUG",'Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 		def variables
 		def message
 		String errorCode = 'SVC0001'
-		utils.log("DEBUG","response: " + response, isDebugLogEnabled)
+		msoLogger.debug("response: " + response)
 		//they use the same format we do, pass their error along
 		//TODO add Received error from A&AI at beg of text
 		try {
@@ -204,12 +206,12 @@ class TrinityExceptionUtil {
 		} catch (Exception ex) {
 			//Ignore the exception - cases include non xml payload
 				message = buildException("Received error from A&AI, unable to parse",execution)
-			utils.log("DEBUG","error mapping error, ignoring: " + ex,isDebugLogEnabled)
+			msoLogger.debug("error mapping error, ignoring: " + ex)
 		}
 		
 		if(message != null) { 
 			 execution.setVariable(prefix+"ErrorResponse",message)
-			 utils.log("ERROR","Fault:"+ execution.getVariable(prefix+"ErrorResponse"))
+			 msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Fault", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, execution.getVariable(prefix+"ErrorResponse"));
 			 return message
 		} else {
 			
@@ -237,22 +239,21 @@ class TrinityExceptionUtil {
 			'execution=' + execution.getId() +
 			')'
 
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		utils.log("DEBUG",'Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 		def prefix=execution.getVariable("prefix")
 		def responseCode = String.valueOf(execution.getVariable(prefix+"ResponseCode"))
 		def variables
-		utils.log("DEBUG","response: " + response, isDebugLogEnabled)
+		msoLogger.debug("response: " + response)
 		
 			try {
-				utils.log("DEBUG","formatting error message" ,isDebugLogEnabled)
+				msoLogger.debug("formatting error message" )
 				def msgVars = execution.getVariable(prefix+"errVariables")
 				def myErr = execution.getVariable(prefix+"err")
 				def messageTxt = execution.getVariable(prefix+"errTxt")
 				def messageId = null
 				
 				if(myErr == null){
-					utils.log("DEBUG","mapping response code: " + responseCode, isDebugLogEnabled)
+					msoLogger.debug("mapping response code: " + responseCode)
 					myErr = mapErrorCodetoError(responseCode, response)
 					if(myErr == null){
 						//not a service or policy error, just return error code
@@ -301,27 +302,26 @@ class TrinityExceptionUtil {
 	</tns:policyException>
 </tns:requestError>""" 
 				}
-				 utils.log("DEBUG", "message " + message, isDebugLogEnabled)
+				 msoLogger.debug("message " + message)
 				 execution.setVariable(prefix+"ErrorResponse",message)
 				 execution.setVariable(prefix+"err", myErr)
 				 execution.setVariable(prefix+"errTxt", messageTxt)
 				 execution.setVariable(prefix+"errVariables", msgVars)
-				 utils.log("ERROR","Fault:"+ execution.getVariable(prefix+"ErrorResponse"))
+				 msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Fault", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, execution.getVariable(prefix+"ErrorResponse"));
 				 return message
 			}catch(Exception ex) {
-				utils.log("DEBUG","error mapping error, return null: " + ex,isDebugLogEnabled)
+				msoLogger.debug("error mapping error, return null: " + ex)
 				return null
 			}
 
 	}
 	
 	String parseError(DelegateExecution execution){
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		def utils=new MsoUtils()
 		def prefix=execution.getVariable("prefix")
 		def text = execution.getVariable(prefix+"errTxt")
 		def msgVars = execution.getVariable(prefix+"errVariables")
-		utils.log("DEBUG",'parsing message: ' + text, isDebugLogEnabled)
+		msoLogger.debug('parsing message: ' + text)
 		if(text == null){
 			return 'failed'
 		}
@@ -330,7 +330,7 @@ class TrinityExceptionUtil {
 				text = text.replaceFirst("%"+(i+1), msgVars[i])
 			}
 		}
-		utils.log("DEBUG",'parsed message is: ' + text, isDebugLogEnabled)
+		msoLogger.debug('parsed message is: ' + text)
 		return text
 	}
 	

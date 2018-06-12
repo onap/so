@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.bpmn.common.scripts
 
 import org.openecomp.mso.bpmn.core.json.DecomposeJsonUtil;
@@ -34,9 +35,11 @@ import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 
-import com.att.ecomp.mso.bpmn.core.domain.*
-
 import groovy.json.*
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 /**
  * This groovy class supports the <class>DecomposeService.bpmn</class> process.
@@ -58,6 +61,8 @@ import groovy.json.*
  *
  */
 public class DecomposeService extends AbstractServiceTaskProcessor {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DecomposeService.class);
+
 
 	String Prefix="DDS_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -65,10 +70,9 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 	JsonUtils jsonUtils = new JsonUtils()
 
 	public void preProcessRequest (DelegateExecution execution) {
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		utils.log("DEBUG"," ***** preProcessRequest of DecomposeService *****",  isDebugEnabled)
-		setBasicDBAuthHeader(execution, isDebugEnabled)
+		msoLogger.trace("preProcessRequest of DecomposeService ")
+		setBasicDBAuthHeader(execution, execution.getVariable('isDebugLogEnabled'))
 
 		try {
 			execution.setVariable("prefix", Prefix)
@@ -89,16 +93,15 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			msoLogger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit preProcessRequest of DecomposeService *****",  isDebugEnabled)
+		msoLogger.trace("Exit preProcessRequest of DecomposeService ")
 	}
 
 	public void queryCatalogDb (DelegateExecution execution) {
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		utils.log("DEBUG"," ***** queryCatalogDB of DecomposeService *****",  isDebugEnabled)
+		msoLogger.trace("queryCatalogDB of DecomposeService ")
 
 		try {
 
@@ -107,8 +110,8 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			String serviceModelUuid = execution.getVariable("DDS_serviceModelUuid")
 			String modelVersion = execution.getVariable("DDS_modelVersion")
 
-			utils.log("DEBUG", "serviceModelInvariantId: " + serviceModelInvariantId, isDebugEnabled)
-			utils.log("DEBUG", "modelVersion: " + modelVersion, isDebugEnabled)
+			msoLogger.debug("serviceModelInvariantId: " + serviceModelInvariantId)
+			msoLogger.debug("modelVersion: " + modelVersion)
 
 			JSONObject catalogDbResponse = null
             if(serviceModelUuid != null && serviceModelUuid.length() > 0)
@@ -120,31 +123,30 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 
 			if (catalogDbResponse == null || catalogDbResponse.toString().equalsIgnoreCase("null")) {
 				msg = "No data found in Catalog DB"
-				utils.log("DEBUG", msg, isDebugEnabled)
+				msoLogger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 			}
 
 			String catalogDbResponseString = catalogDbResponse.toString()
 
 			execution.setVariable("DDS_catalogDbResponse", catalogDbResponseString)
-			utils.log("DEBUG", "catalog DB response string: "+ catalogDbResponseString, isDebugEnabled)
+			msoLogger.debug("catalog DB response string: "+ catalogDbResponseString)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in queryCatalogDb " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			msoLogger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit queryCatalogDb of DecomposeService *****",  isDebugEnabled)
+		msoLogger.trace("Exit queryCatalogDb of DecomposeService ")
 	}
 
 
 
 	public void actuallyDecomposeService (DelegateExecution execution) {
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		utils.log("DEBUG"," ***** actuallyDecomposeService of DecomposeService *****",  isDebugEnabled)
+		msoLogger.trace("actuallyDecomposeService of DecomposeService ")
 
 		try {
 
@@ -153,9 +155,9 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			String serviceModelInvariantId = execution.getVariable("DDS_serviceModelInvariantId")
 
-			utils.log("DEBUG", "serviceModelInvariantId: " + serviceModelInvariantId, isDebugEnabled)
+			msoLogger.debug("serviceModelInvariantId: " + serviceModelInvariantId)
 
-			utils.log("DEBUG", "getting service decomposition", isDebugEnabled)
+			msoLogger.debug("getting service decomposition")
 
 			String catalogDbResponse = execution.getVariable("DDS_catalogDbResponse")
 			ServiceDecomposition serviceDecomposition = DecomposeJsonUtil.jsonToServiceDecomposition(catalogDbResponse, serviceInstanceId)
@@ -163,16 +165,16 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			execution.setVariable("serviceDecomposition", serviceDecomposition)
 			execution.setVariable("serviceDecompositionString", serviceDecomposition.toJsonString())
 
-			utils.log("DEBUG", "service decomposition: "+ serviceDecomposition.toJsonString(), isDebugEnabled)
+			msoLogger.debug("service decomposition: "+ serviceDecomposition.toJsonString())
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in actuallyDecomposeService " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+			msoLogger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit actuallyDecomposeService of DecomposeService *****",  isDebugEnabled)
+		msoLogger.trace("Exit actuallyDecomposeService of DecomposeService ")
 	}
 
 }

@@ -1,0 +1,23 @@
+{
+    "serviceName": "port_mirroring_container",
+    "serviceInvariantUUID": "813f63fd-e223-407a-b83a-2b2077b1289f",
+    "serviceUUID": "ed25a930-6bca-4409-8874-c6525d8d6420",
+    "serviceVersion": "2.0",
+    "serviceArtifacts": 
+    [{
+		"artifactName": "service_PortMirroringContainer_csar.csar",
+		"artifactType": "TOSCA_CSAR",
+		"artifactURL": "service_PortMirroringContainer_csar.csar",
+		"artifactChecksum": "ZDc1MTcxMzk4ODk4N2U5MzMxOTgwMzYzZTI0MTg5Y2U\u003d",
+		"artifactDescription": "TOSCA representation of the asset",
+		"artifactTimeout": 0,
+		"artifactUUID": "123456-35a8-467f-b440-d0f6226b3516",
+		"artifactVersion": "5.0"
+    }],
+    "resources": 
+    [	
+        
+    ],
+    "serviceDescription": "sdfsf",
+    "distributionID": "35120a87-1f82-4276-9735-f6de5a244d65"
+}

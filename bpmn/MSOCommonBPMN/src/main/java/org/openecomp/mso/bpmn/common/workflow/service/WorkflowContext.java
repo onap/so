@@ -23,7 +23,6 @@ package org.openecomp.mso.bpmn.common.workflow.service;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
-import org.jboss.resteasy.spi.AsynchronousResponse;
 
 /**
  * @version 1.0
@@ -32,17 +31,18 @@ import org.jboss.resteasy.spi.AsynchronousResponse;
 public class WorkflowContext implements Delayed {
 	private final String processKey;
 	private final String requestId;
-	private final AsynchronousResponse asynchronousResponse;
+
 	private final long startTime;
 	private final long timeout;
 	
-	public WorkflowContext(String processKey, String requestId,
-			AsynchronousResponse asynchronousResponse, long timeout) {
+	private final WorkflowResponse workflowResponse;
+	
+	public WorkflowContext(String processKey, String requestId, long timeout, WorkflowResponse workflowResponse) {
 		this.processKey = processKey;
-		this.requestId = requestId;
-		this.asynchronousResponse = asynchronousResponse;
+		this.requestId = requestId;		
 		this.timeout = timeout;
-		this.startTime = System.currentTimeMillis();
+		this.startTime = System.currentTimeMillis(); 
+		this.workflowResponse = workflowResponse;
 	}
 	
 	public String getRequestId() {
@@ -53,9 +53,6 @@ public class WorkflowContext implements Delayed {
 		return processKey;
 	}
 
-	public AsynchronousResponse getAsynchronousResponse() {
-		return asynchronousResponse;
-	}
 
 	public long getTimeout() {
 		return timeout;
@@ -63,6 +60,10 @@ public class WorkflowContext implements Delayed {
 
 	public long getStartTime() {
 		return startTime;
+	}
+	
+	public WorkflowResponse getWorkflowResponse() {
+		return workflowResponse;
 	}
 
 	/**

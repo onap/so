@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.openecomp.mso.logger.MsoLogger;
 import com.openpojo.reflection.PojoField;
 
 public class HasAnnotationPropertyWithValueMatcher<T extends PojoField> extends TypeSafeDiagnosingMatcher<T> {
-	private MsoLogger logger=MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL);
+	private MsoLogger logger=MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, HasAnnotationPropertyWithValueMatcher.class);
 	private final String attribute;
 	private final Matcher<?> annotationMatcher;
 	private final Class<? extends Annotation> annotationClass;

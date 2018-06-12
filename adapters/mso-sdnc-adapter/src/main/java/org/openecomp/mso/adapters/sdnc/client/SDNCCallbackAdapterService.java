@@ -28,6 +28,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceFeature;
+
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 
@@ -43,7 +44,7 @@ import org.openecomp.mso.logger.MsoLogger;
                   targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/callback/wsdl/v1")
 public class SDNCCallbackAdapterService extends Service {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, SDNCCallbackAdapterService.class);
 
     public static final URL WSDL_LOCATION;
     public static final QName SERVICE = new QName("http://org.openecomp/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterService");
@@ -59,7 +60,7 @@ public class SDNCCallbackAdapterService extends Service {
         	msoLogger.error(MessageEnum.RA_WSDL_NOT_FOUND, "SDNCCallbackAdapter.wsdl", "SDNC", "", MsoLogger.ErrorCode.DataError, "WSDL not found");
     	} else {
     		try {
-    			msoLogger.info(MessageEnum.RA_PRINT_URL, "SDNCCallbackAdapter.wsdl", wsdlUrl.toURI().toString(), "SDNC", "");
+    			msoLogger.info(MessageEnum.RA_PRINT_URL, "SDNCCallbackAdapter.wsdl", wsdlUrl.toURI().toString(), "SDNC");
 			} catch (Exception e) {
 				msoLogger.error(MessageEnum.RA_WSDL_URL_CONVENTION_EXC, "SDNCCallbackAdapter.wsdl", "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception - URL convention problem", e);
 			}

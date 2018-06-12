@@ -42,7 +42,7 @@ public class CloudifyClientTokenProviderTest {
 
 	@Test
 	public void createTokenProvider() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/testUrl")).willReturn(aResponse()
+		wireMockRule.stubFor(get(urlPathEqualTo("/testUrl/api/v3/tokens")).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json").withBody("{\"role\": \"user\", \"value\": \"tokenVal\"}").withStatus(HttpStatus.SC_OK)));
 		int port = wireMockRule.port();
 

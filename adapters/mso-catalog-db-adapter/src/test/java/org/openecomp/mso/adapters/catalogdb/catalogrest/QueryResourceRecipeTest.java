@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.mso.db.catalog.beans.Recipe;
+import org.openecomp.mso.db.catalog.beans.ServiceRecipe;
 import org.openecomp.mso.jsonpath.JsonPathUtil;
 
 public class QueryResourceRecipeTest {
@@ -55,18 +56,13 @@ public class QueryResourceRecipeTest {
         assertThat(JsonPathUtil.getInstance().locateResult(jsonResult, "$.description")).contains(RECIPE_DESCRIPTION);
     }
 
-    @Test
-    public void toString_properContent() {
-        assertThat(testedObject.toString()).contains("RECIPE: actionTest,uri=uriTest");
-    }
-
     private Recipe createRecipe() {
-        Recipe recipe = new Recipe();
+    	ServiceRecipe recipe = new ServiceRecipe();
         recipe.setId(RECIPE_ID);
         recipe.setAction(RECIPE_ACTION);
         recipe.setOrchestrationUri(RECIPE_URI);
         recipe.setRecipeTimeout(RECIPE_TIMEOUT);
-        recipe.setParamXSD(RECIPE_PARAMS_XSD);
+        recipe.setParamXsd(RECIPE_PARAMS_XSD);
         recipe.setDescription(RECIPE_DESCRIPTION);
         return recipe;
     }

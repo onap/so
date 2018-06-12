@@ -22,24 +22,25 @@
 package org.openecomp.mso.bpmn.common.util;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import org.openecomp.mso.logger.MsoLogger;
 import java.util.Properties;
+import org.openecomp.mso.utils.CryptoUtils;
+
+import org.openecomp.mso.logger.MsoLogger;
 
 public class CryptoHandler implements ICryptoHandler {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CryptoHandler.class);
+	private static final String GENERAL_SECURITY_EXCEPTION_PREFIX = "GeneralSecurityException :";
+	private static final String MSO_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
+	private static final String PROPERTY_KEY = "mso.AaiEncrypted.Pwd";
 
-	private static String msoKey = "aa3871669d893c7fb8abbcda31b88b4f";
-	private static String msoAaiEncryptedPwd;
-
-        @Override
+    @Override
 	public String getMsoAaiPassword() {
-	Properties keyProp = new Properties ();
+    	Properties keyProp = new Properties ();
 		try {
-		keyProp.load (Thread.currentThread ().getContextClassLoader ().getResourceAsStream ("urn.properties"));
-			msoAaiEncryptedPwd =(String) keyProp.get ("mso.AaiEncrypted.Pwd");
-			return CryptoUtils.decrypt(msoAaiEncryptedPwd, msoKey);
+			keyProp.load (Thread.currentThread ().getContextClassLoader ().getResourceAsStream ("urn.properties"));
+			return CryptoUtils.decrypt((String) keyProp.get(PROPERTY_KEY), MSO_KEY);
 		} catch (GeneralSecurityException | IOException e) {
-			LOGGER.debug("GeneralSecurityException :",e);
+			LOGGER.error(GENERAL_SECURITY_EXCEPTION_PREFIX + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -48,9 +49,9 @@ public class CryptoHandler implements ICryptoHandler {
 	@Override
 	public String encryptMsoPassword(String plainMsoPwd) {
 		try {
-			return CryptoUtils.encrypt(plainMsoPwd, msoKey);
+			return CryptoUtils.encrypt(plainMsoPwd, MSO_KEY);
 		} catch (GeneralSecurityException e) {
-			LOGGER.debug("GeneralSecurityException :",e);
+			LOGGER.error(GENERAL_SECURITY_EXCEPTION_PREFIX + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -58,11 +59,10 @@ public class CryptoHandler implements ICryptoHandler {
 	@Override
 	public String decryptMsoPassword(String encryptedPwd) {
 		try {
-			return CryptoUtils.decrypt(encryptedPwd, msoKey);
+			return CryptoUtils.decrypt(encryptedPwd, MSO_KEY);
 		} catch (GeneralSecurityException e) {
-			LOGGER.debug("GeneralSecurityException :",e);
+			LOGGER.error(GENERAL_SECURITY_EXCEPTION_PREFIX + e.getMessage(), e);
 			return null;
 		}
 	}
-
 }

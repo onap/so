@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.adapters.vnfrest;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.openecomp.mso.entity.MsoRequest;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
-
 
 /* README
  Map<String, String> elements when marshalled to XML produce a list of <entry><key>${key}</key><value>${value}</value></entry> elements.
@@ -58,8 +56,9 @@ public class CreateVfModuleRequest extends VfRequestCommon {
 	private String requestType;
 	private Boolean failIfExists;
 	private Boolean backout;
+	private Boolean enableBridge;
 
-	private Map<String,String> vfModuleParams = new HashMap<>();
+	private Map<String, String> vfModuleParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
 
 	public String getCloudSiteId() {
@@ -204,5 +203,13 @@ public class CreateVfModuleRequest extends VfRequestCommon {
 
 	public void setMsoRequest(MsoRequest msoRequest) {
 		this.msoRequest = msoRequest;
+	}
+
+	public Boolean getEnableBridge() {
+		return this.enableBridge;
+	}
+
+	public void setEnableBridge(Boolean enableBridge) {
+		this.enableBridge = enableBridge;
 	}
 }

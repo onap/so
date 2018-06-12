@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,15 +20,24 @@
 
 package org.openecomp.mso.requestsdb;
 
-import org.openecomp.mso.logger.MsoLogger;
+import java.sql.Timestamp;
 
+import org.openecomp.mso.db.request.beans.InfraActiveRequests;
+import org.openecomp.mso.db.request.data.repository.InfraActiveRequestsRepository;
+import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class RequestsDBHelper {
 		
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);	
+	private static final String UNKNOWN = "UNKNOWN";
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, RequestsDBHelper.class);
 	private String className = this.getClass().getSimpleName() +" class\'s ";
-	private String methodName = ""; 
+	private String methodName = "";
 	private String classMethodMessage = "";
-	
+	@Autowired
+	private InfraActiveRequestsRepository infraActiveRequestsRepository;
 	/**
 	 * This util method is to update the InfraRequest table to Complete
 	 * @param msg - string, unique message for each caller
@@ -39,13 +48,27 @@ public class RequestsDBHelper {
 	 */	
 	public void updateInfraSuccessCompletion(String msg, String requestId, String operationalEnvironmentId) {
 		methodName = "updateInfraSuccessCompletion() method.";
-		classMethodMessage = className + " " + methodName;		
+		classMethodMessage = className + " " + methodName;
 		msoLogger.debug("Begin of " + classMethodMessage);
 			
-		RequestsDatabase requestDB = RequestsDatabase.getInstance();
-		requestDB.updateInfraFinalStatus(requestId, "COMPLETE", "SUCCESSFUL, operationalEnvironmentId - " + operationalEnvironmentId + "; Success Message: " + msg,
-										100L, null, "APIH");
-		msoLogger.debug("End of " + classMethodMessage);		
+		InfraActiveRequests request = infraActiveRequestsRepository.findOneByRequestId(requestId);
+	
+		request.setRequestStatus("COMPLETE");
+		request.setStatusMessage("SUCCESSFUL, operationalEnvironmentId - " + operationalEnvironmentId + "; Success Message: " + msg);
+		request.setProgress(100L);
+		request.setLastModifiedBy("APIH");
+		request.setOperationalEnvId(operationalEnvironmentId);
+		if(request.getAction() == null){
+			request.setRequestAction(UNKNOWN);
+		}
+		if(request.getRequestScope() == null){
+			request.setRequestScope(UNKNOWN);
+		}
+		Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
+        request.setEndTime(endTimeStamp);
+		infraActiveRequestsRepository.save(request);
+		
+		msoLogger.debug("End of " + classMethodMessage);
 		
 	}
 	
@@ -59,13 +82,26 @@ public class RequestsDBHelper {
 	 */	
 	public void updateInfraFailureCompletion(String msg, String requestId, String operationalEnvironmentId) {
 		methodName = "updateInfraFailureCompletion() method.";
-		classMethodMessage = className + " " + methodName;		
+		classMethodMessage = className + " " + methodName;
 		msoLogger.debug("Begin of " + classMethodMessage);
 		
-		RequestsDatabase requestDB = RequestsDatabase.getInstance();
-		requestDB.updateInfraFinalStatus(requestId, "FAILED", "FAILURE, operationalEnvironmentId - " + operationalEnvironmentId + "; Error message: " + msg,
-											100L, null, "APIH");
-		msoLogger.debug("End of " + classMethodMessage);		
+		InfraActiveRequests request = infraActiveRequestsRepository.findOneByRequestId(requestId);
+		request.setRequestStatus("FAILED");
+		request.setStatusMessage("FAILURE, operationalEnvironmentId - " + operationalEnvironmentId + "; Error message: " + msg);
+		request.setProgress(100L);
+		request.setLastModifiedBy("APIH");
+		request.setOperationalEnvId(operationalEnvironmentId);
+		if(request.getAction() == null){
+			request.setRequestAction(UNKNOWN);
+		}
+		if(request.getRequestScope() == null){
+			request.setRequestScope(UNKNOWN);
+		}
+		Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
+        request.setEndTime(endTimeStamp);
+		infraActiveRequestsRepository.save(request);
+		
+		msoLogger.debug("End of " + classMethodMessage);
 		
 	}	
 }

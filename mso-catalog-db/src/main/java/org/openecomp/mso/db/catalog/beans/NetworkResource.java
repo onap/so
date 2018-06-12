@@ -21,47 +21,150 @@
 package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-public class NetworkResource extends MavenLikeVersioning implements Serializable {
-	
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import com.openpojo.business.annotation.BusinessKey;
+
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
+
+@Entity
+@Table(name = "network_resource")
+public class NetworkResource implements Serializable {
+
 	private static final long serialVersionUID = 768026109321305392L;
 
+	@BusinessKey
+	@Id
+	@Column(name = "MODEL_UUID")
+	private String modelUUID;
+
+	@Column(name = "ORCHESTRATION_MODE")
 	private String orchestrationMode = null;
+
+	@Column(name = "DESCRIPTION")
 	private String description = null;
+
+	@Column(name = "NEUTRON_NETWORK_TYPE")
 	private String neutronNetworkType = null;
+
+	@Column(name = "AIC_VERSION_MIN")
 	private String aicVersionMin = null;
+
+	@Column(name = "AIC_VERSION_MAX")
 	private String aicVersionMax = null;
-	private String modelName = null;
-	private String modelInvariantUUID = null;
-	private String modelVersion = null;
-	private String toscaNodeType = null;
-	private Timestamp created = null;
-	private String modelUUID = null;
-    private String category = null;
-    private String subCategory = null;
-	private String heatTemplateArtifactUUID = null;
-	
-	public NetworkResource() {}
-	
+
+	@Column(name = "MODEL_NAME")
+	private String modelName;
+
+	@Column(name = "MODEL_INVARIANT_UUID")
+	private String modelInvariantUUID;
+
+	@Column(name = "MODEL_VERSION")
+	private String modelVersion;
+
+	@Column(name = "TOSCA_NODE_TYPE")
+	private String toscaNodeType;
+
+	@Column(name = "RESOURCE_CATEGORY")
+	private String category;
+
+	@Column(name = "RESOURCE_SUB_CATEGORY")
+	private String subCategory;
+
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "networkResource")
+	private List<NetworkResourceCustomization> networkResourceCustomization;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "networkResource")
+	private List<CollectionNetworkResourceCustomization> collectionNetworkResourceCustomization;
+
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "HEAT_TEMPLATE_ARTIFACT_UUID")
+	private HeatTemplate heatTemplate;
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
+	}
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof NetworkResource)) {
+			return false;
+		}
+		NetworkResource castOther = (NetworkResource) other;
+		return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(modelUUID).toHashCode();
+	}
+
+	@LinkedResource
+	public List<NetworkResourceCustomization> getNetworkResourceCustomization() {
+		return networkResourceCustomization;
+	}
+
+	public void addNetworkResourceCustomization(NetworkResourceCustomization networkResourceCustomization) {
+		if (this.networkResourceCustomization == null)
+			this.networkResourceCustomization = new ArrayList<>();
+
+		this.networkResourceCustomization.add(networkResourceCustomization);
+	}
+
+	public void setNetworkResourceCustomization(List<NetworkResourceCustomization> networkResourceCustomization) {
+		this.networkResourceCustomization = networkResourceCustomization;
+	}
+
+	@LinkedResource
+	public List<CollectionNetworkResourceCustomization> getCollectionNetworkResourceCustomization() {
+		return collectionNetworkResourceCustomization;
+	}
+
+	public void setCollectionNetworkResourceCustomization(
+			List<CollectionNetworkResourceCustomization> collectionNetworkResourceCustomization) {
+		this.collectionNetworkResourceCustomization = collectionNetworkResourceCustomization;
+	}
+
 	public String getOrchestrationMode() {
 		return orchestrationMode;
 	}
-	
+
 	public void setOrchestrationMode(String orchestrationMode) {
 		this.orchestrationMode = orchestrationMode;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public String getNeutronNetworkType() {
 		return neutronNetworkType;
 	}
@@ -69,15 +172,11 @@ public class NetworkResource extends MavenLikeVersioning implements Serializable
 	public void setNeutronNetworkType(String neutronNetworkType) {
 		this.neutronNetworkType = neutronNetworkType;
 	}
-	
-	public Timestamp getCreated() {
+
+	public Date getCreated() {
 		return created;
 	}
 
-	public void setCreated(Timestamp created) {
-		this.created = created;
-	}
-		
 	public String getAicVersionMin() {
 		return aicVersionMin;
 	}
@@ -125,45 +224,44 @@ public class NetworkResource extends MavenLikeVersioning implements Serializable
 	public void setModelUUID(String modelUUID) {
 		this.modelUUID = modelUUID;
 	}
-	
-	
-    /**
-     * @return Returns the category.
-     */
-    public String getCategory() {
-        return category;
-    }
 
-    
-    /**
-     * @param category The category to set.
-     */
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    
-    /**
-     * @return Returns the subCategory.
-     */
-    public String getSubCategory() {
-        return subCategory;
-    }
-
-    
-    /**
-     * @param subCategory The subCategory to set.
-     */
-    public void setSubCategory(String subCategory) {
-        this.subCategory = subCategory;
-    }
-
-    public String getHeatTemplateArtifactUUID() {
-		return heatTemplateArtifactUUID;
+	/**
+	 * @return Returns the category.
+	 */
+	public String getCategory() {
+		return category;
 	}
 
-	public void setHeatTemplateArtifactUUID(String heatTemplateArtifactUUID) {
-		this.heatTemplateArtifactUUID = heatTemplateArtifactUUID;
+	/**
+	 * @param category
+	 *            The category to set.
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	/**
+	 * @return Returns the subCategory.
+	 */
+	public String getSubCategory() {
+		return subCategory;
+	}
+
+	/**
+	 * @param subCategory
+	 *            The subCategory to set.
+	 */
+	public void setSubCategory(String subCategory) {
+		this.subCategory = subCategory;
+	}
+
+	@LinkedResource
+	public HeatTemplate getHeatTemplate() {
+		return heatTemplate;
+	}
+
+	public void setHeatTemplate(HeatTemplate heatTemplate) {
+		this.heatTemplate = heatTemplate;
 	}
 
 	public String getModelVersion() {
@@ -175,7 +273,7 @@ public class NetworkResource extends MavenLikeVersioning implements Serializable
 	}
 
 	@Override
-	public String toString () {
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("NETWORK Resource:");
 		sb.append("modelVersion=");
@@ -196,14 +294,12 @@ public class NetworkResource extends MavenLikeVersioning implements Serializable
 		sb.append(toscaNodeType);
 		sb.append(",modelUUID=");
 		sb.append(modelUUID);
-		sb.append(",heatTemplateArtifactUUID=");
-		sb.append(heatTemplateArtifactUUID);
-		
+
 		if (created != null) {
-	        sb.append (",created=");
-	        sb.append (DateFormat.getInstance().format(created));
-	    }
-		
+			sb.append(",created=");
+			sb.append(DateFormat.getInstance().format(created));
+		}
+
 		return sb.toString();
 	}
 }

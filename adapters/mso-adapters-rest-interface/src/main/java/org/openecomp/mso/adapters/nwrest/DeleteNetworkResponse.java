@@ -30,6 +30,10 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @XmlRootElement(name = "deleteNetworkResponse")
 public class DeleteNetworkResponse extends NetworkResponseCommon {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 68336086339501537L;
 	private String networkId;
 	private Boolean networkDeleted;
 

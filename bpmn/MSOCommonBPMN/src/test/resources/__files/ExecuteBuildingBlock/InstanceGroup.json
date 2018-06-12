@@ -1,0 +1,11 @@
+{
+	"modelUUID" : "modelUUID",
+	"modelName" : null,
+	"modelInvariantUUID" : "modelInvariantUUID",
+	"modelVersion" : null,
+	"role" : "instanceGroupRole",
+	"toscaNodeType" : null,
+	"type" : "VNFC",
+	"created" : null,
+	"collectionResource" : null
+}

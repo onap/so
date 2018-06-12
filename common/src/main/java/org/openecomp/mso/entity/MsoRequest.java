@@ -21,6 +21,7 @@
 package org.openecomp.mso.entity;
 
 
+import java.io.Serializable;
 
 /**
  * This simple bean holds tracking information for MSO requests within
@@ -29,8 +30,9 @@ package org.openecomp.mso.entity;
  * 
  *
  */
-public class MsoRequest
+public class MsoRequest implements Serializable
 {
+	private static final long serialVersionUID = 1797142528913733469L;
 	private String requestId;
 	private String serviceInstanceId;
 
@@ -38,11 +40,12 @@ public class MsoRequest
 		this.requestId = null;
 		this.serviceInstanceId = null;
 	}
+
 	public MsoRequest(String r, String s) {
 		this.requestId = r;
 		this.serviceInstanceId = s;
 	}
-
+	
 	public String getRequestId() {
 		return requestId;
 	}

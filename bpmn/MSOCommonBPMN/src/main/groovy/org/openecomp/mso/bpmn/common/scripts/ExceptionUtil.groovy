@@ -28,11 +28,17 @@ import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 /**
  * @version 1.0
  */
 class ExceptionUtil extends AbstractServiceTaskProcessor {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExceptionUtil.class);
+
 
 
 	/**
@@ -49,15 +55,14 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	WorkflowException MapAAIExceptionToWorkflowException(String response, DelegateExecution execution)
 	{
 		def utils=new MsoUtils()
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		def prefix=execution.getVariable("prefix")
 		def errorMsg = execution.getVariable(prefix+"ErrorResponse")
-		utils.log("DEBUG","=========== Begin MapAAIExceptionToWorkflowException ===========",isDebugEnabled)
+		msoLogger.trace("Begin MapAAIExceptionToWorkflowException ")
 		String text = null
 		def variables
 		String errorCode = '5000'
 		WorkflowException wfex
-		utils.log("DEBUG","response: " + response, isDebugEnabled)
+		msoLogger.debug("response: " + response)
 		try{
 		try {
 			//String msg = utils.getNodeXml(response, "Fault")
@@ -65,7 +70,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			text = utils.getNodeText1(response, "text")
 		} catch (Exception ex) {
 			//Ignore the exception - cases include non xml payload
-			utils.log("DEBUG","error mapping error, ignoring: " + ex,isDebugEnabled)
+			msoLogger.debug("error mapping error, ignoring: " + ex)
 		}
 
 		if(text != null) {
@@ -76,12 +81,12 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 				text = text.replaceFirst("%4", variables[3])
 			}
 			String modifiedErrorMessage = 'Received error from A&amp;AI (' + text +')'
-			utils.log("DEBUG", "ModifiedErrorMessage " + modifiedErrorMessage, isDebugEnabled)
+			msoLogger.debug("ModifiedErrorMessage " + modifiedErrorMessage)
 			// let $ModifiedErrorMessage := concat( 'Received error from A',$exceptionaai:ampersand,'AI (' ,functx:replace-multi($ErrorMessage,$from,$Variables ),')')
 			buildWorkflowException(execution, 5000, modifiedErrorMessage)
 
 			wfex = execution.getVariable("WorkflowException")
-			utils.log("ERROR","Fault:"+ wfex)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Fault", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, wfex.errorMessage);
 			return wfex
 		} else {
 			try {
@@ -91,18 +96,18 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 				int errorCodeInt = Integer.parseInt(errorCode)
 				buildWorkflowException(execution, errorCodeInt, mappedErrorMessage)
 
-				utils.log("DEBUG", "mappedErrorMessage " + mappedErrorMessage, isDebugEnabled)
+				msoLogger.debug("mappedErrorMessage " + mappedErrorMessage)
 				wfex = execution.getVariable("WorkflowException")
-				utils.log("ERROR","Fault:"+ wfex, isDebugEnabled)
+				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Fault", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, wfex.errorMessage);
 				return wfex
 			} catch(Exception ex) {
-				utils.log("DEBUG","error mapping error, return null: " + ex, isDebugEnabled)
+				msoLogger.debug("error mapping error, return null: " + ex)
 				return null
 
 			}
 		}
 		}catch(Exception e){
-			utils.log("DEBUG", "Exception occured during MapAAIExceptionToWorkflowException: " + e, isDebugEnabled)
+			msoLogger.debug("Exception occured during MapAAIExceptionToWorkflowException: " + e)
 			buildWorkflowException(execution, 5000, "Error mapping AAI Response to WorkflowException")
 		}
 	}
@@ -120,8 +125,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 */
 	WorkflowException MapAAIExceptionToWorkflowExceptionGeneric(DelegateExecution execution, String response, int resCode){
 		def utils=new MsoUtils()
-		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", "Start MapAAIExceptionToWorkflowExceptionGeneric Process", isDebugLogEnabled)
+		msoLogger.debug("Start MapAAIExceptionToWorkflowExceptionGeneric Process")
 
 		WorkflowException wfex
 		try {
@@ -138,12 +142,12 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 				buildWorkflowException(execution, resCode, "Received a bad response from AAI")
 			}
 		} catch (Exception ex) {
-			utils.log("DEBUG", "Exception Occured during MapAAIExceptionToWorkflowExceptionGeneric: " + ex, isDebugLogEnabled)
+			msoLogger.debug("Exception Occured during MapAAIExceptionToWorkflowExceptionGeneric: " + ex)
 			buildWorkflowException(execution, resCode, "Internal Error - Occured in MapAAIExceptionToWorkflowExceptionGeneric")
 
 		}
-		utils.log("DEBUG", "Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"), isDebugLogEnabled)
-		utils.log("DEBUG", "Completed MapAAIExceptionToWorkflowExceptionGeneric Process", isDebugLogEnabled)
+		msoLogger.debug("Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"))
+		msoLogger.debug("Completed MapAAIExceptionToWorkflowExceptionGeneric Process")
 	}
 
 	/**
@@ -223,7 +227,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			errorMessage=""
 		}
 		if( errorCode.equals('5010')){
-			return 'Could not communicate with A&AI'
+					return 'Could not communicate with A&AI'
 		}else if (errorCode.equals('5020')){
 			return 'No response from A&AI'
 		}else{
@@ -264,13 +268,12 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 */
 	public void buildWorkflowException(DelegateExecution execution, int errorCode, String errorMessage) {
 		MsoUtils utils = new MsoUtils()
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		String processKey = getProcessKey(execution);
-		utils.log("DEBUG", "Building a WorkflowException for " + processKey, isDebugLogEnabled)
+		msoLogger.debug("Building a WorkflowException for " + processKey)
 
 		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
 		execution.setVariable("WorkflowException", exception);
-		utils.log("DEBUG", "Outgoing WorkflowException is " + exception, isDebugLogEnabled)
+		msoLogger.debug("Outgoing WorkflowException is " + exception)
 	}
 
 	/**
@@ -283,14 +286,13 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 * @param errorMessage the error message
 	 */
 	public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, String errorMessage) {
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		String processKey = getProcessKey(execution);
-		utils.log("Building a WorkflowException for Subflow " + processKey, isDebugLogEnabled)
+		msoLogger.debug("Building a WorkflowException for Subflow " + processKey)
 
 		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
 		execution.setVariable("WorkflowException", exception);
-		utils.log("DEBUG", "Outgoing WorkflowException is " + exception, isDebugLogEnabled)
-		utils.log("DEBUG", "Throwing MSOWorkflowException", isDebugLogEnabled)
+		msoLogger.debug("Outgoing WorkflowException is " + exception)
+		msoLogger.debug("Throwing MSOWorkflowException")
 		throw new BpmnError("MSOWorkflowException")
 	}
 
@@ -304,19 +306,18 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 *
 	 */
 	public void processSubflowsBPMNException(DelegateExecution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String processKey = getProcessKey(execution)
 		try{
-			utils.log("DEBUG", "Started ProcessSubflowsBPMNException Method", isDebugEnabled)
+			msoLogger.debug("Started ProcessSubflowsBPMNException Method")
 			if(execution.getVariable("WorkflowException") == null){
 				buildWorkflowException(execution, 2500, "Internal Error - Occured During " + processKey)
 			}
 
-			utils.log("DEBUG", processKey + " Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"), isDebugEnabled)
+			msoLogger.debug(processKey + " Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"))
 		}catch(Exception e){
-			utils.log("DEBUG", "Caught Exception during ProcessSubflowsBPMNException Method: " + e, isDebugEnabled)
+			msoLogger.debug("Caught Exception during ProcessSubflowsBPMNException Method: " + e)
 		}
-		utils.log("DEBUG", "Completed ProcessSubflowsBPMNException Method", isDebugEnabled)
+		msoLogger.debug("Completed ProcessSubflowsBPMNException Method")
 	}
 
 	/**
@@ -331,10 +332,9 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 *
 	 */
 	public String processMainflowsBPMNException(DelegateExecution execution, String requestInfo){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String processKey = getProcessKey(execution)
 		try{
-			utils.log("DEBUG", "Started ProcessMainflowBPMNException Method", isDebugEnabled)
+			msoLogger.debug("Started ProcessMainflowBPMNException Method")
 			if(execution.getVariable("WorkflowException") == null || isBlank(requestInfo)){
 				buildWorkflowException(execution, 2500, "Internal Error - WorkflowException Object and/or RequestInfo is null! " + processKey)
 			}
@@ -354,15 +354,16 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 						</aetgt:WorkflowException>
 					</aetgt:FalloutHandlerRequest>"""
 
-			utils.log("DEBUG", processKey + " Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"), isDebugEnabled)
-			utils.log("DEBUG", processKey + " Outgoing FalloutHandler Request is: " + falloutHandlerRequest, isDebugEnabled)
+			msoLogger.debug(processKey + " Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"))
+			msoLogger.debug(processKey + " Outgoing FalloutHandler Request is: " + falloutHandlerRequest)
+
 			return falloutHandlerRequest
 
 		}catch(Exception e){
-			utils.log("DEBUG", "Caught Exception during ProcessMainflowBPMNException Method: " + e, isDebugEnabled)
+			msoLogger.debug("Caught Exception during ProcessMainflowBPMNException Method: " + e)
 			return null
 		}
-		utils.log("DEBUG", "Completed ProcessMainflowBPMNException Method", isDebugEnabled)
+		msoLogger.debug("Completed ProcessMainflowBPMNException Method")
 	}
 
 	/**
@@ -374,25 +375,48 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 *
 	 */
 	public void processJavaException(DelegateExecution execution){
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String processKey = getProcessKey(execution)
 		try{
-			utils.log("DEBUG", "Caught a Java Exception in " + processKey, isDebugEnabled)
-			utils.log("DEBUG", "Started processJavaException Method", isDebugEnabled)
-			buildWorkflowException(execution, 2500, "Catch a Java Lang Exception in " + processKey)
+			msoLogger.debug("Caught a Java Exception in " + processKey)
+			msoLogger.debug("Started processJavaException Method")
+			// if the BPMN flow java error handler sets "BPMN_javaExpMsg", append it to the WFE
+			String javaExpMsg = execution.getVariable("BPMN_javaExpMsg")
+			String wfeExpMsg = "Catch a Java Lang Exception in " + processKey
+			if (javaExpMsg != null && !javaExpMsg.empty) {
+				wfeExpMsg = wfeExpMsg + ": " + javaExpMsg
+			}
+			buildWorkflowException(execution, 2500, wfeExpMsg)
 
 		}catch(BpmnError b){
 			throw b
 		}catch(Exception e){
-			utils.log("DEBUG", "Caught Exception during processJavaException Method: " + e, isDebugEnabled)
+			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
 			buildWorkflowException(execution, 2500, "Internal Error - During Process Java Exception")
 		}
-		utils.log("DEBUG", "Completed processJavaException Method", isDebugEnabled)
+		msoLogger.debug("Completed processJavaException Method")
 	}
 
 
 	public void preProcessRequest(DelegateExecution execution) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public String getErrorMessage(WorkflowException wfe, String processKey) {
+		if(wfe == null) {
+			return "Unexpected error encountered in " + processKey
+		}
+		else {
+			return wfe.getErrorMessage()
+		}
+	}
+	
+	public int getErrorCode(WorkflowException wfe) {
+		if(wfe == null) {
+			return 2500
+		}
+		else {
+			return wfe.getErrorCode()
+		}
 	}
 }

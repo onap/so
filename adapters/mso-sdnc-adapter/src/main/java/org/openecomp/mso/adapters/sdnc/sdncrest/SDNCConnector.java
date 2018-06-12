@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,27 +18,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.sdnc.sdncrest;
 
-import org.openecomp.mso.adapters.sdnc.impl.Constants;
-import org.openecomp.mso.adapters.sdncrest.SDNCErrorCommon;
-import org.openecomp.mso.adapters.sdncrest.SDNCResponseCommon;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoAlarmLogger;
-import org.openecomp.mso.logger.MsoLogger;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.*;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.DatatypeConverter;
@@ -47,16 +32,45 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.openecomp.mso.adapters.sdnc.impl.Constants;
+import org.openecomp.mso.adapters.sdncrest.SDNCErrorCommon;
+import org.openecomp.mso.adapters.sdncrest.SDNCResponseCommon;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoAlarmLogger;
+import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.openecomp.mso.utils.CryptoUtils;
+import org.springframework.core.env.Environment;
 
 /**
  * Sends requests to SDNC and processes the responses.
  */
+@Component
 public abstract class SDNCConnector {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SDNCConnector.class);
 	private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
+	
+	@Autowired
+	private Environment env;
 
 	public SDNCResponseCommon send(String content, TypedRequestTunables rt) {
 		LOGGER.info(MessageEnum.RA_SEND_REQUEST_SDNC, rt.toString(), "SDNC", "");
@@ -96,13 +110,9 @@ public abstract class SDNCConnector {
 				method =  httpDelete;
 			}
 
-			// AAF Integration, disabled for now due to the constrains from other party
-			// String userCredentials = CredentialConstants.getSecurityProperties().getEncryptedProperty(CredentialConstants.DEFAULT_AUTH, "", CredentialConstants.getEncryptionKey());
-            // if (userCredentials == null) {
-            //		userCredentials = "";
-            //}
-			String userCredentials = SDNCAdapterProperties.getEncryptedProperty(Constants.SDNC_AUTH_PROP,
-				Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
+		
+			String userCredentials = CryptoUtils.decryptProperty(env.getProperty(Constants.SDNC_AUTH_PROP),
+					Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
 			String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 			if(null != method) {
 			    method.setHeader("Authorization", authorization);
@@ -259,6 +269,8 @@ public abstract class SDNCConnector {
 			XPath xpath = xpathFactory.newXPath();
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 			InputSource source = new InputSource(new StringReader(content));
 			Document doc = documentBuilderFactory.newDocumentBuilder().parse(source);
 			NodeList errors = (NodeList) xpath.evaluate("errors/error", doc, XPathConstants.NODESET);

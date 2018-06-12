@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mso-sdnc-adapter
+  namespace: com-att-mso-dev
+  labels:
+    app: mso-sdnc-adapter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mso-sdnc-adapter
+  template:
+    metadata:
+      labels:
+        app: mso-sdnc-adapter
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: mso-sdnc-adapter
+          image: ${docker_repository}/org.onap.mso/mso-sdnc-adapter:${project_version}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+      imagePullSecrets: 
+        - name: msoregistrykey

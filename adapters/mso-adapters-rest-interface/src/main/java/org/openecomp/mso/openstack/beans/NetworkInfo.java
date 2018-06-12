@@ -20,19 +20,17 @@
 
 package org.openecomp.mso.openstack.beans;
 
+
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-
-import com.woorea.openstack.quantum.model.Network;
-import com.woorea.openstack.quantum.model.Segment;
 
 /*
  * This Java bean class relays Network details (including status) to ActiveVOS processes.
  *
  * This bean is returned by all Network-specific adapter operations (create, query, delete)
  */
+
 public class NetworkInfo {
 	// Set defaults for everything
 	private String name = "";
@@ -41,56 +39,15 @@ public class NetworkInfo {
 	private String provider = "";
 	private List<Integer> vlans = new ArrayList<>();
 	private List<String> subnets = new ArrayList<>();
+	private String shared = "";
 
-	static Map<String,NetworkStatus> NetworkStatusMap;
-	static {
-		NetworkStatusMap = new HashMap<>();
-		NetworkStatusMap.put("ACTIVE", NetworkStatus.ACTIVE);
-		NetworkStatusMap.put("DOWN", NetworkStatus.DOWN);
-		NetworkStatusMap.put("BUILD", NetworkStatus.BUILD);
-		NetworkStatusMap.put("ERROR", NetworkStatus.ERROR);
+	public NetworkInfo () {
 	}
 
-	/**
-	 * Capture the data from a Neutron Network object.
-	 *
-	 * For MSO, there are assumptions regarding all networks.
-	 * - Everything will be a provider network
-	 * - All provider networks are VLANs
-	 * - Multiple VLANs are supported, and indicated by multi-provider segments.
-	 *   Each will have the same physical network & network type "vlan".
-	 *
-	 * @param network
-	 */
-	public NetworkInfo(Network network) {
-		if (network != null) {
-			initFieldsWithDataFromNetwork(network);
-		} else {
-			status = NetworkStatus.NOTFOUND;
-		}
-	}
-
-	private void initFieldsWithDataFromNetwork(Network network){
-		name = network.getName();
-		id = network.getId();
-
-		if (network.getStatus() != null && NetworkStatusMap.containsKey(network.getStatus())) {
-			status = NetworkStatusMap.get(network.getStatus());
-		}
-		if (network.getProviderPhysicalNetwork() != null) {
-			provider = network.getProviderPhysicalNetwork();
-			if ("vlan".equals(network.getProviderNetworkType())) {
-                vlans.add(network.getProviderSegmentationId());
-            }
-		}
-		else if (network.getSegments() != null && !network.getSegments().isEmpty()) {
-			Segment s = network.getSegments().get(0);
-			provider = s.getProviderPhysicalNetwork();
-			if ("vlan".equals(s.getProviderNetworkType())) {
-				network.getSegments().forEach(segment -> vlans.add(segment.getProviderSegmentationId()));
-            }
-		}
-		subnets = network.getSubnets();
+	public NetworkInfo (String name, NetworkStatus status) {
+		this.name = name;
+		this.id = name;	// Don't have an ID, so just use name
+		this.status = status;
 	}
 
 	public String getName() {
@@ -135,6 +92,18 @@ public class NetworkInfo {
 
 	public List<String> getSubnets () {
 		return subnets;
+	}
+
+	public void setSubnets (List<String> subnets) {
+		this.subnets = subnets;
+	}
+
+	public String getShared() {
+		return shared;
+	}
+
+	public void setShared(String shared) {
+		this.shared = shared;
 	}
 
 	@Override

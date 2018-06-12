@@ -21,7 +21,6 @@
 package org.openecomp.mso.client.aai;
 
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
@@ -37,8 +36,4 @@ public class AAIQueryObjectMapperProvider extends AAICommonObjectMapperProvider 
 
 	}
 
-	@Override
-	public ObjectMapper getContext(Class<?> type) {
-		return mapper;
-	}
 }

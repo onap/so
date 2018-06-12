@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,92 +18,130 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.apihandlerinfra;
 
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoAlarmLogger;
-import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.utils.UUIDChecker;
+import java.io.IOException;
 
-import com.wordnik.swagger.annotations.ApiOperation;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.openecomp.mso.apihandler.common.ValidationException;
-import org.openecomp.mso.apihandler.common.ErrorNumbers;
-import org.openecomp.mso.apihandler.common.RequestClient;
-import org.openecomp.mso.apihandler.common.RequestClientFactory;
-import org.openecomp.mso.apihandler.common.ResponseHandler;
-import org.openecomp.mso.apihandlerinfra.tasksbeans.*;
-
+import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.openecomp.mso.apihandler.common.ErrorNumbers;
+import org.openecomp.mso.apihandler.common.RequestClient;
+import org.openecomp.mso.apihandler.common.RequestClientFactory;
+import org.openecomp.mso.apihandler.common.ResponseBuilder;
+import org.openecomp.mso.apihandler.common.ResponseHandler;
+import org.openecomp.mso.apihandlerinfra.exceptions.ApiException;
+import org.openecomp.mso.apihandlerinfra.exceptions.BPMNFailureException;
+import org.openecomp.mso.apihandlerinfra.exceptions.ValidateException;
+import org.openecomp.mso.apihandlerinfra.logging.AlarmLoggerInfo;
+import org.openecomp.mso.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.openecomp.mso.apihandlerinfra.tasksbeans.TaskRequestReference;
+import org.openecomp.mso.apihandlerinfra.tasksbeans.TasksRequest;
+import org.openecomp.mso.apihandlerinfra.tasksbeans.Value;
+import org.openecomp.mso.apihandlerinfra.tasksbeans.Variables;
+import org.openecomp.mso.db.request.beans.InfraActiveRequests;
+import org.openecomp.mso.exceptions.ValidationException;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoAlarmLogger;
+import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 
 @Path("/tasks")
+@Component
 public class ManualTasks {
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, ManualTasks.class);
 	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
+    
+	@Autowired
+	private RequestClientFactory reqClientFactory;
+	
+	@Autowired
+	private MsoRequest msoRequest;
+	
+	@Autowired
+	private ResponseBuilder builder;
 	
 	@POST
 	@Path("/{version:[vV]1}/{taskId}/complete")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Complete specified task",response=Response.class)
-	public Response completeTask(String request, @PathParam("version") String version, @PathParam("taskId") String taskId) {
+	@Transactional
+	public Response completeTask(String request, @PathParam("version") String version, @PathParam("taskId") String taskId,
+								@Context ContainerRequestContext requestContext) throws ApiException {
 		
-		String requestId = UUIDChecker.generateUUID(msoLogger);
+		String requestId = requestContext.getProperty("requestId").toString();
+        MsoLogger.setLogContext(requestId, null);
+        msoLogger.info(MessageEnum.APIH_GENERATED_REQUEST_ID, requestId, "", "");
 		long startTime = System.currentTimeMillis ();
 		msoLogger.debug ("requestId is: " + requestId);
-		TasksRequest tr = null;
-		
-		MsoRequest msoRequest = new MsoRequest (requestId);
+		TasksRequest taskRequest = null;
+		String apiVersion = version.substring(1);
 		
 		try{
 			ObjectMapper mapper = new ObjectMapper();
-			tr= mapper.readValue(request, TasksRequest.class);
+			taskRequest= mapper.readValue(request, TasksRequest.class);
 			
-			if (tr.getRequestDetails() == null) {
+			if (taskRequest.getRequestDetails() == null) {
 				throw new ValidationException("requestDetails");				
 			}
-			if (tr.getRequestDetails().getRequestInfo() == null) {
+			if (taskRequest.getRequestDetails().getRequestInfo() == null) {
 				throw new ValidationException("requestInfo");
 			}
-			if (empty(tr.getRequestDetails().getRequestInfo().getSource())) {
+			if (empty(taskRequest.getRequestDetails().getRequestInfo().getSource())) {
 				throw new ValidationException("source");
 			}
-			if (empty(tr.getRequestDetails().getRequestInfo().getRequestorId())) {
+			if (empty(taskRequest.getRequestDetails().getRequestInfo().getRequestorId())) {
 				throw new ValidationException("requestorId");
 			}
 
-		} catch(Exception e){
-			msoLogger.debug ("Mapping of request to JSON object failed : ", e);
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
-					"Mapping of request to JSON object failed.  " + e.getMessage(),
-					ErrorNumbers.SVC_BAD_PARAMETER, null);
-			
-			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, request, e);
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Mapping of request to JSON object failed");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
-			return response;
-		}		
+		}catch(IOException e){
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+
+
+			ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed: " + e.getMessage(),
+					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
+
+			throw validateException;
+		}
+		catch(ValidationException e){
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+
+
+			ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON Object failed. " + e.getMessage(),
+					HttpStatus.SC_BAD_REQUEST,ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
+			throw validateException;
+
+		}
+		//Create Request Record
+		InfraActiveRequests currentActiveReq = msoRequest.createRequestObject(taskRequest,Action.completeTask,requestId,Status.PENDING,request);
 		
 		// Transform the request to Camunda-style Complete request
 		Variables variablesForComplete = new Variables();
 		Value sourceValue = new Value(); 
-		sourceValue.setValue(tr.getRequestDetails().getRequestInfo().getSource());
+		sourceValue.setValue(taskRequest.getRequestDetails().getRequestInfo().getSource());
 		Value responseValue = new Value(); 
-		responseValue.setValue(tr.getRequestDetails().getRequestInfo().getResponseValue().name());
+		responseValue.setValue(taskRequest.getRequestDetails().getRequestInfo().getResponseValue().name());
 		Value requestorIdValue = new Value(); 
-		requestorIdValue.setValue(tr.getRequestDetails().getRequestInfo().getRequestorId());
+		requestorIdValue.setValue(taskRequest.getRequestDetails().getRequestInfo().getRequestorId());
 		variablesForComplete.setSource(sourceValue);
 		variablesForComplete.setResponseValue(responseValue);
 		variablesForComplete.setRequestorId(requestorIdValue);
@@ -113,65 +151,48 @@ public class ManualTasks {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 			camundaJsonReq = mapper.writeValueAsString(variablesForComplete);
-			msoLogger.debug("Camunda Json Request: " + camundaJsonReq);
-		} catch(Exception e){
-			msoLogger.debug ("Mapping of JSON object to Camunda request failed : ", e);
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, MsoException.ServiceException,
-				"Mapping of JSON object to Camunda Request failed.  " + e.getMessage(),
-				ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null);
-		
-			msoLogger.error (MessageEnum.APIH_GENERAL_EXCEPTION, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.UnknownError, request, e);
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, "Mapping of JSON object to Camunda request failed");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
-			return response;
-		}		
+		} catch(JsonProcessingException e){
+
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.UnknownError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+
+
+			ValidateException validateException = new ValidateException.Builder("Mapping of JSON object to Camunda request failed",
+					HttpStatus.SC_INTERNAL_SERVER_ERROR,ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+			throw validateException;
+		}
 		
 		RequestClient requestClient = null;
 		HttpResponse response = null;
 		long subStartTime = System.currentTimeMillis();
 		String requestUrl = "/mso/task/" + taskId + "/complete";
 		try {
-			requestClient = RequestClientFactory.getRequestClient (requestUrl, MsoPropertiesUtils.loadMsoProperties ());
+			requestClient = reqClientFactory.getRequestClient (requestUrl);
 			// Capture audit event
-			msoLogger.debug ("MSO API Handler Posting call to Camunda engine for url: " + requestClient.getUrl ());
-
-			System.out.println("URL : " + requestClient.getUrl ());
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, "Mapping of JSON object to Camunda request failed");
 			
 			response = requestClient.post(camundaJsonReq);
 
-			msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from BPMN engine", "BPMN", requestUrl, null);
 		} catch (Exception e) {
-		    msoLogger.debug ("Exception:", e);
-			msoLogger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine", "BPMN", requestUrl, null);
-			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
-			Response resp = msoRequest.buildServiceErrorResponse (HttpStatus.SC_BAD_GATEWAY,
-					MsoException.ServiceException,
-					"Failed calling bpmn " + e.getMessage (),
-					ErrorNumbers.SVC_NO_SERVER_RESOURCES,
-					null);
-			alarmLogger.sendAlarm ("MsoConfigurationError",
-					MsoAlarmLogger.CRITICAL,
-					Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
-			msoRequest.updateFinalStatus (Status.FAILED);
-			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
-			return resp;
+
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            AlarmLoggerInfo alarmLoggerInfo = new AlarmLoggerInfo.Builder("MsoConfigurationError", MsoAlarmLogger.CRITICAL, Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_BPEL)).build();
+
+
+
+            BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
+                    HttpStatus.SC_BAD_GATEWAY,ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).alarmInfo(alarmLoggerInfo).build();
+
+		    throw bpmnFailureException;
 		}
 
 		if (response == null) {
-			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
-			Response resp = msoRequest.buildServiceErrorResponse (HttpStatus.SC_BAD_GATEWAY,
-					MsoException.ServiceException,
-					"bpelResponse is null",
-					ErrorNumbers.SVC_NO_SERVER_RESOURCES,
-					null);
-			msoRequest.updateFinalStatus (Status.FAILED);
-			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, "Null response from BPMN");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
-			return resp;
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+
+
+            BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
+                    HttpStatus.SC_BAD_GATEWAY,ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).build();
+
+            throw bpmnFailureException;
+
 		}
 
 		ResponseHandler respHandler = new ResponseHandler (response, requestClient.getType ());
@@ -180,7 +201,7 @@ public class ManualTasks {
 		// BPEL accepted the request, the request is in progress
 		if (bpelStatus == HttpStatus.SC_NO_CONTENT || bpelStatus == HttpStatus.SC_ACCEPTED) {			
 			msoLogger.debug ("Received good response from Camunda");
-			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.IN_PROGRESS);			
+		
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "BPMN completed the request");
 			TaskRequestReference trr = new TaskRequestReference();
 			trr.setTaskId(taskId);
@@ -190,32 +211,28 @@ public class ManualTasks {
 				mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 				completeResp = mapper.writeValueAsString(trr);
 			}
-			catch (Exception e) {
-				msoLogger.debug("Unable to format response",e);
-				Response resp = msoRequest.buildServiceErrorResponse(bpelStatus,
-						MsoException.ServiceException,
-						"Request Failed due to bad response format" ,
-						ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
-						null);				
-				msoLogger.error (MessageEnum.APIH_BPEL_RESPONSE_ERROR, requestClient.getUrl (), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Bad response format");
-				msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, "Bad response format");
-				msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
-				return resp;
+			catch (JsonProcessingException e) {
+
+                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).build();
+
+
+                ValidateException validateException = new ValidateException.Builder("Request Failed due to bad response format" ,
+                        bpelStatus,ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
+                throw validateException;
 			}
 			msoLogger.debug("Response to the caller: " + completeResp);			
 			msoLogger.debug ("End of the transaction, the final response is: " + (String) completeResp);
-			return Response.status (HttpStatus.SC_ACCEPTED).entity (completeResp).build ();
-		} else {			
-				msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
-				Response resp = msoRequest.buildServiceErrorResponse(bpelStatus,
-						MsoException.ServiceException,
-						"Request Failed due to BPEL error with HTTP Status= %1" ,
-						ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
-						null);				
-				msoLogger.error (MessageEnum.APIH_BPEL_RESPONSE_ERROR, requestClient.getUrl (), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Response from BPEL engine is empty");
-				msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, "Response from BPEL engine is empty");
-				msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
-				return resp;
+			return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestId, completeResp, apiVersion);
+		} else {
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).build();
+
+
+            BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(bpelStatus),
+                    bpelStatus,ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
+            throw bpmnFailureException;
+            
 		}	
 	
 	}

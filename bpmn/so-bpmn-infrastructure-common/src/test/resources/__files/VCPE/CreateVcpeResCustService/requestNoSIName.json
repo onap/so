@@ -1,0 +1,39 @@
+{
+	"requestDetails":
+		{
+			"modelInfo":
+				{
+					"modelType":"service",
+					"modelInvariantUuid":"uuid-miu-svc-011-abcdef",
+					"modelVersionId":"ASDC_TOSCA_UUID",
+					"modelName":"SIModelName1",
+					"modelVersion":"2"
+				},
+			"subscriberInfo":
+				{
+					"globalSubscriberId":"SDN-ETHERNET-INTERNET",
+					"subscriberName":"Kaneohe"
+				},
+			"requestInfo":
+				{
+					"source":"VID",
+					"suppressRollback":"false",
+					"productFamilyId":"a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb"
+				},
+			"cloudConfiguration":
+				{
+					"lcpCloudRegionId":"mdt1",
+					"tenantId":"8b1df54faa3b49078e3416e21370a3ba"
+				},
+			"requestParameters":
+				{
+					"subscriptionServiceType":"123456789",
+					"aLaCarte":"false",
+					"userParams":
+						{
+							"BRG_WAN_MAC_Address" : "brgmac"
+						}
+				}
+				
+		}
+}

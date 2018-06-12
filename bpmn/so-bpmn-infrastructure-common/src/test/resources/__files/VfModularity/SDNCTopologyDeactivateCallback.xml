@@ -1,0 +1,13 @@
+<output xmlns="org:onap:sdnctl:vnf">
+	<vnf-information>
+		<vnf-id>skask</vnf-id>
+	</vnf-information>
+	<response-code>200</response-code>
+	<svc-request-id>{{REQUEST-ID}}</svc-request-id>
+	<ack-final-indicator>Y</ack-final-indicator>
+	<service-information>
+		<subscriber-name>dontcare</subscriber-name>
+		<service-instance-id>0</service-instance-id>
+		<service-type>SDN-MOBILITY</service-type>
+	</service-information>
+</output>

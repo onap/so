@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,11 +30,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import org.camunda.bpm.engine.runtime.Execution;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
@@ -42,10 +40,12 @@ import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.functions.GetInput;
 import org.onap.sdc.toscaparser.api.parameters.Input;
-import org.openecomp.mso.bpmn.core.PropertyConfiguration;
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader;
 import org.openecomp.mso.bpmn.core.json.JsonUtils;
+import org.openecomp.mso.client.HttpClient;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.utils.TargetEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,9 +59,8 @@ public class ResourceRequestBuilder {
 
     public static String SERVICE_URL_TOSCA_CSAR = "/v3/serviceToscaCsar?serviceModelUuid=";
 
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+    private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, ResourceRequestBuilder.class);
 
-   
     static JsonUtils jsonUtil = new JsonUtils();
 
         /**
@@ -72,7 +71,7 @@ public class ResourceRequestBuilder {
      *     "requestInputs":{K,V}
      * }
      * <br>
-     *
+     * 
      * @param execution Execution context
      * @param serviceUuid The service template uuid
      * @param resourceCustomizationUuid The resource customization uuid
@@ -82,7 +81,7 @@ public class ResourceRequestBuilder {
      */
     @SuppressWarnings("unchecked")
     public static String buildResourceRequestParameters(Execution execution, String serviceUuid, String resourceCustomizationUuid, String serviceParameters) {
-        List<String> resourceList = jsonUtil.StringArrayToList(execution, (String)JsonUtils.getJsonValue(serviceParameters, "resources")); 
+        List<String> resourceList = jsonUtil.StringArrayToList(execution, (String)JsonUtils.getJsonValue(serviceParameters, "resources"));
         //Get the right location str for resource. default is an empty array.
         String locationConstraints ="[]";
         String resourceInputsFromUui = "";
@@ -128,6 +127,7 @@ public class ResourceRequestBuilder {
             throws SdcToscaParserException {
 
         Map<String, Object> resouceRequest = new HashMap<>();
+
         String csarpath = null;
         try {
             csarpath = getCsarFromUuid(serviceUuid);
@@ -184,12 +184,10 @@ public class ResourceRequestBuilder {
     }
 
     private static String getCsarFromUuid(String uuid) throws Exception {
-
-        ResteasyClient client = new ResteasyClientBuilder().build();
-		Map<String, String> properties = PropertyConfiguration.getInstance().getProperties("mso.bpmn.urn.properties");
-		String catalogEndPoint = properties.get("mso.catalog.db.endpoint");
-		ResteasyWebTarget target = client.target(catalogEndPoint + SERVICE_URL_TOSCA_CSAR + uuid);
-        Response response = target.request().get();
+		String catalogEndPoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint");
+    	HttpClient client = new HttpClient(UriBuilder.fromUri(catalogEndPoint + SERVICE_URL_TOSCA_CSAR + uuid).build().toURL(), "application/json", TargetEntity.CATALOG_DB);
+    	
+        Response response = client.get();
         String value = response.readEntity(String.class);
 
         HashMap<String, String> map = new Gson().fromJson(value, new TypeToken<HashMap<String, String>>() {}.getType());

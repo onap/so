@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -62,7 +63,7 @@ import org.xml.sax.SAXException;
 public final class XmlTool {
 
 	private static final Map<String, Integer> ENTITIES = new HashMap<>();
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.BPEL);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.BPEL, XmlTool.class);
 	static {
 		ENTITIES.put("amp", 38);
 		ENTITIES.put("quot", 34);
@@ -99,6 +100,8 @@ public final class XmlTool {
 
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		dbFactory.setNamespaceAware(true);
+		dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 		DocumentBuilder db = dbFactory.newDocumentBuilder();
 		InputSource source = new InputSource(new StringReader(String.valueOf(xml)));
 		Document doc = db.parse(source);
@@ -351,6 +354,8 @@ public final class XmlTool {
 		
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		dbFactory.setNamespaceAware(true);
+		dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 		DocumentBuilder db = dbFactory.newDocumentBuilder();
 		InputSource source = new InputSource(new StringReader(xml));
 		Document doc = db.parse(source);

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,6 +39,10 @@ public class Request extends JsonWrapper implements Serializable {
 	private String requestId;
 	private ModelInfo modelInfo;
 	private String productFamilyId;
+	private String callbackUrl;
+	private String serviceId;
+	private String tenantId;
+	private String cloudRegion;
 	
 	public String getSdncRequestId() {
 		return sdncRequestId;
@@ -64,6 +68,29 @@ public class Request extends JsonWrapper implements Serializable {
 	public void setProductFamilyId(String productFamilyId) {
 		this.productFamilyId = productFamilyId;
 	}
-	
+	public String getCallbackUrl() {
+		return callbackUrl;
+	}
+	public void setCallbackUrl(String callbackUrl) {
+		this.callbackUrl = callbackUrl;
+	}
+	public String getServiceId() {
+		return serviceId;
+	}
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
+	}
+	public String getCloudRegion() {
+		return cloudRegion;
+	}
+	public void setCloudRegion(String cloudRegion) {
+		this.cloudRegion = cloudRegion;
+	}
+	public String getTenantId() {
+		return tenantId;
+	}
+	public void setTenantId(String tenantId) {
+		this.tenantId = tenantId;
+	}
 	
 }

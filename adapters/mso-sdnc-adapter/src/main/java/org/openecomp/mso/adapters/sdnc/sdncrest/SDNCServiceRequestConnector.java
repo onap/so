@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,38 +18,49 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.sdnc.sdncrest;
 
-import org.openecomp.mso.adapters.sdncrest.SDNCErrorCommon;
-import org.openecomp.mso.adapters.sdncrest.SDNCResponseCommon;
-import org.openecomp.mso.adapters.sdncrest.SDNCServiceError;
-import org.openecomp.mso.adapters.sdncrest.SDNCServiceResponse;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.IOException;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.openecomp.mso.adapters.sdncrest.SDNCErrorCommon;
+import org.openecomp.mso.adapters.sdncrest.SDNCResponseCommon;
+import org.openecomp.mso.adapters.sdncrest.SDNCServiceError;
+import org.openecomp.mso.adapters.sdncrest.SDNCServiceResponse;
 import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * SDNCConnector for "agnostic" API services.
  */
+
+@Component
 public class SDNCServiceRequestConnector extends SDNCConnector {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,SDNCServiceRequestConnector.class);
 	@Override
 	protected SDNCResponseCommon createResponseFromContent(int statusCode, String statusMessage,
 			String responseContent, TypedRequestTunables rt) {
 		try {
 			return parseResponseContent(responseContent);
 		} catch (ParseException e) {
-			logError(e.getMessage());
+			LOGGER.error(e);
+			return createErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, e.getMessage(), rt);
+		}catch (Exception e) {
+			LOGGER.error(e);
 			return createErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, e.getMessage(), rt);
 		}
 	}
@@ -71,11 +82,13 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 	 * @throws ParseException on error
 	 */
 	public static SDNCResponseCommon parseResponseContent(String responseContent)
-			throws ParseException {
-		try {
+			throws ParseException,ParserConfigurationException, SAXException, IOException{
+
 			// Note: this document builder is not namespace-aware, so namespaces are ignored.
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		    documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		    documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 			InputSource source = new InputSource(new StringReader(responseContent));
 			Document doc = documentBuilderFactory.newDocumentBuilder().parse(source);
 
@@ -189,11 +202,6 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
             }
 
 			return response;
-		} catch (ParseException e) {
-			throw e;
-		} catch (Exception e) {
-		    LOGGER.debug("Exception:", e);
-			throw new ParseException("Failed to parse SDNC response", 0);
-		}
+		
 	}
 }

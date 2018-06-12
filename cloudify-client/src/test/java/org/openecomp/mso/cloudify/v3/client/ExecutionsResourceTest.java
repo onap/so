@@ -99,7 +99,7 @@ public class ExecutionsResourceTest {
 
 	@Test
 	public void cloudifyClientExecutionById() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/executions")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/executions/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody("{ \"id\": \"123\" }")
 				.withStatus(HttpStatus.SC_OK)));
 		
@@ -150,7 +150,7 @@ public class ExecutionsResourceTest {
 
 	@Test
 	public void cloudifyClientCancelExecution() {
-		wireMockRule.stubFor(post(urlPathEqualTo("/api/v3/executions")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+		wireMockRule.stubFor(post(urlPathEqualTo("/api/v3/executions/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody("{ \"id\": \"123\" }")
 				.withStatus(HttpStatus.SC_OK)));
 		

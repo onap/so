@@ -1,0 +1,13 @@
+{
+	"AssignVnf": {
+		"serviceInstance": {
+			"@class": "inventory.aai.onap.org.v12.ServiceInstance"
+		},
+		"customer": {
+			"@class": "inventory.aai.onap.org.v12.Customer"
+		},
+		"genericVnf": {
+			"@class": "inventory.aai.onap.org.v12.GenericVnf"
+		}
+	}
+}

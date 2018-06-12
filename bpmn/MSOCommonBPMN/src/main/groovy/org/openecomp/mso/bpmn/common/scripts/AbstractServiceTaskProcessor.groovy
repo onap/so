@@ -31,6 +31,7 @@ import org.camunda.bpm.engine.variable.impl.value.ObjectValueImpl
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowCallbackResponse
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowContextHolder
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
 import org.springframework.web.util.UriUtils
 
 public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcessor {
@@ -694,7 +695,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * @param correlator the correlator value (e.g. a request ID)
 	 */
 	public String createCallbackURL(DelegateExecution execution, String messageType, String correlator) {
-		String endpoint = (String) execution.getVariable('URN_mso_workflow_message_endpoint')
+		String endpoint = UrnPropertiesReader.getVariable("mso.workflow.message.endpoint", execution)
 
 		if (endpoint == null || endpoint.isEmpty()) {
 			ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -720,7 +721,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 * @param correlator the correlator value (e.g. a request ID)
 	 */
 	public String createWorkflowMessageAdapterCallbackURL(DelegateExecution execution, String messageType, String correlator) {
-		String endpoint = (String) execution.getVariable('URN_mso_adapters_workflow_message_endpoint')
+		String endpoint = UrnPropertiesReader.getVariable("mso.adapters.workflow.message.endpoint", execution)
 
 		if (endpoint == null || endpoint.isEmpty()) {
 			ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -742,7 +743,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		// Rollback settings
 		def prefix = execution.getVariable('prefix')
 		def disableRollback = execution.getVariable("disableRollback")
-		def defaultRollback = execution.getVariable("URN_mso_rollback").toBoolean()
+		def defaultRollback = UrnPropertiesReader.getVariable("mso.rollback", execution).toBoolean()
 		
 		logDebug('disableRollback: ' + disableRollback, isDebugLogEnabled)
 		logDebug('defaultRollback: ' + defaultRollback, isDebugLogEnabled)
@@ -773,10 +774,10 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	
 	public void setBasicDBAuthHeader(DelegateExecution execution, isDebugLogEnabled) {
 		try {
-			String basicAuthValueDB = execution.getVariable("URN_mso_adapters_db_auth")
+			String basicAuthValueDB = UrnPropertiesReader.getVariable("mso.adapters.db.auth", execution)
 			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugLogEnabled)
 			
-			def encodedString = utils.getBasicAuth(basicAuthValueDB, execution.getVariable("URN_mso_msoKey"))
+			def encodedString = utils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
 			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
 		} catch (IOException ex) {
 			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()

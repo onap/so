@@ -1096,25 +1096,6 @@ alter table ACT_ID_TENANT_MEMBER
     foreign key (GROUP_ID_)
     references ACT_ID_GROUP (ID_);
 
-CREATE TABLE `mso_urn_mapping` (
-`NAME_` VARCHAR(64) NOT NULL COLLATE 'utf8_bin',
-`VALUE_` VARCHAR(300) NULL DEFAULT NULL COLLATE 'utf8_bin',
-`REV_` INT(11) NULL DEFAULT NULL
-)
-COLLATE='latin1_swedish_ci'
-ENGINE=InnoDB
-;
-
-INSERT INTO `mso_urn_mapping` (`NAME_`, `VALUE_`, `REV_`) VALUES ('mso:rollback', 'true', 1);
-INSERT INTO `mso_urn_mapping` (`NAME_`, `VALUE_`, `REV_`) VALUES ('aai:endpoint', 'http://localhost:28090', 1);
-INSERT INTO `mso_urn_mapping` (`NAME_`, `VALUE_`, `REV_`) VALUES ('mso:adapters:tenant:endpoint', 'http://localhost:28090/tenantAdapterMock', 1);
-INSERT INTO `mso_urn_mapping` (`NAME_`, `VALUE_`, `REV_`) VALUES ('mso:adapters:sdnc:endpoint', 'http://localhost:28090/sdncAdapterMock', 1);
-INSERT INTO `mso_urn_mapping` (`NAME_`, `VALUE_`, `REV_`) VALUES ('mso:workflow:sdncadapter:callback', 'http://localhost:28080/mso/SDNCAdapterCallbackService', 1);
-INSERT INTO `mso_urn_mapping` (`NAME_`, `VALUE_`, `REV_`) VALUES ('mso:sdnc:timeout', 'PT5M', 1);
-INSERT INTO `mso_urn_mapping` (`NAME_`, `VALUE_`, `REV_`) VALUES ('mso:sdnc:firewall:yang:model', 'http://com/att/svc/mis/firewall-lite-gui', 1);
-INSERT INTO `mso_urn_mapping` (`NAME_`, `VALUE_`, `REV_`) VALUES ('mso:sdnc:firewall:yang:model:version', '2015-05-15', 1);
-INSERT INTO `mso_urn_mapping` (`NAME_`, `VALUE_`, `REV_`) VALUES ('mso:sdnc:timeout:firewall:minutes', '20', 1);
-
 
 -- add indexes on PROC_DEF_KEY_ columns in history tables CAM-6679
 create index ACT_IDX_HI_ACT_INST_PROC_DEF_KEY on ACT_HI_ACTINST(PROC_DEF_KEY_);

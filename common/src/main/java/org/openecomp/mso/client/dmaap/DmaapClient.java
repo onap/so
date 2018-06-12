@@ -30,8 +30,6 @@ import org.openecomp.mso.client.defaultproperties.DefaultDmaapPropertiesImpl;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import com.att.eelf.configuration.EELFLogger;
-import com.att.eelf.configuration.EELFManager;
 
 public abstract class DmaapClient {
 	
@@ -51,8 +49,9 @@ public abstract class DmaapClient {
 		this.properties.put("password", this.deobfuscatePassword(this.getPassword()));
 		this.properties.put("username", this.getUserName());
 		this.properties.put("topic", this.getTopic());
-		if (this.getHost().isPresent()) {
-			this.properties.put("host", this.getHost().get());
+		Optional<String> host = this.getHost();
+		if (host.isPresent()) {
+			this.properties.put("host", host.get());
 		}
 	}
 	protected String deobfuscatePassword(String password) {

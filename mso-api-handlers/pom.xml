@@ -16,7 +16,7 @@
 		<module>mso-requests-db</module>
 		<module>mso-api-handler-common</module>
 		<module>mso-api-handler-infra</module>
-	</modules>
+=	</modules>
 
 	<dependencies>
 		<dependency>
@@ -29,8 +29,7 @@
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<artifactId>junit</artifactId>			
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

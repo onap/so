@@ -37,7 +37,8 @@ public enum ValidResponses {
     rollback,
     abort,
     skip,
-    retry
+    retry,
+    manual
     ;
 
     public String value() {

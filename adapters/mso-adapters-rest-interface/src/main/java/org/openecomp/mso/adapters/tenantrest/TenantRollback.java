@@ -36,6 +36,7 @@ import org.openecomp.mso.entity.MsoRequest;
 
 @XmlRootElement(name = "rollbackTenantRequest")
 public class TenantRollback extends TenantRequestCommon {
+	private static final long serialVersionUID = -4540810517355635993L;
 	private String tenantId;
 	private String cloudId;
 	private boolean tenantCreated = false;

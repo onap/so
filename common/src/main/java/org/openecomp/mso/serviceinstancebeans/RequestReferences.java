@@ -22,6 +22,12 @@ package org.openecomp.mso.serviceinstancebeans;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonRootName(value = "requestReferences")
+@JsonInclude(Include.NON_DEFAULT)
 public class RequestReferences {
 	
 	String requestId;

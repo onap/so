@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,15 +20,16 @@
 
 package org.openecomp.mso.apihandlerinfra.tasksbeans;
 
-import org.junit.After;
-
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.json.JSONArray;
+
+import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TaskListTest {
 
@@ -44,7 +45,7 @@ public class TaskListTest {
 	protected String _errorMessage;
 	protected String _buildingBlockName;
 	protected String _buildingBlockStep;
-	protected JSONArray _validResponses;
+	protected List<String> _validResponses;
 
 	public TaskListTest() {
 	}
@@ -63,7 +64,7 @@ public class TaskListTest {
 		_errorMessage = "errormessage";
 		_buildingBlockName = "buildingblockname";
 		_buildingBlockStep = "buildingblockstep";
-		_validResponses = mock(JSONArray.class);
+		_validResponses = mock(List.class);
 
 		when(_taskList.getTaskId()).thenReturn(_taskId);
 		when(_taskList.getType()).thenReturn(_type);
@@ -231,7 +232,7 @@ public class TaskListTest {
 	@Test
 	public void testGetValidResponses() {
 
-		JSONArray result = _taskList.getValidResponses();
+		List<String> result = _taskList.getValidResponses();
 		assertEquals(_validResponses, result);
 
 	}

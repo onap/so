@@ -24,27 +24,29 @@ package org.openecomp.mso.adapters.nwrest;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.openecomp.mso.logger.MsoLogger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * Everything that is common between all Network Requests.
  */
-public abstract class NetworkRequestCommon {
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+public abstract class NetworkRequestCommon implements Serializable {
+	private static final long serialVersionUID = -6732431343649282079L;
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, NetworkRequestCommon.class);
 	private Boolean skipAAI = false;
 	private String messageId;
 	private String notificationUrl;
 	@JsonProperty
-	private boolean synchronous;
+	private boolean synchronous = true;
 	public Boolean getSkipAAI() {
 		return skipAAI;
 	}
@@ -67,14 +69,15 @@ public abstract class NetworkRequestCommon {
 
 	public void setNotificationUrl(String notificationUrl) {
 		this.notificationUrl = notificationUrl;
+		this.synchronous = notificationUrl == null || (notificationUrl.isEmpty());
 	}
 
 	public boolean isSynchronous() {
-		return notificationUrl == null || (notificationUrl.isEmpty());
+		return this.synchronous; 
 	}
 	
 	@JsonIgnore
-	public void setSynchronous(boolean synchronous) {
+	protected void setSynchronous(boolean synchronous) {
 		this.synchronous = synchronous;
 	}
 

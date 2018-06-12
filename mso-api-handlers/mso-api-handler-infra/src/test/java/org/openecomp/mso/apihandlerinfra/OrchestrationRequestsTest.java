@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,232 +17,370 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.apihandlerinfra;
 
+import static com.shazam.shazamcrest.MatcherAssert.assertThat;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Collections;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import mockit.MockUp;
 import org.apache.http.HttpStatus;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.openecomp.mso.apihandler.common.ValidationException;
-import org.openecomp.mso.requestsdb.InfraActiveRequests;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
+import org.openecomp.mso.apihandler.common.ErrorNumbers;
+import org.openecomp.mso.db.request.beans.InfraActiveRequests;
+import org.openecomp.mso.db.request.data.repository.InfraActiveRequestsRepository;
+import org.openecomp.mso.exceptions.ValidationException;
+import org.openecomp.mso.serviceinstancebeans.GetOrchestrationListResponse;
 import org.openecomp.mso.serviceinstancebeans.GetOrchestrationResponse;
-import org.openecomp.mso.serviceinstancebeans.InstanceReferences;
 import org.openecomp.mso.serviceinstancebeans.Request;
-import org.openecomp.mso.serviceinstancebeans.RequestStatus;
-import org.openecomp.mso.serviceinstancebeans.ServiceInstancesRequest;
+import org.openecomp.mso.serviceinstancebeans.RequestError;
+import org.openecomp.mso.serviceinstancebeans.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class OrchestrationRequestsTest {
 
+@Transactional
+public class OrchestrationRequestsTest extends BaseTest {
+
+	@Autowired
+	InfraActiveRequestsRepository iar;
+	
 	private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title></title></head><body></body></html>";
 	public static final Response RESPONSE = Response.status(HttpStatus.SC_OK).entity(CHECK_HTML).build();
-	@Mock
-	private static RequestsDatabase db;
-	private static OrchestrationRequests orReq;
-	private static GetOrchestrationResponse orRes;
+	private static final GetOrchestrationListResponse ORCHESTRATION_LIST = generateOrchestrationList();
+	private static final String INVALID_REQUEST_ID = "invalid-request-id";
 
+	private static GetOrchestrationListResponse generateOrchestrationList() {
+		GetOrchestrationListResponse list = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			list = mapper.readValue(new File("src/test/resources/OrchestrationRequest/OrchestrationList.json"),
+					GetOrchestrationListResponse.class);
+		} catch (JsonParseException jpe) {
+			jpe.printStackTrace();
+		} catch (JsonMappingException jme) {
+			jme.printStackTrace();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		return list;
+	}
+	
 	@Test
 	public void testGetOrchestrationRequest() {
-		orReq = Mockito.mock(OrchestrationRequests.class);
-		orRes = new GetOrchestrationResponse();
-		try {
-			// create InfraActiveRequests object
-			InfraActiveRequests infraRequests = new InfraActiveRequests();
-			infraRequests.setRequestId("rq1234d1-5a33-55df-13ab-12abad84e333");
-			infraRequests.setNetworkType("CONTRAIL30_BASIC");
-			infraRequests.setRequestType("createInstance");
-			infraRequests.setSource("VID");
-			infraRequests.setTenantId("19123c2924c648eb8e42a3c1f14b7682");
-			infraRequests.setServiceInstanceId("bc305d54-75b4-431b-adb2-eb6b9e546014");
-			infraRequests.setRequestStatus("IN_PROGRESS");
-			infraRequests.setRequestorId("ab1234");
-			String body = "{\"modelInfo\":{\"modelInvariantId\":\"9771b085-4705-4bf7-815d-8c0627bb7e36\",\"modelType\":\"service\",\"modelName\":\"Service with VNFs with modules\",\"modelVersion\":\"1.0\"}}";		
-			infraRequests.setRequestBody(body);
-	
-			db = Mockito.mock(RequestsDatabase.class);
-			Mockito.when(db.getRequestFromInfraActive(Mockito.anyString())).thenReturn(infraRequests);
+				
+		// TEST VALID REQUEST
+		GetOrchestrationResponse testResponse = new GetOrchestrationResponse();
+		
+		Request request = ORCHESTRATION_LIST.getRequestList().get(1).getRequest();
+		testResponse.setRequest(request);
+		String testRequestId = request.getRequestId();
 
-			///// mock mapInfraActiveRequestToRequest()
-			Request request = new Request();
-			request.setRequestId(infraRequests.getRequestId());
-			request.setRequestScope(infraRequests.getRequestScope());
-			request.setRequestType(infraRequests.getRequestAction());
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
+		
+		UriComponentsBuilder builder = UriComponentsBuilder
+				.fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId));
 
-			InstanceReferences ir = new InstanceReferences();
-			if (infraRequests.getNetworkId() != null)
-				ir.setNetworkInstanceId(infraRequests.getNetworkId());
-			if (infraRequests.getNetworkName() != null)
-				ir.setNetworkInstanceName(infraRequests.getNetworkName());
-			if (infraRequests.getServiceInstanceId() != null)
-				ir.setServiceInstanceId(infraRequests.getServiceInstanceId());
-			if (infraRequests.getServiceInstanceName() != null)
-				ir.setServiceInstanceName(infraRequests.getServiceInstanceName());
-			if (infraRequests.getVfModuleId() != null)
-				ir.setVfModuleInstanceId(infraRequests.getVfModuleId());
-			if (infraRequests.getVfModuleName() != null)
-				ir.setVfModuleInstanceName(infraRequests.getVfModuleName());
-			if (infraRequests.getVnfId() != null)
-				ir.setVnfInstanceId(infraRequests.getVnfId());
-			if (infraRequests.getVnfName() != null)
-				ir.setVnfInstanceName(infraRequests.getVnfName());
-			if (infraRequests.getVolumeGroupId() != null)
-				ir.setVolumeGroupInstanceId(infraRequests.getVolumeGroupId());
-			if (infraRequests.getVolumeGroupName() != null)
-				ir.setVolumeGroupInstanceName(infraRequests.getVolumeGroupName());
-			if (infraRequests.getRequestorId() != null)
-				ir.setRequestorId(infraRequests.getRequestorId());
+		ResponseEntity<GetOrchestrationResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
+				entity, GetOrchestrationResponse.class);
 
-			request.setInstanceReferences(ir);
-			RequestStatus status = new RequestStatus();
-
-			if (infraRequests.getRequestStatus() != null) {
-				status.setRequestState(infraRequests.getRequestStatus());
-			}
-
-			request.setRequestStatus(status);
-		//	RequestStatus reqStatus = request.getRequestStatus();	
-			orRes.setRequest(request);	
-//			Mockito.when(orReq.getOrchestrationRequest(Mockito.anyString(), Mockito.anyString())).thenReturn(RESPONSE);
-			Response resp = orReq.getOrchestrationRequest("rq1234d1-5a33-55df-13ab-12abad84e333", "v3");
-			
-			assertEquals(db.getRequestFromInfraActive("rq1234d1-5a33-55df-13ab-12abad84e333").getRequestId(),
-					"rq1234d1-5a33-55df-13ab-12abad84e333");
-			assertEquals(db.getRequestFromInfraActive("rq1234d1-5a33-55df-13ab-12abad84e333").getSource(), "VID");
-			assertEquals(db.getRequestFromInfraActive("rq1234d1-5a33-55df-13ab-12abad84e333").getTenantId(),
-					"19123c2924c648eb8e42a3c1f14b7682");
-			assertEquals(db.getRequestFromInfraActive("rq1234d1-5a33-55df-13ab-12abad84e333").getServiceInstanceId(),
-					"bc305d54-75b4-431b-adb2-eb6b9e546014");
-			assertEquals(db.getRequestFromInfraActive("rq1234d1-5a33-55df-13ab-12abad84e333").getRequestStatus(),
-					"IN_PROGRESS");
-			assertEquals(db.getRequestFromInfraActive("rq1234d1-5a33-55df-13ab-12abad84e333").getRequestorId(),
-					"ab1234");
-			assertEquals(request.getInstanceReferences().getServiceInstanceId(),"bc305d54-75b4-431b-adb2-eb6b9e546014");
-			assertEquals(request.getInstanceReferences().getRequestorId(),"ab1234");
-			assertEquals(orRes.getRequest().getRequestId(), "rq1234d1-5a33-55df-13ab-12abad84e333");
-//			assertEquals(resp.getStatus(), HttpStatus.SC_OK);
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+		assertThat(response.getBody(),
+		sameBeanAs(testResponse).ignoring("request.startTime").ignoring("request.requestStatus.finishTime"));
+        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
+        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+        assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
+        assertEquals("00032ab7-na18-42e5-965d-8ea592502018", response.getHeaders().get("X-TransactionID").get(0));
 	}
 
 	@Test
-	public void testGetOrchestrationRequestNotPresent() {
-		String requestJSON = " {\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"ab1234\"}}}";
-		try {
+	public void testGetOrchestrationRequestRequestDetails() {
+		//Test request with modelInfo request body
+		GetOrchestrationResponse testResponse = new GetOrchestrationResponse();
+		
+		Request request = ORCHESTRATION_LIST.getRequestList().get(0).getRequest();
+		testResponse.setRequest(request);
+		String testRequestId = request.getRequestId();
 
-			InfraActiveRequests infraRequests = new InfraActiveRequests();
-			infraRequests.setRequestId("rq1234d1-5a33-55df-13ab-12abad84e333");
-			infraRequests.setNetworkType("CONTRAIL30_BASIC");
-			infraRequests.setSource("VID");
-			infraRequests.setTenantId("19123c2924c648eb8e42a3c1f14b7682");
-			infraRequests.setServiceInstanceId("ea4d5374-d28d-4bbf-9691-22985f088b12");
-			infraRequests.setRequestStatus(Status.IN_PROGRESS.name());
-			infraRequests.setStartTime(Timestamp.valueOf(LocalDateTime.now()));
-			final List<InfraActiveRequests> infraActiveRequests = Collections.singletonList(infraRequests);
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
+		
+		UriComponentsBuilder builder = UriComponentsBuilder
+				.fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId));
 
-			// create InfraActiveRequests object
-			final MockUp<RequestsDatabase> mockUpRDB = new MockUp<RequestsDatabase>() {
-				@mockit.Mock
-				public InfraActiveRequests getRequestFromInfraActive(String requestId) {
-					return infraRequests;
-				}
+		ResponseEntity<GetOrchestrationResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
+				entity, GetOrchestrationResponse.class);
 
-				@mockit.Mock
-				public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(Map<String, List<String>> orchestrationMap) {
-					return infraActiveRequests;
-				}
-
-				@mockit.Mock
-				public int updateInfraStatus(String requestId, String requestStatus, String lastModifiedBy) {
-					return 1;
-				}
-			};
-
-			Response response = null;
-			try {
-				OrchestrationRequests requests = new OrchestrationRequests();
-				final ResteasyUriInfo ui = new ResteasyUriInfo(new URI("", "", "", "filter=service-instance-id:EQUALS:abc", ""));
-				response = requests.getOrchestrationRequest(ui,"v5");
-			} finally {
-				mockUpRDB.tearDown();
-			}
-			assertEquals(HttpStatus.SC_OK, response.getStatus());
-			assertNotNull(response.getEntity());
-
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+		assertThat(response.getBody(),
+		sameBeanAs(testResponse).ignoring("request.startTime").ignoring("request.requestStatus.finishTime"));
+        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
+        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+        assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
+        assertEquals("00032ab7-3fb3-42e5-965d-8ea592502017", response.getHeaders().get("X-TransactionID").get(0));
 	}
 
+	@Test
+    public void testGetOrchestrationRequestNoRequestID() {
+
+        HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v6/"));
+
+        ResponseEntity<GetOrchestrationListResponse> response = restTemplate.exchange(builder.toUriString(),
+                HttpMethod.GET, entity, GetOrchestrationListResponse.class);        
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+    }
+
+	@Test
+    public void testGetOrchestrationRequestFilter() {
+		List<String> values = new ArrayList<>();
+		values.add("EQUALS");
+		values.add("vfModule");
+		
+		Map<String, List<String>> orchestrationMap = new HashMap<>();
+		orchestrationMap.put("modelType", values);
+		
+		List<InfraActiveRequests> requests = iar.getOrchestrationFiltersFromInfraActive(orchestrationMap);
+        HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v6?filter=modelType:EQUALS:vfModule"));
+
+        ResponseEntity<GetOrchestrationListResponse> response = restTemplate.exchange(builder.toUriString(),
+                HttpMethod.GET, entity, GetOrchestrationListResponse.class);        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertEquals(requests.size(), response.getBody().getRequestList().size());
+    }
+	
 	@Test
 	public void testUnlockOrchestrationRequest()
 			throws JsonParseException, JsonMappingException, IOException, ValidationException {
+
 		ObjectMapper mapper = new ObjectMapper();
-		String requestJSON = " {\"requestDetails\": {\"requestInfo\": { \"source\": \"VID\", \"requestorId\": \"ab1234\"}}}";
-		//String requestJSON = "{\"requestDetails\":{\"requestInfo\":{\"instanceName\":\"Vfmodule_vLB-0514-1\",\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"demo\"},\"modelInfo\":{\"modelType\":\"vfModule\",\"modelInvariantId\":\"80d62376-2d6d-4618-b666-bf00d0e58296\",\"modelVersionId\":\"578b52e5-4572-444d-8de7-2c140ec2e6e5\",\"modelName\":\"Vloadbalancer..base_vlb..module-0\",\"modelVersion\":\"1\",\"modelCustomizationId\":\"bf87db73-2854-4cd1-adfd-8cd08e12befe\",\"modelCustomizationName\":\"Vloadbalancer..base_vlb..module-0\"},\"requestParameters\":{\"usePreload\":true},\"cloudConfiguration\":{\"lcpCloudRegionId\":\"RegionOne\",\"tenantId\":\"ebb0ea7144004bacac1e39ff23105fa7\"},\"relatedInstanceList\":[{\"relatedInstance\":{\"instanceId\":\"60e28eb9-2808-4a5a-830f-ec982f01dcfe\",\"modelInfo\":{\"modelType\":\"service\",\"modelName\":\"vLoadBalancer\",\"modelInvariantId\":\"3f95e3ed-394d-4301-8c9b-c5f39ff89cfd\",\"modelVersion\":\"1.0\",\"modelVersionId\":\"da1b5347-7bcb-4cc4-8c29-d18dafdb1a47\"}}},{\"relatedInstance\":{\"instanceId\":\"338811a1-f7cd-4093-9903-d0f69b7cb176\",\"modelInfo\":{\"modelType\":\"vnf\",\"modelName\":\"vLoadBalancer\",\"modelInvariantId\":\"040740de-1ce8-4737-ad39-970684b0e3e8\",\"modelVersion\":\"1.0\",\"modelVersionId\":\"5fd1ce25-c414-4baf-903b-5042a60cfb02\",\"modelCustomizationId\":\"5801ace5-7cc7-4011-b677-165a0e8a2a27\",\"modelCustomizationName\":\"vLoadBalancer 0\"}}}]}}";
+		String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
+
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
+
+		UriComponentsBuilder builder;
+		ResponseEntity<String> response;
+		RequestError expectedRequestError;
+		RequestError actualRequestError;
+		ServiceException se;
+
+		// Test invalid JSON		
+		expectedRequestError = new RequestError();
+		se = new ServiceException();
+		se.setMessageId(ErrorNumbers.SVC_BAD_PARAMETER);
+		se.setText(null);
+		expectedRequestError.setServiceException(se);
+
+		builder = UriComponentsBuilder.fromHttpUrl(
+				createURLWithPort("/onap/so/infra/orchestrationRequests/v6/" + INVALID_REQUEST_ID + "/unlock"));
+
+		response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, new HttpEntity<String>(null, headers), String.class);
+		actualRequestError = mapper.readValue(response.getBody(), RequestError.class);
+
+		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+		assertThat(actualRequestError, sameBeanAs(expectedRequestError).ignoring("serviceException.text"));
+	}
+	
+	@Test
+	public void testUnlockOrchestrationRequest_invalid_Json()
+			throws JsonParseException, JsonMappingException, IOException, ValidationException {
 		
-		MsoRequest msoRequest = new MsoRequest("rq1234d1-5a33-55df-13ab-12abad84e333");
-		ServiceInstancesRequest sir = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
-		msoRequest.parseOrchestration(sir);
+		ObjectMapper mapper = new ObjectMapper();
+		String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
 
-		//create object instead of a DB call.
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
 
+		UriComponentsBuilder builder;
+		ResponseEntity<String> response;
+		RequestError expectedRequestError;
+		RequestError actualRequestError;
+		ServiceException se;
+		
+		// Test invalid requestId
+		expectedRequestError = new RequestError();
+		se = new ServiceException();
+		se.setMessageId(ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
+		se.setText("Null response from RequestDB when searching by RequestId");
+		expectedRequestError.setServiceException(se);
 
-		final MockUp<RequestsDatabase> mockUp = new MockUp<RequestsDatabase>() {
-			@mockit.Mock
-			public InfraActiveRequests getRequestFromInfraActive(String requestId) {
-				InfraActiveRequests infraRequests = new InfraActiveRequests();
-				infraRequests.setRequestId("rq1234d1-5a33-55df-13ab-12abad84e333");
-				infraRequests.setNetworkType("CONTRAIL30_BASIC");
-				infraRequests.setSource("VID");
-				infraRequests.setTenantId("19123c2924c648eb8e42a3c1f14b7682");
-				infraRequests.setServiceInstanceId("ea4d5374-d28d-4bbf-9691-22985f088b12");
-				infraRequests.setRequestStatus(Status.IN_PROGRESS.name());
-				infraRequests.setStartTime(Timestamp.valueOf(LocalDateTime.now()));
-				infraRequests.setRequestBody(requestJSON);
-				return infraRequests;
-			}
+		builder = UriComponentsBuilder.fromHttpUrl(
+				createURLWithPort("/onap/so/infra/orchestrationRequests/v6/" + INVALID_REQUEST_ID + "/unlock"));
 
-			@mockit.Mock
-			public int updateInfraStatus(String requestId, String requestStatus, String lastModifiedBy) {
-				return 1;
-			}
-		};
+		response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
+		actualRequestError = mapper.readValue(response.getBody(), RequestError.class);
 
-		final Response response;
-		try {
-			OrchestrationRequests requests = new OrchestrationRequests();
-			response = requests.unlockOrchestrationRequest(requestJSON, "rq1234d1-5a33-55df-13ab-12abad84e333", "v5");
-		} finally {
-			mockUp.tearDown();
-		}
-
-		assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatus());
-		assertEquals("", response.getEntity().toString());
+		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
+		assertThat(actualRequestError, sameBeanAs(expectedRequestError));
 	}
 
+	@Test
+	public void testUnlockOrchestrationRequest_Valid_Status()
+			throws JsonParseException, JsonMappingException, IOException, ValidationException {
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
+
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
+
+		UriComponentsBuilder builder;
+		ResponseEntity<String> response;
+		Request request;
+
+		// Test valid status
+		request = ORCHESTRATION_LIST.getRequestList().get(1).getRequest();
+		builder = UriComponentsBuilder.fromHttpUrl(
+				createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + "5ffbabd6-b793-4377-a1ab-082670fbc7ac" + "/unlock"));
+
+		response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
+
+		String status = iar.findOneByRequestId("5ffbabd6-b793-4377-a1ab-082670fbc7ac").getRequestStatus();
+	
+		assertEquals("UNLOCKED", status);
+		assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatusCode().value());
+		assertEquals(response.getBody(), null);
+	}
+	
+	@Test
+	public void testUnlockOrchestrationRequest_invalid_Status()
+			throws JsonParseException, JsonMappingException, IOException, ValidationException {
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
+
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
+
+		UriComponentsBuilder builder;
+		ResponseEntity<String> response;
+		Request request;
+		RequestError expectedRequestError;
+		RequestError actualRequestError;
+		ServiceException se;
+		// Update UNLOCKED Request
+		request = ORCHESTRATION_LIST.getRequestList().get(1).getRequest();
+		request.getRequestStatus().setRequestState(Status.UNLOCKED.toString());
+		request.getRequestStatus().setStatusMessage(null);
+		request.getRequestStatus().setPercentProgress(null);
+		request.setRequestDetails(null);
+		request.setRequestScope(null);
+		request.setRequestType(null);
+
+		// Test invalid status
+		request = ORCHESTRATION_LIST.getRequestList().get(0).getRequest();
+		expectedRequestError = new RequestError();
+		se = new ServiceException();
+		se.setMessageId(ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
+		se.setText("Orchestration RequestId " + request.getRequestId() + " has a status of "
+				+ request.getRequestStatus().getRequestState() + " and can not be unlocked");
+		expectedRequestError.setServiceException(se);
+
+		builder = UriComponentsBuilder.fromHttpUrl(
+				createURLWithPort("/onap/so/infra/orchestrationRequests/v6/" + request.getRequestId() + "/unlock"));
+
+		response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
+		actualRequestError = mapper.readValue(response.getBody(), RequestError.class);
+
+		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+		assertThat(actualRequestError, sameBeanAs(expectedRequestError));
+	}
+	
+	@Test
+	public void testGetOrchestrationRequestRequestDetailsWhiteSpace() {
+		InfraActiveRequests requests = new InfraActiveRequests();
+		requests.setAction("create");
+		requests.setRequestBody("  ");
+		requests.setRequestId("requestId");
+		requests.setRequestScope("service");
+		requests.setRequestType("createInstance");
+		iar.save(requests);
+
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
+		
+		UriComponentsBuilder builder = UriComponentsBuilder
+				.fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/requestId"));
+
+		ResponseEntity<GetOrchestrationResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
+				entity, GetOrchestrationResponse.class);
+
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
+        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+        assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
+        assertEquals("requestId", response.getHeaders().get("X-TransactionID").get(0));
+	}
+	
+	@Test
+	public void testGetOrchestrationRequestRequestDetailsAlaCarte() throws IOException {
+		InfraActiveRequests requests = new InfraActiveRequests();
+		
+		String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/AlaCarteRequest.json")));
+		
+		requests.setAction("create");
+		requests.setRequestBody(requestJSON);
+		requests.setRequestId("requestId");
+		requests.setRequestScope("service");
+		requests.setRequestType("createInstance");
+		iar.save(requests);
+
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
+		
+		UriComponentsBuilder builder = UriComponentsBuilder
+				.fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/requestId"));
+
+		ResponseEntity<GetOrchestrationResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
+				entity, GetOrchestrationResponse.class);
+
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
+        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+        assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
+        assertEquals("requestId", response.getHeaders().get("X-TransactionID").get(0));
+	}
 }

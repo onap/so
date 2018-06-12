@@ -1,0 +1,65 @@
+{	"serviceInstanceId":"f7ce78bb-423b-11e7-93f8-0050569a7968",
+	"vnfInstanceId":"1882938",
+	"networkInstanceId":"1882937",
+	"volumeGroupInstanceId":"1882935",
+	"vfModuleInstanceId":"1882934",
+	"configurationId": "f7ce78bb-423b-11e7-93f8-0050569a7970",
+	"requestDetails": {
+		"requestInfo": { 
+			"source": "VID", 
+			"requestorId": "xxxxxx",
+			"instanceName": "testService5",
+			"productFamilyId": "test"
+		},
+		"requestParameters": {
+			"autoBuildVfModules": false,
+			"subscriptionServiceType": "test"
+		},
+		"modelInfo":{
+			"modelInvariantId": "f7ce78bb-423b-11e7-93f8-0050569a7965",
+			"modelVersion": "1",
+			"modelVersionId":"1", 
+			"modelType":"service",
+			"modelName":"serviceModel"
+		},
+		"subscriberInfo": {
+      		"globalSubscriberId": "MSO_1610_dev", 
+      		"subscriberName": "MSO_1610_dev"
+    	},
+    	"relatedInstanceList": [
+         {
+            "relatedInstance": {
+               "instanceName": "cisco", 
+               "modelInfo": {
+                  "modelType": "pnf"
+               }
+            }
+         },
+         {
+            "relatedInstance": {
+               "instanceName": "APCON",
+               "modelInfo": {
+                  "modelType": "pnf"
+               }
+            }
+         },
+         {
+            "relatedInstance": {
+               "instanceName": "G10",
+               "modelInfo": {
+                  "modelType": "pnf"
+               }
+            }
+         },
+ 		{
+            "relatedInstance": {
+               "instanceName": "G10",
+               "modelInfo": {
+                  "modelType": "pnf"
+               }
+            }
+         }
+      ]   
+	}
+}
+	

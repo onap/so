@@ -23,12 +23,19 @@ package org.openecomp.mso.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.openecomp.mso.bpmn.core.WorkflowException
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
 import org.openecomp.mso.rest.APIResponse
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
 import org.springframework.web.util.UriUtils
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 public class PrepareUpdateAAIVfModule extends VfModuleBase {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, PrepareUpdateAAIVfModule.class);
+
 	
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	private MsoUtils utils = new MsoUtils()
@@ -62,13 +69,12 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		try {
 			def xml = execution.getVariable('PrepareUpdateAAIVfModuleRequest')
-			logDebug('Received request xml:\n' + xml, isDebugLogEnabled)
-			utils.logAudit("PrepareUpdateAAIVfModule Request  : " + xml)
+			msoLogger.debug('Received request xml:\n' + xml)
+			msoLogger.debug("PrepareUpdateAAIVfModule Request  : " + xml)
 			
 			initProcessVariables(execution)
 			
@@ -81,11 +87,11 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			def orchestrationStatus = getRequiredNodeText(execution, xml,'orchestration-status')
 			execution.setVariable('PUAAIVfMod_orchestrationStatus', orchestrationStatus)
 
-			logDebug('Exited ' + method, isDebugLogEnabled)
+			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
@@ -100,20 +106,19 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.getGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('PUAAIVfMod_vnfId')
 			
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			logDebug('AAI URI is: ' + aai_uri, isDebugLogEnabled)
+			msoLogger.debug('AAI URI is: ' + aai_uri)
 			
-			String endPoint = execution.getVariable("URN_aai_endpoint") + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
+			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
 				
-			utils.logAudit("PrepareUpdateAAIVfModule: AAI endPoint  : " + endPoint)
-			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
+			msoLogger.debug("PrepareUpdateAAIVfModule: AAI endPoint  : " + endPoint)
+			String basicAuthCred = utils.getBasicAuth(UrnPropertiesReader.getVariable("aai.auth", execution),UrnPropertiesReader.getVariable("mso.msoKey", execution))
 			try {
 				RESTConfig config = new RESTConfig(endPoint);
 				def responseData = ''
@@ -126,30 +131,30 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 				if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 					client.addAuthorizationHeader(basicAuthCred)
 				}
-				logDebug('sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
+				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
 				APIResponse response = client.httpGet()
-				utils.logAudit("PrepareUpdateAAIVfModule: - invoking httpGet to AAI")
+				msoLogger.debug("PrepareUpdateAAIVfModule: - invoking httpGet to AAI")
 				
 				responseData = response.getResponseBodyAsString()
 				execution.setVariable('PUAAIVfMod_getVnfResponseCode', response.getStatusCode())
 				execution.setVariable('PUAAIVfMod_getVnfResponse', responseData)
 				
-				utils.logAudit("PrepareUpdateAAIVfModule: AAI Response : " + responseData)
-				utils.logAudit("PrepareUpdateAAIVfModule: AAI ResponseCode : " + response.getStatusCode())
+				msoLogger.debug("PrepareUpdateAAIVfModule: AAI Response : " + responseData)
+				msoLogger.debug("PrepareUpdateAAIVfModule: AAI ResponseCode : " + response.getStatusCode())
 				
-				logDebug('Response code:' + response.getStatusCode(), isDebugLogEnabled)
-				logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
+				msoLogger.debug('Response code:' + response.getStatusCode())
+				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
 			} catch (Exception ex) {
-				ex.printStackTrace()
-				logDebug('Exception occurred while executing AAI GET:' + ex.getMessage(), isDebugLogEnabled)
+				msoLogger.error(ex);
+				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				execution.setVariable('PUAAIVfMod_getVnfResponseCode', 500)
 				execution.setVariable('PUAAIVfMod_getVnfResponse', 'AAI GET Failed:' + ex.getMessage())
 			}
-			logDebug('Exited ' + method, isDebugLogEnabled)
+			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getGenericVnf(): ' + e.getMessage())
 		}
 	}
@@ -166,8 +171,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.validateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 		
 		try {
 			def genericVnf = execution.getVariable('PUAAIVfMod_getVnfResponse')
@@ -182,11 +186,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 				execution.setVariable('PUAAIVfMod_vfModuleOK', false)
 			} else {
 				def orchestrationStatus = execution.getVariable('PUAAIVfMod_orchestrationStatus')
-				if (isDebugLogEnabled) {
-					logDebug('VF Module \'' + vfModuleId + '\': isBaseVfModule=' + vfModule.isBaseVfModule() +
-						', isOnlyVfModule=' + vfModule.isOnlyVfModule() + ', new orchestration-status=' + orchestrationStatus,
-						isDebugLogEnabled)
-				}
+				msoLogger.debug('VF Module \'' + vfModuleId + '\': isBaseVfModule=' + vfModule.isBaseVfModule() +', isOnlyVfModule=' + vfModule.isOnlyVfModule() + ', new orchestration-status=' + orchestrationStatus)
 				if (vfModule.isBaseVfModule() && !vfModule.isOnlyVfModule() && orchestrationStatus.equals('pending-delete')) {
 					def String msg = 'Orchestration status for VF Module \'' + vfModuleId +
 						'\' cannot be set to \'pending-delete\' since it is the base VF Module and it\'s not the only VF Module in Generic VNF \'' + vnfId + '\''
@@ -198,11 +198,11 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 				}
 			}
 			
-			logDebug('Exited ' + method, isDebugLogEnabled)
+			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in validateVfModule(): ' + e.getMessage())
 		}
 	}
@@ -216,8 +216,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.updateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 		
 		try {
 			// Construct payload
@@ -244,15 +243,15 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 					"orchestration-status": "${orchestrationStatus}"
 				}"""
 			
-			utils.logAudit("VfModule payload : " + payload)
+			msoLogger.debug("VfModule payload : " + payload)
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			logDebug('AAI URI is: ' + aai_uri, isDebugLogEnabled)
+			msoLogger.debug('AAI URI is: ' + aai_uri)
 			
-			String endPoint = execution.getVariable("URN_aai_endpoint") + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + "/vf-modules/vf-module/" + UriUtils.encode(vfModuleId, "UTF-8")
-			utils.logAudit("PrepareUpdateAAIVfModule: AAI endPoint  : " + endPoint)
-			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_aai_auth"),execution.getVariable("URN_mso_msoKey"))
+			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + "/vf-modules/vf-module/" + UriUtils.encode(vfModuleId, "UTF-8")
+			msoLogger.debug("PrepareUpdateAAIVfModule: AAI endPoint  : " + endPoint)
+			String basicAuthCred = utils.getBasicAuth(UrnPropertiesReader.getVariable("aai.auth", execution),UrnPropertiesReader.getVariable("mso.msoKey", execution))
 			try {
 				RESTConfig config = new RESTConfig(endPoint);
 				def responseData = ''
@@ -265,41 +264,40 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 				if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 					client.addAuthorizationHeader(basicAuthCred)
 				}
-				logDebug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload, isDebugLogEnabled)
+				msoLogger.debug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload)
 				APIResponse response = client.httpPatch(payload)
-				utils.logAudit("PrepareUpdateAAIVfModule: - invoking httpPatch to AAI")
-				utils.logAudit("PrepareUpdateAAIVfModule: - invoking httpPatch to AAI")
+				msoLogger.debug("PrepareUpdateAAIVfModule: - invoking httpPatch to AAI")
 
 				responseData = response.getResponseBodyAsString()
 				execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', response.getStatusCode())
 				execution.setVariable('PUAAIVfMod_updateVfModuleResponse', responseData)
-				logDebug('Response code:' + response.getStatusCode(), isDebugLogEnabled)
-				logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
-				utils.logAudit("PrepareUpdateAAIVfModule: AAI Response : " + responseData)
-				utils.logAudit("PrepareUpdateAAIVfModule: AAI ResponseCode : " + response.getStatusCode())
+				msoLogger.debug('Response code:' + response.getStatusCode())
+				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
+				msoLogger.debug("PrepareUpdateAAIVfModule: AAI Response : " + responseData)
+				msoLogger.debug("PrepareUpdateAAIVfModule: AAI ResponseCode : " + response.getStatusCode())
 				
 				// Set the output for this flow.  The updated VfModule is an output, the generic VNF name, and for
 				// backward compatibilty, the heat-stack-id is an output
 				execution.setVariable('PUAAIVfMod_outVfModule', newVfModule)
 				def vnfName = execution.getVariable('PUAAIVfMod_vnfName')
-				logDebug('Output PUAAIVfMod_vnfName set to ' + vnfName, isDebugLogEnabled)
+				msoLogger.debug('Output PUAAIVfMod_vnfName set to ' + vnfName)
 				// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead
 				execution.setVariable('WorkflowResponse', newVfModule)
-				logDebug('Output PUAAIVfMod_outVfModule set for VF Module Id \'' + newVfModule.getElementText('vf-module-id') + '\'', isDebugLogEnabled)
+				msoLogger.debug('Output PUAAIVfMod_outVfModule set for VF Module Id \'' + newVfModule.getElementText('vf-module-id') + '\'')
 				def heatStackId = newVfModule.getElementText('heat-stack-id')
 				execution.setVariable('PUAAIVfMod_heatStackId', heatStackId)
-				logDebug('Output PUAAIVfMod_heatStackId set to \'' + heatStackId + '\'', isDebugLogEnabled)
+				msoLogger.debug('Output PUAAIVfMod_heatStackId set to \'' + heatStackId + '\'')
 			} catch (Exception ex) {
 				ex.printStackTrace()
-				logDebug('Exception occurred while executing AAI PUT:' + ex.getMessage(), isDebugLogEnabled)
+				msoLogger.debug('Exception occurred while executing AAI PUT:' + ex.getMessage())
 				execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', 500)
 				execution.setVariable('PUAAIVfMod_updateVfModuleResponse', 'AAI PATCH Failed:' + ex.getMessage())
 			}
-			logDebug('Exited ' + method, isDebugLogEnabled)
+			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
 		}				
 	}
@@ -313,18 +311,15 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.handleVnfNotFound(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
-		logError('Error occurred attempting to query AAI, Response Code ' +
-			execution.getVariable('PUAAIVfMod_getVnfResponseCode') + ', Error Response ' +
-			execution.getVariable('PUAAIVfMod_getVnfResponse'))
+		msoLogger.error('Error occurred attempting to query AAI, Response Code ' + execution.getVariable('PUAAIVfMod_getVnfResponseCode'));
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('PUAAIVfMod_getVnfResponse'))
 		execution.setVariable('WorkflowException', exception)
 		
-		logDebug('Exited ' + method, isDebugLogEnabled)
+		msoLogger.trace('Exited ' + method)
 	}
 	
 	/**
@@ -336,18 +331,17 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.handleVfModuleValidationError(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 				
 		def String errorMsg = 'VF Module validation error: ' + execution.getVariable('PUAAIVfMod_vfModuleValidationError')
-		logError(errorMsg)
-		utils.logAudit("PrepareUpdateAAIVfModule: Error Message : " + errorMsg)
+		msoLogger.error(errorMsg);
+		msoLogger.debug("PrepareUpdateAAIVfModule: Error Message : " + errorMsg)
 		
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000, errorMsg)
 		execution.setVariable('WorkflowException', exception)
 
-		logDebug('Exited ' + method, isDebugLogEnabled)
+		msoLogger.trace('Exited ' + method)
 	}
 	
 	/**
@@ -359,17 +353,14 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.handleUpdateVfModuleFailure(' +
 			'execution=' + execution.getId() +
 			')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
-		logError('Error occurred attempting to update VF Module in AAI, Response Code ' +
-			execution.getVariable('PUAAIVfMod_updateVfModuleResponseCode') + ', Error Response ' +
-			execution.getVariable('PUAAIVfMod_updateVfModuleResponse'))
+		msoLogger.error('Error occurred attempting to update VF Module in AAI, Response Code ' + execution.getVariable('PUAAIVfMod_updateVfModuleResponseCode'));
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('PUAAIVfMod_updateVfModuleResponse'))
 		execution.setVariable('WorkflowException', exception)
 		
-		logDebug('Exited ' + method, isDebugLogEnabled)
+		msoLogger.trace('Exited ' + method)
 	}
 }

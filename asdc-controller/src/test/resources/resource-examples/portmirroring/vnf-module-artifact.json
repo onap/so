@@ -1,0 +1,45 @@
+[
+  {
+    "vfModuleModelName": "VF_RI2_G6_withArtifacts::module-0",
+    "vfModuleModelInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f131",
+    "vfModuleModelVersion": "1.0",
+    "vfModuleModelUUID": "ac53bd31-b2b1-42ce-826a-a9420712cbff.VF_RI2_G6_withArtifacts::module-0.group",
+    "vfModuleModelCustomizationUUID": "customization-uuid",
+    "isBase": true,
+    "properties": {
+        "vf_module_type": "Base",
+        "vf_module_label": "label1",
+        "min_vf_module_instances": "1",
+        "max_vf_module_instances": "2",
+        "initial_count": "3",
+        "vf_module_description": "description"
+    },
+    "artifacts": [
+      "Heat-Artifact-UUID1",
+      "Heat-Artifact-Artifact-UUID1",
+      "EnvArtifact-UUID1",
+      "NestedArtifact-UUID3"
+    ]
+  }, 
+  {
+    "vfModuleModelName": "VF_RI2_G6_withArtifacts::module-1",
+    "vfModuleModelInvariantUUID": "585822c7-4027-4f84-ba50-e9248606f132",
+    "vfModuleModelVersion": "1.0",
+    "vfModuleModelUUID": "ac53bd31-b2b1-42ce-826a-a9420712cbff.VF_RI2_G6_withArtifacts::module-1.group",
+    "vfModuleModelCustomizationUUID": "customization-uuid2",
+    "isBase": true,
+    "properties": {
+        "vf_module_type": "Base",
+        "vf_module_label": "label1",
+        "min_vf_module_instances": "1",
+        "max_vf_module_instances": "2",
+        "initial_count": "3",
+        "vf_module_description": "description"
+    },
+    "artifacts": [
+      "Heat-Artifact-UUID2",
+      "Heat-Artifact-Artifact-UUID2",
+      "EnvArtifact-UUID2"
+    ]
+  }
+]

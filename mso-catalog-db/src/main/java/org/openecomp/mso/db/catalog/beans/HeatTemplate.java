@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,76 +21,171 @@
 package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-public class HeatTemplate extends MavenLikeVersioning implements Serializable {
-	
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.openpojo.business.annotation.BusinessKey;
+
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
+
+@Entity
+@Table(name = "heat_template")
+public class HeatTemplate implements Serializable {
+
 	private static final long serialVersionUID = 768026109321305392L;
 
-    private String artifactUuid = null;
-    private String templateName = null;
-    private String templateBody = null;
-    private int timeoutMinutes;
-    private Set <HeatTemplateParam> parameters;
-    private Set <HeatNestedTemplate> files;
-    private String description = null;
-    private String asdcUuid = null;
-    private String artifactChecksum = null;
+	@BusinessKey
+	@Id
+	@Column(name = "ARTIFACT_UUID", length = 200)
+	private String artifactUuid;
 
-    private Timestamp created = null;
+	@Column(name = "NAME", length = 200)
+	private String templateName;
 
-    public enum TemplateStatus {
-                                PARENT, CHILD, PARENT_COMPLETE
-    }
+	@Lob
+	@Column(name = "BODY", columnDefinition = "LONGTEXT")
+	private String templateBody = null;
 
-    public HeatTemplate () {
-    }
+	@Column(name = "TIMEOUT_MINUTES", length = 20)
+	private Integer timeoutMinutes;
 
-    public String getArtifactUuid() {
-        return this.artifactUuid;
-    }
+	@BusinessKey
+	@Column(name = "VERSION")
+	private String version;
 
-    public void setArtifactUuid (String artifactUuid) {
-        this.artifactUuid = artifactUuid;
-    }
+	@Column(name = "DESCRIPTION", length = 1200)
+	private String description;
 
-    public String getTemplateName () {
-        return templateName;
-    }
+	@Column(name = "ARTIFACT_CHECKSUM", length = 200)
+	private String artifactChecksum;
 
-    public void setTemplateName (String templateName) {
-        this.templateName = templateName;
-    }
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
 
-    public String getTemplateBody () {
-        return templateBody;
-    }
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "heatTemplateArtifactUuid")
+	private Set<HeatTemplateParam> parameters;
 
-    public void setTemplateBody (String templateBody) {
-        this.templateBody = templateBody;
-    }
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "heat_nested_template", joinColumns = @JoinColumn(name = "PARENT_HEAT_TEMPLATE_UUID"), inverseJoinColumns = @JoinColumn(name = "CHILD_HEAT_TEMPLATE_UUID"))
+	private List<HeatTemplate> childTemplates;
 
-    public int getTimeoutMinutes () {
-        return timeoutMinutes;
-    }
+	public enum TemplateStatus {
+		PARENT, CHILD, PARENT_COMPLETE
+	}
 
-    public void setTimeoutMinutes (int timeout) {
-        this.timeoutMinutes = timeout;
-    }
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
+	}
 
-    public Set <HeatTemplateParam> getParameters () {
-        return parameters;
-    }
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("artifactUuid", artifactUuid).append("templateName", templateName)
+				.append("templateBody", templateBody).append("timeoutMinutes", timeoutMinutes)
+				.append("version", version).append("description", description)
+				.append("artifactChecksum", artifactChecksum).append("created", created)
+				.append("parameters", parameters).append("childTemplates", childTemplates).toString();
+	}
 
-    public void setParameters (Set <HeatTemplateParam> parameters) {
-        this.parameters = parameters;
-    }
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof HeatTemplate)) {
+			return false;
+		}
+		HeatTemplate castOther = (HeatTemplate) other;
+		return new EqualsBuilder().append(artifactUuid, castOther.artifactUuid).append(version, castOther.version)
+				.isEquals();
+	}
 
-    public String getDescription() {
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(artifactUuid).append(version).toHashCode();
+	}
+
+	@LinkedResource
+	public List<HeatTemplate> getChildTemplates() {
+		if (childTemplates == null)
+			childTemplates = new ArrayList<>();
+		return childTemplates;
+	}
+
+	public void setChildTemplates(List<HeatTemplate> childTemplates) {
+		this.childTemplates = childTemplates;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public String getArtifactUuid() {
+		return this.artifactUuid;
+	}
+
+	public void setArtifactUuid(String artifactUuid) {
+		this.artifactUuid = artifactUuid;
+	}
+
+	public String getTemplateName() {
+		return templateName;
+	}
+
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
+	}
+
+	public String getTemplateBody() {
+		return templateBody;
+	}
+
+	public void setTemplateBody(String templateBody) {
+		this.templateBody = templateBody;
+	}
+
+	public Integer getTimeoutMinutes() {
+		return timeoutMinutes;
+	}
+
+	public void setTimeoutMinutes(Integer timeout) {
+		this.timeoutMinutes = timeout;
+	}
+
+	@LinkedResource
+	public Set<HeatTemplateParam> getParameters() {
+		if (parameters == null)
+			parameters = new HashSet<>();
+		return parameters;
+	}
+
+	public void setParameters(Set<HeatTemplateParam> parameters) {
+		this.parameters = parameters;
+	}
+
+	public String getDescription() {
 		return description;
 	}
 
@@ -98,77 +193,19 @@ public class HeatTemplate extends MavenLikeVersioning implements Serializable {
 		this.description = description;
 	}
 
-	public String getHeatTemplate () {
+	public String getHeatTemplate() {
 		return this.templateBody;
-    }
-
-    public void setFiles (Set <HeatNestedTemplate> files) {
-        this.files = files;
-    }
-
-    public Set <HeatNestedTemplate> getFiles () {
-        return this.files;
-    }
-
-	public String getAsdcUuid() {
-		return asdcUuid;
 	}
 
-	public void setAsdcUuid(String asdcUuidp) {
-		this.asdcUuid = asdcUuidp;
+	public String getArtifactChecksum() {
+		return artifactChecksum;
 	}
 
-    public String getArtifactChecksum() {
-        return artifactChecksum;
-    }
+	public void setArtifactChecksum(String artifactChecksum) {
+		this.artifactChecksum = artifactChecksum;
+	}
 
-    public void setArtifactChecksum(String artifactChecksum) {
-        this.artifactChecksum = artifactChecksum;
-    }
-
-    public Timestamp getCreated() {
+	public Date getCreated() {
 		return created;
 	}
-
-	public void setCreated(Timestamp created) {
-		this.created = created;
-	}
-
-	@Override
-    public String toString () {
-        String body = (templateBody != null) ? "(" + templateBody.length () + " chars)" : "(Not defined)";
-        StringBuilder sb = new StringBuilder ();
-        sb.append ("Template=")
-          .append (templateName)
-          .append (",version=")
-          .append (version)
-          .append (",body=")
-          .append (body)
-          .append (",timeout=")
-          .append (timeoutMinutes)
-          .append (",asdcUuid=")
-          .append (asdcUuid)
-          .append (",description=")
-          .append (description);
-        if (created != null) {
-        	sb.append (",created=");
-        	sb.append (DateFormat.getInstance().format(created));
-        }
-
-
-        if (parameters != null && !parameters.isEmpty ()) {
-            sb.append (",params=[");
-            for (HeatTemplateParam param : parameters) {
-                sb.append (param.getParamName ());
-                if (param.isRequired ()) {
-                    sb.append ("(reqd)");
-                }
-                sb.append (",");
-            }
-            sb.replace (sb.length () - 1, sb.length (), "]");
-        }
-        return sb.toString ();
-    }
-
-
 }

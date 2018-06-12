@@ -55,12 +55,6 @@ public class QueryServiceCsarTest {
         assertThat(JsonPathUtil.getInstance().locateResult(jsonResult, "$.description")).contains(TOSCA_DESCRIPTION);
     }
 
-    @Test
-    public void toString_properContent() {
-        assertThat(testedObject.toString()).contains(
-                "TOSCACSAR: artifactUUID=artUuidTest,name=toscaNameTest,version=v12,description=toscaDescr,artifactChecksum=tosArtCheck,url=tosUrl");
-    }
-
     private ToscaCsar createToscaCsar() {
         ToscaCsar toscaCsar = new ToscaCsar();
         toscaCsar.setArtifactUUID(TOSCA_ARTIFACT_UUID);

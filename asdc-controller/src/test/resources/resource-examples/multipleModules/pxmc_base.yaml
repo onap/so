@@ -1,0 +1,45 @@
+heat_template_version: 2015-04-30
+
+parameters:
+
+## GLOBAL//Basic Parameters
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+
+resources:
+
+## MSP RSG//Resource:SecurityGroup
+  sec_grp_msp_0:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Security Group for PXMC
+      name:
+        str_replace:
+          template: VF_NAME_sec_grp_msp
+          params:
+            VF_NAME: { get_param: vnf_name }
+      rules:
+        - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "tcp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "udp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "132", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "icmp", "ethertype": "IPv4"}
+        - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "tcp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "udp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "132", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "58", "ethertype": "IPv6"}
+        - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "tcp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "udp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "132", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "icmp", "ethertype": "IPv4"}
+        - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "tcp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "udp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "132", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "58", "ethertype": "IPv6"}
+
+outputs:
+
+  sec_grp_msp_id:
+    description:  uuid of the security group
+    value: {get_resource: sec_grp_msp_0 }

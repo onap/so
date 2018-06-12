@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,10 +23,11 @@ package org.openecomp.mso.client.appc;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
-import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader;
 
 import org.onap.appc.client.lcm.api.AppcClientServiceFactoryProvider;
 import org.onap.appc.client.lcm.api.AppcLifeCycleManagerServiceFactory;
@@ -42,16 +43,10 @@ import org.onap.appc.client.lcm.model.Flags.Mode;
 import org.onap.appc.client.lcm.model.Payload;
 import org.onap.appc.client.lcm.model.Status;
 import org.onap.appc.client.lcm.model.ZULU;
-import org.openecomp.mso.bpmn.core.PropertyConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.att.eelf.configuration.EELFLogger;
-import com.att.eelf.configuration.EELFLogger.Level;
-import com.att.eelf.configuration.EELFManager;
 
 public class ApplicationControllerClient {
-	
-	public static final String DEFAULT_CONTROLLER_TYPE = "appc";
+
+	public static final String DEFAULT_CONTROLLER_TYPE = "APPC";
 
 	private static final String CLIENT_NAME = "MSO";
 
@@ -60,8 +55,7 @@ public class ApplicationControllerClient {
 	private static final int FLAGS_TTL = 65000;
 	protected final EELFLogger auditLogger = EELFManager.getInstance().getAuditLogger();
 
-	@Autowired
-	public ApplicationControllerSupport appCSupport;
+	private ApplicationControllerSupport appCSupport;
 
 	// APPC gave us an API where the controllerType is configured in the
 	// client object, which is not what we asked for. We asked for an API
@@ -83,16 +77,16 @@ public class ApplicationControllerClient {
 	
 	/**
 	 * Creates an ApplicationControllerClient for the specified controller type.
-	 * @param controllerType the controller type: "appc" or "sdnc".
+	 * @param controllerType the controller type: "appc" or "sndnc".
 	 */
 	public ApplicationControllerClient(String controllerType) {
 		if (controllerType == null) {
 			controllerType = DEFAULT_CONTROLLER_TYPE;
 		}
-		this.controllerType = controllerType;
 		appCSupport = new ApplicationControllerSupport();
+		this.controllerType = controllerType;
 	}
-	
+
 	/**
 	 * Gets the controller type.
 	 * @return the controllertype
@@ -128,7 +122,8 @@ public class ApplicationControllerClient {
 	public Status runCommand(Action action, org.onap.appc.client.lcm.model.ActionIdentifiers actionIdentifiers,
 			org.onap.appc.client.lcm.model.Payload payload, String requestID)
 			throws ApplicationControllerOrchestratorException {
-		Object requestObject = createRequest(action, actionIdentifiers, payload, requestID);
+		Object requestObject;
+		requestObject = createRequest(action, actionIdentifiers, payload, requestID);
 		appCSupport.logLCMMessage(requestObject);
 		LifeCycleManagerStateful client = getAppCClient();
 		Method lcmMethod = appCSupport.getAPIMethod(action.name(), client, false);
@@ -140,27 +135,19 @@ public class ApplicationControllerClient {
 		}
 	}
 
-	protected Properties getLCMProperties() {
-		return getLCMProperties("appc");
-	}
-	
 	protected Properties getLCMProperties(String controllerType) {
 		Properties properties = new Properties();
-		Map<String, String> globalProperties = PropertyConfiguration.getInstance()
-				.getProperties("mso.bpmn.urn.properties");
-		
-		properties.put("topic.read", globalProperties.get("appc.client.topic.read"));
-		properties.put("topic.write", globalProperties.get("appc.client.topic.write"));
-		properties.put("SDNC-topic.read", globalProperties.get("appc.client.topic.sdnc.read"));
-		properties.put("SDNC-topic.write", globalProperties.get("appc.client.topic.sdnc.write"));
-		properties.put("topic.read.timeout", globalProperties.get("appc.client.topic.read.timeout"));
-		properties.put("client.response.timeout", globalProperties.get("appc.client.response.timeout"));
-		properties.put("poolMembers", globalProperties.get("appc.client.poolMembers"));
+
+		properties.put("topic.read", UrnPropertiesReader.getVariable("appc.client.topic.read.name"));
+		properties.put("topic.write", UrnPropertiesReader.getVariable("appc.client.topic.write"));		
+		properties.put("topic.read.timeout", UrnPropertiesReader.getVariable("appc.client.topic.read.timeout"));
+		properties.put("client.response.timeout", UrnPropertiesReader.getVariable("appc.client.response.timeout"));		
+		properties.put("poolMembers", UrnPropertiesReader.getVariable("appc.client.poolMembers"));
 		properties.put("controllerType", controllerType);
-		properties.put("client.key", globalProperties.get("appc.client.key"));
-		properties.put("client.secret", globalProperties.get("appc.client.secret"));
+		properties.put("client.key", UrnPropertiesReader.getVariable("appc.client.key"));
+		properties.put("client.secret", UrnPropertiesReader.getVariable("appc.client.secret"));
 		properties.put("client.name", CLIENT_NAME);
-		properties.put("service", globalProperties.get("appc.client.service"));
+		properties.put("service", UrnPropertiesReader.getVariable("appc.client.service"));
 		return properties;
 	}
 

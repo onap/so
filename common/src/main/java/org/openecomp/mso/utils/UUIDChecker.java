@@ -21,16 +21,16 @@
 
 package org.openecomp.mso.utils;
 
+import java.util.UUID;
+
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-
-import java.util.UUID;
 
 /**
  */
 public class UUIDChecker {
 	
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL, UUIDChecker.class);
 
     private UUIDChecker() {
 
@@ -49,7 +49,7 @@ public class UUIDChecker {
         }
     }
 
-    private static String getUUID () {
+    public static String getUUID () {
         return UUID.randomUUID().toString();
     }
 

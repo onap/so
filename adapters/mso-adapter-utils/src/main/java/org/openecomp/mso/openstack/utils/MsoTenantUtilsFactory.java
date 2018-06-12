@@ -20,55 +20,41 @@
 
 package org.openecomp.mso.openstack.utils;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.openecomp.mso.cloud.CloudConfig;
-import org.openecomp.mso.cloud.CloudConfigFactory;
-import org.openecomp.mso.cloud.CloudIdentity;
 import org.openecomp.mso.cloud.CloudSite;
+import org.openecomp.mso.cloud.ServerType;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
+@Component
 public class MsoTenantUtilsFactory {
 
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-	private CloudConfigFactory cloudConfigFactory = new CloudConfigFactory();
-	private String msoPropID;
+	private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, MsoTenantUtilsFactory.class);
+	@Autowired
+	private CloudConfig cloudConfig;
+	@Autowired
+	private MsoKeystoneUtils keystoneUtils;
+	@Autowired
+	private MsoOrmUtils ormUtils;
 	
-	public MsoTenantUtilsFactory (String msoPropID) {
-		this.msoPropID = msoPropID;
-	}
-
-	public void setCloudConfigFactory(CloudConfigFactory cloudConfigFactory) {
-		this.cloudConfigFactory = cloudConfigFactory;
-	}
-
-	public CloudConfigFactory getCloudConfigFactory() {
-		return cloudConfigFactory;
-	}
-
-	//based on Cloud IdentityServerType returns ORM or KEYSTONE Utils
+	// based on Cloud IdentityServerType returns ORM or KEYSTONE Utils
 	public MsoTenantUtils getTenantUtils(String cloudSiteId) throws MsoCloudSiteNotFound {
-		// Obtain the cloud site information 
-		CloudConfig cloudConfig = getCloudConfigFactory().getCloudConfig();
 		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
 				() -> new MsoCloudSiteNotFound(cloudSiteId));
-		return getTenantUtilsByServerType(cloudSite.getIdentityService().getIdentityServerType().toString());
+
+		return getTenantUtilsByServerType(cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getIdentityServerType());
 	}
 
-	public MsoTenantUtils getTenantUtilsByServerType(String serverType) {
+	public MsoTenantUtils getTenantUtilsByServerType(ServerType serverType) {
 
 		MsoTenantUtils tenantU = null;
-		if (CloudIdentity.IdentityServerType.KEYSTONE.toString().equals(serverType)) {
-			tenantU = new MsoKeystoneUtils(msoPropID, getCloudConfigFactory());
-		} else {
-			try {
-				tenantU = CloudIdentity.IdentityServerType.valueOf(serverType).getMsoTenantUtilsClass()
-					.getConstructor(String.class, CloudConfigFactory.class).newInstance(msoPropID, getCloudConfigFactory());
-			} catch (InvocationTargetException | InstantiationException | NoSuchMethodException | IllegalAccessException e) {
-				throw new RuntimeException("Could not instantiate an MsoTenantUtils class for " + serverType, e);
-			}
+		if (ServerType.KEYSTONE.equals(serverType)) {
+			tenantU = keystoneUtils;
+		} else if (ServerType.ORM.equals(serverType)) {
+			tenantU = ormUtils;
 		}
 		return tenantU;
 	}

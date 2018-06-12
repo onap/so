@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,39 +20,42 @@
 
 package org.openecomp.mso.apihandlerinfra.tenantisolation.dmaap;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
 import org.openecomp.mso.client.dmaap.DmaapPublisher;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component
+@Scope("prototype")
 public class OperationalEnvironmentPublisher extends DmaapPublisher {
 
 	
-	public OperationalEnvironmentPublisher() throws FileNotFoundException, IOException {
+	public OperationalEnvironmentPublisher() throws IOException {
 		super();
 	}
 	
 	@Override
 	public String getUserName() {
 
-		return this.msoProperties.get("so.operational-environment.dmaap.username");
+		return this.msoProperties.get("mso.so.operational-environment.dmaap.username");
 	}
 
 	@Override
 	public String getPassword() {
 
-		return this.msoProperties.get("so.operational-environment.dmaap.password");
+		return this.msoProperties.get("mso.so.operational-environment.dmaap.password");
 	}
 
 	@Override
 	public String getTopic() {
 		
-		return this.msoProperties.get("so.operational-environment.publisher.topic");
+		return this.msoProperties.get("mso.so.operational-environment.publisher.topic");
 	}
 
 	@Override
 	public Optional<String> getHost() {
-		return Optional.ofNullable(this.msoProperties.get("so.operational-environment.dmaap.host"));
+		return Optional.ofNullable(this.msoProperties.get("mso.so.operational-environment.dmaap.host"));
 	}
 }

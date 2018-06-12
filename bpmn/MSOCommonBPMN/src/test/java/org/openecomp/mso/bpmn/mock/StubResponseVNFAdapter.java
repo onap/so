@@ -1,20 +1,22 @@
-/*
- * ============LICENSE_START======================================================= 
- * ONAP - SO 
- * ================================================================================ 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
+ *      http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
- * ============LICENSE_END========================================================= 
- */ 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
 package org.openecomp.mso.bpmn.mock;
 
@@ -76,55 +78,55 @@ public class StubResponseVNFAdapter {
 	}
 	
 	public static void mockVNFPost(String vfModuleId, int statusCode, String vnfId) {
-		stubFor(post(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+		stubFor(post(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
-		stubFor(post(urlEqualTo("/vnfs/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+		stubFor(post(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockVNFPut(String vfModuleId, int statusCode) {
-		stubFor(put(urlEqualTo("/vnfs/v1/vnfs/vnfId/vf-modules" + vfModuleId))
+		stubFor(put(urlEqualTo("/services/rest/v1/vnfsvnfId/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
-		stubFor(put(urlEqualTo("/vnfs/rest/v1/vnfs/vnfId/vf-modules" + vfModuleId))
+		stubFor(put(urlEqualTo("/services/rest/v1/vnfs/vnfId/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockVNFPut(String vnfId, String vfModuleId, int statusCode) {
-		stubFor(put(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+		stubFor(put(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
-		stubFor(put(urlEqualTo("/vnfs/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+		stubFor(put(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockVNFDelete(String vnfId, String vfModuleId, int statusCode) {
-		stubFor(delete(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+		stubFor(delete(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
-		stubFor(delete(urlEqualTo("/vnfs/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+		stubFor(delete(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
 	}
 	
 	public static void mockVNFRollbackDelete(String vfModuleId, int statusCode) {
-		stubFor(delete(urlEqualTo("/vnfs/v1/vnfs/vnfId/vf-modules" + vfModuleId + "/rollback"))
+		stubFor(delete(urlEqualTo("/services/rest/v1/vnfsvnfId/vf-modules" + vfModuleId + "/rollback"))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
-		stubFor(delete(urlEqualTo("/vnfs/rest/v1/vnfs/vnfId/vf-modules" + vfModuleId + "/rollback"))
+		stubFor(delete(urlEqualTo("/services/rest/v1/vnfs/vnfId/vf-modules" + vfModuleId + "/rollback"))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 				.withHeader("Content-Type", "application/xml")));
@@ -163,19 +165,19 @@ public class StubResponseVNFAdapter {
 	}
 	
 	public static void mockVNFAdapterRest(String vnfId) {
-		stubFor(post(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules"))
+		stubFor(post(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules"))
 				.willReturn(aResponse()
 						.withStatus(200)));
-		stubFor(post(urlEqualTo("/vnfs/rest/v1/vnfs/" + vnfId + "/vf-modules"))
+		stubFor(post(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules"))
 				.willReturn(aResponse()
 						.withStatus(200)));
 	}
 
 	public static void mockVNFAdapterRest_500(String vnfId) {
-		stubFor(post(urlEqualTo("/vnfs/v1/vnfs/" + vnfId + "/vf-modules"))
+		stubFor(post(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules"))
 				.willReturn(aResponse()
 						.withStatus(500)));
-		stubFor(post(urlEqualTo("/vnfs/rest/v1/vnfs/" + vnfId + "/vf-modules"))
+		stubFor(post(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules"))
 				.willReturn(aResponse()
 						.withStatus(500)));
 	}

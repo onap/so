@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,25 +20,41 @@
 
 package org.openecomp.mso.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.openecomp.mso.logger.MsoLogger;
 
 public class UUIDCheckerTest {
-
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);	
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL, UUIDCheckerTest.class);
 	
-    @Test
-    public void testUUIDChecker()  throws Exception {
-    	boolean isValidUUID = UUIDChecker.isValidUUID("invalid-uuid");
-    	assertEquals(false, isValidUUID);
-    	String validUUID = UUIDChecker.verifyOldUUID("invalid-uuid", LOGGER);
-    	assertEquals(true, UUIDChecker.isValidUUID(validUUID));
-    	String generatedUUID = UUIDChecker.generateUUID(LOGGER);
-    	assertEquals(true, UUIDChecker.isValidUUID(generatedUUID));
-    	String generatedServiceInstanceId = UUIDChecker.generateServiceInstanceID(LOGGER);
-    	assertEquals(true, UUIDChecker.isValidUUID(generatedServiceInstanceId));
-    }
+	@Test
+	public void isValidUUIDTest(){
+		String nullID = null;
+		String badID = "This is not a UUID";
+		String id = UUIDChecker.getUUID();
+		assertFalse(UUIDChecker.isValidUUID(nullID));
+		assertFalse(UUIDChecker.isValidUUID(badID));
+		assertTrue(UUIDChecker.isValidUUID(id));
+	}
 
+	@Test
+	public void verifyOldUUIDTest(){
+		String oldID = UUIDChecker.getUUID();
+		String invalidID = "This is not a UUID";
+		assertEquals(UUIDChecker.verifyOldUUID(oldID,LOGGER),oldID);
+		assertNotEquals(UUIDChecker.verifyOldUUID(invalidID,LOGGER),invalidID);
+	}
+	
+	@Test
+	public void generateTest(){
+		String id = UUIDChecker.generateUUID(LOGGER);
+		assertNotNull(id);
+		assertTrue(UUIDChecker.isValidUUID(id));
+		
+		id = UUIDChecker.generateServiceInstanceID(LOGGER);
+		assertNotNull(id);
+		assertTrue(UUIDChecker.isValidUUID(id));
+		
+	}
 }

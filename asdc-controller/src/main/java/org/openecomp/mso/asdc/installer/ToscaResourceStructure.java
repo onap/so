@@ -21,44 +21,31 @@
 package org.openecomp.mso.asdc.installer;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-
 import java.util.List;
 
 import org.onap.sdc.api.notification.IArtifactInfo;
-import org.onap.sdc.api.notification.INotificationData;
-//import org.openecomp.generic.tosca.parser.model.Metadata;
-//import org.onap.sdc.tosca.parser.factory.SdcCsarHelperFactory;
-//import org.onap.sdc.tosca.parser.factory.SdcCsarHelperFactory;
-///import org.openecomp.generic.tosca.parser.model.Metadata;
-import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.onap.sdc.tosca.parser.impl.SdcCsarHelperImpl;
-import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
-
-
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
-
-
-
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.openecomp.mso.asdc.client.exceptions.ASDCDownloadException;
 import org.openecomp.mso.db.catalog.beans.AllottedResource;
 import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.CollectionNetworkResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.CollectionResource;
+import org.openecomp.mso.db.catalog.beans.ConfigurationResource;
+import org.openecomp.mso.db.catalog.beans.ConfigurationResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.NetworkCollectionResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.NetworkInstanceGroup;
 import org.openecomp.mso.db.catalog.beans.NetworkResource;
 import org.openecomp.mso.db.catalog.beans.NetworkResourceCustomization;
 import org.openecomp.mso.db.catalog.beans.Service;
-import org.openecomp.mso.db.catalog.beans.ServiceToResourceCustomization;
+import org.openecomp.mso.db.catalog.beans.ServiceProxyResource;
+import org.openecomp.mso.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.openecomp.mso.db.catalog.beans.TempNetworkHeatTemplateLookup;
 import org.openecomp.mso.db.catalog.beans.ToscaCsar;
 import org.openecomp.mso.db.catalog.beans.VfModule;
 import org.openecomp.mso.db.catalog.beans.VfModuleCustomization;
-import org.openecomp.mso.db.catalog.beans.VfModuleToHeatFiles;
-import org.openecomp.mso.db.catalog.beans.VnfResCustomToVfModuleCustom;
-import org.openecomp.mso.db.catalog.beans.VnfResource;
 import org.openecomp.mso.db.catalog.beans.VnfResourceCustomization;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
@@ -85,6 +72,22 @@ public class ToscaResourceStructure {
 	private NetworkResourceCustomization catalogNetworkResourceCustomization;
 	
 	private NetworkResource catalogNetworkResource;
+	
+	private List<NetworkInstanceGroup> catalogNetworkInstanceGroup;
+	
+	private CollectionNetworkResourceCustomization catalogCollectionNetworkResourceCustomization;
+	
+	private CollectionResource catalogCollectionResource;
+	
+	private NetworkCollectionResourceCustomization catalogNetworkCollectionResourceCustomization;
+	
+	private ServiceProxyResource catalogServiceProxyResource;
+	
+	private ServiceProxyResourceCustomization catalogServiceProxyResourceCustomization;
+	
+	private ConfigurationResource catalogConfigurationResource;
+	
+	private ConfigurationResourceCustomization catalogConfigurationResourceCustomization;
 		
 	private AllottedResourceCustomization catalogResourceCustomization;
 	
@@ -92,33 +95,21 @@ public class ToscaResourceStructure {
 	
 	private VfModuleCustomization vfModuleCustomization;
 	
-	private VnfResource vnfResource;
+	//private VnfResource vnfResource;
 	
 	private VnfResourceCustomization vnfResourceCustomization;
-	
-	private ServiceToResourceCustomization serviceToResourceCustomization;
-	
+		
 	private AllottedResource allottedResource;
 	
 	private AllottedResourceCustomization allottedResourceCustomization;
 	
-	private VnfResCustomToVfModuleCustom vnfResCustomToVfModuleCustom;
-	
 	private TempNetworkHeatTemplateLookup tempNetworkHeatTemplateLookup;
-	
-	private VfModuleToHeatFiles vfModuleToHeatFiles;
 	
 	private IArtifactInfo toscaArtifact;
 	
 	private ToscaCsar toscaCsar;
 	
-	private ServiceToResourceCustomization vfServiceToResourceCustomization;
-	
-	private ServiceToResourceCustomization allottedServiceToResourceCustomization;
-	
-	private ServiceToResourceCustomization vlServiceToResourceCustomization;
-	
-	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC);
+	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC, ToscaResourceStructure.class);
 		
 	
 	public ToscaResourceStructure(){
@@ -133,7 +124,7 @@ public class ToscaResourceStructure {
 			
 			LOGGER.debug("MSO config path is: " + System.getProperty("mso.config.path"));
 			
-			File spoolFile = new File(System.getProperty("mso.config.path") + "ASDC/" + artifact.getArtifactName());
+			File spoolFile = new File(System.getProperty("mso.config.path") + "/ASDC/" + artifact.getArtifactName());
  
 			LOGGER.debug("ASDC File path is: " + spoolFile.getAbsolutePath());
 			LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, "***PATH", "ASDC", spoolFile.getAbsolutePath());
@@ -242,7 +233,7 @@ public class ToscaResourceStructure {
 	public void setCatalogVfModule(VfModule vfModule) {
 		this.vfModule = vfModule;
 	}
-
+/*
 	public VnfResource getCatalogVnfResource() {
 		return vnfResource;
 	}
@@ -250,6 +241,8 @@ public class ToscaResourceStructure {
 	public void setCatalogVnfResource(VnfResource vnfResource) {
 		this.vnfResource = vnfResource;
 	}
+	
+	*/
 
 	public VnfResourceCustomization getCatalogVnfResourceCustomization() {
 		return vnfResourceCustomization;
@@ -266,15 +259,6 @@ public class ToscaResourceStructure {
 
 	public void setCatalogVfModuleCustomization(VfModuleCustomization vfModuleCustomization) {
 		this.vfModuleCustomization = vfModuleCustomization;
-	}
-
-	public ServiceToResourceCustomization getServiceToResourceCustomization() {
-		return serviceToResourceCustomization;
-	}
-
-	public void setServiceToResourceCustomization(
-			ServiceToResourceCustomization serviceToResourceCustomization) {
-		this.serviceToResourceCustomization = serviceToResourceCustomization;
 	}
 
 	public AllottedResource getAllottedResource() {
@@ -294,15 +278,6 @@ public class ToscaResourceStructure {
 		this.allottedResourceCustomization = allottedResourceCustomization;
 	}
 
-	public VnfResCustomToVfModuleCustom getCatalogVnfResCustomToVfModuleCustom() {
-		return vnfResCustomToVfModuleCustom;
-	}
-
-	public void setCatalogVnfResCustomToVfModuleCustom(
-			VnfResCustomToVfModuleCustom vnfResCustomToVfModuleCustom) {
-		this.vnfResCustomToVfModuleCustom = vnfResCustomToVfModuleCustom;
-	}
-
 	public TempNetworkHeatTemplateLookup getCatalogTempNetworkHeatTemplateLookup() {
 		return tempNetworkHeatTemplateLookup;
 	}
@@ -318,14 +293,6 @@ public class ToscaResourceStructure {
 
 	public void setHeatFilesUUID(String heatFilesUUID) {
 		this.heatFilesUUID = heatFilesUUID;
-	}
-
-	public VfModuleToHeatFiles getCatalogVfModuleToHeatFiles() {
-		return vfModuleToHeatFiles;
-	}
-
-	public void setCatalogVfModuleToHeatFiles(VfModuleToHeatFiles vfModuleToHeatFiles) {
-		this.vfModuleToHeatFiles = vfModuleToHeatFiles;
 	}
 
 	public IArtifactInfo getToscaArtifact() {
@@ -350,33 +317,6 @@ public class ToscaResourceStructure {
 
 	public void setVnfAlreadyInstalled(boolean isVnfAlreadyInstalled) {
 		this.isVnfAlreadyInstalled = isVnfAlreadyInstalled;
-	}
-
-	public ServiceToResourceCustomization getCatalogVfServiceToResourceCustomization() {
-		return vfServiceToResourceCustomization;
-	}
-
-	public void setCatalogVfServiceToResourceCustomization(
-			ServiceToResourceCustomization vfServiceToResourceCustomization) {
-		this.vfServiceToResourceCustomization = vfServiceToResourceCustomization;
-	}
-
-	public ServiceToResourceCustomization getCatalogAllottedServiceToResourceCustomization() {
-		return allottedServiceToResourceCustomization;
-	}
-
-	public void setCatalogAllottedServiceToResourceCustomization(
-			ServiceToResourceCustomization allottedServiceToResourceCustomization) {
-		this.allottedServiceToResourceCustomization = allottedServiceToResourceCustomization;
-	}
-
-	public ServiceToResourceCustomization getCatalogVlServiceToResourceCustomization() {
-		return vlServiceToResourceCustomization;
-	}
-
-	public void setCatalogVlServiceToResourceCustomization(
-			ServiceToResourceCustomization vlServiceToResourceCustomization) {
-		this.vlServiceToResourceCustomization = vlServiceToResourceCustomization;
 	}
 
 	public String getVolHeatTemplateUUID() {
@@ -435,13 +375,6 @@ public class ToscaResourceStructure {
 		this.vfModuleCustomization = vfModuleCustomization;
 	}
 
-	public VnfResource getVnfResource() {
-		return vnfResource;
-	}
-
-	public void setVnfResource(VnfResource vnfResource) {
-		this.vnfResource = vnfResource;
-	}
 
 	public VnfResourceCustomization getVnfResourceCustomization() {
 		return vnfResourceCustomization;
@@ -461,15 +394,6 @@ public class ToscaResourceStructure {
 		this.allottedResourceCustomization = allottedResourceCustomization;
 	}
 
-	public VnfResCustomToVfModuleCustom getVnfResCustomToVfModuleCustom() {
-		return vnfResCustomToVfModuleCustom;
-	}
-
-	public void setVnfResCustomToVfModuleCustom(
-			VnfResCustomToVfModuleCustom vnfResCustomToVfModuleCustom) {
-		this.vnfResCustomToVfModuleCustom = vnfResCustomToVfModuleCustom;
-	}
-
 	public TempNetworkHeatTemplateLookup getTempNetworkHeatTemplateLookup() {
 		return tempNetworkHeatTemplateLookup;
 	}
@@ -479,12 +403,72 @@ public class ToscaResourceStructure {
 		this.tempNetworkHeatTemplateLookup = tempNetworkHeatTemplateLookup;
 	}
 
-	public VfModuleToHeatFiles getVfModuleToHeatFiles() {
-		return vfModuleToHeatFiles;
+	public List<NetworkInstanceGroup> getCatalogNetworkInstanceGroup() {
+		return catalogNetworkInstanceGroup;
 	}
 
-	public void setVfModuleToHeatFiles(VfModuleToHeatFiles vfModuleToHeatFiles) {
-		this.vfModuleToHeatFiles = vfModuleToHeatFiles;
+	public void setCatalogNetworkInstanceGroup(List<NetworkInstanceGroup> catalogNetworkInstanceGroup) {
+		this.catalogNetworkInstanceGroup = catalogNetworkInstanceGroup;
+	}
+
+	public CollectionNetworkResourceCustomization getCatalogCollectionNetworkResourceCustomization() {
+		return catalogCollectionNetworkResourceCustomization;
+	}
+
+	public void setCatalogCollectionNetworkResourceCustomization(
+			CollectionNetworkResourceCustomization catalogCollectionNetworkResourceCustomization) {
+		this.catalogCollectionNetworkResourceCustomization = catalogCollectionNetworkResourceCustomization;
+	}
+
+	public CollectionResource getCatalogCollectionResource() {
+		return catalogCollectionResource;
+	}
+
+	public void setCatalogCollectionResource(CollectionResource catalogCollectionResource) {
+		this.catalogCollectionResource = catalogCollectionResource;
+	}
+
+	public NetworkCollectionResourceCustomization getCatalogNetworkCollectionResourceCustomization() {
+		return catalogNetworkCollectionResourceCustomization;
+	}
+
+	public void setCatalogNetworkCollectionResourceCustomization(
+			NetworkCollectionResourceCustomization catalogNetworkCollectionResourceCustomization) {
+		this.catalogNetworkCollectionResourceCustomization = catalogNetworkCollectionResourceCustomization;
+	}
+
+	public ServiceProxyResource getCatalogServiceProxyResource() {
+		return catalogServiceProxyResource;
+	}
+
+	public void setCatalogServiceProxyResource(ServiceProxyResource catalogServiceProxyResource) {
+		this.catalogServiceProxyResource = catalogServiceProxyResource;
+	}
+
+	public ServiceProxyResourceCustomization getCatalogServiceProxyResourceCustomization() {
+		return catalogServiceProxyResourceCustomization;
+	}
+
+	public void setCatalogServiceProxyResourceCustomization(
+			ServiceProxyResourceCustomization catalogServiceProxyResourceCustomization) {
+		this.catalogServiceProxyResourceCustomization = catalogServiceProxyResourceCustomization;
+	}
+
+	public ConfigurationResource getCatalogConfigurationResource() {
+		return catalogConfigurationResource;
+	}
+
+	public void setCatalogConfigurationResource(ConfigurationResource catalogConfigurationResource) {
+		this.catalogConfigurationResource = catalogConfigurationResource;
+	}
+
+	public ConfigurationResourceCustomization getCatalogConfigurationResourceCustomization() {
+		return catalogConfigurationResourceCustomization;
+	}
+
+	public void setCatalogConfigurationResourceCustomization(
+			ConfigurationResourceCustomization catalogConfigurationResourceCustomization) {
+		this.catalogConfigurationResourceCustomization = catalogConfigurationResourceCustomization;
 	}
 
 	public ToscaCsar getToscaCsar() {
@@ -493,33 +477,6 @@ public class ToscaResourceStructure {
 
 	public void setToscaCsar(ToscaCsar toscaCsar) {
 		this.toscaCsar = toscaCsar;
-	}
-
-	public ServiceToResourceCustomization getVfServiceToResourceCustomization() {
-		return vfServiceToResourceCustomization;
-	}
-
-	public void setVfServiceToResourceCustomization(
-			ServiceToResourceCustomization vfServiceToResourceCustomization) {
-		this.vfServiceToResourceCustomization = vfServiceToResourceCustomization;
-	}
-
-	public ServiceToResourceCustomization getAllottedServiceToResourceCustomization() {
-		return allottedServiceToResourceCustomization;
-	}
-
-	public void setAllottedServiceToResourceCustomization(
-			ServiceToResourceCustomization allottedServiceToResourceCustomization) {
-		this.allottedServiceToResourceCustomization = allottedServiceToResourceCustomization;
-	}
-
-	public ServiceToResourceCustomization getVlServiceToResourceCustomization() {
-		return vlServiceToResourceCustomization;
-	}
-
-	public void setVlServiceToResourceCustomization(
-			ServiceToResourceCustomization vlServiceToResourceCustomization) {
-		this.vlServiceToResourceCustomization = vlServiceToResourceCustomization;
 	}
 
 	public static MsoLogger getLogger() {

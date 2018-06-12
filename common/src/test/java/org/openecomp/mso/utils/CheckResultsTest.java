@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.utils;
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 
 import org.junit.Test;
@@ -41,16 +43,16 @@ public class CheckResultsTest {
         cr.addServiceCheckResult ("host2", "service1", 0, "output2Serv");
         cr.addServiceCheckResult ("host2", "service2", 2, "output2Serv2");
         List <CheckResult> res = cr.getResults ();
-        assert(res.size () == 6);
-        assert(res.get (0).getHostname ().equals ("host1"));
-        assert(res.get (1).getHostname ().equals ("host2"));
-        assert(res.get (2).getHostname ().equals ("host1"));
-        assert(res.get (3).getHostname ().equals ("host1"));
-        assert(res.get (4).getHostname ().equals ("host2"));
-        assert(res.get (5).getHostname ().equals ("host2"));
-        assert(res.get (0).getServicename () == null);
-        assert(res.get (3).getServicename ().equals ("service2"));
-        assert(res.get (5).getState () == 2);
+        assertEquals(res.size (), 6);
+        assertEquals(res.get (0).getHostname (), "host1");
+        assertEquals(res.get (1).getHostname (), "host2");
+        assertEquals(res.get (2).getHostname (), "host1");
+        assertEquals(res.get (3).getHostname (), "host1");
+        assertEquals(res.get (4).getHostname (), "host2");
+        assertEquals(res.get (5).getHostname (), "host2");
+        assertEquals(res.get (0).getServicename (), null);
+        assertEquals(res.get (3).getServicename (), "service2");
+        assertEquals(res.get (5).getState (), 2);
     }
 
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,63 +20,64 @@
 
 package org.openecomp.mso.apihandlerinfra.tenantisolation.process;
 
+import org.apache.http.HttpStatus;
+import org.openecomp.mso.apihandler.common.ErrorNumbers;
+import org.openecomp.mso.apihandlerinfra.exceptions.ApiException;
+import org.openecomp.mso.apihandlerinfra.exceptions.ValidateException;
+import org.openecomp.mso.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.openecomp.mso.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
 import org.openecomp.mso.apihandlerinfra.tenantisolation.dmaap.DmaapOperationalEnvClient;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.helpers.AAIClientObjectBuilder;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.requestsdb.RequestsDBHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-
-public class CreateEcompOperationalEnvironment extends OperationalEnvironmentProcess {
+@Component
+public class CreateEcompOperationalEnvironment {
 	
-	private static final String SERVICE_NAME = "CreateEcompOperationalEnvironment";
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
-	
-	
-	public CreateEcompOperationalEnvironment(CloudOrchestrationRequest request, String requestId) {
-		super(request, requestId);
-        MsoLogger.setServiceName (getRequestId());
-        MsoLogger.setLogContext(getRequestId(), getRequest().getOperationalEnvironmentId());
-	}
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, CreateEcompOperationalEnvironment.class);
+    
+	@Autowired 
+	private AAIClientObjectBuilder aaiClientObjectBuilder;
+	@Autowired 
+	private AAIClientHelper aaiHelper;
+	@Autowired 
+	private RequestsDBHelper requestDb;
+	@Autowired 
+	private DmaapOperationalEnvClient dmaapClient;
 
-	
-	protected DmaapOperationalEnvClient getDmaapClient() {
-		return new DmaapOperationalEnvClient();
-	}
+	public void execute(String requestId, CloudOrchestrationRequest request) throws ApiException{
+
+		//Create ECOMP Managing Environment object in A&AI
+			aaiHelper.createOperationalEnvironment(aaiClientObjectBuilder.buildAAIOperationalEnvironment("ACTIVE", request));
+
+			// Call client to publish to DMaap
+        try {
+        	msoLogger.debug("1" + request.getOperationalEnvironmentId());
+        	msoLogger.debug("2" + request.getRequestDetails().getRequestInfo().getInstanceName());
+        	msoLogger.debug("3" + request.getRequestDetails().getRequestParameters().getOperationalEnvironmentType().toString());
+        	msoLogger.debug("4" + request.getRequestDetails().getRequestParameters().getTenantContext());
+        	msoLogger.debug("5" + request.getRequestDetails().getRequestParameters().getWorkloadContext());
 
 
-	@Override
-	public void execute() {
-		try {
-			msoLogger.debug("Begin of execute method in " + SERVICE_NAME);
-			msoLogger.debug("CloudOrchestrationRequest: " + request.toString());
-			
- 			//Create ECOMP Managing Environment object in A&AI
-			getAaiHelper().createOperationalEnvironment(getAaiClientObjectBuilder().buildAAIOperationalEnvironment("ACTIVE"));
-			msoLogger.debug("ECOMP operational environment created in A&AI.");
-					
-			// Call client to publish to DMaap	
-			getDmaapClient().dmaapPublishOperationalEnvRequest(getRequest().getOperationalEnvironmentId(), 
-					getRequest().getRequestDetails().getRequestInfo().getInstanceName(),
-					getRequest().getRequestDetails().getRequestParameters().getOperationalEnvironmentType().toString(),
-					getRequest().getRequestDetails().getRequestParameters().getTenantContext(),
-					getRequest().getRequestDetails().getRequestParameters().getWorkloadContext(),
-					"Create");
-			msoLogger.debug("ECOMP operational environment published in Dmaap/ASDC.");
-		
+            dmaapClient.dmaapPublishOperationalEnvRequest(request.getOperationalEnvironmentId(),
+                    request.getRequestDetails().getRequestInfo().getInstanceName(),
+                    request.getRequestDetails().getRequestParameters().getOperationalEnvironmentType().toString(),
+                    request.getRequestDetails().getRequestParameters().getTenantContext(),
+                    request.getRequestDetails().getRequestParameters().getWorkloadContext(),
+                    "Create");
+        }catch(Exception e){
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+            ValidateException validateException = new ValidateException.Builder("Could not publish DMaap", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+                    .errorInfo(errorLoggerInfo).build();
+            requestDb.updateInfraFailureCompletion(e.getMessage(), requestId, request.getOperationalEnvironmentId());
+            throw validateException;
+        }
 			//Update request database
-			getRequestDb().updateInfraSuccessCompletion("SUCCESSFULLY Created ECOMP OperationalEnvironment.", getRequestId(), getRequest().getOperationalEnvironmentId()); 
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			msoLogger.error(MessageEnum.APIH_GENERAL_EXCEPTION, "", "", "", MsoLogger.ErrorCode.UnknownError, e.getMessage());
-			getRequestDb().updateInfraFailureCompletion(e.getMessage(), getRequestId(), getRequest().getOperationalEnvironmentId());
-		}	
-	}
+			requestDb.updateInfraSuccessCompletion("SUCCESSFULLY Created ECOMP OperationalEnvironment.", requestId, request.getOperationalEnvironmentId());
 
-
-	@Override
-	protected String getServiceName() {
-		return CreateEcompOperationalEnvironment.SERVICE_NAME;
 	}
-	
 }

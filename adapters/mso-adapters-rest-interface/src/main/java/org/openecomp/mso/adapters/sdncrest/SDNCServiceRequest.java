@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.sdncrest;
 
 import java.io.Serializable;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -59,7 +63,7 @@ public class SDNCServiceRequest extends SDNCRequestCommon implements Serializabl
 	private String sdncServiceDataType;
 
 	// The SDNC service data specified by SDNC "agnostic" API
-    private String sndcServiceData;
+    private String sdncServiceData;
 
 	public SDNCServiceRequest() {
 	}
@@ -75,7 +79,7 @@ public class SDNCServiceRequest extends SDNCRequestCommon implements Serializabl
 		this.sdncService = sdncService;
 		this.sdncOperation = sdncOperation;
 		this.sdncServiceDataType = sdncServiceDataType;
-		this.sndcServiceData = sndcServiceData;
+		this.sdncServiceData = sndcServiceData;
 	}
 
 	@JsonProperty("requestInformation")
@@ -102,45 +106,45 @@ public class SDNCServiceRequest extends SDNCRequestCommon implements Serializabl
 
 	@JsonProperty("sdncService")
 	@XmlElement(name = "sdncService")
-	public String getSDNCService() {
+	public String getSdncService() {
 		return sdncService;
 	}
 
 	@JsonProperty("sdncService")
-	public void setSDNCService(String sdncService) {
+	public void setSdncService(String sdncService) {
 		this.sdncService = sdncService;
 	}
 
 	@JsonProperty("sdncOperation")
 	@XmlElement(name = "sdncOperation")
-	public String getSDNCOperation() {
+	public String getSdncOperation() {
 		return sdncOperation;
 	}
 
 	@JsonProperty("sdncOperation")
-	public void setSDNCOperation(String sdncOperation) {
+	public void setSdncOperation(String sdncOperation) {
 		this.sdncOperation = sdncOperation;
 	}
 
 	@JsonProperty("sdncServiceDataType")
 	@XmlElement(name = "sdncServiceDataType")
-	public String getSDNCServiceDataType() {
+	public String getSdncServiceDataType() {
 		return sdncServiceDataType;
 	}
 
 	@JsonProperty("sdncServiceDataType")
-	public void setSDNCServiceDataType(String sdncServiceDataType) {
+	public void setSdncServiceDataType(String sdncServiceDataType) {
 		this.sdncServiceDataType = sdncServiceDataType;
 	}
 
 	@JsonProperty("sdncServiceData")
 	@XmlElement(name = "sdncServiceData")
-	public String getSDNCServiceData() {
-		return sndcServiceData;
+	public String getSdncServiceData() {
+		return sdncServiceData;
 	}
 
 	@JsonProperty("sdncServiceData")
-	public void setSDNCServiceData(String sndcServiceData) {
-		this.sndcServiceData = sndcServiceData;
+	public void setSdncServiceData(String sndcServiceData) {
+		this.sdncServiceData = sndcServiceData;
 	}
 }

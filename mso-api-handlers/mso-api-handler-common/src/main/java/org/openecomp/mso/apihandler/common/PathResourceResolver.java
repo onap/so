@@ -26,14 +26,13 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.openecomp.mso.logger.MsoLogger;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
-import org.openecomp.mso.logger.MsoLogger;
-
 public class PathResourceResolver implements LSResourceResolver {
 	
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, PathResourceResolver.class);
 
     private String path;
 	

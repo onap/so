@@ -1,37 +1,42 @@
-/*
- * ============LICENSE_START======================================================= 
- * ONAP - SO 
- * ================================================================================ 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
+ *      http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
- * ============LICENSE_END========================================================= 
- */ 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
 package org.openecomp.mso.bpmn.mock;
 
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+
+import org.openecomp.mso.client.HttpClient;
+import org.openecomp.mso.logger.MsoLogger;
+import org.openecomp.mso.utils.TargetEntity;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.common.FileSource;
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import com.github.tomakehurst.wiremock.extension.Parameters;
+import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
-import org.openecomp.mso.logger.MsoLogger;
+public class SDNCAdapterNetworkTopologyMockTransformer extends ResponseDefinitionTransformer {
 
-public class SDNCAdapterNetworkTopologyMockTransformer extends ResponseTransformer {
-
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SDNCAdapterNetworkTopologyMockTransformer.class);
 	
 	private String callbackResponse;
 	private String requestId;
@@ -44,12 +49,13 @@ public class SDNCAdapterNetworkTopologyMockTransformer extends ResponseTransform
 		this.requestId = requestId;
 	}
 	
-	public String name() {
+	@Override
+	public String getName() {
 		return "network-topology-operation-transformer";
 	}
 
 	@Override
-	public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition, FileSource fileSource) {
+	public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition, FileSource fileSource, Parameters parameters) {
 		String requestBody = request.getBodyAsString();
 		
 		String callbackUrl = requestBody.substring(requestBody.indexOf("<sdncadapter:CallbackUrl>")+25, requestBody.indexOf("</sdncadapter:CallbackUrl>"));
@@ -115,12 +121,10 @@ public class SDNCAdapterNetworkTopologyMockTransformer extends ResponseTransform
 				LOGGER.debug("Exception :",e1);
 			}
 			LOGGER.debug("Sending callback response to url: " + callbackUrl);
-			ClientRequest request = new ClientRequest(callbackUrl);
-			request.body("text/xml", payLoad);
-			//System.err.println(payLoad);
 			try {
-				ClientResponse result = request.post();
-				LOGGER.debug("Successfully posted callback? Status: " + result.getStatus());
+				HttpClient client = new HttpClient(UriBuilder.fromUri(callbackUrl).build().toURL(), "text/xml", TargetEntity.SDNC_ADAPTER);
+				Response response = client.post(payLoad);
+				LOGGER.debug("Successfully posted callback? Status: " + response.getStatus());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 			    LOGGER.debug("catch error in - request.post() ");

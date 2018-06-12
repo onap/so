@@ -21,6 +21,8 @@
 package org.openecomp.mso.adapters.vnfrest;
 
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.openecomp.mso.entity.MsoRequest;
@@ -29,7 +31,11 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("deleteVfModuleRequest")
 @XmlRootElement(name = "deleteVfModuleRequest")
-public class DeleteVfModuleRequest extends VfRequestCommon {
+public class DeleteVfModuleRequest extends VfRequestCommon implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8504083539107392561L;
 	private String cloudSiteId;
 	private String tenantId;
 	private String vnfId;

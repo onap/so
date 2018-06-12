@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,78 +17,146 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-public class VnfResourceCustomization extends MavenLikeVersioning implements Serializable {
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.openpojo.business.annotation.BusinessKey;
+
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
+
+@Entity
+@Table(name = "vnf_resource_customization")
+public class VnfResourceCustomization implements Serializable {
 
 	private static final long serialVersionUID = 768026109321305392L;
-	
-	private String modelCustomizationUuid = null;
-	private String modelInstanceName = null;
-	private Timestamp created = null;
-	private String vnfResourceModelUuid = null;
-	private String vnfResourceModelUUID = null;
+
+	@BusinessKey
+	@Id
+	@Column(name = "MODEL_CUSTOMIZATION_UUID")
+	private String modelCustomizationUUID;
+
+	@Column(name = "MODEL_INSTANCE_NAME")
+	private String modelInstanceName;
+
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@Column(name = "MIN_INSTANCES")
 	private Integer minInstances;
+
+	@Column(name = "MAX_INSTANCES")
 	private Integer maxInstances;
+
+	@Column(name = "AVAILABILITY_ZONE_MAX_COUNT")
 	private Integer availabilityZoneMaxCount;
-	private VnfResource vnfResource;
-	private String nfFunction = null;
-	private String nfType = null;
-	private String nfRole = null;
-	private String nfNamingCode = null;
-	private String multiStageDesign = null;
-    private List<VfModuleCustomization> vfModuleCustomizations;
-    private Set<ServiceToResourceCustomization> serviceResourceCustomizations;
 
-	public VnfResourceCustomization() {
+	@Column(name = "NF_FUNCTION")
+	private String nfFunction;
+
+	@Column(name = "NF_TYPE")
+	private String nfType;
+
+	@Column(name = "NF_ROLE")
+	private String nfRole;
+
+	@Column(name = "NF_NAMING_CODE")
+	private String nfNamingCode;
+
+	@Column(name = "MULTI_STAGE_DESIGN")
+	private String multiStageDesign;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "VNF_RESOURCE_MODEL_UUID")
+	private VnfResource vnfResources;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "vnf_res_custom_to_vf_module_custom", joinColumns = @JoinColumn(name = "VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID", referencedColumnName = "MODEL_CUSTOMIZATION_UUID"), inverseJoinColumns = @JoinColumn(name = "VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID", referencedColumnName = "MODEL_CUSTOMIZATION_UUID"))
+	private List<VfModuleCustomization> vfModuleCustomizations;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "vnfResourceCust")
+	private List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizations;
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
+				.append("modelInstanceName", modelInstanceName).append("created", created)
+				.append("minInstances", minInstances).append("maxInstances", maxInstances)
+				.append("availabilityZoneMaxCount", availabilityZoneMaxCount).append("nfFunction", nfFunction)
+				.append("nfType", nfType).append("nfRole", nfRole).append("nfNamingCode", nfNamingCode)
+				.append("multiStageDesign", multiStageDesign).append("vnfResources", vnfResources)
+				.append("vfModuleCustomizations", vfModuleCustomizations)
+				.append("vnfcInstanceGroupCustomizations", vnfcInstanceGroupCustomizations).toString();
 	}
 
-
-	public String getModelCustomizationUuid() {
-		return modelCustomizationUuid;
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof VnfResourceCustomization)) {
+			return false;
+		}
+		VnfResourceCustomization castOther = (VnfResourceCustomization) other;
+		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
 	}
 
-	public void setModelCustomizationUuid(String modelCustomizationUuid) {
-		this.modelCustomizationUuid = modelCustomizationUuid;
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
+	}
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
+	}
+
+	public String getModelCustomizationUUID() {
+		return modelCustomizationUUID;
+	}
+
+	public void setModelCustomizationUUID(String modelCustomizationUUID) {
+		this.modelCustomizationUUID = modelCustomizationUUID;
 	}
 
 	public String getModelInstanceName() {
 		return this.modelInstanceName;
 	}
+
 	public void setModelInstanceName(String modelInstanceName) {
 		this.modelInstanceName = modelInstanceName;
 	}
 
-	public Timestamp getCreationTimestamp() {
+	public Date getCreationTimestamp() {
 		return this.created;
 	}
-	public void setCreationTimestamp(Timestamp created) {
-		this.created = created;
-	}
 
-	public String getVnfResourceModelUuid() {
-		return this.vnfResourceModelUuid == null ? this.vnfResourceModelUUID : this.vnfResourceModelUuid;
-	}
-	public void setVnfResourceModelUuid(String vnfResourceModelUuid) {
-		this.vnfResourceModelUuid = vnfResourceModelUuid;
-	}
-	public String getVnfResourceModelUUID() {
-		return this.vnfResourceModelUUID;
-	}
-	public void setVnfResourceModelUUID(String vnfResourceModelUUID) {
-		this.vnfResourceModelUUID = vnfResourceModelUUID;
-	}
 	public Integer getMinInstances() {
 		return this.minInstances;
 	}
+
 	public void setMinInstances(Integer minInstances) {
 		this.minInstances = minInstances;
 	}
@@ -96,6 +164,7 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 	public Integer getMaxInstances() {
 		return this.maxInstances;
 	}
+
 	public void setMaxInstances(Integer maxInstances) {
 		this.maxInstances = maxInstances;
 	}
@@ -103,15 +172,9 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 	public Integer getAvailabilityZoneMaxCount() {
 		return this.availabilityZoneMaxCount;
 	}
+
 	public void setAvailabilityZoneMaxCount(Integer availabilityZoneMaxCount) {
 		this.availabilityZoneMaxCount = availabilityZoneMaxCount;
-	}
-
-	public VnfResource getVnfResource() {
-		return this.vnfResource;
-	}
-	public void setVnfResource(VnfResource vnfResource) {
-		this.vnfResource = vnfResource;
 	}
 
 	public String getNfFunction() {
@@ -145,59 +208,46 @@ public class VnfResourceCustomization extends MavenLikeVersioning implements Ser
 	public void setNfNamingCode(String nfNamingCode) {
 		this.nfNamingCode = nfNamingCode;
 	}
+
 	public String getMultiStageDesign() {
 		return this.multiStageDesign;
 	}
+
 	public void setMultiStageDesign(String multiStageDesign) {
 		this.multiStageDesign = multiStageDesign;
 	}
+
+	@LinkedResource
 	public List<VfModuleCustomization> getVfModuleCustomizations() {
-		return this.vfModuleCustomizations;
+		if (vfModuleCustomizations == null)
+			vfModuleCustomizations = new ArrayList<>();
+		return vfModuleCustomizations;
 	}
+
 	public void setVfModuleCustomizations(List<VfModuleCustomization> vfModuleCustomizations) {
 		this.vfModuleCustomizations = vfModuleCustomizations;
 	}
-	public void addVfModuleCustomization(VfModuleCustomization vfmc) {
-		if (vfmc != null) {
-			if (this.vfModuleCustomizations != null) {
-				this.vfModuleCustomizations.add(vfmc);
-			} else {
-				this.vfModuleCustomizations = new ArrayList<>();
-				this.vfModuleCustomizations.add(vfmc);
-			}
-		}
+
+	@LinkedResource
+	public VnfResource getVnfResources() {
+		return vnfResources;
 	}
-	public Timestamp getCreated() {
+
+	public void setVnfResources(VnfResource vnfResources) {
+		this.vnfResources = vnfResources;
+	}
+
+	public Date getCreated() {
 		return created;
 	}
 
-	public void setCreated(Timestamp created) {
-		this.created = created;
+	@LinkedResource
+	public List<VnfcInstanceGroupCustomization> getVnfcInstanceGroupCustomizations() {
+		return vnfcInstanceGroupCustomizations;
 	}
 
-	public Set<ServiceToResourceCustomization> getServiceResourceCustomizations() {
-		return serviceResourceCustomizations;
+	public void setVnfcInstanceGroupCustomizations(
+			List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizations) {
+		this.vnfcInstanceGroupCustomizations = vnfcInstanceGroupCustomizations;
 	}
-
-	public void setServiceResourceCustomizations(
-			Set<ServiceToResourceCustomization> serviceResourceCustomizations) {
-		this.serviceResourceCustomizations = serviceResourceCustomizations;
-	}
-
-	@Override
-	public String toString() {
-        return "VnfResourceCustomization: " + "ModelCustUuid=" + this.modelCustomizationUuid +
-            ", ModelInstanceName=" + this.modelInstanceName +
-            ", vnfResourceModelUuid=" + this.vnfResourceModelUUID +
-            ", creationTimestamp=" + this.created +
-            ", minInstances=" + this.minInstances +
-            ", maxInstances=" + this.maxInstances +
-            ", availabilityZoneMaxCount=" + this.availabilityZoneMaxCount +
-            ", nfFunction=" + this.nfFunction +
-            ", nfType=" + this.nfType +
-            ", nfRole=" + this.nfRole +
-            ", nfNamingCode=" + this.nfNamingCode +
-            ", multiStageDesign=" + this.multiStageDesign;
-	}
-
 }

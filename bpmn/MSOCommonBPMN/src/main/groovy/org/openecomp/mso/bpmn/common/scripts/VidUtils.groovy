@@ -26,8 +26,12 @@ import groovy.json.JsonSlurper
 import org.json.JSONObject
 import org.json.XML
 import org.openecomp.mso.bpmn.core.xml.XmlTool
+import org.openecomp.mso.logger.MsoLogger
+import org.openecomp.mso.logger.MessageEnum
+
 
 class VidUtils {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VidUtils.class);
 	
 	public MsoUtils utils = new MsoUtils()
 	private AbstractServiceTaskProcessor taskProcessor
@@ -275,6 +279,8 @@ class VidUtils {
 			return groovy.xml.XmlUtil.serialize(xmlReq.normalize().replaceAll("\t", "").replaceAll("\n", "")).replaceAll("(<\\?[^<]*\\?>\\s*[\\r\\n]*)?", "")
 			
 		} catch(Exception e) {
+			msoLogger.debug("Error in Vid Utils",e.getCause())
+			e.printStackTrace();
 			throw e
 		}
 	}

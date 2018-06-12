@@ -23,40 +23,48 @@ package org.openecomp.mso.asdc.tenantIsolation;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.openecomp.mso.asdc.tenantIsolation.AsdcPropertiesUtils;
 import org.openecomp.mso.client.aai.AAIProperties;
 import org.openecomp.mso.client.aai.AAIVersion;
-import org.openecomp.mso.properties.MsoJavaProperties;
+import org.springframework.context.ApplicationContext;
 
 public class AaiClientPropertiesImpl implements AAIProperties {
 
-	final MsoJavaProperties props;
+	private String aaiEndpoint;
+	private String auth;
+	private String key;
+	private static final String SYSTEM_NAME = "MSO";
+	
 	public AaiClientPropertiesImpl() {
-		this.props = AsdcPropertiesUtils.loadMsoProperties ();
+		ApplicationContext context = SpringContextHelper.getAppContext();
+		aaiEndpoint = context.getEnvironment().getProperty("mso.aai.endpoint");
+		this.auth = context.getEnvironment().getProperty("aai.auth");
+		this.key = context.getEnvironment().getProperty("mso.msoKey");
 	}
 
 	@Override
 	public URL getEndpoint() throws MalformedURLException {
-		return new URL(props.getProperty("aai.endpoint", null));
+		ApplicationContext context = SpringContextHelper.getAppContext();
+		aaiEndpoint = context.getEnvironment().getProperty("mso.aai.endpoint");
+		return new URL(aaiEndpoint);
 	}
 
 	@Override
 	public String getSystemName() {
-		return "MSO";
+		return SYSTEM_NAME;
 	}
 	
 	@Override
 	public AAIVersion getDefaultVersion() {
 		return AAIVersion.LATEST;
 	}
-
+	
 	@Override
 	public String getAuth() {
-		return props.getProperty("aai.auth", null);
+		return this.auth;
 	}
 
 	@Override
 	public String getKey() {
-		return props.getProperty("mso.msoKey", null);
+		return this.key;
 	}
 }

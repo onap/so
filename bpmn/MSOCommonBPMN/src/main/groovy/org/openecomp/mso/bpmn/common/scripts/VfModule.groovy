@@ -21,8 +21,14 @@
 package org.openecomp.mso.bpmn.common.scripts;
 
 import org.apache.commons.lang3.*
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 public class VfModule implements Serializable {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VfModule.class);
+
 	
 	/**
 	 * Class representing a VF Module Node. Fields of this class include indicators

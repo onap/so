@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,27 +22,37 @@ package org.openecomp.mso.asdc.tenantIsolation;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
+import org.openecomp.mso.asdc.BaseTest;
+import org.openecomp.mso.client.aai.AAIVersion;
 
-public class AaiClientPropertiesImplTest {
+public class AaiClientPropertiesImplTest extends BaseTest {
 	
-	private static final String ASDC_CLIENTS_PROP =
-		MsoJavaProperties.class.getClassLoader().getResource("mso.asdc.clients.properties").toString().substring(5);
-
-	@Test
-	public void testGetEndpoint() throws Exception {
-
-		MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-		msoPropertiesFactory.removeAllMsoProperties();
-		msoPropertiesFactory.initializeMsoProperties(AsdcPropertiesUtils.MSO_ASDC_CLIENTS, this.ASDC_CLIENTS_PROP);
-
-		AaiClientPropertiesImpl aaiPropertiesImpl = new AaiClientPropertiesImpl();		
-		String aaiEndpoint = aaiPropertiesImpl.getEndpoint().toString();
-		
-		assertEquals("AAI endpoint", "http://localhost:28090", aaiEndpoint);
-		
+	private static final String SYSTEM_NAME = "MSO";
+	private static final String AAI_ENDPOINT = "http://localhost:8080";
+	
+	@BeforeClass
+	public static void setup() throws Exception {
+		System.setProperty("mso.config.path", "src/test/resources");
 	}
 	
+	@Test
+	public void getEndpointTest() throws Exception {
+		AaiClientPropertiesImpl aaiClientPropertiesImpl = new AaiClientPropertiesImpl();
+		String aaiEndpoint = aaiClientPropertiesImpl.getEndpoint().toString();
+		assertEquals(AAI_ENDPOINT, aaiEndpoint);
+	}
+	
+	@Test
+	public void getSystemNameTest() {
+		AaiClientPropertiesImpl aaiClientPropertiesImpl = new AaiClientPropertiesImpl();
+		assertEquals(SYSTEM_NAME, aaiClientPropertiesImpl.getSystemName());
+	}
+	
+	@Test
+	public void getDefaultVersionTest() {
+		AaiClientPropertiesImpl aaiClientPropertiesImpl = new AaiClientPropertiesImpl();
+		assertEquals(AAIVersion.LATEST, aaiClientPropertiesImpl.getDefaultVersion());
+	}
 }

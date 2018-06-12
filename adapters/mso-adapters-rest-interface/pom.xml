@@ -23,9 +23,18 @@
 					<classesDirectory>target/classes</classesDirectory>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+			  </plugin>
 		</plugins>
 	</build>
 	<dependencies>
+	<dependency>
+		<groupId>org.javatuples</groupId>
+		<artifactId>javatuples</artifactId>
+		<version>1.2</version>
+	</dependency>
 		<dependency>
 			<groupId>org.onap.so.libs.openstack-java-sdk</groupId>
 			<artifactId>keystone-client</artifactId>
@@ -51,6 +60,5 @@
 			<artifactId>common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 	</dependencies>
 </project>

@@ -74,6 +74,10 @@ public class CryptoTest {
     	 assertEquals(encodeString,encode2String);
     	 
     	 assertEquals(CryptoUtils.decrypt(encodeString, testKey),CryptoUtils.decrypt(encode2String, testKey));
+    	 
+    	 encodeString = CryptoUtils.encryptCloudConfigPassword(testData);
+    	 
+    	 assertEquals(testData, CryptoUtils.decryptCloudConfigPassword(encodeString));
     }
 
 }

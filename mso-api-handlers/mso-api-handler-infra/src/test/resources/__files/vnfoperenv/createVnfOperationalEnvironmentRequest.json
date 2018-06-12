@@ -5,7 +5,7 @@
 			"resourceType": "operationalEnvironment",
 			"instanceName": "myVnfOpEnv",
 			"source": "VID",
-			"requestorId": "az2017"
+			"requestorId": "xxxxxx"
 		},
 		"relatedInstanceList": [
 			{

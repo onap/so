@@ -27,12 +27,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoJavaProperties;
 import org.openecomp.mso.utils.CryptoUtils;
+import org.springframework.core.env.Environment;
 
 public abstract class RequestClient {
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
-	protected MsoJavaProperties props;
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH,RequestClient.class);
+	protected Environment props;
 	protected String url;
 	protected HttpClient client;
 	private int type;
@@ -41,8 +41,8 @@ public abstract class RequestClient {
 		this.type = type;
 	}
 	
-	public void setProps(MsoJavaProperties props) {
-		this.props = props;
+	public void setProps(Environment env) {
+		this.props = env;
 	}
 
 	public void setUrl(String url) {
@@ -67,19 +67,45 @@ public abstract class RequestClient {
 
 	public abstract HttpResponse post(String request, String requestId, String requestTimeout, String schemaVersion, String serviceInstanceId, String action) throws ClientProtocolException, IOException;
 
-	public abstract HttpResponse post(String request) throws IOException;
+	public abstract HttpResponse post(String request) throws ClientProtocolException, IOException;
+	
+	/**
+	 * @deprecated Use {@link #post(PostParameter)} instead
+	 */
+	public abstract HttpResponse post(String requestId, boolean isBaseVfModule,
+									int recipeTimeout, String requestAction, String serviceInstanceId,
+									String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
+									String serviceType, String vnfType, String vfModuleType, String networkType,
+									String requestDetails, String apiVersion, boolean aLaCarte, String requestUri) throws ClientProtocolException, IOException;
 
-	public abstract HttpResponse post(RequestClientParamater params) throws IOException;
+	public abstract HttpResponse post(PostParameter parameterObject) throws ClientProtocolException, IOException;
+
+	public abstract HttpResponse get() 
+					throws IOException;
 	
-	public abstract HttpResponse get() throws  IOException;
-	
-	protected String getEncryptedPropValue (String prop, String defaultValue, String encryptionKey) {
+	protected String url (String prop, String defaultValue, String encryptionKey) {
 		 try {
-			 return CryptoUtils.decrypt(prop, encryptionKey);
+			 String result = CryptoUtils.decrypt(prop, encryptionKey);
+			 return result;
 		 }	
 		 catch (GeneralSecurityException e) {
 			 msoLogger.debug("Security exception", e);
 		 }
 		 return defaultValue;
 	 }
+	
+	protected String getEncryptedPropValue (String prop, String defaultValue, String encryptionKey) {
+		 try {
+			 String result = CryptoUtils.decrypt(prop, encryptionKey);
+			 return result;
+		 }	
+		 catch (GeneralSecurityException e) {
+			 msoLogger.debug("Security exception", e);
+		 }
+		 return defaultValue;
+	 }
+
+	
+
+
 }

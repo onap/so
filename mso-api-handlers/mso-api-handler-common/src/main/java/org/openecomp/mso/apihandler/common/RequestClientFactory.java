@@ -21,40 +21,47 @@
 package org.openecomp.mso.apihandler.common;
 
 
+
+
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
-import org.openecomp.mso.properties.MsoJavaProperties;
-
+@Component
 public class RequestClientFactory {
-
-    private RequestClientFactory() {
-    }
-
+	
+	@Autowired
+	private Environment env;
+	
 	//based on URI, returns BPEL, CamundaTask or Camunda client
-	public static RequestClient getRequestClient(String orchestrationURI, MsoJavaProperties props) throws IllegalStateException{
+	public RequestClient getRequestClient(String orchestrationURI) throws IllegalStateException{
 		RequestClient retClient;
-		if(props ==null){
-			throw new IllegalStateException("properties is null");
-		}
+
 		String url;
-		if(orchestrationURI.contains(CommonConstants.BPEL_SEARCH_STR)){
-			url = props.getProperty(CommonConstants.BPEL_URL,null) + orchestrationURI;
-			retClient= new BPELRestClient();
-			
-		}else if(orchestrationURI.contains(CommonConstants.TASK_SEARCH_STR)){
-			url = props.getProperty(CommonConstants.CAMUNDA_URL,null) + orchestrationURI;
+		if(orchestrationURI.contains(CommonConstants.TASK_SEARCH_STR)){
+			url = env.getProperty(CommonConstants.CAMUNDA_URL) + orchestrationURI;
 			retClient = new CamundaTaskClient();
 		}
 		else{
-			url = props.getProperty(CommonConstants.CAMUNDA_URL,null) + orchestrationURI;
+			url = env.getProperty(CommonConstants.CAMUNDA_URL) + orchestrationURI;
 			retClient = new CamundaClient();
 		}
 		retClient.setClient(new DefaultHttpClient());
-		retClient.setProps(props);
+		retClient.setProps(env);
 		retClient.setUrl(url);
 		return retClient;
 		
 	}
+
+	public Environment getEnv() {
+		return env;
+	}
+
+	public void setEnv(Environment env) {
+		this.env = env;
+	}
+	
 	
 
 

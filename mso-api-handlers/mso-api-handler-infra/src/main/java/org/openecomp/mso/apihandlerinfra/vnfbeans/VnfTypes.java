@@ -31,6 +31,7 @@ package org.openecomp.mso.apihandlerinfra.vnfbeans;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -96,8 +97,8 @@ public class VnfTypes {
         return this.vnfType;
     }
     
-    public void setVnfType(List<VnfType> vnfType) {
-       this.vnfType = vnfType;
+    public void setVnfType( List<VnfType> vnfType) {
+    	this.vnfType=vnfType;
     }
 
 }

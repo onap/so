@@ -19,15 +19,19 @@
 */
 package org.openecomp.mso.client.sdnc.sync;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
+import org.openecomp.mso.BaseTest;
+import org.openecomp.mso.bpmn.common.adapter.sdnc.CallbackHeader;
+import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 
-public class SDNCAdapterCallbackRequestTest {
+public class SDNCAdapterCallbackRequestTest{
 	
 	SDNCAdapterCallbackRequest sdnccall = new SDNCAdapterCallbackRequest();
 	CallbackHeader cbh = new CallbackHeader();
-	Object o = new Object();
+	String o = "test";
 
 	@Test
 	public void testSDNCAdapterCallbackRequest() {
@@ -35,7 +39,7 @@ public class SDNCAdapterCallbackRequestTest {
 		sdnccall.setRequestData(o);
 		assertEquals(sdnccall.getCallbackHeader(), cbh);
 		assertEquals(sdnccall.getRequestData(), o);
-		assert(sdnccall.toString()!=null);	
+		assertNotNull(sdnccall.toString());	
 	}
 
 }

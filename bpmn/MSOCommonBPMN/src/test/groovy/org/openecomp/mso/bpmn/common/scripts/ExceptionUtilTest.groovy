@@ -36,6 +36,7 @@ import org.mockito.MockitoAnnotations
 import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.mockito.runners.MockitoJUnitRunner
 import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil;
+import org.openecomp.mso.bpmn.core.WorkflowException
 @RunWith(MockitoJUnitRunner.class)
 import org.junit.Test
 
@@ -63,4 +64,35 @@ class ExceptionUtilTest {
 		ExceptionUtil util = new ExceptionUtil()
 		Assert.assertEquals("5020",util.MapErrorCode(msg))
 	}
+	
+	@Test
+	public void testGetErrorCode() {
+		ExceptionUtil eUtil = new ExceptionUtil()
+		WorkflowException we = new WorkflowException("CreateVCEV2", 400, "SDNC Test Error")
+		int errCd = eUtil.getErrorCode(we)
+		Assert.assertEquals(400, errCd)
+	}
+	
+	@Test
+	public void testGetErrorCodeWithNullWfe() {
+		ExceptionUtil eUtil = new ExceptionUtil()
+		int errCd = eUtil.getErrorCode(null)
+		Assert.assertEquals(2500, errCd)
+	}
+	
+	@Test
+	public void testGetErrorMessage() {
+		ExceptionUtil eUtil = new ExceptionUtil()
+		WorkflowException we = new WorkflowException("CreateVCEV2", 400, "SDNC Test Error")
+		String errMsg = eUtil.getErrorMessage(we, "CreateVCEV2")
+		Assert.assertEquals("SDNC Test Error", errMsg)
+	}
+	
+	@Test
+	public void testGetErrorMessageWithNullWfe() {
+		ExceptionUtil eUtil = new ExceptionUtil()
+		String errMsg = eUtil.getErrorMessage(null, "CreateVCEV2")
+		Assert.assertEquals("Unexpected error encountered in CreateVCEV2", errMsg)
+	}
+	
 }

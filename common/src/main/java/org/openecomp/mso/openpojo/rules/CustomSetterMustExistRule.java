@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import com.openpojo.validation.rule.Rule;
 
 public class CustomSetterMustExistRule implements Rule {
 
-	private Matcher<PojoField>[] excludeMatchers = new Matcher[]{not(anything())};
+	private Matcher[] excludeMatchers = new Matcher[]{not(anything())};
 	private Matcher<PojoField>[] includeMatchers = new Matcher[]{anything()};
 	public CustomSetterMustExistRule() {
 	}
@@ -45,7 +45,7 @@ public class CustomSetterMustExistRule implements Rule {
 			}
 		}
 	}
-	public CustomSetterMustExistRule exclude(Matcher<PojoField>... excludeMatchers) {
+	public CustomSetterMustExistRule exclude(Matcher... excludeMatchers) {
 		this.excludeMatchers = excludeMatchers;
 		return this;
 	}

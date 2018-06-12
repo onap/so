@@ -21,17 +21,18 @@
 package org.openecomp.mso.adapters.sdnc.client;
 
 
+import java.io.StringWriter;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import java.io.StringWriter;
-import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
 /**
  * <p>Java class for anonymous complex type.
  *
@@ -66,7 +67,7 @@ public class SDNCAdapterCallbackRequest {
     @XmlElement(name = "RequestData")
     protected Object requestData;
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, SDNCAdapterCallbackRequest.class);
 
     /**
      * Gets the value of the callbackHeader property.

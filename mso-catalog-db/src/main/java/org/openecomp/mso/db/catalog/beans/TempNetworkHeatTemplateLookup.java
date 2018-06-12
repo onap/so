@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,17 +22,54 @@ package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import com.openpojo.business.annotation.BusinessKey;
 
+@Entity
+@Table(name = "temp_network_heat_template_lookup")
+@IdClass(TempNetworkHeatTemplateLookupId.class)
 public class TempNetworkHeatTemplateLookup implements Serializable {
 
+	public static final long serialVersionUID = -1322322139926390329L;
+
 	@BusinessKey
-	private String networkResourceModelName = null;
+	@Id
+	@Column(name = "NETWORK_RESOURCE_MODEL_NAME")
+	private String networkResourceModelName;
+
 	@BusinessKey
-	private String heatTemplateArtifactUuid = null;
-	private String aicVersionMin = null;
-	private String aicVersionMax = null;
-    public static final long serialVersionUID = -1322322139926390329L;
+	@Id
+	@Column(name = "HEAT_TEMPLATE_ARTIFACT_UUID")
+	private String heatTemplateArtifactUuid;
+
+	@Column(name = "AIC_VERSION_MIN")
+	private String aicVersionMin;
+
+	@Column(name = "AIC_VERSION_MAX")
+	private String aicVersionMax;
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof TempNetworkHeatTemplateLookup)) {
+			return false;
+		}
+		TempNetworkHeatTemplateLookup castOther = (TempNetworkHeatTemplateLookup) other;
+		return new EqualsBuilder().append(networkResourceModelName, castOther.networkResourceModelName)
+				.append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(networkResourceModelName).append(heatTemplateArtifactUuid).toHashCode();
+	}
 
 	public TempNetworkHeatTemplateLookup() {
 		super();
@@ -41,6 +78,7 @@ public class TempNetworkHeatTemplateLookup implements Serializable {
 	public String getNetworkResourceModelName() {
 		return this.networkResourceModelName;
 	}
+
 	public void setNetworkResourceModelName(String networkResourceModelName) {
 		this.networkResourceModelName = networkResourceModelName;
 	}
@@ -48,9 +86,11 @@ public class TempNetworkHeatTemplateLookup implements Serializable {
 	public String getHeatTemplateArtifactUuid() {
 		return this.heatTemplateArtifactUuid;
 	}
+
 	public void setHeatTemplateArtifactUuid(String heatTemplateArtifactUuid) {
 		this.heatTemplateArtifactUuid = heatTemplateArtifactUuid;
 	}
+
 	public String getAicVersionMin() {
 		return this.aicVersionMin;
 	}
@@ -69,32 +109,11 @@ public class TempNetworkHeatTemplateLookup implements Serializable {
 
 	@Override
 	public String toString() {
-		return "NetworkResourceModelName=" + this.networkResourceModelName + "HeatTemplateArtifactUuid=" +
-			this.heatTemplateArtifactUuid + "aicVersionMin=" + this.aicVersionMin + "aicVersionMax=" + this.aicVersionMax;
+		StringBuilder sb = new StringBuilder();
+		sb.append("NetworkResourceModelName=" + this.networkResourceModelName);
+		sb.append("HeatTemplateArtifactUuid=" + this.heatTemplateArtifactUuid);
+		sb.append("aicVersionMin=" + this.aicVersionMin);
+		sb.append("aicVersionMax=" + this.aicVersionMax);
+		return sb.toString();
 	}
-
-	@Override
-    public boolean equals (Object o) {
-        if (!(o instanceof TempNetworkHeatTemplateLookup)) {
-            return false;
-        }
-        if (this == o) {
-            return true;
-        }
-        TempNetworkHeatTemplateLookup tnhtl = (TempNetworkHeatTemplateLookup) o;
-        if (tnhtl.getHeatTemplateArtifactUuid().equals(this.getHeatTemplateArtifactUuid()) && tnhtl.getNetworkResourceModelName().equals(this.getNetworkResourceModelName())) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode () {
-        // hash code does not have to be a unique result - only that two objects that should be treated as equal
-        // return the same value. so this should work.
-        int result;
-        result = (this.networkResourceModelName != null ? this.networkResourceModelName.hashCode() : 0) + (this.heatTemplateArtifactUuid != null ? this.heatTemplateArtifactUuid.hashCode() : 0);
-        return result;
-    }
-
 }

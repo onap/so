@@ -25,7 +25,11 @@ package org.openecomp.mso.adapters.nwrest;
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 
 public class NetworkExceptionResponse extends NetworkResponseCommon {
-    private String message;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7160401922983004097L;
+	private String message;
 	private MsoExceptionCategory category;
 	private Boolean rolledBack;
 

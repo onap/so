@@ -32,6 +32,10 @@ import org.openecomp.mso.openstack.beans.RouteTarget;
 
 @XmlRootElement(name = "queryNetworkResponse")
 public class QueryNetworkResponse extends NetworkResponseCommon {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5251191073081795026L;
 	private String networkId;
 	private String neutronNetworkId;
 	private String networkStackId;
@@ -41,7 +45,7 @@ public class QueryNetworkResponse extends NetworkResponseCommon {
 	private List<RouteTarget> routeTargets;
 	private Map<String, String> subnetIdMap;
 	private Map<String, String> networkOutputs;
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, QueryNetworkResponse.class);
 
 	public QueryNetworkResponse() {
 		super();

@@ -42,7 +42,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @JsonRootName("variables")
 public class ResourceInput {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL, ResourceInput.class);
 	
     @JsonProperty("resourceInstanceName")
     private String resourceInstanceName;

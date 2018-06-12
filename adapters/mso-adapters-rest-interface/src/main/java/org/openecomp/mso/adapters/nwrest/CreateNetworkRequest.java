@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,6 +43,10 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName("createNetworkRequest")
 @XmlRootElement(name = "createNetworkRequest")
 public class CreateNetworkRequest extends NetworkRequestCommon {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8984362978831333521L;
 	private String cloudSiteId;
 	private String tenantId;
 	private String networkId;
@@ -121,12 +125,13 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 		this.networkTypeVersion = networkTypeVersion;
 	}
 
-	public String getNetworkTechnology() {
-		return networkTechnology.toString();
+	public NetworkTechnology getNetworkTechnology() {
+		return networkTechnology;
 	}
 
-	public void setNetworkTechnology(String networkTechnology) {
-		this.networkTechnology = NetworkTechnology.valueOf(networkTechnology);
+	public void setNetworkTechnology(NetworkTechnology networkTechnology) {
+		this.networkTechnology = networkTechnology;
+		this.contrailRequest = determineContrail();
 	}
 
 	public List<Subnet> getSubnets() {
@@ -151,6 +156,7 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 
 	public void setContrailNetwork(ContrailNetwork contrailNetwork) {
 		this.contrailNetwork = contrailNetwork;
+		this.contrailRequest = determineContrail();
 	}
 
 	public Boolean getFailIfExists() {
@@ -186,11 +192,15 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 	}
 
 	public boolean isContrailRequest() {
-		return (networkTechnology == NetworkTechnology.CONTRAIL) && (contrailNetwork != null);
+		return this.contrailRequest;
 	}
 	
 	@JsonIgnore
-	public void setContrailRequest(boolean contrailRequest) {
+	protected void setContrailRequest(boolean contrailRequest) {
 		this.contrailRequest = contrailRequest;
+	}
+	
+	private boolean determineContrail() {
+		return (networkTechnology == NetworkTechnology.CONTRAIL && (contrailNetwork != null));
 	}
 }

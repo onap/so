@@ -20,6 +20,8 @@
 
 package org.openecomp.mso.openstack.beans;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -29,8 +31,12 @@ import javax.xml.bind.annotation.XmlType;
     "routeTarget",
     "routeTargetRole"
 })
-public class RouteTarget {
+public class RouteTarget implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5425083030715789604L;
 	private String routeTarget;
 	private String routeTargetRole;
 	
@@ -43,7 +49,7 @@ public class RouteTarget {
 	public String getRouteTargetRole() {
 		return routeTargetRole;
 	}
-	public void setRole(String routeTargetRole) {
+	public void setRouteTargetRole(String routeTargetRole) {
 		this.routeTargetRole = routeTargetRole;
 	}
 	

@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +20,18 @@
 
 package org.openecomp.mso.db.catalog.beans;
 
-import static org.hamcrest.CoreMatchers.isA;
-import static org.mockito.Matchers.eq;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.openecomp.mso.openpojo.rules.HasAnnotationMatcher.hasAnnotation;
+import static org.openecomp.mso.openpojo.rules.HasAnnotationPropertyWithValueMatcher.hasAnnotationPropertyWithValue;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matcher;
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+
 import org.junit.Test;
+import org.openecomp.mso.openpojo.rules.CustomSetterMustExistRule;
 import org.openecomp.mso.openpojo.rules.EqualsAndHashCodeTester;
+import org.openecomp.mso.openpojo.rules.HasEqualsAndHashCodeRule;
 import org.openecomp.mso.openpojo.rules.HasToStringRule;
 import org.openecomp.mso.openpojo.rules.ToStringTester;
 
@@ -37,8 +42,13 @@ import com.openpojo.reflection.filters.FilterNonConcrete;
 import com.openpojo.reflection.filters.FilterPackageInfo;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
+import com.openpojo.validation.rule.impl.BusinessKeyMustExistRule;
 import com.openpojo.validation.rule.impl.GetterMustExistRule;
-import com.openpojo.validation.rule.impl.SetterMustExistRule;
+import com.openpojo.validation.rule.impl.NoNestedClassRule;
+import com.openpojo.validation.rule.impl.NoPrimitivesRule;
+import com.openpojo.validation.rule.impl.NoPublicFieldsExceptStaticFinalRule;
+import com.openpojo.validation.rule.impl.NoStaticExceptFinalRule;
+import com.openpojo.validation.rule.impl.SerializableMustHaveSerialVersionUIDRule;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
 
@@ -54,19 +64,27 @@ public class BeansTest {
 	@Test
 	public void pojoStructure() {	
 		test("org.openecomp.mso.db.catalog.beans");		
+		test("org.openecomp.mso.db.catalog.beans.macro");		
 	}
 
 	private void test(String pojoPackage) {
 		Validator validator = ValidatorBuilder.create()
 				.with(new GetterMustExistRule())
-				.with(new SetterMustExistRule())
+				.with(new NoPrimitivesRule())
+			    .with(new NoNestedClassRule())
+			    .with(new NoStaticExceptFinalRule())
+			    .with(new SerializableMustHaveSerialVersionUIDRule())
 				.with(new HasToStringRule())
-				
+				.with(new EqualsAndHashCodeTester())
+			    .with(new NoPublicFieldsExceptStaticFinalRule())
+			    .with(new BusinessKeyMustExistRule())
+				.with(new CustomSetterMustExistRule().exclude(hasAnnotation(Temporal.class)))
 				
 				.with(new SetterTester())
 				.with(new GetterTester())
 				.with(new ToStringTester())
-				.with(new EqualsAndHashCodeTester().onlyDeclaredMethods())
+				.with(new HasEqualsAndHashCodeRule())
+			     
 				.build();
 		
 	

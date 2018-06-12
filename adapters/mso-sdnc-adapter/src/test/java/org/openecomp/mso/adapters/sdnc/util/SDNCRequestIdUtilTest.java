@@ -23,6 +23,7 @@ package org.openecomp.mso.adapters.sdnc.util;
 import static org.junit.Assert.assertEquals;
 
 import java.util.UUID;
+
 import org.junit.Test;
 
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,18 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.sdnc.sdncrest;
 
-import org.openecomp.mso.adapters.sdncrest.SDNCErrorCommon;
-import org.openecomp.mso.adapters.sdncrest.SDNCResponseCommon;
-import org.openecomp.mso.adapters.sdncrest.SDNCServiceError;
-import org.openecomp.mso.adapters.sdncrest.SDNCServiceRequest;
-import org.openecomp.mso.logger.MessageEnum;
-import org.openecomp.mso.logger.MsoLogger;
-import org.apache.http.HttpStatus;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.io.StringWriter;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -36,27 +30,36 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.StringWriter;
 
-public class SDNCServiceRequestTask implements Runnable {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
+import org.apache.http.HttpStatus;
+import org.openecomp.mso.adapters.sdnc.exception.SDNCAdapterException;
+import org.openecomp.mso.adapters.sdncrest.SDNCErrorCommon;
+import org.openecomp.mso.adapters.sdncrest.SDNCResponseCommon;
+import org.openecomp.mso.adapters.sdncrest.SDNCServiceError;
+import org.openecomp.mso.adapters.sdncrest.SDNCServiceRequest;
+import org.openecomp.mso.logger.MessageEnum;
+import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-	private final SDNCServiceRequest request;
-	private final String msoRequestId;
-	private final String msoServiceInstanceId;
-	private final String myUrlSuffix;
+@Component
+public class SDNCServiceRequestTask {
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SDNCServiceRequestTask.class);
 
-	public SDNCServiceRequestTask(SDNCServiceRequest request,
-			String msoRequestId, String msoServiceInstanceId,
-			String myUrlSuffix) {
-		this.request = request;
-		this.msoRequestId = msoRequestId;
-		this.msoServiceInstanceId = msoServiceInstanceId;
-		this.myUrlSuffix = myUrlSuffix;
-	}
+	@Autowired
+	private SDNCServiceRequestConnector connector;
+	
+	@Autowired
+	MapTypedRequestTunablesData mapTunables;
+	
+	@Autowired
+	private BPRestCallback bpRestCallback;
 
-	@Override
-	public void run()
+	@Async
+	public void runRequest(SDNCServiceRequest request,String msoRequestId,String msoServiceInstanceId,String myUrlSuffix) throws SDNCAdapterException
 	{
 		MsoLogger.setLogContext(msoRequestId, msoServiceInstanceId);
 		MsoLogger.setServiceName(getClass().getSimpleName());
@@ -64,27 +67,25 @@ public class SDNCServiceRequestTask implements Runnable {
 		LOGGER.debug(getClass().getSimpleName() + ".run()"
 			+ " entered with request: " + request.toJson());
 
-		String sdncRequestId = request.getSDNCRequestId();
-		String sdncService = request.getSDNCService();
-		String sdncOperation = request.getSDNCOperation();
+		String sdncRequestId = request.getSdncRequestId();
+		String sdncService = request.getSdncService();
+		String sdncOperation = request.getSdncOperation();
 
 		TypedRequestTunables rt = new TypedRequestTunables(sdncRequestId, myUrlSuffix);
 		rt.setServiceKey(sdncService, sdncOperation);
-
-		if (!rt.setTunables()) {
+		TypedRequestTunables mappedTunables = mapTunables.setTunables(rt);
+		if (!mappedTunables.getError().isEmpty()) {
 			// Note that the error was logged and alarmed by setTunables()
-			SDNCServiceError error = new SDNCServiceError(request.getSDNCRequestId(),
-				String.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR), rt.getError(), "Y");
-			BPRestCallback callback = new BPRestCallback();
-			callback.send(request.getBPNotificationUrl(), error.toJson());
+			SDNCServiceError error = new SDNCServiceError(request.getSdncRequestId(),
+				String.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR), mappedTunables.getError(), "Y");
+			bpRestCallback.send(request.getBPNotificationUrl(), error.toJson());
 			return;
 		}
 
-		String xml = genSdncReq(request, rt);
+		String xml = genSdncReq(request, mappedTunables);
 
-		long sdncStartTime = System.currentTimeMillis();
-		SDNCConnector connector = new SDNCServiceRequestConnector();
-		SDNCResponseCommon response = connector.send(xml, rt);
+		long sdncStartTime = System.currentTimeMillis();		
+		SDNCResponseCommon response = connector.send(xml, mappedTunables);
 
 		if (response instanceof SDNCErrorCommon) {
 			LOGGER.recordMetricEvent(sdncStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
@@ -95,8 +96,7 @@ public class SDNCServiceRequestTask implements Runnable {
 		}
 
 		long bpStartTime = System.currentTimeMillis();
-		BPRestCallback callback = new BPRestCallback();
-		boolean callbackSuccess = callback.send(request.getBPNotificationUrl(), response.toJson());
+		boolean callbackSuccess = bpRestCallback.send(request.getBPNotificationUrl(), response.toJson());
 
 		if (callbackSuccess) {
 			LOGGER.recordMetricEvent(bpStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
@@ -156,20 +156,20 @@ public class SDNCServiceRequestTask implements Runnable {
 			addTextChild(serviceInformation, "subscriber-global-id", request.getServiceInformation().getSubscriberGlobalId());
 
 			Element agnosticServiceInformation = addChild(root, "agnostic-service-information");
-			addTextChild(agnosticServiceInformation, "operation", request.getSDNCOperation());
-			addTextChild(agnosticServiceInformation, "service", request.getSDNCService());
+			addTextChild(agnosticServiceInformation, "operation", request.getSdncOperation());
+			addTextChild(agnosticServiceInformation, "service", request.getSdncService());
 
 			// anydata is mandatory in the SDNC schema, so if the data we got is null,
 			// set use an empty string instead to ensure we generate an empty element.
 
-			String anydata = request.getSDNCServiceData();
+			String anydata = request.getSdncServiceData();
 			if (anydata == null) {
 				anydata = "";
 			}
 
 			// content-type is also mandatory.
 
-			String contentType = request.getSDNCServiceDataType();
+			String contentType = request.getSdncServiceDataType();
 
 			if (contentType == null || contentType.isEmpty()) {
 				if (anydata.isEmpty()) {
@@ -195,7 +195,10 @@ public class SDNCServiceRequestTask implements Runnable {
 
 		try {
 			StringWriter writer = new StringWriter();
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			TransformerFactory factory = TransformerFactory.newInstance();
+			factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD,"");
+			factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET,"");
+			Transformer transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");

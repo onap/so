@@ -1,0 +1,16 @@
+{ 
+	"globalCustomerId":"globalCustomerId",
+	"subscriberName":"subscriberName",
+	"subscriberType":"subscriberType",
+	"resourceVersion":null,
+	"serviceSubscriptions":{
+		"serviceSubscription":[{
+			"serviceType":"subscriptionServiceType",
+			"tempUbSubAccountId":null,
+			"resourceVersion":null,
+			"serviceInstances":null,
+			"relationshipList":null
+		}]
+	},
+	"relationshipList":null
+}

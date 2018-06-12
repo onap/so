@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,11 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-
 package org.openecomp.mso.client.sdno.beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -34,10 +35,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 "request-id",
 "health-diagnostic-code",
 "operation-type",
+"send-detailed-cmd-response",
 "aai-param-list"
 })
-public class RequestHdCustom {
+public class RequestHdCustom implements Serializable {
 
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = -206110458275127710L;
 @JsonProperty("request-client-name")
 private String requestClientName;
 @JsonProperty("request-user-id")
@@ -48,6 +54,8 @@ private String requestId;
 private String healthDiagnosticCode;
 @JsonProperty("operation-type")
 private String operationType;
+@JsonProperty("send-detailed-cmd-response")
+private String sendDetailedCmdResponse = "false";
 @JsonProperty("aai-param-list")
 private List<AAIParamList> aaiParamList = new ArrayList<AAIParamList>();
 
@@ -151,6 +159,19 @@ public RequestHdCustom withOperationType(String operationType) {
 this.operationType = operationType;
 return this;
  }
+
+public void setSendDetailedCmdResponse(String sendDetailedCmdResponse) {
+	this.sendDetailedCmdResponse = sendDetailedCmdResponse;
+}
+
+public String getSendDetailedCmdResponse() {
+	return sendDetailedCmdResponse;
+}
+
+public RequestHdCustom withSendDetailedCmdResponse(String sendDetailedCmdResponse) {
+	this.sendDetailedCmdResponse = sendDetailedCmdResponse;
+	return this;
+}
 
 @JsonProperty("aai-param-list")
 public List<AAIParamList> getAaiParamList() {

@@ -23,6 +23,7 @@ package org.openecomp.mso.adapters.tenantrest;
 
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "createTenantResponse")

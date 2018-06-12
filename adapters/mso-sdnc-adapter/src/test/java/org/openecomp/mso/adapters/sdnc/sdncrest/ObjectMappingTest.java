@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.sdnc.sdncrest;
 
 import static org.junit.Assert.assertEquals;
@@ -125,11 +126,11 @@ public class ObjectMappingTest {
 		assertEquals("IST15_0902_3003", object.getServiceInformation().getSubscriberGlobalId());
 		assertEquals("http://localhost:8080/mso/SDNCAdapterCallbackService", object.getBPNotificationUrl());
 		assertEquals("PT5M", object.getBPTimeout());
-		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSDNCRequestId());
-		assertEquals("vhnf", object.getSDNCService());
-		assertEquals("service-topology-cust-assign-operation", object.getSDNCOperation());
-		assertEquals("XML", object.getSDNCServiceDataType());
-		assertTrue(object.getSDNCServiceData().startsWith("<vhnf-cust-stage-information>"));
+		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSdncRequestId());
+		assertEquals("vhnf", object.getSdncService());
+		assertEquals("service-topology-cust-assign-operation", object.getSdncOperation());
+		assertEquals("XML", object.getSdncServiceDataType());
+		assertTrue(object.getSdncServiceData().startsWith("<vhnf-cust-stage-information>"));
 	}
 
 	@Test
@@ -153,11 +154,11 @@ public class ObjectMappingTest {
 		assertEquals("IST15_0902_3003", object.getServiceInformation().getSubscriberGlobalId());
 		assertEquals("http://localhost:8080/mso/SDNCAdapterCallbackService", object.getBPNotificationUrl());
 		assertNull(object.getBPTimeout());
-		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSDNCRequestId());
-		assertEquals("vhnf", object.getSDNCService());
-		assertEquals("service-topology-cust-assign-operation", object.getSDNCOperation());
-		assertEquals("XML", object.getSDNCServiceDataType());
-		assertTrue(object.getSDNCServiceData().startsWith("<vhnf-cust-stage-information>"));
+		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSdncRequestId());
+		assertEquals("vhnf", object.getSdncService());
+		assertEquals("service-topology-cust-assign-operation", object.getSdncOperation());
+		assertEquals("XML", object.getSdncServiceDataType());
+		assertTrue(object.getSdncServiceData().startsWith("<vhnf-cust-stage-information>"));
 	}
 
 	@Test
@@ -222,7 +223,7 @@ public class ObjectMappingTest {
 		json = json.replace(EOL + "((RESPONSE-PARAMS))", "," + EOL + "    \"params\": " + PARAMS + EOL);
 
 		SDNCServiceResponse object = mapper.readValue(json, SDNCServiceResponse.class);
-		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSDNCRequestId());
+		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSdncRequestId());
 		assertEquals("200", object.getResponseCode());
 		assertEquals("OK", object.getResponseMessage());
 		assertEquals("Y", object.getAckFinalIndicator());
@@ -244,7 +245,7 @@ public class ObjectMappingTest {
 		json = json.replace("((RESPONSE-PARAMS))", "");
 
 		SDNCServiceResponse object = mapper.readValue(json, SDNCServiceResponse.class);
-		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSDNCRequestId());
+		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSdncRequestId());
 		assertEquals("200", object.getResponseCode());
 		assertNull(object.getResponseMessage());
 		assertEquals("Y", object.getAckFinalIndicator());
@@ -314,7 +315,7 @@ public class ObjectMappingTest {
 		json = json.replace("((RESPONSE-MESSAGE))", "\"responseMessage\": \"" + "SOMETHING BAD" + "\"," + EOL);
 
 		SDNCServiceError object = mapper.readValue(json, SDNCServiceError.class);
-		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSDNCRequestId());
+		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSdncRequestId());
 		assertEquals("500", object.getResponseCode());
 		assertEquals("SOMETHING BAD", object.getResponseMessage());
 		assertEquals("Y", object.getAckFinalIndicator());
@@ -332,7 +333,7 @@ public class ObjectMappingTest {
 		json = json.replace("((RESPONSE-MESSAGE))", "");
 
 		SDNCServiceError object = mapper.readValue(json, SDNCServiceError.class);
-		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSDNCRequestId());
+		assertEquals("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", object.getSdncRequestId());
 		assertEquals("500", object.getResponseCode());
 		assertNull(object.getResponseMessage());
 		assertEquals("Y", object.getAckFinalIndicator());

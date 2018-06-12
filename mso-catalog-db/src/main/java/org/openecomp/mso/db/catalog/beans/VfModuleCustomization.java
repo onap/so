@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,135 +21,179 @@
 package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
 
-public class VfModuleCustomization implements Serializable {
-	
-	@BusinessKey
-	private String modelCustomizationUuid = null;
-	@BusinessKey
-	private String vfModuleModelUuid = null;
-	private String label = null;
-    private Integer minInstances;
-    private Integer maxInstances;
-    private Integer initialCount;
-    private Integer availabilityZoneCount;
-    private String heatEnvironmentArtifactUuid = null;
-    private String volEnvironmentArtifactUuid = null;
-    private Timestamp created = null;
-    private VfModule vfModule;
-    public static final long serialVersionUID = -1322322139926390329L;
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
-	public VfModuleCustomization() {
-		super();
-	}
-	
-	public String getModelCustomizationUuid() {
-		return this.modelCustomizationUuid;
-	}
-	public void setModelCustomizationUuid(String modelCustomizationUuid) {
-		this.modelCustomizationUuid = modelCustomizationUuid;
-	}
-	public String getVfModuleModelUuid() {
-		return this.vfModuleModelUuid;
-	}
-	public void setVfModuleModelUuid(String vfModuleModelUuid) {
-		this.vfModuleModelUuid = vfModuleModelUuid;
-	}
-	public String getHeatEnvironmentArtifactUuid() {
-		return this.heatEnvironmentArtifactUuid;
-	}
-	public void setHeatEnvironmentArtifactUuid(String heatEnvironmentArtifactUuid) {
-		this.heatEnvironmentArtifactUuid = heatEnvironmentArtifactUuid;
-	}
-	public String getVolEnvironmentArtifactUuid() {
-		return this.volEnvironmentArtifactUuid;
-	}
-	public void setVolEnvironmentArtifactUuid(String volEnvironmentArtifactUuid) {
-		this.volEnvironmentArtifactUuid = volEnvironmentArtifactUuid;
-	}
-	
-	public Integer getMinInstances() {
-		return this.minInstances;
-	}
-	public void setMinInstances(Integer minInstances) {
-		this.minInstances = minInstances;
-	}
-	public Integer getMaxInstances() {
-		return this.maxInstances;
-	}
-	public void setMaxInstances(Integer maxInstances) {
-		this.maxInstances = maxInstances;
-	}
-	public Integer getInitialCount() {
-		return this.initialCount;
-	}
-	public void setInitialCount(Integer initialCount) {
-		this.initialCount = initialCount;
-	}
-	public Integer getAvailabilityZoneCount() {
-		return this.availabilityZoneCount;
-	}
-	public void setAvailabilityZoneCount(Integer availabilityZoneCount) {
-		this.availabilityZoneCount = availabilityZoneCount;
-	}
-	public Timestamp getCreated() {
-		return created;
-	}
-	public void setCreated(Timestamp created) {
-		this.created = created;
-	}
-	public String getLabel() {
-		return this.label;
-	}
-	public void setLabel(String label) {
-		this.label = label;
-	}
-	public VfModule getVfModule() {
-		return this.vfModule;
-	}
-	public void setVfModule(VfModule vfModule) {
-		this.vfModule = vfModule;
+@Entity
+@Table(name = "vf_module_customization")
+public class VfModuleCustomization implements Serializable {
+
+	public static final long serialVersionUID = -1322322139926390329L;
+
+	@BusinessKey
+	@Id
+	@Column(name = "MODEL_CUSTOMIZATION_UUID")
+	private String modelCustomizationUUID;
+
+	@Column(name = "LABEL")
+	private String label;
+
+	@Column(name = "MIN_INSTANCES")
+	private Integer minInstances;
+
+	@Column(name = "MAX_INSTANCES")
+	private Integer maxInstances;
+
+	@Column(name = "INITIAL_COUNT")
+	private Integer initialCount;
+
+	@Column(name = "AVAILABILITY_ZONE_COUNT")
+	private Integer availabilityZoneCount;
+
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "VOL_ENVIRONMENT_ARTIFACT_UUID")
+	HeatEnvironment volumeHeatEnv;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "HEAT_ENVIRONMENT_ARTIFACT_UUID")
+	HeatEnvironment heatEnvironment;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "VF_MODULE_MODEL_UUID")
+	private VfModule vfModule;
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
 	}
 
 	@Override
 	public String toString() {
-		return "modelCustomizationUuid=" + this.modelCustomizationUuid +
-			"vfModuleModelUuid=" + this.vfModuleModelUuid +
-			"label=" + this.label +
-			"initalCount=" + this.initialCount +
-			"minInstances=" + this.minInstances +
-			"maxInstances=" + this.maxInstances +
-			"availabilityZoneCount=" + this.availabilityZoneCount +
-			"heatEnvironmentArtifactUuid=" + this.heatEnvironmentArtifactUuid +
-			"volEnvironmentArtifactUuid=" + this.volEnvironmentArtifactUuid +
-			"created=" + this.created;
+		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID).append("label", label)
+				.append("minInstances", minInstances).append("maxInstances", maxInstances)
+				.append("initialCount", initialCount).append("availabilityZoneCount", availabilityZoneCount)
+				.append("created", created).append("volumeHeatEnv", volumeHeatEnv)
+				.append("heatEnvironment", heatEnvironment).append("vfModule", vfModule).toString();
 	}
 
 	@Override
-    public boolean equals (Object o) {
-        if (!(o instanceof VfModuleCustomization)) {
-            return false;
-        }
-        if (this == o) {
-            return true;
-        }
-        VfModuleCustomization vfmc = (VfModuleCustomization) o;
-        if (vfmc.getModelCustomizationUuid().equals(this.getModelCustomizationUuid()) && vfmc.getVfModuleModelUuid().equals(this.getVfModuleModelUuid())) {
-            return true;
-        }
-        return false;
-    }
+	public boolean equals(final Object other) {
+		if (!(other instanceof VfModuleCustomization)) {
+			return false;
+		}
+		VfModuleCustomization castOther = (VfModuleCustomization) other;
+		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
+	}
 
-    @Override
-    public int hashCode () {
-        // hash code does not have to be a unique result - only that two objects that should be treated as equal
-        // return the same value. so this should work.
-        int result = 0;
-        result = (this.modelCustomizationUuid != null ? this.modelCustomizationUuid.hashCode() : 0) + (this.vfModuleModelUuid != null ? this.vfModuleModelUuid.hashCode() : 0);
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
+	}
 
+	public VfModuleCustomization() {
+		super();
+	}
+
+	public String getModelCustomizationUUID() {
+		return this.modelCustomizationUUID;
+	}
+
+	public void setModelCustomizationUUID(String modelCustomizationUUID) {
+		this.modelCustomizationUUID = modelCustomizationUUID;
+	}
+
+	@LinkedResource
+	public HeatEnvironment getVolumeHeatEnv() {
+		return volumeHeatEnv;
+	}
+
+	public void setVolumeHeatEnv(HeatEnvironment volumeHeatEnv) {
+		this.volumeHeatEnv = volumeHeatEnv;
+	}
+
+	@LinkedResource
+	public HeatEnvironment getHeatEnvironment() {
+		return heatEnvironment;
+	}
+
+	public void setHeatEnvironment(HeatEnvironment heatEnvironment) {
+		this.heatEnvironment = heatEnvironment;
+	}
+
+	public Integer getMinInstances() {
+		return this.minInstances;
+	}
+
+	public void setMinInstances(Integer minInstances) {
+		this.minInstances = minInstances;
+	}
+
+	public Integer getMaxInstances() {
+		return this.maxInstances;
+	}
+
+	public void setMaxInstances(Integer maxInstances) {
+		this.maxInstances = maxInstances;
+	}
+
+	public Integer getInitialCount() {
+		return this.initialCount;
+	}
+
+	public void setInitialCount(Integer initialCount) {
+		this.initialCount = initialCount;
+	}
+
+	public Integer getAvailabilityZoneCount() {
+		return this.availabilityZoneCount;
+	}
+
+	public void setAvailabilityZoneCount(Integer availabilityZoneCount) {
+		this.availabilityZoneCount = availabilityZoneCount;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public String getLabel() {
+		return this.label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	@LinkedResource
+	public VfModule getVfModule() {
+		return this.vfModule;
+	}
+
+	public void setVfModule(VfModule vfModule) {
+		this.vfModule = vfModule;
+	}
 }

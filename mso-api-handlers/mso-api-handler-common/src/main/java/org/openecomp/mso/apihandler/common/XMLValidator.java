@@ -32,22 +32,21 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.commons.io.IOUtils;
-import org.xml.sax.SAXException;
-
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
+import org.xml.sax.SAXException;
 
 public class XMLValidator {
 
-    private static String xsdsPath;
+    private static String XSDS_PATH;
 
     static {
         String prefixMsoPropertiesPath = System.getProperty ("mso.config.path");
         if (prefixMsoPropertiesPath == null) {
             prefixMsoPropertiesPath = "";
         }
-        xsdsPath = prefixMsoPropertiesPath + "xsds/";
+        XSDS_PATH = prefixMsoPropertiesPath + "xsds/";
     }
 
     private String stringXsd;
@@ -55,17 +54,17 @@ public class XMLValidator {
     private SchemaFactory factory;
     private Schema schema;
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, XMLValidator.class);
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
 
-    public XMLValidator (String xsdFile) {
+    public XMLValidator (String xsdFile){
 
-        try (FileInputStream xsdStream = new FileInputStream (xsdsPath + xsdFile)) {
+        try (FileInputStream xsdStream = new FileInputStream (XSDS_PATH + xsdFile)) {
 
             stringXsd = IOUtils.toString (xsdStream);
 
             factory = SchemaFactory.newInstance (XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            factory.setResourceResolver (new PathResourceResolver (xsdsPath));
+            factory.setResourceResolver (new PathResourceResolver (XSDS_PATH));
             factory.setFeature (XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
             String quotedXsd = stringXsd.replaceAll ("&#34;", "\"");
@@ -73,7 +72,8 @@ public class XMLValidator {
             schema = factory.newSchema (src);
 
         } catch (IOException | SAXException e) {
-            msoLogger.debug ("Cannot open file " + xsdsPath + xsdFile, e);
+
+            msoLogger.debug ("Cannot open file " + XSDS_PATH + xsdFile, e);
             errorMsg = "ErrorDetails: xsd file " + xsdFile + "could not be opened - " + e.getMessage ();
         }
     }

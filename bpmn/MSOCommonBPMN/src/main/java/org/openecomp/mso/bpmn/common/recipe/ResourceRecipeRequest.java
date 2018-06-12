@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @JsonRootName("variables")
 public class ResourceRecipeRequest {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL);
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL, ResourceRecipeRequest.class);
 	
     @JsonProperty("resourceInput")
     private BpmnParam resourceInput;
@@ -61,7 +61,7 @@ public class ResourceRecipeRequest {
     private BpmnParam recipeParams;
 
     @JsonProperty("mso-service-request-timeout")
-    private BpmnParam recipeTimeout;
+    private BpmnIntegerParam recipeTimeout;
     
     @JsonProperty("resourceInput")
     public BpmnParam getResourceInput() {
@@ -134,12 +134,12 @@ public class ResourceRecipeRequest {
     }
 
     @JsonProperty("mso-service-request-timeout")
-    public BpmnParam getRecipeTimeout() {
+    public BpmnIntegerParam getRecipeTimeout() {
 		return recipeTimeout;
 	}
     
     @JsonProperty("mso-service-request-timeout")
-	public void setRecipeTimeout(BpmnParam recipeTimeout) {
+	public void setRecipeTimeout(BpmnIntegerParam recipeTimeout) {
 		this.recipeTimeout = recipeTimeout;
 	}
 

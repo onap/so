@@ -23,17 +23,20 @@ package org.openecomp.mso.adapters.tenantrest;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.openecomp.mso.logger.MsoLogger;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import org.openecomp.mso.logger.MsoLogger;
+public abstract class TenantRequestCommon implements Serializable {
 
-public class TenantRequestCommon {
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+	private static final long serialVersionUID = 1486834308868170854L;
+	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, TenantRequestCommon.class);
 	public String toJsonString() {
 		try {
 			String jsonString;

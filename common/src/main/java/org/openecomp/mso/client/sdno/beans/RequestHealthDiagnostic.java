@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,6 +35,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "request-client-name",
     "request-node-name",
+    "request-node-uuid",
     "request-node-ip",
     "request-id",
     "request-user-id",
@@ -48,6 +49,8 @@ public class RequestHealthDiagnostic implements Serializable
     private String requestClientName;
     @JsonProperty("request-node-name")
     private String requestNodeName;
+    @JsonProperty("request-node-uuid")
+    private String requestNodeUuid;
     @JsonProperty("request-node-ip")
     private String requestNodeIp;
     @JsonProperty("request-id")
@@ -59,7 +62,7 @@ public class RequestHealthDiagnostic implements Serializable
     @JsonProperty("health-diagnostic-code")
     private String healthDiagnosticCode;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<>();
+    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     private final static long serialVersionUID = 1166788526178388021L;
 
     @JsonProperty("request-client-name")
@@ -89,6 +92,21 @@ public class RequestHealthDiagnostic implements Serializable
 
     public RequestHealthDiagnostic withRequestNodeName(String requestNodeName) {
         this.requestNodeName = requestNodeName;
+        return this;
+    }
+    
+    @JsonProperty("request-node-uuid")
+    public String getRequestNodeUuid() {
+        return requestNodeUuid;
+    }
+
+    @JsonProperty("request-node-uuid")
+    public void setRequestNodeUuid(String requestNodeUuid) {
+        this.requestNodeUuid = requestNodeUuid;
+    }
+
+    public RequestHealthDiagnostic withRequestNodeUuid(String requestNodeUuid) {
+        this.requestNodeUuid = requestNodeUuid;
         return this;
     }
 

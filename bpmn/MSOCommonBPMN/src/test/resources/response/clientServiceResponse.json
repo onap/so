@@ -1,0 +1,105 @@
+{
+	"version": null,
+	"modelName": "MSOTADevInfra_vSAMP10a_Service",
+	"description": "MSO aLaCarte Vfmodule with addon",
+	"modelUUID": "5df8b6de-2083-11e7-93ae-92361f002672",
+	"modelInvariantUUID": "9647dfc4-2083-11e7-93ae-92361f002671",
+	"created": 1492191759000,
+	"modelVersion": "2.0",
+	"serviceType": "NA",
+	"serviceRole": "NA",
+	"environmentContext": "Luna",
+	"workloadContext": "Oxygen",
+	"networkCustomizations": [
+		{
+			"modelCustomizationUUID": "3bdbb104-476c-483e-9f8b-c095b3d308ac",
+			"modelInstanceName": "CONTRAIL30_GNDIRECT 9",
+			"created": 1484703305000,
+			"networkTechnology": "",
+			"networkType": "",
+			"networkScope": "",
+			"networkRole": "",
+			"networkResource": null,
+			"handler": {
+				
+			}
+		}
+	],
+	"vnfCustomizations": [
+		{
+			"version": null,
+			"modelCustomizationUUID": "68dc9a92-214c-11e7-93ae-92361f002672",
+			"modelInstanceName": "vSAMP10a 2",
+			"created": "2017-04-14 21:46:28.000",
+			"minInstances": 0,
+			"maxInstances": 0,
+			"availabilityZoneMaxCount": 0,
+			"nfFunction": "vSAMP",
+			"nfType": "vSAMP",
+			"nfRole": "vSAMP",
+			"nfNamingCode": "vSAMP",
+			"multiStageDesign": null,
+			"vnfResources": null,
+			"vfModuleCustomizations": [
+				{
+					"modelCustomizationUUID": "cb82ffd8-252a-11e7-93ae-92361f002672",
+					"label": "base",
+					"minInstances": 0,
+					"maxInstances": 0,
+					"initialCount": 1,
+					"availabilityZoneCount": 0,
+					"created": "2016-09-14 18:19:56.000",
+					"volumeHeatEnv": null,
+					"heatEnvironment": null,
+					"vfModule": null
+				},
+				{
+					"modelCustomizationUUID": "b4ea86b4-253f-11e7-93ae-92361f002672",
+					"label": "PCM",
+					"minInstances": 0,
+					"maxInstances": 0,
+					"initialCount": 0,
+					"availabilityZoneCount": 0,
+					"created": "2016-09-14 18:19:56.000",
+					"volumeHeatEnv": null,
+					"heatEnvironment": null,
+					"vfModule": null
+				}
+			],
+			"handler": {
+				
+			},
+			"vnfResource": null,
+			"creationTimestamp": 1492206388000
+		}
+	],
+	"allottedCustomizations": [
+		{
+			"version": null,
+			"modelCustomizationUUID": null,
+			"created": 1484946860000,
+			"modelInstanceName": "Sec_Tunnel_Xconn 11",
+			"providingServiceModelInvariantUUID": null,
+			"providingServiceModelUUID": null,
+			"providingServiceModelName": null,
+			"targetNetworkRole": null,
+			"nfFunction": null,
+			"nfType": null,
+			"nfRole": null,
+			"nfNamingCode": null,
+			"minInstances": null,
+			"maxInstances": null,
+			"allottedResource": null,
+			"handler": {
+				
+			}
+		}
+	],
+	"recipes": {
+		
+	},
+	"csar": null,
+	"handler": {
+		
+	}
+}

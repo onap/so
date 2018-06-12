@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,18 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.adapters.catalogdb.catalogrest;
 
-import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
-
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.openecomp.mso.db.catalog.beans.AllottedResourceCustomization;
+import org.openecomp.mso.logger.MsoLogger;
+
 @XmlRootElement(name = "serviceAllottedResources")
 public class QueryAllottedResourceCustomization extends CatalogQuery {
+	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,QueryAllottedResourceCustomization.class);
 	private List<AllottedResourceCustomization> allottedResourceCustomization;
 	private final String template =
 		"\t{\n"+
@@ -90,20 +94,20 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 				boolean arNull = o.getAllottedResource() == null ? true : false;
 	
 			    put(valueMap, "MODEL_NAME",               arNull ? null : o.getAllottedResource().getModelName());
-			    put(valueMap, "MODEL_UUID",               arNull ? null : o.getAllottedResource().getModelUuid());
-			    put(valueMap, "MODEL_INVARIANT_ID",       arNull ? null : o.getAllottedResource().getModelInvariantUuid());
+			    put(valueMap, "MODEL_UUID",               arNull ? null : o.getAllottedResource().getModelUUID());
+			    put(valueMap, "MODEL_INVARIANT_ID",       arNull ? null : o.getAllottedResource().getModelInvariantUUID());
 			    put(valueMap, "MODEL_VERSION",            arNull ? null : o.getAllottedResource().getModelVersion());
-		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUuid());
+		    put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUUID());
 		    put(valueMap, "MODEL_INSTANCE_NAME",      o.getModelInstanceName());
 			    put(valueMap, "TOSCA_NODE_TYPE",      arNull ? null : o.getAllottedResource().getToscaNodeType());
-			    put(valueMap, "ALLOTTED_RESOURCE_TYPE",     o.getNfType());
-			    put(valueMap, "ALLOTTED_RESOURCE_ROLE",     o.getNfRole());
+			    put(valueMap, "ALLOTTED_RESOURCE_TYPE",     arNull ? null : o.getAllottedResource().getSubcategory());
+			    put(valueMap, "ALLOTTED_RESOURCE_ROLE",     o.getTargetNetworkRole());
 			    put(valueMap, "NF_TYPE",     o.getNfType());
 			    put(valueMap, "NF_ROLE",     o.getNfRole());
 			    put(valueMap, "NF_FUNCTION",     o.getNfFunction());
 			    put(valueMap, "NF_NAMING_CODE",     o.getNfNamingCode());
-			    put(valueMap, "PROVIDING_SERVICE_MODEL_INVARIANT_UUID",     o.getProvidingServiceModelInvariantUuid());
-			    put(valueMap, "PROVIDING_SERVICE_MODEL_UUID",     o.getProvidingServiceModelUuid());
+			    put(valueMap, "PROVIDING_SERVICE_MODEL_INVARIANT_UUID",     o.getProvidingServiceModelInvariantUUID());
+			    put(valueMap, "PROVIDING_SERVICE_MODEL_UUID",     o.getProvidingServiceModelUUID());
 			    put(valueMap, "PROVIDING_SERVICE_MODEL_NAME",     o.getProvidingServiceModelName());
 
             sb.append(sep).append(this.setTemplate(template, valueMap));

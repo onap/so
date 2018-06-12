@@ -72,8 +72,8 @@ class FalloutHandlerTest {
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 
 		when(mockExecution.getVariable("FalloutHandlerRequest")).thenReturn(falloutHandlerRequest)
-		when(mockExecution.getVariable("URN_mso_adapters_db_auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
-		when(mockExecution.getVariable("URN_mso_msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
+		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
+		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
 
 		FalloutHandler falloutHandler = new FalloutHandler()
 		falloutHandler.preProcessRequest(mockExecution)
@@ -259,7 +259,7 @@ class FalloutHandlerTest {
 			when(mockExecution.getVariable("FH_request_id")).thenReturn("testReqId")
 			when(mockExecution.getVariable("FH_ErrorMessage")).thenReturn("ErrorMessage")
 			when(mockExecution.getVariable("FH_ErrorCode")).thenReturn("ErrorCode")
-			when(mockExecution.getVariable("URN_mso_default_adapter_namespace")).thenReturn("http://org.openecomp.mso");
+			when(mockExecution.getVariable("mso.default.adapter.namespace")).thenReturn("http://org.openecomp.mso");
 
 			FalloutHandler falloutHandler = new FalloutHandler()
 			falloutHandler.updateRequestGammaPayload(mockExecution)

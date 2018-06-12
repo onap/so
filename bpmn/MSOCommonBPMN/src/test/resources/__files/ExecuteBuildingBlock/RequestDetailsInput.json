@@ -1,0 +1,18 @@
+{
+	"requestParameters": {
+		"subscriptionServiceType": "subscriptionServiceType"
+	},
+	"project": {
+		"projectName": "projectName"
+	},
+	"owningEntity": {
+		"owningEntityId": "owningEntityId",
+		"owningEntityName": "owningEntityName"
+	},
+	"platform": {
+		"platformName": "platformName"
+	},
+	"lineOfBusiness": {
+		"lineOfBusinessName": "lineOfBusinessName"
+	}
+}

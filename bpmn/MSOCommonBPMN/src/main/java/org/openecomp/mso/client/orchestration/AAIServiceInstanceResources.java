@@ -1,0 +1,150 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+package org.openecomp.mso.client.orchestration;
+
+import java.util.Optional;
+
+import org.openecomp.mso.bpmn.common.InjectionHelper;
+import org.openecomp.mso.bpmn.servicedecomposition.bbobjects.Customer;
+import org.openecomp.mso.bpmn.servicedecomposition.bbobjects.OwningEntity;
+import org.openecomp.mso.bpmn.servicedecomposition.bbobjects.Project;
+import org.openecomp.mso.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.openecomp.mso.client.aai.AAIObjectPlurals;
+import org.openecomp.mso.client.aai.AAIObjectType;
+import org.openecomp.mso.client.aai.AAIResourcesClient;
+import org.openecomp.mso.client.aai.entities.uri.AAIResourceUri;
+import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
+import org.openecomp.mso.client.aai.mapper.AAIObjectMapper;
+import org.openecomp.mso.db.catalog.beans.OrchestrationStatus;
+import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class AAIServiceInstanceResources {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AAIServiceInstanceResources.class);
+	
+	@Autowired
+	private InjectionHelper injectionHelper;
+	
+	@Autowired
+	private AAIObjectMapper aaiObjectMapper;
+
+	public boolean existsServiceInstance(ServiceInstance serviceInstance) {
+		AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+				serviceInstance.getServiceInstanceId());
+		return injectionHelper.getAaiClient().exists(serviceInstanceURI);
+	}
+
+	public void createServiceInstance(ServiceInstance serviceInstance, Customer customer) {
+		AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+				customer.getGlobalCustomerId(), customer.getServiceSubscription().getServiceType(), serviceInstance.getServiceInstanceId());
+		serviceInstance.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
+		org.onap.aai.domain.yang.ServiceInstance AAIServiceInstance = aaiObjectMapper.mapServiceInstance(serviceInstance);
+		injectionHelper.getAaiClient().createIfNotExists(serviceInstanceURI, Optional.of(AAIServiceInstance));
+	}
+
+    /**
+     * Create ServiceSubscription in A&AI
+     * @param customer
+     */
+	public void createServiceSubscription(Customer customer) {
+        AAIResourceUri serviceSubscriptionURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_SUBSCRIPTION,
+                customer.getGlobalCustomerId(),customer.getServiceSubscription().getServiceType());
+        org.onap.aai.domain.yang.ServiceSubscription serviceSubscription = aaiObjectMapper.mapServiceSubscription(customer.getServiceSubscription());
+        injectionHelper.getAaiClient().createIfNotExists(serviceSubscriptionURI , Optional.of(serviceSubscription));
+    }
+
+	public void deleteServiceInstance(ServiceInstance serviceInstance) {
+		AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+				serviceInstance.getServiceInstanceId());
+		injectionHelper.getAaiClient().delete(serviceInstanceURI);
+	}
+
+	public void createProject(Project project) {
+		AAIResourceUri projectURI = AAIUriFactory.createResourceUri(AAIObjectType.PROJECT, project.getProjectName());
+		org.onap.aai.domain.yang.Project AAIProject = aaiObjectMapper.mapProject(project);
+		injectionHelper.getAaiClient().createIfNotExists(projectURI, Optional.of(AAIProject));
+	}
+
+	public void createProjectandConnectServiceInstance(Project project, ServiceInstance serviceInstance) {
+		AAIResourceUri projectURI = AAIUriFactory.createResourceUri(AAIObjectType.PROJECT, project.getProjectName());
+		AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+				serviceInstance.getServiceInstanceId());
+		org.onap.aai.domain.yang.Project AAIProject = aaiObjectMapper.mapProject(project);
+		injectionHelper.getAaiClient().createIfNotExists(projectURI, Optional.of(AAIProject)).connect(projectURI, serviceInstanceURI);
+	}
+
+	public void createOwningEntity(OwningEntity owningEntity) {
+		AAIResourceUri owningEntityURI = AAIUriFactory.createResourceUri(AAIObjectType.OWNING_ENTITY,
+				owningEntity.getOwningEntityId());
+		org.onap.aai.domain.yang.OwningEntity AAIOwningEntity = aaiObjectMapper.mapOwningEntity(owningEntity);
+		injectionHelper.getAaiClient().createIfNotExists(owningEntityURI, Optional.of(AAIOwningEntity));
+	}
+
+	public boolean existsOwningEntity(OwningEntity owningEntity) {
+		AAIResourceUri owningEntityUri = AAIUriFactory.createResourceUri(AAIObjectType.OWNING_ENTITY,
+				owningEntity.getOwningEntityId());
+		return injectionHelper.getAaiClient().exists(owningEntityUri);
+	}
+	
+	public boolean existsOwningEntityName(String owningEntityName) {
+		AAIResourceUri owningEntityUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.OWNING_ENTITIES).queryParam("owning-entity-name", owningEntityName);
+		AAIResourcesClient aaiRC = injectionHelper.getAaiClient();
+		return aaiRC.exists(owningEntityUri);
+	}
+
+	public void connectOwningEntityandServiceInstance(OwningEntity owningEntity, ServiceInstance serviceInstance) {
+		AAIResourceUri owningEntityURI = AAIUriFactory.createResourceUri(AAIObjectType.OWNING_ENTITY,
+				owningEntity.getOwningEntityId());
+		AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+				serviceInstance.getServiceInstanceId());
+		injectionHelper.getAaiClient().connect(owningEntityURI, serviceInstanceURI);
+	}
+
+	public void createOwningEntityandConnectServiceInstance(OwningEntity owningEntity,
+			ServiceInstance serviceInstance) {
+		AAIResourceUri owningEntityURI = AAIUriFactory.createResourceUri(AAIObjectType.OWNING_ENTITY,
+				owningEntity.getOwningEntityId());
+		AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+				serviceInstance.getServiceInstanceId());
+		org.onap.aai.domain.yang.OwningEntity AAIOwningEntity = aaiObjectMapper.mapOwningEntity(owningEntity);
+		injectionHelper.getAaiClient().createIfNotExists(owningEntityURI, Optional.of(AAIOwningEntity)).connect(owningEntityURI,
+				serviceInstanceURI);
+	}
+	
+	public void updateOrchestrationStatusServiceInstance(ServiceInstance serviceInstance, OrchestrationStatus orchestrationStatus){
+		ServiceInstance copiedServiceInstance = serviceInstance.shallowCopyId();
+
+		copiedServiceInstance.setOrchestrationStatus(orchestrationStatus);
+		copiedServiceInstance.setServiceInstanceName(serviceInstance.getServiceInstanceName());
+		serviceInstance.setOrchestrationStatus(orchestrationStatus);
+		updateServiceInstance(copiedServiceInstance);
+	}
+	
+	public void updateServiceInstance(ServiceInstance serviceInstance) {
+		AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance.getServiceInstanceId());
+		org.onap.aai.domain.yang.ServiceInstance AAIServiceInstance = aaiObjectMapper.mapServiceInstance(serviceInstance);
+		injectionHelper.getAaiClient().update(serviceInstanceURI, AAIServiceInstance);
+	}
+	
+
+}

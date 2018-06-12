@@ -1,0 +1,259 @@
+{
+  "distributionID": "13af9b84-86bd-46b4-bbe9-04c7cdebdfa5", 
+  "resources": [
+    {
+      "artifacts": [
+        {
+          "artifactChecksum": "NGI5ZGFjYjI4MzU3MGM5YmFlYmFmYmE1MDY4MmJhMDc=", 
+          "artifactDescription": "Auto-generated VF Modules information artifact", 
+          "artifactName": "201673_mowavpnvpebvy0_modules.json", 
+          "artifactTimeout": "120", 
+          "artifactType": "VF_MODULES_METADATA", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/201673_mowavpnvpebvy0_modules.json", 
+          "artifactUUID": "4a58ec6e-cd06-4d74-8b6a-8a2f7d339b3c", 
+          "artifactVersion": "1", 
+          "generatedArtifact": {}, 
+          "relatedArtifacts": {}
+        }, 
+        {
+          "artifactChecksum": "NGVkYTAyYjIyNjQyZjQxYmM4MTJiMTJjZTJmY2NkZTM=", 
+          "artifactDescription": "created from csar", 
+          "artifactName": "AVPN_vRE_BV_volume_v4.yaml", 
+          "artifactTimeout": "120", 
+          "artifactType": "HEAT", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vRE_BV_volume_v4.yaml", 
+          "artifactUUID": "f7a039a5-60f0-4a00-8b29-d65891dddd44", 
+          "artifactVersion": "2", 
+          "generatedArtifact": {
+            "artifactInfo": {
+              "artifactChecksum": "OTI1NmRhMzQ1NzUyMDVjYWE1OWY4M2U2ZTljOGFjMDQ=", 
+              "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+              "artifactName": "AVPN_vRE_BV_volume_v4.env", 
+              "artifactTimeout": "120", 
+              "artifactType": "HEAT_ENV", 
+              "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vRE_BV_volume_v4.env", 
+              "artifactUUID": "5819e096-65cb-4688-ab72-2f3c53eedcb2", 
+              "artifactVersion": "2", 
+              "generatedArtifact": {}, 
+              "relatedArtifacts": {}
+            }
+          }, 
+          "relatedArtifacts": {}
+        }, 
+        {
+          "artifactChecksum": "MDZiODc5N2I0MTU0ZTkyNzRlMzM4YTIzMGIzZDIxZTA=", 
+          "artifactDescription": "created from csar", 
+          "artifactName": "AVPN_vRE_BV_v4.yml", 
+          "artifactTimeout": "120", 
+          "artifactType": "HEAT", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vRE_BV_v4.yml", 
+          "artifactUUID": "6572c705-0066-49e8-831a-ce1691458649", 
+          "artifactVersion": "2", 
+          "generatedArtifact": {
+            "artifactInfo": {
+              "artifactChecksum": "YmZhYjMyODVkMzZiNTdhMzZmODFjYmZlMGIxYzMyZTc=", 
+              "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+              "artifactName": "AVPN_vRE_BV_v4.env", 
+              "artifactTimeout": "120", 
+              "artifactType": "HEAT_ENV", 
+              "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vRE_BV_v4.env", 
+              "artifactUUID": "3dc5a4ec-7bc8-4e12-a000-b448870a919a", 
+              "artifactVersion": "2", 
+              "generatedArtifact": {}, 
+              "relatedArtifacts": {}
+            }
+          }, 
+          "relatedArtifacts": {
+            "artifactInfo": {
+              "artifactChecksum": "YmE0NmZkNzAwMGNjM2JjMTBmMTA5YTY5NWE4YmQwOWU=", 
+              "artifactDescription": "created from csar", 
+              "artifactName": "vmx_config", 
+              "artifactTimeout": "120", 
+              "artifactType": "HEAT_ARTIFACT", 
+              "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/vmx_config", 
+              "artifactUUID": "08b7e90e-2643-4840-9db8-fc0fe2555719", 
+              "artifactVersion": "1", 
+              "generatedArtifact": {}, 
+              "relatedArtifacts": {}
+            }
+          }
+        }, 
+        {
+          "artifactChecksum": "NDM2NjgwZTAyMzBhYWQ2NmZhOTU0MTNiZDJkOTJiNzY=", 
+          "artifactDescription": "created from csar", 
+          "artifactName": "AVPN_vPFE_BV_volume_v4.yaml", 
+          "artifactTimeout": "120", 
+          "artifactType": "HEAT", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vPFE_BV_volume_v4.yaml", 
+          "artifactUUID": "d586a9f6-bba7-4d31-8d92-e9d52ac2e276", 
+          "artifactVersion": "2", 
+          "generatedArtifact": {
+            "artifactInfo": {
+              "artifactChecksum": "ZjhjZjc5MjU1YWE5ZWE0MmMxY2E1NjJkMjg4Mzk1MWY=", 
+              "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+              "artifactName": "AVPN_vPFE_BV_volume_v4.env", 
+              "artifactTimeout": "120", 
+              "artifactType": "HEAT_ENV", 
+              "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vPFE_BV_volume_v4.env", 
+              "artifactUUID": "789fdf92-53a2-464e-9e02-1ed8f47b5fb2", 
+              "artifactVersion": "2", 
+              "generatedArtifact": {}, 
+              "relatedArtifacts": {}
+            }
+          }, 
+          "relatedArtifacts": {}
+        }, 
+        {
+          "artifactChecksum": "ZTdlNjhkOTgyYjBhNzkwOGQ5YTZjZjAyYjNmOWZhNTU=", 
+          "artifactDescription": "created from csar", 
+          "artifactName": "AVPN_vPFE_BV_v4.yml", 
+          "artifactTimeout": "120", 
+          "artifactType": "HEAT", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vPFE_BV_v4.yml", 
+          "artifactUUID": "cb3707fb-ac85-49c6-8bb7-22aec355c977", 
+          "artifactVersion": "2", 
+          "generatedArtifact": {
+            "artifactInfo": {
+              "artifactChecksum": "MTE5MTY1OGZjMzMwYjViZGFhM2FjNzBhZTFhMGZjZTA=", 
+              "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+              "artifactName": "AVPN_vPFE_BV_v4.env", 
+              "artifactTimeout": "120", 
+              "artifactType": "HEAT_ENV", 
+              "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vPFE_BV_v4.env", 
+              "artifactUUID": "4acace9d-e5d5-4e4c-a654-9f2c4bedc573", 
+              "artifactVersion": "2", 
+              "generatedArtifact": {}, 
+              "relatedArtifacts": {}
+            }
+          }, 
+          "relatedArtifacts": {}
+        }, 
+        {
+          "artifactChecksum": "ZWExMWZhZTU1MDgwMjE1NmI3ODFhNDg4YTg0MGM3ZjI=", 
+          "artifactDescription": "created from csar", 
+          "artifactName": "AVPN_base_vPE_BV_v4.yml", 
+          "artifactTimeout": "120", 
+          "artifactType": "HEAT", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_base_vPE_BV_v4.yml", 
+          "artifactUUID": "ed3265a3-880f-42be-a38d-0e3f6a1e819a", 
+          "artifactVersion": "2", 
+          "generatedArtifact": {
+            "artifactInfo": {
+              "artifactChecksum": "MTg4ZjA1MjIwNTFjMGFhMzliMDY4MTRiMWEwYTdmY2Q=", 
+              "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+              "artifactName": "AVPN_base_vPE_BV_v4.env", 
+              "artifactTimeout": "120", 
+              "artifactType": "HEAT_ENV", 
+              "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_base_vPE_BV_v4.env", 
+              "artifactUUID": "c0628be2-b9fc-4a10-914b-0183df8b4283", 
+              "artifactVersion": "2", 
+              "generatedArtifact": {}, 
+              "relatedArtifacts": {}
+            }
+          }, 
+          "relatedArtifacts": {}
+        }, 
+        {
+          "artifactChecksum": "YmE0NmZkNzAwMGNjM2JjMTBmMTA5YTY5NWE4YmQwOWU=", 
+          "artifactDescription": "created from csar", 
+          "artifactName": "vmx_config", 
+          "artifactTimeout": "120", 
+          "artifactType": "HEAT_ARTIFACT", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/vmx_config", 
+          "artifactUUID": "08b7e90e-2643-4840-9db8-fc0fe2555719", 
+          "artifactVersion": "1", 
+          "generatedArtifact": {}, 
+          "relatedArtifacts": {}
+        }, 
+        {
+          "artifactChecksum": "MTg4ZjA1MjIwNTFjMGFhMzliMDY4MTRiMWEwYTdmY2Q=", 
+          "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+          "artifactName": "AVPN_base_vPE_BV_v4.env", 
+          "artifactTimeout": "120", 
+          "artifactType": "HEAT_ENV", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_base_vPE_BV_v4.env", 
+          "artifactUUID": "c0628be2-b9fc-4a10-914b-0183df8b4283", 
+          "artifactVersion": "2", 
+          "generatedArtifact": {}, 
+          "relatedArtifacts": {}
+        }, 
+        {
+          "artifactChecksum": "ZjhjZjc5MjU1YWE5ZWE0MmMxY2E1NjJkMjg4Mzk1MWY=", 
+          "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+          "artifactName": "AVPN_vPFE_BV_volume_v4.env", 
+          "artifactTimeout": "120", 
+          "artifactType": "HEAT_ENV", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vPFE_BV_volume_v4.env", 
+          "artifactUUID": "789fdf92-53a2-464e-9e02-1ed8f47b5fb2", 
+          "artifactVersion": "2", 
+          "generatedArtifact": {}, 
+          "relatedArtifacts": {}
+        }, 
+        {
+          "artifactChecksum": "MTE5MTY1OGZjMzMwYjViZGFhM2FjNzBhZTFhMGZjZTA=", 
+          "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+          "artifactName": "AVPN_vPFE_BV_v4.env", 
+          "artifactTimeout": "120", 
+          "artifactType": "HEAT_ENV", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vPFE_BV_v4.env", 
+          "artifactUUID": "4acace9d-e5d5-4e4c-a654-9f2c4bedc573", 
+          "artifactVersion": "2", 
+          "generatedArtifact": {}, 
+          "relatedArtifacts": {}
+        }, 
+        {
+          "artifactChecksum": "YmZhYjMyODVkMzZiNTdhMzZmODFjYmZlMGIxYzMyZTc=", 
+          "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+          "artifactName": "AVPN_vRE_BV_v4.env", 
+          "artifactTimeout": "120", 
+          "artifactType": "HEAT_ENV", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vRE_BV_v4.env", 
+          "artifactUUID": "3dc5a4ec-7bc8-4e12-a000-b448870a919a", 
+          "artifactVersion": "2", 
+          "generatedArtifact": {}, 
+          "relatedArtifacts": {}
+        }, 
+        {
+          "artifactChecksum": "OTI1NmRhMzQ1NzUyMDVjYWE1OWY4M2U2ZTljOGFjMDQ=", 
+          "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+          "artifactName": "AVPN_vRE_BV_volume_v4.env", 
+          "artifactTimeout": "120", 
+          "artifactType": "HEAT_ENV", 
+          "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/resourceInstances/201673_mowavpnvpebvy0/artifacts/AVPN_vRE_BV_volume_v4.env", 
+          "artifactUUID": "5819e096-65cb-4688-ab72-2f3c53eedcb2", 
+          "artifactVersion": "2", 
+          "generatedArtifact": {}, 
+          "relatedArtifacts": {}
+        }
+      ], 
+      "category": "Network L2-3", 
+      "resourceCustomizationUUID": "d495dcc3-d459-4733-ad74-338e4e21e75d", 
+      "resourceInstanceName": "2016-73_MOW-AVPN-vPE-BV-Y 0", 
+      "resourceInvariantUUID": "90f3e716-b9d1-444b-953e-1840a53e696c", 
+      "resourceName": "2016-73_MOW-AVPN-vPE-BV-Y", 
+      "resourceType": {}, 
+      "resourceUUID": "3737b71b-1b49-4a00-9476-7591abe11642", 
+      "resourceVersion": "1.0", 
+      "subCategory": "Router"
+    }
+  ], 
+  "serviceArtifacts": [
+    {
+      "artifactChecksum": "NTBhZjliZmI2ZjQ0MmUwYjM2ZDQ5NjAzODAyYjY5M2U=", 
+      "artifactDescription": "TOSCA definition package of the asset", 
+      "artifactName": "service-MowAvpnVmxBvVpe1Service-csar.csar", 
+      "artifactTimeout": "0", 
+      "artifactType": "TOSCA_CSAR", 
+      "artifactURL": "/sdc/v1/catalog/services/MowAvpnVmxBvVpe1Service/1.0/artifacts/service-MowAvpnVmxBvVpe1Service-csar.csar", 
+      "artifactUUID": "fc15134a-6fc1-4051-a57d-9c0ba4e51458", 
+      "artifactVersion": "1", 
+      "generatedArtifact": {}, 
+      "relatedArtifacts": {}
+    }
+  ], 
+  "serviceDescription": "AVPN model", 
+  "serviceInvariantUUID": "65608839-1994-486e-a6ca-74331cf8bdee", 
+  "serviceName": "MOW AVPN vMX BV vPE 1 Service", 
+  "serviceUUID": "68c996a8-7101-4d1c-8196-e92e9e4b7919", 
+  "serviceVersion": "1.0"
+}

@@ -28,17 +28,12 @@
   </appender>
 
 
-  <logger name="com.att.eelf.audit" level="info" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
+    
   
-  <logger name="com.att.eelf.metrics" level="info" additivity="false">
-        <appender-ref ref="STDOUT" />
-  </logger>
-
-  <logger name="com.att.eelf.error" level="trace" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger> 
+  	<logger name="org.openecomp" level="${so.log.level:-DEBUG}"
+		additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
 
   <root level="info">
     <appender-ref ref="STDOUT" />

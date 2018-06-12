@@ -30,17 +30,25 @@ import javax.xml.ws.WebServiceContext;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCAdapterResponse;
 import org.openecomp.mso.bpmn.common.adapter.sdnc.SDNCCallbackAdapterPortType;
+import org.openecomp.mso.bpmn.common.workflow.service.CallbackHandlerService.CallbackError;
+import org.openecomp.mso.bpmn.common.workflow.service.CallbackHandlerService.CallbackResult;
 import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Implementation of SDNCAdapterCallbackService.
  */
 @WebService(serviceName="SDNCAdapterCallbackService", targetNamespace="http://org.openecomp/workflow/sdnc/adapter/schema/v1")
-public class SDNCAdapterCallbackServiceImpl extends AbstractCallbackService implements SDNCCallbackAdapterPortType {
+@Service
+public class SDNCAdapterCallbackServiceImpl extends ProcessEngineAwareService implements SDNCCallbackAdapterPortType {
 
-	private final String logMarker = "[SDNC-CALLBACK]";
+	private final static String logMarker = "[SDNC-CALLBACK]";
 
 	@Context WebServiceContext wsContext;
+	
+	@Autowired
+	CallbackHandlerService callback;
 
 	@WebMethod(operationName = "SDNCAdapterCallback")
     @WebResult(name = "SDNCAdapterResponse", targetNamespace = "http://org.openecomp/workflow/sdnc/adapter/schema/v1", partName = "SDNCAdapterCallbackResponse")
@@ -58,7 +66,7 @@ public class SDNCAdapterCallbackServiceImpl extends AbstractCallbackService impl
 		MsoLogger.setServiceName("MSO." + method);
 		MsoLogger.setLogContext(correlationValue, "N/A");
 
-		CallbackResult result = handleCallback(method, message, messageEventName,
+		CallbackResult result = callback.handleCallback(method, message, messageEventName,
 			messageVariable, correlationVariable, correlationValue, logMarker);
 
 		if (result instanceof CallbackError) {

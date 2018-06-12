@@ -1,0 +1,49 @@
+[
+  {
+    "vfModuleModelName": "Lmsp1806Ap7134Vsp..base_stsi_msp_lb..module-0",
+    "vfModuleModelInvariantUUID": "306342e8-c9dd-48d5-85f3-73b0b0f94f2f",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "7a4d4afa-d7c7-46c9-b25d-fd8b5bc4ace8",
+    "vfModuleModelCustomizationUUID": "2607499d-f0c2-4234-ba00-e5e89065cb64",
+    "isBase": true,
+    "artifacts": [
+      "4c52134d-bdc6-4f7d-b780-8472f2e6d259",
+      "21c04671-ead4-483c-bece-83a63f4aa35f"
+    ],
+    "properties": {
+      "min_vf_module_instances": "1",
+      "vf_module_label": "base_stsi_msp_lb",
+      "max_vf_module_instances": "1",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Base",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "1"
+    }
+  },
+  {
+    "vfModuleModelName": "Lmsp1806Ap7134Vsp..mod_vmsi_msp_lb_parent..module-1",
+    "vfModuleModelInvariantUUID": "7166da1b-1ebb-41e2-94c0-e4f645aba58f",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "81d0c2c8-b939-466b-aa4a-5b23b1cfa225",
+    "vfModuleModelCustomizationUUID": "a7de8959-1e63-4096-8e89-433ee81ac82a",
+    "isBase": false,
+    "artifacts": [
+      "6786e6ff-344b-4e02-9dfb-39e635b1dafb",
+      "d0c4cddb-d7a6-405e-a904-f028ce290f28",
+      "f64dd1e9-ed81-4aa2-8da5-bca88dda0155"
+    ],
+    "properties": {
+      "min_vf_module_instances": "0",
+      "vf_module_label": "mod_vmsi_msp_lb_parent",
+      "max_vf_module_instances": "",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Expansion",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "0"
+    }
+  }
+]

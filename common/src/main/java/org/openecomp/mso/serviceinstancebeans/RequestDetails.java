@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,10 @@
 package org.openecomp.mso.serviceinstancebeans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -53,7 +56,11 @@ public class RequestDetails implements Serializable {
     protected Platform platform;
 	@JsonProperty("lineOfBusiness")
     protected LineOfBusiness lineOfBusiness;
-    /**
+	@JsonProperty("instanceName")
+	private List<Map<String, String>> instanceName = new ArrayList<>();
+    
+
+	/**
      * Gets the value of the serviceInfo property.
      *
      * @return
@@ -268,6 +275,21 @@ public class RequestDetails implements Serializable {
 	public void setLineOfBusiness(LineOfBusiness value){
 		this.lineOfBusiness = value;
 	}
+	/**
+     * Gets the value of the instanceName property.
+     */
+	public List<Map<String, String>> getInstanceName() {
+		return instanceName;
+	}
+	/**
+     * Sets the value of the instanceName property.
+     *
+     * @param value
+     *
+     */
+	public void setInstanceName(List<Map<String, String>> instanceName) {
+		this.instanceName = instanceName;
+	}
 	@Override
 	public String toString() {
 		return "RequestDetails [modelInfo=" + modelInfo + ", requestInfo="
@@ -275,6 +297,7 @@ public class RequestDetails implements Serializable {
 				+ Arrays.toString(relatedInstanceList) + ", subscriberInfo="
 				+ subscriberInfo + ", cloudConfiguration=" + cloudConfiguration
 				+ ", requestParameters=" + requestParameters + ", platform=" + platform 
-				+ ", lineOfBusiness=" + ", project=" + project + ", owningEntity=" + owningEntity + "]";
+				+ ", lineOfBusiness=" + ", project=" + project + ", owningEntity=" + owningEntity 
+				+ ", instanceName" + instanceName + "]";
 	}
 }

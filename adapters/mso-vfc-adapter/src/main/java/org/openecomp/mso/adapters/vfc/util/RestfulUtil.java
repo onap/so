@@ -24,6 +24,8 @@ package org.openecomp.mso.adapters.vfc.util;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -38,11 +40,12 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.openecomp.mso.adapters.vfc.model.RestfulResponse;
+import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
-import org.openecomp.mso.properties.MsoPropertiesException;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 /**
  * <br>
@@ -53,49 +56,41 @@ import org.slf4j.LoggerFactory;
  * @author
  * @version ONAP Amsterdam Release 2017-9-6
  */
+@Component
 public class RestfulUtil {
 
     /**
      * Log service
      */
-    private static final Logger LOGGER =  LoggerFactory.getLogger(RestfulUtil.class);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, RestfulUtil.class);
 
     private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
 
     private static final int DEFAULT_TIME_OUT = 60000;
-    
+
     private static final String ONAP_IP = "ONAP_IP";
     
     private static final String DEFAULT_MSB_IP = "127.0.0.1";
 
-    private static final String DEFAULT_MSB_PORT = "80";
+    private static final Integer DEFAULT_MSB_PORT = 80;
 
-    private static final MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
+   @Autowired
+   private Environment env;
 
-    public static String getMsbHost() {
-        String msbPort = DEFAULT_MSB_PORT;
-        // MSB_IP will be set as ONAP_IP environment parameter in install flow.
-        String msbIp = System.getenv().get(ONAP_IP);
-        try {
-            // if ONAP IP is not set. get it from config file.
-            if(null == msbIp || msbIp.isEmpty()) {
-                msbIp = msoPropertiesFactory.getMsoJavaProperties("MSO_PROP_TOPOLOGY").getProperty("msb-ip", DEFAULT_MSB_IP);
-                msbPort = msoPropertiesFactory.getMsoJavaProperties("MSO_PROP_TOPOLOGY").getProperty("msb-port", DEFAULT_MSB_PORT);
-            }
-        } catch(MsoPropertiesException e) {
-            LOGGER.error("Get msb properties failed",e);
-            e.printStackTrace();
-        }
-        return "http://" + msbIp + ":" + msbPort;
+    public String getMsbHost() {
+    	String msbIp = env.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
+    	Integer msbPort = env.getProperty("mso.msb-port", Integer.class, DEFAULT_MSB_PORT);
+    	
+    	return UriBuilder.fromPath("").host(msbIp).port(msbPort).scheme("http").build().toString();
     }
 
     private RestfulUtil() {
 
     }
 
-    public static RestfulResponse send(String url, String methodType, String content) {
+    public RestfulResponse send(String url, String methodType, String content) {
         String msbUrl = getMsbHost() + url;
-        LOGGER.info("Begin to sent message " + methodType +": " + msbUrl);
+        LOGGER.info(MessageEnum.RA_NS_EXC, "Begin to sent message " + methodType +": " + msbUrl, "org.openecomp.mso.adapters.vfc.util.RestfulUtil","VFC Adapter");
 
         HttpRequestBase method = null;
         HttpResponse httpResponse = null;
@@ -196,12 +191,12 @@ public class RestfulUtil {
     }
 
     private static void logError(String errMsg, Throwable t) {
-        LOGGER.error(errMsg, t);
+        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
         ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
     }
 
     private static void logError(String errMsg) {
-        LOGGER.error(errMsg);
+        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
         ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
     }
 

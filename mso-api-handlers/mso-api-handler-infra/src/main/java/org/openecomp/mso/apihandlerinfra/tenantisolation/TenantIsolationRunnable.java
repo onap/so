@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,87 +20,84 @@
 
 package org.openecomp.mso.apihandlerinfra.tenantisolation;
 
-import org.openecomp.mso.apihandlerinfra.Constants;
-import org.openecomp.mso.apihandlerinfra.tenantisolation.process.OperationalEnvironmentProcess;
+import org.apache.http.HttpStatus;
+import org.openecomp.mso.apihandler.common.ErrorNumbers;
+import org.openecomp.mso.apihandlerinfra.exceptions.ApiException;
+import org.openecomp.mso.apihandlerinfra.exceptions.ValidateException;
+import org.openecomp.mso.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.process.ActivateVnfOperationalEnvironment;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.process.ActivateVnfStatusOperationalEnvironment;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.process.CreateEcompOperationalEnvironment;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.process.CreateVnfOperationalEnvironment;
+import org.openecomp.mso.apihandlerinfra.tenantisolation.process.DeactivateVnfOperationalEnvironment;
 import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.Action;
+import org.openecomp.mso.apihandlerinfra.tenantisolationbeans.OperationalEnvironment;
+import org.openecomp.mso.db.request.data.repository.OperationalEnvDistributionStatusRepository;
+import org.openecomp.mso.db.request.data.repository.OperationalEnvServiceModelStatusRepository;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.requestsdb.RequestsDBHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
-public class TenantIsolationRunnable implements Runnable {
+@Component
+@Scope("prototype")
+public class TenantIsolationRunnable {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
-	private OperationalEnvironmentProcessFactory factory = null;
-	private Action action;
-	private String operationalEnvType;
-	private CloudOrchestrationRequest cor;
-	private String requestId;
-	protected RequestsDBHelper requestDb;
-
-	@Override
-	public void run() {
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, TenantIsolationRunnable.class);
+	
+	@Autowired 
+	private RequestsDBHelper requestDb; 
+	@Autowired 
+	private CreateEcompOperationalEnvironment createEcompOpEnv;
+	@Autowired 
+	private CreateVnfOperationalEnvironment createVnfOpEnv;
+	@Autowired 
+	private ActivateVnfOperationalEnvironment activateVnfOpEnv;
+	@Autowired 
+	private DeactivateVnfOperationalEnvironment deactivateVnfOpEnv;
+	@Autowired 
+	private ActivateVnfStatusOperationalEnvironment activateVnfStatusOpEnv;
+	@Autowired
+	private OperationalEnvDistributionStatusRepository distributionStatusRepository;
+	@Autowired
+	private OperationalEnvServiceModelStatusRepository modelStatusRepository;
+	
+	@Async
+	public void run(Action action, String operationalEnvType, CloudOrchestrationRequest cor, String requestId) throws ApiException {
 		msoLogger.debug ("Starting threadExecution in TenantIsolationRunnable for Action " + action.name() + " and OperationalEnvType: " + operationalEnvType);
 		try {
-			OperationalEnvironmentProcess isolation = getFactory().getOperationalEnvironmentProcess(action, operationalEnvType, cor, requestId);
-			isolation.execute();
-		} catch(Exception e) {
-			msoLogger.debug ("Exception during Thread initiation: ", e);
-			msoLogger.error (MessageEnum.APIH_GENERAL_EXCEPTION, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.UnknownError, null, e);
-			getRequestDb().updateInfraFailureCompletion(e.getMessage(), requestId, cor.getOperationalEnvironmentId());
-		}
-	}
+			
+			if(Action.create.equals(action)) {
+				if(OperationalEnvironment.ECOMP.name().equalsIgnoreCase(operationalEnvType)) {
+					createEcompOpEnv.execute(requestId, cor);
+				} else if(OperationalEnvironment.VNF.name().equalsIgnoreCase(operationalEnvType)) {
+					createVnfOpEnv.execute(requestId, cor);
+				} else {
+                    ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+                    ValidateException validateException = new ValidateException.Builder("Invalid OperationalEnvironment Type specified for Create Action",
+                            HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
 
-	public Action getAction() {
-		return action;
-	}
-
-	public void setAction(Action action) {
-		this.action = action;
-	}
-
-	public String getOperationalEnvType() {
-		return operationalEnvType;
-	}
-
-	public void setOperationalEnvType(String operationalEnvType) {
-		this.operationalEnvType = operationalEnvType;
-	}
-
-	public CloudOrchestrationRequest getCor() {
-		return cor;
-	}
-
-	public void setCor(CloudOrchestrationRequest cor) {
-		this.cor = cor;
-	}
-
-	public String getRequestId() {
-		return requestId;
-	}
-
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
-	
-	public OperationalEnvironmentProcessFactory getFactory() {
-		if(factory == null) {
-			factory = new OperationalEnvironmentProcessFactory();
-		}
-		return factory;
-	}
-
-	public void setFactory(OperationalEnvironmentProcessFactory factory) {
-		this.factory = factory;
-	}
-	
-	protected RequestsDBHelper getRequestDb() {
-		if(requestDb == null) {
-			requestDb = new RequestsDBHelper();
-		}
-		return requestDb;
-	}
-	
-	protected void setRequestsDBHelper(RequestsDBHelper helper) {
-		this.requestDb = helper;
+                    throw validateException;
+				}
+			} else if(Action.activate.equals(action)) {
+				activateVnfOpEnv.execute(requestId, cor, distributionStatusRepository, modelStatusRepository);
+			} else if(Action.deactivate.equals(action)) {
+				deactivateVnfOpEnv.execute(requestId, cor);
+			} else if(Action.distributionStatus.equals(action)) {
+				activateVnfStatusOpEnv.execute(requestId, cor, distributionStatusRepository, modelStatusRepository);
+			} else {
+                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+                ValidateException validateException = new ValidateException.Builder("Invalid Action specified: " + action,
+                        HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
+                throw validateException;
+			}
+		}catch(ApiException e) {
+            requestDb.updateInfraFailureCompletion(e.getMessage(), requestId, cor.getOperationalEnvironmentId());
+            throw e;
+        }
 	}
 }
+

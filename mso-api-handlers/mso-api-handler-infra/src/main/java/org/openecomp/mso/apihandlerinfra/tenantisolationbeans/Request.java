@@ -21,8 +21,8 @@
 package org.openecomp.mso.apihandlerinfra.tenantisolationbeans;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 
 @JsonRootName(value = "request")

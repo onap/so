@@ -19,7 +19,7 @@
  */
 package org.openecomp.mso.apihandlerinfra.e2eserviceinstancebeans;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VimLocation {
 

@@ -28,7 +28,9 @@ import java.io.Serializable;
  *
  */
 public class CloudFlavor extends JsonWrapper implements Serializable {
-    private String flavorLabel;
+
+	private static final long serialVersionUID = 8423934332773299577L;
+	private String flavorLabel;
     private String flavor;
 
     public CloudFlavor (String flavorLabel, String flavor){

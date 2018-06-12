@@ -20,9 +20,13 @@
 
 package org.openecomp.mso.adapters.tenantrest;
 
-import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
+
+
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "createTenantResponse")
 public class TenantExceptionResponse implements Serializable {

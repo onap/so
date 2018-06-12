@@ -1,0 +1,15 @@
+<deleteVfModuleRequest>
+	<messageId>testMessageId</messageId>
+	<skipAAI>true</skipAAI>
+	<notificationUrl>testNotificationUrl</notificationUrl>
+	<cloudSiteId>testAicCloudRegion}</cloudSiteId>
+	<tenantId>testTenantId</tenantId>
+	<vnfId>testVnfId</vnfId>
+	<vfModuleId>testVfModuleId</vfModuleId>
+	<vfModuleStackId>testVfModuleStackId</vfModuleStackId>
+	<msoRequest>
+		<requestId>testRequestId</requestId>
+		<serviceInstanceId>testServiceInstanceId</serviceInstanceId>
+		<synchronous>false</synchronous>
+	</msoRequest>
+</deleteVfModuleRequest>

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.bpmn.common.scripts
+
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
+
 import java.io.Serializable;
 
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -29,8 +33,11 @@ import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse;
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
 
 public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, GenerateVfModuleName.class);
 
 	def Prefix="GVFMN_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -38,17 +45,15 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 	
 	
 	public void preProcessRequest(DelegateExecution execution) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		
 		try {
 			def vnfId = execution.getVariable("vnfId")
-			utils.log("DEBUG", "vnfId is " + vnfId, isDebugEnabled)
+			msoLogger.debug("vnfId is " + vnfId)
 			def vnfName = execution.getVariable("vnfName")
-			utils.log("DEBUG", "vnfName is " + vnfName, isDebugEnabled)
+			msoLogger.debug("vnfName is " + vnfName)
 			def vfModuleLabel = execution.getVariable("vfModuleLabel")
-			utils.log("DEBUG", "vfModuleLabel is " + vfModuleLabel, isDebugEnabled)
+			msoLogger.debug("vfModuleLabel is " + vfModuleLabel)
 			def personaModelId = execution.getVariable("personaModelId")
-			utils.log("DEBUG", "personaModelId is " + personaModelId, isDebugEnabled)
+			msoLogger.debug("personaModelId is " + personaModelId)
 			execution.setVariable("GVFMN_vfModuleXml", "")
 		}catch(BpmnError b){
 			throw b
@@ -59,11 +64,10 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 
 
 	public void queryAAI(DelegateExecution execution) {
-		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def method = getClass().getSimpleName() + '.queryAAI(' +
 			'execution=' + execution.getId() +
 			')'
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('vnfId')
@@ -71,10 +75,10 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 			
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String  aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			logDebug('AAI URI is: ' + aai_uri, isDebugLogEnabled)
+			msoLogger.debug('AAI URI is: ' + aai_uri)
 
-			String endPoint = execution.getVariable("URN_aai_endpoint") + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
-			utils.logAudit("AAI endPoint: " + endPoint)
+			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
+			msoLogger.debug("AAI endPoint: " + endPoint)
 
 			try {
 				RESTConfig config = new RESTConfig(endPoint);
@@ -85,29 +89,29 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 					addHeader('X-FromAppId', 'MSO').
 					addHeader('Content-Type', 'application/xml').
 					addHeader('Accept','application/xml');
-				logDebug('sending GET to AAI endpoint \'' + endPoint + '\'', isDebugLogEnabled)
+				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
 				APIResponse response = client.httpGet()
-				utils.logAudit("GenerateVfModuleName - invoking httpGet() to AAI")
+				msoLogger.debug("GenerateVfModuleName - invoking httpGet() to AAI")
 
 				responseData = response.getResponseBodyAsString()
 				if (responseData != null) {
-					logDebug("Received generic VNF data: " + responseData, isDebugLogEnabled)
+					msoLogger.debug("Received generic VNF data: " + responseData)
 
 				}
 
-				utils.logAudit("GenerateVfModuleName - queryAAIVfModule Response: " + responseData)
-				utils.logAudit("GenerateVfModuleName - queryAAIVfModule ResponseCode: " + response.getStatusCode())
+				msoLogger.debug("GenerateVfModuleName - queryAAIVfModule Response: " + responseData)
+				msoLogger.debug("GenerateVfModuleName - queryAAIVfModule ResponseCode: " + response.getStatusCode())
 
 				execution.setVariable('GVFMN_queryAAIVfModuleResponseCode', response.getStatusCode())
 				execution.setVariable('GVFMN_queryAAIVfModuleResponse', responseData)
-				logDebug('Response code:' + response.getStatusCode(), isDebugLogEnabled)
-				logDebug('Response:' + System.lineSeparator() + responseData, isDebugLogEnabled)
+				msoLogger.debug('Response code:' + response.getStatusCode())
+				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
 				if (response.getStatusCode() == 200) {
 					// Set the VfModuleXML					
 					if (responseData != null) {						
 						String vfModulesText = utils.getNodeXml(responseData, "vf-modules")
 						if (vfModulesText == null || vfModulesText.isEmpty()) {
-							logDebug("There are no VF modules in this VNF yet", isDebugLogEnabled)
+							msoLogger.debug("There are no VF modules in this VNF yet")
 							execution.setVariable("GVFMN_vfModuleXml", null)
 						}
 						else {
@@ -130,41 +134,40 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 								}							
 							}
 							matchingVfModules = matchingVfModules + "</vfModules>"
-							logDebug("Matching VF Modules: " + matchingVfModules, isDebugLogEnabled)					
+							msoLogger.debug("Matching VF Modules: " + matchingVfModules)					
 							execution.setVariable("GVFMN_vfModuleXml", matchingVfModules)
 						}
 					}
 				}	
 			} catch (Exception ex) {
 				ex.printStackTrace()
-				logDebug('Exception occurred while executing AAI GET:' + ex.getMessage(),isDebugLogEnabled)
+				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'AAI GET Failed:' + ex.getMessage())
 			}
-			logDebug('Exited ' + method, isDebugLogEnabled)
+			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAI(): ' + e.getMessage())
 		}
 		
 	}
 					
 	public void generateName (DelegateExecution execution) {
-		def isDebugLogEnabled=execution.getVariable("isDebugLogEnabled")
 		def method = getClass().getSimpleName() + '.generateName() ' +
 			'execution=' + execution.getId() +
 			')'
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		msoLogger.trace('Entered ' + method)
 	
 		String vfModuleXml = execution.getVariable("GVFMN_vfModuleXml")		
 		
 		String moduleIndex = utils.getLowestUnusedIndex(vfModuleXml)			
-		logDebug("moduleIndex is: " + moduleIndex, isDebugLogEnabled)
+		msoLogger.debug("moduleIndex is: " + moduleIndex)
 		def vnfName = execution.getVariable("vnfName")
 		def vfModuleLabel = execution.getVariable("vfModuleLabel")
 		def vfModuleName = vnfName + "_" + vfModuleLabel + "_" + moduleIndex
-		logDebug("vfModuleName is: " + vfModuleName, isDebugLogEnabled)
+		msoLogger.debug("vfModuleName is: " + vfModuleName)
 		execution.setVariable("vfModuleName", vfModuleName)
 	}
 }

@@ -23,6 +23,7 @@ package org.openecomp.mso.bpmn.common.scripts;
 import org.apache.commons.lang3.*
 
 import groovy.xml.XmlUtil
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader
 
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
@@ -41,6 +42,10 @@ import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource
+import org.openecomp.mso.logger.MsoLogger
+
+import org.openecomp.mso.logger.MessageEnum
+
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -57,6 +62,8 @@ import org.xml.sax.InputSource
  * This groovy class supports the any Network processes that need the methods defined here.
  */
 class NetworkUtils {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, NetworkUtils.class);
+
 
 	public MsoUtils utils = new MsoUtils()
 	private AbstractServiceTaskProcessor taskProcessor
@@ -1010,7 +1017,7 @@ class NetworkUtils {
 				   if (orchestrationStatus == "PendingDelete" || orchestrationStatus == "pending-delete") {
 					   // skip, do not include in processing, remove!!!
 				   } else {
-				      def subnetList = ["subnet-id", "neutron-subnet-id", "gateway-address", "network-start-address", "cidr-mask", "ip-version", "orchestration-status", "dhcp-enabled", "dhcp-start", "dhcp-end", "resource-version", "subnet-name", "ip-assignment-direction", "host-routes"]
+				      def subnetList = ["subnet-id", "neutron-subnet-id", "gateway-address", "network-start-address", "cidr-mask", "ip-version", "orchestration-status", "dhcp-enabled", "dhcp-start", "dhcp-end", "subnet-role", "resource-version", "subnet-name", "ip-assignment-direction", "host-routes"]
 				      rebuildingSubnets += buildSubNetworkElements(subnetXml, createNetworkResponse, subnetList, "subnet")
 				   }	  
 				}
@@ -1538,8 +1545,9 @@ class NetworkUtils {
 		}
 
 		if (!rollbackValueSet) {
-			if (execution.getVariable("URN_mso_rollback") != null) {
-			    rollbackEnabled = execution.getVariable("URN_mso_rollback").toBoolean()
+
+			if (UrnPropertiesReader.getVariable("mso.rollback", execution) != null) {
+			    rollbackEnabled = UrnPropertiesReader.getVariable("mso.rollback", execution).toBoolean()
 			}
 		}
 		return rollbackEnabled

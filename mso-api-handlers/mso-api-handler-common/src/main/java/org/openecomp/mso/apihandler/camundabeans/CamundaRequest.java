@@ -22,6 +22,8 @@ package org.openecomp.mso.apihandler.camundabeans;
 
 
 
+
+
 import org.openecomp.mso.apihandler.common.CommonConstants;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

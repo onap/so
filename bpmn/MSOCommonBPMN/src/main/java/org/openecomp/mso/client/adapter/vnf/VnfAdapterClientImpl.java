@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,7 @@
 
 package org.openecomp.mso.client.adapter.vnf;
 
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
@@ -32,45 +33,69 @@ import org.openecomp.mso.adapters.vnfrest.RollbackVfModuleRequest;
 import org.openecomp.mso.adapters.vnfrest.RollbackVfModuleResponse;
 import org.openecomp.mso.adapters.vnfrest.UpdateVfModuleRequest;
 import org.openecomp.mso.adapters.vnfrest.UpdateVfModuleResponse;
+import org.openecomp.mso.client.adapter.rest.AdapterRestClient;
+import org.springframework.stereotype.Component;
 
+@Component
 public class VnfAdapterClientImpl implements VnfAdapterClient {
 
 	private static final String VF_MODULES = "/vf-modules/";
 
 	private final VnfAdapterRestProperties props;
+
 	public VnfAdapterClientImpl() {
 		this.props = new VnfAdapterRestProperties();
 	}
-	
+
 	@Override
-	public CreateVfModuleResponse createVfModule(String aaiVnfId, CreateVfModuleRequest req) {
-		return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + "/vf-modules").build()).post(req,
-				CreateVfModuleResponse.class);
+	public CreateVfModuleResponse createVfModule(String aaiVnfId, CreateVfModuleRequest req)
+			throws VnfAdapterClientException {
+		try {
+			return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + "/vf-modules").build()).post(req,
+					CreateVfModuleResponse.class);
+		} catch (InternalServerErrorException e) {
+			throw new VnfAdapterClientException(e.getMessage());
+		}
 	}
 
 	@Override
-	public RollbackVfModuleResponse rollbackVfModule(String aaiVnfId, String aaiVfModuleId,
-			RollbackVfModuleRequest req) {
-		return new AdapterRestClient(this.props,
-				this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId + "/rollback").build()).delete(req,
-						RollbackVfModuleResponse.class);
+	public RollbackVfModuleResponse rollbackVfModule(String aaiVnfId, String aaiVfModuleId, RollbackVfModuleRequest req)
+			throws VnfAdapterClientException {
+		try {
+			return new AdapterRestClient(this.props,
+					this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId + "/rollback").build()).delete(req,
+							RollbackVfModuleResponse.class);
+		} catch (InternalServerErrorException e) {
+			throw new VnfAdapterClientException(e.getMessage());
+		}
 	}
 
 	@Override
-	public DeleteVfModuleResponse deleteVfModule(String aaiVnfId, String aaiVfModuleId, DeleteVfModuleRequest req) {
-		return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId).build())
-				.delete(req, DeleteVfModuleResponse.class);
+	public DeleteVfModuleResponse deleteVfModule(String aaiVnfId, String aaiVfModuleId, DeleteVfModuleRequest req)
+			throws VnfAdapterClientException {
+		try {
+			return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId).build())
+					.delete(req, DeleteVfModuleResponse.class);
+		} catch (InternalServerErrorException e) {
+			throw new VnfAdapterClientException(e.getMessage());
+		}
 	}
 
 	@Override
-	public UpdateVfModuleResponse updateVfModule(String aaiVnfId, String aaiVfModuleId, UpdateVfModuleRequest req) {
-		return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId).build())
-				.put(req, UpdateVfModuleResponse.class);
+	public UpdateVfModuleResponse updateVfModule(String aaiVnfId, String aaiVfModuleId, UpdateVfModuleRequest req)
+			throws VnfAdapterClientException {
+		try {
+			return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId).build())
+					.put(req, UpdateVfModuleResponse.class);
+		} catch (InternalServerErrorException e) {
+			throw new VnfAdapterClientException(e.getMessage());
+		}
 	}
 
 	@Override
 	public QueryVfModuleResponse queryVfModule(String aaiVnfId, String aaiVfModuleId, String cloudSiteId,
-			String tenantId, String vfModuleName, boolean skipAAI, String requestId, String serviceInstanceId) {
+			String tenantId, String vfModuleName, boolean skipAAI, String requestId, String serviceInstanceId)
+			throws VnfAdapterClientException {
 		UriBuilder builder = this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId);
 		if (cloudSiteId != null) {
 			builder.queryParam("cloudSiteId", cloudSiteId);
@@ -90,13 +115,12 @@ public class VnfAdapterClientImpl implements VnfAdapterClient {
 		if (serviceInstanceId != null) {
 			builder.queryParam("msoRequest.serviceInstanceId", serviceInstanceId);
 		}
-		return new AdapterRestClient(this.props, builder.build(), MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON)
-				.get(QueryVfModuleResponse.class);
-	}
-
-	@Override
-	public String healthCheck() {
-		return new AdapterRestClient(this.props, this.getUri("/healthcheck").build()).get(String.class);
+		try {
+			return new AdapterRestClient(this.props, builder.build(), MediaType.APPLICATION_JSON,
+					MediaType.APPLICATION_JSON).get(QueryVfModuleResponse.class).get();
+		} catch (InternalServerErrorException e) {
+			throw new VnfAdapterClientException(e.getMessage());
+		}
 	}
 
 	public UriBuilder getUri(String path) {

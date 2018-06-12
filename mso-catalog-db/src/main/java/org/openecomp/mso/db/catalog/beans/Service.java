@@ -21,65 +21,210 @@
 package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.openecomp.mso.db.catalog.utils.MavenLikeVersioning;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-public class Service extends MavenLikeVersioning implements Serializable {
-	
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.openpojo.business.annotation.BusinessKey;
+
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
+
+@Entity
+@Table(name = "service")
+public class Service implements Serializable {
+
 	private static final long serialVersionUID = 768026109321305392L;
 
-	private String modelName = null;
-	private String description = null;
-	private String modelUUID = null;
-	private String modelInvariantUUID = null;
-	private Timestamp created = null;
-	private String toscaCsarArtifactUUID = null;
-	private String modelVersion = null;
-	private String category = null;
-	private String serviceType = null;
-	private String serviceRole = null;
-	private String environmentContext = null;
-	private String workloadContext = null;
-	private Map<String,ServiceRecipe> recipes = new HashMap<>();
-	private Set<ServiceToResourceCustomization> serviceResourceCustomizations = new HashSet<>();
-	
-	public Service() {}
-	
+	@Column(name = "MODEL_NAME")
+	private String modelName;
+
+	@Column(name = "DESCRIPTION", length = 1200)
+	private String description;
+
+	@BusinessKey
+	@Id
+	@Column(name = "MODEL_UUID")
+	private String modelUUID;
+
+	@Column(name = "MODEL_INVARIANT_UUID")
+	private String modelInvariantUUID;
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@Column(name = "MODEL_VERSION")
+	private String modelVersion;
+
+	@Column(name = "SERVICE_TYPE")
+	private String serviceType;
+
+	@Column(name = "SERVICE_ROLE")
+	private String serviceRole;
+
+	@Column(name = "ENVIRONMENT_CONTEXT")
+	private String environmentContext;
+
+	@Column(name = "WORKLOAD_CONTEXT")
+	private String workloadContext;
+
+	@Column(name = "SERVICE_CATEGORY")
+	private String category;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "network_resource_customization_to_service", joinColumns = @JoinColumn(name = "service_model_uuid"), inverseJoinColumns = @JoinColumn(name = "resource_model_customization_uuid"))
+	private List<NetworkResourceCustomization> networkCustomizations;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "vnf_resource_customization_to_service", joinColumns = @JoinColumn(name = "service_model_uuid"), inverseJoinColumns = @JoinColumn(name = "resource_model_customization_uuid"))
+	private List<VnfResourceCustomization> vnfCustomizations;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "allotted_resource_customization_to_service", joinColumns = @JoinColumn(name = "service_model_uuid"), inverseJoinColumns = @JoinColumn(name = "resource_model_customization_uuid"))
+	private List<AllottedResourceCustomization> allottedCustomizations;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinTable(name = "collection_resource_customization_to_service", joinColumns = @JoinColumn(name = "service_model_uuid"), inverseJoinColumns = @JoinColumn(name = "resource_model_customization_uuid"))
+	private CollectionResourceCustomization collectionResourceCustomization;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "service_proxy_customization_to_service", joinColumns = @JoinColumn(name = "service_model_uuid"), inverseJoinColumns = @JoinColumn(name = "resource_model_customization_uuid"))
+	private List<ServiceProxyResourceCustomization> serviceProxyCustomizations;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@MapKey(name = "action")
+	@JoinColumn(name = "SERVICE_MODEL_UUID")
+	private Map<String, ServiceRecipe> recipes;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "TOSCA_CSAR_ARTIFACT_UUID")
+	private ToscaCsar csar;
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("modelName", modelName).append("description", description)
+				.append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
+				.append("created", created).append("modelVersion", modelVersion).append("serviceType", serviceType)
+				.append("serviceRole", serviceRole).append("environmentContext", environmentContext)
+				.append("workloadContext", workloadContext).append("networkCustomizations", networkCustomizations)
+				.append("vnfCustomizations", vnfCustomizations).append("allottedCustomizations", allottedCustomizations)
+				.append("collectionResourceCustomization", collectionResourceCustomization)
+				.append("serviceProxyCustomizations", serviceProxyCustomizations).append("recipes", recipes)
+				.append("csar", csar).toString();
+	}
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof Service)) {
+			return false;
+		}
+		Service castOther = (Service) other;
+		return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(modelUUID).toHashCode();
+	}
+
+	@LinkedResource
+	public List<ServiceProxyResourceCustomization> getServiceProxyCustomizations() {
+		return serviceProxyCustomizations;
+	}
+
+	public void setServiceProxyCustomizations(List<ServiceProxyResourceCustomization> serviceProxyCustomizations) {
+		this.serviceProxyCustomizations = serviceProxyCustomizations;
+	}
+
+	@LinkedResource
+	public List<NetworkResourceCustomization> getNetworkCustomizations() {
+		if (networkCustomizations == null)
+			networkCustomizations = new ArrayList<>();
+		return networkCustomizations;
+	}
+
+	public void setNetworkCustomizations(List<NetworkResourceCustomization> networkCustomizations) {
+		this.networkCustomizations = networkCustomizations;
+	}
+
+	@LinkedResource
+	public List<VnfResourceCustomization> getVnfCustomizations() {
+		if (vnfCustomizations == null)
+			vnfCustomizations = new ArrayList<>();
+		return vnfCustomizations;
+	}
+
+	public void setVnfCustomizations(List<VnfResourceCustomization> vnfCustomizations) {
+		this.vnfCustomizations = vnfCustomizations;
+	}
+
+	@LinkedResource
+	public List<AllottedResourceCustomization> getAllottedCustomizations() {
+		if (allottedCustomizations == null)
+			allottedCustomizations = new ArrayList<>();
+		return allottedCustomizations;
+	}
+
+	public void setAllottedCustomizations(List<AllottedResourceCustomization> allotedCustomizations) {
+		this.allottedCustomizations = allotedCustomizations;
+	}
+
 	public String getModelName() {
 		return modelName;
 	}
+
 	public void setModelName(String modelName) {
 		this.modelName = modelName;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+	@LinkedResource
 	public Map<String, ServiceRecipe> getRecipes() {
 		return recipes;
 	}
+
 	public void setRecipes(Map<String, ServiceRecipe> recipes) {
 		this.recipes = recipes;
 	}
-	
-	public Timestamp getCreated() {
+
+	public Date getCreated() {
 		return created;
 	}
 
-	public void setCreated(Timestamp created) {
-		this.created = created;
-	}
-		
 	public String getModelUUID() {
 		return modelUUID;
 	}
@@ -96,22 +241,6 @@ public class Service extends MavenLikeVersioning implements Serializable {
 		this.modelInvariantUUID = modelInvariantUUID;
 	}
 
-	public String getToscaCsarArtifactUUID() {
-		return toscaCsarArtifactUUID;
-	}
-
-	public void setToscaCsarArtifactUUID(String toscaCsarArtifactUUID) {
-		this.toscaCsarArtifactUUID = toscaCsarArtifactUUID;
-	}
-
-	public Set<ServiceToResourceCustomization> getServiceResourceCustomizations() {
-		return serviceResourceCustomizations;
-	}
-
-	public void setServiceResourceCustomizations(Set<ServiceToResourceCustomization> serviceResourceCustomizations) {
-		this.serviceResourceCustomizations = serviceResourceCustomizations;
-	}
-	
 	public String getModelVersion() {
 		return modelVersion;
 	}
@@ -120,22 +249,22 @@ public class Service extends MavenLikeVersioning implements Serializable {
 		this.modelVersion = modelVersion;
 	}
 
-    /**
-     * @return Returns the category.
-     */
-    public String getCategory() {
-        return category;
-    }
+	/**
+	 * @return Returns the category.
+	 */
+	public String getCategory() {
+		return category;
+	}
 
-    
-    /**
-     * @param category The category to set.
-     */
-    public void setCategory(String category) {
-        this.category = category;
-    }
+	/**
+	 * @param category
+	 *            The category to set.
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
 
-    public String getServiceType() {
+	public String getServiceType() {
 		return serviceType;
 	}
 
@@ -150,41 +279,38 @@ public class Service extends MavenLikeVersioning implements Serializable {
 	public void setServiceRole(String serviceRole) {
 		this.serviceRole = serviceRole;
 	}
+
 	public String getEnvironmentContext() {
 		return this.environmentContext;
 	}
+
 	public void setEnvironmentContext(String environmentContext) {
 		this.environmentContext = environmentContext;
+	}
+
+	@LinkedResource
+	public ToscaCsar getCsar() {
+		return csar;
+	}
+
+	public void setCsar(ToscaCsar csar) {
+		this.csar = csar;
 	}
 
 	public String getWorkloadContext() {
 		return this.workloadContext;
 	}
+
 	public void setWorkloadContext(String workloadContext) {
 		this.workloadContext = workloadContext;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SERVICE: name=").append(modelName).append(",modelVersion=").append(modelVersion)
-			.append(",description=").append(description).append(",modelInvariantUUID=").append(modelInvariantUUID)
+	@LinkedResource
+	public CollectionResourceCustomization getCollectionResourceCustomization() {
+		return collectionResourceCustomization;
+	}
 
-			.append(",toscaCsarArtifactUUID=").append(toscaCsarArtifactUUID).append(",serviceType=").append(serviceType)
-			.append(",serviceRole=").append(serviceRole).append(",envtContext=").append(this.environmentContext)
-			.append(",workloadContext=").append(this.workloadContext);
-		for (String recipeAction : recipes.keySet()) {
-			ServiceRecipe recipe = recipes.get(recipeAction);
-			sb.append("\n").append(recipe.toString());
-		}
-		
-		for(ServiceToResourceCustomization serviceResourceCustomization : serviceResourceCustomizations) {
-			sb.append("\n").append(serviceResourceCustomization.toString());
-		}
-		if (created != null) {
-		        sb.append (",created=");
-		        sb.append (DateFormat.getInstance().format(created));
-		}
-		return sb.toString();
+	public void setCollectionResourceCustomization(CollectionResourceCustomization collectionResourceCustomization) {
+		this.collectionResourceCustomization = collectionResourceCustomization;
 	}
 }

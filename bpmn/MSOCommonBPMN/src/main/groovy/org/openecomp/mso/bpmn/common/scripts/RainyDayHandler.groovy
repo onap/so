@@ -17,11 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.bpmn.common.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*;
-
-
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -37,11 +36,13 @@ import org.openecomp.mso.client.policy.entities.DictionaryData
 import org.openecomp.mso.client.policy.entities.PolicyDecision
 import org.openecomp.mso.client.policy.entities.Treatments
 import org.openecomp.mso.client.policy.PolicyRestClient
-
-
-import com.att.ecomp.mso.bpmn.core.domain.*
+import org.openecomp.mso.bpmn.core.UrnPropertiesReader;
 
 import groovy.json.*
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 /**
  * This groovy class supports the <class>RainyDayHandler.bpmn</class> process.
@@ -66,6 +67,8 @@ import groovy.json.*
  *
  */
 public class RainyDayHandler extends AbstractServiceTaskProcessor {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, RainyDayHandler.class);
+
 
 	String Prefix="RDH_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -73,47 +76,45 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 	JsonUtils jsonUtils = new JsonUtils()
 
 	public void preProcessRequest (DelegateExecution execution) {
-		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		utils.log("DEBUG"," ***** preProcessRequest of RainyDayHandler *****",  isDebugLogEnabled)
+		msoLogger.trace("preProcessRequest of RainyDayHandler ")
 
 		try {
 			execution.setVariable("prefix", Prefix)
 			// check for required input
 			String requestId = execution.getVariable("msoRequestId")
-			utils.log("DEBUG", "msoRequestId is: " + requestId, isDebugLogEnabled)		
+			msoLogger.debug("msoRequestId is: " + requestId)		
 			def serviceType = execution.getVariable("serviceType")
-			utils.log("DEBUG", "serviceType is: " + serviceType, isDebugLogEnabled)
+			msoLogger.debug("serviceType is: " + serviceType)
 			def vnfType = execution.getVariable("vnfType")
-			utils.log("DEBUG", "vnftype is: " + vnfType, isDebugLogEnabled)
+			msoLogger.debug("vnftype is: " + vnfType)
 			def currentActivity = execution.getVariable("currentActivity")
-			utils.log("DEBUG", "currentActivity is: " + currentActivity, isDebugLogEnabled)
+			msoLogger.debug("currentActivity is: " + currentActivity)
 			def workStep = execution.getVariable("workStep")
-			utils.log("DEBUG", "workStep is: " + workStep, isDebugLogEnabled)
+			msoLogger.debug("workStep is: " + workStep)
 			def failedActivity = execution.getVariable("failedActivity")
-			utils.log("DEBUG", "failedActivity is: " + failedActivity, isDebugLogEnabled)
+			msoLogger.debug("failedActivity is: " + failedActivity)
 			def errorCode = execution.getVariable("errorCode")
-			utils.log("DEBUG", "errorCode is: " + errorCode, isDebugLogEnabled)
+			msoLogger.debug("errorCode is: " + errorCode)
 			def errorText = execution.getVariable("errorText")
-			utils.log("DEBUG", "errorText is: " + errorText, isDebugLogEnabled)
-			String defaultPolicyDisposition = (String) execution.getVariable('URN_policy_default_disposition')
-			utils.log("DEBUG", "defaultPolicyDisposition is: " + defaultPolicyDisposition, isDebugLogEnabled)
+			msoLogger.debug("errorText is: " + errorText)
+			String defaultPolicyDisposition = (String) UrnPropertiesReader.getVariable("policy.default.disposition",execution)
+			msoLogger.debug("defaultPolicyDisposition is: " + defaultPolicyDisposition)
 			execution.setVariable('defaultPolicyDisposition', defaultPolicyDisposition)
 			
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugLogEnabled)
+			msoLogger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit preProcessRequest of RainyDayHandler *****",  isDebugLogEnabled)
+		msoLogger.trace("Exit preProcessRequest of RainyDayHandler ")
 	}
 
 	public void queryPolicy (DelegateExecution execution) {
-		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		utils.log("DEBUG"," ***** queryPolicy of RainyDayHandler *****",  isDebugLogEnabled)
+		msoLogger.trace("queryPolicy of RainyDayHandler ")
 
 		try {
 
@@ -121,14 +122,14 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			String serviceType = execution.getVariable("serviceType")
 			String vnfType = execution.getVariable("vnfType")
 			
-			utils.log("DEBUG", "serviceType: " + serviceType, isDebugLogEnabled)
-			utils.log("DEBUG", "vnfType: " + vnfType, isDebugLogEnabled)
+			msoLogger.debug("serviceType: " + serviceType)
+			msoLogger.debug("vnfType: " + vnfType)
 			
 			def errorCode = execution.getVariable("errorCode")
 			def bbId = execution.getVariable("currentActivity")
 			def workStep = execution.getVariable("workStep")
 			
-			utils.log("DEBUG", "Before querying policy", isDebugLogEnabled)
+			msoLogger.debug("Before querying policy")
 			
 			String decision = 'DENY'
 			String disposition = "Abort"
@@ -136,9 +137,9 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			
 			String defaultPolicyDisposition = (String) execution.getVariable('defaultPolicyDisposition')
 			if (defaultPolicyDisposition != null) {
-				utils.log("DEBUG", "Setting disposition to the configured default instead of querying Policy: " + defaultPolicyDisposition, isDebugLogEnabled)
+				msoLogger.debug("Setting disposition to the configured default instead of querying Policy: " + defaultPolicyDisposition)
 				disposition = defaultPolicyDisposition
-				utils.log("DEBUG", "Setting default allowed treatments: " + defaultAllowedTreatments, isDebugLogEnabled)
+				msoLogger.debug("Setting default allowed treatments: " + defaultAllowedTreatments)
 				execution.setVariable("validResponses", defaultAllowedTreatments)
 			}
 			else {
@@ -147,28 +148,28 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			
 				try {			
 					PolicyClient policyClient = new PolicyClientImpl()
-					utils.log("DEBUG", "Created policy client", isDebugLogEnabled)
+					msoLogger.debug("Created policy client")
 					decisionObject = policyClient.getDecision(serviceType, vnfType, bbId, workStep, errorCode)
-					utils.log("DEBUG", "Obtained decision object", isDebugLogEnabled)
+					msoLogger.debug("Obtained decision object")
 					DictionaryData dictClient = policyClient.getAllowedTreatments(bbId, workStep)					
 					Treatments treatments = dictClient.getTreatments()
 					String validResponses = treatments.getString()
 					if (validResponses != null) {
 						validResponses = validResponses.toLowerCase()
 					}
-					utils.log("DEBUG", "Obtained validResponses: " + validResponses, isDebugLogEnabled)
+					msoLogger.debug("Obtained validResponses: " + validResponses)
 					execution.setVariable("validResponses", validResponses)
 				
 				} catch(Exception e) {
 					msg = "Exception in queryPolicy " + e.getMessage()
-					utils.log("DEBUG", msg, isDebugLogEnabled)				
+					msoLogger.debug(msg)				
 				}
 			
 						
 				if (decisionObject != null) {
 					decision = decisionObject.getDecision()
 					disposition = decisionObject.getDetails()
-					utils.log("DEBUG", "Obtained disposition from policy engine: " + disposition, isDebugLogEnabled)
+					msoLogger.debug("Obtained disposition from policy engine: " + disposition)
 				}
 				else {
 					disposition = "Abort"
@@ -179,17 +180,17 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			}			
 			execution.setVariable("handlingCode", disposition)			
 			
-			utils.log("DEBUG", "Disposition: "+ disposition, isDebugLogEnabled)
+			msoLogger.debug("Disposition: "+ disposition)
 
 		} catch (BpmnError e) {
-			utils.log("DEBUG", "BPMN exception: " + e.errorMessage, isDebugLogEnabled)
+			msoLogger.debug("BPMN exception: " + e.errorMessage)
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in queryPolicy " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugLogEnabled)
+			msoLogger.debug(msg)
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit queryPolicy of RainyDayHandler *****",  isDebugLogEnabled)
+		msoLogger.trace("Exit queryPolicy of RainyDayHandler ")
 	}
 
 

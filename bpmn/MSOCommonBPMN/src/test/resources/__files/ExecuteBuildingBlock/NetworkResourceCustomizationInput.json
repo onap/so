@@ -1,0 +1,25 @@
+{
+	"modelCustomizationUUID" : "modelCustomizationUUID",
+	"modelInstanceName" : "modelInstanceName",
+    "networkTechnology" : "networkTechnology",
+    "networkType" : "networkType",
+    "networkScope" : "networkScope",
+    "networkRole" : "networkRole",
+    "networkResource" : {
+        "modelUUID" : "modelUUID",
+        "orchestrationMode" : "orchestrationMode",
+        "description" : "description",
+        "neutronNetworkType" : "neutronNetworkType",
+        "aicVersionMin" : "aicVersionMin",
+        "aicVersionMax" : "aicVersionMax",
+        "modelName" : "modelName",
+        "modelInvariantUUID" : "modelInvariantUUID",
+        "modelVersion" : "modelVersion",
+        "toscaNodeType" : "toscaNodeType",
+        "category" : "category",
+        "subCategory" : "subCategory",
+        "networkResourceCustomization" : [],
+        "collectionNetworkResourceCustomization" : [],
+        "heatTemplate" : {}
+    }
+}

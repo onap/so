@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,8 +28,10 @@ import java.util.Map;
 
 import javax.ws.rs.core.UriBuilder;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.openecomp.mso.client.aai.AAIObjectPlurals;
 import org.openecomp.mso.client.aai.AAIObjectType;
+import org.openecomp.mso.client.aai.Format;
 import org.openecomp.mso.client.aai.entities.uri.parsers.UriParser;
 import org.openecomp.mso.client.aai.entities.uri.parsers.UriParserSpringImpl;
 import org.springframework.web.util.UriUtils;
@@ -72,6 +74,12 @@ public class SimpleUri implements AAIResourceUri {
 		this.internalURI = UriBuilder.fromPath(this.getTemplate(type));
 		this.values = new Object[0];
 	}
+	protected SimpleUri(AAIObjectPlurals type, Object... values) {
+		this.type = null;
+		this.pluralType = type;
+		this.internalURI = UriBuilder.fromPath(this.getTemplate(type));
+		this.values = values;
+	}
 	
 	@Override
 	public SimpleUri relationshipAPI() {
@@ -93,13 +101,19 @@ public class SimpleUri implements AAIResourceUri {
 	
 	@Override
 	public SimpleUri resourceVersion(String version) {
-		this.internalURI = internalURI.queryParam("resource-version", version);
+		this.internalURI = internalURI.replaceQueryParam("resource-version", version);
 		return this;
 	}
 	
 	@Override
 	public SimpleUri queryParam(String name, String... values) {
 		this.internalURI = internalURI.queryParam(name, values);
+		return this;
+	}
+	
+	@Override
+	public SimpleUri replaceQueryParam(String name, String... values) {
+		this.internalURI = internalURI.replaceQueryParam(name, values);
 		return this;
 	}
 	
@@ -163,16 +177,29 @@ public class SimpleUri implements AAIResourceUri {
 		}
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {		
+		return new HashCodeBuilder().append(this.build()).toHashCode();
+	}
+	
+	
 	@Override
 	public SimpleUri depth(Depth depth) {
-		this.internalURI.queryParam("depth", depth.toString());
+		this.internalURI.replaceQueryParam("depth", depth.toString());
 		return this;
 	}
 	@Override
 	public SimpleUri nodesOnly(boolean nodesOnly) {
 		if (nodesOnly) {
-			this.internalURI.queryParam("nodes-only", "");
+			this.internalURI.replaceQueryParam("nodes-only", "");
 		}
+		return this;
+	}
+	
+	@Override
+	public SimpleUri format(Format format) {
+		this.internalURI.replaceQueryParam("format", format);
 		return this;
 	}
 	

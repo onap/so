@@ -22,8 +22,9 @@ package org.openecomp.mso.bpmn.common.recipe;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.openecomp.mso.BaseTest;
 
-public class ResourceRecipeRequestTest {
+public class ResourceRecipeRequestTest extends BaseTest{
 
 	ResourceRecipeRequest rr=new ResourceRecipeRequest();
 	BpmnParam bp=new BpmnParam();

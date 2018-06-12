@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,6 +43,7 @@ public class CreateVolumeGroupRequest extends VfRequestCommon {
 	private String modelCustomizationUuid;
 	private Map<String,String> volumeGroupParams = new HashMap<>();
 	private Boolean failIfExists;
+	private Boolean enableBridge;
 	private Boolean suppressBackout;
 	private MsoRequest msoRequest = new MsoRequest();
 
@@ -144,5 +145,13 @@ public class CreateVolumeGroupRequest extends VfRequestCommon {
 
 	public void setMsoRequest(MsoRequest msoRequest) {
 		this.msoRequest = msoRequest;
+	}
+
+	public Boolean getEnableBridge() {
+		return enableBridge;
+	}
+
+	public void setEnableBridge(Boolean enableBridge) {
+		this.enableBridge = enableBridge;
 	}
 }

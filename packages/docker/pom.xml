@@ -144,20 +144,6 @@
 							</build>
 						</image>
 						<image>
-							<name>openecomp/mso-arquillian:%l</name>
-							<alias>mso-arquillian</alias>
-							<build>
-								<tags>
-								    <tag>${project.docker.latesttag.version}</tag>
-									<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
-								</tags>
-								<cleanup>try</cleanup>
-								<dockerFileDir>docker-files</dockerFileDir>
-								<dockerFile>Dockerfile.mso-arquillian</dockerFile>
-
-							</build>
-						</image>
-						<image>
 							<name>openecomp/mso:%l</name>
 							<alias>onap/so:%1</alias>
 							<alias>mso</alias>
@@ -191,7 +177,7 @@
 						</goals>
 						<configuration>
 							<removeAll>true</removeAll>
-							<image>openecomp/mso-arquillian:%l,openecomp/mso:%l</image>
+							<image>openecomp/mso:%l</image>
 						</configuration>
 					</execution>
 
@@ -211,7 +197,7 @@
 							<goal>push</goal>
 						</goals>
 						<configuration>
-							<image>openecomp/mso-arquillian:%l,openecomp/mso:%l,openecomp/jacoco:1.0</image>
+							<image>openecomp/mso:%l,openecomp/jacoco:1.0</image>
 						</configuration>
 					</execution>
 				</executions>

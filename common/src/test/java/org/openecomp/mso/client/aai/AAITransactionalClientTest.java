@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,45 +25,104 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import org.onap.aai.domain.yang.Relationship;
 import org.openecomp.mso.client.aai.entities.uri.AAIResourceUri;
 import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class AAITransactionalClientTest {
 
-	
 	private final static String AAI_JSON_FILE_LOCATION = "src/test/resources/__files/aai/bulkprocess/";
+	AAIResourcesClient client = new AAIResourcesClient();
+	AAIResourceUri uriA = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1");
+	AAIResourceUri uriB = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test2");
+	AAIResourceUri uriC = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
+	AAIResourceUri uriD = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test4");
+	AAIResourceUri uriE = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test5");
+	AAIResourceUri uriF = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test6");
+	
+	ObjectMapper mapper;
+	
+	@Before
+	public void before() throws JsonParseException, JsonMappingException, IOException {
+		mapper = new AAICommonObjectMapperProvider().getMapper();
+		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+	}
 	
 	@Test
-	public void run() throws IOException {
+	public void testCreate() throws IOException {
+		final Relationship body = new Relationship();
+		body.setRelatedLink(uriB.build().toString());
 		
+		AAITransactionalClient transactions = client.beginTransaction()
+				.create(uriA.clone().relationshipAPI(), body);
 		
-		AAIResourcesClient client = new AAIResourcesClient();
-		AAIResourceUri uriA = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1");
-		AAIResourceUri uriB = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test2");
-		AAIResourceUri uriC = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
-		AAIResourceUri uriD = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test4");
-		AAIResourceUri uriE = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test5");
-		AAIResourceUri uriF = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test6");
+		String serializedTransactions = mapper.writeValueAsString(transactions.getTransactions());
+		Map<String, Object> actual = mapper.readValue(serializedTransactions, new TypeReference<Map<String, Object>>(){});
+		Map<String, Object> expected = mapper.readValue(getJson("test-request-small.json"), new TypeReference<Map<String, Object>>(){});
+
+		assertEquals(actual, expected);
+	}
+	
+	@Test
+	public void testConnect() throws IOException {
+		List<AAIResourceUri> uris = new ArrayList<AAIResourceUri>();
+		uris.add(uriB);
 		
 		AAIResourceUri uriAClone = uriA.clone();
 		AAITransactionalClient transactions = client
-				.beginTransaction().connect(uriA, uriB).connect(uriC, uriD)
+				.beginTransaction().connect(uriA, uris).connect(uriC, uriD)
 				.beginNewTransaction().connect(uriE, uriF);
-		ObjectMapper mapper = new AAICommonObjectMapperProvider().getMapper();
-		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+		
 		String serializedTransactions = mapper.writeValueAsString(transactions.getTransactions());
-		Map<String, Object> map1 = mapper.readValue(serializedTransactions, new TypeReference<Map<String, Object>>(){});
-		Map<String, Object> map2 = mapper.readValue(getJson("test-request.json"), new TypeReference<Map<String, Object>>(){});
-		assertEquals("payloads are equal", map2, map1);
+		Map<String, Object> actual = mapper.readValue(serializedTransactions, new TypeReference<Map<String, Object>>(){});
+		Map<String, Object> expected = mapper.readValue(getJson("test-request.json"), new TypeReference<Map<String, Object>>(){});
+
+		assertEquals(actual, expected);
 		assertEquals("uri not manipulated", uriAClone.build().toString(), uriA.build().toString());
+	}
+	
+	@Test
+	public void testDisconnect() throws IOException {
+		List<AAIResourceUri> uris = new ArrayList<AAIResourceUri>();
+		uris.add(uriB);
+		
+		AAITransactionalClient transactions = client.beginTransaction()
+				.disconnect(uriA, uris);
+		
+		String serializedTransactions = mapper.writeValueAsString(transactions.getTransactions());
+		Map<String, Object> actual = mapper.readValue(serializedTransactions, new TypeReference<Map<String, Object>>(){});
+		Map<String, Object> expected = mapper.readValue(getJson("test-request-small.json").replace("put", "delete"), new TypeReference<Map<String, Object>>(){});
+
+		assertEquals(actual, expected);
+	}
+	
+	@Test
+	public void testUpdate() throws IOException {
+		final Relationship body = new Relationship();
+		body.setRelatedLink(uriB.build().toString());
+		
+		AAIResourceUri uriAClone = uriA.clone().relationshipAPI();
+		AAITransactionalClient transactions = client.beginTransaction().update(uriAClone, body);
+		
+		String serializedTransactions = mapper.writeValueAsString(transactions.getTransactions());
+		Map<String, Object> actual = mapper.readValue(serializedTransactions, new TypeReference<Map<String, Object>>(){});
+		Map<String, Object> expected = mapper.readValue(getJson("test-request-small.json").replace("put", "patch"), new TypeReference<Map<String, Object>>(){});
+
+		assertEquals(actual, expected);
 	}
 	
 	@Test
@@ -71,10 +130,9 @@ public class AAITransactionalClientTest {
 		AAIResourcesClient client = new AAIResourcesClient();
 		AAITransactionalClient transactions = client
 				.beginTransaction();
+	
 		assertEquals("success status", Optional.empty(), transactions.locateErrorMessages(getJson("response-success.json")));
 		assertEquals(transactions.locateErrorMessages(getJson("response-failure.json")).get(), "another error message\nmy great error");
-
-		
 	}
 	
 	private String getJson(String filename) throws IOException {

@@ -1,0 +1,21 @@
+{
+  "distributionID": "e0d3c4b3-bae6-42cd-808c-385bb2ccf6de", 
+  "resources": [], 
+  "serviceArtifacts": [
+    {
+      "artifactChecksum": "MjI4ZmU3MGM1ZWM5MGQ4YjJkZDczMGUzZDMxN2M4NjY=", 
+      "artifactDescription": "TOSCA definition package of the asset", 
+      "artifactName": "service-AdigVpeTenantOamNetworkIst-csar.csar", 
+      "artifactTimeout": "0", 
+      "artifactType": "TOSCA_CSAR", 
+      "artifactURL": "service-AdigVpeTenantOamNetworkIst-csar.csar", 
+      "artifactUUID": "a218128c-4751-49d0-a74b-f502860033e5", 
+      "artifactVersion": "2"
+    }
+  ], 
+  "serviceDescription": "ADIG vPE Tenant OAM Network_IST", 
+  "serviceInvariantUUID": "f905cea1-3a41-4233-b2d2-be453751b871", 
+  "serviceName": "ADIG vPE Tenant OAM Network_IST", 
+  "serviceUUID": "0bfd24c7-de9d-4297-8cb5-6f9d4a6c20d8", 
+  "serviceVersion": "2.0"
+}

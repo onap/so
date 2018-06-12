@@ -27,10 +27,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.openecomp.mso.adapters.sdnc.impl.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import org.openecomp.mso.adapters.sdnc.impl.Utils;
 /**
  * <p>Java class for anonymous complex type.
  *

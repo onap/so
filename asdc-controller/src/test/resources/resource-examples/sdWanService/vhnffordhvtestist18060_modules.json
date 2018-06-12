@@ -1,0 +1,25 @@
+[
+  {
+    "vfModuleModelName": "VhnfIst1806..base_TEST..module-0",
+    "vfModuleModelInvariantUUID": "378f0948-40e9-489d-83fd-e37ca6a840af",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "5f160b39-10c3-4162-84fc-d1a0e258a24a",
+    "vfModuleModelCustomizationUUID": "6de00354-840b-41aa-993a-058e2cdd9736",
+    "isBase": true,
+    "artifacts": [
+      "afdb3aa0-0290-422d-9393-2273e9330615",
+      "39702c62-9c04-4ec1-8279-34937802ebb9"
+    ],
+    "properties": {
+      "min_vf_module_instances": "1",
+      "vf_module_label": "base_TEST",
+      "max_vf_module_instances": "1",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Base",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "1"
+    }
+  }
+]

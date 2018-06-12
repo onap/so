@@ -28,9 +28,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.EntityUtils;
 import org.openecomp.mso.apihandler.camundabeans.CamundaResponse;
+import org.openecomp.mso.apihandlerinfra.Constants;
+import org.openecomp.mso.apihandlerinfra.exceptions.ApiException;
+import org.openecomp.mso.apihandlerinfra.exceptions.BPMNFailureException;
+import org.openecomp.mso.apihandlerinfra.exceptions.ValidateException;
+import org.openecomp.mso.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.utils.RootIgnoringObjectMapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,24 +42,21 @@ public class ResponseHandler {
 
 	private CamundaResponse response;
 	private int status;
-	private String content = "";
+	private String responseBody="";
 	private HttpResponse httpResponse;
 	private int type;
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH);
-    private static final String RESPONSE_CONTENT_MSG = "response content is: ";
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, ResponseHandler.class);
 
-	public ResponseHandler(HttpResponse httpResponse, int type) {
+	public ResponseHandler(HttpResponse httpResponse, int type) throws ApiException{
 		this.httpResponse = httpResponse;
 		this.type=type;
 		parseResponse();
 	}
 
 
-	private void parseResponse() {
+	private void parseResponse() throws ApiException{
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		msoLogger.debug("Returned status  is: " + statusCode);		
 		status = setStatus(statusCode);
-		msoLogger.debug("Parsed status  is: " + status);
 		if(type==CommonConstants.CAMUNDA){
 			parseCamunda();
 		}else if(type==CommonConstants.CAMUNDATASK){
@@ -68,70 +69,95 @@ public class ResponseHandler {
 	
 
 	
-	@SuppressWarnings("unchecked")
-	private void parseCamunda(){
+	private void parseCamunda() throws ApiException{
 		try{
-			HttpEntity entity = httpResponse.getEntity();
-			content = EntityUtils.toString(entity);
-		} catch (IOException e) {
-			msoLogger.debug("IOException getting Camunda response content", e);
-		}
-
-		ObjectMapper mapper = new RootIgnoringObjectMapper<CamundaResponse>(CamundaResponse.class);
-
-		try {
-			response = mapper.readValue(content, CamundaResponse.class);
-		} catch (IOException e) {
-			msoLogger.debug("IOException getting Camunda response content", e);
-		}
-		msoLogger.debug("json response is: " + content);
-		if(response!=null){
-			content = response.getContent();
-		}
-		msoLogger.debug(RESPONSE_CONTENT_MSG + content);
+				HttpEntity entity = httpResponse.getEntity();
+				responseBody = EntityUtils.toString(entity);
+			} catch (IOException e) {
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
-		if(status!=HttpStatus.SC_ACCEPTED){
-			msoLogger.error(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, "Camunda", String.valueOf(status), content, "Camunda", "parseCamunda", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH from Camunda");
-		}
+				ValidateException validateException = new ValidateException.Builder("IOException getting Camunda response body", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+					.errorInfo(errorLoggerInfo).build();
+				throw validateException;
+			}
+		
+			ObjectMapper mapper = new ObjectMapper(); 
+			try {
+				response = mapper.readValue(responseBody, CamundaResponse.class);
+			} catch (IOException e) {
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+
+
+				ValidateException validateException = new ValidateException.Builder("JSON Object Mapping Request", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+						.errorInfo(errorLoggerInfo).build();
+				throw validateException;
+			}
+			if(response!=null){
+				responseBody = response.getResponse();
+			}else{
+                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, MsoLogger.ErrorCode.BusinessProcesssError)
+                        .targetEntity("Camunda").targetServiceName("parseCamunda").build();
+                BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
+                        .errorInfo(errorLoggerInfo).build();
+            }
 	}
 	
-	private void parseBpel(){
+	private void parseBpel() throws ApiException{
 
 		HttpEntity bpelEntity = httpResponse.getEntity();
 
 		try {
-			if (bpelEntity!=null) {
-				content = EntityUtils.toString(bpelEntity);
-				msoLogger.debug(RESPONSE_CONTENT_MSG + content);
+			if (bpelEntity != null) {
+				responseBody = EntityUtils.toString(bpelEntity);
 
 			}
-			if(status!=HttpStatus.SC_ACCEPTED){
-				msoLogger.error(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, "BPEL", String.valueOf(status), content, "BPEL", "parseBpel", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH from BPEL");
-			}
-		} 
-		catch (IOException e) {
-			msoLogger.debug("IOException getting BPEL response content", e);
+		}catch(IOException e){
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+			ValidateException validateException = new ValidateException.Builder("Could not convert BPEL response to string", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+					.errorInfo(errorLoggerInfo).build();
+			throw validateException;
 		}
+		if(status!=HttpStatus.SC_ACCEPTED){
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, MsoLogger.ErrorCode.BusinessProcesssError)
+					.targetEntity("BPEL").targetServiceName("parseBpel").build();
+
+
+			BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
+					.errorInfo(errorLoggerInfo).build();
+
+			throw bpmnFailureException;
+		}
+
 	}
 	
-	private void parseCamundaTask(){
+	private void parseCamundaTask() throws ApiException{
 
 		HttpEntity camundataskEntity = httpResponse.getEntity();
 
 		try {
-			if (camundataskEntity!=null) {
-				content = EntityUtils.toString(camundataskEntity);
-				msoLogger.debug(RESPONSE_CONTENT_MSG + content);
+			if (camundataskEntity != null) {
+				responseBody = EntityUtils.toString(camundataskEntity);
+			}
+		}catch(IOException e) {
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
 
-			}
-			if(status!=HttpStatus.SC_NO_CONTENT && status != HttpStatus.SC_ACCEPTED){
-				msoLogger.error(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, "CAMUNDATASK", String.valueOf(status), content, "CAMUNDATASK", "parseCamundaTask", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH from Camunda Task");
-			}
-		} 
-		catch (IOException e) {
-			msoLogger.debug("IOException getting Camunda Task response content", e);
+
+			ValidateException validateException = new ValidateException.Builder("Could not convert CamundaTask response to string", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+					.errorInfo(errorLoggerInfo).build();
+			throw validateException;
 		}
+		if(status!=HttpStatus.SC_NO_CONTENT && status != HttpStatus.SC_ACCEPTED){
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER, MsoLogger.ErrorCode.BusinessProcesssError)
+					.targetEntity("CAMUNDATASK").targetServiceName("parseCamundaTask").build();
+
+
+			BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
+					.errorInfo(errorLoggerInfo).build();
+
+			throw bpmnFailureException;
+		} 
+
 	}
 
 	private int setStatus(int statusCode){
@@ -178,17 +204,18 @@ public class ResponseHandler {
 	}
 
 
-	public String getContent() {
-		return content;
+	public String getResponseBody() {
+		return responseBody;
 	}
 
 
-	public void setContent(String content) {
-		this.content = content;
+	public void setResponseBody(String responseBody) {
+		this.responseBody = responseBody;
 	}
 
 
 	public int getStatus() {
 		return status;
 	}
+
 }

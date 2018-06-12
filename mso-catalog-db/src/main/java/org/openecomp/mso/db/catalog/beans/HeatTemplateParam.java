@@ -22,60 +22,49 @@ package org.openecomp.mso.db.catalog.beans;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.openpojo.business.annotation.BusinessKey;
 
+@IdClass(HeatTemplateParamId.class)
+@Entity
+@Table(name = "heat_template_params")
 public class HeatTemplateParam implements Serializable {
 
 	@BusinessKey
-	private String heatTemplateArtifactUuid = null;
-	@BusinessKey
-	private String paramName = null;
-	private boolean required;
-	private String paramType = null;
-	private String paramAlias = null;
-    public static final long serialVersionUID = -1322322139926390329L;
-	
-	public HeatTemplateParam() {}
-	
-	public String getHeatTemplateArtifactUuid() {
-		return this.heatTemplateArtifactUuid;
-	}
-	public void setHeatTemplateArtifactUuid(String heatTemplateArtifactUuid) {
-		this.heatTemplateArtifactUuid = heatTemplateArtifactUuid;
-	}
+	@Id
+	@Column(name = "HEAT_TEMPLATE_ARTIFACT_UUID")
+	private String heatTemplateArtifactUuid;
 
-	public String getParamName() {
-		return paramName;
-	}
-	public void setParamName(String paramName) {
-		this.paramName = paramName;
-	}
-	public boolean isRequired() {
-		return required;
-	}
-	public void setRequired(boolean required) {
-		this.required = required;
-	}
-	public String getParamAlias() {
-		return paramAlias;
-	}
-	public void setParamAlias(String paramAlias) {
-		this.paramAlias = paramAlias;
-	}
-	
-	public String getParamType() {
-	    return paramType;
-	}
-	public void setParamType (String paramType) {
-	    this.paramType = paramType;
-	}
-	
-	
+	@BusinessKey
+	@Id
+	@Column(name = "PARAM_NAME")
+	private String paramName;
+
+	@Column(name = "IS_REQUIRED")
+	private Boolean required;
+
+	@Column(name = "PARAM_TYPE")
+	private String paramType;
+
+	@Column(name = "PARAM_ALIAS")
+	private String paramAlias;
+
+	public static final long serialVersionUID = -1322322139926390329L;
+
 	@Override
-	public String toString () {
-		return "Param=" + paramName + ",type=" + paramType + ",required=" + required + ",paramAlias=" + paramAlias + ", heatTemplateArtifactUuid=" + this.heatTemplateArtifactUuid;
+	public String toString() {
+		return new ToStringBuilder(this).append("heatTemplateArtifactUuid", heatTemplateArtifactUuid)
+				.append("paramName", paramName).append("required", required).append("paramType", paramType)
+				.append("paramAlias", paramAlias).toString();
 	}
 
 	@Override
@@ -88,10 +77,48 @@ public class HeatTemplateParam implements Serializable {
 				.append(paramName, castOther.paramName).isEquals();
 	}
 
-    @Override
-    public int hashCode () {
-        int result;
-        result = this.paramName == null ? 0 : this.paramName.hashCode() + this.heatTemplateArtifactUuid == null ? 0 : this.heatTemplateArtifactUuid.hashCode();
-        return result;
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(heatTemplateArtifactUuid).append(paramName).toHashCode();
+	}
+
+	public String getHeatTemplateArtifactUuid() {
+		return this.heatTemplateArtifactUuid;
+	}
+
+	public void setHeatTemplateArtifactUuid(String heatTemplateArtifactUuid) {
+		this.heatTemplateArtifactUuid = heatTemplateArtifactUuid;
+	}
+
+	public String getParamName() {
+		return paramName;
+	}
+
+	public void setParamName(String paramName) {
+		this.paramName = paramName;
+	}
+
+	public Boolean isRequired() {
+		return required;
+	}
+
+	public void setRequired(Boolean required) {
+		this.required = required;
+	}
+
+	public String getParamAlias() {
+		return paramAlias;
+	}
+
+	public void setParamAlias(String paramAlias) {
+		this.paramAlias = paramAlias;
+	}
+
+	public String getParamType() {
+		return paramType;
+	}
+
+	public void setParamType(String paramType) {
+		this.paramType = paramType;
 	}
 }

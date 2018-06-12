@@ -31,6 +31,7 @@ public class WorkflowException implements Serializable {
 	private final String processKey;
 	private final int errorCode;
 	private final String errorMessage;
+	private final String workStep;
 
 	/**
 	 * Constructor
@@ -43,6 +44,15 @@ public class WorkflowException implements Serializable {
 		this.processKey = processKey;
 		this.errorCode = errorCode;
 		this.errorMessage = errorMessage;
+		workStep = "*";
+	}
+	
+	public WorkflowException(String processKey, int errorCode,
+			String errorMessage, String workStep) {
+		this.processKey = processKey;
+		this.errorCode = errorCode;
+		this.errorMessage = errorMessage;
+		this.workStep = workStep;
 	}
 
 	/**
@@ -65,6 +75,13 @@ public class WorkflowException implements Serializable {
 	public String getErrorMessage() {
 		return errorMessage;
 	}
+	
+	/**
+	 * Returns the error message.
+	 */
+	public String getWorkStep() {
+		return workStep;
+	}
 
 	/**
 	 * Returns a string representation of this object.
@@ -72,6 +89,6 @@ public class WorkflowException implements Serializable {
     @Override
 	public String toString() {
 		return getClass().getSimpleName() + "[processKey=" + getProcessKey() + ",errorCode=" + getErrorCode()
-			+ ",errorMessage=" + getErrorMessage() + "]";
+			+ ",errorMessage=" + getErrorMessage() + ",workStep=" + getWorkStep() + "]";
 	}
 }

@@ -39,16 +39,22 @@ import org.openecomp.mso.bpmn.common.adapter.vnf.VnfAdapterNotify;
 import org.openecomp.mso.bpmn.common.adapter.vnf.VnfRollback;
 import org.openecomp.mso.bpmn.common.adapter.vnf.VnfStatus;
 import org.openecomp.mso.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Implementation of the VnfAdapterNotify service.
  */
 @WebService(serviceName = "vnfAdapterNotify", targetNamespace = "http://org.openecomp.mso/vnfNotify")
-public class VnfAdapterNotifyServiceImpl extends AbstractCallbackService implements VnfAdapterNotify{
+@Service
+public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService implements VnfAdapterNotify{
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VnfAdapterNotifyServiceImpl.class);
 
 	private final String logMarker = "[VNF-NOTIFY]";
+	
+	@Autowired
+	CallbackHandlerService callback;
 
 	@Context WebServiceContext wsContext;
 
@@ -80,7 +86,7 @@ public class VnfAdapterNotifyServiceImpl extends AbstractCallbackService impleme
 		String correlationVariable = "VNFRB_messageId";
 		String correlationValue = messageId;
 
-		handleCallback(method, message, messageEventName, messageVariable,
+		callback.handleCallback(method, message, messageEventName, messageVariable,
 			correlationVariable, correlationValue, logMarker);
     }
 
@@ -126,7 +132,7 @@ public class VnfAdapterNotifyServiceImpl extends AbstractCallbackService impleme
     	message.setStatus(status);
     	message.setOutputs(outputs);
 
-		handleCallback(method, message, messageEventName, messageVariable,
+    	callback.handleCallback(method, message, messageEventName, messageVariable,
 			correlationVariable, correlationValue, logMarker);
     }
 
@@ -169,7 +175,7 @@ public class VnfAdapterNotifyServiceImpl extends AbstractCallbackService impleme
 		message.setOutputs(outputs);
 		message.setRollback(rollback);
 
-		handleCallback(method, message, messageEventName, messageVariable,
+		callback.handleCallback(method, message, messageEventName, messageVariable,
 			correlationVariable, correlationValue, logMarker);
 	 }
 
@@ -209,7 +215,7 @@ public class VnfAdapterNotifyServiceImpl extends AbstractCallbackService impleme
     	message.setOutputs(outputs);
     	message.setRollback(rollback);
 
-		handleCallback(method, message, messageEventName, messageVariable,
+    	callback.handleCallback(method, message, messageEventName, messageVariable,
 			correlationVariable, correlationValue, logMarker);
 	 }
 
@@ -243,7 +249,7 @@ public class VnfAdapterNotifyServiceImpl extends AbstractCallbackService impleme
     	message.setException(exception);
     	message.setErrorMessage(errorMessage);
 
-		handleCallback(method, message, messageEventName, messageVariable,
+    	callback.handleCallback(method, message, messageEventName, messageVariable,
 			correlationVariable, correlationValue, logMarker);
 	}
 }

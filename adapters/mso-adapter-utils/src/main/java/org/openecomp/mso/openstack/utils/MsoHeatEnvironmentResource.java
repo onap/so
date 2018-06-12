@@ -25,7 +25,7 @@ import org.openecomp.mso.logger.MsoLogger;
 
 public class MsoHeatEnvironmentResource {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoHeatEnvironmentResource.class);
     
 	private String name;
 	private String value;

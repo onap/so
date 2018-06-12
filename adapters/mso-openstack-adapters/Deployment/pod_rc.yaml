@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: msoreplicationcontroller
+spec:
+  replicas: 1
+  selector:
+    app: mchanmsopod
+  template:
+    metadata:
+      labels:
+        app: mchanmsopod
+    spec:
+      containers:
+      - name: mchancontainer
+        image: mercechan/msoadapters:kube
+        command: ["java"]
+        args: ["-jar","-Dspring.profiles.active=dev","mso-openstack-adapters-1.1.0-SNAPSHOT.jar"]
+        ports:
+        - containerPort: 8080
+      restartPolicy: Always

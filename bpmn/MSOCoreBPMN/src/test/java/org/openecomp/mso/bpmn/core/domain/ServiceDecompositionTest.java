@@ -19,65 +19,107 @@
 */
 package org.openecomp.mso.bpmn.core.domain;
 
-import static org.junit.Assert.*;
+import static com.shazam.shazamcrest.MatcherAssert.assertThat;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 public class ServiceDecompositionTest {
-	private ServiceDecomposition sd = new ServiceDecomposition();
-	ModelInfo model= new ModelInfo();
-	ServiceInstance si= new ServiceInstance();
-	Project project= new Project();
-	OwningEntity oe= new OwningEntity();
-	//VnfResource vnf = new VnfResource();
-	List<VnfResource> vnfResources;
-	List<NetworkResource> networkResources;
-	List<ConfigResource> configResources;
-	List<AllottedResource> allottedResources;
-	Request request= new Request();
-	Customer customer= new Customer();
+	private static final String RESOURCE_PATH = "src/test/resources/json-examples/";
 	
+	VnfResource vnfResource;
+	NetworkResource networkResource;
+	AllottedResource allottedResource;
+	ConfigResource configResource;
+	
+	@Before
+	public void before() {
+		vnfResource = new VnfResource();
+		vnfResource.setResourceId("vnfResourceId");
+		vnfResource.setModules(new ArrayList<>());
+		
+		networkResource = new NetworkResource();
+		networkResource.setResourceId("networkResourceId");
+		
+		allottedResource = new AllottedResource();
+		allottedResource.setResourceId("allottedResourceId");
+	
+		configResource = new ConfigResource();
+		configResource.setResourceId("configResourceId");
+	}
 
 	@Test
-	public void testServiceDecomposition() {
-		sd.setModelInfo(model);
-		sd.setServiceInstance(si);
-		sd.setProject(project);
-		sd.setOwningEntity(oe);
-		sd.setServiceVnfs(vnfResources);
-		sd.setServiceConfigs(configResources);
-		sd.setServiceNetworks(networkResources);
-		sd.setServiceAllottedResources(allottedResources);
-		sd.setServiceConfigResources(configResources);
-		sd.setServiceType("serviceType");
-		sd.setServiceRole("serviceRole");
-		sd.setRequest(request);
-		sd.setCustomer(customer);
-		sd.setCallbackURN("callbackURN");
-		sd.setSdncVersion("sdncVersion");
-		assertEquals(sd.getModelInfo(), model);
-		assertEquals(sd.getServiceInstance(), si);
-		assertEquals(sd.getProject(), project);
-		assertEquals(sd.getOwningEntity(), oe);
-		assertEquals(sd.getServiceVnfs(), vnfResources);
-		assertEquals(sd.getServiceConfigs(), configResources);
-		assertEquals(sd.getServiceNetworks(), networkResources);
-		assertEquals(sd.getServiceAllottedResources(), allottedResources);
-		assertEquals(sd.getServiceConfigResources(), configResources);
-		assertEquals(sd.getRequest(), request);
-		assertEquals(sd.getCustomer(), customer);
-		assertEquals(sd.getCallbackURN(), "callbackURN");
-		assertEquals(sd.getSdncVersion(), "sdncVersion");
+	public void serviceDecompositionTest() throws JsonProcessingException, IOException {
+		// covering methods not covered by openpojo test
+		String catalogRestOutput = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "ServiceDecomposition.json")));
 		
+		ServiceDecomposition serviceDecomp = new ServiceDecomposition(catalogRestOutput);
+		serviceDecomp.addVnfResource(vnfResource);
+		serviceDecomp.addNetworkResource(networkResource);
+		serviceDecomp.addAllottedResource(allottedResource);
+		serviceDecomp.addConfigResource(configResource);
 		
+		assertThat(serviceDecomp.getServiceResource(vnfResource.getResourceId()), sameBeanAs(vnfResource));
+		assertThat(serviceDecomp.getServiceResource(networkResource.getResourceId()), sameBeanAs(networkResource));
+		assertThat(serviceDecomp.getServiceResource(allottedResource.getResourceId()), sameBeanAs(allottedResource));
+		assertThat(serviceDecomp.getServiceResource(configResource.getResourceId()), sameBeanAs(configResource));
 		
+		VnfResource vnfResourceReplace = new VnfResource();
+		vnfResourceReplace.setResourceId(vnfResource.getResourceId());
+		vnfResourceReplace.setResourceInstanceName("vnfResourceReplaceInstanceName");
 		
+		assertTrue(serviceDecomp.replaceResource(vnfResourceReplace));
+		assertTrue(serviceDecomp.getVnfResources().contains(vnfResourceReplace));
 		
+		assertTrue(serviceDecomp.deleteResource(vnfResourceReplace));
+		assertFalse(serviceDecomp.deleteResource(vnfResourceReplace));
+		assertFalse(serviceDecomp.deleteResource(new VnfResource()));
+	}
 		
+	@Test
+	public void serviceDecompositionJsonTest() throws IOException {
+		String catalogRestOutput = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "ServiceDecomposition.json")));
+		String expectedCatalogRestOutput = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "ServiceDecompositionExpected.json")));
+		String vnfResourceJson = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "VnfResource.json")));
+		String networkResourceJson = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "NetworkResource.json")));
+		String allottedResourceJson = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "AllottedResource.json")));
+		String configResourceJson = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "ConfigResource.json")));
 		
+		ServiceDecomposition serviceDecomp = new ServiceDecomposition(catalogRestOutput, "serviceInstanceId");
+		serviceDecomp.addResource(vnfResource);
+		serviceDecomp.addResource(networkResource);
+		serviceDecomp.addResource(allottedResource);
+		serviceDecomp.addResource(configResource);
 		
+		assertThat(serviceDecomp.getServiceResource(vnfResource.getResourceId()), sameBeanAs(vnfResource));
+		assertThat(serviceDecomp.getServiceResource(networkResource.getResourceId()), sameBeanAs(networkResource));
+		assertThat(serviceDecomp.getServiceResource(allottedResource.getResourceId()), sameBeanAs(allottedResource));
+		assertThat(serviceDecomp.getServiceResource(configResource.getResourceId()), sameBeanAs(configResource));
+		
+		serviceDecomp = new ServiceDecomposition(catalogRestOutput, "serviceInstanceId");
+		serviceDecomp.addVnfResource(vnfResourceJson);
+		serviceDecomp.addNetworkResource(networkResourceJson);
+		serviceDecomp.addAllottedResource(allottedResourceJson);
+		serviceDecomp.addConfigResource(configResourceJson);
+		
+		ServiceDecomposition expectedServiceDecomp = new ServiceDecomposition(expectedCatalogRestOutput, "serviceInstanceId");
+		
+		assertThat(serviceDecomp, sameBeanAs(expectedServiceDecomp));
+		assertEquals(serviceDecomp.listToJson(Arrays.asList(networkResource)) + serviceDecomp.listToJson(Arrays.asList(vnfResource)) + 
+				serviceDecomp.listToJson(Arrays.asList(allottedResource)) + serviceDecomp.listToJson(Arrays.asList(configResource)), 
+				serviceDecomp.getServiceResourcesJsonString());
 	}
 
 }

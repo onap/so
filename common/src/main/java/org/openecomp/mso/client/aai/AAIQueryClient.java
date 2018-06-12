@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,13 +21,11 @@
 package org.openecomp.mso.client.aai;
 
 import java.util.Optional;
-import java.util.UUID;
 
+import org.openecomp.mso.client.RestClient;
 import org.openecomp.mso.client.aai.entities.CustomQuery;
 import org.openecomp.mso.client.aai.entities.uri.AAIUri;
 import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
-import org.openecomp.mso.client.policy.RestClient;
-import org.openecomp.mso.client.aai.AAIVersion;
 
 public class AAIQueryClient extends AAIClient {
 
@@ -38,22 +36,18 @@ public class AAIQueryClient extends AAIClient {
 	private Optional<AAISubgraphType> subgraph = Optional.empty();
 	
 	public AAIQueryClient() {
-		super(UUID.randomUUID());
+		super();
 		this.version = super.getVersion();
 	}
 	
-	public AAIQueryClient(AAIVersion version, UUID requestId) {
-		super(requestId);
-		this.version = version;
-	}
-	
 	public AAIQueryClient(AAIVersion version) {
-		this(version, UUID.randomUUID());
+		super();
+		this.version = version;
 	}
 	
 	public String query(Format format, CustomQuery query) {
 		return this.createClient(AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY).queryParam("format", format.toString()))
-		.addRequestId(requestId).put(query, String.class);
+		.put(query, String.class);
 	}
 	
 	@Override

@@ -1,0 +1,11 @@
+<output
+    xmlns="org:onap:sdnc:northbound:generic-resource">
+    <svc-request-id>094d311c-40bc-4ff1-9617-37c4226efcc3</svc-request-id>
+    <response-code>200</response-code>
+    <response-message></response-message>
+    <ack-final-indicator>Y</ack-final-indicator>
+    <service-response-information>
+        <instance-id>8462db9b-3e91-4e90-a2c8-6471313f87bf</instance-id>
+        <object-path>restconf/config/GENERIC-RESOURCE-API:services/service/8462db9b-3e91-4e90-a2c8-6471313f87bf/service-data/service-topology/</object-path>
+    </service-response-information>
+</output>

@@ -1,0 +1,86 @@
+heat_template_version: 2015-04-30
+
+description: HOT creates MSP MMN Cinder Volumes under MobiSupport Tenant
+
+parameters:
+  mmn_volume_name_1:
+    type: string
+    label: Mobisupport MSP MMN Cinder Volume names
+    description: Mobisupport MSP MMN Cinder Volume names
+
+  mmn_volume_name_2:
+    type: string
+    label: Mobisupport MSP MMN Cinder Volume names
+    description: Mobisupport MSP MMN Cinder Volume names
+
+  mmn_volume_name_3:
+    type: string
+    label: Mobisupport MSP MMN Cinder Volume names
+    description: Mobisupport MSP MMN Cinder Volume names
+
+  mmn_volume_name_4:
+    type: string
+    label: Mobisupport MSP MMN Cinder Volume names
+    description: Mobisupport MSP MMN Cinder Volume names
+
+  mmn_volume_size_1:
+    type: number
+    label: Mobisupport MSP MMN Cinder Volume sizes
+    description: Mobisupport MSP MMN Cinder Volume sizes
+
+  mmn_volume_size_2:
+    type: number
+    label: Mobisupport MSP MMN Cinder Volume sizes
+    description: Mobisupport MSP MMN Cinder Volume sizes
+
+  mmn_volume_size_3:
+    type: number
+    label: Mobisupport MSP MMN Cinder Volume sizes
+    description: Mobisupport MSP MMN Cinder Volume sizes
+
+  mmn_volume_size_4:
+    type: number
+    label: Mobisupport MSP MMN Cinder Volume sizes
+    description: Mobisupport MSP MMN Cinder Volume sizes
+
+resources:
+  mmn_data_volume_1:
+    type: OS::Cinder::Volume
+    properties:
+      name: {get_param: mmn_volume_name_1}
+      size: {get_param: mmn_volume_size_1}
+              
+  mmn_arch_volume_2:
+    type: OS::Cinder::Volume
+    properties:
+      name: {get_param: mmn_volume_name_2}
+      size: {get_param: mmn_volume_size_2}
+         
+  mmn_backup_volume_3:
+    type: OS::Cinder::Volume
+    properties:
+      name: {get_param: mmn_volume_name_3}
+      size: {get_param: mmn_volume_size_3}
+               
+  mmn_misc_volume_4:
+    type: OS::Cinder::Volume
+    properties:
+      name: {get_param: mmn_volume_name_4}
+      size: {get_param: mmn_volume_size_4}
+
+outputs:
+  mmn_data_volume_id_1:
+    description: msp mmn data volume 1
+    value: {get_resource: mmn_data_volume_1}
+              
+  mmn_arch_volume_id_2:
+    description: msp mn arch volume 2
+    value: {get_resource: mmn_arch_volume_2}
+         
+  mmn_backup_volume_id_3:
+    description: msp mn backup volume 3
+    value: {get_resource: mmn_backup_volume_3}
+               
+  mmn_misc_volume_id_4:
+    description: msp mn volume 4
+    value: {get_resource: mmn_misc_volume_4}

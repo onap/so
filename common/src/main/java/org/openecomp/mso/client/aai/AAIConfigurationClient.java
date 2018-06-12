@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ public class AAIConfigurationClient {
 
 	private AAIResourcesClient aaiClient;
 
-	private static final String ORCHESTRATION_STATUS = "PendingCreate";
+	private static final String ORCHESTRATION_STATUS = "PreCreated";
 
 	public AAIConfigurationClient() {
 		aaiClient = new AAIResourcesClient();
@@ -37,6 +37,16 @@ public class AAIConfigurationClient {
 
 	public void createConfiguration(RequestDetails requestDetails, String configurationId, String configurationType,
 			String configurationSubType) {
+
+		AAIResourceUri uri = getConfigurationURI(configurationId);
+		Configuration payload = configurePayload(requestDetails, configurationId, configurationType, configurationSubType);
+		
+		aaiClient.create(uri, payload);
+	}
+	
+	public Configuration configurePayload(RequestDetails requestDetails, String configurationId, String configurationType,
+			String configurationSubType) {
+		
 		Configuration payload = new Configuration();
 		payload.setConfigurationId(configurationId);
 		payload.setConfigurationType(configurationType);
@@ -45,11 +55,10 @@ public class AAIConfigurationClient {
 		payload.setModelVersionId(requestDetails.getModelInfo().getModelVersionId());
 		payload.setOrchestrationStatus(ORCHESTRATION_STATUS);
 		payload.setOperationalStatus("");
-		AAIResourceUri uri = getConfigurationURI(payload.getConfigurationId());
-		payload.setConfigurationSelflink(uri.build().getPath());
+		payload.setConfigurationSelflink(getConfigurationURI(configurationId).build().getPath());
 		payload.setModelCustomizationId(requestDetails.getModelInfo().getModelCustomizationId());
-
-		aaiClient.create(uri, payload);
+		
+		return payload;
 	}
 
 	public void deleteConfiguration(String uuid) {
@@ -61,7 +70,7 @@ public class AAIConfigurationClient {
 	}
 
 	public Configuration getConfiguration(String uuid) {
-		return aaiClient.get(Configuration.class, getConfigurationURI(uuid));
+		return aaiClient.get(Configuration.class, getConfigurationURI(uuid)).orElse(null);
 	}
 
 	public boolean configurationExists(String uuid) {

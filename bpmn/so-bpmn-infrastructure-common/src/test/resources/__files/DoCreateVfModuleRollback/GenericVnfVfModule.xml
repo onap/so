@@ -1,0 +1,26 @@
+<generic-vnf xmlns="http://org.openecomp.aai.inventory/v7">
+	<vnf-id>a27ce5a9-29c4-4c22-a017-6615ac73c721</vnf-id>
+	<vnf-name>STMTN5MMSC21</vnf-name>
+	<vnf-type>mmsc-capacity</vnf-type>
+	<service-id>SDN-MOBILITY</service-id>
+	<equipment-role>vMMSC</equipment-role>
+	<orchestration-status>pending-create</orchestration-status>
+	<in-maint>false</in-maint>
+	<is-closed-loop-disabled>false</is-closed-loop-disabled>
+	<resource-version>0000021</resource-version>
+	<vf-modules>
+		<vf-module>
+			<vf-module-id>973ed047-d251-4fb9-bf1a-65b8949e0a73</vf-module-id>
+			<vf-module-name>STMTN5MMSC21-MMSC::module-0-0</vf-module-name>
+			<persona-model-id>973ed047-d251-4fb9-bf1a-65b8949e0a73</persona-model-id>
+			<persona-model-version>1.0</persona-model-version>
+			<is-base-vf-module>true</is-base-vf-module>
+			<heat-stack-id>FILLED-IN-BY-MSO</heat-stack-id>
+			<orchestration-status>pending-create</orchestration-status>
+			<resource-version>0000073</resource-version>
+		</vf-module>
+	</vf-modules>
+	<relationship-list/>
+	<l-interfaces/>
+	<lag-interfaces/>
+</generic-vnf>

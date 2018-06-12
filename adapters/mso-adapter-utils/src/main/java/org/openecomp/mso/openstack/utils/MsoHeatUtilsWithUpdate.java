@@ -21,12 +21,14 @@
 
 package org.openecomp.mso.openstack.utils;
 
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openecomp.mso.cloud.CloudConfigFactory;
+import org.openecomp.mso.cloud.CloudConfig;
 import org.openecomp.mso.cloud.CloudSite;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
@@ -35,11 +37,12 @@ import org.openecomp.mso.openstack.exceptions.MsoCloudSiteNotFound;
 import org.openecomp.mso.openstack.exceptions.MsoException;
 import org.openecomp.mso.openstack.exceptions.MsoOpenstackException;
 import org.openecomp.mso.openstack.exceptions.MsoStackNotFound;
-import org.openecomp.mso.properties.MsoJavaProperties;
-import org.openecomp.mso.properties.MsoPropertiesException;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
+import org.openecomp.mso.openstack.mappers.StackInfoMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.base.client.OpenStackBaseException;
@@ -49,25 +52,18 @@ import com.woorea.openstack.heat.model.Stack;
 import com.woorea.openstack.heat.model.Stack.Output;
 import com.woorea.openstack.heat.model.UpdateStackParam;
 
+@Component
 public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 
     private static final String UPDATE_STACK = "UpdateStack";
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA);
-
-    protected MsoJavaProperties msoProps = null;
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoHeatUtilsWithUpdate.class);
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-
-    public MsoHeatUtilsWithUpdate (String msoPropID, MsoPropertiesFactory msoPropertiesFactory, CloudConfigFactory cloudConfFactory) {
-        super (msoPropID,msoPropertiesFactory,cloudConfFactory);
-        
-    	try {
-			msoProps = msoPropertiesFactory.getMsoJavaProperties (msoPropID);
-		} catch (MsoPropertiesException e) {
-			LOGGER.error (MessageEnum.LOAD_PROPERTIES_FAIL, "Unknown. Mso Properties ID not found in cache: " + msoPropID, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception Mso Properties ID not found in cache: " + msoPropID, e);
-		}
-    }
     
+    @Autowired
+    private CloudConfig cloudConfig;
+    @Autowired
+    private Environment environment;
     /*
      * Keep these methods around for backward compatibility
      */
@@ -193,7 +189,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         }
 
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = getCloudConfigFactory().getCloudConfig().getCloudSite(cloudSiteId).orElseThrow(
+        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         // This could throw MsoTenantNotFound or MsoOpenstackException (both propagated)
@@ -212,12 +208,19 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         String canonicalName = heatStack.getStackName () + "/" + heatStack.getId ();
 
         LOGGER.debug ("Ready to Update Stack (" + canonicalName + ") with input params: " + stackInputs);
-
+        //force entire stackInput object to generic Map<String, Object> for openstack compatibility
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> normalized = new HashMap<>();
+		try {
+			normalized = mapper.readValue(mapper.writeValueAsString(stackInputs), new TypeReference<HashMap<String,Object>>() {});
+		} catch (IOException e1) {
+			LOGGER.debug("could not map json", e1);
+		}
         // Build up the stack update parameters
         // Disable auto-rollback, because error reason is lost. Always rollback in the code.
         UpdateStackParam stack = new UpdateStackParam ();
         stack.setTimeoutMinutes (timeoutMinutes);
-        stack.setParameters (stackInputs);
+        stack.setParameters (normalized);
         stack.setTemplate (heatTemplate);
         stack.setDisableRollback (true);
         // TJM add envt to stack
@@ -252,7 +255,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         try {
             // Execute the actual Openstack command to update the Heat stack
             OpenStackRequest <Void> request = heatClient.getStacks ().update (canonicalName, stack);
-            executeAndRecordOpenstackRequest (request, msoProps);
+            executeAndRecordOpenstackRequest (request);
         } catch (OpenStackBaseException e) {
             // Since this came on the 'Update Stack' command, nothing was changed
             // in the cloud. Rethrow the error as an MSO exception.
@@ -268,7 +271,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
             // Set a time limit on overall polling.
             // Use the resource (template) timeout for Openstack (expressed in minutes)
             // and add one poll interval to give Openstack a chance to fail on its own.
-            int createPollInterval = msoProps.getIntProperty (createPollIntervalProp, createPollIntervalDefault);
+            int createPollInterval = Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
             int pollTimeout = (timeoutMinutes * 60) + createPollInterval;
 
             boolean loopAgain = true;
@@ -277,7 +280,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                     updateStack = queryHeatStack (heatClient, canonicalName);
                     LOGGER.debug (updateStack.getStackStatus () + " (" + canonicalName + ")");
                     try {
-                    	LOGGER.debug("Current stack " + this.getOutputsAsStringBuilder(heatStack).toString());
+                    	LOGGER.debug("Current stack " + this.getOutputsAsStringBuilderWithUpdate(heatStack).toString());
                     } catch (Exception e) {
                     	LOGGER.debug("an error occurred trying to print out the current outputs of the stack", e);
                     }
@@ -342,10 +345,10 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                 LOGGER.debug ("UpdateStack, stack not found");
             }
         }
-        return new StackInfo (updateStack);
+        return new StackInfoMapper(updateStack).map();
     }
     
-	private StringBuilder getOutputsAsStringBuilder(Stack heatStack) {
+	private StringBuilder getOutputsAsStringBuilderWithUpdate(Stack heatStack) {
 		// This should only be used as a utility to print out the stack outputs
 		// to the log
 		StringBuilder sb = new StringBuilder("");
@@ -370,7 +373,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 			if (obj instanceof String) {
 				sb.append((String) obj).append(" (a string)");
 			} else if (obj instanceof JsonNode) {
-				sb.append(this.convertNode((JsonNode) obj)).append(" (a JsonNode)");
+				sb.append(this.convertNodeWithUpdate((JsonNode) obj)).append(" (a JsonNode)");
 			} else if (obj instanceof java.util.LinkedHashMap) {
 				try {
 					String str = JSON_MAPPER.writeValueAsString(obj);
@@ -423,7 +426,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 		return sb;
 	}
 	
-	private String convertNode(final JsonNode node) {
+	private String convertNodeWithUpdate(final JsonNode node) {
 		try {
 			final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
 			final String json = JSON_MAPPER.writeValueAsString(obj);

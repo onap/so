@@ -23,6 +23,9 @@ package org.openecomp.mso.asdc.installer;
 
 import java.io.UnsupportedEncodingException;
 
+import org.openecomp.mso.db.catalog.beans.HeatEnvironment;
+import org.openecomp.mso.db.catalog.beans.HeatFiles;
+import org.openecomp.mso.db.catalog.beans.HeatTemplate;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 
@@ -33,22 +36,31 @@ import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 public final class VfModuleArtifact {
 	private final IArtifactInfo artifactInfo;
 	private int deployedInDb=0;
-	private final String result;
-		
-	private Object catalogObject;	
+	private final String result;			
+	private HeatFiles heatFiles;
+	private HeatTemplate heatTemplate;
+	private HeatEnvironment heatEnvironment;
 		
 	public VfModuleArtifact(IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
 		artifactInfo=artifactinfo;
 		result = new String(clientResult.getArtifactPayload(), "UTF-8");
 		
+	}	
+
+	public HeatFiles getHeatFiles() {
+		return heatFiles;
 	}
 
-	public Object getCatalogObject() {
-		return catalogObject;
+	public void setHeatFiles(HeatFiles heatFiles) {
+		this.heatFiles = heatFiles;
 	}
 
-	public void setCatalogObject(Object catalogObject) {
-		this.catalogObject = catalogObject;
+	public HeatTemplate getHeatTemplate() {
+		return heatTemplate;
+	}
+
+	public void setHeatTemplate(HeatTemplate heatTemplate) {
+		this.heatTemplate = heatTemplate;
 	}
 
 	public IArtifactInfo getArtifactInfo() {
@@ -65,6 +77,14 @@ public final class VfModuleArtifact {
 
 	public void incrementDeployedInDB() {
 		++deployedInDb;
+	}
+
+	public HeatEnvironment getHeatEnvironment() {
+		return heatEnvironment;
+	}
+
+	public void setHeatEnvironment(HeatEnvironment heatEnvironment) {
+		this.heatEnvironment=heatEnvironment;		
 	}
 	
 }

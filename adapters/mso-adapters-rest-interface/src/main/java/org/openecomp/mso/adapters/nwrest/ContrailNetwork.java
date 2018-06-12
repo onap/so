@@ -21,13 +21,21 @@
 package org.openecomp.mso.adapters.nwrest;
 
 
+import java.io.Serializable;
 import java.util.List;
+
 import org.openecomp.mso.openstack.beans.RouteTarget;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("contrailNetwork")
-public class ContrailNetwork {
+public class ContrailNetwork implements Serializable{
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6879356795950005963L;
 	private String shared   = "false";
 	private String external = "false";
 	private List<RouteTarget> routeTargets;

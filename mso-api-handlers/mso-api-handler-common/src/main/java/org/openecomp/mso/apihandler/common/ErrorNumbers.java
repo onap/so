@@ -28,6 +28,8 @@ public final class ErrorNumbers {
     public static final String REQUEST_FAILED_SCHEMA_VALIDATION = "1000";
     public static final String RECIPE_DOES_NOT_EXIST = "1010";
     public static final String VFMODULE_TYPE_DOES_NOT_EXIST = "1011";
+    public static final String REQUEST_DOES_NOT_EXIST = "1012";
+    public static final String SERVICE_DOES_NOT_EXIST = "1013";
     public static final String SERVICE_PARAMETERS_FAILED_SCHEMA_VALIDATION = "1020";
     public static final String LOCKED_SAME_SERVICE_TYPE_AND_REQUEST_ACTION = "1030";
     public static final String LOCKED_CANCEL_ON_REQUEST_IN_PROGRESS = "1031";
@@ -40,7 +42,9 @@ public final class ErrorNumbers {
     public static final String PREVIOUSLY_COMPLETED_WITH_DIFF_ORDER_VERSION = "1038";
     public static final String LOCKED_DIFFERENT_REQUEST_ACTION = "1040";
     public static final String LOCKED_DIFF_REQUEST_ACTION_SAME_SERVICE_INSTANCE_ID = "1041";
+    public static final String LOCKED_DIFFERENT_REQUEST_SAME_VPN_ID = "1042";
     public static final String REQUEST_TIMED_OUT = "1050";
+
 
     public static final String DISCONNECT_ALREADY_COMPLETE = "1100";
     public static final String CANCEL_ALREADY_COMPLETE = "1110";

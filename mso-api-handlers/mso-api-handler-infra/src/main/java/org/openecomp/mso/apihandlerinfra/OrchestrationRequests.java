@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.apihandlerinfra;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -36,16 +39,20 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openecomp.mso.apihandler.common.ErrorNumbers;
+import org.openecomp.mso.apihandler.common.ResponseBuilder;
+import org.openecomp.mso.apihandlerinfra.exceptions.ApiException;
+import org.openecomp.mso.apihandlerinfra.exceptions.ValidateException;
+import org.openecomp.mso.apihandlerinfra.logging.AlarmLoggerInfo;
+import org.openecomp.mso.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.openecomp.mso.db.request.beans.InfraActiveRequests;
+import org.openecomp.mso.db.request.data.repository.InfraActiveRequestsRepository;
+import org.openecomp.mso.exceptions.ValidationException;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoAlarmLogger;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.requestsdb.InfraActiveRequests;
-import org.openecomp.mso.requestsdb.RequestsDatabase;
 import org.openecomp.mso.serviceinstancebeans.GetOrchestrationListResponse;
 import org.openecomp.mso.serviceinstancebeans.GetOrchestrationResponse;
 import org.openecomp.mso.serviceinstancebeans.InstanceReferences;
@@ -54,319 +61,278 @@ import org.openecomp.mso.serviceinstancebeans.RequestDetails;
 import org.openecomp.mso.serviceinstancebeans.RequestList;
 import org.openecomp.mso.serviceinstancebeans.RequestStatus;
 import org.openecomp.mso.serviceinstancebeans.ServiceInstancesRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Path("/orchestrationRequests")
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Path("onap/so/infra/orchestrationRequests")
 @Api(value="/orchestrationRequests",description="API Requests for Orchestration requests")
+@Component
 public class OrchestrationRequests {
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
-
-    private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
-
-    private RequestsDatabase requestsDB = RequestsDatabase.getInstance();
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, OrchestrationRequests.class);
     
-	/**
-	 *
-	 */
-	public OrchestrationRequests() {
-		// TODO Auto-generated constructor stub
-	}
+    private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
+    
+    @Autowired
+    private InfraActiveRequestsRepository infraActiveRequestsRepository;
+    
+    @Autowired
+    private MsoRequest msoRequest;
+    
+	@Autowired
+	private ResponseBuilder builder;
 
 	@GET
-	@Path("/{version:[vV][4-6]}/{requestId}")
+	@Path("/{version:[vV][4-7]}/{requestId}")
 	@ApiOperation(value="Find Orchestrated Requests for a given requestId",response=Response.class)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getOrchestrationRequest(@PathParam("requestId") String requestId, @PathParam("version") String version) {
+	@Transactional
+	public Response getOrchestrationRequest(@PathParam("requestId") String requestId, @PathParam("version") String version) throws ApiException{
 
+		String apiVersion = version.substring(1);
 		GetOrchestrationResponse orchestrationResponse = new GetOrchestrationResponse();
 
-		MsoRequest msoRequest = new MsoRequest (requestId);
-
-		long startTime = System.currentTimeMillis ();
 
 		InfraActiveRequests requestDB = null;
 
-        try {
-       		 requestDB = requestsDB.getRequestFromInfraActive(requestId);
+		try {
+			requestDB = infraActiveRequestsRepository.findOneByRequestIdOrClientRequestId(requestId, requestId);
+		} catch (Exception e) {
 
-            } catch (Exception e) {
-                msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Request DB - Infra Request Lookup", e);
-                msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
-                Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NOT_FOUND,
-             		   												  MsoException.ServiceException,
-             		   												  e.getMessage (),
-                                                                       ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB,
-                                                                       null);
-                alarmLogger.sendAlarm ("MsoDatabaseAccessError",
-                                       MsoAlarmLogger.CRITICAL,
-                                       Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB));
-                msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception while communciate with Request DB");
-                msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
-                return response;
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.AvailabilityError).build();
+			AlarmLoggerInfo alarmLoggerInfo = new AlarmLoggerInfo.Builder("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL, Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB)).build();
 
-            }
+
+
+			ValidateException validateException = new ValidateException.Builder("Exception while communciate with Request DB - Infra Request Lookup",
+					HttpStatus.SC_NOT_FOUND,ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e).errorInfo(errorLoggerInfo).alarmInfo(alarmLoggerInfo).build();
+
+			throw validateException;
+
+		}
 
         if(requestDB == null) {
-            Response resp = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NO_CONTENT,
-         		   											 MsoException.ServiceException,
-         		   											"Orchestration RequestId " + requestId + " is not found in DB",
-                                                             ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
-                                                             null);
-            msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Null response from RequestDB when searching by RequestId");
-            msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, "Null response from RequestDB when searching by RequestId");
-            msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
-            return resp;
 
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).build();
+
+
+            ValidateException validateException = new ValidateException.Builder("Orchestration RequestId " + requestId + " is not found in DB",
+                    HttpStatus.SC_NO_CONTENT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
+            throw validateException;
         }
 
         Request request = mapInfraActiveRequestToRequest(requestDB);
 
         orchestrationResponse.setRequest(request);
-
-        return Response.status(200).entity(orchestrationResponse).build();
+        
+        return builder.buildResponse(HttpStatus.SC_OK, requestId, orchestrationResponse, apiVersion);
 	}
 
 	@GET
-	@Path("/{version:[vV][4-6]}")
+	@Path("/{version:[vV][4-7]}")
 	@ApiOperation(value="Find Orchestrated Requests for a URI Information",response=Response.class)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getOrchestrationRequest(@Context UriInfo ui, @PathParam("version") String version) {
+	@Transactional
+	public Response getOrchestrationRequest(@Context UriInfo ui, @PathParam("version") String version) throws ApiException{
 
 		long startTime = System.currentTimeMillis ();
-
-		MsoRequest msoRequest = new MsoRequest();
-
+		
 		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 
 		List<InfraActiveRequests> activeRequests = null;
 
 		GetOrchestrationListResponse orchestrationList = null;
-
-
-		try{
-
-			Map<String, List<String>> orchestrationMap = msoRequest.getOrchestrationFilters(queryParams);
-
-			activeRequests = requestsDB.getOrchestrationFiltersFromInfraActive(orchestrationMap);
-
-			orchestrationList = new GetOrchestrationListResponse();
-
-			List<RequestList> requestLists = new ArrayList<>();
-
-			for(InfraActiveRequests infraActive : activeRequests){
-
-				Request request = mapInfraActiveRequestToRequest(infraActive);
-				RequestList requestList = new RequestList();
-				requestList.setRequest(request);
-
-				requestLists.add(requestList);
-
+		Map<String, List<String>> orchestrationMap;
+		String apiVersion = version.substring(1);
+		
+		try {
+			orchestrationMap = msoRequest.getOrchestrationFilters(queryParams);
+			if (orchestrationMap.isEmpty()) {
+				throw new ValidationException("At least one filter query param must be specified");
 			}
+		}catch(ValidationException ex){
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.DataError).build();
 
-			orchestrationList.setRequestList(requestLists);
 
-		}catch(Exception e){
-	           msoLogger.debug ("Get Orchestration Request with Filters Failed : ", e);
-	           Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, MsoException.ServiceException,
-	                   "Get Orchestration Request with Filters Failed.  " + e.getMessage(),
-	                   ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null);
-	           msoLogger.error (MessageEnum.APIH_GENERAL_EXCEPTION, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Get Orchestration Request with Filters Failed : " + e);
-	           msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, "Get Orchestration Request with Filters Failed");
-	           msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
-	           return response;
+			ValidateException validateException = new ValidateException.Builder(ex.getMessage(),
+					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).cause(ex).errorInfo(errorLoggerInfo).build();
+
+			throw validateException;
+
+		}
+			
+		activeRequests = infraActiveRequestsRepository.getOrchestrationFiltersFromInfraActive(orchestrationMap);
+
+		orchestrationList = new GetOrchestrationListResponse();
+		List<RequestList> requestLists = new ArrayList<>();
+		
+		for(InfraActiveRequests infraActive : activeRequests){
+			RequestList requestList = new RequestList();
+			Request request = mapInfraActiveRequestToRequest(infraActive);
+			requestList.setRequest(request);
+			requestLists.add(requestList);
 		}
 
-
-        return Response.status(200).entity(orchestrationList).build();
+		orchestrationList.setRequestList(requestLists);
+		return builder.buildResponse(HttpStatus.SC_OK, null, orchestrationList, apiVersion);
 	}
 
 
 	@POST
-	@Path("/{version: [vV][4-6]}/{requestId}/unlock")
+	@Path("/{version: [vV][4-7]}/{requestId}/unlock")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Unlock Orchestrated Requests for a given requestId",response=Response.class)
-	public Response unlockOrchestrationRequest(String requestJSON, @PathParam("requestId") String requestId, @PathParam("version") String version) {
-
-		MsoRequest msoRequest = new MsoRequest (requestId);
+	@Transactional
+	public Response unlockOrchestrationRequest(String requestJSON, @PathParam("requestId") String requestId, @PathParam("version") String version) throws ApiException{
 
 		long startTime = System.currentTimeMillis ();
 		msoLogger.debug ("requestId is: " + requestId);
-
-		InfraActiveRequests requestDB = null;
-		Request request = null;
-
-		msoLogger.debug ("requestId is: " + requestId);
 		ServiceInstancesRequest sir = null;
 
+		InfraActiveRequests infraActiveRequest = null;
+		Request request = null;
+		
 		try{
 			ObjectMapper mapper = new ObjectMapper();
 			sir = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
+		} catch(IOException e){
 
-		} catch(Exception e){
-			msoLogger.debug ("Mapping of request to JSON object failed : ", e);
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
-					"Mapping of request to JSON object failed.  " + e.getMessage(),
-					ErrorNumbers.SVC_BAD_PARAMETER, null);
-			if (msoRequest.getRequestId () != null) {
-				msoLogger.debug ("Mapping of request to JSON object failed");
-			}
-			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, requestJSON, e);
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Mapping of request to JSON object failed");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
-			return response;
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+
+
+            ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed : ",
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
+
+            throw validateException;
+
 		}
-
-
 		try{
 			msoRequest.parseOrchestration(sir);
 		} catch (Exception e) {
-			msoLogger.debug ("Validation failed: ", e);
-			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
-					"Error parsing request.  " + e.getMessage(),
-					ErrorNumbers.SVC_BAD_PARAMETER, null);
-			if (msoRequest.getRequestId () != null) {
-				msoLogger.debug ("Logging failed message to the database");
-			}
-			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, requestJSON, e);
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Validation of the input request failed");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
-			return response;
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+			 ValidateException validateException = new ValidateException.Builder("Error parsing request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+	                 .errorInfo(errorLoggerInfo).build();
+            throw validateException;
 		}
 
-		try {
-			requestDB = requestsDB.getRequestFromInfraActive(requestId);
+		infraActiveRequest = infraActiveRequestsRepository.findOneByRequestIdOrClientRequestId(requestId, requestId);
+		if(infraActiveRequest == null) {
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MsoLogger.ErrorCode.BusinessProcesssError).build();
 
-			if(requestDB == null) {
-				Response resp = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NOT_FOUND,
-						MsoException.ServiceException,
-						"Orchestration RequestId " + requestId + " is not found in DB",
-						ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
-						null);
-				msoLogger.error (MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Null response from RequestDB when searching by RequestId");
-				msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, "Null response from RequestDB when searching by RequestId");
-				msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
-				return resp;
 
+			ValidateException validateException = new ValidateException.Builder("Null response from RequestDB when searching by RequestId",
+					HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
+			throw validateException;
+
+		}else{
+			String status = infraActiveRequest.getRequestStatus();
+			if(status.equalsIgnoreCase("IN_PROGRESS") || status.equalsIgnoreCase("PENDING") || status.equalsIgnoreCase("PENDING_MANUAL_TASK")){
+				infraActiveRequest.setRequestStatus("UNLOCKED");
+				infraActiveRequest.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
+				infraActiveRequestsRepository.save(infraActiveRequest);
 			}else{
-				request = mapInfraActiveRequestToRequest(requestDB);
-				RequestStatus reqStatus = request.getRequestStatus();
-				Status status = Status.valueOf(reqStatus.getRequestState());
-				if(status == Status.IN_PROGRESS || status == Status.PENDING || status == Status.PENDING_MANUAL_TASK){
-					msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.UNLOCKED);
-					reqStatus.setRequestState(Status.UNLOCKED.toString ());
-					requestsDB.updateInfraStatus (requestId,
-							Status.UNLOCKED.toString (),
-							Constants.MODIFIED_BY_APIHANDLER);
 
-					msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "RequestId " + requestId + " has been unlocked");
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MsoLogger.ErrorCode.DataError).build();
 
-				}else{
-					Response resp = msoRequest.buildServiceErrorResponse (HttpStatus.SC_BAD_REQUEST,
-							MsoException.ServiceException,
-							"Orchestration RequestId " + requestId + " has a status of " + status + " and can not be unlocked",
-							ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
-							null);
-					msoLogger.error (MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "Orchestration RequestId " + requestId + " has a status of " + status + " and can not be unlocked");
-					msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, "Orchestration RequestId " + requestId + " has a status of " + status + " and can not be unlocked");
-					msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
-					return resp;
-				}
+
+				ValidateException validateException = new ValidateException.Builder("Orchestration RequestId " + requestId + " has a status of " + status + " and can not be unlocked",
+						HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
+				throw validateException;
 			}
-		} catch (Exception e) {
-			msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Request DB - Infra Request Lookup", e);
-			msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
-			Response response = msoRequest.buildServiceErrorResponse (HttpStatus.SC_NOT_FOUND,
-					MsoException.ServiceException,
-					e.getMessage (),
-					ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB,
-					null);
-			alarmLogger.sendAlarm ("MsoDatabaseAccessError",
-					MsoAlarmLogger.CRITICAL,
-					Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB));
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception while communciate with Request DB");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
-			return response;
-
 		}
-
 		return Response.status (HttpStatus.SC_NO_CONTENT).entity ("").build ();
 	}
 
-    private Request mapInfraActiveRequestToRequest(InfraActiveRequests requestDB)  {
+    private Request mapInfraActiveRequestToRequest(InfraActiveRequests iar)  throws ApiException{
 
+    	String requestBody = iar.getRequestBody();
+    	Request request = new Request();
+    	
+        ObjectMapper mapper = new ObjectMapper();      
 
-        Request request = new Request();
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
-       request.setRequestId(requestDB.getRequestId());
-       request.setRequestScope(requestDB.getRequestScope());
-       request.setRequestType(requestDB.getRequestAction());
+       request.setRequestId(iar.getRequestId());
+       request.setRequestScope(iar.getRequestScope());
+       request.setRequestType(iar.getRequestAction());
 
        InstanceReferences ir = new InstanceReferences();
-       if(requestDB.getNetworkId() != null)
-       	ir.setNetworkInstanceId(requestDB.getNetworkId());
-       if(requestDB.getNetworkName() != null)
-       	ir.setNetworkInstanceName(requestDB.getNetworkName());
-       if(requestDB.getServiceInstanceId() != null)
-       	ir.setServiceInstanceId(requestDB.getServiceInstanceId());
-       if(requestDB.getServiceInstanceName() != null)
-       	ir.setServiceInstanceName(requestDB.getServiceInstanceName());
-       if(requestDB.getVfModuleId() != null)
-       	ir.setVfModuleInstanceId(requestDB.getVfModuleId());
-       if(requestDB.getVfModuleName() != null)
-       	ir.setVfModuleInstanceName(requestDB.getVfModuleName());
-       if(requestDB.getVnfId() != null)
-       	ir.setVnfInstanceId(requestDB.getVnfId());
-       if(requestDB.getVnfName() != null)
-       	ir.setVnfInstanceName(requestDB.getVnfName());
-       if(requestDB.getVolumeGroupId() != null)
-       	ir.setVolumeGroupInstanceId(requestDB.getVolumeGroupId());
-       if(requestDB.getVolumeGroupName() != null)
-       	ir.setVolumeGroupInstanceName(requestDB.getVolumeGroupName());
-		if(requestDB.getRequestorId() != null)
-			ir.setRequestorId(requestDB.getRequestorId());
+       if(iar.getNetworkId() != null)
+       	ir.setNetworkInstanceId(iar.getNetworkId());
+       if(iar.getNetworkName() != null)
+       	ir.setNetworkInstanceName(iar.getNetworkName());
+       if(iar.getServiceInstanceId() != null)
+       	ir.setServiceInstanceId(iar.getServiceInstanceId());
+       if(iar.getServiceInstanceName() != null)
+       	ir.setServiceInstanceName(iar.getServiceInstanceName());
+       if(iar.getVfModuleId() != null)
+       	ir.setVfModuleInstanceId(iar.getVfModuleId());
+       if(iar.getVfModuleName() != null)
+       	ir.setVfModuleInstanceName(iar.getVfModuleName());
+       if(iar.getVnfId() != null)
+       	ir.setVnfInstanceId(iar.getVnfId());
+       if(iar.getVnfName() != null)
+       	ir.setVnfInstanceName(iar.getVnfName());
+       if(iar.getVolumeGroupId() != null)
+       	ir.setVolumeGroupInstanceId(iar.getVolumeGroupId());
+       if(iar.getVolumeGroupName() != null)
+       	ir.setVolumeGroupInstanceName(iar.getVolumeGroupName());
+		if(iar.getRequestorId() != null)
+			ir.setRequestorId(iar.getRequestorId());
 
 
 		request.setInstanceReferences(ir);
 
-       String requestBody = requestDB.getRequestBody();
-
        RequestDetails requestDetails = null;
 
-       try{
-       	requestDetails = mapper.readValue(requestBody, RequestDetails.class);
+       if(StringUtils.isNotBlank(requestBody)) {
+		   try {
+			   if(requestBody.contains("\"requestDetails\":")){
+				   ServiceInstancesRequest sir = mapper.readValue(requestBody, ServiceInstancesRequest.class);
+				   requestDetails = sir.getRequestDetails();
+			   } else {
+				   requestDetails = mapper.readValue(requestBody, RequestDetails.class);
+			   }
+		   } catch (IOException e) {
 
-       }catch(Exception e){
-       	msoLogger.debug("Exception caught mapping requestBody to RequestDetails",e);
-       }
+			   ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+			   ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed : ",
+					   HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
 
+			   throw validateException;
+		   }
+	   }
        request.setRequestDetails(requestDetails);
-       String startTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(requestDB.getStartTime()) + " GMT";
-       request.setStartTime(startTimeStamp);
+       
+       if(iar.getStartTime() != null) {
+	       String startTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getStartTime()) + " GMT";
+	       request.setStartTime(startTimeStamp);
+       }
 
        RequestStatus status = new RequestStatus();
-       if(requestDB.getStatusMessage() != null){
-    	   status.setStatusMessage(requestDB.getStatusMessage());
+       if(iar.getStatusMessage() != null){
+    	   status.setStatusMessage(iar.getStatusMessage());
        }
 
-       if(requestDB.getEndTime() != null){
-    	   String endTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(requestDB.getEndTime()) + " GMT";
+       if(iar.getEndTime() != null){
+    	   String endTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getEndTime()) + " GMT";
     	   status.setFinishTime(endTimeStamp);
        }
 
 
-       if(requestDB.getRequestStatus() != null){
-    	   status.setRequestState(requestDB.getRequestStatus());
+       if(iar.getRequestStatus() != null){
+    	   status.setRequestState(iar.getRequestStatus());
        }
 
-       if(requestDB.getProgress() != null){
-    	   status.setPercentProgress(requestDB.getProgress().intValue());
+       if(iar.getProgress() != null){
+    	   status.setPercentProgress(iar.getProgress().intValue());
        }
 
        request.setRequestStatus(status);

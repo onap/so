@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.mso.bpmn.common.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*;
@@ -40,6 +41,10 @@ import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.core.domain.ServiceDecomposition
 import org.openecomp.mso.bpmn.core.json.JsonUtils
 import org.openecomp.mso.client.ruby.*
+import org.openecomp.mso.logger.MessageEnum
+import org.openecomp.mso.logger.MsoLogger
+
+
 
 
 
@@ -68,115 +73,59 @@ import org.openecomp.mso.client.ruby.*
  *
  */
 public class ManualHandling extends AbstractServiceTaskProcessor {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ManualHandling.class);
+
 
 	String Prefix="MH_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	
+
 	JsonUtils jsonUtils = new JsonUtils()
 
 	public void preProcessRequest (DelegateExecution execution) {
-		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		utils.log("DEBUG"," ***** preProcessRequest of ManualHandling *****",  isDebugLogEnabled)
+		msoLogger.trace("preProcessRequest of ManualHandling ")
 
 		try {
 			execution.setVariable("prefix", Prefix)
-			setBasicDBAuthHeader(execution, isDebugLogEnabled)
+			setBasicDBAuthHeader(execution, execution.getVariable('isDebugLogEnabled'))
 			// check for required input
 			String requestId = execution.getVariable("msoRequestId")
-			utils.log("DEBUG", "msoRequestId is: " + requestId, isDebugLogEnabled)		
+			msoLogger.debug("msoRequestId is: " + requestId)
 			def serviceType = execution.getVariable("serviceType")
-			utils.log("DEBUG", "serviceType is: " + serviceType, isDebugLogEnabled)
+			msoLogger.debug("serviceType is: " + serviceType)
 			def vnfType = execution.getVariable("vnfType")
-			utils.log("DEBUG", "vnftype is: " + vnfType, isDebugLogEnabled)
+			msoLogger.debug("vnftype is: " + vnfType)
 			def currentActivity = execution.getVariable("currentActivity")
-			utils.log("DEBUG", "currentActivity is: " + currentActivity, isDebugLogEnabled)
+			msoLogger.debug("currentActivity is: " + currentActivity)
 			def workStep = execution.getVariable("workStep")
-			utils.log("DEBUG", "workStep is: " + workStep, isDebugLogEnabled)
+			msoLogger.debug("workStep is: " + workStep)
 			def failedActivity = execution.getVariable("failedActivity")
-			utils.log("DEBUG", "failedActivity is: " + failedActivity, isDebugLogEnabled)
+			msoLogger.debug("failedActivity is: " + failedActivity)
 			def errorCode = execution.getVariable("errorCode")
-			utils.log("DEBUG", "errorCode is: " + errorCode, isDebugLogEnabled)
+			msoLogger.debug("errorCode is: " + errorCode)
 			def errorText = execution.getVariable("errorText")
-			utils.log("DEBUG", "errorText is: " + errorText, isDebugLogEnabled)
+			msoLogger.debug("errorText is: " + errorText)
 			def requestorId = execution.getVariable("requestorId")
-			utils.log("DEBUG", "requestorId is: " + requestorId, isDebugLogEnabled)
+			msoLogger.debug("requestorId is: " + requestorId)
 			def validResponses = execution.getVariable("validResponses")
-			utils.log("DEBUG", "validResponses is: " + validResponses, isDebugLogEnabled)
-			
+			msoLogger.debug("validResponses is: " + validResponses)
+
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugLogEnabled)
+			msoLogger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit preProcessRequest of RainyDayHandler *****",  isDebugLogEnabled)
+		msoLogger.trace("Exit preProcessRequest of RainyDayHandler ")
 	}
 
 	public void createManualTask (DelegateExecution execution) {
-		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		utils.log("DEBUG"," ***** createManualTask of ManualHandling *****",  isDebugLogEnabled)
+		msoLogger.trace("createManualTask of ManualHandling ")
 
 		try {
 			String taskId = UUID.randomUUID()
-			execution.setVariable('taskId', taskId)
-			String type = "fallout"
-			String nfRole = execution.getVariable("vnfType")
-			String subscriptionServiceType = execution.getVariable("serviceType")
-			String originalRequestId = execution.getVariable("msoRequestId")
-			String originalRequestorId = execution.getVariable("requestorId")
-			String errorSource = execution.getVariable("failedActivity")
-			String errorCode = execution.getVariable("errorCode")
-			String errorMessage = execution.getVariable("errorText")			
-			String buildingBlockName = execution.getVariable("currentActivity")
-			String buildingBlockStep = execution.getVariable("workStep")
-			String validResponses = execution.getVariable("validResponses")
-			
-			utils.log("DEBUG", "Before creating task", isDebugLogEnabled)			
-			
-			Map<String, String> taskVariables = new HashMap<String, String>()
-			taskVariables.put("type", type)
-			taskVariables.put("nfRole", nfRole)
-			taskVariables.put("subscriptionServiceType", subscriptionServiceType)
-			taskVariables.put("originalRequestId", originalRequestId)
-			taskVariables.put("originalRequestorId", originalRequestorId)
-			taskVariables.put("errorSource", errorSource)
-			taskVariables.put("errorCode", errorCode)
-			taskVariables.put("errorMessage", errorMessage)
-			taskVariables.put("buildingBlockName", buildingBlockName)
-			taskVariables.put("buildingBlockStep", buildingBlockStep)
-			taskVariables.put("validResponses", validResponses)			
-			
-			TaskService taskService = execution.getProcessEngineServices().getTaskService()			
-			Task manualTask = taskService.newTask(taskId)			
-			taskService.saveTask(manualTask)			
-			taskService.setVariables(taskId, taskVariables)
-			utils.log("DEBUG", "successfully created task: "+ taskId, isDebugLogEnabled)
-
-		} catch (BpmnError e) {
-			utils.log("DEBUG", "BPMN exception: " + e.errorMessage, isDebugLogEnabled)
-			throw e;
-		} catch (Exception ex){
-			msg = "Exception in createManualTask " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugLogEnabled)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		utils.log("DEBUG"," ***** Exit createManualTask of ManualHandling *****",  isDebugLogEnabled)
-	}
-	
-	public void setTaskVariables (DelegateTask task) {
-				
-		DelegateExecution execution = task.getExecution()
-		
-		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
-		String msg = ""
-		utils.log("DEBUG"," ***** setTaskVariables of ManualHandling *****",  isDebugLogEnabled)
-		String taskId = task.getId()
-		utils.log("DEBUG", "taskId is: " + taskId, isDebugLogEnabled)
-
-		try {			
 			execution.setVariable('taskId', taskId)
 			String type = "fallout"
 			String nfRole = execution.getVariable("vnfType")
@@ -189,9 +138,63 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 			String buildingBlockName = execution.getVariable("currentActivity")
 			String buildingBlockStep = execution.getVariable("workStep")
 			String validResponses = execution.getVariable("validResponses")
-			
-			utils.log("DEBUG", "Before creating task", isDebugLogEnabled)
-			
+
+			msoLogger.debug("Before creating task")
+
+			Map<String, String> taskVariables = new HashMap<String, String>()
+			taskVariables.put("type", type)
+			taskVariables.put("nfRole", nfRole)
+			taskVariables.put("subscriptionServiceType", subscriptionServiceType)
+			taskVariables.put("originalRequestId", originalRequestId)
+			taskVariables.put("originalRequestorId", originalRequestorId)
+			taskVariables.put("errorSource", errorSource)
+			taskVariables.put("errorCode", errorCode)
+			taskVariables.put("errorMessage", errorMessage)
+			taskVariables.put("buildingBlockName", buildingBlockName)
+			taskVariables.put("buildingBlockStep", buildingBlockStep)
+			taskVariables.put("validResponses", validResponses)
+
+			TaskService taskService = execution.getProcessEngineServices().getTaskService()
+			Task manualTask = taskService.newTask(taskId)
+			taskService.saveTask(manualTask)
+			taskService.setVariables(taskId, taskVariables)
+			msoLogger.debug("successfully created task: "+ taskId)
+		} catch (BpmnError e) {
+			msoLogger.debug("BPMN exception: " + e.errorMessage)
+			throw e;
+		} catch (Exception ex){
+			msg = "Exception in createManualTask " + ex.getMessage()
+			msoLogger.debug(msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+		msoLogger.trace("Exit createManualTask of ManualHandling ")
+	}
+
+	public void setTaskVariables (DelegateTask task) {
+
+		DelegateExecution execution = task.getExecution()
+
+		String msg = ""
+		msoLogger.trace("setTaskVariables of ManualHandling ")
+		String taskId = task.getId()
+		msoLogger.debug("taskId is: " + taskId)
+
+		try {
+			execution.setVariable('taskId', taskId)
+			String type = "fallout"
+			String nfRole = execution.getVariable("vnfType")
+			String subscriptionServiceType = execution.getVariable("serviceType")
+			String originalRequestId = execution.getVariable("msoRequestId")
+			String originalRequestorId = execution.getVariable("requestorId")
+			String errorSource = execution.getVariable("failedActivity")
+			String errorCode = execution.getVariable("errorCode")
+			String errorMessage = execution.getVariable("errorText")
+			String buildingBlockName = execution.getVariable("currentActivity")
+			String buildingBlockStep = execution.getVariable("workStep")
+			String validResponses = execution.getVariable("validResponses")
+
+			msoLogger.debug("Before creating task")
+
 			Map<String, String> taskVariables = new HashMap<String, String>()
 			taskVariables.put("type", type)
 			taskVariables.put("nfRole", nfRole)
@@ -205,60 +208,57 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 			taskVariables.put("buildingBlockStep", buildingBlockStep)
 			taskVariables.put("validResponses", validResponses)
 			TaskService taskService = execution.getProcessEngineServices().getTaskService()
-			
-				
-			taskService.setVariables(taskId, taskVariables)
-			utils.log("DEBUG", "successfully created task: "+ taskId, isDebugLogEnabled)
 
+
+			taskService.setVariables(taskId, taskVariables)
+			msoLogger.debug("successfully created task: "+ taskId)
 		} catch (BpmnError e) {
-			utils.log("DEBUG", "BPMN exception: " + e.errorMessage, isDebugLogEnabled)
+			msoLogger.debug("BPMN exception: " + e.errorMessage)
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in createManualTask " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugLogEnabled)
+			msoLogger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit createManualTask of ManualHandling *****",  isDebugLogEnabled)
+		msoLogger.trace("Exit createManualTask of ManualHandling ")
 	}
-	
+
 	public void completeTask (DelegateTask task) {
-		
+
 		DelegateExecution execution = task.getExecution()
 
-		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		utils.log("DEBUG"," ***** completeTask of ManualHandling *****",  isDebugLogEnabled)
-		String taskId = task.getId()	
-		utils.log("DEBUG", "taskId is: " + taskId, isDebugLogEnabled)
+		msoLogger.trace("completeTask of ManualHandling ")
+		String taskId = task.getId()
+		msoLogger.debug("taskId is: " + taskId)
 
-		try {			
-			TaskService taskService = execution.getProcessEngineServices().getTaskService()	
-		
+		try {
+			TaskService taskService = execution.getProcessEngineServices().getTaskService()
+
 			Map<String, String> taskVariables = taskService.getVariables(taskId)
 			String responseValue = taskVariables.get("responseValue")
-						
-			utils.log("DEBUG", "Received responseValue on completion: "+ responseValue, isDebugLogEnabled)
-			// Have to set the first letter of the response to upper case			
+
+			msoLogger.debug("Received responseValue on completion: "+ responseValue)
+			// Have to set the first letter of the response to upper case
 			String responseValueForRainyDay = responseValue.substring(0, 1).toUpperCase() + responseValue.substring(1)
-			utils.log("DEBUG", "ResponseValue to RainyDayHandler: "+ responseValueForRainyDay, isDebugLogEnabled)
+			msoLogger.debug("ResponseValue to RainyDayHandler: "+ responseValueForRainyDay)
 			execution.setVariable("responseValue", responseValueForRainyDay)
 
 		} catch (BpmnError e) {
-			utils.log("DEBUG", "BPMN exception: " + e.errorMessage, isDebugLogEnabled)
+			msoLogger.debug("BPMN exception: " + e.errorMessage)
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in createManualTask " + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugLogEnabled)
+			msoLogger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit completeTask of ManualHandling *****",  isDebugLogEnabled)
+		msoLogger.trace("Exit completeTask of ManualHandling ")
 	}
-	
+
 	public void prepareRequestsDBStatusUpdate (DelegateExecution execution, String requestStatus){
-		
+
 		def method = getClass().getSimpleName() + '.prepareRequestsDBStatusUpdate(' +'execution=' + execution.getId() +')'
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		utils.log("DEBUG"," ***** prepareRequestsDBStatusUpdate of ManualHandling *****",  isDebugLogEnabled)
+		msoLogger.trace("prepareRequestsDBStatusUpdate of ManualHandling ")
 		try {
 			def requestId = execution.getVariable("msoRequestId")
 			String payload = """
@@ -273,73 +273,71 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 						   </soapenv:Body>
 						</soapenv:Envelope>
 				"""
-			
+
 			execution.setVariable("setUpdateDBstatusPayload", payload)
-			utils.log("DEBUG", "Outgoing Update Mso Request Payload is: " + payload, isDebugLogEnabled)
-			utils.logAudit("setUpdateDBstatusPayload: " + payload)
-		
+			msoLogger.debug("Outgoing Update Mso Request Payload is: " + payload)
+			msoLogger.debug("setUpdateDBstatusPayload: " + payload)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 		}
-		
-		utils.log("DEBUG"," ***** Exit prepareRequestsDBStatusUpdate of ManualHandling *****",  isDebugLogEnabled)
+
+		msoLogger.trace("Exit prepareRequestsDBStatusUpdate of ManualHandling ")
 	}
-	
+
 	public void createAOTSTicket (DelegateExecution execution) {
-		def isDebugLogEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		utils.log("DEBUG"," ***** createAOTSTicket of ManualHandling *****",  isDebugLogEnabled)
-		
+		msoLogger.trace("createAOTSTicket of ManualHandling ")
+		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		// This method will not be throwing an exception, but rather log the error
 
 		try {
 			execution.setVariable("prefix", Prefix)
-			setBasicDBAuthHeader(execution, isDebugLogEnabled)
+			setBasicDBAuthHeader(execution,isDebugLogEnabled)
 			// check for required input
 			String requestId = execution.getVariable("msoRequestId")
-			utils.log("DEBUG", "requestId is: " + requestId, isDebugLogEnabled)			
+			msoLogger.debug("requestId is: " + requestId)
 			def currentActivity = execution.getVariable("currentActivity")
-			utils.log("DEBUG", "currentActivity is: " + currentActivity, isDebugLogEnabled)
+			msoLogger.debug("currentActivity is: " + currentActivity)
 			def workStep = execution.getVariable("workStep")
-			utils.log("DEBUG", "workStep is: " + workStep, isDebugLogEnabled)
+			msoLogger.debug("workStep is: " + workStep)
 			def failedActivity = execution.getVariable("failedActivity")
-			utils.log("DEBUG", "failedActivity is: " + failedActivity, isDebugLogEnabled)
+			msoLogger.debug("failedActivity is: " + failedActivity)
 			def errorCode = execution.getVariable("errorCode")
-			utils.log("DEBUG", "errorCode is: " + errorCode, isDebugLogEnabled)
+			msoLogger.debug("errorCode is: " + errorCode)
 			def errorText = execution.getVariable("errorText")
-			utils.log("DEBUG", "errorText is: " + errorText, isDebugLogEnabled)
+			msoLogger.debug("errorText is: " + errorText)
 			def vnfName = execution.getVariable("vnfName")
-			utils.log("DEBUG", "vnfName is: " + vnfName, isDebugLogEnabled)			
-			
+			msoLogger.debug("vnfName is: " + vnfName)
+
 			String rubyRequestId = UUID.randomUUID()
-			utils.log("DEBUG", "rubyRequestId: " + rubyRequestId, isDebugLogEnabled)
+			msoLogger.debug("rubyRequestId: " + rubyRequestId)
 			String sourceName = vnfName
-			utils.log("DEBUG", "sourceName: " + sourceName, isDebugLogEnabled)
+			msoLogger.debug("sourceName: " + sourceName)
 			String reason = "VID Workflow failed at " + failedActivity + " " + workStep + " call with error " + errorCode
-			utils.log("DEBUG", "reason: " + reason, isDebugLogEnabled)
+			msoLogger.debug("reason: " + reason)
 			String workflowId = requestId
-			utils.log("DEBUG", "workflowId: " + workflowId, isDebugLogEnabled)
+			msoLogger.debug("workflowId: " + workflowId)
 			String notification = "Request originated from VID | Workflow fallout on " + vnfName + " | Workflow step failure: " + workStep + " failed | VID workflow ID: " + workflowId
-			utils.log("DEBUG", "notification: " + notification, isDebugLogEnabled)			
-			
-			utils.log("DEBUG", "Creating AOTS Ticket request")			
-			
+			msoLogger.debug("notification: " + notification)
+
+			msoLogger.debug("Creating AOTS Ticket request")
+
 			RubyClient rubyClient = new RubyClient()
-			rubyClient.rubyCreateTicketCheckRequest(rubyRequestId, sourceName, reason, workflowId, notification)			
-			
+			rubyClient.rubyCreateTicketCheckRequest(rubyRequestId, sourceName, reason, workflowId, notification)
+
 		} catch (BpmnError e) {
 			msg = "BPMN error in createAOTSTicket " + ex.getMessage()
-			utils.log("ERROR", msg, isDebugLogEnabled)			
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 		} catch (Exception ex){
 			msg = "Exception in createAOTSTicket " + ex.getMessage()
-			utils.log("ERROR", msg, isDebugLogEnabled)			
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 		}
-		utils.log("DEBUG"," ***** Exit createAOTSTicket of ManualHandling *****",  isDebugLogEnabled)
+		msoLogger.trace("Exit createAOTSTicket of ManualHandling ")
 	}
 
-	
-	
+
+
 }

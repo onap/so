@@ -23,7 +23,9 @@ package org.openecomp.mso.adapters.tenantrest;
 
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.openecomp.mso.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "rollbackTenantError")

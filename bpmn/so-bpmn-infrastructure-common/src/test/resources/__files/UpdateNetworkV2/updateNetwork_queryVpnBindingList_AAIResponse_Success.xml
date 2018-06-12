@@ -1,0 +1,57 @@
+<rest:RESTResponse xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
+                   statusCode="200">
+   <rest:headers>
+      <rest:header name="Transfer-Encoding" value="chunked"/>
+      <rest:header name="Date" value="Mon,14 Mar 2016 20:53:33 GMT"/>
+      <rest:header name="Expires" value="Thu,01 Jan 1970 00:00:00 UTC"/>
+      <rest:header name="X-AAI-TXID"
+                   value="mtcnjv9aaas01.mtcnj.aic.cip.com-20160314-20:53:33:487-134392"/>
+      <rest:header name="Content-Type" value="application/xml"/>
+      <rest:header name="Server" value="Apache-Coyote/1.1"/>
+      <rest:header name="Cache-Control" value="private"/>
+   </rest:headers>
+   <rest:payload contentType="text/xml">
+      <vpn-binding xmlns="http://org.openecomp.aai.inventory/v8">
+         <vpn-id>9a7b327d9-287aa00-82c4b0-105757</vpn-id>
+         <vpn-name>GN_EVPN_Test</vpn-name>
+         <route-targets>
+           <route-target>
+             <global-route-target>13979:105708</global-route-target>
+             <route-target-role>EXPORT</route-target-role>
+             <resource-version>1504025599510</resource-version>
+           </route-target>
+           <route-target>
+             <global-route-target>13979:105707</global-route-target>
+             <route-target-role>IMPORT</route-target-role>
+             <resource-version>1504025599519</resource-version>
+           </route-target>           
+         </route-targets>
+         <relationship-list>
+            <relationship>
+               <related-to>l3-network</related-to>
+               <related-link>https://aai-app-e2e.test.com:8443/aai/v8/network/l3-networks/l3-network/689ec39e-c5fc-4462-8db2-4f760763ad28/</related-link>
+               <relationship-data>
+                  <relationship-key>l3-network.network-id</relationship-key>
+                  <relationship-value>689ec39e-c5fc-4462-8db2-4f760763ad28</relationship-value>
+               </relationship-data>
+            </relationship>
+            <relationship>
+               <related-to>l3-network</related-to>
+               <related-link>https://aai-app-e2e.test.com:8443/aai/v8/network/l3-networks/l3-network/1a49396b-19b3-40a4-8792-aa2fbd0f0704/</related-link>
+               <relationship-data>
+                  <relationship-key>l3-network.network-id</relationship-key>
+                  <relationship-value>1a49396b-19b3-40a4-8792-aa2fbd0f0704</relationship-value>
+               </relationship-data>
+            </relationship>
+            <relationship>
+               <related-to>l3-network</related-to>
+               <related-link>https://aai-app-e2e.test.com:8443/aai/v8/network/l3-networks/l3-network/774f3329-3c83-4771-86c7-9e6207cd50fd/</related-link>
+               <relationship-data>
+                  <relationship-key>l3-network.network-id</relationship-key>
+                  <relationship-value>774f3329-3c83-4771-86c7-9e6207cd50fd</relationship-value>
+               </relationship-data>
+            </relationship>
+         </relationship-list>
+      </vpn-binding>
+   </rest:payload>
+</rest:RESTResponse>

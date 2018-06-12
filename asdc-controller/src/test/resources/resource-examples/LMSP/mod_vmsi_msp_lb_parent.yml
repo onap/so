@@ -1,0 +1,237 @@
+heat_template_version: 2015-04-30
+#Nimbus 2.0 MSP LB// Contrail 3.0 Version 2 Template
+# Nimbus Release 3.2: Removed Fat flow, ECMP, F5 startup script parameters 
+description: >
+  HOT template to create resource_group
+
+#####################
+parameters:
+#####################
+
+## GLOBAL//Basic Parameters
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+
+
+## GLOBAL//Network Parameters
+
+  oam_protected_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  sgi_protected_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  int_imbl_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  nimbus_hsl_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  oam_protected_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+  sgi_protected_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+  int_imbl_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+  nimbus_hsl_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+
+## PT//PortTuple Parameters
+  msp_lb_si_name_fqdn:
+    type: string
+    description: fq_name for the ServiceInstance in PortTuple Resource
+#   For manual spinups, value must be in the ENV file.  Must be removed from ENV before uploading to ASDC
+
+## VMI//VirtualMachineInterface Fat flow Parameters
+#  msp_lb_fat_flow_protocol_0:
+#    type: string
+#    description: Fat flow protocol
+#  msp_lb_fat_flow_protocol_1:
+#    type: string
+#    description: Fat flow protocol
+#  msp_lb_fat_flow_port_0:
+#    type: number
+#    description: Fat flow protocol
+#    constraints:
+#      - range: { min: 0, max: 66000 }
+#        description: Must be a number between 0 and 66000
+#  msp_lb_fat_flow_port_1:
+#    type: number
+#    description: Fat flow protocol
+#    constraints:
+#      - range: { min: 0, max: 66000 }
+#        description: Must be a number between 0 and 66000
+
+
+## VMI//VirtualMachineInterface ECMP Parameters
+#  msp_lb_vmi_ecmp_configured:
+#    type: boolean
+#    description: hashing_configured for the VirtualMachineInterface
+#  msp_lb_vmi_ecmp_src_ip:
+#    type: boolean
+#    description: source_ip for the VirtualMachineInterface
+#  msp_lb_vmi_ecmp_dst_ip:
+#    type: boolean
+#    description: destination_ip for the VirtualMachineInterface
+#  msp_lb_vmi_ecmp_ip_protocol:
+#    type: boolean
+#    description: ip_protocol for the VirtualMachineInterface
+# msp_lb_vmi_ecmp_src_port:
+#    type: boolean
+#    description: source_port for the VirtualMachineInterface
+#  msp_lb_vmi_ecmp_dst_port:
+#    type: boolean
+#    description: destination_port for the VirtualMachineInterface
+
+## II//InstanceIp
+  sgi_protected_family_v6:
+    type: string
+    description: IP Family Address for InstanceIp
+  sgi_protected_subnet_id:
+    type: string
+    description: Subnet UUID for InstanceIp
+  sgi_protected_v6_subnet_id:
+    type: string
+    description: Subnet UUID for InstanceIp
+  int_imbl_family_v6:
+    type: string
+    description: IP Family Address for InstanceIp
+  int_imbl_subnet_id:
+    type: string
+    description: Subnet UUID for InstanceIp
+  int_imbl_v6_subnet_id:
+    type: string
+    description: Subnet UUID for InstanceIp
+  msp_lb_oam_protected_ips:
+    type: comma_delimited_list
+    description: the ips of the management network 
+
+## VM//NovaServer Parameters
+  msp_lb_image_name:
+    type: string
+    description: image_name for the ServiceInstance VM
+  msp_lb_flavor_name:
+    type: string
+    description: flavor for the ServiceInstance VM
+  availability_zone_0:
+    type: string
+    description: availability_zone for the ServiceInstance
+  msp_lb_names:
+    type: comma_delimited_list
+    description: Comma Delimited List of Names for ServiceInstance VMs
+
+## Security Group Parameters
+  msp_lb_sec_grp_id:
+    type: string
+    description: uuid of the security group
+#   For manual spinups, value must be in the ENV file.  Must be removed from ENV before uploading to ASDC
+
+## Server Group Parameters
+  msp_lb_srv_grp_id:
+    type: string
+    description: uuid of the server group
+#   For manual spinups, value must be in the ENV file.  Must be removed from ENV before uploading to ASDC
+
+## RHRG//Resource:HEATResourceGroup Parameters
+  msp_lb_hrg_vmsi_count_1:
+    type: number
+    description: Iteration Count of Child Template for Heat::ResourceGroup
+    constraints:
+      - range: { min: 0, max: 99 }
+        description: Must be a number between 0 and 99
+
+## F5 user data
+  msp_lb_admin_password:
+    type: string
+    label: F5 VE Admin User Password
+    description: Password used to perform image import services
+    hidden: true  
+  msp_lb_root_password:
+    type: string
+    label: F5 VE Root User Password
+    description: Password used to perform image import services
+    hidden: true
+
+
+#####################
+resources:
+#####################
+#####################
+# RHRG SET 1        #
+#####################
+
+  MSP_LB_RHRG:
+    type: OS::Heat::ResourceGroup
+    properties:
+      index_var: index
+      count: { get_param: msp_lb_hrg_vmsi_count_1 }
+      resource_def:
+        type: mod_vmsi_msp_lb_child.yaml
+        properties:
+######## RHRG:RPT//Resource:PortTuple
+          msp_lb_si_name_fqdn: { get_param: msp_lb_si_name_fqdn }
+######## RHRG:RVMI//Resource:VirtualMachineInterface
+          oam_protected_interface_type: { get_param: oam_protected_interface_type }
+          sgi_protected_interface_type: { get_param: sgi_protected_interface_type }
+          int_imbl_interface_type: { get_param: int_imbl_interface_type }
+          nimbus_hsl_interface_type: { get_param: nimbus_hsl_interface_type }
+          msp_lb_sec_grp_id: { get_param: msp_lb_sec_grp_id }
+## VMI//VirtualMachineInterface Fat flow Parameters  
+#          msp_lb_fat_flow_protocol_0: { get_param: msp_lb_fat_flow_protocol_0 }
+#          msp_lb_fat_flow_protocol_1: { get_param: msp_lb_fat_flow_protocol_1 }
+#          msp_lb_fat_flow_port_0: { get_param: msp_lb_fat_flow_port_0 }
+#          msp_lb_fat_flow_port_1: { get_param: msp_lb_fat_flow_port_1 }
+## VMI//VirtualMachineInterface ECMP Parameters
+#          msp_lb_vmi_ecmp_configured:
+#            get_param: msp_lb_vmi_ecmp_configured
+#          msp_lb_vmi_ecmp_src_ip:
+#            get_param: msp_lb_vmi_ecmp_src_ip
+#          msp_lb_vmi_ecmp_dst_ip:
+#            get_param: msp_lb_vmi_ecmp_dst_ip
+#          msp_lb_vmi_ecmp_ip_protocol:
+#            get_param: msp_lb_vmi_ecmp_ip_protocol
+#          msp_lb_vmi_ecmp_src_port:
+#            get_param: msp_lb_vmi_ecmp_src_port
+#          msp_lb_vmi_ecmp_dst_port:
+#            get_param: msp_lb_vmi_ecmp_dst_port
+######## RHRG:RVMI&RII//Resource:VirtualMachineInterface&InstanceIp
+          oam_protected_net_fqdn: { get_param: oam_protected_net_fqdn }
+          sgi_protected_net_fqdn: { get_param: sgi_protected_net_fqdn }
+          int_imbl_net_fqdn: { get_param: int_imbl_net_fqdn }
+          nimbus_hsl_net_fqdn: { get_param: nimbus_hsl_net_fqdn }
+######## RHRG:RII//Resource:InstanceIp
+          sgi_protected_family_v6: { get_param: sgi_protected_family_v6 }
+          sgi_protected_subnet_id: { get_param: sgi_protected_subnet_id }
+          sgi_protected_v6_subnet_id: { get_param: sgi_protected_v6_subnet_id }
+          int_imbl_family_v6: { get_param: int_imbl_family_v6 }
+          int_imbl_subnet_id: { get_param: int_imbl_subnet_id }
+          int_imbl_v6_subnet_id: { get_param: int_imbl_v6_subnet_id }
+######## RHRG:RNS//Resource:NovaServer
+          msp_lb_names: { get_param: msp_lb_names }
+          msp_lb_image_name: { get_param: msp_lb_image_name }
+          msp_lb_flavor_name: { get_param: msp_lb_flavor_name }
+          availability_zone_0: { get_param: availability_zone_0 }
+          msp_lb_srv_grp_id: { get_param: msp_lb_srv_grp_id }
+          vf_module_id: { get_param: vf_module_id }
+          vnf_name: { get_param: vnf_name }
+          vnf_id: { get_param: vnf_id }
+          msp_lb_oam_protected_ips: { get_param: msp_lb_oam_protected_ips }
+          msp_lb_hrg_vmsi_count_1: { get_param: msp_lb_hrg_vmsi_count_1}
+          msp_lb_admin_password: { get_param: msp_lb_admin_password}
+          msp_lb_root_password: { get_param: msp_lb_root_password}
+########
+          index: index

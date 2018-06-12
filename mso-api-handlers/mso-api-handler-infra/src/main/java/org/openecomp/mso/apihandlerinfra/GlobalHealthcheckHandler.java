@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,47 +20,51 @@
 
 package org.openecomp.mso.apihandlerinfra;
 
+import javax.transaction.Transactional;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.openecomp.mso.HealthCheckUtils;
+import org.apache.http.HttpStatus;
+import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.utils.UUIDChecker;
+import org.springframework.stereotype.Component;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
+
+
+@Component
 @Path("/globalhealthcheck")
 @Api(value="/globalhealthcheck",description="APIH Infra Global Health Check")
 public class GlobalHealthcheckHandler {
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH,GlobalHealthcheckHandler.class);
+    private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
 
-	@HEAD
+	public static final Response HEALTH_CHECK_RESPONSE = Response.status (HttpStatus.SC_OK)
+            .entity (CHECK_HTML)
+            .build ();
+	
     @GET
     @Produces("text/html")
 	@ApiOperation(value="Performing global health check",response=Response.class)
-    public Response globalHealthcheck (@DefaultValue("true") @QueryParam("enableBpmn") boolean enableBpmn) {
+    @Transactional
+    public Response globalHealthcheck (@DefaultValue("true") @QueryParam("enableBpmn") boolean enableBpmn, 
+    									@Context ContainerRequestContext requestContext) {
         long startTime = System.currentTimeMillis ();
         MsoLogger.setServiceName ("GlobalHealthcheck");
-        // Generate a Request Id
-        String requestId = UUIDChecker.generateUUID(msoLogger);
-        HealthCheckUtils healthCheck = new HealthCheckUtils ();
-        if (!healthCheck.siteStatusCheck (msoLogger)) {
-            return HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-        }
-
-        if (healthCheck.verifyGlobalHealthCheck(enableBpmn, requestId)) {
-            msoLogger.debug("globalHealthcheck - Successful");
-            return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
-        } else {
-            msoLogger.debug("globalHealthcheck - At leaset one of the sub-modules is not available");
-            return  HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-        }
+        // Generated RequestId
+        String requestId = requestContext.getProperty("requestId").toString();
+        MsoLogger.setLogContext(requestId, null);
+        msoLogger.info(MessageEnum.APIH_GENERATED_REQUEST_ID, requestId, "", "");
+        return HEALTH_CHECK_RESPONSE;
     } 
 }

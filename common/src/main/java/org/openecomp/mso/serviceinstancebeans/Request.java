@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-//@JsonRootName(value = "request")
+
 @JsonInclude(Include.NON_DEFAULT)
 public class Request {
 
@@ -32,7 +32,6 @@ public class Request {
     protected String startTime;
     protected String requestScope;
     protected String requestType;
-    //protected String requestDetails;
     protected RequestDetails requestDetails;
     protected InstanceReferences instanceReferences;
     protected RequestStatus requestStatus;

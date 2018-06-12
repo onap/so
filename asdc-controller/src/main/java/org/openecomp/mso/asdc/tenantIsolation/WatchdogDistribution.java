@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,101 +20,97 @@
 
 package org.openecomp.mso.asdc.tenantIsolation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.openecomp.mso.asdc.client.ASDCConfiguration;
 import org.openecomp.mso.client.aai.AAIObjectType;
 import org.openecomp.mso.client.aai.AAIResourcesClient;
 import org.openecomp.mso.client.aai.entities.uri.AAIResourceUri;
 import org.openecomp.mso.client.aai.entities.uri.AAIUriFactory;
 import org.openecomp.mso.client.aai.entities.uri.Depth;
-import org.openecomp.mso.db.catalog.CatalogDatabase;
-import org.openecomp.mso.db.catalog.beans.Service;
+import org.openecomp.mso.db.catalog.data.repository.ServiceRepository;
+import org.openecomp.mso.db.request.beans.WatchdogComponentDistributionStatus;
+import org.openecomp.mso.db.request.beans.WatchdogDistributionStatus;
+import org.openecomp.mso.db.request.beans.WatchdogServiceModVerIdLookup;
+import org.openecomp.mso.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
+import org.openecomp.mso.db.request.data.repository.WatchdogDistributionStatusRepository;
+import org.openecomp.mso.db.request.data.repository.WatchdogServiceModVerIdLookupRepository;
 import org.openecomp.mso.logger.MsoLogger;
-import org.openecomp.mso.properties.MsoJsonProperties;
-import org.openecomp.mso.properties.MsoPropertiesException;
-import org.openecomp.mso.properties.MsoPropertiesFactory;
-import org.openecomp.mso.requestsdb.WatchdogComponentDistributionStatus;
-import org.openecomp.mso.requestsdb.WatchdogComponentDistributionStatusDb;
-import org.openecomp.mso.requestsdb.WatchdogDistributionStatusDb;
-import org.openecomp.mso.requestsdb.WatchdogServiceModVerIdLookupDb;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
+@Component
 public class WatchdogDistribution {
 
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC);
-	private static final String MSO_PROP_ASDC = "MSO_PROP_ASDC";
-	private static MsoPropertiesFactory msoPropertiesFactory = new MsoPropertiesFactory();
-	private WatchdogDistributionStatusDb watchdogDistDb;
-	private WatchdogComponentDistributionStatusDb watchdogCompDistDb;
-	private WatchdogServiceModVerIdLookupDb watchdogSerlookupDb;
-	private CatalogDatabase catalogDb;
+	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC,WatchdogDistribution.class);
+
 	private AAIResourcesClient aaiClient;
-	//protected ASDCConfiguration asdcConfig;
+	
+	@Autowired
+	private WatchdogDistributionStatusRepository watchdogDistributionStatusRepository;
+	
+	@Autowired
+	private WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository;
+	
+	@Autowired
+	private WatchdogServiceModVerIdLookupRepository watchdogModVerIdLookupRepository;
+	
+	@Autowired
+	private ServiceRepository serviceRepo;
+	
+	@Value("${mso.asdc.config.components.componentNames}")
+	private String[] componentNames;
 	   
-	public String getOverallDistributionStatus(String distributionId) throws MsoPropertiesException, Exception {
+	public String getOverallDistributionStatus(String distributionId) throws Exception {
 		LOGGER.debug("Entered getOverallDistributionStatus method for distrubutionId: " + distributionId);
 		
 		String status = null;
-		try { 
-			String distributionStatus = getWatchdogDistDb().getWatchdogDistributionIdStatus(distributionId);
+		try {
+			WatchdogDistributionStatus watchdogDistributionStatus = watchdogDistributionStatusRepository.findOne(distributionId);
+			if(watchdogDistributionStatus == null){
+				watchdogDistributionStatus = new WatchdogDistributionStatus();
+				watchdogDistributionStatus.setDistributionId(distributionId);
+				watchdogDistributionStatusRepository.save(watchdogDistributionStatus);
+			}
+			String distributionStatus = watchdogDistributionStatus.getDistributionIdStatus();
 			
 			if(DistributionStatus.TIMEOUT.name().equalsIgnoreCase(distributionStatus)) {
 				LOGGER.debug("Ignoring to update WatchdogDistributionStatus as distributionId: " + distributionId + " status is set to: " + distributionStatus);
 				return DistributionStatus.TIMEOUT.name();
 			} else {
-				List<WatchdogComponentDistributionStatus> results = getWatchdogCompDistDb().getWatchdogComponentDistributionStatus(distributionId);
+				List<WatchdogComponentDistributionStatus> results = watchdogCDStatusRepository.findByDistributionId(distributionId);
 				LOGGER.debug("Executed RequestDB getWatchdogComponentDistributionStatus for distrubutionId: " + distributionId);
 		
-				MsoJsonProperties properties = msoPropertiesFactory.getMsoJsonProperties(MSO_PROP_ASDC);
-				
 				//*************************************************************************************************************************************************
 				//**** Compare config values verse DB watchdog component names to see if every component has reported status before returning final result back to ASDC
 				//**************************************************************************************************************************************************
 				
-				//List<String> configNames = asdcConfig.getComponentNames();
-				
-				List<String> dbNames = watchdogCompDistDb.getWatchdogComponentNames(distributionId);
+				List<WatchdogComponentDistributionStatus> cdStatuses = watchdogCDStatusRepository.findByDistributionId(distributionId);
 				
 				boolean allComponentsComplete = true;
-							
-				JsonNode masterConfigNode = properties.getJsonRootNode().get("componentNames");
-				
-		        if (masterConfigNode != null) { 
-		            
-		            Iterator<JsonNode> config = masterConfigNode.elements();
 		      
-		            while( config.hasNext() ) {
-		                String name = (String)config.next().asText();	                
+		       for(String name : componentNames ) {		                 
 		                
 		                boolean match = false;
 		                
-						for(String dbName: dbNames){
-							
-							if(name.equals(dbName)){
+						for(WatchdogComponentDistributionStatus cdStatus: cdStatuses){							
+							if(name.equals(cdStatus.getComponentName())){
 								LOGGER.debug("Found componentName " + name + " in the WatchDog Component DB");
 								match = true;
 								break;
 							}
-						}
-						
-						if(match==false){
+						}						
+						if(!match){
 							LOGGER.debug(name + " has not be updated in the the WatchDog Component DB yet, so ending the loop");
 							allComponentsComplete = false;
 							break;
 						}
-
 		            }
-
-		        } 
+		         
 				
-				if(allComponentsComplete) {
-				//if(node.asInt() == results.size()) {
+				if(allComponentsComplete) {				
 					LOGGER.debug("Components Size matched with the WatchdogComponentDistributionStatus results.");
 					
 					 for(WatchdogComponentDistributionStatus componentDist : results) {
@@ -131,36 +127,39 @@ public class WatchdogDistribution {
 					 }
 					 
 					 LOGGER.debug("Updating overall DistributionStatus to: " + status + " for distributionId: " + distributionId);
-					 getWatchdogDistDb().updateWatchdogDistributionIdStatus(distributionId, status);
+					 
+					 watchdogDistributionStatus.setDistributionIdStatus(status);
+					 watchdogDistributionStatusRepository.save(watchdogDistributionStatus);
 				} else {
 					LOGGER.debug("Components Size Didn't match with the WatchdogComponentDistributionStatus results.");
 					status = DistributionStatus.INCOMPLETE.name();
 					return status;
 				}
 			}
-		} catch (MsoPropertiesException e) {
-			String error = "Error occurred when trying to load MSOJson Properties.";
-			LOGGER.debug(error);
-			throw new MsoPropertiesException(e.getMessage());
-		} catch (Exception e) {
+		}catch (Exception e) {
 			LOGGER.debug("Exception occurred on getOverallDistributionStatus : " + e.getMessage());
+			LOGGER.error(e);
 			throw new Exception(e);
-		}
-		
-		LOGGER.debug("Exciting getOverallDistributionStatus method in WatchdogDistribution");
+		}		
+		LOGGER.debug("Exiting getOverallDistributionStatus method in WatchdogDistribution");
 		return status;
 	}
 	
 	public void executePatchAAI(String distributionId, String serviceModelInvariantUUID, String distributionStatus) throws Exception {
 		LOGGER.debug("Entered executePatchAAI method with distrubutionId: " + distributionId + " and distributionStatus: " + distributionStatus);
 		
-		try { 
-			String serviceModelVersionId = getWatchdogSerlookupDb().getWatchdogServiceModVerId(distributionId);
-			LOGGER.debug("Executed RequestDB getWatchdogServiceModVerIdLookup with distributionId: " + distributionId + " and serviceModelVersionId: " + serviceModelVersionId);
+		try {
+			WatchdogServiceModVerIdLookup lookup = watchdogModVerIdLookupRepository.findOneByDistributionId(distributionId);
+			String serviceModelVersionId = "";
 			
+			if(lookup != null) {
+				serviceModelVersionId = lookup.getServiceModelVersionId();
+			}
+			
+			LOGGER.debug("Executed RequestDB getWatchdogServiceModVerIdLookup with distributionId: " + distributionId + " and serviceModelVersionId: " + serviceModelVersionId);
 			LOGGER.debug("ASDC Notification ServiceModelInvariantUUID : " + serviceModelInvariantUUID);
 			
-			if(serviceModelInvariantUUID == null) {
+			if(serviceModelInvariantUUID == null || "".equals(serviceModelVersionId)) {
 				String error = "No Service found with serviceModelInvariantUUID: " + serviceModelInvariantUUID;
 				LOGGER.debug(error);
 				throw new Exception(error);
@@ -177,52 +176,9 @@ public class WatchdogDistribution {
 			LOGGER.debug("A&AI UPDATE MODEL Version is success!");
 		} catch (Exception e) {
 			LOGGER.debug("Exception occurred on executePatchAAI : " + e.getMessage());
+			LOGGER.error(e);
 			throw new Exception(e);
 		}
-	}
-	
-	public WatchdogDistributionStatusDb getWatchdogDistDb() {
-		if(watchdogDistDb == null) {
-			watchdogDistDb =  WatchdogDistributionStatusDb.getInstance();
-		}
-		return watchdogDistDb;
-	}
-
-	public void setWatchdogDistDb(WatchdogDistributionStatusDb watchdogDistDb) {
-		this.watchdogDistDb = watchdogDistDb;
-	}
-
-	public WatchdogComponentDistributionStatusDb getWatchdogCompDistDb() {
-		if(watchdogCompDistDb == null) {
-			watchdogCompDistDb =  WatchdogComponentDistributionStatusDb.getInstance();
-		}
-		return watchdogCompDistDb;
-	}
-
-	public void setWatchdogCompDistDb(WatchdogComponentDistributionStatusDb watchdogCompDistDb) {
-		this.watchdogCompDistDb = watchdogCompDistDb;
-	}
-
-	public WatchdogServiceModVerIdLookupDb getWatchdogSerlookupDb() {
-		if(watchdogSerlookupDb == null) {
-			watchdogSerlookupDb =  WatchdogServiceModVerIdLookupDb.getInstance();
-		}
-		return watchdogSerlookupDb;
-	}
-
-	public void setWatchdogSerlookupDb(WatchdogServiceModVerIdLookupDb watchdogSerlookupDb) {
-		this.watchdogSerlookupDb = watchdogSerlookupDb;
-	}
-
-	public CatalogDatabase getCatalogDb() {
-		if(catalogDb == null) {
-			catalogDb = CatalogDatabase.getInstance();
-		}
-		return catalogDb;
-	}
-
-	public void setCatalogDb(CatalogDatabase catalogDb) {
-		this.catalogDb = catalogDb;
 	}
 
 	public AAIResourcesClient getAaiClient() {
@@ -235,5 +191,4 @@ public class WatchdogDistribution {
 	public void setAaiClient(AAIResourcesClient aaiClient) {
 		this.aaiClient = aaiClient;
 	}
-	
 }

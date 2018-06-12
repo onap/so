@@ -22,11 +22,17 @@ package org.openecomp.mso.openstack.beans;
 
 
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-public class Subnet {
+public class Subnet implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -530027355187604839L;
 
 	private String subnetName; 
 	

@@ -43,7 +43,6 @@
 			<modules>
 				<module>deliveries</module>
 				<module>docker</module>
-				<module>arquillian-unit-tests</module>
 			</modules>
 			<properties>
 					<!-- For this profile we want to skip the docker push (if deploy goal is specified) -->

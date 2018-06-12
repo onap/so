@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ package org.openecomp.mso.bpmn.core;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
@@ -42,17 +43,18 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.camunda.bpm.engine.ProcessEngines;
-import org.openecomp.mso.HealthCheckUtils;
 import org.openecomp.mso.logger.MessageEnum;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.utils.CryptoUtils;
 import org.openecomp.mso.utils.UUIDChecker;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Path("/")
+@Component
 public class HealthCheckHandler  {
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, HealthCheckHandler.class);
     private static final String SITENAME = "mso.sitename";
     private static final String ADAPTER_ENDPOINT = "mso.adapters.openecomp.db.endpoint";
     private static final String ADAPTER_NAMESPACE = "mso.adapters.namespace";
@@ -73,58 +75,18 @@ public class HealthCheckHandler  {
     public static final Response NOT_STARTED_RESPONSE = Response.status (HttpStatus.SC_SERVICE_UNAVAILABLE)
             .entity (NOT_FOUND)
             .build ();
+    
+   
 
     @HEAD
     @GET
     @Path("/nodehealthcheck")
     @Produces("text/html")
-    public Response nodeHealthcheck () {
+    public Response nodeHealthcheck () throws UnknownHostException {
         MsoLogger.setServiceName ("NodeHealthcheck");
         // Generate a Request Id
         String requestId = UUIDChecker.generateUUID(msoLogger);
-
-        PropertyConfiguration propertyConfiguration = PropertyConfiguration.getInstance();
-        Map<String,String> props = propertyConfiguration.getProperties(CONFIG);
-
-        if (props == null) {
-
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(),  MsoLogger.ErrorCode.AvailabilityError, "Unable to load " + CONFIG);
-
-            return NOT_STARTED_RESPONSE;
-        }
-
-        String siteName = props.get(SITENAME);
-        String endpoint = props.get(ADAPTER_ENDPOINT);
-
-        if (null == siteName || siteName.length () == 0 || null == endpoint || endpoint.length () == 0) {
-
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError, "Unable to load key attributes (" + SITENAME + " or " + ADAPTER_ENDPOINT + ") from the config file:" + CONFIG);
-
-            return NOT_STARTED_RESPONSE;
-        }
-
-        try {
-            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY), props.get(ADAPTER_NAMESPACE))) {
-                msoLogger.debug("This site is currently disabled for maintenance.");
-                return HEALTH_CHECK_NOK_RESPONSE;
-            }
-        } catch (Exception e) {
-
-            msoLogger.error(MessageEnum.GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception while getting SiteStatus", e);
-
-            msoLogger.debug("Exception while getting SiteStatus");
-            return NOT_STARTED_RESPONSE;
-        }
-
-
-        HealthCheckUtils healthCheck = new HealthCheckUtils ();
-        if (healthCheck.verifyNodeHealthCheck(HealthCheckUtils.NodeType.BPMN, requestId)) {
-            msoLogger.debug("nodeHealthcheck - Successful");
-            return HealthCheckUtils.HEALTH_CHECK_RESPONSE;
-        } else {
-            msoLogger.debug("nodeHealthcheck - At leaset one of the sub-modules is not available.");
-            return  HealthCheckUtils.HEALTH_CHECK_NOK_RESPONSE;
-        }
+        return HEALTH_CHECK_RESPONSE;       
     }
 
     @HEAD
@@ -134,51 +96,6 @@ public class HealthCheckHandler  {
     public Response healthcheck (@QueryParam("requestId") String requestId) {
         MsoLogger.setServiceName ("Healthcheck");
         verifyOldUUID(requestId);
-
-        PropertyConfiguration propertyConfiguration = PropertyConfiguration.getInstance();
-        Map<String,String> props = propertyConfiguration.getProperties(CONFIG);
-
-        if (props == null) {
-
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(),  MsoLogger.ErrorCode.AvailabilityError, "Unable to load " + CONFIG);
-
-            return NOT_STARTED_RESPONSE;
-        }
-
-        String siteName = props.get(SITENAME);
-        String endpoint = props.get(ADAPTER_ENDPOINT);
-
-        if (null == siteName || siteName.length () == 0 || null == endpoint || endpoint.length () == 0) {
-
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError, "Unable to load key attributes (" + SITENAME + " or " + ADAPTER_ENDPOINT + ") from the config file:" + CONFIG);
-
-            return NOT_STARTED_RESPONSE;
-        }
-
-        try {
-            if (!this.getSiteStatus (endpoint, siteName, props.get(CREDENTIAL), props.get(MSOKEY), props.get(ADAPTER_NAMESPACE))) {
-                msoLogger.debug("This site is currently disabled for maintenance.");
-                return HEALTH_CHECK_NOK_RESPONSE;
-            }
-        } catch (Exception e) {
-
-            msoLogger.error(MessageEnum.GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception while getting SiteStatus", e);
-
-            msoLogger.debug("Exception while getting SiteStatus");
-            return NOT_STARTED_RESPONSE;
-        }
-
-        try {
-        	// TODO: check the appropriate process engine
-        	// ProcessEngines.getDefaultProcessEngine().getIdentityService().createGroupQuery().list();
-        } catch (final Exception e) {
-
-            msoLogger.error(MessageEnum.GENERAL_EXCEPTION_ARG, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception while verifying Camunda engine", e);
-
-            msoLogger.debug("Exception while verifying Camunda engine");
-            return NOT_STARTED_RESPONSE;
-        }
-
         return HEALTH_CHECK_RESPONSE;
     }
 

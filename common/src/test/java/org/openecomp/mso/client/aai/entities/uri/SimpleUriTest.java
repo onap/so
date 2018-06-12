@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,7 @@ package org.openecomp.mso.client.aai.entities.uri;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
@@ -51,11 +52,19 @@ public class SimpleUriTest {
 	}
 	
 	@Test
-	public void cloneTest() {
+	public void cloneTestSingular() {
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1");
 		AAIResourceUri cloned = uri.clone();
 		Map<String,String> keys = cloned.getURIKeys();
 		assertThat(keys.values(), contains("test1"));
+	}
+	
+	@Test
+	public void cloneTestPlural() {
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+		AAIResourceUri cloned = uri.clone();
+		Map<String,String> keys = cloned.getURIKeys();
+		assertThat(keys.values(), empty());
 	}
 	
 	@Test

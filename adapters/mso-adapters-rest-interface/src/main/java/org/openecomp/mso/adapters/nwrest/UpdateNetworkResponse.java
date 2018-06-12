@@ -23,15 +23,19 @@ package org.openecomp.mso.adapters.nwrest;
 
 
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlRootElement;
-import org.jboss.resteasy.annotations.providers.NoJackson;
+
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("updateNetworkResponse")
 @XmlRootElement(name = "updateNetworkResponse")
-@NoJackson
 public class UpdateNetworkResponse extends NetworkResponseCommon {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7528214382414366136L;
 	private String networkId;
 	private String neutronNetworkId;
 	private Map<String, String> subnetMap;

@@ -50,7 +50,7 @@ public class NodeInstancesResourceTest {
 
 	@Test
 	public void nodeInstanceGet() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/node-instances/")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/node-instances/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody("{ \"node_instance\": { \"id\": \"123\" } }")
 				.withStatus(HttpStatus.SC_OK)));
 		
