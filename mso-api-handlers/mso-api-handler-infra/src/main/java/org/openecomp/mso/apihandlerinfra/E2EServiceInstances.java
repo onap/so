@@ -279,8 +279,6 @@ public class E2EServiceInstances {
 
 		ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
 		int bpelStatus = respHandler.getStatus();
-		// String responseBody = respHandler.getResponseBody();
-		// CompareModelsResult modelDiffResponse = new CompareModelsResult();
 
 		return beplStatusUpdate(requestId, startTime, msoRequest, requestClient, respHandler, bpelStatus, action,
 				instanceIdMap);
