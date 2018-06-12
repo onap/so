@@ -232,7 +232,7 @@ public class CatalogDatabase implements Closeable {
         String hql = "FROM HeatTemplate WHERE templateName = :template_name AND version = :version";
         Query query = getSession().createQuery(hql);
         query.setParameter("template_name", templateName);
-        query.setParameter("version", version);
+        query.setParameter(MODEL_VERSION, version);
 
         @SuppressWarnings("unchecked")
         List <HeatTemplate> resultList = query.list();
@@ -1342,7 +1342,7 @@ public class CatalogDatabase implements Closeable {
         String hql = "FROM VfModule WHERE type = :type and version = :version";
         Query query = getSession().createQuery(hql);
         query.setParameter ("type", type);
-        query.setParameter ("version", version);
+        query.setParameter (MODEL_VERSION, version);
         VfModule module = null;
         try {
         	module = (VfModule) query.uniqueResult ();
@@ -2867,7 +2867,7 @@ public class CatalogDatabase implements Closeable {
 
             query = getSession ().createQuery (hql.toString ());
             query.setParameter ("modelCustomizationUuid", modelCustomizationUuid);
-            query.setParameter ("version", asdcServiceModelVersion);
+            query.setParameter (MODEL_VERSION, asdcServiceModelVersion);
         }else{
             hql = new StringBuilder ("FROM VfModule WHERE type = :type AND version = :version AND modelVersion = :modelVersion");
 
@@ -2875,7 +2875,7 @@ public class CatalogDatabase implements Closeable {
 
             query = getSession ().createQuery (hql.toString ());
             query.setParameter (TYPE, vfModuleType);
-            query.setParameter ("version", asdcServiceModelVersion);
+            query.setParameter (MODEL_VERSION, asdcServiceModelVersion);
             query.setParameter ("modelVersion", modelVersion);
         }
 
@@ -3491,7 +3491,7 @@ public class CatalogDatabase implements Closeable {
         String hql = "FROM HeatTemplate WHERE templateName = :template_name AND version = :version AND asdcResourceName = :asdcResourceName";
         Query query = getSession ().createQuery (hql);
         query.setParameter ("template_name", templateName);
-        query.setParameter ("version", version);
+        query.setParameter (MODEL_VERSION, version);
         query.setParameter ("asdcResourceName", asdcResourceName);
 
         @SuppressWarnings("unchecked")
@@ -3603,7 +3603,7 @@ public class CatalogDatabase implements Closeable {
         String hql = "FROM HeatEnvironment WHERE name=:name AND version=:version AND asdcResourceName=:asdcResourceName";
         Query query = getSession ().createQuery (hql);
         query.setParameter ("name", name);
-        query.setParameter ("version", version);
+        query.setParameter (MODEL_VERSION, version);
         query.setParameter ("asdcResourceName", asdcResourceName);
         HeatEnvironment env = null;
         try {
@@ -3645,7 +3645,7 @@ public class CatalogDatabase implements Closeable {
         String hql = "FROM HeatEnvironment WHERE artifactUuid=:artifactUuid AND version=:version";
         Query query = getSession ().createQuery (hql);
         query.setParameter ("artifactUuid", artifactUuid);
-        query.setParameter ("version", version);
+        query.setParameter (MODEL_VERSION, version);
         HeatEnvironment env = null;
         try {
         	env = (HeatEnvironment) query.uniqueResult ();
@@ -4283,7 +4283,7 @@ public class CatalogDatabase implements Closeable {
           query.setParameter ("fileName", fileName);
           query.setParameter ("vnfResourceId", vnfResourceId);
           query.setParameter ("asdcResourceName", asdcResourceName);
-          query.setParameter ("version", version);
+          query.setParameter (MODEL_VERSION, version);
 
           @SuppressWarnings("unchecked")
 
