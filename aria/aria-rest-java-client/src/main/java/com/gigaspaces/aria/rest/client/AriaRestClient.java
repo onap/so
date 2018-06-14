@@ -69,7 +69,7 @@ public class AriaRestClient implements AriaClient {
 	 * @throws StorageException
 	 */
 	public void install_service_template(ServiceTemplate template)
-			throws ValidationException, StorageException, Exception {
+			throws StorageException, Exception {
 
 		byte[] csarBytes = template.getCSARBytes();
 		Response response = null;
