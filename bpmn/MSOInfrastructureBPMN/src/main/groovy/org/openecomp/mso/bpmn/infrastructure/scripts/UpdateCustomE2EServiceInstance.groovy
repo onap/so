@@ -413,7 +413,6 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
                             <ns:updateServiceOperationStatus xmlns:ns="http://org.openecomp.mso/requestsdb">
                             <serviceId>${serviceId}</serviceId>
                             <operationId>${operationId}</operationId>
-                            <serviceName>${serviceName}</serviceName>
                             <operationType>${operationType}</operationType>
                             <userId>${userId}</userId>
                             <result>${result}</result>

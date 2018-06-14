@@ -126,11 +126,16 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			
 			// user params
 			String uuiRequest = execution.getVariable("uuiRequest")
+            
+			// target model Invariant uuid
+			String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceInvariantUuid")
+			execution.setVariable("modelInvariantUuid", modelInvariantUuid)            
+			utils.log("INFO", "modelInvariantUuid: " + modelInvariantUuid, isDebugEnabled)            
+            
 			// target model uuid
 			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceUuid")
-			execution.setVariable("modelUuid", modelUuid)
-			
-			utils.log("INFO","modelUuid: " + modelUuid, isDebugEnabled)
+			execution.setVariable("modelUuid", modelUuid)			
+			utils.log("INFO", "modelUuid: " + modelUuid, isDebugEnabled)
 				
 		} catch (BpmnError e) {
 			throw e;
@@ -327,9 +332,20 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		String msg = ""
 		utils.log("INFO"," ***** preProcessAAIPUT *****",  isDebugEnabled)
 
-		String modelUuid = execution.getVariable("modelUuid")
+
 		String serviceInstanceVersion = execution.getVariable("serviceInstanceVersion")
-		execution.setVariable("GENPS_serviceResourceVersion", serviceInstanceVersion)
+		//execution.setVariable("GENPS_serviceResourceVersion", serviceInstanceVersion)
+        
+		//requestDetails.modelInfo.for AAI PUT servieInstanceData
+		//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData
+		String serviceInstanceName = execution.getVariable("serviceInstanceName")
+		String serviceInstanceId = execution.getVariable("serviceInstanceId")
+		//aai serviceType and Role can be setted as fixed value now.
+		String aaiServiceType = "E2E Service"
+		String aaiServiceRole = "E2E Service"
+		String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
+		String modelUuid = execution.getVariable("modelUuid")
+
 
 		AaiUtil aaiUriUtil = new AaiUtil(this)
 		utils.log("INFO","start create aai uri: " + aaiUriUtil, isDebugEnabled)	
@@ -341,7 +357,13 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		//update target model to aai
 		String serviceInstanceData =
 				"""<service-instance xmlns=\"${namespace}\">
-			       <model-version-id">${modelUuid}</model-version-id>
+                    <service-instance-id>${serviceInstanceId}</service-instance-id>
+                    <service-instance-name>${serviceInstanceName}</service-instance-name>
+                    <service-type>${aaiServiceType}</service-type>
+                    <service-role>${aaiServiceRole}</service-role>
+                    <resource-version>${serviceInstanceVersion}</resource-version>
+                    <model-invariant-id>${modelInvariantUuid}</model-invariant-id>
+                    <model-version-id>${modelUuid}</model-version-id>                    
 				 </service-instance>""".trim()
 
 		execution.setVariable("serviceInstanceData", serviceInstanceData)

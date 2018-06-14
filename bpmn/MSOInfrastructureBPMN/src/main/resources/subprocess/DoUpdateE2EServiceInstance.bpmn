@@ -157,7 +157,7 @@ csi.postConfigRequest(execution)]]></bpmn2:script>
         <bpmn2:incoming>SequenceFlow_05j3sat</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_19ly8h7</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateResources()
+def dcsi = new DoUpdateE2EServiceInstance()
 dcsi.preProcessRollback(execution)
 ]]></bpmn2:script>
       </bpmn2:scriptTask>
@@ -165,7 +165,7 @@ dcsi.preProcessRollback(execution)
         <bpmn2:incoming>SequenceFlow_19ly8h7</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_02znk15</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateResources()
+def dcsi = new DoUpdateE2EServiceInstance()
 dcsi.postProcessRollback(execution)
 ]]></bpmn2:script>
       </bpmn2:scriptTask>
