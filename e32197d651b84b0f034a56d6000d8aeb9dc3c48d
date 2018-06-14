@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_638e8829",
+        "filename": "mso-catalog-db/src/main/java/org/openecomp/mso/db/catalog/CatalogDatabase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-06-14T22:49:48Z",
+      "side": 1,
+      "message": "ONAP uses google style guide. See https://wiki.onap.org/display/DW/Java+code+style \nand\nhttps://google.github.io/styleguide/javaguide.html#s5.2.4-constant-names\n\nAccording to that style guide and the style of other constant vars in this file, constant vars should be all uppercase.",
+      "range": {
+        "startLine": 98,
+        "startChar": 32,
+        "endLine": 98,
+        "endChar": 45
+      },
+      "revId": "e32197d651b84b0f034a56d6000d8aeb9dc3c48d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
