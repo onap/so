@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: subhash kumar singh <subhash.kumar.singh@huawei.com>
+Code-Review+1: Lukasz Biniek <lukasz.biniek@nokia.com>
+Code-Review+2: Marcus Williams <marcus.williams@intel.com>
+Submitted-by: Marcus Williams <marcus.williams@intel.com>
+Submitted-at: Thu, 14 Jun 2018 22:51:52 +0000
+Reviewed-on: https://gerrit.onap.org/r/54585
+Project: so
+Branch: refs/heads/master
