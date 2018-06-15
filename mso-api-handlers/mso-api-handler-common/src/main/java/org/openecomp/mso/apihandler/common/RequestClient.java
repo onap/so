@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.openecomp.mso.logger.MsoLogger;
 import org.openecomp.mso.properties.MsoJavaProperties;
@@ -65,7 +64,7 @@ public abstract class RequestClient {
 		this.client = client;
 	}
 
-	public abstract HttpResponse post(String request, String requestId, String requestTimeout, String schemaVersion, String serviceInstanceId, String action) throws ClientProtocolException, IOException;
+	public abstract HttpResponse post(String request, String requestId, String requestTimeout, String schemaVersion, String serviceInstanceId, String action) throws IOException;
 
 	public abstract HttpResponse post(String request) throws IOException;
 
