@@ -241,7 +241,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
         String serviceId = execution.getVariable("serviceInstanceId")
         String addRelationPayload = """<relationship xmlns="http://org.openecomp.aai.inventory/v11">
                                             <related-to>service-instance</related-to>
-                                            <related-link>/aai/v11/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${serviceType}/service-instances/service-instance/${nsInstanceId}</related-link>
+                                            <related-link>/aai/v11/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${serviceType}/service-instances/service-instance/${serviceId}</related-link>
                                             <relationship-data>
                                                 <relationship-key>customer.global-customer-id</relationship-key>
                                                 <relationship-value>${globalSubscriberId}</relationship-value>
@@ -252,12 +252,12 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
                                             </relationship-data>
                                            <relationship-data>
                                                 <relationship-key>service-instance.service-instance-id</relationship-key>
-                                                <relationship-value>${nsInstanceId}</relationship-value>
+                                                <relationship-value>${serviceId}</relationship-value>
                                             </relationship-data>           
                                         </relationship>"""
         String endpoint = execution.getVariable("URN_aai_endpoint")  
         utils.log("INFO","Add Relationship req:\n" + addRelationPayload,  isDebugEnabled)
-        String url = endpoint + "/aai/v11/business/customers/customer/" + globalSubscriberId + "/service-subscriptions/service-subscription/" + serviceType + "/service-instances/service-instance/" + serviceId + "/relationship-list/relationship"
+        String url = endpoint + "/aai/v11/business/customers/customer/" + globalSubscriberId + "/service-subscriptions/service-subscription/" + serviceType + "/service-instances/service-instance/" + nsInstanceId + "/relationship-list/relationship"
         APIResponse aaiRsp = executeAAIPutCall(execution, url, addRelationPayload)
         utils.log("INFO","aai response status code:" + aaiRsp.getStatusCode(),  isDebugEnabled)
         utils.log("INFO","aai response content:" + aaiRsp.getResponseBodyAsString(),  isDebugEnabled)

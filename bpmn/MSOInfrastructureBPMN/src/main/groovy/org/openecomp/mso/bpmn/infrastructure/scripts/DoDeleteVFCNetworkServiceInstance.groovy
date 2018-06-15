@@ -107,7 +107,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void deleteNSRelationship(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** addNSRelationship *****",  isDebugEnabled)
+        utils.log("INFO"," ***** deleteNSRelationship *****",  isDebugEnabled)
         String nsInstanceId = execution.getVariable("resourceInstanceId")
         if(nsInstanceId == null || nsInstanceId == ""){
             utils.log("INFO"," Delete NS failed",  isDebugEnabled)
@@ -133,13 +133,13 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
                                             </relationship-data>           
                                         </relationship>"""
         String endpoint = execution.getVariable("URN_aai_endpoint")
-        utils.log("INFO","Add Relationship req:\n" + deleteRelationPayload,  isDebugEnabled)
+        utils.log("INFO","Delete Relationship req:\n" + deleteRelationPayload,  isDebugEnabled)
         String url = endpoint + "/aai/v11/business/customers/customer/" + globalSubscriberId + "/service-subscriptions/service-subscription/" + serviceType + "/service-instances/service-instance/" + serviceId + "/relationship-list/relationship"
 
         APIResponse aaiRsp = executeAAIDeleteCall(execution, url, deleteRelationPayload)
         utils.log("INFO","aai response status code:" + aaiRsp.getStatusCode(),  isDebugEnabled)
         utils.log("INFO","aai response content:" + aaiRsp.getResponseBodyAsString(),  isDebugEnabled)
-        utils.log("INFO"," *****Exit addNSRelationship *****",  isDebugEnabled)
+        utils.log("INFO"," *****Exit deleteNSRelationship *****",  isDebugEnabled)
     }
 
     public APIResponse executeAAIDeleteCall(DelegateExecution execution, String url, String payload){
