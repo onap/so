@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9628a786",
+        "filename": "bpmn/MSOInfrastructureBPMN/src/main/java/org/openecomp/mso/bpmn/infrastructure/pnf/dmaap/SystemUtility.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2018-06-26T18:15:25Z",
+      "side": 1,
+      "message": "Lukasz, I don\u0027t think we should use environment variables for configuration.",
+      "range": {
+        "startLine": 26,
+        "startChar": 15,
+        "endLine": 26,
+        "endChar": 21
+      },
+      "revId": "9d5e5705d65df63816a7e80fd7b7a2467f71f0a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
