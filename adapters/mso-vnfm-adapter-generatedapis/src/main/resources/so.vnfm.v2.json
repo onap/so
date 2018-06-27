@@ -1,0 +1,551 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.0.0",
+    "title": "ONAP SO VNFM Adapter API v2",
+    "description": "Describes the API between SO and the adapter for VNFM",
+    "contact": {
+      "name": "ONAP SO VNFM",
+      "email": "onap-discuss@lists.onap.org",
+      "url": "https://gerrit.onap.org/r/#/admin/projects/vfc/nfvo/lcm"
+    }
+  },
+  "basePath": "/api/v1",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/so/v2/vnfs/{vnfIdInAai}": {
+      "get": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VNF query",
+        "description": "VNF query",
+        "operationId": "vnf_query",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VNF in A&AI.",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF creation query parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfQueryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfQueryResponse"
+            }
+          },
+          "404": {
+            "descriotion": "The VNF does not exist on the VNFM side"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VNF create",
+        "description": "VNF create",
+        "operationId": "vnf_create",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VNF",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF creation query parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfCreateResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VNF update",
+        "description": "VNF update",
+        "operationId": "vnf_update",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VNF",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF update parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfUpdateResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VNF delete",
+        "description": "VNF delete",
+        "operationId": "vnf_delete",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VNF",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF delete parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfDeleteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The VNF was successfully deleted."
+          }
+        }
+      }
+    },
+    "/so/v2/vfmodule/{vnfIdInAai}/{vfModuleId}": {
+      "post": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VF module create",
+        "description": "VF module create",
+        "operationId": "vf_module_create",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of VNF in A&AI.",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VF module in A&AI",
+            "name": "vfModuleId",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF creation query parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VfModuleCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SoV2VfModuleCreateResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VF module update",
+        "description": "VF module update",
+        "operationId": "vf_module_update",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of VNF in A&AI.",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VF module in A&AI",
+            "name": "vfModuleId",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF creation query parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VfModuleCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfUpdateResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VF module delete",
+        "description": "VF module delete",
+        "operationId": "vf_module_delete",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of VNF in A&AI.",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VF module in A&AI",
+            "name": "vfModuleId",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF delete parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfDeleteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The VNF was successfully deleted."
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SoMsoRequest": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "required": true,
+          "description": "The identifier of the request in SO. Used to track requests.",
+          "type": "string"
+        },
+        "serviceInstanceId": {
+          "required": true,
+          "description": "The identifier of the service instance in A&AI.",
+          "type": "string"
+        }
+      }
+    },
+    "SoV2VnfQueryRequest": {
+      "type": "object",
+      "properties": {
+        "msoRequest": {
+          "required": true,
+          "$ref": "#/definitions/SoMsoRequest"
+        }
+      }
+    },
+    "SoVnfStatus": {
+      "description": "The status of the VNF",
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "FAILED",
+        "NOTFOUND",
+        "UNKNOWN"
+      ]
+    },
+    "SoOutput": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "SoInput": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "SoV2VnfQueryResponse": {
+      "type": "object",
+      "properties": {
+        "heatStackId": {
+          "required": false,
+          "description": "The identifier of the Heat stack. Missing if the VNF is missing.",
+          "type": "string"
+        },
+        "status": {
+          "required": true,
+          "description": "The status of the VNF",
+          "$ref": "#/definitions/SoVnfStatus"
+        },
+        "vnfExists": {
+          "required": true,
+          "description": "Does the VNF exist.",
+          "type": "boolean"
+        }
+      }
+    },
+    "SoV2VnfCreateRequest": {
+      "type": "object",
+      "properties": {
+        "cloudOwner": {
+          "required": true,
+          "type": "string",
+          "description": "The owner of cloud in A&AI."
+        },
+        "regionName": {
+          "required": true,
+          "type": "string",
+          "description": "The regionName of cloud in A&AI."
+        },
+        "tenantId": {
+          "required": true,
+          "type": "string",
+          "description": "The identifier of the tenant."
+        },
+        "name": {
+          "required": true,
+          "type": "string",
+          "description": "The name of the VNF."
+        },
+        "inputs": {
+          "required": false,
+          "description": "The inputs of the VNF.",
+          "$ref": "#/definitions/SoInput"
+        },
+        "failIfExists": {
+          "required": false,
+          "description": "Should the VNF creation fail if the VNF already exists. (defaults to false)",
+          "type": "boolean"
+        },
+        "backout": {
+          "required": false,
+          "description": "Do not delete VNF in case of failure. (defaults to true)",
+          "type": "boolean"
+        },
+        "msoRequest": {
+          "required": false,
+          "$ref": "#/definitions/SoMsoRequest"
+        }
+      }
+    },
+    "SoV2VnfCreateResponse": {
+      "type": "object",
+      "properties": {
+        "vnfIdInVnfm": {
+          "required": false,
+          "description": "The identifier of the VNF in VNFM",
+          "type": "string"
+        },
+        "rollback": {
+          "required": true,
+          "$ref": "#/definitions/SoMsoRollback"
+        }
+      }
+    },
+    "SoMsoRollback": {
+      "type": "object",
+      "properties": {
+        "vnfIdInVnfm": {
+          "required": true,
+          "description": "The identifier of the VNF in VNFM.",
+          "type": "string"
+        },
+        "rollbackWithDeletion": {
+          "required": true,
+          "description": "Roll back the operation with deletion",
+          "type": "boolean"
+        },
+        "operationExecutionId": {
+          "required": false,
+          "description": "Holds the operation execution id. Is empty for VNF creation.",
+          "type": "string"
+        }
+      }
+    },
+    "SoV2VnfUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "inputs": {
+          "required": false,
+          "description": "The inputs of the VNF.",
+          "$ref": "#/definitions/SoInput"
+        },
+        "msoRequest": {
+          "required": false,
+          "$ref": "#/definitions/SoMsoRequest"
+        }
+      }
+    },
+    "SoV2VnfUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "rollback": {
+          "required": true,
+          "$ref": "#/definitions/SoMsoRollback"
+        }
+      }
+    },
+    "SoV2VnfDeleteRequest": {
+      "type": "object",
+      "properties": {
+        "msoRequest": {
+          "required": false,
+          "$ref": "#/definitions/SoMsoRequest"
+        }
+      }
+    },
+    "SoV2VfModuleCreateRequest": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/SoV2VnfCreateRequest"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "vfModuleName": {
+              "required": true,
+              "description": "The identifier of the base Heat stack",
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "SoV2VfModuleCreateResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/SoV2VnfCreateResponse"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "partId": {
+              "required": true,
+              "description": "The part identifier of the VNF. scalingAspectId_scalingStepIndex",
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "SoV2VfModuleUpdateRequest": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/SoV2VnfUpdateRequest"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "vfModuleId": {
+              "required": true,
+              "description": "The identifier of the base Heat stack",
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

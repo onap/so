@@ -169,6 +169,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     @Override
     public void updateVnf (String cloudSiteId,
                            String tenantId,
+                           String vnfId,
                            String vnfType,
                            String vnfVersion,
                            String vnfName,
@@ -584,11 +585,13 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
      * @param outputs Holder for Map of VNF outputs from Deployment (assigned IPs, etc)
      * @param rollback Holder for returning VnfRollback object
      */
+    @Override
     public void createVfModule(String cloudSiteId,
             String tenantId,
             String vfModuleType,
             String vnfVersion,
             String vfModuleName,
+            String vfModuleId,
             String requestType,
             String volumeGroupId,
             String baseVfModuleId,
@@ -1129,9 +1132,12 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         return;
     }
 
+    @Override
     public void deleteVfModule (String cloudSiteId,
             String tenantId,
+            String vnfId,
             String vfModuleId,
+            String vnfName,
             MsoRequest msoRequest,
             Holder <Map <String, String>> outputs) throws VnfException
 	{
@@ -1197,6 +1203,8 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 	@Override
 	public void updateVfModule (String cloudSiteId,
 	            String tenantId,
+	            String vnfId,
+	            String vfModuleId,
 	            String vnfType,
 	            String vnfVersion,
 	            String vnfName,

@@ -189,6 +189,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                         vnfType,
                         vnfVersion,
                         vnfName,
+                        null,
                         newRequestType,
                         vfVolGroupHeatStackId,
                         vfBaseHeatStackId,
@@ -215,6 +216,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 vnfType,
                 vnfVersion,
                 vnfName,
+                null,
                 newRequestTypeSb.toString(),
                 vfVolGroupHeatStackId,
                 vfBaseHeatStackId,
@@ -232,6 +234,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     @Override
     public void updateVnf(String cloudSiteId,
                           String tenantId,
+                          String vnfId,
                           String vnfType,
                           String vnfVersion,
                           String vnfName,
@@ -599,6 +602,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                                String vnfType,
                                String vnfVersion,
                                String vnfName,
+                               String vfModuleId,
                                String requestType,
                                String volumeGroupHeatStackId,
                                String baseVfHeatStackId,
@@ -613,7 +617,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         String vfModuleName = vnfName;
         String vfModuleType = vnfType;
         String vfVersion = vnfVersion;
-        String mcu = modelCustomizationUuid;
+        String mcu= modelCustomizationUuid;
         boolean useMCUuid = false;
         if (mcu != null && !mcu.isEmpty()) {
             if ("null".equalsIgnoreCase(mcu)) {
@@ -1355,6 +1359,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     @Override
     public void deleteVfModule(String cloudSiteId,
                                String tenantId,
+                               String vnfId,
+                               String vfModuleId,
                                String vnfName,
                                MsoRequest msoRequest,
                                Holder<Map<String, String>> outputs) throws VnfException {
@@ -1408,6 +1414,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     @Override
     public void updateVfModule(String cloudSiteId,
                                String tenantId,
+                               String vnfId,
+                               String vfModuleId,
                                String vnfType,
                                String vnfVersion,
                                String vnfName,

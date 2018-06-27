@@ -224,9 +224,10 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         Holder <String> vnfId = new Holder <> ();
         Holder <Map <String, String>> outputs = new Holder <> ();
         Holder <VnfRollback> vnfRollback = new Holder <> ();
+        String realVnfId = VnfAdapterRestUtils.getVnfByName(vnfName, msoRequest.getRequestId()).get().getVnfId();
 
         try {
-            vnfAdapter.updateVnf (cloudSiteId, tenantId, vnfType,vnfVersion, vnfName, requestType, volumeGroupHeatStackId, inputs, msoRequest, outputs, vnfRollback);
+            vnfAdapter.updateVnf (cloudSiteId, tenantId, realVnfId, vnfType,vnfVersion, vnfName, requestType, volumeGroupHeatStackId, inputs, msoRequest, outputs, vnfRollback);
             MsoLogger.setServiceName (serviceName);
         } catch (VnfException e) {
         	MsoLogger.setServiceName (serviceName);

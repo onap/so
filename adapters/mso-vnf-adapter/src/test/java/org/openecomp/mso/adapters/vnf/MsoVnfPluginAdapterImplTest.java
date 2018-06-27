@@ -79,7 +79,7 @@ public class MsoVnfPluginAdapterImplTest {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.createVfModule("123", "123", "vf", "v1", "module-005", "create", "3245", "234", "123", new HashMap<>(), true, true, msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+		instance.createVfModule("123", "123", "vf", "v1", "module-005", "vfModuleId","create", "3245", "234", "123", new HashMap<>(), true, true, msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
 	}
 
 	@Test(expected = VnfException.class)
@@ -89,7 +89,7 @@ public class MsoVnfPluginAdapterImplTest {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.updateVfModule("123", "1234", "fw", "v2", "vnf1", "create", "123", "12", "233", "234", new HashMap<>(), msoRequest, new Holder<>(), new Holder<>());
+		instance.updateVfModule("123", "1234", "vnfId","fw", "v2", "vnf1", "vfModuleId", "create", "123", "12", "233", "234", new HashMap<>(), msoRequest, new Holder<>(), new Holder<>());
 	}
 
 	@Test
@@ -127,7 +127,7 @@ public class MsoVnfPluginAdapterImplTest {
 		
 		map.put("key1", "value1");
 		try {
-			instance.updateVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+			instance.updateVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vfModuleId", "vnf", "1", "vSAMP12", "VFMOD",
 					"volumeGroupHeatStackId|1",  map, msoRequest, new Holder<>(),
                 new Holder<>());
 		} catch (Exception e) {

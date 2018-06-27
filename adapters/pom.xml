@@ -13,6 +13,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
+                <module>mso-vnfm-adapter-generatedapis</module>
 		<module>mso-adapter-utils</module>
 		<module>mso-adapters-rest-interface</module>
 		<module>mso-vnf-adapter-async-client</module>

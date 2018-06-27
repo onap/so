@@ -69,7 +69,7 @@ public class MsoVnfAdapterImplTest {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-    	msoVnfAdapter.updateVnf("cloudsite", "tenantid", "vfw", "v1", "test",
+    	msoVnfAdapter.updateVnf("cloudsite", "tenantid", "vnfId", "vfw", "v1", "test",
 				"update", "heatid", new HashMap<>(), msoRequest, new Holder<>(), new Holder<>());
     	Assert.assertTrue(true);
     }
@@ -299,7 +299,7 @@ public class MsoVnfAdapterImplTest {
 		Map<String, String> map = new HashMap<>();
 		map.put("key1", "value1");
 		try {
-			instance.createVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+			instance.createVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "vfModuleId","VFMOD",
 					"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 					Boolean.FALSE, Boolean.TRUE, msoRequest, new Holder<>(), new Holder<>(),
                 new Holder<>());
@@ -318,7 +318,7 @@ public class MsoVnfAdapterImplTest {
 		Map<String, String> map = new HashMap<>();
 		map.put("key1", "value1");
 		try {
-			instance.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+			instance.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId","vfModuleId","vnf", "1", "vSAMP12", "VFMOD",
 					"volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
 					"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
                 new Holder<>());
@@ -338,7 +338,7 @@ public class MsoVnfAdapterImplTest {
         map.put("key1", "value1");
         StackInfo stackInfo = new StackInfo("test", HeatStatus.NOTFOUND);
         Mockito.when(heat.queryStack(Mockito.anyString(),Mockito.anyString(),Mockito.anyString())).thenReturn(stackInfo);
-        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId","vnfModuleId","vnf", "1", "vSAMP12", "VFMOD",
                     "volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
                     "88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
                     new Holder<>());
@@ -356,7 +356,7 @@ public class MsoVnfAdapterImplTest {
         Map<String, String> map = new HashMap<>();
         map.put("key1", "value1");
         Mockito.when(heat.queryStack(Mockito.anyString(),Mockito.anyString(),Mockito.anyString())).thenThrow(new MsoCloudifyException(1,"test","test"));
-        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId","vnfModuleId", "vnf", "1", "vSAMP12", "VFMOD",
                 "volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
                 "88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
                 new Holder<>());
@@ -376,7 +376,7 @@ public class MsoVnfAdapterImplTest {
         StackInfo stackInfo = new StackInfo("test", HeatStatus.CREATED);
         StackInfo nestedstackInfo = new StackInfo("test", HeatStatus.NOTFOUND);
         Mockito.when(heat.queryStack(Mockito.anyString(),Mockito.anyString(),Mockito.anyString())).thenReturn(stackInfo,nestedstackInfo);
-        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId","vnfModuleId","vnf", "1", "vSAMP12", "VFMOD",
                 "volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
                 "88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
                 new Holder<>());
@@ -393,7 +393,7 @@ public class MsoVnfAdapterImplTest {
         map.put("key1", "value1");
         StackInfo stackInfo = new StackInfo("test", HeatStatus.CREATED);
         Mockito.when(heat.queryStack(Mockito.anyString(),Mockito.anyString(),Mockito.anyString())).thenReturn(stackInfo).thenThrow(new MsoCloudifyException(1,"test","test"));
-        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId", "vnfModuleId","vnf", "1", "vSAMP12", "VFMOD",
                 "volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
                 "88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
                 new Holder<>());
@@ -412,7 +412,7 @@ public class MsoVnfAdapterImplTest {
         StackInfo nestedStackInfo = new StackInfo("test", HeatStatus.CREATED);
         StackInfo nestedBaseStackInfo = new StackInfo("test", HeatStatus.NOTFOUND);
         Mockito.when(heat.queryStack(Mockito.anyString(),Mockito.anyString(),Mockito.anyString())).thenReturn(stackInfo,nestedStackInfo,nestedBaseStackInfo);
-        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId","vnfModuleId","vnf", "1", "vSAMP12", "VFMOD",
                 "volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
                 "88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
                 new Holder<>());
@@ -430,7 +430,7 @@ public class MsoVnfAdapterImplTest {
         StackInfo stackInfo = new StackInfo("test", HeatStatus.CREATED);
         StackInfo nestedStackInfo = new StackInfo("test", HeatStatus.CREATED);
         Mockito.when(heat.queryStack(Mockito.anyString(),Mockito.anyString(),Mockito.anyString())).thenReturn(stackInfo,nestedStackInfo).thenThrow(new MsoCloudifyException(1,"test","test"));
-        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId","vnfModuleId", "vnf", "1", "vSAMP12", "VFMOD",
                 "volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
                 "88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
                 new Holder<>());
@@ -449,7 +449,7 @@ public class MsoVnfAdapterImplTest {
         StackInfo nestedStackInfo = new StackInfo("test", HeatStatus.CREATED);
         StackInfo nestedBaseStackInfo = new StackInfo("test", HeatStatus.CREATED);
         Mockito.when(heat.queryStack(Mockito.anyString(),Mockito.anyString(),Mockito.anyString())).thenReturn(stackInfo,nestedStackInfo,nestedBaseStackInfo);
-        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+        msoVnfAdapter.updateVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId","vnfModuleId","vnf", "1", "vSAMP12", "VFMOD",
                 "volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
                 "88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<>(),
                 new Holder<>());
@@ -462,7 +462,7 @@ public class MsoVnfAdapterImplTest {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 		try {
-			instance.deleteVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
+			instance.deleteVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId", "vnfModuleId","vSAMP12", msoRequest,
                 new Holder<>());
 		} catch (Exception e) {
 
@@ -482,7 +482,7 @@ public class MsoVnfAdapterImplTest {
         JsonNode node = Mockito.mock(JsonNode.class);
         stackOutputs.put("key",node);
         Mockito.when(heat.queryStackForOutputs(Mockito.anyString(),Mockito.anyString(),Mockito.anyString())).thenReturn(stackOutputs);
-        msoVnfAdapter.deleteVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
+        msoVnfAdapter.deleteVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId","vnfModuleId", "vSAMP12", msoRequest,
                 new Holder<>());
     }
 
@@ -499,7 +499,7 @@ public class MsoVnfAdapterImplTest {
         LinkedHashMap<String,Object> node = Mockito.mock(LinkedHashMap.class);
         stackOutputs.put("key",node);
         Mockito.when(heat.queryStackForOutputs(Mockito.anyString(),Mockito.anyString(),Mockito.anyString())).thenReturn(stackOutputs);
-        msoVnfAdapter.deleteVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
+        msoVnfAdapter.deleteVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId","vnfModuleId", "vSAMP12", msoRequest,
                 new Holder<>());
     }
 
@@ -516,7 +516,7 @@ public class MsoVnfAdapterImplTest {
         Integer node = new Integer(2);
         stackOutputs.put("key",node);
         Mockito.when(heat.queryStackForOutputs(Mockito.anyString(),Mockito.anyString(),Mockito.anyString())).thenReturn(stackOutputs);
-        msoVnfAdapter.deleteVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
+        msoVnfAdapter.deleteVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId","vnfModuleId","vSAMP12", msoRequest,
                 new Holder<>());
     }
 
@@ -533,7 +533,7 @@ public class MsoVnfAdapterImplTest {
         List<String> node = Mockito.mock(List.class);
         stackOutputs.put("key",node);
         Mockito.when(heat.queryStackForOutputs(Mockito.anyString(),Mockito.anyString(),Mockito.anyString())).thenReturn(stackOutputs);
-        msoVnfAdapter.deleteVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
+        msoVnfAdapter.deleteVfModule("MT", "88a6ca3ee0394ade9403f075db23167e", "vnfId","vnfModuleId","vSAMP12", msoRequest,
                 new Holder<>());
     }
 

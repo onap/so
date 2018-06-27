@@ -173,6 +173,7 @@ public class VolumeAdapterRest {
 							completeVnfVfModuleType,
 							req.getVnfVersion(), //vnfVersion,
 							req.getVolumeGroupName(), //vnfName,
+							null,
 							"VOLUME", //requestType,
 							null, //volumeGroupHeatStackId,
 							null, //baseVfHeatStackId,
@@ -484,6 +485,8 @@ public class VolumeAdapterRest {
 					//		vnfRollback);
 					vnfAdapter.updateVfModule (req.getCloudSiteId(),
 							req.getTenantId(),
+							null,
+							null,
 							//req.getVnfType(),
 							completeVnfVfModuleType,
 							req.getVnfVersion(),
