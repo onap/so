@@ -1,0 +1,1255 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Service Discovery RESTful API"
+  },
+  "basePath": "/api/microservices/v1",
+  "tags": [
+    {
+      "name": "Service Resource"
+    }
+  ],
+  "paths": {
+    "/services": {
+      "get": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "get all microservices ",
+        "description": "",
+        "operationId": "getMicroService",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MicroServiceFullInfo"
+              }
+            }
+          },
+          "500": {
+            "description": "get microservice List  fail",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "add one microservice ",
+        "description": "",
+        "operationId": "addMicroService",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "MicroServiceInfo Instance Info",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MicroServiceInfo"
+            }
+          },
+          {
+            "name": "createOrUpdate",
+            "in": "query",
+            "description": "createOrUpdate",
+            "required": false,
+            "type": "boolean",
+            "default": "true"
+          },
+          {
+            "name": "is_manual",
+            "in": "query",
+            "description": "is_manual",
+            "required": false,
+            "type": "boolean",
+            "default": "false"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/MicroServiceFullInfo"
+            }
+          },
+          "422": {
+            "description": "Unprocessable MicroServiceInfo Entity ",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Unprocessable MicroServiceInfo JSON REQUEST",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "add microservice fail",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/services/apigatewayserviceinfo": {
+      "get": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "get apigateway AddressInfo",
+        "description": "",
+        "operationId": "getApigatewayServiceInfo",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "namespace",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "visualRange",
+            "in": "query",
+            "description": "visualRange",
+            "required": false,
+            "type": "string",
+            "default": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MicroServiceFullInfo"
+              }
+            }
+          },
+          "500": {
+            "description": "get apigateway ServiceInfo fail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "apigateway ServiceInfo not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/services/health": {
+      "get": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "sdclient healthy check ",
+        "description": "",
+        "operationId": "health",
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "check fail",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/services/tcpudpportrange": {
+      "get": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "get tcp and udp port range",
+        "description": "",
+        "operationId": "getTCP_UDP_portRange",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "500": {
+            "description": "get port range fail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "port range not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/services/{serviceName}/version/{version}": {
+      "get": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "get one microservice nodes",
+        "description": "",
+        "operationId": "getMicroService",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "description": "microservice serviceName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "microservice version,if the version is empty, please enter \"null\"",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "labels",
+            "in": "query",
+            "description": "Format key:value,Multiple use ',' split",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "namespace",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "ifPassStatus",
+            "in": "query",
+            "description": "if true then only query passing services",
+            "required": false,
+            "type": "boolean",
+            "default": "true"
+          },
+          {
+            "name": "wait",
+            "in": "query",
+            "description": "wait",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "index",
+            "in": "query",
+            "description": "index",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/MicroServiceFullInfo"
+            }
+          },
+          "422": {
+            "description": "Unprocessable MicroServiceInfo Entity ",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "get microservice fail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "microservice not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "update one microservice by serviceName and version",
+        "description": "",
+        "operationId": "updateMicroService",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "description": "microservice serviceName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "microservice version,if the version is empty, please enter \"null\"",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "namespace",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "microservice Instance Info",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MicroServiceInfo"
+            }
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "description": "protocol",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/MicroServiceFullInfo"
+            }
+          },
+          "422": {
+            "description": "Unprocessable MicroServiceInfo Entity ",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Unprocessable MicroServiceInfo JSON REQUEST",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "update microservice fail",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "delete one full microservice by serviceName and version",
+        "description": "",
+        "operationId": "deleteMicroService",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "description": "microservice serviceName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "microservice version,if the version is empty, please enter \"null\"",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "namespace",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "description": "protocol",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "422": {
+            "description": "Unprocessable MicroServiceInfo Entity ",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "delete microservice fail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "204": {
+            "description": "delete microservice succeed "
+          },
+          "404": {
+            "description": "microservice not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/services/{serviceName}/version/{version}/allpublishaddress": {
+      "get": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "get one microservice's all publishaddress",
+        "description": "",
+        "operationId": "getAllPublishaddress",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "description": "microservice serviceName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "microservice version,if the version is empty, please enter \"null\"",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "namespace",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "visualRange",
+            "in": "query",
+            "description": "outSystem:0,inSystem:1,all:0|1(default)",
+            "required": false,
+            "type": "string",
+            "default": "0|1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PublishFullAddress"
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable MicroServiceInfo Entity ",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "get publishaddress fail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "publishaddress not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/services/{serviceName}/version/{version}/nodes": {
+      "get": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "get one microservice ",
+        "description": "",
+        "operationId": "getMicroServiceNodes",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "description": "microservice serviceName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "microservice version,if the version is empty, please enter \"null\"",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "labels",
+            "in": "query",
+            "description": "Format key:value,Multiple use ',' split",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "namespace",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "ifPassStatus",
+            "in": "query",
+            "description": "if true then only query passing services",
+            "required": false,
+            "type": "boolean",
+            "default": "true"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MicroServiceFullInfo"
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable MicroServiceInfo Entity ",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "get microservice fail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "microservice not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/services/{serviceName}/version/{version}/nodes/{ip}/{port}": {
+      "delete": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "delete single node by serviceName and version and node",
+        "description": "",
+        "operationId": "deleteNode",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "description": "microservice serviceName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "microservice version,if the version is empty, please enter \"null\"",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "namespace",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "ip",
+            "in": "path",
+            "description": "ip",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "port",
+            "in": "path",
+            "description": "port",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "description": "protocol",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "422": {
+            "description": "Unprocessable MicroServiceInfo Entity ",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "delete node fail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "204": {
+            "description": "delete node succeed "
+          },
+          "404": {
+            "description": "node not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/services/{serviceName}/version/{version}/publishaddress": {
+      "get": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "get one microservice's inner publishaddress",
+        "description": "",
+        "operationId": "getPublishaddress",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "description": "microservice serviceName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "microservice version,if the version is empty, please enter \"null\"",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "namespace",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "wait",
+            "in": "query",
+            "description": "Waiting time,Scope: 5-300, unit: second",
+            "required": false,
+            "type": "integer",
+            "default": "0",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/PublishAddress"
+            }
+          },
+          "422": {
+            "description": "Unprocessable MicroServiceInfo Entity ",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "get publishaddress fail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "publishaddress not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/services/{serviceName}/version/{version}/ttl": {
+      "put": {
+        "tags": [
+          "Service Resource"
+        ],
+        "summary": "passing one microservice health check by ttl",
+        "description": "",
+        "operationId": "healthCheckbyTTL",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "description": "microservice serviceName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "microservice version,if the version is empty, please enter \"null\"",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "namespace",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "CheckNode Instance Info",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NodeAddress"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/NodeAddress"
+            }
+          },
+          "422": {
+            "description": "Unprocessable MicroServiceInfo Entity ",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Unprocessable CheckNode JSON REQUEST",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "health check by ttl fail",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "PublishAddress": {
+      "type": "object",
+      "required": [
+        "port",
+        "publish_url"
+      ],
+      "properties": {
+        "ip": {
+          "type": "string",
+          "description": "Service Publish IP"
+        },
+        "port": {
+          "type": "string",
+          "description": "Service Publish Port"
+        },
+        "publish_url": {
+          "type": "string",
+          "example": "/api/serviceName/v1",
+          "description": "Service Publish URL,start with /"
+        }
+      }
+    },
+    "PublishFullAddress": {
+      "type": "object",
+      "required": [
+        "port",
+        "publish_protocol",
+        "publish_url",
+        "visualRange"
+      ],
+      "properties": {
+        "ip": {
+          "type": "string",
+          "description": "Service Publish IP"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Service Publish Domain"
+        },
+        "port": {
+          "type": "string",
+          "description": "Service Publish Port"
+        },
+        "publish_url": {
+          "type": "string",
+          "example": "/api/serviceName/v1",
+          "description": "Service Publish URL,start with /"
+        },
+        "visualRange": {
+          "type": "string",
+          "example": "1",
+          "description": "[visual Range]outSystem:0,inSystem:1",
+          "enum": [
+            "0",
+            "1"
+          ]
+        },
+        "publish_protocol": {
+          "type": "string",
+          "example": "https",
+          "description": "Service Publish Protocol",
+          "enum": [
+            "http",
+            "https"
+          ]
+        }
+      }
+    },
+    "MicroServiceFullInfo": {
+      "type": "object",
+      "required": [
+        "protocol",
+        "serviceName",
+        "url",
+        "version"
+      ],
+      "properties": {
+        "serviceName": {
+          "type": "string",
+          "example": "test"
+        },
+        "version": {
+          "type": "string",
+          "example": "v1"
+        },
+        "url": {
+          "type": "string",
+          "example": "/api/serviceName/v1",
+          "description": "Target Service URL,start with /"
+        },
+        "protocol": {
+          "type": "string",
+          "example": "HTTP",
+          "description": "Service Protocol",
+          "enum": [
+            "REST",
+            "UI",
+            "HTTP",
+            "TCP",
+            "UDP"
+          ]
+        },
+        "visualRange": {
+          "type": "string",
+          "example": "1",
+          "description": "[visual Range]interSystem:0,inSystem:1",
+          "enum": [
+            "0",
+            "1"
+          ]
+        },
+        "lb_policy": {
+          "type": "string",
+          "example": "ip_hash",
+          "description": "lb policy",
+          "enum": [
+            "round-robin",
+            "ip_hash"
+          ]
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "enable_ssl": {
+          "type": "boolean",
+          "example": "false",
+          "description": "enable ssl",
+          "default": false
+        },
+        "nodes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/NodeInfo"
+          }
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KeyVaulePair"
+          }
+        },
+        "labels": {
+          "type": "array",
+          "example": "key1:value1",
+          "description": "custom labels",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string"
+        },
+        "is_manual": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "NodeInfo": {
+      "type": "object",
+      "required": [
+        "ip",
+        "port"
+      ],
+      "properties": {
+        "ip": {
+          "type": "string",
+          "example": "127.0.0.1"
+        },
+        "port": {
+          "type": "string",
+          "example": "80"
+        },
+        "lb_server_params": {
+          "type": "string",
+          "example": "weight=5,max_fails=3,fail_timeout=30s",
+          "description": "lb node params",
+          "enum": [
+            "weight",
+            "max_fails",
+            "fail_timeout"
+          ]
+        },
+        "checkType": {
+          "type": "string",
+          "example": "TTL",
+          "description": "health check type",
+          "enum": [
+            "TTL",
+            "HTTP",
+            "TCP"
+          ]
+        },
+        "checkUrl": {
+          "type": "string",
+          "example": "http://localhost:5000/health",
+          "description": "health check URL,applies only to TCP or HTTP"
+        },
+        "checkInterval": {
+          "type": "string",
+          "example": "10s",
+          "description": "TCP or HTTP health check Interval,Unit: second"
+        },
+        "checkTimeOut": {
+          "type": "string",
+          "example": "10s",
+          "description": "TCP or HTTP health check TimeOut,Unit: second"
+        },
+        "ttl": {
+          "type": "string",
+          "example": "10s",
+          "description": "TTL health check Interval,Unit: second"
+        },
+        "ha_role": {
+          "type": "string",
+          "example": "active",
+          "description": "Instance HA_role",
+          "enum": [
+            "active",
+            "standby"
+          ]
+        },
+        "nodeId": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "expiration": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Node": {
+      "type": "object",
+      "required": [
+        "ip",
+        "port"
+      ],
+      "properties": {
+        "ip": {
+          "type": "string",
+          "example": "127.0.0.1"
+        },
+        "port": {
+          "type": "string",
+          "example": "80"
+        },
+        "lb_server_params": {
+          "type": "string",
+          "example": "weight=5,max_fails=3,fail_timeout=30s",
+          "description": "lb node params",
+          "enum": [
+            "weight",
+            "max_fails",
+            "fail_timeout"
+          ]
+        },
+        "checkType": {
+          "type": "string",
+          "example": "TTL",
+          "description": "health check type",
+          "enum": [
+            "TTL",
+            "HTTP",
+            "TCP"
+          ]
+        },
+        "checkUrl": {
+          "type": "string",
+          "example": "http://localhost:5000/health",
+          "description": "health check URL,applies only to TCP or HTTP"
+        },
+        "checkInterval": {
+          "type": "string",
+          "example": "10s",
+          "description": "TCP or HTTP health check Interval,Unit: second"
+        },
+        "checkTimeOut": {
+          "type": "string",
+          "example": "10s",
+          "description": "TCP or HTTP health check TimeOut,Unit: second"
+        },
+        "ttl": {
+          "type": "string",
+          "example": "10s",
+          "description": "TTL health check Interval,Unit: second"
+        },
+        "ha_role": {
+          "type": "string",
+          "example": "active",
+          "description": "Instance HA_role",
+          "enum": [
+            "active",
+            "standby"
+          ]
+        }
+      }
+    },
+    "MicroServiceInfo": {
+      "type": "object",
+      "required": [
+        "protocol",
+        "serviceName",
+        "url",
+        "version"
+      ],
+      "properties": {
+        "serviceName": {
+          "type": "string",
+          "example": "test"
+        },
+        "version": {
+          "type": "string",
+          "example": "v1"
+        },
+        "url": {
+          "type": "string",
+          "example": "/api/serviceName/v1",
+          "description": "Target Service URL,start with /"
+        },
+        "protocol": {
+          "type": "string",
+          "example": "HTTP",
+          "description": "Service Protocol",
+          "enum": [
+            "REST",
+            "UI",
+            "HTTP",
+            "TCP",
+            "UDP"
+          ]
+        },
+        "visualRange": {
+          "type": "string",
+          "example": "1",
+          "description": "[visual Range]interSystem:0,inSystem:1",
+          "enum": [
+            "0",
+            "1"
+          ]
+        },
+        "lb_policy": {
+          "type": "string",
+          "example": "ip_hash",
+          "description": "lb policy",
+          "enum": [
+            "round-robin",
+            "ip_hash"
+          ]
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "enable_ssl": {
+          "type": "boolean",
+          "example": "false",
+          "description": "enable ssl",
+          "default": false
+        },
+        "nodes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/Node"
+          }
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KeyVaulePair"
+          }
+        },
+        "labels": {
+          "type": "array",
+          "example": "key1:value1",
+          "description": "custom labels",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "NodeAddress": {
+      "type": "object",
+      "required": [
+        "ip",
+        "port"
+      ],
+      "properties": {
+        "ip": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        }
+      }
+    },
+    "KeyVaulePair": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

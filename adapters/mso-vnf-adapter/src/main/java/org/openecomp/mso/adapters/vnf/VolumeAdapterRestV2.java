@@ -154,13 +154,14 @@ public class VolumeAdapterRestV2 {
 					outputs.value = testMap();
 				} else {
 					// Support different Adapter Implementations
-					MsoVnfAdapter vnfAdapter = VnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudsiteId);
+					MsoVnfAdapter vnfAdapter = VnfAdapterRestUtils.getVnfAdapterImplByVnfId(mode, cloudsiteId, null, req.getMsoRequest().getRequestId());
 					vnfAdapter.createVfModule(
 							req.getCloudSiteId(), //cloudSiteId,
 							req.getTenantId(), //tenantId,
 							completeVnfVfModuleType, //vnfType,
 							req.getVnfVersion(), //vnfVersion,
 							req.getVolumeGroupName(), //vnfName,
+							null,
 							"VOLUME", //requestType,
 							null, //volumeGroupHeatStackId,
 							null, //baseVfHeatStackId,
@@ -280,7 +281,7 @@ public class VolumeAdapterRestV2 {
 			try {
 				if (! cloudSiteId.equals(TESTING_KEYWORD)) {
 					// Support different Adapter Implementations
-					MsoVnfAdapter vnfAdapter = VnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudSiteId);
+					MsoVnfAdapter vnfAdapter = VnfAdapterRestUtils.getVnfAdapterImplByVnfId(mode, cloudSiteId, null, req.getMsoRequest().getRequestId());
 					vnfAdapter.deleteVnf(req.getCloudSiteId(), req.getTenantId(), req.getVolumeGroupStackId(), req.getMsoRequest());
 				}
 				response = new DeleteVolumeGroupResponse(true, req.getMessageId());
@@ -373,7 +374,7 @@ public class VolumeAdapterRestV2 {
 						vgr.getMsoRequest(), null, null, null, null);
 
 				// Support different Adapter Implementations
-				MsoVnfAdapter vnfAdapter = VnfAdapterRestUtils.getVnfAdapterImpl(vrb.getMode(), vrb.getCloudSiteId());
+				MsoVnfAdapter vnfAdapter = VnfAdapterRestUtils.getVnfAdapterImplByVnfId(vrb.getMode(), vrb.getCloudSiteId(), null, vgr.getMsoRequest().getRequestId());
 				vnfAdapter.rollbackVnf(vrb);
 				response = new RollbackVolumeGroupResponse(true, req.getMessageId());
 			} catch (VnfException e) {
@@ -473,9 +474,11 @@ public class VolumeAdapterRestV2 {
 					outputs.value = testMap();
 				} else {
 					// Support different Adapter Implementations
-					MsoVnfAdapter vnfAdapter = VnfAdapterRestUtils.getVnfAdapterImpl(mode, req.getCloudSiteId());
+					MsoVnfAdapter vnfAdapter = VnfAdapterRestUtils.getVnfAdapterImplByVnfId(mode, req.getCloudSiteId(), null, req.getMsoRequest().getRequestId());
 					vnfAdapter.updateVfModule (req.getCloudSiteId(),
 							req.getTenantId(),
+							null,
+							null,
 							//req.getVnfType(),
 							completeVnfVfModuleType,
 							req.getVnfVersion(),
@@ -541,7 +544,7 @@ public class VolumeAdapterRestV2 {
 				outputs.value = testMap();
 			} else {
 				// Support different Adapter Implementations
-				MsoVnfAdapter vnfAdapter = VnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudSiteId);
+				MsoVnfAdapter vnfAdapter = VnfAdapterRestUtils.getVnfAdapterImplByVnfId(mode, cloudSiteId, null, requestId);
 				vnfAdapter.queryVnf(cloudSiteId, tenantId, volumeGroupStackId, msoRequest, vnfExists, vfModuleId, status, outputs);
 			}
     		if (!vnfExists.value) {

@@ -177,10 +177,8 @@ public class VnfAdapterRestV2 {
 				String cloudsite = req.getCloudSiteId();
 				Holder<Map<String, String>> outputs = new Holder <Map <String, String>> ();
 				if (cloudsite != null && !cloudsite.equals(TESTING_KEYWORD)) {
-					//vnfAdapter.deleteVnf (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest());
-					// Support different Adapter Implementations
-					MsoVnfAdapter adapter = VnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudsite);
-					adapter.deleteVfModule (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest(), outputs);
+					MsoVnfAdapter adapter = VnfAdapterRestUtils.getVnfAdapterImplByVnfId(mode, cloudsite, req.getVnfId(), req.getMsoRequest().getRequestId());
+					adapter.deleteVfModule (req.getCloudSiteId(), req.getTenantId(), req.getVnfId(), req.getVfModuleId(), req.getVfModuleStackId(), req.getMsoRequest(), outputs);
 				}
 				response = new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(), Boolean.TRUE, req.getMessageId(), outputs.value);
 			} catch (VnfException e) {
@@ -236,7 +234,7 @@ public class VnfAdapterRestV2 {
 			Holder<Map<String, String>> outputs = new Holder <Map <String, String>> ();
 			
 			// Support different Adapter Implementations
-			MsoVnfAdapter adapter = VnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudSiteId);
+			MsoVnfAdapter adapter = VnfAdapterRestUtils.getVnfAdapterImplByVnfId(mode, cloudSiteId, aaiVfModuleId, requestId);
 			adapter.queryVnf (cloudSiteId, tenantId, vfModuleName, msoRequest, vnfExists, vfModuleId, status, outputs);
 
 			if (!vnfExists.value) {
@@ -385,12 +383,13 @@ public class VnfAdapterRestV2 {
 					outputs.value = VolumeAdapterRest.testMap();
 				} else {
 					// Support different Adapter Implementations
-					MsoVnfAdapter adapter = VnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudsiteId);
+					MsoVnfAdapter adapter = VnfAdapterRestUtils.getVnfAdapterImplByVnfId(mode, cloudsiteId, req.getVnfId(), req.getMsoRequest().getRequestId());
 					adapter.createVfModule(req.getCloudSiteId(),
 						req.getTenantId(),
 						completeVnfVfModuleType,
 						req.getVnfVersion(),
 						req.getVfModuleName(),
+						req.getVfModuleId(),
 						req.getRequestType(),
 						req.getVolumeGroupStackId(),
 						req.getBaseVfModuleStackId(),
@@ -494,12 +493,14 @@ public class VnfAdapterRestV2 {
 				String cloudsiteId = req.getCloudSiteId();
 
 				// Support different Adapter Implementations
-				MsoVnfAdapter adapter = VnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudsiteId);
+				MsoVnfAdapter adapter = VnfAdapterRestUtils.getVnfAdapterImplByVnfId(mode, cloudsiteId, req.getVnfId(), req.getMsoRequest().getRequestId());
 				adapter.updateVfModule (req.getCloudSiteId(),
 						req.getTenantId(),
+						req.getVnfId(),
 						completeVnfVfModuleType,
 						req.getVnfVersion(),
 						req.getVfModuleName(),
+						req.getVfModuleId(),
 						req.getRequestType(),
 						req.getVolumeGroupStackId(),
 						req.getBaseVfModuleId(),
@@ -610,7 +611,7 @@ public class VnfAdapterRestV2 {
 						vmr.getMsoRequest(), null, null, null, null);
 				
 				// Support multiple adapter implementations
-				MsoVnfAdapter adapter = VnfAdapterRestUtils.getVnfAdapterImpl (vmr.getMode(), vmr.getCloudSiteId());
+				MsoVnfAdapter adapter = VnfAdapterRestUtils.getVnfAdapterImplByVnfId (vmr.getMode(), vmr.getCloudSiteId(), vmr.getVnfId(), vmr.getMsoRequest().getRequestId());
 				adapter.rollbackVnf (vrb);
 				
 				response = new RollbackVfModuleResponse(Boolean.TRUE, req.getMessageId());

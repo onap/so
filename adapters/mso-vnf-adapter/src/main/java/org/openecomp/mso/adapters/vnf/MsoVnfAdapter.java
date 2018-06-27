@@ -54,7 +54,7 @@ public interface MsoVnfAdapter
 							@WebParam(name="failIfExists") Boolean failIfExists,
 							@WebParam(name="backout") Boolean backout,
 							@WebParam(name="request") MsoRequest msoRequest,
-							@WebParam(name="vnfId", mode=Mode.OUT) Holder<String> vnfId,
+							@WebParam(name="vnfId", mode=Mode.OUT) Holder<String> heatStackId,
 							@WebParam(name="outputs", mode=Mode.OUT) Holder<Map<String,String>> outputs,
 							@WebParam(name="rollback", mode=Mode.OUT) Holder<VnfRollback> rollback )
 		throws VnfException, VnfAlreadyExists;
@@ -62,6 +62,7 @@ public interface MsoVnfAdapter
 	@WebMethod
 	public void updateVnf (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
+						    @WebParam(name="vnfId") @XmlElement(required=true) String vnfId,
 							@WebParam(name="vnfType") @XmlElement(required=true) String vnfType,
 							@WebParam(name="vnfVersion") @XmlElement(required=false) String vnfVersion,
 							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
@@ -79,7 +80,7 @@ public interface MsoVnfAdapter
 							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name="vnfExists", mode=Mode.OUT) Holder<Boolean> vnfExists,
-							@WebParam(name="vnfId", mode=Mode.OUT) Holder<String> vnfId,
+							@WebParam(name="vnfId", mode=Mode.OUT) Holder<String> heatStackId,
 							@WebParam(name="status", mode=Mode.OUT) Holder<VnfStatus> status,
 							@WebParam(name="outputs", mode=Mode.OUT) Holder<Map<String,String>> outputs )
 		throws VnfException;
@@ -99,26 +100,44 @@ public interface MsoVnfAdapter
 	@WebMethod
 	public void createVfModule (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
-							@WebParam(name="vnfType") @XmlElement(required=true) String vnfType,
+							//the vnfType is misleading it is the type of the VNF and the type of the VF module separated by ::
+							@WebParam(name="vnfType") @XmlElement(required=true) String vnfModuleType,
 							@WebParam(name="vnfVersion") @XmlElement(required=false) String vnfVersion,
-							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
+							//the vnfName is misleading it is the name of the VNF module
+							@WebParam(name="vnfName") @XmlElement(required=true) String vnfModuleName,
+							@WebParam(name="vfModuleId") @XmlElement(required=true) String vfModuleId,
 							@WebParam(name="requestType") @XmlElement(required=false) String requestType,
 							@WebParam(name="volumeGroupHeatStackId") @XmlElement(required=false) String volumeGroupHeatStackId,
 							@WebParam(name="baseVfHeatStackId") @XmlElement(required=false) String baseVfHeatStackId,
+							//catalog DB table
 							@WebParam(name = "modelCustomizationUuid") @XmlElement(required = false) String modelCustomizationUuid,
 							@WebParam(name="inputs") Map<String,String> inputs,
 							@WebParam(name="failIfExists") Boolean failIfExists,
 							@WebParam(name="backout") Boolean backout,
 							@WebParam(name="request") MsoRequest msoRequest,
-							@WebParam(name="vnfId", mode=Mode.OUT) Holder<String> vnfId,
+							//this parameter is misleading it is in reality the identifier of the created stack
+							@WebParam(name="vnfId", mode=Mode.OUT) Holder<String> heatStackId,
 							@WebParam(name="outputs", mode=Mode.OUT) Holder<Map<String,String>> outputs,
 							@WebParam(name="rollback", mode=Mode.OUT) Holder<VnfRollback> rollback )
 		throws VnfException, VnfAlreadyExists;
 
+	/**
+	 *
+	 * @param cloudSiteId the composite key of the cloudOwner and cloudRegion separated by _
+	 * @param tenantId the identifier of the tenant of the VF-module
+	 * @param vnfId the identifier of the VNF in A&AI
+	 * @param vfModuleId the identifier of the VF-module in A&AI
+	 * @param heatStackId the identifier of the Heat stack that corresponds to the VF-module. The vfName is misleading.
+	 * @param msoRequest the SO request. Can be used for tracking requests
+	 * @param vfModuleOutputs
+	 * @throws VnfException
+	 */
 	@WebMethod
 	public void deleteVfModule (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
-							@WebParam(name="vfName") @XmlElement(required=true) String vfName,
+							@WebParam(name="vnfId") @XmlElement(required = true) String vnfId,
+							@WebParam(name="vfModuleId") @XmlElement(required = true) String vfModuleId,
+							@WebParam(name="vfName") @XmlElement(required=true) String heatStackId,
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name = "vfModuleOutputs", mode = Mode.OUT) Holder<Map<String, String>> vfModuleOutputs)
 		throws VnfException;
@@ -126,6 +145,8 @@ public interface MsoVnfAdapter
 	@WebMethod
 	public void updateVfModule (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
+							@WebParam(name="vnfId") @XmlElement(required = true) String vnfId,
+							@WebParam(name="vfModuleId") @XmlElement(required = true) String vfModuleId,
 							@WebParam(name="vnfType") @XmlElement(required=true) String vnfType,
 							@WebParam(name="vnfVersion") @XmlElement(required=false) String vnfVersion,
 							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,

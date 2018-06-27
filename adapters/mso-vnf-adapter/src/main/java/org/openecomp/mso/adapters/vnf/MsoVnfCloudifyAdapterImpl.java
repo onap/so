@@ -144,6 +144,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     @Override
     public void updateVnf (String cloudSiteId,
                            String tenantId,
+                           String vnfId,
                            String vnfType,
                            String vnfVersion,
                            String vnfName,
@@ -550,6 +551,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             String vfModuleType,
             String vnfVersion,
             String vfModuleName,
+            String vfModuleId,
             String requestType,
             String volumeGroupId,
             String baseVfModuleId,
@@ -1176,8 +1178,11 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         return;
     }
 
+    @Override
     public void deleteVfModule (String cloudSiteId,
                            String tenantId,
+                           String vnfId,
+                           String vfModuleId,
                            String vnfName,
                            MsoRequest msoRequest,
                            Holder <Map <String, String>> outputs) throws VnfException {
@@ -1233,6 +1238,8 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     @Override
     public void updateVfModule (String cloudSiteId,
                            String tenantId,
+                           String vnfId,
+                           String vdModuleId,
                            String vnfType,
                            String vnfVersion,
                            String vnfName,

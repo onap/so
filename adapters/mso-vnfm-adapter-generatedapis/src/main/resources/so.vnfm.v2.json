@@ -1,0 +1,616 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.0.0",
+    "title": "ONAP SO VNFM Adapter API v2",
+    "description": "Describes the API between SO and the adapter for VNFM",
+    "contact": {
+      "name": "ONAP SO VNFM",
+      "email": "onap-discuss@lists.onap.org",
+      "url": "https://gerrit.onap.org/r/#/admin/projects/vfc/nfvo/lcm"
+    }
+  },
+  "basePath": "/api/v1",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/so/v2/ping": {
+      "get": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "Test VNFM driver health",
+        "description": "Test VNFM driver health",
+        "responses": {
+          "204": {
+            "description": "VNFM adapter is healthy"
+          }
+        }
+      }
+    },
+    "/so/v2/vnfs/{vnfIdInAai}/rollback": {
+      "post": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "Rollback VNF update operation",
+        "description": "Rollback VNF update operation",
+        "operationId": "rollback",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VNF",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Rollback parameters",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2RollbackVnfUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Operation has been rolled back"
+          }
+        }
+      }
+    },
+    "/so/v2/vnfs/{vnfIdInAai}": {
+      "get": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VNF query",
+        "description": "VNF query",
+        "operationId": "vnf_query",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VNF in A&AI.",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF creation query parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfQueryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfQueryResponse"
+            }
+          },
+          "404": {
+            "descriotion": "The VNF does not exist on the VNFM side"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VNF create",
+        "description": "VNF create",
+        "operationId": "vnf_create",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VNF",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF creation query parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The VNF was created on the VNFM side."
+          },
+          "400": {
+            "description": "The VNF could not be instantiated on the VNFM side. Failure has been treated according to deleteUponFailure parameter"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VNF update",
+        "description": "VNF update",
+        "operationId": "vnf_update",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VNF",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF update parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The VNF update has finished. Success is indicated in the success field.",
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfUpdateResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VNF delete",
+        "description": "VNF delete",
+        "operationId": "vnf_delete",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VNF",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF delete parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfDeleteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The VNF was successfully deleted."
+          }
+        }
+      }
+    },
+    "/so/v2/vfmodule/{vnfIdInAai}/{vfModuleId}": {
+      "post": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VF module create",
+        "description": "VF module create",
+        "operationId": "vf_module_create",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of VNF in A&AI.",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VF module in A&AI",
+            "name": "vfModuleId",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF creation query parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VfModuleCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The VF module has been created"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VF module update",
+        "description": "VF module update",
+        "operationId": "vf_module_update",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of VNF in A&AI.",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VF module in A&AI",
+            "name": "vfModuleId",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF creation query parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfUpdateResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VF module delete",
+        "description": "VF module delete",
+        "operationId": "vf_module_delete",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of VNF in A&AI.",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VF module in A&AI",
+            "name": "vfModuleId",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF delete parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2VnfDeleteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The VNF was successfully deleted."
+          }
+        }
+      }
+    },
+    "/so/v2/vfmodule/{vnfIdInAai}/{vfModuleId}/rollback": {
+      "put": {
+        "tags": [
+          "SO VNFM Adaptor V2"
+        ],
+        "summary": "VF module update rollback",
+        "description": "VF module update rollback",
+        "operationId": "vf_module_update rollback",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of VNF in A&AI.",
+            "name": "vnfIdInAai",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "type": "string",
+            "description": "The identifier of the VF module in A&AI",
+            "name": "vfModuleId",
+            "in": "path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "VNF update rollback parameter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SoV2RollbackVnfUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Operation has been rolled back"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SoMsoRequest": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "required": true,
+          "description": "The identifier of the request in SO. Used to track requests.",
+          "type": "string"
+        },
+        "serviceInstanceId": {
+          "required": true,
+          "description": "The identifier of the service instance in A&AI.",
+          "type": "string"
+        }
+      }
+    },
+    "SoV2VnfQueryRequest": {
+      "type": "object",
+      "properties": {
+        "msoRequest": {
+          "required": true,
+          "$ref": "#/definitions/SoMsoRequest"
+        }
+      }
+    },
+    "SoVnfStatus": {
+      "description": "The status of the VNF",
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "FAILED",
+        "NOTFOUND",
+        "UNKNOWN"
+      ]
+    },
+    "SoOutput": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "SoInput": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "SoV2VnfQueryResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "required": true,
+          "description": "The status of the VNF",
+          "$ref": "#/definitions/SoVnfStatus"
+        }
+      }
+    },
+    "SoV2VnfCreateRequest": {
+      "type": "object",
+      "properties": {
+        "cloudOwner": {
+          "required": true,
+          "type": "string",
+          "description": "The owner of cloud in A&AI."
+        },
+        "regionName": {
+          "required": true,
+          "type": "string",
+          "description": "The regionName of cloud in A&AI."
+        },
+        "tenantId": {
+          "required": true,
+          "type": "string",
+          "description": "The identifier of the tenant."
+        },
+        "name": {
+          "required": true,
+          "type": "string",
+          "description": "The name of the VNF."
+        },
+        "inputs": {
+          "required": false,
+          "description": "The inputs of the VNF.",
+          "$ref": "#/definitions/SoInput"
+        },
+        "failIfExists": {
+          "required": false,
+          "description": "Should the VNF creation fail if the VNF already exists. (defaults to false)",
+          "type": "boolean"
+        },
+        "deleteUponFailure": {
+          "required": false,
+          "description": "Delete VNF in case of failure. (defaults to false)",
+          "type": "boolean"
+        },
+        "msoRequest": {
+          "required": false,
+          "$ref": "#/definitions/SoMsoRequest"
+        }
+      }
+    },
+    "SoMsoRollback": {
+      "type": "object",
+      "description": "Generic rollback parameters",
+      "properties": {
+        "deleteIfExists": {
+          "required": true,
+          "description": "Delete the VNF if exists",
+          "type": "boolean"
+        },
+        "vnfIdInAai": {
+          "required": true,
+          "description": "The identifier of the VNF in AAI",
+          "type": "string"
+        },
+        "msoRequest": {
+          "required": true,
+          "description": "The pointer to the original request that triggered the rollback",
+          "$ref": "#/definitions/SoMsoRequest"
+        }
+      }
+    },
+    "OriginalVnfProperties": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "SoV2RollbackVnfUpdate": {
+      "type": "object",
+      "properties": {
+        "originalVnfProperties": {
+          "required": false,
+          "description": "The original VNF properties before the operation",
+          "$ref": "#/definitions/OriginalVnfProperties"
+        }
+      }
+    },
+    "SoV2VnfUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "inputs": {
+          "required": false,
+          "description": "The inputs of the VNF.",
+          "$ref": "#/definitions/SoInput"
+        },
+        "msoRequest": {
+          "required": false,
+          "$ref": "#/definitions/SoMsoRequest"
+        }
+      }
+    },
+    "SoV2VnfUpdateResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/SoV2RollbackVnfUpdate"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "successful": {
+              "required": true,
+              "description": "Is the update successful. The operation can be rolled back regardless of this attribute",
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "SoV2VnfDeleteRequest": {
+      "type": "object",
+      "properties": {
+        "msoRequest": {
+          "required": false,
+          "$ref": "#/definitions/SoMsoRequest"
+        }
+      }
+    },
+    "SoV2VfModuleCreateRequest": {
+      "type": "object",
+      "properties": {
+        "scalingAspectId": {
+          "required": true,
+          "description": "The identifier of the scaling aspect",
+          "type": "string"
+        },
+        "inputs": {
+          "required": false,
+          "description": "The inputs of the VNF.",
+          "$ref": "#/definitions/SoInput"
+        },
+        "failIfExists": {
+          "required": false,
+          "description": "Should the VNF creation fail if the VNF already exists. (defaults to false)",
+          "type": "boolean"
+        },
+        "deleteUponFailure": {
+          "required": false,
+          "description": "Delete VF module in case of failure. (defaults to false)",
+          "type": "boolean"
+        },
+        "msoRequest": {
+          "required": false,
+          "$ref": "#/definitions/SoMsoRequest"
+        }
+      }
+    }
+  }
+}
