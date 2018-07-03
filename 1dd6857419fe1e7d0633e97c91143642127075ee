@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_732e44fc",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/VnfAdapterRestUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 2255
+      },
+      "writtenOn": "2018-07-03T19:16:28Z",
+      "side": 1,
+      "message": "It is the old API of the VNF adapter. The VNF should never be looked up by the name, because it is not uniques. As stated in the comment after the deprecation warning.",
+      "parentUuid": "5a93c517_73ec042a",
+      "range": {
+        "startLine": 93,
+        "startChar": 1,
+        "endLine": 93,
+        "endChar": 69
+      },
+      "revId": "1dd6857419fe1e7d0633e97c91143642127075ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_b3b84c12",
         "filename": "adapters/mso-vnf-adapter/src/test/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImplTest.java",
         "patchSetId": 2
@@ -71,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_532b08eb",
+        "filename": "adapters/mso-vnf-adapter/src/test/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2255
+      },
+      "writtenOn": "2018-07-03T19:16:28Z",
+      "side": 1,
+      "message": "I did not write these test (I think all should be deleted they were just fooling the coverage metric system)",
+      "parentUuid": "5a93c517_b3b84c12",
+      "range": {
+        "startLine": 74,
+        "startChar": 6,
+        "endLine": 74,
+        "endChar": 29
+      },
+      "revId": "1dd6857419fe1e7d0633e97c91143642127075ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_1341000b",
         "filename": "adapters/mso-vnfm-adapter-generatedapis/pom.xml",
         "patchSetId": 2
@@ -82,6 +130,30 @@
       "writtenOn": "2018-07-03T15:42:28Z",
       "side": 1,
       "message": "Why is junit provided? Shouldn\u0027t be test?",
+      "range": {
+        "startLine": 147,
+        "startChar": 6,
+        "endLine": 147,
+        "endChar": 29
+      },
+      "revId": "1dd6857419fe1e7d0633e97c91143642127075ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_13358045",
+        "filename": "adapters/mso-vnfm-adapter-generatedapis/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 2255
+      },
+      "writtenOn": "2018-07-03T19:16:28Z",
+      "side": 1,
+      "message": "As stated in the comment. The two type of code is generated test and production. Unfortunately in IDE they can not be split all under target/generated-sources/test xor main. The provided dependency is needed for this. The main code does not deepened on junit. The provided scope prevents it from leaking into production code.",
+      "parentUuid": "5a93c517_1341000b",
       "range": {
         "startLine": 147,
         "startChar": 6,
