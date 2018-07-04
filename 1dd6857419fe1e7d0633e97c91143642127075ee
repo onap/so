@@ -72,6 +72,76 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_e2827bc7",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/VnfAdapterRestUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-07-04T09:46:16Z",
+      "side": 1,
+      "message": "I just don\u0027t understand why method with totally new signature is already depricated. Old method had 2 parameters, new has 4. So this method isn\u0027t kept for backward compatibility and can be safely deleted.",
+      "parentUuid": "5a93c517_732e44fc",
+      "range": {
+        "startLine": 93,
+        "startChar": 1,
+        "endLine": 93,
+        "endChar": 69
+      },
+      "revId": "1dd6857419fe1e7d0633e97c91143642127075ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_62766b08",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/VnfAdapterRestUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-07-04T09:46:16Z",
+      "side": 1,
+      "message": "Why not just fail here? If somebody is passing incorrect argument then it\u0027s bad to just ignore it, instead of comunicating that argument is bad. Also passing UUID instead of String should solve this problem.",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 151,
+        "endChar": 3
+      },
+      "revId": "1dd6857419fe1e7d0633e97c91143642127075ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e2591b8f",
+        "filename": "adapters/mso-vnf-adapter/src/main/java/org/openecomp/mso/adapters/vnf/VnfAdapterRestUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-07-04T09:46:16Z",
+      "side": 1,
+      "message": "It\u0027s strange that you\u0027re returning Optional, but still throw excepton when there is no result, instead of returning Optional.empty()",
+      "range": {
+        "startLine": 154,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 3
+      },
+      "revId": "1dd6857419fe1e7d0633e97c91143642127075ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_b3b84c12",
         "filename": "adapters/mso-vnf-adapter/src/test/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImplTest.java",
         "patchSetId": 2
@@ -119,6 +189,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_c2209ffa",
+        "filename": "adapters/mso-vnf-adapter/src/test/java/org/openecomp/mso/adapters/vnf/MsoVnfAdapterImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-07-04T09:46:16Z",
+      "side": 1,
+      "message": "I know. Totally agree that such tests should be eradicated. All they do is lying about code coverage.",
+      "parentUuid": "5a93c517_532b08eb",
+      "range": {
+        "startLine": 74,
+        "startChar": 6,
+        "endLine": 74,
+        "endChar": 29
+      },
+      "revId": "1dd6857419fe1e7d0633e97c91143642127075ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_1341000b",
         "filename": "adapters/mso-vnfm-adapter-generatedapis/pom.xml",
         "patchSetId": 2
@@ -154,6 +248,30 @@
       "side": 1,
       "message": "As stated in the comment. The two type of code is generated test and production. Unfortunately in IDE they can not be split all under target/generated-sources/test xor main. The provided dependency is needed for this. The main code does not deepened on junit. The provided scope prevents it from leaking into production code.",
       "parentUuid": "5a93c517_1341000b",
+      "range": {
+        "startLine": 147,
+        "startChar": 6,
+        "endLine": 147,
+        "endChar": 29
+      },
+      "revId": "1dd6857419fe1e7d0633e97c91143642127075ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0238c73b",
+        "filename": "adapters/mso-vnfm-adapter-generatedapis/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-07-04T09:46:16Z",
+      "side": 1,
+      "message": "Then the problem is with either IDE or maven plugin configuration. From maven docs: \"provided: This is much like compile, but indicates you expect the JDK or a container to provide the dependency at runtime.\" You don\u0027t except the JDK to provide junit at runtime, so provided scope shouldn\u0027t be used.",
+      "parentUuid": "5a93c517_13358045",
       "range": {
         "startLine": 147,
         "startChar": 6,
