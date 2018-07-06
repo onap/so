@@ -177,7 +177,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				rollbackData.put("VFMODULE", "serviceInstanceId", serviceInstanceId)
 				logDebug("serviceInstanceId: " + serviceInstanceId, isDebugLogEnabled)
 				//flavorList
-				ArrayList<CloudFlavor> flavorList = execution.getVariable(cloudSiteId + "_flavorList")
+				ArrayList<CloudFlavor> flavorList = execution.getVariable("flavorListDict")[cloudSiteId]
 				if (flavorList != null) {
 					execution.setVariable("DCVFM_flavorList", flavorList)
 					logDebug("flavorList is: " + flavorList, isDebugLogEnabled)
