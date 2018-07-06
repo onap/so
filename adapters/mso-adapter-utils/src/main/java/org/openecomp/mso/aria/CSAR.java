@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import java.util.ArrayList;
 
 import org.openecomp.mso.adapters.vdu.VduModelInfo;
 import org.openecomp.mso.adapters.vdu.VduArtifact;
@@ -71,7 +72,7 @@ public class CSAR {
 		 * Organize model info for consumption
 		 */
 		VduArtifact mainTemplate = null;
-		List<VduArtifact> extraFiles = null;
+		List<VduArtifact> extraFiles = new ArrayList<>();
 		for(VduArtifact artifact: vduModel.getArtifacts()){
 				  if( artifact.getType() == ArtifactType.MAIN_TEMPLATE ){
 					 mainTemplate = artifact;
@@ -93,7 +94,7 @@ public class CSAR {
 			/**
 			 * Write other files
 			 */
-			if (extraFiles != null) {
+			if (!extraFiles.isEmpty()) {
 				for (VduArtifact artifact: extraFiles){
 					ofs = new FileOutputStream(new File(dir, artifact.getName()));
 					ofs.write(artifact.getContent());
