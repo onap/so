@@ -177,11 +177,13 @@ public class DoCreateVfModule extends VfModuleBase {
 				rollbackData.put("VFMODULE", "serviceInstanceId", serviceInstanceId)
 				logDebug("serviceInstanceId: " + serviceInstanceId, isDebugLogEnabled)
 				//flavorList
-				ArrayList<CloudFlavor> flavorList = execution.getVariable(cloudSiteId + "_flavorList")
-				if (flavorList != null) {
+				def flavorListDict = execution.getVariable("flavorListDict")
+				if (flavorListDict != null && flavorListDict.toString() != "[:]") {
+					ArrayList<CloudFlavor> flavorList = flavorListDict[cloudSiteId]
 					execution.setVariable("DCVFM_flavorList", flavorList)
 					logDebug("flavorList is: " + flavorList, isDebugLogEnabled)
-				}
+				} else {logDebug("flavorList not populated - flavorListDict was: " +
+						flavorListDict, isDebugLogEnabled)}
 				//source - HARDCODED
 				def source = "VID"
 				execution.setVariable("DCVFM_source", source)

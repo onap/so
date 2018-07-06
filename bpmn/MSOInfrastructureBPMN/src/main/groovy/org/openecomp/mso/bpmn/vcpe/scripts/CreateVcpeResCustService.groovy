@@ -77,6 +77,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
         execution.setVariable("cloudOwner", "")
         execution.setVariable("cloudRegionId", "")
         execution.setVariable("homingModelIds", "")
+        execution.setVariable("flavorListDict", [:])
 
         //TODO
         execution.setVariable("sdncVersion", "1707")
