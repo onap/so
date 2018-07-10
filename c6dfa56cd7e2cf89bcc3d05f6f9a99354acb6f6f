@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e734c54b",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/openecomp/mso/aria/CSAR.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-07-10T12:16:55Z",
+      "side": 1,
+      "message": "You can remove this if. If extraFiles is empty then for-loop inside will make 0 iterations anyway.",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 97,
+        "endChar": 31
+      },
+      "revId": "c6dfa56cd7e2cf89bcc3d05f6f9a99354acb6f6f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
