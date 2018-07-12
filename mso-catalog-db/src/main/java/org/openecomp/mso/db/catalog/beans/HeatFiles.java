@@ -38,7 +38,6 @@ public class HeatFiles extends MavenLikeVersioning implements Serializable {
 	private String version = null;
 	private String artifactChecksum = null;
 
-	public HeatFiles() {}
 
 	public String getArtifactUuid() {
 		return this.artifactUuid;
