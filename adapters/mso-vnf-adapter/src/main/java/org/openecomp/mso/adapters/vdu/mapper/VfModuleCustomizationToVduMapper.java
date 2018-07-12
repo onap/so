@@ -20,7 +20,6 @@
 
 package org.openecomp.mso.adapters.vdu.mapper;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import org.openecomp.mso.adapters.vdu.VduArtifact;
@@ -39,11 +38,10 @@ public class VfModuleCustomizationToVduMapper {
 
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
-	public VduModelInfo mapVfModuleCustomizationToVdu(VfModuleCustomization vfModuleCustom) throws SQLException {
-		CatalogDatabase db = CatalogDatabase.getInstance();
+	public VduModelInfo mapVfModuleCustomizationToVdu(VfModuleCustomization vfModuleCustom) {
 		VduModelInfo vduModel = new VduModelInfo();
 		vduModel.setModelCustomizationUUID(vfModuleCustom.getModelCustomizationUuid());
-		try {
+		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			// Map the cloud templates, attached files, and environment file
 			mapCloudTemplates(
 					db.getHeatTemplateByArtifactUuid(vfModuleCustom.getVfModule().getHeatTemplateArtifactUUId()),
@@ -51,22 +49,14 @@ public class VfModuleCustomizationToVduMapper {
 			mapCloudFiles(vfModuleCustom, vduModel);
 			mapEnvironment(db.getHeatEnvironmentByArtifactUuid(vfModuleCustom.getHeatEnvironmentArtifactUuid()),
 					vduModel);
-		} catch (SQLException e) {
-			LOGGER.debug("unhandled exception in mapVfModuleCustomizationToVdu", e);
-			throw new SQLException("Exception during mapVfModuleCustomizationToVdu " + e.getMessage());
-		} finally {
-			// Make sure DB session is closed
-			db.close();
 		}
-
 		return vduModel;
 	}
 
-	public VduModelInfo mapVfModuleCustVolumeToVdu(VfModuleCustomization vfModuleCustom) throws SQLException {
-		CatalogDatabase db = CatalogDatabase.getInstance();
+	public VduModelInfo mapVfModuleCustVolumeToVdu(VfModuleCustomization vfModuleCustom) {
 		VduModelInfo vduModel = new VduModelInfo();
 		vduModel.setModelCustomizationUUID(vfModuleCustom.getModelCustomizationUuid());
-		try {
+		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			// Map the cloud templates, attached files, and environment file
 			mapCloudTemplates(
 					db.getHeatTemplateByArtifactUuid(vfModuleCustom.getVfModule().getVolHeatTemplateArtifactUUId()),
@@ -74,29 +64,20 @@ public class VfModuleCustomizationToVduMapper {
 			mapCloudFiles(vfModuleCustom, vduModel);
 			mapEnvironment(db.getHeatEnvironmentByArtifactUuid(vfModuleCustom.getVolEnvironmentArtifactUuid()),
 					vduModel);
-		} catch (SQLException e) {
-			LOGGER.debug("unhandled exception in mapVfModuleCustVolumeToVdu", e);
-			throw new SQLException("Exception during mapVfModuleCustVolumeToVdu " + e.getMessage());
-		} finally {
-			// Make sure DB session is closed
-			db.close();
 		}
-
 		return vduModel;
 	}
 
-	private void mapCloudTemplates(HeatTemplate heatTemplate, VduModelInfo vduModel) throws SQLException {
+	private void mapCloudTemplates(HeatTemplate heatTemplate, VduModelInfo vduModel) {
 		// TODO: These catalog objects will be refactored to be
 		// non-Heat-specific
-		CatalogDatabase db = CatalogDatabase.getInstance();
-		try {
+		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			List<VduArtifact> vduArtifacts = vduModel.getArtifacts();
 
 			// Main template. Also set the VDU timeout based on the main
 			// template.
 			vduArtifacts.add(mapHeatTemplateToVduArtifact(heatTemplate, ArtifactType.MAIN_TEMPLATE));
 			vduModel.setTimeoutMinutes(heatTemplate.getTimeoutMinutes());
-			
 			// Nested templates
 			Map<String,Object> nestedTemplates = db.getNestedTemplates(heatTemplate.getArtifactUuid());
 			if (nestedTemplates != null) {
@@ -106,13 +87,9 @@ public class VfModuleCustomizationToVduMapper {
 					vduArtifacts.add(vduArtifact);
 				}
 			}
-			
 		} catch (IllegalArgumentException e) {
 			LOGGER.debug("unhandled exception in mapCloudTemplates", e);
 			throw new IllegalArgumentException("Exception during mapCloudTemplates " + e.getMessage());
-		} finally {
-			// Make sure DB session is closed
-			db.close();
 		}
 	}
 
@@ -124,26 +101,20 @@ public class VfModuleCustomizationToVduMapper {
 		return vduArtifact;
 	}
 
-	private void mapCloudFiles(VfModuleCustomization vfModuleCustom, VduModelInfo vduModel) throws SQLException {
+	private void mapCloudFiles(VfModuleCustomization vfModuleCustom, VduModelInfo vduModel) {
 		// TODO: These catalog objects will be refactored to be
 		// non-Heat-specific
-		CatalogDatabase db = CatalogDatabase.getInstance();
-
-		try{
+		try (CatalogDatabase db = CatalogDatabase.getInstance()) {
 			Map <String, HeatFiles> heatFiles = db.getHeatFilesForVfModule(vfModuleCustom.getVfModuleModelUuid());
 			if (heatFiles != null) {
 				for (HeatFiles heatFile: heatFiles.values()) {
-					mapCloudFileToVduArtifact(heatFile, ArtifactType.TEXT_FILE);
+					vduModel.getArtifacts().add(mapCloudFileToVduArtifact(heatFile, ArtifactType.TEXT_FILE));
 				}
 			}
 		} catch (IllegalArgumentException e) {
 			LOGGER.debug("unhandled exception in mapCloudFiles", e);
 			throw new IllegalArgumentException("Exception during mapCloudFiles " + e.getMessage());
-		} finally {
-			// Make sure DB session is closed
-			db.close();
 		}
-		
 	}
 
 	private VduArtifact mapCloudFileToVduArtifact(HeatFiles heatFile, ArtifactType artifactType) {
