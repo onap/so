@@ -42,7 +42,9 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class AriaRestClient implements AriaClient {
 	private Client client = null;
 	private WebTarget base_target = null;
-
+ 
+  private static final String TEMPLATES_PATH = "templates/";
+  
 	/**
 	 * Construct an Aria REST client
 	 *
@@ -74,7 +76,7 @@ public class AriaRestClient implements AriaClient {
 		byte[] csarBytes = template.getCSARBytes();
 		Response response = null;
 		if (csarBytes == null) {
-			response = base_target.path("templates/" + template.getName()).request(MediaType.APPLICATION_JSON)
+			response = base_target.path(TEMPLATES_PATH + template.getName()).request(MediaType.APPLICATION_JSON)
 					.put(Entity.entity(
 							"{\"service-template-path\":\"" + template.getURI().toString() + "\""
 									+ ",\"service-template-filename\":\"" + template.getFilename() + "\"",
@@ -82,7 +84,7 @@ public class AriaRestClient implements AriaClient {
 		}
 		else {
 			
-			response = base_target.path("templates/" + template.getName()).request("application/zip")
+			response = base_target.path(TEMPLATES_PATH + template.getName()).request("application/zip")
 					.put(Entity.entity(csarBytes, "application/zip"));
 		}
 
@@ -143,7 +145,7 @@ public class AriaRestClient implements AriaClient {
 	 *             other server side errors
 	 */
 	public void delete_service_template(int template_id) throws IllegalArgumentException, Exception {
-		Response response = base_target.path("templates/" + template_id).request(MediaType.APPLICATION_JSON).delete();
+		Response response = base_target.path(TEMPLATES_PATH + template_id).request(MediaType.APPLICATION_JSON).delete();
 
 		if (response.getStatus() >= 200 && response.getStatus() < 300) {
 			return;
@@ -161,7 +163,7 @@ public class AriaRestClient implements AriaClient {
 	 * @return
 	 */
 	public List<? extends NodeTemplate> list_nodes(int template_id) {
-		List<? extends NodeTemplate> nodes = base_target.path("templates/" + template_id + "/nodes")
+		List<? extends NodeTemplate> nodes = base_target.path(TEMPLATES_PATH + template_id + "/nodes")
 				.request(MediaType.APPLICATION_JSON).get(new GenericType<List<NodeTemplateImpl>>() {
 				});
 		return nodes;
@@ -221,7 +223,7 @@ public class AriaRestClient implements AriaClient {
 
 		String json = "{" + inputsToJson(inputs) + "}";
 
-		Response response = base_target.path("templates/" + template_id + "/services/" + service_name)
+		Response response = base_target.path(TEMPLATES_PATH + template_id + "/services/" + service_name)
 				.request(MediaType.APPLICATION_JSON).post(Entity.entity(json, MediaType.APPLICATION_JSON));
 
 		if (response.getStatus() < 200 || response.getStatus() > 299) {
