@@ -1,6 +1,7 @@
 package org.openecomp.mso.bpmn.infrastructure.scripts
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.BeforeClass
@@ -8,18 +9,14 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.MockitoAnnotations
-import org.openecomp.mso.bpmn.infrastructure.scripts.DoCustomDeleteE2EServiceInstance
 import org.openecomp.mso.bpmn.mock.FileUtil
 import org.openecomp.mso.bpmn.vcpe.scripts.GroovyTestBase
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy
+import static org.mockito.Matchers.anyString
 import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
-import static org.mockito.Mockito.when
-import static org.mockito.Mockito.when
-import static org.mockito.Mockito.when
-import static org.mockito.Mockito.when
-import static org.mockito.Mockito.when
-import static org.mockito.Mockito.when
+import static org.mockito.Mockito.eq
 
 class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
 
@@ -58,9 +55,8 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
         verify(mex).setVariable("siParamsXml", "")
     }
 
-    @Ignore
     @Test
-    public void postProcessAAIGETTest(){
+    public void postProcessAAIGETSuccessTest(){
         ExecutionEntity mex = setupMock()
         def map = setupMap(mex)
         initPreProcess(mex)
@@ -70,11 +66,22 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
         when(mex.getVariable("GENGS_service")).thenReturn(aaiGetResponse)
         DoCustomDeleteE2EServiceInstance instance = new DoCustomDeleteE2EServiceInstance()
         instance.postProcessAAIGET(mex)
-		// TODO: what to test here?
-//        verify(mex).setVariable("subscriptionServiceType", "e2eserviceInstance/delete")
+
+        verify(mex).setVariable(eq("serviceRelationShip"), anyString())
     }
 
-    @Ignore
+    @Test
+    public void postProcessAAIGETFailureTest(){
+        ExecutionEntity mex = setupMock()
+        def map = setupMap(mex)
+        initPreProcess(mex)
+        when(mex.getVariable("GENGS_FoundIndicator")).thenReturn(false)
+        when(mex.getVariable("GENGS_SuccessIndicator")).thenReturn(false)
+
+        DoCustomDeleteE2EServiceInstance instance = new DoCustomDeleteE2EServiceInstance()
+        assertThatThrownBy { instance.postProcessAAIGET(mex) } isInstanceOf BpmnError.class
+    }
+
     @Test
     public void preInitResourcesOperStatusTest(){
         ExecutionEntity mex = setupMock()
@@ -83,8 +90,8 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
         when(mex.getVariable("serviceRelationShip")).thenReturn("[{\"resourceInstanceId\":\"3333\",\"resourceType\":\"overlay\"},{\"resourceInstanceId\":\"4444\",\"resourceType\":\"underlay\"},{\"resourceInstanceId\":\"1111\",\"resourceType\":\"vIMS\"},{\"resourceInstanceId\":\"222\",\"resourceType\":\"vEPC\"}]")
         DoCustomDeleteE2EServiceInstance instance = new DoCustomDeleteE2EServiceInstance()
         instance.preInitResourcesOperStatus(mex)
-		// TODO: what to test here?
-//        verify(mex).setVariable("CVFMI_dbAdapterEndpoint", "http://localhost:8080/mso")
+
+        verify(mex).setVariable(eq("CVFMI_initResOperStatusRequest"), anyString())
     }
 
     @Test
@@ -98,7 +105,6 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
         verify(mex).setVariable("resourceType", "overlay")
     }
 
-    @Ignore
     @Test
     public void postProcessSDNCDeleteTest(){
         ExecutionEntity mex = setupMock()
@@ -111,8 +117,7 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
         String response = FileUtil.readResourceFile("__files/GenericFlows/SDNCDeleteResponse.xml")
         String method = "deleteE2E";
         instance.postProcessSDNCDelete(mex, response, method)
-		// TODO: what to test here?
-//        verify(mex).setVariable("DDELSI_sdncRequestDataResponseCode", "0")
+		// following method doesn't do anything currently -> nothing to check
     }
 
     @Test
