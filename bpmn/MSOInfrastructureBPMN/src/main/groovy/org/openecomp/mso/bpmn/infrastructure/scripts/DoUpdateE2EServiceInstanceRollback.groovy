@@ -25,7 +25,9 @@ import groovy.xml.XmlUtil
 import groovy.json.*
 
 import org.openecomp.mso.bpmn.core.json.JsonUtils
+import org.openecomp.mso.bpmn.common.scripts.AaiUtil
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
 import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
 import org.openecomp.mso.bpmn.core.RollbackData
 import org.openecomp.mso.bpmn.core.WorkflowException
@@ -64,6 +66,7 @@ import org.springframework.web.util.UriUtils;
 public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProcessor{
 
 	String Prefix="DUPDSIRB_"
+	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -259,13 +262,36 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 		String msg = ""
 		utils.log("INFO"," ***** preProcessAAIPUT *****",  isDebugEnabled)
 
-		String modelUuid = execution.getVariable("model-version-id-original")
 		String serviceInstanceVersion = execution.getVariable("serviceInstanceVersion_n")
-		execution.setVariable("GENPS_serviceResourceVersion", serviceInstanceVersion)
+//		execution.setVariable("GENPS_serviceResourceVersion", serviceInstanceVersion)
+        
+		//requestDetails.modelInfo.for AAI PUT servieInstanceData
+		//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData
+		String serviceInstanceName = execution.getVariable("serviceInstanceName")
+		String serviceInstanceId = execution.getVariable("serviceInstanceId")
+		//aai serviceType and Role can be setted as fixed value now.
+		String aaiServiceType = "E2E Service"
+		String aaiServiceRole = "E2E Service"
+		String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
+		String modelUuid = execution.getVariable("model-version-id-original")
+
+		//AAI PUT      
+		AaiUtil aaiUriUtil = new AaiUtil(this)
+		utils.log("INFO","start create aai uri: " + aaiUriUtil, isDebugEnabled)
+		String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
+		utils.log("INFO","aai_uri: " + aai_uri, isDebugEnabled)
+		String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
+		utils.log("INFO","namespace: " + namespace, isDebugEnabled)
 
 		String serviceInstanceData =
 				"""<service-instance xmlns=\"${namespace}\">
-			       <resource-version">${modelUuid}</resource-version>
+                    <service-instance-id>${serviceInstanceId}</service-instance-id>
+                    <service-instance-name>${serviceInstanceName}</service-instance-name>
+                    <service-type>${aaiServiceType}</service-type>
+                    <service-role>${aaiServiceRole}</service-role>
+                    <resource-version>${serviceInstanceVersion}</resource-version>
+                    <model-invariant-id>${modelInvariantUuid}</model-invariant-id>
+                    <model-version-id>${modelUuid}</model-version-id>   
 				 </service-instance>""".trim()
 
 		execution.setVariable("serviceInstanceData", serviceInstanceData)
