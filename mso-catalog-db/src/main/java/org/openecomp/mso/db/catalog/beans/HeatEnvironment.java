@@ -38,8 +38,6 @@ public class HeatEnvironment extends MavenLikeVersioning implements Serializable
 
 	private Timestamp created = null;
 
-	public HeatEnvironment() {}
-
 	public String getArtifactUuid() {
 		return this.artifactUuid;
 	}

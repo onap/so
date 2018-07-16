@@ -20,6 +20,9 @@
 
 package org.openecomp.mso.adapters.vdu;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class VduArtifact {
 	
 	// Enumerate the types of artifacts permitted.  This may need to be a variable string
@@ -59,6 +62,19 @@ public class VduArtifact {
 	}
 	public void setType(ArtifactType type) {
 		this.type = type;
-	}	
-	
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		VduArtifact that = (VduArtifact) o;
+		return Objects.equals(name, that.name) &&
+				Arrays.equals(content, that.content) &&
+				type == that.type;
+	}
 }
