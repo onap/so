@@ -115,6 +115,10 @@ public class PropertyConfiguration {
 		return PropertyConfigurationInstanceHolder.instance;
 	}
 
+	static void resetPropertyConfigurationSingletonInstance(){
+		PropertyConfigurationInstanceHolder.instance = new PropertyConfiguration();
+	}
+
 	/**
 	 * Returns the list of supported files.
 	 */
