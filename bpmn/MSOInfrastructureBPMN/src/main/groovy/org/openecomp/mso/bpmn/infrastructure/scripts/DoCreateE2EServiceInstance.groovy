@@ -46,6 +46,7 @@ import org.openecomp.mso.bpmn.core.WorkflowException
 import org.openecomp.mso.rest.APIResponse;
 import org.openecomp.mso.rest.RESTClient
 import org.openecomp.mso.rest.RESTConfig
+import org.openecomp.mso.bpmn.infrastructure.workflow.service.ServicePluginFactory
 
 import java.util.List;
 import java.util.UUID;
@@ -221,8 +222,20 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         }
     }
     
+    public void doServicePreOperation(DelegateExecution execution){
+       //we need a service plugin platform here. 
+    	ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+    	String uuiRequest = execution.getVariable("uuiRequest")		
+    	String newUuiRequest = ServicePluginFactory.getInstance().preProcessService(serviceDecomposition, uuiRequest);
+    	execution.setVariable("uuiRequest", newUuiRequest)	
+    }
+    
     public void doServiceHoming(DelegateExecution execution) {
-        //Now Homing is not clear. So to be implemented.
+    	//we need a service plugin platform here. 
+    	ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+    	String uuiRequest = execution.getVariable("uuiRequest")		
+    	String newUuiRequest = ServicePluginFactory.getInstance().doServiceHoming(serviceDecomposition, uuiRequest);
+    	execution.setVariable("uuiRequest", newUuiRequest)	
     }
     
 	public void postProcessAAIGET(DelegateExecution execution) {
