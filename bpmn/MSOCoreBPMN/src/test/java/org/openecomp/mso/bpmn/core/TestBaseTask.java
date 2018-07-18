@@ -32,6 +32,7 @@ import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -45,7 +46,13 @@ public class TestBaseTask {
 
 	@Rule
 	public ProcessEngineRule processEngineRule = new ProcessEngineRule();
-	
+
+	@BeforeClass
+	public static void setUpClass() {
+		System.setProperty("mso.config.path", "src/test/resources");
+		PropertyConfiguration.resetPropertyConfigurationSingletonInstance();
+	}
+
 	@Before
 	public void beforeTest() throws Exception {
 		CamundaDBSetup.configure();
