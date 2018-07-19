@@ -231,7 +231,7 @@ public abstract class AbstractBuilder<IN, OUT> {
 
      protected ServiceInformationEntity getServiceInformationEntity(DelegateExecution execution) {
           ServiceInformationEntity serviceInformationEntity = new ServiceInformationEntity();
-          serviceInformationEntity.setServiceId("VOLTE_SERVICE_ID");
+          serviceInformationEntity.setServiceId((String) execution.getVariable("serviceInstanceId"));
           serviceInformationEntity.setSubscriptionServiceType((String) execution.getVariable("serviceType"));
           serviceInformationEntity.setOnapModelInformation(getOnapServiceModelInformationEntity(execution));
           serviceInformationEntity.setServiceInstanceId((String) execution.getVariable("serviceInstanceId"));
