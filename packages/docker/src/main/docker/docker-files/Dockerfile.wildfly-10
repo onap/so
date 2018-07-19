@@ -16,9 +16,8 @@ ENV http_proxy=$HTTP_PROXY
 ENV https_proxy=$HTTPS_PROXY
 
 ### Install OpenJDK
-RUN apt-get -y install openjdk-8-jre-headless
-
-
+RUN apt-get -y update; \
+    apt-get -y install openjdk-8-jre-headless
 
 ### Install Wildfly
 ENV JBOSS_HOME=/opt/jboss
