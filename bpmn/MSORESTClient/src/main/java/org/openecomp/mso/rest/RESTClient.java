@@ -185,18 +185,18 @@ public class RESTClient {
     private CloseableHttpClient createClient() throws RESTException {
         //TODO - we may want to trust self signed certificate at some point - add implementation here
         HttpClientBuilder clientBuilder;
-
-		try {
-			SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-					(SSLSocketFactory) SSLSocketFactory.getDefault(),
-					new HostNameVerifier());
-			Registry<ConnectionSocketFactory> registry = RegistryBuilder
-					.<ConnectionSocketFactory> create()
-					.register("http",
-							PlainConnectionSocketFactory.getSocketFactory())
-					.register("https", sslSocketFactory).build();
-			PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(
-					registry);
+        
+        SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
+				(SSLSocketFactory) SSLSocketFactory.getDefault(),
+				new HostNameVerifier());
+		Registry<ConnectionSocketFactory> registry = RegistryBuilder
+				.<ConnectionSocketFactory> create()
+				.register("http",
+						PlainConnectionSocketFactory.getSocketFactory())
+				.register("https", sslSocketFactory).build();
+		
+		try(PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(
+				registry)) {
 			clientBuilder = HttpClientBuilder.create().setConnectionManager(
 					manager);
 		} catch (Exception ex) {
