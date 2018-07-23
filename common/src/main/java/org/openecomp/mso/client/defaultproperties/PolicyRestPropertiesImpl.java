@@ -38,10 +38,9 @@ public class PolicyRestPropertiesImpl implements PolicyRestProperties {
 	final Map<Object, Object> props;
 	public PolicyRestPropertiesImpl() {
 		File initialFile = new File("src/test/resources/policy.properties");
-		InputStream targetStream;
+		
 		Map<Object, Object> temp;
-		try {
-			targetStream = new FileInputStream(initialFile);
+		try(InputStream targetStream = new FileInputStream(initialFile)) {
 			Properties properties = new Properties();
 			properties.load(targetStream);
 			temp = properties;
