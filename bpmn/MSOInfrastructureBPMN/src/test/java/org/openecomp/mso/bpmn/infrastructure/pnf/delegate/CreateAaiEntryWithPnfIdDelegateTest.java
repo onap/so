@@ -27,6 +27,7 @@ import static org.openecomp.mso.bpmn.infrastructure.pnf.delegate.ExecutionVariab
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Test;
+import org.onap.aai.domain.yang.Pnf;
 
 public class CreateAaiEntryWithPnfIdDelegateTest {
 
@@ -41,7 +42,9 @@ public class CreateAaiEntryWithPnfIdDelegateTest {
         // when
         delegate.execute(execution);
         // then
-        assertThat(aaiConnection.getCreated().get("testCorrelationId").getPnfId()).isEqualTo("testCorrelationId");
-        assertThat(aaiConnection.getCreated().get("testCorrelationId").getPnfName()).isEqualTo("testCorrelationId");
+        Pnf createdEntry = aaiConnection.getCreated().get("testCorrelationId");
+        assertThat(createdEntry.getPnfId()).isEqualTo("testCorrelationId");
+        assertThat(createdEntry.getPnfName()).isEqualTo("testCorrelationId");
+        assertThat(createdEntry.isInMaint()).isTrue();
     }
 }
