@@ -191,8 +191,8 @@ public class PnfEventReadyDmaapClientTest {
 
     private Map<String, String> createProperties() {
         Map<String, String> map = new HashMap<>();
-        map.put("dmaapHost", HOST);
-        map.put("dmaapPort", String.valueOf(PORT));
+        map.put("mso.dmaap.host", HOST);
+        map.put("mso.dmaap.port", String.valueOf(PORT));
         return map;
     }
 

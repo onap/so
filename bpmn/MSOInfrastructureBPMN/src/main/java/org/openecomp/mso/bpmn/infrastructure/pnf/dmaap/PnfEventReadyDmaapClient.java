@@ -61,9 +61,9 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         httpClient = HttpClientBuilder.create().build();
         pnfCorrelationIdToThreadMap = new ConcurrentHashMap<>();
         dmaapHost = PropertyConfiguration.getInstance().getProperties(PropertyConfiguration.MSO_BPMN_URN_PROPERTIES)
-                .get("dmaapHost");
+                .get("mso.dmaap.host");
         dmaapPort = Integer.parseInt(PropertyConfiguration.getInstance()
-                .getProperties(PropertyConfiguration.MSO_BPMN_URN_PROPERTIES).get("dmaapPort"));
+                .getProperties(PropertyConfiguration.MSO_BPMN_URN_PROPERTIES).get("mso.dmaap.port"));
         executor = null;
         getRequest = new HttpGet(buildURI());
     }
