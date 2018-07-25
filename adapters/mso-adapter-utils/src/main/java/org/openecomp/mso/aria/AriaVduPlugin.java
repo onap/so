@@ -123,7 +123,7 @@ public class AriaVduPlugin implements VduPlugin {
                     templateId = stemplate.getId();
                 }
             }
-            List<Input> sinputs = new ArrayList<Input>();
+            List<Input> sinputs = new ArrayList<>();
             for (Map.Entry<String, ? extends Object> entry : inputs.entrySet()) {
                 Input inp = new InputImpl(entry.getKey(), entry.getValue().toString(), "");
                 sinputs.add(inp);
