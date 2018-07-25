@@ -172,16 +172,6 @@ public class SDNCNotifyResource {
         }
 
         String bpelUrl;
-        /*
-         * TODO Hibernate
-         * try {
-         * bpelUrl = RequestsDatabase.getBpelUrl(reqId);
-         * }
-         * catch (Exception e)
-         * {
-         * logger.error("Unable to get SDNC_CALLBACK_URL from ActiveRequests, using default for reqid:" + reqId, e);
-         * }
-         */
         
         bpelUrl = SDNCAdapterPortTypeImpl.getProperty (Constants.BPEL_URL_PROP, Constants.DEFAULT_BPEL_URL,msoPropertiesFactory);
         if (bpelUrl == null) {
