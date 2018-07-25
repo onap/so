@@ -54,7 +54,7 @@ public class SDNCAdapterService extends Service {
         URL wsdlUrl = null;
         try {
         	wsdlUrl = Thread.currentThread().getContextClassLoader().getResource("main/resources/SDNCAdapter.wsdl");
-        	//wsdlUrl = SDNCAdapterService.class.getClassLoader().getResource("SDNCAdapter.wsdl");
+        	
         } catch (Exception e) {
             logger.error(MessageEnum.RA_WSDL_NOT_FOUND, "SDNCAdapter.wsdl", "", "", MsoLogger.ErrorCode.DataError, "Exception - WSDL not found", e);
         }
