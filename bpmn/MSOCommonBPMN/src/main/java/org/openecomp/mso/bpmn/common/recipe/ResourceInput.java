@@ -288,8 +288,7 @@ public class ResourceInput {
         try {
             jsonStr = mapper.writeValueAsString(this);
         } catch(JsonProcessingException e) {
-        	msoLogger.debug("JsonProcessingException", e);
-            e.printStackTrace();
+        	msoLogger.error("JsonProcessingException", e);
         }
         return jsonStr;
     }

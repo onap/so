@@ -84,7 +84,6 @@ public class RestfulUtil {
             }
         } catch(MsoPropertiesException e) {
             LOGGER.error("Get msb properties failed",e);
-            e.printStackTrace();
         }
         return "http://" + msbIp + ":" + msbPort;
     }

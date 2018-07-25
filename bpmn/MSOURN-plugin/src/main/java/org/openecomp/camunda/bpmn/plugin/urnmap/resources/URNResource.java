@@ -82,8 +82,7 @@ public class URNResource extends AbstractCockpitPluginResource{
 			
 		} catch (Exception e) 
 		{
-			
-			e.printStackTrace();
+			msoLogger.error("Exception while executing query", e);
 		} finally {
 			try { r.close(); } catch (Exception e) { /* ignored */ }
 			try { psData.close(); } catch (Exception e) { /* ignored */ }
@@ -131,9 +130,8 @@ public class URNResource extends AbstractCockpitPluginResource{
 			}			 
 			
 		} catch (Exception e) 
-		{
-			
-			e.printStackTrace();
+	  {
+			msoLogger.error("Exception while performing JNDI lookup", e);
 		}
 	  
 	  return conn;
@@ -175,8 +173,7 @@ public class URNResource extends AbstractCockpitPluginResource{
 			
 		} catch (Exception e) 
 		{
-			
-			e.printStackTrace();
+			msoLogger.error("Exception while executing query", e);
 		} finally {
 			try { psData.close(); } catch (Exception e) { /* ignored */ }
 			try { conn.close(); } catch (Exception e) { /* ignored */ }
@@ -199,8 +196,7 @@ public class URNResource extends AbstractCockpitPluginResource{
 			    
 		} catch (Exception e) 
 		{
-			
-			e.printStackTrace();
+			msoLogger.error("Exception while executing query", e);
 		} finally {
 			try { psData.close(); } catch (Exception e) { /* ignored */ }
 			try { conn.close(); } catch (Exception e) { /* ignored */ }

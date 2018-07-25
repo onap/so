@@ -67,8 +67,7 @@ public class QueryResourceRecipe extends CatalogQuery{
         try {
             jsonStr = mapper.writeValueAsString(valueMap);
         } catch(JsonProcessingException e) {
-
-            e.printStackTrace();
+            LOGGER.error("JsonProcessingException", e);
         }
         return jsonStr;
     }

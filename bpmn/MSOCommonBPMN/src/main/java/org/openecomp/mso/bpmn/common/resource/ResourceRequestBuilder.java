@@ -113,8 +113,7 @@ public class ResourceRequestBuilder {
             Map<String, Object> resourceInputsFromServiceDeclaredLevel = buildResouceRequest(serviceUuid, resourceCustomizationUuid, serviceInput);
             resourceInputsFromUuiMap.putAll(resourceInputsFromServiceDeclaredLevel);
         } catch(SdcToscaParserException e) {
-        	LOGGER.debug("SdcToscaParserException", e);
-            e.printStackTrace();
+        	LOGGER.error("SdcToscaParserException", e);
         }
         String resourceInputsStr = getJsonString(resourceInputsFromUuiMap);
         String result = "{\n"
@@ -221,8 +220,7 @@ public class ResourceRequestBuilder {
         try {
             jsonStr = mapper.writeValueAsString(srcObj);
         } catch(JsonProcessingException e) {
-        	LOGGER.debug("SdcToscaParserException", e);
-            e.printStackTrace();
+        	LOGGER.error("SdcToscaParserException", e);
         }
         return jsonStr;
     }
