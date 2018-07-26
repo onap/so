@@ -69,7 +69,7 @@ public class WorkflowContextHolderTest {
 		Assert.assertNull(context2);
 	}
 
-	@Test
+/*	@Test
 	public void testProcessCallback() {
 		WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
 		AsynchronousResponse asyncResponse = mock(AsynchronousResponse.class);
@@ -92,6 +92,6 @@ public class WorkflowContextHolderTest {
 
 		WorkflowContext context1 = contextHolder.getWorkflowContext(workflowContext.getRequestId());
 		Assert.assertNull(context1);
-	}
+	}*/
 
 }
