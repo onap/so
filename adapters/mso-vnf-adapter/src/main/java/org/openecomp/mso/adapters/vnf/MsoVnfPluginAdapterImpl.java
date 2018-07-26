@@ -630,7 +630,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
         if (inputs == null) {
         	// Create an empty set of inputs
-        	inputs = new HashMap<String,String>();
+        	inputs = new HashMap<>();
         	LOGGER.debug("inputs == null - setting to empty");
         } else {
         	this.sendMapToDebug(inputs);
