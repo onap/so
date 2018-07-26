@@ -210,7 +210,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
 					"Mapping of request to JSON object failed");
-			msoLogger.debug("End of the transaction, the final response is: " + response.getEntity().toString());
+			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity().toString());
 
 			return response;
 		}
@@ -259,7 +259,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine",e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
-			msoLogger.debug("End of the transaction, the final response is: " + resp.getEntity().toString());
+			msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity().toString());
 			return resp;
 		}
 
@@ -317,7 +317,7 @@ public class E2EServiceInstances {
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
 					MsoLogger.ResponseCode.DBAccessError,
 					"Exception while communciate with Request DB");
-			msoLogger.debug("End of the transaction, the final response is: "
+			msoLogger.debug(END_OF_THE_TRANSACTION
 					+ (String) response.getEntity());
 			return response;
 
@@ -335,7 +335,7 @@ public class E2EServiceInstances {
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
 					MsoLogger.ResponseCode.DataNotFound,
 					"Null response from RequestDB when searching by serviceId");
-			msoLogger.debug("End of the transaction, the final response is: "
+			msoLogger.debug(END_OF_THE_TRANSACTION
 					+ (String) resp.getEntity());
 			return resp;
 
@@ -376,7 +376,7 @@ public class E2EServiceInstances {
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
 					MsoLogger.ResponseCode.SchemaError,
 					"Mapping of request to JSON object failed");
-			msoLogger.debug("End of the transaction, the final response is: "
+			msoLogger.debug(END_OF_THE_TRANSACTION
 					+ (String) response.getEntity());
 			return response;
 		}
@@ -530,7 +530,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
 					"Mapping of request to JSON object failed");
-			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
 			return response;
 		}
 
@@ -550,7 +550,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
 					"Validation of the input request failed");
-			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
 			return response;
 		}
 		
@@ -630,7 +630,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
-			msoLogger.debug("End of the transaction, the final response is: " + (String) getBPMNResp.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) getBPMNResp.getEntity());
 
 			return getBPMNResp;
 		}
@@ -676,7 +676,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
 					"Mapping of request to JSON object failed");
-			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
 			return response;
 		}
 
@@ -696,7 +696,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
 					"Validation of the input request failed");
-			msoLogger.debug("End of the transaction, the final response is: " + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
 			return response;
 		}		
 
@@ -771,7 +771,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
-			msoLogger.debug("End of the transaction, the final response is: " + (String) resp.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + (String) resp.getEntity());
 			return resp;
 		}
 
@@ -822,7 +822,7 @@ public class E2EServiceInstances {
             msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
                     MsoLogger.ResponseCode.SchemaError,
                     "Mapping of request to JSON object failed");
-            msoLogger.debug("End of the transaction, the final response is: "
+            msoLogger.debug(END_OF_THE_TRANSACTION
                     + (String) response.getEntity());
             return response;
         }
@@ -925,7 +925,7 @@ public class E2EServiceInstances {
             msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
                     MsoLogger.ResponseCode.CommunicationError,
                     "Exception while communicate with BPMN engine");
-            msoLogger.debug("End of the transaction, the final response is: "
+            msoLogger.debug(END_OF_THE_TRANSACTION
                     + (String) resp.getEntity());
             return resp;
         }
