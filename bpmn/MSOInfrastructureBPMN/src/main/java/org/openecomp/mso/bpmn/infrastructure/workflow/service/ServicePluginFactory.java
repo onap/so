@@ -213,14 +213,14 @@ public class ServicePluginFactory {
 	}
 
 	private List<Object> queryTerminalPointsFromServiceProviderSystem(String srcLocation, String dstLocation) {
-		Map<String, String> locationSrc = new HashMap<String, String>();
+		Map<String, String> locationSrc = new HashMap<>();
 		locationSrc.put("location", srcLocation);
-		Map<String, String> locationDst = new HashMap<String, String>();
+		Map<String, String> locationDst = new HashMap<>();
 		locationDst.put("location", dstLocation);
-		List<Map<String, String>> locations = new ArrayList<Map<String, String>>();
+		List<Map<String, String>> locations = new ArrayList<>();
 		locations.add(locationSrc);
 		locations.add(locationDst);
-		List<Object> returnList = new ArrayList<Object>();
+		List<Object> returnList = new ArrayList<>();
 		String reqContent = getJsonString(locations);
 		String url = getThirdSPEndPoint();
 		String responseContent = sendRequest(url, "POST", reqContent);
@@ -262,7 +262,7 @@ public class ServicePluginFactory {
 		Map<String, Object> serviceObject = (Map<String, Object>) uuiObject.get("service");
 		Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject.get("parameters");
 		Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject.get("requestInputs");
-		Map<String, Object> oofQueryObject = new HashMap<String, Object>();
+		Map<String, Object> oofQueryObject = new HashMap<>();
 		List<Object> resources = (List<Object>) serviceParametersObject.get("resources");
 		oofQueryObject.put("src-access-provider-id", serviceRequestInputs.get("inner-src-access-provider-id"));
 		oofQueryObject.put("src-access-client-id", serviceRequestInputs.get("inner-src-access-client-id"));
@@ -278,7 +278,7 @@ public class ServicePluginFactory {
 		String url = getOOFCalcEndPoint();
 		String responseContent = sendRequest(url, "POST", oofRequestReq);
 
-		List<Object> returnList = new ArrayList<Object>();
+		List<Object> returnList = new ArrayList<>();
 		if (null != responseContent) {
 			returnList = getJsonObject(responseContent, List.class);
 		}
@@ -291,7 +291,7 @@ public class ServicePluginFactory {
 	}
 	
 	private Map<String, Object> getReturnRoute(List<Object> returnList){
-		Map<String, Object> returnRoute = new HashMap<String,Object>();
+		Map<String, Object> returnRoute = new HashMap<>();
 		for(Object returnVpn :returnList){
 			Map<String, Object> returnVpnInfo = (Map<String, Object>) returnVpn;
 		    String accessTopoId = (String)returnVpnInfo.get("access-topology-id");
