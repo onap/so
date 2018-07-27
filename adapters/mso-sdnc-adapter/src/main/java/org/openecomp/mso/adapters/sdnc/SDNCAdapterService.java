@@ -46,10 +46,10 @@ public class SDNCAdapterService extends Service {
 
 	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA);
 
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://org.openecomp/workflow/sdnc/adapter/wsdl/v1", "SDNCAdapterService");
-    public final static QName SDNCAdapterSoapHttpPort = new QName("http://org.openecomp/workflow/sdnc/adapter/wsdl/v1", "SDNCAdapterSoapHttpPort");
+    public static final QName SERVICE = new QName("http://org.openecomp/workflow/sdnc/adapter/wsdl/v1", "SDNCAdapterService");
+    public static final QName SDNCAdapterSoapHttpPort = new QName("http://org.openecomp/workflow/sdnc/adapter/wsdl/v1", "SDNCAdapterSoapHttpPort");
     static {
         URL wsdlUrl = null;
         try {
