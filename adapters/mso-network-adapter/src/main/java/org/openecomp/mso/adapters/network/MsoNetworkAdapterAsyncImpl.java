@@ -66,6 +66,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
     private static final String BPEL_AUTH_PROP = "org.openecomp.mso.adapters.network.bpelauth";
     private static final String ENCRYPTION_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
+    private static final String NETWORK_EXCEPTION_CREATE_NETWORK = "Got a NetworkException on createNetwork: ";
     /**
      * Health Check web method. Does nothing but return to show the adapter is deployed.
      */
@@ -154,7 +155,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                           subnetIdMap,
                                           networkRollback);
         } catch (NetworkException e) {
-            LOGGER.debug ("Got a NetworkException on createNetwork: ", e);
+            LOGGER.debug (NETWORK_EXCEPTION_CREATE_NETWORK, e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
             try {
@@ -353,7 +354,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
         	MsoLogger.setServiceName (serviceName);
-            LOGGER.debug ("Got a NetworkException on createNetwork: ", e);
+            LOGGER.debug (NETWORK_EXCEPTION_CREATE_NETWORK, e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
             try {
@@ -440,7 +441,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
         	MsoLogger.setServiceName (serviceName);
-            LOGGER.debug ("Got a NetworkException on createNetwork: ", e);
+            LOGGER.debug (NETWORK_EXCEPTION_CREATE_NETWORK, e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
             try {
