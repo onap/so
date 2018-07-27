@@ -123,7 +123,6 @@ public class SDNCSyncRpcClient implements Runnable {
 		msoLogger.debug ("Got the SDNC Code : " + sdncResp.getRespCode());
 		msoLogger.debug ("Got the SDNC Response Message:" + sdncResp.getRespMsg());
 		validateSDNCResponse(sdncResp.getSdncResp());
-		return;
 	}
 
 	public static SDNCResponse getSdncResp(String sdncReqBody, RequestTunables rt, MsoPropertiesFactory msoPropertiesFactoryp) {
@@ -264,7 +263,7 @@ public class SDNCSyncRpcClient implements Runnable {
 		msoLogger.debug ("Starting validate sdnc response");
 		String responseMessage = "";
 		String responseCode = "";
-		if (sdncResponse != null || !sdncResponse.equals("")){
+		if (!(sdncResponse == null || sdncResponse.equals(""))){
 			try{
 				msoLogger.debug ("Got the SDNC Response: " + sdncResponse);
 				JSONObject jsonObj = new JSONObject(sdncResponse);
