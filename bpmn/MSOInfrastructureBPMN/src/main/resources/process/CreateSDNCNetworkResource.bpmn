@@ -118,7 +118,9 @@ csi.sendSyncResponse(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1dww8ye</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_05m2j56</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_1dww8ye" name="yes" sourceRef="ExclusiveGateway_0cdulnk" targetRef="Task_0bga3e8" />
+    <bpmn:sequenceFlow id="SequenceFlow_1dww8ye" name="yes" sourceRef="ExclusiveGateway_0cdulnk" targetRef="Task_0bga3e8">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("isActivateRequired") == "true")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1ex9ov6" sourceRef="CallActivity_1600xlj" targetRef="Task_023hred" />
     <bpmn:sequenceFlow id="SequenceFlow_1kzj1j5" sourceRef="Task_023hred" targetRef="ServiceTask_1cm8iwr" />
     <bpmn:sequenceFlow id="SequenceFlow_0o7h0ag" sourceRef="ServiceTask_1cm8iwr" targetRef="ExclusiveGateway_0cdulnk" />
