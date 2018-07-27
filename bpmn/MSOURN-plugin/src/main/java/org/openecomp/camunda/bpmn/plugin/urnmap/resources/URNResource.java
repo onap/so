@@ -84,8 +84,8 @@ public class URNResource extends AbstractCockpitPluginResource{
 		{
 			msoLogger.error("Exception while executing query", e);
 		} finally {
-			try { r.close(); } catch (Exception e) { /* ignored */ }
-			try { psData.close(); } catch (Exception e) { /* ignored */ }
+			try { if(r!=null)r.close(); } catch (Exception e) { /* ignored */ }
+			try { if(psData!=null)psData.close(); } catch (Exception e) { /* ignored */ }
 			try { conn.close(); } catch (Exception e) { /* ignored */ }
 		}
      
@@ -175,7 +175,7 @@ public class URNResource extends AbstractCockpitPluginResource{
 		{
 			msoLogger.error("Exception while executing query", e);
 		} finally {
-			try { psData.close(); } catch (Exception e) { /* ignored */ }
+			try { if(psData!=null)psData.close(); } catch (Exception e) { /* ignored */ }
 			try { conn.close(); } catch (Exception e) { /* ignored */ }
 		}
  	// getQueryService().executeQuery("cockpit.urnMap.insertNewRow", nRow, URNData.class);
@@ -198,7 +198,7 @@ public class URNResource extends AbstractCockpitPluginResource{
 		{
 			msoLogger.error("Exception while executing query", e);
 		} finally {
-			try { psData.close(); } catch (Exception e) { /* ignored */ }
+			try { if(psData!=null)psData.close(); } catch (Exception e) { /* ignored */ }
 			try { conn.close(); } catch (Exception e) { /* ignored */ }
 		}
 	 
