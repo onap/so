@@ -36,7 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.openecomp.mso.apihandler.common.ValidationException;
-//import org.openecomp.mso.bpmn.core.BPMNLogger;
+
 import org.openecomp.mso.bpmn.core.xml.XmlTool;
 import org.openecomp.mso.logger.MsoLogger;
 
@@ -72,7 +72,7 @@ public class JsonUtils {
 	 * @return String containing the JSON translation
 	 */
 	public static String xml2json(String xml, Boolean pretty) {
-//		String isDebugLogEnabled = "true";
+
 		try {
 			// name spaces cause problems, so just remove them
 			JSONObject jsonObj = XML.toJSONObject(XmlTool.removeNamespaces(xml));
@@ -109,7 +109,7 @@ public class JsonUtils {
 	 * @return String containing the XML translation
 	 */
 	public static String json2xml(String jsonStr, Boolean pretty) {
-//		String isDebugLogEnabled = "true";
+
 		try {
 			JSONObject jsonObj = new JSONObject(jsonStr);
 			if (pretty) {
@@ -335,7 +335,7 @@ public class JsonUtils {
 	 * @return String field value associated with keys
 	 */
 	public static String getJsonValue(String jsonStr, String keys) {
-//		String isDebugLogEnabled = "true";
+
 		try {
 				Object rawValue = getJsonRawValue(jsonStr, keys);
 				if (rawValue == null) {
@@ -470,7 +470,7 @@ public class JsonUtils {
 	 * @return String param value associated with field name
 	 */
 	public static String getJsonParamValue(String jsonStr, String keys, String name, int index) {
-//		String isDebugLogEnabled = "true";
+
 		try {
 			Object rawValue = getJsonRawValue(jsonStr, keys);
 			if (rawValue == null) {
@@ -533,7 +533,7 @@ public class JsonUtils {
 	 * @return String field value associated with key
 	 */
 	public static String getJsonValueForKey(String jsonStr, String key) {
-//		String isDebugLogEnabled = "true";
+
 		try {
 			JSONObject jsonObj = new JSONObject(jsonStr);
 			return getJsonValueForKey(jsonObj, key);
@@ -552,7 +552,7 @@ public class JsonUtils {
 	 * @return String field value associated with key
 	 */
 	public static String getJsonValueForKey(JSONObject jsonObj, String key) {
-//		String isDebugLogEnabled = "true";
+
 		String keyValue = null;
 		try {
 			if (jsonObj.has(key)) {
@@ -712,7 +712,7 @@ public class JsonUtils {
 	 * @return String containing the updated JSON doc
 	 */
 	public static String addJsonValue(String jsonStr, String keys, String value) {
-//		String isDebugLogEnabled = "true";
+
 		// only attempt to insert the key/value pair if it does not exist
 		if (!jsonValueExists(jsonStr, keys)) {
 			return putJsonValue(jsonStr, keys, value);
@@ -733,7 +733,7 @@ public class JsonUtils {
 	 * @return String containing the updated JSON doc
 	 */
 	public static String updJsonValue(String jsonStr, String keys, String newValue) {
-//		String isDebugLogEnabled = "true";
+
 		// only attempt to modify the key/value pair if it exists
 		if (jsonValueExists(jsonStr, keys)) {
 			return putJsonValue(jsonStr, keys, newValue);
@@ -753,7 +753,7 @@ public class JsonUtils {
 	 * @return String containing the updated JSON doc
 	 */
 	public static String delJsonValue(String jsonStr, String keys) {
-//		String isDebugLogEnabled = "true";
+
 		// only attempt to remove the key/value pair if it exists
 		if (jsonValueExists(jsonStr, keys)) {
 			// passing a null value results in a delete
@@ -791,7 +791,7 @@ public class JsonUtils {
 	 * @return Object field value associated with keys
 	 */
 	private static Object getJsonRawValue(String jsonStr, String keys, Boolean wrap) {
-//		String isDebugLogEnabled = "true";
+
 		String keyStr = "";
 		try {
 			JSONObject jsonObj = new JSONObject(jsonStr);
@@ -841,7 +841,7 @@ public class JsonUtils {
 	 * @return String containing the updated JSON doc
 	 */
 	private static String putJsonValue(String jsonStr, String keys, String value) {
-//		String isDebugLogEnabled = "true";
+
 		String keyStr = "";
 		try {
 			JSONObject jsonObj = new JSONObject(jsonStr);
