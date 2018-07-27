@@ -88,10 +88,7 @@ public class ServiceInstances {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Create a Service Instance on a version provided",response=Response.class)
 	public Response createServiceInstance(String request, @PathParam("version") String version) {
-
-		Response response = serviceInstances(request, Action.createInstance, null, version);
-
-		return response;
+		return serviceInstances(request, Action.createInstance, null, version);
 	}
 	
 	@POST
@@ -100,11 +97,9 @@ public class ServiceInstances {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Activate provided Service Instance",response=Response.class)
 	public Response activateServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		Response response = serviceInstances(request, Action.activateInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.activateInstance, instanceIdMap, version);
 	}
 	
 	@POST
@@ -113,11 +108,9 @@ public class ServiceInstances {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Deactivate provided Service Instance",response=Response.class)
 	public Response deactivateServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		Response response = serviceInstances(request, Action.deactivateInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.deactivateInstance, instanceIdMap, version);
 	}
 	
 	@DELETE
@@ -126,10 +119,9 @@ public class ServiceInstances {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Delete provided Service Instance",response=Response.class)
 	public Response deleteServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		Response response = serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
-		return response;
+		return serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
 	}
 	
 	@POST
@@ -138,11 +130,9 @@ public class ServiceInstances {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Create Port Mirroring Configuration",response=Response.class)
 	public Response createPortConfiguration(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		Response response = configurationRecipeLookup(request, Action.createInstance, instanceIdMap, version);
-
-		return response;
+		return configurationRecipeLookup(request, Action.createInstance, instanceIdMap, version);
 	}
 	
 	@DELETE
@@ -152,11 +142,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Delete provided Port",response=Response.class)
 	public Response deletePortConfiguration(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 									@PathParam("configurationInstanceId") String configurationInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("configurationInstanceId", configurationInstanceId);
-		Response response = configurationRecipeLookup(request, Action.deleteInstance, instanceIdMap, version);
-		return response;
+		return configurationRecipeLookup(request, Action.deleteInstance, instanceIdMap, version);
 	}
 	
 	@POST
@@ -166,12 +155,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Enable Port Mirroring",response=Response.class)
 	public Response enablePort(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 								@PathParam("configurationInstanceId") String configurationInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("configurationInstanceId", configurationInstanceId);
-		Response response = configurationRecipeLookup(request, Action.enablePort, instanceIdMap, version);
-
-		return response;
+		return configurationRecipeLookup(request, Action.enablePort, instanceIdMap, version);
 	}
 	
 	@POST
@@ -181,12 +168,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Disable Port Mirroring",response=Response.class)
 	public Response disablePort(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 								@PathParam("configurationInstanceId") String configurationInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("configurationInstanceId", configurationInstanceId);
-		Response response = configurationRecipeLookup(request, Action.disablePort, instanceIdMap, version);
-
-		return response;
+		return configurationRecipeLookup(request, Action.disablePort, instanceIdMap, version);
 	}
 	
 	@POST
@@ -196,12 +181,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Activate Port Mirroring",response=Response.class)
 	public Response activatePort(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 								@PathParam("configurationInstanceId") String configurationInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("configurationInstanceId", configurationInstanceId);
-		Response response = configurationRecipeLookup(request, Action.activateInstance, instanceIdMap, version);
-
-		return response;
+		return configurationRecipeLookup(request, Action.activateInstance, instanceIdMap, version);
 	}
 	
 	@POST
@@ -211,12 +194,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Deactivate Port Mirroring",response=Response.class)
 	public Response deactivatePort(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 								@PathParam("configurationInstanceId") String configurationInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("configurationInstanceId", configurationInstanceId);
-		Response response = configurationRecipeLookup(request, Action.deactivateInstance, instanceIdMap, version);
-
-		return response;
+		return configurationRecipeLookup(request, Action.deactivateInstance, instanceIdMap, version);
 	}
 
 	@POST
@@ -226,11 +207,9 @@ public class ServiceInstances {
 	@ApiOperation(value="Add Relationships to a Service Instance",response=Response.class)
 	public Response addRelationships(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
 		msoLogger.debug ("version is: " + version);
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		Response response = configurationRecipeLookup(request, Action.addRelationships, instanceIdMap, version);
-
-		return response;
+		return configurationRecipeLookup(request, Action.addRelationships, instanceIdMap, version);
 	}
 	
 	@POST
@@ -240,11 +219,9 @@ public class ServiceInstances {
 	@ApiOperation(value="Remove Relationships from Service Instance",response=Response.class)
 	public Response removeRelationships(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
 		msoLogger.debug ("version is: " + version);
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		Response response = configurationRecipeLookup(request, Action.removeRelationships, instanceIdMap, version);
-
-		return response;
+		return configurationRecipeLookup(request, Action.removeRelationships, instanceIdMap, version);
 	}
 	
 	@POST
@@ -254,11 +231,9 @@ public class ServiceInstances {
 	@ApiOperation(value="Create VNF on a specified version and serviceInstance",response=Response.class)
 	public Response createVnfInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
 		msoLogger.debug ("version is: " + version);
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		Response response = serviceInstances(request, Action.createInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.createInstance, instanceIdMap, version);
 	}
 	
 	@POST
@@ -269,12 +244,10 @@ public class ServiceInstances {
 	public Response replaceVnfInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {
 		msoLogger.debug ("version is: " + version);
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
-		Response response = serviceInstances(request, Action.replaceInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.replaceInstance, instanceIdMap, version);
 	}
 	
 	@PUT
@@ -284,12 +257,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Update VNF on a specified version, serviceInstance and vnfInstance",response=Response.class)
 	public Response updateVnfInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {			
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);		
-		Response response = serviceInstances(request, Action.updateInstance, instanceIdMap, version);
-
-		return response;
+		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
+		return serviceInstances(request, Action.updateInstance, instanceIdMap, version);
 	}
 	
 	@POST
@@ -299,12 +270,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Apply updated configuration",response=Response.class)
 	public Response applyUpdatedConfig(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {			
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);		
-		Response response = serviceInstances(request, Action.applyUpdatedConfig, instanceIdMap, version);
-
-		return response;
+		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
+		return serviceInstances(request, Action.applyUpdatedConfig, instanceIdMap, version);
 	}
 
 
@@ -315,12 +284,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Delete provided VNF instance",response=Response.class)
 	public Response deleteVnfInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
-		Response response = serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
 	}
 
 	@POST
@@ -331,12 +298,10 @@ public class ServiceInstances {
 	public Response createVfModuleInstance(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {
 		msoLogger.debug ("version is: " + version);
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
-		Response response = serviceInstances(request, Action.createInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.createInstance, instanceIdMap, version);
 	}
 	
 	@POST
@@ -348,13 +313,11 @@ public class ServiceInstances {
 			@PathParam("vnfInstanceId") String vnfInstanceId,
 			@PathParam("vfmoduleInstanceId") String vfmoduleInstanceId) {
 		msoLogger.debug ("version is: " + version);
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		instanceIdMap.put("vfModuleInstanceId", vfmoduleInstanceId);
-		Response response = serviceInstances(request, Action.replaceInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.replaceInstance, instanceIdMap, version);
 	}
 
 	@PUT
@@ -365,13 +328,11 @@ public class ServiceInstances {
 	public Response updateVfModuleInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId,
 			@PathParam("vfmoduleInstanceId") String vfmoduleInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		instanceIdMap.put("vfModuleInstanceId", vfmoduleInstanceId);
-		Response response = serviceInstances(request, Action.updateInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.updateInstance, instanceIdMap, version);
 	}
 	
 	@POST
@@ -381,12 +342,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Perform VNF software update",response=Response.class)
 	public Response inPlaceSoftwareUpdate(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {			
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);		
-		Response response = serviceInstances(request, Action.inPlaceSoftwareUpdate, instanceIdMap, version);
-
-		return response;
+		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
+		return serviceInstances(request, Action.inPlaceSoftwareUpdate, instanceIdMap, version);
 	}
 	
 	@DELETE
@@ -397,13 +356,11 @@ public class ServiceInstances {
 	public Response deleteVfModuleInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId,
 			@PathParam("vfmoduleInstanceId") String vfmoduleInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		instanceIdMap.put("vfModuleInstanceId", vfmoduleInstanceId);
-		Response response = serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
 	}
 
 
@@ -414,12 +371,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Create VolumeGroup on a specified version, serviceInstance, vnfInstance",response=Response.class)
 	public Response createVolumeGroupInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
-		Response response = serviceInstances(request, Action.createInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.createInstance, instanceIdMap, version);
 	}
 
 	@PUT
@@ -430,13 +385,11 @@ public class ServiceInstances {
 	public Response updateVolumeGroupInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId,
 			@PathParam("volumeGroupInstanceId") String volumeGroupInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		instanceIdMap.put("volumeGroupInstanceId", volumeGroupInstanceId);
-		Response response = serviceInstances(request, Action.updateInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.updateInstance, instanceIdMap, version);
 	}
 
 	@DELETE
@@ -447,13 +400,11 @@ public class ServiceInstances {
 	public Response deleteVolumeGroupInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("vnfInstanceId") String vnfInstanceId,
 			@PathParam("volumeGroupInstanceId") String volumeGroupInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
 		instanceIdMap.put("volumeGroupInstanceId", volumeGroupInstanceId);
-		Response response = serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
 	}
 
 	@POST
@@ -462,11 +413,9 @@ public class ServiceInstances {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value="Create NetworkInstance on a specified version and serviceInstance ",response=Response.class)
 	public Response createNetworkInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		Response response = serviceInstances(request, Action.createInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.createInstance, instanceIdMap, version);
 	}
 
 	@PUT
@@ -476,12 +425,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Update VolumeGroup on a specified version, serviceInstance, networkInstance",response=Response.class)
 	public Response updateNetworkInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("networkInstanceId") String networkInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("networkInstanceId", networkInstanceId);
-		Response response = serviceInstances(request, Action.updateInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.updateInstance, instanceIdMap, version);
 	}
 
 	@DELETE
@@ -491,12 +438,10 @@ public class ServiceInstances {
 	@ApiOperation(value="Delete provided Network instance",response=Response.class)
 	public Response deleteNetworkInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
 			@PathParam("networkInstanceId") String networkInstanceId) {
-		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
+		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
 		instanceIdMap.put("networkInstanceId", networkInstanceId);
-		Response response = serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
-
-		return response;
+		return serviceInstances(request, Action.deleteInstance, instanceIdMap, version);
 	}
 
 	private Response serviceInstances(String requestJSON, Action action, HashMap<String,String> instanceIdMap, String version) {
