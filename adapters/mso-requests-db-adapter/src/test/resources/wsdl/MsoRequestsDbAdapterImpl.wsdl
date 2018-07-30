@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="RequestsDbAdapter" targetNamespace="http://org.onap.so/requestsdb" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://org.onap.so/requestsdb" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+<xs:schema xmlns:tns="http://org.onap.so/requestsdb" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://org.onap.so/requestsdb">
+  <xs:element name="getInfraRequest" type="tns:getInfraRequest"/>
+  <xs:element name="getInfraRequestResponse" type="tns:getInfraRequestResponse"/>
+  <xs:element name="getSiteStatus" type="tns:getSiteStatus"/>
+  <xs:element name="getSiteStatusResponse" type="tns:getSiteStatusResponse"/>
+  <xs:element name="initResourceOperationStatus" type="tns:initResourceOperationStatus"/>
+  <xs:element name="initResourceOperationStatusResponse" type="tns:initResourceOperationStatusResponse"/>
+  <xs:element name="updateInfraRequest" type="tns:updateInfraRequest"/>
+  <xs:element name="updateInfraRequestResponse" type="tns:updateInfraRequestResponse"/>
+  <xs:element name="updateServiceOperationStatus" type="tns:updateServiceOperationStatus"/>
+  <xs:element name="updateServiceOperationStatusResponse" type="tns:updateServiceOperationStatusResponse"/>
+  <xs:complexType name="getInfraRequest">
+    <xs:sequence>
+      <xs:element name="requestId" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getInfraRequestResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:infraActiveRequests"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="infraActiveRequests">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="aaiServiceId" type="xs:string"/>
+      <xs:element minOccurs="0" name="action" type="xs:string"/>
+      <xs:element minOccurs="0" name="aicCloudRegion" type="xs:string"/>
+      <xs:element minOccurs="0" name="aicNodeClli" type="xs:string"/>
+      <xs:element minOccurs="0" name="callBackUrl" type="xs:string"/>
+      <xs:element minOccurs="0" name="clientRequestId" type="xs:string"/>
+      <xs:element minOccurs="0" name="configurationId" type="xs:string"/>
+      <xs:element minOccurs="0" name="configurationName" type="xs:string"/>
+      <xs:element minOccurs="0" name="correlator" type="xs:string"/>
+      <xs:element minOccurs="0" name="endTime" type="xs:long"/>
+      <xs:element minOccurs="0" name="lastModifiedBy" type="xs:string"/>
+      <xs:element minOccurs="0" name="networkId" type="xs:string"/>
+      <xs:element minOccurs="0" name="networkName" type="xs:string"/>
+      <xs:element minOccurs="0" name="networkType" type="xs:string"/>
+      <xs:element minOccurs="0" name="operationalEnvId" type="xs:string"/>
+      <xs:element minOccurs="0" name="operationalEnvName" type="xs:string"/>
+      <xs:element minOccurs="0" name="progress" type="xs:long"/>
+      <xs:element minOccurs="0" name="provStatus" type="xs:string"/>
+      <xs:element minOccurs="0" name="requestAction" type="xs:string"/>
+      <xs:element minOccurs="0" name="requestBody" type="xs:string"/>
+      <xs:element minOccurs="0" name="requestId" type="xs:string"/>
+      <xs:element minOccurs="0" name="requestScope" type="xs:string"/>
+      <xs:element minOccurs="0" name="requestStatus" type="xs:string"/>
+      <xs:element minOccurs="0" name="requestType" type="xs:string"/>
+      <xs:element minOccurs="0" name="requestorId" type="xs:string"/>
+      <xs:element minOccurs="0" name="responseBody" type="xs:string"/>
+      <xs:element minOccurs="0" name="serviceInstanceId" type="xs:string"/>
+      <xs:element minOccurs="0" name="serviceInstanceName" type="xs:string"/>
+      <xs:element minOccurs="0" name="serviceType" type="xs:string"/>
+      <xs:element minOccurs="0" name="source" type="xs:string"/>
+      <xs:element minOccurs="0" name="startTime" type="xs:long"/>
+      <xs:element minOccurs="0" name="statusMessage" type="xs:string"/>
+      <xs:element minOccurs="0" name="tenantId" type="xs:string"/>
+      <xs:element minOccurs="0" name="vfModuleId" type="xs:string"/>
+      <xs:element minOccurs="0" name="vfModuleModelName" type="xs:string"/>
+      <xs:element minOccurs="0" name="vfModuleName" type="xs:string"/>
+      <xs:element minOccurs="0" name="vnfId" type="xs:string"/>
+      <xs:element minOccurs="0" name="vnfName" type="xs:string"/>
+      <xs:element minOccurs="0" name="vnfOutputs" type="xs:string"/>
+      <xs:element minOccurs="0" name="vnfParams" type="xs:string"/>
+      <xs:element minOccurs="0" name="vnfType" type="xs:string"/>
+      <xs:element minOccurs="0" name="volumeGroupId" type="xs:string"/>
+      <xs:element minOccurs="0" name="volumeGroupName" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="msoRequestsDbExceptionBean">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="message" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getSiteStatus">
+    <xs:sequence>
+      <xs:element name="siteName" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getSiteStatusResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="updateInfraRequest">
+    <xs:sequence>
+      <xs:element name="requestId" type="xs:string"/>
+      <xs:element name="lastModifiedBy" type="xs:string"/>
+      <xs:element minOccurs="0" name="statusMessage" type="xs:string"/>
+      <xs:element minOccurs="0" name="responseBody" type="xs:string"/>
+      <xs:element minOccurs="0" name="requestStatus" type="tns:request-status-type"/>
+      <xs:element minOccurs="0" name="progress" type="xs:string"/>
+      <xs:element minOccurs="0" name="vnfOutputs" type="xs:string"/>
+      <xs:element minOccurs="0" name="serviceInstanceId" type="xs:string"/>
+      <xs:element minOccurs="0" name="networkId" type="xs:string"/>
+      <xs:element minOccurs="0" name="vnfId" type="xs:string"/>
+      <xs:element minOccurs="0" name="vfModuleId" type="xs:string"/>
+      <xs:element minOccurs="0" name="volumeGroupId" type="xs:string"/>
+      <xs:element minOccurs="0" name="serviceInstanceName" type="xs:string"/>
+      <xs:element minOccurs="0" name="configurationId" type="xs:string"/>
+      <xs:element minOccurs="0" name="configurationName" type="xs:string"/>
+      <xs:element minOccurs="0" name="vfModuleName" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="updateInfraRequestResponse">
+    <xs:sequence/>
+  </xs:complexType>
+  <xs:complexType name="initResourceOperationStatus">
+    <xs:sequence>
+      <xs:element name="serviceId" type="xs:string"/>
+      <xs:element name="operationId" type="xs:string"/>
+      <xs:element name="operationType" type="xs:string"/>
+      <xs:element name="resourceTemplateUUIDs" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="initResourceOperationStatusResponse">
+    <xs:sequence/>
+  </xs:complexType>
+  <xs:complexType name="updateServiceOperationStatus">
+    <xs:sequence>
+      <xs:element name="serviceId" type="xs:string"/>
+      <xs:element minOccurs="0" name="operationId" type="xs:string"/>
+      <xs:element minOccurs="0" name="operationType" type="xs:string"/>
+      <xs:element minOccurs="0" name="userId" type="xs:string"/>
+      <xs:element minOccurs="0" name="result" type="xs:string"/>
+      <xs:element minOccurs="0" name="operationContent" type="xs:string"/>
+      <xs:element minOccurs="0" name="progress" type="xs:string"/>
+      <xs:element minOccurs="0" name="reason" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="updateServiceOperationStatusResponse">
+    <xs:sequence/>
+  </xs:complexType>
+  <xs:simpleType name="request-status-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="COMPLETE"/>
+      <xs:enumeration value="FAILED"/>
+      <xs:enumeration value="IN_PROGRESS"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="MsoRequestsDbException" nillable="true" type="tns:msoRequestsDbExceptionBean"/>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="getInfraRequest">
+    <wsdl:part name="parameters" element="tns:getInfraRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getSiteStatus">
+    <wsdl:part name="parameters" element="tns:getSiteStatus">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateServiceOperationStatus">
+    <wsdl:part name="parameters" element="tns:updateServiceOperationStatus">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateServiceOperationStatusResponse">
+    <wsdl:part name="parameters" element="tns:updateServiceOperationStatusResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="MsoRequestsDbException">
+    <wsdl:part name="MsoRequestsDbException" element="tns:MsoRequestsDbException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateInfraRequest">
+    <wsdl:part name="parameters" element="tns:updateInfraRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateInfraRequestResponse">
+    <wsdl:part name="parameters" element="tns:updateInfraRequestResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="initResourceOperationStatus">
+    <wsdl:part name="parameters" element="tns:initResourceOperationStatus">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="initResourceOperationStatusResponse">
+    <wsdl:part name="parameters" element="tns:initResourceOperationStatusResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getSiteStatusResponse">
+    <wsdl:part name="parameters" element="tns:getSiteStatusResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getInfraRequestResponse">
+    <wsdl:part name="parameters" element="tns:getInfraRequestResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="RequestsDbAdapter">
+    <wsdl:operation name="getInfraRequest">
+      <wsdl:input name="getInfraRequest" message="tns:getInfraRequest">
+    </wsdl:input>
+      <wsdl:output name="getInfraRequestResponse" message="tns:getInfraRequestResponse">
+    </wsdl:output>
+      <wsdl:fault name="MsoRequestsDbException" message="tns:MsoRequestsDbException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="getSiteStatus">
+      <wsdl:input name="getSiteStatus" message="tns:getSiteStatus">
+    </wsdl:input>
+      <wsdl:output name="getSiteStatusResponse" message="tns:getSiteStatusResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateInfraRequest">
+      <wsdl:input name="updateInfraRequest" message="tns:updateInfraRequest">
+    </wsdl:input>
+      <wsdl:output name="updateInfraRequestResponse" message="tns:updateInfraRequestResponse">
+    </wsdl:output>
+      <wsdl:fault name="MsoRequestsDbException" message="tns:MsoRequestsDbException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="initResourceOperationStatus">
+      <wsdl:input name="initResourceOperationStatus" message="tns:initResourceOperationStatus">
+    </wsdl:input>
+      <wsdl:output name="initResourceOperationStatusResponse" message="tns:initResourceOperationStatusResponse">
+    </wsdl:output>
+      <wsdl:fault name="MsoRequestsDbException" message="tns:MsoRequestsDbException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="updateServiceOperationStatus">
+      <wsdl:input name="updateServiceOperationStatus" message="tns:updateServiceOperationStatus">
+    </wsdl:input>
+      <wsdl:output name="updateServiceOperationStatusResponse" message="tns:updateServiceOperationStatusResponse">
+    </wsdl:output>
+      <wsdl:fault name="MsoRequestsDbException" message="tns:MsoRequestsDbException">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="RequestsDbAdapterSoapBinding" type="tns:RequestsDbAdapter">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getInfraRequest">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getInfraRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getInfraRequestResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="MsoRequestsDbException">
+        <soap:fault name="MsoRequestsDbException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="getSiteStatus">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getSiteStatus">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getSiteStatusResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateInfraRequest">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateInfraRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateInfraRequestResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="MsoRequestsDbException">
+        <soap:fault name="MsoRequestsDbException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="initResourceOperationStatus">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="initResourceOperationStatus">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="initResourceOperationStatusResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="MsoRequestsDbException">
+        <soap:fault name="MsoRequestsDbException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="updateServiceOperationStatus">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateServiceOperationStatus">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateServiceOperationStatusResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="MsoRequestsDbException">
+        <soap:fault name="MsoRequestsDbException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="RequestsDbAdapter">
+    <wsdl:port name="MsoRequestsDbAdapterImplPort" binding="tns:RequestsDbAdapterSoapBinding">
+      <soap:address location="http://localhost:9090/MsoRequestsDbAdapterImplPort"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

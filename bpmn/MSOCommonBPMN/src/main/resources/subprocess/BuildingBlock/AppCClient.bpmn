@@ -8,7 +8,7 @@
     <bpmn:scriptTask id="PreProcessRequest" name="PreProcessRequest" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1wz1rfg</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_14vlkf4</bpmn:outgoing>
-      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def acc = new AppCClient()
 acc.preProcessRequest(execution)]]></bpmn:script>
     </bpmn:scriptTask>
@@ -21,7 +21,7 @@ acc.preProcessRequest(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_14vlkf4</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1j937vi</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.appc.client.lcm.model.Action
-import org.openecomp.mso.bpmn.common.scripts.*
+import org.onap.so.bpmn.common.scripts.*
 def acc = new AppCClient()
 acc.runAppcCommand(execution)]]></bpmn:script>
     </bpmn:scriptTask>
@@ -38,7 +38,7 @@ acc.runAppcCommand(execution)]]></bpmn:script>
       <bpmn:scriptTask id="Task_0a36o0m" name="Process Error" scriptFormat="groovy">
         <bpmn:incoming>SequenceFlow_1wi3avf</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_1gq753e</bpmn:outgoing>
-        <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+        <bpmn:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 
 ExceptionUtil ex = new ExceptionUtil()
 ex.processSubflowsBPMNException(execution)]]></bpmn:script>

@@ -1,0 +1,7 @@
+{
+	"buildingBlock":{
+		"mso-id":"msoId",
+		"bpmn-flow-name":"bbName"
+	},
+	"requestId":"requestId"
+}

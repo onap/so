@@ -1,0 +1,141 @@
+{ 
+  "network-id": "e87e6df5-6f9b-4aa1-a832-68a42c4277eb", 
+  "network-name": "APP-C-24595-T-IST-04AShared_data_vDB_net_1", 
+  "network-type": "CONTRAIL30_BASIC", 
+  "network-role": "DataEvaletNetwork.data", 
+  "network-technology": "contrail", 
+  "is-bound-to-vpn": false, 
+  "service-id": "94508dbd-fe6e-496b-95ef-dd5612b56767", 
+  "network-role-instance": 0, 
+  "resource-version": "1531421309278", 
+  "orchestration-status": "Assigned", 
+  "physical-network-name": "FALSE", 
+  "is-provider-network": false, 
+  "is-shared-network": false, 
+  "is-external-network": false, 
+  "selflink": "restconf/config/GENERIC-RESOURCE-API:services/service/94508dbd-fe6e-496b-95ef-dd5612b56767/service-data/networks/network/e87e6df5-6f9b-4aa1-a832-68a42c4277eb/network-data/network-topology/", 
+  "subnets": { 
+    "subnet": [ 
+      { 
+        "subnet-id": "95069612-23af-4181-bf99-8b2bd6096712", 
+        "subnet-name": "APP-C-24595-T-IST-04AShared_data_vDB_net_1_subnet_1", 
+        "gateway-address": "107.244.64.1", 
+        "network-start-address": "107.244.64.2", 
+        "cidr-mask": "20", 
+        "ip-version": "4", 
+        "orchestration-status": "PendingCreate", 
+        "dhcp-enabled": false, 
+        "dhcp-start": "", 
+        "dhcp-end": "", 
+        "subnet-role": "", 
+        "ip-assignment-direction": "true", 
+        "resource-version": "1531421308312", 
+        "host-routes": { 
+          "host-route": [ 
+            { 
+              "host-route-id": "1047bf36-ca6c-49de-8b7a-8aa7b766a96d", 
+              "route-prefix": "", 
+              "next-hop": "", 
+              "resource-version": "1531421301537" 
+            } 
+          ] 
+        } 
+      } 
+    ] 
+  }, 
+  "relationship-list": { 
+    "relationship": [ 
+      { 
+        "related-to": "service-instance", 
+        "relationship-label": "org.onap.relationships.inventory.ComposedOf", 
+        "related-link": "/aai/v13/business/customers/customer/e433710f-9217-458d-a79d-1c7aff376d89/service-subscriptions/service-subscription/VIRTUAL%20USP/service-instances/service-instance/94508dbd-fe6e-496b-95ef-dd5612b56767", 
+        "relationship-data": [ 
+          { 
+            "relationship-key": "customer.global-customer-id", 
+            "relationship-value": "e433710f-9217-458d-a79d-1c7aff376d89" 
+          }, 
+          { 
+            "relationship-key": "service-subscription.service-type", 
+            "relationship-value": "VIRTUAL USP" 
+          }, 
+          { 
+            "relationship-key": "service-instance.service-instance-id", 
+            "relationship-value": "94508dbd-fe6e-496b-95ef-dd5612b56767" 
+          } 
+        ], 
+        "related-to-property": [ 
+          { 
+            "property-key": "service-instance.service-instance-name", 
+            "property-value": "data_eValet_network_rk_01" 
+          } 
+        ] 
+      }, 
+      { 
+        "related-to": "cloud-region", 
+        "relationship-label": "org.onap.relationships.inventory.Uses", 
+        "related-link": "/aai/v13/cloud-infrastructure/cloud-regions/cloud-region/att-aic/DYH1A", 
+        "relationship-data": [ 
+          { 
+            "relationship-key": "cloud-region.cloud-owner", 
+            "relationship-value": "att-aic" 
+          }, 
+          { 
+            "relationship-key": "cloud-region.cloud-region-id", 
+            "relationship-value": "DYH1A" 
+          } 
+        ], 
+        "related-to-property": [ 
+          { 
+            "property-key": "cloud-region.owner-defined-type", 
+            "property-value": "lcp" 
+          } 
+        ] 
+      }, 
+      { 
+        "related-to": "tenant", 
+        "relationship-label": "org.onap.relationships.inventory.Uses", 
+        "related-link": "/aai/v13/cloud-infrastructure/cloud-regions/cloud-region/att-aic/DYH1A/tenants/tenant/7f3db563322146a688601ade1294a749", 
+        "relationship-data": [ 
+          { 
+            "relationship-key": "cloud-region.cloud-owner", 
+            "relationship-value": "att-aic" 
+          }, 
+          { 
+            "relationship-key": "cloud-region.cloud-region-id", 
+            "relationship-value": "DYH1A" 
+          }, 
+          { 
+            "relationship-key": "tenant.tenant-id", 
+            "relationship-value": "7f3db563322146a688601ade1294a749" 
+          } 
+        ], 
+        "related-to-property": [ 
+          { 
+            "property-key": "tenant.tenant-name", 
+            "property-value": "APP-C-24595-T-IST-04B" 
+          } 
+        ] 
+      }, 
+      { 
+        "related-to": "vpn-binding", 
+        "relationship-label": "org.onap.relationships.inventory.Uses", 
+        "related-link": "/aai/v13/network/vpn-bindings/vpn-binding/13e94b71-3ce1-4988-ab0e-61208fc91f1c", 
+        "relationship-data": [ 
+          { 
+            "relationship-key": "vpn-binding.vpn-id", 
+            "relationship-value": "13e94b71-3ce1-4988-ab0e-61208fc91f1c" 
+          } 
+        ], 
+        "related-to-property": [ 
+          { 
+            "property-key": "vpn-binding.vpn-name", 
+            "property-value": "vMDNS" 
+          }, 
+          { 
+            "property-key": "vpn-binding.vpn-type" 
+          } 
+        ] 
+      } 
+    ] 
+  } 
+}

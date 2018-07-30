@@ -1,0 +1,69 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+package org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class ServiceTopologyOperationInputEntity {
+    @JsonProperty("GENERIC-RESOURCE-API:sdnc-request-header")
+    private SdncRequestHeaderEntity sdncRequestHeader;
+
+    @JsonProperty("GENERIC-RESOURCE-API:request-information")
+    private RequestInformationEntity requestInformation;
+
+    @JsonProperty("GENERIC-RESOURCE-API:service-information")
+    private ServiceInformationEntity serviceInformation;
+
+    @JsonProperty("GENERIC-RESOURCE-API:service-request-input")
+    private ServiceRequestInputEntity serviceRequestInput;
+
+    public SdncRequestHeaderEntity getSdncRequestHeader() {
+        return sdncRequestHeader;
+    }
+
+    public void setSdncRequestHeader(SdncRequestHeaderEntity sdncRequestHeader) {
+        this.sdncRequestHeader = sdncRequestHeader;
+    }
+
+    public RequestInformationEntity getRequestInformation() {
+        return requestInformation;
+    }
+
+    public void setRequestInformation(RequestInformationEntity requestInformation) {
+        this.requestInformation = requestInformation;
+    }
+
+    public ServiceInformationEntity getServiceInformation() {
+        return serviceInformation;
+    }
+
+    public void setServiceInformation(ServiceInformationEntity serviceInformation) {
+        this.serviceInformation = serviceInformation;
+    }
+
+    public ServiceRequestInputEntity getServiceRequestInput() {
+        return serviceRequestInput;
+    }
+
+    public void setServiceRequestInput(ServiceRequestInputEntity serviceRequestInput) {
+        this.serviceRequestInput = serviceRequestInput;
+    }
+}

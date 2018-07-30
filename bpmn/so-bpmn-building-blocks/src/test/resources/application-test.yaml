@@ -1,0 +1,220 @@
+aai:
+  auth: 26AFB797A6A57960D5D718491925C50F77CDC22AC394B3DBA09950D8FD1C0764
+  endpoint: http://localhost:28090
+appc:
+  client:
+    key: iaEMAfjsVsZnraBP
+    response:
+      timeout: '120000'
+    secret: wcivUjsjXzmGFBfxMmyJu9dz
+    poolMembers: localhost:3904,http://localhost:3904
+    service: ueb
+    topic:
+      read:
+        name: APPC-TEST-AMDOCS2
+        timeout: '120000'
+      write: APPC-TEST-AMDOCS1-DEV3
+      sdnc:
+        read: SDNC-LCM-READ
+        write: SDNC-LCM-WRITE
+log:
+  debug:
+    CompleteMsoProcess: 'true'
+    CreateNetworkInstanceInfra: 'true'
+    CreateServiceInstanceInfra: 'true'
+    DeleteNetworkInstanceInfra: 'true'
+    FalloutHandler: 'true'
+    UpdateNetworkInstanceInfra: 'true'
+    VnfAdapterRestV1: 'true'
+    sdncAdapter: 'true'
+    vnfAdapterCreateV1: 'true'
+    vnfAdapterRestV1: 'true'
+mso:
+  adapters:
+    completemsoprocess:
+      endpoint: http://localhost:28090/CompleteMsoProcess
+    db:
+      auth: 757A94191D685FD2092AC1490730A4FC
+      endpoint: http://localhost:28090/dbadapters/RequestsDbAdapter
+      spring:
+        endpoint: http://localhost:28090
+    network:
+      endpoint: http://localhost:28090/networks/NetworkAdapter
+      rest:
+        endpoint: http://localhost:28090/networks/rest/v1/networks
+    openecomp:
+      db:
+        endpoint: http://localhost:28090/dbadapters/RequestsDbAdapter
+    po:
+      auth: 757A94191D685FD2092AC1490730A4FC
+      password: 3141634BF7E070AA289CF2892C986C0B
+    sdnc:
+      endpoint: http://localhost:28090/SDNCAdapter
+      rest:
+        endpoint: http://localhost:28090/SDNCAdapter/v1/sdnc
+      timeout: PT60S
+    tenant:
+      endpoint: http://localhost:28090/tenantAdapterMock
+    vnf:
+      endpoint: http://localhost:28090/vnfs/VnfAdapter
+      rest:
+        endpoint: http://localhost:28090/services/rest/v1/vnfs
+    volume-groups:
+      rest:
+        endpoint: http://localhost:28090/services/rest/v1/volume-groups
+    vnf-async:
+      endpoint: http://localhost:28090/vnfs/VnfAdapterAsync
+    workflow:
+      message:
+        endpoint: http://localhost:28090/workflows/messages/message
+
+  async:
+      core-pool-size: 50
+      max-pool-size: 50
+      queue-capacity: 500
+
+  bpmn:
+    optimisticlockingexception:
+      retrycount: '3'
+  callbackRetryAttempts: '5'
+  catalog:
+    db:
+      endpoint: http://localhost:28090/
+      spring:
+        endpoint: http://localhost:28090
+  correlation:
+        timeout: 60
+  db:
+    auth: Basic YnBlbDptc28tZGItMTUwNyE=
+  default:
+    adapter:
+      namespace: http://org.onap.so
+  healthcheck:
+    log:
+      debug: 'false'
+  infra:
+    customer:
+      id: testCustIdInfra
+  logPath: logs
+  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
+  po:
+    timeout: PT60S
+  request:
+    db:
+      endpoint: http://localhost:28090/
+  rollback: 'true'  
+  service:
+    agnostic:
+      sniro:
+        endpoint: /sniro/api/v2/placement
+        host: http://localhost:28090
+  site-name: localDevEnv
+  sniro:
+    auth: test:testpwd
+    policies:
+      dhv:
+        2vvig: SNIRO.DistanceToLocationPolicy_vhngw,SNIRO.VNFPolicy_vhngatewayprimary1_v1,SNIRO.ResourceInstancePolicy_hngateway,SNIRO.ResourceRegionPolicy_hngateway_v1,SNIRO.VNFPolicy_vhngatewaysecondary1_v1,SNIRO.ZonePolicy_vhngw,SNIRO.PlacementOptimizationPolicy_dhv_v3,SNIRO.VNFPolicy_vhnportal_primary1_v1,SNIRO.ResourceInstancePolicy_vhnportal_v3,SNIRO.ResourceRegionPolicy_vhnportal_v1,SNIRO.VNFPolicy_vhnportalsecondary1_v1,SNIRO.ZonePolicy_vhnportal,SNIRO.DistanceToLocationPolicy_vvig,SNIRO.InventoryGroupPolicy_vvig,SNIRO.VNFPolicy_vvigprimary1_v1,SNIRO.ResourceInstancePolicy_vvig,SNIRO.VNFPolicy_vvigsecondary1_v1
+        4vvig: SNIRO.DistanceToLocationPolicy_vhngw,SNIRO.VNFPolicy_vhngatewayprimary1_v1,SNIRO.ResourceInstancePolicy_hngateway,SNIRO.ResourceRegionPolicy_hngateway_v1,SNIRO.VNFPolicy_vhngatewaysecondary1_v1,SNIRO.ZonePolicy_vhngw,SNIRO.PlacementOptimizationPolicy_dhv_v3,SNIRO.VNFPolicy_vhnportal_primary1_v1,SNIRO.ResourceInstancePolicy_vhnportal_v3,SNIRO.ResourceRegionPolicy_vhnportal_v1,SNIRO.VNFPolicy_vhnportalsecondary1_v1,SNIRO.ZonePolicy_vhnportal,SNIRO.VNFPolicy_vvigprimary2_v1,SNIRO.VNFPolicy_vvigsecondary2_v1,SNIRO.DistanceToLocationPolicy_vvig,SNIRO.InventoryGroupPolicy_vvig,SNIRO.VNFPolicy_vvigprimary1_v1,SNIRO.ResourceInstancePolicy_vvig,SNIRO.VNFPolicy_vvigsecondary1_v1
+    timeout: PT30M
+  workflow:    
+    default:
+      aai:
+        cloud-region:
+          version: '9'
+        generic-vnf:
+          version: '9'
+        v8:
+          customer:
+            uri: /aai/v8/business/customers/customer
+          generic-query:
+            uri: /aai/v8/search/generic-query
+          l3-network:
+            uri: /aai/v8/network/l3-networks/l3-network
+          network-policy:
+            uri: /aai/v8/network/network-policies/network-policy
+          nodes-query:
+            uri: /aai/v8/search/nodes-query
+          route-table-reference:
+            uri: /aai/v8/network/route-table-references/route-table-reference
+          tenant:
+            uri: /aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/tenants/tenant
+          vce:
+            uri: /aai/v8/network/vces/vce
+          vpn-binding:
+            uri: /aai/v8/network/vpn-bindings/vpn-binding
+        v9:
+          cloud-region:
+            uri: /aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic
+          generic-vnf:
+            uri: /aai/v9/network/generic-vnfs/generic-vnf
+    global:
+      default:
+        aai:
+          namespace: http://org.openecomp.aai.inventory/
+          version: '8'
+    message:
+      endpoint: http://localhost:28080/mso/WorkflowMesssage
+    notification:
+      name: GenericNotificationService
+    sdncadapter:
+      callback: http://localhost:28080/mso/SDNCAdapterCallbackService
+    vnfadapter:
+      create:
+        callback: http://localhost:28080/mso/vnfAdapterNotify
+      delete:
+        callback: http://localhost:28080/mso/vnfAdapterNotify
+      query:
+        callback: http://localhost:28080/mso/services/VNFAdapterQuerCallbackV1
+      rollback:
+        callback: http://localhost:28080/mso/vnfAdapterNotify
+  global:
+    dmaap:
+      username: dmaapUsername
+      password: dmaapPassword
+      host: http://localhost:28090
+      publisher:
+        topic: com.att.mso.asyncStatusUpdate
+policy:
+  auth: Basic dGVzdHBkcDphbHBoYTEyMw==
+  client:
+    auth: Basic bTAzNzQzOnBvbGljeVIwY2sk
+  endpoint: https://localhost:8081/pdp/api/
+  environment: TEST
+sniro:
+  conductor:
+    enabled: true
+    host: http://localhost:8446
+    uri: /v1/release-orders
+    headers.auth: Basic dGVzdDp0ZXN0cHdk
+  manager:
+    host: http://localhost:8446
+    uri: /sniro/api/placement/v2
+    headers.auth: Basic dGVzdDp0ZXN0cHdk
+    headers.patchVersion: 1
+    headers.minorVersion: 1
+    headers.latestVersion: 2
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3307/camundabpmn
+    username: root
+    password: password
+    driver-class-name: org.mariadb.jdbc.Driver
+    initialize: true
+  jpa:
+    generate-ddl: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      enable-lazy-load-no-trans: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+mariaDB4j:
+  dataDir:
+  port: 3307
+  databaseName: camundabpmn
+camunda:
+  bpm:
+    metrics:
+      enabled: false
+      db-reporter-activate: false

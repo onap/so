@@ -1,0 +1,12 @@
+{
+   
+  "modelCustomizationId" : "f",   
+   "vfModuleId" : "a",
+   "vfModuleName" : "b",
+   "modelInvariantId" : "g",
+   "modelVersionId" : "h",
+   "orchestrationStatus" : "Assigned",
+   "personaModelVersion" : "g",
+   "isBaseVfModule" : false
+   
+}

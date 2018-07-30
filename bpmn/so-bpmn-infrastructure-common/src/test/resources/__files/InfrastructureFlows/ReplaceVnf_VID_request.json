@@ -1,0 +1,49 @@
+{
+"requestDetails": {
+"modelInfo": {
+"modelType": "vnf",
+"modelInvariantUuid": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "fe6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelName": "vSAMP12",
+"modelVersion": "1.0",
+"modelCustomizationUuid": "MODEL-ID-1234"
+},
+"cloudConfiguration": {
+"lcpCloudRegionId": "mdt1",
+"tenantId": "88a6ca3ee0394ade9403f075db23167e"
+},
+"requestInfo": {
+"instanceName": "STMTN",
+"instanceId": "a27ce5a9-29c4-4c22-a017-6615ac73c721",
+"source": "VID",
+"suppressRollback": true
+},
+"relatedInstanceList": [
+{
+"relatedInstance": {
+"instanceId": "MIS%2F1604%2F0026%2FSW_INTERNET",
+"modelInfo": {
+"modelType": "service",
+"modelInvariantUuid": "995256d2-5a33-55df-13ab-12abad84e7ff",
+"modelUuid": "ab6478e5-ea33-3346-ac12-ab121484a3fe",
+"modelName": "ServicevSAMP12",
+"modelVersion": "1.0"
+}
+}
+}
+],
+"requestParameters": {
+"usePreload": false,
+"userParams" : [
+	{
+		"name" : "someUserParam",
+		"value" : "someValue"
+	},
+	{ 
+		"name": "sgi_protected_subnet_id", 
+		"value": "thisissomefakevalue" 
+	}
+]
+}
+}
+}

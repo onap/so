@@ -1,0 +1,21 @@
+{
+  "SDNCServiceRequest": {
+    "requestInformation": {
+      "requestId":  "0d883b7f-dd34-4e1b-9ed5-341d33052360",
+      "source":  "MSO",
+      "notificationUrl":  "null"
+    },
+    "serviceInformation": {
+      "serviceType":  "vRRaaS",
+      "serviceInstanceId":  "5dad9aac-6e05-4bdb-a8ec-4f3cd718c5c6",
+      "subscriberName":  "MSO-MUX-User",
+      "subscriberGlobalId":  "MSO-MUX-User"
+    },
+    "bpNotificationUrl":  "http://localhost:18080/mso/WorkflowMessage/SDNCAResponse/0d883b7f-dd34-4e1b-9ed5-341d33052360-1511808197479",
+    "sdncRequestId":  "0d883b7f-dd34-4e1b-9ed5-341d33052360-1511808197479",
+    "sdncService":  "infra",
+    "sdncOperation":  "service-topology-infra-assign-operation",
+    "sdncServiceDataType":  "XML",
+    "sdncServiceData":  "<infra-assign-information> <vnf-host-name>vRR-Internal-Network-L2</vnf-host-name> <aic-clli>MTJWNJA4LCP</aic-clli> <cloud-region-id>RegionOne</cloud-region-id> <tenant>22eb191dd41a4f3c9be370fc638322f4</tenant> <vnf-id>6d2e2469-8708-47c3-a0d4-73fa28a8a50b</vnf-id> <vnf-license-information> <vnf-license-details> <service-provider-part-number>no</service-provider-part-number> </vnf-license-details> </vnf-license-information> <service-ecomp-model-information> <model-invariant-uuid>d6c7c582-cf7f-4542-a19e-5fa7e7d89bf2</model-invariant-uuid> <model-version>1.0</model-version> <model-name>vRR_AIC30_1702-0505-SRVS</model-name> <model-uuid>5add3a0f-5379-4800-b87a-430ff45f8793</model-uuid> </service-ecomp-model-information> <vnf-ecomp-model-information> <model-invariant-uuid>532ff79f-fbe8-4c88-aecf-4fe885b93b47</model-invariant-uuid> <vnf-model-customization-uuid>87056771-4d7c-47d0-b5df-6cf02e227458</vnf-model-customization-uuid> <model-version>1.0</model-version> <model-name>vRR_AIC30_1702-0505-VSP</model-name> <model-uuid>978ac869-b506-41d0-9125-9d0e95097c29</model-uuid> </vnf-ecomp-model-information> <vf-module-ecomp-model-information> <model-invariant-uuid>4e5868c5-8321-492b-882f-e4476c878746</model-invariant-uuid> <vf-module-model-customization-uuid-list> <vf-module-model-customization-uuid>2badc305-b2c0-4e2b-b03a-4e5d22079b30</vf-module-model-customization-uuid> </vf-module-model-customization-uuid-list> <vf-module-model-customization-uuid-list> <vf-module-model-customization-uuid>2badc305-b2c0-4e2b-b03a-4e5d22079b31</vf-module-model-customization-uuid> </vf-module-model-customization-uuid-list> <model-uuid>e1b1819f-a9d1-4c27-b419-d98a2500fc47</model-uuid> <model-version>1</model-version> <model-name>Vrr_Internal_Networks_module-1</model-name> </vf-module-ecomp-model-information> </infra-assign-information>"
+  }
+}

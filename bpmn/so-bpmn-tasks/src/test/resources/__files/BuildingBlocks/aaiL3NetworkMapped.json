@@ -1,0 +1,20 @@
+{
+  "networkId": "networkId",
+  "networkName": "networkName",
+  "neutronNetworkId": "neutronNetworkId",
+  "isBoundToVpn": false,
+  "serviceId": "serviceId",
+  "networkRoleInstance": 0,
+  "orchestrationStatus": "Assigned",
+  "heatStackId": "heatStackId",
+  "contrailNetworkFqdn": "contrailNetworkFqdn",
+  "modelInvariantId": "modelInvariantUUID",
+  "modelVersionId": "modelUUID",
+  "modelCustomizationId": "modelCustomizationUUID",
+  "physicalNetworkName": "physicalNetworkName",
+  "isProviderNetwork": false,
+  "isSharedNetwork": false,
+  "isExternalNetwork": false,
+  "selflink": "selflink",
+  "operationalStatus": "operationalStatus"
+}

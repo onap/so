@@ -1,0 +1,3 @@
+<ns2:deleteNetworkResponse xmlns:ns2="http://org.onap.so/network">
+	<networkDeleted>true</networkDeleted>
+</ns2:deleteNetworkResponse>

@@ -1,0 +1,36 @@
+{
+    "serviceName": "service1104",
+    "serviceInvariantUUID": "ebcef23d-2ca3-474f-9381-3a15709538f5",
+    "serviceUUID": "9825d984-dfb0-4d2a-b5bd-3abcf477c4dc",
+    "serviceVersion": "1.0",
+    "serviceArtifacts": 
+    [{
+		"artifactName": "service-Service1104-csar.csar",
+		"artifactType": "TOSCA_CSAR",
+		"artifactURL": "service-Service1104-csar.csar",
+		"artifactChecksum": "ZDc1MTcxMzk4ODk4N2U5MzMxOTgwMzYzZTI0MTg5Y2U\u003d",
+		"artifactDescription": "TOSCA representation of the asset",
+		"artifactTimeout": 0,
+		"artifactUUID": "123456-35a8-467f-b440-d0f6226b3516",
+		"artifactVersion": "5.0"
+    }],
+    "resources": 
+    [	
+        {
+            "resourceInstanceName": "testALTS 0",
+            "resourceInvariantUUID": "51c7fb99-642a-4c02-8d8d-e206fc170b6d",
+            "resourceCustomizationUUID": "364a5635-f63b-45f3-9c3d-14993d996e35", 
+            "resourceName": "resourceName-1",
+            "resourceType": "VF",
+            "resourceUUID": "a81db5a3-7c23-4376-8c42-ec610aaea135",
+            "resourceVersion": "2.0",
+            "category": "Allotted Resource",
+            "subcategory": "Common Network Resources",
+            "artifacts": 
+            []
+        }
+        
+    ],
+    "serviceDescription": "sdfsf",
+    "distributionID": "35120a87-1f82-4276-9735-f6de5a244d65"
+}

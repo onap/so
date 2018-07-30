@@ -7,7 +7,7 @@
     <bpmn2:scriptTask id="intialization" name="Intialization" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 GenericGetVnf genericGetVnf = new GenericGetVnf ()
 genericGetVnf.preProcessRequest(execution)
 ]]></bpmn2:script>
@@ -26,7 +26,7 @@ genericGetVnf.preProcessRequest(execution)
     <bpmn2:scriptTask id="getVnfByName" name="GET Vnf By Name" scriptFormat="groovy">
       <bpmn2:incoming>noVnfId</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 GenericGetVnf genericGetVnf = new GenericGetVnf()
 genericGetVnf.getVnfByName(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -40,7 +40,7 @@ genericGetVnf.getVnfByName(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="getGenericVnf" name="GET Vnf By&#xD;&#xA;Id" scriptFormat="groovy">
       <bpmn2:incoming>haveVnfId</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 GenericGetVnf genericGetVnf = new GenericGetVnf()
 genericGetVnf.getVnfById(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -53,7 +53,7 @@ genericGetVnf.getVnfById(execution)]]></bpmn2:script>
       <bpmn2:scriptTask id="proccessBPMNError" name="Process Error" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_11</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_12</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 
 ExceptionUtil ex = new ExceptionUtil()
 ex.processSubflowsBPMNException(execution)]]></bpmn2:script>
@@ -68,7 +68,7 @@ ex.processSubflowsBPMNException(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="toggleSuccess" name="Toggle Success Indicator" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 GenericGetVnf genericGetVnf = new GenericGetVnf()
 genericGetVnf.setSuccessIndicator(execution, true)
 ]]></bpmn2:script>

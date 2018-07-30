@@ -1,0 +1,82 @@
+{
+	"requestInfo": {
+		"requestId": "random uuid",
+		"requestorId": "userid",
+		"sourceSystem": "VID",
+		"suppressRollback": false,
+        "seflLink":"http://getorchestrationrequest/request-id"
+	},
+	"statusInfo": {
+		"result": "COMPLETED/FAILED/ManualFallout",
+		"statusMessage": "MESSSAGE",
+		"errorCode": "5000"
+	},
+	"serviceInstance": {
+		"serviceInstanceId": "UUID",
+		"modelInfo": {
+			"modelInvariantId": "c8b07c20-02bc-4ecc-bd48-e27eab8617ae",
+			"modelInvariantUuid": "c8b07c20-02bc-4ecc-bd48-e27eab8617ae",
+			"modelName": "0503_Test",
+			"modelType": "service",
+			"modelUuid": "b6f8ed8f-a3be-4f38-8a60-c74fcaaea8ba",
+			"modelVersion": "1.0",
+			"modelVersionId": "b6f8ed8f-a3be-4f38-8a60-c74fcaaea8ba"
+		}
+	},
+	"resourcesOrchestrated": {
+		"serviceInstance": {
+			"serviceInstanceId": "UUID",
+			"orchestrationStatus": "Active",
+			"modelInfo": {
+				"modelInvariantId": "c8b07c20-02bc-4ecc-bd48-e27eab8617ae",
+				"modelInvariantUuid": "c8b07c20-02bc-4ecc-bd48-e27eab8617ae",
+				"modelName": "0503_Test",
+				"modelType": "service",
+				"modelUuid": "b6f8ed8f-a3be-4f38-8a60-c74fcaaea8ba",
+				"modelVersion": "1.0",
+				"modelVersionId": "b6f8ed8f-a3be-4f38-8a60-c74fcaaea8ba"
+			},
+			"actionsTaken": [
+				"assign",
+				"create",
+				"activate"
+			]
+		},
+		"genericVnf": {
+			"genericVnfId": "UUID",
+			"orchestrationStatus": "Active",
+			"modelInfo": {
+				"modelInvariantId": "c8b07c20-02bc-4ecc-bd48-e27eab8617ae",
+				"modelInvariantUuid": "c8b07c20-02bc-4ecc-bd48-e27eab8617ae",
+				"modelName": "0503_Test",
+				"modelType": "service",
+				"modelUuid": "b6f8ed8f-a3be-4f38-8a60-c74fcaaea8ba",
+				"modelVersion": "1.0",
+				"modelVersionId": "b6f8ed8f-a3be-4f38-8a60-c74fcaaea8ba"
+			},
+			"actionsTaken": [
+				"assign",
+				"create",
+				"activate"
+			]
+		},
+		"vfModule": {
+			"vfModuleId": "UUID",
+			"orchestrationStatus": "Active",
+			"modelInfo": {
+				"modelInvariantId": "c8b07c20-02bc-4ecc-bd48-e27eab8617ae",
+				"modelInvariantUuid": "c8b07c20-02bc-4ecc-bd48-e27eab8617ae",
+				"modelName": "0503_Test",
+				"modelType": "service",
+				"modelUuid": "b6f8ed8f-a3be-4f38-8a60-c74fcaaea8ba",
+				"modelVersion": "1.0",
+				"modelVersionId": "b6f8ed8f-a3be-4f38-8a60-c74fcaaea8ba"
+			},
+			"actionsTaken": [
+				"assign",
+				"create",
+				"activate"
+			]
+		}
+	}
+}

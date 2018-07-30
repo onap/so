@@ -1,0 +1,26 @@
+{
+	"createVfModuleResponse": {
+		"messageId": "62265093-277d-4388-9ba6-449838ade586-1517252396874",
+		"vnfId": "c93e0d34-5b63-45de-bbae-b0fe49dd3bd9",
+		"vfModuleId": "1d48aaec-b7f3-4c24-ba4a-4e798ed3223c",
+		"vfModuleStackId": "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId",
+		"vfModuleCreated": true,
+		"vfModuleOutputs": {
+			
+		},
+		"rollback": {
+			"vnfId": "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId",
+			"vfModuleId": "1d48aaec-b7f3-4c24-ba4a-4e798ed3223c",
+			"vfModuleStackId": "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId",
+			"vfModuleCreated": true,
+			"tenantId": "0422ffb57ba042c0800a29dc85ca70f8",
+			"cloudSiteId": "mtn13",
+			"msoRequest": {
+				"requestId": "62265093-277d-4388-9ba6-449838ade586",
+				"serviceInstanceId": "4147e06f-1b89-49c5-b21f-4faf8dc9805a"
+			},
+			"messageId": "62265093-277d-4388-9ba6-449838ade586-1517252396874",
+			"mode": "HEAT"
+		}
+	}
+}

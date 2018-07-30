@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <createVfModuleRequest>
+        <backout>true</backout>
+        <baseVfModuleId />
+        <baseVfModuleStackId />
+        <cloudSiteId>RegionOne</cloudSiteId>
+        <failIfExists>true</failIfExists>
+        <messageId>8892cffa-3514-45d4-b2b0-0fde9a96e323-1511813289000</messageId>
+        <modelCustomizationUuid>2badc305-b2c0-4e2b-b03a-4e5d22079b30</modelCustomizationUuid>
+        <msoRequest>
+            <requestId>8892cffa-3514-45d4-b2b0-0fde9a96e323</requestId>
+            <serviceInstanceId>5dad9aac-6e05-4bdb-a8ec-4f3cd718c5c6</serviceInstanceId>
+        </msoRequest>
+        <notificationUrl>http://localhost:18080/mso/WorkflowMessage/VNFAResponse/8892cffa-3514-45d4-b2b0-0fde9a96e323-1511813289000</notificationUrl>
+        <requestType />
+        <skipAAI>true</skipAAI>
+        <synchronous>false</synchronous>
+        <tenantId>22eb191dd41a4f3c9be370fc638322f4</tenantId>
+        <vfModuleId>dbfad358-de02-4370-a0aa-c6651a5848b8</vfModuleId>
+        <vfModuleName>vRR-Internal-Network-L2</vfModuleName>
+        <vfModuleParams>
+            <aic_clli>MTJWNJA4LCP</aic_clli>
+            <availability_zone_0>nova</availability_zone_0>
+            <int_ctl_net_name_1>VRR-STMTN5MMSC20-INT1</int_ctl_net_name_1>
+            <int_ctl_net_name_2>VRR-STMTN5MMSC20-INT2</int_ctl_net_name_2>
+            <svc_provider_part_number>no</svc_provider_part_number>
+            <vnf_id>6d2e2469-8708-47c3-a0d4-73fa28a8a50b</vnf_id>
+            <vnf_name>STMTN5MMSC20</vnf_name>
+            <vrr_flavor_name>ns.c16r32d128.v1</vrr_flavor_name>
+            <vrr_image_name>MDT17</vrr_image_name>
+            <vrr_int_ctl_forwarding>12</vrr_int_ctl_forwarding>
+            <vrr_int_ctl_len_1>24</vrr_int_ctl_len_1>
+            <vrr_int_ctl_len_2>24</vrr_int_ctl_len_2>
+        </vfModuleParams>
+        <vfModuleType>Vrr_Internal_Networks_module-1</vfModuleType>
+        <vnfId>6d2e2469-8708-47c3-a0d4-73fa28a8a50b</vnfId>
+        <vnfType>STMTN5MMSC20</vnfType>
+        <vnfVersion>1.0</vnfVersion>
+        <volumeGroupId />
+        <volumeGroupStackId />
+    </createVfModuleRequest>

@@ -1,0 +1,20 @@
+{
+    "stack": {
+    	"id": "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001",
+    	"links" : [
+    		{
+    			"href" : "port",
+    			"rel" : "self"
+			}
+		],
+		"stack_name": "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001",
+		"stack_status": "UPDATE_COMPLETE",
+		"outputs": [
+		 	{
+			"output_key": "output name",
+			"output_value": "output value",
+			"description": "output description"
+			}
+		]
+	}
+}

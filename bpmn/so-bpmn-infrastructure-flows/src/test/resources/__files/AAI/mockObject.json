@@ -1,0 +1,10 @@
+{
+	"id" : "something",
+	"resource-version" : "1234",
+	"plural" : {
+		"singular" : [{
+			"id" : "something2",
+			"resource-version" : "5678"
+		}]
+	}
+}

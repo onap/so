@@ -1,0 +1,22 @@
+{
+  "requestDetails": {
+      "modelInfo": {
+         "modelType": "service",
+         "modelName": "Test",
+         "modelVersion": "1.0"
+      },
+      "requestInfo": {
+          "source": "VID",
+          "requestorId": "xxxxxx"
+      },
+      "requestParameters": {
+          "aLaCarte": true,
+          "userParams": [
+            {
+              "name": "someUserParam",
+              "value": "someValue"
+            } 
+          ]
+      }
+  }
+}

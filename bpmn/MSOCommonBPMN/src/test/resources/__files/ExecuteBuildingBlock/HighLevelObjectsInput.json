@@ -1,0 +1,19 @@
+{
+	"customer": {
+		"global-customer-id": "globalCustomerId",
+		"subscriber-name": "subscriberName",
+		"subscriber-type": "subscriberType",
+		"service-subscription": {
+			"service-type": "subscriptionServiceType"
+		}
+	},
+	"project": {
+		"project-name": "projectName"
+	},
+	"owningEntity": {
+		"owning-entity-id": "owningEntityId",
+		"owning-entity-name": "owningEntityName"
+	},
+	"platform": null,
+	"lineOfBusiness": null
+}

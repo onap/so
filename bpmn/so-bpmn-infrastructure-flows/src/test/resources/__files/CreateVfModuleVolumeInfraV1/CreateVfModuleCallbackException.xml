@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<volumeGroupException>    
+	<messageId>{{MESSAGE-ID}}</messageId>
+	<category>INTERNAL</category>
+	<message>Exception during create VF Create VF Module: Unable to determine specific VF Module Type: Nimbus_LU2_PXMC_Svc/PXMC_09_20_2016_v2 3::Pxmc09202016V2..pxmc_base.yaml..module-2 with version = 3.0</message>    
+	<rolledBack>true</rolledBack>
+</volumeGroupException>

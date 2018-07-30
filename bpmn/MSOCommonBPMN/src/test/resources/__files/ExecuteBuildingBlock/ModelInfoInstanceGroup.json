@@ -1,0 +1,10 @@
+{
+	"modelUUID":"modelUUID",
+	"modelInvariantUUID":"modelInvariantUUID",
+	"model-uuid":"modelUUID",
+	"model-invariant-uuid":"modelInvariantUUID",
+	"type":"VNFC",
+	"instance-group-role":"instanceGroupRole",
+	"function": "function",
+	"description": "description"
+}

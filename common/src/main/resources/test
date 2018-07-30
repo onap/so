@@ -1,0 +1,159 @@
+
+   1 <configuration debug="false" scan="true" scanPeriod="3 seconds">
+   2     <!--<jmxConfigurator /> -->
+   3     <!-- directory path for all other type logs -->
+   4     <property name="logDir" value="/var/log/onap" />
+   5     <property name="componentName" value="logging-demo"></property>
+   6     <property name="subComponentName" value="demo"></property>
+   7     <property name="logDirectory" value="${logDir}/${componentName}/${subComponentName}" />   8    
+   9     <property name="generalLogName" value="error" />
+  10     <property name="metricsLogName" value="metric" />
+  11     <property name="auditLogName" value="audit" />
+  12     <property name="debugLogName" value="debug" />
+  13     <property name="queueSize" value="256" />
+  14     <property name="maxFileSize" value="50MB" />
+  15     <property name="maxHistory" value="30" />
+  16     <property name="totalSizeCap" value="10GB" />
+  17     <property name="pattern" value="%nopexception%logger|%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX,UTC}|%level|%replace(%replace(%replace(%message){'\t','\\\\t'}){'\n','\\\\n'}){'|','\\\\|'}|%replace(%replace(%replace(%mdc){'\t','\\\\t'}){'\n','\\\\n'}){'|','\\\\|'}|%replace(%replace(%replace(%rootException){'\t','\\\\t'}){'\n','\\\\n'}){'|','\\\\|'}|%replace(%replace(%replace(%marker){'\t','\\\\t'}){'\n','\\\\n'}){'|','\\\\|'}|%thread|%n"/>
+  18     <!-- Example evaluator filter applied against console appender -->
+  19     <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+  20         <encoder>
+  21             <pattern>${pattern}</pattern>
+  22         </encoder>
+  23     </appender>
+  24     <!-- ============================================================================ -->
+  25     <!-- EELF Appenders -->
+  26     <!-- ============================================================================ -->
+  27     <!-- The EELFAppender is used to record events to the general application 
+  28                 log -->
+  29     <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="EELF">
+  30         <file>${logDirectory}/${generalLogName}.log</file>
+  31         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+  32             <fileNamePattern>${logDirectory}/${generalLogName}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+  33             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+  34                 <maxFileSize>${maxFileSize}</maxFileSize>
+  35             </timeBasedFileNamingAndTriggeringPolicy>
+  36             <maxHistory>${maxHistory}</maxHistory>
+  37             <totalSizeCap>${totalSizeCap}</totalSizeCap>
+  38         </rollingPolicy>
+  39         <encoder>
+  40             <pattern>${pattern}</pattern>
+  41         </encoder>
+  42     </appender>
+  43     <appender class="ch.qos.logback.classic.AsyncAppender" name="asyncEELF">
+  44         <!-- deny all events with a level below INFO, that is TRACE and DEBUG -->
+  45         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+  46             <level>INFO</level>
+  47         </filter>
+  48         <queueSize>${queueSize}</queueSize>
+  49         <appender-ref ref="EELF" />
+  50     </appender>
+  51     <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="EELFAudit">
+  52         <file>${logDirectory}/${auditLogName}.log</file>
+  53         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+  54             <fileNamePattern>${logDirectory}/${auditLogName}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+  55             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+  56                 <maxFileSize>${maxFileSize}</maxFileSize>
+  57             </timeBasedFileNamingAndTriggeringPolicy>
+  58             <maxHistory>${maxHistory}</maxHistory>
+  59             <totalSizeCap>${totalSizeCap}</totalSizeCap>
+  60         </rollingPolicy>
+  61         <encoder>
+  62             <pattern>${pattern}</pattern>
+  63         </encoder>
+  64     </appender>
+  65     <appender class="ch.qos.logback.classic.AsyncAppender" name="asyncEELFAudit">
+  66         <queueSize>${queueSize}</queueSize>
+  67         <appender-ref ref="EELFAudit" />
+  68     </appender>
+  69     <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="EELFMetrics">
+  70         <file>${logDirectory}/${metricsLogName}.log</file>
+  71         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+  72             <fileNamePattern>${logDirectory}/${metricsLogName}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+  73             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+  74                 <maxFileSize>${maxFileSize}</maxFileSize>
+  75             </timeBasedFileNamingAndTriggeringPolicy>
+  76             <maxHistory>${maxHistory}</maxHistory>
+  77             <totalSizeCap>${totalSizeCap}</totalSizeCap>
+  78         </rollingPolicy>
+  79         <encoder>
+  80             <pattern>${pattern}</pattern>
+  81         </encoder>
+  82     </appender>
+  83     <appender class="ch.qos.logback.classic.AsyncAppender" name="asyncEELFMetrics">
+  84         <queueSize>${queueSize}</queueSize>
+  85         <appender-ref ref="EELFMetrics" />
+  86     </appender>
+  87     <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="EELFDebug">
+  88         <file>${logDirectory}/${debugLogName}.log</file>
+  89         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+  90             <fileNamePattern>${logDirectory}/${debugLogName}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+  91             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+  92                 <maxFileSize>${maxFileSize}</maxFileSize>
+  93             </timeBasedFileNamingAndTriggeringPolicy>
+  94             <maxHistory>${maxHistory}</maxHistory>
+  95             <totalSizeCap>${totalSizeCap}</totalSizeCap>
+  96         </rollingPolicy>
+  97         <encoder>
+  98             <pattern>${pattern}</pattern>
+  99         </encoder>
+ 100     </appender>
+ 101     <appender class="ch.qos.logback.classic.AsyncAppender" name="asyncEELFDebug">
+ 102         <queueSize>${queueSize}</queueSize>
+ 103         <appender-ref ref="EELFDebug" />
+ 104         <includeCallerData>true</includeCallerData>
+ 105     </appender>
+ 106     <!-- ============================================================================ -->
+ 107     <!-- EELF loggers -->
+ 108     <!-- ============================================================================ -->
+ 109     <logger additivity="false" level="info" name="com.att.eelf">
+ 110         <appender-ref ref="asyncEELF" />
+ 111         <appender-ref ref="asyncEELFDebug" />
+ 112     </logger>
+ 113     <logger additivity="false" level="info" name="com.att.eelf.security">
+ 114         <appender-ref ref="asyncEELFSecurity" />
+ 115     </logger>
+ 116     <logger additivity="false" level="info" name="com.att.eelf.perf">
+ 117         <appender-ref ref="asyncEELFPerformance" />
+ 118     </logger>
+ 119     <logger additivity="false" level="info" name="com.att.eelf.server">
+ 120         <appender-ref ref="asyncEELFServer" />
+ 121     </logger>
+ 122     <logger additivity="false" level="info" name="com.att.eelf.policy">
+ 123         <appender-ref ref="asyncEELFPolicy" />
+ 124     </logger>
+ 125     <logger additivity="false" level="info" name="com.att.eelf.audit">
+ 126         <appender-ref ref="asyncEELFAudit" />
+ 127     </logger>
+ 128     <logger additivity="false" level="info" name="com.att.eelf.metrics">
+ 129         <appender-ref ref="asyncEELFMetrics" />
+ 130     </logger>
+ 131     <!-- Spring related loggers -->
+ 132     <logger level="WARN" name="org.springframework" />
+ 133     <logger level="WARN" name="org.springframework.beans" />
+ 134     <logger level="WARN" name="org.springframework.web" />
+ 135     <logger level="WARN" name="com.blog.spring.jms" />
+ 136     <logger level="INFO" name="com.att" />
+ 137     <!-- Other Loggers that may help troubleshoot -->
+ 138     <logger level="WARN" name="net.sf" />
+ 139     <logger level="WARN" name="org.apache.commons.httpclient" />
+ 140     <logger level="WARN" name="org.apache.commons" />
+ 141     <logger level="WARN" name="org.apache.coyote" />
+ 142     <logger level="WARN" name="org.apache.jasper" />
+ 143     <!-- Camel Related Loggers (including restlet/servlet/jaxrs/cxf logging. 
+ 144                 May aid in troubleshooting) -->
+ 145     <logger level="WARN" name="org.apache.camel" />
+ 146     <logger level="WARN" name="org.apache.cxf" />
+ 147     <logger level="WARN" name="org.apache.camel.processor.interceptor" />
+ 148     <logger level="WARN" name="org.apache.cxf.jaxrs.interceptor" />
+ 149     <logger level="WARN" name="org.apache.cxf.service" />
+ 150     <logger level="WARN" name="org.restlet" />
+ 151     <logger level="WARN" name="org.apache.camel.component.restlet" />
+ 152     <!-- logback internals logging -->
+ 153     <logger level="WARN" name="ch.qos.logback.classic" />
+ 154     <logger level="WARN" name="ch.qos.logback.core" />
+ 155     <root>
+ 156         <appender-ref ref="asyncEELF" />
+ 157         <!-- <appender-ref ref="asyncEELFDebug" /> -->
+ 158     </root>
+ 159 </configuration>

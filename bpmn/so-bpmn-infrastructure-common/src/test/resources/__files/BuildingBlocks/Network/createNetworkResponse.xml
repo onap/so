@@ -1,0 +1,31 @@
+<createNetworkResponse>
+   <messageId>d4515ea9-2852-4d3a-b424-9d7b6cf69d8e</messageId>
+   <networkCreated>true</networkCreated>
+   <networkFqdn>default-domain:ECOMP_MSO_DND:Dev_Bindings_1802_1311</networkFqdn>
+   <networkId>8d35a433-c1db-4d54-a611-6de10aeb76f9</networkId>
+   <networkStackId>Dev_Bindings_1802_1311/ecf7e197-72db-452e-9eda-253cb642c9b7</networkStackId>
+   <neutronNetworkId>b6a7820c-4734-4ef2-8a73-a22c824423fa</neutronNetworkId>
+   <rollback>
+      <cloudId>mtn6</cloudId>
+      <modelCustomizationUuid>f1fc12e8-afe4-4716-954d-ed4d21a480ad</modelCustomizationUuid>
+      <msoRequest>
+         <requestId>3d35ca0c-2da5-4f60-84d9-3e005de335c0</requestId>
+         <serviceInstanceId>f1d1c7da-fc42-4c31-866e-cfe963e55723</serviceInstanceId>
+      </msoRequest>
+      <networkCreated>true</networkCreated>
+      <networkStackId>Dev_Bindings_1802_1311/ecf7e197-72db-452e-9eda-253cb642c9b7</networkStackId>
+      <networkType>CONTRAIL30_BASIC</networkType>
+      <neutronNetworkId>b6a7820c-4734-4ef2-8a73-a22c824423fa</neutronNetworkId>
+      <tenantId>0422ffb57ba042c0800a29dc85ca70f8</tenantId>
+   </rollback>
+   <subnetMap>
+      <entry>
+         <key>9dbb9e7e-fe18-421f-bad6-2305bd282471</key>
+         <value>27d414c7-1076-4595-aa45-4717ee992cef</value>
+      </entry>
+      <entry>
+         <key>1bb4e1d2-d225-47f3-b6fc-2d0b290de1ab</key>
+         <value>db64710c-fbbc-4dc9-8109-3925b87268fa</value>
+      </entry>
+   </subnetMap>
+</createNetworkResponse>

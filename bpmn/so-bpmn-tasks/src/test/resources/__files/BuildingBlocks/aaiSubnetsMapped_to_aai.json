@@ -1,0 +1,71 @@
+{
+  "subnet" : [ {
+    "subnetId" : "57e9a1ff-d14f-4071-a828-b19ae98eb2fc",
+    "subnetName" : "subnetName",
+    "neutronSubnetId" : null,
+    "gatewayAddress" : "192.168.52.1",
+    "networkStartAddress" : null,
+    "cidrMask" : "24",
+    "ipVersion" : "4",
+    "orchestrationStatus" : "Created",
+    "dhcpEnabled" : true,
+    "dhcpStart" : "dhcpStart",
+    "dhcpEnd" : "dhcpEnd",
+    "subnetRole" : "subnetRole",
+    "ipAssignmentDirection" : "true",
+    "resourceVersion" : null,
+    "subnetSequence" : 3,
+    "hostRoutes" : {
+      "hostRoute" : [ {
+        "hostRouteId" : "string",
+        "routePrefix" : "192.10.16.0/24",
+        "nextHop" : "192.10.16.100/24",
+        "nextHopType" : "ip-address",
+        "resourceVersion" : null,
+        "relationshipList" : null
+      }, {
+        "hostRouteId" : "string",
+        "routePrefix" : "192.110.17.0/24",
+        "nextHop" : "192.110.17.110/24",
+        "nextHopType" : "ip-address",
+        "resourceVersion" : null,
+        "relationshipList" : null
+      } ]
+    },
+    "relationshipList" : null
+  }, {
+    "subnetId" : "57e9a1ff-d14f-4071-a828-b19ae98eb2fc",
+    "subnetName" : "subnetName",
+    "neutronSubnetId" : null,
+    "gatewayAddress" : "192.168.52.1",
+    "networkStartAddress" : null,
+    "cidrMask" : "24",
+    "ipVersion" : "4",
+    "orchestrationStatus" : "Created",
+    "dhcpEnabled" : true,
+    "dhcpStart" : "dhcpStart",
+    "dhcpEnd" : "dhcpEnd",
+    "subnetRole" : "subnetRole",
+    "ipAssignmentDirection" : "true",
+    "resourceVersion" : null,
+    "subnetSequence" : 3,
+    "hostRoutes" : {
+      "hostRoute" : [ {
+        "hostRouteId" : "string",
+        "routePrefix" : "192.10.16.0/24",
+        "nextHop" : "192.10.16.100/24",
+        "nextHopType" : "ip-address",
+        "resourceVersion" : null,
+        "relationshipList" : null
+      }, {
+        "hostRouteId" : "string",
+        "routePrefix" : "192.110.17.0/24",
+        "nextHop" : "192.110.17.110/24",
+        "nextHopType" : "ip-address",
+        "resourceVersion" : null,
+        "relationshipList" : null
+      } ]
+    },
+    "relationshipList" : null
+  } ]
+}

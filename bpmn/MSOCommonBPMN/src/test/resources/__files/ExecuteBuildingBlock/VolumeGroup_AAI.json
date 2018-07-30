@@ -1,0 +1,11 @@
+{
+    "volumeGroupId" : "volumeGroupId",
+    "volumeGroupName" : "volumeGroupName",
+    "heatStackId" : "heatStackId",
+    "vnfType" : "vnfType",
+    "orchestrationStatus" : "PRECREATED",
+    "modelCustomizationId" : "modelCustomizationId",
+    "vfModuleModelCustomizationId" : "vfModuleModelCustomizationId",
+    "resourceVersion" : null,
+    "relationshipList" : {}
+}

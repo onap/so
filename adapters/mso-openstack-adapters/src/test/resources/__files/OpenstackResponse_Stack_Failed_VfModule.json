@@ -1,0 +1,17 @@
+{
+	"stack": {
+		"description": null,
+		"links": null,
+		"stack_status_reason": null,
+		"stack_name": "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001",
+		"updated_time": null,
+		"creation_time": null,
+		"stack_status": "CREATE_FAILED",
+		"id": "stackId",
+		"files": null,
+		"outputs": null,
+		"parameters": {
+			
+		}
+	}
+}

@@ -1,0 +1,21 @@
+{
+	"tosca-node-type": "toscaNodeType",
+	"description": "description",
+    "orchestration-mode": "orchestrationMode",
+    "aic-version-min" : "aicVersionMin",
+    "aic-version-max" : "aicVersionMax",
+    "min-instances": 2,
+    "max-instances": 3,
+    "availability-zone-max-count": 5,
+    "nf-function" : "nfFunction",
+    "nf-type" : "nfType",
+    "nf-role" : "nfRole",
+    "nf-naming-code" : "nfNamingCode",
+    "multi-stage-design" : "multiStageDesign",
+    "model-customization-uuid": "modelCustomizationUUID",
+    "model-instance-name": "modelInstanceName",
+    "model-version" : "modelVersion",
+    "model-invariant-uuid" : "modelInvariantUUID",
+    "model-name" : "modelName",
+    "model-uuid" : "modelUUID"
+}

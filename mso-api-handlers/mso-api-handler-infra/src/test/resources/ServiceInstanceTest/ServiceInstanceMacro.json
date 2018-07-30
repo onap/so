@@ -1,0 +1,34 @@
+{
+	"requestDetails": {
+		"modelInfo": {
+			"modelInvariantId": "2077f51f-320f-47d2-8a80-f80da39228ec",
+			"modelType": "service",
+			"modelName": "OAM Net IST 1806",
+			"modelVersion": "2.0",
+			"modelVersionId": "15a772d0-077a-4758-ac50-9e7e00d811ab",
+			"modelUuid": "15a772d0-077a-4758-ac50-9e7e00d811ab",
+			"modelInvariantUuid": "2077f51f-320f-47d2-8a80-f80da39228ec"
+		},
+		"requestInfo": {
+			"productFamilyId": "vHNPaas",
+			"source": "VID",
+			"suppressRollback": false,
+			"requestorId": "pa2396"
+		},
+		"subscriberInfo": {
+			"globalSubscriberId": "21014aa2-526b-11e6-beb8-9e71128cae77"
+		},
+		"cloudConfiguration": {
+			"tenantId": "d88c0bd297524867b8b0a597b95b7b2a",
+			"lcpCloudRegionId": "au7tx"
+		},
+		"requestParameters": {
+			"subscriptionServiceType": "test",
+			"aLaCarte": false
+		},
+		"owningEntity": {
+			"owningEntityId": "2811e2fb-005e-40de-990b-c0794f362399",
+			"owningEntityName": "PACKET-CORE"
+		}
+	}
+}

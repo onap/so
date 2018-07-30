@@ -1,0 +1,21 @@
+{
+  "output": {
+    "status": {
+      "code": 200,
+      "message": "RESULT_MESSAGE"
+    },
+    "common-header": {
+      "api-ver": "API_VERSION",
+      "request-id": "ECOMP_REQUEST_ID",
+      "originator-id": "ECOMP_SYSTEM_ID",
+      "sub-request-id": "ECOMP_SUBREQUEST_ID",
+      "timestamp": "2016-08-08T23:09:00.11Z",
+      "flags": {
+        "ttl": 1000,
+        "force": "TRUE",
+        "mode": "EXCLUSIVE"
+      }
+    },
+    "locked": "TRUE"
+  }
+}

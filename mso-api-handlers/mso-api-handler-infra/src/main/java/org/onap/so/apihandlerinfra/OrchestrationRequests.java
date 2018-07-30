@@ -1,0 +1,342 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+package org.onap.so.apihandlerinfra;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.Transactional;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpStatus;
+import org.onap.so.apihandler.common.ErrorNumbers;
+import org.onap.so.apihandler.common.ResponseBuilder;
+import org.onap.so.apihandlerinfra.exceptions.ApiException;
+import org.onap.so.apihandlerinfra.exceptions.ValidateException;
+import org.onap.so.apihandlerinfra.logging.AlarmLoggerInfo;
+import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
+import org.onap.so.exceptions.ValidationException;
+import org.onap.so.logger.MessageEnum;
+import org.onap.so.logger.MsoAlarmLogger;
+import org.onap.so.logger.MsoLogger;
+import org.onap.so.serviceinstancebeans.GetOrchestrationListResponse;
+import org.onap.so.serviceinstancebeans.GetOrchestrationResponse;
+import org.onap.so.serviceinstancebeans.InstanceReferences;
+import org.onap.so.serviceinstancebeans.Request;
+import org.onap.so.serviceinstancebeans.RequestDetails;
+import org.onap.so.serviceinstancebeans.RequestList;
+import org.onap.so.serviceinstancebeans.RequestStatus;
+import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Path("onap/so/infra/orchestrationRequests")
+@Api(value="onap/so/infra/orchestrationRequests",description="API Requests for Orchestration requests")
+@Component
+public class OrchestrationRequests {
+
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, OrchestrationRequests.class);
+    
+    private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
+    
+    @Autowired
+    private InfraActiveRequestsRepository infraActiveRequestsRepository;
+    
+    @Autowired
+    private MsoRequest msoRequest;
+    
+	@Autowired
+	private ResponseBuilder builder;
+
+	@GET
+	@Path("/{version:[vV][4-7]}/{requestId}")
+	@ApiOperation(value="Find Orchestrated Requests for a given requestId",response=Response.class)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Transactional
+	public Response getOrchestrationRequest(@PathParam("requestId") String requestId, @PathParam("version") String version) throws ApiException{
+
+		String apiVersion = version.substring(1);
+		GetOrchestrationResponse orchestrationResponse = new GetOrchestrationResponse();
+
+
+		InfraActiveRequests requestDB = null;
+
+		try {
+			requestDB = infraActiveRequestsRepository.findOneByRequestIdOrClientRequestId(requestId, requestId);
+		} catch (Exception e) {
+
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.AvailabilityError).build();
+			AlarmLoggerInfo alarmLoggerInfo = new AlarmLoggerInfo.Builder("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL, Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB)).build();
+
+
+
+			ValidateException validateException = new ValidateException.Builder("Exception while communciate with Request DB - Infra Request Lookup",
+					HttpStatus.SC_NOT_FOUND,ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e).errorInfo(errorLoggerInfo).alarmInfo(alarmLoggerInfo).build();
+
+			throw validateException;
+
+		}
+
+        if(requestDB == null) {
+
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).build();
+
+
+            ValidateException validateException = new ValidateException.Builder("Orchestration RequestId " + requestId + " is not found in DB",
+                    HttpStatus.SC_NO_CONTENT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
+            throw validateException;
+        }
+
+        Request request = mapInfraActiveRequestToRequest(requestDB);
+
+        orchestrationResponse.setRequest(request);
+        
+        return builder.buildResponse(HttpStatus.SC_OK, requestId, orchestrationResponse, apiVersion);
+	}
+
+	@GET
+	@Path("/{version:[vV][4-7]}")
+	@ApiOperation(value="Find Orchestrated Requests for a URI Information",response=Response.class)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Transactional
+	public Response getOrchestrationRequest(@Context UriInfo ui, @PathParam("version") String version) throws ApiException{
+
+		long startTime = System.currentTimeMillis ();
+		
+		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
+
+		List<InfraActiveRequests> activeRequests = null;
+
+		GetOrchestrationListResponse orchestrationList = null;
+		Map<String, List<String>> orchestrationMap;
+		String apiVersion = version.substring(1);
+		
+		try {
+			orchestrationMap = msoRequest.getOrchestrationFilters(queryParams);
+			if (orchestrationMap.isEmpty()) {
+				throw new ValidationException("At least one filter query param must be specified");
+			}
+		}catch(ValidationException ex){
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.DataError).build();
+
+
+			ValidateException validateException = new ValidateException.Builder(ex.getMessage(),
+					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).cause(ex).errorInfo(errorLoggerInfo).build();
+
+			throw validateException;
+
+		}
+			
+		activeRequests = infraActiveRequestsRepository.getOrchestrationFiltersFromInfraActive(orchestrationMap);
+
+		orchestrationList = new GetOrchestrationListResponse();
+		List<RequestList> requestLists = new ArrayList<>();
+		
+		for(InfraActiveRequests infraActive : activeRequests){
+			RequestList requestList = new RequestList();
+			Request request = mapInfraActiveRequestToRequest(infraActive);
+			requestList.setRequest(request);
+			requestLists.add(requestList);
+		}
+
+		orchestrationList.setRequestList(requestLists);
+		return builder.buildResponse(HttpStatus.SC_OK, null, orchestrationList, apiVersion);
+	}
+
+
+	@POST
+	@Path("/{version: [vV][4-7]}/{requestId}/unlock")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Unlock Orchestrated Requests for a given requestId",response=Response.class)
+	@Transactional
+	public Response unlockOrchestrationRequest(String requestJSON, @PathParam("requestId") String requestId, @PathParam("version") String version) throws ApiException{
+
+		long startTime = System.currentTimeMillis ();
+		msoLogger.debug ("requestId is: " + requestId);
+		ServiceInstancesRequest sir = null;
+
+		InfraActiveRequests infraActiveRequest = null;
+		Request request = null;
+		
+		try{
+			ObjectMapper mapper = new ObjectMapper();
+			sir = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
+		} catch(IOException e){
+
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+
+
+            ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
+
+            throw validateException;
+
+		}
+		try{
+			msoRequest.parseOrchestration(sir);
+		} catch (Exception e) {
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+			 ValidateException validateException = new ValidateException.Builder("Error parsing request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+	                 .errorInfo(errorLoggerInfo).build();
+            throw validateException;
+		}
+
+		infraActiveRequest = infraActiveRequestsRepository.findOneByRequestIdOrClientRequestId(requestId, requestId);
+		if(infraActiveRequest == null) {
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MsoLogger.ErrorCode.BusinessProcesssError).build();
+
+
+			ValidateException validateException = new ValidateException.Builder("Null response from RequestDB when searching by RequestId",
+					HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
+			throw validateException;
+
+		}else{
+			String status = infraActiveRequest.getRequestStatus();
+			if(status.equalsIgnoreCase("IN_PROGRESS") || status.equalsIgnoreCase("PENDING") || status.equalsIgnoreCase("PENDING_MANUAL_TASK")){
+				infraActiveRequest.setRequestStatus("UNLOCKED");
+				infraActiveRequest.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
+				infraActiveRequestsRepository.save(infraActiveRequest);
+			}else{
+
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MsoLogger.ErrorCode.DataError).build();
+
+
+				ValidateException validateException = new ValidateException.Builder("Orchestration RequestId " + requestId + " has a status of " + status + " and can not be unlocked",
+						HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
+				throw validateException;
+			}
+		}
+		return Response.status (HttpStatus.SC_NO_CONTENT).entity ("").build ();
+	}
+
+    private Request mapInfraActiveRequestToRequest(InfraActiveRequests iar)  throws ApiException{
+
+    	String requestBody = iar.getRequestBody();
+    	Request request = new Request();
+    	
+        ObjectMapper mapper = new ObjectMapper();      
+
+       request.setRequestId(iar.getRequestId());
+       request.setRequestScope(iar.getRequestScope());
+       request.setRequestType(iar.getRequestAction());
+
+       InstanceReferences ir = new InstanceReferences();
+       if(iar.getNetworkId() != null)
+       	ir.setNetworkInstanceId(iar.getNetworkId());
+       if(iar.getNetworkName() != null)
+       	ir.setNetworkInstanceName(iar.getNetworkName());
+       if(iar.getServiceInstanceId() != null)
+       	ir.setServiceInstanceId(iar.getServiceInstanceId());
+       if(iar.getServiceInstanceName() != null)
+       	ir.setServiceInstanceName(iar.getServiceInstanceName());
+       if(iar.getVfModuleId() != null)
+       	ir.setVfModuleInstanceId(iar.getVfModuleId());
+       if(iar.getVfModuleName() != null)
+       	ir.setVfModuleInstanceName(iar.getVfModuleName());
+       if(iar.getVnfId() != null)
+       	ir.setVnfInstanceId(iar.getVnfId());
+       if(iar.getVnfName() != null)
+       	ir.setVnfInstanceName(iar.getVnfName());
+       if(iar.getVolumeGroupId() != null)
+       	ir.setVolumeGroupInstanceId(iar.getVolumeGroupId());
+       if(iar.getVolumeGroupName() != null)
+       	ir.setVolumeGroupInstanceName(iar.getVolumeGroupName());
+		if(iar.getRequestorId() != null)
+			ir.setRequestorId(iar.getRequestorId());
+
+
+		request.setInstanceReferences(ir);
+
+       RequestDetails requestDetails = null;
+
+       if(StringUtils.isNotBlank(requestBody)) {
+		   try {
+			   if(requestBody.contains("\"requestDetails\":")){
+				   ServiceInstancesRequest sir = mapper.readValue(requestBody, ServiceInstancesRequest.class);
+				   requestDetails = sir.getRequestDetails();
+			   } else {
+				   requestDetails = mapper.readValue(requestBody, RequestDetails.class);
+			   }
+		   } catch (IOException e) {
+
+			   ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+			   ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed : ",
+					   HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
+
+			   throw validateException;
+		   }
+	   }
+       request.setRequestDetails(requestDetails);
+       
+       if(iar.getStartTime() != null) {
+	       String startTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getStartTime()) + " GMT";
+	       request.setStartTime(startTimeStamp);
+       }
+
+       RequestStatus status = new RequestStatus();
+       if(iar.getStatusMessage() != null){
+    	   status.setStatusMessage(iar.getStatusMessage());
+       }
+
+       if(iar.getEndTime() != null){
+    	   String endTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getEndTime()) + " GMT";
+    	   status.setFinishTime(endTimeStamp);
+       }
+
+
+       if(iar.getRequestStatus() != null){
+    	   status.setRequestState(iar.getRequestStatus());
+       }
+
+       if(iar.getProgress() != null){
+    	   status.setPercentProgress(iar.getProgress().intValue());
+       }
+
+       request.setRequestStatus(status);
+
+       return request;
+   }
+ }

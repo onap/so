@@ -1,0 +1,22 @@
+server:
+  port: 8080 
+  tomcat:
+      max-threads: 50
+     
+mso:
+  logPath: ./logs/sdnc
+  site-name: sdncenv
+  async:
+    core-pool-size: 50
+    max-pool-size: 50
+    queue-capacity: 500
+
+#Actuator
+management: 
+  context-path: /manage
+  metrics:
+    se-global-registry: false
+    export:
+      prometheus:
+        enabled: true # Whether exporting of metrics to Prometheus is enabled.
+        step: 1m # Step size (i.e. reporting frequency) to use.

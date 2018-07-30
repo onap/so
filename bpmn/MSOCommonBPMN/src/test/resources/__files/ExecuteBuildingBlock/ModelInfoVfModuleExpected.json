@@ -1,0 +1,14 @@
+{
+	"model-customization-uuid": "modelCustomizationUUID",
+    "model-name" : "modelName",
+    "model-uuid" : "modelUUID",
+    "model-invariant-uuid" : "modelInvariantUUID",
+    "model-version" : "modelVersion",
+    "description": "description",
+    "is-base-boolean": true,
+    "min-instances": 2,
+    "max-instances": 3,
+    "availability-zone-count": 5,
+    "label": "label",
+    "initial-count": null
+}

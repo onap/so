@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.9.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="DoCreateServiceInstanceRollback" name="DoCreateServiceInstanceRollback" isExecutable="true">
+    <bpmn2:startEvent id="createSIRollback_startEvent" name="Start Flow">
+      <bpmn2:outgoing>SequenceFlow_1ipu8um</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:endEvent id="EndEvent_3">
+      <bpmn2:incoming>SequenceFlow_1l4c4k0</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:scriptTask id="ScriptTask_05ltxyj" name="set Success">
+      <bpmn2:incoming>SequenceFlow_1ipu8um</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1l4c4k0</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[#{execution.setVariable("rolledBack", true)}]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_1ipu8um" sourceRef="createSIRollback_startEvent" targetRef="ScriptTask_05ltxyj" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1l4c4k0" sourceRef="ScriptTask_05ltxyj" targetRef="EndEvent_3" />
+  </bpmn2:process>
+  <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCreateServiceInstanceRollback">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_47" bpmnElement="createSIRollback_startEvent">
+        <dc:Bounds x="151" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="146" y="120" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_177" bpmnElement="EndEvent_3">
+        <dc:Bounds x="484" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="457" y="120" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_05ltxyj_di" bpmnElement="ScriptTask_05ltxyj">
+        <dc:Bounds x="287" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ipu8um_di" bpmnElement="SequenceFlow_1ipu8um">
+        <di:waypoint xsi:type="dc:Point" x="187" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="287" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="237" y="76" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1l4c4k0_di" bpmnElement="SequenceFlow_1l4c4k0">
+        <di:waypoint xsi:type="dc:Point" x="387" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="484" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="435.5" y="76" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

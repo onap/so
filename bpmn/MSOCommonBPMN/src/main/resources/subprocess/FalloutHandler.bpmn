@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_3SPHsLr9EeWak-hhutJWuQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_3SPHsLr9EeWak-hhutJWuQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="FalloutHandler" name="Fallout Handler" isExecutable="true">
     <bpmn2:parallelGateway id="ParallelGateway_1">
       <bpmn2:incoming>SequenceFlow_12</bpmn2:incoming>
@@ -20,7 +20,7 @@
     <bpmn2:scriptTask id="ScriptTask_8" name="Pre-Process Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_12</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def preProcessRequestData = new FalloutHandler()
 preProcessRequestData.preProcessRequest(execution)
 
@@ -40,7 +40,7 @@ preProcessRequestData.preProcessRequest(execution)
     <bpmn2:scriptTask id="ScriptTask_2" name="Post Process Response" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def falloutHandler = new FalloutHandler()
 falloutHandler.postProcessResponse(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -64,7 +64,7 @@ falloutHandler.postProcessResponse(execution)]]></bpmn2:script>
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_adapters_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.db.att-endpoint", execution)}]]></camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -74,7 +74,7 @@ falloutHandler.postProcessResponse(execution)]]></bpmn2:script>
             </camunda:inputParameter>
             <camunda:inputParameter name="payload">
               <camunda:script scriptFormat="groovy"><![CDATA[//println"INSIDE --> update Request Gamma"
-import org.openecomp.mso.bpmn.common.scripts.*
+import org.onap.so.bpmn.common.scripts.*
 def updateRequestGamma= new FalloutHandler()
 return updateRequestGamma.updateRequestGammaPayload(execution)]]></camunda:script>
             </camunda:inputParameter>
@@ -106,7 +106,7 @@ return updateRequestGamma.updateRequestGammaPayload(execution)]]></camunda:scrip
       <bpmn2:incoming>SequenceFlow_72</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_31</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_79</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def falloutHandler = new FalloutHandler()
 falloutHandler.buildDBWorkflowException(execution, "FH_updateRequestGammaResponseCode")]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -124,7 +124,7 @@ falloutHandler.buildDBWorkflowException(execution, "FH_updateRequestGammaRespons
       <bpmn2:incoming>SequenceFlow_32</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_80</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_73</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def falloutHandler = new FalloutHandler()
 falloutHandler.buildDBWorkflowException(execution, "FH_updateRequestInfraResponseCode")]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -133,7 +133,7 @@ falloutHandler.buildDBWorkflowException(execution, "FH_updateRequestInfraRespons
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -143,7 +143,7 @@ falloutHandler.buildDBWorkflowException(execution, "FH_updateRequestInfraRespons
             </camunda:inputParameter>
             <camunda:inputParameter name="payload">
               <camunda:script scriptFormat="groovy"><![CDATA[//println"INSIDE --> update Request Infra"
-import org.openecomp.mso.bpmn.common.scripts.*
+import org.onap.so.bpmn.common.scripts.*
 def updateRequestInfra= new FalloutHandler()
 return updateRequestInfra.updateRequestInfraPayload(execution)]]></camunda:script>
             </camunda:inputParameter>
@@ -175,7 +175,7 @@ return updateRequestInfra.updateRequestInfraPayload(execution)]]></camunda:scrip
       <bpmn2:scriptTask id="ScriptTask_4" name="Handle Event" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_1ko8ggw</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1pm9r7h</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 execution.setVariable("FH_success", false)
 def falloutHandler = new FalloutHandler()
 
@@ -207,7 +207,7 @@ execution.setVariable("FH_WorkflowException", wfe)]]></bpmn2:script>
       <bpmn2:terminateEventDefinition />
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_0m7gwor" sourceRef="Task_0ixuwt5" targetRef="ParallelGateway_4" />
-    <bpmn2:callActivity id="Task_0ixuwt5" name="Call Notification Service" calledElement="${URN_mso_workflow_notification_name}">
+    <bpmn2:callActivity id="Task_0ixuwt5" name="Call Notification Service" calledElement="${UrnPropertiesReader.getVariable(&#34;mso.workflow.notification.name&#34;, execution)}">
       <bpmn2:extensionElements>
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />

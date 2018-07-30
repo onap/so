@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://org.onap/workflow/sdnc/adapter/schema/v1">
+	<soapenv:Header />
+	<soapenv:Body>
+		<SDNCAdapterCallbackRequest xmlns="http://org.onap/workflow/sdnc/adapter/schema/v1">
+		 <CallbackHeader>
+		   <RequestId>19174929-3809-49ca-89eb-17f84a035389</RequestId>
+		   <ResponseCode>200</ResponseCode>
+		   <ResponseMessage>OK</ResponseMessage>
+		 </CallbackHeader>
+		 <RequestData xmlns:xs="http://www.w3.org/2001/XMLSchema"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:type="xs:string">&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;output xmlns="com:att:sdnctl:vnf"&gt;&lt;svc-request-id&gt;19174929-3809-49ca-89eb-17f84a035389&lt;/svc-request-id&gt;&lt;response-code&gt;200&lt;/response-code&gt;&lt;ack-final-indicator&gt;Y&lt;/ack-final-indicator&gt;&lt;network-information&gt;&lt;network-id&gt;bdc5efe8-404a-409b-85f6-0dcc9eebae30&lt;/network-id&gt;&lt;/network-information&gt;&lt;service-information&gt;&lt;service-type&gt;a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb&lt;/service-type&gt;&lt;service-instance-id&gt;HSL_direct_net_2&lt;/service-instance-id&gt;&lt;subscriber-name&gt;notsurewecare&lt;/subscriber-name&gt;&lt;/service-information&gt;&lt;/output&gt;</RequestData>
+		</SDNCAdapterCallbackRequest>
+	</soapenv:Body>
+</soapenv:Envelope>

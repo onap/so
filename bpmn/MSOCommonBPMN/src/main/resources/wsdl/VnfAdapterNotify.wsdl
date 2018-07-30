@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
              xmlns:wsp="http://www.w3.org/ns/ws-policy"
-             xmlns:tns="http://org.openecomp.mso/vnfNotify"
+             xmlns:tns="http://org.onap.so/vnfNotify"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
              xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
              name="vnfAdapterNotify"
-             targetNamespace="http://org.openecomp.mso/vnfNotify">
+             targetNamespace="http://org.onap.so/vnfNotify">
   <types>
       <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                 targetNamespace="http://org.openecomp.mso/vnfNotify"
+                 targetNamespace="http://org.onap.so/vnfNotify"
                  version="1.0">
 
          <xs:element name="createVnfNotification" type="tns:createVnfNotification"/>
@@ -36,7 +36,7 @@
                <xs:element minOccurs="0" name="outputs">
                   <xs:complexType>
                      <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                        <xs:element maxOccurs="255" minOccurs="0" name="entry">
                            <xs:complexType>
                               <xs:sequence>
                                  <xs:element minOccurs="0" name="key" type="xs:string"/>
@@ -78,7 +78,7 @@
                <xs:element minOccurs="0" name="outputs">
                   <xs:complexType>
                      <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                        <xs:element maxOccurs="255" minOccurs="0" name="entry">
                            <xs:complexType>
                               <xs:sequence>
                                  <xs:element minOccurs="0" name="key" type="xs:string"/>
@@ -102,7 +102,7 @@
                <xs:element minOccurs="0" name="outputs">
                   <xs:complexType>
                      <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                        <xs:element maxOccurs="255" minOccurs="0" name="entry">
                            <xs:complexType>
                               <xs:sequence>
                                  <xs:element minOccurs="0" name="key" type="xs:string"/>
@@ -172,23 +172,23 @@
   <portType name="vnfAdapterNotify">
       <operation name="rollbackVnfNotification">
          <input message="tns:rollbackVnfNotification"
-                wsam:Action="http://org.openecomp.mso/notify/adapterNotify/rollbackVnfNotificationRequest"/>
+                wsam:Action="http://org.onap.so/notify/adapterNotify/rollbackVnfNotificationRequest"/>
       </operation>
       <operation name="queryVnfNotification">
          <input message="tns:queryVnfNotification"
-                wsam:Action="http://org.openecomp.mso/notify/adapterNotify/queryVnfNotificationRequest"/>
+                wsam:Action="http://org.onap.so/notify/adapterNotify/queryVnfNotificationRequest"/>
       </operation>
       <operation name="createVnfNotification">
          <input message="tns:createVnfNotification"
-                wsam:Action="http://org.openecomp.mso/notify/adapterNotify/createVnfNotificationRequest"/>
+                wsam:Action="http://org.onap.so/notify/adapterNotify/createVnfNotificationRequest"/>
       </operation>
       <operation name="updateVnfNotification">
          <input message="tns:updateVnfNotification"
-                wsam:Action="http://org.openecomp.mso/notify/adapterNotify/updateVnfNotificationRequest"/>
+                wsam:Action="http://org.onap.so/notify/adapterNotify/updateVnfNotificationRequest"/>
       </operation>
       <operation name="deleteVnfNotification">
          <input message="tns:deleteVnfNotification"
-                wsam:Action="http://org.openecomp.mso/notify/adapterNotify/deleteVnfNotificationRequest"/>
+                wsam:Action="http://org.onap.so/notify/adapterNotify/deleteVnfNotificationRequest"/>
       </operation>
   </portType>
   <binding name="MsoVnfAdapterAsyncImplPortBinding" type="tns:vnfAdapterNotify">

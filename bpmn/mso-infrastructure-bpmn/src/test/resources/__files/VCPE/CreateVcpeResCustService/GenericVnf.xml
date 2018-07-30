@@ -1,0 +1,16 @@
+<generic-vnf xmlns="http://org.openecomp.aai.inventory/v7">
+	<vnf-id>VCPE-123456</vnf-id>
+	<vnf-name>VCPE</vnf-name>
+	<vnf-type>VCPE</vnf-type>
+	<service-id>SDN-MOBILITY</service-id>
+	<equipment-role>vPCRF</equipment-role>
+	<orchestration-status>pending-create</orchestration-status>
+	<in-maint>false</in-maint>
+	<is-closed-loop-disabled>false</is-closed-loop-disabled>
+	<model-invariant-id>introvert</model-invariant-id>
+	<model-version-id>2.0</model-version-id>
+	<resource-version>0000020</resource-version>
+	<relationship-list/>
+	<l-interfaces/>
+	<lag-interfaces/>
+</generic-vnf>

@@ -1,0 +1,53 @@
+{
+   "network-id": "0384d743-f69b-4cc8-9aa8-c3ae66662c44",
+   "network-name": "Dev_Bindings_1802_020118",
+   "network-type": "CONTRAIL30_BASIC",
+   "network-role": "GN_EVPN_direct",
+   "network-technology": "contrail",
+   "neutron-network-id": "1112b912-0e00-4d6d-9392-014e106399ee",
+   "is-bound-to-vpn": true,
+   "service-id": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+   "network-role-instance": 0,
+   "resource-version": "1517496965485",
+   "orchestration-status": "Active",
+   "heat-stack-id": "Dev_Bindings_1802_020118/06c2445f-1ca1-4ad8-be08-454c4de443bb",
+   "contrail-network-fqdn": "default-domain:ECOMP_MSO_DND:Dev_Bindings_1802_020118",
+   "physical-network-name": "tbd",
+   "is-provider-network": false,
+   "is-shared-network": true,
+   "is-external-network": false,
+   "subnets": {"subnet":    [
+            {
+         "subnet-id": "209f62cf-cf0c-42f8-b13c-f038b92ef108",
+         "subnet-name": "",
+         "neutron-subnet-id": "3942ca32-5f5b-4d62-a2e4-b528b7a4318c",
+         "gateway-address": "192.168.41.1",
+         "network-start-address": "192.168.41.0",
+         "cidr-mask": "24",
+         "ip-version": "4",
+         "orchestration-status": "Active",
+         "dhcp-enabled": true,
+         "dhcp-start": "192.168.41.3",
+         "dhcp-end": "192.168.41.45",
+         "ip-assignment-direction": "",
+         "resource-version": "1517496965497"
+      },
+            {
+         "subnet-id": "971bc608-1aff-47c0-923d-92e43b699f01",
+         "subnet-name": "",
+         "neutron-subnet-id": "81a5ff92-7ca4-4756-a493-496479f0d10f",
+         "gateway-address": "192.168.42.1",
+         "network-start-address": "192.168.42.0",
+         "cidr-mask": "24",
+         "ip-version": "4",
+         "orchestration-status": "Active",
+         "dhcp-enabled": true,
+         "dhcp-start": "192.168.42.3",
+         "dhcp-end": "192.168.42.45",
+         "ip-assignment-direction": "",
+         "resource-version": "1517496965508"
+      }
+   ]},
+   "relationship-list": {"relationship":    []
+   }
+}

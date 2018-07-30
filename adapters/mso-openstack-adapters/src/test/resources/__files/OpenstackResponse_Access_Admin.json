@@ -1,0 +1,27 @@
+{
+	"access": {
+		"token": {
+			"id": "tokenId1234",
+			"issued_at": null,
+			"expires": "1517418429142",
+			"tenant": null
+		},
+		"serviceCatalog": [
+			{
+				"type": "identity",
+				"name": null,
+				"endpoints": [
+					{
+						"region": "mtn13",
+						"publicURL": "port",
+						"internalURL": null,
+						"adminURL": null
+					}
+				],
+				"endpointsLinks": null
+			}
+		],
+		"user": null,
+		"metadata": null
+	}
+}

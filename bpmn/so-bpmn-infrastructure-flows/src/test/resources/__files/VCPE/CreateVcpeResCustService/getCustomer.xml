@@ -1,0 +1,7 @@
+<customer xmlns="http://org.openecomp.aai.inventory/v8">
+    <global-customer-id>SDN-ETHERNET-INTERNET</global-customer-id>
+    <subscriber-name>SDN-ETHERNET-INTERNET</subscriber-name>
+    <resource-version>1490627351232</resource-version>
+    <service-subscriptions/>
+    <relationship-list/>
+</customer>

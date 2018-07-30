@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+  <bpmn:process id="Orchestration" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_10gblml</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_0eak8i4">
+      <bpmn:incoming>SequenceFlow_0x1lx7c</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Task_06qhrqm" name="Decompose Request" camunda:class="org.onap.so.bpmn.servicedecomposition.tasks.DecomposeRequest">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="request" />
+          <camunda:inputParameter name="buildingblock" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_10gblml</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0x1lx7c</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_10gblml" sourceRef="StartEvent_1" targetRef="Task_06qhrqm" />
+    <bpmn:sequenceFlow id="SequenceFlow_0x1lx7c" sourceRef="Task_06qhrqm" targetRef="EndEvent_0eak8i4" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Orchestration">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="631" y="407" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="604" y="443" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0eak8i4_di" bpmnElement="EndEvent_0eak8i4">
+        <dc:Bounds x="928" y="407" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="946" y="447" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0y0800u_di" bpmnElement="Task_06qhrqm">
+        <dc:Bounds x="746" y="385" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_10gblml_di" bpmnElement="SequenceFlow_10gblml">
+        <di:waypoint xsi:type="dc:Point" x="667" y="425" />
+        <di:waypoint xsi:type="dc:Point" x="746" y="425" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="706.5" y="404" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0x1lx7c_di" bpmnElement="SequenceFlow_0x1lx7c">
+        <di:waypoint xsi:type="dc:Point" x="846" y="425" />
+        <di:waypoint xsi:type="dc:Point" x="928" y="425" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="887" y="404" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

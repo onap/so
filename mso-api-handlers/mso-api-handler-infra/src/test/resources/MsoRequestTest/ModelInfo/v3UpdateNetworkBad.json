@@ -1,0 +1,38 @@
+{
+  "requestDetails": {
+      "modelInfo": {
+          "modelType": "network",
+          "modelName": "CONTRAIL30_BASIC",
+          "modelCustomizationName": "CONTRAIL30_BASIC 1"
+      },
+      "cloudConfiguration": {
+          "lcpCloudRegionId": "mdt1",
+          "tenantId": "8b1df54faa3b49078e3416e21370a3ba"
+      },
+      "requestInfo": {
+          "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+          "source": "VID",
+          "suppressRollback": true,
+          "requestorId": "xxxxxx"
+      },
+      "relatedInstanceList": [
+         {
+            "relatedInstance": {
+               "instanceId": "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc",
+               "modelInfo": {   
+                  "modelType": "service",
+                  "modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+                  "modelVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+                  "modelName": "{parent service model name}",
+                  "modelVersion": "1.0"
+               }
+            }
+         }
+
+      ],
+      "requestParameters": {
+          "userParams": []
+
+      }
+  }
+}

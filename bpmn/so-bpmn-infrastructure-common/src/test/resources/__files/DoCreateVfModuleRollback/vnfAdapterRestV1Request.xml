@@ -1,0 +1,14 @@
+<deleteVfModuleRequest>
+    <cloudSiteId>null</cloudSiteId>
+    <tenantId>null</tenantId>
+    <vnfId>skask</vnfId>
+    <vfModuleId>cb510af0-5b21-4bc7-86d9-323cb396ce32</vfModuleId>
+    <vfModuleStackId>null</vfModuleStackId>
+    <skipAAI>true</skipAAI>
+    <msoRequest>
+        <requestId>testRequestId</requestId>
+        <serviceInstanceId>12345</serviceInstanceId>
+    </msoRequest>
+    <messageId>12345-1513795852327</messageId>
+    <notificationUrl>http://localhost:18080/mso/WorkflowMessage/VNFAResponse/null-1513795852327</notificationUrl>
+</deleteVfModuleRequest>

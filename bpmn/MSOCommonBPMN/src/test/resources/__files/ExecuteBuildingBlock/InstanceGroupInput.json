@@ -1,0 +1,12 @@
+{
+	"id" : "instanceGroupId",
+	"instanceGroupRole" : "instanceGroupRole",
+    "modelInvariantId" : "modelInvariantId",
+    "modelVersionId" : "modelVersionId", 
+    "description" : "description",
+    "instanceGroupType" : "instanceGroupType",
+    "resourceVersion" : "resourceVersion",
+    "instanceGroupName" : "instanceGroupName",
+    "instanceGroupFunction" : "instanceGroupFunction",
+    "relationshipList" : {}
+}

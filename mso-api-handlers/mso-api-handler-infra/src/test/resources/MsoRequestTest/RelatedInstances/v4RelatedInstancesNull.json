@@ -1,0 +1,27 @@
+{
+  "requestDetails": {
+      "modelInfo": {
+         "modelType": "volumeGroup",
+         "modelInvariantId": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
+         "modelVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+         "modelName": "vSAMP12",
+         "modelVersion": "1.0",
+         "modelCustomizationName": "vSAMP12 1",
+         "modelCustomizationId": "a7f1d08e-b02d-11e6-80f5-76304dec7eb7"
+      },
+      "cloudConfiguration": {
+          "lcpCloudRegionId": "mdt1",
+          "tenantId": "88a6ca3ee0394ade9403f075db23167e"
+      },
+      "requestInfo": {
+          "instanceName": "MSOTEST103a",
+          "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+          "source": "VID",
+          "suppressRollback": false,
+          "requestorId": "xxxxxx"
+      },
+      "requestParameters": {
+          "autoBuildVfModules": true
+      }
+  }
+}

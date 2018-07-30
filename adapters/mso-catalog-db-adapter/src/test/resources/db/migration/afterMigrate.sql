@@ -1,0 +1,198 @@
+
+insert into heat_files(artifact_uuid, name, version, description, body, artifact_checksum, creation_timestamp) values
+('00535bdd-0878-4478-b95a-c575c742bfb0', 'nimbus-ethernet-gw', '1', 'created from csar', 'DEVICE=$dev\nBOOTPROTO=none\nNM_CONTROLLED=no\nIPADDR=$ip\nNETMASK=$netmask\nGATEWAY=$gateway\n', 'MANUAL RECORD', '2017-01-21 23:56:43');
+
+
+insert into tosca_csar(artifact_uuid, name, version, description, artifact_checksum, url, creation_timestamp) values
+('0513f839-459d-46b6-aa3d-2edfef89a079', 'service-Ciservicee3756aea561a-csar.csar', '1', 'TOSCA definition package of the asset', 'YTk1MmY2MGVlNzVhYTU4YjgzYjliMjNjMmM3NzU1NDc=', '/sdc/v1/catalog/services/Ciservicee3756aea561a/1.0/artifacts/service-Ciservicee3756aea561a-csar.csar', '2017-11-27 11:38:27');
+
+
+insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values
+('5df8b6de-2083-11e7-93ae-92361f002671', 'MSOTADevInfra_vSAMP10a_Service', '9647dfc4-2083-11e7-93ae-92361f002671', '1.0', 'MSO aLaCarte Vfmodule with addon', '2017-04-14 13:42:39', '0513f839-459d-46b6-aa3d-2edfef89a079', 'NA', 'NA', 'Luna', 'Oxygen');
+
+insert into tosca_csar(ARTIFACT_UUID,NAME,VERSION,DESCRIPTION,ARTIFACT_CHECKSUM,URL,CREATION_TIMESTAMP) values
+('266eaf78-af74-45cd-83ec-9c477f189dc1','service-NetworkCollectionSvc0106-csar.csar','1','TOSCA definition package of the asset','OGQ1M2QyYjU0OWMzZTY4MWVlYTNhOWIxNmQ2NjEyZDQ=','/sdc/v1/catalog/services/NetworkCollectionSvc0106/1.0/artifacts/service-NetworkCollectionSvc0106-csar.csar','2018-06-01 16:06:52');
+insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values
+('4694a55f-58b3-4f17-92a5-796d6f5ffd0d', 'Network_Collection_SVC_0106', 'afa5911f-87a7-4e99-a6dc-8e6cd7b86573', '1.0','tbd','2018-06-01 16:06:52', '266eaf78-af74-45cd-83ec-9c477f189dc1', 'INFRASTRUCTURE', '', 'General_Revenue-Bearing', 'Production');
+insert into collection_resource(MODEL_UUID,MODEL_NAME,MODEL_INVARIANT_UUID,MODEL_VERSION,TOSCA_NODE_TYPE,DESCRIPTION,CREATION_TIMESTAMP) values
+('e083bdcd-449d-433d-9699-1bbc2d363f06','Network_Collection_Resource_1806','38273494-f61a-4645-bfe2-d971994bc3e5','1.0','org.openecomp.resource.cr.NetworkCollectionResource1806','tbd','2018-06-20 12:53:34');
+insert into collection_resource_customization(MODEL_CUSTOMIZATION_UUID,MODEL_INSTANCE_NAME,role,object_type,function,collection_resource_type,CREATION_TIMESTAMP,CR_MODEL_UUID) values
+('a07a5826-3281-485c-8f40-6988011ef3f2','Network_Collection_Resource_1806','','NetworkCollection','','','2018-06-01 16:06:52','e083bdcd-449d-433d-9699-1bbc2d363f06'),
+('a07a5826-3281-485c-8f40-6988011ef3f3','Network_Collection_Resource_1806','','NetworkCollection','','','2018-06-01 16:06:52','e083bdcd-449d-433d-9699-1bbc2d363f06');
+insert into collection_resource_customization_to_service(SERVICE_MODEL_UUID,RESOURCE_MODEL_CUSTOMIZATION_UUID) values
+('4694a55f-58b3-4f17-92a5-796d6f5ffd0d', 'a07a5826-3281-485c-8f40-6988011ef3f2');
+insert into instance_group(MODEL_UUID, MODEL_NAME, MODEL_INVARIANT_UUID, MODEL_VERSION, TOSCA_NODE_TYPE, ROLE, OBJECT_TYPE, CREATION_TIMESTAMP, CR_MODEL_UUID, INSTANCE_GROUP_TYPE) values
+("0c8692ef-b9c0-435d-a738-edf31e71f38b", "network_collection_resource_1806..NetworkCollection..0", "c675f5f6-c017-40cb-807a-cb806ad24c0f", "1", "org.openecomp.resource.cr.NetworkCollectionResource1806", "SUB_INTERFACE", "L3_NETWORK", "2018-05-25 14:33:28", "e083bdcd-449d-433d-9699-1bbc2d363f06", "L3_NETWORK");
+insert into collection_resource_instance_group_customization(COLLECTION_RESOURCE_CUSTOMIZATION_MODEL_UUID,INSTANCE_GROUP_MODEL_UUID,FUNCTION,DESCRIPTION,SUBINTERFACE_NETWORK_QUANTITY,CREATION_TIMESTAMP) values
+('a07a5826-3281-485c-8f40-6988011ef3f2','0c8692ef-b9c0-435d-a738-edf31e71f38b','ncfunction','ncdescription',5,'2018-06-01 16:06:52'),
+('a07a5826-3281-485c-8f40-6988011ef3f3','0c8692ef-b9c0-435d-a738-edf31e71f38b','ncfunction','ncdescription',5,'2018-06-01 16:06:52');
+insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values
+('5df8b6de-2083-11e7-93ae-92361f002672', 'MSOTADevInfra_vSAMP10a_Service', '9647dfc4-2083-11e7-93ae-92361f002671', '2.0', 'MSO aLaCarte Vfmodule with addon', '2017-04-14 13:42:39', null, 'NA', 'NA', 'Luna', 'Oxygen');
+
+insert into service_recipe(id, action, version_str, description, orchestration_uri, service_param_xsd, recipe_timeout, service_timeout_interim, creation_timestamp, service_model_uuid) values
+('1', 'createInstance', '1', 'MSOTADevInfra aLaCarte', '/mso/async/services/CreateGenericALaCarteServiceInstance', null, '180', '0', '2017-04-14 19:18:20', '5df8b6de-2083-11e7-93ae-92361f002671');
+
+insert into heat_template(artifact_uuid, name, version, description, body, timeout_minutes, artifact_checksum, creation_timestamp) values
+('ff874603-4222-11e7-9252-005056850d2e', 'module_mns_zrdm3frwl01exn_01_rgvm_1.yml', '1', 'created from csar', 'heat_template_version: 2013-05-23 description: heat template that creates TEST VNF parameters: TEST_server_name: type: string label: TEST server name description: TEST server name TEST_image_name: type: string label: image name description: TEST image name TEST_flavor_name: type: string label: TEST flavor name description: flavor name of TEST instance TEST_Role_net_name: type: string label: TEST network name description: TEST network name TEST_vnf_id: type: string label: TEST VNF Id description: TEST VNF Id resources:TEST: type: OS::Nova::Server properties: name: { get_param: TEST_server_name } image: { get_param: TEST_image_name } flavor: { get_param: TEST_flavor_name } networks: - port: { get_resource: TEST_port_0} metadata: vnf_id: {get_param: TEST_vnf_id} TEST_port_0: type: OS::Neutron::Port properties: network: { get_param: TEST_Role_net_name }', '60', 'MANUAL RECORD', '2017-01-21 23:26:56'), 
+('ff87482f-4222-11e7-9252-005056850d2e', 'module_mns_zrdm3frwl01exn_01_rgvm_1.yml', '1', 'created from csar', 'heat_template_version: 2013-05-23 description: heat template that creates TEST VNF parameters: TEST_server_name: type: string label: TEST server name description: TEST server name TEST_image_name: type: string label: image name description: TEST image name TEST_flavor_name: type: string label: TEST flavor name description: flavor name of TEST instance TEST_Role_net_name: type: string label: TEST network name description: TEST network name TEST_vnf_id: type: string label: TEST VNF Id description: TEST VNF Id resources:TEST: type: OS::Nova::Server properties: name: { get_param: TEST_server_name } image: { get_param: TEST_image_name } flavor: { get_param: TEST_flavor_name } networks: - port: { get_resource: TEST_port_0} metadata: vnf_id: {get_param: TEST_vnf_id} TEST_port_0: type: OS::Neutron::Port properties: network: { get_param: TEST_Role_net_name }', '60', 'MANUAL RECORD', '2017-01-21 23:26:56'), 
+('aa874603-4222-11e7-9252-005056850d2e', 'module_mns_zrdm3frwl01exn_01_rgvm_1.yml', '1', 'created from csar', 'heat_template_version: 2013-05-23 description: heat template that creates TEST VNF parameters: TEST_server_name: type: string label: TEST server name description: TEST server name TEST_image_name: type: string label: image name description: TEST image name TEST_flavor_name: type: string label: TEST flavor name description: flavor name of TEST instance TEST_Role_net_name: type: string label: TEST network name description: TEST network name TEST_vnf_id: type: string label: TEST VNF Id description: TEST VNF Id resources:TEST: type: OS::Nova::Server properties: name: { get_param: TEST_server_name } image: { get_param: TEST_image_name } flavor: { get_param: TEST_flavor_name } networks: - port: { get_resource: TEST_port_0} metadata: vnf_id: {get_param: TEST_vnf_id} TEST_port_0: type: OS::Neutron::Port properties: network: { get_param: TEST_Role_net_name }', '60', 'MANUAL RECORD', '2017-01-21 23:26:56'); 
+
+
+insert into heat_template_params(heat_template_artifact_uuid, param_name, is_required, param_type, param_alias) values
+('ff874603-4222-11e7-9252-005056850d2e', 'availability_zone_0', 1, 'string', ''),
+('ff874603-4222-11e7-9252-005056850d2e', 'exn_direct_net_fqdn',1, 'string', ''),
+('ff874603-4222-11e7-9252-005056850d2e', 'exn_hsl_net_fqdn', 1, 'string', '');
+
+insert into heat_environment(artifact_uuid, name, version, description, body, artifact_checksum, creation_timestamp) values
+('fefb1601-4222-11e7-9252-005056850d2e', 'module_nso.env', '2', 'Auto-generated HEAT Environment deployment artifact', 'parameters:\n  availability_zone_0: \"alln-zone-1\"\n  nso_flavor_name: \"citeis.1vCPUx2GB\"\n  nso_image_name: \"RHEL-6.8-BASE-20160912\"\n  nso_name_0: \"zrdm3vamp01nso001\"\n  nso_oam_ip_0: \"172.18.25.175\"\n  nso_oam_net_gw: \"172.18.25.1\"\n  nso_oam_net_mask: \"255.255.255.0\"\n  nso_sec_grp_id: \"36f48d82-f099-4437-bfbc-70d9e5d420d1\"\n  nso_srv_grp_id: \"e431c477-5bd1-476a-bfa9-e4ce16b8356b\"\n  oam_net_id: \"nso_oam\"\n  vf_module_id: \"145cd730797234b4a40aa99335abc143\"\n  vnf_id: \"730797234b4a40aa99335157b02871cd\"\n  vnf_name: \"Mobisupport\"\n', 'MWI2ODY0Yjc1NDJjNWU1NjdkMTAyMjVkNzFmZDU0MzA=', '2017-11-27 08:42:58'),
+('fefb1751-4333-11e7-9252-005056850d2e', 'module_nso.env', '2', 'Auto-generated HEAT Environment deployment artifact', 'parameters:\n  availability_zone_0: \"alln-zone-1\"\n  nso_flavor_name: \"citeis.1vCPUx2GB\"\n  nso_image_name: \"RHEL-6.8-BASE-20160912\"\n  nso_name_0: \"zrdm3vamp01nso001\"\n  nso_oam_ip_0: \"172.18.25.175\"\n  nso_oam_net_gw: \"172.18.25.1\"\n  nso_oam_net_mask: \"255.255.255.0\"\n  nso_sec_grp_id: \"36f48d82-f099-4437-bfbc-70d9e5d420d1\"\n  nso_srv_grp_id: \"e431c477-5bd1-476a-bfa9-e4ce16b8356b\"\n  oam_net_id: \"nso_oam\"\n  vf_module_id: \"145cd730797234b4a40aa99335abc143\"\n  vnf_id: \"730797234b4a40aa99335157b02871cd\"\n  vnf_name: \"Mobisupport\"\n', 'MWI2ODY0Yjc1NDJjNWU1NjdkMTAyMjVkNzFmZDU0MzA=', '2017-11-27 08:42:58');
+
+insert into vnf_resource(orchestration_mode, description, creation_timestamp, model_uuid, aic_version_min, aic_version_max, model_invariant_uuid, model_version, model_name, tosca_node_type, heat_template_artifact_uuid) values
+('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002671', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '1.0', 'vSAMP10a', 'VF', null);
+
+insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design) values
+('68dc9a92-214c-11e7-93ae-92361f002671', 'vSAMP10a 1', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002671', null);
+
+
+insert into vf_module(model_uuid, model_invariant_uuid, model_version, model_name, description, is_base, heat_template_artifact_uuid, vol_heat_template_artifact_uuid, creation_timestamp, vnf_resource_model_uuid) values
+
+('20c4431c-246d-11e7-93ae-92361f002671', '78ca26d0-246d-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::base::module-0', 'vSAMP10a DEV Base', '1', 'ff874603-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
+('066de97e-253e-11e7-93ae-92361f002671', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671');
+
+
+insert into vf_module_customization(model_customization_uuid, label, initial_count, min_instances, max_instances, availability_zone_count, heat_environment_artifact_uuid, vol_environment_artifact_uuid, creation_timestamp, vf_module_model_uuid) values
+('cb82ffd8-252a-11e7-93ae-92361f002671', 'base', '1', '0', '0', '0', 'fefb1601-4222-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '20c4431c-246d-11e7-93ae-92361f002671'),
+('b4ea86b4-253f-11e7-93ae-92361f002671', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002671');
+
+
+insert into vnf_res_custom_to_vf_module_custom(vnf_resource_cust_model_customization_uuid, vf_module_cust_model_customization_uuid, creation_timestamp) values
+('68dc9a92-214c-11e7-93ae-92361f002671', 'cb82ffd8-252a-11e7-93ae-92361f002671', '2017-05-26 15:08:24'),
+('68dc9a92-214c-11e7-93ae-92361f002671', 'b4ea86b4-253f-11e7-93ae-92361f002671', '2017-05-26 15:08:24');
+
+insert into allotted_resource(model_uuid, model_invariant_uuid, model_version, model_name, tosca_node_type, subcategory, description, creation_timestamp) values
+('f6b7d4c6-e8a4-46e2-81bc-31cad5072842', 'b7a1b78e-6b6b-4b36-9698-8c9530da14af', '1.0', 'Tunnel_Xconn', '', '', '', '2017-05-26 15:08:24'); 
+
+insert into allotted_resource_customization(model_customization_uuid, model_instance_name, providing_service_model_invariant_uuid, target_network_role, nf_type, nf_role, nf_function, nf_naming_code, min_instances, max_instances, ar_model_uuid, creation_timestamp) values
+('367a8ba9-057a-4506-b106-fbae818597c6', 'Sec_Tunnel_Xconn 11', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'f6b7d4c6-e8a4-46e2-81bc-31cad5072842', TIMESTAMP '2017-01-20 16:14:20.0');
+
+
+insert into temp_network_heat_template_lookup(network_resource_model_name, heat_template_artifact_uuid, aic_version_min, aic_version_max) values
+('CONTRAIL30_GNDIRECT', 'ff874603-4222-11e7-9252-005056850d2e', '3', '3');
+
+insert into network_resource(model_uuid, model_name, model_invariant_uuid, description, heat_template_artifact_uuid, neutron_network_type, model_version, tosca_node_type, aic_version_min, aic_version_max, orchestration_mode, creation_timestamp) values
+('10b36f65-f4e6-4be6-ae49-9596dc1c47fc', 'CONTRAIL30_GNDIRECT', 'ce4ff476-9641-4e60-b4d5-b4abbec1271d', 'Contrail 30 GNDIRECT NW', 'aa874603-4222-11e7-9252-005056850d2e', 'BASIC', '1.0', '', '3.0', '', 'HEAT', '2017-01-17 20:35:05');
+
+insert into network_resource_customization(model_customization_uuid, model_instance_name, network_technology, network_type, network_role, network_scope, creation_timestamp, network_resource_model_uuid) values
+('3bdbb104-476c-483e-9f8b-c095b3d308ac', 'CONTRAIL30_GNDIRECT 9', '', '', '', '', '2017-04-19 14:28:32', '10b36f65-f4e6-4be6-ae49-9596dc1c47fc');
+insert into collection_network_resource_customization(model_customization_uuid, model_instance_name, network_technology, network_type, network_role, network_scope, creation_timestamp, network_resource_model_uuid, instance_group_model_uuid, crc_model_customization_uuid) values
+('1a61be4b-3378-4c9a-91c8-c919519b2d01', 'CONTRAIL30_GNDIRECT 9', '', '', '', '', '2017-04-19 14:28:32', '10b36f65-f4e6-4be6-ae49-9596dc1c47fc', '0c8692ef-b9c0-435d-a738-edf31e71f38b', 'a07a5826-3281-485c-8f40-6988011ef3f2');
+
+insert into vnf_resource(orchestration_mode, description, creation_timestamp, model_uuid, aic_version_min, aic_version_max, model_invariant_uuid, model_version, model_name, tosca_node_type, heat_template_artifact_uuid) values
+('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002672', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '2.0', 'vSAMP10a', 'VF', null);
+
+
+insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design) values
+('68dc9a92-214c-11e7-93ae-92361f002672', 'vSAMP10a 2', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002672', null);
+
+
+
+
+
+insert into vf_module(model_uuid, model_invariant_uuid, model_version, model_name, description, is_base, heat_template_artifact_uuid, vol_heat_template_artifact_uuid, creation_timestamp, vnf_resource_model_uuid) values
+
+('20c4431c-246d-11e7-93ae-92361f002672', '78ca26d0-246d-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::base::module-0', 'vSAMP10a DEV Base', '1', 'ff874603-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
+('066de97e-253e-11e7-93ae-92361f002672', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671');
+
+
+
+insert into vf_module_customization(model_customization_uuid, label, initial_count, min_instances, max_instances, availability_zone_count, heat_environment_artifact_uuid, vol_environment_artifact_uuid, creation_timestamp, vf_module_model_uuid) values
+('cb82ffd8-252a-11e7-93ae-92361f002672', 'base', '1', '0', '0', '0', 'fefb1601-4222-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '20c4431c-246d-11e7-93ae-92361f002672'),
+('b4ea86b4-253f-11e7-93ae-92361f002672', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002672');
+
+
+insert into vnf_res_custom_to_vf_module_custom(vnf_resource_cust_model_customization_uuid, vf_module_cust_model_customization_uuid, creation_timestamp) values
+('68dc9a92-214c-11e7-93ae-92361f002672', 'cb82ffd8-252a-11e7-93ae-92361f002672', '2017-05-26 15:08:24'),
+('68dc9a92-214c-11e7-93ae-92361f002672', 'b4ea86b4-253f-11e7-93ae-92361f002672', '2017-05-26 15:08:24');
+           
+
+              
+insert into vf_module_to_heat_files(vf_module_model_uuid, heat_files_artifact_uuid) values
+('20c4431c-246d-11e7-93ae-92361f002671', '00535bdd-0878-4478-b95a-c575c742bfb0'),
+('066de97e-253e-11e7-93ae-92361f002671', '00535bdd-0878-4478-b95a-c575c742bfb0');
+
+
+insert into network_resource_customization_to_service(service_model_uuid, resource_model_customization_uuid) values
+('5df8b6de-2083-11e7-93ae-92361f002671', '3bdbb104-476c-483e-9f8b-c095b3d308ac'),
+('5df8b6de-2083-11e7-93ae-92361f002672', '3bdbb104-476c-483e-9f8b-c095b3d308ac');
+
+
+insert into vnf_resource_customization_to_service(service_model_uuid, resource_model_customization_uuid) values
+('5df8b6de-2083-11e7-93ae-92361f002671', '68dc9a92-214c-11e7-93ae-92361f002671'),
+('5df8b6de-2083-11e7-93ae-92361f002672', '68dc9a92-214c-11e7-93ae-92361f002672');
+
+insert into allotted_resource_customization_to_service(service_model_uuid, resource_model_customization_uuid) values
+('5df8b6de-2083-11e7-93ae-92361f002671', '367a8ba9-057a-4506-b106-fbae818597c6' ),
+('5df8b6de-2083-11e7-93ae-92361f002672', '367a8ba9-057a-4506-b106-fbae818597c6');
+
+
+
+insert into vnf_recipe(id, nf_role, action, service_type, version_str, description, orchestration_uri, vnf_param_xsd, recipe_timeout, creation_timestamp, vf_module_id) values
+('61', '*', 'CREATE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/workflow/services/CreateGenericVNFV1', '', '180', '2016-06-03 10:14:10', ''),
+('63', '*', 'DELETE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/async/services/deleteGenericVNFV1', '', '180', '2016-06-03 10:14:10', ''),
+('65', '*', 'UPDATE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/workflow/services/updateGenericVNFV1', '', '180', '2016-06-03 10:14:10', ''),
+('67', '*', 'CREATE_VF_MODULE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/async/services/CreateVfModule', '', '180', '2016-06-03 10:14:10', '*'),
+('69', '*', 'DELETE_VF_MODULE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/async/services/DeleteVfModule', '', '180', '2016-06-03 10:14:10', '*'),
+('71', '*', 'UPDATE_VF_MODULE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/async/services/UpdateVfModule', '', '180', '2016-06-03 10:14:10', '*'),
+('77', 'VID_DEFAULT', 'createInstance', '', '1', 'VID_DEFAULT recipe to create VNF if no custom BPMN flow is found', '/mso/async/services/CreateVnfInfra', '', '180', '2016-09-14 19:18:20', ''),
+('78', 'VID_DEFAULT', 'deleteInstance', '', '1', 'VID_DEFAULT recipe to delete VNF if no custom BPMN flow is found', '/mso/async/services/DeleteVnfInfra', '', '180', '2016-09-14 19:18:20', ''),
+('81', 'VID_DEFAULT', 'updateInstance', '', '1', 'VID_DEFAULT update', '/mso/async/services/UpdateVnfInfra', '', '180', '2017-07-28 18:19:39', ''),
+('85', 'VID_DEFAULT', 'replaceInstance', '', '1', 'VID_DEFAULT replace', '/mso/async/services/ReplaceVnfInfra', '', '180', '2017-07-28 18:19:45', ''),
+('10000', 'VID_DEFAULT', 'inPlaceSoftwareUpdate', '', '1', 'VID_DEFAULT inPlaceSoftwareUpdate', '/mso/async/services/VnfInPlaceUpdate', '', '180', '2017-10-25 18:19:45', ''),
+('10001', 'VID_DEFAULT', 'applyUpdatedConfig', '', '1', 'VID_DEFAULT applyUpdatedConfig', '/mso/async/services/VnfConfigUpdate', '', '180', '2017-10-25 18:19:45', '');
+
+
+insert into vnf_components(vnf_id, component_type, heat_template_id, heat_environment_id, creation_timestamp) values
+('13961', 'VOLUME', '13843', '13961', '2016-05-19 20:22:02');   
+
+insert into vnf_components_recipe(id, vnf_type, vnf_component_type, action, service_type, version, description, orchestration_uri, vnf_component_param_xsd, recipe_timeout, creation_timestamp, vf_module_model_uuid) values
+('5', '*', 'VOLUME_GROUP', 'CREATE', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/createCinderVolumeV1', '', '180', '2016-06-03 10:15:11', ''),
+('7', '*', 'VOLUME_GROUP', 'DELETE', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/deleteCinderVolumeV1', '', '180', '2016-06-03 10:15:11', ''),
+('9', '*', 'VOLUME_GROUP', 'UPDATE', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/updateCinderVolumeV1', '', '180', '2016-06-03 10:15:11', ''),
+('13', '', 'VOLUME_GROUP', 'DELETE_VF_MODULE_VOL', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/DeleteVfModuleVolume', '', '180', '2016-06-03 10:15:11', '*'),
+('15', '', 'VOLUME_GROUP', 'UPDATE_VF_MODULE_VOL', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/UpdateVfModuleVolume', '', '180', '2016-06-03 10:15:11', '*'),
+('16', '', 'volumeGroup', 'createInstance', '', '1', 'VID_DEFAULT recipe to create volume-group if no custom BPMN flow is found', '/mso/async/services/CreateVfModuleVolumeInfraV1', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
+('17', '', 'volumeGroup', 'deleteInstance', '', '1', 'VID_DEFAULT recipe to delete volume-group if no custom BPMN flow is found', '/mso/async/services/DeleteVfModuleVolumeInfraV1', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
+('18', '', 'volumeGroup', 'updateInstance', '', '1', 'VID_DEFAULT recipe to update volume-group if no custom BPMN flow is found', '/mso/async/services/UpdateVfModuleVolumeInfraV1', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
+('19', '', 'vfModule', 'createInstance', '', '1', 'VID_DEFAULT recipe to create vf-module if no custom BPMN flow is found', '/mso/async/services/CreateVfModuleInfra', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
+('20', '', 'vfModule', 'deleteInstance', '', '1', 'VID_DEFAULT recipe to delete vf-module if no custom BPMN flow is found', '/mso/async/services/DeleteVfModuleInfra', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
+('21', '', 'vfModule', 'updateInstance', '', '1', 'VID_DEFAULT recipe to update vf-module if no custom BPMN flow is found', '/mso/async/services/UpdateVfModuleInfra', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
+('25', '', 'vfModule', 'replaceInstance', '', '1', 'VID_DEFAULT vfModule replace', '/mso/async/services/ReplaceVfModuleInfra', '', '180', '2017-07-28 18:25:06', 'VID_DEFAULT');               
+        
+insert into network_recipe(id, model_name, action, description, orchestration_uri, network_param_xsd, recipe_timeout, service_type, creation_timestamp, version_str) values
+('1', 'CONTRAIL_BASIC', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
+('2', 'CONTRAIL_BASIC', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
+('3', 'CONTRAIL_BASIC', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
+('4', 'CONTRAIL_SHARED', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
+('5', 'CONTRAIL_SHARED', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
+('6', 'CONTRAIL_SHARED', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
+('7', 'CONTRAIL_EXTERNAL', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
+('8', 'CONTRAIL_EXTERNAL', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
+('9', 'CONTRAIL_EXTERNAL', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
+('10', 'CONTRAIL30_BASIC', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-05-26 14:48:13', '1'),
+('11', 'CONTRAIL30_BASIC', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2016-05-26 14:48:13', '1'),
+('12', 'CONTRAIL30_BASIC', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2016-05-26 14:48:13', '1'),
+('13', 'NEUTRON_BASIC', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-06-01 19:54:51', '1'),
+('17', 'VID_DEFAULT', 'createInstance', 'VID_DEFAULT recipe to create network if no custom BPMN flow is found', '/mso/async/services/CreateNetworkInstance', '', '180', '', '2016-09-14 19:18:20', '1.0'),
+('18', 'VID_DEFAULT', 'updateInstance', 'VID_DEFAULT recipe to update network if no custom BPMN flow is found', '/mso/async/services/UpdateNetworkInstance', '', '180', '', '2016-09-14 19:18:20', '1.0'),
+('19', 'VID_DEFAULT', 'deleteInstance', 'VID_DEFAULT recipe to delete network if no custom BPMN flow is found', '/mso/async/services/DeleteNetworkInstance', '', '180', '', '2016-09-14 19:18:20', '1.0'),
+('124', 'CONTRAIL30_MPSCE', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-10-18 18:47:52', '1'),
+('126', 'CONTRAIL30_MPSCE', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2016-10-18 18:47:52', '1'),
+('128', 'CONTRAIL30_MPSCE', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2016-10-18 18:47:52', '1'),
+('141', 'CONTRAIL30_L2NODHCP', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2017-01-03 20:12:46', '1'),
+('144', 'CONTRAIL30_L2NODHCP', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2017-01-03 20:12:46', '1'),
+('147', 'CONTRAIL30_L2NODHCP', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2017-01-03 20:12:46', '1'),
+('169', 'CONTRAIL30_GNDIRECT', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2017-01-17 20:25:34', '1'),
+('172', 'CONTRAIL30_GNDIRECT', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2017-01-17 20:25:34', '1'),
+('175', 'CONTRAIL30_GNDIRECT', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2017-01-17 20:25:34', '1'),
+('176', 'NEUTRON_BASIC', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2017-09-22 18:47:31', '1'),
+('177', 'NEUTRON_BASIC', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2017-09-22 18:47:31', '1');    

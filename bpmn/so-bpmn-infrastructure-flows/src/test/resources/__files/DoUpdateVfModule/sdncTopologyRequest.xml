@@ -1,0 +1,11 @@
+<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:sdncadapter="http://org.onap/workflow/sdnc/adapter/schema/v1"
+                                                xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
+    <sdncadapter:RequestHeader>
+        <sdncadapter:RequestId>testReqId</sdncadapter:RequestId>
+        <sdncadapter:SvcInstanceId>MIS/1604/0026/SW_INTERNET</sdncadapter:SvcInstanceId>
+        <sdncadapter:SvcAction>query</sdncadapter:SvcAction>
+        <sdncadapter:SvcOperation>/VNF-API:vnfs/vnf-list/12345</sdncadapter:SvcOperation>
+        <sdncadapter:CallbackUrl>http://localhost:8090/SDNCAdapter</sdncadapter:CallbackUrl>
+        <sdncadapter:MsoAction>mobility</sdncadapter:MsoAction>
+    </sdncadapter:RequestHeader>
+</sdncadapterworkflow:SDNCAdapterWorkflowRequest>

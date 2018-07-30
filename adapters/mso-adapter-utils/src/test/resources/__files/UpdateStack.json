@@ -1,0 +1,11 @@
+{
+    "description" : "description",
+    "links" : [],
+    "stackStatusReason" : "stackStatusReason",
+    "stackName" : "stackName",
+    "updatedTime" : null,
+    "creationTime" : null,
+    "stackStatus" : "UPDATE_COMPLETE",
+    "id" : "id",
+    "files" : {}
+}

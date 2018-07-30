@@ -1,0 +1,37 @@
+[{
+	name=mow_adig_test_ist0_vnf_instance_name, 
+	value=wswdc403me6
+},{
+	name=mow_adig_test_bv_ist0_bandwidth, 
+	value=Gbps
+}, {
+	name=mow_adig_test_bv_ist0_vnf_config_template_version, 
+	value=17.2
+}, {
+	name=mow_adig_test_ist0_vnf_config_template_version, 
+	value=17.2
+}, {
+	name=mow_adig_test_bv_ist0_ASN, 
+	value=2685
+}, {
+	name=mow_adig_test_bv_ist0_bandwidth_units, 
+	value=Gbps
+}, {
+	name=mow_adig_test_bv_ist0_availability_zone_0, 
+	value=mdt25b-kvm-az01
+}, {
+	name=mow_adig_test_bv_ist0_vnf_config_template, 
+	value=17.2
+}, {
+	name=mow_adig_test_ist0_bandwidth_units, 
+	value=Gbps
+}, {
+	name=mow_adig_test_bv_ist0_vnf_instance_name, 
+	value=wswdc403me6
+}, {
+	name=mow_adig_test_bv_ist0_vnf_instance, 
+	value=wswdc403me6
+}, {
+	name=mow_adig_test_bv_ist0_AIC_CLLI, 
+	value=MTSNJA4LCP1
+}]

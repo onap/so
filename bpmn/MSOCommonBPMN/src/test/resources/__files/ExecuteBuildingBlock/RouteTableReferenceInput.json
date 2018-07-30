@@ -1,0 +1,6 @@
+{
+	"routeTableReferenceId": "routeTableReferenceId",
+	"routeTableReferenceFqdn": "routeTableReferenceFqdn",
+    "resourceVersion": "resourceVersion",
+    "relationshipList": {}
+}

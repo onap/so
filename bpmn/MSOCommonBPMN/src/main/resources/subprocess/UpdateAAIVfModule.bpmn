@@ -5,7 +5,7 @@
     <bpmn2:scriptTask id="QueryAAIForVfModule" name="Query AAI for VF Module" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_38</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_39</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def uvm = new UpdateAAIVfModule()
 uvm.getVfModule(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -17,7 +17,7 @@ uvm.getVfModule(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="AAIQueryFailure" name="Handle AAI Query Failure" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_18</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def uvm= new UpdateAAIVfModule()
 uvm.handleAAIQueryFailure(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -30,7 +30,7 @@ uvm.handleAAIQueryFailure(execution)]]></bpmn2:script>
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:outputParameter name="CreateCustomerV1Response"><![CDATA[<aetgt:CreateCustomerResponse xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"                   xmlns:ns="http://org.openecomp/mso/workflow/schema/v1">
+            <camunda:outputParameter name="CreateCustomerV1Response"><![CDATA[<aetgt:CreateCustomerResponse xmlns:aetgt="http://org.onap/so/workflow/schema/v1"                   xmlns:ns="http://org.onap/so/workflow/schema/v1">
  <ns:GlobalCustomerId>${CCV1_subscriberglobalid}</ns:GlobalCustomerId>
    </aetgt:CreateCustomerResponse>]]></camunda:outputParameter>
           </camunda:inputOutput>
@@ -50,7 +50,7 @@ uvm.handleAAIQueryFailure(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="HandleUpdateVfModuleFailure" name="Handle Update VF Module Failure" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def uvm= new UpdateAAIVfModule()
 uvm.handleUpdateVfModuleFailure(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -67,7 +67,7 @@ uvm.handleUpdateVfModuleFailure(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="UpdateVfModule" name="Update VF Module" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_22</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_14</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def uvm= new UpdateAAIVfModule()
 uvm.updateVfModule(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -79,7 +79,7 @@ uvm.updateVfModule(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ProcessReceivedRequest" name="Process Received Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_38</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def uvm= new UpdateAAIVfModule()
 uvm.preProcessRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>

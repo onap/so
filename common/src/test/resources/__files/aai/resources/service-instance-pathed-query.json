@@ -2,7 +2,7 @@
   "results": [
     {
       "resource-type": "service-instance",
-      "resource-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3"
+      "resource-link": "https://localhost:8443/aai/v9/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3"
     }
   ]
 }

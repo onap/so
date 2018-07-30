@@ -1,0 +1,72 @@
+{
+	"variables": {
+		"bpmnRequest": {
+			"value": "{\n  \"requestDetails\": {\n    \"cloudConfiguration\": {\n      \"lcpCloudRegionId\": \"mtn6\", \n      \"tenantId\": \"0422ffb57ba042c0800a29dc85ca70f8\"\n    }, \n    \"modelInfo\": {\n      \"modelInvariantUuid\": \"52b49b5d-3086-4ffd-b5e6-1b1e5e7e062f\", \n      \"modelName\": \"MSO Test Network\", \n      \"modelType\": \"service\", \n      \"modelUuid\": \"aed5a5b7-20d3-44f7-90a3-ddbd16f14d1e\", \n      \"modelVersion\": \"1.0\"\n    }, \n    \"owningEntity\": {\n      \"owningEntityId\": \"123459af-0427-42c2-9d15-971b99b12345\", \n      \"owningEntityName\": \"vSAMP10a Entity-200\"\n    }, \n    \"project\": {\n      \"projectName\": \"vSAMP10a Project-3\"\n    }, \n    \"requestInfo\": {\n      \"instanceName\": \"MSO-DEV-SI-1802-v6-2-19-10\", \n      \"requestorId\": \"xxxxxx\", \n      \"source\": \"VID\", \n      \"suppressRollback\": false\n    }, \n    \"requestParameters\": {\n      \"aLaCarte\": true, \n      \"subscriptionServiceType\": \"MSO-dev-service-type\", \n      \"userParams\": [\n        {\n          \"name\": \"someUserParam\", \n          \"value\": \"someValue\"\n        }\n      ]\n    }, \n    \"subscriberInfo\": {\n      \"globalSubscriberId\": \"MSO_1610_dev\", \n      \"subscriberName\": \"MSO_1610_dev\"\n    }\n  }\n}\n",
+			"type": "String"
+		},
+		"requestId": {
+			"value": "6dd20050-76ee-418f-a153-50720a8f3286",
+			"type": "String"
+		},
+		"mso-request-id": {
+			"value": "6dd20050-76ee-418f-a153-50720a8f3286",
+			"type": "String"
+		},
+		"isBaseVfModule": {
+			"value": false,
+			"type": "Boolean"
+		},
+		"recipeTimeout": {
+			"value": 180,
+			"type": "Integer"
+		},
+		"requestAction": {
+			"value": "createInstance",
+			"type": "String"
+		},
+		"serviceInstanceId": {
+			"value": "",
+			"type": "String"
+		},
+		"vnfId": {
+			"value": "",
+			"type": "String"
+		},
+		"vfModuleId": {
+			"value": "",
+			"type": "String"
+		},
+		"volumeGroupId": {
+			"value": "",
+			"type": "String"
+		},
+		"networkId": {
+			"value": "",
+			"type": "String"
+		},
+		"configurationId": {
+			"value": "",
+			"type": "String"
+		},
+		"serviceType": {
+			"value": "",
+			"type": "String"
+		},
+		"vnfType": {
+			"value": "",
+			"type": "String"
+		},
+		"vfModuleType": {
+			"value": "",
+			"type": "String"
+		},
+		"networkType": {
+			"value": "",
+			"type": "String"
+		},
+		"host": {
+			"value": "localhost",
+			"type": "String"
+		}
+	}
+}

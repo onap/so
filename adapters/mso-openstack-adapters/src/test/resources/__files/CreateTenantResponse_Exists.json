@@ -1,0 +1,15 @@
+{
+	"createTenantResponse": {
+		"cloudSiteId": "mtn13",
+		"tenantId": "tenantId",
+		"tenantCreated": false,
+		"tenantRollback": {
+			"cloudId": "mtn13",
+			"tenantCreated": false,
+			"msoRequest": {
+				"requestId": "62265093-277d-4388-9ba6-449838ade586",
+				"serviceInstanceId": "4147e06f-1b89-49c5-b21f-4faf8dc9805a"
+			}
+		}
+	}
+}

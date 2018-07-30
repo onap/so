@@ -1,0 +1,33 @@
+{
+	"cloudSiteId": "cloudRegionId",
+	"tenantId": "tenantId",
+	"vnfType": "vnfType",
+	"vfModuleId": "vfModuleId",
+	"vfModuleName": "vfModuleName",
+	"vfModuleType": "vfModuleModelName",
+	"vnfVersion": "serviceModelVersion",
+	"modelCustomizationUuid": "vfModuleModelCustomizationUuid",
+	"skipAAI": true,
+	"backout": false,
+	"failIfExists": true,
+	"msoRequest": 
+	{
+		"requestId": "requestId",
+		"serviceInstanceId": "serviceInstanceId"
+	},
+
+	"vfModuleParams": 
+	{
+		"environment_context": "environmentContext",
+		"key1": "value1",
+		"paramOne": "paramOneValue",
+		"paramThree": "paramThreeValue",
+		"paramTwo": "paramTwoValue",
+		"vf_module_id": "vfModuleId",
+		"vf_module_index": "1",
+		"vf_module_name": "vfModuleName",
+		"vnf_id": "vnfId",
+		"vnf_name": "vnfName",
+		"workload_context": "workloadContext"
+	}
+}

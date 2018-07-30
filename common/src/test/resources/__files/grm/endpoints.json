@@ -7,7 +7,7 @@
             "minor": 0,
             "patch": "0"
          },
-         "hostAddress": "135.144.120.218",
+         "hostAddress": "192.168.120.218",
          "listenPort": "32004",
          "latitude": "37.7022",
          "longitude": "121.9358",
@@ -54,7 +54,7 @@
             "minor": 0,
             "patch": "0"
          },
-         "hostAddress": "135.144.120.22",
+         "hostAddress": "192.168.120.22",
          "listenPort": "32004",
          "latitude": "1.0",
          "longitude": "1.0",
@@ -101,7 +101,7 @@
             "minor": 0,
             "patch": "0"
          },
-         "hostAddress": "135.144.120.218",
+         "hostAddress": "192.168.120.218",
          "listenPort": "32002",
          "latitude": "1.0",
          "longitude": "1.0",

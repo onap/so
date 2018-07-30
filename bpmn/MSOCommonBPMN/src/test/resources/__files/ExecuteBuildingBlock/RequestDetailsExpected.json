@@ -1,0 +1,14 @@
+{
+	"modelInfo": {
+		"modelType": "vfModule",
+		"modelName": "vSAMP10aDEV::base::module-0"
+	},
+	"requestInfo": {
+		"source": "VID",
+		"suppressRollback": false
+	},
+	"cloudConfiguration": {
+		"tenantId": "6accefef3cb442ff9e644d589fb04107",
+		"lcpCloudRegionId": "mtn6"
+	}
+}

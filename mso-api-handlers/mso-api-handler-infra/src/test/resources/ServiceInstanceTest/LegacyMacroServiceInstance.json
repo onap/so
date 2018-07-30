@@ -1,0 +1,74 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelInvariantId": "282bdcd2-34ed-4665-9ab2-63455814531d",
+      "modelType": "service",
+      "modelName": "MOW_ADIG_test_BV_IST",
+      "modelVersion": "1.0",
+      "modelVersionId": "109a153e-325f-4df5-8161-edd91314daee",
+      "modelUuid": "109a153e-325f-4df5-8161-edd91314daee",
+      "modelInvariantUuid": "282bdcd2-34ed-4665-9ab2-63455814531d"
+    },
+    "cloudConfiguration": {
+        "lcpCloudRegionId": "mdt25b",
+        "tenantId": "aefb697db6524ddebfe4915591b0a347"
+     },
+    "requestInfo": {
+      "productFamilyId": "testaaS",
+      "source": "VID",
+      "suppressRollback": false,
+      "requestorId": "ss616y"
+    },
+    "subscriberInfo": {
+      "globalSubscriberId": "21014aa2-526b-11e6-beb8-9e71128cae77"
+    },
+    "requestParameters": {
+      "subscriptionServiceType": "test",
+      "userParams": [{
+			"name": "mow_adig_test_ist0_vnf_instance_name", 
+			"value": "wswdc403me6"
+		},{
+			"name": "mow_adig_test_bv_ist0_bandwidth", 
+			"value": "Gbps"
+		}, {
+			"name": "mow_adig_test_bv_ist0_vnf_config_template_version", 
+			"value": "17.2"
+		}, {
+			"name": "mow_adig_test_ist0_vnf_config_template_version", 
+			"value": "17.2"
+		}, {
+			"name": "mow_adig_test_bv_ist0_ASN", 
+			"value": "2685"
+		}, {
+			"name": "mow_adig_test_bv_ist0_bandwidth_units", 
+			"value": "Gbps"
+		}, {
+			"name": "mow_adig_test_bv_ist0_availability_zone_0", 
+			"value": "mdt25b-kvm-az01"
+		}, {
+			"name": "mow_adig_test_bv_ist0_vnf_config_template", 
+			"value": "17.2"
+		}, {
+			"name": "mow_adig_test_ist0_bandwidth_units", 
+			"value": "Gbps"
+		}, {
+			"name": "mow_adig_test_bv_ist0_vnf_instance_name", 
+			"value": "wswdc403me6"
+		}, {
+			"name": "mow_adig_test_bv_ist0_vnf_instance", 
+			"value": "wswdc403me6"
+		}, {
+			"name": "mow_adig_test_bv_ist0_AIC_CLLI", 
+			"value": "MTSNJA4LCP1"
+		}],
+      "aLaCarte": false
+    },
+    "project": {
+      "projectName": "GigaPower"
+    },
+    "owningEntity": {
+      "owningEntityId": "2811e2fb-005e-40de-990b-c0794f362399",
+      "owningEntityName": "PACKET-CORE"
+    }
+  }
+}

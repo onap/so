@@ -1,0 +1,13 @@
+{
+	"requestInfo": {
+		"callbackUrl": "callbackURL",
+		"productFamilyId": "productFamilyId",
+		"source": "source",
+		"suppressRollback": false,
+		"requestorId": "requestorId"
+	},
+	"requestParameters": {
+		"subscriptionServiceType": "subscriptionServiceType"
+	}
+}
+

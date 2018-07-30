@@ -24,7 +24,7 @@
                                 "relationship": [
                                     {
                                         "related-to": "vpls-pe",
-                                        "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/network/vpls-pes/vpls-pe/sfcca301vr1",
+                                        "related-link": "https://localhost:8443/aai/v9/network/vpls-pes/vpls-pe/sfcca301vr1",
                                         "relationship-data": [
                                             {
                                                 "relationship-key": "vpls-pe.equipment-name",
@@ -48,7 +48,7 @@
                     "relationship": [
                         {
                             "related-to": "vce",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/network/vces/vce/a9fec18e-1ea3-40e4-a6c0-a89b3de07053",
+                            "related-link": "https://localhost:8443/aai/v9/network/vces/vce/a9fec18e-1ea3-40e4-a6c0-a89b3de07053",
                             "relationship-data": [
                                 {
                                     "relationship-key": "vce.vnf-id",
@@ -64,7 +64,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj104snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj104snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -79,7 +79,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj105snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj105snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -94,7 +94,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/compute_host",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/compute_host",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -109,7 +109,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj106snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj106snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -124,7 +124,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj126sd9",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj126sd9",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -139,7 +139,7 @@
                         },
                         {
                             "related-to": "vce",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/network/vces/vce/8ae1e5f8-61f1-4c71-913a-b40cc4593cb9",
+                            "related-link": "https://localhost:8443/aai/v9/network/vces/vce/8ae1e5f8-61f1-4c71-913a-b40cc4593cb9",
                             "relationship-data": [
                                 {
                                     "relationship-key": "vce.vnf-id",
@@ -155,7 +155,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj102sta",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj102sta",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -170,7 +170,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnjtax102",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnjtax102",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -185,7 +185,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj107snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj107snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -200,7 +200,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj118snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj118snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -215,7 +215,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj110snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj110snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -230,7 +230,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj109snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj109snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -245,7 +245,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj114snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj114snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -260,7 +260,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj119snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj119snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -275,7 +275,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj116snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj116snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -290,7 +290,7 @@
                         },
                         {
                             "related-to": "vce",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/network/vces/vce/a2935fa9-b743-49f4-9813-a127f13c4e93",
+                            "related-link": "https://localhost:8443/aai/v9/network/vces/vce/a2935fa9-b743-49f4-9813-a127f13c4e93",
                             "relationship-data": [
                                 {
                                     "relationship-key": "vce.vnf-id",
@@ -306,7 +306,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj108snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj108snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -321,7 +321,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj123sd9",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj123sd9",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -336,7 +336,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj101snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj101snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -351,7 +351,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj102snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj102snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -366,7 +366,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnjtax101",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnjtax101",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -381,7 +381,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj113snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj113snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -396,7 +396,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj111snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj111snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -411,7 +411,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj103snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj103snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -426,7 +426,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj117snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj117snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -441,7 +441,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj101sta",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj101sta",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -456,7 +456,7 @@
                         },
                         {
                             "related-to": "vce",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/network/vces/vce/c7fe7698-8063-4e26-8bd3-ca3edde0b0d4",
+                            "related-link": "https://localhost:8443/aai/v9/network/vces/vce/c7fe7698-8063-4e26-8bd3-ca3edde0b0d4",
                             "relationship-data": [
                                 {
                                     "relationship-key": "vce.vnf-id",
@@ -472,7 +472,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj120snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj120snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -487,7 +487,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj124sd9",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj124sd9",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -502,7 +502,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj125sd9",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj125sd9",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -517,7 +517,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj112snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj112snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -532,7 +532,7 @@
                         },
                         {
                             "related-to": "pserver",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj115snd",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/pservers/pserver/mtcnj115snd",
                             "relationship-data": [
                                 {
                                     "relationship-key": "pserver.hostname",
@@ -547,7 +547,7 @@
                         },
                         {
                             "related-to": "cloud-region",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtcnj2",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtcnj2",
                             "relationship-data": [
                                 {
                                     "relationship-key": "cloud-region.cloud-owner",
@@ -567,7 +567,7 @@
                         },
                         {
                             "related-to": "oam-network",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/oam-networks/oam-network/f9263cat-4eaa-43a0-bea4-adcf6e123456",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/oam-networks/oam-network/f9263cat-4eaa-43a0-bea4-adcf6e123456",
                             "relationship-data": [
                                 {
                                     "relationship-key": "cloud-region.cloud-owner",
@@ -591,7 +591,7 @@
                         },
                         {
                             "related-to": "oam-network",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/oam-networks/oam-network/b9263fab-4eaa-43a0-bea4-adcf6e999999",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/oam-networks/oam-network/b9263fab-4eaa-43a0-bea4-adcf6e999999",
                             "relationship-data": [
                                 {
                                     "relationship-key": "cloud-region.cloud-owner",
@@ -615,7 +615,7 @@
                         },
                         {
                             "related-to": "oam-network",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/oam-networks/oam-network/cf33dc95-c5d2-48fd-8078-fd949363f63b",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/oam-networks/oam-network/cf33dc95-c5d2-48fd-8078-fd949363f63b",
                             "relationship-data": [
                                 {
                                     "relationship-key": "cloud-region.cloud-owner",
@@ -639,7 +639,7 @@
                         },
                         {
                             "related-to": "availability-zone",
-                            "related-link": "https://aai-conexus-e2e.test.att.com:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/availability-zones/availability-zone/mtcnj-esx-az01",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/availability-zones/availability-zone/mtcnj-esx-az01",
                             "relationship-data": [
                                 {
                                     "relationship-key": "cloud-region.cloud-owner",

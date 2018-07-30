@@ -1,0 +1,21 @@
+{
+ "requestDetails": {
+  "requestInfo": {
+   "callbackUrl": "http://localhost:28080/simulada/CCD/AsyncRequestStatus",
+   "source": "CCD",
+   "instanceName": "USOSTCDALTX0101VFHN31"
+  },
+  "subscriberInfo": {
+   "globalSubscriberId": "38829939920000",
+   "subscriberName": "Fern Hill Real Estate LLC 31"
+  },
+  "requestParameters": {
+   "userParams": [
+    {
+     "name": "someUserParam",
+     "value": "someValue"
+    }
+   ]
+  }
+  }
+}

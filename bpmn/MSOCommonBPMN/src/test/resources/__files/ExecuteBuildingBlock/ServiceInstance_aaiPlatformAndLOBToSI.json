@@ -1,0 +1,72 @@
+{
+	"service-instance-id": null,
+	"service-instance-name": null,
+	"orchestration-status": null,
+	"owning-entity": null,
+	"project": null,
+	"vnfs": [
+		{
+			"closedLoopDisabled": false,
+			"vnf-id": "vnfId",
+			"vnf-name": null,
+			"vnf-type": null,
+			"orchestration-status": null,
+			"vf-modules": [],
+			"volume-groups": [],
+			"line-of-business": {
+				"line-of-business-name": "lineOfBusinessName"
+			},
+			"platform": {
+				"platform-name": "platformName"
+			},
+			"cascaded": false,
+			"cloud-params": null,
+			"cloud-context": null,
+			"solution": null,
+			"vnf-name-2": null,
+			"service-id": null,
+			"regional-resource-zone": null,
+			"prov-status": null,
+			"operational-status": null,
+			"equipment-role": null,
+			"management-option": null,
+			"ipv4-oam-address": null,
+			"ipv4-loopback0-address": null,
+			"nm-lan-v6-address": null,
+			"management-v6-address": null,
+			"vcpu": null,
+			"vcpu-units": null,
+			"vmemory": null,
+			"vmemory-units": null,
+			"vdisk": null,
+			"vdisk-units": null,
+			"in-maint": false,
+			"is-closed-loop-disabled": false,
+			"summary-status": null,
+			"encrypted-access-flag": null,
+			"as-number": null,
+			"regional-resource-subzone": null,
+			"self-link": null,
+			"ipv4-oam-gateway-address": null,
+			"ipv4-oam-gateway-address-prefix-length": null,
+			"vlan-id-outer": null,
+			"nm-profile-name": null,
+			"l-interfaces": [],
+			"lag-interfaces": [],
+			  "license": {
+    "entitlement-pool-uuids": [],
+    "license-key-group-uuids": []
+  },
+			"entitlements": [],
+			"model-info-generic-vnf": null
+		}
+	],
+	"allotted-resources": [],
+	"networks": [],
+	"vhn-portal-url": null,
+	"service-instance-location-id": null,
+	"selflink": null,
+	"metadata": null,
+	"configurations": [],
+	"model-info-service-instance": null
+}

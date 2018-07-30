@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+  <bpmn:process id="DoDeleteVfModuleVolumeV2" name="DoDeleteVfModuleVolumeV2" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>SequenceFlow_1gvfdp4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Task_06u1lr0" name="Call REST AAI Query Cloud Region" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1vy2ojp</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1dlcqmc</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def delVfModuleVol = new DoDeleteVfModuleVolumeV2()
+delVfModuleVol.executeMethod('callRESTQueryAAICloudRegion', execution, isDebugLogEnabled)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_1woqfjw" name="Call REST AAI Query for Volume Group" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1dlcqmc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1kjccf1</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def deleteVfMod = new DoDeleteVfModuleVolumeV2()
+deleteVfMod.executeMethod('callRESTQueryAAIForVolumeGroup', execution, isDebugLogEnabled)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_0yjx0p2" name="Prepare VNF Adapter Delete" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1kjccf1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1tgngf7</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def deleteVfMod = new DoDeleteVfModuleVolumeV2()
+deleteVfMod.executeMethod('prepareVnfAdapterDeleteRequest', execution, isDebugLogEnabled)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:callActivity id="Task_14fsstq" name="Call REST VNF Adapter Delete" calledElement="vnfAdapterRestV1">
+      <bpmn:extensionElements>
+        <camunda:in source="DDVMV_deleteVnfARequest" target="vnfAdapterRestV1Request" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+        <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
+        <camunda:in variables="all" />
+        <camunda:out source="vnfAdapterRestV1Response" target="DDVMV_deleteVnfAResponse" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="VNFREST_SuccessIndicator" target="VNFREST_SuccessIndicator" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1tgngf7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1x3luyj</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="Task_17q1roq" name="Call REST AAI Delete Volume Group" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0cy0y9t</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_13c3cv2</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def deleteVfMod = new DoDeleteVfModuleVolumeV2()
+deleteVfMod.executeMethod('callRESTDeleteAAIVolumeGroup', execution, isDebugLogEnabled)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="EndEvent_0fw1gkf" name="Stop">
+      <bpmn:incoming>SequenceFlow_1sgtwr2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1dlcqmc" sourceRef="Task_06u1lr0" targetRef="Task_1woqfjw" />
+    <bpmn:sequenceFlow id="SequenceFlow_1kjccf1" sourceRef="Task_1woqfjw" targetRef="Task_0yjx0p2" />
+    <bpmn:sequenceFlow id="SequenceFlow_1tgngf7" sourceRef="Task_0yjx0p2" targetRef="Task_14fsstq" />
+    <bpmn:scriptTask id="Task_1i432ud" name="Pre Process Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1gvfdp4</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vy2ojp</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def deleteVfMod = new DoDeleteVfModuleVolumeV2()
+deleteVfMod.executeMethod('preProcessRequest', execution, isDebugLogEnabled)
+]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1gvfdp4" sourceRef="StartEvent_1" targetRef="Task_1i432ud" />
+    <bpmn:sequenceFlow id="SequenceFlow_1vy2ojp" sourceRef="Task_1i432ud" targetRef="Task_06u1lr0" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0o3lxtf" name="VNF Adapter REST call success?">
+      <bpmn:incoming>SequenceFlow_1x3luyj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0cy0y9t</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1rgd8dg</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1x3luyj" sourceRef="Task_14fsstq" targetRef="ExclusiveGateway_0o3lxtf" />
+    <bpmn:sequenceFlow id="SequenceFlow_0cy0y9t" name="Yes" sourceRef="ExclusiveGateway_0o3lxtf" targetRef="Task_17q1roq">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{VNFREST_SuccessIndicator == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="EndEvent_00cohim" name="throw MSOException">
+      <bpmn:incoming>SequenceFlow_1rgd8dg</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_0fa7ks7" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1rgd8dg" sourceRef="ExclusiveGateway_0o3lxtf" targetRef="EndEvent_00cohim" />
+    <bpmn:scriptTask id="Task_018w43g" name="Post Process" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_13c3cv2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1sgtwr2</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def deleteVfMod = new DoDeleteVfModuleVolumeV2()
+deleteVfMod.executeMethod('postProcess', execution, isDebugLogEnabled)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_13c3cv2" sourceRef="Task_17q1roq" targetRef="Task_018w43g" />
+    <bpmn:sequenceFlow id="SequenceFlow_1sgtwr2" sourceRef="Task_018w43g" targetRef="EndEvent_0fw1gkf" />
+  </bpmn:process>
+  <bpmn:error id="Error_0fa7ks7" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoDeleteVfModuleVolumeV2">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="179" y="138" width="23" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1qojxu5_di" bpmnElement="Task_06u1lr0">
+        <dc:Bounds x="407" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1mht6f6_di" bpmnElement="Task_1woqfjw">
+        <dc:Bounds x="564" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_02ujn8y_di" bpmnElement="Task_0yjx0p2">
+        <dc:Bounds x="713" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0bf87en_di" bpmnElement="Task_14fsstq">
+        <dc:Bounds x="865" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_07kmkio_di" bpmnElement="Task_17q1roq">
+        <dc:Bounds x="1151" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0fw1gkf_di" bpmnElement="EndEvent_0fw1gkf">
+        <dc:Bounds x="1463" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1470" y="138" width="22" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1dlcqmc_di" bpmnElement="SequenceFlow_1dlcqmc">
+        <di:waypoint xsi:type="dc:Point" x="507" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="564" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="536" y="95" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kjccf1_di" bpmnElement="SequenceFlow_1kjccf1">
+        <di:waypoint xsi:type="dc:Point" x="664" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="713" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="689" y="95" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1tgngf7_di" bpmnElement="SequenceFlow_1tgngf7">
+        <di:waypoint xsi:type="dc:Point" x="813" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="865" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="839" y="95" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0wjwf8w_di" bpmnElement="Task_1i432ud">
+        <dc:Bounds x="247" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gvfdp4_di" bpmnElement="SequenceFlow_1gvfdp4">
+        <di:waypoint xsi:type="dc:Point" x="209" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="247" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="228" y="95" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vy2ojp_di" bpmnElement="SequenceFlow_1vy2ojp">
+        <di:waypoint xsi:type="dc:Point" x="347" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="407" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="377" y="95" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0o3lxtf_di" bpmnElement="ExclusiveGateway_0o3lxtf" isMarkerVisible="true">
+        <dc:Bounds x="1028" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1020" y="145" width="66" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1x3luyj_di" bpmnElement="SequenceFlow_1x3luyj">
+        <di:waypoint xsi:type="dc:Point" x="965" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="1028" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="997" y="95" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0cy0y9t_di" bpmnElement="SequenceFlow_0cy0y9t">
+        <di:waypoint xsi:type="dc:Point" x="1078" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="1151" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1106" y="95" width="18" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0zln0ww_di" bpmnElement="EndEvent_00cohim">
+        <dc:Bounds x="1035" y="274" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1016" y="310" width="73" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rgd8dg_di" bpmnElement="SequenceFlow_1rgd8dg">
+        <di:waypoint xsi:type="dc:Point" x="1053" y="145" />
+        <di:waypoint xsi:type="dc:Point" x="1053" y="274" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1068" y="199.5" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1ilduoy_di" bpmnElement="Task_018w43g">
+        <dc:Bounds x="1298" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_13c3cv2_di" bpmnElement="SequenceFlow_13c3cv2">
+        <di:waypoint xsi:type="dc:Point" x="1251" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="1298" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1275" y="95" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1sgtwr2_di" bpmnElement="SequenceFlow_1sgtwr2">
+        <di:waypoint xsi:type="dc:Point" x="1398" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="1463" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1431" y="95" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

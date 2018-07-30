@@ -1,0 +1,27 @@
+{
+	"configuration-id" : "configurationId",
+	"orchestration-status" : "PRECREATED",
+    "tunnel-bandwidth" : "tunnelBandwidth",
+    "vendor-allowed-max-bandwidth" : "vendorAllowedMaxBandwidth",
+    "management-option" : "managementOption",
+    "configuration-name" : "configurationName",
+    "configuration-type" : "configurationType",
+    "configuration-sub-type" : "configurationSubType",
+    "operational-status" : "operationalStatus",
+    "configuration-selflink" : "configurationSelflink",
+    "metadata" : null,
+    "forwarder-evcs" : [
+	    {
+			"forwarder-evc-id": "forwarderEvcId"
+		}
+    ],
+    "evcs" : [
+	    {
+			"evc-id": "evcId"
+		}
+    ],
+    "model-info-configuration" : null,
+    "related-configuration" : null,
+    "l3-network" : null,
+    "l-interface" : null
+}

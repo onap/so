@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+  <bpmn:process id="UnassignVnfBB" name="UnassignVnfBB" isExecutable="true">
+    <bpmn:startEvent id="UnassignVnfBB_Start" name="Start">
+      <bpmn:outgoing>SequenceFlow_1kfxl04</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="DeleteVnf" name="Delete Vnf (AAI)" camunda:expression="${AAIDeleteTasks.deleteVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0w3s09a</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0qa6sxx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="UnassignVnf" name="Unassign Vnf (SDNC)" camunda:expression="${SDNCUnassignTasks.unassignVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1kfxl04</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_02st1i1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="UnassignVnfBB_End" name="End">
+      <bpmn:incoming>SequenceFlow_0qa6sxx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1kfxl04" sourceRef="UnassignVnfBB_Start" targetRef="UnassignVnf" />
+    <bpmn:sequenceFlow id="SequenceFlow_0qa6sxx" sourceRef="DeleteVnf" targetRef="UnassignVnfBB_End" />
+    <bpmn:serviceTask id="DeleteVnfInstanceGroups" name="Delete Vnf Instance Groups (AAI)" camunda:expression="${UnassignVnf.deleteInstanceGroups(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_02st1i1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0w3s09a</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_02st1i1" sourceRef="UnassignVnf" targetRef="DeleteVnfInstanceGroups" />
+    <bpmn:sequenceFlow id="SequenceFlow_0w3s09a" sourceRef="DeleteVnfInstanceGroups" targetRef="DeleteVnf" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="UnassignVnfBB">
+      <bpmndi:BPMNShape id="StartEvent_0kxwniy_di" bpmnElement="UnassignVnfBB_Start">
+        <dc:Bounds x="213" y="-3" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="218" y="33" width="25" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0028k7a_di" bpmnElement="DeleteVnf">
+        <dc:Bounds x="723" y="-25" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_13t22km_di" bpmnElement="UnassignVnf">
+        <dc:Bounds x="367" y="-25" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0qdq7wj_di" bpmnElement="UnassignVnfBB_End">
+        <dc:Bounds x="959" y="-3" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="967" y="37" width="20" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kfxl04_di" bpmnElement="SequenceFlow_1kfxl04">
+        <di:waypoint xsi:type="dc:Point" x="249" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="367" y="15" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="308" y="0" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qa6sxx_di" bpmnElement="SequenceFlow_0qa6sxx">
+        <di:waypoint xsi:type="dc:Point" x="823" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="959" y="15" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="846" y="0" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0b1276e_di" bpmnElement="DeleteVnfInstanceGroups">
+        <dc:Bounds x="546" y="-25" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_02st1i1_di" bpmnElement="SequenceFlow_02st1i1">
+        <di:waypoint xsi:type="dc:Point" x="467" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="546" y="15" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="506.5" y="-6" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0w3s09a_di" bpmnElement="SequenceFlow_0w3s09a">
+        <di:waypoint xsi:type="dc:Point" x="646" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="723" y="15" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="684.5" y="-6" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

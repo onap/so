@@ -1,0 +1,109 @@
+{
+    "subscriptionServiceType": {
+        "type": "String",
+        "value": "PORT-MIRROR",
+        "valueInfo": {}
+    },
+    "currentActivity": {
+        "type": "String",
+        "value": "UpdateConfigurationState",
+        "valueInfo": {}
+    },
+    "validResponses": {
+        "type": "String",
+        "value": "rollback, skip, manual, abort",
+        "valueInfo": {}
+    },
+    "serviceType": {
+        "type": "String",
+        "value": "PORT-MIRROR",
+        "valueInfo": {}
+    },
+    "msoRequestId": {
+        "type": "String",
+        "value": "4f6fe9ac-800c-4540-a93e-10d179fa1b0a",
+        "valueInfo": {}
+    },
+    "vnfType": {
+        "type": "String",
+        "value": "VPROBE",
+        "valueInfo": {}
+    }, 
+    "originalRequestorId": {
+        "type": "String",
+        "value": "VID",
+        "valueInfo": {}
+    },
+    "errorSource": {
+        "type": "String",
+        "value": "SDNO",
+        "valueInfo": {}
+    },
+    "errorText": {
+        "type": "String",
+        "value": "SDN-O exception: failed with message FAIL - AnsibleOperations exception: Failed : HTTP error code : 400 - Error Msg : no node list provided and no inventory file found",
+        "valueInfo": {}
+    },
+    "taskId": {
+        "type": "String",
+        "value": "b5fa707a-f55a-11e7-a796-005056856d52",
+        "valueInfo": {}
+    },
+    "nfRole": {
+        "type": "String",
+        "value": "VPROBE",
+        "valueInfo": {}
+    },"updateRequestResponse": {
+        "type": "String",
+        "value": "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:updateInfraRequestResponse xmlns:ns2=\"http://org.onap.so/requestsdb\"/></soap:Body></soap:Envelope>",
+        "valueInfo": {}
+    },
+    "failedActivity": {
+        "type": "String",
+        "value": "SDNO",
+        "valueInfo": {}
+    },
+    "originalRequestId": {
+        "type": "String",
+        "value": "4f6fe9ac-800c-4540-a93e-10d179fa1b0a",
+        "valueInfo": {}
+    },"errorMessage": {
+        "type": "String",
+        "value": "SDN-O exception: failed with message FAIL - AnsibleOperations exception: Failed : HTTP error code : 400 - Error Msg : no node list provided and no inventory file found",
+        "valueInfo": {}
+    },"workStep": {
+        "type": "String",
+        "value": "Configurationactivate SDNO Post-Check",
+        "valueInfo": {}
+    },
+    "URN_log_debug_asyncQueryAAICustomer": {
+        "type": "String",
+        "value": "true",
+        "valueInfo": {}
+    },
+    "URN_mso_workflow_default_aai_v11_l3_network_uri": {
+        "type": "String",
+        "value": "/aai/v11/network/l3-networks/l3-network",
+        "valueInfo": {}
+    },"errorCode": {
+        "type": "String",
+        "value": "1002",
+        "valueInfo": {}
+    },"vnfName": {
+        "type": "Null",
+        "value": null,
+        "valueInfo": {}
+    },"buildingBlockName": {
+        "type": "String",
+        "value": "UpdateConfigurationState",
+        "valueInfo": {}
+    },"buildingBlockStep": {
+        "type": "String",
+        "value": "Configurationactivate SDNO Post-Check",
+        "valueInfo": {}
+    },"type": {
+        "type": "String",
+        "value": "fallout",
+        "valueInfo": {}
+    }
+}

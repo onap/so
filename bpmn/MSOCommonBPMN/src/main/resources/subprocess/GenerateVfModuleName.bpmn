@@ -7,14 +7,14 @@
     <bpmn:scriptTask id="InitializeVariables" name="Initialize Variables" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1opqmjl</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0aqc89s</bpmn:outgoing>
-      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def generateVfModuleName = new GenerateVfModuleName()
 generateVfModuleName.preProcessRequest(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="QueryAAIForIndex" name="Query AAI for Index" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0aqc89s</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1afb896</bpmn:outgoing>
-      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def generateVfModuleName = new GenerateVfModuleName()
 generateVfModuleName.queryAAI(execution)]]></bpmn:script>
     </bpmn:scriptTask>
@@ -29,7 +29,7 @@ generateVfModuleName.queryAAI(execution)]]></bpmn:script>
     <bpmn:scriptTask id="PostProcessAAIResponse" name="Generate Name Based on Lowest Index" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1afb896</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0o6nle0</bpmn:outgoing>
-      <bpmn:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def generateVfModuleName = new GenerateVfModuleName()
 generateVfModuleName.generateName(execution)]]></bpmn:script>
     </bpmn:scriptTask>

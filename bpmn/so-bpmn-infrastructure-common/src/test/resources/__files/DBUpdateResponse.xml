@@ -1,0 +1,4 @@
+
+
+<ns2:updateRequestResponse xmlns:ns2="http://org.onap/requestsdb"
+                           xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>

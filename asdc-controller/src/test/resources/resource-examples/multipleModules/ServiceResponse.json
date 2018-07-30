@@ -1,0 +1,458 @@
+{
+	"modelName": "Vf zrdm5bpxmc02092017-Service",
+	"description": "Demo",
+	"modelUUID": "bad955c3-29b2-4a27-932e-28e942cc6480",
+	"modelInvariantUUID": "b16a9398-ffa3-4041-b78c-2956b8ad9c7b",
+	"serviceType": "",
+	"serviceRole": "",
+	"environmentContext": "General_Revenue-Bearing",
+	"networkCustomizations": [],
+	"vnfCustomizations": [
+		{
+			"modelCustomizationUuid": "96c23a4a-6887-4b2c-9cce-1e4ea35eaade",
+			"modelInstanceName": "Vf zrdm5bpxmc02092017-VF 0",
+			"multiStageDesign": "false",
+			"vnfResources": {
+				"modelUuid": "d326f424-2312-4dd6-b7fe-364fadbd1ef5",
+				"modelInvariantUuid": "23122c9b-dd7f-483f-bf0a-e069303db2f7",
+				"modelName": "Vf zrdm5bpxmc02092017-VF",
+				"toscaNodeType": "org.openecomp.resource.vf.VfZrdm5bpxmc02092017Vf",
+				"description": "Demo",
+				"orchestrationMode": "HEAT",
+				"modelVersion": "1.0",
+				"modelInvariantId": "23122c9b-dd7f-483f-bf0a-e069303db2f7"
+			},
+			"vfModuleCustomizations": [
+				{
+					"modelCustomizationUuid": "074c64d0-7e13-4bcc-8bdb-ea922331102d",
+					"label": "pxmc_base",
+					"minInstances": 1,
+					"maxInstances": 1,
+					"initialCount": 1,
+					"heatEnvironment": {
+						"artifactUuid": "6dd99c31-c52e-4c45-b99b-d223c877a296",
+						"name": "pxmc_base.env",
+						"description": "Auto-generated HEAT Environment deployment artifact",
+						"environment": "parameters:\n  vnf_name: \n",
+						"artifactChecksum": "OGM2MWIzZTA2OTc5YjQwNTM1NGVhODA0YTFkNzM4ZTg=",
+						"version": "2"
+					},
+					"vfModule": {
+						"modelUUID": "eb5de6fb-9ecf-4009-b922-fae3a9ae7d46",
+						"modelInvariantUUID": "f7a867f2-596b-4f4a-a128-421e825a6190",
+						"modelName": "VfZrdm5bpxmc02092017Vf..pxmc_base..module-0",
+						"modelVersion": "1",
+						"isBase": 1,
+						"moduleHeatTemplate": {
+							"artifactUuid": "7e7f7356-11bd-4f2f-bbbc-5c10954e3189",
+							"templateName": "pxmc_base.yaml",
+							"templateBody": "heat_template_version: 2015-04-30\n\nparameters:\n\n## GLOBAL//Basic Parameters\n  vnf_name:\n    type: string\n    description: Unique name for this VF instance\n#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC\n\nresources:\n\n## MSP RSG//Resource:SecurityGroup\n  sec_grp_msp_0:\n    type: OS::Neutron::SecurityGroup\n    properties:\n      description: Security Group for PXMC\n      name:\n        str_replace:\n          template: VF_NAME_sec_grp_msp\n          params:\n            VF_NAME: { get_param: vnf_name }\n      rules:\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"tcp\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"udp\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"132\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"icmp\", \"ethertype\": \"IPv4\"}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"tcp\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"udp\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"132\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"58\", \"ethertype\": \"IPv6\"}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"tcp\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"udp\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"132\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"icmp\", \"ethertype\": \"IPv4\"}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"tcp\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"udp\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"132\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"58\", \"ethertype\": \"IPv6\"}\n\noutputs:\n\n  sec_grp_msp_id:\n    description:  uuid of the security group\n    value: {get_resource: sec_grp_msp_0 }\n",
+							"timeoutMinutes": 120,
+							"version": "1",
+							"description": "created from csar",
+							"artifactChecksum": "YThkNGFhZjAwNmM4NzMzODc0YzNhYTUxOTljNGQwNmM=",
+							"parameters": [
+								{
+									"heatTemplateArtifactUuid": "7e7f7356-11bd-4f2f-bbbc-5c10954e3189",
+									"paramName": "vnf_name",
+									"required": true,
+									"paramType": "string"
+								}
+							],
+							"childTemplates": [],
+							"heatTemplate": "heat_template_version: 2015-04-30\n\nparameters:\n\n## GLOBAL//Basic Parameters\n  vnf_name:\n    type: string\n    description: Unique name for this VF instance\n#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC\n\nresources:\n\n## MSP RSG//Resource:SecurityGroup\n  sec_grp_msp_0:\n    type: OS::Neutron::SecurityGroup\n    properties:\n      description: Security Group for PXMC\n      name:\n        str_replace:\n          template: VF_NAME_sec_grp_msp\n          params:\n            VF_NAME: { get_param: vnf_name }\n      rules:\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"tcp\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"udp\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"132\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"icmp\", \"ethertype\": \"IPv4\"}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"tcp\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"udp\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"132\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"egress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"58\", \"ethertype\": \"IPv6\"}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"tcp\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"udp\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"132\", \"ethertype\": \"IPv4\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"0.0.0.0/0\", \"protocol\": \"icmp\", \"ethertype\": \"IPv4\"}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"tcp\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"udp\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"132\", \"ethertype\": \"IPv6\", \"port_range_max\": 65535, \"port_range_min\": 0}\n        - {\"direction\": \"ingress\", \"remote_ip_prefix\": \"::/0\", \"protocol\": \"58\", \"ethertype\": \"IPv6\"}\n\noutputs:\n\n  sec_grp_msp_id:\n    description:  uuid of the security group\n    value: {get_resource: sec_grp_msp_0 }\n"
+						},
+						"heatFiles": [],
+						"vnfResources": {
+							"modelUuid": "d326f424-2312-4dd6-b7fe-364fadbd1ef5",
+							"modelInvariantUuid": "23122c9b-dd7f-483f-bf0a-e069303db2f7",
+							"modelName": "Vf zrdm5bpxmc02092017-VF",
+							"toscaNodeType": "org.openecomp.resource.vf.VfZrdm5bpxmc02092017Vf",
+							"description": "Demo",
+							"orchestrationMode": "HEAT",
+							"modelVersion": "1.0",
+							"modelInvariantId": "23122c9b-dd7f-483f-bf0a-e069303db2f7"
+						},
+						"modelInvariantUuid": "f7a867f2-596b-4f4a-a128-421e825a6190",
+						"base": true
+					}
+				},
+				{
+					"modelCustomizationUuid": "5336a98e-0966-4e59-b6e6-c8162804a024",
+					"label": "pxmc_vmt",
+					"minInstances": 0,
+					"initialCount": 0,
+					"heatEnvironment": {
+						"artifactUuid": "bc1640f1-69f0-4760-8fc3-3318ec2ff129",
+						"name": "pxmc_vmt.env",
+						"description": "Auto-generated HEAT Environment deployment artifact",
+						"environment": "parameters:\n  cinder_delete_on_termination_false: \n  cinder_delete_on_termination_true: \n  oam_protected_net_name: \n  sec_grp_msp_id: \n  vf_module_id: \n  vmt_block_device_names: \n  vmt_flavor_name: \n  vmt_name_0: \n  vmt_oam_protected_ip_0: \n  vmt_volume_image_name_0: \n  vmt_volume_image_name_1: \n  vmt_volume_name_0: \n  vmt_volume_name_1: \n  vmt_volume_size_0: \n  vmt_volume_size_1: \n  vnf_id: \n",
+						"artifactChecksum": "MjdkYzY5ZGU0ZTlkZDlhNzI2ZGVhMjk1ODVhZTg1NTY=",
+						"version": "2"
+					},
+					"vfModule": {
+						"modelUUID": "4d4423e2-17e8-455a-b9ae-7e4ab71b9cdc",
+						"modelInvariantUUID": "1e099992-6222-41a9-acde-5a8abb690775",
+						"modelName": "VfZrdm5bpxmc02092017Vf..pxmc_vmt..module-1",
+						"modelVersion": "1",
+						"isBase": 0,
+						"moduleHeatTemplate": {
+							"artifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+							"templateName": "pxmc_vmt.yaml",
+							"templateBody": "heat_template_version: 2015-04-30\n\ndescription: HOT creates Nimbus MSP VMT stack under MobiSupport Tenant\n\nparameters:\n  vmt_name_0:\n    type: string\n    label: MSP VMT server names\n    description: name of the MSP VMT instances\n#  vmt_image_name:\n#    type: string\n#    label: MSP VMT image name\n#    description: MSP VMT image name\n  vmt_flavor_name:\n    type: string\n    label: MSP VMT flavor name\n    description: MSP VMT flavor name\n#  availability_zone_0:\n#    type: string\n#    label: MSP VMT availability zones\n#    description: MSP VMT availability zones\n  sec_grp_msp_id:\n    type: string\n    label: security group id\n    description: the id of security group\n  vmt_oam_protected_ip_0:\n    type: string\n    label: MSP VMT OAM IP Addresses\n    description: MSP VMT OAM IP Addresses\n  oam_protected_net_name:\n    type: string\n    label: MSP VMT OAM net name\n    description: MSP VMT OAM net name\n  vmt_block_device_names:\n    type: comma_delimited_list\n    label: MSP VMT Block Device Names\n    description: MSP VMT Block Device Names\n  vmt_volume_name_0:\n    type: string\n    label: Mobisupport MSP VMT Cinder Volume names\n    description: Mobisupport MSP VMT Cinder Volume names\n  vmt_volume_name_1:\n    type: string\n    label: Mobisupport MSP VMT Cinder Volume names\n    description: Mobisupport MSP VMT Cinder Volume names\n  vmt_volume_size_0:\n    type: number\n    label: Mobisupport MSP VMT Cinder Volume sizes\n    description: Mobisupport MSP VMT Cinder Volume sizes\n  vmt_volume_size_1:\n    type: number\n    label: Mobisupport MSP VMT Cinder Volume sizes\n    description: Mobisupport MSP VMT Cinder Volume sizes\n  vmt_volume_image_name_0:\n    type: string\n    label: Mobisupport MSP VMT VDA Cinder Volume image name\n    description: Mobisupport MSP VMT VDA Cinder Volume image name\n  vmt_volume_image_name_1:\n    type: string\n    label: Mobisupport MSP VMT VDB Cinder Volume image name\n    description: Mobisupport MSP VMT VDB Cinder Volume image name\n  cinder_delete_on_termination_true:\n    type: boolean\n    description: delete cinder volume upon instances termination\n  cinder_delete_on_termination_false:\n    type: boolean\n    description: keep cinder volume upon instances termination\n  vnf_id:\n    type: string\n    label: MSP VMT VNF ID\n    description: MSP VMT VNF ID\n  vf_module_id:\n    type: string\n    description:  Unique ID for this VF Module instance\n\nresources:\n################ Cinder Volumes ##############################\n  vmt_volume_0:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: vmt_volume_name_0}\n      size: {get_param: vmt_volume_size_0}\n      image: {get_param: vmt_volume_image_name_0}\n\n  vmt_volume_1:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: vmt_volume_name_1}\n      size: {get_param: vmt_volume_size_1}\n      image: {get_param: vmt_volume_image_name_1}\n\n################ Ports ##############################\n  vmt_oam_protected_0_port:\n    type: OS::Neutron::Port\n    properties:\n      network: {get_param: oam_protected_net_name}\n      fixed_ips: [{\"ip_address\": {get_param: vmt_oam_protected_ip_0}}]\n      security_groups: [{get_param: sec_grp_msp_id}]\n      replacement_policy: AUTO\n\n################### Servers #########################\n  vmt_zrdm5bpxmc02vmt_0:\n    type: OS::Nova::Server\n    properties:\n      name: {get_param: vmt_name_0}\n#      image: {get_param:  vmt_image_name}\n      flavor: {get_param: vmt_flavor_name}\n#      availability_zone: {get_param: availability_zone_0}\n      block_device_mapping_v2: \n        - device_name: {get_param: [vmt_block_device_names, 0]}\n          volume_id: {get_resource: vmt_volume_0}\n          delete_on_termination: {get_param: cinder_delete_on_termination_true}\n          boot_index: 0\n        - device_name: {get_param: [vmt_block_device_names, 1]}\n          volume_id: {get_resource: vmt_volume_1}\n          delete_on_termination: {get_param: cinder_delete_on_termination_true}\n          boot_index: -1\n      networks:\n        - port: {get_resource: vmt_oam_protected_0_port}\n      config_drive: \"True\"\n      user_data_format: RAW\n      user_data:\n        get_file: user_data_zrdm5bpxmc02vmt001.txt\n\n      metadata:\n        vnf_id: {get_param: vnf_id}\n        vf_module_id {get_param: vf_module_id}\n        \"evacuation_policy\": \"Evacuation\"\n",
+							"timeoutMinutes": 120,
+							"version": "1",
+							"description": "created from csar",
+							"artifactChecksum": "ODE0YTRiYzc2YzkxOTliZjJhNjc0M2RhMWU4M2VlZmE=",
+							"parameters": [
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vmt_name_0",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vf_module_id",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "sec_grp_msp_id",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vmt_volume_name_1",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vmt_volume_name_0",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vmt_block_device_names",
+									"required": true,
+									"paramType": "comma_delimited_list"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vmt_flavor_name",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vnf_id",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "oam_protected_net_name",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vmt_volume_image_name_1",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vmt_volume_image_name_0",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vmt_oam_protected_ip_0",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vmt_volume_size_0",
+									"required": true,
+									"paramType": "number"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "cinder_delete_on_termination_false",
+									"required": true,
+									"paramType": "boolean"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "vmt_volume_size_1",
+									"required": true,
+									"paramType": "number"
+								},
+								{
+									"heatTemplateArtifactUuid": "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+									"paramName": "cinder_delete_on_termination_true",
+									"required": true,
+									"paramType": "boolean"
+								}
+							],
+							"childTemplates": [],
+							"heatTemplate": "heat_template_version: 2015-04-30\n\ndescription: HOT creates Nimbus MSP VMT stack under MobiSupport Tenant\n\nparameters:\n  vmt_name_0:\n    type: string\n    label: MSP VMT server names\n    description: name of the MSP VMT instances\n#  vmt_image_name:\n#    type: string\n#    label: MSP VMT image name\n#    description: MSP VMT image name\n  vmt_flavor_name:\n    type: string\n    label: MSP VMT flavor name\n    description: MSP VMT flavor name\n#  availability_zone_0:\n#    type: string\n#    label: MSP VMT availability zones\n#    description: MSP VMT availability zones\n  sec_grp_msp_id:\n    type: string\n    label: security group id\n    description: the id of security group\n  vmt_oam_protected_ip_0:\n    type: string\n    label: MSP VMT OAM IP Addresses\n    description: MSP VMT OAM IP Addresses\n  oam_protected_net_name:\n    type: string\n    label: MSP VMT OAM net name\n    description: MSP VMT OAM net name\n  vmt_block_device_names:\n    type: comma_delimited_list\n    label: MSP VMT Block Device Names\n    description: MSP VMT Block Device Names\n  vmt_volume_name_0:\n    type: string\n    label: Mobisupport MSP VMT Cinder Volume names\n    description: Mobisupport MSP VMT Cinder Volume names\n  vmt_volume_name_1:\n    type: string\n    label: Mobisupport MSP VMT Cinder Volume names\n    description: Mobisupport MSP VMT Cinder Volume names\n  vmt_volume_size_0:\n    type: number\n    label: Mobisupport MSP VMT Cinder Volume sizes\n    description: Mobisupport MSP VMT Cinder Volume sizes\n  vmt_volume_size_1:\n    type: number\n    label: Mobisupport MSP VMT Cinder Volume sizes\n    description: Mobisupport MSP VMT Cinder Volume sizes\n  vmt_volume_image_name_0:\n    type: string\n    label: Mobisupport MSP VMT VDA Cinder Volume image name\n    description: Mobisupport MSP VMT VDA Cinder Volume image name\n  vmt_volume_image_name_1:\n    type: string\n    label: Mobisupport MSP VMT VDB Cinder Volume image name\n    description: Mobisupport MSP VMT VDB Cinder Volume image name\n  cinder_delete_on_termination_true:\n    type: boolean\n    description: delete cinder volume upon instances termination\n  cinder_delete_on_termination_false:\n    type: boolean\n    description: keep cinder volume upon instances termination\n  vnf_id:\n    type: string\n    label: MSP VMT VNF ID\n    description: MSP VMT VNF ID\n  vf_module_id:\n    type: string\n    description:  Unique ID for this VF Module instance\n\nresources:\n################ Cinder Volumes ##############################\n  vmt_volume_0:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: vmt_volume_name_0}\n      size: {get_param: vmt_volume_size_0}\n      image: {get_param: vmt_volume_image_name_0}\n\n  vmt_volume_1:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: vmt_volume_name_1}\n      size: {get_param: vmt_volume_size_1}\n      image: {get_param: vmt_volume_image_name_1}\n\n################ Ports ##############################\n  vmt_oam_protected_0_port:\n    type: OS::Neutron::Port\n    properties:\n      network: {get_param: oam_protected_net_name}\n      fixed_ips: [{\"ip_address\": {get_param: vmt_oam_protected_ip_0}}]\n      security_groups: [{get_param: sec_grp_msp_id}]\n      replacement_policy: AUTO\n\n################### Servers #########################\n  vmt_zrdm5bpxmc02vmt_0:\n    type: OS::Nova::Server\n    properties:\n      name: {get_param: vmt_name_0}\n#      image: {get_param:  vmt_image_name}\n      flavor: {get_param: vmt_flavor_name}\n#      availability_zone: {get_param: availability_zone_0}\n      block_device_mapping_v2: \n        - device_name: {get_param: [vmt_block_device_names, 0]}\n          volume_id: {get_resource: vmt_volume_0}\n          delete_on_termination: {get_param: cinder_delete_on_termination_true}\n          boot_index: 0\n        - device_name: {get_param: [vmt_block_device_names, 1]}\n          volume_id: {get_resource: vmt_volume_1}\n          delete_on_termination: {get_param: cinder_delete_on_termination_true}\n          boot_index: -1\n      networks:\n        - port: {get_resource: vmt_oam_protected_0_port}\n      config_drive: \"True\"\n      user_data_format: RAW\n      user_data:\n        get_file: user_data_zrdm5bpxmc02vmt001.txt\n\n      metadata:\n        vnf_id: {get_param: vnf_id}\n        vf_module_id {get_param: vf_module_id}\n        \"evacuation_policy\": \"Evacuation\"\n"
+						},
+						"heatFiles": [],
+						"vnfResources": {
+							"modelUuid": "d326f424-2312-4dd6-b7fe-364fadbd1ef5",
+							"modelInvariantUuid": "23122c9b-dd7f-483f-bf0a-e069303db2f7",
+							"modelName": "Vf zrdm5bpxmc02092017-VF",
+							"toscaNodeType": "org.openecomp.resource.vf.VfZrdm5bpxmc02092017Vf",
+							"description": "Demo",
+							"orchestrationMode": "HEAT",
+							"modelVersion": "1.0",
+							"modelInvariantId": "23122c9b-dd7f-483f-bf0a-e069303db2f7"
+						},
+						"modelInvariantUuid": "1e099992-6222-41a9-acde-5a8abb690775",
+						"base": false
+					}
+				},
+				{
+					"modelCustomizationUuid": "e38906fa-717c-49b0-b391-e6ec12b50c4a",
+					"label": "pxmc_mmn",
+					"minInstances": 0,
+					"initialCount": 0,
+					"heatEnvironment": {
+						"artifactUuid": "e88ce0b9-1496-4d03-ab1d-6d8d79bfc737",
+						"name": "pxmc_mmn.env",
+						"description": "Auto-generated HEAT Environment deployment artifact",
+						"environment": "parameters:\n  cinder_delete_on_termination_false: \n  cinder_delete_on_termination_true: \n  mmn_arch_volume_id_2: \n  mmn_backup_volume_id_3: \n  mmn_block_device_names: \n  mmn_data_volume_id_1: \n  mmn_flavor_name: \n  mmn_misc_volume_id_4: \n  mmn_name_0: \n  mmn_oam_protected_ip_0: \n  mmn_volume_image_name_0: \n  mmn_volume_name_0: \n  mmn_volume_size_0: \n  oam_protected_net_name: \n  sec_grp_msp_id: \n  vf_module_id: \n  vnf_id: \n",
+						"artifactChecksum": "ZGI1NzI2Y2FmYjFhOTM2ZDYwNzg1YWRhZjBmMTk2OTQ=",
+						"version": "2"
+					},
+					"vfModule": {
+						"modelUUID": "a8cb1182-9b6d-46f8-b06b-ded4fe69e10d",
+						"modelInvariantUUID": "8e53c069-b2f0-437a-9c00-21cbc5c8f081",
+						"modelName": "VfZrdm5bpxmc02092017Vf..pxmc_mmn..module-2",
+						"modelVersion": "1",
+						"isBase": 0,
+						"volumeHeatTemplate": {
+							"artifactUuid": "2f372a02-df1b-46ca-b81e-822e3f406965",
+							"templateName": "pxmc_mmn_volume.yaml",
+							"templateBody": "heat_template_version: 2015-04-30\n\ndescription: HOT creates MSP MMN Cinder Volumes under MobiSupport Tenant\n\nparameters:\n  mmn_volume_name_1:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume names\n    description: Mobisupport MSP MMN Cinder Volume names\n\n  mmn_volume_name_2:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume names\n    description: Mobisupport MSP MMN Cinder Volume names\n\n  mmn_volume_name_3:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume names\n    description: Mobisupport MSP MMN Cinder Volume names\n\n  mmn_volume_name_4:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume names\n    description: Mobisupport MSP MMN Cinder Volume names\n\n  mmn_volume_size_1:\n    type: number\n    label: Mobisupport MSP MMN Cinder Volume sizes\n    description: Mobisupport MSP MMN Cinder Volume sizes\n\n  mmn_volume_size_2:\n    type: number\n    label: Mobisupport MSP MMN Cinder Volume sizes\n    description: Mobisupport MSP MMN Cinder Volume sizes\n\n  mmn_volume_size_3:\n    type: number\n    label: Mobisupport MSP MMN Cinder Volume sizes\n    description: Mobisupport MSP MMN Cinder Volume sizes\n\n  mmn_volume_size_4:\n    type: number\n    label: Mobisupport MSP MMN Cinder Volume sizes\n    description: Mobisupport MSP MMN Cinder Volume sizes\n\nresources:\n  mmn_data_volume_1:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: mmn_volume_name_1}\n      size: {get_param: mmn_volume_size_1}\n              \n  mmn_arch_volume_2:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: mmn_volume_name_2}\n      size: {get_param: mmn_volume_size_2}\n         \n  mmn_backup_volume_3:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: mmn_volume_name_3}\n      size: {get_param: mmn_volume_size_3}\n               \n  mmn_misc_volume_4:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: mmn_volume_name_4}\n      size: {get_param: mmn_volume_size_4}\n\noutputs:\n  mmn_data_volume_id_1:\n    description: msp mmn data volume 1\n    value: {get_resource: mmn_data_volume_1}\n              \n  mmn_arch_volume_id_2:\n    description: msp mn arch volume 2\n    value: {get_resource: mmn_arch_volume_2}\n         \n  mmn_backup_volume_id_3:\n    description: msp mn backup volume 3\n    value: {get_resource: mmn_backup_volume_3}\n               \n  mmn_misc_volume_id_4:\n    description: msp mn volume 4\n    value: {get_resource: mmn_misc_volume_4}\n",
+							"timeoutMinutes": 120,
+							"version": "2",
+							"description": "created from csar",
+							"artifactChecksum": "MzA5MGY5ODQ0NDY5MDhiMDM3YjFlNGIwNzJkNjFhOTI=",
+							"parameters": [
+								{
+									"heatTemplateArtifactUuid": "2f372a02-df1b-46ca-b81e-822e3f406965",
+									"paramName": "mmn_volume_name_2",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "2f372a02-df1b-46ca-b81e-822e3f406965",
+									"paramName": "mmn_volume_size_2",
+									"required": true,
+									"paramType": "number"
+								},
+								{
+									"heatTemplateArtifactUuid": "2f372a02-df1b-46ca-b81e-822e3f406965",
+									"paramName": "mmn_volume_name_1",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "2f372a02-df1b-46ca-b81e-822e3f406965",
+									"paramName": "mmn_volume_size_1",
+									"required": true,
+									"paramType": "number"
+								},
+								{
+									"heatTemplateArtifactUuid": "2f372a02-df1b-46ca-b81e-822e3f406965",
+									"paramName": "mmn_volume_name_4",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "2f372a02-df1b-46ca-b81e-822e3f406965",
+									"paramName": "mmn_volume_name_3",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "2f372a02-df1b-46ca-b81e-822e3f406965",
+									"paramName": "mmn_volume_size_4",
+									"required": true,
+									"paramType": "number"
+								},
+								{
+									"heatTemplateArtifactUuid": "2f372a02-df1b-46ca-b81e-822e3f406965",
+									"paramName": "mmn_volume_size_3",
+									"required": true,
+									"paramType": "number"
+								}
+							],
+							"childTemplates": [],
+							"heatTemplate": "heat_template_version: 2015-04-30\n\ndescription: HOT creates MSP MMN Cinder Volumes under MobiSupport Tenant\n\nparameters:\n  mmn_volume_name_1:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume names\n    description: Mobisupport MSP MMN Cinder Volume names\n\n  mmn_volume_name_2:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume names\n    description: Mobisupport MSP MMN Cinder Volume names\n\n  mmn_volume_name_3:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume names\n    description: Mobisupport MSP MMN Cinder Volume names\n\n  mmn_volume_name_4:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume names\n    description: Mobisupport MSP MMN Cinder Volume names\n\n  mmn_volume_size_1:\n    type: number\n    label: Mobisupport MSP MMN Cinder Volume sizes\n    description: Mobisupport MSP MMN Cinder Volume sizes\n\n  mmn_volume_size_2:\n    type: number\n    label: Mobisupport MSP MMN Cinder Volume sizes\n    description: Mobisupport MSP MMN Cinder Volume sizes\n\n  mmn_volume_size_3:\n    type: number\n    label: Mobisupport MSP MMN Cinder Volume sizes\n    description: Mobisupport MSP MMN Cinder Volume sizes\n\n  mmn_volume_size_4:\n    type: number\n    label: Mobisupport MSP MMN Cinder Volume sizes\n    description: Mobisupport MSP MMN Cinder Volume sizes\n\nresources:\n  mmn_data_volume_1:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: mmn_volume_name_1}\n      size: {get_param: mmn_volume_size_1}\n              \n  mmn_arch_volume_2:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: mmn_volume_name_2}\n      size: {get_param: mmn_volume_size_2}\n         \n  mmn_backup_volume_3:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: mmn_volume_name_3}\n      size: {get_param: mmn_volume_size_3}\n               \n  mmn_misc_volume_4:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: mmn_volume_name_4}\n      size: {get_param: mmn_volume_size_4}\n\noutputs:\n  mmn_data_volume_id_1:\n    description: msp mmn data volume 1\n    value: {get_resource: mmn_data_volume_1}\n              \n  mmn_arch_volume_id_2:\n    description: msp mn arch volume 2\n    value: {get_resource: mmn_arch_volume_2}\n         \n  mmn_backup_volume_id_3:\n    description: msp mn backup volume 3\n    value: {get_resource: mmn_backup_volume_3}\n               \n  mmn_misc_volume_id_4:\n    description: msp mn volume 4\n    value: {get_resource: mmn_misc_volume_4}\n"
+						},
+						"moduleHeatTemplate": {
+							"artifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+							"templateName": "pxmc_mmn.yaml",
+							"templateBody": "heat_template_version: 2015-04-30\n\ndescription: HOT creates Nimbus vMSP MMN stack.\n\nparameters:\n  mmn_name_0:\n    type: string\n    label: MSP MMN server names\n    description: name of the MSP MMN instances\n  mmn_flavor_name:\n    type: string\n    label: MSP MMN flavor name\n    description: MSP MMN flavor name\n#  mmn_image_name:\n#    type: string\n#    label: MSP MMN image name\n#    description: MSP MMN image name\n#  availability_zone_0:\n#    type: string\n#    label: MSP MMN availability zones\n#    description: MSP MMN availability zones\n  sec_grp_msp_id:\n    type: string\n    label: security group id\n    description: the id of security group\n  mmn_oam_protected_ip_0:\n    type: string\n    label: MSP MMN OAM IP Addresses\n    description: MSP MMN OAM IP Addresses\n  oam_protected_net_name:\n    type: string\n    label: MSP MMN OAM net name\n    description: MSP MMN OAM net name\n  mmn_volume_name_0:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume names\n    description: Mobisupport MSP MMN Cinder Volume names\n  mmn_volume_size_0:\n    type: number\n    label: Mobisupport MSP MMN Cinder Volume sizes\n    description: Mobisupport MSP MMN Cinder Volume sizes\n  mmn_volume_image_name_0:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume image name\n    description: Mobisupport MSP MMN Cinder Volume image name\n  mmn_data_volume_id_1:\n    type: string\n    label: MSP MMN Volume id 1\n    description: MSP MMN Volume id 1\n  mmn_arch_volume_id_2:\n    type: string\n    label: MSP MMN Volume id 2\n    description: MSP MMN Volume id 2\n  mmn_backup_volume_id_3:\n    type: string\n    label: MSP MMN Volume id 3\n    description: MSP MMN Volume id 3\n  mmn_misc_volume_id_4:\n    type: string\n    label: MSP MMN Volume id 4\n    description: MSP MMN Volume id 4\n  mmn_block_device_names:\n    type: comma_delimited_list\n    label: MSP MMN Block Device Names\n    description: MSP MMN Block Device Names\n  cinder_delete_on_termination_true:\n    type: boolean\n    description: delete cinder volume upon instances termination\n  cinder_delete_on_termination_false:\n    type: boolean\n    description: keep cinder volume upon instances termination\n  vnf_id:\n    type: string\n    label: MSP MMN VNF ID\n    description: MSP MMN VNF ID\n  vf_module_id:\n    type: string\n    description: Unique ID for this VF module instance\n\nresources:\n################ Cinder Volume ########################\n  mmn_volume_0:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: mmn_volume_name_0}\n      size: {get_param: mmn_volume_size_0}\n      image: {get_param: mmn_volume_image_name_0}\n\n################ Server ##############################\n  mmn_zrdm5bpxmc02mmn_0:\n    type: OS::Nova::Server\n    properties:\n      name: {get_param: mmn_name_0}\n#      image: {get_param: mmn_image_name}\n      flavor: {get_param: mmn_flavor_name}\n#      availability_zone: {get_param: availability_zone_0}\n      block_device_mapping_v2:\n        - device_name: { get_param: [mmn_block_device_names, 0] }\n          volume_id: { get_resource: mmn_volume_0 }\n          delete_on_termination: {get_param: cinder_delete_on_termination_true}\n      networks:\n        - port: { get_resource: mmn_oam_protected_0_port }\n      config_drive: \"True\"\n      user_data_format: RAW\n      user_data:\n        get_file: user_data_zrdm5bpxmc02mmn001.txt\n      metadata:\n        vnf_id: {get_param: vnf_id}\n        vf_module_id {get_param: vf_module_id}\n        \"evacuation_policy\": \"Evacuation\"\n\n################ Ports ##############################\n  mmn_oam_protected_0_port:\n    type: OS::Neutron::Port\n    properties:\n      network: {get_param: oam_protected_net_name}\n      fixed_ips: [{\"ip_address\": {get_param: mmn_oam_protected_ip_0}}]\n      security_groups: [{ get_param: sec_grp_msp_id }]\n      replacement_policy: AUTO\n\n################ Volume Attachment ##############################\n  volume_attachment_vdb:\n    type: OS::Cinder::VolumeAttachment\n    depends_on: mmn_zrdm5bpxmc02mmn_0\n    properties:\n      volume_id: { get_param: mmn_data_volume_id_1 }\n      instance_uuid: { get_resource: mmn_zrdm5bpxmc02mmn_0}\n      mountpoint: /dev/vdb\n\n  volume_attachment_vdc:\n    type: OS::Cinder::VolumeAttachment\n    depends_on: volume_attachment_vdb\n    properties:\n      volume_id: { get_param: mmn_arch_volume_id_2 }\n      instance_uuid: { get_resource: mmn_zrdm5bpxmc02mmn_0}\n      mountpoint: /dev/vdc\n\n  volume_attachment_vdd:\n    type: OS::Cinder::VolumeAttachment\n    depends_on: volume_attachment_vdc\n    properties:\n      volume_id: { get_param: mmn_backup_volume_id_3 }\n      instance_uuid: { get_resource: mmn_zrdm5bpxmc02mmn_0}\n      mountpoint: /dev/vdd\n\n  volume_attachment_vde:\n    type: OS::Cinder::VolumeAttachment\n    depends_on: volume_attachment_vdd\n    properties:\n      volume_id: { get_param: mmn_misc_volume_id_4 }\n      instance_uuid: { get_resource:  mmn_zrdm5bpxmc02mmn_0}\n      mountpoint: /dev/vde\n",
+							"timeoutMinutes": 120,
+							"version": "1",
+							"description": "created from csar",
+							"artifactChecksum": "YmNiYTU5YTM4ODVhYTlhODc5NGMwNWZkZjI5MTRmNTE=",
+							"parameters": [
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "vnf_id",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "mmn_block_device_names",
+									"required": true,
+									"paramType": "comma_delimited_list"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "mmn_name_0",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "mmn_arch_volume_id_2",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "mmn_volume_image_name_0",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "cinder_delete_on_termination_false",
+									"required": true,
+									"paramType": "boolean"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "mmn_oam_protected_ip_0",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "mmn_data_volume_id_1",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "mmn_backup_volume_id_3",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "vf_module_id",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "sec_grp_msp_id",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "mmn_volume_size_0",
+									"required": true,
+									"paramType": "number"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "cinder_delete_on_termination_true",
+									"required": true,
+									"paramType": "boolean"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "mmn_volume_name_0",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "oam_protected_net_name",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "mmn_misc_volume_id_4",
+									"required": true,
+									"paramType": "string"
+								},
+								{
+									"heatTemplateArtifactUuid": "b8bca13b-811f-44ab-9d27-45b842c664d8",
+									"paramName": "mmn_flavor_name",
+									"required": true,
+									"paramType": "string"
+								}
+							],
+							"childTemplates": [],
+							"heatTemplate": "heat_template_version: 2015-04-30\n\ndescription: HOT creates Nimbus vMSP MMN stack.\n\nparameters:\n  mmn_name_0:\n    type: string\n    label: MSP MMN server names\n    description: name of the MSP MMN instances\n  mmn_flavor_name:\n    type: string\n    label: MSP MMN flavor name\n    description: MSP MMN flavor name\n#  mmn_image_name:\n#    type: string\n#    label: MSP MMN image name\n#    description: MSP MMN image name\n#  availability_zone_0:\n#    type: string\n#    label: MSP MMN availability zones\n#    description: MSP MMN availability zones\n  sec_grp_msp_id:\n    type: string\n    label: security group id\n    description: the id of security group\n  mmn_oam_protected_ip_0:\n    type: string\n    label: MSP MMN OAM IP Addresses\n    description: MSP MMN OAM IP Addresses\n  oam_protected_net_name:\n    type: string\n    label: MSP MMN OAM net name\n    description: MSP MMN OAM net name\n  mmn_volume_name_0:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume names\n    description: Mobisupport MSP MMN Cinder Volume names\n  mmn_volume_size_0:\n    type: number\n    label: Mobisupport MSP MMN Cinder Volume sizes\n    description: Mobisupport MSP MMN Cinder Volume sizes\n  mmn_volume_image_name_0:\n    type: string\n    label: Mobisupport MSP MMN Cinder Volume image name\n    description: Mobisupport MSP MMN Cinder Volume image name\n  mmn_data_volume_id_1:\n    type: string\n    label: MSP MMN Volume id 1\n    description: MSP MMN Volume id 1\n  mmn_arch_volume_id_2:\n    type: string\n    label: MSP MMN Volume id 2\n    description: MSP MMN Volume id 2\n  mmn_backup_volume_id_3:\n    type: string\n    label: MSP MMN Volume id 3\n    description: MSP MMN Volume id 3\n  mmn_misc_volume_id_4:\n    type: string\n    label: MSP MMN Volume id 4\n    description: MSP MMN Volume id 4\n  mmn_block_device_names:\n    type: comma_delimited_list\n    label: MSP MMN Block Device Names\n    description: MSP MMN Block Device Names\n  cinder_delete_on_termination_true:\n    type: boolean\n    description: delete cinder volume upon instances termination\n  cinder_delete_on_termination_false:\n    type: boolean\n    description: keep cinder volume upon instances termination\n  vnf_id:\n    type: string\n    label: MSP MMN VNF ID\n    description: MSP MMN VNF ID\n  vf_module_id:\n    type: string\n    description: Unique ID for this VF module instance\n\nresources:\n################ Cinder Volume ########################\n  mmn_volume_0:\n    type: OS::Cinder::Volume\n    properties:\n      name: {get_param: mmn_volume_name_0}\n      size: {get_param: mmn_volume_size_0}\n      image: {get_param: mmn_volume_image_name_0}\n\n################ Server ##############################\n  mmn_zrdm5bpxmc02mmn_0:\n    type: OS::Nova::Server\n    properties:\n      name: {get_param: mmn_name_0}\n#      image: {get_param: mmn_image_name}\n      flavor: {get_param: mmn_flavor_name}\n#      availability_zone: {get_param: availability_zone_0}\n      block_device_mapping_v2:\n        - device_name: { get_param: [mmn_block_device_names, 0] }\n          volume_id: { get_resource: mmn_volume_0 }\n          delete_on_termination: {get_param: cinder_delete_on_termination_true}\n      networks:\n        - port: { get_resource: mmn_oam_protected_0_port }\n      config_drive: \"True\"\n      user_data_format: RAW\n      user_data:\n        get_file: user_data_zrdm5bpxmc02mmn001.txt\n      metadata:\n        vnf_id: {get_param: vnf_id}\n        vf_module_id {get_param: vf_module_id}\n        \"evacuation_policy\": \"Evacuation\"\n\n################ Ports ##############################\n  mmn_oam_protected_0_port:\n    type: OS::Neutron::Port\n    properties:\n      network: {get_param: oam_protected_net_name}\n      fixed_ips: [{\"ip_address\": {get_param: mmn_oam_protected_ip_0}}]\n      security_groups: [{ get_param: sec_grp_msp_id }]\n      replacement_policy: AUTO\n\n################ Volume Attachment ##############################\n  volume_attachment_vdb:\n    type: OS::Cinder::VolumeAttachment\n    depends_on: mmn_zrdm5bpxmc02mmn_0\n    properties:\n      volume_id: { get_param: mmn_data_volume_id_1 }\n      instance_uuid: { get_resource: mmn_zrdm5bpxmc02mmn_0}\n      mountpoint: /dev/vdb\n\n  volume_attachment_vdc:\n    type: OS::Cinder::VolumeAttachment\n    depends_on: volume_attachment_vdb\n    properties:\n      volume_id: { get_param: mmn_arch_volume_id_2 }\n      instance_uuid: { get_resource: mmn_zrdm5bpxmc02mmn_0}\n      mountpoint: /dev/vdc\n\n  volume_attachment_vdd:\n    type: OS::Cinder::VolumeAttachment\n    depends_on: volume_attachment_vdc\n    properties:\n      volume_id: { get_param: mmn_backup_volume_id_3 }\n      instance_uuid: { get_resource: mmn_zrdm5bpxmc02mmn_0}\n      mountpoint: /dev/vdd\n\n  volume_attachment_vde:\n    type: OS::Cinder::VolumeAttachment\n    depends_on: volume_attachment_vdd\n    properties:\n      volume_id: { get_param: mmn_misc_volume_id_4 }\n      instance_uuid: { get_resource:  mmn_zrdm5bpxmc02mmn_0}\n      mountpoint: /dev/vde\n"
+						},
+						"heatFiles": [],
+						"vnfResources": {
+							"modelUuid": "d326f424-2312-4dd6-b7fe-364fadbd1ef5",
+							"modelInvariantUuid": "23122c9b-dd7f-483f-bf0a-e069303db2f7",
+							"modelName": "Vf zrdm5bpxmc02092017-VF",
+							"toscaNodeType": "org.openecomp.resource.vf.VfZrdm5bpxmc02092017Vf",
+							"description": "Demo",
+							"orchestrationMode": "HEAT",
+							"modelVersion": "1.0",
+							"modelInvariantId": "23122c9b-dd7f-483f-bf0a-e069303db2f7"
+						},
+						"modelInvariantUuid": "8e53c069-b2f0-437a-9c00-21cbc5c8f081",
+						"base": false
+					}
+				}
+			],
+			"vnfResource": {
+				"modelUuid": "d326f424-2312-4dd6-b7fe-364fadbd1ef5",
+				"modelInvariantUuid": "23122c9b-dd7f-483f-bf0a-e069303db2f7",
+				"modelName": "Vf zrdm5bpxmc02092017-VF",
+				"toscaNodeType": "org.openecomp.resource.vf.VfZrdm5bpxmc02092017Vf",
+				"description": "Demo",
+				"orchestrationMode": "HEAT",
+				"modelVersion": "1.0",
+				"modelInvariantId": "23122c9b-dd7f-483f-bf0a-e069303db2f7"
+			}
+		}
+	],
+	"allotedCustomizations": [],
+	"recipes": {
+		
+	},
+	"csar": {
+		"artifactUUID": "396cfd49-0f4b-4fec-9f33-0fd7e90d5a22",
+		"name": "service-VfZrdm5bpxmc02092017Service-csar.csar",
+		"artifactChecksum": "MWQ3Y2FmMWExNDQyYWI2N2YwNjEwZGUzN2IzMzI3NjE=",
+		"url": "service-VfZrdm5bpxmc02092017Service-csar.csar",
+		"description": "TOSCA definition package of the asset",
+		"version": "1"
+	}
+}

@@ -1,0 +1,13 @@
+<deleteVolumeGroupRequest>
+    <cloudSiteId>null</cloudSiteId>
+    <tenantId>12345</tenantId>
+    <volumeGroupId>12345</volumeGroupId>
+    <volumeGroupStackId>null</volumeGroupStackId>
+    <skipAAI>true</skipAAI>
+    <msoRequest>
+        <requestId>12345</requestId>
+        <serviceInstanceId>12345</serviceInstanceId>
+    </msoRequest>
+    <messageId>580b5601-9260-4d19-abed-e671ac42c429</messageId>
+    <notificationUrl>http://localhost:18080/mso/WorkflowMessage/VNFAResponse/580b5601-9260-4d19-abed-e671ac42c429</notificationUrl>
+</deleteVolumeGroupRequest>

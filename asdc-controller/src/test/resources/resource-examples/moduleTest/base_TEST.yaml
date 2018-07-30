@@ -1,0 +1,44 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates TEST VNF
+
+parameters:
+  TEST_server_name:
+    type: string
+    label: TEST server name
+    description: TEST server name
+  TEST_image_name:
+    type: string
+    label: image name
+    description: TEST image name
+  TEST_flavor_name:
+    type: string
+    label: TEST flavor name
+    description: flavor name of TEST instance
+
+  TEST_Role_net_name:
+    type: string
+    label: TEST network name
+    description: TEST network name
+  TEST_vnf_id:
+    type: string
+    label: TEST VNF Id
+    description: TEST VNF Id
+
+resources:
+
+  TEST: 
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: TEST_server_name }
+      image: { get_param: TEST_image_name }
+      flavor: { get_param: TEST_flavor_name }
+      networks:
+        - port: { get_resource: TEST_port_0}
+      metadata:
+        vnf_id: {get_param: TEST_vnf_id}
+
+  TEST_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: TEST_Role_net_name }

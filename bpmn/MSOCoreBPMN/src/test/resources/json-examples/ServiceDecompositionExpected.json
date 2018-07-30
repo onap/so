@@ -1,0 +1,51 @@
+{
+	"serviceResources" : {
+		"modelInfo" : {
+			"modelName" : "modelName",
+			"modelUuid" : "modelUuid",
+			"modelInvariantUuid" : "modelInvariantUuid",
+			"modelVersion" : "modelVersion",
+			"modelCustomizationUuid" : "modelCustomizationUuid",
+			"modelCustomizationName" : "modelCustomizationName",
+			"modelInstanceName" : "modelInstanceName",
+			"modelType" : "modelType"
+		},
+		"serviceType" : "serviceType",
+		"serviceRole" : "serviceRole",
+		"project" : {},
+		"owningEntity" : {},
+		"serviceInstance" : {
+			"serviceInstanceId" : "serviceInstanceId"
+		},
+		"serviceVnfs" : [
+			{
+				"resourceId" : "vnfResourceId",
+				"resourceType" : "VNF",
+				"resourceInstance" : {},
+				"homingSolution" : {
+					"license" : {},
+					"rehome" : false
+				},
+				"vfModules" : []
+			}
+		],
+		"networkResource" : [
+			{
+				"resourceId" : "networkResourceId",
+				"resourceType" : "NETWORK"
+			}
+		],
+		"serviceAllottedResources" : [
+			{
+				"resourceId" : "allottedResourceId",
+				"resourceType" : "ALLOTTED_RESOURCE"
+			}
+		],
+		"configResource" : [
+			{
+				"resourceId" : "configResourceId",
+				"resourceType" : "CONFIGURATION"
+			}
+		]
+	}
+}

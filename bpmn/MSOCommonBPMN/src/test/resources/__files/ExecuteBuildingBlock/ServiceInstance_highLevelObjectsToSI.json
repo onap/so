@@ -1,0 +1,35 @@
+{
+	"service-instance-id": null,
+	"service-instance-name": null,
+	"orchestration-status": null,
+	"owning-entity": {
+		"owning-entity-id": "owningEntityId",
+		"owning-entity-name": "owningEntityName"
+	},
+	"customer": {
+		"global-customer-id": "globalCustomerId",
+		"subscriber-name": "subscriberName",
+		"subscriber-type": "subscriberType",
+		"service-subscription": {
+			"service-type": "subscriptionServiceType"
+		}
+	},
+	"project": {
+		"project-name": "projectName"
+	},
+	"vnfs": [],
+	"allotted-resources": [],
+	"networks": [],
+	"bandwidth-total": null,
+	"bandwidth-up-wan-1": null,
+	"bandwidth-down-wan-1": null,
+	"bandwidth-up-wan-2": null,
+	"bandwidth-down-wan-2": null,
+	"vhn-portal-url": null,
+	"service-instance-location-id": null,
+	"selflink": null,
+	"metadata": null,
+	"volume-groups": [],
+	"configuration": null,
+	"model-info-service-instance": null
+}

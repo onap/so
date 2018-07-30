@@ -1,0 +1,18 @@
+{
+	"model-customization-uuid": "modelCustomizationUUID",
+	"model-instance-name": "modelInstanceName",
+    "network-technology": "networkTechnology",
+    "network-type": "networkType",
+    "network-scope": "networkScope",
+    "network-role": "networkRole",
+    "description" : "description",
+    "model-version" : "modelVersion",
+    "model-invariant-uuid" : "modelInvariantUUID",
+    "model-name" : "modelName",
+    "model-uuid" : "modelUUID",
+    "neutron-network-type" : "neutronNetworkType",
+    "aic-version-min" : "aicVersionMin",
+    "aic-version-max" : "aicVersionMax",
+    "orchestration-mode" : "orchestrationMode",
+    "tosca-node-type" : "toscaNodeType"
+}

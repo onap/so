@@ -1,0 +1,32 @@
+{
+	"configurationId" : "configurationId",
+    "managementOption" : "managementOption",
+    "configurationName" : "configurationName",
+    "configurationType" : "configurationType",
+    "configurationSubType" : "configurationSubType",
+    "modelInvariantId" : "modelInvariantId",
+    "modelVersionId" : "modelVersionId",   
+    "orchestrationStatus" : "PRECREATED",
+    "operationalStatus" : "operationalStatus",
+    "configurationSelflink" : "configurationSelflink",
+    "modelCustomizationId" : "modelCustomizationId",
+    "tunnelBandwidth" : "tunnelBandwidth",
+    "vendorAllowedMaxBandwidth" : "vendorAllowedMaxBandwidth",
+    "resourceVersion" : "resourceVersion",
+    "relationshipList" : {},
+    "metadata" : {},
+    "forwarderEvcs" : {
+	    "forwarderEvc": [
+			{
+				"forwarderEvcId": "forwarderEvcId"
+			}
+		]
+	},
+    "evcs" : {
+	    "evc": [
+			{
+				"evcId": "evcId"
+			}
+		]
+	}
+}

@@ -1,0 +1,83 @@
+# will be used as entry in DB to say SITE OFF/ON for healthcheck
+
+server-port: 8080
+ssl-enable: false
+
+
+
+# H2
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/catalogdb
+    username: root
+    password: password
+    driver-class-name: org.mariadb.jdbc.Driver
+    initialize: true
+
+  jpa:
+      show-sql: true
+      hibernate:
+        ddl-auto: validate
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        enable-lazy-load-no-trans: true
+      database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  security:
+    usercredentials:
+    -  
+      username: asdc
+      password: '$2a$12$4R2QhxH7elzoZYoC.HJKTOHYDoaC9LbJD44Q9/tm4t/UzPF9Cgifi'
+      role: Asdc-Client 
+    -  
+      username: mso_admin
+      password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
+      role: ACTUATOR        
+request:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/requestdb
+    username: root
+    password: password
+    driver-class-name: org.mariadb.jdbc.Driver
+    initialize: true
+    initialization-mode: never
+
+#Actuator
+management: 
+  context-path: /manage
+
+
+mso:
+  logPath: logs
+  catalog:
+    db:
+      spring:
+        endpoint: "http://localhost:8090"
+  db:
+    auth: Basic YnBlbDptc28tZGItMTUwNyE=
+  site-name: siteName
+  aai:  
+    endpoint: https://localhost:8443
+  asdc-connections:
+    asdc-controller1:
+      user: msopreist
+      consumerGroup: msoasdc-id-local
+      consumerId: msoasdc-id-local
+      environmentName: Pre-IST
+      asdcAddress: localhost:8443
+      password: 658D6E9E0C087547284339181615C358
+      pollingInterval: 30
+      pollingTimeout: 30
+      relevantArtifactTypes: HEAT,HEAT_ENV,HEAT_VOL
+      activateServerTLSAuth: false
+      keyStorePassword:  
+      keyStorePath:
+      watchDogTimeout: 1
+      isFitlerInEmptyResources: true
+      messageBusAddress: localhost,localhost,localhost
+  asdc:
+    config:
+      key: 566B754875657232314F5548556D3665
+      components:
+        count: 3,
+        componentNames: SO,AAI,SDNC
+  scheduling:
+    enabled: false

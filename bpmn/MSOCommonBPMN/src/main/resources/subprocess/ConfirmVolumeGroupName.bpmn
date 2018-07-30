@@ -12,7 +12,7 @@
     <bpmn2:scriptTask id="AAIQueryFailure" name="AAI Query Failure" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_18</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvgn= new ConfirmVolumeGroupName()
 cvgn.handleAAIQueryFailure(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -24,7 +24,7 @@ cvgn.handleAAIQueryFailure(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="QueryAAIForVolumeGroupId" name="Query AAI for&#xD;&#xA;Volume Group Id" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_38</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_39</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvgn= new ConfirmVolumeGroupName()
 cvgn.queryAAIForVolumeGroupId(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -32,7 +32,7 @@ cvgn.queryAAIForVolumeGroupId(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="InitializeVariables" name="Initialize Variables" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_38</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvgn= new ConfirmVolumeGroupName()
 cvgn.preProcessRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -41,7 +41,7 @@ cvgn.preProcessRequest(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="CheckAAIQueryResult" name="Check AAI Query Result" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvgn= new ConfirmVolumeGroupName()
 cvgn.checkAAIQueryResult(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -49,7 +49,7 @@ cvgn.checkAAIQueryResult(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="VolumeGroupNotInName" name="Volume Group Not In Name" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvgn= new ConfirmVolumeGroupName()
 cvgn.handleVolumeGroupNameNoMatch(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -66,7 +66,7 @@ cvgn.handleVolumeGroupNameNoMatch(execution)]]></bpmn2:script>
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:outputParameter name="WorkflowResponse"><![CDATA[<aetgt:CreateVfModuleResponse xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"                   xmlns:ns="http://org.openecomp/mso/workflow/schema/v1">
+            <camunda:outputParameter name="WorkflowResponse"><![CDATA[<aetgt:CreateVfModuleResponse xmlns:aetgt="http://org.onap/so/workflow/schema/v1"                   xmlns:ns="http://org.onap/so/workflow/schema/v1">
  <ns:response>SUCCESS</ns:response>
    </aetgt:CreateVfModuleResponse>]]></camunda:outputParameter>
           </camunda:inputOutput>

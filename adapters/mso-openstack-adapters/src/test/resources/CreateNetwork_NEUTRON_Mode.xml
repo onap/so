@@ -1,0 +1,17 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Body>
+       <aetgt:createNetwork xmlns:aetgt="http://org.onap.so/network" xmlns:NetworkAdapter="http://org.onap.so/network">
+          <cloudSiteId>mtn13</cloudSiteId>
+          <tenantId>bef254252c5d44e6bcec65c180180ab5</tenantId>
+          <networkType>CONTRAIL31_GNDIRECT</networkType>
+          <networkName>dvspg-VCE_VPE-mtjnj40avbc</networkName>
+          <physicalNetworkName>dvs-mtjnj-01</physicalNetworkName>
+          <vlans>3014</vlans>
+          <failIfExists>false</failIfExists>
+          <request>
+             <requestId>9733c8d1-2668-4e5f-8b51-2cacc9b662c0</requestId>
+             <serviceInstanceId>MIS/1806/25009/SW_INTERNET</serviceInstanceId>
+          </request>
+       </aetgt:createNetwork>
+    </SOAP-ENV:Body>
+ </SOAP-ENV:Envelope>

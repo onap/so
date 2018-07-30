@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://org.onap/workflow/sdnc/adapter/schema/v1">
+	<soapenv:Header />
+	<soapenv:Body>
+      <SDNCAdapterCallbackRequest xmlns="http://org.onap/workflow/sdnc/adapter/schema/v1">
+        <CallbackHeader>
+         <RequestId>79ec9006-3695-4fcc-93a8-be6f9e248beb</RequestId>
+         <ResponseCode>200</ResponseCode>
+         <ResponseMessage>OK</ResponseMessage>
+       </CallbackHeader>
+       <RequestData xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">&lt;output xmlns="org:onap:sdnc:northbound:generic-resource"&gt;&lt;response-message&gt;&lt;/response-message&gt;&lt;svc-request-id&gt;79ec9006-3695-4fcc-93a8-be6f9e248beb&lt;/svc-request-id&gt;&lt;service-response-information&gt;&lt;instance-id&gt;f805ec2b-b4d8-473e-8325-67f110139e5d&lt;/instance-id&gt;&lt;/service-response-information&gt;&lt;response-code&gt;200&lt;/response-code&gt;&lt;network-response-information&gt;&lt;instance-id&gt;49c86598-f766-46f8-84f8-8d1c1b10f9b4&lt;/instance-id&gt;&lt;object-path&gt;restconf/config/GENERIC-RESOURCE-API:services/service/f805ec2b-b4d8-473e-8325-67f110139e5d/service-data/networks/network/f7e4db56-aab5-4065-8e65-cec1cd1de24f&lt;/object-path&gt;&lt;/network-response-information&gt;&lt;ack-final-indicator&gt;Y&lt;/ack-final-indicator&gt;&lt;/output&gt;</RequestData>
+      </SDNCAdapterCallbackRequest>	
+	</soapenv:Body>
+</soapenv:Envelope>
