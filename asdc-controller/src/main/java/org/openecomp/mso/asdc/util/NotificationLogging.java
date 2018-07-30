@@ -128,11 +128,7 @@ public class NotificationLogging implements InvocationHandler {
 		}
 		
 		// Must be public
-		if (!Modifier.isPublic(method.getModifiers())) {
-			return false;
-		}
-		
-		return true;
+    return Modifier.isPublic(method.getModifiers());
 	}
 	
 	private static String testNull(Object object) {
