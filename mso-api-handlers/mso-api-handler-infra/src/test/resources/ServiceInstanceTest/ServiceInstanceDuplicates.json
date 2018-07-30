@@ -1,0 +1,31 @@
+{	"serviceInstanceId":"1882939",
+	"vnfInstanceId":"1882938",
+	"networkInstanceId":"1882937",
+	"volumeGroupInstanceId":"1882935",
+	"vfModuleInstanceId":"1882934",
+	"configurationId": "test",
+	"requestDetails": {
+		"requestInfo": { 
+			"source": "VID", 
+			"requestorId": "xxxxxx",
+			"instanceName": "testService10"
+		},
+		"requestParameters": {
+			"aLaCarte": true,
+			"autoBuildVfModules": false,
+			"subscriptionServiceType": "test"
+		},
+		"modelInfo":{
+			"modelInvariantId": "f7ce78bb-423b-11e7-93f8-0050569a7967",
+			"modelVersion":"1", 
+			"modelVersionId":"10", 
+			"modelType":"service",
+			"modelName":"serviceModel"
+		},
+	 	"subscriberInfo": {
+      		"globalSubscriberId": "MSO_1610_dev", 
+      		"subscriberName": "MSO_1610_dev"
+    	}
+	}
+}
+	

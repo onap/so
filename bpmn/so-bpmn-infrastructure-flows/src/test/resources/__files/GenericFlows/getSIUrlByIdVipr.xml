@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<search-results xmlns="http://org.openecomp.aai.inventory/v8">
+   <result-data>
+      <resource-type>service-instance</resource-type>
+      <resource-link>https://aai-int1.test.com:8443/aai/v8/business/customers/customer/MSO_1610_dev/service-subscriptions/service-subscription/MSO-dev-service-type/service-instances/service-instance/aa8428ac-7dd2-441f-aa3e-e175802574fb</resource-link>
+   </result-data>
+</search-results>

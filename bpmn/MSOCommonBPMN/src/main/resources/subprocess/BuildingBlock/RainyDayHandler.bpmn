@@ -21,7 +21,7 @@
       <bpmn2:scriptTask id="processJavaError" name="Process Error" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_0tgrn11</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_0g4aus9</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 ExceptionUtil exceptionUtil = new ExceptionUtil()
 exceptionUtil.processJavaException(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
@@ -30,7 +30,7 @@ exceptionUtil.processJavaException(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="preProcessRequest_ScriptTask" name="PreProcess Incoming Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0yxffj2</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def rdh = new RainyDayHandler()
 rdh.preProcessRequest(execution)
 ]]></bpmn2:script>
@@ -40,7 +40,7 @@ rdh.preProcessRequest(execution)
     <bpmn2:scriptTask id="QueryPolicyEngine" name="Query Policy " scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0yxffj2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_12vj619</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def rdh = new RainyDayHandler()
 rdh.queryPolicy(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <sdncadapterworkflow:SDNCAdapterWorkflowResponse
-	xmlns:sdncadapterworkflow="http://org.openecomp/mso/workflow/schema/v1">
+	xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
 	<sdncadapterworkflow:response-data>
 		<tag0:RequestData
-			xmlns:tag0="http://org.openecomp/workflow/sdnc/adapter/schema/v1"
+			xmlns:tag0="http://org.onap/workflow/sdnc/adapter/schema/v1"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">
 			<output xmlns="com:att:sdnctl:nbncapi">
 				<ack-final-indicator>Y</ack-final-indicator>

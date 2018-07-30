@@ -1,0 +1,16 @@
+<updateVfModuleResponse>
+    <vnfId>skask</vnfId>
+    <vfModuleId>supercool</vfModuleId>
+    <vfModuleStackId>slowburn</vfModuleStackId>
+    <vfModuleOutputs>
+        <entry>
+            <key>key1</key>
+            <value>value1</value>
+        </entry>
+        <entry>
+            <key>key2</key>
+            <value>value2</value>
+        </entry>
+    </vfModuleOutputs>
+    <messageId>{{MESSAGE-ID}}</messageId>
+</updateVfModuleResponse>

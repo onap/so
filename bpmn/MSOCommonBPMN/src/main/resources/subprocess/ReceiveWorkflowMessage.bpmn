@@ -4,7 +4,7 @@
     <bpmn2:scriptTask id="ScriptTask_1" name="Pre-Process Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_9</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1ps0nzi</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def receiveWorkflowMessage = new ReceiveWorkflowMessage()
 receiveWorkflowMessage .preProcessRequest(execution)
 ]]></bpmn2:script>
@@ -16,7 +16,7 @@ receiveWorkflowMessage .preProcessRequest(execution)
     <bpmn2:scriptTask id="ScriptTask_5" name="Workflow Exception (timeout)" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_27</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_34</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def exceptionUtil = new ExceptionUtil()
 exceptionUtil.buildWorkflowException(execution, 7010, "Receive Workflow Message Timeout Error")]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -28,7 +28,7 @@ exceptionUtil.buildWorkflowException(execution, 7010, "Receive Workflow Message 
     <bpmn2:scriptTask id="ScriptTask_setSuccess" name="Process Message and Set WorkflowResult" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_44</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def receiveWorkflowMessage = new ReceiveWorkflowMessage()
 receiveWorkflowMessage.processReceivedMessage(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>

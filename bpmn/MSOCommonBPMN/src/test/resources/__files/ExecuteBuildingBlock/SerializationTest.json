@@ -1,0 +1,86 @@
+{
+  "requestContext" : {
+    "product-family-id" : null,
+    "source" : "VID",
+    "requestor-id" : "xxxxxx",
+    "subscription-service-type" : "Mobility",
+    "user-params" : null,
+    "action" : "createInstance",
+    "callback-url" : null,
+    "service-uri" : null,
+    "mso-request-id" : "fa807605-ebf5-4edd-83aa-c23edba607a2",
+    "requestParameters" : {
+      "subscriptionServiceType" : "Mobility",
+      "aLaCarte" : true,
+      "testApi" : "GR_API"
+    }
+  },
+  "orchContext" : {
+    "is-rollback-enabled" : false
+  },
+  "locationContext" : {
+    "cloud-owner" : null,
+    "cloud-region-id" : null,
+    "tenant-id" : null,
+    "complex" : null,
+    "aic-version" : null
+  },
+  "userInput" : null,
+  "serviceInstance" : {
+    "service-instance-id" : "a446e2ab-7c92-4b4c-bfc2-9ab88f3c99c3",
+    "service-instance-name" : "Network_vprobes_mgmt_1_SI_sk316t",
+    "orchestration-status" : "PRECREATED",
+    "owning-entity" : {
+      "owning-entity-id" : "f160c875-ddd1-4ef5-84d8-d098784daa3a",
+      "owning-entity-name" : "OE1"
+    },
+    "customer" : {
+      "global-customer-id" : "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+      "subscriber-name" : "Mobility",
+      "subscriber-type" : "INFRA",
+      "service-subscription" : {
+        "service-type" : "Mobility",
+        "temp-ub-sub-account-id" : null,
+        "service-instances" : [ ]
+      },
+      "vpn-bindings" : [ ]
+    },
+    "project" : {
+      "project-name" : "project1"
+    },
+    "collection" : null,
+    "vnfs" : [ ],
+    "allotted-resources" : [ ],
+    "networks" : [ ],
+    "bandwidth-total" : null,
+    "bandwidth-up-wan-1" : null,
+    "bandwidth-down-wan-1" : null,
+    "bandwidth-up-wan-2" : null,
+    "bandwidth-down-wan-2" : null,
+    "vhn-portal-url" : null,
+    "service-instance-location-id" : null,
+    "selflink" : null,
+    "metadata" : null,
+    "configuration" : null,
+    "vpn-bonding-links" : [ ],
+    "model-info-service-instance" : {
+      "model-name" : "Network_vprobes_mgmt_1",
+      "description" : "tbd",
+      "created" : "Mon Jan 15 10:54:06 GMT 2018",
+      "model-uuid" : "13da7f84-f380-4591-a714-937d4bef0c34",
+      "model-invariant-uuid" : "0bd8b143-41cf-4373-8601-61be1bf01c9a",
+      "model-version" : "1.0",
+      "service-type" : "",
+      "service-role" : "",
+      "environment-context" : "General_Revenue-Bearing",
+      "workload-context" : "Production"
+    }
+  },
+  "cloudRegion" : {
+    "lcp-cloud-region-id" : null,
+    "tenant-id" : null,
+    "cloud-owner" : null,
+    "cloud-region-version" : null
+  },
+  "customer" : null
+}

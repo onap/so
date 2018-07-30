@@ -1,0 +1,67 @@
+{
+    "serviceName": "testALTS1",
+    "serviceInvariantUUID": "155006dc-f0b4-4d6d-b217-72c75e819cdb",
+    "serviceUUID": "3e56620a-1566-4268-8629-58aae07df9e5",
+    "serviceVersion": "2.0",
+    "serviceArtifacts": 
+    [{
+		"artifactName": "service-Testalts1-csar.csar",
+		"artifactType": "TOSCA_CSAR",
+		"artifactURL": "service-Testalts1-csar.csar",
+		"artifactChecksum": "NTdjNDdiMTU5YjVkNzQxYjNkZWQ2N2M5YTdiYjQ3MGI=",
+		"artifactDescription": "TOSCA representation of the asset",
+		"artifactTimeout": 0,
+		"artifactUUID": "9e2c10dc-a3a6-4799-b0a9-a128fbf7a9b1",
+		"artifactVersion": "2.0"
+    }],
+    "resources": 
+    [	
+        {
+            "resourceInstanceName": "testALTS 0",
+            "resourceInvariantUUID": "51c7fb99-642a-4c02-8d8d-e206fc170b6d",
+            "resourceCustomizationUUID": "364a5635-f63b-45f3-9c3d-14993d996e35", 
+            "resourceName": "resourceName-1",
+            "resourceType": "VF",
+            "resourceUUID": "a81db5a3-7c23-4376-8c42-ec610aaea135",
+            "resourceVersion": "2.0",
+            "category": "Network L4+",
+            "subcategory": "Common Network Resources",
+            "artifacts": 
+            [
+                {
+                    "artifactChecksum": "ZGY5NzliMTI4NDA4NGYyOWIyYTA4N2NmYzZiYWU5MmM=",
+                    "artifactDescription": "Auto-generated VF Modules information artifact",
+                    "artifactName": "testalts0_modules.json",                    
+                    "artifactType": "VF_MODULES_METADATA",
+                    "artifactURL": "testalts0_modules.json",
+                    "artifactUUID": "68be0190-fb74-408e-81db-d90a5e3aecb5",
+                    "artifactTimeout": 0,
+                    "artifactVersion": "2.0"
+                },
+                {
+                    "artifactChecksum": "MDJlOTUwMDY0YzU3YjRjZTM0ZmZmYTM5NTE5ZThkNDI=",
+                    "artifactDescription": "created from csar",
+                    "artifactName": "base_TEST.yaml",
+                    "artifactTimeout": 120,
+                    "artifactType": "HEAT",
+                    "artifactURL": "base_TEST.yaml",
+                    "artifactUUID": "d7c1d4ca-3fdc-4880-86dc-90ca724fbcd7",
+                    "artifactVersion": "2.0",
+                    "generatedArtifact": "57f6520b-fa65-4544-90de-95c8190c2e6c"                    
+                },                
+                {
+                    "artifactChecksum": "YWQ2MmE0Y2NjNGE4YmJlOTk0YmZhYmIxYTc1YWZkY2M=",
+                    "artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+                    "artifactName": "base_TEST.env",
+                    "artifactTimeout": 0,
+                    "artifactType": "HEAT_ENV",
+                    "artifactURL": "base_TEST.env",
+                    "artifactUUID": "57f6520b-fa65-4544-90de-95c8190c2e6c",
+                    "artifactVersion": "1.0"                   
+                }
+            ]
+        }
+    ],
+    "serviceDescription": "ALTS service",
+    "distributionID": "03f016c8-7d8e-412b-901d-e96c7c66459b"
+}

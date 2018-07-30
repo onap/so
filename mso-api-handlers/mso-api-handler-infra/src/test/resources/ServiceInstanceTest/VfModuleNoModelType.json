@@ -1,0 +1,20 @@
+{
+	"requestDetails": {
+		"requestInfo": { 
+			"source": "VID", 
+			"requestorId": "zz9999",
+			"instanceName": "testVfModule2"
+	},
+	"requestParameters": {
+		"aLaCarte": true, 
+		"autoBuildVfModules": false,
+		"subscriptionServiceType": "test"
+	},
+	"modelInfo":{
+		"modelInvariantId": "f7ce78bb-423b-11e7-93f8-0050569a79",
+		"modelVersion":"1",  
+		"modelName":"serviceModel"
+		}
+	}
+}
+	

@@ -1,0 +1,32 @@
+{
+	"serviceInstanceId":"f7ce78bb-423b-11e7-93f8-0050569a7968",
+	"vnfInstanceId":"1882938",
+	"networkInstanceId":"1882937",
+	"volumeGroupInstanceId":"1882935",
+	"vfModuleInstanceId":"1882934",
+	"requestDetails": {
+		"requestInfo": { 
+			"source": "VID", 
+			"requestorId": "xxxxxx",
+			"instanceName": "testService7"
+		},
+		"requestParameters": {
+			"aLaCarte": true,
+			"testApi": "VNF_API", 
+			"autoBuildVfModules": false,
+			"subscriptionServiceType": "test"
+		},
+		"modelInfo":{
+			"modelInvariantId": "f7ce78bb-423b-11e7-93f8-0050569a7965",
+			"modelVersion":"100", 
+			"modelVersionId":"100", 
+			"modelType":"service",
+			"modelName":"serviceModel"
+		},
+	 	"subscriberInfo": {
+      		"globalSubscriberId": "MSO_1610_dev", 
+      		"subscriberName": "MSO_1610_dev"
+    	}
+  	}
+}
+	

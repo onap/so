@@ -1,0 +1,7 @@
+{
+	"tenant": {
+		"name": "testingTenantName",
+		"description": "SDN Tenant (via MSO)",
+		"enabled": true
+	}
+}

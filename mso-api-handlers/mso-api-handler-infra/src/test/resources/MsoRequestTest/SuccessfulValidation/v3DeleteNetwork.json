@@ -1,0 +1,15 @@
+{
+  "requestDetails": {
+      "modelInfo": {
+          "modelType": "network"
+      },
+      "cloudConfiguration": {
+          "lcpCloudRegionId": "mdt1",
+          "tenantId": "8b1df54faa3b49078e3416e21370a3ba"
+      },
+      "requestInfo": {
+          "source": "VID",
+          "requestorId": "xxxxxx"
+      }
+  }
+}

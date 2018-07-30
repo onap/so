@@ -1,0 +1,75 @@
+[
+  {
+    "vfModuleModelName": "VfZrdm5bpxmc02092017Vf..pxmc_base..module-0",
+    "vfModuleModelInvariantUUID": "f7a867f2-596b-4f4a-a128-421e825a6190",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "eb5de6fb-9ecf-4009-b922-fae3a9ae7d46",
+    "vfModuleModelCustomizationUUID": "074c64d0-7e13-4bcc-8bdb-ea922331102d",
+    "isBase": true,
+    "artifacts": [
+      "7e7f7356-11bd-4f2f-bbbc-5c10954e3189",
+      "6dd99c31-c52e-4c45-b99b-d223c877a296"
+    ],
+    "properties": {
+      "min_vf_module_instances": "1",
+      "vf_module_label": "pxmc_base",
+      "max_vf_module_instances": "1",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Base",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "1"
+    }
+  },
+  {
+    "vfModuleModelName": "VfZrdm5bpxmc02092017Vf..pxmc_vmt..module-1",
+    "vfModuleModelInvariantUUID": "1e099992-6222-41a9-acde-5a8abb690775",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "4d4423e2-17e8-455a-b9ae-7e4ab71b9cdc",
+    "vfModuleModelCustomizationUUID": "5336a98e-0966-4e59-b6e6-c8162804a024",
+    "isBase": false,
+    "artifacts": [
+      "ad12ab80-5419-4346-a5d7-dac2fc15575f",
+      "53acdabe-689f-45e5-8578-f1514d3529da",
+      "bc1640f1-69f0-4760-8fc3-3318ec2ff129"
+    ],
+    "properties": {
+      "min_vf_module_instances": "0",
+      "vf_module_label": "pxmc_vmt",
+      "max_vf_module_instances": "",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Expansion",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "0"
+    }
+  },
+  {
+    "vfModuleModelName": "VfZrdm5bpxmc02092017Vf..pxmc_mmn..module-2",
+    "vfModuleModelInvariantUUID": "8e53c069-b2f0-437a-9c00-21cbc5c8f081",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "a8cb1182-9b6d-46f8-b06b-ded4fe69e10d",
+    "vfModuleModelCustomizationUUID": "e38906fa-717c-49b0-b391-e6ec12b50c4a",
+    "isBase": false,
+    "artifacts": [
+      "2f372a02-df1b-46ca-b81e-822e3f406965",
+      "5bc62c72-5f7a-40bc-a167-1a4fed9afdef",
+      "b8bca13b-811f-44ab-9d27-45b842c664d8",
+      "c1ae6284-48d9-4437-a195-b2cf2ba23070",
+      "e88ce0b9-1496-4d03-ab1d-6d8d79bfc737"
+    ],
+    "properties": {
+      "min_vf_module_instances": "0",
+      "vf_module_label": "pxmc_mmn",
+      "max_vf_module_instances": "",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Expansion",
+      "availability_zone_count": "",
+      "volume_group": "true",
+      "initial_count": "0"
+    }
+  }
+]

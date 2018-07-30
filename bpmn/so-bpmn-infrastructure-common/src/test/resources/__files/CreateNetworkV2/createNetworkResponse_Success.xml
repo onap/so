@@ -1,0 +1,24 @@
+<ns2:createNetworkResponse xmlns:ns2="http://org.onap.so/network"
+                                    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <networkId>MNS-25180-L-01-dmz_direct_net_1/2c88a3a9-69b9-43a7-ada6-1aca577c3641</networkId>
+   <neutronNetworkId>c4f4e878-cde0-4b15-ae9a-bda857759cea</neutronNetworkId>
+   <subnetIdMap>
+      <entry>
+         <key>57e9a1ff-d14f-4071-a828-b19ae98eb2fc</key>
+         <value>bd8e87c6-f4e2-41b8-b0bc-9596aa00cd73</value>
+      </entry>
+   </subnetIdMap>
+   <rollback>
+      <cloudId>RDM2WAGPLCP</cloudId>
+      <msoRequest>
+         <requestId>1ef47428-cade-45bd-a103-0751e8b2deb0</requestId>
+         <serviceInstanceId/>
+      </msoRequest>
+      <networkCreated>true</networkCreated>
+      <networkId>MNS-25180-L-01-dmz_direct_net_1/2c88a3a9-69b9-43a7-ada6-1aca577c3641</networkId>
+      <networkType>CONTRAIL_EXTERNAL</networkType>
+      <networkUpdated>false</networkUpdated>
+      <neutronNetworkId>c4f4e878-cde0-4b15-ae9a-bda857759cea</neutronNetworkId>
+      <tenantId>7dd5365547234ee8937416c65507d266</tenantId>
+   </rollback>
+</ns2:createNetworkResponse>

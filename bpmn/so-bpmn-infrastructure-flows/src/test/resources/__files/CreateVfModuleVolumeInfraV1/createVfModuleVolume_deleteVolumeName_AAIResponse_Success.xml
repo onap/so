@@ -1,0 +1,24 @@
+	<rest:RESTResponse xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
+					   statusCode="200">
+	   <rest:headers>
+		  <rest:header name="X-CSI-Internal-WriteableRequest" value="true"/>
+		  <rest:header name="X-CSI-MethodName" value="helloWorld-GetMethod(Logical)"/>
+		  <rest:header name="Content-Length" value="0"/>
+		  <rest:header name="breadcrumbId" value="ID-mtsnjv9aaas23-44965-1459957053425-0-211467"/>
+		  <rest:header name="X-CSI-UniqueTransactionId"
+					   value="AjscCsiRestful28795@mtsnjv9aaas23d44059bc-ef96-4af8-a28b-98044e08d7af"/>
+		  <rest:header name="User-Agent" value="Jakarta Commons-HttpClient/3.1"/>
+		  <rest:header name="X-TransactionID" value="3749995c-266b-4025-a0c4-4ce6983efc66"/>
+		  <rest:header name="X-CSI-ServiceName" value="helloWorld"/>
+		  <rest:header name="Server" value="Jetty(9.2.z-SNAPSHOT)"/>
+		  <rest:header name="Cache-Control" value="no-cache,no-store"/>
+		  <rest:header name="X-FromAppId" value="MSO"/>
+		  <rest:header name="Date" value="Fri,08 Apr 2016 16:53:04 GMT"/>
+		  <rest:header name="X-CSI-ConversationId"
+					   value="ajscUser~CNG-CSI~bbd0e78f-d4e7-41be-b9ad-4a6767fa660a"/>
+		  <rest:header name="X-CSI-MessageId" value="6ccfeb13-56da-4836-bfbd-5a42dee60939"/>
+		  <rest:header name="X-AAI-TXID" value="mtsnjv9aaas23-20160408-16:53:04:629-73256"/>
+		  <rest:header name="Content-Type" value="application/xml"/>
+		  <rest:header name="Accept" value="application/xml"/>
+	   </rest:headers>
+	</rest:RESTResponse>

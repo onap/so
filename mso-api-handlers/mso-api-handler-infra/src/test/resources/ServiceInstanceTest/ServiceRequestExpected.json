@@ -1,0 +1,72 @@
+{
+	"variables": {
+		"bpmnRequest": {
+			"value": "{\"requestDetails\":{\"modelInfo\":{\"modelInvariantId\":\"f7ce78bb-423b-11e7-93f8-0050569a7965\",\"modelType\":\"service\",\"modelName\":\"serviceModel\",\"modelVersion\":\"1\",\"modelVersionId\":\"10\",\"modelUuid\":\"10\",\"modelInvariantUuid\":\"f7ce78bb-423b-11e7-93f8-0050569a7965\"},\"requestInfo\":{\"source\":\"VID\",\"instanceName\":\"testService9\",\"suppressRollback\":false,\"requestorId\":\"xxxxxx\"},\"subscriberInfo\":{\"globalSubscriberId\":\"MSO_1610_dev\",\"subscriberName\":\"MSO_1610_dev\"},\"requestParameters\":{\"alaCarte\":true,\"subscriptionServiceType\":\"test\",\"aLaCarte\":true,\"autoBuildVfModules\":false}},\"serviceInstanceId\":\"1882939\",\"vnfInstanceId\":\"1882938\",\"networkInstanceId\":\"1882937\",\"volumeGroupInstanceId\":\"1882935\",\"vfModuleInstanceId\":\"1882934\"}",
+			"type": "String"
+		},
+		"requestId": {
+			"value": "c2d5adfc-a4ce-4764-b25a-ce7988c0d5e7",
+			"type": "String"
+		},
+		"mso-request-id": {
+			"value": "c2d5adfc-a4ce-4764-b25a-ce7988c0d5e7",
+			"type": "String"
+		},
+		"isBaseVfModule": {
+			"value": false,
+			"type": "Boolean"
+		},
+		"recipeTimeout": {
+			"value": 180,
+			"type": "Integer"
+		},
+		"requestAction": {
+			"value": "createInstance",
+			"type": "String"
+		},
+		"serviceInstanceId": {
+			"value": "1882939",
+			"type": "String"
+		},
+		"vnfId": {
+			"value": "1882938",
+			"type": "String"
+		},
+		"vfModuleId": {
+			"value": "1882934",
+			"type": "String"
+		},
+		"volumeGroupId": {
+			"value": "1882935",
+			"type": "String"
+		},
+		"networkId": {
+			"value": "1882937",
+			"type": "String"
+		},
+		"configurationId": {
+			"value": "",
+			"type": "String"
+		},
+		"serviceType": {
+			"value": "",
+			"type": "String"
+		},
+		"vnfType": {
+			"value": "",
+			"type": "String"
+		},
+		"vfModuleType": {
+			"value": "",
+			"type": "String"
+		},
+		"networkType": {
+			"value": "",
+			"type": "String"
+		},
+		"host": {
+			"value": "localhost",
+			"type": "String"
+		}
+	}
+}

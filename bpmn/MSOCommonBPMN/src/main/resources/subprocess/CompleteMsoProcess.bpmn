@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_EsMs0HcuEeW2U_kkOHX1ZQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_EsMs0HcuEeW2U_kkOHX1ZQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.1" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CompleteMsoProcess" name="CompleteMsoProcess" isExecutable="true">
     <bpmn2:scriptTask id="preProcessRequest" name="Pre-Process Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_18</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def preProcessRequestData = new CompleteMsoProcess()
 preProcessRequestData.preProcessRequest(execution)
 
 ]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="preProcessRequest" targetRef="ExclusiveGateway_1r258d4" />
-    <bpmn2:startEvent id="StartEvent_1" name="Start With Message ">
+    <bpmn2:startEvent id="StartEvent_1" name="Start With message">
       <bpmn2:outgoing>SequenceFlow_18</bpmn2:outgoing>
       <bpmn2:messageEventDefinition id="MessageEventDefinition_1" messageRef="Message_2" />
     </bpmn2:startEvent>
@@ -41,7 +41,7 @@ preProcessRequestData.preProcessRequest(execution)
     <bpmn2:scriptTask id="ScriptTask_3" name="Prepare Infra&#10;&#10;Update DB Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_127i45q</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def completeMsoProcess = new CompleteMsoProcess()
 completeMsoProcess.setUpdateDBstatustoSuccessPayload(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -50,7 +50,7 @@ completeMsoProcess.setUpdateDBstatustoSuccessPayload(execution)]]></bpmn2:script
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
             <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("CMSO_setUpdateDBstatustoSuccessPayload")}]]></camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -75,7 +75,7 @@ completeMsoProcess.setUpdateDBstatustoSuccessPayload(execution)]]></bpmn2:script
       <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
       <bpmn2:script><![CDATA[//println "INSIDE --> Build Error Message @@@@"
 //println "CMSO_updateRequestResponse IS --> " + execution.getVariable("CMSO_updateRequestResponse")
-import org.openecomp.mso.bpmn.common.scripts.*
+import org.onap.so.bpmn.common.scripts.*
 def buildDataErrorMessage = new CompleteMsoProcess()
 buildDataErrorMessage.buildDataError(execution, "Complete MSO  -- Update DB status to SUCCESS -- Failed")]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -95,7 +95,7 @@ buildDataErrorMessage.buildDataError(execution, "Complete MSO  -- Update DB stat
       <bpmn2:terminateEventDefinition id="_TerminateEventDefinition_2" />
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_0mipf25" name="Connect Fault" sourceRef="BoundaryEvent_7" targetRef="BuildErrorMessage" />
-    <bpmn2:callActivity id="CallActivity_101qf6x" name="Call Notification Service" calledElement="${URN_mso_workflow_notification_name}">
+    <bpmn2:callActivity id="CallActivity_101qf6x" name="Call Notification Service" calledElement="${UrnPropertiesReader.getVariable(&#34;mso.workflow.notification.name&#34;, execution)}">
       <bpmn2:extensionElements>
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
@@ -132,7 +132,7 @@ buildDataErrorMessage.buildDataError(execution, "Complete MSO  -- Update DB stat
     </bpmn2:parallelGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_1g8ig3h" sourceRef="ExclusiveGateway_019d74x" targetRef="ScriptTask_0vyk0lo" />
     <bpmn2:sequenceFlow id="SequenceFlow_067veaf" sourceRef="ExclusiveGateway_1r258d4" targetRef="ExclusiveGateway_3" />
-    <bpmn2:exclusiveGateway id="ExclusiveGateway_08yqzk9" name="Infra Check" default="SequenceFlow_1ffkc0n">
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_08yqzk9" name="Infra Check Check" default="SequenceFlow_1ffkc0n">
       <bpmn2:incoming>SequenceFlow_0xe5zck</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_127i45q</bpmn2:outgoing>
       <bpmn2:outgoing>SequenceFlow_1ffkc0n</bpmn2:outgoing>
@@ -156,7 +156,7 @@ buildDataErrorMessage.buildDataError(execution, "Complete MSO  -- Update DB stat
       <bpmn2:incoming>SequenceFlow_1g8ig3h</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1pzb94j</bpmn2:outgoing>
       <bpmn2:script><![CDATA[println "INSIDE --> Complete MSO Process Done SUCCESSFULLY"
-import org.openecomp.mso.bpmn.common.scripts.*
+import org.onap.so.bpmn.common.scripts.*
 def postProcessResponseData = new CompleteMsoProcess()
 postProcessResponseData.postProcessResponse(execution)
 println "CompleteMsoProcess Response -->" + "\n" + execution.getVariable("CompletionHandlerResponse")]]></bpmn2:script>
@@ -171,7 +171,7 @@ println "CompleteMsoProcess Response -->" + "\n" + execution.getVariable("Comple
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_41" bpmnElement="StartEvent_1">
         <dc:Bounds x="67" y="297" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="93" y="338" width="50" height="24" />
+          <dc:Bounds x="94" y="338" width="49" height="25" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_34" bpmnElement="preProcessRequest">

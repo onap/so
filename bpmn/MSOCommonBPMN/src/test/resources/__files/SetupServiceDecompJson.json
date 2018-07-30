@@ -1,0 +1,36 @@
+{
+	"requestDetails": {
+		"serviceInstance": {
+			"serviceInstanceId": "MSORefactorTest2",
+			"serviceInstanceName": "bensServiceInstance2",
+			"serviceType": "MSO-dev-service-type",
+			"serviceRole": "abc",
+			"modelInvariantUuid": "9647dfc4-2083-11e7-93ae-92361f002671",
+			"modelUuid": "5df8b6de-2083-11e7-93ae-92361f002671",
+			"modelVersion": "1.0",
+			"modelName": "MSOTADevInfra_vSAMP10a_Service",
+			"environmentContext": "Luna",
+			"workloadContext": "Oxygen",
+			"orchestrationStatus": "ACTIVE"
+		},
+		"project": {
+			"projectName": "MSORefactorTest1234"
+		},
+		"owningEntity": {
+			"owningEntityId": "MSORefactorTestId1234",
+			"owningEntityName": "MSORefactorTest1234"
+		},
+		"customer": {
+			"subscriptionServiceType": "MSO-dev-service-type",
+			"globalSubscriberId": "MSO_1610_dev"
+		},
+		"request": {
+			"sdncRequestId": "736c7370-640b-4f7a-975d-320f73340dd3",
+			"callbackURL": "abc",
+			"requestId": "223c2e74-a23a-4ab8-bddb-2c2431dcb67f",
+			"productFamilyId": "abc",
+			"callbackUrl": "http://localhost:8080/adapters/rest/SDNCNotify",
+			"serviceId": "123"
+		}
+	}
+}

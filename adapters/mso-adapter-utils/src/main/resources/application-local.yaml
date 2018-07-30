@@ -1,0 +1,64 @@
+# will be used as entry in DB to say SITE OFF/ON for healthcheck
+# MSO Properties go here
+mso:
+  catalog:
+    db:
+      spring:
+        endpoint: "http://localhost:8080"
+  db:
+    auth: Basic YnBlbDptc28tZGItMTUwNyE=
+cloud_config:
+  identity_services:
+    MT_KEYSTONE:
+      identity_url: "http://localhost:5000/v2.0"
+      mso_id: "john"
+      mso_pass: "313DECE408AF7759D442D7B06DD9A6AA"
+      admin_tenant: "admin"
+      member_role: "_member_"
+      tenant_metadata: false
+      identity_server_type: "KEYSTONE"
+      identity_authentication_type: "USERNAME_PASSWORD"
+    DAN_KEYSTONE:
+      identity_url: "http://192.168.170.21:5000/v2.0"
+      mso_id: "jc1348"
+      mso_pass: "313DECE408AF7759D442D7B06DD9A6AA"
+      admin_tenant: "service"
+      member_role: "_member_"
+      tenant_metadata: false
+      identity_server_type: "KEYSTONE"
+      identity_authentication_type: "USERNAME_PASSWORD"
+  cloud_sites:
+    regionOne:
+      region_id: "regionOne"
+      clli: "MT2"
+      aic_version: "2.5"
+      identity_service_id: "MT_KEYSTONE"
+    DAN:
+      region_id: "RegionOne"
+      clli: "MT"
+      aic_version: "2.5"
+      identity_service_id: "DAN_KEYSTONE"
+    DEFAULT:
+      region_id: ""
+      clli: "MTN6"
+      aic_version: "3.0"
+      identity_service_id: "ORDM3"
+adapters:
+  po:
+    retryCodes: "504"
+    retryDelay: "5"
+    retryCount: "3"
+  tenant:
+    tenant_description: "ECOMP Tenant"
+    region_type: "single"
+    user_role: "admin"
+    success_status_string: "Success"
+    no_regions_status_string: "no regions"
+    orm_request_path: "/v1/orm/customers/"
+    x_aic_orm_client_string: "ECOMP-MSO"
+    keystone_url_version: "/v2.0"
+    keystone_reg_ex: "/[vV][0-9]"
+    orm_url_replace_this: "8080"
+    orm_url_replace_with_this: "7080"
+    quota_value: "10"
+    set_default_quota: "false"

@@ -1,0 +1,24 @@
+{
+	"modelCustomizationUUID" : "modelCustomizationUUID",
+    "label" : "label",
+    "minInstances": 2,
+    "maxInstances": 3,
+    "availabilityZoneCount": 5,
+	"volumeHeatEnv" : {},
+	"heatEnvironment" : {},
+	"vfModule" : {
+	   "modelUUID" : "modelUUID",
+        "modelInvariantUUID" : "modelInvariantUUID",
+        "modelName" : "modelName",
+        "modelVersion" : "modelVersion",
+        "description" : "description",
+        "isBase" : true,
+        "volumeHeatTemplate" : {},
+        "moduleHeatTemplate" : {},
+        "heatFiles" : [],
+        "vfModuleCustomization" : [],
+        "vnfResources" : {
+            "modelName" : "vnfResourceModelName"
+        }
+	}
+}

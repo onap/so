@@ -1,0 +1,19 @@
+{
+	"interface-name": "Xe-7/1/10",
+	"port-description": "VVIG EGRESS",
+	"resource-version": "1494002035673",
+	"relationship-list": {
+		"relationship": [
+			{
+				"related-to": "physical-link",
+				"related-link": "/aai/v11/network/physical-links/physical-link/testPhysicalLinkUcpe",
+				"relationship-data": [
+					{
+						"relationship-key": "physical-link.link-name",
+						"relationship-value": "L4YS.999964..ATI_EGRESS"
+					}
+				]
+			}
+		]
+	}
+}

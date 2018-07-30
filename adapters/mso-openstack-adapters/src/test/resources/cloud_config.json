@@ -1,0 +1,258 @@
+{
+     "cloud_config": {
+          "identity_services": {
+               "MT_KEYSTONE": {
+                    "identity_url": "http://localhost:5000/v2.0",
+                    "mso_id": "john",
+                    "mso_pass": "FD205490A48D48475607C36B9AD902BF",
+                    "admin_tenant": "admin",
+                    "member_role": "_member_",
+                    "tenant_metadata": false,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "DAN_KEYSTONE": {
+                    "identity_url": "http://192.168.170.21:5000/v2.0",
+                    "mso_id": "jc1348",
+                    "mso_pass": "BC59F80E38208A42ABB81ECCDD4FB3E4",
+                    "admin_tenant": "service",
+                    "member_role": "_member_",
+                    "tenant_metadata": false,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "MTINJVCC101_DCP": {
+                    "identity_url": "http://192.168.27.7:5000/v2.0",
+                    "mso_id": "m93909",
+                    "mso_pass": "95604B9EAAC4D77D74786FAE54177206",
+                    "admin_tenant": "service",
+                    "member_role": "admin",
+                    "tenant_metadata": true,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "MTSNJA3DCP1": {
+                    "identity_url": "https://localhost:5000/v2.0",
+                    "mso_id": "m93954",
+                    "mso_pass": "A1C56E1776686AB1B9B21B0E1B089187",
+                    "admin_tenant": "service",
+                    "member_role": "admin",
+                    "tenant_metadata": true,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "MDCP1": {
+                    "identity_url": "http://192.168.27.26:5000/v2.0",
+                    "mso_id": "admin",
+                    "mso_pass": "43DF28471936B8EFB6BDCF651A2A0785",
+                    "admin_tenant": "admin",
+                    "member_role": "admin",
+                    "tenant_metadata": false,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "ALEXZ": {
+                    "identity_url": "http://192.168.125.5:5000/v2.0",
+                    "mso_id": "jc",
+                    "mso_pass": "5E34F1F7C1A80A101F2BF1F41F629479",
+                    "admin_tenant": "jc",
+                    "member_role": "admin",
+                    "tenant_metadata": false,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "sdcp": {
+                    "identity_url": "https://localhost:5000/v2.0",
+                    "mso_id": "m96730",
+                    "mso_pass": "4B36EA2603159918BDE7800A8A4CEFD2",
+                    "admin_tenant": "service",
+                    "member_role": "admin",
+                    "tenant_metadata": true,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "gdcp1": {
+                    "identity_url": "https://localhost:5000/v2.0",
+                    "mso_id": "m96730",
+                    "mso_pass": "4B36EA2603159918BDE7800A8A4CEFD2",
+                    "admin_tenant": "service",
+                    "member_role": "admin",
+                    "tenant_metadata": true,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "CRAIG1": {
+                    "identity_url": "http://192.168.125.102:5000/v2.0",
+                    "mso_id": "mso-team",
+                    "mso_pass": "34813879BF7DB11F87BEA3862C94D5EE",
+                    "admin_tenant": "mso-team",
+                    "member_role": "admin",
+                    "tenant_metadata": false,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "MTN17": {
+                    "identity_url": "https://localhost:5000/v2.0",
+                    "mso_id": "m96730",
+                    "mso_pass": "4B36EA2603159918BDE7800A8A4CEFD2",
+                    "admin_tenant": "admin",
+                    "member_role": "admin",
+                    "tenant_metadata": true,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "MDT3": {
+                    "identity_url": "https://localhost:5000/v2.0",
+                    "mso_id": "m93945",
+                    "mso_pass": "93937EA01B94A10A49279D4572B48369",
+                    "admin_tenant": "admin",
+                    "member_role": "admin",
+                    "tenant_metadata": true,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "MTN6": {
+                    "identity_url": "https://localhost:5000/v2.0",
+                    "mso_id": "m93945",
+                    "mso_pass": "9E5B5CD92BBC529D12C399B980C8992E",
+                    "admin_tenant": "admin",
+                    "member_role": "admin",
+                    "tenant_metadata": true,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "RDM3": {
+                    "identity_url": "https://localhost:5000/v2.0",
+                    "mso_id": "m96928",
+                    "mso_pass": "7F7FAC9A8AFF10F15FA4C951EE22C72C",
+                    "admin_tenant": "admin",
+                    "member_role": "admin",
+                    "tenant_metadata": true,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "MTN13": {
+                    "identity_url": "https://localhost:5000/v2.0",
+                    "mso_id": "m93945",
+                    "mso_pass": "93937EA01B94A10A49279D4572B48369",
+                    "admin_tenant": "admin",
+                    "member_role": "admin",
+                    "tenant_metadata": true,
+                    "identity_server_type": "KEYSTONE",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "ORDM3": {
+                    "identity_url": "http://192.168.38.220:8080",
+                    "mso_id": "m96928",
+                    "mso_pass": "7F7FAC9A8AFF10F15FA4C951EE22C72C",
+                    "admin_tenant": "admin",
+                    "member_role": "admin",
+                    "tenant_metadata": true,
+                    "identity_server_type": "ORM",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               },
+               "OMTN6": {
+                    "identity_url": "http://192.168.155.143:8080",
+                    "mso_id": "m93945",
+                    "mso_pass": "93937EA01B94A10A49279D4572B48369",
+                    "admin_tenant": "admin",
+                    "member_role": "admin",
+                    "tenant_metadata": true,
+                    "identity_server_type": "ORM",
+                    "identity_authentication_type": "USERNAME_PASSWORD"
+               }
+          },
+          "cloud_sites": {
+               "regionOne": {
+                    "region_id": "regionOne",
+                    "clli": "MT",
+                    "aic_version": "2.5",
+                    "identity_service_id": "MT_KEYSTONE"
+               },
+               "DAN": {
+                    "region_id": "RegionOne",
+                    "clli": "DAN",
+                    "aic_version": "2.5",
+                    "identity_service_id": "DAN_KEYSTONE"
+               },
+               "regionTwo": {
+                    "region_id": "regionTwo",
+                    "clli": "MTINJVCC101",
+                    "aic_version": "2.5",
+                    "identity_service_id": "MTINJVCC101_DCP"
+               },
+               "mtsnjlcp1": {
+                    "region_id": "mtsnjlcp1",
+                    "clli": "MTSNJA4LCP1",
+                    "aic_version": "2.5",
+                    "identity_service_id": "MTSNJA3DCP1"
+               },
+               "mlcp1": {
+                    "region_id": "mlcp1",
+                    "clli": "MLCP1",
+                    "aic_version": "2.5",
+                    "identity_service_id": "MDCP1"
+               },
+               "mlcp2": {
+                    "region_id": "mlcp2",
+                    "clli": "MLCP2",
+                    "aic_version": "2.5",
+                    "identity_service_id": "MDCP1"
+               },
+               "ALEXZ": {
+                    "region_id": "RegionOne",
+                    "clli": "ALEXZ",
+                    "aic_version": "2.5",
+                    "identity_service_id": "ALEXZ"
+               },
+               "mtn5": {
+                    "region_id": "mtn5",
+                    "clli": "MDTWNJ21",
+                    "aic_version": "2.5",
+                    "identity_service_id": "sdcp"
+               },
+               "AAIAIC25": {
+                    "region_id": "RegionOne",
+                    "clli": "JCRAIG",
+                    "aic_version": "3.0",
+                    "identity_service_id": "CRAIG1"
+               },
+               "mtn17": {
+                    "region_id": "mtn17",
+                    "clli": "MTN17",
+                    "aic_version": "3.0",
+                    "identity_service_id": "MTN17"
+               },
+               "mdt3": {
+                    "region_id": "mdt3",
+                    "clli": "MDT3",
+                    "aic_version": "3.0",
+                    "identity_service_id": "MDT3"
+               },
+               "mtn6": {
+                    "region_id": "mtn6",
+                    "clli": "NJMIDN1",
+                    "aic_version": "3.0",
+                    "identity_service_id": "MTN6"
+               },
+               "mtn13": {
+                    "region_id": "mtn13",
+                    "clli": "MDT13",
+                    "aic_version": "3.0",
+                    "identity_service_id": "MTN13"
+               },
+               "rdm3": {
+                    "region_id": "rdm3",
+                    "clli": "RDM3",
+                    "aic_version": "3.0",
+                    "identity_service_id": "ORDM3"
+               },
+               "DEFAULT": {
+                    "region_id": "",
+                    "clli": "MTN6",
+                    "aic_version": "3.0",
+                    "identity_service_id": "ORDM3"
+               }
+          }
+     }
+}

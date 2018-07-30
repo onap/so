@@ -1,0 +1,30 @@
+server: 
+  port: 8080  
+  tomcat:
+    max-threads: 50
+
+spring: 
+  datasource:
+     driver-class-name: org.mariadb.jdbc.Driver 
+     url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/camundabpmn
+     username: ${DB_USERNAME}
+     password: ${DB_PASSWORD}
+     dbcp2: 
+      initial-size: 5
+      max-total: 20 
+      validation-query: select 1
+      test-on-borrow: true
+  http:
+    multipart:
+      enabled: false
+  jersey:
+    application-path: /sobpmnengine
+#Actuator
+management: 
+  context-path: /manage
+  metrics:
+    se-global-registry: false
+    export:
+      prometheus:
+        enabled: true # Whether exporting of metrics to Prometheus is enabled.
+        step: 1m # Step size (i.e. reporting frequency) to use.

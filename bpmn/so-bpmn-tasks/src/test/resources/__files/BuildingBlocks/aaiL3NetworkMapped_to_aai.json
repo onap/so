@@ -1,0 +1,118 @@
+{
+  "networkId" : "TESTING_ID",
+  "networkName" : "TESTING_NAME",
+  "networkType" : "CONTRAIL_EXTERNAL",
+  "networkRole" : "dmz_direct",
+  "networkTechnology" : "contrail",
+  "neutronNetworkId" : null,
+  "isBoundToVpn" : false,
+  "serviceId" : "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+  "networkRoleInstance" : 1,
+  "resourceVersion" : null,
+  "orchestrationStatus" : "Created",
+  "heatStackId" : "heatStack_id",
+  "msoCatalogKey" : null,
+  "contrailNetworkFqdn" : "contrailNetwork_fqdn",
+  "modelInvariantId" : "modelInvariant_id",
+  "modelVersionId" : "modelCustomization_id",
+  "personaModelVersion" : null,
+  "modelCustomizationId" : "modelCustomization_id",
+  "widgetModelId" : "widgetModel_id",
+  "widgetModelVersion" : "widgetModel_version",
+  "physicalNetworkName" : "physicalNetwork_name",
+  "isProviderNetwork" : false,
+  "isSharedNetwork" : false,
+  "isExternalNetwork" : false,
+  "selflink" : "self_link",
+  "operationalStatus" : "operationalStatus",
+  "subnets" : {
+    "subnet" : [ {
+      "subnetId" : "57e9a1ff-d14f-4071-a828-b19ae98eb2fc",
+      "subnetName" : "subnetName",
+      "neutronSubnetId" : null,
+      "gatewayAddress" : "192.168.52.1",
+      "networkStartAddress" : null,
+      "cidrMask" : "24",
+      "ipVersion" : "4",
+      "orchestrationStatus" : "Created",
+      "dhcpEnabled" : true,
+      "dhcpStart" : "dhcpStart",
+      "dhcpEnd" : "dhcpEnd",
+      "subnetRole" : "subnetRole",
+      "ipAssignmentDirection" : "true",
+      "resourceVersion" : null,
+      "subnetSequence" : 3,
+      "hostRoutes" : {
+        "hostRoute" : [ {
+          "hostRouteId" : "string",
+          "routePrefix" : "192.10.16.0/24",
+          "nextHop" : "192.10.16.100/24",
+          "nextHopType" : "ip-address",
+          "resourceVersion" : null,
+          "relationshipList" : null
+        }, {
+          "hostRouteId" : "string",
+          "routePrefix" : "192.110.17.0/24",
+          "nextHop" : "192.110.17.110/24",
+          "nextHopType" : "ip-address",
+          "resourceVersion" : null,
+          "relationshipList" : null
+        } ]
+      },
+      "relationshipList" : null
+    }, {
+      "subnetId" : "57e9a1ff-d14f-4071-a828-b19ae98eb2fc",
+      "subnetName" : "subnetName",
+      "neutronSubnetId" : null,
+      "gatewayAddress" : "192.168.52.1",
+      "networkStartAddress" : null,
+      "cidrMask" : "24",
+      "ipVersion" : "4",
+      "orchestrationStatus" : "Created",
+      "dhcpEnabled" : true,
+      "dhcpStart" : "dhcpStart",
+      "dhcpEnd" : "dhcpEnd",
+      "subnetRole" : "subnetRole",
+      "ipAssignmentDirection" : "true",
+      "resourceVersion" : null,
+      "subnetSequence" : 3,
+      "hostRoutes" : {
+        "hostRoute" : [ {
+          "hostRouteId" : "string",
+          "routePrefix" : "192.10.16.0/24",
+          "nextHop" : "192.10.16.100/24",
+          "nextHopType" : "ip-address",
+          "resourceVersion" : null,
+          "relationshipList" : null
+        }, {
+          "hostRouteId" : "string",
+          "routePrefix" : "192.110.17.0/24",
+          "nextHop" : "192.110.17.110/24",
+          "nextHopType" : "ip-address",
+          "resourceVersion" : null,
+          "relationshipList" : null
+        } ]
+      },
+      "relationshipList" : null
+    } ]
+  },
+  "ctagAssignments" : {
+    "ctagAssignment" : [ {
+      "vlanIdInner" : 1,
+      "resourceVersion" : null,
+      "relationshipList" : null
+    } ]
+  },
+  "segmentationAssignments" : {
+    "segmentationAssignment" : [ {
+      "segmentationId" : "segmentationId1",
+      "resourceVersion" : null,
+      "relationshipList" : null
+    }, {
+      "segmentationId" : "segmentationId2",
+      "resourceVersion" : null,
+      "relationshipList" : null
+    } ]
+  },
+  "relationshipList" : null
+}

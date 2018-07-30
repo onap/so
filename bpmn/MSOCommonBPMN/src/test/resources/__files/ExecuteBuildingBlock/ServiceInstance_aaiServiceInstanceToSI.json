@@ -1,0 +1,27 @@
+{
+	"service-instance-id": "serviceInstanceId",
+	"service-instance-name": "serviceInstanceName",
+	"orchestration-status": "CREATED",
+	"owning-entity": null,
+	"project": null,
+	"vnfs": [],
+	"allotted-resources": [
+		{
+			"id": "allottedID",
+			"target-network-role": null,
+			"self-link": null,
+			"orchestration-status": null,
+			"operational-status": null,
+			"type": null,
+			"role": null,
+			"model-info-allotted-resource": null
+		}
+	],
+	"networks": [],
+	"vhn-portal-url": "vhnPortalUrl",
+	"service-instance-location-id": "serviceInstanceLocId",
+	"selflink": "selfLink",
+	"metadata": null,
+	"configurations": [],
+	"model-info-service-instance": null
+}

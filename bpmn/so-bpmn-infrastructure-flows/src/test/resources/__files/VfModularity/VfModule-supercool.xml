@@ -1,0 +1,27 @@
+<vf-module xmlns="http://org.openecomp.aai.inventory/v7">
+	<vf-module-id>supercool</vf-module-id>
+	<vf-module-name>PCRF::module-2</vf-module-name>
+	<heat-stack-id>fastburn</heat-stack-id>
+	<orchestration-status>pending-create</orchestration-status>
+	<is-base-vf-module>false</is-base-vf-module>
+	<resource-version>330-89</resource-version>
+	<model-invariant-id>introvert</model-invariant-id>
+	<model-version-id>2.0</model-version-id>
+	<relationship-list>
+		<relationship>
+			<related-to>volume-group</related-to>
+			<relationship-data>
+				<relationship-key>cloud-region.cloud-owner</relationship-key>
+				<relationship-value>att-aic</relationship-value>
+			</relationship-data>
+			<relationship-data>
+				<relationship-key>cloud-region.cloud-region-id</relationship-key>
+				<relationship-value>pdk1</relationship-value>
+			</relationship-data>
+			<relationship-data>
+				<relationship-key>volume-group.volume-group-id</relationship-key>
+				<relationship-value>78987</relationship-value>
+			</relationship-data>
+		</relationship>
+	</relationship-list>
+</vf-module>

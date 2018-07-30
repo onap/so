@@ -1,0 +1,11 @@
+{
+  "segmentationAssignment" : [ {
+    "segmentationId" : "segmentationId1",
+    "resourceVersion" : null,
+    "relationshipList" : null
+  }, {
+    "segmentationId" : "segmentationId2",
+    "resourceVersion" : null,
+    "relationshipList" : null
+  } ]
+}

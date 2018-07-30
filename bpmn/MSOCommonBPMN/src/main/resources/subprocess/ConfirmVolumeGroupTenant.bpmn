@@ -4,7 +4,7 @@
     <bpmn2:scriptTask id="queryAAIForVolumeGroup" name="Query AAI Volume Group" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 ConfirmVolumeGroupTenant volume = new ConfirmVolumeGroupTenant()
 volume.preProcessRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -25,7 +25,7 @@ volume.preProcessRequest(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="assignError" name="Assign Workflow Exception" scriptFormat="groovy">
       <bpmn2:incoming>idsMatchNo</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 ConfirmVolumeGroupTenant volume = new ConfirmVolumeGroupTenant()
 volume.assignWorkflowException(execution, "does not belong to your tenant")]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -37,7 +37,7 @@ volume.assignWorkflowException(execution, "does not belong to your tenant")]]></
     <bpmn2:scriptTask id="assignVolumeHeatId" name="Assign Volume Heat Id" scriptFormat="groovy">
       <bpmn2:incoming>groupNamesMatchYes</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 ConfirmVolumeGroupTenant volume = new ConfirmVolumeGroupTenant()
 volume.assignVolumeHeatId(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -45,7 +45,7 @@ volume.assignVolumeHeatId(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="assignErrorNames" name="Assign Workflow Exception" scriptFormat="groovy">
       <bpmn2:incoming>groupNamesMatchNo</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 ConfirmVolumeGroupTenant volume = new ConfirmVolumeGroupTenant()
 volume.assignWorkflowException(execution, "name does not match")]]></bpmn2:script>
     </bpmn2:scriptTask>

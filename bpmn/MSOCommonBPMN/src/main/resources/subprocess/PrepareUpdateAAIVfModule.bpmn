@@ -6,7 +6,7 @@ and the updated VF Module (type=VfModule) is placed in the variable 'PUAAIVfMod_
     <bpmn2:scriptTask id="QueryAAIForGenericVnf" name="Query AAI for Generic Vnf" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_38</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_39</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def puvm = new PrepareUpdateAAIVfModule()
 puvm.getGenericVnf(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -23,14 +23,14 @@ puvm.getGenericVnf(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_1" name="Validate VF Module" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_22</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def puvm= new PrepareUpdateAAIVfModule()
 puvm.validateVfModule(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="VnfNotFound" name="Handle Generic Vnf Not found" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_18</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def puvm= new PrepareUpdateAAIVfModule()
 puvm.handleVnfNotFound(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -48,7 +48,7 @@ puvm.handleVnfNotFound(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_2" name="Handle VF Module Validation Error" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_12</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_15</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def puvm= new PrepareUpdateAAIVfModule()
 puvm.handleVfModuleValidationError(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -75,7 +75,7 @@ puvm.handleVfModuleValidationError(execution)]]></bpmn2:script>
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:outputParameter name="CreateCustomerV1Response"><![CDATA[<aetgt:CreateCustomerResponse xmlns:aetgt="http://org.openecomp/mso/workflow/schema/v1"                   xmlns:ns="http://org.openecomp/mso/workflow/schema/v1">
+            <camunda:outputParameter name="CreateCustomerV1Response"><![CDATA[<aetgt:CreateCustomerResponse xmlns:aetgt="http://org.onap/so/workflow/schema/v1"                   xmlns:ns="http://org.onap/so/workflow/schema/v1">
  <ns:GlobalCustomerId>${CCV1_subscriberglobalid}</ns:GlobalCustomerId>
    </aetgt:CreateCustomerResponse>]]></camunda:outputParameter>
           </camunda:inputOutput>
@@ -86,7 +86,7 @@ puvm.handleVfModuleValidationError(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="HandleUpdateVfModuleFailure" name="Handle Update VF Module Failure" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def puvm= new PrepareUpdateAAIVfModule()
 puvm.handleUpdateVfModuleFailure(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -94,7 +94,7 @@ puvm.handleUpdateVfModuleFailure(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="UpdateVfModule" name="Update VF Module" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_16</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_14</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def puvm= new PrepareUpdateAAIVfModule()
 puvm.updateVfModule(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -109,7 +109,7 @@ puvm.updateVfModule(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ProcessReceivedRequest" name="Process Received Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_38</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def puvm= new PrepareUpdateAAIVfModule()
 puvm.preProcessRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>

@@ -1,0 +1,34 @@
+ <sdncadapterworkflow:SDNCRequestData xmlns:ns5="http://org.onap/so/request/types/v1"
+                                                xmlns:sdncadapter="http://org.onap/workflow/sdnc/adapter/schema/v1"
+                                                xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
+      <request-information>
+         <request-id>b184fee2-3bda-4bb7-9475-e18dbeb994c0</request-id>
+         <source>MSO</source>
+         <notification-url/>
+         <order-number/>
+         <order-version/>
+         <request-action>CreateServiceInstance</request-action>
+      </request-information>
+      <service-information>
+         <service-id/>
+         <subscription-service-type>MSO-dev-service-type</subscription-service-type>
+         <onap-model-information>
+            <model-invariant-uuid>52b49b5d-3086-4ffd-b5e6-1b1e5e7e062f</model-invariant-uuid>
+            <model-uuid>aed5a5b7-20d3-44f7-90a3-ddbd16f14d1e</model-uuid>
+            <model-version>1.0</model-version>
+            <model-name>MSO Test Network</model-name>
+         </onap-model-information>
+         <service-instance-id>d46c06c9-dcb2-48c9-888f-35219a8c492e</service-instance-id>
+         <subscriber-name/>
+         <global-customer-id>MSO_1610_dev</global-customer-id>
+      </service-information>
+      <service-request-input>
+         <service-instance-name>MSO-DEV-SI-1802-v6-2-19-113</service-instance-name>
+         <service-input-parameters>
+            <param>
+               <name>someUserParam</name>
+               <value>someValue</value>
+            </param>
+         </service-input-parameters>
+      </service-request-input>
+   </sdncadapterworkflow:SDNCRequestData>

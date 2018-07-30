@@ -1,9 +1,9 @@
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-	xmlns:v1="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+	xmlns:v1="http://org.onap/workflow/sdnc/adapter/schema/v1">
 	<soapenv:Header />
 	<soapenv:Body>
 		<v1:SDNCAdapterCallback>
-<SDNCAdapterCallbackRequest xmlns="http://org.openecomp/workflow/sdnc/adapter/schema/v1">
+<SDNCAdapterCallbackRequest xmlns="http://org.onap/workflow/sdnc/adapter/schema/v1">
     <CallbackHeader>
         <RequestId>testRequestId</RequestId>
         <ResponseCode>200</ResponseCode>
@@ -300,7 +300,7 @@
 						&lt;/request-information&gt;
 						&lt;sdnc-request-header&gt;
 							&lt;svc-action&gt;activate&lt;/svc-action&gt;
-							&lt;svc-notification-url&gt;https://msojra.mtsnjdcp1.aic.cip.com:8443/adapters/rest/SDNCNotify&lt;/svc-notification-url&gt;
+							&lt;svc-notification-url&gt;https://localhost:8443/adapters/rest/SDNCNotify&lt;/svc-notification-url&gt;
 							&lt;svc-request-id&gt;5b1f3c5d-cdf9-488d-8a4b-d3f1229d7760&lt;/svc-request-id&gt;
 						&lt;/sdnc-request-header&gt;
 						&lt;l2-homing-information&gt;

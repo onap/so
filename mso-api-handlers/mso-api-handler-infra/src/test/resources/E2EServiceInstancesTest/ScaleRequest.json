@@ -1,0 +1,18 @@
+{
+	"service":{
+		"serviceType":"example-service-type",
+		"globalSubscriberId":"test_custormer",
+		"resources":[{
+			"resourceInstanceId":"ns111",
+			"scaleType":"SCALE_NS",
+			"scaleNsData":{
+				"scaleNsByStepsData":{
+					"numberOfSteps":"4",
+					"aspectId":"TIC_EDGE_HW",
+					"scalingDirection":"UP"
+				}
+			}
+		}],
+		"serviceInstanceName":"XXXX"
+	}
+}

@@ -12,7 +12,7 @@
     <bpmn2:scriptTask id="toggleSuccess" name="Toggle Success Indicator" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 
 def serviceInstance= new GenericPutService()
 serviceInstance.setSuccessIndicator(execution, true)
@@ -23,7 +23,7 @@ execution.setVariable("WorkflowResponse", " ")  //for junits]]></bpmn2:script>
     <bpmn2:scriptTask id="putServiceInstance" name="Put Service Instance" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 
 def serviceInstance= new GenericPutService()
 serviceInstance.putServiceInstance(execution)]]></bpmn2:script>
@@ -32,7 +32,7 @@ serviceInstance.putServiceInstance(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="Initialization" name="Initialization" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 
 def serviceInstance= new GenericPutService()
 serviceInstance.preProcessRequest(execution)
@@ -51,7 +51,7 @@ serviceInstance.preProcessRequest(execution)
       <bpmn2:scriptTask id="processError" name="Process Error" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_6</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 
 ExceptionUtil ex = new ExceptionUtil()
 ex.processSubflowsBPMNException(execution)]]></bpmn2:script>
@@ -67,7 +67,7 @@ ex.processSubflowsBPMNException(execution)]]></bpmn2:script>
       <bpmn2:scriptTask id="processJavaError" name="Process Java Error" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_9</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 
 ExceptionUtil ex = new ExceptionUtil()
 ex.processJavaException(execution)]]></bpmn2:script>

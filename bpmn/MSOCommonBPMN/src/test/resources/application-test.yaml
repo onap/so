@@ -1,0 +1,223 @@
+aai:
+  auth: 26AFB797A6A57960D5D718491925C50F77CDC22AC394B3DBA09950D8FD1C0764
+  endpoint: http://localhost:${wiremock.server.port}
+appc:
+  client:
+    key: iaEMAfjsVsZnraBP
+    response:
+      timeout: '120000'
+    secret: wcivUjsjXzmGFBfxMmyJu9dz
+    poolMembers: localhost
+    service: ueb
+    topic:
+      read:
+        name: APPC-TEST-AMDOCS2
+        timeout: '120000'
+      write: APPC-TEST-AMDOCS1-DEV3
+      sdnc:
+        read: SDNC-LCM-READ
+        write: SDNC-LCM-WRITE
+log:
+  debug:
+    CompleteMsoProcess: 'true'
+    CreateNetworkInstanceInfra: 'true'
+    CreateServiceInstanceInfra: 'true'
+    DeleteNetworkInstanceInfra: 'true'
+    FalloutHandler: 'true'
+    UpdateNetworkInstanceInfra: 'true'
+    VnfAdapterRestV1: 'true'
+    sdncAdapter: 'true'
+    vnfAdapterCreateV1: 'true'
+    vnfAdapterRestV1: 'true'
+mso:
+  adapters:
+    completemsoprocess:
+      endpoint: http://localhost:${wiremock.server.port}/CompleteMsoProcess
+    db:
+      auth: 757A94191D685FD2092AC1490730A4FC
+      endpoint: http://localhost:${wiremock.server.port}/dbadapters/RequestsDbAdapter
+      att-endpoint: http://localhost:${wiremock.server.port}/dbadapters/AttRequestsDbAdapter
+      spring:
+        endpoint: http://localhost:${wiremock.server.port}
+    network:
+      endpoint: http://localhost:${wiremock.server.port}/networks/NetworkAdapter
+      rest:
+        endpoint: http://localhost:${wiremock.server.port}/networks/rest/v1/networks
+    openecomp:
+      db:
+        endpoint: http://localhost:${wiremock.server.port}/dbadapters/RequestsDbAdapter
+    po:
+      auth: 757A94191D685FD2092AC1490730A4FC
+      password: 3141634BF7E070AA289CF2892C986C0B
+    sdnc:
+      endpoint: http://localhost:${wiremock.server.port}/SDNCAdapter
+      rest:
+        endpoint: http://localhost:${wiremock.server.port}/SDNCAdapter/v1/sdnc
+      timeout: PT60S
+    tenant:
+      endpoint: http://localhost:${wiremock.server.port}/tenantAdapterMock
+    vnf:
+      endpoint: http://localhost:${wiremock.server.port}/vnfs/VnfAdapter
+      rest:
+        endpoint: http://localhost:${wiremock.server.port}/services/rest/v1/vnfs
+    volume-groups:
+      rest:
+        endpoint: http://localhost:${wiremock.server.port}/services/rest/v1/volume-groups
+    vnf-async:
+      endpoint: http://localhost:${wiremock.server.port}/vnfs/VnfAdapterAsync
+    workflow:
+      message:
+        endpoint: http://localhost:${wiremock.server.port}/workflows/messages/message
+
+  async:
+      core-pool-size: 50
+      max-pool-size: 50
+      queue-capacity: 500
+
+  bpmn:
+    optimisticlockingexception:
+      retrycount: '3'
+  callbackRetryAttempts: '5'
+  catalog:
+    db:
+      endpoint: http://localhost:${wiremock.server.port}/
+      spring:
+        endpoint: http://localhost:${wiremock.server.port} 
+  correlation:
+        timeout: 60
+  db:
+    auth: Basic YnBlbDptc28tZGItMTUwNyE=
+  default:
+    adapter:
+      namespace: http://org.onap.so
+  healthcheck:
+    log:
+      debug: 'false'
+  infra:
+    customer:
+      id: testCustIdInfra
+  logPath: logs
+  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
+  po:
+    timeout: PT60S
+  request:
+    db:
+      endpoint: http://localhost:${wiremock.server.port}/
+  rollback: 'true'
+  site-name: localDevEnv
+  workflow:    
+    default:
+      aai:
+        cloud-region:
+          version: '9'
+        generic-vnf:
+          version: '9'
+        v8:
+          customer:
+            uri: /aai/v8/business/customers/customer
+          generic-query:
+            uri: /aai/v8/search/generic-query
+          l3-network:
+            uri: /aai/v8/network/l3-networks/l3-network
+          network-policy:
+            uri: /aai/v8/network/network-policies/network-policy
+          nodes-query:
+            uri: /aai/v8/search/nodes-query
+          route-table-reference:
+            uri: /aai/v8/network/route-table-references/route-table-reference
+          tenant:
+            uri: /aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/tenants/tenant
+          vce:
+            uri: /aai/v8/network/vces/vce
+          vpn-binding:
+            uri: /aai/v8/network/vpn-bindings/vpn-binding
+        v9:
+          cloud-region:
+            uri: /aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic
+          generic-vnf:
+            uri: /aai/v9/network/generic-vnfs/generic-vnf
+    global:
+      default:
+        aai:
+          namespace: http://org.openecomp.aai.inventory/
+          version: '8'
+    message:
+      endpoint: http://localhost:${wiremock.server.port}/mso/WorkflowMesssage
+    notification:
+      name: GenericNotificationService
+    sdncadapter:
+      callback: http://localhost:${wiremock.server.port}/mso/SDNCAdapterCallbackService
+    vnfadapter:
+      create:
+        callback: http://localhost:${wiremock.server.port}/mso/vnfAdapterNotify
+      delete:
+        callback: http://localhost:${wiremock.server.port}/mso/vnfAdapterNotify
+      query:
+        callback: http://localhost:${wiremock.server.port}/mso/services/VNFAdapterQuerCallbackV1
+      rollback:
+        callback: http://localhost:${wiremock.server.port}/mso/vnfAdapterNotify
+  global:
+    dmaap:
+      username: dmaapUsername
+      password: dmaapPassword
+      host: http://localhost:${wiremock.server.port}
+      publisher:
+        topic: com.att.mso.asyncStatusUpdate
+  oof:
+    auth: test
+    timeout: PT10S
+    service:
+      agnostic:
+        endpoint: /api/oof/v1/placement
+        host: http://localhost:${wiremock.server.port}
+policy:
+  auth: Basic dGVzdHBkcDphbHBoYTEyMw==
+  client:
+    auth: Basic bTAzNzQzOnBvbGljeVIwY2sk
+  endpoint: https://localhost:8081/pdp/api/
+  environment: TEST
+sdnc:
+  auth: Basic YWRtaW46YWRtaW4=
+  host: http://localhost:8446
+  path: /restconf/operations/GENERIC-RESOURCE-API
+sniro:
+  conductor:
+    enabled: true
+    host: http://localhost:${wiremock.server.port}
+    uri: /v1/release-orders
+    headers.auth: Basic dGVzdDp0ZXN0cHdk
+  manager:
+    timeout: PT30M
+    host: http://localhost:${wiremock.server.port}
+    uri.v1: /sniro/api/v2/placement
+    uri.v2: /sniro/api/placement/v2
+    headers.auth: Basic dGVzdDp0ZXN0cHdk
+    headers.patchVersion: 1
+    headers.minorVersion: 1
+    headers.latestVersion: 2
+
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3307/camundabpmn
+    username: root
+    password: password
+    driver-class-name: org.mariadb.jdbc.Driver
+    initialize: true
+  jpa:
+    generate-ddl: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      enable-lazy-load-no-trans: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+mariaDB4j:
+  dataDir:
+  port: 3307
+  databaseName: camundabpmn
+camunda:
+  bpm:
+    metrics:
+      enabled: false
+      db-reporter-activate: false

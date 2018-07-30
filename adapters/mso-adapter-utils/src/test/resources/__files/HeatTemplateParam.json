@@ -1,0 +1,7 @@
+{
+    "heatTemplateArtifactUuid" : "heatTemplateArtifactUuid",
+    "paramName" : "keyTest",
+    "required" : true,
+    "paramType" : "paramType",
+    "paramAlias" : "paramAlias"
+}

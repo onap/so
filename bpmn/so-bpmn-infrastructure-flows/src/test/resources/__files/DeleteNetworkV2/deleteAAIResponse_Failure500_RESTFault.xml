@@ -1,0 +1,19 @@
+<rest:RESTFault xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
+                errorType="transport">
+   <rest:errorCode>500</rest:errorCode>
+   <rest:message>HTTP method: GET Internal Server Error </rest:message>
+   <rest:messageDetails>&lt;Fault&gt;
+    &lt;requestError&gt;
+        &lt;serviceException&gt;
+            &lt;messageId&gt;SVC3002&lt;/messageId&gt;
+            &lt;text&gt;Error writing output performing %1 on %2 (msg=%3) (ec=%4)&lt;/text&gt;
+            &lt;variables&gt;
+                &lt;variable&gt;PUT customer&lt;/variable&gt;
+                &lt;variable&gt;SubName32&lt;/variable&gt;
+                &lt;variable&gt;Unexpected error reading/updating database:Adding this property for key [service-instance-id] and value [12312442454112] violates a uniqueness constraint [service-instance-id]&lt;/variable&gt;
+                &lt;variable&gt;ERR.5.4.5105&lt;/variable&gt;
+            &lt;/variables&gt;
+        &lt;/serviceException&gt;
+    &lt;/requestError&gt;
+&lt;/Fault&gt;</rest:messageDetails>
+</rest:RESTFault>

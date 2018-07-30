@@ -1,0 +1,7 @@
+{
+	"deleteVfModuleResponse": {
+    	"vfModuleId" : "1d48aaec-b7f3-4c24-ba4a-4e798ed3223c",
+    	"vfModuleDeleted" : true,
+		"vnfId" : "c93e0d34-5b63-45de-bbae-b0fe49dd3bd9"
+	}
+}

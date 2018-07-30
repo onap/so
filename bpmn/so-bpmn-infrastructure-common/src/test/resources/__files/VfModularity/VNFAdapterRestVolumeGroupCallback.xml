@@ -1,0 +1,15 @@
+<updateVolumeGroupResponse>
+    <volumeGroupId>78987</volumeGroupId>
+    <volumeGroupStackId>slowburn</volumeGroupStackId>
+    <vfModuleOutputs>
+        <entry>
+            <key>key1</key>
+            <value>value1</value>
+        </entry>
+        <entry>
+            <key>key2</key>
+            <value>value2</value>
+        </entry>
+    </vfModuleOutputs>
+    <messageId>{{MESSAGE-ID}}</messageId>
+</updateVolumeGroupResponse>

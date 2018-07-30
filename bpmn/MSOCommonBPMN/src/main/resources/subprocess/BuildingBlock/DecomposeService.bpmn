@@ -20,7 +20,7 @@
       <bpmn2:scriptTask id="processJavaError" name="Process Error" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_0tgrn11</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_0g4aus9</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 ExceptionUtil exceptionUtil = new ExceptionUtil()
 exceptionUtil.processJavaException(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
@@ -29,7 +29,7 @@ exceptionUtil.processJavaException(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="decomposeService_ScriptTask" name="Decompose Service" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_12vj619</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0tj2l1j</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def dds = new DecomposeService()
 dds.actuallyDecomposeService(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -37,7 +37,7 @@ dds.actuallyDecomposeService(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="preProcessRequest_ScriptTask" name="PreProcess Incoming Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0yxffj2</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def dds = new DecomposeService()
 dds.preProcessRequest(execution)
 ]]></bpmn2:script>
@@ -47,7 +47,7 @@ dds.preProcessRequest(execution)
     <bpmn2:scriptTask id="queryCatalogDB_ScriptTask" name="Query Catalog DB" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0yxffj2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_12vj619</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def dds = new DecomposeService()
 dds.queryCatalogDb(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>

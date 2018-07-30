@@ -1,0 +1,10 @@
+<vf-module xmlns="http://org.openecomp.aai.inventory/v7">
+	<vf-module-id>lukewarm</vf-module-id>
+	<vf-module-name>PCRF::module-1</vf-module-name>
+	<heat-stack-id>slowburn</heat-stack-id>
+	<orchestration-status>pending-create</orchestration-status>
+	<is-base-vf-module>true</is-base-vf-module>
+	<resource-version>330-90</resource-version>
+	<model-invariant-id>introvert</model-invariant-id>
+	<model-version-id>2.0</model-version-id>
+</vf-module>

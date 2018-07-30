@@ -21,6 +21,7 @@
 <configuration scan="false" debug="true">
   <!--<jmxConfigurator /> -->
   <!-- directory path for all other type logs -->
+
   <property name="logDir" value="./target" />
   
   <!-- directory path for debugging type logs -->
@@ -44,15 +45,8 @@
 
   <property name="logDirectory" value="${logDir}/${componentName}/${subComponentName}" />
   <property name="debugLogDirectory" value="${debugDir}/${componentName}/${subComponentName}" />
-  
 
-  <!-- Example evaluator filter applied against console appender -->
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>${defaultPattern}</pattern>
-    </encoder>
-  </appender>
-
+  <appender name="test" class="org.onap.so.utils.TestAppender"/>
   <!-- ============================================================================ -->
   <!-- EELF Appenders -->
   <!-- ============================================================================ -->
@@ -148,24 +142,35 @@
     <includeCallerData>true</includeCallerData>
   </appender>
  
-  
+  	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] |%X{RequestId}| %-5level
+				%logger{1024} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
   <!-- ============================================================================ -->
   <!--  EELF loggers -->
   <!-- ============================================================================ -->
 
-  <logger name="com.att.eelf.audit" level="info" additivity="false">
-    <appender-ref ref="asyncEELFAudit" />
+  <logger name="com.att.eelf.audit" level="${so.log.level:-DEBUG}" additivity="false">
+    <appender-ref ref="asyncEELFAudit" /> 
   </logger>
   
-  <logger name="com.att.eelf.metrics" level="info" additivity="false">
-        <appender-ref ref="asyncEELFMetrics" />
+  <logger name="METRIC" level="${so.log.level:-DEBUG}" additivity="true">
+    <appender-ref ref="asyncEELFMetrics" />
+    <appender-ref ref="test" />
   </logger>
 
-  <logger name="com.att.eelf.error" level="debug" additivity="false">
+  <logger name="com.att.eelf.error" level="${so.log.level:-DEBUG}" additivity="false">
     <appender-ref ref="asyncEELFError" />
-  </logger> 
-  <root level="INFO">
+  </logger>
+  
+  <root level="${so.log.level:-DEBUG}">
     <appender-ref ref="asyncEELFDebug" />
+    <appender-ref ref="STDOUT" />
   </root>
+
 
 </configuration>

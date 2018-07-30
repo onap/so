@@ -1,0 +1,22 @@
+{
+  "requestList": [
+    {
+      "request": {
+        "finishTime": "2017-12-22 19:21:25.0", 
+        "instanceReferences": {
+          "serviceInstanceId": "24b7a73a-ae87-453b-8639-1495feabeac1"
+        }, 
+        "requestId": "000e480b-c55a-4116-a10b-51c312f46184", 
+        "requestScope": "service", 
+        "requestStatus": {
+          "percentProgress": 100, 
+          "requestState": "FAILED", 
+          "statusMessage": "Internal Error - Occured in CreateService createBandwidthConfigurationAAI", 
+          "timeStamp": "2018-01-11 11:06:32.478"
+        }, 
+        "requestType": "Create", 
+        "startTime": "2017-12-22 19:21:18.0"
+      }
+    }
+  ]
+}

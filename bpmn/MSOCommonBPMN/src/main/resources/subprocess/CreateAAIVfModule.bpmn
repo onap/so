@@ -23,7 +23,7 @@
     <bpmn2:scriptTask id="AAIQueryFailure" name="AAI Query Failure" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_18</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvm = new CreateAAIVfModule()
 cvm.handleAAIQueryFailure(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -35,7 +35,7 @@ cvm.handleAAIQueryFailure(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ProcessAAISearch" name="Process AAI Generic Vnf Query" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_22</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_24</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvm = new CreateAAIVfModule()
 cvm.processAAIGenericVnfQuery(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -58,7 +58,7 @@ cvm.processAAIGenericVnfQuery(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_26</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_33</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_29</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvm = new CreateAAIVfModule()
 cvm.handleCreateVfModuleFailure(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -70,7 +70,7 @@ cvm.handleCreateVfModuleFailure(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_2" name="Parse For Add-on Module" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_31</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvm = new CreateAAIVfModule()
 cvm.parseForAddOnModule(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -78,7 +78,7 @@ cvm.parseForAddOnModule(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_8" name="Create Add-on Module" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_34</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_35</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvm = new CreateAAIVfModule()
 cvm.createVfModule(execution, false)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -95,7 +95,7 @@ cvm.createVfModule(execution, false)]]></bpmn2:script>
     <bpmn2:scriptTask id="QueryAAIForGenericVnf" name="Query AAI for&#xD;&#xA;Generic Vnf" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_38</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_39</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvm = new CreateAAIVfModule()
 cvm.queryAAIForGenericVnf(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -103,7 +103,7 @@ cvm.queryAAIForGenericVnf(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="InitializeVariables" name="Initialize Variables" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_38</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvm = new CreateAAIVfModule()
 cvm.preProcessRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -115,7 +115,7 @@ cvm.preProcessRequest(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="CreateVfModuleFailure" name="Create Vf Module Failure" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvm = new CreateAAIVfModule()
 cvm.handleCreateVfModuleFailure(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -147,7 +147,7 @@ cvm.handleCreateVfModuleFailure(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_3" name="Create Generic Vnf" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_9</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_20</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvm = new CreateAAIVfModule()
 cvm.createGenericVnf(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -159,7 +159,7 @@ cvm.createGenericVnf(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_27</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_12</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvm = new CreateAAIVfModule()
 cvm.createVfModule(execution, true)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -172,7 +172,7 @@ cvm.createVfModule(execution, true)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_1" name="Parse for Base Module" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_11</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def cvm = new CreateAAIVfModule()
 cvm.parseForBaseModule(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>

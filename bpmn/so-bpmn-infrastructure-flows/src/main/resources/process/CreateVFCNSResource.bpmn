@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+  <bpmn:process id="CreateVFCNSResource" name="CreateVFCNSResource" isExecutable="true">
+    <bpmn:startEvent id="createNS_StartEvent" name="createNS_StartEvent">
+      <bpmn:outgoing>SequenceFlow_1qo2pln</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1qo2pln" sourceRef="createNS_StartEvent" targetRef="PreprocessIncomingRequest_task" />
+    <bpmn:sequenceFlow id="SequenceFlow_0khtova" sourceRef="PreprocessIncomingRequest_task" targetRef="Task_09nzhwk" />
+    <bpmn:sequenceFlow id="SequenceFlow_1uiz85h" sourceRef="Task_09nzhwk" targetRef="ExclusiveGateway_0zfksms" />
+    <bpmn:scriptTask id="Task_09nzhwk" name="Create Network Service" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0khtova</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1uiz85h</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new CreateVFCNSResource()
+dcsi.createNetworkService(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="PreprocessIncomingRequest_task" name="Preprocess Incoming Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1qo2pln</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0khtova</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new CreateVFCNSResource()
+dcsi.preProcessRequest(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="instantiate_NSTask" name="Instantiate Network Service" scriptFormat="groovy">
+      <bpmn:incoming>createNSSuccess_SequenceFlow</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ywe21t</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new CreateVFCNSResource()
+dcsi.instantiateNetworkService(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0zfksms" name="Create NS Success?">
+      <bpmn:incoming>SequenceFlow_1uiz85h</bpmn:incoming>
+      <bpmn:outgoing>createNSSuccess_SequenceFlow</bpmn:outgoing>
+      <bpmn:outgoing>createNSFailed_SequenceFlow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="createNSSuccess_SequenceFlow" name="yes" sourceRef="ExclusiveGateway_0zfksms" targetRef="instantiate_NSTask">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("nsInstanceId" )  != null && execution.getVariable("nsInstanceId" )  != "" )}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="createNSFailed_SequenceFlow" name="no" sourceRef="ExclusiveGateway_0zfksms" targetRef="createNSFailed_EndEvent">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("nsInstanceId" )  == null || execution.getVariable("nsInstanceId" )  == "" )}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1is7zys" name="Instantiate NS Success?">
+      <bpmn:incoming>SequenceFlow_1ywe21t</bpmn:incoming>
+      <bpmn:outgoing>instantiateFailed_SequenceFlow</bpmn:outgoing>
+      <bpmn:outgoing>instantiateSuccess_SequenceFlow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1ywe21t" sourceRef="instantiate_NSTask" targetRef="ExclusiveGateway_1is7zys" />
+    <bpmn:sequenceFlow id="instantiateFailed_SequenceFlow" name="no" sourceRef="ExclusiveGateway_1is7zys" targetRef="EndEvent_1gkvvpn">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("jobId" )  == null || execution.getVariable("jobId" )  == "" )}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="instantiateSuccess_SequenceFlow" name="yes" sourceRef="ExclusiveGateway_1is7zys" targetRef="queryJob_Task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("jobId" )  != null && execution.getVariable("jobId" )  != "" )}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_15492gl" name="Instantiate Finished?">
+      <bpmn:incoming>SequenceFlow_0xqo13p</bpmn:incoming>
+      <bpmn:outgoing>operationFinished_SequenceFlow</bpmn:outgoing>
+      <bpmn:outgoing>operationProcessing_SequenceFlow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="operationFinished_SequenceFlow" name="yes" sourceRef="ExclusiveGateway_15492gl" targetRef="finishNSCreate_Task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("operationStatus" )  != "processing" )}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="operationProcessing_SequenceFlow" name="no" sourceRef="ExclusiveGateway_15492gl" targetRef="timeDelay_Task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("operationStatus" )  == "processing" )}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0cq2q6g" sourceRef="finishNSCreate_Task" targetRef="ScriptTask_1890l78" />
+    <bpmn:endEvent id="createNSFailed_EndEvent" name="createNSFailed">
+      <bpmn:incoming>createNSFailed_SequenceFlow</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="EndEvent_1gkvvpn">
+      <bpmn:incoming>instantiateFailed_SequenceFlow</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="EndEvent_1x6k78c">
+      <bpmn:incoming>SequenceFlow_1lwqmo9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="queryJob_Task" name="Query NS Progress" scriptFormat="groovy">
+      <bpmn:incoming>instantiateSuccess_SequenceFlow</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1gsbpxj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0xqo13p</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new CreateVFCNSResource()
+dcsi.queryNSProgress(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="finishNSCreate_Task" name="Add NS Relationship" scriptFormat="groovy">
+      <bpmn:incoming>operationFinished_SequenceFlow</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0cq2q6g</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new CreateVFCNSResource()
+dcsi.addNSRelationship(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0xqo13p" sourceRef="queryJob_Task" targetRef="ExclusiveGateway_15492gl" />
+    <bpmn:scriptTask id="timeDelay_Task" name="timeDelay" scriptFormat="groovy">
+      <bpmn:incoming>operationProcessing_SequenceFlow</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1gsbpxj</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new CreateVFCNSResource()
+dcsi.timeDelay(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1gsbpxj" sourceRef="timeDelay_Task" targetRef="queryJob_Task" />
+    <bpmn:scriptTask id="ScriptTask_1890l78" name="Send Sync Ack Response" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0cq2q6g</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1lwqmo9</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def csi = new  CreateVFCNSResource()
+csi.sendSyncResponse(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1lwqmo9" sourceRef="ScriptTask_1890l78" targetRef="EndEvent_1x6k78c" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateVFCNSResource">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="createNS_StartEvent">
+        <dc:Bounds x="175" y="111" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="152" y="147" width="83" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qo2pln_di" bpmnElement="SequenceFlow_1qo2pln">
+        <di:waypoint xsi:type="dc:Point" x="211" y="129" />
+        <di:waypoint xsi:type="dc:Point" x="251" y="129" />
+        <di:waypoint xsi:type="dc:Point" x="251" y="129" />
+        <di:waypoint xsi:type="dc:Point" x="293" y="129" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="266" y="123" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0khtova_di" bpmnElement="SequenceFlow_0khtova">
+        <di:waypoint xsi:type="dc:Point" x="393" y="129" />
+        <di:waypoint xsi:type="dc:Point" x="479" y="129" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="436" y="108" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1uiz85h_di" bpmnElement="SequenceFlow_1uiz85h">
+        <di:waypoint xsi:type="dc:Point" x="579" y="129" />
+        <di:waypoint xsi:type="dc:Point" x="683" y="129" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="631" y="108" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1dw39hg_di" bpmnElement="Task_09nzhwk">
+        <dc:Bounds x="479" y="89" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_03j6ogo_di" bpmnElement="PreprocessIncomingRequest_task">
+        <dc:Bounds x="293" y="89" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1qmmew8_di" bpmnElement="instantiate_NSTask">
+        <dc:Bounds x="839" y="89" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0zfksms_di" bpmnElement="ExclusiveGateway_0zfksms" isMarkerVisible="true">
+        <dc:Bounds x="683" y="104" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="685" y="158" width="52" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rt03zl_di" bpmnElement="createNSSuccess_SequenceFlow">
+        <di:waypoint xsi:type="dc:Point" x="733" y="129" />
+        <di:waypoint xsi:type="dc:Point" x="839" y="129" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="777" y="108" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0df541u_di" bpmnElement="createNSFailed_SequenceFlow">
+        <di:waypoint xsi:type="dc:Point" x="708" y="104" />
+        <di:waypoint xsi:type="dc:Point" x="708" y="33" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="717" y="63" width="12" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1is7zys_di" bpmnElement="ExclusiveGateway_1is7zys" isMarkerVisible="true">
+        <dc:Bounds x="1034" y="105" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1029" y="159" width="69" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ywe21t_di" bpmnElement="SequenceFlow_1ywe21t">
+        <di:waypoint xsi:type="dc:Point" x="939" y="129" />
+        <di:waypoint xsi:type="dc:Point" x="1034" y="130" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="986.5" y="108.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0j7xo94_di" bpmnElement="instantiateFailed_SequenceFlow">
+        <di:waypoint xsi:type="dc:Point" x="1059" y="105" />
+        <di:waypoint xsi:type="dc:Point" x="1059" y="33" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1068" y="63" width="12" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ui2n9l_di" bpmnElement="instantiateSuccess_SequenceFlow">
+        <di:waypoint xsi:type="dc:Point" x="1059" y="155" />
+        <di:waypoint xsi:type="dc:Point" x="1059" y="271" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1066" y="207" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_15492gl_di" bpmnElement="ExclusiveGateway_15492gl" isMarkerVisible="true">
+        <dc:Bounds x="1034" y="570" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1038" y="624" width="50" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hftgi6_di" bpmnElement="operationFinished_SequenceFlow">
+        <di:waypoint xsi:type="dc:Point" x="1034" y="595" />
+        <di:waypoint xsi:type="dc:Point" x="902" y="595" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="929.1428571428571" y="574" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0omec46_di" bpmnElement="operationProcessing_SequenceFlow">
+        <di:waypoint xsi:type="dc:Point" x="1084" y="595" />
+        <di:waypoint xsi:type="dc:Point" x="1212" y="595" />
+        <di:waypoint xsi:type="dc:Point" x="1212" y="486" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1131" y="607" width="12" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0cq2q6g_di" bpmnElement="SequenceFlow_0cq2q6g">
+        <di:waypoint xsi:type="dc:Point" x="802" y="595" />
+        <di:waypoint xsi:type="dc:Point" x="690" y="595" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="701" y="574" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1ido9wi_di" bpmnElement="createNSFailed_EndEvent">
+        <dc:Bounds x="690" y="-3" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="626" y="37" width="75" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0xgvlmx_di" bpmnElement="EndEvent_1gkvvpn">
+        <dc:Bounds x="1041" y="-3" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1014" y="37" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_15pcuuc_di" bpmnElement="EndEvent_1x6k78c">
+        <dc:Bounds x="484" y="577" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="412" y="617" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0sxy5we_di" bpmnElement="queryJob_Task">
+        <dc:Bounds x="1009" y="271" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0xxyfku_di" bpmnElement="finishNSCreate_Task">
+        <dc:Bounds x="802" y="555" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xqo13p_di" bpmnElement="SequenceFlow_0xqo13p">
+        <di:waypoint xsi:type="dc:Point" x="1059" y="351" />
+        <di:waypoint xsi:type="dc:Point" x="1059" y="570" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1074" y="454.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0rb5agx_di" bpmnElement="timeDelay_Task">
+        <dc:Bounds x="1162" y="406" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gsbpxj_di" bpmnElement="SequenceFlow_1gsbpxj">
+        <di:waypoint xsi:type="dc:Point" x="1212" y="406" />
+        <di:waypoint xsi:type="dc:Point" x="1212" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="1109" y="311" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1227" y="352.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1890l78_di" bpmnElement="ScriptTask_1890l78">
+        <dc:Bounds x="590" y="555" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1lwqmo9_di" bpmnElement="SequenceFlow_1lwqmo9">
+        <di:waypoint xsi:type="dc:Point" x="590" y="595" />
+        <di:waypoint xsi:type="dc:Point" x="520" y="595" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="555" y="573" width="0" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

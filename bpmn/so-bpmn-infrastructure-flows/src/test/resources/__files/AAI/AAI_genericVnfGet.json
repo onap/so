@@ -1,0 +1,9 @@
+{
+    "vnf-id": "msoVnf123",
+    "vnf-name": "MSO-Test-VNF-123",
+    "vnf-type": "vnf-type",
+    "orchestration-status": "active",
+    "in-maint": false,
+    "is-closed-loop-disabled": false,
+    "resource-version": "1525360206136"
+}

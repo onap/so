@@ -10,7 +10,7 @@
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
       <bpmn2:script><![CDATA[//import java.net.InetAddress;
-import org.openecomp.mso.bpmn.common.workflow.service.*
+import org.onap.so.bpmn.common.workflow.service.*
 
 //def hostname = InetAddress.getLocalHost().getCanonicalHostName()
 //println ("my host name =================" + hostname)

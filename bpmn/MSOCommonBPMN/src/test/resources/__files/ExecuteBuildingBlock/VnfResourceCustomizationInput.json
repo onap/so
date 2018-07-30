@@ -1,0 +1,25 @@
+{
+	"modelCustomizationUUID" : "modelCustomizationUUID",
+	"modelInstanceName" : "modelInstanceName",
+    "minInstances": 2,
+    "maxInstances": 3,
+    "availabilityZoneMaxCount": 5,
+    "nfFunction" : "nfFunction",
+    "nfType" : "nfType",
+    "nfRole" : "nfRole",
+    "nfNamingCode" : "nfNamingCode",
+    "multiStageDesign" : "multiStageDesign",
+    "vnfResources" : {
+        "modelUUID" : "modelUUID",
+        "modelInvariantUUID" : "modelInvariantUUID",
+        "modelName" : "modelName",
+        "modelVersion" : "modelVersion",
+        "toscaNodeType" : "toscaNodeType",
+        "description" : "description",
+        "orchestrationMode" : "orchestrationMode",
+        "aicVersionMin" : "aicVersionMin",
+        "aicVersionMax" : "aicVersionMax",
+        "category" : "category",
+        "subCategory" : "subCategory"
+    }
+}

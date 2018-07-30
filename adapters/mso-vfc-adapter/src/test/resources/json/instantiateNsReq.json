@@ -19,7 +19,7 @@
         ],
         "additionalParamForNs":{
             "externalDataNetworkName":"Flow_out_net",
-            "m6000_mng_ip":"181.18.20.2",
+            "m6000_mng_ip":"192.168.20.2",
             "externalCompanyFtpDataNetworkName":"Flow_out_net",
             "externalPluginManageNetworkName":"plugin_net_2014",
             "externalManageNetworkName":"mng_net_2017",

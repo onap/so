@@ -1,0 +1,44 @@
+{"serviceVnfs": [
+		{ "modelInfo"                    : {
+			"modelName"              : "vSAMP12",
+			"modelUuid"              : "7097d8bb-f6ad-4cf7-866e-6a04c8f1b332",
+			"modelInvariantUuid"     : "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+			"modelVersion"           : "2.0",
+			"modelCustomizationUuid" : "MODEL-123",
+			"modelInstanceName"      : "VNF for VF Module Create Test Two Phased"
+			},
+		"toscaNodeType"            : null,
+		"nfFunction"           	: null,
+		"nfType"              		: null,
+		"nfRole"              		: "vSCP",
+		"nfNamingCode"         	: null,
+		"multiStageDesign"		: "true",
+			"vfModules": [
+				{
+					"modelInfo"               : { 
+						"modelName"              : "STMTN5MMSC21-MMSC::model-1-0",
+						"modelUuid"              : "ebc3d18c-3e62-4c24-bcd6-961e98701a0a",
+						"modelInvariantUuid"     : "introvert",
+						"modelVersion"           : "1",
+						"modelCustomizationUuid" : "1740536a-742e-40f5-b9c8-83918849a787"
+					},		"isBase"                 : true,
+					"vfModuleLabel"          : "base_TEST",
+					"initialCount"           : 1,
+					"hasVolumeGroup"           : true
+				},
+				{
+					"modelInfo"               : { 
+						"modelName"              : "VhnfForDhvTest..base_TEST..module-1",
+						"modelUuid"              : "ebc3d18c-3e62-4c24-bcd6-961e98701a0b",
+						"modelInvariantUuid"     : "extrovert",
+						"modelVersion"           : "1",
+						"modelCustomizationUuid" : "1740536a-742e-40f5-b9c8-83918849a788"
+					},		"isBase"                 : false,
+					"vfModuleLabel"          : "addon_TEST",
+					"initialCount"           : 1,
+					"hasVolumeGroup"           : true
+				}
+			]
+		}
+		]
+}

@@ -1,0 +1,42 @@
+{
+  "cloudSiteId": "cloudRegionPo",
+  "tenantId": "testTenantId",
+  "networkId": "e87e6df5-6f9b-4aa1-a832-68a42c4277eb",
+  "networkName": "APP-C-24595-T-IST-04AShared_data_vDB_net_1",
+  "networkType": "CONTRAIL30_BASIC",
+  "modelCustomizationUuid": "8edf06ef-fd40-42cf-a054-0fc09108d3f0",
+  "networkTechnology": "NEUTRON",
+  "subnets": [
+    {
+      "subnetName": "APP-C-24595-T-IST-04AShared_data_vDB_net_1_subnet_1",
+      "subnetId": "95069612-23af-4181-bf99-8b2bd6096712",
+      "cidr": "107.244.64.2/20",
+      "gatewayIp": "107.244.64.1",
+      "ipVersion": "4",
+      "enableDHCP": false,
+      "addrFromStart": true,
+      "hostRoutes": []
+    }
+  ],
+  "providerVlanNetwork": {
+    "physicalNetworkName": "FALSE",
+    "vlans": []
+  },
+  "contrailNetwork": {
+    "shared": "false",
+    "external": "false",
+    "routeTargets": [],
+    "policyFqdns": [],
+    "routeTableFqdns": []
+  },
+  "failIfExists": true,
+  "backout": false,
+  "msoRequest": {
+    "requestId": "6cfde724-76c7-4747-bcb3-67a59a46ca95",
+    "serviceInstanceId": "testServiceInstanceId1"
+  },
+  "contrailRequest": false,
+  "skipAAI": true,
+  "messageId": "175264dc-fb6b-4aae-ba42-8c77a63fec12",
+  "synchronous": true
+}

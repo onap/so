@@ -1,0 +1,25 @@
+{
+	"createNetworkResponse": {
+		"messageId": null,
+		"networkId": "da886914-efb2-4917-b335-c8381528d90b",
+		"neutronNetworkId": null,
+		"networkStackId": "stackname/stackId",
+		"networkFqdn": null,
+		"networkCreated": true,
+		"subnetMap": {
+
+		},
+		"rollback": {
+			"networkStackId": "stackname/stackId",
+			"tenantId": "ba38bc24a2ef4fb2ad2810c894f1938f",
+			"cloudId": "mtn13",
+			"networkType": "CONTRAIL30_BASIC",
+			"modelCustomizationUuid": "3bdbb104-476c-483e-9f8b-c095b3d308ac",
+			"networkCreated": true,
+			"msoRequest": {
+				"requestId": "requestId",
+				"serviceInstanceId": "05869d5f-47df-4b45-bbfc-4f03ce0a50bf"
+			}
+		}
+	}
+}

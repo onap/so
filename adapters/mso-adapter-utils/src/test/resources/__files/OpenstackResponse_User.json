@@ -1,0 +1,11 @@
+{
+	"user": {
+		"id": "msoId",
+		"username": "admin",
+		"password": null,
+		"tenantId": "tenantId",
+		"name": "testingTenantName",
+		"email": null,
+		"enabled": null
+	}
+}

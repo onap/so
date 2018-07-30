@@ -1,0 +1,12 @@
+{
+    "stack": {
+    	"id": "baseVfModuleStackId",
+    	"links" : [
+    		{
+    			"href" : "port",
+    			"rel" : "self"
+			}
+		],
+		"stack_name": "vnfBaseStack"
+	}
+}

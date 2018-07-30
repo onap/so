@@ -1,0 +1,412 @@
+#cloud-config
+# \hbrief   cloud-init main template for MSP config
+# \hversion 0.0.11
+# \hdate    2016-05-09
+# \brief   cloud-init template for MSP config
+# \version 0.2.57
+# \date    2016-09-19
+# Configuration created for MSP SLES_12 MMN
+
+chpasswd:
+ list: |
+  root:Ericsson
+  miepadm:miep1234
+
+ expire: False
+
+users:
+
+bootcmd:
+
+ - [ sh, -xc, "echo \"#################################################################\" > /etc/issue.ci" ]
+ - [ sh, -xc, "echo \"#                                                               #\" >> /etc/issue.ci" ]
+ - [ sh, -xc, "echo \"#     * * *  Cloud-init configuration is in progress  * * *     #\" >> /etc/issue.ci" ]
+ - [ sh, -xc, "echo \"#                                                               #\" >> /etc/issue.ci" ]
+ - [ sh, -xc, "echo \"#     The system will reboot shortly and then be accessible     #\" >> /etc/issue.ci" ]
+ - [ sh, -xc, "echo \"#                                                               #\" >> /etc/issue.ci" ]
+ - [ sh, -xc, "echo \"#################################################################\" >> /etc/issue.ci" ]
+ - [ sh, -xc, "if [ -f /etc/issue.orig ]; then cp /etc/issue.orig /etc/issue; fi" ]
+ - [ sh, -xc, "if [ ! -f /etc/issue.orig ]; then cp /etc/issue /etc/issue.orig; cp /etc/issue.ci /etc/issue; fi" ]
+ - [ sh, -xc, "/bin/sed -i 's/^DHCLIENT_SET_DEFAULT_ROUTE=\"yes\".*/DHCLIENT_SET_DEFAULT_ROUTE=\"no\"/' /etc/sysconfig/network/dhcp" ]
+ - [ sh, -xc, "/bin/sed -i 's/^NETCONFIG_DNS_POLICY=.*/NETCONFIG_DNS_POLICY=\"STATIC\"/' /etc/sysconfig/network/config" ]
+
+runcmd:
+ - [ sh, -xc, "chage -M 99999 root;rm -f /etc/shadow-" ]
+ - [ sh, -xc, "chage -M 99999 miepadm;rm -f /etc/shadow-" ]
+ - [ sh, -xc, "sed -i 's/^GRUB_TIMEOUT.*/GRUB_TIMEOUT=0/' /etc/default/grub" ]
+ - [ sh, -xc, "echo GRUB_FORCE_HIDDEN_MENU=true >> /etc/default/grub" ]
+ - [ sh, -xc, "/usr/sbin/grub2-mkconfig -o /boot/grub2/grub.cfg" ]
+ - [ sh, -xc, "sed -i 's/^.*:.*/admin:6041A28W2rLq6/' /opt/miep/tools/lighttpd/lighttpd_auth.properties" ]
+ - [ sh, -xc, "sed -i 's/^.*=.*/admin=709e17d2a62751a051fa2072f0976334/' /opt/miep/register/conf/auth.properties" ]
+ - [ sh, -xc, "sed -i 's/kernel\\.unknown_nmi_panic.*//' /etc/sysctl.conf" ]
+ - [ sh, -xc, "sed -i 's/kernel\\.panic_on_unrecovered_nmi.*//' /etc/sysctl.conf" ]
+ - [ sh, -xc, "echo \"  kernel.unknown_nmi_panic=1\n kernel.panic_on_unrecovered_nmi=1\n\n\" >> /etc/sysctl.conf" ]
+ - [ sh, -xc, "sed -i 's/^\\(IRQBALANCE_ARGS=\\).*$/\\1\"--hintpolicy ignore\"/' /etc/sysconfig/irqbalance" ]
+ - [ sh, -xc, "sed -i 's/^ListenAddress.*/ListenAddress 107.112.138.70/' /etc/ssh/sshd_config" ]
+ - [ sh, -xc, "sed -i 's/^ClientAliveCountMax.*/ClientAliveCountMax '0'/g' /etc/ssh/sshd_config" ]
+ - [ sh, -xc, "sed -i 's/^PermitRootLogin.*/PermitRootLogin 'no'/g' /etc/ssh/sshd_config" ]
+ - [ sh, -xc, "sed -i 's/^#UseDNS.*/UseDNS 'no'/g' /etc/ssh/sshd_config" ]
+ - [ sh, -xc, "echo auth       optional     pam_faildelay.so delay=5000000  >> /etc/pam.d/sshd" ]
+ - [ sh, -xc, "echo trap2sink 127.0.0.1 >> /etc/snmp/snmpd.conf" ]
+ - [ sh, -xc, "sed -i 's/^agentaddress.*/agentaddress 107.112.138.70/' /etc/snmp/snmpd.conf" ]
+ - [ sh, -xc, "sed -i 's/^    IP=.*/    IP=\"107.112.138.70\"/' /opt/miep/snmp/tools/agentmonitor.sh" ]
+ - [ sh, -xc, "sed -i 's/^    SNMPCOMMUNITY=.*/    SNMPCOMMUNITY=\"SNOS-PE\"/' /opt/miep/snmp/tools/agentmonitor.sh" ]
+ - [ sh, -xc, "sed -i 's/^    IP=.*/    IP=\"107.112.138.70\"/' /opt/miep/snmp/tools/agentmonitor_sle12.sh" ]
+ - [ sh, -xc, "sed -i 's/^    SNMPCOMMUNITY=.*/    SNMPCOMMUNITY=\"SNOS-PE\"/' /opt/miep/snmp/tools/agentmonitor_sle12.sh" ]
+ - [ sh, -xc, "/sbin/yast2 dns edit nameserver1=155.165.194.100" ]
+ - [ sh, -xc, "/usr/sbin/wicked ifdown all; /usr/sbin/wicked ifup --timeout 60 eth0; /usr/sbin/wicked ifup --timeout 60 all" ]
+ - [ sh, -xc, "mkdir -p /opt/miep/tools" ]
+ - [ sh, -xc, "wget --directory-prefix=/opt/miep/tools http://107.112.138.71/miit/zrdm5bpxtc02/custom-files/zrdm5bpxtc02/AttMspCust.tgz" ]
+ - [ sh, -xc, "export TERM=vt220 ; yast keyboard set layout=english-us" ]
+ - [ sh, -xc, "sed -i 's/YPSAddress.*/YPSAddress\"\tvalue=\"https:\\/\\/yps.ericsson.net\\/YPServer\" \\/>/' /opt/miep/etc/license/SentinelCloudRuntime.properties" ]
+
+ - [ sh, -xc, "umask 027 ; /opt/miep/tools/mnsetup/initmn.sh firstinstall 2>&1 | tee /opt/miep/tools/mnsetup/firstinstall.log" ]
+ - [ sh, -xc, "chown root:root /opt/miep/tools/AttMspCust.tgz" ]
+ - [ sh, -xc, "chmod 440 /opt/miep/tools/AttMspCust.tgz" ]
+ - [ sh, -xc, "mkdir -p /opt/miep/tools/AttMspCust" ]
+ - [ sh, -xc, "chown root:root /opt/miep/tools/AttMspCust" ]
+ - [ sh, -xc, "tar xfz /opt/miep/tools/AttMspCust.tgz -C /opt/miep/tools/AttMspCust" ]
+ - [ sh, -xc, "/opt/miep/tools/AttMspCust/CloudInit/cloudCron.sh 107.112.138.71" ]
+ - [ sh, -xc, "mkdir -p /opt/miep/etc/certs/manifest/ca/" ]
+ - [ sh, -xc, "chown -R miepadm:miepgrp /opt/miep/etc/certs/manifest/" ]
+ - [ sh, -xc, "mkdir -p /opt/miep/etc/certs/origin_server_ssl/server_cert" ]
+ - [ sh, -xc, "chown -R miepadm:miepgrp /opt/miep/etc/certs/origin_server_ssl/server_cert" ]
+ - [ sh, -xc, "sed -i 's/KexAlgorithms/#KexAlgorithms/g' /etc/ssh/sshd_config" ]
+ - [ sh, -xc, "wget --directory-prefix=/opt/miep/tools/AttMspCust/CloudInit/msacerts -e robots=off  -r -l1 --no-parent -R '*html*' http://107.112.138.71/miit/zrdm5bpxtc02/custom-files/zrdm5bpxtc02/msacerts" ]
+ - [ sh, -xc, "mv /opt/miep/tools/AttMspCust/CloudInit/msacerts/107.112.138.71/miit/zrdm5bpxtc02/custom-files/zrdm5bpxtc02/msacerts/* /opt/miep/tools/AttMspCust/CloudInit/msacerts/" ]
+ - [ sh, -xc, "mv /opt/miep/tools/AttMspCust/CloudInit/msacerts/keystore* /opt/miep/tools/AttMspCust/CloudInit/msacerts/.keystore_`hostname`_gno" ]
+ - [ sh, -xc, "rm -rf /opt/miep/tools/AttMspCust/CloudInit/msacerts/107.112.138.71" ]
+ - [ sh, -xc, "sed -i 's/PASS_MAX_DAYS   60/PASS_MAX_DAYS   99999/' /etc/login.defs" ]
+ - [ sh, -xc, "sleep 61s" ]
+ - [ sh, -xc, "mkdir -p /usr/java/default/bin/ && ln -s /usr/bin/java /usr/java/default/bin/" ]
+
+timezone: 'PST8PDT'
+
+write_files:
+ - content: |
+    H4sIANk1vFkAA41Sy27bMBC88ysW8TViKaWNC92MAkV9KOIi+QFKWllE+RBIyo9+fZeW7DqxDHR10c4OZ3aXXEDnQgxwjrdOBWiVRmgw1F5VGECCHUyFHlx7YltpMIsuk03jMQS2gPdhZN8ruyUd5yF2CG/fNp/WGwhDFY4houEA6whkZEhNH28EhoANyAiVcxGiMvgI+w4tWAfJGwL6HXpqzCP4wVoy4zciLxaCkVrD6BkeqZXzbLW0UOHooyyVZZOGkzciD8mvebi2TU6vRxvloWQL+l9vstW4CIDvg9bZr0Fq1Spssh/TsgBeO+fjJadzLC+WXNCXT07a1VKn7V7ybcoYOYQeayU1Oe2eYVo6BlaW+exJ1e+esytwyl1fyfo3Yy0KUZbiimaRbNr2Cja1DLH32KpDKhTJ6lSgfVpHL2NCiwvq3RDpSib86YKfXhdLU2QzAS+rn2msz7A6jzXLo3WJJc/zgudPX/lSAPzxjflS9QdTi8IYK0TO97Lf7rlxFd1w3zmLnAabY85hmZPmHn5PeWS8b+2D+M7E/2xtZM5ht639w+8pjwzG/gJrL8X/3wMAAA==
+   path: /etc/hosts
+   owner: root:root
+   permissions: '0644'
+   encoding: 'gzip+base64'
+ - content: |
+    ################################################################################
+    ## /etc/ntp.conf
+    ##
+    ## Sample NTP configuration file.
+    ## See package 'ntp-doc' for documentation, Mini-HOWTO and FAQ.
+    ## Copyright (c) 1998 S.u.S.E. GmbH Fuerth, Germany.
+    ##
+    ## Author: Michael Andres,  <ma@suse.de>
+    ##         Michael Skibbe,  <mskibbe@suse.de>
+    ##
+    ################################################################################
+    
+    ##
+    ## Radio and modem clocks by convention have addresses in the 
+    ## form 127.127.t.u, where t is the clock type and u is a unit 
+    ## number in the range 0-3. 
+    ##
+    ## Most of these clocks require support in the form of a 
+    ## serial port or special bus peripheral. The particular  
+    ## device is normally specified by adding a soft link 
+    ## /dev/device-u to the particular hardware device involved, 
+    ## where u correspond to the unit number above. 
+    ## 
+    ## Generic DCF77 clock on serial port (Conrad DCF77)
+    ## Address:     127.127.8.u
+    ## Serial Port: /dev/refclock-u
+    ##  
+    ## (create soft link /dev/refclock-0 to the particular ttyS?)
+    ##
+    # server 127.127.8.0 mode 5 prefer
+    server 135.144.38.211 prefer
+    server 155.165.201.253 prefer
+    
+    ##
+    ## Undisciplined Local Clock. This is a fake driver intended for backup
+    ## and when no outside source of synchronized time is available.
+    ##
+    server 127.127.1.0              # local clock (LCL)
+    fudge  127.127.1.0 stratum 10   # LCL is unsynchronized
+    
+    ##
+    ## Add external Servers using
+    ## # rcntp addserver <yourserver>
+    ## 
+    
+    ##
+    ## Miscellaneous stuff
+    ##
+    
+    driftfile /var/lib/ntp/drift/ntp.drift # path for drift file
+    
+    logfile   /var/log/ntp          # alternate log file
+    # logconfig =syncstatus + sysevents
+    # logconfig =all
+    
+    # statsdir /tmp/                # directory for statistics files
+    # filegen peerstats  file peerstats  type day enable
+    # filegen loopstats  file loopstats  type day enable
+    # filegen clockstats file clockstats type day enable
+    
+    #
+    # Authentication stuff
+    #
+    keys /etc/ntp.keys              # path for keys file
+    trustedkey 1                    # define trusted keys
+    requestkey 1                    # key (7) for accessing server variables
+    controlkey 1
+    
+    #  by default act only as a basic NTP client
+    restrict default kod nomodify notrap nopeer noquery
+    restrict -6 default kod nomodify notrap nopeer noquery
+    #
+    #  allow NTP messages only from the loopback
+    restrict 127.0.0.1
+    restrict  ::1
+   path: /etc/ntp.conf
+   owner: root:root
+   permissions: '0644'
+ - content: |
+    # default <OAM GW> - -
+    default 107.112.136.1 - -
+   path: /etc/sysconfig/network/routes
+   owner: root:root
+   permissions: '0644'
+ - content: |
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <trapDestCfg xmlns="http://www.ericsson.com/esa">
+        <managerDefinition snmpVersion="v2c" active="yes">
+            <ip>107.239.72.10</ip>
+            <port>162</port>
+            <securityName>v1v2ReadWriteSecName</securityName>
+            <securityLevel>noAuthNoPriv</securityLevel>
+        </managerDefinition>
+        <managerDefinition snmpVersion="v2c" active="yes">
+            <ip>135.207.171.152</ip>
+            <port>162</port>
+            <securityName>v1v2ReadWriteSecName</securityName>
+            <securityLevel>noAuthNoPriv</securityLevel>
+        </managerDefinition>
+    </trapDestCfg>
+   path: /opt/miep/tools/AttMspCust/CloudInit/trapDestCfg.xml
+   owner: root:root
+   permissions: '0755'
+ - content: |
+    [
+    {
+    "networkname": "OAM"
+    },
+    {
+    "networkname": "Internal"
+    },
+    {
+    "networkname": "Access"
+    },
+    {
+    "networkname": "dmz_untrust"
+    },
+    {
+    "networkname": "dmz_trust"
+    },
+    {
+    "networkname": "dmz_trust1"
+    },
+    {
+    "networkname": "dmz_untrust1"
+    },
+    {
+    "networkname": "Internet"
+    },
+    {
+    "networkname": "ControlPlaneSig"
+    },
+    {
+    "networkname": "AccessIngress"
+    },
+    {
+    "networkname": "InternetIngress"
+    }
+    ]
+   path: /opt/miep/init/networknames.json
+   owner: miepadm:miepgrp
+   permissions: '0644'
+ - content: |
+    BOOTPROTO='static'
+    IPADDR='107.112.138.70'
+    BROADCAST='107.112.143.255'
+    NETMASK='255.255.248.0'
+    NETWORK='107.112.136.0'
+    STARTMODE='onboot'
+    DEVICE='eth0'
+    USERCONTROL='no'
+    NAME='OAM'
+    DEFROUTE='yes'
+    CHECK_DUPLICATE_IP='yes'
+    SEND_GRATUITOUS_ARP='yes'
+   path: /etc/sysconfig/network/ifcfg-eth0
+   owner: root:root
+   permissions: '0644'
+ - content: |
+   path: /etc/udev/rules.d/10-local.rules
+   encoding: b64
+   owner: root:root
+   permissions: '0640'
+ - content: |
+    #
+    # VERSION: <Auto generated by 1.0.2.3>
+    #
+    # This file contains the variable definitions to pull RMS Input Files from the PCRF.
+    
+    # The PCRF_PRIMARY variable specifies the Primary IP the MSP should use to connect to the PCRF.
+    
+    PCRF_PRIMARY=107.122.136.120
+    
+    # The PCRF_SECONDARY variable specifies the Secondary IP the MSP should use to connect to the PCRF.
+    
+    PCRF_SECONDARY=107.122.136.121
+    
+    # The PCRF_USER variable specifies the user value to use when performing the secure ftp transfer.
+    
+    PCRF_USER=msp
+    
+    # The PCRF_PASS variable specifies the password value to use when performing the secure ftp transfer.
+    
+    PCRF_PASS=@TTmsp123
+    
+    # The PCRF_DIR variable specifies the directory on the PCRF server where the RMS Input Files are located.
+    # This is the directory the secure ftp transfer will change to before pulling the RPM Input File.
+    
+    PCRF_DIR=/home/msp/downloads
+    
+    # The PCRF_PROMPT variable specifies the sftp prompt string that MSP can expect the PCRF server to
+    # display as a prompt when remotely connecting to the PCRF server using sftp.
+    
+    PCRF_PROMPT=sftp>
+    MSA_GROUP_NAME=
+   path: /appl/rms/cfg/pcrf.cfg
+   owner: root:root
+   permissions: '0755'
+ - content: |
+    #
+    # reserved values
+    #
+    255     local
+    254     main
+    253     default
+    0       unspec
+    #
+    # local
+    #
+    #1      inr.ruhep
+   path: /etc/iproute2/rt_tables
+   owner: root:root
+   permissions: '0644'
+ - content: |
+    ### /etc/resolv.conf file autogenerated by netconfig!
+    #
+    # Before you change this file manually, consider to define the
+    # static DNS configuration using the following variables in the
+    # /etc/sysconfig/network/config file:
+    #     NETCONFIG_DNS_STATIC_SEARCHLIST
+    #     NETCONFIG_DNS_STATIC_SERVERS
+    #     NETCONFIG_DNS_FORWARDER
+    # or disable DNS configuration updates via netconfig by setting:
+    #     NETCONFIG_DNS_POLICY=''
+    #
+    # See also the netconfig(8) manual page and other documentation.
+    #
+    # Note: Manual change of this file disables netconfig too, but
+    # may get lost when this file contains comments or empty lines
+    # only, the netconfig settings are same with settings in this
+    # file and in case of a "netconfig update -f" call.
+    #
+    ### Please remove (at least) this line when you modify the file!
+    nameserver 155.165.194.100
+    nameserver 155.165.201.100
+    search wapgw.mobilephone.net
+    options attempts:1
+    options timeout:6
+   path: /etc/resolv.conf
+   owner: root:root
+   permissions: '0644'
+ - content: |
+    MN_OAM_IPADDR=107.112.138.70
+    SNMP_IPADDR=107.239.72.10
+    SNMP_PORT=162
+    MN_SERVER_GROUPNAME=rdm5b
+    STORAGE_TYPE=CINDER
+    SUPPORT_LANG_LIST={"en":"English"}
+    AUTOSTART=Y
+    AUTODBPATCH=Y
+    PRODUCT=MSP
+    MN_TO_OTHER_NODE_NETWORK=OAM
+   path: /opt/miep/tools/mnsetup/init.properties
+   owner: root:root
+   permissions: '0640'
+ - content: |
+    CAE_PASSWORD=wapwap12
+    MSA_PASSWORD=wapwap12
+    CAPLOG_PASSWORD=wapwap12
+    TRACELOG_PASSWORD=wapwap12
+   path: /opt/miep/tools/mnsetup/init.properties.sec
+   owner: root:root
+   permissions: '0640'
+ - content: |
+    107.112.138.59 zrdm5bpxtc02adm001 zrdm5bpxtc02adm001-oam
+   path: /var/tmp/adm_hosts
+   owner: root:root
+   permissions: '0644'
+ - content: WwogewogICJwYXJlbnQiIDogInJkbTViIiwKICAiZ3JvdXBzIiA6IFsKICAgewogICAgImdyb3VwbmFtZSIgOiAienJkbTVicHh0YzAyIiwKICAgICJkaXNwbGF5bmFtZSIgOiAienJkbTVicHh0YzAyIiwKICAgICJkZXNjcmlwdGlvbiIgOiAienJkbTVicHh0YzAyIgogICB9CiAgXQogfSwKIHsKICAicGFyZW50IiA6ICJ6cmRtNWJweHRjMDIiLAogICJncm91cHMiIDogWwogICB7CiAgICAiZ3JvdXBuYW1lIiA6ICJ6cmRtNWJweHRjMDItVFMiLAogICAgImRpc3BsYXluYW1lIiA6ICJ6cmRtNWJweHRjMDItVFMiLAogICAgImRlc2NyaXB0aW9uIiA6ICJ6cmRtNWJweHRjMDItVFMiCiAgIH0KICBdCiB9Cl0K
+   path: /opt/miep/msaapp/apps/clusteradmin/clusters.json
+   encoding: b64
+   owner: msausr:msagrp
+   permissions: '0640'
+ - content: |
+    . /opt/miep/tools/AttMspCust/CloudInit/helpers.sh
+    cd /opt/miep/tools/msa
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set apsLicenseCustomerId '946935'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set apsLicenseUserId 'AT&T_Customer_Test_Lab2_vMSP_Nimbus'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set prsPrefixLookupTable '2606:ae00:af00::/41=64'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set prsDiamRealm 'zrdm5bpxtc02.msp.sd'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set htsHttpClientIpRangesBlacklist '172.26.14.0/25,172.26.17.0/24,107.103.114.0/25,107.103.113.0/25,107.103.112.160/29,107.103.121.0/24,107.103.122.0/24,fd00:2600:2600:100::/64,2606:ae00:b800:3441::/64,2606:ae00:b800:3442::/64'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set attLdapPool_host '172.21.196.7'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set attLdapPool_user 'cn=virNimbusV2L,ou=Users,ou=Administration,o=Cingular'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set attLdapPool_pwd 'MSPLab'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set attLdapPool_secondhost '155.165.172.23'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set attLdapPool_seconduser 'cn=virNimbusV2L,ou=Users,ou=Administration,o=Cingular'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set attLdapPool_secondpwd 'MSPLab'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02 -m cast set idfMspIpAddr ''
+    ./msaconfigctrl.sh -g zrdm5bpxtc02-TS -m cast set prsDiamMessageTimeout 16000
+    ./msaconfigctrl.sh -g zrdm5bpxtc02-TS -m cast set prsDiamSlowPeerAlarmLimit 16000
+    ./msaconfigctrl.sh -g zrdm5bpxtc02-TS -m cast set prsDiameterServerListenerAddressList '0.0.0.0:3868'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02-TS -m cast set ltmi.keyServerUpdateHostList 'zrdm5bpxtc02mts001,zrdm5bpxtc02mts002'
+    ./msaconfigctrl.sh -g zrdm5bpxtc02-TS -m cast set omsNsIntrusionDetection 1
+    ./msaconfigctrl.sh -g zrdm5bpxtc02-TS -m cast set telGroup1FTPTargetServerName zrdm5bpxtc02adm001.wapgw.mobilephone.net
+    $SU -s $BASH - postgres -c "psql -d msa -c \"set search_path = msa,msp; update msp.virtualgateway set externalnodeip='172.26.39.6' where servergrpid= '0' and vgindex= 'VG011'\""
+    $SU -s $BASH - postgres -c "psql -d msa -c \"set search_path = msa,msp; update msp.virtualgateway set servingdestaddrranges='172.26.39.6/32' where servergrpid= '0' and vgindex= 'VG011'\""
+    $SU -s $BASH - postgres -c "psql -d msa -c \"set search_path = msa,msp; update msp.virtualgateway set externalnodeip='fc00:a:a::700' where servergrpid= '0' and vgindex= 'VG013'\""
+    $SU -s $BASH - postgres -c "psql -d msa -c \"set search_path = msa,msp; update msp.virtualgateway set servingdestaddrranges='fc00:a:a::700/128' where servergrpid= '0' and vgindex= 'VG013'\""
+   path: /opt/miep/tools/AttMspCust/CloudInit/install_msa_zone.sh
+   owner: root:root
+   permissions: '0755'
+ - content: |
+    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
+   path: /opt/miep/etc/license/Cloud_Entitlement.combine
+   owner: msausr:msagrp
+   permissions: '0755'
+   encoding: 'gzip+base64'
+ - content: |
+    *.* @135.207.171.57:1538
+    *.* @155.165.162.48:1532
+   path: /etc/rsyslog.d/remote.conf
+   owner: root:root
+   permissions: '0600'
+
+scripts_per_once:
+
+power_state:
+ mode: reboot
+ message: Server will reboot now
+ timeout: 5

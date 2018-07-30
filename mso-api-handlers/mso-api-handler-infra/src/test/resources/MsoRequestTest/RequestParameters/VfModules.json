@@ -1,0 +1,75 @@
+{ 
+  "requestDetails": { 
+    "modelInfo": { 
+      "modelType": "service", 
+      "modelInvariantId": "5d48acb5-097d-4982-aeb2-f4a3bd87d31b", 
+      "modelVersionId": "3c40d244-808e-42ca-b09a-256d83d19d0a", 
+      "modelName": "MOW vMX BV 1 Service", 
+      "modelVersion": "10" 
+    }, 
+    "cloudConfiguration": { 
+      "lcpCloudRegionId": "mdt1", 
+      "tenantId": "88a6ca3ee0394ade9403f075db23167e" 
+    }, 
+    "owningEntity": { 
+      "owningEntityId": "038d99af-0427-42c2-9d15-971b99b9b489", 
+      "owningEntityName": "PACKET CORE" 
+    }, 
+    "project": { 
+      "projectName": "{some project name}" 
+    }, 
+    "subscriberInfo": { 
+      "globalSubscriberId": "{some subscriber id}" 
+    }, 
+    "requestInfo": { 
+      "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb", 
+      "source": "VID", 
+      "suppressRollback": true, 
+      "requestorId": "xxxxxx" 
+    }, 
+    "requestParameters": { 
+      "subscriptionServiceType": "VMX", 
+      "aLaCarte": false, 
+      "userParams": [ 
+        { 
+          "service": { 
+            "modelInfo": { 
+              "modelName": "MOW vMX BV 1 Service", 
+              "modelCustomizationId": "3c40d244-808e-42ca-b09a-256d83d19d0a",
+              "modelVersionId": "3c40d244-808e-42ca-b09a-256d83d19d0a" 
+            }, 
+            "instanceParams": [], 
+            "resources": { 
+              "vnfs": [ 
+                { 
+                  "modelInfo": { 
+                    "modelCustomizationName": "2016-73_MOW-BV-L 0", 
+					"modelName": "2016-73_MOW-BV-L", 
+					"modelVersionId": "3c40d244-808e-42ca-b09a-256d83d19d0a",
+                    "modelCustomizationId": "ab153b6e-c364-44c0-bef6-1f2982117f04" 
+                  }, 
+                  "cloudConfiguration": {
+      				"lcpCloudRegionId": "mdt1",
+      				"tenantId": "88a6ca3ee0394ade9403f075db23167e"
+   				  },
+				  "platform": { 
+						"platformName": "someValue" 
+				  }, 
+				  "lineOfBusiness": { 
+						"lineOfBusinessName": "someValue" 
+				  }, 
+				  "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",  
+                  "instanceParams": [ 
+					{ 
+					 "instanceName": "someVnfInstanceName"  
+                    } 
+                  ] 
+                } 
+              ] 
+            } 
+          } 
+        } 
+      ] 
+    } 
+  } 
+}

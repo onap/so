@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+  <bpmn:process id="DeactivateServiceInstanceBB" name="DeactivateServiceInstanceBB" isExecutable="true">
+    <bpmn:startEvent id="Start_DeactivateServiceInstanceBB" name="Start">
+      <bpmn:outgoing>SequenceFlow_101w1ck</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="End_DeactivateServiceInstanceBB" name="end">
+      <bpmn:incoming>SequenceFlow_0pioehv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_00q7fsg" sourceRef="Task_DeactivateServiceInstance_SDNC" targetRef="Task_DeactivateServiceInstance_AAI" />
+    <bpmn:sequenceFlow id="SequenceFlow_0pioehv" sourceRef="Task_DeactivateServiceInstance_AAI" targetRef="End_DeactivateServiceInstanceBB" />
+    <bpmn:serviceTask id="Task_DeactivateServiceInstance_AAI" name="Update Service OStatus to Assigned (AAI)" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusAssignedService(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_00q7fsg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0pioehv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_DeactivateServiceInstance_SDNC" name="Service Instance Deactivate (SDNC)" camunda:expression="${SDNCDeactivateTasks.deactivateServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_101w1ck</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_00q7fsg</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_101w1ck" sourceRef="Start_DeactivateServiceInstanceBB" targetRef="Task_DeactivateServiceInstance_SDNC" />
+  </bpmn:process>
+  <bpmn:error id="Error_05rnr6a" name="gDelegateError" errorCode="7000" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DeactivateServiceInstanceBB">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_DeactivateServiceInstanceBB">
+        <dc:Bounds x="23" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="29" y="138" width="23" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1qdtskz_di" bpmnElement="End_DeactivateServiceInstanceBB">
+        <dc:Bounds x="416" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="425" y="142" width="18" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_00q7fsg_di" bpmnElement="SequenceFlow_00q7fsg">
+        <di:waypoint xsi:type="dc:Point" x="216" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="262" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="239" y="105" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0pioehv_di" bpmnElement="SequenceFlow_0pioehv">
+        <di:waypoint xsi:type="dc:Point" x="362" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="416" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="389" y="99" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1d9vh4e_di" bpmnElement="Task_DeactivateServiceInstance_AAI">
+        <dc:Bounds x="262" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_04l854m_di" bpmnElement="Task_DeactivateServiceInstance_SDNC">
+        <dc:Bounds x="116" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_101w1ck_di" bpmnElement="SequenceFlow_101w1ck">
+        <di:waypoint xsi:type="dc:Point" x="59" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="116" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="87.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

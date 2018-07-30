@@ -1,0 +1,32 @@
+{
+	"service-instance-id": "3655a595-05d1-433c-93c0-3afd6b572545",
+	"service-instance-name": "serviceInstanceName",
+	"orchestration-status": "PRECREATED",
+	"owning-entity": {
+		"owning-entity-id": "owningEntityId",
+		"owning-entity-name": "owningEntityName"
+	},
+	"project": {
+		"project-name": "projectName"
+	},
+	"vnfs": [],
+	"allotted-resources": [],
+	"networks": [],
+	"vhn-portal-url": null,
+	"service-instance-location-id": null,
+	"selflink": null,
+	"metadata": null,
+	"configurations": [],
+	"model-info-service-instance": {
+		"description": "description",
+		"created": null,
+		"model-name": "modelName",
+		"model-uuid": "modelUUID",
+		"model-invariant-uuid": "modelInvariantUUID",
+		"model-version": "modelVersion",
+		"service-type": "serviceType",
+		"service-role": "serviceRole",
+		"environment-context": "environmentContext",
+		"workload-context": "workloadContext"
+	}
+}

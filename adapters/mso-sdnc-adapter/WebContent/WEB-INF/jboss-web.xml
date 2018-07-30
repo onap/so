@@ -1,4 +1,0 @@
-<jboss-web>
-	<context-root>adapters</context-root>
-	<security-domain>other</security-domain>
-</jboss-web>

@@ -1,0 +1,152 @@
+heat_template_version: 2015-04-30
+
+description: HOT creates Nimbus vMSP MMN stack.
+
+parameters:
+  mmn_name_0:
+    type: string
+    label: MSP MMN server names
+    description: name of the MSP MMN instances
+  mmn_flavor_name:
+    type: string
+    label: MSP MMN flavor name
+    description: MSP MMN flavor name
+#  mmn_image_name:
+#    type: string
+#    label: MSP MMN image name
+#    description: MSP MMN image name
+#  availability_zone_0:
+#    type: string
+#    label: MSP MMN availability zones
+#    description: MSP MMN availability zones
+  sec_grp_msp_id:
+    type: string
+    label: security group id
+    description: the id of security group
+  mmn_oam_protected_ip_0:
+    type: string
+    label: MSP MMN OAM IP Addresses
+    description: MSP MMN OAM IP Addresses
+  oam_protected_net_name:
+    type: string
+    label: MSP MMN OAM net name
+    description: MSP MMN OAM net name
+  mmn_volume_name_0:
+    type: string
+    label: Mobisupport MSP MMN Cinder Volume names
+    description: Mobisupport MSP MMN Cinder Volume names
+  mmn_volume_size_0:
+    type: number
+    label: Mobisupport MSP MMN Cinder Volume sizes
+    description: Mobisupport MSP MMN Cinder Volume sizes
+  mmn_volume_image_name_0:
+    type: string
+    label: Mobisupport MSP MMN Cinder Volume image name
+    description: Mobisupport MSP MMN Cinder Volume image name
+  mmn_data_volume_id_1:
+    type: string
+    label: MSP MMN Volume id 1
+    description: MSP MMN Volume id 1
+  mmn_arch_volume_id_2:
+    type: string
+    label: MSP MMN Volume id 2
+    description: MSP MMN Volume id 2
+  mmn_backup_volume_id_3:
+    type: string
+    label: MSP MMN Volume id 3
+    description: MSP MMN Volume id 3
+  mmn_misc_volume_id_4:
+    type: string
+    label: MSP MMN Volume id 4
+    description: MSP MMN Volume id 4
+  mmn_block_device_names:
+    type: comma_delimited_list
+    label: MSP MMN Block Device Names
+    description: MSP MMN Block Device Names
+  cinder_delete_on_termination_true:
+    type: boolean
+    description: delete cinder volume upon instances termination
+  cinder_delete_on_termination_false:
+    type: boolean
+    description: keep cinder volume upon instances termination
+  vnf_id:
+    type: string
+    label: MSP MMN VNF ID
+    description: MSP MMN VNF ID
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF module instance
+
+resources:
+################ Cinder Volume ########################
+  mmn_volume_0:
+    type: OS::Cinder::Volume
+    properties:
+      name: {get_param: mmn_volume_name_0}
+      size: {get_param: mmn_volume_size_0}
+      image: {get_param: mmn_volume_image_name_0}
+
+################ Server ##############################
+  mmn_zrdm5bpxmc02mmn_0:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: mmn_name_0}
+#      image: {get_param: mmn_image_name}
+      flavor: {get_param: mmn_flavor_name}
+#      availability_zone: {get_param: availability_zone_0}
+      block_device_mapping_v2:
+        - device_name: { get_param: [mmn_block_device_names, 0] }
+          volume_id: { get_resource: mmn_volume_0 }
+          delete_on_termination: {get_param: cinder_delete_on_termination_true}
+      networks:
+        - port: { get_resource: mmn_oam_protected_0_port }
+      config_drive: "True"
+      user_data_format: RAW
+      user_data:
+        get_file: user_data_zrdm5bpxmc02mmn001.txt
+      metadata:
+        vnf_id: {get_param: vnf_id}
+        vf_module_id {get_param: vf_module_id}
+        "evacuation_policy": "Evacuation"
+
+################ Ports ##############################
+  mmn_oam_protected_0_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_protected_net_name}
+      fixed_ips: [{"ip_address": {get_param: mmn_oam_protected_ip_0}}]
+      security_groups: [{ get_param: sec_grp_msp_id }]
+      replacement_policy: AUTO
+
+################ Volume Attachment ##############################
+  volume_attachment_vdb:
+    type: OS::Cinder::VolumeAttachment
+    depends_on: mmn_zrdm5bpxmc02mmn_0
+    properties:
+      volume_id: { get_param: mmn_data_volume_id_1 }
+      instance_uuid: { get_resource: mmn_zrdm5bpxmc02mmn_0}
+      mountpoint: /dev/vdb
+
+  volume_attachment_vdc:
+    type: OS::Cinder::VolumeAttachment
+    depends_on: volume_attachment_vdb
+    properties:
+      volume_id: { get_param: mmn_arch_volume_id_2 }
+      instance_uuid: { get_resource: mmn_zrdm5bpxmc02mmn_0}
+      mountpoint: /dev/vdc
+
+  volume_attachment_vdd:
+    type: OS::Cinder::VolumeAttachment
+    depends_on: volume_attachment_vdc
+    properties:
+      volume_id: { get_param: mmn_backup_volume_id_3 }
+      instance_uuid: { get_resource: mmn_zrdm5bpxmc02mmn_0}
+      mountpoint: /dev/vdd
+
+  volume_attachment_vde:
+    type: OS::Cinder::VolumeAttachment
+    depends_on: volume_attachment_vdd
+    properties:
+      volume_id: { get_param: mmn_misc_volume_id_4 }
+      instance_uuid: { get_resource:  mmn_zrdm5bpxmc02mmn_0}
+      mountpoint: /dev/vde

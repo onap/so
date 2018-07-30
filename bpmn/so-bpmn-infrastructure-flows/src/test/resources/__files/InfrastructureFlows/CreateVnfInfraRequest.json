@@ -1,0 +1,46 @@
+{
+  "requestDetails": {
+      "modelInfo": {
+        "modelType": "vnf",
+         "modelInvariantUuid": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
+         "modelUuid": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+         "modelName": "vSAMP12",
+         "modelVersion": "1.0",
+         "modelInstanceName": "vSAMP12 1",
+         "modelCustomizationUuid": "customizationId123"
+      },
+      "cloudConfiguration": {
+          "lcpCloudRegionId": "mdt1",
+          "tenantId": "88a6ca3ee0394ade9403f075db23167e"
+      },
+      "requestInfo": {
+          "instanceName": "testVnfName123",
+          "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+          "source": "VID",
+          "suppressRollback": false
+      },
+      "relatedInstanceList": [
+         {
+            "relatedInstance": {
+               "instanceId": "{serviceInstanceId}",
+               "modelInfo": {
+                  "modelType": "service",
+                  "modelInvariantUuid": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+                  "modelUuid": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+                  "modelName": "{parent service model name}",
+                  "modelVersion": "1.0"
+               }
+            }
+         }
+      ],
+      "requestParameters": {
+      },
+	  "platform": {
+		"platformName": "platform name"
+	  },
+	  "lineOfBusiness": {
+		"lineOfBusinessName": "line of business names"
+	  }
+  }
+  
+}

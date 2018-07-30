@@ -1,0 +1,17 @@
+{
+	"stack": {
+		"description": null,
+		"links": null,
+		"stackStatusReason": null,
+		"stackName": null,
+		"updatedTime": null,
+		"creationTime": null,
+		"stackStatus": "NOT_FOUND",
+		"id": "stackId",
+		"files": null,
+		"outputs": null,
+		"parameters": {
+			
+		}
+	}
+}

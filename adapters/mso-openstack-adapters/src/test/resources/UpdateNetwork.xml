@@ -1,0 +1,23 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Body>
+		<aetgt:updateNetwork xmlns:aetgt="http://org.onap.so/network" xmlns:NetworkAdapter="http://org.onap.so/network">
+          <cloudSiteId>mtn13</cloudSiteId>
+		   <tenantId>2871503957144f72b3cf481b379828ec</tenantId>
+		   <networkType>CONTRAIL30_BASIC</networkType>
+		   <modelCustomizationUuid/>
+		   <networkId>43173f6a-d699-414b-888f-ab243dda6dfe</networkId>
+		   <networkName>vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0</networkName>
+		   <physicalNetworkName>TestPhysicalNetwork</physicalNetworkName>
+		   <vlans>
+			   1
+		   </vlans>
+		   <vlans>
+				2
+		   </vlans>
+		   <request>
+		      <requestId>5a29d907-b8c7-47bf-85f3-3940c0cce0f7</requestId>
+		      <serviceInstanceId>ab652f96-1fc3-4fdd-8e1b-4af629bc22c0</serviceInstanceId>
+		   </request>
+       </aetgt:updateNetwork>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

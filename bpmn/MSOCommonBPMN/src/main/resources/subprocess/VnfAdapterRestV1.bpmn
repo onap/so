@@ -4,7 +4,7 @@
     <bpmn2:scriptTask id="ScriptTask_2" name="Log Response" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_14</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def vnfAdapterRestV1 = new VnfAdapterRestV1()
 def statusCode = execution.getVariable('VNFREST_vnfAdapterStatusCode')
 String response = String.valueOf(execution.getVariable('VNFREST_vnfAdapterResponse'))
@@ -16,14 +16,14 @@ vnfAdapterRestV1.logDebug(processKey + " received response from VnfAdapter: stat
     <bpmn2:scriptTask id="ScriptTask_3" name="Workflow Exception (no connection)">
       <bpmn2:incoming>SequenceFlow_17</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_35</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def exceptionUtil = new ExceptionUtil()
 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Failed to communicate with VnfAdapter")]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="ScriptTask_4" name="Workflow Exception (bad response)" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_36</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 
 String res = execution.getVariable(VNFREST_vnfAdapterResponse)
 
@@ -47,7 +47,7 @@ vnfAdapterRestV1.vnfAdapterWorkflowException(execution, res)]]></bpmn2:script>
     <bpmn2:boundaryEvent id="BoundaryEvent_1" name="Timeout" attachedToRef="waitForAsyncMessage">
       <bpmn2:outgoing>SequenceFlow_27</bpmn2:outgoing>
       <bpmn2:timerEventDefinition id="TimerEventDefinition_1">
-        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression">${URN_mso_po_timeout}</bpmn2:timeDuration>
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression"><![CDATA[${UrnPropertiesReader.getVariable("mso.po.timeout", execution)}]]></bpmn2:timeDuration>
       </bpmn2:timerEventDefinition>
     </bpmn2:boundaryEvent>
     <bpmn2:subProcess id="waitForAsyncMessage" name="Wait for Callback">
@@ -71,7 +71,7 @@ vnfAdapterRestV1.vnfAdapterWorkflowException(execution, res)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_5" name="Workflow Exception (timeout)" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_27</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_34</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def exceptionUtil = new ExceptionUtil()
 exceptionUtil.buildAndThrowWorkflowException(execution, 7010, "VnfAdapter Callback Timeout Error")]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -79,7 +79,7 @@ exceptionUtil.buildAndThrowWorkflowException(execution, 7010, "VnfAdapter Callba
     <bpmn2:scriptTask id="ScriptTask_6" name="Process Callback" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_28</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_33</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def vnfAdapterRestV1 = new VnfAdapterRestV1()
 vnfAdapterRestV1.processCallback(execution)
 ]]></bpmn2:script>
@@ -116,7 +116,7 @@ vnfAdapterRestV1.processCallback(execution)
     <bpmn2:scriptTask id="ScriptTask_setSuccess" name="Set Success Indicator" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_31</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def vnfAdapterRestV1 = new VnfAdapterRestV1()
 vnfAdapterRestV1.setSuccessIndicator(execution, true)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -127,7 +127,7 @@ vnfAdapterRestV1.setSuccessIndicator(execution, true)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_7" name="Send Request to Vnf Adapter" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def vnfAdapterRestV1 = new VnfAdapterRestV1()
 vnfAdapterRestV1.sendRequestToVnfAdapter(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -136,7 +136,7 @@ vnfAdapterRestV1.sendRequestToVnfAdapter(execution)]]></bpmn2:script>
       <bpmn2:scriptTask id="ScriptTask_8" name="Process Error" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def exUtil = new ExceptionUtil()
 exUtil.processSubflowsBPMNException(execution)
 ]]></bpmn2:script>
@@ -154,7 +154,7 @@ exUtil.processSubflowsBPMNException(execution)
     <bpmn2:scriptTask id="ScriptTask_1" name="Pre-Process Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_9</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def vnfAdapterRestV1 = new VnfAdapterRestV1()
 vnfAdapterRestV1.preProcessRequest(execution)
 ]]></bpmn2:script>

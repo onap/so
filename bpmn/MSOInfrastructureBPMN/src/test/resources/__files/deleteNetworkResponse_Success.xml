@@ -1,3 +1,0 @@
-<ns2:deleteNetworkResponse xmlns:ns2="http://org.openecomp.mso/network">
-	<networkDeleted>true</networkDeleted>
-</ns2:deleteNetworkResponse>

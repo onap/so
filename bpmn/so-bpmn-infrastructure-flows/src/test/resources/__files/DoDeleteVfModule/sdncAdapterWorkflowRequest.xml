@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1" xmlns:ns5="http://org.onap/so/request/types/v1" xmlns:sdncadapter="http://org.onap/workflow/sdnc/adapter/schema/v1">
+    <sdncadapter:RequestHeader>
+        <sdncadapter:RequestId>testReqId</sdncadapter:RequestId>
+        <sdncadapter:SvcInstanceId>12345</sdncadapter:SvcInstanceId>
+        <sdncadapter:SvcAction>release</sdncadapter:SvcAction>
+        <sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
+        <sdncadapter:CallbackUrl>http://localhost:8090/SDNCAdapterCallback</sdncadapter:CallbackUrl>
+    </sdncadapter:RequestHeader>
+    <sdncadapterworkflow:SDNCRequestData>
+        <request-information>
+            <request-id>12345</request-id>
+            <request-action>DisconnectVNFRequest</request-action>
+            <source>VID</source>
+            <notification-url />
+            <order-number />
+            <order-version />
+        </request-information>
+        <service-information>
+            <service-id>12345</service-id>
+            <service-type>12345</service-type>
+            <service-instance-id>123456789</service-instance-id>
+            <subscriber-name>notsurewecare</subscriber-name>
+        </service-information>
+        <vnf-request-information>
+            <vnf-id>12345</vnf-id>
+            <vnf-type>null</vnf-type>
+            <vnf-name>vfModuleName_test</vnf-name>
+            <generic-vnf-id>12345</generic-vnf-id>
+            <generic-vnf-name />
+            <generic-vnf-type />
+            <aic-cloud-region>null</aic-cloud-region>
+            <tenant>19123c2924c648eb8e42a3c1f14b7682</tenant>
+        </vnf-request-information>
+    </sdncadapterworkflow:SDNCRequestData>
+</sdncadapterworkflow:SDNCAdapterWorkflowRequest>

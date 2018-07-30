@@ -1,0 +1,14 @@
+{
+    "stack": {
+    	"id": "da886914-efb2-4917-b335-c8381528d90b",
+    	"links" : [
+    		{
+    			"href" : "port",
+    			"rel" : "self"
+			}
+		],
+		"stack_name": "name",
+		"stack_status": "CREATE_COMPLETE"
+		
+	}
+}

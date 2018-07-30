@@ -1,0 +1,6 @@
+{
+	"globalSubscriberId": "60c3e96e-0970-4871-b6e0-3b6de7561519",
+    "serviceType": "vnf",
+    "modelInvariantIdTarget": "60c3e96e-0970-4871-b6e0-3b6de1234567",
+    "modelVersionIdTarget": "modelVersionIdTarget"
+}

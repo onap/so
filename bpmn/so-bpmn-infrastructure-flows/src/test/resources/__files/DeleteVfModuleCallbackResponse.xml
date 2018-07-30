@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<deleteVfModuleResponse>
+    <messageId>86651f79-057e-4245-8f5f-174db3cef553-1502888133261</messageId>
+    <vfModuleDeleted>true</vfModuleDeleted>
+    <vfModuleId>20928949-5230-495d-86a6-f3690b9b5d60</vfModuleId>
+    <vfModuleOutputs>
+        <entry>
+            <key>shared_private_network_id</key>
+            <value>bcd04543-b3d7-4c64-a910-1735b875ebb2</value>
+        </entry>
+        <entry>
+            <key>server1_port</key>
+            <value>d1605e82-50ba-4544-9f8d-a8a37b678046</value>
+        </entry>
+        <entry>
+            <key>vnf_id</key>
+            <value>7da56895-6be1-4bec-856b-525e0e573199</value>
+        </entry>
+    </vfModuleOutputs>
+    <vnfId>7da56895-6be1-4bec-856b-525e0e573199</vnfId>
+</deleteVfModuleResponse>

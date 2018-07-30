@@ -1,0 +1,14 @@
+{
+    "stack": {
+    	"id": "da886914-efb2-4917-b335-c8381528d90b",
+    	"links" : [
+    		{
+    			"href" : "port",
+    			"rel" : "self"
+			}
+		],
+		"stack_name": "vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0",
+		"stack_status": "UPDATE_COMPLETE"
+		
+	}
+}

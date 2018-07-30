@@ -1,0 +1,10 @@
+{
+	"roles": [
+		{
+			"id": "admin",
+			"name": "admin",
+			"description": null,
+			"enabled": null
+		}
+	]
+}

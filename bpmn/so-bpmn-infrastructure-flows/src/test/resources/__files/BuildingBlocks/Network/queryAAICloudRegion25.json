@@ -1,0 +1,596 @@
+{
+   "cloud-owner": "att-aic",
+   "cloud-region-id": "mtn6",
+   "cloud-type": "openstack",
+   "owner-defined-type": "LCP",
+   "cloud-region-version": "2.5",
+   "cloud-zone": "AUS1",
+   "complex-name": "mtn6",
+   "resource-version": "1485202577",
+   "relationship-list": {"relationship":    [
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/316fd41a-5943-4028-b537-9eace4a94387",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "316fd41a-5943-4028-b537-9eace4a94387"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-1702-125"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/c7910b86-8830-4b43-8d93-895f4e71ee8a",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "c7910b86-8830-4b43-8d93-895f4e71ee8a"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwProtectedOam.OAM_net_33"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/491508c7-1246-4ebc-a080-98fbe272291a",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "491508c7-1246-4ebc-a080-98fbe272291a"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwOamNetVto.HNGWOAMNETVTO.OAM_net_23"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/acaccfdb-2bf9-4ccb-b123-c54e28e8e310",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "acaccfdb-2bf9-4ccb-b123-c54e28e8e310"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-2002"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/8594c6a8-f8ff-43aa-a0b5-952fd60c9f6a",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "8594c6a8-f8ff-43aa-a0b5-952fd60c9f6a"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwProtectedOam.OAM_net_45"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/cf82a73f-de7f-4f84-8dfc-16a487c63a36",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "cf82a73f-de7f-4f84-8dfc-16a487c63a36"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-2001"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/259062a4-dc9a-43f2-b46d-46f8b31bb661",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "259062a4-dc9a-43f2-b46d-46f8b31bb661"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwProtectedOam.OAM_net_29"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/5102bbfc-44f3-4cd3-ae1e-0c9942653aed",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "5102bbfc-44f3-4cd3-ae1e-0c9942653aed"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwProtectedOam.OAM_net_30"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/9b6d2ec3-1e58-4927-91a4-0dabe260436e",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "9b6d2ec3-1e58-4927-91a4-0dabe260436e"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwProtectedOam.OAM_net_31"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/268c0582-a5b3-4f9f-8f4f-ea0f93620212",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "268c0582-a5b3-4f9f-8f4f-ea0f93620212"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwProtectedOam.OAM_net_23"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/48627fd2-b3f2-4867-9fa3-f6425a7d22f5",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "48627fd2-b3f2-4867-9fa3-f6425a7d22f5"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwOamNetVto.HNGWOAMNETVTO.OAM_net_10"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/fb630eb9-44a3-4a90-a0c9-e52002f9f555",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "fb630eb9-44a3-4a90-a0c9-e52002f9f555"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwProtectedOam.OAM_net_28"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/65cc74dd-bffb-4f71-8db8-0fb6e6ac36ef",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "65cc74dd-bffb-4f71-8db8-0fb6e6ac36ef"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwProtectedOam.OAM_net_26"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/29ee3893-b7d0-4420-a035-c990fc32eb1c",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "29ee3893-b7d0-4420-a035-c990fc32eb1c"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwProtectedOam.OAM_net_48"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/f8fb2eaa-68f7-4a1a-8adb-37ba7b3d891e",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "f8fb2eaa-68f7-4a1a-8adb-37ba7b3d891e"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-1702-126"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/c1fc2c47-4986-4d42-80c3-379d5252bdb1",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "c1fc2c47-4986-4d42-80c3-379d5252bdb1"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwProtectedOam.OAM_net_40"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/e47d1154-03b4-44a1-8196-6fb947f4d4b3",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "e47d1154-03b4-44a1-8196-6fb947f4d4b3"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwOamNetVto.HNGWOAMNETVTO.OAM_net_26"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/09e0d15b-e36c-4bf5-8c2b-f4ce9256854f",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "09e0d15b-e36c-4bf5-8c2b-f4ce9256854f"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "oam-net"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/7b86609c-1c79-4329-bf21-15df6db1ffe0",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "7b86609c-1c79-4329-bf21-15df6db1ffe0"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "oam-net"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/c547848e-2617-4161-9154-1aa6cca60994",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "c547848e-2617-4161-9154-1aa6cca60994"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "oam-net"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/d348293a-2f7b-4925-bf21-fd59c2e52bfa",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "d348293a-2f7b-4925-bf21-fd59c2e52bfa"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_TEST_1702_A_int_HngwProtectedOam.OAM_net_32"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/92e7461d-358a-47a3-be5e-669dcf6400ef",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "92e7461d-358a-47a3-be5e-669dcf6400ef"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "oam-net"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/01c857bf-c75e-4f1c-886c-f651a8479037",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "01c857bf-c75e-4f1c-886c-f651a8479037"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-1707-0509A"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/4cadeb8b-f258-436d-a998-de887f10d180",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "4cadeb8b-f258-436d-a998-de887f10d180"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-1707-0511C"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/d9b00452-16c5-441f-9455-2954b93b7be7",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "d9b00452-16c5-441f-9455-2954b93b7be7"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-1707-0512C"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/f170b669-031a-47ff-a545-61a5fbfaf884",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "f170b669-031a-47ff-a545-61a5fbfaf884"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_1Bindings_324_1"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/fb7ed40a-4c29-464c-a9d7-edc314802cc4",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "fb7ed40a-4c29-464c-a9d7-edc314802cc4"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-1707-0512A"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/f901b9d6-3779-4f0d-a925-cb7e5e84650a",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "f901b9d6-3779-4f0d-a925-cb7e5e84650a"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-1707-155"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/e901cbc9-b964-4e8f-a363-12fe30585526",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "e901cbc9-b964-4e8f-a363-12fe30585526"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Mobility_ATM_1707_int_HngwOamNetVto.HNGWOAMNETVTO.OAM_net_1"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/4a5b95a6-4659-406e-bd39-d7909fed055f",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "4a5b95a6-4659-406e-bd39-d7909fed055f"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-1707-1707-ipv6-6001-badMask"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/7883684f-4ee0-460e-a277-0276e79fb8b8",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "7883684f-4ee0-460e-a277-0276e79fb8b8"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Mobility_ATM_1707_HnportalProviderNetwork.HNPortalPROVIDERNETWORK.SR_IOV_Provider2_1_net_1"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/da4d0845-1e2f-4d94-a66f-bca45242c12f",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "da4d0845-1e2f-4d94-a66f-bca45242c12f"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Mobility_ATM_1707_int_HngwOamNetVto.HNGWOAMNETVTO.OAM_net_29"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/c06bf62e-7c26-4c12-818f-927c3c25a38a",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "c06bf62e-7c26-4c12-818f-927c3c25a38a"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Mobility_ATM_1707_int_HngwOamNetVto.HNGWOAMNETVTO.OAM_net_2"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/b09885f5-afce-400c-84dc-0a2779fc3e21",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "b09885f5-afce-400c-84dc-0a2779fc3e21"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "ST-MTN6-NoBinding-1707-18-1000A"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/e746082a-41dc-40ec-a06e-d1138004902e",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "e746082a-41dc-40ec-a06e-d1138004902e"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-1710-4001"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/f1c5642c-c7d8-4409-997f-b5b186d8892f",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "f1c5642c-c7d8-4409-997f-b5b186d8892f"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-1707-119"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/51e3b192-31e3-4c3e-89a9-e1f2592e15fc",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "51e3b192-31e3-4c3e-89a9-e1f2592e15fc"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_Bindings_1802_1311"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/fc0ae18f-0a1f-4773-b387-5aed5b58fffb",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "fc0ae18f-0a1f-4773-b387-5aed5b58fffb"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_Bindings_1802_021618"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/0384d743-f69b-4cc8-9aa8-c3ae66662c44",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "0384d743-f69b-4cc8-9aa8-c3ae66662c44"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_Bindings_1802_020118"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/6ee51b6e-2b54-45cf-83f7-8bfa2c4ecaf3",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "6ee51b6e-2b54-45cf-83f7-8bfa2c4ecaf3"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_Dev_HostRoutes-1802-bns-2001"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/aaaa-bbbb-cccc-dddd-eeee",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "aaaa-bbbb-cccc-dddd-eeee"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "direct_dhcp_net_1"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/800bdc98-4326-4358-980d-e552e2105eaf",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "800bdc98-4326-4358-980d-e552e2105eaf"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "Dev_NoBinding-1707-0512B"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/b11eb5fc-082d-424a-a14c-f356d1ce611d",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "b11eb5fc-082d-424a-a14c-f356d1ce611d"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "DEV-1Binding-1710-0814-1000A"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/4636eea4-86a3-4cd3-806d-a63f29542ba3",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "4636eea4-86a3-4cd3-806d-a63f29542ba3"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "DEV-MTN6-NoBinding-1707-20-1000A"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/1111-2222-3333-4444-5555",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "1111-2222-3333-4444-5555"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MNS-25180-L-06Shared_OAM_PROTECTED_NET_1"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/67743f38-c2ac-4309-b81c-8b05381e5522",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "67743f38-c2ac-4309-b81c-8b05381e5522"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "dev_Bindings_full_1710_0907A"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/wwww-xxxx-yyyy-zzzz",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "wwww-xxxx-yyyy-zzzz"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MNS-25180-P-ALPSGA01_oam_direct_net_1"
+         }]
+      },
+            {
+         "related-to": "l3-network",
+         "related-link": "/aai/v11/network/l3-networks/l3-network/ed885e04-ffe5-47fb-bb20-103e5e22ef89",
+         "relationship-data": [         {
+            "relationship-key": "l3-network.network-id",
+            "relationship-value": "ed885e04-ffe5-47fb-bb20-103e5e22ef89"
+         }],
+         "related-to-property": [         {
+            "property-key": "l3-network.network-name",
+            "property-value": "MSO_Dev_HostRoutes-1802-bns-1002"
+         }]
+      },
+            {
+         "related-to": "complex",
+         "related-link": "/aai/v11/cloud-infrastructure/complexes/complex/AUSTTXGR",
+         "relationship-data": [         {
+            "relationship-key": "complex.physical-location-id",
+            "relationship-value": "AUSTTXGR"
+         }]
+      }
+   ]}
+}

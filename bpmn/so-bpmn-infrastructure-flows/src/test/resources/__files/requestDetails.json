@@ -1,0 +1,37 @@
+{
+	"requestDetails": {
+		"project": {
+			"projectName": "vSAMP12 Project"
+		},
+		"owningEntity": {
+			"owningEntityId": "MSO-Test-OE",
+			"owningEntityName": "MSO-Test123"
+		},
+		"modelInfo": {
+			"modelType": "service",
+			"modelInvariantUuid": "d214abcc-2083-11e7-93ae-92361f002671",
+			"modelUuid": "c4503baa-2083-11e7-93ae-92361f002671",
+			"modelName": "MSOTADevInfra_vSAMP12_Service",
+			"modelVersion": "1.0"
+		},
+		"subscriberInfo": {
+			"globalSubscriberId": "MSO_1610_dev",
+			"subscriberName": "MSO_1610_dev"
+		},
+		"requestInfo": {
+			"instanceName": "bensServiceInstance3",
+			"source": "VID",
+			"suppressRollback": "true",
+			"productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb"
+		},
+		"cloudConfiguration": {
+			"lcpCloudRegionId": "mdt1",
+			"tenantId": "8b1df54faa3b49078e3416e21370a3ba"
+		},
+		"requestParameters": {
+			"subscriptionServiceType": "MSO-dev-service-type",
+			"aLaCarte": "false",
+			"userParams": []
+		}
+	}
+}

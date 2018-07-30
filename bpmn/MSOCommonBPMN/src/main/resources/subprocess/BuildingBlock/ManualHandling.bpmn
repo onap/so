@@ -19,7 +19,7 @@
       <bpmn2:scriptTask id="processJavaError" name="Process Error" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_0tgrn11</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_0g4aus9</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 ExceptionUtil exceptionUtil = new ExceptionUtil()
 exceptionUtil.processJavaException(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
@@ -30,7 +30,7 @@ exceptionUtil.processJavaException(execution)]]></bpmn2:script>
     <bpmn2:userTask id="ManualHandlingUserTask" name="Manual Handling User Task">
       <bpmn2:extensionElements>
         <camunda:taskListener event="complete">
-          <camunda:script scriptFormat="groovy"><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+          <camunda:script scriptFormat="groovy"><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def mh = new ManualHandling()
 mh.completeTask(task)]]></camunda:script>
         </camunda:taskListener>
@@ -38,7 +38,7 @@ mh.completeTask(task)]]></camunda:script>
           <camunda:property />
         </camunda:properties>
         <camunda:taskListener event="create">
-          <camunda:script scriptFormat="groovy"><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+          <camunda:script scriptFormat="groovy"><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def mh = new ManualHandling()
 mh.setTaskVariables(task)]]></camunda:script>
         </camunda:taskListener>
@@ -54,7 +54,7 @@ mh.setTaskVariables(task)]]></camunda:script>
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
             <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("setUpdateDBstatusPayload")}]]></camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -75,14 +75,14 @@ mh.setTaskVariables(task)]]></camunda:script>
     <bpmn2:scriptTask id="Task_137bzdi" name="Prepare Requests DB Status Update to PENDING_MANUAL_TASK" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0zgg47r</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0mbjrvr</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def mh = new ManualHandling()
 mh.prepareRequestsDBStatusUpdate(execution, "PENDING_MANUAL_TASK")]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="Task_0r60vxk" name="Prepare Requests DB Status Update to IN_PROGRESS" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_192yimz</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0zer29a</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def mh = new ManualHandling()
 mh.prepareRequestsDBStatusUpdate(execution, "IN_PROGRESS")]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -90,7 +90,7 @@ mh.prepareRequestsDBStatusUpdate(execution, "IN_PROGRESS")]]></bpmn2:script>
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_adapters_openecomp_db_endpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
             <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("setUpdateDBstatusPayload")}]]></camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -111,7 +111,7 @@ mh.prepareRequestsDBStatusUpdate(execution, "IN_PROGRESS")]]></bpmn2:script>
     <bpmn2:scriptTask id="Task_1qrt7xw" name="PreProcess Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0jav6cu</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0zgg47r</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def mh = new ManualHandling()
 mh.preProcessRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -120,7 +120,7 @@ mh.preProcessRequest(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="CreateAOTSRubyTicket" name="Create AOTS Ruby Ticket" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0b84ki5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0igra4l</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 def mh = new ManualHandling()
 mh.createAOTSTicket(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>

@@ -1,0 +1,16 @@
+{
+	"AssignServiceInstance": {
+		"serviceInstance": {
+			"@class": "inventory.aai.onap.org.v12.ServiceInstance"
+		},
+		"project": {
+			"@class": "inventory.aai.onap.org.v12.Project"
+		},
+		"owningEntity": {
+			"@class": "inventory.aai.onap.org.v12.OwningEntity"
+		},
+		"customer": {
+			"@class": "inventory.aai.onap.org.v12.Customer"
+		}
+	}
+}

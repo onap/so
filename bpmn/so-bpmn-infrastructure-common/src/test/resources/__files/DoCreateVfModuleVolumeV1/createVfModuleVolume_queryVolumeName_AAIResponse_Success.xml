@@ -1,0 +1,49 @@
+<rest:RESTResponse xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
+				   statusCode="200">
+   <rest:headers>
+	  <rest:header name="X-CSI-Internal-WriteableRequest" value="true"/>
+	  <rest:header name="X-CSI-MethodName" value="UNKNOWN"/>
+	  <rest:header name="Content-Length" value="968"/>
+	  <rest:header name="breadcrumbId" value="ID-mtsnjv9aaas23-44965-1459957053425-0-211465"/>
+	  <rest:header name="X-CSI-UniqueTransactionId"
+				   value="AjscCsiRestful28795@mtsnjv9aaas237d4a4d21-e60a-495f-935f-cc225dc3c847"/>
+	  <rest:header name="User-Agent" value="Jakarta Commons-HttpClient/3.1"/>
+	  <rest:header name="X-TransactionID" value="3a19f95d-d63e-4a8e-8b9c-6563895628aa"/>
+	  <rest:header name="X-CSI-ServiceName" value="UNKNOWN"/>
+	  <rest:header name="Server" value="Jetty(9.2.z-SNAPSHOT)"/>
+	  <rest:header name="Cache-Control" value="no-cache,no-store"/>
+	  <rest:header name="X-FromAppId" value="MSO"/>
+	  <rest:header name="Date" value="Fri,08 Apr 2016 16:53:04 GMT"/>
+	  <rest:header name="X-CSI-ConversationId"
+				   value="ajscUser~CNG-CSI~c0a2bb44-2167-4e85-ad6a-483a24c0823a"/>
+	  <rest:header name="volume-group-name" value="simpleCinderVolume_201604071"/>
+	  <rest:header name="X-CSI-MessageId" value="f6d6eed4-456e-4033-be04-b17582902dc2"/>
+	  <rest:header name="X-AAI-TXID" value="mtsnjv9aaas23-20160408-16:53:04:592-73255"/>
+	  <rest:header name="Content-Type" value="application/xml"/>
+	  <rest:header name="Accept" value="application/xml"/>
+   </rest:headers>
+   <rest:payload contentType="text/xml">
+	  <volume-group xmlns="http://org.openecomp.aai.inventory/v8">
+		 <volume-group-id>8424bb3c-c3e7-4553-9662-469649ed9379</volume-group-id>
+		 <volume-group-name>MSOTESTVOL103W-vSAMP12_base_vol_module-0</volume-group-name>
+		 <heat-stack-id/>
+		 <vnf-type>simple_cinder_master</vnf-type>
+		 <orchestration-status>Pending</orchestration-status>
+		 <resource-version>1460134360</resource-version>
+		 <relationship-list>
+			<relationship>
+			   <related-to>tenant</related-to>
+			   <related-link>https://aai-ext1.test.com:8443/aai/v6/cloud-infrastructure/tenants/tenant/897deadc2b954a6bac6d3c197fb3525e/</related-link>
+			   <relationship-data>
+				  <relationship-key>tenant.tenant-id</relationship-key>
+				  <relationship-value>897deadc2b954a6bac6d3c197fb3525e</relationship-value>
+			   </relationship-data>
+			   <related-to-property>
+				  <property-key>tenant.tenant-name</property-key>
+				  <property-value>MSOTest1</property-value>
+			   </related-to-property>
+			</relationship>
+		 </relationship-list>
+	  </volume-group>
+   </rest:payload>
+</rest:RESTResponse>

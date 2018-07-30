@@ -1,0 +1,17 @@
+{
+	"modelName": "modelName",
+	"description": "description",
+	"modelUUID": "modelUUID",
+	"modelInvariantUUID": "modelInvariantUUID",
+	"created": 10,
+	"modelVersion": "modelVersion",
+	"serviceType": "serviceType",
+	"serviceRole": "serviceRole",
+	"environmentContext": "environmentContext",
+	"workloadContext": "workloadContext",
+	"networkCustomizations": null,
+	"vnfCustomizations": [],
+	"allottedCustomizations": null,
+	"recipes": null,
+	"csar": null
+}

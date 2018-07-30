@@ -1,0 +1,24 @@
+<volume-request xmlns="http://org.onap/so/infra/vnf-request/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<request-info>
+		<test-data-only>123abc</test-data-only> <!-- don't remove this tag. Its used for junit test -->
+		<request-id>d8d4fcfa-fd7e-4413-b19d-c95aa67291b8</request-id>
+		<action>CREATE_VF_MODULE_VOL</action>
+		<source>SoapUI-bns-create-base-vol-1001-1</source>
+	</request-info>
+	<volume-inputs>
+		<vnf-type>Test/vSAMP12</vnf-type>
+		<vf-module-model-name>vSAMP12::base::module-0</vf-module-model-name>
+		<backout-on-failure>false</backout-on-failure>
+		<asdc-service-model-version/>
+		<service-id>a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb</service-id>
+		<aic-cloud-region>MDTWNJ21</aic-cloud-region>
+		<tenant-id>897deadc2b954a6bac6d3c197fb3525e</tenant-id>
+		<volume-group-name>MSOTESTVOL101a-vSAMP12_base_vol_module-0</volume-group-name>
+		<volume-group-id/>
+	</volume-inputs>
+	<volume-params>
+		<param name="param1">value1</param>"
+		<param name="param2">value2</param>"
+		<param name="param3">value3</param>"
+	</volume-params>	
+</volume-request>

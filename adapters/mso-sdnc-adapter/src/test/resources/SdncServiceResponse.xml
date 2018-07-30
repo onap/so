@@ -1,0 +1,12 @@
+<input>
+    <configuration-response-common>
+        <svc-request-id>8ac1f688-70d1-4eb7-8422-5bf3ffe5c1ff-1525453645560</svc-request-id>
+        <response-code>200</response-code>
+        <response-message>Success: Activation Success</response-message>
+        <ack-final-indicator>Y</ack-final-indicator>
+        <response-parameters>
+            <tag-name>test</tag-name>
+            <tag-value>test</tag-value>
+        </response-parameters>
+    </configuration-response-common>
+</input>

@@ -1,0 +1,27 @@
+{
+  "vf-module-id": "example-vnf-id-val-90603",
+  "vf-module-name": "example-vnf-name-val-56838",
+  "vnf-name2": "example-vnf-name2-val-56319",
+  "vnf-type": "example-vnf-type-val-30533",
+  "service-id": "example-service-id-val-28290",
+  "regional-resource-zone": "example-regional-resource-zone-val-11059",
+  "prov-status": "example-prov-status-val-59777",
+  "operational-status": "example-operational-status-val-22513",
+  "in-maint": true,
+ 
+  "equipment-role": "example-equipment-role-val-23396",
+  "orchestration-status": "example-orchestration-status-val-59435",
+  "heat-stack-id": "example-heat-stack-id-val-96869",
+  "mso-catalog-key": "example-mso-catalog-key-val-30721",
+  "management-option": "example-management-option-val-61927",
+  "ipv4-oam-address": "192.168.10.14",
+  "ipv4-loopback0-address": "example-ipv4-loopback0-address-val-87072",
+  "nm-lan-v6-address": "example-nm-lan-v6-address-val-91063",
+  "management-v6-address": "example-management-v6-address-val-80466",
+  "vcpu": 45837298,
+  "vcpu-units": "example-vcpu-units-val-86249",
+  "vmemory": 57288956,
+  "vmemory-units": "example-vmemory-units-val-13291",
+  "vdisk": 16937143,
+  "vdisk-units": "example-vdisk-units-val-73197"
+}

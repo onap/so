@@ -1,0 +1,13 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Body>
+        <aetgt:queryNetwork xmlns:aetgt="http://org.onap.so/network" xmlns:NetworkAdapter="http://org.onap.so/network">
+          <cloudSiteId>mtn13</cloudSiteId>
+		   <tenantId>2871503957144f72b3cf481b379828ec</tenantId>
+		   <networkNameOrId>43173f6a-d699-414b-888f-ab243dda6dfe</networkNameOrId>
+		   <request>
+		      <requestId>5a29d907-b8c7-47bf-85f3-3940c0cce0f7</requestId>
+		      <serviceInstanceId>ab652f96-1fc3-4fdd-8e1b-4af629bc22c0</serviceInstanceId>
+		   </request>
+       </aetgt:queryNetwork>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

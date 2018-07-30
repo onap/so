@@ -1,0 +1,7 @@
+USE catalogdb;
+
+ALTER TABLE
+  `instance_group` CHANGE COLUMN `CR_MODEL_UUID` `CR_MODEL_UUID` VARCHAR(200) NULL,
+  CHANGE COLUMN `tosca_node_type` `TOSCA_NODE_TYPE` varchar(200) DEFAULT NULL,
+  CHANGE COLUMN `object_type` `OBJECT_TYPE` varchar(200) NOT NULL;
+  

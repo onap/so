@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-	xmlns:v1="http://org.openecomp.mso/vnfNotify">
+	xmlns:v1="http://org.onap.so/vnfNotify">
 	<soapenv:Header />
 	<soapenv:Body>
-			<ns2:createVnfNotification xmlns:ns2="http://org.openecomp.mso/vnfNotify">
+			<ns2:createVnfNotification xmlns:ns2="http://org.onap.so/vnfNotify">
    <messageId>edab9ec7-6cf8-47cf-b58c-9ba4ef5d3f70</messageId>
    <completed>true</completed>
    <vnfId>slcp34248vbc/020a112b-a0c8-4143-87a3-698680ba2efe</vnfId>

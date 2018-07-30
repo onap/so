@@ -1,0 +1,64 @@
+# TEST FILE
+catalog.db.endpoint: "http://localhost:"
+
+ssl-enable: false 
+mso:
+  site-name: localDevEnv
+  logPath: logs
+  catalog:
+    db:
+      spring:
+        endpoint: "http://localhost:"
+  db:
+    auth: Basic YnBlbDptc28tZGItMTUwNyE=
+
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3307/
+    username: root
+    password: password
+    driver-class-name: org.mariadb.jdbc.Driver    
+    initialize: true
+    initialization-mode: never
+  jpa:   
+    generate-ddl: false
+    show-sql: true
+    hibernate:      
+      ddl-auto: none
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      enable-lazy-load-no-trans: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  security:
+    usercredentials:
+    -  
+      username: test
+      password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
+      role: BPEL-Client
+    -
+      username: bpel
+      password: '$2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO'
+      role: BPEL-Client
+    -  
+      username: mso_admin
+      password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
+      role: ACTUATOR 
+mariaDB4j:
+  dataDir: 
+  port: 3307
+  databaseName: catalog_db
+  
+server:
+    port: 8080
+    tomcat:
+        max-threads: 50
+
+
+#Actuator
+management: 
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    info:
+      enabled: true
+
+

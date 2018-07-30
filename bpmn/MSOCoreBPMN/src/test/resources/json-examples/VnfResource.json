@@ -1,0 +1,12 @@
+{
+	"vnfResource" : {
+		"resourceId" : "vnfResourceId",
+		"resourceType" : "VNF",
+		"resourceInstance" : {},
+		"homingSolution" : {
+			"license" : {},
+			"rehome" : false
+		},
+		"vfModules" : []
+	}
+}

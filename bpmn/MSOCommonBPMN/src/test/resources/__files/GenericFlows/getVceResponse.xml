@@ -5,7 +5,6 @@
          <vnf-type>esx-vce</vnf-type>
          <prov-status>NVTPROV</prov-status>
          <orchestration-status>created</orchestration-status>
-         <resource-version>0000020</resource-version>
          <heat-stack-id>slcp1476vbc/94a3c72b-94d5-444b-9a1f-647a36c2181d</heat-stack-id>
          <mso-catalog-key/>
          <vpe-id>VPESAT-mtanjrsv126</vpe-id>
@@ -17,7 +16,6 @@
                <neutron-network-name>dvspg-VCE_VPE-slcp1476vbc</neutron-network-name>
                <interface-role>Internet</interface-role>
                <port-group-name>dvspg-VCE_VPE-slcp1476vbc</port-group-name>
-               <resource-version>0000020</resource-version>
                <switch-name>dvs-slcp1-01</switch-name>
                <orchestration-status>created</orchestration-status>
                <heat-stack-id>dvspg-VCE_VPE-slcp1476vbc/c1299f74-da35-4228-b1e0-d2fd07176196</heat-stack-id>
@@ -25,7 +23,6 @@
                <cvlan-tags>
                   <cvlan-tag-entry>
                      <cvlan-tag>3012</cvlan-tag>
-                     <resource-version>0000020</resource-version>
                   </cvlan-tag-entry>
                </cvlan-tags>
             </port-group>
@@ -36,14 +33,12 @@
                <interface-role>Customer</interface-role>
                <port-group-name>dvspg-IPAG_VCE-slcp1476vbc</port-group-name>
                <switch-name>dvs-slcp1-01</switch-name>
-               <resource-version>0000020</resource-version>
                <orchestration-status>created</orchestration-status>
                <heat-stack-id>dvspg-IPAG_VCE-slcp1476vbc/1e9c033a-2eef-47f5-9d48-98e0b59538e7</heat-stack-id>
                <mso-catalog-key/>
                <cvlan-tags>
                   <cvlan-tag-entry>
                      <cvlan-tag>2003</cvlan-tag>
-                     <resource-version>0000020</resource-version>
                   </cvlan-tag-entry>
                </cvlan-tags>
             </port-group>

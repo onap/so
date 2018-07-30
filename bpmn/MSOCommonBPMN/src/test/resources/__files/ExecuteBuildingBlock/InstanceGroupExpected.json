@@ -1,0 +1,8 @@
+{
+	"id" : "instanceGroupId",
+	"description" : "description",
+	"resource-version" : "resourceVersion",
+	"instance-group-name" : "instanceGroupName",
+	"model-info-instance-group" : null,
+	"instance-group-function" : "instanceGroupFunction"
+}

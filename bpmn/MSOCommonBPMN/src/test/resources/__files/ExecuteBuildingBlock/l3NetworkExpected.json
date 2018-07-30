@@ -1,0 +1,36 @@
+{
+	"network-id": "networkId",
+	"cascaded": null,
+	"cloud-params": {},
+	"network-name": "networkName",
+	"is-bound-to-vpn": true,
+	"service-id": "serviceId",
+	"network-role-instance": 1234,
+	"orchestration-status": "ASSIGNED",
+	"heat-stack-id": "heatStackId",
+	"contrail-network-fqdn": "contrailNetworkFqdn",
+	"widget-model-id": "widgetModelId",
+	"widget-model-version": "widgetModelVersion",
+	"physical-network-name": "physicalNetworkName",
+	"is-provider-network": true,
+	"is-shared-network": true,
+	"is-external-network": true,
+	"self-link": "selflink",
+	"operational-status": "operationalStatus",
+	"subnets": [
+		{
+			"subnet-id": "subnetId"
+		}
+	],
+	"ctag-assignments": [
+		{
+			"vlan-id-inner": 1234
+		}
+	],
+	"segmentation-assignments": [
+		{
+			"segmentation-id": "segmentationId"
+		}
+	],
+	"model-info-network": null
+}
