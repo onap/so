@@ -481,8 +481,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     private String convertNode(final JsonNode node) {
         try {
             final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
-            final String json = JSON_MAPPER.writeValueAsString(obj);
-            return json;
+            return JSON_MAPPER.writeValueAsString(obj);
         } catch (JsonParseException jpe) {
             LOGGER.debug("Error converting json to string " + jpe.getMessage());
         } catch (Exception e) {
