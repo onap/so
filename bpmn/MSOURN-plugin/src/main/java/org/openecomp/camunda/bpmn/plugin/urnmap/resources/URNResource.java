@@ -50,12 +50,13 @@ import org.openecomp.mso.logger.MsoLogger;
 
 //public class ProcessInstanceResource extends AbstractPluginResource {
 public class URNResource extends AbstractCockpitPluginResource{
+  private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
+  
   public URNResource(String engineName) {
     super(engineName);
   }
   
   private Connection conn;
-  private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL);
   @GET
   public List<URNData> getUrnDataMap() 
   {  
