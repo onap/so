@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_3ab55dcd",
+        "filename": "adapters/mso-network-adapter/src/main/java/org/openecomp/mso/adapters/network/MsoNetworkAdapterAsyncImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-07-30T11:37:17Z",
+      "side": 1,
+      "message": "This log should state that there was exception on deleteNetwork, not createNetwork. There was an error due to copy pasting code.",
+      "range": {
+        "startLine": 444,
+        "startChar": 12,
+        "endLine": 444,
+        "endChar": 61
+      },
+      "revId": "d6d1983aecec2dea711f11eccad2025bff26056f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
