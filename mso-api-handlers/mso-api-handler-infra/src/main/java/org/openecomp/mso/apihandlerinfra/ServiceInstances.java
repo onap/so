@@ -82,6 +82,8 @@ public class ServiceInstances {
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH);
 	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
 
+  public static final String END_OF_THE_TRANSACTION = "End of the transaction, the final response is: ";
+
 	@POST
 	@Path("/{version:[vV][4-6]}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -515,7 +517,7 @@ public class ServiceInstances {
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
 					"Mapping of request to JSON object failed.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null);
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			return response;
 		}
 
@@ -530,7 +532,7 @@ public class ServiceInstances {
 				msoLogger.debug ("Logging failed message to the database");
 				msoRequest.createRequestRecord (Status.FAILED, action);
 			}
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			return response;
 		}
 		
@@ -550,7 +552,7 @@ public class ServiceInstances {
 					e.getMessage(),
 					ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
 					null) ;
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			return response;
 		}
 
@@ -582,7 +584,7 @@ public class ServiceInstances {
 					Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));
 			msoRequest.createRequestRecord (Status.FAILED,action);
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception while communciate with DB");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			return response;
 		}
 
@@ -600,7 +602,7 @@ public class ServiceInstances {
 			}
 			msoLogger.error (MessageEnum.APIH_REQUEST_VALIDATION_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.SchemaError, requestJSON, e);
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, "Validation of the input request failed");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			return response;
 		} catch (Exception e) {
 			msoLogger.error (MessageEnum.APIH_DB_ACCESS_EXC, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.DataError, "Exception while querying Catalog DB", e);
@@ -615,7 +617,7 @@ public class ServiceInstances {
 					Messages.errors.get (ErrorNumbers.ERROR_FROM_CATALOG_DB));
 			msoRequest.createRequestRecord (Status.FAILED,action);
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, "Exception while querying Catalog DB");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			db.close();
 			return response;
 		}
@@ -630,7 +632,7 @@ public class ServiceInstances {
 					null);
 			msoRequest.createRequestRecord (Status.FAILED, action);
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, "No recipe found in DB");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			db.close();
 			return response;
 		}
@@ -685,7 +687,7 @@ public class ServiceInstances {
 						null);
 				msoRequest.createRequestRecord (Status.FAILED, action);
 				msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, "No matching vfModuleType found in DB");
-				msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+				msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 				db.close();
 				return response;
 			}
@@ -704,7 +706,7 @@ public class ServiceInstances {
 																	"Exception while creating record in DB " + e.getMessage(),
 																	ErrorNumbers.SVC_BAD_PARAMETER,
 																	null);
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			return response;
 		}
 		
@@ -759,7 +761,7 @@ public class ServiceInstances {
 			msoRequest.updateFinalStatus (Status.FAILED);
 			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity (),e);
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) resp.getEntity (),e);
 			return resp;
 		}
 
@@ -773,7 +775,7 @@ public class ServiceInstances {
 			msoRequest.updateFinalStatus (Status.FAILED);
 			msoLogger.error (MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, Constants.MSO_PROP_APIHANDLER_INFRA, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, "Null response from BPMN");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) resp.getEntity ());
 			return resp;
 		}
 
@@ -790,7 +792,7 @@ public class ServiceInstances {
 					Constants.PROGRESS_REQUEST_IN_PROGRESS,
 					Constants.MODIFIED_BY_APIHANDLER);
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "BPMN accepted the request, the request is in progress");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) camundaJSONResponseBody);
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) camundaJSONResponseBody);
 			return Response.status (HttpStatus.SC_ACCEPTED).entity (camundaJSONResponseBody).build ();
 		} else {
 			List<String> variables = new ArrayList<>();
@@ -806,7 +808,7 @@ public class ServiceInstances {
 				msoRequest.updateFinalStatus (Status.FAILED);
 				msoLogger.error (MessageEnum.APIH_BPEL_RESPONSE_ERROR, requestClient.getUrl (), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Response from BPEL engine is failed with HTTP Status=" + bpelStatus);
 				msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, "Response from BPMN engine is failed");
-				msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
+				msoLogger.debug (END_OF_THE_TRANSACTION + (String) resp.getEntity ());
 				return resp;
 			} else {
 				msoRequest.setStatus (org.openecomp.mso.apihandlerinfra.vnfbeans.RequestStatusType.FAILED);
@@ -818,7 +820,7 @@ public class ServiceInstances {
 				msoRequest.updateFinalStatus (Status.FAILED);
 				msoLogger.error (MessageEnum.APIH_BPEL_RESPONSE_ERROR, requestClient.getUrl (), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Response from BPEL engine is empty");
 				msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError, "Response from BPEL engine is empty");
-				msoLogger.debug ("End of the transaction, the final response is: " + (String) resp.getEntity ());
+				msoLogger.debug (END_OF_THE_TRANSACTION + (String) resp.getEntity ());
 				return resp;
 			}
 		}
@@ -858,7 +860,7 @@ public class ServiceInstances {
 		msoLogger.warn (MessageEnum.APIH_DUPLICATE_FOUND, dupMessage, "", "", MsoLogger.ErrorCode.SchemaError, "Duplicate request - Subscriber already has a request for this service");
 		msoRequest.createRequestRecord (Status.FAILED, action);
 		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, dupMessage);
-		msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+		msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 		return response;
 	}
 
@@ -1218,7 +1220,7 @@ public class ServiceInstances {
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
 					"Mapping of request to JSON object failed.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null);
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			return response;
 		}
 
@@ -1228,7 +1230,7 @@ public class ServiceInstances {
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST, MsoException.ServiceException,
 					"Error parsing request.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null);
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			return response;
 		}
 
@@ -1248,7 +1250,7 @@ public class ServiceInstances {
 					e.getMessage(),
 					ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
 					null) ;
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			return response;
 		}
 
@@ -1278,7 +1280,7 @@ public class ServiceInstances {
 																	null);
 			msoRequest.createRequestRecord (Status.FAILED, action);
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			return response;
 			
 		}
@@ -1295,7 +1297,7 @@ public class ServiceInstances {
 					"Exception while creating record in DB " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER,
 					null);
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) response.getEntity ());
+			msoLogger.debug (END_OF_THE_TRANSACTION + (String) response.getEntity ());
 			return response;
 		}
 
