@@ -82,7 +82,9 @@ public class QueryVfModule extends CatalogQuery {
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
 		StringBuilder sb = new StringBuilder();
-		if (!isEmbed && isArray) sb.append("{ ");
+		if (!isEmbed && isArray) { 
+			sb.append("{ ");
+		}
 		if (isArray) sb.append("\"vfModules\": [");
 		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
