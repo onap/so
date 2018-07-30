@@ -64,6 +64,6 @@ public class HasAnnotationMatcher<T extends Annotation> extends TypeSafeDiagnosi
 	}
 
 	public static <T extends Annotation> Matcher<AnnotatedElement> hasAnnotation(final Class<T> annotationType, final Matcher<? super T> annotationMatcher) {
-		return new HasAnnotationMatcher<T>(annotationType, annotationMatcher);
+		return new HasAnnotationMatcher<>(annotationType, annotationMatcher);
 	}
 }
