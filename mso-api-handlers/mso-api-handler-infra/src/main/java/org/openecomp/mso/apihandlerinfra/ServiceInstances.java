@@ -790,7 +790,7 @@ public class ServiceInstances {
 					Constants.PROGRESS_REQUEST_IN_PROGRESS,
 					Constants.MODIFIED_BY_APIHANDLER);
 			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "BPMN accepted the request, the request is in progress");
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) camundaJSONResponseBody);
+			msoLogger.debug ("End of the transaction, the final response is: " + camundaJSONResponseBody);
 			return Response.status (HttpStatus.SC_ACCEPTED).entity (camundaJSONResponseBody).build ();
 		} else {
 			List<String> variables = new ArrayList<>();
