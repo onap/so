@@ -122,7 +122,14 @@
 			<directory>../../adapters/mso-workflow-message-adapter/target/</directory>
 			<outputDirectory>artifacts</outputDirectory>
 		</fileSet>
-
+        
+        <fileSet>
+            <includes>
+                <include>camunda-rest-api*.war</include>
+            </includes>
+            <directory>../../so-monitoring/camunda-rest-api/target/</directory>
+            <outputDirectory>artifacts</outputDirectory>
+        </fileSet>
 	</fileSets>
 
 </assembly>

@@ -29,6 +29,7 @@
     <module>asdc-controller</module>
     <module>status-control</module>
     <module>bpmn</module>
+    <module>so-monitoring</module>
     <module>packages</module>
     <!-- module>aria</module -->
   </modules>
@@ -51,6 +52,9 @@
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
     <resteasy.version>3.0.19.Final</resteasy.version>
     <enforcer.skip>true</enforcer.skip>
+    <camunda.version>7.8.0</camunda.version>
+    <version.commons-fileupload>1.3.3</version.commons-fileupload>
+    <version.springframework>3.2.4.RELEASE</version.springframework>
   </properties>
   <distributionManagement>
     <repository>
@@ -551,6 +555,18 @@
   </dependencies>
   <dependencyManagement>
     <dependencies>
+       <dependency>
+         <groupId>org.camunda.bpm</groupId>
+         <artifactId>camunda-bom</artifactId>
+         <version>${camunda.version}</version>
+         <scope>import</scope>
+         <type>pom</type>
+       </dependency>
+       <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${version.springframework}</version>
+      </dependency>
       <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
       <!-- force use of version 4.5 everywhere in transient deps, aligned 
         on WildFly 10 version -->

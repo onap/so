@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============LICENSE_START=======================================================
+   Copyright (C) 2018 Ericsson. All rights reserved.
+  ================================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  SPDX-License-Identifier: Apache-2.0
+  ============LICENSE_END=========================================================
+-->
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <display-name>camunda bpm rest api</display-name>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>EmptyBodyFilter</filter-name>
+        <filter-class>org.camunda.bpm.engine.rest.filter.EmptyBodyFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>EmptyBodyFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>CacheControlFilter</filter-name>
+        <filter-class>org.camunda.bpm.engine.rest.filter.CacheControlFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CacheControlFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+  
+  <!-- Http Basic Authentication Filter -->
+    <filter>
+        <filter-name>camunda-auth</filter-name>
+        <filter-class>org.camunda.bpm.engine.rest.security.auth.ProcessEngineAuthenticationFilter</filter-class>
+        <init-param>
+            <param-name>authentication-provider</param-name>
+            <param-value>org.camunda.bpm.engine.rest.security.auth.impl.HttpBasicAuthenticationProvider</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>camunda-auth</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+</web-app>
