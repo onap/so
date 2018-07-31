@@ -10,7 +10,7 @@
       <bpmn:incoming>SequenceFlow_18l3crb</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0khtova</bpmn:outgoing>
       <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DeleteSDNCNetworkResource()
+def dcsi = new DeActivateSDNCNetworkResource()
 dcsi.prepareSDNCRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:endEvent id="EndEvent_1x6k78c" name="delete SDNC call end">
@@ -35,24 +35,24 @@ dcsi.prepareSDNCRequest(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_0x5f1o7</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ow44q0</bpmn:outgoing>
       <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DeleteSDNCNetworkResource()
-dcsi.postDeleteSDNCCall(execution)</bpmn:script>
+def dcsi = new DeActivateSDNCNetworkResource()
+dcsi.postDeactivateSDNCCall(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_18l3crb" sourceRef="Task_13sx2bp" targetRef="PreprocessIncomingRequest_task" />
     <bpmn:scriptTask id="Task_13sx2bp" name="Pre Process Request" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1qo2pln</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_18l3crb</bpmn:outgoing>
       <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DeleteSDNCNetworkResource()
+def dcsi = new DeleteSDNDeActivateSDNCNetworkResourceCNetworkResource()
 dcsi.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1mz0vdx" sourceRef="Task_0tezqd4" targetRef="Task_18tomkl" />
-    <bpmn:scriptTask id="Task_0tezqd4" name="Delete progress update parameters before delete" scriptFormat="groovy">
+    <bpmn:scriptTask id="Task_0tezqd4" name="Delete progress update parameters after deactivate" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0uig0sx</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1mz0vdx</bpmn:outgoing>
       <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DeleteSDNCNetworkResource()
-dcsi.prepareUpdateBeforeDeleteSDNCResource(execution)</bpmn:script>
+def dcsi = new DeActivateSDNCNetworkResource()
+dcsi.prepareUpdateAfterDeActivateSDNCResource(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:serviceTask id="Task_18tomkl" name="update progress update">
       <bpmn:extensionElements>
@@ -80,7 +80,7 @@ dcsi.prepareUpdateBeforeDeleteSDNCResource(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_0ow44q0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_15wux6a</bpmn:outgoing>
       <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def csi = new  DeleteSDNCNetworkResource()
+def csi = new  DeActivateSDNCNetworkResource()
 csi.sendSyncResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_15wux6a" sourceRef="ScriptTask_1emjxm2" targetRef="EndEvent_1x6k78c" />
