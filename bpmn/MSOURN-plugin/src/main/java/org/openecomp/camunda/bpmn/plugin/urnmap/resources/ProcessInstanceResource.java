@@ -29,7 +29,6 @@ import javax.ws.rs.PUT;
 
 import org.camunda.bpm.cockpit.db.QueryParameters;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractPluginResource;
-import org.camunda.bpm.cockpit.db.CommandExecutor;
 import org.openecomp.camunda.bpmn.plugin.urnmap.db.*;
 
 public class ProcessInstanceResource extends AbstractPluginResource {
