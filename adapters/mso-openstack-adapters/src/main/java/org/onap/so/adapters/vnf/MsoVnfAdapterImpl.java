@@ -491,51 +491,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     		LOGGER.debug(" HeatBridgeMain.py failed for unknown reasons!" + e);
     		return false;
     	}
-    }
-
-    private void sendMapToDebug(Map<String, Object> inputs, String optionalName) {
-    	int i = 0;
-    	StringBuilder sb = new StringBuilder(optionalName == null ? "\ninputs" : "\n" + optionalName);
-    	if (inputs == null) {
-    		sb.append("\tNULL");
-    	}
-    	else if (inputs.size() < 1) {
-    		sb.append("\tEMPTY");
-    	} else {
-    		for (Map.Entry<String,Object> entry : inputs.entrySet()) {
-    			String outputString;
-    			String str = entry.getKey();
-    			Object value = entry.getValue();
-    			try {
-    				outputString = value.toString();
-    			} catch (Exception e) {
-    				LOGGER.debug("Exception :",e);
-    				outputString = "Unable to call toString() on the value for " + str;
-    			}
-                sb.append("\t\nitem ").append(i++).append(": '").append(str).append("'='").append(outputString)
-                        .append("'");
-    		}
-    	}
-    	LOGGER.debug(sb.toString());
-    	return;	
-    }
-    
-    private void sendMapToDebug(Map<String, String> inputs) {
-    	int i = 0;
-    	StringBuilder sb = new StringBuilder("inputs:");
-    	if (inputs == null) {
-    		sb.append("\tNULL");
-    	}
-    	else if (inputs.size() < 1) {
-    		sb.append("\tEMPTY");
-    	} else {
-    		for (Map.Entry<String, String> entry: inputs.entrySet()) {
-                sb.append("\titem ").append(i++).append(": ").append(entry.getKey()).append("=").append(entry.getValue());
-    		}
-    	}
-    	LOGGER.debug(sb.toString());
-    	return;
-    }
+    }  
 
     private String convertNode(final JsonNode node) {
         try {
@@ -646,13 +602,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	nestedBaseStackId = baseVfHeatStackId;
         }
 
-        if (inputs == null) {
-        	// Create an empty set of inputs
-        	inputs = new HashMap<>();
-        	LOGGER.debug("inputs == null - setting to empty");
-        } else {
-        	this.sendMapToDebug(inputs);
-        }
         //This method will also handle doing things the "old" way - i.e., just orchestrate a VNF
         boolean oldWay = false;
         if (requestTypeString.startsWith("X")) {
@@ -775,13 +724,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	    LOGGER.debug(error);
         	    throw new VnfException (error, MsoExceptionCategory.USERDATA);
         	} else {
-        		LOGGER.debug("Found nested volume heat stack - copying values to inputs *later*");
-        		//this.sendMapToDebug(inputs);
-        		nestedVolumeOutputs = nestedHeatStack.getOutputs();
-        		this.sendMapToDebug(nestedVolumeOutputs, "volumeStackOutputs");
-        		//TODO
-        		//heat.copyStringOutputsToInputs(inputs, nestedHeatStack.getOutputs(), false);      
-        		//this.sendMapToDebug(inputs);
+        		LOGGER.debug("Found nested volume heat stack - copying values to inputs *later*");        		
+        		nestedVolumeOutputs = nestedHeatStack.getOutputs();        	
         	}
         }
 
@@ -812,13 +756,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	    LOGGER.debug(error);
         	    throw new VnfException (error, MsoExceptionCategory.USERDATA);
         	} else {
-        		LOGGER.debug("Found nested base heat stack - these values will be copied to inputs *later*");
-        		//this.sendMapToDebug(inputs);
-        		baseStackOutputs = nestedBaseHeatStack.getOutputs();
-        		this.sendMapToDebug(baseStackOutputs, "baseStackOutputs");
-        		//TODO
-        		//heat.copyStringOutputsToInputs(inputs, nestedBaseHeatStack.getOutputs(), false);      
-        		//this.sendMapToDebug(inputs);
+        		LOGGER.debug("Found nested base heat stack - these values will be copied to inputs *later*");        		
+        		baseStackOutputs = nestedBaseHeatStack.getOutputs();        		
         	}
         }
 
@@ -1160,8 +1099,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             heat.copyBaseOutputsToInputs(goldenInputs, baseStackOutputs, parameterNames, aliasToParam);
             // Step 3 - add the volume inputs if any
             LOGGER.debug("Now add in the volume stack outputs if applicable");
-            heat.copyBaseOutputsToInputs(goldenInputs, nestedVolumeOutputs, parameterNames, aliasToParam);
-            this.sendMapToDebug(goldenInputs, "Final inputs sent to openstack");
+            heat.copyBaseOutputsToInputs(goldenInputs, nestedVolumeOutputs, parameterNames, aliasToParam);         
             
             for (HeatTemplateParam parm : heatTemplate.getParameters ()) {
                 LOGGER.debug ("Parameter:'" + parm.getParamName ()
@@ -1468,9 +1406,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	// Create an empty set of inputs
         	inputs = new HashMap<>();
         	LOGGER.debug("inputs == null - setting to empty");
-        } else {
-        	this.sendMapToDebug(inputs);
-        }
+        } 
+        
         boolean isBaseRequest = false;
         boolean isVolumeRequest = false;
         if (requestTypeString.startsWith("VOLUME")) {
@@ -1558,12 +1495,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	    throw new VnfException (error, MsoExceptionCategory.USERDATA);
         	} else {
         		LOGGER.debug("Found nested heat stack - copying values to inputs *later*");
-        		nestedVolumeOutputs = nestedHeatStack.getOutputs();
-        		//this.sendMapToDebug(inputs);
-        		this.sendMapToDebug(nestedVolumeOutputs, "volumeStackOutputs");
-        		//TODO
-        		heat.copyStringOutputsToInputs(inputs, nestedHeatStack.getOutputs(), false);
-        		//this.sendMapToDebug(inputs);
+        		nestedVolumeOutputs = nestedHeatStack.getOutputs();        	
+        		heat.copyStringOutputsToInputs(inputs, nestedHeatStack.getOutputs(), false);        	
         	}
         }
         // handle a nestedBaseStackId if sent - this is the stack ID of the base.
@@ -1596,11 +1529,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	} else {
         		LOGGER.debug("Found nested base heat stack - copying values to inputs *later*");
         		baseStackOutputs = nestedBaseHeatStack.getOutputs();
-        		//this.sendMapToDebug(inputs);
-        		this.sendMapToDebug(baseStackOutputs, "baseStackOutputs");
-        		//TODO
         		heat.copyStringOutputsToInputs(inputs, nestedBaseHeatStack.getOutputs(), false);
-        		//this.sendMapToDebug(inputs);
         	}
         }
 
