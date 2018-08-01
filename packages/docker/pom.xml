@@ -180,6 +180,31 @@
 							</build>
 						</image>
 						<image>
+							<name>so/vfc-adapter</name>
+							<build>
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>Dockerfile.so-app</dockerFile>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>${project.version}-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
+								</tags>
+								<assembly>
+									<inline>
+										<dependencySets>
+											<dependencySet>
+												<includes>
+													<include>org.onap.so.adapters:mso-vfc-adapter</include>
+												</includes>
+												<outputFileNameMapping>app.jar</outputFileNameMapping>
+											</dependencySet>
+										</dependencySets>
+									</inline>
+								</assembly>
+							</build>
+						</image>
+						<image>
 							<name>so/asdc-controller</name>
 							<build>
 								<cleanup>try</cleanup>
@@ -321,6 +346,11 @@
 		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>mso-openstack-adapters</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so.adapters</groupId>
+			<artifactId>mso-vfc-adapter</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
