@@ -1,0 +1,47 @@
+# will be used as entry in DB to say SITE OFF/ON for healthcheck
+
+server:
+    port: 8083
+    tomcat:
+        max-threads: 50
+ssl-enable: false
+mso:
+  logPath: logs
+  site-name: localSite
+spring:
+  datasource:
+    url: jdbc:mariadb://mariadb:3306/requestdb
+    username: so
+    password: so123
+    driver-class-name: org.mariadb.jdbc.Driver
+    initialize: false
+    initialization-mode: never
+  jpa:
+    generate-ddl: false
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      enable-lazy-load-no-trans: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  security:
+    usercredentials:
+    -
+      username: bpel
+      password: '$2b$10$byoF5q.VngZd8nj63q2Rm.bbAGUQrNG3DliPtc5l9nJIbXpXyCfrG'
+      role: BPEL-Client
+    -  
+      username: mso_admin
+      password: '$2b$10$byoF5q.VngZd8nj63q2Rm.bbAGUQrNG3DliPtc5l9nJIbXpXyCfrG'
+      role: ACTUATOR
+
+#Actuator
+management: 
+  context-path: /manage
+
+flyway:
+  baseline-on-migrate: true
+  url: jdbc:mariadb://mariadb:3306/requestdb
+  user: so
+  password: so123
+      
