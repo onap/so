@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -10,20 +11,16 @@
 
 	<packaging>pom</packaging>
 	<artifactId>docker</artifactId>
-
-	<name>MSO Docker Deliveries</name>
-	<description>OpenECOMP MSO Docker Deliveries</description>
+	<name>Docker Images</name>
+	<description>Docker Images</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<!-- If the maven profile "docker" is specified the parameter -Dmso.git.url=<MsoGitRepo> must be provided
-		     i.e: mvn clean install -P docker -Dmso.git.url=https://gerrit.openecomp.org/r-->
-		<mso.chef.git.url.prefix>${env.GIT_NO_PROJECT}</mso.chef.git.url.prefix>
-		<mso.chef.git.branchname>master</mso.chef.git.branchname>
-		<mso.chef.git.url.suffix.chef.repo>so/chef-repo</mso.chef.git.url.suffix.chef.repo>
-		<mso.chef.git.url.suffix.chef.config>so/so-config</mso.chef.git.url.suffix.chef.config>
-		<mso.project.version>${project.version}</mso.project.version>
+		<so.project.version>${project.version}</so.project.version>
+		<docker.skip>false</docker.skip>
+		<docker.skip.build>false</docker.skip.build>
+		<docker.skip.push>false</docker.skip.push>
 		<docker.pull.registry>nexus3.onap.org:10001</docker.pull.registry>
 		<docker.push.registry>nexus3.onap.org:10003</docker.push.registry>
 	</properties>
@@ -31,74 +28,37 @@
 	<build>
 		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
-		    <plugin>
-                <groupId>org.codehaus.groovy.maven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                  <execution>
-                    <phase>validate</phase>
-                    <goals>
-                      <goal>execute</goal>
-                    </goals>
-                    <configuration>
-                      <source>
-                        println project.properties['mso.project.version'];
-                        def versionArray;
-                        if ( project.properties['mso.project.version'] != null ) {
-                            versionArray = project.properties['mso.project.version'].split('\\.');
-                        }
-
-                        if ( project.properties['mso.project.version'].endsWith("-SNAPSHOT") ) {
-                            project.properties['project.docker.latesttag.version']=versionArray[0] + '.' + versionArray[1] + "-SNAPSHOT-latest";
-                        } else {
-                            project.properties['project.docker.latesttag.version']=versionArray[0] + '.' + versionArray[1] + "-STAGING-latest";
-                        }
-
-                        println 'New Tag for docker:' + project.properties['project.docker.latesttag.version'];
-                      </source>
-                    </configuration>
-                  </execution>
-              </executions>
-            </plugin>
-
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-scm-plugin</artifactId>
-				<version>1.9.5</version>
+				<groupId>org.codehaus.groovy.maven</groupId>
+				<artifactId>gmaven-plugin</artifactId>
+				<version>1.0</version>
 				<executions>
 					<execution>
-						<id>chef-repo-checkout</id>
+						<phase>validate</phase>
 						<goals>
-							<goal>checkout</goal>
+							<goal>execute</goal>
 						</goals>
-						<phase>initialize</phase>
 						<configuration>
-							<connectionUrl>scm:git:${mso.chef.git.url.prefix}/${mso.chef.git.url.suffix.chef.repo}</connectionUrl>
-							<checkoutDirectory>src/main/docker/docker-files/chef-configs/chef-repo</checkoutDirectory>
-							<scmVersion>${mso.chef.git.branchname}</scmVersion>
-							<scmVersionType>branch</scmVersionType>
-							<skipCheckoutIfExists>true</skipCheckoutIfExists>
-							<pushChanges>false</pushChanges>
-						</configuration>
-					</execution>
-					<execution>
-						<id>mso-config-checkout</id>
-						<goals>
-							<goal>checkout</goal>
-						</goals>
-						<phase>initialize</phase>
-						<configuration>
-							<connectionUrl>scm:git:${mso.chef.git.url.prefix}/${mso.chef.git.url.suffix.chef.config}</connectionUrl>
-							<checkoutDirectory>src/main/docker/docker-files/chef-configs/mso-config</checkoutDirectory>
-							<scmVersion>${mso.chef.git.branchname}</scmVersion>
-							<scmVersionType>branch</scmVersionType>
-							<skipCheckoutIfExists>true</skipCheckoutIfExists>
-							<pushChanges>false</pushChanges>
+							<source>
+								println 'Project version: ' + project.properties['so.project.version'];
+								def versionArray;
+								if ( project.properties['so.project.version'] != null ) {
+									versionArray = project.properties['so.project.version'].split('-');
+								}
+
+								if ( project.properties['so.project.version'].endsWith("-SNAPSHOT") ) {
+									project.properties['project.docker.latesttag.version']=versionArray[0] + "-SNAPSHOT-latest";
+								} else {
+									project.properties['project.docker.latesttag.version']=versionArray[0] + '.' + versionArray[1] + "-STAGING-latest";
+								}
+
+								println 'New tag for docker: ' + project.properties['project.docker.latesttag.version'];
+							</source>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
@@ -112,62 +72,191 @@
 
 					<images>
 						<image>
-							<name>openecomp/jacoco:1.0</name>
-							<alias>jacoco</alias>
+							<name>so/base-image:1.0</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
-								<dockerFile>Dockerfile.jacoco</dockerFile>
-
+								<dockerFile>Dockerfile.so-base-image</dockerFile>
 							</build>
 						</image>
 						<image>
-							<name>openecomp/ubuntu-update:1.0</name>
-							<alias>ubuntu-update</alias>
+							<name>so/catalog-db-adapter</name>
 							<build>
-
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
-								<dockerFile>Dockerfile.ubuntu-16.04-update</dockerFile>
-
-							</build>
-						</image>
-						<image>
-							<name>openecomp/wildfly:1.0</name>
-							<alias>wildfly</alias>
-							<build>
-
-								<cleanup>try</cleanup>
-								<dockerFileDir>docker-files</dockerFileDir>
-								<dockerFile>Dockerfile.wildfly-10</dockerFile>
-
-							</build>
-						</image>
-						<image>
-							<name>openecomp/mso:%l</name>
-							<alias>onap/so:%1</alias>
-							<alias>openecomp/mso:%l</alias>
-							<alias>so</alias>
-							<build>
+								<dockerFile>Dockerfile.so-app</dockerFile>
 								<tags>
-									<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+									<tag>${project.version}</tag>
+									<tag>${project.version}-${maven.build.timestamp}</tag>
 									<tag>${project.docker.latesttag.version}</tag>
 								</tags>
-								<cleanup>try</cleanup>
-								<dockerFileDir>docker-files</dockerFileDir>
-								<dockerFile>Dockerfile.mso-chef-final</dockerFile>
 								<assembly>
-									<basedir>/</basedir>
-
-									<user>jboss:jboss:jboss</user>
-									<basedir>/opt/jboss/wildfly/standalone/deployments</basedir>
-									<descriptor>../../../../deliveries/src/main/assembly/war-pack/mso-wars.xml</descriptor>
+									<inline>
+										<dependencySets>
+											<dependencySet>
+												<includes>
+													<include>org.onap.so.adapters:mso-catalog-db-adapter</include>
+												</includes>
+												<outputFileNameMapping>app.jar</outputFileNameMapping>
+											</dependencySet>
+										</dependencySets>
+									</inline>
 								</assembly>
 							</build>
 						</image>
-
+						<image>
+							<name>so/requests-db-adapter</name>
+							<build>
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>Dockerfile.so-app</dockerFile>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>${project.version}-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
+								</tags>
+								<assembly>
+									<inline>
+										<dependencySets>
+											<dependencySet>
+												<includes>
+													<include>org.onap.so.adapters:mso-requests-db-adapter</include>
+												</includes>
+												<outputFileNameMapping>app.jar</outputFileNameMapping>
+											</dependencySet>
+										</dependencySets>
+									</inline>
+								</assembly>
+							</build>
+						</image>
+						<image>
+							<name>so/sdnc-adapter</name>
+							<build>
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>Dockerfile.so-app</dockerFile>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>${project.version}-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
+								</tags>
+								<assembly>
+									<inline>
+										<dependencySets>
+											<dependencySet>
+												<includes>
+													<include>org.onap.so:mso-sdnc-adapter</include>
+												</includes>
+												<outputFileNameMapping>app.jar</outputFileNameMapping>
+											</dependencySet>
+										</dependencySets>
+									</inline>
+								</assembly>
+							</build>
+						</image>
+						<image>
+							<name>so/openstack-adapters</name>
+							<build>
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>Dockerfile.so-app</dockerFile>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>${project.version}-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
+								</tags>
+								<assembly>
+									<inline>
+										<dependencySets>
+											<dependencySet>
+												<includes>
+													<include>org.onap.so:mso-openstack-adapters</include>
+												</includes>
+												<outputFileNameMapping>app.jar</outputFileNameMapping>
+											</dependencySet>
+										</dependencySets>
+									</inline>
+								</assembly>
+							</build>
+						</image>
+						<image>
+							<name>so/asdc-controller</name>
+							<build>
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>Dockerfile.so-app</dockerFile>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>${project.version}-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
+								</tags>
+								<assembly>
+									<inline>
+										<dependencySets>
+											<dependencySet>
+												<includes>
+													<include>org.onap.so:asdc-controller</include>
+												</includes>
+												<outputFileNameMapping>app.jar</outputFileNameMapping>
+											</dependencySet>
+										</dependencySets>
+									</inline>
+								</assembly>
+							</build>
+						</image>
+						<image>
+							<name>so/bpmn-infra</name>
+							<build>
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>Dockerfile.so-app</dockerFile>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>${project.version}-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
+								</tags>
+								<assembly>
+									<inline>
+										<dependencySets>
+											<dependencySet>
+												<includes>
+													<include>org.onap.so:mso-infrastructure-bpmn</include>
+												</includes>
+												<outputFileNameMapping>app.jar</outputFileNameMapping>
+											</dependencySet>
+										</dependencySets>
+									</inline>
+								</assembly>
+							</build>
+						</image>
+						<image>
+							<name>so/api-handler-infra</name>
+							<build>
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>Dockerfile.so-app</dockerFile>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>${project.version}-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
+								</tags>
+								<assembly>
+									<inline>
+										<dependencySets>
+											<dependencySet>
+												<includes>
+													<include>org.onap.so:mso-api-handler-infra</include>
+												</includes>
+												<outputFileNameMapping>app.jar</outputFileNameMapping>
+											</dependencySet>
+										</dependencySets>
+									</inline>
+								</assembly>
+							</build>
+						</image>
 					</images>
 				</configuration>
+
 				<executions>
 					<execution>
 						<id>clean-images</id>
@@ -177,7 +266,6 @@
 						</goals>
 						<configuration>
 							<removeAll>true</removeAll>
-							<image>openecomp/mso:%l</image>
 						</configuration>
 					</execution>
 
@@ -197,11 +285,10 @@
 							<goal>push</goal>
 						</goals>
 						<configuration>
-							<image>openecomp/mso:%l,openecomp/jacoco:1.0</image>
+							<image>so/catalog-db-adapter,so/requests-db-adapter,so/sdnc-adapter,so/openstack-adapters,so/asdc-controller,so/bpmn-infra,so/api-handler-infra</image>
 						</configuration>
 					</execution>
 				</executions>
-
 			</plugin>
 
 			<plugin>
@@ -215,4 +302,41 @@
 		</plugins>
 	</build>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.onap.so.adapters</groupId>
+			<artifactId>mso-catalog-db-adapter</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so.adapters</groupId>
+			<artifactId>mso-requests-db-adapter</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>mso-sdnc-adapter</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>mso-openstack-adapters</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>asdc-controller</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>mso-infrastructure-bpmn</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>mso-api-handler-infra</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 </project>

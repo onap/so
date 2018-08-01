@@ -1,0 +1,24 @@
+FROM so/base-image:1.0
+
+ARG http_proxy
+ENV HTTP_PROXY=$http_proxy
+ENV http_proxy=$HTTP_PROXY
+ARG https_proxy
+ENV HTTPS_PROXY=$https_proxy
+ENV https_proxy=$HTTPS_PROXY
+
+RUN mkdir /app
+
+# TODO: certificates?
+
+COPY maven/app.jar /app
+COPY configs/logging/logback-spring.xml /app
+COPY scripts/startService.sh /app
+
+RUN chown -R so:so /app && chmod 700 /app/startService.sh
+
+VOLUME /tmp
+
+WORKDIR /app
+USER so:so
+ENTRYPOINT /app/startService.sh
