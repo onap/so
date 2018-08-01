@@ -22,9 +22,6 @@ package org.onap.so.adapters.sdncrest;
 
 import java.io.Serializable;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
