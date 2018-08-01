@@ -49,7 +49,7 @@
 								if ( project.properties['so.project.version'].endsWith("-SNAPSHOT") ) {
 									project.properties['project.docker.latesttag.version']=versionArray[0] + "-SNAPSHOT-latest";
 								} else {
-									project.properties['project.docker.latesttag.version']=versionArray[0] + '.' + versionArray[1] + "-STAGING-latest";
+									project.properties['project.docker.latesttag.version']=versionArray[0] + "-STAGING-latest";
 								}
 
 								println 'New tag for docker: ' + project.properties['project.docker.latesttag.version'];
