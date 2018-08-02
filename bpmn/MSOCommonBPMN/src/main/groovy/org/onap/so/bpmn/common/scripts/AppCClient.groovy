@@ -20,21 +20,11 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.onap.so.bpmn.core.UrnPropertiesReader
-
-import java.util.HashMap;
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.hibernate.event.internal.AbstractLockUpgradeEventListener
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.appc.ApplicationControllerOrchestrator
-import org.onap.so.client.appc.ApplicationControllerOrchestratorException
 import org.onap.appc.client.lcm.model.Action
-import org.onap.appc.client.lcm.model.Status
-import org.onap.so.bpmn.appc.payload.PayloadClient
 import org.onap.so.client.appc.ApplicationControllerAction;
-import groovy.transform.TypeChecked;
-import java.util.UUID;
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
@@ -113,7 +103,7 @@ public class AppCClient extends AbstractServiceTaskProcessor{
 				payload =  Optional.of(pay)
 			}
 			if(action.equals(Action.HealthCheck)){
-				String healthCheckIndex = execution.getVariable('healthCheckIndex')
+				Integer healthCheckIndex = (Integer) execution.getVariable('healthCheckIndex')
 				execution.setVariable('workStep', action.toString() + healthCheckIndex)
 				execution.setVariable('healthCheckIndex', healthCheckIndex + 1)
 			}
