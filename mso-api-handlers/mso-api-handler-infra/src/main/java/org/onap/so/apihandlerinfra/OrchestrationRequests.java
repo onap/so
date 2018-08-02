@@ -48,7 +48,6 @@ import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.AlarmLoggerInfo;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoAlarmLogger;
@@ -76,11 +75,10 @@ public class OrchestrationRequests {
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, OrchestrationRequests.class);
     
-    private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
-    
+
     @Autowired
-    private InfraActiveRequestsRepository infraActiveRequestsRepository;
-    
+	private RequestsDbClient requestsDbClient;
+
     @Autowired
     private MsoRequest msoRequest;
     
@@ -101,7 +99,8 @@ public class OrchestrationRequests {
 		InfraActiveRequests requestDB = null;
 
 		try {
-			requestDB = infraActiveRequestsRepository.findOneByRequestIdOrClientRequestId(requestId, requestId);
+			requestDB = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
+
 		} catch (Exception e) {
 
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.AvailabilityError).build();
@@ -128,7 +127,7 @@ public class OrchestrationRequests {
         }
 
         Request request = mapInfraActiveRequestToRequest(requestDB);
-
+		request.setRequestId(requestId);
         orchestrationResponse.setRequest(request);
         
         return builder.buildResponse(HttpStatus.SC_OK, requestId, orchestrationResponse, apiVersion);
@@ -167,7 +166,7 @@ public class OrchestrationRequests {
 
 		}
 			
-		activeRequests = infraActiveRequestsRepository.getOrchestrationFiltersFromInfraActive(orchestrationMap);
+		activeRequests = requestsDbClient.getOrchestrationFiltersFromInfraActive(orchestrationMap);
 
 		orchestrationList = new GetOrchestrationListResponse();
 		List<RequestList> requestLists = new ArrayList<>();
@@ -222,7 +221,7 @@ public class OrchestrationRequests {
             throw validateException;
 		}
 
-		infraActiveRequest = infraActiveRequestsRepository.findOneByRequestIdOrClientRequestId(requestId, requestId);
+		infraActiveRequest = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
 		if(infraActiveRequest == null) {
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MsoLogger.ErrorCode.BusinessProcesssError).build();
 
@@ -237,7 +236,8 @@ public class OrchestrationRequests {
 			if(status.equalsIgnoreCase("IN_PROGRESS") || status.equalsIgnoreCase("PENDING") || status.equalsIgnoreCase("PENDING_MANUAL_TASK")){
 				infraActiveRequest.setRequestStatus("UNLOCKED");
 				infraActiveRequest.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
-				infraActiveRequestsRepository.save(infraActiveRequest);
+				infraActiveRequest.setRequestId(requestId);
+				requestsDbClient.save(infraActiveRequest);
 			}else{
 
 				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MsoLogger.ErrorCode.DataError).build();

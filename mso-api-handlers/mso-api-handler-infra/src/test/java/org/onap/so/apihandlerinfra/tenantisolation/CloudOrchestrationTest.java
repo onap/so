@@ -20,55 +20,43 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.onap.so.apihandlerinfra.ApiHandlerApplication;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.apihandlerinfra.Status;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Action;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.TenantIsolationRequest;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.ws.rs.core.MediaType;
+import java.io.File;
+import java.io.IOException;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class CloudOrchestrationTest extends BaseTest {
 	
 	private static final String path = "/onap/so/infra/cloudResources/v1";
+
 	private HttpHeaders headers = new HttpHeaders();
 
-	
-	@LocalServerPort
-	private int port;
-	
-	@Autowired 
-	private InfraActiveRequestsRepository iarRepo;
-	
+	@Before
+	public void setupTestClass() throws Exception{
+		stubFor(post(urlPathEqualTo(getTestUrl(""))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_CREATED)));
+	}
+
 	@Test
 	public void testCreateOpEnvObjectMapperError() throws IOException {
 		
@@ -77,7 +65,6 @@ public class CloudOrchestrationTest extends BaseTest {
 		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 	
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/operationalEnvironments");
-		       
 		ResponseEntity<String> response = restTemplate.exchange(
 				builder.toUriString(),
 				HttpMethod.POST, entity, String.class);
@@ -108,21 +95,17 @@ public class CloudOrchestrationTest extends BaseTest {
 	}
 	
 	@Test
-	public void testCreateOpEnvReqRecord() throws IOException {
+	public void testCreateOpEnvReqRecordDuplicateCheck() throws IOException {
+		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withBody(String.format(getResponseTemplate, "123", "PENDING"))
+				.withStatus(HttpStatus.SC_OK)));
 		ObjectMapper mapper = new ObjectMapper();
 		TenantIsolationRequest request = mapper.readValue(new File("src/test/resources/TenantIsolation/ECOMPOperationEnvironmentCreate.json"), TenantIsolationRequest.class);
 		headers.set("Accept", MediaType.APPLICATION_JSON);
 		headers.set("Content-Type", MediaType.APPLICATION_JSON);
 		HttpEntity<TenantIsolationRequest> entity = new HttpEntity<TenantIsolationRequest>(request, headers);
-		
-		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("123");
-		iar.setOperationalEnvName("myOpEnv");
-		iar.setRequestScope("create");
-		iar.setRequestStatus("PENDING");
-		iar.setRequestAction("UNKNOWN");
-		iarRepo.saveAndFlush(iar);
-		
+
+
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/operationalEnvironments");
 		       
 		ResponseEntity<String> response = restTemplate.exchange(
@@ -142,26 +125,19 @@ public class CloudOrchestrationTest extends BaseTest {
 		HttpEntity<TenantIsolationRequest> entity = new HttpEntity<TenantIsolationRequest>(request, headers);
 	
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/operationalEnvironments");
-		       
+		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withStatus(HttpStatus.SC_NOT_FOUND)));
 		ResponseEntity<String> response = restTemplate.exchange(
 				builder.toUriString(),
 				HttpMethod.POST, entity, String.class);
-		InfraActiveRequests iar = iarRepo.findOneByRequestId("987654321");
-		assertEquals(iar.getRequestBody(), mapper.writeValueAsString(request.getRequestDetails()));
 		assertEquals(200, response.getStatusCodeValue());
 	}
 	
 	@Test
 	public void testCreateVNFDuplicateCheck() throws IOException {
-		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestId");
-		iar.setOperationalEnvName("myVnfOpEnv");
-		iar.setRequestStatus(Status.IN_PROGRESS.toString());
-		iar.setAction(Action.create.toString());
-		iar.setRequestAction(Action.create.toString());
-		iar.setRequestScope("UNKNOWN");
-		iarRepo.saveAndFlush(iar);
-		
+		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myVnfOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withBody(String.format(getResponseTemplate, "requestId", Status.IN_PROGRESS.toString()))
+				.withStatus(HttpStatus.SC_OK)));
 		ObjectMapper mapper = new ObjectMapper();
 		TenantIsolationRequest request = mapper.readValue(new File("src/test/resources/TenantIsolation/VNFOperationEnvironmentCreate.json"), TenantIsolationRequest.class);
 		headers.set("Accept", MediaType.APPLICATION_JSON);
@@ -185,7 +161,9 @@ public class CloudOrchestrationTest extends BaseTest {
 		HttpEntity<TenantIsolationRequest> entity = new HttpEntity<TenantIsolationRequest>(request, headers);
 	
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/operationalEnvironments");
-		       
+		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myVnfOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withStatus(HttpStatus.SC_NOT_FOUND)));
+
 		ResponseEntity<String> response = restTemplate.exchange(
 				builder.toUriString(),
 				HttpMethod.POST, entity, String.class);
@@ -201,7 +179,12 @@ public class CloudOrchestrationTest extends BaseTest {
 		HttpEntity<TenantIsolationRequest> entity = new HttpEntity<TenantIsolationRequest>(request, headers);
 	
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/operationalEnvironments/ff3514e3-5a33-55df-13ab-12abad84e7ff/activate");
-		       
+		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":{\"operationalEnvironmentId\":\"ff3514e3-5a33-55df-13ab-12abad84e7ff\"},\"instanceName\":\"myVnfOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withStatus(HttpStatus.SC_NOT_FOUND)));
+
+		stubFor(get(urlPathEqualTo(getTestUrl("checkVnfIdStatus/ff3514e3-5a33-55df-13ab-12abad84e7ff"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withStatus(HttpStatus.SC_OK)));
+
 		ResponseEntity<String> response = restTemplate.exchange(
 				builder.toUriString(),
 				HttpMethod.POST, entity, String.class);
@@ -211,14 +194,6 @@ public class CloudOrchestrationTest extends BaseTest {
 	
 	@Test
 	public void testDeactivate() throws IOException {
-		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("ff3514e3-5a33-55df-13ab-12abad84e7fa");
-		iar.setRequestStatus(Status.COMPLETE.toString());
-		iar.setRequestAction("UNKNOWN");
-		iar.setRequestScope("UNKNOWN");
-		iarRepo.saveAndFlush(iar);
-		
-				
 		ObjectMapper mapper = new ObjectMapper();
 		TenantIsolationRequest request = mapper.readValue(new File("src/test/resources/TenantIsolation/DeactivateOperationEnvironment.json"), TenantIsolationRequest.class);
 		
@@ -226,8 +201,13 @@ public class CloudOrchestrationTest extends BaseTest {
 		headers.set("Content-Type", MediaType.APPLICATION_JSON);
 		HttpEntity<TenantIsolationRequest> entity = new HttpEntity<TenantIsolationRequest>(request, headers);
 
-	
-	
+
+//		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":{\"operationalEnvironmentId\":\"ff3514e3-5a33-55df-13ab-12abad84e7fa\"},\"instanceName\":null,\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+//				.withBodyFile((String.format(getResponseTemplate, "ff3514e3-5a33-55df-13ab-12abad84e7fa", Status.COMPLETE.toString()))).withStatus(HttpStatus.SC_OK)));
+
+		stubFor(get(urlPathEqualTo(getTestUrl("checkVnfIdStatus/ff3514e3-5a33-55df-13ab-12abad84e7fa"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withStatus(HttpStatus.SC_OK)));
+
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/operationalEnvironments/ff3514e3-5a33-55df-13ab-12abad84e7fa/deactivate");
 		       
 		ResponseEntity<String> response = restTemplate.exchange(
@@ -237,28 +217,7 @@ public class CloudOrchestrationTest extends BaseTest {
 		assertEquals(200, response.getStatusCodeValue());
 	}
 	
-	@Test
-	public void testDeactivateThreadException() throws IOException {
-		//need to simulate a 500 error
-		/*CloudOrchestration co = new CloudOrchestration();
-		TenantIsolationRequest tenantIsolationRequest = mock(TenantIsolationRequest.class);
-		RequestsDatabase reqDB = mock(RequestsDatabase.class);
-		TenantIsolationRunnable thread = mock(TenantIsolationRunnable.class);
-		Response res = Response.status(500).entity("Failed creating a Thread").build();
-		
-		co.setRequestsDatabase(reqDB);
-		co.setThread(thread);
-		co.setTenantIsolationRequest(tenantIsolationRequest);
-		String request = IOUtils.toString(ClassLoader.class.getResourceAsStream ("/DeactivateOperationEnvironment.json"), CharEncoding.UTF_8);
-		when(reqDB.checkInstanceNameDuplicate(null, "myVnfOpEnv", "operationalEnvironment")).thenReturn(null);
-		doNothing().when(tenantIsolationRequest).createRequestRecord(Status.IN_PROGRESS, Action.deactivate);
-		doThrow(Exception.class).when(thread).run();
-		when(tenantIsolationRequest.buildServiceErrorResponse(any(Integer.class), any(MsoException.class), any(String.class), any(String.class), any(List.class))).thenReturn(res);
 
-		Response response = co.activateOperationEnvironment(request, null, "ff3514e3-5a33-55df-13ab-12abad84e7ff");
-		assertEquals(500, response.getStatus());*/
-	}
-	
 	@Test
 	@Ignore
 	public void testDeactivateDupCheck() throws IOException {
@@ -270,7 +229,7 @@ public class CloudOrchestrationTest extends BaseTest {
 		iar.setAction(Action.create.toString());
 		iar.setRequestAction(Action.create.toString());
 		iar.setRequestScope("UNKNOWN");
-		iarRepo.saveAndFlush(iar);
+		//iarRepo.saveAndFlush(iar);
 		ObjectMapper mapper = new ObjectMapper();
 		String request = mapper.readValue(new File("src/test/resources/TenantIsolation/DeactivateOperationEnvironment.json"), String.class);
 		
