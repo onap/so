@@ -22,6 +22,8 @@ package org.onap.so.adapters.vdu;
 
 import java.util.Arrays;
 import java.util.Objects;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 public class VduArtifact {
 	
@@ -35,6 +37,21 @@ public class VduArtifact {
 	private byte[] content;
 	private ArtifactType type;
 	
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof VduArtifact)) {
+			return false;
+		}
+		VduArtifact castOther = (VduArtifact) other;
+		return new EqualsBuilder().append(name, castOther.name).append(content, castOther.content)
+				.append(type, castOther.type).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(name).append(content).append(type).toHashCode();
+	}
+
 	// Default constructor
 	public VduArtifact() {}
 	
@@ -64,17 +81,5 @@ public class VduArtifact {
 		this.type = type;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		VduArtifact that = (VduArtifact) o;
-		return Objects.equals(name, that.name) &&
-				Arrays.equals(content, that.content) &&
-				type == that.type;
-	}
+	
 }
