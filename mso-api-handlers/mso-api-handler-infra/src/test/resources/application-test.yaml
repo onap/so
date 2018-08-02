@@ -17,6 +17,13 @@ camunda-nodehealthcheck-urn: /mso/nodehealthcheck
 
 
 mso:
+  infra-requests:
+    archived:
+      period: 180
+  adapters:
+    db:
+      spring:
+          endpoint: http://localhost:${wiremock.server.port}
   logPath: logs
   site-name: mtanj
   catalog:

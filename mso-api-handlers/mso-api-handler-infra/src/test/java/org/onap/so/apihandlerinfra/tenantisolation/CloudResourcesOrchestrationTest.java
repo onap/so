@@ -20,17 +20,8 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.ws.rs.core.MediaType;
-
+import org.apache.http.HttpStatus;
+import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -42,6 +33,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.ws.rs.core.MediaType;
+import java.text.ParseException;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class CloudResourcesOrchestrationTest extends BaseTest{
@@ -57,7 +55,10 @@ public class CloudResourcesOrchestrationTest extends BaseTest{
 
 
 	HttpHeaders headers = new HttpHeaders();
-
+	@Before
+	public void setupTestClass() throws Exception{
+		stubFor(post(urlPathEqualTo(getTestUrl(""))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_CREATED)));
+	}
 	@Test
 	public void testUnlockFailObjectMapping() {
 		
@@ -129,7 +130,8 @@ public class CloudResourcesOrchestrationTest extends BaseTest{
 	
 	@Test
 	public void testGetInfraActiveRequestNull() {
-		
+		stubFor(get(urlPathEqualTo(getTestUrl("request-id-null-check"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withStatus(HttpStatus.SC_OK)));
 		headers.set("Accept", MediaType.APPLICATION_JSON);
 		headers.set("Content-Type", MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
@@ -144,53 +146,12 @@ public class CloudResourcesOrchestrationTest extends BaseTest{
 		assertEquals(400, response.getStatusCodeValue());
 
 	}
-	
-	@Test
-	public void testUnlockError() {
-		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestIdtestUnlockError");
-		iar.setRequestScope("requestScope");
-		iar.setRequestType("requestType");
-		iar.setOperationalEnvId("operationalEnvironmentId");
-		iar.setOperationalEnvName("operationalEnvName");
-		iar.setRequestorId("xxxxxx");
-		iar.setRequestBody("");
-		iar.setRequestStatus("IN_PROGRESS");
-		iar.setRequestAction("TEST");
-		
-		iarRepo.saveAndFlush(iar);
-		headers.set("Accept", MediaType.APPLICATION_JSON);
-		headers.set("Content-Type", MediaType.APPLICATION_JSON);
-		HttpEntity<String> entity = new HttpEntity<>(requestJSON, headers);
-	
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/v1/requestId/unlock");
-		       
-		ResponseEntity<String> response = restTemplate.exchange(
-				builder.toUriString(),
-				HttpMethod.POST, entity, String.class);
-		
-		assertEquals(400, response.getStatusCodeValue());
-	}
-	
+
 	@Test
 	public void testUnlock() throws ParseException {
-		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestIdtestUnlock");
-		iar.setRequestScope("requestScope");
-		iar.setRequestType("requestType");
-		iar.setOperationalEnvId("operationalEnvironmentId");
-		iar.setOperationalEnvName("operationalEnvName");
-		iar.setRequestorId("xxxxxx");
-		iar.setRequestBody("{}");
-		iar.setRequestStatus("IN_PROGRESS");
-		iar.setRequestAction("TEST");
-		
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		Date date = dateFormat.parse("23/09/2007");
-		long time = date.getTime();
-		iar.setStartTime(new Timestamp(time));
-		
-		iarRepo.saveAndFlush(iar);
+		stubFor(get(urlPathEqualTo(getTestUrl("requestIdtestUnlock"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withBody(String.format(getResponseTemplate, "requestIdtestUnlock", "IN_PROGRESS"))
+				.withStatus(HttpStatus.SC_OK)));
 		headers.set("Accept", MediaType.APPLICATION_JSON);
 		headers.set("Content-Type", MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(requestJSON, headers);
@@ -206,23 +167,10 @@ public class CloudResourcesOrchestrationTest extends BaseTest{
 	
 	@Test
 	public void testUnlockComplete() throws ParseException {
-		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestIdtestUnlockComplete");
-		iar.setRequestScope("requestScope");
-		iar.setRequestType("requestType");
-		iar.setOperationalEnvId("operationalEnvironmentId");
-		iar.setOperationalEnvName("operationalEnvName");
-		iar.setRequestorId("xxxxxx");
-		iar.setRequestBody("{}");
-		iar.setRequestStatus("COMPLETE");
-		iar.setRequestAction("TEST");
-		
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		Date date = dateFormat.parse("23/09/2007");
-		long time = date.getTime();
-		iar.setStartTime(new Timestamp(time));
-		
-		iarRepo.saveAndFlush(iar);
+		stubFor(get(urlPathEqualTo(getTestUrl("requestIdtestUnlockComplete"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withBody(String.format(getResponseTemplate, "requestIdtestUnlockComplete", "COMPLETE"))
+				.withStatus(HttpStatus.SC_OK)));
+
 		headers.set("Accept", MediaType.APPLICATION_JSON);
 		headers.set("Content-Type", MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(requestJSON, headers);
@@ -239,7 +187,8 @@ public class CloudResourcesOrchestrationTest extends BaseTest{
 	
 	@Test
 	public void testGetOperationalEnvFilter() {
-		
+		stubFor(get(urlPathEqualTo(getTestUrl("not-there"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withStatus(HttpStatus.SC_OK)));
 		headers.set("Accept", MediaType.APPLICATION_JSON);
 		headers.set("Content-Type", MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(null, headers);
@@ -259,23 +208,9 @@ public class CloudResourcesOrchestrationTest extends BaseTest{
 	
 	@Test
 	public void testGetOperationalEnvSuccess() throws ParseException {
-		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("90c56827-1c78-4827-bc4d-6afcdb37a51f");
-		iar.setRequestScope("requestScope");
-		iar.setRequestType("requestType");
-		iar.setOperationalEnvId("operationalEnvironmentId");
-		iar.setOperationalEnvName("operationalEnvName");
-		iar.setRequestorId("xxxxxx");
-		iar.setRequestBody("{}");
-		iar.setRequestStatus("COMPLETE");
-		iar.setRequestAction("TEST");
-		
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		Date date = dateFormat.parse("23/09/2007");
-		long time = date.getTime();
-		iar.setStartTime(new Timestamp(time));
-		
-		iarRepo.saveAndFlush(iar);
+		stubFor(get(urlPathEqualTo(getTestUrl("90c56827-1c78-4827-bc4d-6afcdb37a51f"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withBody(String.format(getResponseTemplateNoBody, "90c56827-1c78-4827-bc4d-6afcdb37a51f", "COMPLETE"))
+				.withStatus(HttpStatus.SC_OK)));
 		headers.set("Accept", MediaType.APPLICATION_JSON);
 		headers.set("Content-Type", MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>("", headers);
@@ -298,26 +233,14 @@ public class CloudResourcesOrchestrationTest extends BaseTest{
 	
 	@Test
 	public void testGetOperationalEnvFilterSuccess() throws ParseException {
-		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("requestIdtestGetOperationalEnvFilterSuccess");
-		iar.setRequestScope("requestScope");
-		iar.setRequestType("requestType");
-		iar.setOperationalEnvId("operationalEnvironmentId");
-		iar.setOperationalEnvName("myVnfOpEnv");
-		iar.setRequestorId("xxxxxx");
-		iar.setRequestBody("");
-		iar.setRequestStatus("COMPLETE");
-		iar.setStatusMessage("status Message");
-		iar.setProgress(20L);
-		iar.setRequestAction("TEST");
-		
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		Date date = dateFormat.parse("23/09/2007");
-		long time = date.getTime();
-		iar.setStartTime(new Timestamp(time));
-		iar.setEndTime(new Timestamp(time));
-		
-		iarRepo.saveAndFlush(iar);
+		stubFor(get(urlPathEqualTo(getTestUrl("requestIdtestGetOperationalEnvFilterSuccess"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withBody(String.format(getResponseTemplate, "requestIdtestGetOperationalEnvFilterSuccess", "COMPLETE"))
+				.withStatus(HttpStatus.SC_OK)));
+
+		stubFor(post(urlPathEqualTo(getTestUrl("getCloudOrchestrationFiltersFromInfraActive"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withBody("{\"requestId\":\"getCloudOrchestrationFiltersFromInfraActive\", \"operationalEnvironmentName\":\"myVnfOpEnv\"}")
+				.withBody("["+String.format(getResponseTemplateNoBody, "requestIdtestGetOperationalEnvFilterSuccess", "COMPLETE")+"]")
+				.withStatus(HttpStatus.SC_OK)));
 
 		headers.set("Accept", MediaType.APPLICATION_JSON);
 		headers.set("Content-Type", MediaType.APPLICATION_JSON);

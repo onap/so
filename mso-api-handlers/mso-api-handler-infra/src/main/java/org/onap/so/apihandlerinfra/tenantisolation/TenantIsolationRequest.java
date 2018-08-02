@@ -27,11 +27,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onap.so.apihandlerinfra.Constants;
-import org.onap.so.apihandlerinfra.MsoException;
+import org.onap.so.apihandlerinfra.RequestsDbClient;
 import org.onap.so.apihandlerinfra.Status;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Action;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Manifest;
@@ -45,19 +44,15 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.ResourceType;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.ServiceModelList;
 import org.onap.so.apihandlerinfra.vnfbeans.RequestStatusType;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.serviceinstancebeans.PolicyException;
-import org.onap.so.serviceinstancebeans.RequestError;
-import org.onap.so.serviceinstancebeans.ServiceException;
+
 import org.onap.so.utils.UUIDChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -70,8 +65,6 @@ public class TenantIsolationRequest {
     private RequestInfo requestInfo;
 
     private String errorMessage;
-    private String errorCode;
-    private String httpResponse;
     private String responseBody;
     private RequestStatusType status;
     private String operationalEnvironmentId;
@@ -79,8 +72,8 @@ public class TenantIsolationRequest {
     private String requestScope;
     private CloudOrchestrationRequest cor;
     
-    @Autowired 
-    private InfraActiveRequestsRepository infraActiveRequestsRepository;
+    @Autowired
+	private RequestsDbClient requestsDbClient;
     
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, TenantIsolationRequest.class);
 
@@ -311,7 +304,7 @@ public class TenantIsolationRequest {
 		} else if(status == Status.IN_PROGRESS) {
 			aq.setProgress(Constants.PROGRESS_REQUEST_IN_PROGRESS);
 		}
-		infraActiveRequestsRepository.save(aq);
+		requestsDbClient.save(aq);
     }
 	
     
@@ -336,73 +329,6 @@ public class TenantIsolationRequest {
         return orchestrationFilterParams;
   }
 
-    /**
-     * Build Error Response for Exception handling.
-     *
-     * @param int
-     * @param httpResponseCode the HTTP response code
-     * @param exceptionType.
-     * @param text the error description
-     * @param messageId
-     * @return the web service response
-     *
-     */
-    public Response buildServiceErrorResponse (int httpResponseCode,
-									            MsoException exceptionType,
-									            String text,
-									            String messageId,
-									            List<String> variables) {
-
-    	this.errorCode = messageId;
-
-    	this.errorCode = text != null ? text : "";
-    	this.httpResponse = Integer.toString(httpResponseCode);
-    	
-    	if(errorMessage.length() > 1999){
-    	    errorMessage = errorMessage.substring(0, 1999);
-    	}
-
-    	RequestError re = new RequestError();
-
-    	if(exceptionType.name().equals("PolicyException")){
-
-    		PolicyException pe = new PolicyException();
-    		pe.setMessageId(messageId);
-    		pe.setText(text);
-    		if(variables != null){
-    			for(String variable: variables){
-    				pe.getVariables().add(variable);
-    			}
-    		}
-    		re.setPolicyException(pe);
-
-    	} else {
-
-    		ServiceException se = new ServiceException();
-    		se.setMessageId(messageId);
-    		se.setText(text);
-    		if(variables != null){
-    			for(String variable: variables){
-    				se.getVariables().add(variable);
-    			}
-    		}
-    		re.setServiceException(se);
-     	}
-
-        String requestErrorStr = null;
-
-        try{
-        	ObjectMapper mapper = new ObjectMapper();
-        	mapper.setSerializationInclusion(Include.NON_DEFAULT);
-        	requestErrorStr = mapper.writeValueAsString(re);
-        }catch(Exception e){
-        	msoLogger.error (MessageEnum.APIH_VALIDATION_ERROR, "", "", MsoLogger.ErrorCode.DataError, "Exception in buildServiceErrorResponse writing exceptionType to string ", e);
-        }
-
-        return Response.status (httpResponseCode).entity(requestErrorStr).build ();
-
-    }
-    
 	private static boolean empty(String s) {
 		return (s == null || s.trim().isEmpty());
 	}
@@ -423,7 +349,7 @@ public class TenantIsolationRequest {
 			request.setProgress(this.progress);
 			request.setResponseBody(this.responseBody);
 			request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
-			infraActiveRequestsRepository.save(request);
+			requestsDbClient.save(request);
 		} catch (Exception e) {
 			msoLogger.error(MessageEnum.APIH_DB_UPDATE_EXC, e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "Exception when updating record in DB");
 			msoLogger.debug ("Exception: ", e);

@@ -40,6 +40,7 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.Constants;
+import org.onap.so.apihandlerinfra.RequestsDbClient;
 import org.onap.so.apihandlerinfra.Status;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.DuplicateRequestException;
@@ -73,8 +74,10 @@ public class CloudOrchestration {
 	
 	@Autowired
 	private TenantIsolationRequest tenantIsolationRequest ;
+
 	@Autowired
-	private InfraActiveRequestsRepository iarRepo;
+	private RequestsDbClient requestsDbClient;
+
 	@Autowired
 	private Provider<TenantIsolationRunnable> tenantIsolationRunnable;
 
@@ -143,7 +146,7 @@ public class CloudOrchestration {
 		dup = duplicateCheck(action, instanceIdMap, startTime, instanceName, resourceType);
 
 		if(dup == null && (Action.activate.equals(action) || Action.deactivate.equals(action))) {
-			dup = iarRepo.checkVnfIdStatus(cor.getOperationalEnvironmentId());
+			dup = requestsDbClient.checkVnfIdStatus(cor.getOperationalEnvironmentId());
 		}
 
 		if(dup != null) {
@@ -202,7 +205,7 @@ public class CloudOrchestration {
 	private InfraActiveRequests duplicateCheck(Action action, HashMap<String, String> instanceIdMap, long startTime,
 						String instanceName, String requestScope) throws ApiException {
 		try {
-			return iarRepo.checkInstanceNameDuplicate (instanceIdMap, instanceName, requestScope);
+			return requestsDbClient.checkInstanceNameDuplicate (instanceIdMap, instanceName, requestScope);
 		} catch (Exception e) {
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 

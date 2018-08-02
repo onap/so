@@ -20,12 +20,13 @@
 
 package org.onap.so.apihandlerinfra;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.transaction.Transactional;
-
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.After;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.logger.MsoLogger;
@@ -43,11 +44,11 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.client.WireMock;
+import javax.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApiHandlerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -57,7 +58,6 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 @Sql(executionPhase=ExecutionPhase.AFTER_TEST_METHOD,scripts="classpath:InfraActiveRequestsReset.sql")
 @AutoConfigureWireMock(port = 0)
 public abstract class BaseTest {
-	
 	protected MsoLogger logger = MsoLogger.getMsoLogger(Catalog.GENERAL, BaseTest.class);
 	protected TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 
@@ -86,5 +86,19 @@ public abstract class BaseTest {
 	public void tearDown(){
 		iar.deleteAll();
 		WireMock.reset();
+	}
+
+	public static String getResponseTemplate;
+	public static String getResponseTemplateNoBody;
+	public static String infraActivePost;
+	@BeforeClass
+	public static void setupTest() throws Exception {
+		getResponseTemplate = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/InfraActiveRequests/getInfraActiveRequest.json")));
+		getResponseTemplateNoBody = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/InfraActiveRequests/getInfraActiveRequestNoBody.json")));
+		infraActivePost = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/InfraActiveRequests/createInfraActiveRequests.json")));
+	}
+
+	public String getTestUrl(String requestId) {
+		return "/infraActiveRequests/" + requestId;
 	}
 }
