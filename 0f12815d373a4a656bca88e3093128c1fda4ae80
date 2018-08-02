@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_95523712",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/tenantisolation/CloudOrchestrationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-08-02T20:37:50Z",
+      "side": 1,
+      "message": "I don\u0027t like commenting out un-needed code. Deletion in almost all cases makes more sense.",
+      "range": {
+        "startLine": 232,
+        "startChar": 2,
+        "endLine": 232,
+        "endChar": 30
+      },
+      "revId": "0f12815d373a4a656bca88e3093128c1fda4ae80",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
