@@ -20,33 +20,30 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.runtime.MessageCorrelationBuilder;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {InformDmaapClient.class, DmaapClientTestImpl.class})
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+
 public class InformDmaapClientTest {
+    @Before
+    public void setUp() throws Exception {
+        informDmaapClient = new InformDmaapClient();
+        dmaapClientTest = new DmaapClientTestImpl();
+        informDmaapClient.setDmaapClient(dmaapClientTest);
+        delegateExecution = mockDelegateExecution();
+    }
 
-    @Autowired
     private InformDmaapClient informDmaapClient;
 
-    @Autowired
     private DmaapClientTestImpl dmaapClientTest;
 
     private DelegateExecution delegateExecution;
@@ -55,8 +52,6 @@ public class InformDmaapClientTest {
 
     @Test
     public void shouldSendListenerToDmaapClient() throws Exception {
-        // given
-        mockDelegateExecution();
         // when
         informDmaapClient.execute(delegateExecution);
         // then
@@ -67,8 +62,6 @@ public class InformDmaapClientTest {
 
     @Test
     public void shouldSendListenerToDmaapClientAndSendMessageToCamunda() throws Exception {
-        // given
-        mockDelegateExecution();
         // when
         informDmaapClient.execute(delegateExecution);
         dmaapClientTest.getInformConsumer().run();
@@ -79,8 +72,8 @@ public class InformDmaapClientTest {
         inOrder.verify(messageCorrelationBuilder).correlateWithResult();
     }
 
-    private void mockDelegateExecution() {
-        delegateExecution = mock(DelegateExecution.class);
+    private DelegateExecution mockDelegateExecution() {
+        DelegateExecution delegateExecution = mock(DelegateExecution.class);
         when(delegateExecution.getVariable(eq(ExecutionVariableNames.CORRELATION_ID))).thenReturn("testCorrelationId");
         when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
         ProcessEngineServices processEngineServices = mock(ProcessEngineServices.class);
@@ -90,5 +83,6 @@ public class InformDmaapClientTest {
         messageCorrelationBuilder = mock(MessageCorrelationBuilder.class);
         when(runtimeService.createMessageCorrelation(any())).thenReturn(messageCorrelationBuilder);
         when(messageCorrelationBuilder.processInstanceBusinessKey(any())).thenReturn(messageCorrelationBuilder);
+        return delegateExecution;
     }
 }

@@ -36,6 +36,7 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -47,15 +48,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(Enclosed.class)
 public class CheckAaiForCorrelationIdDelegateTest {
 
-    @RunWith(SpringRunner.class)
-    @SpringBootTest(classes = {CheckAaiForCorrelationIdDelegate.class, AaiConnectionTestImpl.class})
     public static class ConnectionOkTests {
 
-        @Autowired
         private CheckAaiForCorrelationIdDelegate delegate;
 
+        @Before
+        public void setUp() {
+            delegate = new CheckAaiForCorrelationIdDelegate();
+            delegate.setAaiConnection(new AaiConnectionTestImpl());
+        }
+
         @Test
-        public void shouldThrowExceptionWhenCorrelationIdIsNotSet() throws Exception {
+        public void shouldThrowExceptionWhenCorrelationIdIsNotSet() {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
             when(execution.getVariable(CORRELATION_ID)).thenReturn(null);
@@ -110,16 +114,18 @@ public class CheckAaiForCorrelationIdDelegateTest {
         }
     }
 
-
-    @RunWith(SpringRunner.class)
-    @SpringBootTest(classes = {CheckAaiForCorrelationIdDelegate.class, AaiConnectionThrowingException.class})
     public static class NoConnectionTests {
 
-        @Autowired
         private CheckAaiForCorrelationIdDelegate delegate;
 
+        @Before
+        public void setUp() {
+            delegate = new CheckAaiForCorrelationIdDelegate();
+            delegate.setAaiConnection(new AaiConnectionThrowingException());
+        }
+
         @Test
-        public void shouldThrowExceptionWhenIoExceptionOnConnectionToAai() throws Exception {
+        public void shouldThrowExceptionWhenIoExceptionOnConnectionToAai() {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
             when(execution.getVariable(CORRELATION_ID)).thenReturn(ID_WITH_ENTRY_NO_IP);

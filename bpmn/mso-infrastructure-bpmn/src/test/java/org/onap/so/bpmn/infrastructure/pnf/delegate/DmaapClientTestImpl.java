@@ -53,6 +53,10 @@ public class DmaapClientTestImpl implements DmaapClient {
         return informConsumer;
     }
 
+    public void sendMessage() {
+        informConsumer.run();
+    }
+
     public boolean haveRegisteredConsumer() {
         return correlationId != null;
     }

@@ -20,35 +20,27 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
+import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.junit.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {CancelDmaapSubscription.class, DmaapClientTestImpl.class})
 public class CancelDmaapSubscriptionTest {
-
-    @Autowired
-    public CancelDmaapSubscription delegate;
-
-    @Autowired
-    private DmaapClientTestImpl dmaapClientTest;
 
     @Test
     public void shouldCancelSubscription() throws Exception {
         // given
+        CancelDmaapSubscription delegate = new CancelDmaapSubscription();
+        DmaapClientTestImpl dmaapClientTest = new DmaapClientTestImpl();
+        delegate.setDmaapClient(dmaapClientTest);
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
         when(delegateExecution.getVariable(eq(ExecutionVariableNames.CORRELATION_ID))).thenReturn("testCorrelationId");
         when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
-        dmaapClientTest.registerForUpdate("testCorrelationId", () -> {});
+        dmaapClientTest.registerForUpdate("testCorrelationId", () -> {
+        });
         // when
         delegate.execute(delegateExecution);
         // then
