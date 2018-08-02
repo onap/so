@@ -116,25 +116,6 @@ public class AAIRestClientImpl implements AAIRestClientI {
     }
 
     @Override
-    public void updateMaintenceFlag(String vnfName, boolean inMaint, String transactionLoggingUuid) throws IOException {
-        UUID requestId;
-        try {
-            requestId = UUID.fromString(transactionLoggingUuid);
-        } catch (IllegalArgumentException e) {
-            logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically");
-            requestId = UUID.randomUUID();
-        }
-        GenericVnfs genericVnfs = new AAIResourcesClient(ENDPOINT_VERSION).get(GenericVnfs.class,
-                AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName)).orElse(null);
-        if (genericVnfs.getGenericVnf().size() > 1) {
-            throw new IndexOutOfBoundsException("Multiple Generic Vnfs Returned");
-        }
-
-        GenericVnf genericVnf = genericVnfs.getGenericVnf().get(0);
-        updateMaintenceFlagVnfId(genericVnf.getVnfId(), inMaint, transactionLoggingUuid);
-    }
-
-    @Override
     public void updateMaintenceFlagVnfId(String vnfId, boolean inMaint, String transactionLoggingUuid)
             throws IOException {
         UUID requestId;
