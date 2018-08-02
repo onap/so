@@ -39,8 +39,6 @@ public interface AAIRestClientI {
 	
 	List<Pserver> getPhysicalServerByVnfId(String vnfId, String transactionLoggingUuid) throws UnsupportedEncodingException, JsonParseException, JsonMappingException, IOException;
 	
-	void updateMaintenceFlag(String vnfId,boolean inMaint, String transactionLoggingUuid) throws Exception;
-
 	void updateMaintenceFlagVnfId(String vnfId, boolean inMaint, String transactionLoggingUuid) throws Exception;
 	
 	GenericVnf getVnfByName(String vnfId,  String transactionLoggingUuid) throws Exception;
