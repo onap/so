@@ -77,4 +77,9 @@ public class VduArtifact {
 				Arrays.equals(content, that.content) &&
 				type == that.type;
 	}
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(1, 31).append(getName()).append(getType()).toHashCode();
+	}
+	
 }
