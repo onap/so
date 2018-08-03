@@ -75,8 +75,28 @@ public class ResourceInput {
     @JsonProperty("resourceParameters")
     private String resourceParameters;
     
+    @JsonProperty("requestsInputs")
+    private String requestsInputs;
+    
     @JsonProperty("operationType")
     private String operationType;
+    
+    /**
+     * @return Returns the requestsInputs.
+     */
+    @JsonProperty("requestsInputs")
+    public String getRequestsInputs() {
+        return requestsInputs;
+    }
+
+    
+    /**
+     * @param requestsInputs The requestsInputs to set.
+     */
+    @JsonProperty("requestsInputs")
+    public void setRequestsInputs(String requestsInputs) {
+        this.requestsInputs = requestsInputs;
+    }
 
     
     /**

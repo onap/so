@@ -233,6 +233,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 		 String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
 		 String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters)
 		 resourceInput.setResourceParameters(resourceParameters)
+		 resourceInput.setRequestsInputs(incomingRequest)
 		 execution.setVariable("resourceInput", resourceInput)
 		 msoLogger.trace("COMPLETED prepareResourceRecipeRequest Process ")
 	 }
