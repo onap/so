@@ -1,0 +1,27 @@
+server:
+  port: 8080
+  tomcat:
+    max-threads: 51
+ssl-enable: false
+spring:
+  datasource:
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  jpa:
+    show-sql: false
+    hibernate:
+      dialect: org.hibernate.dialect.MySQL5Dialect
+      ddl-auto: create-drop
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      enable-lazy-load-no-trans: true
+camunda:
+  rest:
+    api:
+      username: admin
+      password: Kp8bJ4SXszM0WXlhak3eHlcse2gAw84vaoGGmJvUy2U
+      url: http://131.160.203.59:9080/engine-rest/engine/
+      engine: default

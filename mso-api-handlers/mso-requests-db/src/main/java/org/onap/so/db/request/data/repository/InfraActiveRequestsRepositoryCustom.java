@@ -30,28 +30,33 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface InfraActiveRequestsRepositoryCustom {
 
-	public boolean healthCheck();
+    public boolean healthCheck();
 
-	public InfraActiveRequests getRequestFromInfraActive(String requestId);
+    public InfraActiveRequests getRequestFromInfraActive(String requestId);
 
-	public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName,
-			String requestScope);
+    public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName,
+            String requestScope);
 
-	public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(Map<String, List<String>> orchestrationMap);
+    public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(Map<String, List<String>> orchestrationMap);
 
-	// Added this method for Tenant Isolation project ( 1802-295491a) to query the mso_requests DB 
-	// (infra_active_requests table) for operationalEnvId and OperationalEnvName
-	public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(Map<String, String> orchestrationMap);
+    // Added this method for Tenant Isolation project ( 1802-295491a) to query the mso_requests DB
+    // (infra_active_requests table) for operationalEnvId and OperationalEnvName
+    public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(Map<String, String> orchestrationMap);
 
-	public List<InfraActiveRequests> getRequestListFromInfraActive(String queryAttributeName, String queryValue,
-			String requestType);
+    public List<InfraActiveRequests> getRequestListFromInfraActive(String queryAttributeName, String queryValue,
+            String requestType);
 
-	public InfraActiveRequests getRequestFromInfraActive(String requestId, String requestType);
+    public InfraActiveRequests getRequestFromInfraActive(String requestId, String requestType);
 
-	public InfraActiveRequests checkDuplicateByVnfName(String vnfName, String action, String requestType);
+    public InfraActiveRequests checkDuplicateByVnfName(String vnfName, String action, String requestType);
 
-	public InfraActiveRequests checkDuplicateByVnfId(String vnfId, String action, String requestType);
+    public InfraActiveRequests checkDuplicateByVnfId(String vnfId, String action, String requestType);
 
-	public InfraActiveRequests checkVnfIdStatus(String operationalEnvironmentId);
-	
+    public InfraActiveRequests checkVnfIdStatus(String operationalEnvironmentId);
+
+    List<InfraActiveRequests> getInfraActiveRequests(final Map<String, String[]> filters);
+
+    List<InfraActiveRequests> getInfraActiveRequests(final Map<String, String[]> filters, final long startTime,
+            final long endTime, final Integer maxResult);
+
 }
