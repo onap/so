@@ -25,13 +25,13 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class ApplicationExceptionTest {
-	private ApplicationException application = new ApplicationException(0,null);
+	private ApplicationException application = new ApplicationException(500,null);
 	
 	@Test
 	public void testApplicationException() {
-		application.setErrorCode(0);
+		application.setErrorCode(500);
 		application.setErrorMsg("ErrorMsg");
-		assertEquals(application.getErrorCode(), 0);
+		assertEquals(application.getErrorCode(), 500);
 		assertEquals(application.getErrorMsg(), "ErrorMsg");	
 	}
 	
