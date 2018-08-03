@@ -57,8 +57,6 @@ import org.onap.sdnc.apps.client.model.GenericResourceApiVmnetworkdataInterfaceR
 import org.onap.sdnc.apps.client.model.GenericResourceApiVmnetworkdataNetworkInformationItems;
 import org.onap.sdnc.apps.client.model.GenericResourceApiVmnetworkdataNetworkinformationitemsNetworkInformationItem;
 import org.onap.sdnc.apps.client.model.GenericResourceApiVmnetworkdataNetworkinformationitemsNetworkinformationitemNetworkIps;
-import org.onap.sdnc.apps.client.model.GenericResourceApiVmnetworkdataSriovParameters;
-import org.onap.sdnc.apps.client.model.GenericResourceApiVmnetworkdataSriovparametersHeatVlanFilters;
 import org.onap.sdnc.apps.client.model.GenericResourceApiVmtopologydataVmNames;
 import org.onap.sdnc.apps.client.model.GenericResourceApiVmtopologydataVmNetworks;
 import org.onap.sdnc.apps.client.model.GenericResourceApiVmtopologydataVmnamesVnfcNames;
@@ -350,7 +348,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	}
 	
 	private void buildVfModuleSriovParameters(Map<String,String> paramsMap, GenericResourceApiVmNetworkData network, String networkKey) {
-		// SRIOV Parameters
+		/** SRIOV Parameters
 		GenericResourceApiVmnetworkdataSriovParameters sriovParameters = network.getSriovParameters();
 		if (sriovParameters != null) {
 			GenericResourceApiVmnetworkdataSriovparametersHeatVlanFilters heatVlanFilters = sriovParameters.getHeatVlanFilters();
@@ -373,6 +371,7 @@ public class VnfAdapterVfModuleObjectMapper {
 				}
 			}
 		}
+		**/
 	}
 	
 	private void buildVfModuleNetworkInformation(Map<String,String> paramsMap, GenericResourceApiVmNetworkData network, String key, String networkKey) {
