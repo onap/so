@@ -20,19 +20,19 @@
 
 package org.onap.so.adapters.requestsdb;
 
+import java.util.List;
+import java.util.Map;
+
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-
-
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class InfraActiveRequestsRepositoryCustomController {
@@ -58,5 +58,17 @@ public class InfraActiveRequestsRepositoryCustomController {
     @RequestMapping(method = RequestMethod.POST, value = "/infraActiveRequests/checkInstanceNameDuplicate")
     public InfraActiveRequests checkInstanceNameDuplicate(@RequestBody InstanceNameDuplicateCheckRequest instanceNameDuplicateCheckRequest) {
         return infraActiveRequestsRepository.checkInstanceNameDuplicate(instanceNameDuplicateCheckRequest.getInstanceIdMap(), instanceNameDuplicateCheckRequest.getInstanceName(), instanceNameDuplicateCheckRequest.getRequestScope());
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/infraActiveRequests/v0/getInfraActiveRequests")
+    public List<InfraActiveRequests> getInfraActiveRequests(@RequestBody Map<String, String[]> filters) {
+        return infraActiveRequestsRepository.getInfraActiveRequests(filters);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/infraActiveRequests/v1/getInfraActiveRequests")
+    public List<InfraActiveRequests> getInfraActiveRequests(@RequestBody Map<String, String[]> filters,
+            @RequestParam("from") long startTime, @RequestParam("to") long endTime,
+            @RequestParam(value = "maxResult", required = false) Integer maxResult) {
+        return infraActiveRequestsRepository.getInfraActiveRequests(filters, startTime, endTime, maxResult);
     }
 }
