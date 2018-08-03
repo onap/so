@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vfc;
+package org.onap.so.adapters.vfc.rest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +48,7 @@ import org.onap.so.requestsdb.RequestsDbConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
@@ -60,6 +61,7 @@ import org.springframework.stereotype.Component;
  * @version ONAP Amsterdam Release 2017-08-28
  */
 @Component
+@Primary
 public class VfcManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(VfcManager.class);
@@ -67,25 +69,23 @@ public class VfcManager {
   /**
    * nfvo url map
    */
-  private static Map<String, String> nfvoUrlMap;
+  private Map<String, String> nfvoUrlMap;
+  
   @Autowired
   private ResourceOperationStatusRepository resourceOperationStatusRepository;
   
   @Autowired
   private RestfulUtil restfulUtil;
   
-  static {
-    nfvoUrlMap = new HashMap<>();
-    nfvoUrlMap.put(Step.CREATE, CommonConstant.NFVO_CREATE_URL);
-    nfvoUrlMap.put(Step.INSTANTIATE, CommonConstant.NFVO_INSTANTIATE_URL);
-    nfvoUrlMap.put(Step.TERMINATE, CommonConstant.NFVO_TERMINATE_URL);
-    nfvoUrlMap.put(Step.DELETE, CommonConstant.NFVO_DELETE_URL);
-    nfvoUrlMap.put(Step.QUERY, CommonConstant.NFVO_QUERY_URL);
-	nfvoUrlMap.put(Step.SCALE, CommonConstant.NFVO_SCALE_URL);
-  }
-
-  public VfcManager() {
-
+ 
+  public VfcManager() {      
+          nfvoUrlMap = new HashMap<>();
+          nfvoUrlMap.put(Step.CREATE, CommonConstant.NFVO_CREATE_URL);
+          nfvoUrlMap.put(Step.INSTANTIATE, CommonConstant.NFVO_INSTANTIATE_URL);
+          nfvoUrlMap.put(Step.TERMINATE, CommonConstant.NFVO_TERMINATE_URL);
+          nfvoUrlMap.put(Step.DELETE, CommonConstant.NFVO_DELETE_URL);
+          nfvoUrlMap.put(Step.QUERY, CommonConstant.NFVO_QUERY_URL);
+          nfvoUrlMap.put(Step.SCALE, CommonConstant.NFVO_SCALE_URL);
   }
 
   /**

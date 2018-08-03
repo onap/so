@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,28 +20,20 @@
 
 package org.onap.so.adapters.vfc;
 
-import org.onap.so.adapters.vfc.model.RestfulResponse;
 
-/**
- * Implement class of operating aai database table <br>
- * <p>
- * </p>
- * 
- * @author
- * @version ONAP Amsterdam Release 2017-08-28
- */
-public class AaiUtil {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-  public static RestfulResponse addRelation(String globalSubsriberId, String serviceType,
-      String serviceInstanceId, String resourceInstanceId) {
-    // sent rest to aai to add relation for service and ns.
-      
-    return null;
-  }
 
-  public static RestfulResponse removeRelation(String globalSubsriberId, String serviceType,
-      String serviceInstanceId, String resourceInstanceId) {
-    // sent rest to aai to remove relation between service an ns.
-    return null;
-  }
+
+@SpringBootApplication(scanBasePackages = {"org.onap.so"})
+public class MSOVfcApplication {
+
+    public static void main(String... args) {
+        SpringApplication.run(MSOVfcApplication.class, args);
+    }
+
 }
