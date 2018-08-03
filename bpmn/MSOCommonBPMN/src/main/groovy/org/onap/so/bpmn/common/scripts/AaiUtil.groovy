@@ -94,6 +94,12 @@ class AaiUtil {
 		msoLogger.debug('AaiUtil.getBusinessCustomerUri() - AAI URI: ' + uri)
 		return uri
 	}
+	
+	public String getBusinessSPPartnerUri(DelegateExecution execution) {
+		def uri = getUri(execution, 'sp-partner')
+		msoLogger.debug('AaiUtil.getBusinessSPPartnerUri() - AAI URI: ' + uri)
+		return uri
+	}
 
 	//public String getBusinessCustomerUriv7(DelegateExecution execution) {
 	//	//	//def uri = getUri(execution, BUSINESS_CUSTOMERV7)
