@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vfc;
+package org.onap.so.adapters.vfc.rest;
 
 import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
