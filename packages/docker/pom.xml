@@ -105,7 +105,7 @@
 							</build>
 						</image>
 						<image>
-							<name>so/requests-db-adapter</name>
+							<name>so/request-db-adapter</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -155,7 +155,7 @@
 							</build>
 						</image>
 						<image>
-							<name>so/openstack-adapters</name>
+							<name>so/openstack-adapter</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -310,7 +310,7 @@
 							<goal>push</goal>
 						</goals>
 						<configuration>
-							<image>so/catalog-db-adapter,so/requests-db-adapter,so/sdnc-adapter,so/openstack-adapters,so/asdc-controller,so/bpmn-infra,so/api-handler-infra</image>
+							<image>so/catalog-db-adapter,so/request-db-adapter,so/sdnc-adapter,so/openstack-adapter,so/vfc-adapter,so/asdc-controller,so/bpmn-infra,so/api-handler-infra</image>
 						</configuration>
 					</execution>
 				</executions>
