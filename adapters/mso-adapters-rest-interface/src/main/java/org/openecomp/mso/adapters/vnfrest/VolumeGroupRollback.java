@@ -30,16 +30,16 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName("VolumeGroupRollback")
 @XmlRootElement(name = "VolumeGroupRollback")
 public class VolumeGroupRollback {
-//	“volumeGroupRollback”: {
+
 //	“volumeGroupId”: “<A&AI_ VOLUME_GROUP_ID>”,
 //	“volumeGroupStackId”: “<VOLUME_GROUP _STACK_ID>”,
 //	 “tenantId”: “<TENANT_ID>”,
 //	“cloudSiteId”: “<CLOUD_CLLI>”,
 //	“volumeGroupCreated”: TRUE|FALSE,
-//	“msoRequest”: {
+
 //		“requestId”: “<REQUEST_ID>”,
 //		“serviceInstanceId”: “<SERVICE_INSTANCE_ID>”
-//	}
+
 //},
 
 	private String volumeGroupId;
