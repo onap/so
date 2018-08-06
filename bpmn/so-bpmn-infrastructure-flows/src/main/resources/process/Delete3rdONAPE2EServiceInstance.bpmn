@@ -156,7 +156,7 @@ dcsi.checkSPPartnerand LocallCall(execution)]]></bpmn:script>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0bmqdpg" name="GoTo  StartLocalONAPDeleteE2ESI">
       <bpmn:incoming>SequenceFlow_0u3tca8</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1pwflny</bpmn:incoming>
-      <bpmn:linkEventDefinition name=" StartLocalONAPDeleteE2ESI" />
+      <bpmn:linkEventDefinition name="StartLocalONAPDeleteE2ESI" />
     </bpmn:intermediateThrowEvent>
     <bpmn:endEvent id="EndEvent_1itzq8n" name="Delete3rdONAPRES_End">
       <bpmn:incoming>SequenceFlow_0vhbw8y</bpmn:incoming>
