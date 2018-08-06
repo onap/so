@@ -36,18 +36,18 @@ import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.stereotype.Component;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiParam;
-import org.onap.sdnc.apps.client.model.GenericResourceApiParamParam;
-import org.onap.sdnc.apps.client.model.GenericResourceApiRequestActionEnumeration;
-import org.onap.sdnc.apps.client.model.GenericResourceApiRequestinformationRequestInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiSdncrequestheaderSdncRequestHeader;
-import org.onap.sdnc.apps.client.model.GenericResourceApiServiceinformationServiceInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiSvcActionEnumeration;
-import org.onap.sdnc.apps.client.model.GenericResourceApiVfModuleOperationInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiVnfinformationVnfInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiVfmoduleinformationVfModuleInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiVfmodulerequestinputVfModuleRequestInput;
-import org.onap.sdnc.apps.client.model.GenericResourceApiVfModuleResponseInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestinformationRequestInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiSdncrequestheaderSdncRequestHeader;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceinformationServiceInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiSvcActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfinformationVnfInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmoduleinformationVfModuleInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmodulerequestinputVfModuleRequestInput;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleResponseInformation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

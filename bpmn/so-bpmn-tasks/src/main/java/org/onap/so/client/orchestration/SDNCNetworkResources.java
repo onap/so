@@ -36,8 +36,8 @@ import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiNetworkOperationInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 
 @Component
 public class SDNCNetworkResources {

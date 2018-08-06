@@ -20,7 +20,7 @@
 
 package org.onap.so.client.sdnc.mapper;
 
-import org.onap.sdnc.apps.client.model.*;
+import org.onap.sdnc.northbound.client.model.*;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;

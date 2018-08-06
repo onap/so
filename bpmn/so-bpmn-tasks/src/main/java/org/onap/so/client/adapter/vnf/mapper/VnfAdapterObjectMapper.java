@@ -21,13 +21,13 @@
 package org.onap.so.client.adapter.vnf.mapper;
 
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiParamParam;
-import org.onap.sdnc.apps.client.model.GenericResourceApiVfmoduletopologyVfModuleTopology;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmoduletopologyVfModuleTopology;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
 import org.onap.so.bpmn.core.UrnPropertiesReader;

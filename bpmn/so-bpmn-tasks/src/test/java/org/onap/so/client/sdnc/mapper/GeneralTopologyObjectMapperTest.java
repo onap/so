@@ -43,14 +43,14 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoConfiguration;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiConfigurationinformationConfigurationInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiGcrequestinputGcRequestInput;
-import org.onap.sdnc.apps.client.model.GenericResourceApiParam;
-import org.onap.sdnc.apps.client.model.GenericResourceApiParamParam;
-import org.onap.sdnc.apps.client.model.GenericResourceApiSdncrequestheaderSdncRequestHeader;
-import org.onap.sdnc.apps.client.model.GenericResourceApiServiceinformationServiceInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiSvcActionEnumeration;
-import org.onap.sdnc.apps.client.model.GenericResourceApiVnfinformationVnfInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiConfigurationinformationConfigurationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiGcrequestinputGcRequestInput;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiSdncrequestheaderSdncRequestHeader;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceinformationServiceInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiSvcActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfinformationVnfInformation;
 
 
 public class GeneralTopologyObjectMapperTest  extends TestDataSetup{

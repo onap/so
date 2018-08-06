@@ -47,7 +47,7 @@ import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.onap.so.client.sdnc.mapper.VfModuleTopologyOperationRequestMapper;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiVfModuleOperationInformation;;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SDNCVfModuleResourcesTest  extends TestDataSetup{	

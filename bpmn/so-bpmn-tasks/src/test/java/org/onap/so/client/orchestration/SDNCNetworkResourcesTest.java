@@ -50,8 +50,8 @@ import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.onap.so.client.sdnc.mapper.NetworkTopologyOperationRequestMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiNetworkOperationInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SDNCNetworkResourcesTest extends TestDataSetup{

@@ -36,7 +36,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBondingLink;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiGcTopologyOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiGcTopologyOperationInformation;
 
 
 public class GCTopologyOperationRequestMapperTest extends TestDataSetup{

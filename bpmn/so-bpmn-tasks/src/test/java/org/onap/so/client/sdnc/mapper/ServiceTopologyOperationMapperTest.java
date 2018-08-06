@@ -36,9 +36,9 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiOnapmodelinformationOnapModelInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiRequestActionEnumeration;
-import org.onap.sdnc.apps.client.model.GenericResourceApiServiceOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiOnapmodelinformationOnapModelInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ServiceTopologyOperationMapperTest {

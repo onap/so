@@ -35,8 +35,8 @@ import org.onap.so.client.sdnc.mapper.GCTopologyOperationRequestMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiGcTopologyOperationInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiGcTopologyOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 
 @Component
 public class SDNCConfigurationResources {

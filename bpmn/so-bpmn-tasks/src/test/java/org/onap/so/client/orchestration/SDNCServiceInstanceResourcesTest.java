@@ -45,8 +45,8 @@ import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.onap.so.client.sdnc.mapper.ServiceTopologyOperationMapper;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiRequestActionEnumeration;
-import org.onap.sdnc.apps.client.model.GenericResourceApiServiceOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SDNCServiceInstanceResourcesTest  extends TestDataSetup{

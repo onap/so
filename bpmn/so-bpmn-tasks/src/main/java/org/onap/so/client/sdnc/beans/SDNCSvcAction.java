@@ -20,7 +20,7 @@
 
 package org.onap.so.client.sdnc.beans;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiSvcActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiSvcActionEnumeration;
 
 public enum SDNCSvcAction {
 	ACTIVATE("activate",GenericResourceApiSvcActionEnumeration.ACTIVATE),

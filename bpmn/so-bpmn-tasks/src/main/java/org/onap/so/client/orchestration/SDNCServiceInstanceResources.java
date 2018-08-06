@@ -34,8 +34,8 @@ import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiRequestActionEnumeration;
-import org.onap.sdnc.apps.client.model.GenericResourceApiServiceOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
 
 @Component
 public class SDNCServiceInstanceResources {

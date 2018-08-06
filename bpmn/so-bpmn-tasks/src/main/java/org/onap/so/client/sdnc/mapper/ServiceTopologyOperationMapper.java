@@ -30,14 +30,14 @@ import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 import org.springframework.stereotype.Component;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiParam;
-import org.onap.sdnc.apps.client.model.GenericResourceApiParamParam;
-import org.onap.sdnc.apps.client.model.GenericResourceApiRequestActionEnumeration;
-import org.onap.sdnc.apps.client.model.GenericResourceApiRequestinformationRequestInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiSdncrequestheaderSdncRequestHeader;
-import org.onap.sdnc.apps.client.model.GenericResourceApiServiceOperationInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiServiceinformationServiceInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiServicerequestinputServiceRequestInput;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestinformationRequestInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiSdncrequestheaderSdncRequestHeader;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceinformationServiceInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServicerequestinputServiceRequestInput;
 
 @Component
 public class ServiceTopologyOperationMapper{

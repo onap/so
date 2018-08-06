@@ -44,7 +44,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiVfModuleOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class VfModuleTopologyOperationRequestMapperTest {

@@ -46,7 +46,7 @@ import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.onap.so.client.sdnc.mapper.GCTopologyOperationRequestMapper;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiGcTopologyOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiGcTopologyOperationInformation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SDNCConfigurationResourcesTest extends TestDataSetup{

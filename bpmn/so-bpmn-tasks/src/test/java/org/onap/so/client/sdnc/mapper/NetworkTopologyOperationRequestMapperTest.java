@@ -45,8 +45,8 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 
-import org.onap.sdnc.apps.client.model.GenericResourceApiNetworkOperationInformation;
-import org.onap.sdnc.apps.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NetworkTopologyOperationRequestMapperTest {
