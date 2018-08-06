@@ -124,6 +124,7 @@ public class CloudResourcesOrchestration {
 			if(status.equalsIgnoreCase("IN_PROGRESS") || status.equalsIgnoreCase("PENDING") || status.equalsIgnoreCase("PENDING_MANUAL_TASK")){
 				infraActiveRequest.setRequestStatus("UNLOCKED");
 				infraActiveRequest.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
+				infraActiveRequest.setRequestId(requestId);
 				requestDbClient.save(infraActiveRequest);
 			}else{
 				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,MsoLogger.ErrorCode.DataError).build();
