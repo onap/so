@@ -20,11 +20,7 @@
 
 package org.onap.so.client.aai.entities.uri;
 
-import java.net.URI;
-import java.util.Map;
-
 import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
@@ -52,6 +48,12 @@ public interface AAIUri extends GraphInventoryUri {
 	public AAIUri queryParam(String name, String... values);
 	@Override
 	public AAIUri replaceQueryParam(String name, String... values);
+	@Override
+	public AAIUri resultIndex(int index);
+	@Override
+	public AAIUri resultSize(int size);
+	@Override
+	public AAIUri limit(int size);
 	@Override
 	public AAIUri clone();
 	

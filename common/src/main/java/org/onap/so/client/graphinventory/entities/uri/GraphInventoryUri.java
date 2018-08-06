@@ -47,6 +47,9 @@ public interface GraphInventoryUri {
 	public GraphInventoryUri nodesOnly(boolean nodesOnly);
 	public GraphInventoryUri queryParam(String name, String... values);
 	public GraphInventoryUri replaceQueryParam(String name, String... values);
+	public GraphInventoryUri resultIndex(int index);
+	public GraphInventoryUri resultSize(int size);
+	public GraphInventoryUri limit(int size);
 	public GraphInventoryUri clone();
 	
 	/**

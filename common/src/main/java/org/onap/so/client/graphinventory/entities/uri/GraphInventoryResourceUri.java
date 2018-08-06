@@ -40,5 +40,11 @@ public interface GraphInventoryResourceUri extends GraphInventoryUri {
 	@Override
 	public GraphInventoryResourceUri replaceQueryParam(String name, String... values);
 	@Override
+	public GraphInventoryResourceUri resultIndex(int index);
+	@Override
+	public GraphInventoryResourceUri resultSize(int size);
+	@Override
+	public GraphInventoryResourceUri limit(int size);
+	@Override
 	public GraphInventoryResourceUri clone();
 }

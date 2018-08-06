@@ -82,6 +82,21 @@ public class AAISimpleUri extends SimpleUri implements AAIResourceUri {
 	}
 	
 	@Override
+	public AAISimpleUri resultIndex(int index) {
+		return (AAISimpleUri) super.resultIndex(index);
+	}
+	
+	@Override
+	public AAISimpleUri resultSize(int size) {
+		return (AAISimpleUri) super.resultSize(size);
+	}
+	
+	@Override
+	public AAISimpleUri limit(int size) {
+		return (AAISimpleUri) super.limit(size);
+	}
+	
+	@Override
 	public AAISimpleUri clone() {
 		if (this.type != null) {
 			return new AAISimpleUri((AAIObjectType)this.type, this.internalURI.clone(), values);

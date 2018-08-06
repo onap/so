@@ -120,6 +120,23 @@ public class SimpleUri implements GraphInventoryResourceUri {
 	}
 	
 	@Override
+	public SimpleUri resultIndex(int index) {
+		this.internalURI = internalURI.replaceQueryParam("resultIndex", index);
+		return this;
+	}
+	
+	@Override
+	public SimpleUri resultSize(int size) {
+		this.internalURI = internalURI.replaceQueryParam("resultSize", size);
+		return this;
+	}
+	
+	@Override
+	public SimpleUri limit(int size) {
+		return this.resultIndex(0).resultSize(size);
+	}
+	
+	@Override
 	public URI build() {
 		return build(this.values);
 	}

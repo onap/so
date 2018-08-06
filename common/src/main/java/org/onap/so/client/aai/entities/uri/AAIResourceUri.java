@@ -42,5 +42,11 @@ public interface AAIResourceUri extends AAIUri, GraphInventoryResourceUri {
 	@Override
 	public AAIResourceUri replaceQueryParam(String name, String... values);
 	@Override
+	public AAIResourceUri resultIndex(int index);
+	@Override
+	public AAIResourceUri resultSize(int size);
+	@Override
+	public AAIResourceUri limit(int size);
+	@Override
 	public AAIResourceUri clone();
 }
