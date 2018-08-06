@@ -137,6 +137,18 @@ dcsi.prepareUpdateAfterCreateSDNCResource(execution)</bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_1cd8ujq" sourceRef="Task_0uwlr22" targetRef="ScriptTask_1g5zyi6" />
     <bpmn:sequenceFlow id="SequenceFlow_0auvfvm" sourceRef="ScriptTask_1g5zyi6" targetRef="EndEvent_1x6k78c" />
     <bpmn:callActivity id="Task_0bga3e8" name="call Activate SDNC network Resource" calledElement="ActivateSDNCNetworkResource">
+      <bpmn:extensionElements>
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+        <camunda:in source="requestAction" target="requestAction" />
+        <camunda:in source="recipeParams" target="recipeParams" />
+        <camunda:in source="resourceInput" target="resourceInput" />
+        <camunda:in source="recipeParamXsd" target="recipeParamXsd" />
+        <camunda:in source="operationId" target="operationId" />
+        <camunda:in source="svcAction" target="svcAction" />
+        <camunda:in source="requestAction" target="requestAction" />
+        <camunda:in source="URN_mso_workflow_sdncadapter_callback" target="URN_mso_workflow_sdncadapter_callback" />
+        <camunda:in source="networkRequest" target="networkRequest" />
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1dww8ye</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_05niqbf</bpmn:outgoing>
     </bpmn:callActivity>
