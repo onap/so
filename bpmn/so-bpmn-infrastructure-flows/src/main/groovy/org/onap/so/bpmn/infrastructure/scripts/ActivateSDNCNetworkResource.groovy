@@ -25,13 +25,15 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
+import org.onap.so.logger.MsoLogger
 
 /**
  * This groovy class supports the <class>ActivateSDNCCNetworkResource.bpmn</class> process.
  * flow for SDNC Network Resource Activate
  */
 public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
-
+    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateSDNCNetworkResource.class);
+    
     String Prefix = "ACTSDNCRES_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -41,22 +43,18 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 
     public void preProcessRequest(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** Started preProcessRequest *****",  isDebugEnabled)
+        msoLogger.trace("Started preProcessRequest ")
     }
 
     public void prepareUpdateAfterActivateSDNCResource(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** started prepareUpdateAfterActivateSDNCResource *****",  isDebugEnabled)
+        msoLogger.trace("started prepareUpdateAfterActivateSDNCResource ")
     }
 
     public void postCreateSDNCCall(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** started postCreateSDNCCall *****",  isDebugEnabled)
+        msoLogger.trace("started postCreateSDNCCall ")
     }
 
     public void sendSyncResponse(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** started sendSyncResponse *****",  isDebugEnabled)
+        msoLogger.trace("started sendSyncResponse ")
     }
 }
