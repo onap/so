@@ -42,7 +42,7 @@ public class InfraActiveRequestsRepositoryCustomController {
     public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(@RequestBody Map<String, String> orchestrationMap){
         return infraActiveRequestsRepository.getCloudOrchestrationFiltersFromInfraActive(orchestrationMap);
     }
-    @RequestMapping(method = RequestMethod.POST, value = "/getOrchestrationFiltersFromInfraActive")
+    @RequestMapping(method = RequestMethod.POST, value = "/infraActiveRequests/getOrchestrationFiltersFromInfraActive")
     public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(@RequestBody Map<String, List<String>> orchestrationMap){
         return  infraActiveRequestsRepository.getOrchestrationFiltersFromInfraActive(orchestrationMap);
     }

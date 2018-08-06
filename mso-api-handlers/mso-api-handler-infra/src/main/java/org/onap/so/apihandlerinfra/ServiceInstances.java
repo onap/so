@@ -23,6 +23,7 @@ package org.onap.so.apihandlerinfra;
 
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -712,7 +713,7 @@ public class ServiceInstances {
                 String errorMessage = "VnfType " + vnfType + " and VF Module Model Name " + modelInfo.getModelName() + serviceVersionText + " not found in MSO Catalog DB";
                 ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
                 VfModuleNotFoundException vfModuleException = new VfModuleNotFoundException.Builder(errorMessage, HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
-                msoRequest.updateStatus(currentActiveReq, Status.FAILED, vfModuleException.getMessage());
+                updateStatus(currentActiveReq, Status.FAILED, vfModuleException.getMessage());
 
                 throw vfModuleException;
 		}
@@ -829,7 +830,7 @@ public class ServiceInstances {
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             String url = requestClient != null ? requestClient.getUrl() : "";
             ClientConnectionException clientException = new ClientConnectionException.Builder(url, HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).cause(e).errorInfo(errorLoggerInfo).build();
-            msoRequest.updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
+            updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
 
             throw clientException;
 		}
@@ -839,7 +840,7 @@ public class ServiceInstances {
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             ClientConnectionException clientException = new ClientConnectionException.Builder(requestClient.getUrl(), HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).build();
 
-            msoRequest.updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
+            updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
 
             throw clientException;
 		}
@@ -883,7 +884,7 @@ public class ServiceInstances {
 		    BPMNFailureException bpmnException = new BPMNFailureException.Builder(String.valueOf(bpelStatus) + camundaJSONResponseBody, bpelStatus, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
 		            .errorInfo(errorLoggerInfo).build();
 
-		    msoRequest.updateStatus(currentActiveReq, Status.FAILED, bpmnException.getMessage());
+		    updateStatus(currentActiveReq, Status.FAILED, bpmnException.getMessage());
 
 		    throw bpmnException;
 		} else {
@@ -893,7 +894,7 @@ public class ServiceInstances {
 
 		    BPMNFailureException servException = new BPMNFailureException.Builder(String.valueOf(bpelStatus), bpelStatus, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
 		            .errorInfo(errorLoggerInfo).build();
-		    msoRequest.updateStatus(currentActiveReq, Status.FAILED, servException.getMessage());
+		    updateStatus(currentActiveReq, Status.FAILED, servException.getMessage());
 
 		    throw servException;
 		}
@@ -968,7 +969,7 @@ public class ServiceInstances {
         DuplicateRequestException dupException = new DuplicateRequestException.Builder(requestScope,instance,dup.getRequestStatus(),dup.getRequestId(), HttpStatus.SC_CONFLICT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
             .errorInfo(errorLoggerInfo).build();
 
-        msoRequest.updateStatus(currentActiveReq, Status.FAILED, dupException.getMessage());
+        updateStatus(currentActiveReq, Status.FAILED, dupException.getMessage());
 
         throw dupException;
 	}
@@ -987,7 +988,7 @@ public class ServiceInstances {
             ValidateException validateException = new ValidateException.Builder("Duplicate Check Request", HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
                     .errorInfo(errorLoggerInfo).build();
 
-            msoRequest.updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+            updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
 
             throw validateException;
 		}
@@ -1008,12 +1009,32 @@ public class ServiceInstances {
                     .errorInfo(errorLoggerInfo).build();
             String requestScope = requestScopeFromUri(requestUri);
 
-            msoRequest.createErrorRequestRecord(Status.FAILED, requestId, validateException.getMessage(), action, requestScope, requestJSON);
+            createErrorRequestRecord(Status.FAILED, requestId, validateException.getMessage(), action, requestScope, requestJSON);
 
             throw validateException;
 		}
 	}
-	
+	//TODO MSO-4177 -- remove this and call the msoRequest instead
+	public void createErrorRequestRecord (Status status, String requestId, String errorMessage, Actions action, String requestScope, String requestJSON) {
+		try {
+			InfraActiveRequests request = new InfraActiveRequests(requestId);
+			Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
+			request.setStartTime (startTimeStamp);
+			request.setRequestStatus(status.toString());
+			request.setStatusMessage(errorMessage);
+			request.setProgress((long) 100);
+			request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
+			request.setRequestAction(action.toString());
+			request.setRequestScope(requestScope);
+			request.setRequestBody(requestJSON);
+			Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
+			request.setEndTime(endTimeStamp);
+			iar.save(request);
+		} catch (Exception e) {
+			msoLogger.error(MessageEnum.APIH_DB_UPDATE_EXC, e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "Exception when updating record in DB");
+			msoLogger.debug ("Exception: ", e);
+		}
+	}
 	private void parseRequest(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action, String version, 
 								String requestJSON, Boolean aLaCarte, String requestId, InfraActiveRequests currentActiveReq) throws ValidateException {
 		int reqVersion = Integer.parseInt(version.substring(1));
@@ -1024,7 +1045,7 @@ public class ServiceInstances {
 	        ValidateException validateException = new ValidateException.Builder("Error parsing request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                  .errorInfo(errorLoggerInfo).build();
 
-	        msoRequest.updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+	        updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
 
 	        throw validateException;
 		}
@@ -1049,7 +1070,7 @@ public class ServiceInstances {
                 ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                         .errorInfo(errorLoggerInfo).build();
 
-                msoRequest.updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+                updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
 
                 throw validateException;
 			}
@@ -1064,7 +1085,7 @@ public class ServiceInstances {
                 ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                         .errorInfo(errorLoggerInfo).build();
 
-                msoRequest.updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+                updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
 
                 throw validateException;
             }
@@ -1078,7 +1099,7 @@ public class ServiceInstances {
 
                 ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                         .errorInfo(errorLoggerInfo).build();
-                msoRequest.updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+                updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
 
                 throw validateException;
 		}
@@ -1091,7 +1112,7 @@ public class ServiceInstances {
             RecipeNotFoundException recipeNotFoundExceptionException = new RecipeNotFoundException.Builder("Recipe could not be retrieved from catalog DB.", HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR)
                     .errorInfo(errorLoggerInfo).build();
 
-            msoRequest.updateStatus(currentActiveReq, Status.FAILED, recipeNotFoundExceptionException.getMessage());
+            updateStatus(currentActiveReq, Status.FAILED, recipeNotFoundExceptionException.getMessage());
             throw recipeNotFoundExceptionException;
 		}
 		return recipeLookupResult;
@@ -1611,7 +1632,7 @@ public class ServiceInstances {
             ValidateException validateException = new ValidateException.Builder(error, HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR)
                     .errorInfo(errorLoggerInfo).build();
 
-            msoRequest.updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+            updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
 
             throw validateException;
 			
@@ -1658,4 +1679,15 @@ public class ServiceInstances {
 			throw validateException;
     	}
     }
+	//TODO MSO-4177 -- remove this and call the msoRequest instead
+	public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage){
+		if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
+			aq.setStatusMessage (errorMessage);
+			aq.setProgress(new Long(100));
+			aq.setRequestStatus(status.toString());
+			Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
+			aq.setEndTime (endTimeStamp);
+			iar.save(aq);
+		}
+	}
 }

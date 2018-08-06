@@ -374,7 +374,7 @@ public class OrchestrationRequestsTest extends BaseTest {
 
     private void setupTestGetOrchestrationRequestFilter() throws Exception{
         //for testGetOrchestrationRequestFilter();
-        stubFor(any(urlPathEqualTo("/getOrchestrationFiltersFromInfraActive/")).withRequestBody(equalToJson("{\"modelType\":[\"EQUALS\",\"vfModule\"]}")).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        stubFor(any(urlPathEqualTo("/infraActiveRequests/getOrchestrationFiltersFromInfraActive/")).withRequestBody(equalToJson("{\"modelType\":[\"EQUALS\",\"vfModule\"]}")).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getRequestDetailsFilter.json"))))
                 .withStatus(HttpStatus.SC_OK)));
     }
