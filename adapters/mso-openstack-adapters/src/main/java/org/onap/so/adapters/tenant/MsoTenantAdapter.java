@@ -50,7 +50,7 @@ public interface MsoTenantAdapter
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name="tenantId", mode=Mode.OUT) Holder<String> tenantId,
 							@WebParam(name="rollback", mode=Mode.OUT) Holder<TenantRollback> rollback )
-		throws TenantException, TenantAlreadyExists;
+		throws TenantException;
 	
 	@WebMethod
 	public void queryTenant (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
