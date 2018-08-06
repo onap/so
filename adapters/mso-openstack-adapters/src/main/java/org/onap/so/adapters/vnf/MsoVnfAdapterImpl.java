@@ -102,7 +102,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final String VALET_ENABLED = "org.onap.so.adapters.vnf.valet_enabled";
     private static final String FAIL_REQUESTS_ON_VALET_FAILURE = "org.onap.so.adapters.vnf.fail_requests_on_valet_failure";
-
+	private static final String SUCCESS_MSG = "Successfully received response from Open Stack";
+	
     @Autowired
     private VFModuleCustomizationRepository vfModuleCustomRepo;
     
@@ -116,19 +117,23 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     private MsoHeatUtils heat;
     @Autowired
     private ValetClient vci;
+    
     /**
+     * DO NOT use that constructor to instantiate this class, the msoPropertiesfactory will be NULL.
+     * @see MsoVnfAdapterImpl#MsoVnfAdapterImpl(MsoPropertiesFactory, CloudConfigFactory)
+     */
+    public MsoVnfAdapterImpl() {
+		// Do nothing
+		//DO NOT use that constructor to instantiate this class, the msoPropertiesfactory will be NULL.
+	}
+	
+	/**
      * Health Check web method. Does nothing but return to show the adapter is deployed.
      */
     @Override
     public void healthCheck () {
         LOGGER.debug ("Health check call in VNF Adapter");
     }
-
-    /**
-     * DO NOT use that constructor to instantiate this class, the msoPropertiesfactory will be NULL.
-     * @see MsoVnfAdapterImpl#MsoVnfAdapterImpl(MsoPropertiesFactory, CloudConfigFactory)
-     */
-    public MsoVnfAdapterImpl() {}
 
     /**
      * This is the "Create VNF" web service implementation.
@@ -298,7 +303,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         long subStartTime = System.currentTimeMillis ();
         try {
             heatStack = heat.queryStack (cloudSiteId, tenantId, vnfName);
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "QueryStack", vnfName);
+            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "QueryStack", vnfName);
         } catch (MsoException me) {
             me.addContext ("QueryVNF");
             // Failed to query the Stack due to an openstack exception.
@@ -361,7 +366,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         long subStartTime = System.currentTimeMillis ();
         try {
             heat.deleteStack (tenantId, cloudSiteId, vnfName, true);
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "DeleteStack", vnfName);
+            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "DeleteStack", vnfName);
         } catch (MsoException me) {
             me.addContext ("DeleteVNF");
             // Failed to query the Stack due to an openstack exception.
@@ -411,7 +416,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         long subStartTime = System.currentTimeMillis ();
         try {
             heat.deleteStack (tenantId, cloudSiteId, vnfId, true);
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "DeleteStack", null);
+            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "DeleteStack", null);
         } catch (MsoException me) {
             // Failed to rollback the Stack due to an openstack exception.
             // Convert to a generic VnfException
@@ -484,11 +489,12 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	} catch (IOException e) {
     		LOGGER.debug(" HeatBridgeMain.py failed with IO Exception! " + e);
     		return false;
-    	} catch (InterruptedException e) {
-    		LOGGER.debug(" HeatBridgeMain.py failed when interrupted! " + e);
-    		return false;
     	} catch (RuntimeException e) {
-    		LOGGER.debug(" HeatBridgeMain.py failed for unknown reasons!" + e);
+    		LOGGER.debug(" HeatBridgeMain.py failed during runtime!" + e);
+    		return false;
+    	}
+		catch (Exception e) {
+    		LOGGER.debug(" HeatBridgeMain.py failed for unknown reasons! " + e);
     		return false;
     	}
     }  
@@ -641,7 +647,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         long subStartTime1 = System.currentTimeMillis ();
         try {
             heatStack = heat.queryStack (cloudSiteId, tenantId, vfModuleName);
-            LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "QueryStack", vfModuleName);
+            LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "QueryStack", vfModuleName);
         } catch (MsoException me) {
             String error = "Create VF Module: Query " + vfModuleName + " in " + cloudSiteId + "/" + tenantId + ": " + me ;
             LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", vfModuleName);
@@ -705,7 +711,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	try {
         		LOGGER.debug("Querying for nestedStackId = " + nestedStackId);
         		nestedHeatStack = heat.queryStack(cloudSiteId, tenantId, nestedStackId);
-                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "QueryStack", vfModuleName);
+                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "QueryStack", vfModuleName);
         	} catch (MsoException me) {
         	    // Failed to query the Stack due to an openstack exception.
         	    // Convert to a generic VnfException
@@ -737,7 +743,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	try {
         		LOGGER.debug("Querying for nestedBaseStackId = " + nestedBaseStackId);
         		nestedBaseHeatStack = heat.queryStack(cloudSiteId, tenantId, nestedBaseStackId);
-                LOGGER.recordMetricEvent (subStartTime3, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "QueryStack", vfModuleName);
+                LOGGER.recordMetricEvent (subStartTime3, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "QueryStack", vfModuleName);
         	} catch (MsoException me) {
         	    // Failed to query the Stack due to an openstack exception.
         	    // Convert to a generic VnfException
@@ -892,11 +898,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 			}
 			// End Version check 1607
 
-            // with VF_MODULE - we have both the non-vol and vol template/envs in that object
-            // with VNF_RESOURCE - we use the old methods.
-            //Integer heatTemplateId = null;
-            //Integer heatEnvtId = null;
-            
+           
          
             
          // By the time we get here - heatTemplateId and heatEnvtId should be populated (or null)
@@ -1049,10 +1051,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // Note this also removes any comments
             MsoHeatEnvironmentEntry mhee = null;
             if (heatEnvironment != null && heatEnvironment.getEnvironment() != null && heatEnvironment.getEnvironment().contains ("parameters:")) {
-                //LOGGER.debug ("Have an Environment argument with a parameters: section - will bypass checking for valid params - but will still check for aliases");
+               
             	LOGGER.debug("Enhanced environment checking enabled - 1604");
                 StringBuilder sb = new StringBuilder(heatEnvironment.getEnvironment());
-                //LOGGER.debug("About to create MHEE with " + sb);
+               
                 mhee = new MsoHeatEnvironmentEntry(sb);
                 StringBuilder sb2 = new StringBuilder("\nHeat Template Parameters:\n");
                 for (HeatTemplateParam parm : heatTemplate.getParameters()) {
@@ -1197,7 +1199,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             		LOGGER.debug("heat is null!");
             		throw new MsoHeatNotFoundException();
             	}
-                LOGGER.recordMetricEvent (createStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "CreateStack", vfModuleName);
+                LOGGER.recordMetricEvent (createStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "CreateStack", vfModuleName);
             } catch (MsoException me) {
                 me.addContext ("CreateVFModule");
                 String error = "Create VF Module " + vfModuleType + " in " + cloudSiteId + "/" + tenantId + ": " + me;
@@ -1301,7 +1303,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         long subStartTime = System.currentTimeMillis ();
         try {
             heat.deleteStack (tenantId, cloudSiteId, vnfName, true);
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "DeleteStack", vnfName);
+            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "DeleteStack", vnfName);
         } catch (MsoException me) {
             me.addContext ("DeleteVNF");
             // Failed to query the Stack due to an openstack exception.
@@ -1378,7 +1380,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         String mcu = modelCustomizationUuid;
         boolean useMCUuid = false;
         if (mcu != null && !mcu.isEmpty()) {
-            if (mcu.equalsIgnoreCase("null")) {
+            if ("null".equalsIgnoreCase(mcu)) {
                 LOGGER.debug("modelCustomizationUuid: passed in as the string 'null' - will ignore: " + modelCustomizationUuid);
                 useMCUuid = false;
                 mcu = "";
