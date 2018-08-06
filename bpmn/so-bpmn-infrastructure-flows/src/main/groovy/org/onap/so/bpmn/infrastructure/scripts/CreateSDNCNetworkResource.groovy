@@ -109,9 +109,9 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         }
     }
     
-    String customizeResourceParam(String netowrkInputParametersJson) {
+    String customizeResourceParam(String networkInputParametersJson) {
         List<Map<String, Object>> paramList = new ArrayList();
-        JSONObject jsonObject = new JSONObject(netowrkInputParametersJson);
+        JSONObject jsonObject = new JSONObject(networkInputParametersJson);
         Iterator iterator = jsonObject.keys();
         while (iterator.hasNext()) {
             String key = iterator.next();
@@ -159,9 +159,9 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String modelName = resourceInputObj.getResourceModelInfo().getModelName()
             String modelVersion = resourceInputObj.getResourceModelInfo().getModelVersion()
             String resourceInputPrameters = resourceInputObj.getResourceParameters()
-            String netowrkInputParametersJson = jsonUtil.getJsonValue(resourceInputPrameters, "requestInputs")
+            String networkInputParametersJson = jsonUtil.getJsonValue(resourceInputPrameters, "requestInputs")
             //here convert json string to xml string
-            String netowrkInputParameters = XML.toString(new JSONObject(customizeResourceParam(netowrkInputParametersJson)))
+            String netowrkInputParameters = XML.toString(new JSONObject(customizeResourceParam(networkInputParametersJson)))
             // 1. prepare assign topology via SDNC Adapter SUBFLOW call
             String sndcTopologyCreateRequest =
                     """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
