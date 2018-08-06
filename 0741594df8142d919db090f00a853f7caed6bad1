@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_0e9051eb",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/ActivateSDNCNetworkResource.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-08-06T12:34:48Z",
+      "side": 1,
+      "message": "Can you fix the spelling error here?",
+      "range": {
+        "startLine": 160,
+        "startChar": 19,
+        "endLine": 160,
+        "endChar": 45
+      },
+      "revId": "0741594df8142d919db090f00a853f7caed6bad1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_aebcbd6d",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/ActivateSDNCNetworkResource.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-08-06T12:34:48Z",
+      "side": 1,
+      "message": "Can you fix the spelling error here?",
+      "range": {
+        "startLine": 207,
+        "startChar": 86,
+        "endLine": 207,
+        "endChar": 108
+      },
+      "revId": "0741594df8142d919db090f00a853f7caed6bad1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
