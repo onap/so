@@ -20,7 +20,6 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.logger.MessageEnum
@@ -170,8 +169,6 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 			msoLogger.debug("Exception Occured During PreProcessRequest: " + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
-
-//		msoLogger.trace("Completed CompleteMsoProcess preProcessRequest Method ");
 	}
 
 	public void setUpdateDBstatustoSuccessPayload (DelegateExecution execution){
@@ -303,8 +300,6 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 				}
-		//		msoLogger.trace("Completed CompleteMsoProcess PostProcessRequest Method ");
-
 	}
 
 

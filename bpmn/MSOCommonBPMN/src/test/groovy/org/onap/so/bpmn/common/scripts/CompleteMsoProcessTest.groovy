@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.Test
@@ -140,11 +141,6 @@ class CompleteMsoProcessTest {
    <sdncadapterworkflow:out>BPEL BPEL-NAME FAILED</sdncadapterworkflow:out>
 </sdncadapterworkflow:MsoCompletionResponse>"""
 
-/*
-	private String msoCompletionResponse = """<sdncadapterworkflow:MsoCompletionResponse xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
-   <sdncadapterworkflow:out>BPEL BPEL-NAME FAILED</sdncadapterworkflow:out>
-</sdncadapterworkflow:MsoCompletionResponse>"""
-*/
 	@Test
     void testBuildDataError() {
 		// given
@@ -167,4 +163,20 @@ class CompleteMsoProcessTest {
 		assertThat capturedException.errorCode isEqualTo 500
 		assertThat capturedException.errorMessage isEqualTo message
     }
+
+	@Test
+	void postProcessResponse_successful() {
+		DelegateExecution mockExecution = mock(DelegateExecution.class)
+		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+		when(mockExecution.getVariable("CMSO_mso-bpel-name")).thenReturn("mso-bpel-test")
+		new CompleteMsoProcess().postProcessResponse(mockExecution)
+
+		String expectedResponse = "<sdncadapterworkflow:MsoCompletionResponse xmlns:sdncadapterworkflow=\"http://ecomp.com/mso/workflow/schema/v1\">\n" +
+				"  <sdncadapterworkflow:out>BPEL mso-bpel-test completed</sdncadapterworkflow:out>\n" +
+				"</sdncadapterworkflow:MsoCompletionResponse>"
+
+		verify(mockExecution).setVariable("WorkflowResponse", expectedResponse)
+		verify(mockExecution).setVariable("CompleteMsoProcessResponse", expectedResponse)
+		verify(mockExecution).setVariable("CMSO_ResponseCode", "200")
+	}
 }

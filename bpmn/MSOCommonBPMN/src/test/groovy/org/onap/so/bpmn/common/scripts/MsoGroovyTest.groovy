@@ -22,13 +22,9 @@ package org.onap.so.bpmn.common.scripts
 
 import static org.mockito.Mockito.*
 
-import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
 import org.camunda.bpm.engine.repository.ProcessDefinition
 
 abstract class MsoGroovyTest {
