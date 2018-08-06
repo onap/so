@@ -78,6 +78,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 operationType = jsonUtil.getJsonValue(recipeParamsFromWf, "operationType")
             }
 
+            // TODO: based on the resource type decide action and operation type
             String sdnc_svcAction = "activate"
             operationType = "SOTNConnectivity"
 
