@@ -86,7 +86,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${springboot.version}</version>
 				<configuration>
-					<mainClass>org.onap.so.adapters.requestsdb.application.MSOInfrastructureApplication</mainClass>
+					<mainClass>org.onap.so.bpmn.infrastructure.MSOInfrastructureApplication</mainClass>
 				</configuration>
 				<executions>
 					<execution>
