@@ -107,7 +107,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             throw e;
         } catch (Exception ex){
             msg = "Exception in preProcessRequest " + ex.getMessage()
-            utils.log("DEBUG", msg, isDebugEnabled)
+            msoLogger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
