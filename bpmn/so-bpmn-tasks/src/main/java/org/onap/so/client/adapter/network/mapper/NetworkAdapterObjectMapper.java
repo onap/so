@@ -240,7 +240,7 @@ public class NetworkAdapterObjectMapper {
 		for (org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet subnet : subnets) {
 			org.onap.so.openstack.beans.Subnet openstackSubnet = modelMapper.map(subnet, org.onap.so.openstack.beans.Subnet.class);
 			//update cidr value
-			if (subnet.getNetworkStartAddress() != null & subnet.getCidrMask() != null)
+			if (subnet.getNetworkStartAddress() != null && subnet.getCidrMask() != null)
 				openstackSubnet.setCidr(subnet.getNetworkStartAddress().concat(FORWARD_SLASH).concat(subnet.getCidrMask()));
 			List<org.onap.so.bpmn.servicedecomposition.bbobjects.HostRoute> hostRouteList = subnet.getHostRoutes();
 			List<org.onap.so.openstack.beans.HostRoute> openstackHostRouteList = new ArrayList<>();
