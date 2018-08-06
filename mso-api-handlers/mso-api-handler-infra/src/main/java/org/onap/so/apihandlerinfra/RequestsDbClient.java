@@ -55,13 +55,13 @@ public class RequestsDbClient {
 
 	private Client<InfraActiveRequests> infraActiveRequestClient;
 
-	@Value("${mso.adapters.db.spring.endpoint:}")
+	@Value("${mso.adapters.requestDb.endpoint}")
 	private String endpoint;
-	
-	@Value("${mso.db.auth:}")
+
+	@Value("${mso.adapters.requestDb.auth}")
 	private String msoAdaptersAuth;
 
-	private String getOrchestrationFilterURI = "/getOrchestrationFiltersFromInfraActive/";
+	private String getOrchestrationFilterURI = "/infraActiveRequests/getOrchestrationFiltersFromInfraActive/";
 
 	private String checkVnfIdStatus = "/infraActiveRequests/checkVnfIdStatus/";
 

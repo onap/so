@@ -21,9 +21,9 @@ mso:
     archived:
       period: 180
   adapters:
-    db:
-      spring:
-          endpoint: http://localhost:${wiremock.server.port}
+    requestDb:
+      endpoint:  http://localhost:${wiremock.server.port}
+      auth: Basic YnBlbDptc28tZGItMTUwNyE=
   logPath: logs
   site-name: mtanj
   catalog:

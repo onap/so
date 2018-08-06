@@ -479,20 +479,6 @@ public class MsoRequest {
 			return 0;        	
         }
     }
-    
-    public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage){
-    	if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
-            aq.setStatusMessage (errorMessage);          
-            aq.setProgress(new Long(100));
-            aq.setRequestStatus(status.toString());
-            Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
-            aq.setEndTime (endTimeStamp);
-            iarRepo.save(aq);
-    	}
-    }
-
-  
-    
 
     public static String domToStr (Document doc) {
         if (doc == null) {
