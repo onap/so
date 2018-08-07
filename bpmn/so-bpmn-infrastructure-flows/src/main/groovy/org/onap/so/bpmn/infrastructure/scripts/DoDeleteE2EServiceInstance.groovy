@@ -192,76 +192,93 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                     //Confirm there are no related service instances (vnf/network or volume)
                     if (utils.nodeExists(siData, "relationship-list")) {
                         utils.log("INFO", "SI Data relationship-list exists:", isDebugEnabled)
-                        //test(siData)
-                        NodeList nodeList = serviceXml.getElementsByTagName("relationship")
                         JSONArray jArray = new JSONArray()
-                        for (int x = 0; x < nodeList.getLength(); x++) {
-                            Node node = nodeList.item(x)
-                            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                                Element eElement = (Element) node
-                                def e = eElement.getElementsByTagName("related-to").item(0).getTextContent()    								//for ns
-                                if(e.equals("service-instance")){
-                                    def relatedObject = eElement.getElementsByTagName("related-link").item(0).getTextContent()
-                                    utils.log("INFO", "ServiceInstance Related NS :" + relatedObject, isDebugEnabled)
-                                    NodeList dataList = node.getChildNodes()
-                                    if(null != dataList) {
-                                        JSONObject jObj = new JSONObject()
-                                        for (int i = 0; i < dataList.getLength(); i++) {
-                                            Node dNode = dataList.item(i)
-                                            if(dNode.getNodeName() == "relationship-data") {
-                                                Element rDataEle = (Element)dNode
-                                                def eKey =  rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
-                                                def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
-                                                if(eKey.equals("service-instance.service-instance-id")){
-                                                    jObj.put("resourceInstanceId", eValue)
-                                                }
 
-                                            }
-                                            else if(dNode.getNodeName() == "related-to-property"){
-                                                Element rDataEle = (Element)dNode
-                                                def eKey =  rDataEle.getElementsByTagName("property-key").item(0).getTextContent()
-                                                def eValue = rDataEle.getElementsByTagName("property-value").item(0).getTextContent()
-                                                if(eKey.equals("service-instance.service-instance-name")){
-                                                    jObj.put("resourceType", eValue)
-                                                }
-                                            }
-                                        }
-                                        utils.log("INFO", "Relationship related to Resource:" + jObj.toString(), isDebugEnabled)
-                                        jArray.put(jObj)
-                                    }
-                                    //for overlay/underlay
-                                }else if (e.equals("configuration")){
-                                    def relatedObject = eElement.getElementsByTagName("related-link").item(0).getTextContent()
-                                    utils.log("INFO", "ServiceInstance Related Configuration :" + relatedObject, isDebugEnabled)
-                                    NodeList dataList = node.getChildNodes()
-                                    if(null != dataList) {
-                                        JSONObject jObj = new JSONObject()
-                                        for (int i = 0; i < dataList.getLength(); i++) {
-                                            Node dNode = dataList.item(i)
-                                            if(dNode.getNodeName() == "relationship-data") {
-                                                Element rDataEle = (Element)dNode
-                                                def eKey =  rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
-                                                def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
-                                                if(eKey.equals("configuration.configuration-id")){
-                                                    jObj.put("resourceInstanceId", eValue)
-                                                }
-                                            }
-                                            else if(dNode.getNodeName() == "related-to-property"){
-                                                Element rDataEle = (Element)dNode
-                                                def eKey =  rDataEle.getElementsByTagName("property-key").item(0).getTextContent()
-                                                def eValue = rDataEle.getElementsByTagName("property-value").item(0).getTextContent()
-                                                if(eKey.equals("configuration.configuration-type")){
-                                                    jObj.put("resourceType", eValue)
-                                                }
-                                            }
-                                        }
-                                        utils.log("INFO", "Relationship related to Resource:" + jObj.toString(), isDebugEnabled)
-                                        jArray.put(jObj)
-                                    }
-                                }
-                            }
+                        XmlParser xmlParser = new XmlParser()
+                        Node root = xmlParser.parseText(siData)
+                        def relation_list = utils.getChildNode(root, 'relationship-list')
+                        def relationships = utils.getIdenticalChildren(relation_list, 'relationship')
+
+                        for (def relation: relationships) {
+                        	def jObj = getRelationShipData(relation, isDebugEnabled)
+                        	jArray.put(jObj)
                         }
+
                         execution.setVariable("serviceRelationShip", jArray.toString())
+						
+//                        //test(siData)
+//                        NodeList nodeList = serviceXml.getElementsByTagName("relationship")
+//                        JSONArray jArray = new JSONArray()
+//                        for (int x = 0; x < nodeList.getLength(); x++) {
+//                            Node node = nodeList.item(x)
+//                            if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                                Element eElement = (Element) node
+//                                def e = eElement.getElementsByTagName("related-to").item(0).getTextContent()    								//for ns
+//                                if(e.equals("service-instance")){
+//                                    def relatedObject = eElement.getElementsByTagName("related-link").item(0).getTextContent()
+//                                    utils.log("INFO", "ServiceInstance Related NS :" + relatedObject, isDebugEnabled)
+//                                    NodeList dataList = node.getChildNodes()
+//                                    if(null != dataList) {
+//                                        JSONObject jObj = new JSONObject()
+//                                        for (int i = 0; i < dataList.getLength(); i++) {
+//                                            Node dNode = dataList.item(i)
+//                                            if(dNode.getNodeName() == "relationship-data") {
+//                                                Element rDataEle = (Element)dNode
+//                                                def eKey =  rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
+//                                                def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
+//                                                if(eKey.equals("service-instance.service-instance-id")){
+//                                                    jObj.put("resourceInstanceId", eValue)
+//                                                }
+//
+//                                            }
+//                                            else if(dNode.getNodeName() == "related-to-property"){
+//                                                Element rDataEle = (Element)dNode
+//                                                def eKey =  rDataEle.getElementsByTagName("property-key").item(0).getTextContent()
+//                                                def eValue = rDataEle.getElementsByTagName("property-value").item(0).getTextContent()
+//                                                if(eKey.equals("service-instance.service-instance-name")){
+//                                                    jObj.put("resourceType", eValue)
+//                                                }
+//                                            }
+//                                        }
+//                                        utils.log("INFO", "Relationship related to Resource:" + jObj.toString(), isDebugEnabled)
+//                                        jArray.put(jObj)
+//                                    }
+//                                    //for overlay/underlay
+//                                }else if (e.equals("configuration")){
+//                                    def relatedObject = eElement.getElementsByTagName("related-link").item(0).getTextContent()
+//                                    utils.log("INFO", "ServiceInstance Related Configuration :" + relatedObject, isDebugEnabled)
+//                                    NodeList dataList = node.getChildNodes()
+//                                    if(null != dataList) {
+//                                        JSONObject jObj = new JSONObject()
+//                                        for (int i = 0; i < dataList.getLength(); i++) {
+//                                            Node dNode = dataList.item(i)
+//                                            if(dNode.getNodeName() == "relationship-data") {
+//                                                Element rDataEle = (Element)dNode
+//                                                def eKey =  rDataEle.getElementsByTagName("relationship-key").item(0).getTextContent()
+//                                                def eValue = rDataEle.getElementsByTagName("relationship-value").item(0).getTextContent()
+//                                                if(eKey.equals("configuration.configuration-id")){
+//                                                    jObj.put("resourceInstanceId", eValue)
+//                                                }
+//                                            }
+//                                            else if(dNode.getNodeName() == "related-to-property"){
+//                                                Element rDataEle = (Element)dNode
+//                                                def eKey =  rDataEle.getElementsByTagName("property-key").item(0).getTextContent()
+//                                                def eValue = rDataEle.getElementsByTagName("property-value").item(0).getTextContent()
+//                                                if(eKey.equals("configuration.configuration-type")){
+//                                                    jObj.put("resourceType", eValue)
+//                                                }
+//                                            }
+//                                        }
+//                                        utils.log("INFO", "Relationship related to Resource:" + jObj.toString(), isDebugEnabled)
+//                                        jArray.put(jObj)
+//                                    }
+//                                // for SP-Partner
+//                                }else if (e.equals("sp-partner")){
+//									
+//								}								
+//                            }
+//                        }
+//                        execution.setVariable("serviceRelationShip", jArray.toString())
                     }
                 }
             }else{
@@ -292,6 +309,50 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         }
         utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
     }
+	
+	private JSONObject getRelationShipData(node, isDebugEnabled){
+		JSONObject jObj = new JSONObject()
+		
+		def relation  = utils.nodeToString(node)
+		def rt  = utils.getNodeText1(relation, "related-to")
+		
+		def rl  = utils.getNodeText1(relation, "related-link")
+		utils.log("INFO", "ServiceInstance Related NS/Configuration :" + rl, isDebugEnabled)
+		
+		def rl_datas = utils.getIdenticalChildren(node, "relationship-data")
+		for(def rl_data : rl_datas) {
+			def eKey =  utils.getChildNodeText(rl_data, "relationship-key")
+			def eValue = utils.getChildNodeText(rl_data, "relationship-value")
+
+			if ((rt == "service-instance" && eKey.equals("service-instance.service-instance-id"))
+			//for overlay/underlay
+			|| (rt == "configuration" && eKey.equals("configuration.configuration-id")
+			)){
+				jObj.put("resourceInstanceId", eValue)
+			}
+			// for sp-partner
+			if(rt == "sp-partner" && eKey.equals("sp-partner.id")) {
+				jObj.put("resourceInstanceId", eValue)
+				String sppartnerName = "sp-partner" + eValue
+				jObj.put("resourceType", sppartnerName)
+			}
+		}
+
+		def rl_props = utils.getIdenticalChildren(node, "related-to-property")
+		for(def rl_prop : rl_props) {
+			def eKey =  utils.getChildNodeText(rl_prop, "property-key")
+			def eValue = utils.getChildNodeText(rl_prop, "property-value")
+			if((rt == "service-instance" && eKey.equals("service-instance.service-instance-name"))
+			//for overlay/underlay
+			|| (rt == "configuration" && eKey.equals("configuration.configuration-type"))){
+				jObj.put("resourceType", eValue)
+			}
+		}
+
+		utils.log("INFO", "Relationship related to Resource:" + jObj.toString(), isDebugEnabled)
+
+		return jObj
+	}
 
    public void getCurrentNS(DelegateExecution execution){
        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
