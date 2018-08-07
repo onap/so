@@ -137,6 +137,15 @@ csi.sendSyncResponse(execution)</bpmn:script>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_00vqgvt" sourceRef="Task_1xychp0" targetRef="PreprocessIncomingRequest_task" />
     <bpmn:callActivity id="Task_1xychp0" name="Call Deactivate SDNC Network Resource" calledElement="DeActivateSDNCNetworkResource">
+      <bpmn:extensionElements>
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+        <camunda:in source="requestAction" target="requestAction" />
+        <camunda:in source="recipeParams" target="recipeParams" />
+        <camunda:in source="recipeParams" target="recipeParams" />
+        <camunda:in source="recipeParamXsd" target="recipeParamXsd" />
+        <camunda:in source="URN_mso_workflow_sdncadapter_callback" target="URN_mso_workflow_sdncadapter_callback" />
+        <camunda:in source="resourceInput" target="resourceInput" />
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0h3klf0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_00vqgvt</bpmn:outgoing>
     </bpmn:callActivity>
