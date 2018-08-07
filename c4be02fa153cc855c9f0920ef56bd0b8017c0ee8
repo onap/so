@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_5154a553",
+        "filename": "common/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-08-07T13:47:23Z",
+      "side": 1,
+      "message": "Not a good idea to hard code the version, it would be instead put in a config",
+      "revId": "c4be02fa153cc855c9f0920ef56bd0b8017c0ee8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
