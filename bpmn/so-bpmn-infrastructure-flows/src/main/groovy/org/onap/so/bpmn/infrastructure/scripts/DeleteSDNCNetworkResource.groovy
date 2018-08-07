@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.logger.MsoLogger
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.apache.commons.lang3.*
@@ -40,6 +42,8 @@ import groovy.json.*
  * flow for SDNC Network Resource 
  */
 public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
+    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,
+            CreateSDNCNetworkResource.class);
 
     String Prefix="DELSDNCRES_"
             
@@ -50,18 +54,17 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
     SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
     
     public void preProcessRequest(DelegateExecution execution){
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** Started preProcessRequest *****",  isDebugEnabled)
+        msoLogger.info("***** Started preProcessRequest *****")
         try {           
             
             //get bpmn inputs from resource request.
             String requestId = execution.getVariable("mso-request-id")
             String requestAction = execution.getVariable("requestAction")
-            utils.log("INFO","The requestAction is: " + requestAction,  isDebugEnabled)
+            msoLogger.info("The requestAction is: " + requestAction)
             String recipeParamsFromRequest = execution.getVariable("recipeParams")
-            utils.log("INFO","The recipeParams is: " + recipeParamsFromRequest,  isDebugEnabled)
+            msoLogger.info("The recipeParams is: " + recipeParamsFromRequest)
             String resourceInput = execution.getVariable("resourceInput")
-            utils.log("INFO","The resourceInput is: " + resourceInput,  isDebugEnabled)
+            msoLogger.info("The resourceInput is: " + resourceInput)
             //Get ResourceInput Object
             ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
             execution.setVariable(Prefix + "resourceInput", resourceInputObj)
@@ -116,8 +119,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
      * generate the nsParameters
      */
     public void prepareSDNCRequest (DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** Started prepareSDNCRequest *****",  isDebugEnabled)
+        msoLogger.info("***** Started prepareSDNCRequest *****")
 
         try {
             // get variables
@@ -194,15 +196,15 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String sndcTopologyDeleteRequesAsString = utils.formatXml(sndcTopologyDeleteRequest)
             utils.logAudit(sndcTopologyDeleteRequesAsString)
             execution.setVariable("sdncAdapterWorkflowRequest", sndcTopologyDeleteRequesAsString)
-            utils.log("INFO","sdncAdapterWorkflowRequest - " + "\n" +  sndcTopologyDeleteRequesAsString, isDebugEnabled)
+            msoLogger.info("sdncAdapterWorkflowRequest - " + "\n" +  sndcTopologyDeleteRequesAsString)
 
         } catch (Exception ex) {
             String exceptionMessage = " Bpmn error encountered in DeleteSDNCCNetworkResource flow. prepareSDNCRequest() - " + ex.getMessage()
-            utils.log("DEBUG", exceptionMessage, isDebugEnabled)
+            msoLogger.debug(exceptionMessage)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
         }
-       utils.log("INFO"," ***** Exit prepareSDNCRequest *****",  isDebugEnabled)
+        msoLogger.info(" ***** Exit prepareSDNCRequest *****")
 	}
 
     private void setProgressUpdateVariables(DelegateExecution execution, String body) {
@@ -277,18 +279,16 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void postDeleteSDNCCall(DelegateExecution execution){
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** Started prepareSDNCRequest *****",  isDebugEnabled)
+        msoLogger.info(" ***** Started prepareSDNCRequest *****")
         String responseCode = execution.getVariable(Prefix + "sdncDeleteReturnCode")
         String responseObj = execution.getVariable(Prefix + "SuccessIndicator")
-        
-        utils.log("INFO","response from sdnc, response code :" + responseCode + "  response object :" + responseObj,  isDebugEnabled)
-        utils.log("INFO"," ***** Exit prepareSDNCRequest *****",  isDebugEnabled)
+
+        msoLogger.info("response from sdnc, response code :" + responseCode + "  response object :" + responseObj)
+        msoLogger.info(" ***** Exit prepareSDNCRequest *****")
     }
     
 	public void sendSyncResponse (DelegateExecution execution) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " *** sendSyncResponse *** ", isDebugEnabled)
+        msoLogger.info(" *** sendSyncResponse *** ")
 
 		try {
 			String operationStatus = "finished"
@@ -300,9 +300,9 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
 		} catch (Exception ex) {
 			String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
-			utils.log("DEBUG", msg, isDebugEnabled)
+            msoLogger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("DEBUG"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
+        msoLogger.info(" ***** Exit sendSyncResopnse *****")
 	}
 }
