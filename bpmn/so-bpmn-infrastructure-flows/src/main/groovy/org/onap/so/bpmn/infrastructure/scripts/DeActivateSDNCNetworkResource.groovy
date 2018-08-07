@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.json.JSONObject
 import org.json.XML
+import org.onap.so.logger.MsoLogger
 import org.openecomp.mso.bpmn.common.recipe.ResourceInput
 import org.openecomp.mso.bpmn.common.resource.ResourceRequestBuilder
 import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -37,8 +38,9 @@ import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
  * flow for SDNC Network Resource Activate
  */
 public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
-
-    String Prefix = "ACTSDNCRES_"
+    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,
+            CreateSDNCNetworkResource.class);
+    String Prefix = "DEACTSDNCRES_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -47,43 +49,39 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
     SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 
     public void preProcessRequest(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** started  preProcessRequest*****",  isDebug)
+        msoLogger.info(" ***** started  preProcessRequest*****")
     }
 
     public void prepareSDNCRequest(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** started prepareSDNCRequest *****",  isDebug)
+        msoLogger.info(" ***** started prepareSDNCRequest *****")
     }
 
     public void prepareUpdateAfterDeActivateSDNCResource(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** started prepareUpdateAfterDeActivateSDNCResource *****",  isDebug)
+        msoLogger.info("***** started prepareUpdateAfterDeActivateSDNCResource *****")
     }
 
     public void postDeactivateSDNCCall(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** started postDeactivateSDNCCall *****",  isDebugEnabled)
+        msoLogger.info(" ***** started postDeactivateSDNCCall *****")
     }
 
     public void sendSyncResponse(DelegateExecution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** started sendSyncResponse *****",  isDebugEnabled)
+        msoLogger.info(" ***** started sendSyncResponse *****")
 
         try {
             String operationStatus = "finished"
             // RESTResponse for main flow
             String resourceOperationResp = """{"operationStatus":"${operationStatus}"}""".trim()
-            utils.log("DEBUG", " sendSyncResponse to APIH:" + "\n" + resourceOperationResp, isDebugEnabled)
+            msoLogger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
             sendWorkflowResponse(execution, 202, resourceOperationResp)
             execution.setVariable("sentSyncResponse", true)
 
         } catch (Exception ex) {
             String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
-            utils.log("DEBUG", msg, isDebugEnabled)
+            msoLogger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        utils.log("DEBUG"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
+        msoLogger.debug(" ***** Exit sendSyncResopnse *****")
     }
 
 }
