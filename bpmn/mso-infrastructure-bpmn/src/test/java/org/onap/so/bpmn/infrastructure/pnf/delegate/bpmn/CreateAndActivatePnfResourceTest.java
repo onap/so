@@ -48,7 +48,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(locations = "/applicationContext_forPnfTesting.xml")
-@Ignore
 public class CreateAndActivatePnfResourceTest {
 
     private static final String TIMEOUT_10_S = "PT10S";
