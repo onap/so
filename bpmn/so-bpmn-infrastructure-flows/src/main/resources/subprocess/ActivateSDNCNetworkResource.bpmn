@@ -18,7 +18,7 @@
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="sdncAdapterWorkflowRequest" target="sdncAdapterWorkflowRequest" />
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_18l3crb</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0sjrnv5</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1xk5xed</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="SequenceFlow_1xk5xed" sourceRef="CallActivity_1600xlj" targetRef="Task_0uwlr22" />
@@ -30,7 +30,7 @@
 def dcsi = new ActivateSDNCNetworkResource()
 dcsi.postCreateSDNCCall(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="SequenceFlow_18l3crb" sourceRef="Task_13sx2bp" targetRef="CallActivity_1600xlj" />
+    <bpmn:sequenceFlow id="SequenceFlow_18l3crb" sourceRef="Task_13sx2bp" targetRef="ScriptTask_1gih50a" />
     <bpmn:scriptTask id="Task_13sx2bp" name="Pre Process Request" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1c92ks3</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_18l3crb</bpmn:outgoing>
@@ -78,13 +78,21 @@ csi.sendSyncResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_17md60u" sourceRef="ScriptTask_1g5zyi6" targetRef="EndEvent_1x6k78c" />
     <bpmn:sequenceFlow id="SequenceFlow_1c92ks3" sourceRef="createNS_StartEvent" targetRef="Task_13sx2bp" />
+    <bpmn:scriptTask id="ScriptTask_1gih50a" name="Prepare SDNC Actiate request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_18l3crb</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0sjrnv5</bpmn:outgoing>
+      <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
+def dcsi = new ActivateSDNCNetworkResource()
+dcsi.prepareSDNCRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0sjrnv5" sourceRef="ScriptTask_1gih50a" targetRef="CallActivity_1600xlj" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ActivateSDNCNetworkResource">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="createNS_StartEvent">
-        <dc:Bounds x="-203" y="306" width="36" height="36" />
+        <dc:Bounds x="-275" y="306" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-230" y="352" width="89" height="27" />
+          <dc:Bounds x="-302" y="352" width="89" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_15pcuuc_di" bpmnElement="EndEvent_1x6k78c">
@@ -114,14 +122,14 @@ csi.sendSyncResponse(execution)</bpmn:script>
         <dc:Bounds x="594" y="284" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_18l3crb_di" bpmnElement="SequenceFlow_18l3crb">
-        <di:waypoint x="12" y="324" />
-        <di:waypoint x="77" y="324" />
+        <di:waypoint x="-105" y="324" />
+        <di:waypoint x="-63" y="324" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="235.5" y="108" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_14l9mlv_di" bpmnElement="Task_13sx2bp">
-        <dc:Bounds x="-88" y="284" width="100" height="80" />
+        <dc:Bounds x="-205" y="284" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_0hu4lhm_di" bpmnElement="Task_0uwlr22">
         <dc:Bounds x="247" y="284" width="100" height="80" />
@@ -154,8 +162,15 @@ csi.sendSyncResponse(execution)</bpmn:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1c92ks3_di" bpmnElement="SequenceFlow_1c92ks3">
-        <di:waypoint x="-167" y="324" />
-        <di:waypoint x="-88" y="324" />
+        <di:waypoint x="-239" y="324" />
+        <di:waypoint x="-205" y="324" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1gih50a_di" bpmnElement="ScriptTask_1gih50a">
+        <dc:Bounds x="-63" y="284" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0sjrnv5_di" bpmnElement="SequenceFlow_0sjrnv5">
+        <di:waypoint x="37" y="324" />
+        <di:waypoint x="77" y="324" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
