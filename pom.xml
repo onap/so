@@ -47,8 +47,7 @@
 		<org.apache.maven.user-settings></org.apache.maven.user-settings>
 		<openstack.version>1.2.2</openstack.version>
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
-		<springboot.version>1.5.13.RELEASE</springboot.version>
-		<cxf.version>3.1.12</cxf.version>
+		<springboot.version>1.5.13.RELEASE</springboot.version>	
 		<originalClassifier>original</originalClassifier>
 		<docker.skip>true</docker.skip>
 		<docker.skip.build>true</docker.skip.build>
@@ -63,6 +62,7 @@
 		<snapshotNexusPath>content/repositories/snapshots/</snapshotNexusPath>
 		<publicNexusPath>content/repositories/public/</publicNexusPath>
 		<siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
+		<cxf.version>3.2.5</cxf.version>
 	</properties>
 	<distributionManagement>
 		<repository>
