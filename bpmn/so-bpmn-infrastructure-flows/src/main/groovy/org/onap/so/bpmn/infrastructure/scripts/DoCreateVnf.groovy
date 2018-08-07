@@ -43,6 +43,7 @@ import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.springframework.web.util.UriUtils
+import org.json.JSONObject
 
 
 /**
@@ -245,6 +246,32 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 
 		}
 		msoLogger.trace("COMPLETED DoCreateVnf PreProcessRequest Process")
+	}
+
+	/**
+	 * Gets the service instance from aai
+	 */
+	public void getServiceInstance(DelegateExecution execution) {
+		try {
+			String serviceInstanceId = execution.getVariable('DoCVNF_serviceInstanceId')
+
+			AAIResourcesClient resourceClient = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+
+			if(resourceClient.exists(uri)){
+				execution.setVariable("GENGS_siResourceLink", uri.build().toString())
+
+			}else{
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai")
+			}
+
+		}catch(BpmnError e) {
+			throw e;
+		}catch(Exception ex) {
+			String msg = "Exception in getServiceInstance. " + ex.getMessage()
+			msoLogger.debug(msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
 	}
 
 	private Object getVariableEnforced(DelegateExecution execution, String name){

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,7 +67,7 @@ import org.onap.so.logger.MsoLogger
  * @param - GENPS_tunnelXconnectId - Conditional Field. Required for tunnel-xconnect.
  *
  * @param - GENPS_serviceResourceVersion - Conditional Field. Needs to be provided only in case of update for both service-instance and service subscription. The calling flows
- *          should check if a service-instance or servic-subscription exists by calling the subflow GenericGetService. if it exists then resourceversion should be
+ *          should check if a service-instance or servic-subscription exists by calling the subflow. if it exists then resourceversion should be
  *          obtained from aai and sent as an input parameter.
  *
  * Outgoing Variables:
@@ -104,7 +104,7 @@ class GenericPutService extends AbstractServiceTaskProcessor{
 			String allottedResourceId = execution.getVariable("GENPS_allottedResourceId")
 			String tunnelXconnectId = execution.getVariable("GENPS_tunnelXconnectId")
 			String type = execution.getVariable("GENPS_type")
-			
+
 			if(type != null){
 				msoLogger.debug("Incoming GENPS_type is: " + type)
 				if(type.equalsIgnoreCase("service-instance")){
@@ -201,7 +201,7 @@ class GenericPutService extends AbstractServiceTaskProcessor{
 
 			String serviceType = execution.getVariable("GENPS_serviceType")
 			msoLogger.debug(" Incoming GENPS_serviceType is: " + serviceType)
-			
+
 			String globalSubscriberId = execution.getVariable("GENPS_globalSubscriberId")
 			msoLogger.debug("Incoming Global Subscriber Id is: " + globalSubscriberId)
 

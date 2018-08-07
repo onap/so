@@ -3,14 +3,14 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved. 
+ * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,9 +22,12 @@ package org.onap.so.bpmn.infrastructure.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
+import javax.ws.rs.NotFoundException
+
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils;
@@ -35,6 +38,11 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.springframework.web.util.UriUtils;
@@ -58,7 +66,7 @@ import groovy.json.*
  * @param - failExists - TODO
  * @param - serviceInputParams (should contain aic_zone for serviceTypes TRANSPORT,ATM)
  * @param - sdncVersion ("1610")
- * @param - serviceDecomposition - Decomposition for R1710 
+ * @param - serviceDecomposition - Decomposition for R1710
  * (if macro provides serviceDecompsition then serviceModelInfo, serviceInstanceId & serviceInstanceName will be ignored)
  *
  * Outputs:
@@ -98,17 +106,17 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 				msoLogger.info(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
-			
+
 			if (isBlank(serviceType)) {
 				msg = "Input serviceType is null"
 				msoLogger.info(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
-			
+
 			if (productFamilyId == null) {
 				execution.setVariable("productFamilyId", "")
 			}
-			
+
 			String sdncCallbackUrl = execution.getVariable('URN_mso_workflow_sdncadapter_callback')
 			if (isBlank(sdncCallbackUrl)) {
 				msg = "URN_mso_workflow_sdncadapter_callback is null"
@@ -118,8 +126,8 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
 			msoLogger.info("SDNC Callback URL: " + sdncCallbackUrl)
 
-			//requestDetails.modelInfo.for AAI PUT servieInstanceData 			
-			//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData 
+			//requestDetails.modelInfo.for AAI PUT servieInstanceData
+			//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			String uuiRequest = execution.getVariable("uuiRequest")
@@ -130,7 +138,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			//aai serviceType and Role can be setted as fixed value now.
 			String aaiServiceType = "E2E Service"
 			String aaiServiceRole = "E2E Service"
-			
+
 			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
 			execution.setVariable("modelUuid", modelUuid)
 
@@ -142,7 +150,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			}
 
 			String statusLine = isBlank(oStatus) ? "" : "<orchestration-status>${MsoUtils.xmlEscape(oStatus)}</orchestration-status>"
-				
+
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
 			String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
@@ -155,7 +163,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 					${statusLine}
 				    <model-invariant-id>${MsoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-id>
 				    <model-version-id>${MsoUtils.xmlEscape(modelUuid)}</model-version-id>
-					</service-instance>""".trim()					
+					</service-instance>""".trim()
 			execution.setVariable("serviceInstanceData", serviceInstanceData)
 			msoLogger.debug(serviceInstanceData)
 			msoLogger.info(" aai_uri " + aai_uri + " namespace:" + namespace)
@@ -170,7 +178,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		}
 		msoLogger.trace("Exit preProcessRequest ")
 	}
-	
+
    public void prepareDecomposeService(DelegateExecution execution) {
         try {
             msoLogger.trace("Inside prepareDecomposeService of create generic e2e service ")
@@ -193,7 +201,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
      }
 
     public void processDecomposition(DelegateExecution execution) {
-        msoLogger.trace("Inside processDecomposition() of  create generic e2e service flow ")    
+        msoLogger.trace("Inside processDecomposition() of  create generic e2e service flow ")
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
         } catch (Exception ex) {
@@ -202,23 +210,23 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
     }
-    
+
     public void doServicePreOperation(DelegateExecution execution){
-       //we need a service plugin platform here. 
+       //we need a service plugin platform here.
     	ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-    	String uuiRequest = execution.getVariable("uuiRequest")		
+    	String uuiRequest = execution.getVariable("uuiRequest")
     	String newUuiRequest = ServicePluginFactory.getInstance().preProcessService(serviceDecomposition, uuiRequest);
-    	execution.setVariable("uuiRequest", newUuiRequest)	
+    	execution.setVariable("uuiRequest", newUuiRequest)
     }
-    
+
     public void doServiceHoming(DelegateExecution execution) {
-    	//we need a service plugin platform here. 
+    	//we need a service plugin platform here.
     	ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-    	String uuiRequest = execution.getVariable("uuiRequest")		
+    	String uuiRequest = execution.getVariable("uuiRequest")
     	String newUuiRequest = ServicePluginFactory.getInstance().doServiceHoming(serviceDecomposition, uuiRequest);
-    	execution.setVariable("uuiRequest", newUuiRequest)	
+    	execution.setVariable("uuiRequest", newUuiRequest)
     }
-    
+
 	public void postProcessAAIGET(DelegateExecution execution) {
 		msoLogger.trace("postProcessAAIGET ")
 		String msg = ""
@@ -260,6 +268,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		msoLogger.trace("Exit postProcessAAIGET ")
 	}
 
+	//TODO use create if not exist
 	public void postProcessAAIPUT(DelegateExecution execution) {
 		msoLogger.trace("postProcessAAIPUT ")
 		String msg = ""
@@ -296,7 +305,32 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		}
 		msoLogger.trace("Exit postProcessAAIPUT ")
 	}
-	
+
+	/**
+	 * Gets the service instance and its relationships from aai
+	 */
+	public void getServiceInstance(DelegateExecution execution) {
+		try {
+			String serviceInstanceId = execution.getVariable('serviceInstanceId')
+			String globalSubscriberId = execution.getVariable('globalSubscriberId')
+			String serviceType = execution.getVariable('subscriptionServiceType')
+
+			AAIResourcesClient resourceClient = new AAIResourcesClient()
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
+			AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
+
+			ServiceInstance si = wrapper.asBean(ServiceInstance.class)
+			execution.setVariable("serviceInstanceName", si.getServiceInstanceName())
+
+		}catch(BpmnError e) {
+			throw e;
+		}catch(Exception ex) {
+			String msg = "Internal Error in getServiceInstance: " + ex.getMessage()
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+	}
+
+
 	public void postProcessAAIGET2(DelegateExecution execution) {
 		msoLogger.trace("postProcessAAIGET2 ")
 		String msg = ""
@@ -342,7 +376,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	public void preProcessRollback (DelegateExecution execution) {
 		msoLogger.trace("preProcessRollback ")
 		try {
-			
+
 			Object workflowException = execution.getVariable("WorkflowException");
 
 			if (workflowException instanceof WorkflowException) {
@@ -397,10 +431,10 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("operationType", operationType)
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             List<Resource>  resourceList = serviceDecomposition.getServiceResources()
-            
+
             for(Resource resource : resourceList){
                     resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
-            }           
+            }
 
             def dbAdapterEndpoint = "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter"
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
@@ -429,23 +463,23 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing preInitResourcesOperStatus.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }
-        msoLogger.trace("COMPLETED preInitResourcesOperStatus Process ")  
+        msoLogger.trace("COMPLETED preInitResourcesOperStatus Process ")
 	}
 
 	// prepare input param for using DoCreateResources.bpmn
 	public void preProcessForAddResource(DelegateExecution execution) {
 		msoLogger.trace("STARTED preProcessForAddResource Process ")
-		
+
 		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 		List<Resource> addResourceList = serviceDecomposition.getServiceResources()
 		execution.setVariable("addResourceList", addResourceList)
-		
+
 		msoLogger.trace("COMPLETED preProcessForAddResource Process ")
 	}
 
 	public void postProcessForAddResource(DelegateExecution execution) {
 		// do nothing now
-	
+
 	}
 
 }

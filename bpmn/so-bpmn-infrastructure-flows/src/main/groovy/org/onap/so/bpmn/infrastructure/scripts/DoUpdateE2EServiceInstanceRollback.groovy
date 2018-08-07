@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,13 +67,13 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 		execution.setVariable("rollbackAAI",false)
 		execution.setVariable("rollbackAdded",false)
 		execution.setVariable("rollbackDeleted",false)
-		
+
 		List addResourceList = execution.getVariable("addResourceList")
         List delResourceList = execution.getVariable("delResourceList")
         execution.setVariable("addResourceList_o",  addResourceList)
         execution.setVariable("delResourceList_o",  delResourceList)
         //exchange add and delete resource list
-        execution.setVariable("addResourceList",  delResourceList)        
+        execution.setVariable("addResourceList",  delResourceList)
         execution.setVariable("delResourceList",  addResourceList)
 
 		try {
@@ -103,14 +103,14 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 					{
 						execution.setVariable("rollbackAdded", true)
 					}
-					
+
 					def rollbackDeleted = rollbackData.get("SERVICEINSTANCE", "rollbackDeleted")
 					if ("true".equals(rollbackDeleted))
 					{
 						execution.setVariable("rollbackDeleted", true)
-					}					
+					}
 
-					if (execution.getVariable("rollbackAAI") != true && execution.getVariable("rollbackAdded") != true 
+					if (execution.getVariable("rollbackAAI") != true && execution.getVariable("rollbackAdded") != true
 					  && execution.getVariable("rollbackDeleted") != true)
 					{
 						execution.setVariable("skipRollback", true)
@@ -148,7 +148,7 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 			boolean rollbackAAI = execution.getVariable("rollbackAAI")
 			boolean rollbackAdded = execution.getVariable("rollbackAdded")
 			boolean rollbackDeleted = execution.getVariable("rollbackDeleted")
-			
+
 			List addResourceList = execution.getVariable("addResourceList_o")
 			List delResourceList = execution.getVariable("delResourceList_o")
 			execution.setVariable("addResourceList",  addResourceList)
@@ -177,66 +177,21 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 			msoLogger.debug(msg)
 		}
 	}
-	
-    
+
+
     public void preProcessForAddResource(DelegateExecution execution) {
     }
 
     public void postProcessForAddResource(DelegateExecution execution) {
     }
-    
+
     public void preProcessForDeleteResource(DelegateExecution execution) {
     }
 
     public void postProcessForDeleteResource(DelegateExecution execution) {
-    } 
+    }
 
-	public void preProcessAAIGET(DelegateExecution execution) {
-	}
-    	
-	public void postProcessAAIGET(DelegateExecution execution) {
-		msoLogger.trace("postProcessAAIGET ")
-		String msg = ""
-
-		try {
-			String serviceInstanceName = execution.getVariable("serviceInstanceName")
-			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-			if(!succInAAI){
-				msoLogger.info("Error getting Service-instance from AAI in postProcessAAIGET", + serviceInstanceName)
-				WorkflowException workflowException = execution.getVariable("WorkflowException")
-				msoLogger.debug("workflowException: " + workflowException)
-				if(workflowException != null){
-					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-				}
-				else
-				{
-					msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
-					msoLogger.info(msg)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-				}
-			}
-			else
-			{
-				boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-				if(foundInAAI){
-					String aaiService = execution.getVariable("GENGS_service")
-					if (!isBlank(aaiService) && (utils.nodeExists(aaiService, "resource-version"))) {
-						execution.setVariable("serviceInstanceVersion_n",  utils.getNodeText(aaiService, "resource-version"))
-						msoLogger.info("Found Service-instance in AAI.serviceInstanceName:" + execution.getVariable("serviceInstanceName"))
-					}
-				}
-			}
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception ex) {
-			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET " + ex.getMessage()
-			msoLogger.info(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		msoLogger.trace("Exit postProcessAAIGET ")
-	}    
-
-	public void preProcessAAIPUT(DelegateExecution execution) {		
+	public void preProcessAAIPUT(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
 		msoLogger.info("Entered " + method)
 		String msg = ""
@@ -244,7 +199,7 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 
 		String serviceInstanceVersion = execution.getVariable("serviceInstanceVersion_n")
 //		execution.setVariable("GENPS_serviceResourceVersion", serviceInstanceVersion)
-        
+
 		//requestDetails.modelInfo.for AAI PUT servieInstanceData
 		//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData
 		String serviceInstanceName = execution.getVariable("serviceInstanceName")
@@ -255,7 +210,7 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 		String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
 		String modelUuid = execution.getVariable("model-version-id-original")
 
-		//AAI PUT      
+		//AAI PUT
 		AaiUtil aaiUriUtil = new AaiUtil(this)
 		utils.log("INFO","start create aai uri: " + aaiUriUtil, isDebugEnabled)
 		String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
@@ -271,7 +226,7 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
                     <service-role>${MsoUtils.xmlEscape(aaiServiceRole)}</service-role>
                     <resource-version>${MsoUtils.xmlEscape(serviceInstanceVersion)}</resource-version>
                     <model-invariant-id>${MsoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-id>
-                    <model-version-id>${MsoUtils.xmlEscape(modelUuid)}</model-version-id>   
+                    <model-version-id>${MsoUtils.xmlEscape(modelUuid)}</model-version-id>
 				 </service-instance>""".trim()
 
 		execution.setVariable("serviceInstanceData", serviceInstanceData)
@@ -279,10 +234,10 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 		msoLogger.debug(serviceInstanceData)
 		msoLogger.info(" aai_uri " + aai_uri + " namespace:" + namespace)
 		msoLogger.info(" 'payload' to update Service Instance in AAI - " + "\n" + serviceInstanceData)
-	
+
 		msoLogger.info("Exited " + method)
-	}	
-	
+	}
+
 	public void postProcessAAIPUT(DelegateExecution execution) {
 		msoLogger.trace("postProcessAAIPUT ")
 		String msg = ""
@@ -299,7 +254,7 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 			}
 			else
 			{
-				
+
 			}
 
 		} catch (BpmnError e) {
@@ -310,7 +265,7 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 		msoLogger.trace("Exit postProcessAAIPUT ")
-	}	
+	}
 
 	public void processRollbackException(DelegateExecution execution){
 		msoLogger.trace("processRollbackException ")

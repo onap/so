@@ -22,12 +22,10 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.apache.commons.lang3.StringUtils.*;
 
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
-
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -35,17 +33,13 @@ import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.logger.MsoLogger
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.logger.MsoLogger
 import org.springframework.web.util.UriUtils;
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
-import org.xml.sax.InputSource
 
 import groovy.json.*
 
@@ -282,170 +276,86 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 		msoLogger.trace("Exit postProcessSDNC " + method + " ")
 	}
 
-	public void postProcessAAIGET(DelegateExecution execution) {
-
-		msoLogger.trace("postProcessAAIGET ")
-		String msg = ""
-
+	/**
+	 * Gets the service instance uri from aai
+	 */
+	public void getServiceInstance(DelegateExecution execution) {
+		msoLogger.trace("getServiceInstance ")
 		try {
+			String serviceInstanceId = execution.getVariable('serviceInstanceId')
 
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-			String serviceType = ""
+			AAIResourcesClient resourceClient = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
 
-			if(foundInAAI == true){
-				msoLogger.debug("Found Service-instance in AAI")
-
-				//Extract GlobalSubscriberId
-				String siRelatedLink = execution.getVariable("GENGS_siResourceLink")
-				if (isBlank(siRelatedLink))
-				{
-					msg = "Could not retrive ServiceInstance data from AAI to delete id:" + serviceInstanceId
-					msoLogger.debug(msg)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-				}
-				else
-				{
-					msoLogger.debug("Found Service-instance in AAI. link: " + siRelatedLink)
-					String  globalSubscriberId = execution.getVariable("globalSubscriberId")
-					if(isBlank(globalSubscriberId)){
-						int custStart = siRelatedLink.indexOf("customer/")
-						int custEnd = siRelatedLink.indexOf("/service-subscriptions")
-						globalSubscriberId = siRelatedLink.substring(custStart + 9, custEnd)
-						execution.setVariable("globalSubscriberId", globalSubscriberId)
-					}
-
-					//Extract Service Type if not provided on request
-					String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
-					if(isBlank(subscriptionServiceType)){
-						int serviceStart = siRelatedLink.indexOf("service-subscription/")
-						int serviceEnd = siRelatedLink.indexOf("/service-instances/")
-						String serviceTypeEncoded = siRelatedLink.substring(serviceStart + 21, serviceEnd)
-						subscriptionServiceType = UriUtils.decode(serviceTypeEncoded, "UTF-8")
-						execution.setVariable("subscriptionServiceType", subscriptionServiceType)
-					}
-
-					if (isBlank(globalSubscriberId) || isBlank(subscriptionServiceType))
-					{
-						msg = "Could not retrive global-customer-id & subscription-service-type from AAI to delete id:" + serviceInstanceId
-						msoLogger.debug(msg)
-						exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-					}
+			if(resourceClient.exists(uri)){
+				execution.setVariable("GENGS_siResourceLink", uri.build().toString())
+				Map<String, String> keys = uri.getURIKeys()
+				String  globalSubscriberId = execution.getVariable("globalSubscriberId")
+				if(isBlank(globalSubscriberId)){
+					globalSubscriberId = keys.get("global-customer-id")
+					execution.setVariable("globalSubscriberId", globalSubscriberId)
 				}
 
-				String siData = execution.getVariable("GENGS_service")
-				msoLogger.debug("SI Data")
-				if (isBlank(siData))
-				{
-					msg = "Could not retrive ServiceInstance data from AAI to delete id:" + serviceInstanceId
-					msoLogger.debug(msg)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+				//Extract Service Type if not provided on request
+				String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
+				if(isBlank(subscriptionServiceType)){
+					String serviceTypeEncoded = keys.get("service-type") //TODO will this produce as already decoded?
+					subscriptionServiceType = UriUtils.decode(serviceTypeEncoded, "UTF-8")
+					execution.setVariable("subscriptionServiceType", subscriptionServiceType)
 				}
-				else
-				{
-					msoLogger.debug("SI Data" + siData)
-					serviceType = utils.getNodeText(siData,"service-type")
+
+				AAIResultWrapper wrapper = resourceClient.get(uri)
+				List<AAIResourceUri> uriList = wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.ALLOTTED_RESOURCE)
+				uriList.addAll(wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF))
+				uriList.addAll(wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.L3_NETWORK))
+
+				if(uriList.isEmpty){
+					ServiceInstance si = wrapper.asBean(ServiceInstance.class)
+					String orchestrationStatus = si.getOrchestrationStatus()
+					String serviceType = si.getServiceType()
 					execution.setVariable("serviceType", serviceType)
-					execution.setVariable("serviceRole", utils.getNodeText(siData,"service-role"))
-					String orchestrationStatus =  utils.getNodeText(siData,"orchestration-status")
+					execution.setVariable("serviceRole", si.getServiceRole())
 
-					//Confirm there are no related service instances (vnf/network or volume)
-					if (utils.nodeExists(siData, "relationship-list")) {
-						msoLogger.debug("SI Data relationship-list exists:")
-						InputSource source = new InputSource(new StringReader(siData));
-						DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-						DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-						Document serviceXml = docBuilder.parse(source)
-
-						NodeList nodeList = serviceXml.getElementsByTagName("relationship")
-						for (int x = 0; x < nodeList.getLength(); x++) {
-							Node node = nodeList.item(x)
-							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Element eElement = (Element) node
-								def e = eElement.getElementsByTagName("related-to").item(0).getTextContent()
-								if(e.equals("generic-vnf") || e.equals("l3-network") || e.equals("allotted-resource") ){
-									msoLogger.debug("ServiceInstance still has relationship(s) to generic-vnfs, l3-networks or allotted-resources")
-									execution.setVariable("siInUse", true)
-									//there are relationship dependencies to this Service Instance
-									msg = " Stopped deleting Service Instance, it has dependencies. Service instance id: " + serviceInstanceId
-									msoLogger.debug(msg)
-									exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-								}else{
-									msoLogger.debug("Relationship NOT related to OpenStack")
-								}
-							}
-						}
-					}
-
-					if ("TRANSPORT".equalsIgnoreCase(serviceType))
-					{
-						if ("PendingDelete".equals(orchestrationStatus))
-						{
+					if("TRANSPORT".equalsIgnoreCase(serviceType)){
+						if("PendingDelete".equals(orchestrationStatus)){
 							execution.setVariable("skipDeactivate", true)
+						}else{
+							exceptionUtil.buildAndThrowWorkflowException(execution, 500, "ServiceInstance of type TRANSPORT must in PendingDelete status to allow Delete. Orchestration-status: " + orchestrationStatus)
 						}
-						else
-						{
-							msg = "ServiceInstance of type TRANSPORT must in PendingDelete status to allow Delete. Orchestration-status:" + orchestrationStatus
-							msoLogger.debug(msg)
-							exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-						}
-
 					}
 
-					//alacarte SIs are NOT sent to sdnc. exceptions are listed in config variable
 					String svcTypes = UrnPropertiesReader.getVariable("sdnc.si.svc.types",execution) ?: ""
-					msoLogger.debug("SDNC SI serviceTypes:" + svcTypes)
 					List<String> svcList = Arrays.asList(svcTypes.split("\\s*,\\s*"));
 					boolean isSdncService= false
-					for (String listEntry : svcList){
-						if (listEntry.equalsIgnoreCase(serviceType)){
+					for(String listEntry : svcList){
+						if(listEntry.equalsIgnoreCase(serviceType)){
 							isSdncService = true
 							break;
 						}
 					}
-
-					//All Macros are sent to SDNC, TRANSPORT(Macro) is sent to SDNW
-					//Alacartes are sent to SDNC if they are listed in config variable above
 					execution.setVariable("sendToSDNC", true)
-					if(execution.getVariable("sdncVersion").equals("1610")) //alacarte
-					{
+					if(execution.getVariable("sdncVersion").equals("1610")){
 						if(!isSdncService){
 							execution.setVariable("sendToSDNC", false)
 						}
 					}
 
-					msoLogger.debug("isSdncService: " + isSdncService)
-					msoLogger.debug("Send To SDNC: " + execution.getVariable("sendToSDNC"))
-					msoLogger.debug("Service Type: " + execution.getVariable("serviceType"))
-
+				}else{
+					execution.setVariable("siInUse", true)
+					msoLogger.debug("Stopped deleting Service Instance, it has dependencies")
+					exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Stopped deleting Service Instance, it has dependencies")
 				}
 			}else{
-				boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-				if(succInAAI != true){
-					msoLogger.debug("Error getting Service-instance from AAI", + serviceInstanceId)
-					WorkflowException workflowException = execution.getVariable("WorkflowException")
-					msoLogger.debug("workflowException: " + workflowException)
-					if(workflowException != null){
-						exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-					}
-					else
-					{
-						msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
-						msoLogger.debug(msg)
-						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-					}
-				}
-
-				msoLogger.debug("Service-instance NOT found in AAI. Silent Success")
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "ServiceInstance not found in aai")
 			}
-		} catch (BpmnError e) {
+
+		}catch(BpmnError e) {
 			throw e;
-		} catch (Exception ex) {
-			msg = "Exception in DoDeleteServiceInstance.postProcessAAIGET. " + ex.getMessage()
+		}catch (Exception ex){
+			String msg = "Exception in getServiceInstance. " + ex.getMessage()
 			msoLogger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit postProcessAAIGET ")
 	}
 
 	/**

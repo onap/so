@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="DoCompareModelofE2EServiceInstance" name="DoCompareModelofE2EServiceInstance" isExecutable="true">
     <bpmn2:sequenceFlow id="SequenceFlow_1rebkae" sourceRef="StartEvent_0jhv664" targetRef="CallActivity_1va14ul" />
     <bpmn2:intermediateCatchEvent id="StartEvent_0jhv664" name="StartCompare">
@@ -70,30 +70,14 @@ def dcsi = new DoCompareModelofE2EServiceInstance()
 dcsi.preProcessRequest(execution)
 ]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:callActivity id="CallActivity_1a3n88w" name="Call AAI Generic GetService" calledElement="GenericGetService">
-      <bpmn2:extensionElements>
-        <camunda:in source="serviceInstanceId" target="GENGS_serviceInstanceId" />
-        <camunda:in sourceExpression="service-instance" target="GENGS_type" />
-        <camunda:out source="GENGS_FoundIndicator" target="GENGS_FoundIndicator" />
-        <camunda:out source="GENGS_SuccessIndicator" target="GENGS_SuccessIndicator" />
-        <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:out source="GENGS_siResourceLink" target="GENGS_siResourceLink" />
-        <camunda:out source="GENGS_service" target="GENGS_service" />
-        <camunda:in source="globalSubscriberId" target="GENGS_globalCustomerId" />
-        <camunda:in source="serviceType" target="GENGS_serviceType" />
-      </bpmn2:extensionElements>
+    <bpmn2:scriptTask id="ScriptTask_18k4xnm" name="&#10;AAI&#10;Query&#10;(svc instance)&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1xzphe4</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0b6eqin</bpmn2:outgoing>
-    </bpmn2:callActivity>
-    <bpmn2:scriptTask id="ScriptTask_18k4xnm" name="Post Process AAI GET" scriptFormat="groovy">
-      <bpmn2:incoming>SequenceFlow_0b6eqin</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1cpg3ku</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new DoCompareModelofE2EServiceInstance()
-dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
+dcsi.getServiceInstance(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_1xzphe4" name="" sourceRef="ScriptTask_0ba0el1" targetRef="CallActivity_1a3n88w" />
-    <bpmn2:sequenceFlow id="SequenceFlow_0b6eqin" sourceRef="CallActivity_1a3n88w" targetRef="ScriptTask_18k4xnm" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1xzphe4" name="" sourceRef="ScriptTask_0ba0el1" targetRef="ScriptTask_18k4xnm" />
     <bpmn2:sequenceFlow id="SequenceFlow_1cpg3ku" sourceRef="ScriptTask_18k4xnm" targetRef="IntermediateThrowEvent_1dhdmdy" />
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
@@ -102,9 +86,9 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoCompareModelofE2EServiceInstance">
       <bpmndi:BPMNEdge id="SequenceFlow_1rebkae_di" bpmnElement="SequenceFlow_1rebkae">
         <di:waypoint xsi:type="dc:Point" x="6" y="259" />
-        <di:waypoint xsi:type="dc:Point" x="363" y="259" />
+        <di:waypoint xsi:type="dc:Point" x="211" y="259" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="139.5" y="238" width="90" height="12" />
+          <dc:Bounds x="63.5" y="238" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_05z1jyy_di" bpmnElement="StartEvent_0jhv664">
@@ -114,16 +98,16 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0x8im5g_di" bpmnElement="EndEvent_0x8im5g">
-        <dc:Bounds x="1038" y="241" width="36" height="36" />
+        <dc:Bounds x="912" y="241" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1011" y="281" width="90" height="12" />
+          <dc:Bounds x="885" y="281" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1lkpfe2_di" bpmnElement="SequenceFlow_1lkpfe2">
-        <di:waypoint xsi:type="dc:Point" x="801" y="259" />
-        <di:waypoint xsi:type="dc:Point" x="1038" y="259" />
+        <di:waypoint xsi:type="dc:Point" x="607" y="259" />
+        <di:waypoint xsi:type="dc:Point" x="912" y="259" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="874.5" y="238" width="90" height="12" />
+          <dc:Bounds x="714.5" y="238" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="SubProcess_0roysbg_di" bpmnElement="SubProcess_0roysbg" isExpanded="true">
@@ -165,9 +149,9 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_1dhdmdy_di" bpmnElement="IntermediateThrowEvent_1dhdmdy">
-        <dc:Bounds x="1048" y="83" width="36" height="36" />
+        <dc:Bounds x="853" y="83" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1023" y="123" width="88" height="36" />
+          <dc:Bounds x="838" y="123" width="68" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1chfao3_di" bpmnElement="SequenceFlow_1chfao3">
@@ -178,48 +162,36 @@ dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1va14ul_di" bpmnElement="CallActivity_1va14ul">
-        <dc:Bounds x="363" y="219" width="100" height="80" />
+        <dc:Bounds x="211" y="219" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1odhh8p_di" bpmnElement="ScriptTask_1odhh8p">
-        <dc:Bounds x="701" y="219" width="100" height="80" />
+        <dc:Bounds x="507" y="219" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1pe6r93_di" bpmnElement="SequenceFlow_1pe6r93">
-        <di:waypoint xsi:type="dc:Point" x="463" y="259" />
-        <di:waypoint xsi:type="dc:Point" x="701" y="259" />
+        <di:waypoint xsi:type="dc:Point" x="311" y="259" />
+        <di:waypoint xsi:type="dc:Point" x="507" y="259" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="537" y="238" width="90" height="12" />
+          <dc:Bounds x="364" y="238" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0ba0el1_di" bpmnElement="ScriptTask_0ba0el1">
         <dc:Bounds x="211" y="61" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_1a3n88w_di" bpmnElement="CallActivity_1a3n88w">
-        <dc:Bounds x="499" y="59" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_18k4xnm_di" bpmnElement="ScriptTask_18k4xnm">
-        <dc:Bounds x="776" y="61" width="100" height="80" />
+        <dc:Bounds x="507" y="61" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1xzphe4_di" bpmnElement="SequenceFlow_1xzphe4">
-        <di:waypoint xsi:type="dc:Point" x="311" y="101" />
-        <di:waypoint xsi:type="dc:Point" x="499" y="99" />
+        <di:waypoint xsi:type="dc:Point" x="311" y="102" />
+        <di:waypoint xsi:type="dc:Point" x="507" y="101" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="360" y="85" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0b6eqin_di" bpmnElement="SequenceFlow_0b6eqin">
-        <di:waypoint xsi:type="dc:Point" x="599" y="99" />
-        <di:waypoint xsi:type="dc:Point" x="776" y="101" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="643.5" y="79" width="0" height="12" />
+          <dc:Bounds x="364" y="80.5" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1cpg3ku_di" bpmnElement="SequenceFlow_1cpg3ku">
-        <di:waypoint xsi:type="dc:Point" x="876" y="101" />
-        <di:waypoint xsi:type="dc:Point" x="968" y="101" />
-        <di:waypoint xsi:type="dc:Point" x="968" y="101" />
-        <di:waypoint xsi:type="dc:Point" x="1048" y="101" />
+        <di:waypoint xsi:type="dc:Point" x="607" y="101" />
+        <di:waypoint xsi:type="dc:Point" x="853" y="101" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="983" y="95" width="0" height="12" />
+          <dc:Bounds x="685" y="80" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

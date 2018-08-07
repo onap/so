@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,6 +36,14 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse;
 import org.springframework.web.util.UriUtils
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.Relationships
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.json.JSONObject
+import javax.ws.rs.NotFoundException
 
 import groovy.json.*
 import groovy.xml.XmlUtil
@@ -47,7 +55,7 @@ import groovy.xml.XmlUtil
  */
 public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateNetworkInstance.class);
-	
+
 	String Prefix="CRENWKI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
@@ -56,7 +64,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 
 	def className = getClass().getSimpleName()
-	
+
 	/**
 	 * This method is executed during the preProcessRequest task of the <class>DoCreateNetworkInstance.bpmn</class> process.
 	 * @param execution
@@ -78,7 +86,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		execution.setVariable(Prefix + "networkOutputs", "")
 		execution.setVariable(Prefix + "networkId","")
 		execution.setVariable(Prefix + "networkName","")
-		
+
 		// AAI query Name
 		execution.setVariable(Prefix + "queryNameAAIRequest","")
 		execution.setVariable(Prefix + "queryNameAAIResponse", "")
@@ -149,7 +157,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		//execution.setVariable(Prefix + "rollbackSDNCReturnCode", "")
 		execution.setVariable(Prefix + "isSdncRollbackNeeded", false)
 		execution.setVariable(Prefix + "sdncResponseSuccess", false)
-		
+
 		execution.setVariable(Prefix + "activateSDNCRequest", "")
 		execution.setVariable(Prefix + "activateSDNCResponse", "")
 		execution.setVariable(Prefix + "rollbackActivateSDNCRequest", "")
@@ -164,7 +172,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		execution.setVariable(Prefix + "Success", false)
 
 		execution.setVariable(Prefix + "isException", false)
-		
+
 	}
 
 	// **************************************************
@@ -175,25 +183,25 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 */
 	public void preProcessRequest (DelegateExecution execution) {
-		
-		execution.setVariable("prefix",Prefix)		
+
+		execution.setVariable("prefix",Prefix)
 		msoLogger.trace("Inside preProcessRequest() of " + className + ".groovy")
-		
+
 		try {
 			// initialize flow variables
 			InitializeProcessVariables(execution)
-			
+
 			// GET Incoming request & validate 3 kinds of format.
 			execution.setVariable("action", "CREATE")
 			String networkRequest = execution.getVariable("bpmnRequest")
 			if (networkRequest != null) {
 				if (networkRequest.contains("requestDetails")) {
-					// JSON format request is sent, create xml 
+					// JSON format request is sent, create xml
 					try {
 						def prettyJson = JsonOutput.prettyPrint(networkRequest.toString())
 						msoLogger.debug(" Incoming message formatted . . . : " + '\n' + prettyJson)
 						networkRequest =  vidUtils.createXmlNetworkRequestInfra(execution, networkRequest)
-		
+
 					} catch (Exception ex) {
 						String dataErrorMessage = " Invalid json format Request - " + ex.getMessage()
 						msoLogger.debug(dataErrorMessage)
@@ -201,26 +209,26 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 					}
 				} else {
   				   // XML format request is sent
-				   
+
 				}
 			} else {
 				// vIPR format request is sent, create xml from individual variables
 				networkRequest = vidUtils.createXmlNetworkRequestInstance(execution)
 			}
-				
+
 			networkRequest = utils.formatXml(networkRequest)
 			execution.setVariable(Prefix + "networkRequest", networkRequest)
 			msoLogger.debug(Prefix + "networkRequest - " + '\n' + networkRequest)
-			
+
 			// validate 'backout-on-failure' to override 'mso.rollback'
 			boolean rollbackEnabled = networkUtils.isRollbackEnabled(execution, networkRequest)
 			execution.setVariable(Prefix + "rollbackEnabled", rollbackEnabled)
 			msoLogger.debug(Prefix + "rollbackEnabled - " + rollbackEnabled)
-										
+
 			String networkInputs = utils.getNodeXml(networkRequest, "network-inputs", false).replace("tag0:","").replace(":tag0","")
 			execution.setVariable(Prefix + "networkInputs", networkInputs)
 			msoLogger.debug(Prefix + "networkInputs - " + '\n' + networkInputs)
-			
+
 			// prepare messageId
 			String messageId = execution.getVariable("testMessageId")  // for testing
 			if (messageId == null || messageId == "") {
@@ -230,12 +238,12 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 				msoLogger.debug(Prefix + "messageId, pre-assigned: " + messageId)
 			}
 			execution.setVariable(Prefix + "messageId", messageId)
-			
+
 			String source = utils.getNodeText(networkRequest, "source")
 			execution.setVariable(Prefix + "source", source)
 			msoLogger.debug(Prefix + "source - " + source)
-			
-			// validate cloud region 
+
+			// validate cloud region
 			String lcpCloudRegionId = utils.getNodeText(networkRequest, "aic-cloud-region")
 			if ((lcpCloudRegionId == null) || (lcpCloudRegionId == "") || (lcpCloudRegionId == "null")) {
 				String dataErrorMessage = "Missing value/element: 'lcpCloudRegionId' or 'cloudConfiguration' or 'aic-cloud-region'."
@@ -244,7 +252,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 			// validate service instance id
-			String serviceInstanceId = utils.getNodeText(networkRequest, "service-instance-id") 
+			String serviceInstanceId = utils.getNodeText(networkRequest, "service-instance-id")
 			if ((serviceInstanceId == null) || (serviceInstanceId == "") || (serviceInstanceId == "null")) {
 				String dataErrorMessage = "Missing value/element: 'serviceInstanceId'."
 				msoLogger.debug(" Invalid Request - " + dataErrorMessage)
@@ -253,12 +261,12 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 			// PO Authorization Info / headers Authorization=
 			String basicAuthValuePO = UrnPropertiesReader.getVariable("mso.adapters.po.auth",execution)
-			
+
 			try {
 				def encodedString = utils.getBasicAuth(basicAuthValuePO, UrnPropertiesReader.getVariable("mso.msoKey",execution))
 				execution.setVariable("BasicAuthHeaderValuePO",encodedString)
 				execution.setVariable("BasicAuthHeaderValueSDNC", encodedString)
-	
+
 			} catch (IOException ex) {
 				String exceptionMessage = "Exception Encountered in DoCreateNetworkInstance, PreProcessRequest() - "
 				String dataErrorMessage = exceptionMessage + " Unable to encode PO/SDNC user/password string - " + ex.getMessage()
@@ -273,11 +281,11 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("GENGS_type", "service-instance")
 			msoLogger.debug("GENGS_type - " + "service-instance")
 			msoLogger.debug(" Url for SDNC adapter: " + UrnPropertiesReader.getVariable("mso.adapters.sdnc.endpoint",execution))
-			
+
 			String sdncVersion = execution.getVariable("sdncVersion")
 			msoLogger.debug("sdncVersion? : " + sdncVersion)
-			
-			// build 'networkOutputs'			
+
+			// build 'networkOutputs'
 			String networkId = utils.getNodeText(networkRequest, "network-id")
 			if ((networkId == null) || (networkId == "null")) {
 				networkId = ""
@@ -295,25 +303,49 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			msoLogger.debug(Prefix + "networkOutputs - " + '\n' + networkOutputs)
 			execution.setVariable(Prefix + "networkId", networkId)
 			execution.setVariable(Prefix + "networkName", networkName)
-		
+
 		} catch (BpmnError e) {
 		throw e;
-		
+
 		} catch (Exception ex) {
 			sendSyncError(execution)
 			// caught exception
 			String exceptionMessage = "Exception Encountered in PreProcessRequest() of " + className + ".groovy ***** : " + ex.getMessage()
 			msoLogger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
-		
+
 		}
 
 	}
-	
+
+	/**
+	 * Gets the service instance uri from aai
+	 */
+	public void getServiceInstance(DelegateExecution execution) {
+		try {
+			String serviceInstanceId = execution.getVariable('CRENWKI_serviceInstanceId')
+
+			AAIResourcesClient resourceClient = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+
+			if(!resourceClient.exists(uri)){
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai")
+			}
+
+		}catch(BpmnError e) {
+			throw e;
+		}catch (Exception ex){
+			String msg = "Exception in getServiceInstance. " + ex.getMessage()
+			msoLogger.debug(msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+	}
+
+
 	public void callRESTQueryAAINetworkName (DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
-		
+
 		msoLogger.debug(" ***** Inside callRESTQueryAAINetworkName() of DoCreateNetworkInstance ***** " )
 
 		// get variables
@@ -348,7 +380,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 					execution.setVariable(Prefix + "orchestrationStatus", orchestrationStatus.toUpperCase())
 					msoLogger.debug(Prefix + "orchestrationStatus - " + orchestrationStatus.toUpperCase())
 					execution.setVariable("orchestrationStatus", orchestrationStatus)
-					
+
 				} catch (Exception ex) {
 				    // response is empty
 					execution.setVariable(Prefix + "orchestrationStatus", orchestrationStatus)
@@ -385,9 +417,9 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void callRESTQueryAAICloudRegion (DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
-				
+
 		msoLogger.debug(" ***** Inside callRESTQueryAAICloudRegion() of DoCreateNetworkInstance ***** " )
 
 		try {
@@ -434,7 +466,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void callRESTQueryAAINetworkId(DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.debug(" ***** Inside callRESTQueryAAINetworkId() of DoCreateNetworkInstance ***** " )
@@ -445,15 +477,15 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String assignSDNCResponse = execution.getVariable(Prefix + "assignSDNCResponse")
 			if (execution.getVariable("sdncVersion") != "1610") {
 			   String networkResponseInformation = ""
-			   try {	
+			   try {
 			      networkResponseInformation = utils.getNodeXml(assignSDNCResponse, "network-response-information", false).replace("tag0:","").replace(":tag0","")
 				  networkId = utils.getNodeText(networkResponseInformation, "instance-id")
 			   } catch (Exception ex) {
 			      String dataErrorMessage = " SNDC Response network validation for 'instance-id' (network-id) failed: Empty <network-response-information>"
 			      msoLogger.debug(dataErrorMessage)
 				  exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-			   } 	  
-			   	  
+			   }
+
 			} else {
 			   networkId = utils.getNodeText(assignSDNCResponse, "network-id")
 			}
@@ -465,11 +497,11 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			   msoLogger.debug(" SNDC Response network validation for 'instance-id' (network-id)' is good: " + networkId)
 			}
 
-    
+
 			execution.setVariable(Prefix + "networkId", networkId)
 			String networkName   = utils.getNodeText(assignSDNCResponse, "network-name")
 			execution.setVariable(Prefix + "networkName", networkName)
-			
+
 			networkId = UriUtils.encode(networkId,"UTF-8")
 
 			// Prepare AA&I url
@@ -491,7 +523,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			if (returnCode=='200') {
 				execution.setVariable(Prefix + "queryIdAAIResponse", aaiResponseAsString)
 				msoLogger.debug(" QueryAAINetworkId Success REST Response - " + "\n" + aaiResponseAsString)
-				
+
 				String netId   = utils.getNodeText(aaiResponseAsString, "network-id")
 				execution.setVariable(Prefix + "networkId", netId)
 				String netName   = utils.getNodeText(aaiResponseAsString, "network-name")
@@ -532,7 +564,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void callRESTReQueryAAINetworkId(DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.debug(" ***** Inside callRESTReQueryAAINetworkId() of DoCreateNetworkInstance ***** " )
@@ -540,7 +572,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		try {
 			// get variables
 			String networkId   = execution.getVariable(Prefix + "networkId")
-			String netId = networkId 
+			String netId = networkId
 			networkId = UriUtils.encode(networkId,"UTF-8")
 
 			// Prepare AA&I url
@@ -606,7 +638,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void callRESTQueryAAINetworkVpnBinding(DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.debug(" ***** Inside callRESTQueryAAINetworkVpnBinding() of DoCreateNetworkInstance ***** " )
@@ -748,7 +780,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void callRESTQueryAAINetworkPolicy(DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.debug(" ***** Inside callRESTQueryAAINetworkPolicy() of DoCreateNetworkInstance ***** " )
@@ -882,7 +914,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void callRESTQueryAAINetworkTableRef(DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.debug(" ***** Inside callRESTQueryAAINetworkTableRef() of DoCreateNetworkInstance ***** " )
@@ -1017,7 +1049,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 
 	public void callRESTUpdateContrailAAINetwork(DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.debug(" ***** Inside callRESTUpdateContrailAAINetwork() of DoCreateNetworkInstance ***** " )
@@ -1046,7 +1078,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			msoLogger.debug(" 'payload' to Update Contrail - " + "\n" + payloadXml)
 
 			APIResponse response = aaiUriUtil.executeAAIPutCall(execution, updateContrailAAIUrlRequest, payloadXml)
-						
+
 			String returnCode = response.getStatusCode()
 			execution.setVariable(Prefix + "aaiUpdateContrailReturnCode", returnCode)
 			msoLogger.debug(" ***** AAI Update Contrail Response Code  : " + returnCode)
@@ -1060,7 +1092,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 				   execution.setVariable(Prefix + "isPONR", false)
 				} else {
 				   execution.setVariable(Prefix + "isPONR", true)
-				}  
+				}
 				msoLogger.debug(Prefix + "isPONR" + ": " + execution.getVariable(Prefix + "isPONR"))
 			} else {
 				if (returnCode=='404') {
@@ -1096,7 +1128,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void prepareCreateNetworkRequest (DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.trace("Inside prepareCreateNetworkRequest() of DoCreateNetworkInstance")
@@ -1106,7 +1138,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			// get variables
 			String requestId = execution.getVariable("msoRequestId")
 			if (requestId == null) {
-				requestId = execution.getVariable("mso-request-id") 
+				requestId = execution.getVariable("mso-request-id")
 			}
 			String messageId = execution.getVariable(Prefix + "messageId")
 			String source    = execution.getVariable(Prefix + "source")
@@ -1115,7 +1147,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String queryIdResponse = execution.getVariable(Prefix + "queryIdAAIResponse")
 			String cloudRegionId = execution.getVariable(Prefix + "cloudRegionPo")
 			String backoutOnFailure = execution.getVariable(Prefix + "rollbackEnabled")
-			
+
 			// Prepare Network request
 			String routeCollection = execution.getVariable(Prefix + "routeCollection")
 			String policyCollection = execution.getVariable(Prefix + "networkCollection")
@@ -1138,7 +1170,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void prepareSDNCRequest (DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.trace("Inside prepareSDNCRequest() of DoCreateNetworkInstance")
@@ -1158,9 +1190,9 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 				execution.setVariable("mso-request-id", requestId)
 			} else {
 			    requestId = execution.getVariable("mso-request-id")
-			} 	
+			}
 			execution.setVariable(Prefix + "requestId", requestId)
-			
+
 			// 1. prepare assign topology via SDNC Adapter SUBFLOW call
  		   	String sndcTopologyCreateRequest = sdncAdapterUtils.sdncTopologyRequestV2(execution, createNetworkInput, serviceInstanceId, sdncCallback, "assign", "NetworkActivateRequest", cloudRegionId, networkId, null, null)
 
@@ -1179,21 +1211,21 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void prepareRpcSDNCRequest (DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.trace("Inside prepareRpcSDNCRequest() of DoCreateNetworkInstance")
 
 		try {
 			// get variables
-			
+
 			String sdncCallback = UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback",execution)
 			String createNetworkInput = execution.getVariable(Prefix + "networkRequest")
 			String cloudRegionId = execution.getVariable(Prefix + "cloudRegionSdnc")
 
 			String networkId = execution.getVariable(Prefix + "networkId")
 			String serviceInstanceId = execution.getVariable(Prefix + "serviceInstanceId")
-			
+
 			// 1. prepare assign topology via SDNC Adapter SUBFLOW call
 			String sndcTopologyCreateRequest = sdncAdapterUtils.sdncTopologyRequestRsrc(execution, createNetworkInput, serviceInstanceId, sdncCallback, "assign", "CreateNetworkInstance", cloudRegionId, networkId, null)
 
@@ -1209,11 +1241,11 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		}
 
 	}
-	
+
 	public void prepareRpcSDNCActivateRequest (DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
-		
+
 		msoLogger.trace("Inside prepareRpcSDNCActivateRequest() of DoCreateNetworkInstance")
 
 		try {
@@ -1223,7 +1255,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String cloudRegionId = execution.getVariable(Prefix + "cloudRegionSdnc")
 			String networkId = execution.getVariable(Prefix + "networkId")
 			String serviceInstanceId = execution.getVariable(Prefix + "serviceInstanceId")
-			
+
 			// 1. prepare assign topology via SDNC Adapter SUBFLOW call
 			String sndcTopologyCreateRequest = sdncAdapterUtils.sdncTopologyRequestRsrc(execution, createNetworkInput, serviceInstanceId, sdncCallback, "activate", "CreateNetworkInstance", cloudRegionId, networkId, null)
 
@@ -1240,7 +1272,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		}
 
 	}
-	
+
 
 
 
@@ -1249,7 +1281,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	// **************************************************
 
 	public void validateCreateNetworkResponse (DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.trace("Inside validateNetworkResponse() of DoCreateNetworkInstance")
@@ -1321,7 +1353,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void validateSDNCResponse (DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.trace("Inside validateSDNCResponse() of DoCreateNetworkInstance")
@@ -1329,7 +1361,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		String response = execution.getVariable(Prefix + "assignSDNCResponse")
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 		WorkflowException workflowException = execution.getVariable("WorkflowException")
-		
+
 		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 		// reset variable
@@ -1349,7 +1381,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void validateRpcSDNCActivateResponse (DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.trace("Inside validateRpcSDNCActivateResponse() of DoCreateNetworkInstance")
@@ -1373,12 +1405,12 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			msoLogger.debug("Did NOT Successfully Validated Rpc SDNC Activate Response")
 			throw new BpmnError("MSOWorkflowException")
 		}
-		
+
 	}
 
 
 	public void prepareSDNCRollbackRequest (DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.trace("Inside prepareSDNCRollbackRequest() of DoCreateNetworkInstance")
@@ -1392,7 +1424,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String networkId = execution.getVariable(Prefix + "networkId")
 			if (networkId == 'null') {networkId = ""}
 			String serviceInstanceId = execution.getVariable(Prefix + "serviceInstanceId")
-			
+
 			// 2. prepare rollback topology via SDNC Adapter SUBFLOW call
 			String sndcTopologyRollbackRequest = sdncAdapterUtils.sdncTopologyRequestV2(execution, createNetworkInput, serviceInstanceId, sdncCallback, "rollback", "NetworkActivateRequest", cloudRegionId, networkId, null, null)
 			String sndcTopologyRollbackRequestAsString = utils.formatXml(sndcTopologyRollbackRequest)
@@ -1410,7 +1442,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void prepareRpcSDNCRollbackRequest (DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.trace("Inside prepareRpcSDNCRollbackRequest() of DoCreateNetworkInstance")
@@ -1440,15 +1472,15 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		}
 
 	}
-	
+
 	public void prepareRpcSDNCActivateRollback(DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
 
 		msoLogger.trace("Inside prepareRpcSDNCActivateRollback() of DoCreateNetworkInstance")
 
 		try {
-		
+
 			// get variables
 			String sdncCallback = UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback",execution)
 			String createNetworkInput = execution.getVariable(Prefix + "networkRequest")
@@ -1473,76 +1505,76 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		}
 
 	}
-	
+
 	public void prepareRollbackData(DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
-		
+
 		msoLogger.trace("Inside prepareRollbackData() of DoCreateNetworkInstance")
-		
+
 		try {
-			
+
 			Map<String, String> rollbackData = new HashMap<String, String>();
 			String rollbackSDNCRequest = execution.getVariable(Prefix + "rollbackSDNCRequest")
-			if (rollbackSDNCRequest != null) { 
+			if (rollbackSDNCRequest != null) {
 				if (rollbackSDNCRequest != "") {
 			        rollbackData.put("rollbackSDNCRequest", execution.getVariable(Prefix + "rollbackSDNCRequest"))
 			    }
-			}	
+			}
 			String rollbackNetworkRequest = execution.getVariable(Prefix + "rollbackNetworkRequest")
 			if (rollbackNetworkRequest != null) {
-				if (rollbackNetworkRequest != "") { 	 
+				if (rollbackNetworkRequest != "") {
 			        rollbackData.put("rollbackNetworkRequest", execution.getVariable(Prefix + "rollbackNetworkRequest"))
-				}	
+				}
 			}
 			String rollbackActivateSDNCRequest = execution.getVariable(Prefix + "rollbackActivateSDNCRequest")
 			if (rollbackActivateSDNCRequest != null) {
-				if (rollbackActivateSDNCRequest != "") {	 
+				if (rollbackActivateSDNCRequest != "") {
 			        rollbackData.put("rollbackActivateSDNCRequest", execution.getVariable(Prefix + "rollbackActivateSDNCRequest"))
-				}	
+				}
 			}
 			execution.setVariable("rollbackData", rollbackData)
 			msoLogger.debug("** rollbackData : " + rollbackData)
-			
+
 			execution.setVariable("WorkflowException", execution.getVariable(Prefix + "WorkflowException"))
 			msoLogger.debug("** WorkflowException : " + execution.getVariable("WorkflowException"))
-			
+
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoCreateNetworkInstance flow. prepareRollbackData() - " + ex.getMessage()
 			msoLogger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
-		
+
 		}
-		
+
 	}
-	
+
 	public void postProcessResponse(DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
-		
+
 		msoLogger.trace("Inside postProcessResponse() of DoCreateNetworkInstance")
-		
+
 		try {
-			
+
 			//Conditions:
-			// 1. Silent Success: execution.getVariable("CRENWKI_orchestrationStatus") == "ACTIVE"  
+			// 1. Silent Success: execution.getVariable("CRENWKI_orchestrationStatus") == "ACTIVE"
 			// 2. Success: execution.getVariable("WorkflowException") == null (NULL)
-			// 3. WorkflowException: execution.getVariable("WorkflowException") != null (NOT NULL) 
-			
+			// 3. WorkflowException: execution.getVariable("WorkflowException") != null (NOT NULL)
+
 			msoLogger.debug(" ***** Is Exception Encountered (isException)? : " + execution.getVariable(Prefix + "isException"))
 			// successful flow
-			if (execution.getVariable(Prefix + "isException") == false) {  
+			if (execution.getVariable(Prefix + "isException") == false) {
 				// set rollback data
 				execution.setVariable("orchestrationStatus", "")
 				execution.setVariable("networkId", execution.getVariable(Prefix + "networkId"))
 				execution.setVariable("networkName", execution.getVariable(Prefix + "networkName"))
-				prepareSuccessRollbackData(execution) // populate rollbackData  
+				prepareSuccessRollbackData(execution) // populate rollbackData
 				execution.setVariable("WorkflowException", null)
 				execution.setVariable(Prefix + "Success", true)
 				msoLogger.debug(" ***** postProcessResponse(), GOOD !!!")
 			} else {
    			   // inside sub-flow logic
-				execution.setVariable(Prefix + "Success", false) 
+				execution.setVariable(Prefix + "Success", false)
 				execution.setVariable("rollbackData", null)
 				String exceptionMessage = " Exception encountered in MSO Bpmn. "
 				if (execution.getVariable("workflowException") != null) {  // Output of Rollback flow.
@@ -1553,45 +1585,45 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			       if (execution.getVariable(Prefix + "WorkflowException") != null) {
 				      WorkflowException pwfex = execution.getVariable(Prefix + "WorkflowException")
 				      exceptionMessage = pwfex.getErrorMessage()
-			       }   
+			       }
    				}
 			    // going to the Main flow: a-la-carte or macro
 			    msoLogger.debug(" ***** postProcessResponse(), BAD !!!")
 			    exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 				throw new BpmnError("MSOWorkflowException")
 			}
-							
+
 		} catch(BpmnError b){
 		     msoLogger.debug("Rethrowing MSOWorkflowException")
 		     throw b
-			
+
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoCreateNetworkInstance flow. postProcessResponse() - " + ex.getMessage()
 			msoLogger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 			throw new BpmnError("MSOWorkflowException")
-		
+
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	public void prepareSuccessRollbackData(DelegateExecution execution) {
-		
+
 		execution.setVariable("prefix",Prefix)
-		
+
 		msoLogger.trace("Inside prepareSuccessRollbackData() of DoCreateNetworkInstance")
-		
+
 		try {
-			
+
 			if (execution.getVariable("sdncVersion") != '1610') {
 			    prepareRpcSDNCRollbackRequest(execution)
 				prepareRpcSDNCActivateRollback(execution)
 			} else {
 			    prepareSDNCRollbackRequest(execution)
-			} 	
-			
+			}
+
 			Map<String, String> rollbackData = new HashMap<String, String>();
 			String rollbackSDNCRequest = execution.getVariable(Prefix + "rollbackSDNCRequest")
 			if (rollbackSDNCRequest != null) {
@@ -1612,63 +1644,63 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 				}
 			}
 			execution.setVariable("rollbackData", rollbackData)
-			
+
 			msoLogger.debug("** 'rollbackData' for Full Rollback : " + rollbackData)
 			execution.setVariable("WorkflowException", null)
 
-			
+
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoCreateNetworkInstance flow. prepareSuccessRollbackData() - " + ex.getMessage()
 			msoLogger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
-		
+
 		}
-		
+
 	}
 
 	public void setExceptionFlag(DelegateExecution execution){
-		
+
 		execution.setVariable("prefix",Prefix)
-		
+
 		msoLogger.trace("Inside setExceptionFlag() of DoCreateNetworkInstance")
-		
+
 		try {
-			
+
 			execution.setVariable(Prefix + "isException", true)
-			
+
 			if (execution.getVariable("SavedWorkflowException1") != null) {
 				execution.setVariable(Prefix + "WorkflowException", execution.getVariable("SavedWorkflowException1"))
 			} else {
 				execution.setVariable(Prefix + "WorkflowException", execution.getVariable("WorkflowException"))
 			}
 			msoLogger.debug(Prefix + "WorkflowException - " +execution.getVariable(Prefix + "WorkflowException"))
-			
+
 		} catch(Exception ex){
 		  	String exceptionMessage = "Bpmn error encountered in DoCreateNetworkInstance flow. setExceptionFlag(): " + ex.getMessage()
 			msoLogger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
-		}  
-		
+		}
+
 	}
-	
-	
+
+
 	// *******************************
 	//     Build Error Section
 	// *******************************
 
 
-	
+
 	public void processJavaException(DelegateExecution execution){
-		
+
 		execution.setVariable("prefix",Prefix)
-		
+
 		try{
 			msoLogger.debug( "Caught a Java Exception in " + Prefix)
 			msoLogger.debug("Started processJavaException Method")
 			msoLogger.debug("Variables List: " + execution.getVariables())
 			execution.setVariable("UnexpectedError", "Caught a Java Lang Exception - " + Prefix)  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Caught a Java Lang Exception")
-			
+
 		}catch(Exception e){
 			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
 			execution.setVariable("UnexpectedError", "Exception in processJavaException method - " + Prefix)  // Adding this line temporarily until this flows error handling gets updated
