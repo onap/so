@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">
-  <bpmn:process id="Create3rdONAPE2EServiceInstance" name="Create3rdONAPE2EServiceInstance " isExecutable="true">
-    <bpmn:startEvent id="StartEvent_0hj12gh" name="Delete3rdONAPRES_Start">
+  <bpmn:process id="Create3rdONAPE2EServiceInstance" name="Create3rdONAPE2EServiceInstance" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_0hj12gh" name="Create3rdONAPRES_Start">
       <bpmn:outgoing>SequenceFlow_190fewc</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:scriptTask id="ScriptTask_0rs5t7w" name="prepare 3rdONAP Delete Request" scriptFormat="groovy">
+    <bpmn:scriptTask id="ScriptTask_0rs5t7w" name="prepare 3rdONAP Create Request" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0mmu3kz</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_15mvx68</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.prepare3rdONAPRequest(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:endEvent id="EndEvent_013449q" name="Delete3rdONAPRES_End">
+    <bpmn:endEvent id="EndEvent_013449q" name="Create3rdONAPRES_End">
       <bpmn:incoming>SequenceFlow_0a8k9xi</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:scriptTask id="ScriptTask_1b88nnk" name="Save SPPartner In AAI">
       <bpmn:incoming>SequenceFlow_0y2g8mr</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0znwu8z</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.saveSPPartnerInAAI(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_16rcjl3" name="Pre Process Request" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1ttrqml</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0brxjic</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.preProcessRequest(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:scriptTask id="ScriptTask_10n1tb6" name="Init Delete resource progress" scriptFormat="groovy">
+    <bpmn:scriptTask id="ScriptTask_10n1tb6" name="Init Create resource progress" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0brxjic</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ezt5f0</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 execution.setVariable("progress", "5")
 execution.setVariable("status", "processing")
 execution.setVariable("statusDescription", "Start Creating")
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.prepareUpdateProgress(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:serviceTask id="ServiceTask_039ju3f" name="resource progress update">
@@ -64,15 +64,15 @@ dcsi.prepareUpdateProgress(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_0znwu8z</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_04hwfll</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def csi = new  Delete3rdONAPE2EServiceInstance()
+def csi = new  Create3rdONAPE2EServiceInstance()
 csi.postProcess(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:scriptTask id="ScriptTask_0r2cxvb" name="Delete E2ESI in 3rdONAP" scriptFormat="groovy">
+    <bpmn:scriptTask id="ScriptTask_0r2cxvb" name="Create E2ESI in 3rdONAP" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_15mvx68</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0wp73cw</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new Delete3rdONAPE2EServiceInstance()
-dcsi.doDeleteE2ESIin3rdONAP(execution)]]></bpmn:script>
+def dcsi = new Create3rdONAPE2EServiceInstance()
+dcsi.doCreateE2ESIin3rdONAP(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:serviceTask id="ServiceTask_0p5029r" name="resource progress update">
       <bpmn:extensionElements>
@@ -100,7 +100,7 @@ dcsi.doDeleteE2ESIin3rdONAP(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_1suwdgi</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0mmu3kz</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.allocateCrossONAPResource(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_190fewc" sourceRef="StartEvent_0hj12gh" targetRef="ScriptTask_160sboy" />
@@ -111,7 +111,7 @@ dcsi.allocateCrossONAPResource(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_190fewc</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1f71u71</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.checkSPPartnerInfo(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="ExclusiveGateway_01c0nhq" name="Is 3rdONAP SPPartner Existing" default="SequenceFlow_0h1rnsw">
@@ -123,22 +123,22 @@ dcsi.checkSPPartnerInfo(execution)]]></bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_1msw3xo" name="yes" sourceRef="ExclusiveGateway_01c0nhq" targetRef="ScriptTask_1y8kdt3">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("Is3rdONAPExist" )  == "true" )}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_0cql41g" name="Start3rdONAPDeleteE2ESI">
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_0cql41g" name="Start3rdONAPCreateE2ESI">
       <bpmn:outgoing>SequenceFlow_1ttrqml</bpmn:outgoing>
-      <bpmn:linkEventDefinition name="Start3rdONAPDeleteE2ESI" />
+      <bpmn:linkEventDefinition name="Start3rdONAPCreateE2ESI" />
     </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1f71u71" sourceRef="ScriptTask_160sboy" targetRef="ExclusiveGateway_01c0nhq" />
     <bpmn:sequenceFlow id="SequenceFlow_1ttrqml" sourceRef="IntermediateCatchEvent_0cql41g" targetRef="ScriptTask_16rcjl3" />
-    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0wbo4nq" name="GoTo Start3rdONAPDeleteE2ESI">
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0wbo4nq" name="GoTo Start3rdONAPCreateE2ESI">
       <bpmn:incoming>SequenceFlow_0o376do</bpmn:incoming>
-      <bpmn:linkEventDefinition name="Start3rdONAPDeleteE2ESI" />
+      <bpmn:linkEventDefinition name="Start3rdONAPCreateE2ESI" />
     </bpmn:intermediateThrowEvent>
     <bpmn:scriptTask id="ScriptTask_0yz8d8c" name="Query E2ESI progress in 3rdONAP" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_13s0mg5</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0kkou66</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0fkfn70</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.getE2ESIProgressin3rdONAP(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_04hwfll" sourceRef="ScriptTask_1aj6okk" targetRef="ScriptTask_18auy29" />
@@ -146,7 +146,7 @@ dcsi.getE2ESIProgressin3rdONAP(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_1msw3xo</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1kcu53z</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.checkLocallCall(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1kcu53z" sourceRef="ScriptTask_1y8kdt3" targetRef="ExclusiveGateway_0pj14lp" />
@@ -159,36 +159,36 @@ dcsi.checkLocallCall(execution)]]></bpmn:script>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("IsLocalCall" )  == "true" )}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1y8xkzy" name="no" sourceRef="ExclusiveGateway_0pj14lp" targetRef="IntermediateThrowEvent_1y4vypx" />
-    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1y4vypx" name="GoTo  StartLocalONAPDeleteE2ESI">
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1y4vypx" name="GoTo  StartLocalONAPCreateE2ESI">
       <bpmn:incoming>SequenceFlow_1y8xkzy</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0h1rnsw</bpmn:incoming>
-      <bpmn:linkEventDefinition name="StartLocalONAPDeleteE2ESI" />
+      <bpmn:linkEventDefinition name="StartLocalONAPCreateE2ESI" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:endEvent id="EndEvent_0o0n3fa" name="Delete3rdONAPRES_End">
+    <bpmn:endEvent id="EndEvent_0o0n3fa" name="Create3rdONAPRES_End">
       <bpmn:incoming>SequenceFlow_131f1jj</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:scriptTask id="ScriptTask_1lazb8l" name="Save SPPartner In AAI">
       <bpmn:incoming>SequenceFlow_1wq9f5k</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_18gb81f</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.saveSPPartnerInAAI(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_0buj724" name="Pre Process Request" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0wnyy50</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0z9axn6</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.preProcessRequest(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:scriptTask id="ScriptTask_0rixvgj" name="Prepare Delete resource progress" scriptFormat="groovy">
+    <bpmn:scriptTask id="ScriptTask_0rixvgj" name="Prepare Create resource progress" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0z9axn6</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_04l4to1</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 execution.setVariable("progress", "100")
 execution.setVariable("status", "finished")
 execution.setVariable("statusDescription", "Local Creation Only")
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.prepareUpdateProgress(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:serviceTask id="ServiceTask_1kgvq5e" name="update progress update">
@@ -218,18 +218,18 @@ dcsi.prepareUpdateProgress(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_0dkbe3r</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1wn6y9u</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def csi = new  Delete3rdONAPE2EServiceInstance()
+def csi = new  Create3rdONAPE2EServiceInstance()
 csi.postProcess(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_18h4prx" name="StartLocalONAPDeleteE2ESI">
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_18h4prx" name="StartLocalONAPCreateE2ESI">
       <bpmn:outgoing>SequenceFlow_0wnyy50</bpmn:outgoing>
-      <bpmn:linkEventDefinition name="StartLocalONAPDeleteE2ESI" />
+      <bpmn:linkEventDefinition name="StartLocalONAPCreateE2ESI" />
     </bpmn:intermediateCatchEvent>
     <bpmn:scriptTask id="ScriptTask_03gddkg" name="Send Sync Ack Response" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1wn6y9u</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_131f1jj</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def csi = new  Delete3rdONAPE2EServiceInstance()
+def csi = new  Create3rdONAPE2EServiceInstance()
 csi.sendSyncResponse(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0z9axn6" sourceRef="ScriptTask_0buj724" targetRef="ScriptTask_0rixvgj" />
@@ -252,15 +252,15 @@ csi.sendSyncResponse(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_1udji9x</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0kkou66</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.timeDelay(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_1662gjm" name="Delete SI in 3rdONAP Success?" default="SequenceFlow_12seu6n">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1662gjm" name="Create SI in 3rdONAP Success?" default="SequenceFlow_12seu6n">
       <bpmn:incoming>SequenceFlow_0wp73cw</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_13s0mg5</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_12seu6n</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_1we7izu" name="Delete  SI in 3rdONAP Finished?">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1we7izu" name="Create  SI in 3rdONAP Finished?">
       <bpmn:incoming>SequenceFlow_1luhljs</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1udji9x</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0y2g8mr</bpmn:outgoing>
@@ -269,7 +269,7 @@ dcsi.timeDelay(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_04hwfll</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0a8k9xi</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def csi = new  Delete3rdONAPE2EServiceInstance()
+def csi = new  Create3rdONAPE2EServiceInstance()
 csi.sendSyncResponse(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0a8k9xi" sourceRef="ScriptTask_18auy29" targetRef="EndEvent_013449q" />
@@ -299,8 +299,8 @@ csi.sendSyncResponse(execution)]]></bpmn:script>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 execution.setVariable("progress", "100")
 execution.setVariable("status", "error")
-execution.setVariable("statusDescription", "Delete Service Order failed ")
-def dcsi = new Delete3rdONAPE2EServiceInstance()
+execution.setVariable("statusDescription", "Create Service Order failed ")
+def dcsi = new Create3rdONAPE2EServiceInstance()
 dcsi.prepareUpdateProgress(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:serviceTask id="ServiceTask_1ixmamy" name="resource progress update">
@@ -330,7 +330,7 @@ dcsi.prepareUpdateProgress(execution)]]></bpmn:script>
   </bpmn:process>
   <bpmn:error id="Error_0nbdy47" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Delete3rdONAPE2EServiceInstance">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Create3rdONAPE2EServiceInstance">
       <bpmndi:BPMNShape id="StartEvent_0hj12gh_di" bpmnElement="StartEvent_0hj12gh">
         <dc:Bounds x="-9" y="-418" width="36" height="36" />
         <bpmndi:BPMNLabel>
