@@ -95,7 +95,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class MsoRequest {
       
 	@Autowired
-	private InfraActiveRequestsRepository iarRepo;    
+	private RequestsDbClient requestsDbClient;
 	
 	@Autowired
 	private ResponseBuilder builder;
@@ -426,7 +426,7 @@ public class MsoRequest {
             request.setRequestBody(requestJSON);
             Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
             request.setEndTime(endTimeStamp);
-            iarRepo.save(request);
+			requestsDbClient.save(request);
         } catch (Exception e) {
         	msoLogger.error(MessageEnum.APIH_DB_UPDATE_EXC, e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "Exception when updating record in DB");
             msoLogger.debug ("Exception: ", e);

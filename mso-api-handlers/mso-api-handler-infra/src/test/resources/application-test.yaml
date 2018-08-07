@@ -29,7 +29,7 @@ mso:
   catalog:
     db:
       spring:
-        endpoint: "http://localhost:"
+        endpoint: http://localhost:${wiremock.server.port}
   db:
     auth: Basic YnBlbDptc28tZGItMTUwNyE=
   config: 

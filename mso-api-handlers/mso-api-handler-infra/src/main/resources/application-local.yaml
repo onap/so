@@ -17,6 +17,10 @@ camunda-nodehealthcheck-urn: /mso/nodehealthcheck
 
 
 mso:
+  adapters:
+    requestDb:
+      auth: Basic YnBlbDptc28tZGItMTUwNyE=
+      endpoint: http://localhost:8081
   logPath: logs
   site-name: mtanj
   catalog:

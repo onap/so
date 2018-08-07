@@ -22,6 +22,7 @@ package org.onap.so.apihandlerinfra;
 
 import org.apache.http.HttpStatus;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,10 +31,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -41,10 +38,9 @@ import org.springframework.web.client.RestTemplate;
 import uk.co.blackpepper.bowman.Client;
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
-import uk.co.blackpepper.bowman.RestTemplateConfigurer;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
+import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +49,11 @@ import java.util.Map;
 @Component("RequestDbClient")
 public class RequestsDbClient {
 
+	private static final String SERVICE_ID = "SERVICE_ID";
+	private static final String OPERATION_ID = "OPERATION_ID";
+	
 	private Client<InfraActiveRequests> infraActiveRequestClient;
+	private Client<OperationStatus> operationStatusClient;
 
 	@Value("${mso.adapters.requestDb.endpoint}")
 	private String endpoint;
@@ -62,12 +62,15 @@ public class RequestsDbClient {
 	private String msoAdaptersAuth;
 
 	private String getOrchestrationFilterURI = "/infraActiveRequests/getOrchestrationFiltersFromInfraActive/";
+	private static final String OPERATION_STATUS_REPOSITORY_SEARCH = "/operationStatusRepository/search";
 
 	private String checkVnfIdStatus = "/infraActiveRequests/checkVnfIdStatus/";
 
 	private String infraActiveRequestURI = "/infraActiveRequests/";
 
 	private String checkInstanceNameDuplicate = "/infraActiveRequests/checkInstanceNameDuplicate";
+	
+	private String findOneByServiceIdAndOperationIdURI = "/findOneByServiceIdAndOperationId";
 
 	private String cloudOrchestrationFiltersFromInfraActive = "/infraActiveRequests/getCloudOrchestrationFiltersFromInfraActive";
 
@@ -83,27 +86,18 @@ public class RequestsDbClient {
 		checkVnfIdStatus = endpoint + checkVnfIdStatus;
 		checkInstanceNameDuplicate = endpoint + checkInstanceNameDuplicate;
 		cloudOrchestrationFiltersFromInfraActive = endpoint + cloudOrchestrationFiltersFromInfraActive;
+		findOneByServiceIdAndOperationIdURI = endpoint + OPERATION_STATUS_REPOSITORY_SEARCH + findOneByServiceIdAndOperationIdURI;
 		headers = new HttpHeaders();
 		headers.set("Authorization", msoAdaptersAuth);
 	}
 
 	public RequestsDbClient() {
-		ClientFactory clientFactory = Configuration.builder().setRestTemplateConfigurer(new RestTemplateConfigurer() {
-
-			public void configure(RestTemplate restTemplate) {
-
-				restTemplate.getInterceptors().add(new ClientHttpRequestInterceptor() {
-
-					public ClientHttpResponse intercept(HttpRequest request, byte[] body,
-							ClientHttpRequestExecution execution) throws IOException {
-
-						request.getHeaders().add("Authorization", msoAdaptersAuth);
-						return execution.execute(request, body);
-					}
-				});
-			}
-		}).build().buildClientFactory();
+		ClientFactory clientFactory = Configuration.builder().setRestTemplateConfigurer(restTemplate -> restTemplate.getInterceptors().add((request, body, execution) -> {
+			request.getHeaders().add("Authorization", msoAdaptersAuth);
+			return execution.execute(request, body);
+		})).build().buildClientFactory();
 		infraActiveRequestClient = clientFactory.create(InfraActiveRequests.class);
+		operationStatusClient = clientFactory.create(OperationStatus.class);
        
 	}
 	public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(Map<String, String> orchestrationMap){
@@ -145,6 +139,13 @@ public class RequestsDbClient {
 		}
 
 	}
+	
+	public  OperationStatus getOneByServiceIdAndOperationId(String serviceId, String operationId){
+		return this.getSingleOperationStatus(UriBuilder.fromUri(findOneByServiceIdAndOperationIdURI)
+				.queryParam(SERVICE_ID,serviceId)
+				.queryParam(OPERATION_ID,operationId)
+				.build());
+	}
 
 	public void save(InfraActiveRequests infraActiveRequests) {
 		URI uri = getUri(infraActiveRequestURI);
@@ -158,6 +159,10 @@ public class RequestsDbClient {
 
 	public void updateInfraActiveRequests(InfraActiveRequests request) {		
 		infraActiveRequestClient.put(request);
+	}
+	
+	public OperationStatus getSingleOperationStatus(URI uri){
+		return operationStatusClient.get(uri);
 	}
 
 	protected URI getUri(String uri) {
