@@ -35,17 +35,17 @@
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
-			<version>3.1.12</version>
+			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
-			<version>3.1.12</version>
+			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-rs-service-description-swagger</artifactId>
-			<version>3.1.11</version>
+			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -118,17 +118,17 @@
 			<plugin>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-java2ws-plugin</artifactId>
-				<version>3.1.12</version>
+				<version>${cxf.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.cxf</groupId>
 						<artifactId>cxf-rt-frontend-jaxws</artifactId>
-						<version>3.1.12</version>
+						<version>${cxf.version}</version>
 					</dependency>
 					<dependency>
 						<groupId>org.apache.cxf</groupId>
 						<artifactId>cxf-rt-frontend-simple</artifactId>
-						<version>3.1.12</version>
+						<version>${cxf.version}</version>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -213,7 +213,7 @@
 											cxf-java2ws-plugin
 										</artifactId>
 										<versionRange>
-											[3.1.12,)
+											[3.2.5,)
 										</versionRange>
 										<goals>
 											<goal>java2ws</goal>
