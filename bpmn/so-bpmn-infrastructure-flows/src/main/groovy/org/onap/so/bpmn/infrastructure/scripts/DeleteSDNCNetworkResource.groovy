@@ -145,8 +145,11 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String modelName = resourceInputObj.getResourceModelInfo().getModelName()
             String modelVersion = resourceInputObj.getResourceModelInfo().getModelVersion()
             // 1. prepare assign topology via SDNC Adapter SUBFLOW call
-            String sndcTopologyDeleteRequest =
-                    """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+            String sndcTopologyDeleteRequest = ""
+
+            switch (modelName) {
+                case ~/^Site$/:
+                    sndcTopologyDeleteRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
                                  <sdncadapter:RequestHeader>
@@ -177,8 +180,12 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                         </onap-model-information>
                                         <service-instance-id>${MsoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
                                         <global-customer-id>${MsoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
+                                        <subscriber-name></subscriber-name>
                                      </service-information>
-                                     <network-information>
+                                     <vnf-information>
+                                        <!-- TODO: to be filled as per the request input -->
+                                        <vnf-id></vnf-id>
+                                        <vnf-type></vnf-type>
                                         <onap-model-information>
                                              <model-invariant-uuid>${MsoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
                                              <model-customization-uuid>${MsoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
@@ -186,13 +193,45 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                              <model-version>${MsoUtils.xmlEscape(modelVersion)}</model-version>
                                              <model-name>${MsoUtils.xmlEscape(modelName)}</model-name>
                                         </onap-model-information>
-                                     </network-information>
-                                     <network-request-input>
-                                       <network-input-parameters></network-input-parameters>
-                                     </network-request-input>
+                                     </vnf-information>
+                                     <vnf-request-input>
+                                        <request-version></request-version>
+                                        <vnf-name></vnf-name>
+                                        <vnf-networks>
+                                            <vnf-network>
+                                                <network-role></network-role>
+                                                <network-name></network-name>
+                                                <neutron-id></neutron-id>
+                                                <network-id></network-id>
+                                                <contrail-network-fqdn></contrail-network-fqdn>
+                                                <subnets-data>
+                                                    <subnet-data>
+                                                        <ip-version></ip-version>
+                                                        <subnet-id></subnet-id>
+                                                    </subnet-data>
+                                                </subnets-data>
+                                            </vnf-network>
+                                        </vnf-networks>
+                                        <subnets-data>
+                                            <subnet-data>
+                                                <ip-version></ip-version>
+                                                <subnet-id></subnet-id>
+                                            </subnet-data>
+                                        </subnets-data>
+                                     </vnf-request-input>
+                                     <vnf-input-parameters>
+                                       <param></param>
+                                     </vnf-input-parameters>
                                 </sdncadapterworkflow:SDNCRequestData>
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
-            
+                    break
+
+
+
+                default:
+                    sndcTopologyDeleteRequest = ""
+            }
+
             String sndcTopologyDeleteRequesAsString = utils.formatXml(sndcTopologyDeleteRequest)
             utils.logAudit(sndcTopologyDeleteRequesAsString)
             execution.setVariable("sdncAdapterWorkflowRequest", sndcTopologyDeleteRequesAsString)
