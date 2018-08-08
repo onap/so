@@ -73,15 +73,15 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<executions>
-					<execution>
+						<execution>
 							<id>default-test</id>
 							<goals>
 								<goal>test</goal>
 							</goals>
-							<configuration>								
-                                    <includes>
-                                        <include>**/AllTestsTestSuite.java</include>                                       
-                                    </includes>                              
+							<configuration>
+								<includes>
+									<include>**/AllTestsTestSuite.java</include>
+								</includes>
 							</configuration>
 						</execution>
 						<execution>
@@ -89,23 +89,23 @@
 							<goals>
 								<goal>test</goal>
 							</goals>
-							<configuration>								
-                                    <includes>
-                                        <include>**/AllTasksTestsTestSuite.java</include>                                       
-                                    </includes>                              
+							<configuration>
+								<includes>
+									<include>**/AllTasksTestsTestSuite.java</include>
+								</includes>
 							</configuration>
 						</execution>
 						<execution>
-                            <id>bpmn-test</id>
-                            <goals>
-                                <goal>test</goal>
-                            </goals>
-                            <configuration>                             
-                                    <includes>
-                                        <include>**/AllBPMNTestSuites.java</include>                                       
-                                    </includes>                              
-                            </configuration>
-                        </execution>    			
+							<id>bpmn-test</id>
+							<goals>
+								<goal>test</goal>
+							</goals>
+							<configuration>
+								<includes>
+									<include>**/AllBPMNTestSuites.java</include>
+								</includes>
+							</configuration>
+						</execution>
 					</executions>
 				</plugin>
 			</plugins>
@@ -134,9 +134,14 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 			<scope>test</scope>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -156,7 +161,7 @@
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-rs-service-description-swagger</artifactId>
 			<version>${cxf.version}</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -209,7 +214,7 @@
 			<version>2.0</version>
 		</dependency>
 		<dependency>
-		<groupId>org.onap.so</groupId>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSORESTClient</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -243,17 +248,17 @@
 			<artifactId>javax.annotation-api</artifactId>
 			<version>1.3</version>
 		</dependency>
-		  <dependency>
-            <groupId>org.onap.msb.java-sdk</groupId>
-            <artifactId>msb-java-sdk</artifactId>
-            <version>1.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.eclipsesource.jaxrs</groupId>
-                    <artifactId>jersey-all</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+		<dependency>
+			<groupId>org.onap.msb.java-sdk</groupId>
+			<artifactId>msb-java-sdk</artifactId>
+			<version>1.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.eclipsesource.jaxrs</groupId>
+					<artifactId>jersey-all</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -271,16 +276,16 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
 		</dependency>
 		<dependency>
-            <groupId>ch.vorburger.mariaDB4j</groupId>
-            <artifactId>mariaDB4j</artifactId>
-            <version>2.2.3</version>
-            <scope>test</scope>
-        </dependency>
+			<groupId>ch.vorburger.mariaDB4j</groupId>
+			<artifactId>mariaDB4j</artifactId>
+			<version>2.2.3</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
