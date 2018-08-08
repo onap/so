@@ -128,8 +128,18 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
             String modelName = resourceInputObj.getResourceModelInfo().getModelName()
             String modelVersion = resourceInputObj.getResourceModelInfo().getModelVersion()
             // 1. prepare assign topology via SDNC Adapter SUBFLOW call
-            String sndcTopologyDeleteRequest =
-                    """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+            String sdncTopologyDeleteRequest = ""
+
+            switch (modelName) {
+                case ~/^Site$/:
+                    sdncTopologyDeleteRequest = ""
+                    break
+
+                case ~/^SOTNAttachment$/:
+                    sdncTopologyDeleteRequest = ""
+                    break
+                default:
+                    sdncTopologyDeleteRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
                                  <sdncadapter:RequestHeader>
@@ -175,8 +185,9 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
                                      </network-request-input>
                                 </sdncadapterworkflow:SDNCRequestData>
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+            }
 
-            String sndcTopologyDeleteRequesAsString = utils.formatXml(sndcTopologyDeleteRequest)
+            String sndcTopologyDeleteRequesAsString = utils.formatXml(sdncTopologyDeleteRequest)
             utils.logAudit(sndcTopologyDeleteRequesAsString)
             execution.setVariable("sdncAdapterWorkflowRequest", sndcTopologyDeleteRequesAsString)
             msoLogger.info("sdncAdapterWorkflowRequest - " + "\n" +  sndcTopologyDeleteRequesAsString)
