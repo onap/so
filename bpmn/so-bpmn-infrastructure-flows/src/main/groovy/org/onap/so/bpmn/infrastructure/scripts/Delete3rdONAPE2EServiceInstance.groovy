@@ -56,7 +56,7 @@ import org.onap.so.rest.RESTConfig
  */
 public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcessor {
 
-	String Prefix="CRE3rdONAPESI_"
+	String Prefix = "CRE3rdONAPESI_"
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -249,11 +249,12 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		String subscriberId = execution.getVariable("globalSubscriberId")
 		String customerRole = ""
 		String subscriberName = ""
-		String referredType = execution.getVariable("serviceType")
+		String referredType = "Consumer"
 		String orderItemId = "1"
 		String action = "delete" //for delete
 		String serviceState = "active"
 		String serviceName = ""
+		String serviceType = execution.getVariable("serviceType")
 		String serviceId = execution.getVariable(Prefix + "ServiceInstanceId")
 		
 		Map<String, String> valueMap = new HashMap<>()
@@ -271,6 +272,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		valueMap.put("action", '"' + action + '"')
 		valueMap.put("serviceState", '"' + serviceState + '"')
 		valueMap.put("serviceName", '"' + serviceName + '"')
+		valueMap.put("serviceType", '"' + serviceType + '"')
 		valueMap.put("serviceId", '"' + serviceId + '"')
 		
 		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil(this)		
@@ -448,7 +450,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		String sppartnerVersion = execution.getVariable(Prefix + "sppartnerVersion")
 		
 		AaiUtil aaiUriUtil = new AaiUtil(this)
-		String serviceAaiPath = execution.getVariable(Prefix + "serviceAaiPath") + "/${sppartnerVersion}"
+		String serviceAaiPath = execution.getVariable(Prefix + "serviceAaiPath") + "?resource-version=${sppartnerVersion}"
 		APIResponse response = aaiUriUtil.executeAAIDeleteCall(execution, serviceAaiPath)
 		int responseCode = response.getStatusCode()
 		execution.setVariable(Prefix + "DeleteSppartnerResponseCode", responseCode)

@@ -63,6 +63,7 @@ class ExternalAPIUtil {
         "\t\t\"service\": {\n" +
             "\t\t\t\"serviceState\": <serviceState>,\n" +
             "\t\t\t\"name\": <serviceName>,\n" +
+            "\t\t\t\"serviceType\": <serviceType>,\n" +
             "\t\t\t\"serviceSpecification\": { \n" +
                 "\t\t\t\t\"id\": <serviceUuId> \n" +
             "\t\t\t},\n" +

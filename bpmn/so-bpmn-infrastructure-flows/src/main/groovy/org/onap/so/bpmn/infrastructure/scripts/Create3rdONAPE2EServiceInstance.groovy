@@ -326,11 +326,12 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		String subscriberId = execution.getVariable("globalSubscriberId")
 		String customerRole = ""
 		String subscriberName = ""
-		String referredType = execution.getVariable("serviceType")
+		String referredType = "Consumer"
 		String orderItemId = "1"
 		String action = "add" //for create
 		String serviceState = "active"
 		String serviceName = execution.getVariable("serviceInstanceName")
+		String serviceType = execution.getVariable("serviceType")
 		String serviceId = execution.getVariable("serviceInstanceId")
 		
 		Map<String, String> valueMap = new HashMap<>()
@@ -348,6 +349,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		valueMap.put("action", '"' + action + '"')
 		valueMap.put("serviceState", '"' + serviceState + '"')
 		valueMap.put("serviceName", '"' + serviceName + '"')
+		valueMap.put("serviceType", '"' + serviceType + '"')
 		valueMap.put("serviceId", '"' + serviceId + '"')
 		
 		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil(this)
@@ -493,6 +495,8 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		String sppartnerUrl = execution.getVariable(Prefix + "SppartnerUrl")
 		String callSource = execution.getVariable(Prefix + "CallSource")
 		String serviceInstanceId = execution.getVariable("serviceInstanceId")
+		String globalSubscriberId = execution.getVariable("globalSubscriberId")
+		String serviceType = execution.getVariable("serviceType")
 		
 		AaiUtil aaiUriUtil = new AaiUtil(this)
 		String aai_uri = aaiUriUtil.getBusinessSPPartnerUri(execution)
@@ -502,11 +506,18 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 				"""<sp-partner xmlns=\"${namespace}\">
 			        <id>${sppartnerId}</id>
 			        <url>${sppartnerUrl}</url>
-			        <callSource>${callSource}</callSource>
-					<service-instance>					
-					    <service-instance-id>${serviceInstanceId}</service-instance-id>				    
-				    </service-instance>
-					</sp-partner>""".trim()
+			        <callsource>${callSource}</callsource>
+			        <relationship-list>
+			          <relationship>
+			            <related-to>service-instance</related-to>
+			            <related-link>/aai/v14/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${serviceType}/service-instances/service-instance/${serviceInstanceId}</related-link>
+			            <relationship-data>
+			                <relationship-key>service-instance.service-instance-id</relationship-key>
+			                <relationship-value>${serviceInstanceId}</relationship-value>
+			            </relationship-data> 
+			          </relationship>
+			        </relationship-list>
+				</sp-partner>""".trim()
 		utils.logAudit(payload)
 		
 		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
