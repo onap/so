@@ -23,12 +23,13 @@ package org.onap.so.db.request.data.repository;
 import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.beans.OperationStatusId;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@Repository
+@RepositoryRestResource(collectionResourceRel = "operationStatusRepository", path = "operationStatusRepository")
 public interface OperationStatusRepository extends JpaRepository<OperationStatus, OperationStatusId> {
 	
-	OperationStatus findOneByServiceIdAndOperationId(String serviceId, String operationId);
+	OperationStatus findOneByServiceIdAndOperationId(@Param("SERVICE_ID") String serviceId, @Param("OPERATION_ID") String operationId);
 	public OperationStatus findOneByServiceName(String serviceName);
 	public OperationStatus findOneByServiceId(String serviceId);
 }

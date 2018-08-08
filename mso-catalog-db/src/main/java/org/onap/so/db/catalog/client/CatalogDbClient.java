@@ -20,14 +20,6 @@
 
 package org.onap.so.db.catalog.client;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.ws.rs.core.UriBuilder;
-
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
@@ -40,6 +32,7 @@ import org.onap.so.db.catalog.beans.ResourceType;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
@@ -54,44 +47,71 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import uk.co.blackpepper.bowman.Client;
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
 import uk.co.blackpepper.bowman.RestTemplateConfigurer;
 
+import javax.annotation.PostConstruct;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 @Component("CatalogDbClient")
 public class CatalogDbClient {
 
-	protected Client<Service> serviceClient;
-
-	protected Client<VfModuleCustomization> vfModuleCustomizationClient;
-
-	protected Client<OrchestrationFlow> orchestrationClient;
-
-	protected Client<NorthBoundRequest> northBoundRequestClient;
-
-	protected Client<RainyDayHandlerStatus> rainyDayHandlerStatusClient;
-
-	protected Client<BuildingBlockDetail> buildingBlockDetailClient;
-
-	protected Client<OrchestrationStatusStateTransitionDirective> orchestrationStatusStateTransitionDirectiveClient;
-
-	protected Client<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizationClient;
-
-	protected Client<CollectionResourceInstanceGroupCustomization> collectionResourceInstanceGroupCustomizationClient;
-
-	protected Client<InstanceGroup> instanceGroupClient;
+	private static final String SERVICE_RECIPE_SEARCH = "/serviceRecipe/search";
+	private static final String SERVICE_MODEL_UUID = "SERVICE_MODEL_UUID";
+	private static final String ACTION = "ACTION";
+	private static final String MODEL_NAME = "MODEL_NAME";
+	private static final String SERVICE_SEARCH = "/service/search";
+	private static final String MODEL_VERSION = "MODEL_VERSION";
+	private static final String MODEL_INVARIANT_UUID = "MODEL_INVARIANT_UUID";
+	private String findFirstByModelNameURI = "/findFirstByModelNameOrderByModelVersionDesc";
+	private String findFirstByServiceModelUUIDAndActionURI = "/findFirstByServiceModelUUIDAndAction";
+	private String findByModelVersionAndModelInvariantUUIDURI = "/findByModelVersionAndModelInvariantUUID";
 	
-	protected Client<NetworkCollectionResourceCustomization> networkCollectionResourceCustomizationClient;
+	private Client<Service> serviceClient;
+
+	private Client<VfModuleCustomization> vfModuleCustomizationClient;
+
+	private Client<OrchestrationFlow> orchestrationClient;
+
+	private Client<NorthBoundRequest> northBoundRequestClient;
+
+	private Client<RainyDayHandlerStatus> rainyDayHandlerStatusClient;
+
+	private Client<BuildingBlockDetail> buildingBlockDetailClient;
+
+	private Client<OrchestrationStatusStateTransitionDirective> orchestrationStatusStateTransitionDirectiveClient;
+
+	private Client<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizationClient;
+
+	private Client<CollectionResourceInstanceGroupCustomization> collectionResourceInstanceGroupCustomizationClient;
+
+	private Client<InstanceGroup> instanceGroupClient;
 	
-	protected Client<CollectionNetworkResourceCustomization> collectionNetworkResourceCustomizationClient;
+	private Client<NetworkCollectionResourceCustomization> networkCollectionResourceCustomizationClient;
+	
+	private Client<CollectionNetworkResourceCustomization> collectionNetworkResourceCustomizationClient;
+
+	private Client<ServiceRecipe> serviceRecipeClient;
 
 	@Value("${mso.catalog.db.spring.endpoint}")
 	protected String endpoint;
 
 	@Value("${mso.db.auth}")
 	private String msoAdaptersAuth;
+
+	@PostConstruct
+	public void init(){
+		findFirstByModelNameURI = endpoint + SERVICE_SEARCH + findFirstByModelNameURI;
+		findByModelVersionAndModelInvariantUUIDURI = endpoint + SERVICE_SEARCH + findByModelVersionAndModelInvariantUUIDURI;
+		findFirstByServiceModelUUIDAndActionURI = endpoint + SERVICE_RECIPE_SEARCH + findFirstByServiceModelUUIDAndActionURI; 
+	}
 
 	public CatalogDbClient() {
 		ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
@@ -126,6 +146,7 @@ public class CatalogDbClient {
 		instanceGroupClient = clientFactory.create(InstanceGroup.class);
 		networkCollectionResourceCustomizationClient = clientFactory.create(NetworkCollectionResourceCustomization.class);
 		collectionNetworkResourceCustomizationClient = clientFactory.create(CollectionNetworkResourceCustomization.class);
+		serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
 	}
 	
 	public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(String modelCustomizationUUID) {
@@ -198,7 +219,7 @@ public class CatalogDbClient {
 		return this.getMultipleOrchestrationFlows(UriBuilder.fromUri(endpoint + "/orchestrationFlow/").build());
 	}
 
-	protected List<OrchestrationFlow> getMultipleOrchestrationFlows(URI uri) {
+	private List<OrchestrationFlow> getMultipleOrchestrationFlows(URI uri) {
 		Iterable<OrchestrationFlow> orchIterator = orchestrationClient.getAll(uri);
 		List<OrchestrationFlow> orchList = new ArrayList<>();
 		Iterator<OrchestrationFlow> it = orchIterator.iterator();
@@ -229,7 +250,7 @@ public class CatalogDbClient {
 		return collectionInstanceGroupCustList;
 	}
 
-	protected List<VnfcInstanceGroupCustomization> getMultipleVnfcInstanceGroupCustomizations(URI uri) {
+	private List<VnfcInstanceGroupCustomization> getMultipleVnfcInstanceGroupCustomizations(URI uri) {
 		Iterable<VnfcInstanceGroupCustomization> vnfcIterator = vnfcInstanceGroupCustomizationClient.getAll(uri);
 		List<VnfcInstanceGroupCustomization> vnfcList = new ArrayList<>();
 		Iterator<VnfcInstanceGroupCustomization> it = vnfcIterator.iterator();
@@ -264,35 +285,53 @@ public class CatalogDbClient {
 				.build());
 	}
 	
-	protected CollectionNetworkResourceCustomization getSingleCollectionNetworkResourceCustomization(URI uri) {
+	public  ServiceRecipe getFirstByServiceModelUUIDAndAction(String modelUUID, String action){
+		return this.getSingleServiceRecipe(UriBuilder.fromUri(findFirstByServiceModelUUIDAndActionURI)
+				.queryParam(SERVICE_MODEL_UUID,modelUUID)
+				.queryParam(ACTION,action)
+				.build());
+	}
+	
+	public Service getFirstByModelNameOrderByModelVersionDesc(String modelName){
+		return this.getSingleService(UriBuilder.fromUri(findFirstByModelNameURI)
+				.queryParam(MODEL_NAME,modelName)
+				.build());
+	}
+	
+	
+	private CollectionNetworkResourceCustomization getSingleCollectionNetworkResourceCustomization(URI uri) {
 		return collectionNetworkResourceCustomizationClient.get(uri);
 	}
 
-	protected InstanceGroup getSingleInstanceGroup(URI uri) {
+	private InstanceGroup getSingleInstanceGroup(URI uri) {
 		return instanceGroupClient.get(uri);
 	}
 
-	protected Service getSingleService(URI uri) {
+	private Service getSingleService(URI uri) {
 		return serviceClient.get(uri);
 	}
 
-	protected VfModuleCustomization getSingleVfModuleCustomization(URI uri) {
+	private VfModuleCustomization getSingleVfModuleCustomization(URI uri) {
 		return vfModuleCustomizationClient.get(uri);
 	}
 
-	protected NorthBoundRequest getSingleNorthBoundRequest(URI uri) {
+	private NorthBoundRequest getSingleNorthBoundRequest(URI uri) {
 		return northBoundRequestClient.get(uri);
 	}
 
-	protected RainyDayHandlerStatus getSingleRainyDayHandlerStatus(URI uri) {
+	private RainyDayHandlerStatus getSingleRainyDayHandlerStatus(URI uri) {
 		return rainyDayHandlerStatusClient.get(uri);
+	}
+	
+	private ServiceRecipe getSingleServiceRecipe(URI uri){
+		return serviceRecipeClient.get(uri);
 	}
 
 	public Service getServiceByModelVersionAndModelInvariantUUID(String modelVersion, String modelInvariantUUID) {
 		return this.getSingleService(
-				UriBuilder.fromUri(endpoint + "/service/search/findByModelVersionAndModelInvariantUUID")
-						.queryParam("MODEL_VERSION", modelVersion)
-						.queryParam("MODEL_INVARIANT_UUID", modelInvariantUUID).build());
+				UriBuilder.fromUri(findByModelVersionAndModelInvariantUUIDURI)
+						.queryParam(MODEL_VERSION, modelVersion)
+						.queryParam(MODEL_INVARIANT_UUID, modelInvariantUUID).build());
 	}
 
 	//USED FOR TEST ONLY

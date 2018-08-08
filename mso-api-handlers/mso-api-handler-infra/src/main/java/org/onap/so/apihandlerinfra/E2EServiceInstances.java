@@ -56,10 +56,8 @@ import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
-import org.onap.so.db.catalog.data.repository.ServiceRecipeRepository;
-import org.onap.so.db.catalog.data.repository.ServiceRepository;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.OperationStatus;
-import org.onap.so.db.request.data.repository.OperationStatusRepository;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoAlarmLogger;
 import org.onap.so.logger.MsoLogger;
@@ -84,14 +82,12 @@ import com.wordnik.swagger.annotations.ApiOperation;
 public class E2EServiceInstances {
 
 	private HashMap<String, String> instanceIdMap = new HashMap<>();
-	private static MsoLogger msoLogger = MsoLogger
+	private static final MsoLogger msoLogger = MsoLogger
 			.getMsoLogger(MsoLogger.Catalog.APIH, E2EServiceInstances.class);
-	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
-	public static final String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
+	private static final MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
+	private static final String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
-	public static final String END_OF_THE_TRANSACTION = "End of the transaction, the final response is: ";
-	public static final String EXCEPTION_CREATING_DB_RECORD = "Exception while creating record in DB";
-	public static final String EXCEPTION_COMMUNICATE_BPMN_ENGINE = "Exception while communicate with BPMN engine";
+	private static final String END_OF_THE_TRANSACTION = "End of the transaction, the final response is: ";
 	
 	@Autowired
 	private MsoRequest msoRequest;
@@ -100,13 +96,10 @@ public class E2EServiceInstances {
 	private RequestClientFactory requestClientFactory;
 
 	@Autowired
-	private OperationStatusRepository osRepo;
+	private RequestsDbClient requestsDbClient;
 	
 	@Autowired
-	private ServiceRepository serviceRepo;
-	
-	@Autowired
-	private ServiceRecipeRepository sRecipeRepo;
+	private CatalogDbClient catalogDbClient;
 	
 	@Autowired
 	private ResponseBuilder builder;
@@ -224,7 +217,7 @@ public class E2EServiceInstances {
 		long startTime = System.currentTimeMillis();
 		msoLogger.debug("requestId is: " + requestId);
 
-		CompareModelsRequest e2eCompareModelReq = null;
+		CompareModelsRequest e2eCompareModelReq;
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -256,8 +249,8 @@ public class E2EServiceInstances {
 		String workflowUrl = "/mso/async/services/CompareModelofE2EServiceInstance";
 		int recipeTimeout = 180;
 
-		RequestClient requestClient = null;
-		HttpResponse response = null;
+		RequestClient requestClient;
+		HttpResponse response;
 
 		long subStartTime = System.currentTimeMillis();
 
@@ -327,12 +320,11 @@ public class E2EServiceInstances {
 		
 		long startTime = System.currentTimeMillis();
 
-		OperationStatus operationStatus = null;
+		OperationStatus operationStatus;
 
 		try {
-			operationStatus = osRepo.findOneByServiceIdAndOperationId(serviceId,
+			operationStatus = requestsDbClient.getOneByServiceIdAndOperationId(serviceId,
 					operationId);
-
 		} catch (Exception e) {
 			msoLogger
 					.error(MessageEnum.APIH_DB_ACCESS_EXC,
@@ -353,7 +345,7 @@ public class E2EServiceInstances {
 					MsoLogger.ResponseCode.DBAccessError,
 					"Exception while communciate with Request DB");
 			msoLogger.debug(END_OF_THE_TRANSACTION
-					+ (String) response.getEntity());
+					+ response.getEntity());
 			return response;
 
 		}
@@ -371,7 +363,7 @@ public class E2EServiceInstances {
 					MsoLogger.ResponseCode.DataNotFound,
 					"Null response from RequestDB when searching by serviceId");
 			msoLogger.debug(END_OF_THE_TRANSACTION
-					+ (String) resp.getEntity());
+					+ resp.getEntity());
 			return resp;
 
 		}
@@ -387,7 +379,7 @@ public class E2EServiceInstances {
 		String requestId = UUIDChecker.generateUUID(msoLogger);
 		long startTime = System.currentTimeMillis();
 		msoLogger.debug("requestId is: " + requestId);
-		E2EServiceInstanceDeleteRequest e2eDelReq = null;
+		E2EServiceInstanceDeleteRequest e2eDelReq;
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -410,11 +402,11 @@ public class E2EServiceInstances {
 					MsoLogger.ResponseCode.SchemaError,
 					"Mapping of request to JSON object failed");
 			msoLogger.debug(END_OF_THE_TRANSACTION
-					+ (String) response.getEntity());
+					+ response.getEntity());
 			return response;
 		}
 
-		RecipeLookupResult recipeLookupResult = null;
+		RecipeLookupResult recipeLookupResult;
 		try {
 			//TODO  Get the service template model version uuid from AAI.
 			recipeLookupResult = getServiceInstanceOrchestrationURI(null, action);
@@ -436,7 +428,7 @@ public class E2EServiceInstances {
 					MsoLogger.ResponseCode.DBAccessError,
 					"Exception while communciate with DB");
 			msoLogger.debug(END_OF_THE_TRANSACTION
-					+ (String) response.getEntity());
+					+ response.getEntity());
 			return response;
 		}
 		if (recipeLookupResult == null) {
@@ -454,12 +446,12 @@ public class E2EServiceInstances {
 					MsoLogger.ResponseCode.DataNotFound,
 					"No recipe found in DB");
 			msoLogger.debug(END_OF_THE_TRANSACTION
-					+ (String) response.getEntity());
+					+ response.getEntity());
 			return response;
 		}
 
-		RequestClient requestClient = null;
-		HttpResponse response = null;
+		RequestClient requestClient;
+		HttpResponse response;
 
 		long subStartTime = System.currentTimeMillis();
 		try {
@@ -514,7 +506,7 @@ public class E2EServiceInstances {
 					MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
 			msoLogger.debug("End of the transaction, the final response is: "
-					+ (String) resp.getEntity());
+					+ resp.getEntity());
 			return resp;
 		}
 
@@ -530,7 +522,7 @@ public class E2EServiceInstances {
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
 					MsoLogger.ResponseCode.InternalError,
 					"Null response from BPMN");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) resp.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
 			return resp;
 		}
 
@@ -548,7 +540,7 @@ public class E2EServiceInstances {
 		String requestId = UUIDChecker.generateUUID(msoLogger);
 		long startTime = System.currentTimeMillis();
 		msoLogger.debug("requestId is: " + requestId);
-		E2EServiceInstanceRequest e2eSir = null;
+		E2EServiceInstanceRequest e2eSir;
 		String serviceId = instanceIdMap.get("serviceId");
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -565,7 +557,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
 					"Mapping of request to JSON object failed");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 
@@ -585,11 +577,11 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
 					"Validation of the input request failed");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 		
-		RecipeLookupResult recipeLookupResult = null;
+		RecipeLookupResult recipeLookupResult;
 		try {
 			recipeLookupResult = getServiceInstanceOrchestrationURI(e2eSir.getService().getServiceUuid(), action);
 		} catch (Exception e) {
@@ -603,7 +595,7 @@ public class E2EServiceInstances {
 			
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
 					"Exception while communciate with DB");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			
 			return response;
 		}
@@ -617,15 +609,15 @@ public class E2EServiceInstances {
 		
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound,
 					"No recipe found in DB");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 
 			return response;
 		}
 
 		String serviceInstanceType = e2eSir.getService().getServiceType();
 
-		RequestClient requestClient = null;
-		HttpResponse response = null;
+		RequestClient requestClient;
+		HttpResponse response;
 
 		long subStartTime = System.currentTimeMillis();
 		String sirRequestJson = convertToString(sir);
@@ -665,7 +657,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) getBPMNResp.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + getBPMNResp.getEntity());
 
 			return getBPMNResp;
 		}
@@ -677,7 +669,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError,
 					"Null response from BPMN");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) getBPMNResp.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + getBPMNResp.getEntity());
 			return getBPMNResp;
 		}
 
@@ -694,7 +686,7 @@ public class E2EServiceInstances {
 		String requestId = UUIDChecker.generateUUID(msoLogger);
 		long startTime = System.currentTimeMillis();
 		msoLogger.debug("requestId is: " + requestId);
-		E2EServiceInstanceRequest e2eSir = null;
+		E2EServiceInstanceRequest e2eSir;
 
 		MsoRequest msoRequest = new MsoRequest();
 		ObjectMapper mapper = new ObjectMapper();
@@ -711,7 +703,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
 					"Mapping of request to JSON object failed");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 
@@ -731,11 +723,11 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
 					"Validation of the input request failed");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 		
-		RecipeLookupResult recipeLookupResult = null;
+		RecipeLookupResult recipeLookupResult;
 		try {
 			recipeLookupResult = getServiceInstanceOrchestrationURI(e2eSir.getService().getServiceUuid(), action);
 		} catch (Exception e) {
@@ -749,7 +741,7 @@ public class E2EServiceInstances {
 			
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
 					"Exception while communciate with DB");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 
@@ -762,15 +754,15 @@ public class E2EServiceInstances {
 		
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound,
 					"No recipe found in DB");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) response.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 
 		String serviceInstanceType = e2eSir.getService().getServiceType();
 
 		String serviceId = "";
-		RequestClient requestClient = null;
-		HttpResponse response = null;
+		RequestClient requestClient;
+		HttpResponse response;
 
 		long subStartTime = System.currentTimeMillis();
 		String sirRequestJson = convertToString(sir);
@@ -809,7 +801,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) resp.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
 			return resp;
 		}
 
@@ -820,7 +812,7 @@ public class E2EServiceInstances {
 					MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError,
 					"Null response from BPMN");
-			msoLogger.debug(END_OF_THE_TRANSACTION + (String) resp.getEntity());
+			msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
 			return resp;
 		}
 
@@ -837,7 +829,7 @@ public class E2EServiceInstances {
         String requestId = UUIDChecker.generateUUID(msoLogger);
         long startTime = System.currentTimeMillis();
         msoLogger.debug("requestId is: " + requestId);
-		E2EServiceInstanceScaleRequest e2eScaleReq = null;
+		E2EServiceInstanceScaleRequest e2eScaleReq;
 
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -860,11 +852,11 @@ public class E2EServiceInstances {
                     MsoLogger.ResponseCode.SchemaError,
                     "Mapping of request to JSON object failed");
             msoLogger.debug(END_OF_THE_TRANSACTION
-                    + (String) response.getEntity());
+                    + response.getEntity());
             return response;
         }
 
-        RecipeLookupResult recipeLookupResult = null;
+        RecipeLookupResult recipeLookupResult;
         try {
 			//TODO  Get the service template model version uuid from AAI.
 			recipeLookupResult = getServiceInstanceOrchestrationURI(null, action);
@@ -886,7 +878,7 @@ public class E2EServiceInstances {
                     MsoLogger.ResponseCode.DBAccessError,
                     "Exception while communciate with DB");
             msoLogger.debug(END_OF_THE_TRANSACTION
-                    + (String) response.getEntity());
+                    + response.getEntity());
             return response;
         }
         if (recipeLookupResult == null) {
@@ -903,12 +895,12 @@ public class E2EServiceInstances {
                     MsoLogger.ResponseCode.DataNotFound,
                     "No recipe found in DB");
             msoLogger.debug(END_OF_THE_TRANSACTION
-                    + (String) response.getEntity());
+                    + response.getEntity());
             return response;
         }
 
-        RequestClient requestClient = null;
-        HttpResponse response = null;
+        RequestClient requestClient;
+        HttpResponse response;
 
         long subStartTime = System.currentTimeMillis();
         try {
@@ -963,7 +955,7 @@ public class E2EServiceInstances {
                     MsoLogger.ResponseCode.CommunicationError,
                     "Exception while communicate with BPMN engine");
             msoLogger.debug(END_OF_THE_TRANSACTION
-                    + (String) resp.getEntity());
+                    + resp.getEntity());
             return resp;
         }
 
@@ -979,7 +971,7 @@ public class E2EServiceInstances {
             msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
                     MsoLogger.ResponseCode.InternalError,
                     "Null response from BPMN");
-            msoLogger.debug(END_OF_THE_TRANSACTION + (String) resp.getEntity());
+            msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
             return resp;
         }
 
@@ -1028,7 +1020,7 @@ public class E2EServiceInstances {
 						MsoLogger.ResponseCode.InternalError,
 						"Response from BPMN engine is failed");
 				msoLogger.debug(END_OF_THE_TRANSACTION
-						+ (String) resp.getEntity());
+						+ resp.getEntity());
 				return resp;
 			} else {
 				Response resp = msoRequest
@@ -1047,7 +1039,7 @@ public class E2EServiceInstances {
 						MsoLogger.ResponseCode.InternalError,
 						"Response from BPEL engine is empty");
 				msoLogger.debug(END_OF_THE_TRANSACTION
-						+ (String) resp.getEntity());
+						+ resp.getEntity());
 				return resp;
 			}
 		}
@@ -1056,7 +1048,6 @@ public class E2EServiceInstances {
 	/**
 	 * Getting recipes from catalogDb
 	 * 
-	 * @param db the catalog db
 	 * @param serviceModelUUID the service model version uuid
 	 * @param action the action for the service
 	 * @return the service recipe result
@@ -1079,7 +1070,6 @@ public class E2EServiceInstances {
 	/**
 	 * Getting recipes from catalogDb
 	 * If Service recipe is not set, use default recipe, if set , use special recipe.
-	 * @param db the catalog db
 	 * @param serviceModelUUID the service version uuid
 	 * @param action the action of the service.
 	 * @return the service recipe result.
@@ -1088,13 +1078,12 @@ public class E2EServiceInstances {
 
 		String defaultServiceModelName = "UUI_DEFAULT";
 
-		Service defaultServiceRecord = serviceRepo.findFirstByModelNameOrderByModelVersionDesc(defaultServiceModelName);
-		ServiceRecipe defaultRecipe = sRecipeRepo.findFirstByServiceModelUUIDAndAction(defaultServiceRecord.getModelUUID(), action.name());
+		Service defaultServiceRecord = catalogDbClient.getFirstByModelNameOrderByModelVersionDesc(defaultServiceModelName);
 		//set recipe as default generic recipe
-		ServiceRecipe recipe = defaultRecipe;
+		ServiceRecipe recipe = catalogDbClient.getFirstByServiceModelUUIDAndAction(defaultServiceRecord.getModelUUID(), action.name());
 		//check the service special recipe 
 		if(null != serviceModelUUID && ! serviceModelUUID.isEmpty()){
-		      ServiceRecipe serviceSpecialRecipe = sRecipeRepo.findFirstByServiceModelUUIDAndAction(
+		      ServiceRecipe serviceSpecialRecipe = catalogDbClient.getFirstByServiceModelUUIDAndAction(
 		              serviceModelUUID, action.name());
 		      if(null != serviceSpecialRecipe){
 		          //set service special recipe.

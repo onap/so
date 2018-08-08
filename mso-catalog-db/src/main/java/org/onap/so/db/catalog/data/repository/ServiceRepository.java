@@ -41,7 +41,7 @@ public interface ServiceRepository extends JpaRepository<Service, String> {
 	 * @return
 	 */
 	@Query(value = "SELECT * FROM service WHERE MODEL_NAME = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
-	Service findFirstByModelNameOrderByModelVersionDesc(String modelName);
+	Service findFirstByModelNameOrderByModelVersionDesc(@Param("MODEL_NAME") String modelName);
 
 	/**
 	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting
@@ -59,7 +59,7 @@ public interface ServiceRepository extends JpaRepository<Service, String> {
 
 	/**
 	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting
-	 * @param modelName
+	 * @param modelUUID
 	 * @return
 	 */
 	@Query(value = "SELECT * FROM service WHERE MODEL_UUID = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
@@ -67,7 +67,7 @@ public interface ServiceRepository extends JpaRepository<Service, String> {
 
 	/**
 	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting
-	 * @param modelName
+	 * @param modelUUID
 	 * @return
 	 */
 	@Query(value = "SELECT * FROM service WHERE MODEL_UUID = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
@@ -78,7 +78,7 @@ public interface ServiceRepository extends JpaRepository<Service, String> {
 
 	/**
 	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting
-	 * @param modelName
+	 * @param modelInvariantUUID
 	 * @return
 	 */
 	@Query(value = "SELECT * FROM service WHERE MODEL_INVARIANT_UUID = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
