@@ -280,7 +280,54 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
                     break
 
                 default:
-                    sndcTopologyDeleteRequest = ""
+                    sndcTopologyDeleteRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+                                                              xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
+                                                              xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
+                                 <sdncadapter:RequestHeader>
+                                    <sdncadapter:RequestId>${MsoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${MsoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${MsoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
+                                    <sdncadapter:SvcOperation>network-topology-operation</sdncadapter:SvcOperation>
+                                    <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
+                                    <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
+                                 </sdncadapter:RequestHeader>
+                                 <sdncadapterworkflow:SDNCRequestData>
+                                     <request-information>
+                                        <request-id>${MsoUtils.xmlEscape(hdrRequestId)}</request-id>
+                                        <request-action>${MsoUtils.xmlEscape(sdnc_requestAction)}</request-action>
+                                        <source>${MsoUtils.xmlEscape(source)}</source>
+                                        <notification-url></notification-url>
+                                        <order-number></order-number>
+                                        <order-version></order-version>
+                                     </request-information>
+                                     <service-information>
+                                        <service-id>${MsoUtils.xmlEscape(serviceInstanceId)}</service-id>
+                                        <subscription-service-type>${MsoUtils.xmlEscape(serviceType)}</subscription-service-type>
+                                        <onap-model-information>
+                                             <model-invariant-uuid>${MsoUtils.xmlEscape(serviceModelInvariantUuid)}</model-invariant-uuid>
+                                             <model-uuid>${MsoUtils.xmlEscape(serviceModelUuid)}</model-uuid>
+                                             <model-version>${MsoUtils.xmlEscape(serviceModelVersion)}</model-version>
+                                             <model-name>${MsoUtils.xmlEscape(serviceModelName)}</model-name>
+                                        </onap-model-information>
+                                        <service-instance-id>${MsoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
+                                        <global-customer-id>${MsoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
+                                     </service-information>
+                                     <network-information>
+                                        <!-- TODO: to be filled as per the request input -->
+                                        <network-id></network-id>
+                                        <onap-model-information>
+                                             <model-invariant-uuid>${MsoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
+                                             <model-customization-uuid>${MsoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
+                                             <model-uuid>${MsoUtils.xmlEscape(modelUuid)}</model-uuid>
+                                             <model-version>${MsoUtils.xmlEscape(modelVersion)}</model-version>
+                                             <model-name>${MsoUtils.xmlEscape(modelName)}</model-name>
+                                        </onap-model-information>
+                                     </network-information>
+                                     <network-request-input>
+                                       <network-input-parameters></network-input-parameters>
+                                     </network-request-input>
+                                </sdncadapterworkflow:SDNCRequestData>
+                             </aetgt:SDNCAdapterWorkflowRequest>""".trim()
             }
 
             String sndcTopologyDeleteRequesAsString = utils.formatXml(sndcTopologyDeleteRequest)
