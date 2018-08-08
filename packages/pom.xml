@@ -20,16 +20,12 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			<modules>
-				<module>deliveries</module>
-			</modules>
 		</profile>
 
     <!-- Those profile are exclusive, choose docker or with-integration-tests -->
 		<profile>
 			<id>docker</id>
-			<modules>
-				<module>deliveries</module>
+			<modules>				
 				<module>docker</module>
 			</modules>
 			<properties>
@@ -37,18 +33,5 @@
 					<docker.skip.push>false</docker.skip.push>
 			</properties>
 		</profile>
-
-		<profile>
-			<id>with-integration-tests</id>
-			<modules>
-				<module>deliveries</module>
-				<module>docker</module>
-			</modules>
-			<properties>
-					<!-- For this profile we want to skip the docker push (if deploy goal is specified) -->
-					<docker.skip.push>true</docker.skip.push>
-			</properties>
-		</profile>
-
 	</profiles>
 </project>
