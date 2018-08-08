@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_d788a0e9",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/Delete3rdONAPE2EServiceInstance.bpmn",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-08-08T20:18:42Z",
+      "side": 0,
+      "message": "This is annoying. You fixed this yesterday. It looks like when Elaine updated the BPMN she didn\u0027t rebase and her change reintroduced the issue. We should be catching stuff like this when we review and merge changes.",
+      "range": {
+        "startLine": 158,
+        "startChar": 38,
+        "endLine": 158,
+        "endChar": 39
+      },
+      "revId": "6591ba62c3fcd998836ea1ed844bde03a04a8380",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
