@@ -45,8 +45,6 @@ public final class CommonConstants {
 	public static final String CAMUNDA_AUTH = "mso.camundaAuth";
 	public static final String BPEL_SEARCH_STR = "active-bpel";
 	public static final String TASK_SEARCH_STR = "task";
-	public static final String BPEL_URL = "bpelURL";
-	public static final String BPEL_AUTH = "bpelAuth";
 	public static final int BPEL = 0;
 	public static final int CAMUNDA = 1;
 	public static final int CAMUNDATASK = 2;
