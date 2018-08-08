@@ -29,9 +29,6 @@ insert into collection_resource_instance_group_customization(COLLECTION_RESOURCE
 insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values
 ('5df8b6de-2083-11e7-93ae-92361f002672', 'MSOTADevInfra_vSAMP10a_Service', '9647dfc4-2083-11e7-93ae-92361f002671', '2.0', 'MSO aLaCarte Vfmodule with addon', '2017-04-14 13:42:39', null, 'NA', 'NA', 'Luna', 'Oxygen');
 
-insert into service_recipe(id, action, version_str, description, orchestration_uri, service_param_xsd, recipe_timeout, service_timeout_interim, creation_timestamp, service_model_uuid) values
-('1', 'createInstance', '1', 'MSOTADevInfra aLaCarte', '/mso/async/services/CreateGenericALaCarteServiceInstance', null, '180', '0', '2017-04-14 19:18:20', '5df8b6de-2083-11e7-93ae-92361f002671');
-
 insert into heat_template(artifact_uuid, name, version, description, body, timeout_minutes, artifact_checksum, creation_timestamp) values
 ('ff874603-4222-11e7-9252-005056850d2e', 'module_mns_zrdm3frwl01exn_01_rgvm_1.yml', '1', 'created from csar', 'heat_template_version: 2013-05-23 description: heat template that creates TEST VNF parameters: TEST_server_name: type: string label: TEST server name description: TEST server name TEST_image_name: type: string label: image name description: TEST image name TEST_flavor_name: type: string label: TEST flavor name description: flavor name of TEST instance TEST_Role_net_name: type: string label: TEST network name description: TEST network name TEST_vnf_id: type: string label: TEST VNF Id description: TEST VNF Id resources:TEST: type: OS::Nova::Server properties: name: { get_param: TEST_server_name } image: { get_param: TEST_image_name } flavor: { get_param: TEST_flavor_name } networks: - port: { get_resource: TEST_port_0} metadata: vnf_id: {get_param: TEST_vnf_id} TEST_port_0: type: OS::Neutron::Port properties: network: { get_param: TEST_Role_net_name }', '60', 'MANUAL RECORD', '2017-01-21 23:26:56'), 
 ('ff87482f-4222-11e7-9252-005056850d2e', 'module_mns_zrdm3frwl01exn_01_rgvm_1.yml', '1', 'created from csar', 'heat_template_version: 2013-05-23 description: heat template that creates TEST VNF parameters: TEST_server_name: type: string label: TEST server name description: TEST server name TEST_image_name: type: string label: image name description: TEST image name TEST_flavor_name: type: string label: TEST flavor name description: flavor name of TEST instance TEST_Role_net_name: type: string label: TEST network name description: TEST network name TEST_vnf_id: type: string label: TEST VNF Id description: TEST VNF Id resources:TEST: type: OS::Nova::Server properties: name: { get_param: TEST_server_name } image: { get_param: TEST_image_name } flavor: { get_param: TEST_flavor_name } networks: - port: { get_resource: TEST_port_0} metadata: vnf_id: {get_param: TEST_vnf_id} TEST_port_0: type: OS::Neutron::Port properties: network: { get_param: TEST_Role_net_name }', '60', 'MANUAL RECORD', '2017-01-21 23:26:56'), 
@@ -134,65 +131,5 @@ insert into allotted_resource_customization_to_service(service_model_uuid, resou
 ('5df8b6de-2083-11e7-93ae-92361f002671', '367a8ba9-057a-4506-b106-fbae818597c6' ),
 ('5df8b6de-2083-11e7-93ae-92361f002672', '367a8ba9-057a-4506-b106-fbae818597c6');
 
-
-
-insert into vnf_recipe(id, nf_role, action, service_type, version_str, description, orchestration_uri, vnf_param_xsd, recipe_timeout, creation_timestamp, vf_module_id) values
-('61', '*', 'CREATE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/workflow/services/CreateGenericVNFV1', '', '180', '2016-06-03 10:14:10', ''),
-('63', '*', 'DELETE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/async/services/deleteGenericVNFV1', '', '180', '2016-06-03 10:14:10', ''),
-('65', '*', 'UPDATE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/workflow/services/updateGenericVNFV1', '', '180', '2016-06-03 10:14:10', ''),
-('67', '*', 'CREATE_VF_MODULE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/async/services/CreateVfModule', '', '180', '2016-06-03 10:14:10', '*'),
-('69', '*', 'DELETE_VF_MODULE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/async/services/DeleteVfModule', '', '180', '2016-06-03 10:14:10', '*'),
-('71', '*', 'UPDATE_VF_MODULE', '', '1', 'Recipe Match All for VNFs if no custom flow exists', '/mso/async/services/UpdateVfModule', '', '180', '2016-06-03 10:14:10', '*'),
-('77', 'VID_DEFAULT', 'createInstance', '', '1', 'VID_DEFAULT recipe to create VNF if no custom BPMN flow is found', '/mso/async/services/CreateVnfInfra', '', '180', '2016-09-14 19:18:20', ''),
-('78', 'VID_DEFAULT', 'deleteInstance', '', '1', 'VID_DEFAULT recipe to delete VNF if no custom BPMN flow is found', '/mso/async/services/DeleteVnfInfra', '', '180', '2016-09-14 19:18:20', ''),
-('81', 'VID_DEFAULT', 'updateInstance', '', '1', 'VID_DEFAULT update', '/mso/async/services/UpdateVnfInfra', '', '180', '2017-07-28 18:19:39', ''),
-('85', 'VID_DEFAULT', 'replaceInstance', '', '1', 'VID_DEFAULT replace', '/mso/async/services/ReplaceVnfInfra', '', '180', '2017-07-28 18:19:45', ''),
-('10000', 'VID_DEFAULT', 'inPlaceSoftwareUpdate', '', '1', 'VID_DEFAULT inPlaceSoftwareUpdate', '/mso/async/services/VnfInPlaceUpdate', '', '180', '2017-10-25 18:19:45', ''),
-('10001', 'VID_DEFAULT', 'applyUpdatedConfig', '', '1', 'VID_DEFAULT applyUpdatedConfig', '/mso/async/services/VnfConfigUpdate', '', '180', '2017-10-25 18:19:45', '');
-
-
 insert into vnf_components(vnf_id, component_type, heat_template_id, heat_environment_id, creation_timestamp) values
 ('13961', 'VOLUME', '13843', '13961', '2016-05-19 20:22:02');   
-
-insert into vnf_components_recipe(id, vnf_type, vnf_component_type, action, service_type, version, description, orchestration_uri, vnf_component_param_xsd, recipe_timeout, creation_timestamp, vf_module_model_uuid) values
-('5', '*', 'VOLUME_GROUP', 'CREATE', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/createCinderVolumeV1', '', '180', '2016-06-03 10:15:11', ''),
-('7', '*', 'VOLUME_GROUP', 'DELETE', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/deleteCinderVolumeV1', '', '180', '2016-06-03 10:15:11', ''),
-('9', '*', 'VOLUME_GROUP', 'UPDATE', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/updateCinderVolumeV1', '', '180', '2016-06-03 10:15:11', ''),
-('13', '', 'VOLUME_GROUP', 'DELETE_VF_MODULE_VOL', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/DeleteVfModuleVolume', '', '180', '2016-06-03 10:15:11', '*'),
-('15', '', 'VOLUME_GROUP', 'UPDATE_VF_MODULE_VOL', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/UpdateVfModuleVolume', '', '180', '2016-06-03 10:15:11', '*'),
-('16', '', 'volumeGroup', 'createInstance', '', '1', 'VID_DEFAULT recipe to create volume-group if no custom BPMN flow is found', '/mso/async/services/CreateVfModuleVolumeInfraV1', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('17', '', 'volumeGroup', 'deleteInstance', '', '1', 'VID_DEFAULT recipe to delete volume-group if no custom BPMN flow is found', '/mso/async/services/DeleteVfModuleVolumeInfraV1', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('18', '', 'volumeGroup', 'updateInstance', '', '1', 'VID_DEFAULT recipe to update volume-group if no custom BPMN flow is found', '/mso/async/services/UpdateVfModuleVolumeInfraV1', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('19', '', 'vfModule', 'createInstance', '', '1', 'VID_DEFAULT recipe to create vf-module if no custom BPMN flow is found', '/mso/async/services/CreateVfModuleInfra', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('20', '', 'vfModule', 'deleteInstance', '', '1', 'VID_DEFAULT recipe to delete vf-module if no custom BPMN flow is found', '/mso/async/services/DeleteVfModuleInfra', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('21', '', 'vfModule', 'updateInstance', '', '1', 'VID_DEFAULT recipe to update vf-module if no custom BPMN flow is found', '/mso/async/services/UpdateVfModuleInfra', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('25', '', 'vfModule', 'replaceInstance', '', '1', 'VID_DEFAULT vfModule replace', '/mso/async/services/ReplaceVfModuleInfra', '', '180', '2017-07-28 18:25:06', 'VID_DEFAULT');               
-        
-insert into network_recipe(id, model_name, action, description, orchestration_uri, network_param_xsd, recipe_timeout, service_type, creation_timestamp, version_str) values
-('1', 'CONTRAIL_BASIC', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
-('2', 'CONTRAIL_BASIC', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
-('3', 'CONTRAIL_BASIC', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
-('4', 'CONTRAIL_SHARED', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
-('5', 'CONTRAIL_SHARED', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
-('6', 'CONTRAIL_SHARED', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
-('7', 'CONTRAIL_EXTERNAL', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
-('8', 'CONTRAIL_EXTERNAL', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
-('9', 'CONTRAIL_EXTERNAL', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2016-09-14 19:00:57', '1'),
-('10', 'CONTRAIL30_BASIC', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-05-26 14:48:13', '1'),
-('11', 'CONTRAIL30_BASIC', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2016-05-26 14:48:13', '1'),
-('12', 'CONTRAIL30_BASIC', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2016-05-26 14:48:13', '1'),
-('13', 'NEUTRON_BASIC', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-06-01 19:54:51', '1'),
-('17', 'VID_DEFAULT', 'createInstance', 'VID_DEFAULT recipe to create network if no custom BPMN flow is found', '/mso/async/services/CreateNetworkInstance', '', '180', '', '2016-09-14 19:18:20', '1.0'),
-('18', 'VID_DEFAULT', 'updateInstance', 'VID_DEFAULT recipe to update network if no custom BPMN flow is found', '/mso/async/services/UpdateNetworkInstance', '', '180', '', '2016-09-14 19:18:20', '1.0'),
-('19', 'VID_DEFAULT', 'deleteInstance', 'VID_DEFAULT recipe to delete network if no custom BPMN flow is found', '/mso/async/services/DeleteNetworkInstance', '', '180', '', '2016-09-14 19:18:20', '1.0'),
-('124', 'CONTRAIL30_MPSCE', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2016-10-18 18:47:52', '1'),
-('126', 'CONTRAIL30_MPSCE', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2016-10-18 18:47:52', '1'),
-('128', 'CONTRAIL30_MPSCE', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2016-10-18 18:47:52', '1'),
-('141', 'CONTRAIL30_L2NODHCP', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2017-01-03 20:12:46', '1'),
-('144', 'CONTRAIL30_L2NODHCP', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2017-01-03 20:12:46', '1'),
-('147', 'CONTRAIL30_L2NODHCP', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2017-01-03 20:12:46', '1'),
-('169', 'CONTRAIL30_GNDIRECT', 'CREATE', '', '/mso/async/services/CreateNetworkV2', '', '180', '', '2017-01-17 20:25:34', '1'),
-('172', 'CONTRAIL30_GNDIRECT', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2017-01-17 20:25:34', '1'),
-('175', 'CONTRAIL30_GNDIRECT', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2017-01-17 20:25:34', '1'),
-('176', 'NEUTRON_BASIC', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2017-09-22 18:47:31', '1'),
-('177', 'NEUTRON_BASIC', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2017-09-22 18:47:31', '1');    
