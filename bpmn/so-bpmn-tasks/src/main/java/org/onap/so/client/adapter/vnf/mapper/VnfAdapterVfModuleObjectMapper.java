@@ -30,18 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
-import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
-import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
-import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.entity.MsoRequest;
-import org.onap.so.jsonpath.JsonPathUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import javax.annotation.PostConstruct;
 
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
@@ -57,18 +46,37 @@ import org.onap.sdnc.northbound.client.model.GenericResourceApiVmnetworkdataInte
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVmnetworkdataNetworkInformationItems;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVmnetworkdataNetworkinformationitemsNetworkInformationItem;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVmnetworkdataNetworkinformationitemsNetworkinformationitemNetworkIps;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVmnetworkdataSriovParameters;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVmnetworkdataSriovparametersHeatVlanFilters;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVmtopologydataVmNames;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVmtopologydataVmNetworks;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVmtopologydataVmnamesVnfcNames;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfNetworkData;
-import org.onap.sdnc.northbound.client.model.*;
-
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfcNetworkData;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfcnetworkdataVnfcNetworkData;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfcnetworkdataVnfcnetworkdataVnfcPorts;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfcnetworkdataVnfcnetworkdataVnfcportsVnfcPort;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfresourceassignmentsVnfResourceAssignments;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfresourceassignmentsVnfresourceassignmentsAvailabilityZones;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfresourceassignmentsVnfresourceassignmentsVnfNetworks;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnftopologyVnfTopology;
+import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
+import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.entity.MsoRequest;
+import org.onap.so.jsonpath.JsonPathUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -96,19 +104,33 @@ public class VnfAdapterVfModuleObjectMapper {
 	private static final String FLOATING_V6_IP = "_floating_v6_ip";
 	private static final String UNDERSCORE = "_";
 	
+	@PostConstruct
+	public void init () {
+		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+	}
+	
 	public CreateVfModuleRequest createVfModuleRequestMapper(RequestContext requestContext, CloudRegion cloudRegion, OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf, 
-				VfModule vfModule, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse) throws JsonParseException, JsonMappingException, IOException {
+				VfModule vfModule, VolumeGroup volumeGroup, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse) throws JsonParseException, JsonMappingException, IOException {
 		CreateVfModuleRequest createVfModuleRequest = new CreateVfModuleRequest();
 		
 		createVfModuleRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
 		createVfModuleRequest.setTenantId(cloudRegion.getTenantId());
 		createVfModuleRequest.setVfModuleId(vfModule.getVfModuleId());
 		createVfModuleRequest.setVfModuleName(vfModule.getVfModuleName());
-		createVfModuleRequest.setVnfType(genericVnf.getVnfType());
+		createVfModuleRequest.setVnfId(genericVnf.getVnfId());
+		createVfModuleRequest.setVnfType(genericVnf.getVnfType());		
 		createVfModuleRequest.setVnfVersion(serviceInstance.getModelInfoServiceInstance().getModelVersion());
 		createVfModuleRequest.setVfModuleType(vfModule.getModelInfoVfModule().getModelName());
 		createVfModuleRequest.setModelCustomizationUuid(vfModule.getModelInfoVfModule().getModelCustomizationUUID());
-		
+		if (volumeGroup != null) {
+			createVfModuleRequest.setVolumeGroupId(volumeGroup.getVolumeGroupId());
+			createVfModuleRequest.setVolumeGroupStackId(volumeGroup.getHeatStackId());
+		}
+		VfModule baseVfModule = getBaseVfModule(genericVnf);		
+		if (baseVfModule != null) {
+			createVfModuleRequest.setBaseVfModuleId(baseVfModule.getVfModuleId());
+			createVfModuleRequest.setBaseVfModuleStackId(baseVfModule.getHeatStackId());
+		}
 		createVfModuleRequest.setVfModuleParams(buildVfModuleParamsMap(requestContext, serviceInstance, genericVnf, vfModule, sdncVnfQueryResponse, sdncVfModuleQueryResponse));
 		
 		createVfModuleRequest.setSkipAAI(true);		
@@ -134,6 +156,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	
 	private Map<String,String> buildVfModuleParamsMap(RequestContext requestContext, ServiceInstance serviceInstance, GenericVnf genericVnf, 
 				VfModule vfModule, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse) throws JsonParseException, JsonMappingException, IOException {
+		
 		GenericResourceApiVnftopologyVnfTopology vnfTopology = mapper.readValue(sdncVnfQueryResponse, GenericResourceApiVnftopologyVnfTopology.class);
 		GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology = mapper.readValue(sdncVfModuleQueryResponse, GenericResourceApiVfmoduletopologyVfModuleTopology.class);
 		Map<String,String> paramsMap = new HashMap<>();
@@ -151,7 +174,10 @@ public class VnfAdapterVfModuleObjectMapper {
 		buildMandatoryParamsMap(paramsMap, serviceInstance, genericVnf, vfModule);
 		
 		// Parameters received from the request should overwrite any parameters received from SDNC
-		paramsMap.putAll(requestContext.getUserParams());
+		
+		if (requestContext.getUserParams() != null) {
+			paramsMap.putAll(requestContext.getUserParams());
+		}
 		return paramsMap;
 	}
 	
@@ -348,7 +374,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	}
 	
 	private void buildVfModuleSriovParameters(Map<String,String> paramsMap, GenericResourceApiVmNetworkData network, String networkKey) {
-		/** SRIOV Parameters
+		// SRIOV Parameters
 		GenericResourceApiVmnetworkdataSriovParameters sriovParameters = network.getSriovParameters();
 		if (sriovParameters != null) {
 			GenericResourceApiVmnetworkdataSriovparametersHeatVlanFilters heatVlanFilters = sriovParameters.getHeatVlanFilters();
@@ -371,7 +397,7 @@ public class VnfAdapterVfModuleObjectMapper {
 				}
 			}
 		}
-		**/
+		
 	}
 	
 	private void buildVfModuleNetworkInformation(Map<String,String> paramsMap, GenericResourceApiVmNetworkData network, String key, String networkKey) {
@@ -725,5 +751,19 @@ public class VnfAdapterVfModuleObjectMapper {
 		}
 		
 		return json;
+	}
+	
+	private VfModule getBaseVfModule(GenericVnf genericVnf) {
+		List<VfModule> vfModules = genericVnf.getVfModules();
+		VfModule baseVfModule = null;
+		if (vfModules != null) {
+			for(int i = 0; i < vfModules.size(); i++) {
+				if (vfModules.get(i).getModelInfoVfModule().getIsBaseBoolean()) {
+					baseVfModule = vfModules.get(i);
+					break;					
+				}
+			}
+		}
+		return baseVfModule;
 	}
 }

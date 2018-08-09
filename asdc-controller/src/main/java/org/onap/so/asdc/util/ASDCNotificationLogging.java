@@ -212,6 +212,9 @@ public class ASDCNotificationLogging {
     		buffer.append("Model Name:");
     		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
     		buffer.append(System.lineSeparator());
+       		buffer.append("Model UUID:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
+    		buffer.append(System.lineSeparator());
        		buffer.append("Description:");
     		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
     		buffer.append(System.lineSeparator());

@@ -138,12 +138,52 @@ public class VnfAdapterCreateTasksTest extends BaseTaskTest{
 		execution.setVariable("SDNCQueryResponse_" + genericVnf.getVnfId(), sdncVnfQueryResponse);
 		
 		doReturn(createVfModuleRequest).when(vnfAdapterVfModuleResources).createVfModuleRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
-				genericVnf, vfModule, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+				genericVnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 		
 		vnfAdapterCreateTasks.createVfModule(execution);
 		
 		verify(vnfAdapterVfModuleResources, times(1)).createVfModuleRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
-				genericVnf, vfModule, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+				genericVnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+		
+		assertEquals(execution.getVariable("VNFREST_Request"), createVfModuleRequest.toXmlString());
+	}
+	
+	@Test
+	public void test_createVfModuleWithVolumeGroup() throws Exception {
+		RequestContext requestContext = setRequestContext();
+		
+		ServiceInstance serviceInstance = setServiceInstance();
+		
+		GenericVnf genericVnf = setGenericVnf();
+
+		VfModule vfModule = setVfModule();
+		
+		VolumeGroup volumeGroup = setVolumeGroup();
+		
+		CloudRegion cloudRegion = setCloudRegion();
+		
+		OrchestrationContext orchestrationContext = setOrchestrationContext();
+		orchestrationContext.setIsRollbackEnabled(true);
+		
+		CreateVfModuleRequest modRequest = new CreateVfModuleRequest();
+		modRequest.setVfModuleId(vfModule.getVfModuleId());
+		modRequest.setBaseVfModuleStackId("baseVfModuleStackId");
+		modRequest.setVfModuleName(vfModule.getVfModuleName());
+		CreateVfModuleRequest createVfModuleRequest = modRequest;
+		
+		String sdncVfModuleQueryResponse = "{someJson}";
+		execution.setVariable("SDNCQueryResponse_" + vfModule.getVfModuleId(), sdncVfModuleQueryResponse);
+		
+		String sdncVnfQueryResponse = "{someJson}";
+		execution.setVariable("SDNCQueryResponse_" + genericVnf.getVnfId(), sdncVnfQueryResponse);
+		
+		doReturn(createVfModuleRequest).when(vnfAdapterVfModuleResources).createVfModuleRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
+				genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+		
+		vnfAdapterCreateTasks.createVfModule(execution);
+		
+		verify(vnfAdapterVfModuleResources, times(1)).createVfModuleRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
+				genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 		
 		assertEquals(execution.getVariable("VNFREST_Request"), createVfModuleRequest.toXmlString());
 	}

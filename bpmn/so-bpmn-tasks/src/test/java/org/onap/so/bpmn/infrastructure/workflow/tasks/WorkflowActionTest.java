@@ -600,12 +600,15 @@ public class WorkflowActionTest extends BaseTaskTest {
 		instanceGroup.setCollectionNetworkResourceCustomizations(new ArrayList<>());
 		CollectionNetworkResourceCustomization collectionNetworkResourceCust = new CollectionNetworkResourceCustomization();
 		collectionNetworkResourceCust.setModelCustomizationUUID("123");
+		collectionNetworkResourceCust.setNetworkResourceCustomization(collectionResourceCustomization);
 		instanceGroup.getCollectionNetworkResourceCustomizations().add(collectionNetworkResourceCust );
 		List<CollectionResourceInstanceGroupCustomization> collectionInstanceGroupCustomizations = new ArrayList<>();
 		CollectionResourceInstanceGroupCustomization collectionInstanceGroupCustomization = new CollectionResourceInstanceGroupCustomization();
+		collectionInstanceGroupCustomization.setModelCustomizationUUID("123");
 		collectionInstanceGroupCustomization.setSubInterfaceNetworkQuantity(3);
 		collectionInstanceGroupCustomizations.add(collectionInstanceGroupCustomization);
 		collectionInstanceGroupCustomization.setInstanceGroup(instanceGroup);
+		collectionInstanceGroupCustomization.setCollectionResourceCust(collectionResourceCustomization);
 		instanceGroup.setCollectionInstanceGroupCustomizations(collectionInstanceGroupCustomizations);
 		collectionResource.setInstanceGroup(instanceGroup);
 		collectionResourceCustomization.setCollectionResource(collectionResource);;
@@ -618,14 +621,32 @@ public class WorkflowActionTest extends BaseTaskTest {
 		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"AssignServiceInstanceBB");
 		assertEquals(ebbs.get(1).getBuildingBlock().getBpmnFlowName(),"CreateNetworkCollectionBB");
 		assertEquals(ebbs.get(2).getBuildingBlock().getBpmnFlowName(),"AssignNetworkBB");
+		assertEquals("Network id not empty", !ebbs.get(2).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
 		assertEquals(ebbs.get(3).getBuildingBlock().getBpmnFlowName(),"CreateNetworkBB");
+		assertEquals("Network id not empty", !ebbs.get(3).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
 		assertEquals(ebbs.get(4).getBuildingBlock().getBpmnFlowName(),"ActivateNetworkBB");
+		assertEquals("Network id not empty", !ebbs.get(4).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
+		assertEquals("Network id same for AssignNetworkBB CreateNetworkBB ActivateNetworkBB",
+				ebbs.get(2).getWorkflowResourceIds().getNetworkId() == ebbs.get(3).getWorkflowResourceIds().getNetworkId() 
+				&& ebbs.get(3).getWorkflowResourceIds().getNetworkId() == ebbs.get(4).getWorkflowResourceIds().getNetworkId(), true);
 		assertEquals(ebbs.get(5).getBuildingBlock().getBpmnFlowName(),"AssignNetworkBB");
+		assertEquals("Network id not empty", !ebbs.get(5).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
 		assertEquals(ebbs.get(6).getBuildingBlock().getBpmnFlowName(),"CreateNetworkBB");
+		assertEquals("Network id not empty", !ebbs.get(6).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
 		assertEquals(ebbs.get(7).getBuildingBlock().getBpmnFlowName(),"ActivateNetworkBB");
+		assertEquals("Network id not empty", !ebbs.get(7).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
+		assertEquals("Network id same for AssignNetworkBB CreateNetworkBB ActivateNetworkBB",
+				ebbs.get(5).getWorkflowResourceIds().getNetworkId() == ebbs.get(6).getWorkflowResourceIds().getNetworkId() 
+				&& ebbs.get(6).getWorkflowResourceIds().getNetworkId() == ebbs.get(7).getWorkflowResourceIds().getNetworkId(), true);
 		assertEquals(ebbs.get(8).getBuildingBlock().getBpmnFlowName(),"AssignNetworkBB");
+		assertEquals("Network id not empty", !ebbs.get(8).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
 		assertEquals(ebbs.get(9).getBuildingBlock().getBpmnFlowName(),"CreateNetworkBB");
+		assertEquals("Network id not empty", !ebbs.get(9).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
 		assertEquals(ebbs.get(10).getBuildingBlock().getBpmnFlowName(),"ActivateNetworkBB");
+		assertEquals("Network id not empty", !ebbs.get(10).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
+		assertEquals("Network id same for AssignNetworkBB CreateNetworkBB ActivateNetworkBB",
+				ebbs.get(8).getWorkflowResourceIds().getNetworkId() == ebbs.get(9).getWorkflowResourceIds().getNetworkId() 
+				&& ebbs.get(9).getWorkflowResourceIds().getNetworkId() == ebbs.get(10).getWorkflowResourceIds().getNetworkId(), true);
 		assertEquals(ebbs.get(11).getBuildingBlock().getBpmnFlowName(),"ActivateNetworkCollectionBB");
 		assertEquals(ebbs.get(12).getBuildingBlock().getBpmnFlowName(),"ActivateServiceInstanceBB");
 	}
@@ -1423,7 +1444,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		
 		workflowResourceIds.setVnfId("id444");
 		when(bbSetupUtils.getAAIGenericVnf("id444")).thenReturn(vnf);
-		when(bbSetupUtils.getRelatedVolumeGroupByNameFromVfModule("id123","111111")).thenReturn(opVolumeGroup);
+		when(bbSetupUtils.getRelatedVolumeGroupByNameFromVfModule("id123", "id123","111111")).thenReturn(opVolumeGroup);
 		when(bbSetupUtils.getRelatedVolumeGroupByNameFromVnf("id444","111111")).thenReturn(Optional.empty());
 		id2 = workflowAction.validateResourceIdInAAI("generatedId123", WorkflowType.VOLUMEGROUP, "111111", reqDetails, workflowResourceIds);
 		assertEquals("id123",id2);

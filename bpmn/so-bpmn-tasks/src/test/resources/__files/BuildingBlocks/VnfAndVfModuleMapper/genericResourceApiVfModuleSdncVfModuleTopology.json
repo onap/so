@@ -1,0 +1,178 @@
+{
+  "vf-module-assignments": {
+    "vms": {
+      "vm": [
+        {
+          "vm-type": "vmType0",
+          "vm-names": {
+            "vm-name": [
+              "vmName0",
+              "vmName1"
+            ],
+            "vnfc-names": [
+              {
+                "vnfc-name": "vnfcName0",
+                "vnfc-networks": {
+                  "vnfc-network-data": [
+                    {
+                      "vnfc-network-role": "vnfcNetworkRole0",
+                      "vnfc-type": "fw",
+                      "vnfc-ports": {
+                        "vnfc-port": [
+                          {
+                            "vnfc-port-id": "01",
+                            "common-sub-interface-role": "ctrl",
+                            "vnic-sub-interfaces": {
+                              "sub-interface-network-data": [
+                                {
+                                  "network-id": "networkId0",
+                                  "network-name": 1,
+                                  "vlan-tag-id": 1,
+                                  "network-information-items": {
+                                    "network-information-item": [
+                                      {
+                                        "ip-version": "ipv4",
+                                        "network-ips": {
+                                          "network-ip": [
+                                            "ip0",
+                                            "ip1"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "ip-version": "ipv6",
+                                        "network-ips": {
+                                          "network-ip": [
+                                            "ip0",
+                                            "ip1"
+                                          ]
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "floating-ips": {
+                                    "floating-ip-v4": [
+                                      "floatingIpV40",
+                                      "floatingIpV41"
+                                    ],
+                                    "floating-ip-v6": [
+                                      "floatingIpV60",
+                                      "floatingIpV61"
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "vm-networks": {
+            "vm-network": [
+              {
+                "network-role": "vmNetworkRole0",
+                "floating-ips": {
+                  "floating-ip-v4": [
+                    "floatingIpV40",
+                    "floatingIpV41"
+                  ],
+                  "floating-ip-v6": [
+                    "floatingIpV60",
+                    "floatingIpV61"
+                  ]
+                },
+                "interface-route-prefixes": {
+                  "interface-route-prefix": [
+                    "interfaceRoutePrefix0",
+                    "interfaceRoutePrefix1"
+                  ]
+                },
+                "sriov-parameters": {
+                  "heat-vlan-filters": {
+                    "heat-vlan-filter": [
+                      "heatVlanFilter0",
+                      "heatVlanFilter1"
+                    ]
+                  }
+                },
+                "network-information-items": {
+                  "network-information-item": [
+                    {
+                      "network-ips": {
+                        "network-ip": [
+                          "ip0",
+                          "ip1"
+                        ]
+                      },
+                      "ip-version": "ipv4"
+                    },
+                    {
+                      "network-ips": {
+                        "network-ip": [
+                          "ip2",
+                          "ip3"
+                        ]
+                      },
+                      "ip-version": "ipv6"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "vf-module-parameters": {
+    "param": [
+      {
+        "name": "paramOne",
+        "value": "paramOneValue",
+        "resource-resolution-data": {
+          "resource-key": [
+            {
+              "name": "resourceKeyName",
+              "value": "resourceKeyValue"
+            }
+          ],
+          "status": "status",
+          "capability-name": "capabilityName"
+        }
+      },
+      {
+        "name": "paramTwo",
+        "value": "paramTwoValue",
+        "resource-resolution-data": {
+          "resource-key": [
+            {
+              "name": "resourceKeyName",
+              "value": "resourceKeyValue"
+            }
+          ],
+          "status": "status",
+          "capability-name": "capabilityName"
+        }
+      },
+      {
+        "name": "paramThree",
+        "value": "paramThreeValue",
+        "resource-resolution-data": {
+          "resource-key": [
+            {
+              "name": "resourceKeyName",
+              "value": "resourceKeyValue"
+            }
+          ],
+          "status": "status",
+          "capability-name": "capabilityName"
+        }
+      }
+    ]
+  }
+}

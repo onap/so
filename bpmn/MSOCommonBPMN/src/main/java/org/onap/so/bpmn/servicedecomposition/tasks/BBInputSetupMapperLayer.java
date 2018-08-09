@@ -201,6 +201,7 @@ public class BBInputSetupMapperLayer {
 		modelInfoCollection.setDescription(collectionResource.getDescription());
 		modelInfoCollection.setModelInvariantUUID(collectionResource.getModelInvariantUUID());
 		modelInfoCollection.setModelVersionId(collectionResource.getModelUUID());
+		modelInfoCollection.setModelCustomizationUUID(collectionCust.getModelCustomizationUUID());
 		return modelInfoCollection;
 	}
 
