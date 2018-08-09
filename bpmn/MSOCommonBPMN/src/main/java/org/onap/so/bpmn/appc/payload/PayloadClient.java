@@ -48,8 +48,8 @@ public class PayloadClient {
 			UpgradeAction payloadResult = new UpgradeAction();
 			ConfigurationParametersUpgrade configParams = new ConfigurationParametersUpgrade();
 		    String payloadString = payload.isPresent() ? payload.get() : "";
-			String existingSoftware = JsonUtils.getJsonValue(payloadString, "existing-software-version");
-			String newSoftware = JsonUtils.getJsonValue(payloadString, "new-software-version");
+			String existingSoftware = JsonUtils.getJsonValue(payloadString, "existing_software_version");
+			String newSoftware = JsonUtils.getJsonValue(payloadString, "new_software_version");
 			configParams.setExistingSoftwareVersion(existingSoftware);
 			configParams.setNewSoftwareVersion(newSoftware);
 			configParams.setVnfName(vnfName);
@@ -69,7 +69,7 @@ public class PayloadClient {
 			QuiesceTrafficAction payloadResult = new QuiesceTrafficAction();
 			ConfigurationParametersQuiesce configParams = new ConfigurationParametersQuiesce();
 			String payloadString = payload.isPresent() ? payload.get() : "";
-			String operationsTimeout = JsonUtils.getJsonValue(payloadString, "operations-timeout");
+			String operationsTimeout = JsonUtils.getJsonValue(payloadString, "operations_timeout");
 			configParams.setOperationsTimeout(operationsTimeout);
 			configParams.setVnfName(vnfName);
 			payloadResult.setConfigurationParameters(configParams);

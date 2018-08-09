@@ -266,6 +266,10 @@ public class AAIObjectMapper {
 				protected void configure() {
 					map().setModelInvariantId(source.getModelInfoCollection().getModelInvariantUUID());
 					map().setModelVersionId(source.getModelInfoCollection().getModelVersionId());
+					map().setCollectionCustomizationId(source.getModelInfoCollection().getModelCustomizationUUID());
+					map().setCollectionFunction(source.getModelInfoCollection().getCollectionFunction());
+					map().setCollectionRole(source.getModelInfoCollection().getCollectionRole());
+					map().setCollectionType(source.getModelInfoCollection().getCollectionType());
 					map().setCollectionName(source.getName());
 				}
 			});

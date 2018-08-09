@@ -736,7 +736,7 @@ public class BBInputSetupUtilsTest {
 		volumeGroup.setVolumeGroupName("name123");
 		expected.get().getVolumeGroup().add(volumeGroup);
 		doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
-		Optional<VolumeGroup> actual = this.bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule("id123", "name123");
+		Optional<VolumeGroup> actual = this.bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule("id123", "id123", "name123");
 		assertEquals(actual.get().getVolumeGroupId(), expected.get().getVolumeGroup().get(0).getVolumeGroupId());
 	}
 	
@@ -745,6 +745,7 @@ public class BBInputSetupUtilsTest {
 		expectedException.expect(Exception.class);
 		
 		String vnfId = "vnfId";
+		String volumeGroupId = "volumeGroupId";
 		String volumeGroupName = "volumeGroupName";
 		
 		VolumeGroup volumeGroup = new VolumeGroup();
@@ -757,17 +758,18 @@ public class BBInputSetupUtilsTest {
 		
 		doReturn(expectedVolumeGroup).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
 		
-		bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnfId, volumeGroupName);
+		bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnfId, volumeGroupId, volumeGroupName);
 	}
 	
 	@Test
 	public void getRelatedVolumeGroupByNameFromVfModuleNotFoundTest() throws Exception {
 		String vnfId = "vnfId";
+		String volumeGroupId = "volumeGroupId";
 		String volumeGroupName = "volumeGroupName";
 		
 		doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
 		
-		Optional<VolumeGroup> actualVolumeGroup = bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnfId, volumeGroupName);
+		Optional<VolumeGroup> actualVolumeGroup = bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnfId, volumeGroupId, volumeGroupName);
 		
 		assertEquals(actualVolumeGroup, Optional.empty());
 	}

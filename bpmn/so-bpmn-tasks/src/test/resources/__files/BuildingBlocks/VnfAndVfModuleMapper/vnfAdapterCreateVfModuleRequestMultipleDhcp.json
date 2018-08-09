@@ -1,6 +1,7 @@
 {
 	"cloudSiteId": "cloudRegionId",
 	"tenantId": "tenantId",
+	"vnfId": "vnfId",
 	"vnfType": "vnfType",
 	"vfModuleId": "vfModuleId",
 	"vfModuleName": "vfModuleName",

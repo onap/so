@@ -55,7 +55,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.entity.MsoRequest;
 
 public class VnfAdapterObjectMapperTest {
-	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
+	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/VnfAndVfModuleMapper/";
 
 	@Spy
 	private VnfAdapterObjectMapper vnfAdapterObjectMapper = new VnfAdapterObjectMapper();

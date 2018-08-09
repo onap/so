@@ -28,6 +28,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.adapter.vnf.mapper.VnfAdapterVfModuleObjectMapper;
@@ -43,8 +44,8 @@ public class VnfAdapterVfModuleResources {
 	private VnfAdapterVfModuleObjectMapper vnfAdapterVfModuleObjectMapper;
 	
 	public CreateVfModuleRequest createVfModuleRequest(RequestContext requestContext, CloudRegion cloudRegion, OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf, 
-			VfModule vfModule, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse) throws IOException {
-		return vnfAdapterVfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, vfModule, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+			VfModule vfModule, VolumeGroup volumeGroup, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse) throws IOException {
+		return vnfAdapterVfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 	}
 	
 	public DeleteVfModuleRequest deleteVfModuleRequest(RequestContext requestContext, CloudRegion cloudRegion, 

@@ -65,7 +65,6 @@ public class ToscaResourceStructure {
 	String envHeatTemplateUUID;
 	String heatFilesUUID;
 	String workloadPerformance;
-	boolean isVnfAlreadyInstalled = false;
 	String serviceVersion;
 	private boolean isDeployedSuccessfully=false;
 	
@@ -312,14 +311,6 @@ public class ToscaResourceStructure {
 
 	public void setCatalogToscaCsar(ToscaCsar toscaCsar) {
 		this.toscaCsar = toscaCsar;
-	}
-
-	public boolean isVnfAlreadyInstalled() {
-		return isVnfAlreadyInstalled;
-	}
-
-	public void setVnfAlreadyInstalled(boolean isVnfAlreadyInstalled) {
-		this.isVnfAlreadyInstalled = isVnfAlreadyInstalled;
 	}
 
 	public String getVolHeatTemplateUUID() {

@@ -1459,14 +1459,20 @@ public class BBInputSetupTest {
 				new AAICommonObjectMapperProvider().getMapper().writeValueAsString(aaiCollection)));
 
 		Collection collection = new Collection();
+		ModelInfoCollection modelInfoCollection = new ModelInfoCollection();
 		List<InstanceGroup> instanceGroupsList = new ArrayList<>();
 		InstanceGroup instanceGroup = new InstanceGroup();
 		instanceGroupsList.add(instanceGroup);
-
+		NetworkCollectionResourceCustomization networkCollectionCust = Mockito.mock(NetworkCollectionResourceCustomization.class);
+		CollectionResource collectionResource = new CollectionResource();
 		doReturn(collection).when(bbInputSetupMapperLayer)
 				.mapAAICollectionIntoCollection(isA(org.onap.aai.domain.yang.Collection.class));
 		doReturn(instanceGroup).when(SPY_bbInputSetup).mapInstanceGroup(isA(AAIResultWrapper.class));
 		doReturn(instanceGroupsList).when(SPY_bbInputSetup).mapInstanceGroups(any());
+		doReturn(networkCollectionCust).when(SPY_bbInputSetupUtils).getCatalogNetworkCollectionResourceCustByID(aaiCollection.getCollectionCustomizationId());
+		doReturn(collectionResource).when(networkCollectionCust).getCollectionResource();
+		doReturn(modelInfoCollection).when(bbInputSetupMapperLayer).mapCatalogCollectionToCollection(networkCollectionCust, collectionResource);
+
 		SPY_bbInputSetup.mapCollection(collections, serviceInstance);
 
 		assertEquals(collection, serviceInstance.getCollection());

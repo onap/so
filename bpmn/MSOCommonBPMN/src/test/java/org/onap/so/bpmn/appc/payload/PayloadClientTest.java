@@ -31,10 +31,10 @@ public class PayloadClientTest {
 
 	@Test
 	public void upgradeFormatTest()  throws Exception {
-		String payloadResult = "{\"configuration-parameters\":{\"vnf_name\":\"vnfName1\",\"existing-software-version\":\"existingVersion\",\"new-software-version\":\"newVersion\"}}";
+		String payloadResult = "{\"configuration-parameters\":{\"vnf_name\":\"vnfName1\",\"existing_software_version\":\"existingVersion\",\"new_software_version\":\"newVersion\"}}";
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("existing-software-version", "existingVersion");
-		jsonObject.put("new-software-version", "newVersion");
+		jsonObject.put("existing_software_version", "existingVersion");
+		jsonObject.put("new_software_version", "newVersion");
 		Optional<String> payload = Optional.of(jsonObject.toString());
 		Optional<String> payloadClient = PayloadClient.upgradeFormat(payload, "vnfName1"); 
 		assertEquals(payloadResult, payloadClient.get());
@@ -51,7 +51,7 @@ public class PayloadClientTest {
 	public void quiesceTrafficFormatTest()  throws Exception {
 		String payloadResult = "{\"configuration-parameters\":{\"vnf_name\":\"vnfName1\",\"operations_timeout\":\"operationTimeout\"}}";
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("operations-timeout", "operationTimeout");
+		jsonObject.put("operations_timeout", "operationTimeout");
 		Optional<String> payload = Optional.of(jsonObject.toString());
 		Optional<String> payloadClient = PayloadClient.quiesceTrafficFormat(payload, "vnfName1"); 
 		assertEquals(payloadResult, payloadClient.get());

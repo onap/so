@@ -92,13 +92,18 @@ public class VnfAdapterCreateTasks {
 			ServiceInstance serviceInstance = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0);
 			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
 			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			VolumeGroup volumeGroup = null;
+			try {
+				volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+			} catch(BBObjectNotFoundException bbException) {				
+			}
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			RequestContext requestContext = gBBInput.getRequestContext();
 			OrchestrationContext orchestrationContext = gBBInput.getOrchContext();
 			String sdncVfModuleQueryResponse = execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId());
 			String sdncVnfQueryResponse = execution.getVariable("SDNCQueryResponse_" + genericVnf.getVnfId());
 			
-			CreateVfModuleRequest createVfModuleRequest = vnfAdapterVfModuleResources.createVfModuleRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, vfModule, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+			CreateVfModuleRequest createVfModuleRequest = vnfAdapterVfModuleResources.createVfModuleRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 			execution.setVariable(VNFREST_REQUEST, createVfModuleRequest.toXmlString());
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

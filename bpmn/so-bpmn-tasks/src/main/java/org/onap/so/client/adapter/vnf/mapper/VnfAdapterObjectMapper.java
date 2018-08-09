@@ -20,14 +20,18 @@
 
 package org.onap.so.client.adapter.vnf.mapper;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
-import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmoduletopologyVfModuleTopology;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.annotation.PostConstruct;
 
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmoduletopologyVfModuleTopology;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
@@ -41,16 +45,19 @@ import org.onap.so.entity.MsoRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class VnfAdapterObjectMapper {
 	private ObjectMapper mapper = new ObjectMapper();
+	
+	@PostConstruct
+	public void init () {
+		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+	}
 
 	public CreateVolumeGroupRequest createVolumeGroupRequestMapper(RequestContext requestContext, CloudRegion cloudRegion, OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf, VolumeGroup volumeGroup, String sdncVfModuleQueryResponse) throws JsonParseException, JsonMappingException, IOException {
 		CreateVolumeGroupRequest createVolumeGroupRequest = new CreateVolumeGroupRequest();
@@ -101,7 +108,7 @@ public class VnfAdapterObjectMapper {
 		final String USER_PARAM_NAME_KEY = "name";
         final String USER_PARAM_VALUE_KEY = "value";
 		// sdncVfModuleQueryResponse will not be available in aLaCarte case
-		if (sdncVfModuleQueryResponse != null) {
+		if (sdncVfModuleQueryResponse != null) {			
 			GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology = mapper.readValue(sdncVfModuleQueryResponse, GenericResourceApiVfmoduletopologyVfModuleTopology.class);
 			buildParamsMapFromSdncParams(volumeGroupParams, vfModuleTopology.getVfModuleParameters());
 		}

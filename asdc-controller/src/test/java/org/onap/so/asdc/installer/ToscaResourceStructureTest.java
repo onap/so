@@ -83,7 +83,6 @@ public class ToscaResourceStructureTest {
 		toscaResourceStructure.setHeatFilesUUID("heatFilesUUID");
 		toscaResourceStructure.setToscaArtifact(artifactInfo);
 		toscaResourceStructure.setToscaCsar(new ToscaCsar());
-		toscaResourceStructure.setVnfAlreadyInstalled(true);
 		toscaResourceStructure.setVolHeatTemplateUUID("volHeatTemplateUUID");
 		toscaResourceStructure.setEnvHeatTemplateUUID("envHeatTemplateUUID");
 		toscaResourceStructure.setServiceVersion("serviceVersion");
@@ -111,7 +110,6 @@ public class ToscaResourceStructureTest {
 		assertEquals("heatFilesUUID", toscaResourceStructure.getHeatFilesUUID());
 		assertEquals(artifactInfo, toscaResourceStructure.getToscaArtifact());
 		assertThat(toscaResourceStructure.getToscaCsar(), sameBeanAs(new ToscaCsar()));
-		assertEquals(true, toscaResourceStructure.isVnfAlreadyInstalled());
 		assertEquals("volHeatTemplateUUID", toscaResourceStructure.getVolHeatTemplateUUID());
 		assertEquals("envHeatTemplateUUID", toscaResourceStructure.getEnvHeatTemplateUUID());
 		assertEquals("serviceVersion", toscaResourceStructure.getServiceVersion());
