@@ -51,10 +51,6 @@ INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORC
 INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) VALUES (13,'createInstance','1','DEFAULT recipe to create service-instance if no custom BPMN flow is found','/mso/async/services/CreateGenericALaCarteServiceInstance',NULL,180,NULL,'2017-10-05 18:52:03','f2e1dc69-c8ef-47e9-8b64-966cc87f2110');
 INSERT INTO `service_recipe` (`id`, `ACTION`, `VERSION_STR`, `DESCRIPTION`, `ORCHESTRATION_URI`, `SERVICE_PARAM_XSD`, `RECIPE_TIMEOUT`, `SERVICE_TIMEOUT_INTERIM`, `CREATION_TIMESTAMP`, `SERVICE_MODEL_UUID`) VALUES (14,'deleteInstance','1','DEFAULT recipe to delete service-instance if no custom BPMN flow is found','/mso/async/services/DeleteGenericALaCarteServiceInstance',NULL,180,NULL,'2017-10-05 18:52:03','f2e1dc69-c8ef-47e9-8b64-966cc87f2110');
 
-INSERT INTO `temp_network_heat_template_lookup` (`NETWORK_RESOURCE_MODEL_NAME`, `HEAT_TEMPLATE_ARTIFACT_UUID`, `AIC_VERSION_MIN`, `AIC_VERSION_MAX`) VALUES ('CONTRAIL30_GNDIRECT','4885c7a1-a9fe-11e7-8b4b-0242ac120002','3.0',NULL);
-INSERT INTO `temp_network_heat_template_lookup` (`NETWORK_RESOURCE_MODEL_NAME`, `HEAT_TEMPLATE_ARTIFACT_UUID`, `AIC_VERSION_MIN`, `AIC_VERSION_MAX`) VALUES ('CONTRAIL30_L2NODHCP','4885c198-a9fe-11e7-8b4b-0242ac120002','3.0',NULL);
-INSERT INTO `temp_network_heat_template_lookup` (`NETWORK_RESOURCE_MODEL_NAME`, `HEAT_TEMPLATE_ARTIFACT_UUID`,`AIC_VERSION_MIN` , `AIC_VERSION_MAX` ) VALUES ('Generic NeutronNet','efee1d84-b8ec-11e7-abc4-cec278b6b50a','2.0','NULL');
-
 INSERT INTO `vnf_components_recipe` (`id`, `VNF_TYPE`, `VNF_COMPONENT_TYPE`, `VF_MODULE_MODEL_UUID`, `ACTION`, `SERVICE_TYPE`, `VERSION`, `DESCRIPTION`, `ORCHESTRATION_URI`, `VNF_COMPONENT_PARAM_XSD`, `RECIPE_TIMEOUT`, `CREATION_TIMESTAMP`) VALUES (1,'*','VOLUME_GROUP',NULL,'CREATE',NULL,'1','Recipe Match All for','/mso/async/services/createCinderVolumeV1',null,180,'2017-10-05 18:52:03');
 INSERT INTO `vnf_components_recipe` (`id`, `VNF_TYPE`, `VNF_COMPONENT_TYPE`, `VF_MODULE_MODEL_UUID`, `ACTION`, `SERVICE_TYPE`, `VERSION`, `DESCRIPTION`, `ORCHESTRATION_URI`, `VNF_COMPONENT_PARAM_XSD`, `RECIPE_TIMEOUT`, `CREATION_TIMESTAMP`) VALUES (2,'*','VOLUME_GROUP',NULL,'DELETE',NULL,'1','Recipe Match All for','/mso/async/services/deleteCinderVolumeV1',null,180,'2017-10-05 18:52:03');
 INSERT INTO `vnf_components_recipe` (`id`, `VNF_TYPE`, `VNF_COMPONENT_TYPE`, `VF_MODULE_MODEL_UUID`, `ACTION`, `SERVICE_TYPE`, `VERSION`, `DESCRIPTION`, `ORCHESTRATION_URI`, `VNF_COMPONENT_PARAM_XSD`, `RECIPE_TIMEOUT`, `CREATION_TIMESTAMP`) VALUES (3,'*','VOLUME_GROUP',NULL,'UPDATE',NULL,'1','Recipe Match All for','/mso/async/services/updateCinderVolumeV1',null,180,'2017-10-05 18:52:03');
@@ -93,70 +89,4 @@ INSERT INTO `vnf_recipe` (`id`, `VF_MODULE_ID`, `ACTION`, `SERVICE_TYPE`, `VERSI
 INSERT INTO `vnf_recipe` (`id`, `VF_MODULE_ID`, `ACTION`, `SERVICE_TYPE`, `VERSION_STR`, `VNF_TYPE`, `DESCRIPTION`, `ORCHESTRATION_URI`, `VNF_PARAM_XSD`, `RECIPE_TIMEOUT`, `CREATION_TIMESTAMP`) VALUES (12,NULL,'deleteInstance',NULL,'1','NS_DEFAULT','default custom E2E recipe to delete NS if no custom BPMN flow is found','/mso/async/services/DeleteVFCNSResource',NULL,180,'2018-04-18 18:52:03');
 INSERT INTO `vnf_recipe` (`id`, `VF_MODULE_ID`, `ACTION`, `SERVICE_TYPE`, `VERSION_STR`, `VNF_TYPE`, `DESCRIPTION`, `ORCHESTRATION_URI`, `VNF_PARAM_XSD`, `RECIPE_TIMEOUT`, `CREATION_TIMESTAMP`) VALUES (13,NULL,'inPlaceSoftwareUpdate',NULL,'1','VID_DEFAULT','VID_DEFAULT recipe to update VNF software if no custom BPMN flow is found','/mso/async/services/VnfInPlaceUpdate',NULL,180,'2018-05-23 11:00:00');
 INSERT INTO `vnf_recipe` (`id`, `VF_MODULE_ID`, `ACTION`, `SERVICE_TYPE`, `VERSION_STR`, `VNF_TYPE`, `DESCRIPTION`, `ORCHESTRATION_URI`, `VNF_PARAM_XSD`, `RECIPE_TIMEOUT`, `CREATION_TIMESTAMP`) VALUES (14,NULL,'applyUpdatedConfig',NULL,'1','VID_DEFAULT','VID_DEFAULT recipe to apply updated VNF config if no custom BPMN flow is found','/mso/async/services/VnfConfigUpdate',NULL,180,'2018-05-23 11:00:00');
-
-INSERT INTO service_recipe(ID, ACTION, VERSION_STR, DESCRIPTION, ORCHESTRATION_URI, SERVICE_PARAM_XSD, RECIPE_TIMEOUT, SERVICE_TIMEOUT_INTERIM, CREATION_TIMESTAMP, SERVICE_MODEL_UUID) VALUES
-('1', 'createInstance', '1', 'Infra aLaCarte', '/mso/async/services/CreateGenericALaCarteServiceInstance', null, '180', '0', '2017-04-14 19:18:20', '5df8b6de-2083-11e7-93ae-92361f002671'),
-('10', 'createInstance', '1', 'VID_DEFAULT recipe to create service-instance if no custom BPMN flow is found', '/mso/async/services/CreateGenericALaCarteServiceInstance', NULL, '180', NULL, '2016-09-13 15:05:18', 'f78914d9-423b-11e7-93f8-0050569a7965'),
-('11', 'activateInstance', '1', 'Activate ServiceInstance', '/mso/async/services/ActivateInstance', NULL, '120', NULL, '2016-09-13 15:06:18', 'f78914d9-423b-11e7-93f8-0050569a7966'),
-('12', 'deactivateInstance', '1', 'Deactivate ServiceInstance', '/mso/async/services/DeactivateInstance', NULL, '180', NULL, '2016-09-13 15:06:18', 'f78914d9-423b-11e7-93f8-0050569a7966'),
-('13', 'deleteInstance', '1', 'Delete ServiceInstance', '/mso/async/services/DeleteInstance', NULL, '180', NULL, '2016-09-13 15:06:18', 'f78914d9-423b-11e7-93f8-0050569a7966'),
-('14', 'createInstance', '1', 'Create VnfInstance', '/mso/async/services/CreateVnfInstance', NULL, '180', NULL, '2016-09-13 15:06:18', 'f78914d9-423b-11e7-93f8-0050569a7967'),
-('15', 'replaceInstance', '1', 'Replace VnfInstance', '/mso/async/services/ReplaceVnfInstance', NULL, '180', NULL, '2016-09-13 15:06:18', 'f78914d9-423b-11e7-93f8-0050569a7967'),
-('16', 'updateInstance', '1', 'Update VnfInstance', '/mso/async/services/UpdateVnfInstance', NULL, '180', NULL, '2016-09-13 15:06:18', 'f78914d9-423b-11e7-93f8-0050569a7967'),
-('17', 'applyUpdatedConfig', '1', 'ApplyUpdatedConfig VnfInstance', '/mso/async/services/ApplyUpdatedConfig', NULL, '180', NULL, '2016-09-13 15:06:18', 'f78914d9-423b-11e7-93f8-0050569a7967'),
-('18', 'deleteInstance', '1', 'Delete VnfInstance', '/mso/async/services/DeleteVnfInstance', NULL, '180', NULL, '2016-09-13 15:06:18', 'f78914d9-423b-11e7-93f8-0050569a7967'),
-('19', 'createInstance', '1', 'Create VfModule', '/mso/async/services/CreateVfModule', NULL, '180', NULL, '2016-09-13 15:06:18', 'f78914d9-423b-11e7-93f8-0050569a7968'),
-('20', 'createInstance', '1', 'Create NetworkInstance', '/mso/async/services/CreateNetworkInstance', NULL, '180', NULL, '2016-09-13 15:06:18', 'f78914d9-423b-11e7-93f8-0050569a7969'),
-('36', 'assignInstance', '10.0', 'Assign ServiceInstance', '/mso/async/services/AssignServiceInstance', NULL, '180', NULL, '2016-09-13 15:06:18', '5d48acb5-097d-4982-aeb2-f4a3bd87d31b'),
-('37', 'unassignInstance', '1.0', 'Unassign ServiceInstance', '/mso/async/services/UnassignServiceInstance', NULL, '180', NULL, '2016-09-13 15:06:18', 'ff3514e3-5a33-55df-13ab-12abad84e7ff'),
-('41', 'createInstance', '1', 'Create ServiceRequest', '/mso/async/services/CreateMacroServiceNetworkVnf', null, '180', '0', '2017-04-14 19:18:20', '109a153e-325f-4df5-8161-edd91314daee');
-
-NSERT INTO vnf_recipe(ID, nf_role, ACTION, SERVICE_TYPE, VERSION_STR, DESCRIPTION, ORCHESTRATION_URI, VNF_PARAM_XSD, RECIPE_TIMEOUT, CREATION_TIMESTAMP, VF_MODULE_ID) VALUES
-('77', 'VID_DEFAULT', 'createInstance', '', '1', 'VID_DEFAULT recipe to create VNF if no custom BPMN flow is found', '/mso/async/services/CreateVnfInfra', '', '180', '2016-09-14 19:18:20', ''),
-('78', 'VID_DEFAULT', 'deleteInstance', '', '1', 'VID_DEFAULT recipe to delete VNF if no custom BPMN flow is found', '/mso/async/services/DeleteVnfInfra', '', '180', '2016-09-14 19:18:20', ''),
-('81', 'VID_DEFAULT', 'updateInstance', '', '1', 'VID_DEFAULT update', '/mso/async/services/UpdateVnfInfra', '', '180', '2017-07-28 18:19:39', ''),
-('85', 'VID_DEFAULT', 'replaceInstance', '', '1', 'VID_DEFAULT replace', '/mso/async/services/ReplaceVnfInfra', 'VID_DEFAULT', '180', '2017-07-28 18:19:45', ''),
-('10000', 'VID_DEFAULT', 'inPlaceSoftwareUpdate', '', '1', 'VID_DEFAULT inPlaceSoftwareUpdate', '/mso/async/services/VnfInPlaceUpdate', '', '180', '2017-10-25 18:19:45', ''),
-('10001', 'VID_DEFAULT', 'applyUpdatedConfig', '', '1', 'VID_DEFAULT applyUpdatedConfig', '/mso/async/services/VnfConfigUpdate', '', '180', '2017-10-25 18:19:45', ''),
-
-
-('13', 'CREATE', 'createInstance', 'VID_DEFAULT', '1', 'Create VnfInstance', '/mso/async/services/CreateVnf', '', '180', '2016-06-03 10:14:10', '1882934'),
-('14', 'REPLACE', 'replaceInstance', 'VID_DEFAULT', '1', 'Replace VnfInstance', '/mso/async/services/ReplaceVnf', '', '180', '2016-06-03 10:14:10', '1882934'),
-('15', 'UPDATE', 'updateInstance', 'VID_DEFAULT', '1', 'Update VnfInstance', '/mso/async/services/UpdateVnf', '', '180', '2016-06-03 10:14:10', '1882934'),
-('16', 'DEFAULT', 'applyUpdatedConfig', 'VID_DEFAULT', '1', 'Default VnfInstance', '/mso/async/services/DefaultVnfUri', '', '180', '2016-06-03 10:14:10', '1882934'),
-('17', 'DEFAULT', 'inPlaceSoftwareUpdate', 'VID_DEFAULT', '1', 'Default VnfInstance', '/mso/async/services/DefaultVnfUri', '', '180', '2016-06-03 10:14:10', '1882934'),
-('20', 'DELETE', 'deleteInstance', 'VID_DEFAULT', '1', 'Delete VnfInstance', '/mso/async/services/DeleteVnf', '', '180', '2016-06-03 10:14:10', '1882934'),
-('21', 'TEST', 'replaceInstance', 'VID_
-
-INSERT INTO vnf_components_recipe(ID, VNF_TYPE, VNF_COMPONENT_TYPE, ACTION, SERVICE_TYPE, VERSION, DESCRIPTION, ORCHESTRATION_URI, VNF_COMPONENT_PARAM_XSD, RECIPE_TIMEOUT, CREATION_TIMESTAMP, VF_MODULE_MODEL_UUID) VALUES
-('5', '*', 'VOLUME_GROUP', 'CREATE', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/createCinderVolumeV1', '', '180', '2016-06-03 10:15:11', ''),
-('7', '*', 'VOLUME_GROUP', 'DELETE', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/deleteCinderVolumeV1', '', '180', '2016-06-03 10:15:11', ''),
-('9', '*', 'VOLUME_GROUP', 'UPDATE', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/updateCinderVolumeV1', '', '180', '2016-06-03 10:15:11', ''),
-('13', '', 'VOLUME_GROUP', 'DELETE_VF_MODULE_VOL', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/DeleteVfModuleVolume', '', '180', '2016-06-03 10:15:11', '*'),
-('15', '', 'VOLUME_GROUP', 'UPDATE_VF_MODULE_VOL', '', '1', 'Recipe Match All for VF Modules if no custom flow exists', '/mso/async/services/UpdateVfModuleVolume', '', '180', '2016-06-03 10:15:11', '*'),
-('16', 'volumeGroup', 'volumeGroup', 'createInstance', '', '1', 'VID_DEFAULT recipe to create volume-group if no custom BPMN flow is found', '/mso/async/services/CreateVfModuleVolumeInfraV1', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('17', 'volumeGroup', 'volumeGroup', 'deleteInstance', '', '1', 'VID_DEFAULT recipe to delete volume-group if no custom BPMN flow is found', '/mso/async/services/DeleteVfModuleVolumeInfraV1', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('18', 'volumeGroup', 'volumeGroup', 'updateInstance', '', '1', 'VID_DEFAULT recipe to update volume-group if no custom BPMN flow is found', '/mso/async/services/UpdateVfModuleVolumeInfraV1', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('19', 'vfModule', 'vfModule', 'createInstance', '', '1', 'VID_DEFAULT recipe to create vf-module if no custom BPMN flow is found', '/mso/async/services/CreateVfModuleInfra', '', '180', '2016-09-14 19:18:20', '20c4431c-246d-11e7-93ae-92361f002672'),
-('20', 'vfModule', 'vfModule', 'deleteInstance', '', '1', 'VID_DEFAULT recipe to delete vf-module if no custom BPMN flow is found', '/mso/async/services/DeleteVfModuleInfra', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('21', 'vfModule', 'vfModule', 'updateInstance', '', '1', 'VID_DEFAULT recipe to update vf-module if no custom BPMN flow is found', '/mso/async/services/UpdateVfModuleInfra', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('25', 'vfModule', 'vfModule', 'replaceInstance', '', '1', 'VID_DEFAULT vfModule replace', '/mso/async/services/ReplaceVfModuleInfra', '', '180', '2017-07-28 18:25:06', 'VID_DEFAULT');               
-
-
-INSERT INTO network_recipe(ID, MODEL_NAME, ACTION, DESCRIPTION, ORCHESTRATION_URI, NETWORK_PARAM_XSD, RECIPE_TIMEOUT, SERVICE_TYPE, CREATION_TIMESTAMP, VERSION_STR) VALUES
-('17', 'VID_DEFAULT', 'createInstance', 'VID_DEFAULT recipe to create network if no custom BPMN flow is found', '/mso/async/services/CreateNetworkInstance', '', '180', '', '2016-09-14 19:18:20', '1.0'),
-('18', 'VID_DEFAULT', 'updateInstance', 'VID_DEFAULT recipe to update network if no custom BPMN flow is found', '/mso/async/services/UpdateNetworkInstance', '', '180', '', '2016-09-14 19:18:20', '1.0'),
-('19', 'VID_DEFAULT', 'deleteInstance', 'VID_DEFAULT recipe to delete network if no custom BPMN flow is found', '/mso/async/services/DeleteNetworkInstance', '', '180', '', '2016-09-14 19:18:20', '1.0');
-
-
-INSERT INTO vnf_recipe (nf_role, ACTION, VERSION_STR, DESCRIPTION, ORCHESTRATION_URI, RECIPE_TIMEOUT)
-VALUES
-('GR-API-DEFAULT', 'createInstance', '1', 'Gr api recipe to create vnf', '/mso/async/services/WorkflowActionBB', 180),
-('GR-API-DEFAULT', 'deleteInstance', '1', 'Gr api recipe to delete vnf', '/mso/async/services/WorkflowActionBB', 180),
-('GR-API-DEFAULT', 'updateInstance', '1', 'Gr api recipe to update vnf', '/mso/async/services/WorkflowActionBB', 180),
-('GR-API-DEFAULT', 'replaceInstance', '1', 'Gr api recipe to replace vnf', '/mso/async/services/WorkflowActionBB', 180),
-('GR-API-DEFAULT', 'inPlaceSoftwareUpdate', '1', 'Gr api recipe to do an in place software update', '/mso/async/services/VnfInPlaceUpdate', 180),
-('GR-API-DEFAULT', 'applyUpdatedConfig', '1', 'Gr api recipe to apply updated config', '/mso/async/services/VnfConfigUpdate', 180);
-
-
 SET FOREIGN_KEY_CHECKS=1;
