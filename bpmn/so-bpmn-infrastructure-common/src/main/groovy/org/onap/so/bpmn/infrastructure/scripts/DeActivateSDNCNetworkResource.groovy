@@ -18,20 +18,20 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.scripts
+package org.onap.so.bpmn.infrastructure.scripts
 
 import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.json.JSONObject
 import org.json.XML
 import org.onap.so.logger.MsoLogger
-import org.openecomp.mso.bpmn.common.recipe.ResourceInput
-import org.openecomp.mso.bpmn.common.resource.ResourceRequestBuilder
-import org.openecomp.mso.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.recipe.ResourceInput
+import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.openecomp.mso.bpmn.core.json.JsonUtils
-import org.openecomp.mso.bpmn.common.scripts.ExceptionUtil
-import org.openecomp.mso.bpmn.common.scripts.SDNCAdapterUtils
+import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 
 /**
  * This groovy class supports the <class>ActivateSDNCCNetworkResource.bpmn</class> process.

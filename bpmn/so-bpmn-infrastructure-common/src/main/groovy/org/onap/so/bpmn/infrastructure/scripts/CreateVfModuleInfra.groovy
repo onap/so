@@ -36,7 +36,9 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.infrastructure.aai.AAICreateResources;
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-
+import org.w3c.dom.*
+import javax.xml.parsers.*
+import org.xml.sax.InputSource
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
