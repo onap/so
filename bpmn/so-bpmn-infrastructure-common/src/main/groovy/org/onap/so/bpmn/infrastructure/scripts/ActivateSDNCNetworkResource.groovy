@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.mso.bpmn.infrastructure.scripts
+package org.onap.so.bpmn.infrastructure.scripts
 
 import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.BpmnError

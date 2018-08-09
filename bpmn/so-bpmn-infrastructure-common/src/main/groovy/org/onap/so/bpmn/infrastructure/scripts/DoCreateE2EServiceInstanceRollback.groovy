@@ -37,7 +37,7 @@ import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
 import org.onap.so.logger.MsoLogger
 import org.onap.so.logger.MessageEnum
-
+import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.aai.AAIObjectType

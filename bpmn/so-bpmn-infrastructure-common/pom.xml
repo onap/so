@@ -20,6 +20,51 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.8</version>
+				<configuration>
+					<additionalProjectnatures>
+						<projectnature>org.eclipse.jdt.groovy.core.groovyNature</projectnature>
+					</additionalProjectnatures>
+					<sourceIncludes>
+						<sourceInclude>**/*.groovy</sourceInclude>
+					</sourceIncludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.gmaven</groupId>
+				<artifactId>gmaven-plugin</artifactId>
+				<version>1.5</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.gmaven.runtime</groupId>
+						<artifactId>gmaven-runtime-2.0</artifactId>
+						<version>1.5</version>
+					</dependency>
+					<dependency>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy</artifactId>
+						<version>${groovy.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<debug>false</debug>
+					<verbose>true</verbose>
+					<stacktrace>true</stacktrace>
+					<defaultScriptExtension>.groovy</defaultScriptExtension>
+					<providerSelection>2.0</providerSelection>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>testCompile</goal>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 			</plugin>
 			<plugin>
@@ -265,5 +310,12 @@
             <version>2.2.3</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>MSOCommonBPMN</artifactId>
+			<version>${project.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

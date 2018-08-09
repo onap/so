@@ -29,9 +29,9 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MsoLogger
-
+import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import groovy.json.*
-
+import org.onap.so.bpmn.common.scripts.AaiUtil;
 
 /**
  * This groovy class supports the <class>DoUpdateE2EServiceInstanceRollback.bpmn</class> process.
