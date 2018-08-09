@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved. 
+ * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,47 +20,29 @@
 package org.onap.so.bpmn.infrastructure.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*;
-import groovy.xml.XmlUtil
-import groovy.json.*
 
-import org.onap.so.bpmn.core.domain.ServiceDecomposition
-import org.onap.so.bpmn.core.domain.ServiceInstance
-import org.onap.so.bpmn.core.domain.ModelInfo
-import org.onap.so.bpmn.core.domain.Resource
-import org.onap.so.bpmn.core.domain.CompareModelsResult
-import org.onap.so.bpmn.core.domain.ResourceModelInfo
-import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.bpmn.common.scripts.AaiUtil
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
-import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.rest.APIResponse;
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
+import javax.ws.rs.NotFoundException
 
-
-import java.util.List
-import java.util.Map
-import java.util.UUID;
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
-
+import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.json.JSONObject;
-import org.json.JSONArray;
-import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils;
+import org.onap.aai.domain.yang.ServiceInstance
+import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.core.domain.CompareModelsResult
+import org.onap.so.bpmn.core.domain.ModelInfo
+import org.onap.so.bpmn.core.domain.Resource
+import org.onap.so.bpmn.core.domain.ResourceModelInfo
+import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
-import org.xml.sax.InputSource
+import groovy.json.*
+
 /**
  * This groovy class supports the <class>DoCompareModelofE2EServiceInstance.bpmn</class> process.
  *
@@ -80,7 +62,7 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 
 	String Prefix="DCMPMDSI_"
 	private static final String DebugFlag = "isDebugEnabled"
-	
+
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 
@@ -94,11 +76,11 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 
 		execution.setVariable("prefix", Prefix)
 		//Inputs
-		
+
 		//subscriberInfo. for AAI GET
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
 		utils.log("INFO"," ***** globalSubscriberId *****" + globalSubscriberId,  isDebugEnabled)
-		
+
 		String serviceType = execution.getVariable("serviceType")
 		utils.log("INFO"," ***** serviceType *****" + serviceType,  isDebugEnabled)
 
@@ -142,85 +124,48 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
-	
-	public void postProcessAAIGET(DelegateExecution execution) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** postProcessAAIGET ***** ", isDebugEnabled)
-		String msg = ""
 
+	/**
+	 * Gets the service instance from aai
+	 *
+	 * @author cb645j
+	 */
+	public void getServiceInstance(DelegateExecution execution) {
 		try {
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-			String serviceType = ""
+			String serviceInstanceId = execution.getVariable('serviceInstanceId')
+			String globalSubscriberId = execution.getVariable('globalSubscriberId')
+			String serviceType = execution.getVariable('serviceType')
 
-			if(foundInAAI){
-				utils.log("INFO","Found Service-instance in AAI", isDebugEnabled)
+			AAIResourcesClient resourceClient = new AAIResourcesClient()
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
+			AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
 
-				String siData = execution.getVariable("GENGS_service")
-				utils.log("INFO", "SI Data", isDebugEnabled)
-				if (isBlank(siData))
-				{
-					msg = "Could not retrive ServiceInstance data from AAI, Id:" + serviceInstanceId
-					utils.log("INFO", msg, isDebugEnabled)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-				}
-				else
-				{
-					utils.log("INFO", "SI Data" + siData, isDebugEnabled)
-					
-					// Get Template uuid and version
-					if (utils.nodeExists(siData, "model-invariant-id") && utils.nodeExists(siData, "model-version-id") ) {
-					    utils.log("INFO", "SI Data model-invariant-id and model-version-id exist", isDebugEnabled)
-						
-					    def modelInvariantId  = utils.getNodeText(siData, "model-invariant-id")
-					    def modelVersionId  = utils.getNodeText(siData, "model-version-id")
-					    
-					    // Set Original Template info
-					    execution.setVariable("model-invariant-id-original", modelInvariantId)
-					    execution.setVariable("model-version-id-original", modelVersionId)					
-					}					
-				}
-			}else{
-				boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-				if(!succInAAI){
-					utils.log("INFO","Error getting Service-instance from AAI", + serviceInstanceId, isDebugEnabled)
-					WorkflowException workflowException = execution.getVariable("WorkflowException")
-					utils.logAudit("workflowException: " + workflowException)
-					if(workflowException != null){
-						exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-					}
-					else
-					{
-						msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
-						utils.log("INFO", msg, isDebugEnabled)
-						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-					}
-				}
+			ServiceInstance si = wrapper.asBean(ServiceInstance.class)
+			execution.setVariable("model-invariant-id-original", si.getModelInvariantId())
+			execution.setVariable("model-version-id-original", si.getModelVersionId())
 
-				utils.log("INFO","Service-instance NOT found in AAI. Silent Success", isDebugEnabled)
-			}
-		}catch (BpmnError e) {
+		}catch(BpmnError e) {
 			throw e;
-		} catch (Exception ex) {
-			msg = "Exception in DoDeleteE2EServiceInstance.postProcessAAIGET. " + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
+		}catch(NotFoundException e) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Service-instance does not exist AAI")
+		}catch(Exception ex) {
+			String msg = "Internal Error in getServiceInstance: " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit postProcessAAIGET ")
 	}
 
 	public void postCompareModelVersions(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
-				
+
 		List<Resource> addResourceList = execution.getVariable("addResourceList")
 		List<Resource> delResourceList = execution.getVariable("delResourceList")
-		
+
 		CompareModelsResult cmpResult = new CompareModelsResult()
 		List<ResourceModelInfo> addedResourceList = new ArrayList<ResourceModelInfo>()
 		List<ResourceModelInfo> deletedResourceList = new ArrayList<ResourceModelInfo>()
-		
-		
+
+
 		String serviceModelUuid = execution.getVariable("model-version-id-target")
         List<String> requestInputs = new ArrayList<String>()
 		ModelInfo mi = null;
@@ -233,11 +178,11 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 			rmodel.setResourceUuid(mi.getModelUuid())
 			rmodel.setResourceCustomizationUuid(resourceCustomizationUuid)
 			addedResourceList.add(rmodel)
-			
+
 			Map<String, Object> resourceParameters = ResourceRequestBuilder.buildResouceRequest(serviceModelUuid, resourceCustomizationUuid, null)
-			requestInputs.addAll(resourceParameters.keySet())			
+			requestInputs.addAll(resourceParameters.keySet())
 		}
-		
+
 		for(Resource rc : delResourceList) {
 			mi = rc.getModelInfo()
 			String resourceCustomizationUuid = mi.getModelCustomizationUuid()
@@ -246,15 +191,15 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 			rmodel.setResourceInvariantUuid(mi.getModelInvariantUuid())
 			rmodel.setResourceUuid(mi.getModelUuid())
 			rmodel.setResourceCustomizationUuid(resourceCustomizationUuid)
-			deletedResourceList.add(rmodel)			
+			deletedResourceList.add(rmodel)
 		}
-		
+
 		cmpResult.setAddedResourceList(addedResourceList)
 		cmpResult.setDeletedResourceList(deletedResourceList)
-		cmpResult.setRequestInputs(requestInputs)	
+		cmpResult.setRequestInputs(requestInputs)
 
 		execution.setVariable("compareModelsResult", cmpResult)
 	}
-	
+
 }
-	
+

@@ -37,7 +37,14 @@ import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse;
 import org.springframework.web.util.UriUtils;
-
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.Relationships
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.json.JSONObject
+import javax.ws.rs.NotFoundException
 import groovy.json.*
 
 
@@ -149,63 +156,32 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		msoLogger.info("Exited " + method)
 	}
 
-
-
-	public void postProcessAAIGET(DelegateExecution execution) {
-		def method = getClass().getSimpleName() + '.postProcessAAIGET(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
-
-		String msg = ""
-
+	/**
+	 * Gets the service instance and its relationships from aai
+	 *
+	 * @author cb645j
+	 */
+	public void getServiceInstance(DelegateExecution execution) {
 		try {
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			msoLogger.info("serviceInstanceId: "+serviceInstanceId)
+			String serviceInstanceId = execution.getVariable('serviceInstanceId')
+			String globalSubscriberId = execution.getVariable('globalSubscriberId')
+			String serviceType = execution.getVariable('serviceType')
 
-			boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-			msoLogger.info("foundInAAI: "+foundInAAI)
+			AAIResourcesClient resourceClient = new AAIResourcesClient()
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
+			AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
+			String json = wrapper.getJson()
 
-			String serviceType = ""
+			execution.setVariable("serviceInstance", json)
 
-
-			if(foundInAAI){
-				msoLogger.info("Found Service-instance in AAI")
-
-				String siData = execution.getVariable("GENGS_service")
-				msoLogger.info("SI Data")
-				if (isBlank(siData))
-				{
-					msg = "Could not retrive ServiceInstance data from AAI to delete id:" + serviceInstanceId
-					msoLogger.info(msg)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-				}
-
-			}else{
-				boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-				if(!succInAAI){
-					msoLogger.info("Error getting Service-instance from AAI", + serviceInstanceId)
-					WorkflowException workflowException = execution.getVariable("WorkflowException")
-					msoLogger.debug("workflowException: " + workflowException)
-					if(workflowException != null){
-						exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-					}
-					else
-					{
-						msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
-						msoLogger.info(msg)
-						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-					}
-				}
-
-				msoLogger.info("Service-instance NOT found in AAI. Silent Success")
-			}
-		}catch (BpmnError e) {
+		}catch(BpmnError e) {
 			throw e;
-		} catch (Exception ex) {
-			msg = "Bpmn error encountered in " + method + "--" + ex.getMessage()
-			msoLogger.info(msg)
+		}catch(NotFoundException e) {
+			msoLogger.info("SI not found in aai. Silent Success ")
+		}catch(Exception ex) {
+			String msg = "Internal Error in getServiceInstance: " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.info("Exited " + method)
 	}
 
 	private void loadResourcesProperties(DelegateExecution execution) {
@@ -334,23 +310,14 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 
-			// confirm if ServiceInstance was found
-			if ( !execution.getVariable("GENGS_FoundIndicator") )
-			{
-				String exceptionMessage = "Bpmn error encountered in DeleteMobileAPNCustService flow. Service Instance was not found in AAI by id: " + serviceInstanceId
-				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
-			}
 
 			execution.setVariable(Prefix+"resourceList", "")
 			execution.setVariable(Prefix+"resourceCount", 0)
 			execution.setVariable(Prefix+"nextResource", 0)
 			execution.setVariable(Prefix+"resourceFinish", true)
 
-			// get SI extracted by GenericGetService
-			String serviceInstanceAaiRecord = execution.getVariable("GENGS_service");
-			msoLogger.info("serviceInstanceAaiRecord: " +serviceInstanceAaiRecord)
-
-			String aaiJsonRecord = jsonUtil.xml2json(serviceInstanceAaiRecord)
+			String aaiJsonRecord = execution.getVariable("serviceInstance");
+			msoLogger.info("serviceInstanceAaiRecord: " +aaiJsonRecord)
 
 			msoLogger.info("aaiJsonRecord: " +aaiJsonRecord)
 			def serviceInstanceName = jsonUtil.getJsonValue(aaiJsonRecord, "service-instance.service-instance-name")

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,6 +33,14 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.Relationships
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import javax.ws.rs.NotFoundException
+import org.json.JSONObject
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 
@@ -100,7 +108,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 				String dataErrorMessage = " Element 'serviceInstanceId' is missing. "
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 			}
-			
+
 			String requestAction = execution.getVariable("requestAction")
 			execution.setVariable("requestAction", requestAction)
 
@@ -117,20 +125,20 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 
 			execution.setVariable("globalSubscriberId", globalSubscriberId)
 			execution.setVariable("globalCustomerId", globalSubscriberId)
-			
+
 			String suppressRollback = jsonUtil.getJsonValue(DeleteVcpeResCustServiceRequest, "requestDetails.requestInfo.suppressRollback")
 			execution.setVariable("disableRollback", suppressRollback)
 			msoLogger.debug("Incoming Suppress/Disable Rollback is: " + suppressRollback)
-			
+
 			String productFamilyId = jsonUtil.getJsonValue(DeleteVcpeResCustServiceRequest, "requestDetails.requestInfo.productFamilyId")
 			execution.setVariable("productFamilyId", productFamilyId)
 			msoLogger.debug("Incoming productFamilyId is: " + productFamilyId)
-			
+
 			// extract subscriptionServiceType
 			String subscriptionServiceType = jsonUtil.getJsonValue(DeleteVcpeResCustServiceRequest, "requestDetails.requestParameters.subscriptionServiceType")
 			execution.setVariable("subscriptionServiceType", subscriptionServiceType)
 			msoLogger.debug("Incoming subscriptionServiceType is: " + subscriptionServiceType)
-			
+
 			// extract cloud configuration
 			String cloudConfiguration = jsonUtil.getJsonValue(DeleteVcpeResCustServiceRequest, "requestDetails.cloudConfiguration")
 			execution.setVariable("cloudConfiguration", cloudConfiguration)
@@ -145,7 +153,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			String sdncVersion = "1707"
 			execution.setVariable("sdncVersion", sdncVersion)
 			msoLogger.debug("sdncVersion: "+ sdncVersion)
-			
+
 			//For Completion Handler & Fallout Handler
 			String requestInfo =
 			"""<request-info xmlns="http://org.onap/so/infra/vnf-request/v1">
@@ -155,10 +163,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 				   </request-info>"""
 
 			execution.setVariable(Prefix+"requestInfo", requestInfo)
-			
-			//Setting for Generic Sub Flows
-			execution.setVariable("GENGS_type", "service-instance")
-			
+
 			msoLogger.trace("Completed preProcessRequest DeleteVcpeResCustServiceRequest Request ")
 
 		} catch (BpmnError e) {
@@ -189,120 +194,87 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		}
 	}
 
-	public void prepareServiceDelete(DelegateExecution execution) {
-		def isDebugEnabled=execution.getVariable(DebugFlag)
-		msoLogger.trace("Inside prepareServiceDelete() of DeleteVcpeResCustService ")
-		
+	/**
+	 * Gets the service instance and its related resources from aai
+	 *
+	 * @author cb645j
+	 */
+	public void getServiceInstance(DelegateExecution execution) {
 		try {
-			
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			
-			// confirm if ServiceInstance was found
-			if ( !execution.getVariable("GENGS_FoundIndicator") )
-			{
-				String exceptionMessage = "Bpmn error encountered in DeleteVcpeResCustService flow. Service Instance was not found in AAI by id: " + serviceInstanceId
-				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
-			}
-			
-			// get variable within incoming json
-			String DeleteVcpeResCustServiceRequest = execution.getVariable("DeleteVcpeResCustServiceRequest");
-			
-			// get SI extracted by GenericGetService
-			String serviceInstanceAaiRecord = execution.getVariable("GENGS_service");
-			
-			msoLogger.debug("serviceInstanceAaiRecord: "+serviceInstanceAaiRecord)
-			serviceInstanceAaiRecord = utils.removeXmlNamespaces(serviceInstanceAaiRecord)
-			
-			def (TXC_found, TXC_id) = new Tuple(false, null)
-			def (BRG_found, BRG_id) = new Tuple(false, null)
-			List relatedVnfIdList = []
-			
-			for(Node rel: utils.getMultNodeObjects(serviceInstanceAaiRecord, "relationship")) {
-				def relto = utils.getChildNodeText(rel, "related-to")
-				def relink = utils.getChildNodeText(rel, "related-link")
-				msoLogger.debug("check: "+relto+" link: "+relink)
-				
-				if(isBlank(relto) || isBlank(relink)) {
-					
-				} else if(relto == "generic-vnf") {
-					def id = relink.substring(relink.indexOf("/generic-vnf/")+13)
-					if(id.endsWith("/")) {
-						id = id.substring(0, id.length()-1)
+			String serviceInstanceId = execution.getVariable('serviceInstanceId')
+
+			AAIResourcesClient resourceClient = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+
+			if(resourceClient.exists(uri)){
+				AAIResultWrapper wrapper = resourceClient.get(uri, NotFoundException.class)
+				Optional<Relationships> relationships = wrapper.getRelationships()
+
+				def (TXC_found, TXC_id) = new Tuple(false, null)
+				def (BRG_found, BRG_id) = new Tuple(false, null)
+				List relatedVnfIdList = []
+
+				if(relationships.isPresent()){
+
+					List<AAIResourceUri> vnfUris = relationships.get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF)
+					for(AAIResourceUri u:vnfUris){
+						Map<String, String> keys = u.getURIKeys()
+						String vnfId = keys.get("vnf-id")
+						relatedVnfIdList.add(vnfId)
 					}
-					
-					relatedVnfIdList.add(id)
-					
-				} else if(relto == "allotted-resource") {
-					def (type, id) = getAaiAr(execution, relink)
-					
-					if(isBlank(type) || isBlank(id)) {
-						
-					} else if(type == "TunnelXConn" || type == "Tunnel XConn") {
-						msoLogger.debug("TunnelXConn AR found")
-						TXC_found = true
-						TXC_id = id
-						
-					} else if(type == "BRG") {
-						msoLogger.debug("BRG AR found")
-						BRG_found = true
-						BRG_id = id
+					List<AAIResourceUri> arUris = relationships.get().getRelatedAAIUris(AAIObjectType.ALLOTTED_RESOURCE)
+					for(AAIResourceUri u:arUris){
+						String ar = resourceClient.get(u).getJson()
+
+						def type = jsonUtil.getJsonValue(ar, "type")
+						def id = jsonUtil.getJsonValue(ar, "id")
+
+						if(type == "TunnelXConn" || type == "Tunnel XConn") {
+							msoLogger.debug("TunnelXConn AR found")
+							TXC_found = true
+							TXC_id = id
+
+						}else if(type == "BRG") {
+							msoLogger.debug("BRG AR found")
+							BRG_found = true
+							BRG_id = id
+						}
+
+						execution.setVariable(Prefix+"TunnelXConn", TXC_found)
+						execution.setVariable("TXC_allottedResourceId", TXC_id)
+						msoLogger.debug("TXC_allottedResourceId: " + TXC_id)
+
+						execution.setVariable(Prefix+"BRG", BRG_found)
+						execution.setVariable("BRG_allottedResourceId", BRG_id)
+						msoLogger.debug("BRG_allottedResourceId: " + BRG_id)
+
 					}
 				}
+
+				execution.setVariable(Prefix+"vnfsCount", relatedVnfIdList.size())
+				if(relatedVnfIdList.size() > 0) {
+					execution.setVariable(Prefix+"relatedVnfIdList", relatedVnfIdList)
+				}
+
+			}else{
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
 			}
-			
-			execution.setVariable(Prefix+"TunnelXConn", TXC_found)
-			execution.setVariable("TXC_allottedResourceId", TXC_id)
-			msoLogger.debug("TXC_allottedResourceId: " + TXC_id)
-						
-			execution.setVariable(Prefix+"BRG", BRG_found)
-			execution.setVariable("BRG_allottedResourceId", BRG_id)
-			msoLogger.debug("BRG_allottedResourceId: " + BRG_id)
-			
-			int vnfsCount = relatedVnfIdList.size()
-			execution.setVariable(Prefix+"vnfsCount", vnfsCount)
-			msoLogger.debug(" "+Prefix+"vnfsCount : " + vnfsCount)
-			if(vnfsCount > 0) {
-				execution.setVariable(Prefix+"relatedVnfIdList", relatedVnfIdList)
-			}
-			
-			msoLogger.trace("Completed prepareServiceDelete() of DeleteVcpeResCustService ")
-		} catch (BpmnError e){
+
+		}catch(BpmnError e) {
 			throw e;
-		} catch (Exception ex) {
-			sendSyncError(execution)
-		    String exceptionMessage = "Bpmn error encountered in DeleteVcpeResCustService flow. prepareServiceDelete() - " + ex.getMessage()
-		    msoLogger.debug(exceptionMessage)
-		    exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
+		}catch(NotFoundException e) {
+			msoLogger.debug("Service Instance does not exist AAI")
+			exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Service Instance was not found in aai")
+		}catch(Exception ex) {
+			String msg = "Internal Error in getServiceInstance: " + ex.getMessage()
+			msoLogger.debug(msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
-	
-	private getAaiAr(DelegateExecution execution, String relink) {
-		def isDebugEnabled = execution.getVariable(DebugFlag)
-		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = UrnPropertiesReader.getVariable("aai.endpoint",execution) + relink
-		
-		msoLogger.debug("get AR info " + aaiEndpoint)
-		APIResponse response = aaiUtil.executeAAIGetCall(execution, aaiEndpoint)
-		
-		int responseCode = response.getStatusCode()
-		msoLogger.debug("get AR info responseCode:" + responseCode)
-		
-		String aaiResponse = response.getResponseBodyAsString()
-		msoLogger.debug("get AR info " + aaiResponse)
-		
-		if(responseCode < 200 || responseCode >= 300 || isBlank(aaiResponse)) {
-			return new Tuple2(null, null)
-		}
-		
-		def type = utils.getNodeText(aaiResponse, "type")
-		def id = utils.getNodeText(aaiResponse, "id")
-		
-		return new Tuple2(type, id)
-	}
-	
-	
+
+
 	// *******************************
-	//     
+	//
 	// *******************************
 	public void prepareVnfAndModulesDelete (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
@@ -316,7 +288,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			if (vnfList.size() > 0 ) {
 				vnfId = vnfList.get(vnfsDeletedCount.intValue())
 			}
-							
+
 			execution.setVariable("vnfId", vnfId)
 			msoLogger.debug("need to delete vnfId:" + vnfId)
 
@@ -327,7 +299,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 	 }
-	
+
 	// *******************************
 	//     Validate Vnf request Section -> increment count
 	// *******************************
@@ -338,9 +310,9 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		try {
 			int vnfsDeletedCount = execution.getVariable(Prefix+"vnfsDeletedCount")
 			vnfsDeletedCount++
-			
+
 			execution.setVariable(Prefix+"vnfsDeletedCount", vnfsDeletedCount)
-			
+
 			msoLogger.debug(" ***** Completed validateVnfDelete of DeleteVcpeResCustService ***** "+" vnf # "+vnfsDeletedCount)
 		} catch (Exception ex) {
 			// try error in method block
@@ -349,7 +321,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		}
 	 }
 
-	
+
 	// *****************************************
 	//     Prepare Completion request Section
 	// *****************************************

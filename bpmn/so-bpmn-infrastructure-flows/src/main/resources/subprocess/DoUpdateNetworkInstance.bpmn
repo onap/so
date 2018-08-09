@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="DoUpdateNetworkInstance" name="DoUpdateNetworkInstance" isExecutable="true">
     <bpmn2:startEvent id="updateNetwork_startEvent" name="Start Flow">
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
@@ -231,42 +231,14 @@ DoUpdateNetworkInstance.callRESTQueryAAICloudRegion(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_32" name="" sourceRef="callRESTQueryCloudRegion_ScriptTask" targetRef="prepareSDNCTopoRequest_ScriptTask" />
     <bpmn2:scriptTask id="callRESTQueryNetworkId_ScriptTask" name="Call REST Query Network Id In AAI" scriptFormat="groovy">
-      <bpmn2:incoming>siFoundYes</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_24</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 DoUpdateNetworkInstance.callRESTQueryAAINetworkId(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_24" name="" sourceRef="callRESTQueryNetworkId_ScriptTask" targetRef="callRESTQueryCloudRegion_ScriptTask" />
-    <bpmn2:scriptTask id="workflowExceptionSINotFound" name="Create Workflow Exception" scriptFormat="groovy">
-      <bpmn2:incoming>siFoundNo</bpmn2:incoming>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
-ExceptionUtil exceptionUtil = new ExceptionUtil()
-exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Service Instance Not Found")]]></bpmn2:script>
-    </bpmn2:scriptTask>
-    <bpmn2:exclusiveGateway id="siFoundCheck" name="is SI Found?" default="siFoundNo">
-      <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
-      <bpmn2:outgoing>siFoundYes</bpmn2:outgoing>
-      <bpmn2:outgoing>siFoundNo</bpmn2:outgoing>
-    </bpmn2:exclusiveGateway>
-    <bpmn2:sequenceFlow id="siFoundYes" name="Yes" sourceRef="siFoundCheck" targetRef="callRESTQueryNetworkId_ScriptTask">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("GENGSI_FoundIndicator" ) == true && execution.getVariable("GENGSI_SuccessIndicator" ) == true}]]></bpmn2:conditionExpression>
-    </bpmn2:sequenceFlow>
-    <bpmn2:sequenceFlow id="siFoundNo" name="No" sourceRef="siFoundCheck" targetRef="workflowExceptionSINotFound" />
-    <bpmn2:callActivity id="callGetServiceInstance" name="Get&#10;Service&#10;Instance" calledElement="GenericGetService">
-      <bpmn2:extensionElements>
-        <camunda:in source="UPDNETI_serviceInstanceId" target="GENGS_serviceInstanceId" />
-        <camunda:out source="GENGS_serviceInstance" target="UPDNETI_serviceInstanceId" />
-        <camunda:out source="GENGS_FoundIndicator" target="GENGSI_FoundIndicator" />
-        <camunda:out source="GENGS_SuccessIndicator" target="GENGSI_SuccessIndicator" />
-        <camunda:out source="GENGS_siResourceLink" target="GENGSI_siResourceLink" />
-        <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:in source="GENGS_type" target="GENGS_type" />
-      </bpmn2:extensionElements>
-      <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
-    </bpmn2:callActivity>
-    <bpmn2:sequenceFlow id="SequenceFlow_3" name="" sourceRef="callGetServiceInstance" targetRef="siFoundCheck" />
+    <bpmn2:sequenceFlow id="SequenceFlow_3" name="" sourceRef="callGetServiceInstance" targetRef="callRESTQueryNetworkId_ScriptTask" />
     <bpmn2:scriptTask id="validateUpdatePONetwork_ScriptTask" name="Validate Update PO Network" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_59</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_13</bpmn2:outgoing>
@@ -340,6 +312,13 @@ def DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
 DoUpdateNetworkInstance.callRESTQueryAAINetworkPolicy(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_38" name="" sourceRef="callRESTQueryNetworkPolicy_ScriptTask" targetRef="callRESTQueryNetworkTableRef_ScriptTask" />
+    <bpmn2:scriptTask id="callGetServiceInstance" name="AAI&#10;Query&#10;(svc instance)" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+def DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
+DoUpdateNetworkInstance.getServiceInstance(execution)]]></bpmn2:script>
+    </bpmn2:scriptTask>
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -430,7 +409,7 @@ DoUpdateNetworkInstance.callRESTQueryAAINetworkPolicy(execution)]]></bpmn2:scrip
         <di:waypoint xsi:type="dc:Point" x="572" y="203" />
         <di:waypoint xsi:type="dc:Point" x="686" y="203" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="629" y="188" width="0" height="0" />
+          <dc:Bounds x="584" y="188" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_35" bpmnElement="SequenceFlow_23" sourceElement="_BPMNShape_StartEvent_50" targetElement="_BPMNShape_ExclusiveGateway_90">
@@ -682,42 +661,16 @@ DoUpdateNetworkInstance.callRESTQueryAAINetworkPolicy(execution)]]></bpmn2:scrip
           <dc:Bounds x="221" y="470" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="_BPMNShape_CallActivity_72" bpmnElement="callGetServiceInstance">
-        <dc:Bounds x="686" y="163" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_ExclusiveGateway_244" bpmnElement="siFoundCheck" isMarkerVisible="true">
-        <dc:Bounds x="836" y="177" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="891" y="195" width="79" height="22" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_3" sourceElement="_BPMNShape_CallActivity_72" targetElement="_BPMNShape_ExclusiveGateway_244">
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_3" sourceElement="ScriptTask_0e58tta_di" targetElement="_BPMNShape_ScriptTask_133">
         <di:waypoint xsi:type="dc:Point" x="786" y="203" />
         <di:waypoint xsi:type="dc:Point" x="805" y="203" />
         <di:waypoint xsi:type="dc:Point" x="805" y="202" />
-        <di:waypoint xsi:type="dc:Point" x="836" y="202" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="799" y="203" width="6" height="6" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_17" bpmnElement="siFoundYes" sourceElement="_BPMNShape_ExclusiveGateway_244" targetElement="_BPMNShape_ScriptTask_133">
-        <di:waypoint xsi:type="dc:Point" x="861" y="177" />
+        <di:waypoint xsi:type="dc:Point" x="861" y="202" />
         <di:waypoint xsi:type="dc:Point" x="861" y="140" />
         <di:waypoint xsi:type="dc:Point" x="910" y="140" />
         <di:waypoint xsi:type="dc:Point" x="984" y="140" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="868" y="157" width="29" height="22" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_331" bpmnElement="workflowExceptionSINotFound">
-        <dc:Bounds x="984" y="256" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_20" bpmnElement="siFoundNo" sourceElement="_BPMNShape_ExclusiveGateway_244" targetElement="_BPMNShape_ScriptTask_331">
-        <di:waypoint xsi:type="dc:Point" x="861" y="227" />
-        <di:waypoint xsi:type="dc:Point" x="861" y="296" />
-        <di:waypoint xsi:type="dc:Point" x="984" y="296" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="871" y="233" width="22" height="22" />
+          <dc:Bounds x="788" y="184" width="90" height="6" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_22" bpmnElement="SequenceFlow_24" sourceElement="_BPMNShape_ScriptTask_133" targetElement="_BPMNShape_ScriptTask_245">
@@ -824,6 +777,9 @@ DoUpdateNetworkInstance.callRESTQueryAAINetworkPolicy(execution)]]></bpmn2:scrip
         <di:waypoint xsi:type="dc:Point" x="797" y="946" />
         <di:waypoint xsi:type="dc:Point" x="816" y="847" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0e58tta_di" bpmnElement="callGetServiceInstance">
+        <dc:Bounds x="686" y="163" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn2:definitions>

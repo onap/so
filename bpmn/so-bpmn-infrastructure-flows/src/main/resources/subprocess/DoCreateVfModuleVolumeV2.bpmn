@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_FhrCQG2BEeaNdqnn65BT4A" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_FhrCQG2BEeaNdqnn65BT4A" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="DoCreateVfModuleVolumeV2" name="DoCreateVfModuleVolumeV2" isExecutable="true">
     <bpmn2:scriptTask id="ScriptTask_preProcessRequest" name="Preprocess Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
@@ -128,26 +128,14 @@ doCreateVfModuleVolumeV2.executeMethod('validateVnfResponse', execution, isDebug
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1qwurc5" sourceRef="CallActivity_callVnfAdapterCreate" targetRef="Task_07psich" />
     <bpmn2:sequenceFlow id="SequenceFlow_1gbt2n5" sourceRef="Task_07psich" targetRef="ScriptTask_callRestAaiRequeryVolGrpNm" />
-    <bpmn2:callActivity id="Task_1u766ge" name="Call Generic Get Service instance" calledElement="GenericGetService">
-      <bpmn2:extensionElements>
-        <camunda:in source="serviceInstanceId" target="GENGS_serviceInstanceId" />
-        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
-        <camunda:in source="GENGS_type" target="GENGS_type" />
-        <camunda:out source="GENGS_FoundIndicator" target="GENGS_FoundIndicator" />
-        <camunda:out source="GENGS_SuccessIndicator" target="GENGS_SuccessIndicator" />
-      </bpmn2:extensionElements>
+    <bpmn2:scriptTask id="Task_0qbm5cz" name="&#10;AAI&#10;Query&#10;(svc instance)&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1wi1cf9</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_1vmbvy8</bpmn2:outgoing>
-    </bpmn2:callActivity>
-    <bpmn2:scriptTask id="Task_0qbm5cz" name="Validate Get Service Instance Call" scriptFormat="groovy">
-      <bpmn2:incoming>SequenceFlow_1vmbvy8</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1dpt7ul</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def doCreateVfModuleVolumeV2 = new DoCreateVfModuleVolumeV2()
-doCreateVfModuleVolumeV2.executeMethod('validateGetServiceInstanceCall', execution, isDebugLogEnabled)]]></bpmn2:script>
+doCreateVfModuleVolumeV2.executeMethod('getServiceInstance', execution, isDebugLogEnabled)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_1wi1cf9" sourceRef="ScriptTask_preProcessRequest" targetRef="Task_1u766ge" />
-    <bpmn2:sequenceFlow id="SequenceFlow_1vmbvy8" sourceRef="Task_1u766ge" targetRef="Task_0qbm5cz" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1wi1cf9" sourceRef="ScriptTask_preProcessRequest" targetRef="Task_0qbm5cz" />
     <bpmn2:sequenceFlow id="SequenceFlow_1dpt7ul" sourceRef="Task_0qbm5cz" targetRef="ScriptTask_callRestAaiCloudRegion" />
   </bpmn2:process>
   <bpmn2:error id="Error_1" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
@@ -330,31 +318,21 @@ doCreateVfModuleVolumeV2.executeMethod('validateGetServiceInstanceCall', executi
           <dc:Bounds x="837" y="322" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="CallActivity_1u596hd_di" bpmnElement="Task_1u766ge">
-        <dc:Bounds x="506" y="106" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1n9cmka_di" bpmnElement="Task_0qbm5cz">
-        <dc:Bounds x="640" y="106" width="100" height="80" />
+        <dc:Bounds x="576" y="106" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1wi1cf9_di" bpmnElement="SequenceFlow_1wi1cf9">
         <di:waypoint xsi:type="dc:Point" x="469" y="146" />
-        <di:waypoint xsi:type="dc:Point" x="506" y="146" />
+        <di:waypoint xsi:type="dc:Point" x="576" y="146" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="488" y="121" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1vmbvy8_di" bpmnElement="SequenceFlow_1vmbvy8">
-        <di:waypoint xsi:type="dc:Point" x="606" y="146" />
-        <di:waypoint xsi:type="dc:Point" x="640" y="146" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="623" y="121" width="0" height="0" />
+          <dc:Bounds x="477.5" y="131" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1dpt7ul_di" bpmnElement="SequenceFlow_1dpt7ul">
-        <di:waypoint xsi:type="dc:Point" x="740" y="146" />
+        <di:waypoint xsi:type="dc:Point" x="676" y="146" />
         <di:waypoint xsi:type="dc:Point" x="768" y="146" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="754" y="121" width="0" height="0" />
+          <dc:Bounds x="677" y="131" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

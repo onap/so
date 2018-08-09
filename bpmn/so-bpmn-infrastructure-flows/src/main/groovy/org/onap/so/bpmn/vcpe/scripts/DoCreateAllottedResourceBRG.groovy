@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,12 +37,19 @@ import static org.apache.commons.lang3.StringUtils.*
 
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.Relationships
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.json.JSONObject
+import javax.ws.rs.NotFoundException
 /**
  * This groovy class supports the <class>DoCreateAllottedResourceBRG.bpmn</class> process.
  *
  * @author
- * 
+ *
  * Inputs:
  * @param - msoRequestId
  * @param - isDEbugLogEnabled
@@ -57,15 +64,15 @@ import org.onap.so.logger.MsoLogger
  * @param - allottedResourceRole
  * @param - allottedResourceType
  * @param - brgWanMacAddress
- * @param - vni 
- * @param - vgmuxBearerIP 
+ * @param - vni
+ * @param - vgmuxBearerIP
  *
  * Outputs:
  * @param - rollbackData (localRB->null)
  * @param - rolledBack (no localRB->null, localRB F->false, localRB S->true)
  * @param - WorkflowException - O
  * @param - allottedResourceId
- * @param - allottedResourceName 
+ * @param - allottedResourceName
  *
  */
 public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
@@ -155,6 +162,33 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 		msoLogger.trace("end preProcessRequest")
 	}
 
+	/**
+	 * Gets the service instance uri from aai
+	 */
+	public void getServiceInstance(DelegateExecution execution) {
+		msoLogger.trace("getServiceInstance ")
+		try {
+			String serviceInstanceId = execution.getVariable('serviceInstanceId')
+
+			AAIResourcesClient resourceClient = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+
+			if(resourceClient.exists(uri)){
+				execution.setVariable("CSI_resourceLink", uri.build().toString())
+			}else{
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai")
+			}
+
+		}catch(BpmnError e) {
+			throw e;
+		}catch (Exception ex){
+			String msg = "Exception in getServiceInstance. " + ex.getMessage()
+			msoLogger.debug(msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+		msoLogger.trace("Exit getServiceInstance ")
+	}
+
 	public void getAaiAR (DelegateExecution execution) {
 
 
@@ -192,6 +226,39 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 		}
 		msoLogger.trace("end getAaiAR")
 	}
+
+	public void getParentServiceInstance(DelegateExecution execution) {
+		msoLogger.trace("getParentServiceInstance ")
+		try {
+			String serviceInstanceId = execution.getVariable('parentServiceInstanceId')
+
+			AAIResourcesClient resourceClient = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.NODES_QUERY, "").queryParam("search-node-type", "service-instance").queryParam("filter", "service-instance-id:EQUALS:" + serviceInstanceId)
+			String json = resourceClient.get(uri).getJson()
+
+			JSONObject obj = new JSONObject(json)
+			if(obj.has("result-data")){
+				JSONObject ob = obj.getJSONArray("result-data").getJSONObject(0)
+				String resourceLink = ob.getString("resource-link")
+
+				String[] split = resourceLink.split("/aai/")
+				String siRelatedLink = "/aai/" + split[1]
+
+				execution.setVariable("PSI_resourceLink", resourceLink)
+			}else{
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai")
+			}
+
+		}catch(BpmnError e) {
+			throw e;
+		}catch (Exception ex){
+			String msg = "Exception in getParentServiceInstance. " + ex.getMessage()
+			msoLogger.debug(msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+		msoLogger.trace("Exit getParentServiceInstance ")
+	}
+
 
 	public void createAaiAR(DelegateExecution execution) {
 
@@ -387,9 +454,9 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 						<global-customer-id>${MsoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
 					</service-information>
 					<allotted-resource-information>
-						<allotted-resource-id>${MsoUtils.xmlEscape(allottedResourceId)}</allotted-resource-id>    
+						<allotted-resource-id>${MsoUtils.xmlEscape(allottedResourceId)}</allotted-resource-id>
 						<allotted-resource-type>brg</allotted-resource-type>
-						<parent-service-instance-id>${MsoUtils.xmlEscape(parentServiceInstanceId)}</parent-service-instance-id>   
+						<parent-service-instance-id>${MsoUtils.xmlEscape(parentServiceInstanceId)}</parent-service-instance-id>
 						<onap-model-information>
 							<model-invariant-uuid>${MsoUtils.xmlEscape(modelInvariantId)}</model-invariant-uuid>
 							<model-uuid>${MsoUtils.xmlEscape(modelUUId)}</model-uuid>
@@ -575,7 +642,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			String sdncRequestId = UUID.randomUUID().toString()
-			
+
 			//neeed the same url as used by vfmodules
 			String SDNCGetRequest =
 			"""<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.onap/so/request/types/v1"
@@ -600,7 +667,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 		}
 		msoLogger.trace("end preProcessSDNCGet")
 	}
-	
+
 	public void updateAaiAROrchStatus(DelegateExecution execution, String status){
 
 		msoLogger.trace("start updateAaiAROrchStatus")
@@ -609,7 +676,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 		String orchStatus = arUtils.updateAROrchStatus(execution, status, aaiARPath)
 		msoLogger.trace("end updateAaiAROrchStatus")
 	}
-	
+
 	public void generateOutputs(DelegateExecution execution)
 	{
 
@@ -619,7 +686,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			msoLogger.debug("resp:" + sdncGetResponse)
 			String arData = utils.getNodeXml(sdncGetResponse, "brg-topology")
 			arData = utils.removeXmlNamespaces(arData)
-		
+
 			String brga = utils.getNodeXml(arData, "brg-assignments")
 			String ari = utils.getNodeXml(arData, "allotted-resource-identifiers")
 			execution.setVariable("allotedResourceName", utils.getNodeText(ari, "allotted-resource-name"))
@@ -630,7 +697,7 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			msoLogger.debug(msg)
 		}
 		msoLogger.trace("end generateOutputs")
-		
+
 	}
 
 	public void preProcessRollback (DelegateExecution execution) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="DoCreateE2EServiceInstanceV2" name="DoCreateE2EServiceInstanceV2" isExecutable="true">
     <bpmn2:startEvent id="createSI_startEvent" name="Start Flow">
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
@@ -13,21 +13,7 @@ def dcsi = new DoCreateE2EServiceInstanceV2()
 dcsi.preProcessRequest(execution)
 ]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="CustomE2EGetService" targetRef="ScriptTask_0i8cqdy_PostProcessAAIGET" />
-    <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="preProcessRequest_ScriptTask" targetRef="CustomE2EGetService" />
-    <bpmn2:callActivity id="CustomE2EGetService" name="Call Custom E2E Get Service" calledElement="CustomE2EGetService">
-      <bpmn2:extensionElements>
-        <camunda:in source="serviceInstanceName" target="GENGS_serviceInstanceName" />
-        <camunda:in source="globalSubscriberId" target="GENGS_globalCustomerId" />
-        <camunda:in sourceExpression="service-instance" target="GENGS_type" />
-        <camunda:out source="GENGS_FoundIndicator" target="GENGS_FoundIndicator" />
-        <camunda:out source="GENGS_SuccessIndicator" target="GENGS_SuccessIndicator" />
-        <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:in source="serviceType" target="GENGS_serviceType" />
-      </bpmn2:extensionElements>
-      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
-    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="preProcessRequest_ScriptTask" targetRef="IntermediateThrowEvent_0aggdcl_GoToStartService" />
     <bpmn2:callActivity id="CustomE2EPutService" name="Call Custom E2E Put Service" calledElement="CustomE2EPutService">
       <bpmn2:extensionElements>
         <camunda:in source="globalSubscriberId" target="GENPS_globalSubscriberId" />
@@ -83,13 +69,6 @@ dcsi.postProcessRollback(execution)
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_1xzgv5k" sourceRef="ScriptTask_1p0vyip" targetRef="EndEvent_117lkk3" />
     </bpmn2:subProcess>
-    <bpmn2:scriptTask id="ScriptTask_0i8cqdy_PostProcessAAIGET" name="Post Process AAI GET" scriptFormat="groovy">
-      <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_10aubhh</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def dcsi = new DoCreateE2EServiceInstanceV2()
-dcsi.postProcessAAIGET(execution)]]></bpmn2:script>
-    </bpmn2:scriptTask>
     <bpmn2:scriptTask id="ScriptTask_0q37vn9_PostProcessAAIPUT" name="Post Process AAI PUT" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_129ih1g</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_03fabby</bpmn2:outgoing>
@@ -225,9 +204,8 @@ def csi = new  DoCreateE2EServiceInstanceV2()
 csi.postOtherControllerType(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_0gxsqsa" sourceRef="Task_0zhvu4r_llllll" targetRef="ExclusiveGateway_0r4jkig" />
-    <bpmn2:sequenceFlow id="SequenceFlow_10aubhh" sourceRef="ScriptTask_0i8cqdy_PostProcessAAIGET" targetRef="IntermediateThrowEvent_0aggdcl_GoToStartService" />
     <bpmn2:intermediateThrowEvent id="IntermediateThrowEvent_0aggdcl_GoToStartService" name="GoTo StartService">
-      <bpmn2:incoming>SequenceFlow_10aubhh</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:linkEventDefinition name="StartService" />
     </bpmn2:intermediateThrowEvent>
     <bpmn2:intermediateCatchEvent id="StartEvent_0l5bz4h_StartService" name="StartService">
@@ -486,23 +464,13 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn2:script>
           <dc:Bounds x="59.5" y="82" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_10" bpmnElement="SequenceFlow_4">
-        <di:waypoint xsi:type="dc:Point" x="664" y="97" />
-        <di:waypoint xsi:type="dc:Point" x="917" y="97" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="745.5" y="82" width="90" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_2" sourceElement="_BPMNShape_ScriptTask_61" targetElement="CallActivity_1md4kyb_di">
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_2" sourceElement="_BPMNShape_ScriptTask_61" targetElement="IntermediateThrowEvent_1m5zb3d_di">
         <di:waypoint xsi:type="dc:Point" x="287" y="97" />
-        <di:waypoint xsi:type="dc:Point" x="564" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="1239" y="97" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="380.5" y="82" width="90" height="0" />
+          <dc:Bounds x="718" y="82" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="CallActivity_1md4kyb_di" bpmnElement="CustomE2EGetService">
-        <dc:Bounds x="564" y="57" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_0khp0qc_di" bpmnElement="CustomE2EPutService">
         <dc:Bounds x="564" y="244" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -545,9 +513,6 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn2:script>
           <dc:Bounds x="126" y="1831" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ScriptTask_0i8cqdy_di" bpmnElement="ScriptTask_0i8cqdy_PostProcessAAIGET">
-        <dc:Bounds x="917" y="57" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_0q37vn9_di" bpmnElement="ScriptTask_0q37vn9_PostProcessAAIPUT">
         <dc:Bounds x="917" y="244" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -750,13 +715,6 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn2:script>
         <di:waypoint xsi:type="dc:Point" x="176" y="1214" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="312.5" y="1193" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_10aubhh_di" bpmnElement="SequenceFlow_10aubhh">
-        <di:waypoint xsi:type="dc:Point" x="1017" y="97" />
-        <di:waypoint xsi:type="dc:Point" x="1239" y="97" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1128" y="76" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_1m5zb3d_di" bpmnElement="IntermediateThrowEvent_0aggdcl_GoToStartService">
