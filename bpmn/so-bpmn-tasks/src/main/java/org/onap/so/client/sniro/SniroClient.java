@@ -31,6 +31,7 @@ import org.onap.so.client.sniro.beans.SniroConductorRequest;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -76,7 +77,7 @@ public class SniroClient {
 		baseClient.setTargetUrl(url);
 		baseClient.setHttpHeader(header);
 
-		LinkedHashMap<?, ?> response = baseClient.post(homingRequest.toJsonString());
+		LinkedHashMap<?, ?> response = baseClient.post(homingRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
 		validator.validateDemandsResponse(response);
 		log.trace("Completed Sniro Client Post Demands");
 	}
@@ -106,7 +107,7 @@ public class SniroClient {
 		baseClient.setTargetUrl(url);
 		baseClient.setHttpHeader(header);
 
-		LinkedHashMap<?, ?> response = baseClient.post(releaseRequest.toJsonString());
+		LinkedHashMap<?, ?> response = baseClient.post(releaseRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
 		SniroValidator v = new SniroValidator();
 		v.validateReleaseResponse(response);
 		log.trace("Completed Sniro Client Post Release");

@@ -58,15 +58,15 @@ public class BaseClient<I,O> {
 		this.targetUrl = targetUrl;
 	}
 
-	public O get(I data, Object... uriVariables) throws RestClientException {
-		return run(data, HttpMethod.GET, uriVariables);
+	public O get(I data, ParameterizedTypeReference<O> typeRef, Object... uriVariables) throws RestClientException {
+		return run(data, HttpMethod.GET, typeRef, uriVariables);
 	}
 
-	public O post(I data, Object... uriVariables) throws RestClientException {
-		return run(data, HttpMethod.POST, uriVariables);
+	public O post(I data, ParameterizedTypeReference<O> typeRef, Object... uriVariables) throws RestClientException {
+		return run(data, HttpMethod.POST, typeRef, uriVariables);
 	}
 
-	public O run(I data, HttpMethod method, Object... uriVariables) throws RestClientException {
+	public O run(I data, HttpMethod method, ParameterizedTypeReference<O> typeRef, Object... uriVariables) throws RestClientException {
 		HttpEntity<I> requestEntity = new HttpEntity<I>(data, getHttpHeader());
 		RestTemplate restTemplate = new RestTemplate();
 		ObjectMapper mapper = new ObjectMapper();
@@ -75,8 +75,7 @@ public class BaseClient<I,O> {
         mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         restTemplate.getMessageConverters().add(0, converter);
 		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
-		ParameterizedTypeReference<O> output = new ParameterizedTypeReference<O>() {};
-		ResponseEntity<O> responseEntity = restTemplate.exchange(getTargetUrl(), method, requestEntity, output,
+		ResponseEntity<O> responseEntity = restTemplate.exchange(getTargetUrl(), method, requestEntity, typeRef,
 				uriVariables);
 		return responseEntity.getBody();
 	}
