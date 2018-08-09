@@ -155,7 +155,7 @@ dcsi.checkLocallCall(execution)]]></bpmn:script>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1y4vypx" name="GoTo  StartLocalONAPDeleteE2ESI">
       <bpmn:incoming>SequenceFlow_1y8xkzy</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0h1rnsw</bpmn:incoming>
-      <bpmn:linkEventDefinition name=" StartLocalONAPDeleteE2ESI" />
+      <bpmn:linkEventDefinition name="StartLocalONAPDeleteE2ESI" />
     </bpmn:intermediateThrowEvent>
     <bpmn:endEvent id="EndEvent_0o0n3fa" name="Delete3rdONAPRES_End">
       <bpmn:incoming>SequenceFlow_131f1jj</bpmn:incoming>
