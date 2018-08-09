@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.1" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CreateGenericALaCarteServiceInstance" name="CreateGenericALaCarteServiceInstance" isExecutable="true">
     <bpmn2:startEvent id="createSI_startEvent" name="Create SI Start Flow">
       <bpmn2:outgoing>SequenceFlow_0lp2z7l</bpmn2:outgoing>
@@ -15,7 +15,7 @@ ex.processJavaException(execution)]]></bpmn2:script>
       <bpmn2:sequenceFlow id="SequenceFlow_14" name="" sourceRef="ScriptTask_1" targetRef="EndEvent_1" />
       <bpmn2:startEvent id="StartEvent_1">
         <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
-        <bpmn2:errorEventDefinition id="ErrorEventDefinition_2" errorRef="Error_1" />
+        <bpmn2:errorEventDefinition id="ErrorEventDefinition_2" errorRef="Error_1" camunda:errorMessageVariable="gUnknownError" />
       </bpmn2:startEvent>
       <bpmn2:sequenceFlow id="SequenceFlow_10" name="" sourceRef="StartEvent_1" targetRef="ScriptTask_1" />
       <bpmn2:endEvent id="EndEvent_1">
@@ -197,35 +197,35 @@ csi.prepareCreateServiceInstance(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_SubProcess_28" bpmnElement="unexpectedErrors_SubProcess" isExpanded="true">
-        <dc:Bounds x="300" y="880" width="394" height="188" />
+        <dc:Bounds x="187" y="926" width="394" height="188" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_71" bpmnElement="StartEvent_1">
-        <dc:Bounds x="333" y="957" width="36" height="36" />
+        <dc:Bounds x="220" y="1003" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="351" y="998" width="0" height="0" />
+          <dc:Bounds x="193" y="1044" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_270" bpmnElement="ScriptTask_1">
-        <dc:Bounds x="448" y="935" width="100" height="80" />
+        <dc:Bounds x="335" y="981" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_EndEvent_220" bpmnElement="EndEvent_1">
-        <dc:Bounds x="609" y="957" width="36" height="36" />
+        <dc:Bounds x="496" y="1003" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="627" y="998" width="0" height="0" />
+          <dc:Bounds x="469" y="1044" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="SequenceFlow_10" sourceElement="_BPMNShape_StartEvent_71" targetElement="_BPMNShape_ScriptTask_270">
-        <di:waypoint xsi:type="dc:Point" x="369" y="975" />
-        <di:waypoint xsi:type="dc:Point" x="448" y="975" />
+        <di:waypoint xsi:type="dc:Point" x="256" y="1021" />
+        <di:waypoint xsi:type="dc:Point" x="335" y="1021" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="411" y="975" width="0" height="0" />
+          <dc:Bounds x="253" y="1021" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_13" bpmnElement="SequenceFlow_14" sourceElement="_BPMNShape_ScriptTask_270" targetElement="_BPMNShape_EndEvent_220">
-        <di:waypoint xsi:type="dc:Point" x="548" y="975" />
-        <di:waypoint xsi:type="dc:Point" x="609" y="975" />
+        <di:waypoint xsi:type="dc:Point" x="435" y="1021" />
+        <di:waypoint xsi:type="dc:Point" x="496" y="1021" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="583" y="975" width="0" height="0" />
+          <dc:Bounds x="425" y="1021" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_CallActivity_72" bpmnElement="doCreateServiceInstance_CallActivity">

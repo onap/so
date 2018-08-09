@@ -381,15 +381,22 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			msoLogger.debug("Started processJavaException Method")
 			// if the BPMN flow java error handler sets "BPMN_javaExpMsg", append it to the WFE
 			String javaExpMsg = execution.getVariable("BPMN_javaExpMsg")
+            String errorMessage = execution.getVariable("gUnknownError")
 			String wfeExpMsg = "Catch a Java Lang Exception in " + processKey
 			if (javaExpMsg != null && !javaExpMsg.empty) {
 				wfeExpMsg = wfeExpMsg + ": " + javaExpMsg
 			}
+            if (errorMessage != null && !errorMessage.empty) {
+                msoLogger.error("Unknown Error: " + errorMessage);
+            }
+            msoLogger.error("Java Error: " + wfeExpMsg);
 			buildWorkflowException(execution, 2500, wfeExpMsg)
 
 		}catch(BpmnError b){
+            msoLogger.error(b);
 			throw b
 		}catch(Exception e){
+            msoLogger.error(e);
 			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
 			buildWorkflowException(execution, 2500, "Internal Error - During Process Java Exception")
 		}
