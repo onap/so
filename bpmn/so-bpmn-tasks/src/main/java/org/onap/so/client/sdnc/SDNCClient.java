@@ -21,6 +21,7 @@
 package org.onap.so.client.sdnc;
 
 import java.util.LinkedHashMap;
+
 import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.client.exception.BadResponseException;
@@ -29,6 +30,7 @@ import org.onap.so.client.sdnc.beans.SDNCProperties;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +60,7 @@ public class SDNCClient {
 			HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
 			STOClient.setHttpHeader(httpHeader);
 			msoLogger.info("Running SDNC CLIENT for TargetUrl: " + targetUrl);
-			LinkedHashMap<?, ?> output = STOClient.post(jsonRequest);
+			LinkedHashMap<?, ?> output = STOClient.post(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
 			msoLogger.info("Validating output...");
 			return sdnCommonTasks.validateSDNResponse(output);
 	}
@@ -84,7 +86,7 @@ public class SDNCClient {
 			HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
 			STOClient.setHttpHeader(httpHeader);
 			msoLogger.info("Running SDNC CLIENT...");
-			LinkedHashMap<?, ?> output = STOClient.get(jsonRequest);
+			LinkedHashMap<?, ?> output = STOClient.get(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
 			msoLogger.info("Validating output...");
 			return sdnCommonTasks.validateSDNGetResponse(output);
 	}
