@@ -32,6 +32,7 @@ import javax.ws.rs.core.Response.Status;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.RestProperties;
+import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUri;
@@ -96,6 +97,21 @@ public class AAIResourcesClient extends AAIClient {
 		AAIResourceUri uriAClone = uriA.clone();
 		RestClient aaiRC = this.createClient(uriAClone.relationshipAPI());
 		aaiRC.put(this.buildRelationship(uriB));
+		return;
+	}
+	
+	/**
+	 * Adds a relationship between two objects in A&AI 
+	 * with a given edge label
+	 * @param uriA
+	 * @param uriB
+	 * @param edge label
+	 * @return
+	 */
+	public void connect(AAIResourceUri uriA, AAIResourceUri uriB, AAIEdgeLabel label) {
+		AAIResourceUri uriAClone = uriA.clone();
+		RestClient aaiRC = this.createClient(uriAClone.relationshipAPI());
+		aaiRC.put(this.buildRelationship(uriB, label));
 		return;
 	}
 	
@@ -203,8 +219,18 @@ public class AAIResourcesClient extends AAIClient {
 	}
 	
 	private Relationship buildRelationship(AAIResourceUri uri) {
+		return buildRelationship(uri, Optional.empty());
+	}
+	
+	private Relationship buildRelationship(AAIResourceUri uri, AAIEdgeLabel label) {
+		return buildRelationship(uri, Optional.of(label));
+	}
+	private Relationship buildRelationship(AAIResourceUri uri, Optional<AAIEdgeLabel> label) {
 		final Relationship result = new Relationship();
 		result.setRelatedLink(uri.build().toString());
+		if (label.isPresent()) {
+			result.setRelationshipLabel(label.toString());
+		}
 		return result;
 	}
 	
