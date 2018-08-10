@@ -102,7 +102,7 @@ public class OrchestrationRequests {
 			requestDB = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
 
 		} catch (Exception e) {
-
+		    msoLogger.error(e);
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.AvailabilityError).build();
 			AlarmLoggerInfo alarmLoggerInfo = new AlarmLoggerInfo.Builder("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL, Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB)).build();
 
@@ -156,12 +156,10 @@ public class OrchestrationRequests {
 				throw new ValidationException("At least one filter query param must be specified");
 			}
 		}catch(ValidationException ex){
+		    msoLogger.error(ex);
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.DataError).build();
-
-
 			ValidateException validateException = new ValidateException.Builder(ex.getMessage(),
 					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).cause(ex).errorInfo(errorLoggerInfo).build();
-
 			throw validateException;
 
 		}
@@ -202,10 +200,8 @@ public class OrchestrationRequests {
 			ObjectMapper mapper = new ObjectMapper();
 			sir = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 		} catch(IOException e){
-
+		    msoLogger.error(e);
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
-
-
             ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
                     HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
 
@@ -215,6 +211,7 @@ public class OrchestrationRequests {
 		try{
 			msoRequest.parseOrchestration(sir);
 		} catch (Exception e) {
+		    msoLogger.error(e);
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
 			 ValidateException validateException = new ValidateException.Builder("Error parsing request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
 	                 .errorInfo(errorLoggerInfo).build();
@@ -301,7 +298,7 @@ public class OrchestrationRequests {
 				   requestDetails = mapper.readValue(requestBody, RequestDetails.class);
 			   }
 		   } catch (IOException e) {
-
+		       msoLogger.error(e);
 			   ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
 			   ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed : ",
 					   HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
