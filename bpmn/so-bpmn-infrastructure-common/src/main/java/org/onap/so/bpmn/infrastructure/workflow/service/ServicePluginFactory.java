@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.service;
 
+import org.json.JSONObject;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
@@ -45,6 +46,7 @@ import org.apache.http.util.EntityUtils;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.domain.ServiceDecomposition;
+import org.onap.so.bpmn.core.domain.Resource;
 import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
@@ -61,6 +63,8 @@ public class ServicePluginFactory {
 	public static final String OOF_Default_EndPoint = "http://192.168.1.223:8443/oof/sotncalc";
 
 	public static final String Third_SP_Default_EndPoint = "http://192.168.1.223:8443/sp/resourcemgr/querytps";
+	
+	public static final String Inventory_OSS_Default_EndPoint = "http://192.168.1.199:8443/oss/inventory";
 
 	private static final int DEFAULT_TIME_OUT = 60000;
 
@@ -77,7 +81,15 @@ public class ServicePluginFactory {
 		}
 		return instance;
 	}
+
+	private ServicePluginFactory() {
+
+	}
+
 	
+	private String getInventoryOSSEndPoint(){
+		return UrnPropertiesReader.getVariable("mso.service-plugin.inventory-oss-endpoint", Inventory_OSS_Default_EndPoint);
+	}
 	private String getThirdSPEndPoint(){
 		return UrnPropertiesReader.getVariable("mso.service-plugin.third-sp-endpoint", Third_SP_Default_EndPoint);
 	}
@@ -86,6 +98,60 @@ public class ServicePluginFactory {
 		return UrnPropertiesReader.getVariable("mso.service-plugin.oof-calc-endpoint", OOF_Default_EndPoint);
 	}
 	
+	public ServiceDecomposition doProcessSiteLocation(ServiceDecomposition serviceDecomposition, String uuiRequest) {		
+		ServiceDecomposition serviceDecompositionforLocal = serviceDecomposition;
+
+		if (isSiteLocationLocal(serviceDecomposition, uuiRequest)) {
+			return serviceDecomposition;
+		}
+
+		List<Resource> addResourceList = serviceDecomposition.getServiceResources();
+		for (Resource resource : addResourceList) {
+			String resourcemodelName = resource.getModelInfo().getModelName();
+			if (!StringUtils.containsIgnoreCase(resourcemodelName, "sp-partner")) {
+				serviceDecompositionforLocal.deleteResource(resource);
+				break;
+			}
+			if (!StringUtils.containsIgnoreCase(resourcemodelName, "sppartner")) {
+				serviceDecompositionforLocal.deleteResource(resource);
+				break;
+			}
+		}
+
+		return serviceDecompositionforLocal;
+	}
+
+	public boolean isSiteLocationLocal(ServiceDecomposition serviceDecomposition, String uuiRequest) {
+        boolean isSiteLocationLocal = true;
+
+        String serviceModelName = serviceDecomposition.getModelInfo().getModelName();
+        String serviceParameters = JsonUtils.getJsonValue(uuiRequest, "service.parameters");
+    	String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs");
+    	JSONObject inputParameters = new JSONObject(requestInputs);
+    	
+    	if(StringUtils.containsIgnoreCase(serviceModelName, "site") && inputParameters.has("location"))
+		{
+			Object location  = inputParameters.get("location");
+			JSONObject locationObj = new JSONObject(location);
+			String locationONAP = queryLocationFromInventoryOSS(locationObj);
+			if(StringUtils.containsIgnoreCase(locationONAP, "remote")) {
+				isSiteLocationLocal = false;
+			}
+		}
+
+		return isSiteLocationLocal;
+	}
+	
+	private String queryLocationFromInventoryOSS(JSONObject locationObj) {
+		String reqContent = getJsonString(locationObj);
+		String url = getInventoryOSSEndPoint();
+		String responseContent = sendRequest(url, "POST", reqContent);
+		String locationONAP = "";
+		if (null != responseContent) {
+			locationONAP = getJsonObject(responseContent, String.class);
+		}
+		return locationONAP;
+	}
 
 	public String preProcessService(ServiceDecomposition serviceDecomposition, String uuiRequest) {
 
