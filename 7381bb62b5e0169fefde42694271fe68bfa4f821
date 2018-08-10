@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_6c90dbec",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeleteE2EServiceInstance.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 741
+      },
+      "writtenOn": "2018-08-10T09:44:37Z",
+      "side": 1,
+      "message": "this block is same as line 334-338. when rt \u003d\u003d sp-partner.\nso i assume that you want to support rt with other type like sppartner then could combine this if else block into one.",
+      "range": {
+        "startLine": 339,
+        "startChar": 3,
+        "endLine": 343,
+        "endChar": 4
+      },
+      "revId": "7381bb62b5e0169fefde42694271fe68bfa4f821",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0cbda768",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeleteE2EServiceInstance.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 741
+      },
+      "writtenOn": "2018-08-10T09:44:37Z",
+      "side": 1,
+      "message": "not required to mention explicitly",
+      "range": {
+        "startLine": 421,
+        "startChar": 66,
+        "endLine": 421,
+        "endChar": 74
+      },
+      "revId": "7381bb62b5e0169fefde42694271fe68bfa4f821",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ecbb8b70",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/service/ServicePluginFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 741
+      },
+      "writtenOn": "2018-08-10T09:44:37Z",
+      "side": 1,
+      "message": "pls use camelcase format, (very minor to consider)",
+      "range": {
+        "startLine": 67,
+        "startChar": 28,
+        "endLine": 67,
+        "endChar": 58
+      },
+      "revId": "7381bb62b5e0169fefde42694271fe68bfa4f821",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ec72abe4",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/service/ServicePluginFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 741
+      },
+      "writtenOn": "2018-08-10T09:44:37Z",
+      "side": 1,
+      "message": "i feel this could be an static method . and load during the class is loaded.",
+      "range": {
+        "startLine": 90,
+        "startChar": 16,
+        "endLine": 90,
+        "endChar": 17
+      },
+      "revId": "7381bb62b5e0169fefde42694271fe68bfa4f821",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_8c7777d4",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/service/ServicePluginFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 741
+      },
+      "writtenOn": "2018-08-10T09:44:37Z",
+      "side": 1,
+      "message": "can you please combine this into one logic and if this is case insensitive, pls consider the same at the other location 343 at E2EDeleteService",
+      "range": {
+        "startLine": 111,
+        "startChar": 3,
+        "endLine": 118,
+        "endChar": 4
+      },
+      "revId": "7381bb62b5e0169fefde42694271fe68bfa4f821",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ac74b3cf",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/service/ServicePluginFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 741
+      },
+      "writtenOn": "2018-08-10T09:44:37Z",
+      "side": 1,
+      "message": "is there no authentication involved between SO and InventoryOSS ?",
+      "range": {
+        "startLine": 148,
+        "startChar": 27,
+        "endLine": 148,
+        "endChar": 64
+      },
+      "revId": "7381bb62b5e0169fefde42694271fe68bfa4f821",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
