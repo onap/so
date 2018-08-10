@@ -96,7 +96,7 @@ public class ResponseHandlerTest{
     @Test
     public void tesMappingErrorResponse () throws ApiException {
         thrown.expect(ValidateException.class);
-        thrown.expectMessage(startsWith("JSON Object Mapping Request"));
+        thrown.expectMessage(startsWith("Cannot parse Camunda Response"));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_BAD_REQUEST)));
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
     	

@@ -845,8 +845,20 @@ public class ServiceInstances {
             throw clientException;
 		}
 
-		ResponseHandler respHandler = new ResponseHandler (response, requestClient.getType ());
-		int bpelStatus = respHandler.getStatus ();
+		ResponseHandler respHandler = null;
+        int bpelStatus = 500;
+        try {
+            respHandler = new ResponseHandler (response, requestClient.getType ());
+            bpelStatus = respHandler.getStatus ();
+        } catch (ApiException e) {
+            msoLogger.error(e);
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ValidateException validateException = new ValidateException.Builder("Exception caught mapping Camunda JSON response to object", HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+                        .errorInfo(errorLoggerInfo).build();
+            currentActiveReq.setRequestStatus(Status.FAILED.name());
+            currentActiveReq.setStatusMessage(validateException.getMessage());
+           throw validateException;
+        }
 
 		// BPEL accepted the request, the request is in progress
 		if (bpelStatus == HttpStatus.SC_ACCEPTED) {
@@ -858,7 +870,7 @@ public class ServiceInstances {
 					ObjectMapper mapper = new ObjectMapper();
 					jsonResponse = mapper.readValue(camundaResp.getResponse(), ServiceInstancesResponse.class);
 				} catch (IOException e) {
-					e.printStackTrace();
+					msoLogger.error(e);
 					ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 					ValidateException validateException = new ValidateException.Builder("Exception caught mapping Camunda JSON response to object", HttpStatus.SC_NOT_ACCEPTABLE, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
 			                    .errorInfo(errorLoggerInfo).build();
