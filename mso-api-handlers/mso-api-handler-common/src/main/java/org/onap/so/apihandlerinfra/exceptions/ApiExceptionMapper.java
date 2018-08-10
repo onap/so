@@ -63,7 +63,7 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
             errorText = errorText.substring(0, 1999);
         }
 
-        writeErrorLog(errorText, errorLoggerInfo, alarmLoggerInfo);
+        writeErrorLog(exception, errorText, errorLoggerInfo, alarmLoggerInfo);
 
         return buildServiceErrorResponse(errorText,messageId,variables);
 
@@ -96,8 +96,9 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
         return requestErrorStr;
     }
 
-    protected void writeErrorLog(String errorText, ErrorLoggerInfo errorLogInfo, AlarmLoggerInfo alarmLogInfo) {
-
+    protected void writeErrorLog(Exception e, String errorText, ErrorLoggerInfo errorLogInfo, AlarmLoggerInfo alarmLogInfo) {
+        if( e!= null)
+            logger.error(e);
         if(errorLogInfo != null)
             logger.error(errorLogInfo.getLoggerMessageType().toString(), errorLogInfo.getErrorSource(), errorLogInfo.getTargetEntity(), errorLogInfo.getTargetServiceName(), errorLogInfo.getErrorCode(), errorText);
         if(alarmLogInfo != null){
