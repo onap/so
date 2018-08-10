@@ -20,11 +20,6 @@
 
 package org.onap.so.client.sdnc;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.Collections;
-
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +27,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -69,11 +63,6 @@ public class BaseClient<I,O> {
 	public O run(I data, HttpMethod method, Object... uriVariables) throws RestClientException {
 		HttpEntity<I> requestEntity = new HttpEntity<I>(data, getHttpHeader());
 		RestTemplate restTemplate = new RestTemplate();
-		ObjectMapper mapper = new ObjectMapper();
-		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setObjectMapper(mapper);
-        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-        restTemplate.getMessageConverters().add(0, converter);
 		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 		ParameterizedTypeReference<O> output = new ParameterizedTypeReference<O>() {};
 		ResponseEntity<O> responseEntity = restTemplate.exchange(getTargetUrl(), method, requestEntity, output,

@@ -65,6 +65,7 @@ import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
+import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
@@ -1452,7 +1453,9 @@ public class BBInputSetup implements JavaDelegate {
 			aaiCollection = aaiCollectionOp.get();
 
 			Collection collection = this.mapperLayer.mapAAICollectionIntoCollection(aaiCollection);
-			
+			NetworkCollectionResourceCustomization collectionResourceCust = 
+					bbInputSetupUtils.getCatalogNetworkCollectionResourceCustByID(aaiCollection.getCollectionCustomizationId());
+			collection.setModelInfoCollection(mapperLayer.mapCatalogCollectionToCollection(collectionResourceCust, collectionResourceCust.getCollectionResource()));
 			Optional<Relationships> relationshipsOp = collectionWrapper.getRelationships();
 			Relationships relationships = null;
 			if (relationshipsOp.isPresent()) {

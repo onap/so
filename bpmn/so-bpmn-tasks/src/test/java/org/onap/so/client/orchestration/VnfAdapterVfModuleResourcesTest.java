@@ -33,13 +33,14 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
@@ -59,6 +60,7 @@ public class VnfAdapterVfModuleResourcesTest  extends TestDataSetup{
 	private ModelInfoServiceInstance modelInfoServiceInstance;
 	private GenericVnf genericVnf;
 	private VfModule vfModule;
+	private VolumeGroup volumeGroup;
 	private ModelInfoVfModule modelInfoVfModule;
 	private CloudRegion cloudRegion;
 	private OrchestrationContext orchestrationContext;
@@ -95,13 +97,30 @@ public class VnfAdapterVfModuleResourcesTest  extends TestDataSetup{
 	@Test
 	public void test_createVfModule() throws Exception {
 		doReturn(createVfModuleRequest).when(MOCK_vnfAdapterVfModuleObjectMapper).createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
-				genericVnf, vfModule, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+				genericVnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 		
 		CreateVfModuleRequest actualCreateVfModuleRequest = vnfAdapterVfModuleResources.createVfModuleRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
-				genericVnf, vfModule, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+				genericVnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
 		verify(MOCK_vnfAdapterVfModuleObjectMapper, times(1)).createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
-				genericVnf, vfModule, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+				genericVnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+		
+		assertNotNull(createVfModuleRequest);
+		assertNotNull(actualCreateVfModuleRequest);
+		assertEquals(createVfModuleRequest, actualCreateVfModuleRequest);
+	}
+	
+	@Test
+	public void test_createVfModuleWithVolumeGroup() throws Exception {
+		volumeGroup = buildVolumeGroup();
+		doReturn(createVfModuleRequest).when(MOCK_vnfAdapterVfModuleObjectMapper).createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
+				genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+		
+		CreateVfModuleRequest actualCreateVfModuleRequest = vnfAdapterVfModuleResources.createVfModuleRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
+				genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+
+		verify(MOCK_vnfAdapterVfModuleObjectMapper, times(1)).createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
+				genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 		
 		assertNotNull(createVfModuleRequest);
 		assertNotNull(actualCreateVfModuleRequest);

@@ -38,6 +38,8 @@ public class BuildingBlock implements Serializable{
 	private String key;
 	@JsonProperty("is-virtual-link")
 	private boolean isVirtualLink;
+	@JsonProperty("virtual-link-key")
+	private String virtualLinkKey;
 
 	public String getBpmnFlowName() {
 		return bpmnFlowName;
@@ -62,5 +64,11 @@ public class BuildingBlock implements Serializable{
 	}
 	public void setIsVirtualLink(boolean isVirtualLink) {
 		this.isVirtualLink = isVirtualLink;
+	}
+	public String getVirtualLinkKey() {
+		return virtualLinkKey;
+	}
+	public void setVirtualLinkKey(String virtualLinkKey) {
+		this.virtualLinkKey = virtualLinkKey;
 	}
 }

@@ -350,11 +350,19 @@ public class AAIObjectMapperTest{
 		ModelInfoCollection modelInfoCollection = new ModelInfoCollection();
 		modelInfoCollection.setCollectionFunction("networkCollectionFunction");
 		modelInfoCollection.setCollectionRole("networkCollectionRole");
+		modelInfoCollection.setCollectionType("networkCollectionType");
+		modelInfoCollection.setModelCustomizationUUID("modelCustomizationUUID");
+		modelInfoCollection.setModelVersionId("modelVersionId");
+		modelInfoCollection.setModelInvariantUUID("modelInvariantUUID");
 		networkCollection.setModelInfoCollection(modelInfoCollection);
 		networkCollection.setName("networkCollectionName");
 
 		org.onap.aai.domain.yang.Collection expectedCollection = new org.onap.aai.domain.yang.Collection();
 		expectedCollection.setCollectionId("networkCollectionId");
+		expectedCollection.setCollectionType("networkCollectionType");
+		expectedCollection.setCollectionCustomizationId("modelCustomizationUUID");
+		expectedCollection.setModelVersionId("modelVersionId");
+		expectedCollection.setModelInvariantId("modelInvariantUUID");
 		expectedCollection.setCollectionFunction("networkCollectionFunction");
 		expectedCollection.setCollectionRole("networkCollectionRole");
 		expectedCollection.setCollectionName("networkCollectionName");

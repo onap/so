@@ -27,7 +27,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ModelInfoCollection  implements Serializable {
 
 	private static final long serialVersionUID = 8380534468706675508L;
-	
+
+	@JsonProperty("model-customization-uuid")
+	private String modelCustomizationUUID;
 	@JsonProperty("model-version-id")
 	private String modelVersionId;
 	@JsonProperty("model-invariant-uuid")
@@ -43,6 +45,12 @@ public class ModelInfoCollection  implements Serializable {
 	@JsonProperty("quantity")
 	private int quantity;
 	
+	public String getModelCustomizationUUID() {
+		return modelCustomizationUUID;
+	}
+	public void setModelCustomizationUUID(String modelCustomizationUUID) {
+		this.modelCustomizationUUID = modelCustomizationUUID;
+	}
 	public String getModelVersionId() {
 		return modelVersionId;
 	}

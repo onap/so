@@ -49,6 +49,7 @@ import org.onap.so.client.db.request.RequestsDbClient;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -125,6 +126,11 @@ public class BBInputSetupUtils {
 
 	public CollectionNetworkResourceCustomization getCatalogCollectionNetworkResourceCustByID(String key) {
 		return catalogDbClient.getCollectionNetworkResourceCustomizationByID(key);
+	}
+
+	public NetworkCollectionResourceCustomization getCatalogNetworkCollectionResourceCustByID(
+			String collectionCustomizationId) {
+		return catalogDbClient.getNetworkCollectionResourceCustomizationByID(collectionCustomizationId);
 	}
 
 	public List<VnfcInstanceGroupCustomization> getVnfcInstanceGroups(String modelCustomizationUUID) {
@@ -389,8 +395,8 @@ public class BBInputSetupUtils {
 		}
 	}
 
-	public Optional<VolumeGroup> getRelatedVolumeGroupByNameFromVfModule(String vfModuleId, String volumeGroupName) throws Exception {
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vfModuleId);
+	public Optional<VolumeGroup> getRelatedVolumeGroupByNameFromVfModule(String vnfId, String vfModuleId, String volumeGroupName) throws Exception {
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
 		uri.relatedTo(AAIObjectPlurals.VOLUME_GROUP).queryParam("volume-group-name", volumeGroupName);
 		Optional<VolumeGroups> volumeGroups = injectionHelper.getAaiClient().get(VolumeGroups.class, uri);
 		VolumeGroup volumeGroup = null;

@@ -1,0 +1,44 @@
+{
+  "vnf-resource-assignments": {
+    "availability-zones": {
+      "availability-zone": "zone0"      
+    },
+    "vnf-networks": {
+      "vnf-network": [
+        {
+          "network-role": "vnfNetworkRole0",
+          "neutron-id": "neutronId0",
+          "network-name": "netName0",
+          "contrail-network-fqdn": "netFqdnValue0",
+          "subnets-data": {
+            "subnet-data": [
+              {
+                "ip-version": "ipv4",
+                "subnet-id": "subnetId0",
+                "dhcp-enabled": "Y"
+              },
+              {
+                "ip-version": "ipv6",
+                "subnet-id": "subnetId1",
+                "dhcp-enabled": "Y"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "vnf-parameters-data": {
+    "param": [
+      {
+        "name": "key1",
+        "value": "value1"
+      }
+    ]
+  },
+  "aic-clli": "",
+  "tenant": "",
+  "vnf-topology-identifier-structure": {},
+  "onap-model-information": {},
+  "aic-cloud-region": ""
+}

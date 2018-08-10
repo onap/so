@@ -27,15 +27,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
 "vnf_name",
-"existing-software-version",
-"new-software-version"
+"existing_software_version",
+"new_software_version"
 })
 public class ConfigurationParametersUpgrade {
 @JsonProperty("vnf_name")
 private String vnfName;
-@JsonProperty("existing-software-version")
+@JsonProperty("existing_software_version")
 private String existingSoftwareVersion;
-@JsonProperty("new-software-version")
+@JsonProperty("new_software_version")
 private String newSoftwareVersion;
 
 @JsonProperty("vnf_name")
@@ -48,22 +48,22 @@ public void setVnfName(String vnfName) {
 this.vnfName = vnfName;
 }
 
-@JsonProperty("existing-software-version")
+@JsonProperty("existing_software_version")
 public String getExistingSoftwareVersion() {
 return existingSoftwareVersion;
 }
 
-@JsonProperty("existing-software-version")
+@JsonProperty("existing_software_version")
 public void setExistingSoftwareVersion(String existingSoftwareVersion) {
 this.existingSoftwareVersion = existingSoftwareVersion;
 }
 
-@JsonProperty("new-software-version")
+@JsonProperty("new_software_version")
 public String getNewSoftwareVersion() {
 return newSoftwareVersion;
 }
 
-@JsonProperty("new-software-version")
+@JsonProperty("new_software_version")
 public void setNewSoftwareVersion(String newSoftwareVersion) {
 this.newSoftwareVersion = newSoftwareVersion;
 }

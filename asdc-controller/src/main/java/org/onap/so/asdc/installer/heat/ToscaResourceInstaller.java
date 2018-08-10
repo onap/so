@@ -440,30 +440,10 @@ public class ToscaResourceInstaller {
 					VfModuleCustomization vfModuleCustomization = createVFModuleResource(matchingObject.get(), nodeTemplate, toscaResourceStruct, vfResourceStructure,vfMetadata, vnfResource);
 					vfModuleCustomization.getVfModule().setVnfResources(vnfResource.getVnfResources());
 				}else
-					throw (new Exception("Cannot find matching VFModule Customization"));
+					throw new Exception("Cannot find matching VFModule Customization for VF Module Metadata: " + vfMetadata.getVfModuleModelCustomizationUUID());
 				
 			}
 			service.getVnfCustomizations().add(vnfResource);
-		}
-	}
-
-	protected void processFlexware(ToscaResourceStructure toscaResourceStruct, Service service, NodeTemplate nodeTemplate,
-			String serviceType) {
-		if (serviceType != null && serviceType.equalsIgnoreCase("Flexware")) {
-
-			createVnfResource(nodeTemplate, toscaResourceStruct, service);
-			String modelName = toscaResourceStruct.getVnfResourceCustomization().getVnfResources().getModelName();
-			
-			String modelVersion = BigDecimalVersion.castAndCheckNotificationVersionToString(
-					toscaResourceStruct.getCatalogVnfResourceCustomization().getVnfResources().getModelVersion());
-			// check for duplicate record already in the database
-			VnfResource vnfResource = vnfRepo.findByModelNameAndModelVersion(modelName, modelVersion);
-
-			if (vnfResource != null) {
-				toscaResourceStruct.setVnfAlreadyInstalled(true);
-			}
-
-			vnfCustomizationRepo.saveAndFlush(toscaResourceStruct.getCatalogVnfResourceCustomization());					
 		}
 	}
 
@@ -1263,12 +1243,20 @@ public class ToscaResourceInstaller {
 			
 			// Set all Child Templates related to HEAT_VOLUME
 			if(!volumeHeatChildTemplates.isEmpty()){
-				vfModule.getVolumeHeatTemplate().setChildTemplates(volumeHeatChildTemplates);
+				if(vfModule.getVolumeHeatTemplate() != null){
+					vfModule.getVolumeHeatTemplate().setChildTemplates(volumeHeatChildTemplates);
+				}else{
+					logger.debug("VolumeHeatTemplate not set in setHeatInformationForVfModule()");
+				}
 			}
 			
 			// Set all Child Templates related to HEAT
 			if(!heatChildTemplates.isEmpty()){
-				vfModule.getVolumeHeatTemplate().setChildTemplates(heatChildTemplates);
+				if(vfModule.getModuleHeatTemplate() != null){
+					vfModule.getModuleHeatTemplate().setChildTemplates(heatChildTemplates);
+				}else{
+					logger.debug("ModuleHeatTemplate not set in setHeatInformationForVfModule()");
+				}
 			}
 		}
 	}

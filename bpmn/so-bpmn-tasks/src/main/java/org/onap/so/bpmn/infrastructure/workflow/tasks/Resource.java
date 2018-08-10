@@ -26,6 +26,7 @@ public class Resource {
 	private WorkflowType resourceType;
 	private boolean generated;
 	private boolean baseVfModule;
+	private String virtualLinkKey;
 	
 	public Resource(WorkflowType resourceType, String resourceId, boolean generated){
 		this.resourceId = resourceId;
@@ -56,5 +57,11 @@ public class Resource {
 	}
 	public void setBaseVfModule(boolean baseVfModule) {
 		this.baseVfModule = baseVfModule;
+	}
+	public String getVirtualLinkKey() {
+		return virtualLinkKey;
+	}
+	public void setVirtualLinkKey(String virtualLinkKey) {
+		this.virtualLinkKey = virtualLinkKey;
 	}
 }

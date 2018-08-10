@@ -1,4 +1,6 @@
 {
+	"model-customization-uuid":"modelCustomizationUUID",
+	"model-version-id":"modelVersionId",
 	"model-invariant-uuid":"modelInvariantUUID",
 	"collection-function":"function",
 	"collection-role":"role",
