@@ -164,7 +164,8 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 			//uuiRequest
 			String incomingRequest = resourceInputObj.getRequestsInputs()
 			String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
-			JSONObject inputParameters = new JSONObject(customizeResourceParam(serviceParameters))
+			String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
+			JSONObject inputParameters = new JSONObject(customizeResourceParam(requestInputs))
 			execution.setVariable(Prefix + "ServiceParameters", inputParameters)
 			
 			// CallSource is added only when ONAP SO calling 3rdONAP(External API) SO(Remote call)

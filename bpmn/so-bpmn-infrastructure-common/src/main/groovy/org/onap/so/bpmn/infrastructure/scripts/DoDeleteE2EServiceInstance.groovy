@@ -336,6 +336,11 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 				String sppartnerName = "sp-partner" + eValue
 				jObj.put("resourceType", sppartnerName)
 			}
+			else if(eKey.equals(rt + ".id")){				
+				jObj.put("resourceInstanceId", eValue)
+				String resourceName = rt + eValue;
+				jObj.put("resourceType", resourceName)
+			}
 		}
 
 		def rl_props = utils.getIdenticalChildren(node, "related-to-property")
@@ -412,6 +417,8 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             if (serviceRelationShip != null) {
                 relationShipList = jsonSlurper.parseText(serviceRelationShip)
             }
+			
+            List<Resource> deleteRealResourceList = new ArrayList<Resource>();
 
             //Set the real resource instance id to the decomosed resource list
             for (Resource resource: deleteResourceList) {
@@ -421,13 +428,17 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                 if (relationShipList != null) {
                     relationShipList.each {
                         if (StringUtils.containsIgnoreCase(it.resourceType, resource.getModelInfo().getModelName())) {
-                            resource.setResourceId(it.resourceInstanceId);
+                            resource.setResourceId(it.resourceInstanceId)
+                            deleteRealResourceList.add(resource)
                         }
                     }
                 }
             }
-            execution.setVariable("deleteResourceList", deleteResourceList)
-            utils.log("DEBUG", "delete resource list : " + deleteResourceList, isDebugEnabled)
+			
+            // only delete real existing resources
+            execution.setVariable("deleteResourceList", deleteRealResourceList)
+			
+            utils.log("DEBUG", "delete resource list : " + deleteRealResourceList, isDebugEnabled)
         } catch (Exception ex) {
             String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. processDecomposition() - " + ex.getMessage()
             utils.log("DEBUG", exceptionMessage, isDebugEnabled)
