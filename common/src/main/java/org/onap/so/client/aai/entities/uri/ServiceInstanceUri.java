@@ -22,19 +22,19 @@ package org.onap.so.client.aai.entities.uri;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.AAIQueryClient;
-import org.onap.so.client.graphinventory.Format;
-import org.onap.so.client.aai.entities.CustomQuery;
+import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.Results;
-import org.onap.so.client.graphinventory.entities.uri.SimpleUri;
+import org.onap.so.client.graphinventory.Format;
+import org.onap.so.client.graphinventory.entities.uri.HttpAwareUri;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPayloadException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriNotFoundException;
@@ -42,7 +42,7 @@ import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriNotFoundExc
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ServiceInstanceUri extends AAISimpleUri {
+public class ServiceInstanceUri extends AAISimpleUri implements HttpAwareUri {
 
 	private Optional<String> cachedValue = Optional.empty();
 
@@ -55,11 +55,10 @@ public class ServiceInstanceUri extends AAISimpleUri {
 	}
 	protected String getSerivceInstance(Object id) throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
 		if (!this.getCachedValue().isPresent()) {
-			AAIResourceUri serviceInstanceUri = AAIUriFactory.createNodesUri(AAIObjectType.SERVICE_INSTANCE, id);
-			CustomQuery query = new CustomQuery(Collections.singletonList(serviceInstanceUri));
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createNodesUri(AAIObjectType.SERVICE_INSTANCE, id).format(Format.PATHED);
 			String resultJson;
 			try {
-				resultJson = this.getQueryClient().query(Format.PATHED, query);
+				resultJson = this.getResourcesClient().get(serviceInstanceUri, NotFoundException.class).getJson();
 			} catch (BadRequestException e) {
 				throw new GraphInventoryUriNotFoundException("Service instance " + id + " not found at: " + serviceInstanceUri.build());
 				
@@ -99,7 +98,7 @@ public class ServiceInstanceUri extends AAISimpleUri {
 	protected Optional<String> getCachedValue() {
 		return this.cachedValue;
 	}
-
+	
 	@Override
 	public URI build() {
 		try {
@@ -119,8 +118,11 @@ public class ServiceInstanceUri extends AAISimpleUri {
 		return new ServiceInstanceUri(this.internalURI.clone(), this.getCachedValue(), values);
 	}
 	
-	protected AAIQueryClient getQueryClient() {
-		AAIResourceUri uri = AAIUriFactory.createNodesUri(AAIObjectType.ALLOTTED_RESOURCE, "").clone();
-		return new AAIQueryClient();
+	public AAIResourcesClient getResourcesClient() {
+		return new AAIResourcesClient();
+	}
+	@Override
+	public URI buildNoNetwork() {
+		return super.build(new String[]{"NONE", "NONE", (String)this.values[0]});
 	}
 }

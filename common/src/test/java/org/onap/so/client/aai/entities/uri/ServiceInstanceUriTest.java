@@ -21,10 +21,9 @@
 package org.onap.so.client.aai.entities.uri;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -43,14 +42,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.UriBuilder;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.onap.so.client.aai.AAIQueryClient;
-import org.onap.so.client.graphinventory.Format;
-import org.onap.so.client.aai.entities.CustomQuery;
+import org.mockito.Matchers;
+import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPayloadException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriNotFoundException;
@@ -155,9 +156,11 @@ public class ServiceInstanceUriTest {
 		 
 		ServiceInstanceUri instance = new ServiceInstanceUri("key3");
 		ServiceInstanceUri spy = spy(instance);
-		AAIQueryClient mockQueryClient = mock(AAIQueryClient.class);
-		when(mockQueryClient.query(any(Format.class), any(CustomQuery.class))).thenReturn(content);
-		when(spy.getQueryClient()).thenReturn(mockQueryClient);
+		AAIResourcesClient mockResourcesClient = mock(AAIResourcesClient.class);
+		AAIResultWrapper wrapper = mock(AAIResultWrapper.class);
+		when(mockResourcesClient.get(Matchers.<AAIResourceUri>any(AAIResourceUri.class), Matchers.<Class<NotFoundException>>any())).thenReturn(wrapper);
+		when(wrapper.getJson()).thenReturn(content);
+		when(spy.getResourcesClient()).thenReturn(mockResourcesClient);
 		exception.expect(GraphInventoryUriComputationException.class);
 		spy.build();
 		
@@ -176,17 +179,24 @@ public class ServiceInstanceUriTest {
 	public void noVertexFound() throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
 		ServiceInstanceUri instance = new ServiceInstanceUri("key3");
 		ServiceInstanceUri spy = spy(instance);
-		AAIQueryClient client = mock(AAIQueryClient.class);
-		when(client.query(any(Format.class), any(CustomQuery.class))).thenReturn("{\"results\":[]}");
-		doReturn(client).when(spy).getQueryClient();
-		stubFor(put(urlMatching("/aai/v[0-9]+/query.*")) 
-				.withRequestBody(containing("key3")) 
+		AAIResourcesClient client = createClient();
+		doReturn(client).when(spy).getResourcesClient();
+		/*AAIResultWrapper wrapper = mock(AAIResultWrapper.class);
+		when(client.get(Matchers.<AAIResourceUri>any(AAIResourceUri.class), Matchers.<Class<NotFoundException>>any())).thenReturn(wrapper);
+		when(wrapper.getJson()).thenReturn("{\"results\":[]}");
+		doReturn(client).when(spy).getResourcesClient();*/
+		stubFor(get(urlPathMatching("/aai/v[0-9]+/nodes/service-instances/service-instance/key3")) 
 				.willReturn(aResponse() 
-					.withStatus(400) 
+					.withStatus(404) 
 					.withHeader("Content-Type", "application/json") 
 					.withBodyFile("")));
-		exception.expect(GraphInventoryUriComputationException.class);
-		exception.expectMessage(containsString("NotFoundException"));
+		exception.expect(NotFoundException.class);
 		spy.build();	
+	}
+	
+	private AAIResourcesClient createClient() {
+		AAIResourcesClient client = spy(new AAIResourcesClient());
+		doReturn(new DefaultAAIPropertiesImpl()).when(client).getRestProperties();
+		return client;
 	}
 }

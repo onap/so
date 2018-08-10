@@ -81,9 +81,13 @@ public class AAIResourcesClient extends AAIClient {
 	 */
 	public boolean exists(AAIResourceUri uri) {
 		AAIUri forceMinimal = this.addParams(Optional.of(Depth.ZERO), true, uri);
-		RestClient aaiRC = this.createClient(forceMinimal);
-		
-		return aaiRC.get().getStatus() == Status.OK.getStatusCode();
+		try {
+			RestClient aaiRC = this.createClient(forceMinimal);
+			
+			return aaiRC.get().getStatus() == Status.OK.getStatusCode();
+		} catch (NotFoundException e) {
+			return false;
+		}
 	}
 	
 	/**
@@ -148,7 +152,15 @@ public class AAIResourcesClient extends AAIClient {
 	 * @return
 	 */
 	public <T> Optional<T> get(Class<T> clazz, AAIResourceUri uri) {
-		return this.createClient(uri).get(clazz);
+		try {
+			return this.createClient(uri).get(clazz);
+		} catch (NotFoundException e) {
+			if (this.getRestProperties().mapNotFoundToEmpty()) {
+				return Optional.empty();
+			} else {
+				throw e;
+			}
+		}
 	}
 	
 	/**
@@ -157,7 +169,15 @@ public class AAIResourcesClient extends AAIClient {
 	 * @return
 	 */
 	public Response getFullResponse(AAIResourceUri uri) {
-		return this.createClient(uri).get();
+		try {
+			return this.createClient(uri).get();
+		} catch (NotFoundException e) {
+			if (this.getRestProperties().mapNotFoundToEmpty()) {
+				return e.getResponse();
+			} else {
+				throw e;
+			}
+		}
 	}
 	
 	/**
@@ -167,7 +187,15 @@ public class AAIResourcesClient extends AAIClient {
 	 * @return
 	 */
 	public <T> Optional<T> get(GenericType<T> resultClass, AAIResourceUri uri) {
-		return this.createClient(uri).get(resultClass);
+		try {
+			return this.createClient(uri).get(resultClass);
+		} catch (NotFoundException e) {
+			if (this.getRestProperties().mapNotFoundToEmpty()) {
+				return Optional.empty();
+			} else {
+				throw e;
+			}
+		}
 	}
 	
 	/**
@@ -177,7 +205,16 @@ public class AAIResourcesClient extends AAIClient {
 	 * @return
 	 */
 	public AAIResultWrapper get(AAIResourceUri uri) {
-		String json = this.createClient(uri).get(String.class).orElse(null);
+		String json;
+		try {
+			json = this.createClient(uri).get(String.class).orElse(null);
+		} catch (NotFoundException e) {
+			if (this.getRestProperties().mapNotFoundToEmpty()) {
+				json = null;
+			} else {
+				throw e;
+			}
+		}
 		return new AAIResultWrapper(json);
 	}
 	
@@ -189,17 +226,27 @@ public class AAIResourcesClient extends AAIClient {
 	 * @return
 	 */
 	public AAIResultWrapper get(AAIResourceUri uri, Class<? extends RuntimeException> c) {
-		
+		String json;
+		try {
+			json = this.createClient(uri).get(String.class)
+					.orElseThrow(() -> createException(c, uri.build() + " not found in A&AI"));
+		} catch (NotFoundException e) {
+			throw createException(c, "could not construct uri for use with A&AI");
+		}
+
+		return new AAIResultWrapper(json);
+	}
+	
+	private RuntimeException createException(Class<? extends RuntimeException> c, String message) {
 		RuntimeException e;
 		try {
-			e = c.getConstructor(String.class).newInstance(uri.build() + " not found in A&AI");
+			e = c.getConstructor(String.class).newInstance(message);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e1) {
 			throw new IllegalArgumentException("could not create instance for " + c.getName());
 		}
-		String json = this.createClient(uri).get(String.class)
-				.orElseThrow(() -> e);
-		return new AAIResultWrapper(json);
+		
+		return e;
 	}
 	
 	private Relationship buildRelationship(AAIResourceUri uri) {
@@ -248,7 +295,7 @@ public class AAIResourcesClient extends AAIClient {
 		return clone;
 	}
 	@Override
-	protected <T extends RestProperties> T getRestProperties() {
+	public <T extends RestProperties> T getRestProperties() {
 		return super.getRestProperties();
 	}
 }

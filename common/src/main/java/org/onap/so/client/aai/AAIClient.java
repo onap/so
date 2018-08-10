@@ -22,11 +22,13 @@ package org.onap.so.client.aai;
 
 import java.net.URI;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.client.RestClient;
 import org.onap.so.client.graphinventory.GraphInventoryClient;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
+import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +51,12 @@ public abstract class AAIClient extends GraphInventoryClient {
 	}
 	@Override
 	protected RestClient createClient(GraphInventoryUri uri) {
-		return new AAIRestClient(getRestProperties(), constructPath(uri));
+		try {
+			return new AAIRestClient(getRestProperties(), constructPath(uri));
+		} catch (GraphInventoryUriComputationException | NotFoundException e) {
+			logger.debug("failed to construct A&AI uri", e);
+			throw e;
+		}
 	}
 	
 	protected AAIVersion getVersion() {

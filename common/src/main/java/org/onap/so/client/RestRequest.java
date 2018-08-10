@@ -72,16 +72,12 @@ public class RestRequest implements Callable<Response> {
 			try {
 				mapper.get().map(response);
 			} catch (NotFoundException e) {
-				if (this.client.props.mapNotFoundToEmpty()) {
+				if (this.client.props.mapNotFoundToEmpty() && "GET".equals(method)) {
 					msoLogger.error(e);
 					return response;
 				} else {
 					throw e;
 				}
-			}
-		} else {
-			if (response.getStatus() == Status.NOT_FOUND.getStatusCode() && this.client.props.mapNotFoundToEmpty()) {
-				return response;
 			}
 		}
 
