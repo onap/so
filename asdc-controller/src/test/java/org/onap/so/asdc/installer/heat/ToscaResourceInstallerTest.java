@@ -102,8 +102,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
 	private AllottedResourceCustomizationRepository allottedCustomizationRepo;
 	@Autowired
 	private ServiceRepository serviceRepo;
-	@Autowired
-	private ExternalServiceToInternalServiceRepository externalServiceToInternalServiceRepository;
 	@Mock
 	private SdcCsarHelperImpl sdcCsarHelper;
 	@Mock
@@ -120,10 +118,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
 	private NotificationDataImpl notificationData;
 	private JsonStatusData statusData;
 	private static final String MSO = "SO";
-
-	private AllottedResource allottedResource;
-	private AllottedResourceCustomization allottedResourceCustomization;
-	private Service catalogService;
 
 	@Before
 	public void before() {
@@ -380,7 +374,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
 				.ignoring("createTime")
 				.ignoring("modifyTime"));
 	}
-
 	
 	@Test
 	public void installTheResourceExceptionTest() throws Exception {
@@ -471,133 +464,5 @@ public class ToscaResourceInstallerTest extends BaseTest {
 			}
 		}
 		return actualWatchdogComponentDistributionStatus;
-	}
-
-	private void populatevfResourceStructure() throws Exception {
-		vfResourceStructure = spy(new VfResourceStructure(notificationData, resourceInstance));
-
-		HashMap<String, VfModuleArtifact> vfModuleArtifacts = mock(HashMap.class);
-		CapabilityAssignments capabilityAssignments = mock(CapabilityAssignments.class);
-		CapabilityAssignment capabilityAssignment = mock(CapabilityAssignment.class);
-
-		Iterator artifactIterator = mock(Iterator.class);
-		Iterator nodeTemplateIterator = mock(Iterator.class);
-		IDistributionClientDownloadResult clientResult = mock(IDistributionClientDownloadResult.class);
-		doReturn(IOUtils.toByteArray(
-				new FileInputStream(
-						new File(
-								getClass().getClassLoader().getResource("resource-examples/simpleTest.yaml").getFile())
-				))).when(clientResult).getArtifactPayload();
-		VfModuleArtifact vfModuleArtifact = new VfModuleArtifact(artifactInfo, clientResult);
-		Collection<VfModuleArtifact> vfModuleArtifactsValues = mock(Collection.class);
-
-		NodeTemplate nodeTemplate = mock(NodeTemplate.class);
-		List<NodeTemplate> nodeTemplateList = new ArrayList<>();
-		nodeTemplateList.add(nodeTemplate);
-
-		doReturn(sdcCsarHelper).when(toscaResourceStruct).getSdcCsarHelper();
-		doReturn("metadataPropertyValue").when(sdcCsarHelper).getMetadataPropertyValue(any(Metadata.class), any(String.class));
-		doReturn("ntPropertyLeafValue").when(sdcCsarHelper).getNodeTemplatePropertyLeafValue(any(NodeTemplate.class), any(String.class));
-		doReturn("true").when(sdcCsarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_PROVIDERNETWORK_ISPROVIDERNETWORK);
-		doReturn("1").when(sdcCsarHelper).getCapabilityPropertyLeafValue(any(CapabilityAssignment.class), any(String.class));
-		doReturn(vfGroups).when(sdcCsarHelper).getVfModulesByVf(any(String.class));
-		doReturn(capabilityAssignments).when(sdcCsarHelper).getCapabilitiesOf(any(NodeTemplate.class));
-		doReturn(capabilityAssignment).when(capabilityAssignments).getCapabilityByName(any(String.class));
-		doReturn(vfModuleArtifacts).when(vfResourceStructure).getArtifactsMapByUUID();
-		when(vfModuleArtifacts.values()).thenReturn(vfModuleArtifactsValues);
-		when(vfModuleArtifactsValues.iterator()).thenReturn(artifactIterator);
-		when(artifactIterator.hasNext()).thenReturn(true, false);
-		when(artifactIterator.next()).thenReturn(vfModuleArtifact);
-		when(artifactInfo.getArtifactType()).thenReturn(ASDCConfiguration.OTHER);
-		when(nodeTemplateIterator.hasNext()).thenReturn(true, false);
-		doReturn(nodeTemplateList).when(sdcCsarHelper).getServiceVfList();
-		doReturn(nodeTemplateList).when(sdcCsarHelper).getServiceVlList();
-		doReturn(nodeTemplateList).when(sdcCsarHelper).getAllottedResources();
-		doReturn(metadata).when(nodeTemplate).getMetaData();
-		doReturn("model_instance_name").when(nodeTemplate).getName();
-	}
-
-	private void populateToscaResourceStruct() {
-
-		VnfResource vnfResource = new VnfResource();
-		vnfResource.setModelName("modelName");
-		vnfResource.setModelVersion("1.1");
-		vnfResource.setModelUUID("modelUUID");
-		vnfResource.setOrchestrationMode("orchestrationMode");
-
-		VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
-		vnfResourceCustomization.setVnfResources(vnfResource);
-		vnfResourceCustomization.setModelCustomizationUUID("vnfResCustModelCustomizationUUID");
-		vnfResourceCustomization.setModelInstanceName("modelInstanceName");
-
-		allottedResource = new AllottedResource();
-		allottedResource.setModelUUID("serviceMetadataValue");
-		allottedResource.setModelInvariantUUID("modelInvariantUUID");
-		allottedResource.setModelName("modelName");
-		allottedResource.setModelVersion("1.1");
-
-		allottedResourceCustomization = new AllottedResourceCustomization();
-		allottedResourceCustomization.setAllottedResource(allottedResource);
-		allottedResourceCustomization.setModelCustomizationUUID("modelCustomizationUUID");
-		allottedResourceCustomization.setModelInstanceName("modelInstanceName");
-
-		catalogService = new Service();
-		catalogService.setServiceType("Bonding");
-		catalogService.setModelUUID("5df8b6de-2083-11e7-93ae-92361f002672");
-		catalogService.setModelInvariantUUID("modelInvariantUUID");
-		catalogService.setModelName("modelName");
-		catalogService.setModelVersion("modelVersion");
-		catalogService.getVnfCustomizations().add(vnfResourceCustomization);
-
-		catalogService.setServiceRole("COLLABORATE");
-
-		HeatTemplate heatTemplate = new HeatTemplate();
-		heatTemplate.setArtifactUuid("ff874603-4222-11e7-9252-005056850d2e");
-		heatTemplate.setArtifactChecksum("MANUAL RECORD");
-		heatTemplate.setTemplateBody("templateBody");
-		heatTemplate.setTemplateName("module_mns_zrdm3frwl01exn_01_rgvm_1.yml");
-		heatTemplate.setVersion("1");
-
-		NetworkResource networkResource = new NetworkResource();
-		networkResource.setAicVersionMin("aicVersionMin");
-		networkResource.setModelUUID("modelUUID");
-		networkResource.setOrchestrationMode("orchestrationMode");
-		networkResource.setModelVersion("modelVersion");
-		networkResource.setNeutronNetworkType("neutronNetworkType");
-		networkResource.setAicVersionMax("aicVersionMax");
-		networkResource.setModelName("CONTRAIL30_GNDIRECT");
-		networkResource.setModelInvariantUUID("modelInvariantUUID");
-		networkResource.setHeatTemplate(heatTemplate);
-
-		NetworkResourceCustomization networkResourceCustomization = new NetworkResourceCustomization();
-		networkResourceCustomization.setModelCustomizationUUID("modelCustomizationUUID");
-		networkResourceCustomization.setModelInstanceName("modelInstanceName");
-		networkResourceCustomization.setNetworkResource(networkResource);
-
-		doReturn(networkResource).when(toscaResourceStruct).getCatalogNetworkResource();
-		doReturn(networkResourceCustomization).when(toscaResourceStruct).getCatalogNetworkResourceCustomization();
-		doNothing().when(toscaResourceStruct).setSuccessfulDeployment();
-		doReturn("serviceVersion").when(toscaResourceStruct).getServiceVersion();
-		doReturn(catalogService).when(toscaResourceStruct).getCatalogService();
-		doReturn(artifactInfo).when(toscaResourceStruct).getToscaArtifact();
-		doReturn("artifactChecksum").when(artifactInfo).getArtifactChecksum();
-		doReturn("artifactUUID").when(artifactInfo).getArtifactUUID();
-		doReturn("artifactName").when(artifactInfo).getArtifactName();
-		doReturn("1.0").when(artifactInfo).getArtifactVersion();
-		doReturn("artifactDescription").when(artifactInfo).getArtifactDescription();
-		doReturn("artifactURL").when(artifactInfo).getArtifactURL();
-		doReturn(metadata).when(toscaResourceStruct).getServiceMetadata();
-		doReturn("serviceMetadataValue").when(metadata).getValue(any(String.class));
-		doReturn("CONTRAIL30_GNDIRECT").when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_NAME);
-		doReturn(vnfResourceCustomization).when(toscaResourceStruct).getCatalogVnfResourceCustomization();
-		doReturn(allottedResource).when(toscaResourceStruct).getAllottedResource();
-		doReturn(allottedResourceCustomization).when(toscaResourceStruct).getCatalogAllottedResourceCustomization();
-	}
-
-	private void populateNotificationData() {
-		notificationData.setDistributionID("testStatusSuccessTosca");
-		notificationData.setServiceVersion("123456");
-		notificationData.setServiceUUID("5df8b6de-2083-11e7-93ae-92361f002671");
-		notificationData.setWorkloadContext("workloadContext");
 	}
 }

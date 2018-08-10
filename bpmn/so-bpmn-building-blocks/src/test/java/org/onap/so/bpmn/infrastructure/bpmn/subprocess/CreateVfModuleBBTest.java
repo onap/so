@@ -42,6 +42,7 @@ public class CreateVfModuleBBTest extends BaseBPMNTest{
 				"QueryVfModule",
 				"CreateVfModule",
 				"VnfAdapter",
+				"UpdateVfModuleHeatStackId",
 				"UpdateVfModuleStatus",
 				"CreateVfModuleBB_End");
 		assertThat(pi).isEnded();
@@ -54,7 +55,7 @@ public class CreateVfModuleBBTest extends BaseBPMNTest{
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
 				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf")
-				.hasNotPassed("QueryVfModule", "CreateVfModule", "VnfAdapter", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
+				.hasNotPassed("QueryVfModule", "CreateVfModule", "VnfAdapter", "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}
 
@@ -65,7 +66,7 @@ public class CreateVfModuleBBTest extends BaseBPMNTest{
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
 				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule")
-				.hasNotPassed("CreateVfModule", "VnfAdapter", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
+				.hasNotPassed("CreateVfModule", "VnfAdapter", "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}
 	
@@ -76,8 +77,22 @@ public class CreateVfModuleBBTest extends BaseBPMNTest{
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
 				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule", "CreateVfModule")
-				.hasNotPassed("VnfAdapter", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
+				.hasNotPassed("VnfAdapter", "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
 		assertThat(pi).isEnded();
+	}
+	
+	@Test
+	public void rainyDayCreateVfModuleUpdateVfModuleHeatStackIdError_Test() throws Exception {
+		mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
+
+		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks).updateHeatStackIdVfModule(any(BuildingBlockExecution.class));
+		ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVfModuleBB", variables);
+		assertThat(pi).isNotNull();
+		assertThat(pi).isStarted()
+				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule", "CreateVfModule", "VnfAdapter", "UpdateVfModuleHeatStackId")
+				.hasNotPassed("UpdateVfModuleStatus", "CreateVfModuleBB_End");
+		assertThat(pi).isEnded();
+		
 	}
 	
 	@Test
@@ -87,7 +102,7 @@ public class CreateVfModuleBBTest extends BaseBPMNTest{
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVfModuleBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
-				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule", "CreateVfModule", "VnfAdapter", "UpdateVfModuleStatus")
+				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule", "CreateVfModule", "VnfAdapter", "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus")
 				.hasNotPassed("CreateVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}

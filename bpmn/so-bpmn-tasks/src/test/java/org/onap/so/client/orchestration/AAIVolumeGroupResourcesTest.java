@@ -129,4 +129,17 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup{
 
 		verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
 	}
+	
+	@Test
+	public void updateHeatStackIdVolumeGroupTest() throws Exception {	
+		volumeGroup.setHeatStackId("testVolumeHeatStackId");
+		
+		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VolumeGroup.class));
+		
+		aaiVolumeGroupResources.updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+
+		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.VolumeGroup.class));
+		
+		assertEquals("testVolumeHeatStackId", volumeGroup.getHeatStackId());
+	}
 }

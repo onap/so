@@ -142,6 +142,10 @@ public class BBInputSetupMapperLayer {
 	protected VfModule mapAAIVfModule(org.onap.aai.domain.yang.VfModule aaiVfModule) {
 		VfModule vfModule = modelMapper.map(aaiVfModule, VfModule.class);
 		vfModule.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiVfModule.getOrchestrationStatus()));
+		
+		ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
+		modelInfoVfModule.setIsBaseBoolean(aaiVfModule.isIsBaseVfModule());		
+		vfModule.setModelInfoVfModule(modelInfoVfModule);		
 		return vfModule;
 	}
 
@@ -175,7 +179,7 @@ public class BBInputSetupMapperLayer {
 
 	protected ModelInfoInstanceGroup mapCatalogInstanceGroupToInstanceGroup(CollectionResourceCustomization collectionCust, InstanceGroup instanceGroup) {
 		ModelInfoInstanceGroup modelInfoInstanceGroup = modelMapper.map(instanceGroup, ModelInfoInstanceGroup.class);
-		if(instanceGroup.getType().equals(InstanceGroupType.L3_NETWORK))
+		if(instanceGroup.getType() != null && instanceGroup.getType().equals(InstanceGroupType.L3_NETWORK))
 			modelInfoInstanceGroup.setType(ModelInfoInstanceGroup.TYPE_L3_NETWORK);
 		else
 			modelInfoInstanceGroup.setType(ModelInfoInstanceGroup.TYPE_VNFC);

@@ -54,7 +54,7 @@ public class ServiceTopologyOperationMapper{
 		GenericResourceApiServiceinformationServiceInformation servInfo = generalTopologyObjectMapper.buildServiceInformation(serviceInstance, requestContext, customer, true);
 		GenericResourceApiServicerequestinputServiceRequestInput servReqInfo = new GenericResourceApiServicerequestinputServiceRequestInput();
 	
-		servReqInfo.setServiceInstanceName(serviceInstance.getServiceInstanceId());
+		servReqInfo.setServiceInstanceName(serviceInstance.getServiceInstanceName());
 		
 		servOpInput.setSdncRequestHeader(sdncRequestHeader);
 		servOpInput.setRequestInformation(reqInfo);
@@ -64,7 +64,7 @@ public class ServiceTopologyOperationMapper{
 		if(requestContext.getUserParams()!=null){
 			for (Map.Entry<String, String> entry : requestContext.getUserParams().entrySet()) {
 				GenericResourceApiServicerequestinputServiceRequestInput serviceRequestInput = new GenericResourceApiServicerequestinputServiceRequestInput(); 
-				serviceRequestInput.setServiceInstanceName(serviceInstance.getServiceInstanceId()); 
+				serviceRequestInput.setServiceInstanceName(serviceInstance.getServiceInstanceName()); 
 				GenericResourceApiParam serviceInputParameters = new GenericResourceApiParam(); 
 				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam(); 
 				paramItem.setName(entry.getKey()); 

@@ -141,6 +141,19 @@ public class AAIUpdateTasks {
 		}
 	}
 	
+	public void updateHeatStackIdVolumeGroup(BuildingBlockExecution execution) {
+		try {
+			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+			
+			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+			CloudRegion cloudRegion = gBBInput.getCloudRegion();
+			
+			aaiVolumeGroupResources.updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	
 	public void updateOrchestrationStatusAssignedVfModule(BuildingBlockExecution execution) {
 		try {
 			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
@@ -276,6 +289,16 @@ public class AAIUpdateTasks {
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 			aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ACTIVE);
 			execution.setVariable("aaiActivateVfModuleRollback", true);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	
+	public void updateHeatStackIdVfModule(BuildingBlockExecution execution) {		
+		try {
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			aaiVfModuleResources.updateHeatStackIdVfModule(vfModule, vnf);			
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
