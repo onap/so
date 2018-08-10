@@ -89,7 +89,7 @@ public class ResponseHandler {
 				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
-				ValidateException validateException = new ValidateException.Builder("JSON Object Mapping Request", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+				ValidateException validateException = new ValidateException.Builder("Cannot parse Camunda Response", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
 						.errorInfo(errorLoggerInfo).build();
 				throw validateException;
 			}
