@@ -62,7 +62,8 @@
 		<snapshotNexusPath>content/repositories/snapshots/</snapshotNexusPath>
 		<publicNexusPath>content/repositories/public/</publicNexusPath>
 		<siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
-		<cxf.version>3.1.12</cxf.version>
+		<cxf.version>3.2.5</cxf.version>
+		<jax.ws.rs>2.1</jax.ws.rs>
 	</properties>
 	<distributionManagement>
 		<repository>
@@ -547,7 +548,7 @@
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.0</version>
+			<version>${jax.ws.rs}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>
