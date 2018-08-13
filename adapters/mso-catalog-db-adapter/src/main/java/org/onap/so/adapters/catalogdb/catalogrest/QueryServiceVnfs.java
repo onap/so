@@ -29,11 +29,15 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @XmlRootElement(name = "serviceVnfs")
 public class QueryServiceVnfs extends CatalogQuery {
+    protected static Logger logger = LoggerFactory.getLogger(QueryServiceVnfs.class);
+    
 	private List<VnfResourceCustomization> serviceVnfs;
-	private final String template =
+	private static final String TEMPLATE =
         "\n"+
         "\t{ \"modelInfo\"                    : {\n"+
 			"\t\t\"modelName\"              : <MODEL_NAME>,\n"+
@@ -52,15 +56,17 @@ public class QueryServiceVnfs extends CatalogQuery {
 			"<_VFMODULES_>\n" + 
 			"\t}";
 
-	public QueryServiceVnfs() { super(); serviceVnfs = new ArrayList<>(); }
-	public QueryServiceVnfs(List<VnfResourceCustomization> vlist) { 
-		LOGGER.debug ("QueryServiceVnfs:");
+	public QueryServiceVnfs() { 
+	    super(); 
+	    serviceVnfs = new ArrayList<>();
+	}
+	
+	public QueryServiceVnfs(List<VnfResourceCustomization> vlist) {	
 		serviceVnfs = new ArrayList<>();
 		for (VnfResourceCustomization o : vlist) {
-			LOGGER.debug ("-- o is a  serviceVnfs ----");
-			LOGGER.debug (o.toString());
-			serviceVnfs.add(o);
-			LOGGER.debug ("-------------------");
+		    if(logger.isDebugEnabled())
+		        logger.debug (o.toString());
+			serviceVnfs.add(o);	
 		}
 	}
 
@@ -75,7 +81,9 @@ public class QueryServiceVnfs extends CatalogQuery {
 		int i = 1;
 		for (VnfResourceCustomization o : serviceVnfs) {
 			sb.append(i).append("\t");
-			if (!first) sb.append("\n"); first = false;
+			if (!first)
+			    sb.append("\n");
+			first = false;
 			sb.append(o);
 		}
 		return sb.toString();
@@ -84,14 +92,18 @@ public class QueryServiceVnfs extends CatalogQuery {
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
 		StringBuilder sb = new StringBuilder();
-		if (!isEmbed && isArray) sb.append("{ ");
-		if (isArray) sb.append("\"serviceVnfs\": [");
+		if (!isEmbed && isArray)
+		    sb.append("{ ");
+		if (isArray)
+		    sb.append("\"serviceVnfs\": [");
 		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		for (VnfResourceCustomization o : serviceVnfs) {
-			if (first) sb.append("\n"); first = false;
+			if (first) 
+			    sb.append("\n");
+			first = false;
 
 			boolean vrNull = o.getVnfResources() == null ? true : false;
 
@@ -111,12 +123,15 @@ public class QueryServiceVnfs extends CatalogQuery {
 		    String subitem = new QueryVfModule(vrNull ? null : o.getVfModuleCustomizations()).JSON2(true, true); 
 		    valueMap.put("_VFMODULES_",               subitem.replaceAll("(?m)^", "\t\t"));
 
-            sb.append(sep).append(this.setTemplate(template, valueMap));
+            sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
             sep = ",\n";
 		}
-		if (!first) sb.append("\n");
-		if (isArray) sb.append("]");
-		if (!isEmbed && isArray) sb.append("}");
+		if (!first)
+		    sb.append("\n");
+		if (isArray)
+		    sb.append("]");
+		if (!isEmbed && isArray)
+		    sb.append("}");
 		return sb.toString();
 	}
 }

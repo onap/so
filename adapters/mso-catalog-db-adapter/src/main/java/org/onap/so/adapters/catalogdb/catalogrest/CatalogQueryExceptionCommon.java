@@ -27,13 +27,14 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import org.onap.so.logger.MsoLogger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public abstract class CatalogQueryExceptionCommon {
 	private String messageId;
-	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,CatalogQueryExceptionCommon.class);
+	protected static Logger logger = LoggerFactory.getLogger(CatalogQueryExceptionCommon.class);
 
 	public CatalogQueryExceptionCommon() { messageId = null; }
 	public CatalogQueryExceptionCommon(String messageId) { this.messageId = messageId; }
@@ -49,7 +50,7 @@ public abstract class CatalogQueryExceptionCommon {
 			jsonString = mapper.writeValueAsString(this);
 			return jsonString;
 		} catch (Exception e) {
-		    LOGGER.debug ("Exception:", e);
+		    logger.error ("Exception:", e);
 			return "";
 		}
 	}
@@ -63,7 +64,7 @@ public abstract class CatalogQueryExceptionCommon {
 			marshaller.marshal(this, bs);
 			return bs.toString();
 		} catch (Exception e) {
-		    LOGGER.debug ("Exception:", e);
+		    logger.error ("Exception:", e);
 			return "";
 		}
 	}

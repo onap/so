@@ -33,9 +33,8 @@ import org.onap.so.db.catalog.beans.VfModuleCustomization;
 @XmlRootElement(name = "vfModules")
 public class QueryVfModule extends CatalogQuery {
 	private List<VfModuleCustomization> vfModules;
-	private final String template =
+	private static final String TEMPLATE =
 		"\t{\n"+
-//		"\t{ \"vfModule\"               : { \n"+
 		"\t\t\"modelInfo\"               : { \n"+
 			"\t\t\t\"modelName\"              : <MODEL_NAME>,\n"+
 			"\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"+
@@ -48,20 +47,21 @@ public class QueryVfModule extends CatalogQuery {
 			"\t\t\"initialCount\"           : <INITIAL_COUNT>,\n"+
 			"\t\t\"hasVolumeGroup\"           : <HAS_VOLUME_GROUP>\n"+
 		"\t}";
-//		"\t}}";
 
-	public QueryVfModule() { super(); vfModules = new ArrayList<>(); }
-	public QueryVfModule(List<VfModuleCustomization> vlist) { 
-		LOGGER.debug ("QueryVfModule:");
-		vfModules = new ArrayList<>();
-		if (vlist != null) {
-			for (VfModuleCustomization o : vlist) {
-			LOGGER.debug ("-- o is a  vfModules ----");
-			LOGGER.debug (o.toString());
-			vfModules.add(o);
-			LOGGER.debug ("-------------------");
-		}
+	public QueryVfModule() {
+	    super();
+	    vfModules = new ArrayList<>();
 	}
+	
+	public QueryVfModule(List<VfModuleCustomization> vlist) {
+	    vfModules = new ArrayList<>();
+	    if (vlist != null) {
+	        for (VfModuleCustomization o : vlist) {
+	            if(logger.isDebugEnabled())
+	                logger.debug (o.toString());
+	            vfModules.add(o);			
+	        }
+	    }
 	}
 
 	public List<VfModuleCustomization> getVfModule(){ return this.vfModules; }
@@ -75,7 +75,9 @@ public class QueryVfModule extends CatalogQuery {
 		int i = 1;
 		for (VfModuleCustomization o : vfModules) {
 			sb.append(i).append("\t");
-			if (!first) sb.append("\n"); first = false;
+			if (!first) 
+			    sb.append("\n");
+			first = false;
 			sb.append(o);
 		}
 		return sb.toString();
@@ -84,14 +86,18 @@ public class QueryVfModule extends CatalogQuery {
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
 		StringBuilder sb = new StringBuilder();
-		if (!isEmbed && isArray) sb.append("{ ");
-		if (isArray) sb.append("\"vfModules\": [");
+		if (!isEmbed && isArray) 
+		    sb.append("{ ");
+		if (isArray) 
+		    sb.append("\"vfModules\": [");
 		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		for (VfModuleCustomization o : vfModules) {
-			if (first) sb.append("\n"); first = false;
+			if (first) 
+			    sb.append("\n");
+			first = false;
 
 			boolean vfNull = o.getVfModule() == null ? true : false;
 			boolean hasVolumeGroup = false;
@@ -110,12 +116,15 @@ public class QueryVfModule extends CatalogQuery {
 		    put(valueMap, "INITIAL_COUNT",            o.getInitialCount());
 			put(valueMap, "HAS_VOLUME_GROUP", new Boolean(hasVolumeGroup));
 
-            sb.append(sep).append(this.setTemplate(template, valueMap));
+            sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
             sep = ",\n";
 		}
-		if (!first) sb.append("\n");
-		if (isArray) sb.append("]");
-		if (!isEmbed && isArray) sb.append("}");
+		if (!first) 
+		    sb.append("\n");
+		if (isArray) 
+		    sb.append("]");
+		if (!isEmbed && isArray) 
+		    sb.append("}");
 		return sb.toString();
 	}
 }

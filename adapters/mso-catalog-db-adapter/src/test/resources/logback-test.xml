@@ -1,12 +1,18 @@
 <configuration>
-
+	<property name="p_tim" value="%d{&quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;, UTC}"/>
+    <property name="p_lvl" value="%level"/>
+    <property name="p_log" value="%logger"/>
+    <property name="p_mdc" value="%replace(%replace(%mdc){'\t','\\\\t'}){'\n', '\\\\n'}"/>
+    <property name="p_msg" value="%replace(%replace(%msg){'\t', '\\\\t'}){'\n','\\\\n'}"/>
+    <property name="p_exc" value="%replace(%replace(%rootException){'\t', '\\\\t'}){'\n','\\\\n'}"/>
+    <property name="p_mak" value="%replace(%replace(%marker){'\t', '\\\\t'}){'\n','\\\\n'}"/>
+    <property name="p_thr" value="%thread"/>
+    <property name="pattern" value="%nopexception${p_tim}\t${p_thr}\t${p_lvl}\t${p_log}\t${p_mdc}\t${p_msg}\t${p_exc}\t${p_mak}\t%n"/>
 
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] |%X{RequestId}| %-5level
-				%logger{1024} - %msg%n
-			</pattern>
+			<pattern>${pattern}</pattern>
 		</encoder>
 	</appender>
 
@@ -27,6 +33,7 @@
 
 	<logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="test" />
 	</logger>
 	
 	<logger name="org.flywaydb" level="DEBUG" additivity="false">
@@ -38,12 +45,10 @@
 		<appender-ref ref="STDOUT" />
 	</logger>
 	
-	<logger name="AUDIT" level="info" additivity="true">		
-		<appender-ref ref="test" />
-	</logger>
 
 	<root level="WARN">
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="test" />
 	</root>
 
 

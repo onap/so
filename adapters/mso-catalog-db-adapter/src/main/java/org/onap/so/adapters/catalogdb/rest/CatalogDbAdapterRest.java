@@ -49,7 +49,7 @@ We might be able to derive it's value from the current vnf-type (using the "midd
 min and initial counts can be 0. max can be null to indicate no maximum.
 
 Once the network-level distribution artifacts are defined, similar updates can be made to the NETWORK_RESOURCE table.
-*/
+ */
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +101,8 @@ import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.rest.beans.ServiceMacroHolder;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,488 +115,481 @@ import org.springframework.transaction.annotation.Transactional;
 @Path("/{version: v[0-9]+}")
 @Component
 public class CatalogDbAdapterRest {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,CatalogDbAdapterRest.class);
-	private static final boolean IS_ARRAY = true;
-	
-	@Autowired
-	private VnfCustomizationRepository vnfCustomizationRepo;
-	
-	@Autowired
-	private ServiceRepository serviceRepo;
-	
-	@Autowired
-	private NetworkResourceCustomizationRepository networkCustomizationRepo;
-	
-	@Autowired
-	private NetworkResourceRepository networkResourceRepo;
-	
-	@Autowired
-	private AllottedResourceCustomizationRepository allottedCustomizationRepo;
-	
-	@Autowired
-	private ToscaCsarRepository toscaCsarRepo;
-	
-	@Autowired
-	private VFModuleRepository vfModuleRepo;
-	
-	@Autowired
-	private VnfRecipeRepository vnfRecipeRepo;
-	
-	@Autowired
-	private NetworkRecipeRepository networkRecipeRepo;
-	
-	@Autowired
-	private ArRecipeRepository arRecipeRepo;
-	
-	@Autowired
-	private VnfResourceRepository vnfResourceRepo;
-	
-	@Autowired
-	private AllottedResourceRepository arResourceRepo;
-	
-	private static final String NO_MATCHING_PARAMETERS = "no matching parameters";
+    protected static Logger logger = LoggerFactory.getLogger(CatalogDbAdapterRest.class);
+    private static final boolean IS_ARRAY = true;
 
-	public Response respond(String version, int respStatus, boolean isArray, CatalogQuery qryResp) {
-		return Response
-				.status(respStatus)
-				//.entity(new GenericEntity<QueryServiceVnfs>(qryResp) {})
-				.entity(qryResp.toJsonString(version, isArray))
-				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-				.build();
-	}
+    @Autowired
+    private VnfCustomizationRepository vnfCustomizationRepo;
 
-	@GET
-	@Path("vnfResources/{vnfModelCustomizationUuid}")
-	@Transactional( readOnly = true)
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response serviceVnfs (
-			@PathParam("version") String version,
-			@PathParam("vnfModelCustomizationUuid") String vnfUuid
-	) {
-		return serviceVnfsImpl (version, !IS_ARRAY, vnfUuid, null, null, null, null);
-	}
+    @Autowired
+    private ServiceRepository serviceRepo;
 
-	@GET
-	@Path("serviceVnfs")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Transactional( readOnly = true)
-	public Response serviceVnfs(
-			@PathParam("version") String version,
-			@QueryParam("vnfModelCustomizationUuid") String vnfUuid,
-			@QueryParam("serviceModelUuid") String smUuid,
-			@QueryParam("serviceModelInvariantUuid") String smiUuid,
-			@QueryParam("serviceModelVersion") String smVer,
-			@QueryParam("serviceModelName") String smName
-	) {
-		return serviceVnfsImpl (version, IS_ARRAY, vnfUuid, smUuid, smiUuid, smVer, smName);
-	}
+    @Autowired
+    private NetworkResourceCustomizationRepository networkCustomizationRepo;
 
-	public Response serviceVnfsImpl(String version, boolean isArray, String vnfUuid, String serviceModelUUID, String smiUuid, String smVer, String smName) {
-		QueryServiceVnfs qryResp = null;
-		int respStatus = HttpStatus.SC_OK;		
-		List<VnfResourceCustomization> ret = new ArrayList<>();
-		Service service = null;
-		try {
-			if (vnfUuid != null && !"".equals(vnfUuid)) 
-				ret = vnfCustomizationRepo.findByModelCustomizationUUID(vnfUuid);			
-			else if (serviceModelUUID != null && !"".equals(serviceModelUUID)) 				
-				service = serviceRepo.findFirstOneByModelUUIDOrderByModelVersionDesc(serviceModelUUID);
-			else if (smiUuid != null && !"".equals(smiUuid))			
-				if (smVer != null && !"".equals(smVer)) 
-					service = serviceRepo.findByModelVersionAndModelInvariantUUID(smVer,smiUuid);					
-				else 					
-					service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(smiUuid);
-			else if (smName != null && !"".equals(smName)) {
-				if (smVer != null && !"".equals(smVer)) 					
-					service = serviceRepo.findByModelNameAndModelVersion(smName, smVer);
-				else 
-					service = serviceRepo.findFirstByModelNameOrderByModelVersionDesc(smName);			
-			}
-			else {
-				throw(new Exception(NO_MATCHING_PARAMETERS));
-			}
-			
-			if (service == null && ret.isEmpty()) {
-				respStatus = HttpStatus.SC_NOT_FOUND;
-				qryResp = new QueryServiceVnfs();
-			}else if( service == null && !ret.isEmpty()){
-				qryResp = new QueryServiceVnfs(ret);				
-			} else if (service != null) {
-				qryResp = new QueryServiceVnfs(service.getVnfCustomizations());				
-			}
-			LOGGER.debug ("serviceVnfs qryResp="+ qryResp);
-			return respond(version, respStatus, isArray, qryResp);
-		} catch (Exception e) {
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  "", "", "queryServiceVnfs", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryServiceVnfs", e);
-			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
-			return Response
-				.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-				.entity(new GenericEntity<CatalogQueryException>(excResp) {})
-				.build();
-		}
-	}
+    @Autowired
+    private NetworkResourceRepository networkResourceRepo;
 
-	@GET
-	@Path("networkResources/{networkModelCustomizationUuid}")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Transactional( readOnly = true)
-	public Response serviceNetworks (
-			@PathParam("version") String version,
-			@PathParam("networkModelCustomizationUuid") String nUuid
-	) {
-		return serviceNetworksImpl (version, !IS_ARRAY, nUuid, null, null, null, null);
-	}
+    @Autowired
+    private AllottedResourceCustomizationRepository allottedCustomizationRepo;
 
-	@GET
-	@Path("serviceNetworks")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Transactional( readOnly = true)
-	public Response serviceNetworks (
-			@PathParam("version") String version,
-			@QueryParam("networkModelCustomizationUuid") String networkModelCustomizationUuid,
-			@QueryParam("networkType") String networkType,
-		@QueryParam("networkModelName") String networkModelName,
-			@QueryParam("serviceModelUuid") String serviceModelUuid,
-			@QueryParam("serviceModelInvariantUuid") String serviceModelInvariantUuid,
-		@QueryParam("serviceModelVersion") String serviceModelVersion,
-		@QueryParam("networkModelVersion") String networkModelVersion
-	) {
-		if (networkModelName != null && !"".equals(networkModelName)) {
-			networkType = networkModelName;
-		}
-		return serviceNetworksImpl (version, IS_ARRAY,  networkModelCustomizationUuid, networkType, serviceModelUuid, serviceModelInvariantUuid, serviceModelVersion);
-	}
+    @Autowired
+    private ToscaCsarRepository toscaCsarRepo;
 
-	public Response serviceNetworksImpl (String version, boolean isArray, String  networkModelCustomizationUuid, String networkType, String serviceModelUuid, String serviceModelInvariantUuid, String serviceModelVersion) {
-		QueryServiceNetworks qryResp;
-		int respStatus = HttpStatus.SC_OK;
-		String uuid = "";
-		List<NetworkResourceCustomization> ret = new ArrayList<>();
-		Service service = null;
-		
-		try{
-			if (networkModelCustomizationUuid != null && !"".equals(networkModelCustomizationUuid)) {
-				uuid = networkModelCustomizationUuid;				
-				ret = networkCustomizationRepo.findByModelCustomizationUUID(networkModelCustomizationUuid);
-			}else if (networkType != null && !"".equals(networkType)) {
-				uuid = networkType;				
-				NetworkResource networkResources = networkResourceRepo.findFirstByModelNameOrderByModelVersionDesc(networkType);
-				if(networkResources != null)
-					ret=networkResources.getNetworkResourceCustomization();
-			}
-			else if (serviceModelInvariantUuid != null && !"".equals(serviceModelInvariantUuid)) {
-				uuid = serviceModelInvariantUuid;
-				if (serviceModelVersion != null && !"".equals(serviceModelVersion)) {					
-					service = serviceRepo.findByModelVersionAndModelInvariantUUID(serviceModelVersion, uuid);
-				}
-				else {					
-					service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(uuid);
-				}
-			}else if (serviceModelUuid != null && !"".equals(serviceModelUuid)) {
-				uuid = serviceModelUuid;				
-				service = serviceRepo.findOneByModelUUID(serviceModelUuid);
-			}
-			else {
-				throw(new Exception(NO_MATCHING_PARAMETERS));
-			}
-			
-			if(service != null)
-				ret = service.getNetworkCustomizations();
+    @Autowired
+    private VFModuleRepository vfModuleRepo;
 
-			if (ret == null || ret.isEmpty()) {
-				LOGGER.debug ("serviceNetworks not found");
-				respStatus = HttpStatus.SC_NOT_FOUND;
-				qryResp = new QueryServiceNetworks();
-			} else {
-				LOGGER.debug ("serviceNetworks found");
-				qryResp = new QueryServiceNetworks(ret);
-				LOGGER.debug ("serviceNetworks qryResp="+ qryResp);
-			}
-			LOGGER.debug ("Query serviceNetworks exit");
-			return respond(version, respStatus, isArray, qryResp);
-		} catch (Exception e) {
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  uuid, "", "queryServiceNetworks", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryServiceNetworks", e);
-			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
-			return Response
-				.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-				.entity(new GenericEntity<CatalogQueryException>(excResp) {})
-				.build();
-		}
-	}
+    @Autowired
+    private VnfRecipeRepository vnfRecipeRepo;
 
-	@GET
-	@Path("serviceResources")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Transactional(readOnly = true)
-	public Response serviceResources(
-			@PathParam("version") String version,
-			@QueryParam("serviceModelUuid") String modelUUID,
-			@QueryParam("serviceModelInvariantUuid") String modelInvariantUUID,
-			@QueryParam("serviceModelVersion") String modelVersion) {
-		QueryServiceMacroHolder qryResp;
-		int respStatus = HttpStatus.SC_OK;
-		String uuid = "";
-		ServiceMacroHolder ret = new ServiceMacroHolder();
-		
-		try{
-			if (modelUUID != null && !"".equals(modelUUID)) {
-				uuid = modelUUID;
-				LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelUuid serviceModelUuid: " + uuid);
-				Service serv =serviceRepo.findOneByModelUUID(uuid);
-				ret.setService(serv);				
-			}
-			else if (modelInvariantUUID != null && !"".equals(modelInvariantUUID)) {
-				uuid = modelInvariantUUID;
-				if (modelVersion != null && !"".equals(modelVersion)) {
-					LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: " + uuid+ " serviceModelVersion: "+ modelVersion);
-					Service serv = serviceRepo.findByModelVersionAndModelInvariantUUID(modelVersion, uuid);
-					ret.setService(serv);	
-				}
-				else {
-					LOGGER.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelUuid: " + uuid);
-					Service serv = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(uuid);
-					ret.setService(serv);
-				}
-			}
-			else {
-				throw(new Exception(NO_MATCHING_PARAMETERS));
-			}
+    @Autowired
+    private NetworkRecipeRepository networkRecipeRepo;
 
-			if (ret.getService() == null) {
-				LOGGER.debug ("serviceMacroHolder not found");
-				respStatus = HttpStatus.SC_NOT_FOUND;
-				qryResp = new QueryServiceMacroHolder();
-			} else {
-				LOGGER.debug ("serviceMacroHolder found");
-				qryResp = new QueryServiceMacroHolder(ret);
-				LOGGER.debug ("serviceMacroHolder qryResp="+ qryResp);
-			}
-			LOGGER.debug ("Query serviceMacroHolder exit");
-			return respond(version, respStatus, IS_ARRAY, qryResp);
-		} catch (Exception e) {
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  uuid, "", "queryServiceMacroHolder", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryServiceMacroHolder", e);
-			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
-			return Response
-				.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-				.entity(new GenericEntity<CatalogQueryException>(excResp){} )
-				.build();
-		}
-	}
-	
+    @Autowired
+    private ArRecipeRepository arRecipeRepo;
 
-	@GET
-	@Path("allottedResources/{arModelCustomizationUuid}")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Transactional( readOnly = true)
-	public Response serviceAllottedResources (
-			@PathParam("version") String version,
-			@PathParam("arModelCustomizationUuid") String aUuid
-	) {
-		return serviceAllottedResourcesImpl(version, !IS_ARRAY, aUuid, null, null, null);
-	}
+    @Autowired
+    private VnfResourceRepository vnfResourceRepo;
 
-	@GET
-	@Path("serviceAllottedResources")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Transactional( readOnly = true)
-	public Response serviceAllottedResources(
-			@PathParam("version") String version,
-			@QueryParam("serviceModelUuid") String smUuid,
-			@QueryParam("serviceModelInvariantUuid") String smiUuid,
-			@QueryParam("serviceModelVersion") String smVer,
-			@QueryParam("arModelCustomizationUuid") String aUuid
-	) {
-		return serviceAllottedResourcesImpl(version, IS_ARRAY, aUuid, smUuid, smiUuid, smVer);
-	}
+    @Autowired
+    private AllottedResourceRepository arResourceRepo;
 
-	public Response serviceAllottedResourcesImpl(String version, boolean isArray, String aUuid, String smUuid, String serviceModelInvariantUuid, String smVer) {
-		QueryAllottedResourceCustomization qryResp;
-		int respStatus = HttpStatus.SC_OK;
-		String uuid = "";
-		List<AllottedResourceCustomization> ret = new ArrayList<>();
-		Service service = null;
-		try{
-			if (smUuid != null && !"".equals(smUuid)) {
-				uuid = smUuid;				
-				service = serviceRepo.findFirstOneByModelUUIDOrderByModelVersionDesc(uuid);			
-			}
-			else if (serviceModelInvariantUuid != null && !"".equals(serviceModelInvariantUuid)) {
-				uuid = serviceModelInvariantUuid;
-				if (smVer != null && !"".equals(smVer)) {					
-					service = serviceRepo.findByModelVersionAndModelInvariantUUID(smVer, uuid);
-				}
-				else {				
-					service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(uuid);
-				}
-			}
-			else if (aUuid != null && !"".equals(aUuid)) {
-				uuid = aUuid;				
-				ret = allottedCustomizationRepo.findByModelCustomizationUUID(uuid);
-			}
-			else {
-				throw(new Exception(NO_MATCHING_PARAMETERS));
-			}
-			
-			if(service != null)
-				ret=service.getAllottedCustomizations();
+    private static final String NO_MATCHING_PARAMETERS = "no matching parameters";
 
-			if (ret == null || ret.isEmpty()) {
-				LOGGER.debug ("AllottedResourceCustomization not found");
-				respStatus = HttpStatus.SC_NOT_FOUND;
-				qryResp = new QueryAllottedResourceCustomization();
-			} else {				
-				qryResp = new QueryAllottedResourceCustomization(ret);
-				LOGGER.debug ("AllottedResourceCustomization qryResp="+ qryResp);
-			}			
-			return respond(version, respStatus, isArray, qryResp);
-		} catch (Exception e) {
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  uuid, "", "queryAllottedResourceCustomization", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - queryAllottedResourceCustomization", e);
-			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
-			return Response
-				.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-				.entity(new GenericEntity<CatalogQueryException>(excResp) {})
-				.build();
-		}
-	}
-	
-	@GET
-	@Path("vfModules")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Transactional( readOnly = true)
-	public Response vfModules(@QueryParam("vfModuleModelName") String vfModuleModelName) {
-		QueryVfModule qryResp;
-		int respStatus = HttpStatus.SC_OK;
-		List<VfModuleCustomization> ret = null;	
-		try{
-			if(vfModuleModelName != null && !"".equals(vfModuleModelName)){
-				VfModule vfModule = vfModuleRepo.findFirstByModelNameOrderByModelVersionDesc(vfModuleModelName);
-				if(vfModule != null)
-					ret = vfModule.getVfModuleCustomization();				
-			}else{
-				throw(new Exception(NO_MATCHING_PARAMETERS));
-			}
-			
-			if(ret == null || ret.isEmpty()){
-				LOGGER.debug ("vfModules not found");
-				respStatus = HttpStatus.SC_NOT_FOUND;
-				qryResp = new QueryVfModule();
-			}else{			
-				qryResp = new QueryVfModule(ret);				
-				LOGGER.debug ("vfModules tojsonstring is: "+ qryResp.JSON2(false, false));
-			}			
-			return Response
-					.status(respStatus)
-					.entity(qryResp.JSON2(false, false)) 
-					.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-					.build();
-		}catch(Exception e){
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  vfModuleModelName, "", "queryVfModules", MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query VfModules by vfModuleModuleName: ", e);
-			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
-			return Response
-					.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-					.entity(new GenericEntity<CatalogQueryException>(excResp) {})
-					.build();
-		}
-	}
-	/**
-	 * Get the tosca csar info from catalog
-	 * <br>
-	 * 
-	 * @param smUuid service model uuid
-	 * @return the tosca csar information of the serivce.
-	 * @since ONAP Beijing Release
-	 */
-	@GET
-	@Path("serviceToscaCsar")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response serviceToscaCsar(@QueryParam("serviceModelUuid") String smUuid) {
-		int respStatus = HttpStatus.SC_OK;
-		String entity = "";
-		try {
-			if (smUuid != null && !"".equals(smUuid)) {
-				LOGGER.debug("Query Csar by service model uuid: " + smUuid);
-				ToscaCsar toscaCsar = toscaCsarRepo.findOne(smUuid);
-				if (toscaCsar != null) {
-					QueryServiceCsar serviceCsar = new QueryServiceCsar(toscaCsar);
-					entity = serviceCsar.JSON2(false, false);
-				} else {
-					respStatus = HttpStatus.SC_NOT_FOUND;
-				}
-			} else {
-				throw (new Exception("Incoming parameter is null or blank"));
-			}
-			LOGGER.debug("Query Csar exit");
-			return Response
-					.status(respStatus)
-					.entity(entity)
-					.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-					.build();
-		} catch (Exception e) {
-			LOGGER.error(MessageEnum.RA_QUERY_VNF_ERR, smUuid, "", "ServiceToscaCsar",
-					MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query csar by service model uuid: ", e);
-			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
-					CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
-			return Response
-					.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-					.entity(new GenericEntity<CatalogQueryException>(excResp) {
-					})
-					.build();
-		}
-	}
+    public Response respond(String version, int respStatus, boolean isArray, CatalogQuery qryResp) {
+        return Response
+                .status(respStatus)
+                //.entity(new GenericEntity<QueryServiceVnfs>(qryResp) {})
+                .entity(qryResp.toJsonString(version, isArray))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .build();
+    }
 
-	/**
-	 * Get the resource recipe info from catalog
-	 * <br>
-	 * 
-	 * @param rmUuid resource model uuid
-	 * @return the recipe information of the resource.
-	 * @since ONAP Beijing Release
-	 */
-	@GET
-	@Path("resourceRecipe")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response resourceRecipe(@QueryParam("resourceModelUuid") String rmUuid, @QueryParam("action") String action) {
-		int respStatus = HttpStatus.SC_OK;
-		String entity = "";
-		try {
-			if (rmUuid != null && !"".equals(rmUuid)) {
-				LOGGER.debug("Query recipe by resource model uuid: " + rmUuid);
-				//check vnf and network and ar, the resource could be any resource.
-				VnfResource vnf = vnfResourceRepo.findResourceByModelUUID(rmUuid);
-				Recipe recipe = vnfRecipeRepo.findVnfRecipeByNfRoleAndAction(vnf.getModelName(), action);
-				if (null == recipe) {
-					NetworkResource nResource = networkResourceRepo.findResourceByModelUUID(rmUuid);
-					recipe = networkRecipeRepo.findByModelNameAndAction(nResource.getModelName(), action);
-				}
-				if (null == recipe) {
-					AllottedResource arResource = arResourceRepo.findResourceByModelUUID(rmUuid);
-					recipe = arRecipeRepo.findByModelNameAndAction(arResource.getModelName(), action);
-				}
-				if (recipe != null) {
-					QueryResourceRecipe resourceRecipe = new QueryResourceRecipe(recipe);
-					entity = resourceRecipe.JSON2(false, false);
-				} else {
-					respStatus = HttpStatus.SC_NOT_FOUND;
-				}
-			} else {
-				throw (new Exception("Incoming parameter is null or blank"));
-			}
-			LOGGER.debug("Query recipe exit");
-			return Response
-				.status(respStatus)
-				.entity(entity)
-				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-				.build();
-		} catch (Exception e) {
-			LOGGER.error(MessageEnum.RA_QUERY_VNF_ERR, rmUuid, "", "resourceRecipe",
-				MsoLogger.ErrorCode.BusinessProcesssError, "Exception during query recipe by resource model uuid: ", e);
-			CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
-				CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
-			return Response
-				.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-				.entity(new GenericEntity<CatalogQueryException>(excResp) {
-				})
-				.build();
-		}
-	}
+    @GET
+    @Path("vnfResources/{vnfModelCustomizationUuid}")
+    @Transactional( readOnly = true)
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Response serviceVnfs (
+            @PathParam("version") String version,
+            @PathParam("vnfModelCustomizationUuid") String vnfUuid
+            ) {
+        return serviceVnfsImpl (version, !IS_ARRAY, vnfUuid, null, null, null, null);
+    }
+
+    @GET
+    @Path("serviceVnfs")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Transactional( readOnly = true)
+    public Response serviceVnfs(
+            @PathParam("version") String version,
+            @QueryParam("vnfModelCustomizationUuid") String vnfUuid,
+            @QueryParam("serviceModelUuid") String smUuid,
+            @QueryParam("serviceModelInvariantUuid") String smiUuid,
+            @QueryParam("serviceModelVersion") String smVer,
+            @QueryParam("serviceModelName") String smName
+            ) {
+        return serviceVnfsImpl (version, IS_ARRAY, vnfUuid, smUuid, smiUuid, smVer, smName);
+    }
+
+    public Response serviceVnfsImpl(String version, boolean isArray, String vnfUuid, String serviceModelUUID, String smiUuid, String smVer, String smName) {
+        QueryServiceVnfs qryResp = null;
+        int respStatus = HttpStatus.SC_OK;		
+        List<VnfResourceCustomization> ret = new ArrayList<>();
+        Service service = null;
+        try {
+            if (vnfUuid != null && !"".equals(vnfUuid)) 
+                ret = vnfCustomizationRepo.findByModelCustomizationUUID(vnfUuid);			
+            else if (serviceModelUUID != null && !"".equals(serviceModelUUID)) 				
+                service = serviceRepo.findFirstOneByModelUUIDOrderByModelVersionDesc(serviceModelUUID);
+            else if (smiUuid != null && !"".equals(smiUuid))			
+                if (smVer != null && !"".equals(smVer)) 
+                    service = serviceRepo.findByModelVersionAndModelInvariantUUID(smVer,smiUuid);					
+                else 					
+                    service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(smiUuid);
+            else if (smName != null && !"".equals(smName)) {
+                if (smVer != null && !"".equals(smVer)) 					
+                    service = serviceRepo.findByModelNameAndModelVersion(smName, smVer);
+                else 
+                    service = serviceRepo.findFirstByModelNameOrderByModelVersionDesc(smName);			
+            }
+            else {
+                throw(new Exception(NO_MATCHING_PARAMETERS));
+            }
+
+            if (service == null && ret.isEmpty()) {
+                respStatus = HttpStatus.SC_NOT_FOUND;
+                qryResp = new QueryServiceVnfs();
+            }else if( service == null && !ret.isEmpty()){
+                qryResp = new QueryServiceVnfs(ret);				
+            } else if (service != null) {
+                qryResp = new QueryServiceVnfs(service.getVnfCustomizations());				
+            }
+            logger.debug ("serviceVnfs qryResp= {}", qryResp);
+            return respond(version, respStatus, isArray, qryResp);
+        } catch (Exception e) {
+            logger.error("Exception - queryServiceVnfs", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response
+                    .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("networkResources/{networkModelCustomizationUuid}")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Transactional( readOnly = true)
+    public Response serviceNetworks (
+            @PathParam("version") String version,
+            @PathParam("networkModelCustomizationUuid") String nUuid
+            ) {
+        return serviceNetworksImpl (version, !IS_ARRAY, nUuid, null, null, null, null);
+    }
+
+    @GET
+    @Path("serviceNetworks")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Transactional( readOnly = true)
+    public Response serviceNetworks (
+            @PathParam("version") String version,
+            @QueryParam("networkModelCustomizationUuid") String networkModelCustomizationUuid,
+            @QueryParam("networkType") String networkType,
+            @QueryParam("networkModelName") String networkModelName,
+            @QueryParam("serviceModelUuid") String serviceModelUuid,
+            @QueryParam("serviceModelInvariantUuid") String serviceModelInvariantUuid,
+            @QueryParam("serviceModelVersion") String serviceModelVersion,
+            @QueryParam("networkModelVersion") String networkModelVersion
+            ) {
+        if (networkModelName != null && !"".equals(networkModelName)) {
+            networkType = networkModelName;
+        }
+        return serviceNetworksImpl (version, IS_ARRAY,  networkModelCustomizationUuid, networkType, serviceModelUuid, serviceModelInvariantUuid, serviceModelVersion);
+    }
+
+    public Response serviceNetworksImpl (String version, boolean isArray, String  networkModelCustomizationUuid, String networkType, String serviceModelUuid, String serviceModelInvariantUuid, String serviceModelVersion) {
+        QueryServiceNetworks qryResp;
+        int respStatus = HttpStatus.SC_OK;
+        String uuid = "";
+        List<NetworkResourceCustomization> ret = new ArrayList<>();
+        Service service = null;
+
+        try{
+            if (networkModelCustomizationUuid != null && !"".equals(networkModelCustomizationUuid)) {
+                uuid = networkModelCustomizationUuid;				
+                ret = networkCustomizationRepo.findByModelCustomizationUUID(networkModelCustomizationUuid);
+            }else if (networkType != null && !"".equals(networkType)) {
+                uuid = networkType;				
+                NetworkResource networkResources = networkResourceRepo.findFirstByModelNameOrderByModelVersionDesc(networkType);
+                if(networkResources != null)
+                    ret=networkResources.getNetworkResourceCustomization();
+            }
+            else if (serviceModelInvariantUuid != null && !"".equals(serviceModelInvariantUuid)) {
+                uuid = serviceModelInvariantUuid;
+                if (serviceModelVersion != null && !"".equals(serviceModelVersion)) {					
+                    service = serviceRepo.findByModelVersionAndModelInvariantUUID(serviceModelVersion, uuid);
+                }
+                else {					
+                    service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(uuid);
+                }
+            }else if (serviceModelUuid != null && !"".equals(serviceModelUuid)) {
+                uuid = serviceModelUuid;				
+                service = serviceRepo.findOneByModelUUID(serviceModelUuid);
+            }
+            else {
+                throw(new Exception(NO_MATCHING_PARAMETERS));
+            }
+
+            if(service != null)
+                ret = service.getNetworkCustomizations();
+
+            if (ret == null || ret.isEmpty()) {
+                logger.debug ("serviceNetworks not found");
+                respStatus = HttpStatus.SC_NOT_FOUND;
+                qryResp = new QueryServiceNetworks();
+            } else {				
+                qryResp = new QueryServiceNetworks(ret);
+                logger.debug ("serviceNetworks found qryResp= {}", qryResp);
+            }
+            return respond(version, respStatus, isArray, qryResp);
+        } catch (Exception e) {
+            logger.error ("Exception - queryServiceNetworks", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response
+                    .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("serviceResources")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Transactional(readOnly = true)
+    public Response serviceResources(
+            @PathParam("version") String version,
+            @QueryParam("serviceModelUuid") String modelUUID,
+            @QueryParam("serviceModelInvariantUuid") String modelInvariantUUID,
+            @QueryParam("serviceModelVersion") String modelVersion) {
+        QueryServiceMacroHolder qryResp;
+        int respStatus = HttpStatus.SC_OK;
+        String uuid = "";
+        ServiceMacroHolder ret = new ServiceMacroHolder();
+
+        try{
+            if (modelUUID != null && !"".equals(modelUUID)) {
+                uuid = modelUUID;
+                logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelUuid serviceModelUuid: {}" , uuid);
+                Service serv =serviceRepo.findOneByModelUUID(uuid);
+                ret.setService(serv);				
+            }
+            else if (modelInvariantUUID != null && !"".equals(modelInvariantUUID)) {
+                uuid = modelInvariantUUID;
+                if (modelVersion != null && !"".equals(modelVersion)) {
+                    logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: {}  serviceModelVersion: {}",uuid, modelVersion);
+                    Service serv = serviceRepo.findByModelVersionAndModelInvariantUUID(modelVersion, uuid);
+                    ret.setService(serv);	
+                }
+                else {
+                    logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelUuid: {}" , uuid);
+                    Service serv = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(uuid);
+                    ret.setService(serv);
+                }
+            }
+            else {
+                throw(new Exception(NO_MATCHING_PARAMETERS));
+            }
+
+            if (ret.getService() == null) {
+                logger.debug ("serviceMacroHolder not found");
+                respStatus = HttpStatus.SC_NOT_FOUND;
+                qryResp = new QueryServiceMacroHolder();
+            } else {
+                qryResp = new QueryServiceMacroHolder(ret);
+                logger.debug ("serviceMacroHolder qryResp= {}", qryResp);
+            }
+            return respond(version, respStatus, IS_ARRAY, qryResp);
+        } catch (Exception e) {
+            logger.error ("Exception - queryServiceMacroHolder", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response
+                    .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp){} )
+                    .build();
+        }
+    }
+
+
+    @GET
+    @Path("allottedResources/{arModelCustomizationUuid}")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Transactional( readOnly = true)
+    public Response serviceAllottedResources (
+            @PathParam("version") String version,
+            @PathParam("arModelCustomizationUuid") String aUuid
+            ) {
+        return serviceAllottedResourcesImpl(version, !IS_ARRAY, aUuid, null, null, null);
+    }
+
+    @GET
+    @Path("serviceAllottedResources")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Transactional( readOnly = true)
+    public Response serviceAllottedResources(
+            @PathParam("version") String version,
+            @QueryParam("serviceModelUuid") String smUuid,
+            @QueryParam("serviceModelInvariantUuid") String smiUuid,
+            @QueryParam("serviceModelVersion") String smVer,
+            @QueryParam("arModelCustomizationUuid") String aUuid
+            ) {
+        return serviceAllottedResourcesImpl(version, IS_ARRAY, aUuid, smUuid, smiUuid, smVer);
+    }
+
+    public Response serviceAllottedResourcesImpl(String version, boolean isArray, String aUuid, String smUuid, String serviceModelInvariantUuid, String smVer) {
+        QueryAllottedResourceCustomization qryResp;
+        int respStatus = HttpStatus.SC_OK;
+        String uuid = "";
+        List<AllottedResourceCustomization> ret = new ArrayList<>();
+        Service service = null;
+        try{
+            if (smUuid != null && !"".equals(smUuid)) {
+                uuid = smUuid;				
+                service = serviceRepo.findFirstOneByModelUUIDOrderByModelVersionDesc(uuid);			
+            }
+            else if (serviceModelInvariantUuid != null && !"".equals(serviceModelInvariantUuid)) {
+                uuid = serviceModelInvariantUuid;
+                if (smVer != null && !"".equals(smVer)) {					
+                    service = serviceRepo.findByModelVersionAndModelInvariantUUID(smVer, uuid);
+                }
+                else {				
+                    service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(uuid);
+                }
+            }
+            else if (aUuid != null && !"".equals(aUuid)) {
+                uuid = aUuid;				
+                ret = allottedCustomizationRepo.findByModelCustomizationUUID(uuid);
+            }
+            else {
+                throw(new Exception(NO_MATCHING_PARAMETERS));
+            }
+
+            if(service != null)
+                ret=service.getAllottedCustomizations();
+
+            if (ret == null || ret.isEmpty()) {
+                logger.debug ("AllottedResourceCustomization not found");
+                respStatus = HttpStatus.SC_NOT_FOUND;
+                qryResp = new QueryAllottedResourceCustomization();
+            } else {				
+                qryResp = new QueryAllottedResourceCustomization(ret);
+                logger.debug ("AllottedResourceCustomization qryResp= {}", qryResp);
+            }			
+            return respond(version, respStatus, isArray, qryResp);
+        } catch (Exception e) {
+            logger.error ("Exception - queryAllottedResourceCustomization", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response
+                    .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("vfModules")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Transactional( readOnly = true)
+    public Response vfModules(@QueryParam("vfModuleModelName") String vfModuleModelName) {
+        QueryVfModule qryResp;
+        int respStatus = HttpStatus.SC_OK;
+        List<VfModuleCustomization> ret = null;	
+        try{
+            if(vfModuleModelName != null && !"".equals(vfModuleModelName)){
+                VfModule vfModule = vfModuleRepo.findFirstByModelNameOrderByModelVersionDesc(vfModuleModelName);
+                if(vfModule != null)
+                    ret = vfModule.getVfModuleCustomization();				
+            }else{
+                throw(new Exception(NO_MATCHING_PARAMETERS));
+            }
+
+            if(ret == null || ret.isEmpty()){
+                logger.debug ("vfModules not found");
+                respStatus = HttpStatus.SC_NOT_FOUND;
+                qryResp = new QueryVfModule();
+            }else{			
+                qryResp = new QueryVfModule(ret);				
+                if(logger.isDebugEnabled())
+                    logger.debug ("vfModules tojsonstring is: {}", qryResp.JSON2(false, false));
+            }			
+            return Response
+                    .status(respStatus)
+                    .entity(qryResp.JSON2(false, false)) 
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .build();
+        }catch(Exception e){
+            logger.error ("Exception during query VfModules by vfModuleModuleName: ", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(), CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response
+                    .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
+        }
+    }
+    /**
+     * Get the tosca csar info from catalog
+     * <br>
+     * 
+     * @param smUuid service model uuid
+     * @return the tosca csar information of the serivce.
+     * @since ONAP Beijing Release
+     */
+    @GET
+    @Path("serviceToscaCsar")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Response serviceToscaCsar(@QueryParam("serviceModelUuid") String smUuid) {
+        int respStatus = HttpStatus.SC_OK;
+        String entity = "";
+        try {
+            if (smUuid != null && !"".equals(smUuid)) {
+                logger.debug("Query Csar by service model uuid: {}",smUuid);
+                ToscaCsar toscaCsar = toscaCsarRepo.findOne(smUuid);
+                if (toscaCsar != null) {
+                    QueryServiceCsar serviceCsar = new QueryServiceCsar(toscaCsar);
+                    entity = serviceCsar.JSON2(false, false);
+                } else {
+                    respStatus = HttpStatus.SC_NOT_FOUND;
+                }
+            } else {
+                throw (new Exception("Incoming parameter is null or blank"));
+            }
+            return Response
+                    .status(respStatus)
+                    .entity(entity)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (Exception e) {
+            logger.error("Exception during query csar by service model uuid: ", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
+                    CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response
+                    .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    })
+                    .build();
+        }
+    }
+
+    /**
+     * Get the resource recipe info from catalog
+     * <br>
+     * 
+     * @param rmUuid resource model uuid
+     * @return the recipe information of the resource.
+     * @since ONAP Beijing Release
+     */
+    @GET
+    @Path("resourceRecipe")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Response resourceRecipe(@QueryParam("resourceModelUuid") String rmUuid, @QueryParam("action") String action) {
+        int respStatus = HttpStatus.SC_OK;
+        String entity = "";
+        try {
+            if (rmUuid != null && !"".equals(rmUuid)) {
+                logger.debug("Query recipe by resource model uuid: {}", rmUuid);
+                //check vnf and network and ar, the resource could be any resource.
+                VnfResource vnf = vnfResourceRepo.findResourceByModelUUID(rmUuid);
+                Recipe recipe = vnfRecipeRepo.findVnfRecipeByNfRoleAndAction(vnf.getModelName(), action);
+                if (null == recipe) {
+                    NetworkResource nResource = networkResourceRepo.findResourceByModelUUID(rmUuid);
+                    recipe = networkRecipeRepo.findByModelNameAndAction(nResource.getModelName(), action);
+                }
+                if (null == recipe) {
+                    AllottedResource arResource = arResourceRepo.findResourceByModelUUID(rmUuid);
+                    recipe = arRecipeRepo.findByModelNameAndAction(arResource.getModelName(), action);
+                }
+                if (recipe != null) {
+                    QueryResourceRecipe resourceRecipe = new QueryResourceRecipe(recipe);
+                    entity = resourceRecipe.JSON2(false, false);
+                } else {
+                    respStatus = HttpStatus.SC_NOT_FOUND;
+                }
+            } else {
+                throw new Exception("Incoming parameter is null or blank");
+            }
+            return Response
+                    .status(respStatus)
+                    .entity(entity)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (Exception e) {
+            logger.error("Exception during query recipe by resource model uuid: ", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
+                    CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response
+                    .status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    })
+                    .build();
+        }
+    }
 }

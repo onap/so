@@ -24,19 +24,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @XmlRootElement(name = "serviceAllottedResources")
 public class QueryAllottedResourceCustomization extends CatalogQuery {
-	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,QueryAllottedResourceCustomization.class);
+    protected static Logger logger = LoggerFactory.getLogger(QueryAllottedResourceCustomization.class);
 	private List<AllottedResourceCustomization> allottedResourceCustomization;
-	private final String template =
+	private static final String TEMPLATE =
 		"\t{\n"+
-//		"\t{ \"allottedResource\"       : {\n"+
 		"\t\t\"modelInfo\"       : {\n"+
 			"\t\t\t\"modelName\"              : <MODEL_NAME>,\n"+
 			"\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"+
@@ -55,14 +53,24 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 	        "\t\t\"nfType\"                             : <NF_TYPE>,\n"+ 
 	        "\t\t\"nfRole\"                             : <NF_ROLE>,\n"+ 
 	        "\t\t\"nfNamingCode\"                       : <NF_NAMING_CODE>\n"+ 
-	    "\t}";			
-//		"\t}}";
+	    "\t}";
 
-	public QueryAllottedResourceCustomization() { super(); allottedResourceCustomization = new ArrayList<>(); }
-	public QueryAllottedResourceCustomization(List<AllottedResourceCustomization> vlist) { allottedResourceCustomization = vlist; }
+	public QueryAllottedResourceCustomization() {
+	    super();
+	    allottedResourceCustomization = new ArrayList<>();
+	}
+	
+	public QueryAllottedResourceCustomization(List<AllottedResourceCustomization> vlist) {
+	    allottedResourceCustomization = vlist; 
+	}
 
-	public List<AllottedResourceCustomization> getServiceAllottedResources(){ return this.allottedResourceCustomization; }
-	public void setServiceAllottedResources(List<AllottedResourceCustomization> v) { this.allottedResourceCustomization = v; }
+	public List<AllottedResourceCustomization> getServiceAllottedResources(){ 
+	    return this.allottedResourceCustomization; 
+	}
+	
+	public void setServiceAllottedResources(List<AllottedResourceCustomization> v) { 
+	    this.allottedResourceCustomization = v; 
+	}
 
 	@Override
 	public String toString () {
@@ -72,7 +80,10 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 		int i = 1;
 		for (AllottedResourceCustomization o : allottedResourceCustomization) {
 			sb.append(i).append("\t");
-			if (!first) sb.append("\n"); first = false;
+			if (!first) 
+			    sb.append("\n"); 
+			
+			first = false;
 			sb.append(o);
 		}
 		return sb.toString();
@@ -81,15 +92,20 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
 		StringBuilder sb = new StringBuilder();
-		if (!isEmbed && isArray) sb.append("{ ");
-		if (isArray) sb.append("\"serviceAllottedResources\": [");
+		if (!isEmbed && isArray) 
+		    sb.append("{ ");
+		if (isArray)
+		    sb.append("\"serviceAllottedResources\": [");
 		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		if (this.allottedResourceCustomization != null) {
 		for (AllottedResourceCustomization o : allottedResourceCustomization) {
-			if (first) sb.append("\n"); first = false;
+			if (first) 
+			    sb.append("\n");
+			
+			first = false;
 
 				boolean arNull = o.getAllottedResource() == null ? true : false;
 	
@@ -110,13 +126,19 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 			    put(valueMap, "PROVIDING_SERVICE_MODEL_UUID",     o.getProvidingServiceModelUUID());
 			    put(valueMap, "PROVIDING_SERVICE_MODEL_NAME",     o.getProvidingServiceModelName());
 
-            sb.append(sep).append(this.setTemplate(template, valueMap));
+            sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
             sep = ",\n";
 		}
 		}
-		if (!first) sb.append("\n");
-		if (isArray) sb.append("]");
-		if (!isEmbed && isArray) sb.append("}");
+		if (!first)
+		    sb.append("\n");
+		
+		if (isArray)
+		    sb.append("]");
+		
+		if (!isEmbed && isArray)
+		    sb.append("}");
+		
 		return sb.toString();
 	}
 

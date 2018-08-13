@@ -35,13 +35,7 @@ import org.onap.so.db.catalog.beans.ToscaCsar;
  */
 public class QueryServiceCsar extends CatalogQuery{
     
-    private ToscaCsar toscaCsar;
-    
-    public QueryServiceCsar(ToscaCsar toscaCsar){
-        this.toscaCsar = toscaCsar;
-    }
-    
-    private final String template =
+    private static final String TEMPLATE =
             "\t{\n"+
             "\t\t\"artifactUUID\"         : <ARTIFACT_UUID>,\n"+
             "\t\t\"name\"                 : <NAME>,\n"+
@@ -51,9 +45,14 @@ public class QueryServiceCsar extends CatalogQuery{
             "\t\t\"description\"          : <DESCRIPTION>\n"+
             "\t}";
     
+    private ToscaCsar toscaCsar;
+    
+    public QueryServiceCsar(ToscaCsar toscaCsar){
+        this.toscaCsar = toscaCsar;
+    }
+    
     @Override
     public String toString() {
-
         return toscaCsar.toString();
     }
 
@@ -66,7 +65,7 @@ public class QueryServiceCsar extends CatalogQuery{
         put(valueMap, "ARTIFACT_CHECK_SUM", null == toscaCsar ? null : toscaCsar.getArtifactChecksum());
         put(valueMap, "URL", null == toscaCsar ? null : toscaCsar.getUrl());
         put(valueMap, "DESCRIPTION", null == toscaCsar ? null : toscaCsar.getDescription());
-        return this.setTemplate(template, valueMap);
+        return this.setTemplate(TEMPLATE, valueMap);
     }
 
 }
