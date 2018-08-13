@@ -26,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -57,62 +58,80 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class ManualTasksTest extends BaseTest{
 
-	private final String basePath = "/tasks/v1/";
-	
+    private final String basePath = "/tasks/v1/";
 
-	
-	@Test
-	public void testCreateOpEnvObjectMapperError() throws IOException {
-		TestAppender.events.clear();
-		stubFor(post(urlPathEqualTo("/sobpmnengine/task/55/complete"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
-		
-		String taskId = "55";
-		TasksRequest taskReq = new TasksRequest();
-		RequestDetails reqDetail = new RequestDetails();
-		RequestInfo reqInfo = new RequestInfo();
-		reqInfo.setRequestorId("testId");
-		reqInfo.setSource("testSource");	
-		reqInfo.setResponseValue(ValidResponses.skip);
-		reqDetail.setRequestInfo(reqInfo);
-		taskReq.setRequestDetails(reqDetail);
-		
-		//expected response
-		TaskRequestReference expectedResponse = new TaskRequestReference();
-		expectedResponse.setTaskId(taskId);	
-		
-		headers.set("Accept", MediaType.APPLICATION_JSON);
-		headers.set("Content-Type", MediaType.APPLICATION_JSON);
-		headers.set(MsoLogger.ECOMP_REQUEST_ID, "987654321");
-		headers.set(MsoLogger.CLIENT_ID, "VID");
-		HttpEntity<TasksRequest> entity = new HttpEntity<TasksRequest>(taskReq, headers);
-		
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(basePath) + taskId + "/complete");	       
-		ResponseEntity<String> response = restTemplate.exchange(
-				builder.toUriString(),
-				HttpMethod.POST, entity, String.class);
 
-	
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-		TaskRequestReference realResponse = mapper.readValue(response.getBody(), TaskRequestReference.class);
-		
-		
-		//then		
-		assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());	
-		assertThat(realResponse, sameBeanAs(expectedResponse));	
-		ILoggingEvent logEvent = TestAppender.events.get(0);
-        Map<String,String> mdc = logEvent.getMDCPropertyMap();
-        assertEquals("987654321", mdc.get(MsoLogger.REQUEST_ID));
-        assertEquals("VID", mdc.get(MsoLogger.CLIENT_ID));        
-        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
-        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
-        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
-        assertEquals("1.0.0", response.getHeaders().get("X-LatestVersion").get(0));
-        assertEquals("987654321", response.getHeaders().get("X-TransactionID").get(0));
-        MDC.remove(MsoLogger.CLIENT_ID);
-		
-	}
+    @Test
+    public void testCreateOpEnvObjectMapperError() throws IOException {
+        TestAppender.events.clear();
+        stubFor(post(urlPathEqualTo("/sobpmnengine/task/55/complete"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
+
+        String taskId = "55";
+        TasksRequest taskReq = new TasksRequest();
+        RequestDetails reqDetail = new RequestDetails();
+        RequestInfo reqInfo = new RequestInfo();
+        reqInfo.setRequestorId("testId");
+        reqInfo.setSource("testSource");	
+        reqInfo.setResponseValue(ValidResponses.skip);
+        reqDetail.setRequestInfo(reqInfo);
+        taskReq.setRequestDetails(reqDetail);
+
+        //expected response
+        TaskRequestReference expectedResponse = new TaskRequestReference();
+        expectedResponse.setTaskId(taskId);	
+
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        headers.set(MsoLogger.ECOMP_REQUEST_ID, "987654321");
+        headers.set(MsoLogger.CLIENT_ID, "VID");
+        HttpEntity<TasksRequest> entity = new HttpEntity<TasksRequest>(taskReq, headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(basePath) + taskId + "/complete");	       
+        ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.POST, entity, String.class);
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        TaskRequestReference realResponse = mapper.readValue(response.getBody(), TaskRequestReference.class);
+
+
+        //then		
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());	
+        assertThat(realResponse, sameBeanAs(expectedResponse));	
+        
+        for(ILoggingEvent logEvent : TestAppender.events)
+            if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
+                    logEvent.getMarker().getName().equals("ENTRY")
+                    ){
+                Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                assertNotNull(mdc.get(MsoLogger.BEGINTIME));
+                assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));               
+                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
+                assertEquals("tasks/v1/55/complete",mdc.get(MsoLogger.SERVICE_NAME));
+                assertEquals("INPROGRESS",mdc.get(MsoLogger.STATUSCODE));
+            }else if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
+                    logEvent.getMarker().getName().equals("EXIT")){
+                Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                assertNotNull(mdc.get(MsoLogger.BEGINTIME));
+                assertNotNull(mdc.get(MsoLogger.ENDTIME));
+                assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));
+                assertEquals("202",mdc.get(MsoLogger.RESPONSECODE));
+                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
+                assertEquals("tasks/v1/55/complete",mdc.get(MsoLogger.SERVICE_NAME));
+                assertEquals("COMPLETE",mdc.get(MsoLogger.STATUSCODE));
+                assertNotNull(mdc.get(MsoLogger.RESPONSEDESC));
+                assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
+                assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+                assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+                assertEquals("1.0.0", response.getHeaders().get("X-LatestVersion").get(0));
+            }
+    }
 }

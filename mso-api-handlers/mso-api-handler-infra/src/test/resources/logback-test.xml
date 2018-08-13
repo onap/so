@@ -1,39 +1,41 @@
-<configuration >
-  
-  
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-     <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1024} - %msg%n
+<configuration>
+
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1024} - %msg%n
 			</pattern>
-    </encoder>
-  </appender>
-  <appender name="test" class="org.onap.so.apihandlerinfra.TestAppender"/>
-  
+		</encoder>
+	</appender>
+	<appender name="test" class="org.onap.so.apihandlerinfra.TestAppender" />
 
-  <logger name="AUDIT" level="info" additivity="false">
-    <appender-ref ref="STDOUT" />
-    <appender-ref ref = "test" />
-  </logger>
-  
-  <logger name="com.att.eelf.metrics" level="info" additivity="false">
-        <appender-ref ref="STDOUT" />
-  </logger>
 
-  <logger name="com.att.eelf.error" level="ERROR" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger> 
-
-	<logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
+	<logger name="AUDIT" level="info" additivity="false">
 		<appender-ref ref="STDOUT" />
 	</logger>
-	
-	<logger name="com.att" level="${so.log.level:-DEBUG}" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
-  <root level="WARN">
-    <appender-ref ref="STDOUT" />
-  </root>
 
-  <logger name="wiremock.org" level="ERROR" />
+	<logger name="com.att.eelf.metrics" level="info" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="com.att.eelf.error" level="ERROR" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="org.onap" level="${so.log.level:-DEBUG}"
+		additivity="false">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="test" />
+	</logger>
+
+	<logger name="com.att" level="${so.log.level:-DEBUG}"
+		additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+	<root level="WARN">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+	<logger name="wiremock.org" level="ERROR" />
 
 </configuration>

@@ -124,7 +124,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-        headers.set(MsoLogger.TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
+        headers.set(MsoLogger.ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(MsoLogger.CLIENT_ID, "VID");
         //expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -141,18 +141,37 @@ public class ServiceInstancesTest extends BaseTest{
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
-        ILoggingEvent logEvent = TestAppender.events.get(0);
-        Map<String,String> mdc = logEvent.getMDCPropertyMap();
-        assertEquals("32807a28-1a14-4b88-b7b3-2950918aa76d", mdc.get(MsoLogger.REQUEST_ID));
-        assertEquals("VID", mdc.get(MsoLogger.CLIENT_ID));
-        MDC.remove(MsoLogger.CLIENT_ID);
-        assertTrue(response.getBody().contains("1882939"));
-        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
-        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
-        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
-        assertEquals("5.0.0", response.getHeaders().get("X-LatestVersion").get(0));
-        assertEquals("32807a28-1a14-4b88-b7b3-2950918aa76d", response.getHeaders().get("X-TransactionID").get(0));
-
+        
+        
+        
+        for(ILoggingEvent logEvent : TestAppender.events)
+            if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
+                    logEvent.getMarker().getName().equals("ENTRY")
+                    ){
+                Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                assertNotNull(mdc.get(MsoLogger.BEGINTIME));
+                assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));               
+                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
+                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",mdc.get(MsoLogger.SERVICE_NAME));
+                assertEquals("INPROGRESS",mdc.get(MsoLogger.STATUSCODE));
+            }else if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
+                    logEvent.getMarker().getName().equals("EXIT")){
+                Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                assertNotNull(mdc.get(MsoLogger.BEGINTIME));
+                assertNotNull(mdc.get(MsoLogger.ENDTIME));
+                assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));
+                assertEquals("202",mdc.get(MsoLogger.RESPONSECODE));
+                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
+                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",mdc.get(MsoLogger.SERVICE_NAME));
+                assertEquals("COMPLETE",mdc.get(MsoLogger.STATUSCODE));
+                assertNotNull(mdc.get(MsoLogger.RESPONSEDESC));
+                assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+                assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+                assertEquals("5.0.0", response.getHeaders().get("X-LatestVersion").get(0));
+            }
+        
         //ExpectedRecord
         InfraActiveRequests expectedRecord = new InfraActiveRequests();
         expectedRecord.setRequestStatus("IN_PROGRESS");
@@ -575,7 +594,7 @@ public class ServiceInstancesTest extends BaseTest{
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         String requestId = "b7a6b76f-2ee2-416c-971b-548472a8c5c3";
-        headers.set(MsoLogger.TRANSACTION_ID, requestId);
+        headers.set(MsoLogger.ONAP_REQUEST_ID, requestId);
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -684,7 +703,7 @@ public class ServiceInstancesTest extends BaseTest{
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         String requestId = "b7a6b76f-2ee2-416c-971b-548472a8c5c5";
-        headers.set(MsoLogger.TRANSACTION_ID, requestId);
+        headers.set(MsoLogger.ONAP_REQUEST_ID, requestId);
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -838,7 +857,7 @@ public class ServiceInstancesTest extends BaseTest{
     }
     @Test
     public void createVfModuleNoModelType() throws JsonParseException, JsonMappingException, IOException{
-        headers.set(MsoLogger.TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
+        headers.set(MsoLogger.ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         InfraActiveRequests expectedRecord = new InfraActiveRequests();
         expectedRecord.setRequestStatus("FAILED");
         expectedRecord.setAction("createInstance");
@@ -1039,7 +1058,7 @@ public class ServiceInstancesTest extends BaseTest{
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         String requestId = "b7a6b76f-2ee2-416c-971b-548472a8c5c4";
-        headers.set(MsoLogger.TRANSACTION_ID, requestId);
+        headers.set(MsoLogger.ONAP_REQUEST_ID, requestId);
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -1123,7 +1142,7 @@ public class ServiceInstancesTest extends BaseTest{
     }
     @Test
     public void convertJsonToServiceInstanceRequestFail() throws JsonParseException, JsonMappingException, IOException {
-        headers.set(MsoLogger.TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
+        headers.set(MsoLogger.ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         //ExpectedRecord
         InfraActiveRequests expectedRecord = new InfraActiveRequests();
         expectedRecord.setRequestStatus("FAILED");

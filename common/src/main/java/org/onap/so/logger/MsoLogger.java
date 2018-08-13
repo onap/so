@@ -35,6 +35,8 @@ import org.onap.so.entity.MsoRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 
 /**
@@ -49,15 +51,23 @@ import org.slf4j.MDC;
  */
 
 public class MsoLogger {
-    // MDC parameters
-    public static final String REQUEST_ID                  = "RequestId";
-    public static final String SERVICE_INSTANCE_ID         = "ServiceInstanceId";
-    public static final String SERVICE_NAME                = "ServiceName";
-    public static final String SERVICE_NAME_IS_METHOD_NAME = "ServiceNameIsMethodName";
+    // Required MDC parameters
+    public static final String REQUEST_ID                  = "RequestID";
+    public static final String INVOCATION_ID               = "InvocationID";
     public static final String INSTANCE_UUID               = "InstanceUUID";
+    public static final String SERVICE_NAME                = "ServiceName";
+    public static final String STATUSCODE                  = "StatusCode";
+    public static final String RESPONSECODE                = "ResponseCode";
+    public static final String RESPONSEDESC                = "ResponseDesc";
+    public static final String FQDN                        = "ServerFQDN";
+    
+    
+    public static final String SERVICE_INSTANCE_ID         = "ServiceInstanceId";
+    
+    public static final String SERVICE_NAME_IS_METHOD_NAME = "ServiceNameIsMethodName";
     public static final String SERVER_IP                   = "ServerIPAddress";
    
-    public static final String FQDN                        = "ServerFQDN";
+    
     public static final String REMOTE_HOST                 = "RemoteHost";
     public static final String ALERT_SEVERITY              = "AlertSeverity";
     public static final String TIMER                       = "Timer";
@@ -73,16 +83,17 @@ public class MsoLogger {
     public static final String HEADER_REQUEST_ID           = "X-RequestId";
     public static final String TRANSACTION_ID			   = "X-TransactionID";
     public static final String ECOMP_REQUEST_ID			   = "X-ECOMP-RequestID";
+    public static final String ONAP_REQUEST_ID            = "X-ONAP-RequestID";
+    
     public static final String CLIENT_ID 				   = "X-ClientID";
+    public static final String INVOCATION_ID_HEADER        = "X-InvocationID";
     
     // Audit/Metric log specific
     public static final String BEGINTIME                   = "BeginTimestamp";
     public static final String STARTTIME                   = "StartTimeMilis";
     public static final String ENDTIME                     = "EndTimestamp";
     public static final String PARTNERNAME                 = "PartnerName";
-    public static final String STATUSCODE                  = "StatusCode";
-    public static final String RESPONSECODE                = "ResponseCode";
-    public static final String RESPONSEDESC                = "ResponseDesc";
+
     
     
     // Metric log specific
@@ -103,8 +114,10 @@ public class MsoLogger {
     public static final String ERRORCODE                   = "ErrorCode";
     public static final String ERRORDESC                   = "ErrorDesc";
     
+    //Status Codes
     public static final String COMPLETE                    = "COMPLETE";    
-
+    public static final String INPROGRESS                    = "INPROGRESS";
+    
     public enum Catalog {
         APIH, BPEL, RA, ASDC, GENERAL
     }
@@ -157,6 +170,9 @@ public class MsoLogger {
             this.value = value;
         }
     }
+    
+    public static final Marker ENTRY = MarkerFactory.getMarker("ENTRY");
+    public static final Marker EXIT = MarkerFactory.getMarker("EXIT");
 
     private Logger logger;
     private Logger metricsLogger;

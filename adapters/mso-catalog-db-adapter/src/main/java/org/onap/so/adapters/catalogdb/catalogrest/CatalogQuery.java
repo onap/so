@@ -24,13 +24,12 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.onap.so.logger.MsoLogger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class CatalogQuery {
-	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,CatalogQuery.class);
+	protected static Logger logger = LoggerFactory.getLogger(CatalogQuery.class);
 	private static final boolean IS_EMBED = true;
 
 	public abstract String JSON2(boolean isArray, boolean isEmbed);
@@ -48,21 +47,20 @@ public abstract class CatalogQuery {
 	}
 
 	protected String setTemplate(String template, Map<String, String> valueMap) {
-		LOGGER.debug("CatalogQuery setTemplate");
 		StringBuffer result = new StringBuffer();
 
 		String pattern = "<.*>";
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(template);
 
-		LOGGER.debug("CatalogQuery template:" + template);
+		logger.debug("CatalogQuery template: {}", template);
 		while (m.find()) {
 			String key = template.substring(m.start() + 1, m.end() - 1);
-			LOGGER.debug("CatalogQuery key:" + key + " contains key? " + valueMap.containsKey(key));
+			logger.debug("CatalogQuery key: {} contains key? {}", key , valueMap.containsKey(key));
 			m.appendReplacement(result, valueMap.getOrDefault(key, "\"TBD\""));
 		}
 		m.appendTail(result);
-		LOGGER.debug("CatalogQuery return:" + result.toString());
+		logger.debug("CatalogQuery return: {}", result.toString());
 		return result.toString();
 	}
 
@@ -76,8 +74,7 @@ public abstract class CatalogQuery {
 			jsonString = mapper.writeValueAsString(this);
 		}
 		catch (Exception e) {
-		    LOGGER.debug("Exception:", e);
-			LOGGER.debug ("jsonString exception:"+e.getMessage());
+		    logger.error("Error converting to JSON" , e);			
 			jsonString = "invalid"; //throws instead?
 		}
 		return jsonString;
