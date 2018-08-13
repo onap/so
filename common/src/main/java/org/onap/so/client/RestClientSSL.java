@@ -72,23 +72,15 @@ public abstract class RestClientSSL extends RestClient {
 	private KeyStore getKeyStore() {
 		KeyStore ks = null;
 	    char[] password = System.getProperty(RestClientSSL.SSL_KEY_STORE_PASSWORD_KEY).toCharArray();
-	    FileInputStream fis = null;
-	    try {
+	    try(FileInputStream fis = new FileInputStream(System.getProperty(RestClientSSL.SSL_KEY_STORE_KEY))) {
 	    	ks = KeyStore.getInstance(KeyStore.getDefaultType());
-	        fis = new FileInputStream(System.getProperty(RestClientSSL.SSL_KEY_STORE_KEY));
+	        
 	        ks.load(fis, password);
 	    }
 	    catch(Exception e) {
 	    	return null;
 	    }
-	    finally {
-	        if (fis != null) {
-	            try { 
-	            	fis.close();
-	            }
-	            catch(Exception e) {}
-	        }
-	    }
+	    
 	    return ks;
 	}
 }
