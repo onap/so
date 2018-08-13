@@ -30,18 +30,17 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
 import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl;
+import org.onap.so.bpmn.infrastructure.pnf.delegate.DmaapClientTestImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -60,6 +59,9 @@ public class CreateAndActivatePnfResourceTest {
 
     @Autowired
     private AaiConnectionTestImpl aaiConnection;
+
+    @Autowired
+    private DmaapClientTestImpl dmaapClientTestImpl;
 
     @Test
     @Deployment(resources = {"process/CreateAndActivatePnfResource.bpmn"})
@@ -96,9 +98,8 @@ public class CreateAndActivatePnfResourceTest {
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
         assertThat(instance).isWaitingAt("WaitForDmaapPnfReadyNotification").isWaitingFor("WorkflowMessage");
-        runtimeService.createMessageCorrelation("WorkflowMessage")
-                .processInstanceBusinessKey("businessKey")
-                .correlateWithResult();
+        dmaapClientTestImpl.sendMessage();
+
         // then
         assertThat(instance).isEnded().hasPassedInOrder(
                 "CreateAndActivatePnf_StartEvent",
@@ -125,9 +126,8 @@ public class CreateAndActivatePnfResourceTest {
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
         assertThat(instance).isWaitingAt("WaitForDmaapPnfReadyNotification").isWaitingFor("WorkflowMessage");
-        runtimeService.createMessageCorrelation("WorkflowMessage")
-                .processInstanceBusinessKey("businessKey")
-                .correlateWithResult();
+        dmaapClientTestImpl.sendMessage();
+
         // then
         assertThat(instance).isEnded().hasPassedInOrder(
                 "CreateAndActivatePnf_StartEvent",

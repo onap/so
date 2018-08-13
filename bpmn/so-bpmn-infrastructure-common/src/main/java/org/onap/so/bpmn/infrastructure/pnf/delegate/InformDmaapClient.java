@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
+import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
@@ -30,12 +31,15 @@ public class InformDmaapClient implements JavaDelegate {
     private DmaapClient dmaapClient;
 
     @Override
-    public void execute(DelegateExecution execution) throws Exception {
+    public void execute(DelegateExecution execution) {
         String correlationId = (String) execution.getVariable(ExecutionVariableNames.CORRELATION_ID);
-        dmaapClient.registerForUpdate(correlationId, () -> execution.getProcessEngineServices().getRuntimeService()
+        RuntimeService runtimeService = execution.getProcessEngineServices().getRuntimeService();
+        dmaapClient.registerForUpdate(correlationId, () ->
+            runtimeService
                 .createMessageCorrelation("WorkflowMessage")
                 .processInstanceBusinessKey(execution.getProcessBusinessKey())
-                .correlateWithResult());
+                .correlateWithResult()
+        );
     }
 
     @Autowired
