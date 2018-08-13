@@ -74,4 +74,12 @@ public class AAIVolumeGroupResources {
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
 		injectionHelper.getAaiClient().delete(uri);
 	}
+	
+	public void updateHeatStackIdVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+		VolumeGroup copiedVolumeGroup = volumeGroup.shallowCopyId();
+		
+		copiedVolumeGroup.setHeatStackId(volumeGroup.getHeatStackId());
+		injectionHelper.getAaiClient().update(uri, aaiObjectMapper.mapVolumeGroup(copiedVolumeGroup));
+	}
 }

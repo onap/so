@@ -203,6 +203,24 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	}
 	
 	@Test
+	public void updateHeatStackIdVfModuleTest() throws Exception {
+		doNothing().when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
+
+		aaiUpdateTasks.updateHeatStackIdVfModule(execution);
+
+		verify(aaiVfModuleResources, times(1)).updateHeatStackIdVfModule(vfModule, genericVnf);
+	}
+	
+	@Test
+	public void updateHeatStackIdVfModuleExceptionTest() throws Exception {
+		doThrow(Exception.class).when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
+		
+		expectedException.expect(BpmnError.class);
+	
+		aaiUpdateTasks.updateHeatStackIdVfModule(execution);
+	}
+	
+	@Test
 	public void updateOrchestrationStatusActiveVolumeGroupTest() throws Exception {
 		doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ACTIVE);
 
@@ -249,7 +267,23 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 		expectedException.expect(BpmnError.class);
 		doThrow(Exception.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ASSIGNED);
 		aaiUpdateTasks.updateOrchestrationStatusAssignedVolumeGroup(execution);
-	}	
+	}
+	@Test
+	public void updateHeatStackIdVolumeGroupTest() throws Exception {
+		doNothing().when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+
+		aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
+
+		verify(aaiVolumeGroupResources, times(1)).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+	}
+	
+	@Test
+	public void updateHeatStackIdVolumeGroupExceptionTest() throws Exception {
+		expectedException.expect(BpmnError.class);
+		doThrow(Exception.class).when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+		aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
+	}
+	
 	@Test
 	public void updateOstatusAssignedNetworkTest() throws Exception {
 		doNothing().when(aaiNetworkResources).updateNetwork(network);

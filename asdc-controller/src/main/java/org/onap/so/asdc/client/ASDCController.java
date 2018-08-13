@@ -25,6 +25,7 @@ package org.onap.so.asdc.client;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.onap.sdc.api.IDistributionClient;
@@ -44,6 +45,7 @@ import org.onap.so.asdc.client.exceptions.ASDCParametersException;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.IVfResourceInstaller;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
+import org.onap.so.asdc.installer.VfModuleStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.asdc.tenantIsolation.DistributionStatus;
@@ -671,7 +673,23 @@ public class ASDCController {
 
     	try {
     		
-   			this.processCsarServiceArtifacts(iNotif, toscaResourceStructure);	
+   			this.processCsarServiceArtifacts(iNotif, toscaResourceStructure);
+   			
+   			// Install a service with no resources, only the service itself
+   			if (iNotif.getResources() == null || iNotif.getResources().size() < 1) {
+   				
+   				LOGGER.debug("No resources found for Service: " + iNotif.getServiceUUID());
+				
+   				try{
+   					resourceStructure = new VfResourceStructure(iNotif,new ResourceInstance()); 
+   					
+					this.deployResourceStructure(resourceStructure, toscaResourceStructure);
+
+			 	} catch(ArtifactInstallerException e){
+			 		deploySuccessful = false;
+			 		errorMessage = e.getMessage();
+			 	}  
+   			} else { // Services with resources
    		 	
     		for (IResourceInstance resource : iNotif.getResources()){
     			
@@ -695,23 +713,21 @@ public class ASDCController {
 	    					resourceStructure.addArtifactToStructure(distributionClient,artifact, resultArtifact);
 	    				}
 	    			}
-				}	    			
-    		 } 			
-			 try{
-
+				}
+				
 				//Deploy All resources and artifacts
 				LOGGER.debug("Preparing to deploy Service: " + iNotif.getServiceUUID());
-				if(resourceStructure == null){
-					resourceStructure = new VfResourceStructure(iNotif,new ResourceInstance()); 
-				}
-				this.deployResourceStructure(resourceStructure, toscaResourceStructure);
+				try{
+					
+					this.deployResourceStructure(resourceStructure, toscaResourceStructure);
 
-
-			 } catch(ArtifactInstallerException e){
-				deploySuccessful = false;
-				errorMessage = e.getMessage();
-			 }
-
+			 	} catch(ArtifactInstallerException e){
+			 		deploySuccessful = false;
+			 		errorMessage = e.getMessage();
+			 	}  
+				
+    		} 	
+   		}
 			 this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deploySuccessful, errorMessage);
     		
     	} catch (ASDCDownloadException | UnsupportedEncodingException e) {

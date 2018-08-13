@@ -23,8 +23,12 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 import java.util.Optional;
 
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.AAINetworkResources;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,6 +46,12 @@ public class UnassignNetworkBB {
 
 	@Autowired
 	private NetworkBBUtils networkBBUtils;
+	
+	@Autowired
+	private ExtractPojosForBB extractPojosForBB;
+	
+	@Autowired
+	private AAINetworkResources aaiNetworkResources;
 
 	/**
 	 * BPMN access method to prepare overall error messages.
@@ -54,9 +64,11 @@ public class UnassignNetworkBB {
 	
 	public void checkRelationshipRelatedTo(BuildingBlockExecution execution, String relatedToValue) throws Exception {
 		try {
-			AAIResultWrapper aaiResultWrapper = execution.getVariable("l3NetworkAAIResultWrapper");
-			Optional<org.onap.aai.domain.yang.L3Network> l3network = aaiResultWrapper.asBean(org.onap.aai.domain.yang.L3Network.class);
-			if (networkBBUtils.isRelationshipRelatedToExists(l3network, relatedToValue)) {
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
+				execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
+			Optional<org.onap.aai.domain.yang.L3Network> network = aaiResultWrapper.asBean(org.onap.aai.domain.yang.L3Network.class);
+			if (networkBBUtils.isRelationshipRelatedToExists(network, relatedToValue)) {
 				String msg = MESSAGE_CANNOT_PERFORM_UNASSIGN + relatedToValue;
 				execution.setVariable("ErrorUnassignNetworkBB", msg);
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);

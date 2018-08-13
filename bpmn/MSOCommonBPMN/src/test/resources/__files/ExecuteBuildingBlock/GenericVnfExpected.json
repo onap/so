@@ -12,7 +12,9 @@
 		"heat-stack-id":"heatStackId",
 		"contrail-service-instance-fqdn":"contrailServiceInstanceFqdn",
 		"module-index":1,"selflink":"selflink",
-		"model-info-vf-module":null
+		"model-info-vf-module": {
+			"is-base-boolean":false
+		}
 	}],
 	"volume-groups":[],
 	"line-of-business":null,

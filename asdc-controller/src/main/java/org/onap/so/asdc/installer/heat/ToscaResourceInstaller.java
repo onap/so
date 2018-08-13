@@ -33,6 +33,7 @@ import java.util.Set;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
 import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.api.notification.IStatusData;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.tosca.parser.impl.SdcTypes;
@@ -424,26 +425,35 @@ public class ToscaResourceInstaller {
 
 			String vfCustomizationUUID = toscaResourceStruct.getSdcCsarHelper()
 					.getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
-			logger.debug("vfCustomizationUUID=" + vfCustomizationUUID);					
+			logger.debug("vfCustomizationUUID=" + vfCustomizationUUID);	
 			
-			VnfResourceCustomization vnfResource = createVnfResource(nodeTemplate, toscaResourceStruct, service);	
+			IResourceInstance vfMetaDataResource = vfResourceStructure.getResourceInstance();		
 			
-			for (VfModuleStructure vfModuleStructure : vfResourceStructure.getVfModuleStructure()) {			
-				logger.debug("vfModuleStructure:" + vfModuleStructure.toString());
-				List<org.onap.sdc.toscaparser.api.Group> vfGroups = toscaResourceStruct
-						.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
-				IVfModuleData vfMetadata = vfModuleStructure.getVfModuleMetadata();		
-				Optional<org.onap.sdc.toscaparser.api.Group> matchingObject = vfGroups.stream().
-					    filter(group -> group.getMetadata().getValue("vfModuleModelCustomizationUUID").equals(vfMetadata.getVfModuleModelCustomizationUUID())).
-					    findFirst();
-				if(matchingObject.isPresent()){
-					VfModuleCustomization vfModuleCustomization = createVFModuleResource(matchingObject.get(), nodeTemplate, toscaResourceStruct, vfResourceStructure,vfMetadata, vnfResource);
-					vfModuleCustomization.getVfModule().setVnfResources(vnfResource.getVnfResources());
-				}else
-					throw new Exception("Cannot find matching VFModule Customization for VF Module Metadata: " + vfMetadata.getVfModuleModelCustomizationUUID());
+			// Make sure the vfMetadata and tosca customizations match before comparing their VF Modules UUID's
+			if(vfCustomizationUUID.equals(vfMetaDataResource.getResourceCustomizationUUID())){
 				
-			}
-			service.getVnfCustomizations().add(vnfResource);
+				logger.debug("vfCustomizationUUID: " + vfCustomizationUUID + " matches vfMetaData CustomizationUUID");
+				
+				VnfResourceCustomization vnfResource = createVnfResource(nodeTemplate, toscaResourceStruct, service);	
+			
+				for (VfModuleStructure vfModuleStructure : vfResourceStructure.getVfModuleStructure()) {			
+					logger.debug("vfModuleStructure ModelUUID: " + vfModuleStructure.toString());
+					List<org.onap.sdc.toscaparser.api.Group> vfGroups = toscaResourceStruct
+							.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
+					IVfModuleData vfMetadata = vfModuleStructure.getVfModuleMetadata();		
+					
+					Optional<org.onap.sdc.toscaparser.api.Group> matchingObject = vfGroups.stream().
+						    filter(group -> group.getMetadata().getValue("vfModuleModelCustomizationUUID").equals(vfMetadata.getVfModuleModelCustomizationUUID())).
+						    findFirst();
+					if(matchingObject.isPresent()){
+						VfModuleCustomization vfModuleCustomization = createVFModuleResource(matchingObject.get(), nodeTemplate, toscaResourceStruct, vfResourceStructure,vfMetadata, vnfResource);
+						vfModuleCustomization.getVfModule().setVnfResources(vnfResource.getVnfResources());
+					}else
+						throw new Exception("Cannot find matching VFModule Customization for VF Module Metadata: " + vfMetadata.getVfModuleModelCustomizationUUID());
+					
+				}
+				service.getVnfCustomizations().add(vnfResource);
+		   }
 		}
 	}
 

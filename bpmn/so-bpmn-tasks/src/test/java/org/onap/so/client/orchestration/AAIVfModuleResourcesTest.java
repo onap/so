@@ -124,4 +124,17 @@ public class AAIVfModuleResourcesTest extends TestDataSetup{
 		aaiVfModuleResources.connectVfModuleToVolumeGroup(vnf, vfModule, volumeGroup, cloudRegion);
 		verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
 	}
+	
+	@Test
+	public void updateHeatStackIdVfModuleTest() throws Exception {
+		vfModule.setHeatStackId("testHeatStackId");
+		
+		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VfModule.class));
+		
+		aaiVfModuleResources.updateHeatStackIdVfModule(vfModule, vnf);
+
+		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.VfModule.class));
+		
+		assertEquals("testHeatStackId", vfModule.getHeatStackId());
+	}
 }

@@ -209,6 +209,10 @@ public class ASDCNotificationLogging {
         List<NodeTemplate> vfNodeTemplatesList = toscaResourceStructure.getSdcCsarHelper().getServiceVfList();
         for (NodeTemplate vfNodeTemplate :  vfNodeTemplatesList) {
         	
+        	buffer.append(System.lineSeparator());
+    		buffer.append("VNF Properties:");
+    		buffer.append(System.lineSeparator());
+        	
     		buffer.append("Model Name:");
     		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
     		buffer.append(System.lineSeparator());

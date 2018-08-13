@@ -304,19 +304,22 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			VnfResource vnfResource = (VnfResource) execution.getVariable("vnfResourceDecomposition")
 			List<ModuleResource> moduleResources = vnfResource.getVfModules()
 			
-			for (j in 0..moduleResources.size()-1) {				
-				ModelInfo modelInfo = moduleResources[j].getModelInfo()
-				String modelInvariantUuidFromDecomposition = modelInfo.getModelInvariantUuid()
-				msoLogger.debug("modelInvariantUuidFromDecomposition: " + modelInvariantUuidFromDecomposition)
-				
-				if (modelInvariantUuid.equals(modelInvariantUuidFromDecomposition)) {
-					String vfModuleModelInfo = modelInfo.toJsonString()
-					String vfModuleModelInfoValue = jsonUtil.getJsonValue(vfModuleModelInfo, "modelInfo")
-					execution.setVariable("DUVAM_vfModuleModelInfo", vfModuleModelInfoValue)
-					msoLogger.debug("vfModuleModelInfo: " + vfModuleModelInfoValue)
-					break
+			if (moduleResources != null && !moduleResources.isEmpty()) {
+			
+				for (j in 0..moduleResources.size()-1) {				
+					ModelInfo modelInfo = moduleResources[j].getModelInfo()
+					String modelInvariantUuidFromDecomposition = modelInfo.getModelInvariantUuid()
+					msoLogger.debug("modelInvariantUuidFromDecomposition: " + modelInvariantUuidFromDecomposition)
+					
+					if (modelInvariantUuid.equals(modelInvariantUuidFromDecomposition)) {
+						String vfModuleModelInfo = modelInfo.toJsonString()
+						String vfModuleModelInfoValue = jsonUtil.getJsonValue(vfModuleModelInfo, "modelInfo")
+						execution.setVariable("DUVAM_vfModuleModelInfo", vfModuleModelInfoValue)
+						msoLogger.debug("vfModuleModelInfo: " + vfModuleModelInfoValue)
+						break
+					}
+					
 				}
-				
 			}			
 			
 		}catch(Exception e){

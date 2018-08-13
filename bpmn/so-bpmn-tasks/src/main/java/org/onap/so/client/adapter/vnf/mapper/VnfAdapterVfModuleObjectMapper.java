@@ -187,7 +187,9 @@ public class VnfAdapterVfModuleObjectMapper {
 		paramsMap.put("vf_module_id", vfModule.getVfModuleId());
 		paramsMap.put("vf_module_name", vfModule.getVfModuleName());
 		paramsMap.put("environment_context",serviceInstance.getModelInfoServiceInstance().getEnvironmentContext());
+		paramsMap.putIfAbsent("environment_context", "");
 		paramsMap.put("workload_context", serviceInstance.getModelInfoServiceInstance().getWorkloadContext());
+		paramsMap.putIfAbsent("workload_context", "");
 		Integer vfModuleIndex = vfModule.getModuleIndex();
 		if (vfModuleIndex != null) {
 			paramsMap.put("vf_module_index", vfModuleIndex.toString());
