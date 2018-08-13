@@ -29,14 +29,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @XmlRootElement(name = "serviceNetworks")
 public class QueryServiceNetworks extends CatalogQuery {
-	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,QueryServiceNetworks.class);
+    protected static Logger logger = LoggerFactory.getLogger(QueryServiceNetworks.class);
 	private List<NetworkResourceCustomization> serviceNetworks;
-	private final String template =
+	private static final String TEMPLATE =
 		"\t{\n"+
-//		"\t{ \"networkResource\"            : {\n"+
 			"\t\t\"modelInfo\"                : {\n"+
 			"\t\t\t\"modelName\"              : <MODEL_NAME>,\n"+
 			"\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"+
@@ -51,16 +52,19 @@ public class QueryServiceNetworks extends CatalogQuery {
 			"\t\t\"networkRole\"              : <NETWORK_ROLE>,\n"+
 			"\t\t\"networkScope\"             : <NETWORK_SCOPE>\n"+
 		"\t}";
-//		"\t}}";
 
-	public QueryServiceNetworks() { super(); serviceNetworks = new ArrayList<>(); }
+	public QueryServiceNetworks() { 
+	    super();
+	    serviceNetworks = new ArrayList<>();
+	}
+	
 	public QueryServiceNetworks(List<NetworkResourceCustomization> vlist) {
-		LOGGER.debug ("QueryServiceNetworks:");
+	    logger.debug ("QueryServiceNetworks:");
 		serviceNetworks = new ArrayList<>();
 		for (NetworkResourceCustomization o : vlist) {
-			LOGGER.debug (o.toString());
+		    if(logger.isDebugEnabled())
+		        logger.debug (o.toString());
 			serviceNetworks.add(o);
-			LOGGER.debug ("-------------------");
 		}
 	}
 
@@ -75,7 +79,9 @@ public class QueryServiceNetworks extends CatalogQuery {
 		int i = 1;
 		for (NetworkResourceCustomization o : serviceNetworks) {
 			sb.append(i).append("\t");
-			if (!first) sb.append("\n"); first = false;
+			if (!first)
+			    sb.append("\n");
+			first = false;
 			sb.append(o);
 		}
 		return sb.toString();
@@ -84,15 +90,19 @@ public class QueryServiceNetworks extends CatalogQuery {
 	@Override
 	public String JSON2(boolean isArray, boolean isEmbed) {
 		StringBuilder sb = new StringBuilder();
-		if (!isEmbed && isArray) sb.append("{ ");
-		if (isArray) sb.append("\"serviceNetworks\": [");
+		if (!isEmbed && isArray) 
+		    sb.append("{ ");
+		if (isArray) 
+		    sb.append("\"serviceNetworks\": [");
 
 		Map<String, String> valueMap = new HashMap<>();
 		String sep = "";
 		boolean first = true;
 
 		for (NetworkResourceCustomization o : serviceNetworks) {
-			if (first) sb.append("\n"); first = false;
+			if (first) 
+			    sb.append("\n");
+			first = false;
 			boolean nrNull = o.getNetworkResource() == null ? true : false;
 		    put(valueMap, "MODEL_NAME",               nrNull ? null : o.getNetworkResource().getModelName());
 		    put(valueMap, "MODEL_UUID",               nrNull ? null : o.getNetworkResource().getModelUUID());
@@ -106,12 +116,15 @@ public class QueryServiceNetworks extends CatalogQuery {
 		    put(valueMap, "NETWORK_SCOPE",             o.getNetworkScope());
 		    put(valueMap, "NETWORK_TECHNOLOGY",             o.getNetworkTechnology());
 
-            sb.append(sep).append(this.setTemplate(template, valueMap));
+            sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
             sep = ",\n";
 		}
-		if (!first) sb.append("\n");
-		if (isArray) sb.append("]");
-		if (!isEmbed && isArray) sb.append("}");
+		if (!first) 
+		    sb.append("\n");
+		if (isArray)
+		    sb.append("]");
+		if (!isEmbed && isArray) 
+		    sb.append("}");
 		return sb.toString();
 	}
 }

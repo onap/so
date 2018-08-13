@@ -58,7 +58,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CatalogDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-
 public class CatalogDBRestTest {
 
 	private static final String ECOMP_MSO_CATALOG_V2_VF_MODULES = "ecomp/mso/catalog/v2/vfModules";
@@ -748,32 +747,45 @@ public class CatalogDBRestTest {
 	
 	@Test
 	public void testGetVFModulesBadQueryParam() throws JSONException, IOException {
-		TestAppender.events.clear();
-		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-		headers.set("Accept", MediaType.APPLICATION_JSON);
+	    TestAppender.events.clear();
+	    HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+	    headers.set("Accept", MediaType.APPLICATION_JSON);
 
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_VF_MODULES))
-				.queryParam("ADASD", "NEUTRON_BASIC");
+	    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_VF_MODULES))
+	            .queryParam("ADASD", "NEUTRON_BASIC");
 
-		ResponseEntity<String> response = restTemplate.exchange(
-				builder.toUriString(),
-				HttpMethod.GET, entity, String.class);
+	    ResponseEntity<String> response = restTemplate.exchange(
+	            builder.toUriString(),
+	            HttpMethod.GET, entity, String.class);
 
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),response.getStatusCode().value());
-		JSONAssert.assertEquals(badQueryParamResponse, response.getBody().toString(), false);			
+	    assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),response.getStatusCode().value());
+	    JSONAssert.assertEquals(badQueryParamResponse, response.getBody().toString(), false);			
 
-	
-		ILoggingEvent logEvent = TestAppender.events.get(0);
-		Map<String,String> mdc = logEvent.getMDCPropertyMap();
-		assertNotNull(mdc.get(MsoLogger.BEGINTIME));
-		assertNotNull(mdc.get(MsoLogger.ENDTIME));
-		assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
-		assertNotNull(mdc.get(MsoLogger.TIMER));
-		assertEquals("500",mdc.get(MsoLogger.RESPONSECODE));		
-		assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
-		assertEquals("v2/vfModules",mdc.get(MsoLogger.SERVICE_NAME));
-		assertEquals("ERROR",mdc.get(MsoLogger.STATUSCODE));
-		assertNotNull(mdc.get(MsoLogger.RESPONSEDESC));
+
+	    for(ILoggingEvent logEvent : TestAppender.events)
+	        if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
+	                logEvent.getMarker().getName().equals("ENTRY")
+	                ){
+	            Map<String,String> mdc = logEvent.getMDCPropertyMap();
+	            assertNotNull(mdc.get(MsoLogger.BEGINTIME));
+	            assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+	            assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));	           
+	            assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
+	            assertEquals("v2/vfModules",mdc.get(MsoLogger.SERVICE_NAME));
+	            assertEquals("INPROGRESS",mdc.get(MsoLogger.STATUSCODE));
+	        }else if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
+                    logEvent.getMarker().getName().equals("EXIT")){
+	            Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                assertNotNull(mdc.get(MsoLogger.BEGINTIME));
+                assertNotNull(mdc.get(MsoLogger.ENDTIME));
+                assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));
+                assertEquals("500",mdc.get(MsoLogger.RESPONSECODE));
+                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
+                assertEquals("v2/vfModules",mdc.get(MsoLogger.SERVICE_NAME));
+                assertEquals("ERROR",mdc.get(MsoLogger.STATUSCODE));
+                assertNotNull(mdc.get(MsoLogger.RESPONSEDESC));
+	        }
 	}
 	
 	private String createURLWithPort(String uri) {

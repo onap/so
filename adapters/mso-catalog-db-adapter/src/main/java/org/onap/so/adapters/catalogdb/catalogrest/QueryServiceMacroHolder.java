@@ -32,7 +32,7 @@ import org.onap.so.db.catalog.rest.beans.ServiceMacroHolder;
 public class QueryServiceMacroHolder extends CatalogQuery {
     private ServiceMacroHolder serviceMacroHolder;
     private static final String LINE_BEGINNING = "(?m)^";
-	private static final String template =
+	private static final String TEMPLATE =
 		"{ \"serviceResources\"    : {\n"+
 			"\t\"modelInfo\"       : {\n"+
             "\t\t\"modelName\"          : <SERVICE_MODEL_NAME>,\n"+
@@ -90,7 +90,7 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 		subitem = new QueryAllottedResourceCustomization(service.getAllottedCustomizations()).JSON2(true, true);
 		valueMap.put("_SERVICEALLOTTEDRESOURCES_",  subitem.replaceAll(LINE_BEGINNING, "\t"));
 
-        buf.append(this.setTemplate(template, valueMap));
+        buf.append(this.setTemplate(TEMPLATE, valueMap));
 		return buf.toString();
 	}
 

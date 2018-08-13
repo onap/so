@@ -23,7 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.onap.so.db.catalog.beans.Recipe;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -38,6 +39,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  * @version     ONAP Beijing Release  2018-02-28
  */
 public class QueryResourceRecipe extends CatalogQuery{
+    protected static Logger logger = LoggerFactory.getLogger(QueryResourceRecipe.class);
     
     private Recipe resourceRecipe;
     
@@ -66,8 +68,7 @@ public class QueryResourceRecipe extends CatalogQuery{
         try {
             jsonStr = mapper.writeValueAsString(valueMap);
         } catch(JsonProcessingException e) {
-
-            e.printStackTrace();
+            logger.error("Error creating JSON", e);
         }
         return jsonStr;
     }
