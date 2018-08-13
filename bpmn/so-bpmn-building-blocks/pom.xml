@@ -9,7 +9,6 @@
 	<artifactId>so-bpmn-building-blocks</artifactId>
 	<packaging>jar</packaging>
 	<properties>
-		<jax.ws.rs>2.0.1</jax.ws.rs>
 		<httpclient.version>3.1</httpclient.version>
 		<camunda.bpm.assert.version>1.2</camunda.bpm.assert.version>
 		<h2.version>1.4.196</h2.version>
@@ -140,11 +139,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.4</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
