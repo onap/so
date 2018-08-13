@@ -28,8 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudSite;
+import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.StackInfo;

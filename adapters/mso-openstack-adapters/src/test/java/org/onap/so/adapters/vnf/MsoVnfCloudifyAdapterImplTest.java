@@ -22,14 +22,13 @@
 package org.onap.so.adapters.vnf;
 
 import org.apache.http.HttpStatus;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudifyManager;
+import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +37,7 @@ import javax.xml.ws.Holder;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 
@@ -56,23 +51,18 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 	private CloudConfig cloudConfig;
 
 	@Before
-	public void before(){
+	public void before() throws Exception {
 		super.setUp();
 		CloudifyManager cloudifyManager = new CloudifyManager();
 		cloudifyManager.setId("mtn13");
 		cloudifyManager.setCloudifyUrl("http://localhost:"+wireMockPort+"/v2.0");
 		cloudifyManager.setUsername("m93945");
 		cloudifyManager.setPassword("93937EA01B94A10A49279D4572B48369");
-		cloudConfig.getCloudifyManagers().put("mtn13",cloudifyManager);
 	}
 	
-	@After
-	public void after(){
-		cloudConfig.getCloudifyManagers().clear();
-	}
-	
-	@Test
-    public void queryVnfNullPointerExceptionTest() throws Exception {
+	@Test 
+    public void queryVnfExceptionTest() throws Exception {
+		reset();
 		expectedException.expect(VnfException.class);
         MsoRequest msoRequest = new MsoRequest();
         msoRequest.setRequestId("12345");

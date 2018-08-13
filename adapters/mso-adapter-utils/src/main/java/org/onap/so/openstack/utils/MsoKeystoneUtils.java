@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.onap.so.cloud.CloudIdentity;
-import org.onap.so.cloud.CloudSite;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoAlarmLogger;
@@ -92,7 +92,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
      * <p>
      *
      * @param tenantName The tenant name to create
-     * @param cloudId The cloud identifier (may be a region) in which to create the tenant.
+     * @param cloudSiteId The cloud identifier (may be a region) in which to create the tenant.
      * @return the tenant ID of the newly created tenant
      * @throws MsoTenantAlreadyExists Thrown if the requested tenant already exists
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception
@@ -150,7 +150,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
 	            executeAndRecordOpenstackRequest (request);
             }
 
-            if (cloudIdentity.hasTenantMetadata () && metadata != null && !metadata.isEmpty ()) {
+            if (cloudIdentity.getTenantMetadata () && metadata != null && !metadata.isEmpty ()) {
                 Metadata tenantMetadata = new Metadata ();
                 tenantMetadata.setMetadata (metadata);
 
@@ -221,7 +221,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
             }
 
             Map <String, String> metadata = new HashMap <String, String> ();
-            if (cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).hasTenantMetadata ()) {
+            if (cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getTenantMetadata ()) {
                 OpenStackRequest <Metadata> request = keystoneAdminClient.tenants ().showMetadata (tenant.getId ());
                 Metadata tenantMetadata = executeAndRecordOpenstackRequest (request);
                 if (tenantMetadata != null) {
@@ -267,7 +267,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
             }
 
             Map <String, String> metadata = new HashMap <String, String> ();
-            if (cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).hasTenantMetadata ()) {
+            if (cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getTenantMetadata ()) {
                 OpenStackRequest <Metadata> request = keystoneAdminClient.tenants ().showMetadata (tenant.getId ());
                 Metadata tenantMetadata = executeAndRecordOpenstackRequest (request);
                 if (tenantMetadata != null) {

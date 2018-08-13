@@ -29,7 +29,7 @@ import java.util.GregorianCalendar;
 import org.junit.Test;
 import org.onap.so.BaseTest;
 
-public class NeutronCacheEntryTest extends BaseTest {
+public class NeutronCacheEntryTest {
 	
 	private static final String NEUTRON_URL = "testNeutronUrl";
 	private static final String TOKEN = "testToken";

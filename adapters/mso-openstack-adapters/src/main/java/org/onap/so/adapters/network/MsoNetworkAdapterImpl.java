@@ -36,7 +36,7 @@ import org.onap.so.adapters.network.beans.ContrailSubnet;
 import org.onap.so.adapters.network.exceptions.NetworkException;
 import org.onap.so.adapters.network.mappers.ContrailSubnetMapper;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudSite;
+import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
@@ -1167,7 +1167,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 			}
 
 			MavenLikeVersioning aicV = new MavenLikeVersioning();
-			aicV.setVersion(cloudSite.getAicVersion());
+			aicV.setVersion(cloudSite.getCloudVersion());
 			if ((aicV.isMoreRecentThan(networkResource.getAicVersionMin()) || aicV
 					.isTheSameVersion(networkResource.getAicVersionMin())) // aic
 																			// >=
@@ -1181,13 +1181,13 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 						+ networkResource.getAicVersionMin() + " VersionMax:"
 						+ networkResource.getAicVersionMax()
 						+ " supported on Cloud:" + cloudSiteId
-						+ " with AIC_Version:" + cloudSite.getAicVersion());
+						+ " with AIC_Version:" + cloudSite.getCloudVersion());
 			} else {
 				String error = "Network Type:" + networkType + " Version_Min:"
 						+ networkResource.getAicVersionMin() + " Version_Max:"
 						+ networkResource.getAicVersionMax()
 						+ " not supported on Cloud:" + cloudSiteId
-						+ " with AIC_Version:" + cloudSite.getAicVersion();
+						+ " with AIC_Version:" + cloudSite.getCloudVersion();
 				LOGGER.error(MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "",
 						MsoLogger.ErrorCode.DataError,
 						"Network Type not supported on Cloud");

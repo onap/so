@@ -59,7 +59,7 @@ import org.onap.so.adapters.vdu.mapper.VfModuleCustomizationToVduMapper;
 import org.onap.so.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudSite;
+import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.cloudify.utils.MsoCloudifyUtils;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatTemplate;
@@ -705,7 +705,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         }
         CloudSite cloudSite = cloudSiteOp.get();
 		MavenLikeVersioning aicV = new MavenLikeVersioning();
-		aicV.setVersion(cloudSite.getAicVersion());
+		aicV.setVersion(cloudSite.getCloudVersion());
     
 		String vnfMin = vnfResource.getAicVersionMin();
 		String vnfMax = vnfResource.getAicVersionMax();
@@ -714,7 +714,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 		     (vnfMax != null && aicV.isMoreRecentThan(vnfMax)))
 		{
 			// ERROR
-			String error = "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID() + " VersionMin=" + vnfMin + " VersionMax:" + vnfMax + " NOT supported on Cloud: " + cloudSiteId + " with AIC_Version:" + cloudSite.getAicVersion();
+			String error = "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID() + " VersionMin=" + vnfMin + " VersionMax:" + vnfMax + " NOT supported on Cloud: " + cloudSiteId + " with AIC_Version:" + cloudSite.getCloudVersion();
 			LOGGER.error(MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - setVersion");
 			LOGGER.debug(error);
 			throw new VnfException(error, MsoExceptionCategory.USERDATA);

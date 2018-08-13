@@ -41,8 +41,8 @@ import org.onap.so.adapters.vdu.VduPlugin;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudIdentity;
-import org.onap.so.cloud.CloudSite;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
 import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
@@ -949,7 +949,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      * @return an authenticated Heat object
      */
     public Heat getHeatClient (CloudSite cloudSite, String tenantId) throws MsoException {
-        String cloudId = cloudConfig.getCloudSiteId(cloudSite);
+        String cloudId = cloudSite.getId();
 
         // Check first in the cache of previously authorized clients
         String cacheKey = cloudId + ":" + tenantId;

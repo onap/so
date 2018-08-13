@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.cloud;
+package org.onap.so.db.catalog.beans;
 
 public enum AuthenticationType {
 	USERNAME_PASSWORD, RACKSPACE_APIKEY; 

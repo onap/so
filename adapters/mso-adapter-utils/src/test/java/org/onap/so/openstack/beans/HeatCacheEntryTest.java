@@ -30,7 +30,7 @@ import java.util.GregorianCalendar;
 import org.junit.Test;
 import org.onap.so.BaseTest;
 
-public class HeatCacheEntryTest extends BaseTest {
+public class HeatCacheEntryTest {
 	
 	private static final String HEAT_URL = "testHeatUrl";
 	private static final String TOKEN = "testToken";

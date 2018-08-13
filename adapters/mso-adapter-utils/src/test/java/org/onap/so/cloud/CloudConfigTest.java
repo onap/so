@@ -22,86 +22,71 @@ package org.onap.so.cloud;
 
 import static org.junit.Assert.*;
 
-import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.onap.so.BaseTest;
+import org.onap.so.db.catalog.beans.AuthenticationType;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * This class implements test methods of the CloudConfig features.
  *
  *
  */
-public class CloudConfigTest extends BaseTest {
+public class CloudConfigTest extends BaseTest{
 
 	@Autowired
 	private CloudConfig con;
 
-   /**
-    * This method implements a test for the getCloudSites method.
-    */
-   @Test
-   public final void testGetCloudSites () {
-	   Map<String,CloudSite> siteMap = con.getCloudSites();
-	   assertNotNull(siteMap);
+	/**
+	 * This method implements a test for the getCloudSite method.
+	 */
+	@Test
+	public final void testGetCloudSite () {
+		CloudSite site1 = con.getCloudSite("MTN13").get();
 
-	   CloudSite site1 = siteMap.get("regionOne");
-
-	   assertEquals ("regionOne", site1.getRegionId());
-	   assertEquals ("MT_KEYSTONE", site1.getIdentityServiceId());
-	   assertEquals ("MT2", site1.getClli());
-	   assertEquals ("2.5", site1.getAicVersion());
-   }
+		assertEquals ("mtn13", site1.getRegionId());
+		assertEquals ("mtn13", site1.getIdentityServiceId());
+		assertEquals ("MDT13", site1.getClli());
+		assertEquals ("3.0", site1.getCloudVersion());
+	}
 
 
-   /**
-    * This method implements a test for the getIdentityServices method.
- * @throws MsoException 
-    */
-   @Test
-   public final void testGetIdentityServices () throws MsoException {
-	   Map<String,CloudIdentity> identityMap = con.getIdentityServices ();
-	   assertNotNull(identityMap);
+	/**
+	 * This method implements a test for the getIdentityServices method.
+	 * @throws MsoException
+	 */
+	@Test
+	public final void testGetIdentityServices () throws MsoException {
 
-	   CloudIdentity identity1 = identityMap.get("MT_KEYSTONE");
+		CloudIdentity identity1 = con.getIdentityService("mtn13");
 
-	   assertEquals("john", identity1.getMsoId());
-	   assertEquals("313DECE408AF7759D442D7B06DD9A6AA", identity1.getMsoPass());
-	   assertEquals("admin", identity1.getAdminTenant());
-	   assertEquals("_member_", identity1.getMemberRole());
-	   assertEquals(false, identity1.hasTenantMetadata());
-	   assertEquals("http://localhost:"+wireMockPort+"/v2.0", identity1.getIdentityUrl());
-	   assertEquals(ServerType.KEYSTONE, identity1.getIdentityServerType());
-	   assertEquals(AuthenticationType.USERNAME_PASSWORD, identity1.getIdentityAuthenticationType());
+		assertEquals("m93945", identity1.getMsoId());
+		assertEquals("93937EA01B94A10A49279D4572B48369", identity1.getMsoPass());
+		assertEquals("admin", identity1.getAdminTenant());
+		assertEquals("admin", identity1.getMemberRole());
+		assertTrue(identity1.getIdentityUrl().contains("http://localhost:"));
+		assertEquals(ServerType.KEYSTONE, identity1.getIdentityServerType());
+		assertEquals(AuthenticationType.USERNAME_PASSWORD, identity1.getIdentityAuthenticationType());
 
-   }
+	}
 
-   /**
-    * This method implements a test for the getCloudSite method.
-    */
-   @Test
-   public final void testGetDefaultCloudSite () {
-	   Optional<CloudSite> site  = con.getCloudSite("NotThere");
-	   assertTrue(site.isPresent());
-	   CloudSite site1 = site.get();
-	   assertEquals ("NotThere", site1.getRegionId());
-	   assertEquals("MTN6", site1.getClli());
-	   assertEquals("NotThere", site1.getId());
-	   assertEquals ("ORDM3", site1.getIdentityServiceId());
-   }
-   
-   @Test
-   public void testGetIdentityService() {
-	   CloudIdentity identity = con.getIdentityService("MT_KEYSTONE");
-	   assertEquals("john", identity.getMsoId());
-	   assertEquals("MT_KEYSTONE", identity.getId());
-   }
-
+	/**
+	 * This method implements a test for the getCloudSite method.
+	 */
+	@Test
+	public final void testGetDefaultCloudSite () {
+		Optional<CloudSite> site  = con.getCloudSite("NotThere");
+		assertTrue(site.isPresent());
+		CloudSite site1 = site.get();
+		assertEquals ("NotThere", site1.getRegionId());
+		assertEquals("MDT13", site1.getClli());
+		assertEquals("NotThere", site1.getId());
+	}
+	
 }

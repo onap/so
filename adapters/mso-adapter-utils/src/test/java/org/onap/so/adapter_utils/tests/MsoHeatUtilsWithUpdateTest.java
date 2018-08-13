@@ -23,7 +23,6 @@ package org.onap.so.adapter_utils.tests;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,9 +35,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudIdentity;
-import org.onap.so.cloud.CloudSite;
-import org.onap.so.cloud.ServerType;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoIOException;

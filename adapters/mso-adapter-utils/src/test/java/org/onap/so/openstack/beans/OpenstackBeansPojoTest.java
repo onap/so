@@ -30,7 +30,7 @@ import com.openpojo.validation.ValidatorBuilder;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
 
-public class OpenstackBeansPojoTest extends BaseTest {
+public class OpenstackBeansPojoTest {
 	@Test
 	public void pojoStructure() {
 		test(PojoClassFactory.getPojoClass(VnfRollback.class));

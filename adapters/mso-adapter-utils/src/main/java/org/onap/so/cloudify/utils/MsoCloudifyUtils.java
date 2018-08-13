@@ -42,8 +42,8 @@ import org.onap.so.adapters.vdu.VduPlugin;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudSite;
-import org.onap.so.cloud.CloudifyManager;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.cloudify.base.client.CloudifyBaseException;
 import org.onap.so.cloudify.base.client.CloudifyClientTokenProvider;
 import org.onap.so.cloudify.base.client.CloudifyConnectException;
@@ -898,7 +898,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     {
         CloudifyManager cloudifyConfig = cloudConfig.getCloudifyManager(cloudSite.getCloudifyId());
         if (cloudifyConfig == null) {
-        	throw new MsoCloudifyManagerNotFound (cloudConfig.getCloudSiteId(cloudSite));
+        	throw new MsoCloudifyManagerNotFound (cloudSite.getId());
         }
 
         // Get a Cloudify client

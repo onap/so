@@ -12,7 +12,7 @@
 				"name": null,
 				"endpoints": [
 					{
-						"region": "regionOne",
+						"region": "mtn13",
 						"publicURL": "port",
 						"internalURL": null,
 						"adminURL": null
@@ -25,7 +25,7 @@
 				"name": null,
 				"endpoints": [
 					{
-						"region": "regionOne",
+						"region": "mtn13",
 						"publicURL": "port",
 						"internalURL": null,
 						"adminURL": null
@@ -38,7 +38,7 @@
 				"name": null,
 				"endpoints": [
 					{
-						"region": "regionOne",
+						"region": "mtn13",
 						"publicURL": "port",
 						"internalURL": null,
 						"adminURL": null

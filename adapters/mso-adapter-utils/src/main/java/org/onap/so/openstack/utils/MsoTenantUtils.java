@@ -24,7 +24,7 @@ package org.onap.so.openstack.utils;
 import java.util.Map;
 
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.MsoTenant;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;

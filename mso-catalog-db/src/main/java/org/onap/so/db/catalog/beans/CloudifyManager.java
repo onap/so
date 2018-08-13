@@ -18,24 +18,29 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.cloud;
+package org.onap.so.db.catalog.beans;
 
-import java.security.GeneralSecurityException;
-import java.util.Comparator;
-
-import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
-import org.onap.so.utils.CryptoUtils;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
+import org.onap.so.logger.MsoLogger;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 /**
- * JavaBean JSON class for a Cloudify Manager.  This bean represents a Cloudify
+ * EntityBean class for a Cloudify Manager.  This bean represents a Cloudify
  * node through which TOSCA-based VNFs may be deployed.  Each CloudSite in the
  * CloudConfig may have a Cloudify Manager for deployments using TOSCA blueprints.
  * Cloudify Managers may support multiple Cloud Sites, but each site will have
@@ -43,36 +48,62 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
  * 
  * This does not replace the ability to use the CloudSite directly via Openstack.
  *
- * Note that this is only used to access Cloud Configurations loaded from a
- * JSON config file, so there are no explicit setters.
- *
  * @author JC1348
  */
+@Entity
+@Table(name = "cloudify_managers")
 public class CloudifyManager {
 	
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, CloudifyManager.class);
-
-	@BusinessKey
 	@JsonProperty
+	@BusinessKey
+	@Id
+	@Column(name = "ID")
 	private String id;
 	
 	@BusinessKey
 	@JsonProperty ("cloudify_url")
+	@Column(name = "CLOUDIFY_URL")
 	private String cloudifyUrl;
 	
 	@BusinessKey
 	@JsonProperty("username")
+	@Column(name = "USERNAME")
 	private String username;
 	
 	@BusinessKey
 	@JsonProperty("password")
+	@Column(name = "PASSWORD")
 	private String password;
 	
 	@BusinessKey
 	@JsonProperty("version")
+	@Column(name = "VERSION")
 	private String version;
 
+	@JsonProperty("last_updated_by")
+	@BusinessKey
+	@Column(name = "LAST_UPDATED_BY")
+	private String lastUpdatedBy ;
+
+	@JsonProperty("creation_timestamp")
+	@BusinessKey
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@JsonProperty("update_timestamp")
+	@BusinessKey
+	@Column(name = "UPDATE_TIMESTAMP")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date updated;
+
 	public CloudifyManager() {}
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
+		this.updated = new Date();
+	}
 	
 	public String getId() {
 		return id;
@@ -111,6 +142,30 @@ public class CloudifyManager {
 
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	public String getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public Date getUpdated() {
+		return updated;
+	}
+
+	public void setLastUpdatedBy(String lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public void setUpdated(Date updated) {
+		this.updated = updated;
 	}
 
 	@Override

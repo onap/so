@@ -75,7 +75,7 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
 		
 		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		CreateTenantRequest request = new CreateTenantRequest();
-		String cloudSiteId = "mtn13";
+		String cloudSiteId = "MTN13";
 		String requestId = "62265093-277d-4388-9ba6-449838ade586";
 		String serviceInstanceId = "4147e06f-1b89-49c5-b21f-4faf8dc9805a";
 		String tenantName = "testingTenantName";
@@ -127,7 +127,7 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
 		
 		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		CreateTenantRequest request = new CreateTenantRequest();
-		String cloudSiteId = "mtn13";
+		String cloudSiteId = "MTN13";
 		String requestId = "62265093-277d-4388-9ba6-449838ade586";
 		String serviceInstanceId = "4147e06f-1b89-49c5-b21f-4faf8dc9805a";
 		String tenantName = "testingTenantName";

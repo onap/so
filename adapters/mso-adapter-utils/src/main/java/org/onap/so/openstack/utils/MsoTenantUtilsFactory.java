@@ -21,8 +21,8 @@
 package org.onap.so.openstack.utils;
 
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudSite;
-import org.onap.so.cloud.ServerType;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.springframework.beans.factory.annotation.Autowired;

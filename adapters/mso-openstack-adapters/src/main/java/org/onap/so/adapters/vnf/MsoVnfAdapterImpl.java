@@ -39,7 +39,7 @@ import org.onap.so.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudSite;
+import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatFiles;
 import org.onap.so.db.catalog.beans.HeatTemplate;
@@ -859,7 +859,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 				if (this.cloudConfig != null) {
                     Optional<CloudSite> cloudSiteOpt = this.cloudConfig.getCloudSite(cloudSiteId);
                     if (cloudSiteOpt.isPresent()) {
-                        aicV.setVersion(cloudSiteOpt.get().getAicVersion());
+                        aicV.setVersion(cloudSiteOpt.get().getCloudVersion());
 						// Add code to handle unexpected values in here
 						boolean moreThanMin = true;
 						boolean equalToMin = true;
@@ -878,10 +878,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 						if (!doNotTest) {
 							if ((moreThanMin || equalToMin) // aic >= min
 									&& (equalToMax || !(moreThanMax))) { //aic <= max
-								LOGGER.debug("VNF Resource " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " supported on Cloud: " + cloudSiteId + " with AIC_Version:" + cloudSiteOpt.get().getAicVersion());
+								LOGGER.debug("VNF Resource " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " supported on Cloud: " + cloudSiteId + " with AIC_Version:" + cloudSiteOpt.get().getCloudVersion());
 							} else {
 								// ERROR
-								String error = "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " NOT supported on Cloud: " + cloudSiteId + " with AIC_Version:" + cloudSiteOpt.get().getAicVersion();
+								String error = "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " NOT supported on Cloud: " + cloudSiteId + " with AIC_Version:" + cloudSiteOpt.get().getCloudVersion();
 								LOGGER.error(MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - setVersion");
 								LOGGER.debug(error);
 								throw new VnfException(error, MsoExceptionCategory.USERDATA);
@@ -1606,7 +1606,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 			if (this.cloudConfig != null) {
 				Optional<CloudSite> cloudSiteOpt = this.cloudConfig.getCloudSite(cloudSiteId);
 				if (cloudSiteOpt.isPresent()) {
-					aicV.setVersion(cloudSiteOpt.get().getAicVersion());
+					aicV.setVersion(cloudSiteOpt.get().getCloudVersion());
 					boolean moreThanMin = true;
 					boolean equalToMin = true;
 					boolean moreThanMax = true;

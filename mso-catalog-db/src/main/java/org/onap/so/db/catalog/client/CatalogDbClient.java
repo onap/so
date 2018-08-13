@@ -32,18 +32,17 @@ import org.onap.so.db.catalog.beans.ResourceType;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.onap.so.logging.jaxrs.filter.jersey.SpringClientFilter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -100,8 +99,14 @@ public class CatalogDbClient {
 
 	private Client<ServiceRecipe> serviceRecipeClient;
 
+	private Client<CloudSite> cloudSiteClient;
+
+	private Client<CloudIdentity> cloudIdentityClient;
+
+	private Client<CloudifyManager> cloudifyManagerClient;
+
 	@Value("${mso.catalog.db.spring.endpoint}")
-	protected String endpoint;
+	private String endpoint;
 
 	@Value("${mso.db.auth}")
 	private String msoAdaptersAuth;
@@ -116,21 +121,14 @@ public class CatalogDbClient {
 	public CatalogDbClient() {
 		ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
 		
-		ClientFactory clientFactory = Configuration.builder().setClientHttpRequestFactory(factory).setRestTemplateConfigurer(new RestTemplateConfigurer() {
+		ClientFactory clientFactory = Configuration.builder().setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
+			restTemplate.getInterceptors().add((new SpringClientFilter()));
+			
+			restTemplate.getInterceptors().add((request, body, execution) -> {
 
-			public void configure(RestTemplate restTemplate) {
-				restTemplate.getInterceptors().add((new SpringClientFilter()));
-				
-				restTemplate.getInterceptors().add(new ClientHttpRequestInterceptor() {
-
-					public ClientHttpResponse intercept(HttpRequest request, byte[] body,
-							ClientHttpRequestExecution execution) throws IOException {
-
-						request.getHeaders().add("Authorization", msoAdaptersAuth);
-						return execution.execute(request, body);
-					}
-				});
-			}
+				request.getHeaders().add("Authorization", msoAdaptersAuth);
+				return execution.execute(request, body);
+			});
 		}).build().buildClientFactory();
 		serviceClient = clientFactory.create(Service.class);
 		orchestrationClient = clientFactory.create(OrchestrationFlow.class);
@@ -146,6 +144,9 @@ public class CatalogDbClient {
 		instanceGroupClient = clientFactory.create(InstanceGroup.class);
 		networkCollectionResourceCustomizationClient = clientFactory.create(NetworkCollectionResourceCustomization.class);
 		collectionNetworkResourceCustomizationClient = clientFactory.create(CollectionNetworkResourceCustomization.class);
+		cloudSiteClient = clientFactory.create(CloudSite.class);
+		cloudIdentityClient = clientFactory.create(CloudIdentity.class);
+		cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
 		serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
 	}
 	
@@ -303,6 +304,24 @@ public class CatalogDbClient {
 		return collectionNetworkResourceCustomizationClient.get(uri);
 	}
 
+	public CloudifyManager getCloudifyManager(String id) {
+		return this.getSingleCloudifyManager(UriBuilder.fromUri(endpoint+"/cloudifyManager/"+id).build());
+	}
+	
+	public CloudSite getCloudSite(String id){
+		return this.getSinglCloudSite(UriBuilder.fromUri(endpoint+"/cloudSite/"+id).build());
+	}
+	
+	public CloudIdentity getCloudIdentity(String id){
+		return this.getSingleCloudIdentity(UriBuilder.fromUri(endpoint+"/cloudIdentity/"+id).build());
+	}
+	
+	public CloudSite getCloudSiteByClliAndAicVersion (String clli, String aicVersion){
+		return this.getSinglCloudSite(UriBuilder.fromUri(endpoint+"/cloud_sites/search/findByClliAndCloudVersion")
+		.queryParam("CLLI",clli).queryParam("AIC_VERSION",aicVersion)
+		.build());
+	}
+
 	private InstanceGroup getSingleInstanceGroup(URI uri) {
 		return instanceGroupClient.get(uri);
 	}
@@ -325,6 +344,18 @@ public class CatalogDbClient {
 	
 	private ServiceRecipe getSingleServiceRecipe(URI uri){
 		return serviceRecipeClient.get(uri);
+	}
+
+	protected CloudSite getSinglCloudSite(URI uri) {
+		return cloudSiteClient.get(uri);
+	}
+
+	protected CloudIdentity getSingleCloudIdentity(URI uri) {
+		return cloudIdentityClient.get(uri);
+	}
+
+	protected CloudifyManager getSingleCloudifyManager(URI uri) {
+		return cloudifyManagerClient.get(uri);
 	}
 
 	public Service getServiceByModelVersionAndModelInvariantUUID(String modelVersion, String modelInvariantUUID) {

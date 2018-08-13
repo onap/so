@@ -18,59 +18,110 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.cloud;
+package org.onap.so.db.catalog.beans;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Comparator;
+import java.util.Date;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 /**
- * JavaBean JSON class for a CloudIdentity. This bean represents a cloud identity
+ * EntityBean class for a CloudIdentity. This bean represents a cloud identity
  * service instance (i.e. a DCP node) in the NVP/AIC cloud. It will be loaded via
- * CloudConfig object, of which it is a component (a CloudConfig JSON configuration
- * file may contain multiple CloudIdentity definitions).
- *
- * Note that this is only used to access Cloud Configurations loaded from a
- * JSON config file, so there are no explicit setters.
+ * CloudConfig object, of which it is a component.
  *
  */
+@Entity
+@Table(name = "identity_services")
 public class CloudIdentity {
-	
+
     @JsonProperty
     @BusinessKey
+    @Id
+    @Column(name = "ID")
     private String id;
+    
     @JsonProperty("identity_url")
     @BusinessKey
+    @Column(name = "IDENTITY_URL")
     private String identityUrl;
+    
     @JsonProperty("mso_id")
     @BusinessKey
+    @Column(name = "MSO_ID")
     private String msoId;
+    
     @JsonProperty("mso_pass")
     @BusinessKey
+    @Column(name = "MSO_PASS")
     private String msoPass;
+    
     @JsonProperty("admin_tenant")
     @BusinessKey
+    @Column(name = "ADMIN_TENANT")
     private String adminTenant;
+    
     @JsonProperty("member_role")
     @BusinessKey
+    @Column(name = "MEMBER_ROLE")
     private String memberRole;
+    
     @JsonProperty("tenant_metadata")
     @BusinessKey
+    @Column(name = "TENANT_METADATA")
     private Boolean tenantMetadata;
+    
     @JsonProperty("identity_server_type")
     @BusinessKey
+    @Enumerated(EnumType.STRING)
+    @Column(name = "IDENTITY_SERVER_TYPE")
     private ServerType identityServerType;
+    
     @JsonProperty("identity_authentication_type")
     @BusinessKey
+    @Enumerated(EnumType.STRING)
+    @Column(name = "IDENTITY_AUTHENTICATION_TYPE")
     private AuthenticationType identityAuthenticationType;
+
+    @JsonProperty("last_updated_by")
+    @BusinessKey
+    @Column(name = "LAST_UPDATED_BY")
+    private String lastUpdatedBy ;
+
+    @JsonProperty("creation_timestamp")
+    @BusinessKey
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
+
+    @JsonProperty("update_timestamp")
+    @BusinessKey
+    @Column(name = "UPDATE_TIMESTAMP")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updated;
     
     public CloudIdentity() {}
+
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+        this.updated = new Date();
+    }
 
     public String getId () {
         return id;
@@ -107,6 +158,30 @@ public class CloudIdentity {
         return adminTenant;
     }
 
+    public String getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setLastUpdatedBy(String lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
     public void setAdminTenant (String tenant) {
         this.adminTenant = tenant;
     }
@@ -119,7 +194,7 @@ public class CloudIdentity {
         this.memberRole = role;
     }
 
-    public Boolean hasTenantMetadata () {
+    public Boolean getTenantMetadata() {
         return tenantMetadata;
     }
 
@@ -172,7 +247,7 @@ public class CloudIdentity {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
 				.append("identityUrl", getIdentityUrl()).append("msoId", getMsoId())
 				.append("adminTenant", getAdminTenant()).append("memberRole", getMemberRole())
-				.append("tenantMetadata", hasTenantMetadata()).append("identityServerType", getIdentityServerType())
+				.append("tenantMetadata", getTenantMetadata()).append("identityServerType", getIdentityServerType())
 				.append("identityAuthenticationType", getIdentityAuthenticationType()).toString();
 	}
 
@@ -189,7 +264,7 @@ public class CloudIdentity {
 				.append(getIdentityUrl(), castOther.getIdentityUrl()).append(getMsoId(), castOther.getMsoId())
 				.append(getMsoPass(), castOther.getMsoPass()).append(getAdminTenant(), castOther.getAdminTenant())
 				.append(getMemberRole(), castOther.getMemberRole())
-				.append(hasTenantMetadata(), castOther.hasTenantMetadata())
+				.append(getTenantMetadata(), castOther.getTenantMetadata())
 				.append(getIdentityServerType(), castOther.getIdentityServerType())
 				.append(getIdentityAuthenticationType(), castOther.getIdentityAuthenticationType()).isEquals();
 	}
@@ -197,7 +272,7 @@ public class CloudIdentity {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(1, 31).append(getId()).append(getIdentityUrl()).append(getMsoId())
-				.append(getMsoPass()).append(getAdminTenant()).append(getMemberRole()).append(hasTenantMetadata())
+				.append(getMsoPass()).append(getAdminTenant()).append(getMemberRole()).append(getTenantMetadata())
 				.append(getIdentityServerType()).append(getIdentityAuthenticationType()).toHashCode();
 	}
 }

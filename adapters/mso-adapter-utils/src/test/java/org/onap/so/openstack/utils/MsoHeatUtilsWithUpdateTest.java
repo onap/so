@@ -25,7 +25,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.File;
@@ -39,13 +38,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.so.TestDataSetup;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudSite;
+import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.exceptions.MsoException;
@@ -55,10 +53,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.heat.Heat;
-import com.woorea.openstack.heat.StackResource;
-import com.woorea.openstack.heat.StackResource.UpdateStack;
 import com.woorea.openstack.heat.model.Stack;
-import com.woorea.openstack.heat.model.UpdateStackParam;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
@@ -95,7 +90,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
 	
 	@Test
 	public void updateStackTest() throws MsoException, JsonParseException, JsonMappingException, IOException {
-		CloudSite cloudSite = mapper.readValue(new File(RESOURCE_PATH + "CloudSite.json"), CloudSite.class);
+		CloudSite cloudSite = new CloudSite();
 		Heat heatClient = new Heat("endpoint");
 		Stack heatStack = mapper.readValue(new File(RESOURCE_PATH + "HeatStack.json"), Stack.class);
 		Stack updateStack = mapper.readValue(new File(RESOURCE_PATH + "UpdateStack.json"), Stack.class);
@@ -120,7 +115,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
 	public void updateStackWithEnvironmentTest() throws JsonParseException, JsonMappingException, IOException, MsoException {
 		String environmentString = "environmentString";
 		
-		CloudSite cloudSite = mapper.readValue(new File(RESOURCE_PATH + "CloudSite.json"), CloudSite.class);
+		CloudSite cloudSite = new CloudSite();
 		Heat heatClient = new Heat("endpoint");
 		Stack heatStack = mapper.readValue(new File(RESOURCE_PATH + "HeatStack.json"), Stack.class);
 		Stack updateStack = mapper.readValue(new File(RESOURCE_PATH + "UpdateStack.json"), Stack.class);
@@ -147,7 +142,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
 		Map<String, Object> files = new HashMap<>();
 		files.put("file1", new Object());
 		
-		CloudSite cloudSite = mapper.readValue(new File(RESOURCE_PATH + "CloudSite.json"), CloudSite.class);
+		CloudSite cloudSite = new CloudSite();
 		Heat heatClient = new Heat("endpoint");
 		Stack heatStack = mapper.readValue(new File(RESOURCE_PATH + "HeatStack.json"), Stack.class);
 		Stack updateStack = mapper.readValue(new File(RESOURCE_PATH + "UpdateStack.json"), Stack.class);

@@ -34,8 +34,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @SpringBootApplication(scanBasePackages = { "org.onap.so" })
 @EnableAsync
 @EnableJpaRepositories({ "org.onap.so.db.catalog.data.repository",
-		"org.onap.so.db.request.data.repository" })
-@EntityScan({ "org.onap.so.db.catalog.beans", "org.onap.so.db.request.beans" })
+		"org.onap.so.db.request.data.repository"})
+@EntityScan({ "org.onap.so.db.catalog.beans", "org.onap.so.db.request.beans"})
 public class MsoOpenstackAdaptersApplication {
 
 	@Value("${mso.async.core-pool-size}")

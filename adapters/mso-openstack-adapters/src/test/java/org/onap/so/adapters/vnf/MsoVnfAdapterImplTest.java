@@ -81,9 +81,10 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	String vnfName = "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId";
 
 	@Before
-	public void before() {
+	public void before() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		WireMock.reset();
+		setUp();
 	}
 
 	@Test
@@ -105,7 +106,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, String> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+		instance.createVfModule("MTN13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -510,7 +511,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		vfModuleCustomization.getVfModule().getModuleHeatTemplate().setParameters(new HashSet<>());
 		Map<String, String> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+		instance.updateVfModule("MTN13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
 				"b4ea86b4-253f-11e7-93ae-92361f002671", map, msoRequest, new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());

@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.cloud;
+package org.onap.so.db.catalog.beans;
 
 
 import static org.junit.Assert.assertEquals;
@@ -27,6 +27,9 @@ import static org.junit.Assert.assertTrue;
 import java.security.GeneralSecurityException;
 
 import org.junit.Test;
+import org.onap.so.db.catalog.beans.AuthenticationType;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.utils.CryptoUtils;
 
 public class CloudIdentityTest {
@@ -61,7 +64,7 @@ public class CloudIdentityTest {
         assertTrue (id.getMemberRole ().equals ("member"));
         assertTrue (id.getMsoId ().equals ("msoId"));
         assertTrue (CryptoUtils.decryptCloudConfigPassword(id.getMsoPass()).equals ("password"));
-        assertTrue (id.hasTenantMetadata ());
+        assertTrue (id.getTenantMetadata ());
 //        assertTrue (id.toString ().contains ("keystone"));
         assertTrue(id.toString().contains("null"));
     }

@@ -20,8 +20,8 @@
 
 package org.onap.so.cloud.authentication;
 
-import org.onap.so.cloud.AuthenticationType;
-import org.onap.so.cloud.CloudIdentity;
+import org.onap.so.db.catalog.beans.AuthenticationType;
+import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.cloud.authentication.models.RackspaceAuthentication;
 import org.onap.so.utils.CryptoUtils;
 import org.springframework.stereotype.Component;

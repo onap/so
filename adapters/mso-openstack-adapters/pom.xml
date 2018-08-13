@@ -218,6 +218,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
     		<groupId>janino</groupId>
     		<artifactId>janino</artifactId>
     		<version>2.5.15</version>
@@ -263,6 +267,10 @@
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
 			<version>1.2.4.RELEASE</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
 		</dependency>
 	</dependencies>
 </project>

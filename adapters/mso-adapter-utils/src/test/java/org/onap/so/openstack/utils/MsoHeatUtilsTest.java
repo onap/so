@@ -47,6 +47,10 @@ import org.onap.so.adapters.vdu.VduInstance;
 import org.onap.so.adapters.vdu.VduModelInfo;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
+import org.onap.so.cloud.CloudConfig;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.openstack.beans.HeatStatus;
+import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.exceptions.MsoException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +71,7 @@ public class MsoHeatUtilsTest extends BaseTest{
 		expected.setStatus(status);
 
 		CloudInfo cloudInfo = new CloudInfo();
-		cloudInfo.setCloudSiteId("regionOne");
+		cloudInfo.setCloudSiteId("MTN13");
 		cloudInfo.setTenantId("tenantId");
 		VduModelInfo vduModel = new VduModelInfo();
 		vduModel.setModelCustomizationUUID("blueprintId");
@@ -111,7 +115,7 @@ public class MsoHeatUtilsTest extends BaseTest{
 		expected.setStatus(status);
 
 		CloudInfo cloudInfo = new CloudInfo();
-		cloudInfo.setCloudSiteId("regionOne");
+		cloudInfo.setCloudSiteId("mtn13");
 		cloudInfo.setTenantId("tenantId");
 		String instanceId = "instanceId";
 
@@ -138,7 +142,7 @@ public class MsoHeatUtilsTest extends BaseTest{
 		expected.setStatus(status);
 
 		CloudInfo cloudInfo = new CloudInfo();
-		cloudInfo.setCloudSiteId("regionOne");
+		cloudInfo.setCloudSiteId("mtn13");
 		cloudInfo.setTenantId("tenantId");
 		String instanceId = "instanceId";
 

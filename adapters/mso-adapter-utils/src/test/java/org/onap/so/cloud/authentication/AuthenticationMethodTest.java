@@ -24,11 +24,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onap.so.BaseTest;
 import org.onap.so.cloud.Application;
-import org.onap.so.cloud.AuthenticationType;
-import org.onap.so.cloud.CloudIdentity;
+import org.onap.so.db.catalog.beans.AuthenticationType;
+import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.cloud.authentication.models.RackspaceAuthentication;
-import org.onap.so.openstack.exceptions.MsoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -43,10 +43,7 @@ import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
  * only are tested.
  *
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
-@ActiveProfiles("test")
-public class AuthenticationMethodTest {
+public class AuthenticationMethodTest extends BaseTest {
 
 	@Autowired
 	private AuthenticationMethodFactory authenticationMethodFactory;

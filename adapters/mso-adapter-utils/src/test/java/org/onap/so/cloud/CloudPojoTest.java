@@ -21,7 +21,9 @@
 package org.onap.so.cloud;
 
 import org.junit.Test;
-import org.onap.so.openpojo.rules.EqualsAndHashCodeTester;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.openpojo.rules.ToStringTester;
 
 import com.openpojo.reflection.PojoClass;
@@ -51,7 +53,6 @@ public class CloudPojoTest {
 				.with(new SetterTester())
 				.with(new GetterTester())
 				.with(new ToStringTester())
-				.with(new EqualsAndHashCodeTester())
 				.build();
 		validator.validate(pojoClass);
 	}

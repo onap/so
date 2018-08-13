@@ -42,13 +42,12 @@ import org.onap.so.adapters.vdu.VduModelInfo;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudIdentity;
-import org.onap.so.cloud.CloudSite;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.cloudify.beans.DeploymentInfo;
 import org.onap.so.cloudify.beans.DeploymentStatus;
 import org.onap.so.cloudify.v3.client.Cloudify;
 import org.onap.so.cloudify.v3.model.AzureConfig;
-import org.onap.so.cloudify.v3.model.OpenstackConfig;
 import org.onap.so.openstack.exceptions.MsoException;
 
 public class MsoCloudifyUtilsTest2 {

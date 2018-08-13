@@ -114,21 +114,7 @@ spring:
 management: 
   context-path: /manage
 
-cloud_config:
-  identity_services:
-    MTN13:
-      identity_url: "http://localhost:5000/v2.0"
-      mso_id: "m93945"
-      mso_pass: "93937EA01B94A10A49279D4572B48369"
-      admin_tenant: "admin"
-      member_role: "admin"
-      tenant_metadata: true
-      identity_server_type: "KEYSTONE"
-      identity_authentication_type: "USERNAME_PASSWORD"
-  cloud_sites:
-    mtn13:
-      region_id: "mtn13"
-      clli: "MDT13"
-      aic_version: "3.0"
-      identity_service_id: "MTN13"
+flyway:
+  outOfOrder: true
+  ignoreMissingMigrations: true
 

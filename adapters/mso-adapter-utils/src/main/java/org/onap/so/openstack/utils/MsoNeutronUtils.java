@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.CloudIdentity;
-import org.onap.so.cloud.CloudSite;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoAlarmLogger;
@@ -42,7 +42,6 @@ import org.onap.so.openstack.exceptions.MsoIOException;
 import org.onap.so.openstack.exceptions.MsoNetworkAlreadyExists;
 import org.onap.so.openstack.exceptions.MsoNetworkNotFound;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
-import org.onap.so.openstack.exceptions.MsoTenantNotFound;
 import org.onap.so.openstack.mappers.NetworkInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

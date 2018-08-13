@@ -18,10 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.cloud;
+package org.onap.so.db.catalog.beans;
 
 
-import java.util.Comparator;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
@@ -30,62 +30,110 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 /**
- * JavaBean JSON class for a CloudSite.  This bean represents a cloud location
+ * EntityBean class for a CloudSite.  This bean represents a cloud location
  * (i.e. and LCP node) in the NVP/AIC cloud.  It will be loaded via CloudConfig
- * object, of which it is a component (a CloudConfig JSON configuration file
- * will contain multiple CloudSite definitions).
- *
- * Note that this is only used to access Cloud Configurations loaded from a
- * JSON config file, so there are no explicit setters.
+ * object, of which it is a component
  *
  */
+@Entity
+@Table(name = "cloud_sites")
 public class CloudSite {
+	
 	@JsonProperty
 	@BusinessKey
+	@Id
+	@Column(name = "ID")
 	private String id;
+	
 	@JsonProperty("region_id")
 	@BusinessKey
+	@Column(name = "REGION_ID")
 	private String regionId;
-	@JsonProperty("identity_service_id")
-	@BusinessKey
-	private String identityServiceId;
+
 	@JsonProperty("aic_version")
 	@BusinessKey
-	private String aicVersion;
+	@Column(name = "CLOUD_VERSION")
+	private String cloudVersion;
+	
 	@JsonProperty("clli")
 	@BusinessKey
+	@Column(name = "CLLI")
 	private String clli;
-	@JsonProperty("cloudify_id")
-	@BusinessKey
-	private String cloudifyId;
+	
 	@JsonProperty("platform")
 	@BusinessKey
+	@Column(name = "PLATFORM")
 	private String platform;
+	
 	@JsonProperty("orchestrator")
 	@BusinessKey
+	@Column(name = "ORCHESTRATOR")
 	private String orchestrator;
+
+	@JsonProperty("cloudify_id")
+	@BusinessKey
+	@Column(name = "CLOUDIFY_ID")
+	private String cloudifyId;
 	
 	// Derived property (set by CloudConfig loader based on identityServiceId)
+	@BusinessKey
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "IDENTITY_SERVICE_ID")
 	private CloudIdentity identityService;
-	// Derived property (set by CloudConfig loader based on cloudifyId)
-	private CloudifyManager cloudifyManager;
+
+	@BusinessKey
+	@JsonProperty("identity_service_id")
+	transient private String identityServiceId;
+
+	@JsonProperty("last_updated_by")
+	@BusinessKey
+	@Column(name = "LAST_UPDATED_BY")
+	private String lastUpdatedBy ;
+
+	@JsonProperty("creation_timestamp")
+	@BusinessKey
+	@Column(name = "CREATION_TIMESTAMP", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@JsonProperty("update_timestamp")
+	@BusinessKey
+	@Column(name = "UPDATE_TIMESTAMP")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date updated;
 	
 	public CloudSite() {
 		
 	}
+
+	@PrePersist
+	protected void onCreate() {
+		this.created = new Date();
+		this.updated = new Date();
+	}
 	
 	public CloudSite(CloudSite site) {
-		this.aicVersion = site.getAicVersion();
+		this.cloudVersion = site.getCloudVersion();
 		this.clli = site.getClli();
-		this.cloudifyId = this.getCloudifyId();
-		this.cloudifyManager = this.getCloudifyManager();
 		this.id = site.getId();
 		this.identityService = site.getIdentityService();
-		this.identityServiceId = site.getIdentityServiceId();
 		this.orchestrator = site.getOrchestrator();
 		this.platform = site.getPlatform();
-		this.regionId = this.getRegionId();
+		this.regionId = site.getRegionId();
+		this.identityServiceId = site.getIdentityServiceId();
 	}
 	public String getId() {
 		return this.id;
@@ -104,18 +152,15 @@ public class CloudSite {
 	}
 
 	public String getIdentityServiceId() {
-		return identityServiceId;
+		return identityServiceId == null ? (identityService== null? null:identityService.getId()):identityServiceId;
 	}
 	
-	public void setIdentityServiceId(String identityServiceId) {
-		this.identityServiceId = identityServiceId;
-	}
-	public String getAicVersion() {
-		return aicVersion;
+	public String getCloudVersion() {
+		return cloudVersion;
 	}
 
-	public void setAicVersion(String aicVersion) {
-		this.aicVersion = aicVersion;
+	public void setCloudVersion(String cloudVersion) {
+		this.cloudVersion = cloudVersion;
 	}
 
 	public String getClli() {
@@ -130,10 +175,34 @@ public class CloudSite {
 		return cloudifyId;
 	}
 
-	public void setCloudifyId (String id) {
-		this.cloudifyId = id;
+	public void setCloudifyId(String cloudifyId) {
+		this.cloudifyId = cloudifyId;
 	}
-	
+
+	public String getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public Date getUpdated() {
+		return updated;
+	}
+
+	public void setLastUpdatedBy(String lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public void setUpdated(Date updated) {
+		this.updated = updated;
+	}
+
 	public String getPlatform() {
 		return platform;
 	}
@@ -157,19 +226,15 @@ public class CloudSite {
 	public void setIdentityService (CloudIdentity identity) {
 		this.identityService = identity;
 	}
-	
-	public CloudifyManager getCloudifyManager () {
-		return cloudifyManager;
-	}
-
-	public void setCloudifyManager (CloudifyManager cloudify) {
-		this.cloudifyManager = cloudify;
+	@Deprecated
+	public void setIdentityServiceId(String identityServiceId) {
+		this.identityServiceId = identityServiceId;
 	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("regionId", getRegionId())
-				.append("identityServiceId", getIdentityServiceId()).append("aicVersion", getAicVersion())
+				.append("identityServiceId", getIdentityServiceId()).append("cloudVersion", getCloudVersion())
 				.append("clli", getClli()).append("cloudifyId", getCloudifyId()).append("platform", getPlatform())
 				.append("orchestrator", getOrchestrator()).toString();
 	}
@@ -185,12 +250,12 @@ public class CloudSite {
 		CloudSite castOther = (CloudSite) other;
 		return new EqualsBuilder().append(getRegionId(), castOther.getRegionId())
 				.append(getIdentityServiceId(), castOther.getIdentityServiceId())
-				.append(getAicVersion(), castOther.getAicVersion()).append(getClli(), castOther.getClli()).isEquals();
+				.append(getCloudVersion(), castOther.getCloudVersion()).append(getClli(), castOther.getClli()).isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(1, 31).append(getRegionId()).append(getIdentityServiceId()).append(getAicVersion())
+		return new HashCodeBuilder(1, 31).append(getRegionId()).append(getIdentityServiceId()).append(getCloudVersion())
 				.append(getClli()).toHashCode();
 	}
 }

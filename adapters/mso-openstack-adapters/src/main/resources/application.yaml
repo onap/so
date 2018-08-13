@@ -38,3 +38,7 @@ spring:
 #Actuator
 management: 
   context-path: /manage
+
+flyway:
+  outOfOrder: true
+  ignoreMissingMigrations: true

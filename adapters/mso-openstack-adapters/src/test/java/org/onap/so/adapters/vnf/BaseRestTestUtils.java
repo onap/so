@@ -24,10 +24,16 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.openstack.MsoOpenstackAdaptersApplication;
+import org.onap.so.db.catalog.beans.AuthenticationType;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.ServerType;
+import org.onap.so.db.catalog.data.repository.CloudIdentityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,16 +42,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpHeaders;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.ws.rs.core.MediaType;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.reset;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MsoOpenstackAdaptersApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -63,6 +73,11 @@ public class BaseRestTestUtils {
 	
 	@LocalServerPort
 	private int port;
+
+	public ObjectMapper mapper;
+	
+	@Autowired
+	private CloudIdentityRepository cloudIdentityRepository;
 	
 	protected String readJsonFileAsString(String fileLocation) throws JsonParseException, JsonMappingException, IOException{
 		ObjectMapper mapper = new ObjectMapper();
@@ -87,10 +102,53 @@ public class BaseRestTestUtils {
 			return sb.toString();
 		}
 	}
-	
+
+	/***
+	 * Before each test execution, updating IdentityUrl port value to the ramdom wireMockPort
+	 * Since URL will be used as a rest call and required to be mocked in unit tests
+	 */
 	@Before
-	public void setUp(){
+	public void setUp() throws Exception {
 		reset();
+		mapper = new ObjectMapper();
+
+		CloudIdentity identity = new CloudIdentity();
+		identity.setId("MTN13");
+		identity.setMsoId("m93945");
+		identity.setMsoPass("93937EA01B94A10A49279D4572B48369");
+		identity.setAdminTenant("admin");
+		identity.setMemberRole("admin");
+		identity.setTenantMetadata(new Boolean(true));
+		identity.setIdentityUrl("http://localhost:"+wireMockPort+"/v2.0");
+		identity.setIdentityAuthenticationType(AuthenticationType.USERNAME_PASSWORD);
+
+		CloudSite cloudSite = new CloudSite();
+		cloudSite.setId("MTN13");
+		cloudSite.setCloudVersion("3.0");
+		cloudSite.setClli("MDT13");
+		cloudSite.setRegionId("mtn13");
+		cloudSite.setOrchestrator("orchestrator" +
+				"");
+		identity.setIdentityServerType(ServerType.KEYSTONE);
+		cloudSite.setIdentityService(identity);
+
+
+		stubFor(get(urlPathEqualTo("/cloudSite/MTN13")).willReturn(aResponse()
+				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
+				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/cloudSite/default")).willReturn(aResponse()
+				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
+				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
+				.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/cloudIdentity/MTN13")).willReturn(aResponse()
+				.withBody(getBody(mapper.writeValueAsString(identity),wireMockPort, ""))
+				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
+				.withStatus(HttpStatus.SC_OK)));
+	}
+
+	protected static String getBody(String body, int port, String urlPath) throws IOException {
+		return body.replaceAll("port", "http://localhost:" + port + urlPath);
 	}
 	
 	@Test

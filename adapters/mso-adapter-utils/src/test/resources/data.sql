@@ -1,0 +1,3 @@
+INSERT INTO `cloudify_managers` (`ID`, `CLOUDIFY_URL`, `USERNAME`, `PASSWORD`, `VERSION`, `CREATION_TIMESTAMP`, `UPDATE_TIMESTAMP`) VALUES ('mtn13', 'http://localhost:28090/v2.0', 'm93945', '93937EA01B94A10A49279D4572B48369', NULL, '2018-07-17 14:05:08', '2018-07-17 14:05:08');
+
+INSERT INTO `cloud_sites` (`ID`, `region_id`, `identity_service_id`, `cloud_version`, `clli`, `cloudify_id`, `platform`, `orchestrator`, `CREATION_TIMESTAMP`, `UPDATE_TIMESTAMP`) VALUES ('MTN13', 'mtn13', 'MTN13', '3.0', 'MDT13', 'mtn13', null, 'orchestrator', '2018-07-17 14:06:28', '2018-07-17 14:06:28');
