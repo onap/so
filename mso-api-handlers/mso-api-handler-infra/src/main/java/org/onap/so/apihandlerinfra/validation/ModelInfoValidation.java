@@ -23,6 +23,7 @@ package org.onap.so.apihandlerinfra.validation;
 
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Actions;
+import org.onap.so.apihandlerinfra.TestApi;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
@@ -73,19 +74,22 @@ public class ModelInfoValidation implements ValidationRule{
                 (requestScope.equalsIgnoreCase(ModelType.configuration.name()) && (action == Action.activateInstance || action == Action.deactivateInstance))))) {
         	throw new ValidationException ("modelInvariantId");
         }
+        if(empty(modelInfo.getModelInvariantId()) && (requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.scaleOut)){
+        	throw new ValidationException("modelInvariantId");
+        }
 
         if (!empty (modelInfo.getModelInvariantId ()) && !UUIDChecker.isValidUUID (modelInfo.getModelInvariantId ())) {
         	throw new ValidationException ("modelInvariantId format");
         }
 
         if(reqVersion >= 4 && !(requestScope.equalsIgnoreCase(ModelType.configuration.name())) && empty (modelInfo.getModelName ()) && (action == Action.createInstance || action == Action.updateInstance || 
-        		action == Action.addRelationships || action == Action.removeRelationships || (action == Action.deleteInstance && (requestScope.equalsIgnoreCase (ModelType.vfModule.name ()))))){
+        		action == Action.addRelationships || action == Action.removeRelationships || ((action == Action.deleteInstance || action == Action.scaleOut) && (requestScope.equalsIgnoreCase (ModelType.vfModule.name ()))))){
         	throw new ValidationException ("modelName");
         }
 
         if (empty (modelInfo.getModelVersion ()) && !(requestScope.equalsIgnoreCase(ModelType.configuration.name())) && 
         		(!(reqVersion < 4 && requestScope.equalsIgnoreCase (ModelType.network.name ())) 
-        				&& (action == Action.createInstance || action == Action.updateInstance || action == Action.addRelationships || action == Action.removeRelationships))) {
+        				&& (action == Action.createInstance || action == Action.updateInstance || action == Action.addRelationships || action == Action.removeRelationships || action == Action.scaleOut))) {
         	throw new ValidationException ("modelVersion");
         }
 
@@ -95,6 +99,9 @@ public class ModelInfoValidation implements ValidationRule{
         		(requestScope.equalsIgnoreCase(ModelType.configuration.name()) && (action == Action.activateInstance || action == Action.deactivateInstance))))) {
         	throw new ValidationException ("modelVersionId");
          }
+        if(empty(modelInfo.getModelVersionId()) && (requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.scaleOut)){
+        	throw new ValidationException("modelVersionId");
+        }
         
         if(requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action != Action.deleteInstance && empty (modelInfo.getModelCustomizationName ())) {
         	if (!UUIDChecker.isValidUUID (modelInfo.getModelCustomizationId())) {
@@ -104,6 +111,9 @@ public class ModelInfoValidation implements ValidationRule{
 
         if(reqVersion >= 4 && (!UUIDChecker.isValidUUID (modelInfo.getModelCustomizationId())) && (requestScope.equalsIgnoreCase (ModelType.network.name ()) || requestScope.equalsIgnoreCase(ModelType.configuration.name()))
         		&& (action == Action.updateInstance || action == Action.createInstance)){
+        	throw new ValidationException ("modelCustomizationId");
+        }
+        if(empty(modelInfo.getModelCustomizationId()) && action == Action.scaleOut && !(requestParameters.getTestApi() == TestApi.VNF_API.name() && requestParameters.isUsePreload() == true)){
         	throw new ValidationException ("modelCustomizationId");
         }
         return info;

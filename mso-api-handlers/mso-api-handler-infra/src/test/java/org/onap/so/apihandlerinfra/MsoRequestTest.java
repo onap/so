@@ -192,6 +192,7 @@ public class MsoRequestTest extends BaseTest {
 			{"No valid cloudConfiguration is specified", mapper.readValue(inputStream("/CloudConfiguration/CloudConfigurationConfig.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.enablePort, 5},
 			{"No valid cloudConfiguration is specified", mapper.readValue(inputStream("/CloudConfiguration/InPlaceSoftwareUpdateCloudConfiguration.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.inPlaceSoftwareUpdate, 6},
 			{"No valid cloudConfiguration is specified", mapper.readValue(inputStream("/CloudConfiguration/DeactivateAndCloudDeleteCloudConfiguration.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.deactivateAndCloudDelete, 7},
+			{"No valid cloudConfiguration is specified", mapper.readValue(inputStream("/CloudConfiguration/ScaleOutNoCloudConfig.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7},
 			{"No valid lcpCloudRegionId is specified", mapper.readValue(inputStream("/CloudConfiguration/EmptyLcpCloudConfiguration.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
 			{"No valid lcpCloudRegionId is specified", mapper.readValue(inputStream("/CloudConfiguration/InPlaceSoftwareUpdateCloudRegionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.inPlaceSoftwareUpdate, 6},
 			{"No valid tenantId is specified", mapper.readValue(inputStream("/CloudConfiguration/EmptyTenantId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
@@ -206,6 +207,7 @@ public class MsoRequestTest extends BaseTest {
 			{"No valid modelCustomizationId or modelCustomizationName is specified", mapper.readValue(inputStream("/ModelInfo/ModelCustomization.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.replaceInstance, 6},
 			{"No valid modelCustomizationId or modelCustomizationName is specified", mapper.readValue(inputStream("/ModelInfo/ModelCustomization.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.updateInstance, 6},
 			{"No valid modelCustomizationId or modelCustomizationName is specified", mapper.readValue(inputStream("/ModelInfo/VnfModelCustomizationId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.replaceInstance, 5},
+			{"No valid modelCustomizationId is specified", mapper.readValue(inputStream("/ModelInfo/ScaleOutNoModelCustomizationId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7},
 			{"No valid model-info is specified", mapper.readValue(inputStream("/ModelInfo/ModelInfoNull.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
 			{"No valid modelInvariantId format is specified", mapper.readValue(inputStream("/ModelInfo/InvalidModelInvariantId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 2},
 			{"No valid modelInvariantId is specified", mapper.readValue(inputStream("/ModelInfo/ModelInvariantId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.deactivateInstance, 4},
@@ -215,11 +217,14 @@ public class MsoRequestTest extends BaseTest {
 			{"No valid modelInvariantId is specified", mapper.readValue(inputStream("/ModelInfo/ModelInvariantIdConfiguration.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.activateInstance, 3},
 			{"No valid modelInvariantId is specified", mapper.readValue(inputStream("/ModelInfo/v5DeactivateModelInvariantId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.deactivateInstance, 5},
 			{"No valid modelInvariantId is specified", mapper.readValue(inputStream("/ModelInfo/v3UpdateNetworkBad.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.updateInstance, 4},
+			{"No valid modelInvariantId is specified", mapper.readValue(inputStream("/ModelInfo/ScaleOutNoModelInvariantId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7},
 			{"No valid modelName is specified", mapper.readValue(inputStream("/ModelInfo/VfModuleModelName.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.deleteInstance, 4},
+			{"No valid modelName is specified", mapper.readValue(inputStream("/ModelInfo/ScaleOutNoModelName.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7},
 			{"No valid modelType is specified", mapper.readValue(inputStream("/ModelInfo/ModelTypeNull.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
 			{"No valid modelVersion is specified", mapper.readValue(inputStream("/ModelInfo/ModelVersionService.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.updateInstance, 3},
 			{"No valid modelVersion is specified", mapper.readValue(inputStream("/ModelInfo/ModelVersionVfModule.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 3},
 			{"No valid modelVersion is specified", mapper.readValue(inputStream("/ModelInfo/ModelVersionServiceCreate.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 3},
+			{"No valid modelVersion is specified", mapper.readValue(inputStream("/ModelInfo/ScaleOutNoModelVersion.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7},
 			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelInfo/ModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
 			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelInfo/ConfigurationModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.activateInstance, 5},
 			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelInfo/v2ModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.activateInstance, 4},
@@ -229,6 +234,7 @@ public class MsoRequestTest extends BaseTest {
 			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelInfo/v2ModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.disablePort, 5},
 			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelInfo/ModelVersionIdCreate.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
 			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelInfo/v5ActivateModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.activateInstance, 5},
+			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelInfo/ScaleOutNoModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7},
 			//ValidationException for Platform and LineOfBusiness
 			{"No valid lineOfBusinessName is specified", mapper.readValue(inputStream("/PlatformAndLineOfBusiness/EmptyLineOfBusiness.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
 			{"No valid platform is specified", mapper.readValue(inputStream("/PlatformAndLineOfBusiness/Platform.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 6},
@@ -261,6 +267,7 @@ public class MsoRequestTest extends BaseTest {
 			{"No valid related instances is specified", mapper.readValue(inputStream("/RelatedInstances/v5EnablePortNoRelatedInstance.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.enablePort, 5},			
 			{"No valid related instances is specified", mapper.readValue(inputStream("/RelatedInstances/v5CreateNoRelatedInstances.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
 			{"No valid related instances is specified", mapper.readValue(inputStream("/RelatedInstances/v4RelatedInstancesNull.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.updateInstance, 4},
+			{"No valid related instances is specified", mapper.readValue(inputStream("/RelatedInstances/ScaleOutNoRelatedInstances.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7},
 			{"No valid related service instance for vfModule request is specified", mapper.readValue(inputStream("/RelatedInstances/VfModuleRelatedInstancesService.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.activateInstance, 5},
 			{"No valid related service instance for vnf request is specified", mapper.readValue(inputStream("/RelatedInstances/VnfRelatedInstancesService.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.activateInstance, 5},			
 			{"No valid related service instance for volumeGroup request is specified", mapper.readValue(inputStream("/RelatedInstances/RelatedInstancesServiceInstance.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.activateInstance, 5},
@@ -275,6 +282,7 @@ public class MsoRequestTest extends BaseTest {
 			{"No valid requestInfo is specified", mapper.readValue(inputStream("/RequestInfo/RequestInfoNull.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
 			{"No valid requestInfo is specified", mapper.readValue(inputStream("/RequestInfo/RequestInfo.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.applyUpdatedConfig, 6},
 			{"No valid requestInfo is specified", mapper.readValue(inputStream("/RequestInfo/RequestInfo.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.inPlaceSoftwareUpdate, 6},
+			{"No valid requestInfo is specified", mapper.readValue(inputStream("/RequestInfo/ScaleOutNoRequestInfo.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7},
 			{"No valid productFamilyId is specified", mapper.readValue(inputStream("/RequestInfo/VnfProductFamilyId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 3},
 			{"No valid productFamilyId is specified", mapper.readValue(inputStream("/RequestInfo/NetworkProductFamilyId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 3},
 			{"No valid productFamilyId is specified", mapper.readValue(inputStream("/RequestInfo/NetworkProductFamilyId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.updateInstance, 3},
@@ -310,7 +318,9 @@ public class MsoRequestTest extends BaseTest {
 			{"No valid model-info in userParams network resources is specified", mapper.readValue(inputStream("/RequestParameters/Network.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.assignInstance, 7},	
 			{"No valid modelCustomizationId in userParams vfModule resources is specified", mapper.readValue(inputStream("/RequestParameters/VfModuleModelCustomizationId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.assignInstance, 7},
 			{"No valid modelCustomizationId in userParams vnf resources is specified", mapper.readValue(inputStream("/RequestParameters/VnfModelCustomizationId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.assignInstance, 7},
-			{"No valid modelCustomizationId in userParams network resources is specified", mapper.readValue(inputStream("/RequestParameters/NetworkModelCustomizationId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.assignInstance, 7}
+			{"No valid modelCustomizationId in userParams network resources is specified", mapper.readValue(inputStream("/RequestParameters/NetworkModelCustomizationId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.assignInstance, 7},
+			//Validation for ConfigurationParameters
+			{"No valid configuration parameters is specified", mapper.readValue(inputStream("/ConfigurationParameters/NoConfigurationParameters.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7}
 		});
 	}
 	@Test

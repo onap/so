@@ -42,5 +42,6 @@ public enum Action implements Actions{
 	unassignInstance,
 	compareModel,
 	scaleInstance,
-	deactivateAndCloudDelete
+	deactivateAndCloudDelete,
+	scaleOut
 }

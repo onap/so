@@ -217,7 +217,8 @@ public class RelatedInstancesValidation implements ValidationRule{
         }
         else if ((( requestScope.equalsIgnoreCase(ModelType.vnf.name ()) || requestScope.equalsIgnoreCase(ModelType.volumeGroup.name ()) || requestScope.equalsIgnoreCase(ModelType.vfModule.name ()) 
         			|| requestScope.equalsIgnoreCase(ModelType.configuration.name())) && (action == Action.createInstance || action == Action.enablePort || action == Action.disablePort)) ||
-        		(reqVersion >= 4 && (requestScope.equalsIgnoreCase(ModelType.volumeGroup.name ()) || requestScope.equalsIgnoreCase(ModelType.vfModule.name ())) && action == Action.updateInstance) ||
+        		(reqVersion >= 4 && (requestScope.equalsIgnoreCase(ModelType.volumeGroup.name ()) || requestScope.equalsIgnoreCase(ModelType.vfModule.name ())) && action == Action.updateInstance ||
+        		(requestScope.equalsIgnoreCase(ModelType.vfModule.name ()) && action == Action.scaleOut)) ||
         			(requestScope.equalsIgnoreCase(ModelType.service.name()) && (action.equals(Action.addRelationships) || action.equals(Action.removeRelationships)))){
         	 msoLogger.debug ("related instance exception");
         	throw new ValidationException ("related instances");

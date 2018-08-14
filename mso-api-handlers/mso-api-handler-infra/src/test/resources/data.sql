@@ -224,8 +224,7 @@ INSERT INTO vnf_components_recipe(ID, VNF_TYPE, VNF_COMPONENT_TYPE, ACTION, SERV
 ('19', 'vfModule', 'vfModule', 'createInstance', '', '1', 'VID_DEFAULT recipe to create vf-module if no custom BPMN flow is found', '/mso/async/services/CreateVfModuleInfra', '', '180', '2016-09-14 19:18:20', '20c4431c-246d-11e7-93ae-92361f002672'),
 ('20', 'vfModule', 'vfModule', 'deleteInstance', '', '1', 'VID_DEFAULT recipe to delete vf-module if no custom BPMN flow is found', '/mso/async/services/DeleteVfModuleInfra', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
 ('21', 'vfModule', 'vfModule', 'updateInstance', '', '1', 'VID_DEFAULT recipe to update vf-module if no custom BPMN flow is found', '/mso/async/services/UpdateVfModuleInfra', '', '180', '2016-09-14 19:18:20', 'VID_DEFAULT'),
-('25', 'vfModule', 'vfModule', 'replaceInstance', '', '1', 'VID_DEFAULT vfModule replace', '/mso/async/services/ReplaceVfModuleInfra', '', '180', '2017-07-28 18:25:06', 'VID_DEFAULT');               
-
+('25', 'vfModule', 'vfModule', 'replaceInstance', '', '1', 'VID_DEFAULT vfModule replace', '/mso/async/services/ReplaceVfModuleInfra', '', '180', '2017-07-28 18:25:06', 'VID_DEFAULT');
 
 INSERT INTO catalogdb.network_recipe(ID, MODEL_NAME, ACTION, DESCRIPTION, ORCHESTRATION_URI, NETWORK_PARAM_XSD, RECIPE_TIMEOUT, SERVICE_TYPE, CREATION_TIMESTAMP, VERSION_STR) VALUES
 ('17', 'VID_DEFAULT', 'createInstance', 'VID_DEFAULT recipe to create network if no custom BPMN flow is found', '/mso/async/services/CreateNetworkInstance', '', '180', '', '2016-09-14 19:18:20', '1.0'),
@@ -274,7 +273,9 @@ VALUES
 ('vfModule', 'deleteInstance', '1', 'Gr api recipe to delete vf-module', '/mso/async/services/WorkflowActionBB', 180, 'GR-API-DEFAULT'),
 ('vfModule', 'updateInstance', '1', 'Gr api recipe to update vf-module', '/mso/async/services/WorkflowActionBB', 180, 'GR-API-DEFAULT'),
 ('vfModule', 'replaceInstance', '1', 'Gr api recipe to replace vf-module', '/mso/async/services/WorkflowActionBB', 180, 'GR-API-DEFAULT'),
-('vfModule', 'deactivateAndCloudDelete', '1', 'Gr api recipe to deactivateAndCloudDelete vf-module', '/mso/async/services/WorkflowActionBB', 180, 'GR-API-DEFAULT');
+('vfModule', 'deactivateAndCloudDelete', '1', 'Gr api recipe to deactivateAndCloudDelete vf-module', '/mso/async/services/WorkflowActionBB', 180, 'GR-API-DEFAULT'),
+('vfModule', 'scaleOut', '1', 'Gr api recipe to scale out vfModule', '/mso/async/services/WorkflowActionBB', '180', 'GR-API-DEFAULT');               
+
 
 UPDATE vnf_components_recipe
 SET vf_module_model_uuid = 'VNF-API-DEFAULT'

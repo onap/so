@@ -58,6 +58,8 @@ public class RequestDetails implements Serializable {
     protected LineOfBusiness lineOfBusiness;
 	@JsonProperty("instanceName")
 	private List<Map<String, String>> instanceName = new ArrayList<>();
+	@JsonProperty("configurationParameters")
+	protected List<Map<String, String>> configurationParameters = new ArrayList<>();
     
 
 	/**
@@ -290,14 +292,20 @@ public class RequestDetails implements Serializable {
 	public void setInstanceName(List<Map<String, String>> instanceName) {
 		this.instanceName = instanceName;
 	}
+	public List<Map<String, String>> getConfigurationParameters() {
+		return configurationParameters;
+	}
+
+	public void setConfigurationParameters(List<Map<String, String>> configurationParameters) {
+		this.configurationParameters = configurationParameters;
+	}
+
 	@Override
 	public String toString() {
-		return "RequestDetails [modelInfo=" + modelInfo + ", requestInfo="
-				+ requestInfo + ", relatedInstanceList="
-				+ Arrays.toString(relatedInstanceList) + ", subscriberInfo="
-				+ subscriberInfo + ", cloudConfiguration=" + cloudConfiguration
-				+ ", requestParameters=" + requestParameters + ", platform=" + platform 
-				+ ", lineOfBusiness=" + ", project=" + project + ", owningEntity=" + owningEntity 
-				+ ", instanceName" + instanceName + "]";
+		return "RequestDetails [modelInfo=" + modelInfo + ", requestInfo=" + requestInfo + ", relatedInstanceList="
+				+ Arrays.toString(relatedInstanceList) + ", subscriberInfo=" + subscriberInfo + ", cloudConfiguration="
+				+ cloudConfiguration + ", requestParameters=" + requestParameters + ", project=" + project
+				+ ", owningEntity=" + owningEntity + ", platform=" + platform + ", lineOfBusiness=" + lineOfBusiness
+				+ ", instanceName=" + instanceName + ", configurationParameters=" + configurationParameters + "]";
 	}
 }
