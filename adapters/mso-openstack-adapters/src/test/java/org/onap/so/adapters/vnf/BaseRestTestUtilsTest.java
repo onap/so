@@ -33,7 +33,6 @@ import org.onap.so.db.catalog.beans.AuthenticationType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.ServerType;
-import org.onap.so.db.catalog.data.repository.CloudIdentityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,7 +60,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 @SpringBootTest(classes = MsoOpenstackAdaptersApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureWireMock(port = 0)
-public class BaseRestTestUtils {
+public class BaseRestTestUtilsTest {
 	@Value("${wiremock.server.port}")
     protected int wireMockPort;
 	
@@ -76,8 +75,6 @@ public class BaseRestTestUtils {
 
 	public ObjectMapper mapper;
 	
-	@Autowired
-	private CloudIdentityRepository cloudIdentityRepository;
 	
 	protected String readJsonFileAsString(String fileLocation) throws JsonParseException, JsonMappingException, IOException{
 		ObjectMapper mapper = new ObjectMapper();

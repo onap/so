@@ -196,5 +196,10 @@
 			<artifactId>micrometer-registry-prometheus</artifactId>
 			<version>1.0.5</version>
 		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>so-bpmn-tasks</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>
