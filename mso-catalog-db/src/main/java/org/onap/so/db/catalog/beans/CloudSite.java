@@ -51,211 +51,213 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "cloud_sites")
 public class CloudSite {
-	
-	@JsonProperty
-	@BusinessKey
-	@Id
-	@Column(name = "ID")
-	private String id;
-	
-	@JsonProperty("region_id")
-	@BusinessKey
-	@Column(name = "REGION_ID")
-	private String regionId;
 
-	@JsonProperty("aic_version")
-	@BusinessKey
-	@Column(name = "CLOUD_VERSION")
-	private String cloudVersion;
-	
-	@JsonProperty("clli")
-	@BusinessKey
-	@Column(name = "CLLI")
-	private String clli;
-	
-	@JsonProperty("platform")
-	@BusinessKey
-	@Column(name = "PLATFORM")
-	private String platform;
-	
-	@JsonProperty("orchestrator")
-	@BusinessKey
-	@Column(name = "ORCHESTRATOR")
-	private String orchestrator;
+    @JsonProperty
+    @BusinessKey
+    @Id
+    @Column(name = "ID")
+    private String id;
 
-	@JsonProperty("cloudify_id")
-	@BusinessKey
-	@Column(name = "CLOUDIFY_ID")
-	private String cloudifyId;
-	
-	// Derived property (set by CloudConfig loader based on identityServiceId)
-	@BusinessKey
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "IDENTITY_SERVICE_ID")
-	private CloudIdentity identityService;
+    @JsonProperty("region_id")
+    @BusinessKey
+    @Column(name = "REGION_ID")
+    private String regionId;
 
-	@BusinessKey
-	@JsonProperty("identity_service_id")
-	transient private String identityServiceId;
+    @JsonProperty("aic_version")
+    @BusinessKey
+    @Column(name = "CLOUD_VERSION")
+    private String cloudVersion;
 
-	@JsonProperty("last_updated_by")
-	@BusinessKey
-	@Column(name = "LAST_UPDATED_BY")
-	private String lastUpdatedBy ;
+    @JsonProperty("clli")
+    @BusinessKey
+    @Column(name = "CLLI")
+    private String clli;
 
-	@JsonProperty("creation_timestamp")
-	@BusinessKey
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @JsonProperty("platform")
+    @BusinessKey
+    @Column(name = "PLATFORM")
+    private String platform;
 
-	@JsonProperty("update_timestamp")
-	@BusinessKey
-	@Column(name = "UPDATE_TIMESTAMP")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updated;
-	
-	public CloudSite() {
-		
-	}
+    @JsonProperty("orchestrator")
+    @BusinessKey
+    @Column(name = "ORCHESTRATOR")
+    private String orchestrator;
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-		this.updated = new Date();
-	}
-	
-	public CloudSite(CloudSite site) {
-		this.cloudVersion = site.getCloudVersion();
-		this.clli = site.getClli();
-		this.id = site.getId();
-		this.identityService = site.getIdentityService();
-		this.orchestrator = site.getOrchestrator();
-		this.platform = site.getPlatform();
-		this.regionId = site.getRegionId();
-		this.identityServiceId = site.getIdentityServiceId();
-	}
-	public String getId() {
-		return this.id;
-	}
-	
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public String getRegionId() {
-		return regionId;
-	}
-	
-	public void setRegionId(String regionId) {
-		this.regionId = regionId;
-	}
+    @JsonProperty("cloudify_id")
+    @BusinessKey
+    @Column(name = "CLOUDIFY_ID")
+    private String cloudifyId;
 
-	public String getIdentityServiceId() {
-		return identityServiceId == null ? (identityService== null? null:identityService.getId()):identityServiceId;
-	}
-	
-	public String getCloudVersion() {
-		return cloudVersion;
-	}
+    // Derived property (set by CloudConfig loader based on identityServiceId)
+    @BusinessKey
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "IDENTITY_SERVICE_ID")
+    private CloudIdentity identityService;
 
-	public void setCloudVersion(String cloudVersion) {
-		this.cloudVersion = cloudVersion;
-	}
+    @BusinessKey
+    @JsonProperty("identity_service_id")
+    private transient String identityServiceId;
 
-	public String getClli() {
-		return clli;
-	}
+    @JsonProperty("last_updated_by")
+    @BusinessKey
+    @Column(name = "LAST_UPDATED_BY")
+    private String lastUpdatedBy ;
 
-	public void setClli(String clli) {
-		this.clli = clli;
-	}
+    @JsonProperty("creation_timestamp")
+    @BusinessKey
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	public String getCloudifyId() {
-		return cloudifyId;
-	}
+    @JsonProperty("update_timestamp")
+    @BusinessKey
+    @Column(name = "UPDATE_TIMESTAMP")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updated;
 
-	public void setCloudifyId(String cloudifyId) {
-		this.cloudifyId = cloudifyId;
-	}
+    public CloudSite() {
 
-	public String getLastUpdatedBy() {
-		return lastUpdatedBy;
-	}
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+        this.updated = new Date();
+    }
 
-	public Date getUpdated() {
-		return updated;
-	}
+    public CloudSite(CloudSite site) {
+        this.cloudVersion = site.getCloudVersion();
+        this.clli = site.getClli();
+        this.id = site.getId();
+        this.identityService = site.getIdentityService();
+        this.orchestrator = site.getOrchestrator();
+        this.platform = site.getPlatform();
+        this.regionId = site.getRegionId();
+        this.identityServiceId = site.getIdentityServiceId();
+    }
+    
+    
+    public String getId() {
+        return this.id;
+    }
 
-	public void setLastUpdatedBy(String lastUpdatedBy) {
-		this.lastUpdatedBy = lastUpdatedBy;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public String getRegionId() {
+        return regionId;
+    }
 
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
+    public void setRegionId(String regionId) {
+        this.regionId = regionId;
+    }
 
-	public String getPlatform() {
-		return platform;
-	}
+    public String getIdentityServiceId() {
+        return identityServiceId == null ? (identityService== null? null:identityService.getId()):identityServiceId;
+    }
 
-	public void setPlatform(String platform) {
-		this.platform = platform;
-	}
+    public String getCloudVersion() {
+        return cloudVersion;
+    }
 
-	public String getOrchestrator() {
-		return orchestrator;
-	}
+    public void setCloudVersion(String cloudVersion) {
+        this.cloudVersion = cloudVersion;
+    }
 
-	public void setOrchestrator(String orchestrator) {
-		this.orchestrator = orchestrator;
-	}
+    public String getClli() {
+        return clli;
+    }
 
-	public CloudIdentity getIdentityService () {
-		return identityService;
-	}
+    public void setClli(String clli) {
+        this.clli = clli;
+    }
 
-	public void setIdentityService (CloudIdentity identity) {
-		this.identityService = identity;
-	}
-	@Deprecated
-	public void setIdentityServiceId(String identityServiceId) {
-		this.identityServiceId = identityServiceId;
-	}
+    public String getCloudifyId() {
+        return cloudifyId;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("regionId", getRegionId())
-				.append("identityServiceId", getIdentityServiceId()).append("cloudVersion", getCloudVersion())
-				.append("clli", getClli()).append("cloudifyId", getCloudifyId()).append("platform", getPlatform())
-				.append("orchestrator", getOrchestrator()).toString();
-	}
+    public void setCloudifyId(String cloudifyId) {
+        this.cloudifyId = cloudifyId;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (other == null) {
-			return false;
-		}
-		if (!getClass().equals(other.getClass())) {
-			return false;
-		}
-		CloudSite castOther = (CloudSite) other;
-		return new EqualsBuilder().append(getRegionId(), castOther.getRegionId())
-				.append(getIdentityServiceId(), castOther.getIdentityServiceId())
-				.append(getCloudVersion(), castOther.getCloudVersion()).append(getClli(), castOther.getClli()).isEquals();
-	}
+    public String getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(1, 31).append(getRegionId()).append(getIdentityServiceId()).append(getCloudVersion())
-				.append(getClli()).toHashCode();
-	}
+    public Date getCreated() {
+        return created;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setLastUpdatedBy(String lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
+
+    public String getOrchestrator() {
+        return orchestrator;
+    }
+
+    public void setOrchestrator(String orchestrator) {
+        this.orchestrator = orchestrator;
+    }
+
+    public CloudIdentity getIdentityService () {
+        return identityService;
+    }
+
+    public void setIdentityService (CloudIdentity identity) {
+        this.identityService = identity;
+    }
+    @Deprecated
+    public void setIdentityServiceId(String identityServiceId) {
+        this.identityServiceId = identityServiceId;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("regionId", getRegionId())
+                .append("identityServiceId", getIdentityServiceId()).append("cloudVersion", getCloudVersion())
+                .append("clli", getClli()).append("cloudifyId", getCloudifyId()).append("platform", getPlatform())
+                .append("orchestrator", getOrchestrator()).toString();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (!getClass().equals(other.getClass())) {
+            return false;
+        }
+        CloudSite castOther = (CloudSite) other;
+        return new EqualsBuilder().append(getRegionId(), castOther.getRegionId())
+                .append(getIdentityServiceId(), castOther.getIdentityServiceId())
+                .append(getCloudVersion(), castOther.getCloudVersion()).append(getClli(), castOther.getClli()).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(1, 31).append(getRegionId()).append(getIdentityServiceId()).append(getCloudVersion())
+                .append(getClli()).toHashCode();
+    }
 }
