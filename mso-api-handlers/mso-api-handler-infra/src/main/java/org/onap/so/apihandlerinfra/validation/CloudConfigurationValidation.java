@@ -53,7 +53,7 @@ public class CloudConfigurationValidation implements ValidationRule{
 					(action == Action.enablePort || action == Action.disablePort || action == Action.activateInstance || action == Action.deactivateInstance)){
 				throw new ValidationException ("cloudConfiguration");
 			}
-			if(requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.deactivateAndCloudDelete){
+			if(requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && (action == Action.deactivateAndCloudDelete || action == Action.scaleOut)){
 				throw new ValidationException("cloudConfiguration");
 			}
 		}

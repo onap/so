@@ -1,0 +1,34 @@
+{
+   "requestDetails":{
+      "modelInfo":{
+         "modelType":"vfModule",
+         "modelInvariantId":"ff5256d2-5a33-55df-13ab-12abad84e7ff",
+         "modelVersionId":"fe6478e5-ea33-3346-ac12-ab121484a3fe",
+         "modelCustomizationId":"cb82ffd8-252a-11e7-93ae-92361f002672",
+         "modelName":"vSAMP12..base..module-0",
+         "modelVersion":"1"
+      },
+      "cloudConfiguration":{
+         "lcpCloudRegionId":"mdt1",
+         "tenantId":"88a6ca3ee0394ade9403f075db23167e"
+      },
+      "requestInfo":{
+         "instanceName":"MSOTEST103a-vSAMP12_base_module-0",
+         "source":"VID",
+         "suppressRollback":true,
+         "requestorId":"xxxxxx"
+      },
+      "requestParameters":{
+         "usePreload":true,
+         "userParams":[
+
+         ]
+      },
+      "configurationParameters":[
+         {
+            "availability-zone":"$.vnf-topology.vnf-resource-assignments.availability-zones.availability-zone[0]",
+            "xtz-123":"$.vnf-topology.vnf-resource-assignments.availability-zones.availability-zone[0]"
+         }
+      ]
+   }
+}

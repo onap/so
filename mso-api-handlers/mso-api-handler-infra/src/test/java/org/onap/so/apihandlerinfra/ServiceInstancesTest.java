@@ -1433,4 +1433,26 @@ public class ServiceInstancesTest extends BaseTest{
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
         assertThat(request, sameBeanAs(expected));
     }
+    @Test
+    public void scaleOutVfModule() throws JsonParseException, JsonMappingException, IOException {
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        //expected response
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "v7" + "/serviceInstances/7a88cbeb-0ec8-4765-a271-4f9e90c3da7b/vnfs/cbba721b-4803-4df7-9347-307c9a955426/vfModules/scaleOut";
+        ResponseEntity<String> response = sendRequest(inputStream("/ScaleOutRequest.json"), uri, HttpMethod.POST);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertTrue(response.getBody().contains("1882939"));
+    }
 }

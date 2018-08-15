@@ -525,6 +525,21 @@ public class ServiceInstances {
 		Response response = serviceInstances(request, Action.deactivateAndCloudDelete, instanceIdMap, version, requestId, getRequestUri(requestContext));
 		return response;
 	}
+	
+	@POST
+	@Path("/{version:[vV][7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/scaleOut")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="VF Auto Scale Out",response=Response.class)
+	@Transactional
+	public Response scaleOutVfModule(String request,  @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+                                           @PathParam("vnfInstanceId") String vnfInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
+		String requestId = getRequestId(requestContext);
+		HashMap<String, String> instanceIdMap = new HashMap<>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
+		return serviceInstances(request, Action.scaleOut, instanceIdMap, version, requestId, getRequestUri(requestContext));
+	}
 
 
 	@POST

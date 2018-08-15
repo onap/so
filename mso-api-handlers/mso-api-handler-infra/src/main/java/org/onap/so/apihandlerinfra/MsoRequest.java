@@ -44,6 +44,7 @@ import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
 import org.onap.so.apihandlerinfra.validation.ApplyUpdatedConfigValidation;
 import org.onap.so.apihandlerinfra.validation.CloudConfigurationValidation;
+import org.onap.so.apihandlerinfra.validation.ConfigurationParametersValidation;
 import org.onap.so.apihandlerinfra.validation.InPlaceSoftwareUpdateValidation;
 import org.onap.so.apihandlerinfra.validation.InstanceIdMapValidation;
 import org.onap.so.apihandlerinfra.validation.ModelInfoValidation;
@@ -178,6 +179,7 @@ public class MsoRequest {
 	        rules.add(new PlatformLOBValidation());
 	        rules.add(new ProjectOwningEntityValidation());
 	        rules.add(new RelatedInstancesValidation());
+	        rules.add(new ConfigurationParametersValidation());
         } 
 	    if(reqVersion >= 7 && requestParameters != null && requestParameters.getUserParams() != null){
 	    	for(Map<String, Object> params : requestParameters.getUserParams()){
