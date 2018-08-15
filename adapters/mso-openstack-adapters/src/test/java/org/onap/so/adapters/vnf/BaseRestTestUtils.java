@@ -33,7 +33,6 @@ import org.onap.so.db.catalog.beans.AuthenticationType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.ServerType;
-import org.onap.so.db.catalog.data.repository.CloudIdentityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,8 +75,6 @@ public class BaseRestTestUtils {
 
 	public ObjectMapper mapper;
 	
-	@Autowired
-	private CloudIdentityRepository cloudIdentityRepository;
 	
 	protected String readJsonFileAsString(String fileLocation) throws JsonParseException, JsonMappingException, IOException{
 		ObjectMapper mapper = new ObjectMapper();
