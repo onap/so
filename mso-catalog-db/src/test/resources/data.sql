@@ -644,4 +644,5 @@ VALUES
 
 INSERT INTO CONTROLLER_SELECTION_REFERENCE (VNF_TYPE, CONTROLLER_NAME, ACTION_CATEGORY)
 VALUES
-('vLoadBalancerMS/vLoadBalancerMS 0', 'APPC', 'ConfigScaleOut');
+('vLoadBalancerMS/vLoadBalancerMS 0', 'APPC', 'ConfigScaleOut'),
+('vLoadBalancerMS/vLoadBalancerMS 0', 'APPC', 'HealthCheck');
