@@ -352,9 +352,10 @@ public class ASDCController {
     			+ artifact.getArtifactUUID ()
     			+ ")");
     	
+    	String filePath = System.getProperty("mso.config.path") + "/ASDC" + "/" + artifact.getArtifactVersion() + "/" + artifact.getArtifactName();
     	byte[] payloadBytes = resultArtifact.getArtifactPayload();
     	
-    	try (FileOutputStream outFile = new FileOutputStream(System.getProperty("mso.config.path") + "/ASDC" + "/" + artifact.getArtifactName())) {
+    	try (FileOutputStream outFile = new FileOutputStream(filePath)) {
     		LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, "***WRITE FILE ARTIFACT NAME", "ASDC", artifact.getArtifactName());
     		outFile.write(payloadBytes, 0, payloadBytes.length);
     		outFile.close();
