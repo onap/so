@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_17def911",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCreateE2EServiceInstance.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 741
+      },
+      "writtenOn": "2018-08-16T06:25:37Z",
+      "side": 1,
+      "message": "seems wrong placement of invalid char",
+      "range": {
+        "startLine": 473,
+        "startChar": 19,
+        "endLine": 473,
+        "endChar": 20
+      },
+      "revId": "7463e19d05447b402d4b9d9520fee616538ce36c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
