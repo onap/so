@@ -22,6 +22,7 @@ d * ============LICENSE_START===================================================
 package org.onap.so.asdc.client;
 
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -352,9 +353,17 @@ public class ASDCController {
     			+ artifact.getArtifactUUID ()
     			+ ")");
     	
+    	String filePath = System.getProperty("mso.config.path") + "/ASDC" + "/" + artifact.getArtifactVersion() + "/" + artifact.getArtifactName();
+    	// make parent directory
+    	File file = new File(filePath);    	
+    	File fileParent = file.getParentFile();
+    	if (!fileParent.exists()) {
+    	    fileParent.mkdirs();
+    	}
+
     	byte[] payloadBytes = resultArtifact.getArtifactPayload();
     	
-    	try (FileOutputStream outFile = new FileOutputStream(System.getProperty("mso.config.path") + "/ASDC" + "/" + artifact.getArtifactName())) {
+    	try (FileOutputStream outFile = new FileOutputStream(filePath)) {
     		LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, "***WRITE FILE ARTIFACT NAME", "ASDC", artifact.getArtifactName());
     		outFile.write(payloadBytes, 0, payloadBytes.length);
     		outFile.close();
