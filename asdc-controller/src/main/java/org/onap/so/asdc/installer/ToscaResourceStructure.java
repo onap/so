@@ -126,7 +126,9 @@ public class ToscaResourceStructure {
 			
 			LOGGER.debug("MSO config path is: " + System.getProperty("mso.config.path"));
 			
-			File spoolFile = new File(System.getProperty("mso.config.path") + "/ASDC/" + artifact.getArtifactName());
+			String filePath = System.getProperty("mso.config.path") + "/ASDC/" + artifact.getArtifactVersion() + "/" + artifact.getArtifactName();
+
+			File spoolFile = new File(filePath);
  
 			LOGGER.debug("ASDC File path is: " + spoolFile.getAbsolutePath());
 			LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, "***PATH", "ASDC", spoolFile.getAbsolutePath());
