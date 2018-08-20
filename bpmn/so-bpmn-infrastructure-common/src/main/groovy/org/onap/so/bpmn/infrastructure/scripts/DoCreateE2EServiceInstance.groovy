@@ -466,6 +466,19 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         msoLogger.trace("COMPLETED preInitResourcesOperStatus Process ")
 	}
 
+	// if site location is in local Operator, create all resources in local ONAP; 
+	// if site location is in 3rd Operator, only process sp-partner to create all resources in 3rd ONAP
+	public void doProcessSiteLocation(DelegateExecution execution){
+
+		msoLogger.trace("======== Start doProcessSiteLocation Process ======== ")
+		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+		String uuiRequest = execution.getVariable("uuiRequest")
+		ServiceDecomposition serviceDecompositionforLocal = ServicePluginFactory.getInstance().doProcessSiteLocation(serviceDecomposition, uuiRequest);
+		execution.setVariable("serviceDecomposition", serviceDecompositionforLocal)
+		
+		msoLogger.trace("======== COMPLETED doProcessSiteLocation Process ======== ")
+	}
+
 	// prepare input param for using DoCreateResources.bpmn
 	public void preProcessForAddResource(DelegateExecution execution) {
 		msoLogger.trace("STARTED preProcessForAddResource Process ")
