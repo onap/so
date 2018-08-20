@@ -4,7 +4,7 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -183,9 +183,9 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 	    def currentIndex = execution.getVariable("currentResourceIndex")
 	    List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")  
 	    Resource currentResource = sequencedResourceList.get(currentIndex)
-        execution.setVariable("resourceType", currentResource.getModelInfo().getModelName())
+	    execution.setVariable("resourceType", currentResource.getModelInfo().getModelName())
 	    msoLogger.info("Now we deal with resouce:" + currentResource.getModelInfo().getModelName())  
-        msoLogger.trace("COMPLETED getCurrentResoure Process ")  
+	    msoLogger.trace("COMPLETED getCurrentResoure Process ")  
     }
     
     public void parseNextResource(DelegateExecution execution){
@@ -261,7 +261,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 	         } else {
 	             String exceptionMessage = "Resource receipe is not found for resource modeluuid: " +
 	                     resourceInput.getResourceModelInfo().getModelUuid()
-	             utils.log("ERROR", exceptionMessage, isDebugEnabled)
+	             msoLogger.trace(exceptionMessage)
 	             exceptionUtil.buildAndThrowWorkflowException(execution, 500, exceptionMessage)
 	         }
 

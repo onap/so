@@ -22,6 +22,7 @@ package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
+import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
 import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
@@ -36,8 +37,8 @@ class ExternalAPIUtil {
 	public MsoUtils utils = new MsoUtils()
 	
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
-
-	private AbstractServiceTaskProcessor taskProcessor
+    
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExternalAPIUtil.class)
 	
 	public static final String PostServiceOrderRequestsTemplate =
 	"{\n" +
@@ -62,8 +63,8 @@ class ExternalAPIUtil {
         "\t\t\"action\": <action>,\n" +
         "\t\t\"service\": {\n" +
             "\t\t\t\"serviceState\": <serviceState>,\n" +
+			"\t\t\t\"id\": <serviceId>,\n" +
             "\t\t\t\"name\": <serviceName>,\n" +
-            "\t\t\t\"serviceType\": <serviceType>,\n" +
             "\t\t\t\"serviceSpecification\": { \n" +
                 "\t\t\t\t\"id\": <serviceUuId> \n" +
             "\t\t\t},\n" +
@@ -82,16 +83,12 @@ class ExternalAPIUtil {
     "\t} \n" + 
     "}"
 
-	public ExternalAPIUtil(AbstractServiceTaskProcessor taskProcessor) {
-		this.taskProcessor = taskProcessor
-	}
 
 //	public String getUri(DelegateExecution execution, resourceName) {
 //
-//		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 //		def uri = execution.getVariable("ExternalAPIURi")
 //		if(uri) {
-//			taskProcessor.logDebug("ExternalAPIUtil.getUri: " + uri, isDebugLogEnabled)
+//			msoLogger.debug("ExternalAPIUtil.getUri: " + uri)
 //			return uri
 //		}
 //		
@@ -99,21 +96,21 @@ class ExternalAPIUtil {
 //	}
 	
 	public String setTemplate(String template, Map<String, String> valueMap) {		
-		taskProcessor.logDebug("ExternalAPIUtil setTemplate", true);
+		msoLogger.debug("ExternalAPIUtil setTemplate", true);
 		StringBuffer result = new StringBuffer();
 
 		String pattern = "<.*>";
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(template);
 
-		taskProcessor.logDebug("ExternalAPIUtil template:" + template, true);
+		msoLogger.debug("ExternalAPIUtil template:" + template, true);
 		while (m.find()) {
 			String key = template.substring(m.start() + 1, m.end() - 1);
-			taskProcessor.logDebug("ExternalAPIUtil key:" + key + " contains key? " + valueMap.containsKey(key), true);
+			msoLogger.debug("ExternalAPIUtil key:" + key + " contains key? " + valueMap.containsKey(key), true);
 			m.appendReplacement(result, valueMap.getOrDefault(key, "\"TBD\""));
 		}
 		m.appendTail(result);
-		taskProcessor.logDebug("ExternalAPIUtil return:" + result.toString(), true);
+		msoLogger.debug("ExternalAPIUtil return:" + result.toString(), true);
 		return result.toString();
 	}
 
@@ -129,13 +126,12 @@ class ExternalAPIUtil {
 	 *
 	 */
 	public APIResponse executeExternalAPIGetCall(DelegateExecution execution, String url){
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		taskProcessor.logDebug(" ======== STARTED Execute ExternalAPI Get Process ======== ", isDebugEnabled)
+		msoLogger.debug(" ======== STARTED Execute ExternalAPI Get Process ======== ")
 		APIResponse apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
-			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
-			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
+			msoLogger.debug( "Generated uuid is: " + uuid)
+			msoLogger.debug( "URL to be used is: " + url)
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_externalapi_auth"),execution.getVariable("URN_mso_msoKey"))
 
@@ -147,9 +143,9 @@ class ExternalAPIUtil {
 			}
 			apiResponse = client.get()
 
-			taskProcessor.logDebug( "======== COMPLETED Execute ExternalAPI Get Process ======== ", isDebugEnabled)
+			msoLogger.debug( "======== COMPLETED Execute ExternalAPI Get Process ======== ")
 		}catch(Exception e){
-			taskProcessor.logDebug("Exception occured while executing ExternalAPI Get Call. Exception is: \n" + e, isDebugEnabled)
+			msoLogger.debug("Exception occured while executing ExternalAPI Get Call. Exception is: \n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse
@@ -168,13 +164,12 @@ class ExternalAPIUtil {
 	 *
 	 */
 	public APIResponse executeExternalAPIPostCall(DelegateExecution execution, String url, String payload){
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		taskProcessor.logDebug( " ======== Started Execute ExternalAPI Post Process ======== ", isDebugEnabled)
+		msoLogger.debug( " ======== Started Execute ExternalAPI Post Process ======== ")
 		APIResponse apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
-			taskProcessor.logDebug( "Generated uuid is: " + uuid, isDebugEnabled)
-			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
+			msoLogger.debug( "Generated uuid is: " + uuid)
+			msoLogger.debug( "URL to be used is: " + url)
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_externalapi_auth"),execution.getVariable("URN_mso_msoKey"))
 			RESTConfig config = new RESTConfig(url);
@@ -185,9 +180,9 @@ class ExternalAPIUtil {
 			}
 			apiResponse = client.httpPost(payload)
 
-			taskProcessor.logDebug( "======== Completed Execute ExternalAPI Post Process ======== ", isDebugEnabled)
+			msoLogger.debug( "======== Completed Execute ExternalAPI Post Process ======== ")
 		}catch(Exception e){
-			taskProcessor.utils.log("ERROR", "Exception occured while executing ExternalAPI Post Call. Exception is: \n" + e, isDebugEnabled)
+			msoLogger.error("Exception occured while executing ExternalAPI Post Call. Exception is: \n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse
@@ -209,11 +204,10 @@ class ExternalAPIUtil {
 	 *
 	 */
 	public APIResponse executeExternalAPIPostCall(DelegateExecution execution, String url, String payload, String authenticationHeaderValue, String headerName, String headerValue){
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		taskProcessor.logDebug( " ======== Started Execute ExternalAPI Post Process ======== ", isDebugEnabled)
+		msoLogger.debug( " ======== Started Execute ExternalAPI Post Process ======== ")
 		APIResponse apiResponse = null
 		try{
-			taskProcessor.logDebug( "URL to be used is: " + url, isDebugEnabled)
+			msoLogger.debug( "URL to be used is: " + url)
 
 			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_externalapi_auth"),execution.getVariable("URN_mso_msoKey"))
 
@@ -224,9 +218,9 @@ class ExternalAPIUtil {
 			}
 			apiResponse = client.httpPost(payload)
 
-			taskProcessor.logDebug( "======== Completed Execute ExternalAPI Post Process ======== ", isDebugEnabled)
+			msoLogger.debug( "======== Completed Execute ExternalAPI Post Process ======== ")
 		}catch(Exception e){
-			taskProcessor.utils.log("ERROR", "Exception occured while executing ExternalAPI Post Call. Exception is: \n" + e, isDebugEnabled)
+			msoLogger.error("Exception occured while executing ExternalAPI Post Call. Exception is: \n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse
