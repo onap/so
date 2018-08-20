@@ -1,4 +1,4 @@
-FROM so/base-image:1.0
+FROM onap/so/base-image:1.0
 
 ARG http_proxy
 ENV HTTP_PROXY=$http_proxy
