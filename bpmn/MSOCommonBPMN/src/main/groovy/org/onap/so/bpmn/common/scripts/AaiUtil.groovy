@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,8 +27,6 @@ import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-
-
 
 class AaiUtil {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AaiUtil.class);
@@ -98,6 +96,15 @@ class AaiUtil {
 	public String getBusinessSPPartnerUri(DelegateExecution execution) {
 		def uri = getUri(execution, 'sp-partner')
 		msoLogger.debug('AaiUtil.getBusinessSPPartnerUri() - AAI URI: ' + uri)
+		return uri
+	}
+
+	public String getAAIServiceInstanceUri(DelegateExecution execution) {
+		String uri = getBusinessCustomerUri(execution)
+
+		uri = uri +"/" + execution.getVariable("globalSubscriberId") + "/service-subscriptions/service-subscription/" + UriUtils.encode(execution.getVariable("serviceType"),"UTF-8") + "/service-instances/service-instance/" + UriUtils.encode(execution.getVariable("serviceInstanceId"),"UTF-8")
+
+		msoLogger.debug('AaiUtil.getAAIRequestInputUri() - AAI URI: ' + uri)
 		return uri
 	}
 
@@ -645,5 +652,86 @@ class AaiUtil {
 		else {
 			return 0
 		}
+	}
+
+	private def getPInterface(DelegateExecution execution, String aai_uri) {
+
+		String namespace = getNamespaceFromUri(aai_uri)
+		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+		String serviceAaiPath = ${aai_endpoint}${aai_uri}
+
+		APIResponse response = executeAAIGetCall(execution, serviceAaiPath)
+		return new XmlParser().parseText(response.getResponseBodyAsString())
+	}
+
+	// This method checks if interface is remote
+	private def isPInterfaceRemote(DelegateExecution execution, String uri) {
+		if(uri.contains("ext-aai-network")) {
+			return true
+		} else {
+			return false
+		}
+	}
+
+	// This method returns Local and remote TPs information from AAI	
+	public Map getTPsfromAAI(DelegateExecution execution) {
+		Map tpInfo = [:]
+
+		String aai_uri = '/aai/v14/network/logical-links'
+
+		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+		String serviceAaiPath = ${aai_endpoint}${aai_uri}
+
+		APIResponse response = executeAAIGetCall(execution, serviceAaiPath)
+
+		def logicalLinks = new XmlParser().parseText(response.getResponseBodyAsString())
+
+		logicalLinks."logical-links".find { link ->
+			def pInterface = []
+			def relationship = link."relationship-list"."relationship"
+			relationship.each {
+				if ("p-interface".compareToIgnoreCase(it."related-to")) {
+					pInterface.add(it)
+				}
+			}
+			if (pInterface.size() == 2) {
+				def localTP = null
+				def remoteTP = null
+
+				if (pInterface[0]."related-link".contains("ext-aai-networks")) {
+					remoteTP = pInterface[0]
+					localTP = pInterface[1]
+				}
+
+				if (pInterface[1]."related-link".contains("ext-aai-networks")) {
+					localTP = pInterface[0]
+					remoteTP = pInterface[1]
+				}
+
+				if (localTP != null && remoteTP != null) {
+				
+					// give local tp
+					var intfLocal = getPInterface(execution, localTP."related-link")
+					tpInfotpInfo.put("local-access-node-id", localTP."related-link".split("/")[6])
+				
+					def networkRef = intfLocal."network-ref".split("/")
+					tpInfo.put("local-access-provider-id", networkRef[1])
+					tpInfo.put("local-access-client-id", networkRef[3])
+					tpInfo.put("local-access-topology-id", networkRef[5])
+					tpInfo.put("local-access-ltp-id", localTP."interface-name")
+					
+					// give local tp
+					var intfRemote = getPInterface(execution, remoteTP."related-link")
+					tpInfo.put("remote-access-node-id", remoteTP."related-link".split("/")[6])					
+					def networkRefRemote = intfRemote."network-ref".split("/")
+					tpInfo.put("remote-access-provider-id", networkRefRemote[1])
+					tpInfo.put("remote-access-client-id", networkRefRemote[3])
+					tpInfo.put("remote-access-topology-id", networkRefRemote[5])
+					tpInfo.put("remote-access-ltp-id", remoteTP."interface-name")
+				}
+			}
+
+		}
+		return tpInfo
 	}
 }
