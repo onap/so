@@ -87,10 +87,6 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 			
 			boolean is3rdONAPExist = false
 
-			if(inputParameters.has("id"))
-			{
-				String sppartnerId = inputParameters.get("id")
-			}
 			if(inputParameters.has("url"))
 			{
 				String sppartnerUrl = inputParameters.get("url")
@@ -175,6 +171,8 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 			{
 				callSource = inputParameters.get("CallSource")
 				if("ExternalAPI".equalsIgnoreCase(callSource)) {
+					String sppartnerId = inputParameters.get("SppartnerServiceId")
+					execution.setVariable(Prefix + "SppartnerServiceId", sppartnerId)
 					isLocalCall = false
 				}							
 			}
@@ -235,7 +233,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 				msoLogger.info(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
-			execution.setVariable("serviceInstanceId", serviceInstanceId)
+			execution.setVariable(Prefix + "ServiceInstanceId", serviceInstanceId)
 			msoLogger.info("serviceInstanceId:" + serviceInstanceId)
 
 		} catch (BpmnError e) {
@@ -288,21 +286,32 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		//get TP links from AAI for SOTN handoverMode only
 		String handoverMode = execution.getVariable(Prefix + "HandoverMode")
 		if("SOTN".equalsIgnoreCase(handoverMode)) {
-			//to do get tp link in AAI
-			
-			
 			// Put TP Link info into serviceParameters
-			String accessProviderId = ""
-			String accessClientId = ""
-			String accessTopologyId = ""
-			String accessNodeId = ""
-			String accessLtpId = ""
-			JSONObject inputParameters = execution.getVariable(Prefix + "ServiceParameters")			
-			inputParameters.put("access-provider-id", accessProviderId)
-			inputParameters.put("access-client-id", accessClientId)
-			inputParameters.put("access-topology-id", accessTopologyId)
-			inputParameters.put("access-node-id", accessNodeId)
-			inputParameters.put("access-ltp-id", accessLtpId)
+			JSONObject inputParameters = execution.getVariable(Prefix + "ServiceParameters")
+
+			Map<String, Object> crossTPs = new HashMap<String, Object>();
+			crossTPs.put("local-access-provider-id", inputParameters.get("remote-access-provider-id"));
+			crossTPs.put("local-access-client-id", inputParameters.get("remote-access-client-id"));
+			crossTPs.put("local-access-topology-id", inputParameters.get("remote-access-topology-id"));
+			crossTPs.put("local-access-node-id", inputParameters.get("remote-access-node-id"));
+			crossTPs.put("local-access-ltp-id", inputParameters.get("remote-access-ltp-id"));
+			crossTPs.put("remote-access-provider-id", inputParameters.get("local-access-provider-id"));
+			crossTPs.put("remote-access-client-id", inputParameters.get("local-client-id"));
+			crossTPs.put("remote-access-topology-id", inputParameters.get("local-topology-id"));
+			crossTPs.put("remote-access-node-id", inputParameters.get("local-node-id"));
+			crossTPs.put("remote-access-ltp-id", inputParameters.get("local-ltp-id"));
+
+			inputParameters.put("local-access-provider-id", crossTPs.get("local-access-provider-id"));
+			inputParameters.put("local-access-client-id", crossTPs.get("local-access-client-id"));
+			inputParameters.put("local-access-topology-id", crossTPs.get("local-access-topology-id"));
+			inputParameters.put("local-access-node-id", crossTPs.get("local-access-node-id"));
+			inputParameters.put("local-access-ltp-id", crossTPs.get("local-access-ltp-id"));
+			inputParameters.put("remote-access-provider-id", crossTPs.get("remote-access-provider-id"));
+			inputParameters.put("remote-access-client-id", crossTPs.get("remote-client-id"));
+			inputParameters.put("remote-access-topology-id", crossTPs.get("remote-topology-id"));
+			inputParameters.put("remote-access-node-id", crossTPs.get("remote-node-id"));
+			inputParameters.put("remote-access-ltp-id", crossTPs.get("remote-ltp-id"));
+
 			execution.setVariable(Prefix + "ServiceParameters", inputParameters)
 		}
 		
@@ -332,8 +341,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		String action = "add" //for create
 		String serviceState = "active"
 		String serviceName = execution.getVariable("serviceInstanceName")
-		String serviceType = execution.getVariable("serviceType")
-		String serviceId = execution.getVariable("serviceInstanceId")
+		String serviceUuId = execution.setVariable(Prefix + "SppartnerUUID")
 		
 		Map<String, String> valueMap = new HashMap<>()
 		valueMap.put("externalId", '"' + externalId + '"')
@@ -349,24 +357,36 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		valueMap.put("orderItemId", '"' + orderItemId + '"')
 		valueMap.put("action", '"' + action + '"')
 		valueMap.put("serviceState", '"' + serviceState + '"')
+		valueMap.put("serviceId", '""')//To be confirmed 
 		valueMap.put("serviceName", '"' + serviceName + '"')
-		valueMap.put("serviceType", '"' + serviceType + '"')
-		valueMap.put("serviceId", '"' + serviceId + '"')
+		valueMap.put("serviceUuId", '"' + serviceUuId + '"')
 		
 		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil(this)
 		
 		// insert CallSource='ExternalAPI' to uuiRequest		
-		Map<String, String> callSourceMap = new HashMap<>()
-		callSourceMap.put("inputName", "CallSource")
-		callSourceMap.put("inputValue", "ExternalAPI")
-		String _requestInputs_ = externalAPIUtil.setTemplate(ExternalAPIUtil.RequestInputsTemplate, callSourceMap)
+		Map<String, String> requestInputsMap = new HashMap<>()
+		requestInputsMap.put("inputName", "CallSource")
+		requestInputsMap.put("inputValue", "ExternalAPI")
+		String _requestInputs_ = externalAPIUtil.setTemplate(ExternalAPIUtil.RequestInputsTemplate, requestInputsMap)
+		
+		requestInputsMap.clear()		
+		String serviceInstanceId = execution.getVariable(Prefix + "ServiceInstanceId")
+		requestInputsMap.put("inputName", "SppartnerServiceId")
+		requestInputsMap.put("inputValue", serviceInstanceId)		
+		_requestInputs_ +=  ",\n" + externalAPIUtil.setTemplate(ExternalAPIUtil.RequestInputsTemplate, requestInputsMap)
+		
+		requestInputsMap.clear()
+		String serviceType = execution.getVariable("serviceType")
+		requestInputsMap.put("inputName", "serviceType")
+		requestInputsMap.put("inputValue", serviceType)
+		_requestInputs_ +=  ",\n" + externalAPIUtil.setTemplate(ExternalAPIUtil.RequestInputsTemplate, requestInputsMap)		
 		
 		// Transfer all uuiRequest incomeParameters to ExternalAPI format
 		JSONObject inputParameters = execution.getVariable(Prefix + "ServiceParameters")
 		for(String key : inputParameters.keySet()) {			
 			String inputName = key
 			String inputValue = inputParameters.opt(key)
-			Map<String, String> requestInputsMap = new HashMap<>()
+			requestInputsMap.clear()
 			requestInputsMap.put("inputName", '"' + inputName+ '"')
 			requestInputsMap.put("inputValue", '"' + inputValue + '"')
 			_requestInputs_ += ",\n" + externalAPIUtil.setTemplate(ExternalAPIUtil.RequestInputsTemplate, requestInputsMap)
@@ -437,7 +457,11 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		if(responseCode == 200 || responseCode == 201 || responseCode == 202 )			
 		{
 			msoLogger.debug("Get ServiceOrder Received a Good Response")
-			String serviceOrderState = responseObj.get("State")
+			
+			String sppartnerServiceId = responseObj.get("orderIterm.service.id")
+			execution.setVariable(Prefix + "SppartnerServiceId", sppartnerServiceId)
+
+			String serviceOrderState = responseObj.get("orderIterm.state")
 			execution.setVariable(Prefix + "SuccessIndicator", true)
 			execution.setVariable("serviceOrderState", serviceOrderState)			
 			
@@ -492,10 +516,10 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		msoLogger.info(" ***** Started postCreateE2ESIin3rdONAP *****")	
 		
-		String sppartnerId = UUID.randomUUID().toString()
+		String sppartnerId = execution.getVariable(Prefix + "SppartnerServiceId")
 		String sppartnerUrl = execution.getVariable(Prefix + "SppartnerUrl")
 		String callSource = execution.getVariable(Prefix + "CallSource")
-		String serviceInstanceId = execution.getVariable("serviceInstanceId")
+		String serviceInstanceId = execution.getVariable(Prefix + "ServiceInstanceId")
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
 		String serviceType = execution.getVariable("serviceType")
 		

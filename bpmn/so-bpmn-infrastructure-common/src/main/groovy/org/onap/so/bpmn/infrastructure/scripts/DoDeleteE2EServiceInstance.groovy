@@ -330,11 +330,11 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 			)){
 				jObj.put("resourceInstanceId", eValue)
 			}
-			// for sp-partner
-			if(rt == "sp-partner" && eKey.equals("sp-partner.id")) {
+			// for sp-partner and others
+			else if(eKey.equals(rt + ".id")){				
 				jObj.put("resourceInstanceId", eValue)
-				String sppartnerName = "sp-partner" + eValue
-				jObj.put("resourceType", sppartnerName)
+				String resourceName = rt + eValue;
+				jObj.put("resourceType", resourceName)
 			}
 			else if(eKey.equals(rt + ".id")){				
 				jObj.put("resourceInstanceId", eValue)
