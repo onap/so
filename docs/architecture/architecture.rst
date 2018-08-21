@@ -85,6 +85,12 @@ SO Sub-Components
   Populate SO Catalog
 
   Support self-service updates to models and artifacts
+
+** SO Monitoring**
+  Monitor BPMN Workflow execution by providing
+  * Service list search based on search criteria
+  * Service statistic
+  * Service Process Instance Rendering and Detail
   
 Third Party and Open Source
 ---------------------------
@@ -93,7 +99,7 @@ Third Party and Open Source
   Camunda (open source)
 
 **Other Open Source Components of Note:**
-  JBOSS EAP/Wildfly
+  Tomcat
   MySQL/MariaDB
   Openstack Java SDK (“woorea”)
 
