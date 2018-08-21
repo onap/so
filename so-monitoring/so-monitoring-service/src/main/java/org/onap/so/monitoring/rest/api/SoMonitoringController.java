@@ -213,7 +213,7 @@ public class SoMonitoringController {
         }
         return Response.status(Status.OK).entity(databaseServiceProvider.getSoInfraRequest(filters)).build();
     }
-
+    
     @POST
     @Path("/v1/search")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
