@@ -59,6 +59,7 @@
     </build>
 
     <modules>
+        <module>so-monitoring-ui</module>
         <module>so-monitoring-handler</module>
         <module>so-monitoring-service</module>
     </modules>
