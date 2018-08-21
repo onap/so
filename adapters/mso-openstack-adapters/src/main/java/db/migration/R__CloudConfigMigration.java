@@ -13,6 +13,8 @@ import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.logger.MsoLogger;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,10 +35,31 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
     @Override
     public void migrate(Connection connection) throws Exception {
         LOGGER.debug("Starting migration for CloudConfig");
-        CloudConfig cloudConfig = loadCloudConfig();
-        if(cloudConfig == null){
-            LOGGER.debug("No CloudConfig defined in :"+getApplicationYamlName()+" exiting.");
-        }else{
+        
+        CloudConfig cloudConfig = null;
+
+        // Try the override file
+        String configLocation = System.getProperty("spring.config.location");
+        if (configLocation != null) {
+            try (InputStream stream = new FileInputStream(configLocation)) {
+                cloudConfig = loadCloudConfig(stream);
+            }
+        }
+        
+        if (cloudConfig == null) {
+        	LOGGER.debug("No CloudConfig defined in " + configLocation);
+
+        	// Try the application.yaml file
+            try (InputStream stream = R__CloudConfigMigration.class.getResourceAsStream(getApplicationYamlName())) {
+                cloudConfig = loadCloudConfig(stream);
+            }
+
+            if (cloudConfig == null) {
+            	LOGGER.debug("No CloudConfig defined in " + getApplicationYamlName());
+            }
+        }
+ 
+        if(cloudConfig != null){
             migrateCloudIdentity(cloudConfig.getIdentityServices().values(), connection);
             migrateCloudSite(cloudConfig.getCloudSites().values(), connection);
             migrateCloudifyManagers(cloudConfig.getCloudifyManagers().values(), connection);
@@ -51,13 +74,14 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         this.cloudConfig = cloudConfig;
     }
 
-    private CloudConfig loadCloudConfig() throws Exception {
+    private CloudConfig loadCloudConfig(InputStream stream) throws Exception {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        R__CloudConfigMigration cloudConfigMigration = mapper.readValue(R__CloudConfigMigration.class
-                .getResourceAsStream(getApplicationYamlName()), R__CloudConfigMigration.class);
+        R__CloudConfigMigration cloudConfigMigration =
+        		mapper.readValue(stream, R__CloudConfigMigration.class);
         CloudConfig cloudConfig = cloudConfigMigration.getCloudConfig();
+
         if(cloudConfig != null){
-            cloudConfig.populateId();
+        	cloudConfig.populateId();
         }
 
         return cloudConfig;
