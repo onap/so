@@ -166,6 +166,7 @@
         name="org.camunda.bpm.engine.impl.persistence.entity.JobEntity.level"
         level="WARN" />
 
+    <logger name="db.migration" level="DEBUG" />
     <logger name="org.apache.wire" level="DEBUG" />
     <logger name="org.onap" level="DEBUG" />
     <logger name="com.att.ecomp" level="DEBUG" />
