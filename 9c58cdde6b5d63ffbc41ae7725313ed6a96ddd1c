@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_a1f25098",
+        "filename": "docs/architecture/architecture.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-08-21T11:54:23Z",
+      "side": 1,
+      "message": "** SO Monitoring**\n  Monitor BPMN Workflow execution by providing\n  * Service list search based on search criteria\n  * Service statistic\n  * Service Process Instance Rendering and Detail",
+      "revId": "9c58cdde6b5d63ffbc41ae7725313ed6a96ddd1c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
