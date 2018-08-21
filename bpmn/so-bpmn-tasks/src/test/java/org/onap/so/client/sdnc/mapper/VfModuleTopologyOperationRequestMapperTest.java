@@ -100,6 +100,9 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		modelInfoVfModule.setModelUUID("vfModuleModelUuid");
 		modelInfoVfModule.setModelCustomizationUUID("vfModuleModelCustomizationUuid");
 		vfModule.setModelInfoVfModule(modelInfoVfModule);
+		HashMap<String, String> cloudParams = new HashMap<String, String>();
+		userParams.put("key2", "value2");
+		vfModule.setCloudParams(cloudParams);
 
 		VolumeGroup volumeGroup = new VolumeGroup();
 		volumeGroup.setVolumeGroupId("volumeGroupId");

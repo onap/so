@@ -23,6 +23,10 @@
         "value" : "value1"
       },
       {
+        "name" : "key2",
+        "value" : "value2"
+      },
+      {
         "name" : "volume-group-id",
         "value" : "volumeGroupId"
       } ]

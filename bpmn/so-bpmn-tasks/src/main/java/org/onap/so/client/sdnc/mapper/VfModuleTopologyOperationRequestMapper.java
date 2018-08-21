@@ -128,6 +128,15 @@ public class VfModuleTopologyOperationRequestMapper {
 			}
 		}
 		
+		if (vfModule.getCloudParams() != null) {
+			for (Map.Entry<String, String> entry : vfModule.getCloudParams().entrySet()) {
+				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
+				paramItem.setName(entry.getKey());
+				paramItem.setValue(entry.getValue());
+				vfModuleInputParameters.addParamItem(paramItem);
+			}
+		}
+		
 		if (volumeGroup != null) {
 			GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
 			paramItem.setName("volume-group-id");

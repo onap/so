@@ -96,6 +96,7 @@ public class VnfAdapterImpl {
                         exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "HeatStackId is missing from create VolumeGroup Vnf Adapter response.");
                     }
                 }
+                execution.setVariable("generalBuildingBlock", execution.getGeneralBuildingBlock());
             }
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

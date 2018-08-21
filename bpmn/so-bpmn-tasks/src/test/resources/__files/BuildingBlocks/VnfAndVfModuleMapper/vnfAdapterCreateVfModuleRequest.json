@@ -39,6 +39,7 @@
 		"fw_subint_ctrl_port_0_floating_v6_ip": "floatingIpV60",
 		"workload_context": "workloadContext",
 		"key1": "value2",
+		"key3": "value3",
 		"availability_zone_0": "zone0",
 		"availability_zone_1": "zone1",
 		"availability_zone_2": "zone2",

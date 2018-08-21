@@ -103,6 +103,9 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 		modelInfoVfModule.setModelUUID("vfModuleModelUuid");
 		modelInfoVfModule.setModelCustomizationUUID("vfModuleModelCustomizationUuid");
 		vfModule.setModelInfoVfModule(modelInfoVfModule);
+		HashMap<String, String> cloudParams = new HashMap<String, String>();
+		cloudParams.put("key3", "value3");
+		vfModule.setCloudParams(cloudParams);
 
 		CloudRegion cloudRegion = new CloudRegion();
 		cloudRegion.setLcpCloudRegionId("cloudRegionId");

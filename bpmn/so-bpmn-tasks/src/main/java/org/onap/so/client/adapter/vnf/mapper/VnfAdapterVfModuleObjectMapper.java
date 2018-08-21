@@ -178,6 +178,9 @@ public class VnfAdapterVfModuleObjectMapper {
 		if (requestContext.getUserParams() != null) {
 			paramsMap.putAll(requestContext.getUserParams());
 		}
+		if (vfModule.getCloudParams() != null) {
+			paramsMap.putAll(vfModule.getCloudParams());
+		}
 		return paramsMap;
 	}
 	
