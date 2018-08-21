@@ -36,7 +36,7 @@ public class WebSecurityConfigImpl extends WebSecurityConfig {
 		http.csrf().disable()
 		.authorizeRequests()
 		.antMatchers("/manage/health","/manage/info").permitAll()
-		.antMatchers("/**").hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(),",").toString())
+		.antMatchers("/**").hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(),","))
 		.and()
 		.httpBasic();
 	}
