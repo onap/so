@@ -1,12 +1,14 @@
 server:
-  port: 8080
+  port: 9091
   tomcat:
     max-threads: 50
 ssl-enable: false
 spring:
   datasource:
-    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;
-    driver-class-name: org.h2.Driver
+    url: jdbc:mariadb://so-db:3306/mso_requests?autoReconnect=true&amp;connectTimeout=60000&amp;socketTimeout=60000
+    username: root
+    password: password
+    driver-class-name: org.mariadb.jdbc.Driver
   h2:
     console:
       enabled: true
@@ -18,6 +20,7 @@ spring:
       ddl-auto: create-drop
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
+
 camunda:
   rest:
     api:
