@@ -45,11 +45,11 @@ Guest IP: <leave blank>
 
 Guest Port: 22
 
-.. image:: images/Configure_ubuntu_SO_1.png
+.. image:: ../images/Configure_ubuntu_SO_1.png
 
 .
 
-.. image:: images/Configure_ubuntu_SO_2.png
+.. image:: ../images/Configure_ubuntu_SO_2.png
 
 Create Shared Folder
 --------------------
@@ -140,7 +140,7 @@ Install the guest additions.  NOTE: look for errors in the command output!  If y
 	cd /media/cdrom
 	sudo ./VBoxLinuxAdditions.run
 
-.. image:: images/Configure_ubuntu_SO_9.png	
+.. image:: ../images/Configure_ubuntu_SO_9.png	
 	
 Add yourself to the vboxsf user group (replace "userid" with your user ID):
 	

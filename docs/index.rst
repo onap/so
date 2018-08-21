@@ -8,8 +8,8 @@ ONAP SO
 .. toctree::
    :maxdepth: 1
 
-   Install_Configure_SO.rst
-   architecture.rst
+   installconfigure/Install_Configure_SO.rst
+   architecture/architecture.rst
    offered_consumed_apis.rst
    developer_information.rst
    release-notes.rst

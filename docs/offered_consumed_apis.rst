@@ -12,4 +12,4 @@ All the Service Orchestrator APIs, both inward and outward are documented in the
 .. toctree::
    :maxdepth: 1
    
-   SO_Interface.rst
+   api/SO_Interface.rst
