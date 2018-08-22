@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -643,13 +645,14 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         CreateNetworkNotification.SubnetIdMap subnetIdMap = new CreateNetworkNotification.SubnetIdMap ();
 
         if (hMap != null && hMap.value != null) {
-            Map <String, String> sMap = new HashMap <> ();
-            sMap = hMap.value;
+            Map <String, String> sMap = hMap.value;
             CreateNetworkNotification.SubnetIdMap.Entry entry = new CreateNetworkNotification.SubnetIdMap.Entry ();
 
-            for (String key : sMap.keySet ()) {
+            for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
+            	String key = mapEntry.getKey();
+        		String value = mapEntry.getValue();
                 entry.setKey (key);
-                entry.setValue (sMap.get (key));
+                entry.setValue (value);
                 subnetIdMap.getEntry ().add (entry);
             }
         }
@@ -661,8 +664,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         UpdateNetworkNotification.SubnetIdMap subnetIdMap = new UpdateNetworkNotification.SubnetIdMap ();
 
         if (hMap != null && hMap.value != null) {
-            Map <String, String> sMap = new HashMap <> ();
-            sMap = hMap.value;
+            Map <String, String> sMap = hMap.value;
             UpdateNetworkNotification.SubnetIdMap.Entry entry = new UpdateNetworkNotification.SubnetIdMap.Entry ();
 
             for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
@@ -681,8 +683,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         QueryNetworkNotification.SubnetIdMap subnetIdMap = new QueryNetworkNotification.SubnetIdMap ();
 
         if (hMap != null && hMap.value != null) {
-            Map <String, String> sMap = new HashMap <> ();
-            sMap = hMap.value;
+            Map <String, String> sMap = hMap.value;
             QueryNetworkNotification.SubnetIdMap.Entry entry = new QueryNetworkNotification.SubnetIdMap.Entry ();
 
             for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
