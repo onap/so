@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_e52feb86",
+        "filename": "so-monitoring/so-monitoring-ui/src/main/frontend/src/app/model/searchData.model.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-08-22T15:23:56Z",
+      "side": 1,
+      "message": "change it to ALL?",
+      "range": {
+        "startLine": 27,
+        "startChar": 32,
+        "endLine": 27,
+        "endChar": 36
+      },
+      "revId": "0db7c6fbc9bed4fb3b484a60132e4a68aa675b20",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
