@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,6 +46,8 @@ public class ServiceInstance extends JsonWrapper implements Serializable {
 	private String environmentContext;
 	private String workloadContext;
 	private Map serviceParams;
+	private Customer customer = new Customer();
+	private String e2eVpnKey;
 
 	public String getServiceType() {
 		return serviceType;
@@ -112,5 +114,16 @@ public class ServiceInstance extends JsonWrapper implements Serializable {
 	}
 	public void setServiceRole(String serviceRole) {
 		this.serviceRole = serviceRole;
+	}
+	public Customer getCustomer(){
+		return customer;
+	}
+
+	public String getE2eVpnKey(){
+		return e2eVpnKey;
+	}
+
+	public void setE2eVpnKey(String e2eVpnKey){
+		this.e2eVpnKey = e2eVpnKey;
 	}
 }
