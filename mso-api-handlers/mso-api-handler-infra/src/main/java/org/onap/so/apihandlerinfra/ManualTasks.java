@@ -61,7 +61,8 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.wordnik.swagger.annotations.ApiOperation;
+
+import io.swagger.annotations.ApiOperation;
 
 
 @Path("/tasks")

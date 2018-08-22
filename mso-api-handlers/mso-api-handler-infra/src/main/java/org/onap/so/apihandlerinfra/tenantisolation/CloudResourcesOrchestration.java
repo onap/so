@@ -20,9 +20,25 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.Transactional;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
@@ -33,8 +49,12 @@ import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.AlarmLoggerInfo;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
-import org.onap.so.apihandlerinfra.tenantisolationbeans.*;
+import org.onap.so.apihandlerinfra.tenantisolationbeans.CloudOrchestrationRequestList;
+import org.onap.so.apihandlerinfra.tenantisolationbeans.CloudOrchestrationResponse;
+import org.onap.so.apihandlerinfra.tenantisolationbeans.InstanceReferences;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Request;
+import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestDetails;
+import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestStatus;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
@@ -44,15 +64,10 @@ import org.onap.so.utils.UUIDChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Component
 @Path("onap/so/infra/cloudResourcesRequests")
