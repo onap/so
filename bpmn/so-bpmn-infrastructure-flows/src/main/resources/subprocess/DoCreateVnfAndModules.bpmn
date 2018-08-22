@@ -40,7 +40,6 @@ doCreateVnfAndModules.preProcessRequest(execution)]]></bpmn:script>
         <camunda:in source="tenantId" target="tenantId" />
         <camunda:in source="false" target="usePreload" />
         <camunda:in source="aLaCarte" target="aLaCarte" />
-        <camunda:in source="RegionOne_flavorList" target="RegionOne_flavorList" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1hf7k7q</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ixcnb6</bpmn:outgoing>
@@ -128,7 +127,6 @@ doCreateVnfAndModules.validateAddOnModule(execution)]]></bpmn:script>
         <camunda:in source="tenantId" target="tenantId" />
         <camunda:in source="rollbackData" target="rollbackData" />
         <camunda:in source="vnfResourceDecomposition" target="vnfResourceDecomposition" />
-        <camunda:in source="RegionOne_flavorList" target="RegionOne_flavorList" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_19ohb1a</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_07u8e3l</bpmn:outgoing>
