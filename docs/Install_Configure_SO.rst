@@ -65,11 +65,11 @@ Auto-mount: <checked>
 
 Read-only: <unchecked>
 
-.. image:: images/Configure_ubuntu_SO_3.png
+.. image:: ../images/Configure_ubuntu_SO_3.png
 
 .
 
-.. image:: images/Configure_ubuntu_SO_4.png
+.. image:: ../images/Configure_ubuntu_SO_4.png
 
 Install Ubuntu in the VM
 ------------------------
@@ -111,7 +111,7 @@ Connect to the VM from your host computer
 -----------------------------------------
 	The PuTTY SSH client is popular.  A connection to localhost:1022 (or whatever port you have forwarded) will go to the VM.
 
-.. image:: images/Configure_ubuntu_SO_7.png
+.. image:: ../images/Configure_ubuntu_SO_7.png
 	
 Install VirtualBox Guest Additions
 ----------------------------------
@@ -159,6 +159,6 @@ Further Reading
 .. toctree::
    :maxdepth: 1
 
-   Install_Docker.rst
-   Configure_git_and_gerrit.rst
-   Workspace_and_Development_Tools.rst
+   installconfigure/Install_Docker.rst
+   installconfigure/Configure_git_and_gerrit.rst
+   installconfigure/Workspace_and_Development_Tools.rst
