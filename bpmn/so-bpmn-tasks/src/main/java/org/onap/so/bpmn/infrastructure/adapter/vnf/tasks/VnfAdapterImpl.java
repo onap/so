@@ -65,6 +65,7 @@ public class VnfAdapterImpl {
 			execution.setVariable("isDebugLogEnabled", "true");
 			execution.setVariable("mso-request-id", gBBInput.getRequestContext().getMsoRequestId());
 			execution.setVariable("mso-service-instance-id", serviceInstance.getServiceInstanceId());
+			execution.setVariable("heatStackId", null);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
@@ -80,23 +81,25 @@ public class VnfAdapterImpl {
                     String heatStackId = ((CreateVfModuleResponse) vnfRestResponse).getVfModuleStackId();
                     if(!StringUtils.isEmpty(heatStackId)) {
                         vfModule.setHeatStackId(heatStackId);
+                        execution.setVariable("heatStackId", heatStackId);
                     }
                 } else if(vnfRestResponse instanceof DeleteVfModuleResponse) {
                     VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
                     Boolean vfModuleDelete = ((DeleteVfModuleResponse) vnfRestResponse).getVfModuleDeleted();
                     if(null!= vfModuleDelete && vfModuleDelete) {
                         vfModule.setHeatStackId(null);
+                        execution.setVariable("heatStackId", null);
                     }
                 } else if(vnfRestResponse instanceof CreateVolumeGroupResponse) {
                     VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
                     String heatStackId = ((CreateVolumeGroupResponse) vnfRestResponse).getVolumeGroupStackId();
                     if(!StringUtils.isEmpty(heatStackId)) {
                         volumeGroup.setHeatStackId(heatStackId);
+                        execution.setVariable("heatStackId", heatStackId);
                     }else{
                         exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "HeatStackId is missing from create VolumeGroup Vnf Adapter response.");
                     }
-                }
-                execution.setVariable("generalBuildingBlock", execution.getGeneralBuildingBlock());
+                }                
             }
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

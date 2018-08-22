@@ -204,11 +204,13 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void updateHeatStackIdVfModuleTest() throws Exception {
+		execution.setVariable("heatStackId", "newHeatStackId");
 		doNothing().when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
 
 		aaiUpdateTasks.updateHeatStackIdVfModule(execution);
 
 		verify(aaiVfModuleResources, times(1)).updateHeatStackIdVfModule(vfModule, genericVnf);
+		assertEquals("newHeatStackId", vfModule.getHeatStackId());
 	}
 	
 	@Test
@@ -270,11 +272,13 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	}
 	@Test
 	public void updateHeatStackIdVolumeGroupTest() throws Exception {
+		execution.setVariable("heatStackId", "newHeatStackId");
 		doNothing().when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
 
 		aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
 
 		verify(aaiVolumeGroupResources, times(1)).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+		assertEquals("newHeatStackId", volumeGroup.getHeatStackId());
 	}
 	
 	@Test

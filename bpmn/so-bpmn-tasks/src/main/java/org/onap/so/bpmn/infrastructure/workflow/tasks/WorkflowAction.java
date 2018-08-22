@@ -136,6 +136,7 @@ public class WorkflowAction {
 			RequestDetails requestDetails = sIRequest.getRequestDetails();
 			Resource resource = extractResourceIdAndTypeFromUri(uri);
 			WorkflowType resourceType = resource.getResourceType();
+			execution.setVariable("resourceName", resourceType.toString());
 			String resourceId = "";
 			if (resource.isGenerated()) {
 				resourceId = validateResourceIdInAAI(resource.getResourceId(), resourceType,
@@ -240,7 +241,7 @@ public class WorkflowAction {
 				}
 				if (resourceType == WorkflowType.SERVICE
 						&& (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
-						&& !resourceCounter.stream().filter(x -> VNF.equals(x.getResourceType())).collect(Collectors.toList()).isEmpty()) {
+						&& !resourceCounter.stream().filter(x -> WorkflowType.VNF.equals(x.getResourceType())).collect(Collectors.toList()).isEmpty()) {
 					execution.setVariable("homing", true);
 					execution.setVariable("calledHoming", false);
 				}
