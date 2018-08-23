@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -84,7 +86,7 @@ import org.onap.so.logger.MsoLogger;
  */
 public class RESTClient {
 
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,RESTClient.class);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,RESTClient.class);
     private final String proxyHost;
     private final int proxyPort;
 
@@ -185,32 +187,37 @@ public class RESTClient {
      */
     private CloseableHttpClient createClient() throws RESTException {
        HttpClientBuilder clientBuilder;
+       PoolingHttpClientConnectionManager manager = null;
        try {
-			SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-					(SSLSocketFactory) SSLSocketFactory.getDefault(),
-					new HostNameVerifier());
-			Registry<ConnectionSocketFactory> registry = RegistryBuilder
-					.<ConnectionSocketFactory> create()
-					.register("http", PlainConnectionSocketFactory.getSocketFactory())
-					.register("https", sslSocketFactory).build();
-			PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(registry);
-			clientBuilder = HttpClientBuilder.create().setConnectionManager(manager);
-		} catch (Exception ex) {
-			LOGGER.debug("Exception :", ex);
-			throw new RESTException(ex.getMessage());
-		}
-		clientBuilder.disableRedirectHandling();
+            SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
+                    (SSLSocketFactory) SSLSocketFactory.getDefault(),
+                    new HostNameVerifier());
+            Registry<ConnectionSocketFactory> registry = RegistryBuilder
+                    .<ConnectionSocketFactory> create()
+                    .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                    .register("https", sslSocketFactory).build();
+            manager = new PoolingHttpClientConnectionManager(registry);
+            clientBuilder = HttpClientBuilder.create().setConnectionManager(manager);
+        } catch (Exception ex) {
+            LOGGER.debug("Exception :", ex);
+            throw new RESTException(ex.getMessage());
+        }
+       finally
+       {
+           manager.close();
+       }
+        clientBuilder.disableRedirectHandling();
 
-		if ((this.proxyHost != null) && (this.proxyPort != -1)) {
-			HttpHost proxy = new HttpHost(this.proxyHost, this.proxyPort);
-			clientBuilder.setProxy(proxy);
-		}
-		int timeoutInSeconds = 300;
-		RequestConfig requestConfig = RequestConfig.custom()
-				  .setConnectTimeout(timeoutInSeconds * 1000)
-				  .setConnectionRequestTimeout(timeoutInSeconds * 1000)
-				  .setSocketTimeout(timeoutInSeconds * 1000).build();
-		return clientBuilder.setDefaultRequestConfig(requestConfig).build();
+        if ((this.proxyHost != null) && (this.proxyPort != -1)) {
+            HttpHost proxy = new HttpHost(this.proxyHost, this.proxyPort);
+            clientBuilder.setProxy(proxy);
+        }
+        int timeoutInSeconds = 300;
+        RequestConfig requestConfig = RequestConfig.custom()
+                  .setConnectTimeout(timeoutInSeconds * 1000)
+                  .setConnectionRequestTimeout(timeoutInSeconds * 1000)
+                  .setSocketTimeout(timeoutInSeconds * 1000).build();
+        return clientBuilder.setDefaultRequestConfig(requestConfig).build();
     }
 
 
@@ -411,7 +418,7 @@ public class RESTClient {
      * @throws RESTException if POST was unsuccessful
      */
     public APIResponse httpPost() throws RESTException {
-    	return httpPost(buildQuery());
+        return httpPost(buildQuery());
     }
 
     /**
@@ -539,7 +546,7 @@ public class RESTClient {
      * @throws RESTException if request was unsuccessful
      */
     public APIResponse httpDelete() throws RESTException {
-    	return httpDelete(null);
+        return httpDelete(null);
     }
 
     /**
@@ -595,29 +602,29 @@ public class RESTClient {
     }
 
 
-	/**
-	 * Allows inclusion of a request body with DELETE.
-	 */
-	private class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
-	    public static final String METHOD_NAME = "DELETE";
+    /**
+     * Allows inclusion of a request body with DELETE.
+     */
+    private class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
+        public static final String METHOD_NAME = "DELETE";
 
-	    @Override
-		public String getMethod() {
-	        return METHOD_NAME;
-	    }
+        @Override
+        public String getMethod() {
+            return METHOD_NAME;
+        }
 
-	    public HttpDeleteWithBody(final String uri) {
-	        super();
-	        setURI(URI.create(uri));
-	    }
+        public HttpDeleteWithBody(final String uri) {
+            super();
+            setURI(URI.create(uri));
+        }
 
-	    public HttpDeleteWithBody(final URI uri) {
-	        super();
-	        setURI(uri);
-	    }
+        public HttpDeleteWithBody(final URI uri) {
+            super();
+            setURI(uri);
+        }
 
-	    public HttpDeleteWithBody() {
-	        super();
-	    }
-	}
+        public HttpDeleteWithBody() {
+            super();
+        }
+    }
 }
