@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_ceb1a790",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/bbobjects/LInterface.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-08-23T21:07:40Z",
+      "side": 1,
+      "message": "I would have prefered getIsPortMirrored().\n\nThis is clunky and confusing.",
+      "range": {
+        "startLine": 134,
+        "startChar": 16,
+        "endLine": 134,
+        "endChar": 20
+      },
+      "revId": "2fd0666635757ee894a785a0070b6f94a548c00e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
