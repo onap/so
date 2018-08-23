@@ -1,0 +1,19 @@
+server:
+  port: 8080
+  tomcat:
+    max-threads: 50
+ssl-enable: false
+camunda:
+  rest:
+    api:
+      username: admin
+      password: Kp8bJ4SXszM0WXlhak3eHlcse2gAw84vaoGGmJvUy2U
+      url: http://131.160.203.59:9080/engine-rest/engine/
+      engine: default
+mso:
+  database:
+    rest:
+      api:
+        url: http://localhost:8081/infraActiveRequests/
+        username: null
+        password: null
