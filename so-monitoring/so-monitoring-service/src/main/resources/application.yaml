@@ -1,0 +1,19 @@
+server:
+  port: 9091
+  tomcat:
+    max-threads: 50
+ssl-enable: false
+camunda:
+  rest:
+    api:
+      url: http://bpmn-infra:8081/engine-rest/engine/
+      engine: default
+      username: admin
+      password: Kp8bJ4SXszM0WXlhak3eHlcse2gAw84vaoGGmJvUy2U
+mso:
+  database:
+    rest:
+      api:
+        url: http://request-db-adapter:8083/infraActiveRequests/
+        username: bpul
+        password: password1$
