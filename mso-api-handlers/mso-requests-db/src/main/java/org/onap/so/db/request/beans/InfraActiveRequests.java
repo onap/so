@@ -36,60 +36,59 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Table(name = "infra_active_requests")
 public class InfraActiveRequests extends InfraRequests {
 
-	private static final long serialVersionUID = -6818265918910035170L;
+    private static final long serialVersionUID = -6818265918910035170L;
 
-	public InfraActiveRequests() {
-	}
+    public InfraActiveRequests() {}
 
-	public InfraActiveRequests(String requestId, String action) {
-		setRequestId(requestId);
-		setAction(action);
-	}
+    public InfraActiveRequests(final String requestId, final String action) {
+        setRequestId(requestId);
+        setAction(action);
+    }
 
-	public InfraActiveRequests(String requestId) {
-		setRequestId(requestId);
-	}    
-	
-	@Override
-	public boolean equals(final Object other) {
-		if (this == other) {
-			return true;
-		}
-		if (!(other instanceof InfraActiveRequests)) {
-			return false;
-		}
-		InfraActiveRequests castOther = (InfraActiveRequests) other;
-		return Objects.equals(getRequestId(), castOther.getRequestId());
-	}
+    public InfraActiveRequests(final String requestId) {
+        setRequestId(requestId);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(getRequestId());
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof InfraActiveRequests)) {
+            return false;
+        }
+        final InfraActiveRequests castOther = (InfraActiveRequests) other;
+        return Objects.equals(getRequestId(), castOther.getRequestId());
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("requestId", getRequestId())
-				.append("clientRequestId", getClientRequestId()).append("action", getAction())
-				.append("requestStatus", getRequestStatus()).append("statusMessage", getStatusMessage())
-				.append("progress", getProgress()).append("startTime", getStartTime()).append("endTime", getEndTime())
-				.append("source", getSource()).append("vnfId", getVnfId()).append("vnfName", getVnfName())
-				.append("vnfType", getVnfType()).append("serviceType", getServiceType())
-				.append("aicNodeClli", getAicNodeClli()).append("tenantId", getTenantId())
-				.append("provStatus", getProvStatus()).append("vnfParams", getVnfParams())
-				.append("vnfOutputs", getVnfOutputs()).append("requestBody", getRequestBody())
-				.append("responseBody", getResponseBody()).append("lastModifiedBy", getLastModifiedBy())
-				.append("modifyTime", getModifyTime()).append("requestType", getRequestType())
-				.append("volumeGroupId", getVolumeGroupId()).append("volumeGroupName", getVolumeGroupName())
-				.append("vfModuleId", getVfModuleId()).append("vfModuleName", getVfModuleName())
-				.append("vfModuleModelName", getVfModuleModelName()).append("aaiServiceId", getAaiServiceId())
-				.append("aicCloudRegion", getAicCloudRegion()).append("callBackUrl", getCallBackUrl())
-				.append("correlator", getCorrelator()).append("serviceInstanceId", getServiceInstanceId())
-				.append("serviceInstanceName", getServiceInstanceName()).append("requestScope", getRequestScope())
-				.append("requestAction", getRequestAction()).append("networkId", getNetworkId())
-				.append("networkName", getNetworkName()).append("networkType", getNetworkType())
-				.append("requestorId", getRequestorId()).append("configurationId", getConfigurationId())
-				.append("configurationName", getConfigurationName()).append("operationalEnvId", getOperationalEnvId())
-				.append("operationalEnvName", getOperationalEnvName()).toString();
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(getRequestId());
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("requestId", getRequestId())
+                .append("clientRequestId", getClientRequestId()).append("action", getAction())
+                .append("requestStatus", getRequestStatus()).append("statusMessage", getStatusMessage())
+                .append("progress", getProgress()).append("startTime", getStartTime()).append("endTime", getEndTime())
+                .append("source", getSource()).append("vnfId", getVnfId()).append("vnfName", getVnfName())
+                .append("vnfType", getVnfType()).append("serviceType", getServiceType())
+                .append("aicNodeClli", getAicNodeClli()).append("tenantId", getTenantId())
+                .append("provStatus", getProvStatus()).append("vnfParams", getVnfParams())
+                .append("vnfOutputs", getVnfOutputs()).append("requestBody", getRequestBody())
+                .append("responseBody", getResponseBody()).append("lastModifiedBy", getLastModifiedBy())
+                .append("modifyTime", getModifyTime()).append("requestType", getRequestType())
+                .append("volumeGroupId", getVolumeGroupId()).append("volumeGroupName", getVolumeGroupName())
+                .append("vfModuleId", getVfModuleId()).append("vfModuleName", getVfModuleName())
+                .append("vfModuleModelName", getVfModuleModelName()).append("aaiServiceId", getAaiServiceId())
+                .append("aicCloudRegion", getAicCloudRegion()).append("callBackUrl", getCallBackUrl())
+                .append("correlator", getCorrelator()).append("serviceInstanceId", getServiceInstanceId())
+                .append("serviceInstanceName", getServiceInstanceName()).append("requestScope", getRequestScope())
+                .append("requestAction", getRequestAction()).append("networkId", getNetworkId())
+                .append("networkName", getNetworkName()).append("networkType", getNetworkType())
+                .append("requestorId", getRequestorId()).append("configurationId", getConfigurationId())
+                .append("configurationName", getConfigurationName()).append("operationalEnvId", getOperationalEnvId())
+                .append("operationalEnvName", getOperationalEnvName()).toString();
+    }
 }
