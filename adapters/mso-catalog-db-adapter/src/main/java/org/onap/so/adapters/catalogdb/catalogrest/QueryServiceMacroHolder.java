@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -71,10 +73,10 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 		StringBuilder buf = new StringBuilder();
 		Map<String, String> valueMap = new HashMap<>();
 
-		put(valueMap, "SERVICE_MODEL_NAME",         service.getModelName()); //getServiceModelName());
-		put(valueMap, "SERVICE_MODEL_UUID",         service.getModelUUID()); //getServiceModelUuid());
-		put(valueMap, "SERVICE_MODEL_INVARIANT_ID", service.getModelInvariantUUID()); //getServiceModelInvariantId());
-		put(valueMap, "SERVICE_MODEL_VERSION",      service.getModelVersion()); //getServiceModelVersion());
+		put(valueMap, "SERVICE_MODEL_NAME",         service.getModelName()); 
+		put(valueMap, "SERVICE_MODEL_UUID",         service.getModelUUID()); 
+		put(valueMap, "SERVICE_MODEL_INVARIANT_ID", service.getModelInvariantUUID()); 
+		put(valueMap, "SERVICE_MODEL_VERSION",      service.getModelVersion()); 
 		put(valueMap, "SERVICE_TYPE",               service.getServiceType());
 		put(valueMap, "SERVICE_ROLE",               service.getServiceRole());
 		put(valueMap, "ENVIRONMENT_CONTEXT",        service.getEnvironmentContext());
