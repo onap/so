@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_88bf27fb",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/SniroUtils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2018-08-23T14:17:48Z",
+      "side": 1,
+      "message": "If this the \"better way\" then let\u0027s remove the TODO comment.",
+      "range": {
+        "startLine": 109,
+        "startChar": 0,
+        "endLine": 109,
+        "endChar": 2
+      },
+      "revId": "dd964967d3e3bc94aa04f8fb3ce90a42803fc7c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
