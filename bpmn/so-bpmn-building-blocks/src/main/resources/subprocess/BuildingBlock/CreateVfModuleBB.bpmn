@@ -29,7 +29,7 @@
         <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="VNFREST_Request" target="VNFREST_Request" />
-        <camunda:out source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+        <camunda:out source="heatStackId" target="heatStackId" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_16g4dz0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ecr393</bpmn:outgoing>

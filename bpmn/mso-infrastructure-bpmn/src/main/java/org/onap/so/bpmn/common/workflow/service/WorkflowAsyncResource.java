@@ -40,6 +40,7 @@ import org.onap.so.bpmn.common.workflow.context.WorkflowContext;
 import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder;
 import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
 import org.onap.so.logger.MsoLogger;
+import org.openecomp.mso.bpmn.common.workflow.service.WorkflowProcessorException;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -92,7 +93,6 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 	
 	/**
 	 * Asynchronous JAX-RS method that starts a process instance.
-	 * @param asyncResponse an object that will receive the asynchronous response
 	 * @param processKey the process key
 	 * @param variableMap input variables to the process
 	 * @return 
@@ -114,7 +114,10 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 			processor.startProcess(processKey, variableMap);
 			WorkflowResponse response = waitForResponse(getRequestId(inputVariables)); 
 			return Response.status(202).entity(response).build();	
-		} catch (Exception e) {
+		} catch (WorkflowProcessorException e) {
+			WorkflowResponse response =  e.getWorkflowResponse();
+			return Response.status(500).entity(response).build();
+		}catch (Exception e) {
 			WorkflowResponse response =  buildUnkownError(getRequestId(inputVariables),e.getMessage());		
 			return Response.status(500).entity(response).build();	
 		}		

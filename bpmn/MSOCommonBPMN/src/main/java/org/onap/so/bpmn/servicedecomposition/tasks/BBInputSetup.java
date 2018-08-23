@@ -346,13 +346,15 @@ public class BBInputSetup implements JavaDelegate {
 				ModelInfo vnfModelInfo = new ModelInfo();
 				vnfModelInfo.setModelCustomizationUuid(vnfModelCustomizationUUID);
 				this.mapCatalogVnf(tempVnf, vnfModelInfo, service);
-				for(VolumeGroup volumeGroup : tempVnf.getVolumeGroups()) {
-					String volumeGroupCustId = 
-							this.bbInputSetupUtils.getAAIVolumeGroup(CLOUD_OWNER, 
-									cloudConfiguration.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId()).getModelCustomizationId();
-					if(modelInfo.getModelCustomizationId().equalsIgnoreCase(volumeGroupCustId)) {
-						lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, volumeGroup.getVolumeGroupId());
-						break;
+				if (lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID) == null) {
+					for(VolumeGroup volumeGroup : tempVnf.getVolumeGroups()) {
+						String volumeGroupCustId = 
+								this.bbInputSetupUtils.getAAIVolumeGroup(CLOUD_OWNER, 
+										cloudConfiguration.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId()).getModelCustomizationId();
+						if(modelInfo.getModelCustomizationId().equalsIgnoreCase(volumeGroupCustId)) {
+							lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, volumeGroup.getVolumeGroupId());
+							break;
+						}
 					}
 				}
 				break;

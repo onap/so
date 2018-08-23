@@ -28,11 +28,10 @@ import java.util.UUID;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
-import org.onap.so.bpmn.common.workflow.context.WorkflowCallbackResponse;
-import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder;
+import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
 import org.onap.so.logger.MsoLogger;
+import org.openecomp.mso.bpmn.common.workflow.service.WorkflowProcessorException;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -79,13 +78,12 @@ public class WorkflowProcessor extends ProcessEngineAwareService {
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError,
 					logMarker + "Error in starting the process: " + e.getMessage());
 
-			WorkflowCallbackResponse callbackResponse = new WorkflowCallbackResponse();
-			callbackResponse.setStatusCode(500);
-			callbackResponse.setMessage("Fail");
-			callbackResponse.setResponse("Error occurred while executing the process: " + e);
-
-			WorkflowContextHolder.getInstance().processCallback(processKey, processInstanceId,
-					getRequestId(inputVariables), callbackResponse);
+			WorkflowResponse workflowResponse = new WorkflowResponse();
+			workflowResponse.setResponse("Error occurred while executing the process: " + e);
+			workflowResponse.setProcessInstanceID(processInstanceId);
+			workflowResponse.setMessageCode(500);
+			workflowResponse.setMessage("Fail");
+			throw new WorkflowProcessorException(workflowResponse);
 		}
 	}
 	

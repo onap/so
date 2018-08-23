@@ -144,9 +144,11 @@ public class AAIUpdateTasks {
 	public void updateHeatStackIdVolumeGroup(BuildingBlockExecution execution) {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+			String heatStackId = execution.getVariable("heatStackId");
 			
 			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
+			volumeGroup.setHeatStackId(heatStackId);
 			
 			aaiVolumeGroupResources.updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
 		} catch (Exception ex) {
@@ -296,8 +298,10 @@ public class AAIUpdateTasks {
 	
 	public void updateHeatStackIdVfModule(BuildingBlockExecution execution) {		
 		try {
+			String heatStackId = execution.getVariable("heatStackId");
 			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			vfModule.setHeatStackId(heatStackId);
 			aaiVfModuleResources.updateHeatStackIdVfModule(vfModule, vnf);			
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

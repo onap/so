@@ -96,6 +96,7 @@ public class AAIObjectMapper {
 					map().setModelInvariantId(source.getModelInfoVfModule().getModelInvariantUUID());
 					map().setModelVersionId(source.getModelInfoVfModule().getModelUUID());
 					map().setPersonaModelVersion(source.getModelInfoVfModule().getModelInvariantUUID());
+					map().setIsBaseVfModule(source.getModelInfoVfModule().getIsBaseBoolean());
 
 				}
 			});

@@ -245,6 +245,32 @@ public class AAIObjectMapperTest{
 		assertThat(reqMapper1, sameBeanAs(AAIVfModule));
 
 	}
+	
+	@Test
+	public void vfModuleBaseMap() throws Exception {
+		VfModule vfModule = new VfModule();
+		vfModule.setVfModuleId("a");
+		vfModule.setVfModuleName("b");
+		vfModule.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
+		ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
+		modelInfoVfModule.setModelCustomizationUUID("f");
+		modelInfoVfModule.setModelInvariantUUID("g");
+		modelInfoVfModule.setModelUUID("h");
+		modelInfoVfModule.setIsBaseBoolean(true);
+		vfModule.setModelInfoVfModule(modelInfoVfModule);
+
+		org.onap.aai.domain.yang.VfModule AAIVfModule = aaiObjectMapper.mapVfModule(vfModule);
+
+		String jsonToCompare = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiVfModuleBaseMap.json")));
+
+		ObjectMapper omapper = new ObjectMapper();
+		org.onap.aai.domain.yang.VfModule reqMapper1 = omapper.readValue(
+				jsonToCompare,
+				org.onap.aai.domain.yang.VfModule.class);
+
+		assertThat(reqMapper1, sameBeanAs(AAIVfModule));
+
+	}
 
 	@Test
 	public void testMapInstanceGroup() {

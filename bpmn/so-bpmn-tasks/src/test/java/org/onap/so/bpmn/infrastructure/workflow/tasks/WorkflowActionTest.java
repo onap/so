@@ -778,7 +778,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		assertEquals(UUID.randomUUID().toString().length(),ebbs.get(14).getWorkflowResourceIds().getVnfId().length());
 		assertEquals(ebbs.get(15).getBuildingBlock().getBpmnFlowName(),"ActivateServiceInstanceBB");
 		assertEquals(3,ebbs.get(0).getWorkflowResourceIds().getServiceInstanceId().length());
-
+		assertEquals(true, execution.getVariable("homing"));
 	}
 	
 	@Test
