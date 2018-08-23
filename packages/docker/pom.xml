@@ -205,7 +205,7 @@
 							</build>
 						</image>
 						<image>
-							<name>onap/so/asdc-controller</name>
+							<name>onap/so/sdc-controller</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -310,7 +310,7 @@
 							<goal>push</goal>
 						</goals>
 						<configuration>
-							<image>onap/so/catalog-db-adapter,onap/so/request-db-adapter,onap/so/sdnc-adapter,onap/so/openstack-adapter,onap/so/vfc-adapter,onap/so/asdc-controller,onap/so/bpmn-infra,onap/so/api-handler-infra</image>
+							<image>onap/so/catalog-db-adapter,onap/so/request-db-adapter,onap/so/sdnc-adapter,onap/so/openstack-adapter,onap/so/vfc-adapter,onap/so/sdc-controller,onap/so/bpmn-infra,onap/so/api-handler-infra</image>
 						</configuration>
 					</execution>
 				</executions>
