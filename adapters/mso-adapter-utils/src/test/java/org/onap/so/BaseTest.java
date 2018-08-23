@@ -76,7 +76,7 @@ public abstract class BaseTest extends TestDataSetup {
 				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
 				.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/cloudSite/default")).willReturn(aResponse()
+		stubFor(get(urlPathEqualTo("/cloudSite/DEFAULT")).willReturn(aResponse()
 				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
 				.withHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));

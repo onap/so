@@ -25,17 +25,14 @@ import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.RollbackVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.UpdateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.VolumeGroupRollback;
-import org.onap.so.cloud.CloudConfig;
 import org.onap.so.entity.MsoRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class VolumeGroupAdapterCommon extends BaseRestTestUtils {
 
-    @Autowired
-    protected CloudConfig cloudConfig;
+
 
     protected static final String MSO_REQUEST_ID = "62265093-277d-4388-9ba6-449838ade586";
     protected static final String MSO_SERVICE_INSTANCE_ID = "4147e06f-1b89-49c5-b21f-4faf8dc9805a";
@@ -93,7 +90,6 @@ public class VolumeGroupAdapterCommon extends BaseRestTestUtils {
     }
 
     protected CreateVolumeGroupRequest buildCreateVfModuleRequest() {
-        cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
         CreateVolumeGroupRequest request = new CreateVolumeGroupRequest();
         request.setCloudSiteId(CLOUDSITE_ID);
         request.setTenantId(TENANT_ID);

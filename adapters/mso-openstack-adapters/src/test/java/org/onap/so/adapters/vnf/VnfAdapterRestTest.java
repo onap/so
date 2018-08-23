@@ -37,7 +37,6 @@ import org.onap.so.adapters.vnfrest.UpdateVfModuleResponse;
 import org.onap.so.adapters.vnfrest.VfModuleExceptionResponse;
 import org.onap.so.adapters.vnfrest.VfModuleRollback;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
-import org.onap.so.cloud.CloudConfig;
 import org.onap.so.entity.MsoRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -75,8 +74,7 @@ import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackResponseAccess;
 
 public class VnfAdapterRestTest extends BaseRestTestUtils {
 	
-	@Autowired
-	private CloudConfig cloudConfig;
+
 	@Autowired
 	private JettisonStyleMapperProvider jettisonTypeObjectMapper;
 	private static final String MESSAGE_ID = "62265093-277d-4388-9ba6-449838ade586-1517252396874";
@@ -164,7 +162,6 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 	public void testCreateVfModuleWithEnableBridgeNull()
 			throws JSONException, JsonParseException, JsonMappingException, IOException {
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		CreateVfModuleRequest request = new CreateVfModuleRequest();
 		request.setBackout(true);
 		request.setSkipAAI(true);
@@ -232,7 +229,6 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testCreateVfModuleFail() throws IOException{
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		CreateVfModuleRequest request = new CreateVfModuleRequest();
 		request.setBackout(true);
 		request.setSkipAAI(true);
@@ -331,7 +327,6 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testDeleteVfModule() throws IOException{
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		DeleteVfModuleRequest request = new DeleteVfModuleRequest();
 		MsoRequest msoRequest = new MsoRequest();
 		String vfModuleStackId = "stackId";
@@ -382,7 +377,6 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testUpdateVfModule() throws IOException{
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		UpdateVfModuleRequest request = new UpdateVfModuleRequest();
 		MsoRequest msoRequest = new MsoRequest();
 		String vfModuleStackId = "vfModuleStackId";
@@ -449,8 +443,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testRollbackVfModule() throws IOException {
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-		
+
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId(MSO_REQUEST_ID);
 		msoRequest.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
@@ -488,7 +481,6 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testQueryVfModule() throws IOException{
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		String testUrl = createURLWithPort("/services/rest/v1/vnfs/" + AAI_VNF_ID + "/vf-modules/" + VF_MODULE_ID);
 		String testUri = UriBuilder.fromPath("/services/rest/v1/vnfs/" + AAI_VNF_ID + "/vf-modules/" + VF_MODULE_ID )
 				.host("localhost").port(wireMockPort).scheme("http")
@@ -512,7 +504,6 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 	}
 
 	private CreateVfModuleRequest populateCreateVfModuleRequest(){
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		CreateVfModuleRequest request = new CreateVfModuleRequest();
 		request.setBackout(true);
 		request.setSkipAAI(true);

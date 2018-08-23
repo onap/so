@@ -138,7 +138,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         // Add MSO User to the tenant as a member and
         // apply tenant metadata if supported by the cloud site
         try {
-            CloudIdentity cloudIdentity = cloudConfig.getIdentityService(cloudSiteOpt.get().getIdentityServiceId());
+            CloudIdentity cloudIdentity = cloudSiteOpt.get().getIdentityService();
 
             User msoUser = findUserByNameOrId (keystoneAdminClient, cloudIdentity.getMsoId ());
             Role memberRole = findRoleByNameOrId (keystoneAdminClient, cloudIdentity.getMemberRole ());
@@ -221,7 +221,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
             }
 
             Map <String, String> metadata = new HashMap <String, String> ();
-            if (cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getTenantMetadata ()) {
+            if (cloudSite.getIdentityService().getTenantMetadata ()) {
                 OpenStackRequest <Metadata> request = keystoneAdminClient.tenants ().showMetadata (tenant.getId ());
                 Metadata tenantMetadata = executeAndRecordOpenstackRequest (request);
                 if (tenantMetadata != null) {
@@ -267,7 +267,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
             }
 
             Map <String, String> metadata = new HashMap <String, String> ();
-            if (cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getTenantMetadata ()) {
+            if (cloudSite.getIdentityService().getTenantMetadata ()) {
                 OpenStackRequest <Metadata> request = keystoneAdminClient.tenants ().showMetadata (tenant.getId ());
                 Metadata tenantMetadata = executeAndRecordOpenstackRequest (request);
                 if (tenantMetadata != null) {
@@ -401,7 +401,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
      * @return an authenticated Keystone object
      */
     public Keystone getKeystoneAdminClient (CloudSite cloudSite) throws MsoException {
-        CloudIdentity cloudIdentity = cloudConfig.getIdentityService(cloudSite.getIdentityServiceId());
+        CloudIdentity cloudIdentity = cloudSite.getIdentityService();
 
         String cloudId = cloudIdentity.getId ();
         String adminTenantName = cloudIdentity.getAdminTenant ();

@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.openstack.MsoOpenstackAdaptersApplication;
+import org.onap.so.cloud.CloudConfig;
 import org.onap.so.db.catalog.beans.AuthenticationType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
@@ -63,7 +64,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 public class BaseRestTestUtils {
 	@Value("${wiremock.server.port}")
     protected int wireMockPort;
-	
+	@Autowired
+	CloudConfig cloudConfig;
+
 	@Autowired
 	@Qualifier("JettisonStyle")
 	protected TestRestTemplate restTemplate;
@@ -134,7 +137,7 @@ public class BaseRestTestUtils {
 				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
 				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/cloudSite/default")).willReturn(aResponse()
+		stubFor(get(urlPathEqualTo("/cloudSite/DEFAULT")).willReturn(aResponse()
 				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
 				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
@@ -142,6 +145,8 @@ public class BaseRestTestUtils {
 				.withBody(getBody(mapper.writeValueAsString(identity),wireMockPort, ""))
 				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
+		cloudConfig.getCloudSite("MTN13").get().getIdentityService().setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
+
 	}
 
 	protected static String getBody(String body, int port, String urlPath) throws IOException {

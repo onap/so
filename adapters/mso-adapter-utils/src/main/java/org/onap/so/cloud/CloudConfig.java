@@ -24,7 +24,6 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -51,7 +50,7 @@ import org.springframework.stereotype.Component;
 public class CloudConfig {
 	
     private static final String CLOUD_SITE_VERSION = "2.5";
-    private static final String DEFAULT_CLOUD_SITE_ID = "default";
+    private static final String DEFAULT_CLOUD_SITE_ID = "DEFAULT";
 
     @Autowired
     private CatalogDbClient catalogDbClient;
@@ -106,17 +105,6 @@ public class CloudConfig {
         } else {
             return Optional.empty();
         }
-    }
-
-    /**
-     * Get a specific CloudIdentity, based on an ID.
-     * 
-     * @param id
-     *            the ID to match
-     * @return a CloudIdentity, or null of no match found
-     */
-    public CloudIdentity getIdentityService(String id) {
-        return catalogDbClient.getCloudIdentity(id);
     }
 
 	/**

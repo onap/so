@@ -375,7 +375,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		}
 
 		// Obtain an MSO token for the tenant from the identity service
-		CloudIdentity cloudIdentity = cloudConfig.getIdentityService(cloudSite.getIdentityServiceId());
+		CloudIdentity cloudIdentity = cloudSite.getIdentityService();
 		MsoTenantUtils tenantUtils = tenantUtilsFactory.getTenantUtilsByServerType(cloudIdentity.getIdentityServerType());
         final String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
 		Keystone keystoneTenantClient = new Keystone(keystoneUrl);
