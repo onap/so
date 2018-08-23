@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +22,6 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.service;
 
-import org.json.JSONObject;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
@@ -44,14 +46,13 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.camunda.bpm.engine.runtime.Execution;
+import org.json.JSONObject;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.onap.so.bpmn.core.domain.ServiceDecomposition;
 import org.onap.so.bpmn.core.domain.Resource;
+import org.onap.so.bpmn.core.domain.ServiceDecomposition;
 import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -179,7 +180,8 @@ public class ServicePluginFactory {
 
 	private String preProcessSOTNService(ServiceDecomposition serviceDecomposition, String uuiRequest) {
 		Map<String, Object> uuiObject = getJsonObject(uuiRequest, Map.class);
-		Map<String, Object> serviceObject = (Map<String, Object>) uuiObject.get("service");
+		Map<String, Object> serviceObject= null;
+		if(uuiObject !=null) serviceObject = (Map<String, Object>) uuiObject.get("service");
 		Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject.get("parameters");
 		Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject.get("requestInputs");
 		List<Object> resources = (List<Object>) serviceParametersObject.get("resources");
@@ -233,8 +235,11 @@ public class ServicePluginFactory {
 
 		Map<String, Object> vpnRequestInputs = getVPNResourceRequestInputs(resources);
 		// here we put client signal to vpn resource inputs
-		vpnRequestInputs.put("src-client-signal", srcClientSignal);
-		vpnRequestInputs.put("dst-client-signal", dstClientSignal);
+		if(vpnRequestInputs!=null)
+		{
+		 vpnRequestInputs.put("src-client-signal", srcClientSignal);
+		 vpnRequestInputs.put("dst-client-signal", dstClientSignal);
+		}
 
 		// Now we need to query terminal points from SP resourcemgr system.
 		List<Object> locationTerminalPointList = queryTerminalPointsFromServiceProviderSystem(srcLocation, dstLocation);
