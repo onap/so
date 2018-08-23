@@ -69,7 +69,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 	private OwningEntity owningEntity;
 	@JsonProperty("serviceVnfs")
 	private List <VnfResource> vnfResources;
-	@JsonProperty("networkResource")
+	@JsonProperty("serviceNetworks")
 	private List <NetworkResource> networkResources;
 	@JsonProperty("serviceAllottedResources")
 	private List <AllottedResource> allottedResources;
