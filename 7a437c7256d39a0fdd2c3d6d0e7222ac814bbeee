@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_65e2f6d6",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/service/ServicePluginFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-08-23T11:48:06Z",
+      "side": 1,
+      "message": "If uuiObject is null, what is the behavior. There is no else or exception handling. In that case, this function would not work. I think this fixes a problem partially.",
+      "range": {
+        "startLine": 184,
+        "startChar": 4,
+        "endLine": 184,
+        "endChar": 37
+      },
+      "revId": "7a437c7256d39a0fdd2c3d6d0e7222ac814bbeee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e5cda65e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/service/ServicePluginFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-08-23T11:48:06Z",
+      "side": 1,
+      "message": "what would be the else and exception behavior?",
+      "range": {
+        "startLine": 238,
+        "startChar": 2,
+        "endLine": 238,
+        "endChar": 28
+      },
+      "revId": "7a437c7256d39a0fdd2c3d6d0e7222ac814bbeee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
