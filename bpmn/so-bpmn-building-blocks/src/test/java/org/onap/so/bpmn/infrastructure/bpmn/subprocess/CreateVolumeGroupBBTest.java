@@ -61,8 +61,6 @@ public class CreateVolumeGroupBBTest extends BaseBPMNTest{
 				.hasPassedInOrder("CreateVolumeGroupBB_Start", "QueryVfModuleSDNC", "CreateVolumeGroupVnfAdapter", "Vnf_Adapter")
 				.hasNotPassed("UpdateVolumeGroupAAI", "CreateVolumeGroupBB_End");
 		assertThat(pi).isEnded();
-		assertThat(pi).hasPassedInOrder("CreateVolumeGroupBB_Start", "QueryVfModuleSDNC", "CreateVolumeGroupVnfAdapter")
-				.hasNotPassed("Vnf_Adapter", "UpdateVolumeGroupAAI", "CreateVolumeGroupBB_End");
 	}
 }
 
