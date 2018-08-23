@@ -4,6 +4,5 @@
 	"vnf-type":"vnfType",	
 	"orchestration-status":"PRECREATED",	
 	"cloud-params":{},	
-	"cascaded":false,
 	"heat-stack-id":"heatStackId"
 }

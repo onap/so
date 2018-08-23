@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
@@ -36,7 +37,13 @@ import org.onap.so.adapters.nwrest.ProviderVlanNetwork;
 import org.onap.so.adapters.nwrest.RollbackNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
@@ -273,8 +280,8 @@ public class NetworkAdapterObjectMapper {
 
 	private ContrailNetwork buildContrailNetwork(L3Network l3Network, Customer customer){
 		ContrailNetwork contrailNetwork = new ContrailNetwork();
-		contrailNetwork.setExternal(Boolean.toString(l3Network.isExternalNetwork()));
-		contrailNetwork.setShared(Boolean.toString(l3Network.isSharedNetwork()));
+		contrailNetwork.setExternal(Optional.ofNullable(l3Network.isIsExternalNetwork()).orElse(false).toString());
+		contrailNetwork.setShared(Optional.ofNullable(l3Network.isIsSharedNetwork()).orElse(false).toString());
 		contrailNetwork.setPolicyFqdns(buildPolicyFqdns(l3Network.getNetworkPolicies()));
 		contrailNetwork.setRouteTableFqdns(buildRouteTableFqdns(l3Network.getContrailNetworkRouteTableReferences()));
 		if(customer!= null)
@@ -335,7 +342,7 @@ public class NetworkAdapterObjectMapper {
 	private void setFlowFlags(UpdateNetworkRequest updateNetworkRequest, OrchestrationContext orchestrationContext){
 		updateNetworkRequest.setSkipAAI(true);
 		//revert suppressRollabck=TRUE into backout=FALSE and vice versa
-		updateNetworkRequest.setBackout(!Boolean.valueOf(orchestrationContext.getIsRollbackEnabled()));
+		updateNetworkRequest.setBackout(!Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
 		//NetworkTechnology(NetworkTechnology.NEUTRON); NOOP - default
 	}
 }

@@ -57,13 +57,13 @@ public class LInterface implements Serializable, ShallowCopy<LInterface>{
 	@JsonProperty("interface-description")
     private String interfaceDescription;
 	@JsonProperty("is-port-mirrored")
-    private boolean isPortMirrored;
+    private Boolean isPortMirrored;
 	@JsonProperty("in-maint")
-    private boolean inMaint;
+    private Boolean inMaint;
 	@JsonProperty("prov-status")
     private String provStatus;
 	@JsonProperty("is-ip-unnumbered")
-    private boolean isIpUnnumbered;
+    private Boolean isIpUnnumbered;
 	@JsonProperty("allowed-address-pairs")
     private String allowedAddressPairs;
 	@JsonProperty("vlans")
@@ -131,13 +131,13 @@ public class LInterface implements Serializable, ShallowCopy<LInterface>{
 	public void setInterfaceDescription(String interfaceDescription) {
 		this.interfaceDescription = interfaceDescription;
 	}
-	public boolean isPortMirrored() {
+	public Boolean isIsPortMirrored() {
 		return isPortMirrored;
 	}
-	public void setPortMirrored(boolean isPortMirrored) {
+	public void setPortMirrored(Boolean isPortMirrored) {
 		this.isPortMirrored = isPortMirrored;
 	}
-	public boolean isInMaint() {
+	public Boolean isInMaint() {
 		return inMaint;
 	}
 	public void setInMaint(boolean inMaint) {
@@ -149,10 +149,10 @@ public class LInterface implements Serializable, ShallowCopy<LInterface>{
 	public void setProvStatus(String provStatus) {
 		this.provStatus = provStatus;
 	}
-	public boolean isIpUnnumbered() {
+	public Boolean isIsIpUnnumbered() {
 		return isIpUnnumbered;
 	}
-	public void setIpUnnumbered(boolean isIpUnnumbered) {
+	public void setIpUnnumbered(Boolean isIpUnnumbered) {
 		this.isIpUnnumbered = isIpUnnumbered;
 	}
 	public String getAllowedAddressPairs() {

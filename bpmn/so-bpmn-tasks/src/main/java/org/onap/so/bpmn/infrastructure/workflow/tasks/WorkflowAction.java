@@ -689,7 +689,7 @@ public class WorkflowAction {
 			for (ExecuteBuildingBlock ebb : orchFlows) {
 				if (ebb.getBuildingBlock().getBpmnFlowName().equals("AssignNetworkBB")) {
 					String key = ebb.getBuildingBlock().getKey();
-					boolean isVirtualLink = ebb.getBuildingBlock().getIsVirtualLink();
+					boolean isVirtualLink = Boolean.TRUE.equals(ebb.getBuildingBlock().getIsVirtualLink());
 					String virtualLinkKey = ebb.getBuildingBlock().getVirtualLinkKey();
 					sortedOrchFlows.add(ebb);
 					for (ExecuteBuildingBlock ebb2 : orchFlows) {

@@ -425,7 +425,7 @@ public class BBInputSetupTest {
 
 		doReturn(customer).when(SPY_bbInputSetup).getCustomerAndServiceSubscription(requestDetails, resourceId);
 		doReturn(serviceInstance).when(SPY_bbInputSetup).getALaCarteServiceInstance(service, requestDetails, customer,
-				project, owningEntity, lookupKeyMap, resourceId, executeBB.isaLaCarte(),
+				project, owningEntity, lookupKeyMap, resourceId, Boolean.TRUE.equals(executeBB.isaLaCarte()),
 				executeBB.getBuildingBlock().getBpmnFlowName());
 		doReturn(expected).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
 				executeBB, requestAction, customer);
@@ -475,7 +475,7 @@ public class BBInputSetupTest {
 		doReturn(customer).when(SPY_bbInputSetup).getCustomerAndServiceSubscription(requestDetails, resourceId);
 		doReturn(serviceSubscription).when(SPY_bbInputSetup).getServiceSubscription(requestDetails, customer);
 		doReturn(serviceInstance).when(SPY_bbInputSetup).getALaCarteServiceInstance(service, requestDetails, customer,
-				project, owningEntity, lookupKeyMap, resourceId, executeBB.isaLaCarte(),
+				project, owningEntity, lookupKeyMap, resourceId, Boolean.TRUE.equals(executeBB.isaLaCarte()),
 				executeBB.getBuildingBlock().getBpmnFlowName());
 		doReturn(expected).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
 				executeBB, requestAction,customer);
@@ -518,7 +518,7 @@ public class BBInputSetupTest {
 		doReturn(customer).when(SPY_bbInputSetup).getCustomerAndServiceSubscription(requestDetails, resourceId);
 		doReturn(serviceSubscription).when(SPY_bbInputSetup).getServiceSubscription(requestDetails, customer);
 		doReturn(serviceInstance).when(SPY_bbInputSetup).getALaCarteServiceInstance(service, requestDetails, customer,
-				null, null, lookupKeyMap, resourceId, executeBB.isaLaCarte(),
+				null, null, lookupKeyMap, resourceId, Boolean.TRUE.equals(executeBB.isaLaCarte()),
 				executeBB.getBuildingBlock().getBpmnFlowName());
 		doReturn(expected).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
 				executeBB, requestAction,customer);

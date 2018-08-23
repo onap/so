@@ -63,7 +63,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-public class AAIObjectMapperTest{
+public class AAIObjectMapperTest {
 	private AAIObjectMapper aaiObjectMapper = new AAIObjectMapper();
 	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
 
@@ -343,7 +343,7 @@ public class AAIObjectMapperTest{
 		l3Network.setContrailNetworkFqdn("contrailNetworkFqdn");
 		l3Network.setIsBoundToVpn(false);
 		l3Network.setIsCascaded(false);
-		l3Network.setIsExternalNetwork(false);
+		l3Network.setIsSharedNetwork(false);
 		l3Network.setHeatStackId("heatStackId");
 		l3Network.setOperationalStatus("operationalStatus");
 		l3Network.setPhysicalNetworkName("physicalNetworkName");
@@ -429,7 +429,7 @@ public class AAIObjectMapperTest{
 		l3Network.setPhysicalNetworkName("physicalNetwork_name");
 		l3Network.setIsProviderNetwork(true);
 		l3Network.setIsSharedNetwork(false);
-		l3Network.setIsExternalNetwork(false);
+		l3Network.setIsExternalNetwork(true);
 		l3Network.setSelflink("self_link");
 		l3Network.setOperationalStatus("operationalStatus");
 
@@ -562,7 +562,7 @@ public class AAIObjectMapperTest{
 		AAIObjectMapper aaiObjectMapper = new AAIObjectMapper();
 		org.onap.aai.domain.yang.CtagAssignments v12CtagAssingments = aaiObjectMapper.mapToAAICtagAssignmentList(ctagAssignments);
 
-		assertEquals(ctagAssignments.get(0).getVlanIdInner(), v12CtagAssingments.getCtagAssignment().get(0).getVlanIdInner());
+		assertEquals(ctagAssignments.get(0).getVlanIdInner().longValue(), v12CtagAssingments.getCtagAssignment().get(0).getVlanIdInner());
 
 		String jsonToCompare = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiCtagAssingmentsMapped_to_aai.json")));
 		ObjectMapper omapper = new ObjectMapper();

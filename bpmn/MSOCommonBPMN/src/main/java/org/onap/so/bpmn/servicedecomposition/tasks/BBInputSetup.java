@@ -141,8 +141,8 @@ public class BBInputSetup implements JavaDelegate {
 			String resourceId = executeBB.getResourceId();
 			String requestAction = executeBB.getRequestAction();
 			String vnfType = executeBB.getVnfType();
-			boolean aLaCarte = executeBB.isaLaCarte();
-			boolean homing = executeBB.isHoming();
+			boolean aLaCarte = Boolean.TRUE.equals(executeBB.isaLaCarte());
+			boolean homing = Boolean.TRUE.equals(executeBB.isHoming());
 			Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 			outputBB = this.getGBB(executeBB, lookupKeyMap, requestAction, aLaCarte, resourceId, vnfType);
 			ObjectMapper mapper = new ObjectMapper();
@@ -707,7 +707,7 @@ public class BBInputSetup implements JavaDelegate {
 				}
 			}
 			ServiceInstance serviceInstance = this.getALaCarteServiceInstance(service, requestDetails, customer,
-					project, owningEntity, lookupKeyMap, resourceId, executeBB.isaLaCarte(),
+					project, owningEntity, lookupKeyMap, resourceId, Boolean.TRUE.equals(executeBB.isaLaCarte()),
 					executeBB.getBuildingBlock().getBpmnFlowName());
 			return this.populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, customer);
 		} else {
@@ -879,7 +879,7 @@ public class BBInputSetup implements JavaDelegate {
 		if (bbName.contains(NETWORK) && !bbName.contains(NETWORK_COLLECTION)) {
 			String networkId = lookupKeyMap.get(ResourceKey.NETWORK_ID);
 			ModelInfo networkModelInfo = new ModelInfo();
-			if(!executeBB.getBuildingBlock().getIsVirtualLink()) {
+			if(!Boolean.TRUE.equals(executeBB.getBuildingBlock().getIsVirtualLink())) {
 				NetworkResourceCustomization networkCust = getNetworkCustomizationByKey(key, service);
 				if (networkCust != null) {
 					networkModelInfo.setModelCustomizationUuid(networkCust.getModelCustomizationUUID());

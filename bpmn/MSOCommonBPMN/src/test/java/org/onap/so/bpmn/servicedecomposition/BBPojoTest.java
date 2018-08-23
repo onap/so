@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.servicedecomposition;
 
 import org.junit.Test;
-import org.onap.so.BaseTest;
 
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
@@ -30,12 +29,13 @@ import com.openpojo.reflection.filters.FilterPackageInfo;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
 import com.openpojo.validation.rule.impl.GetterMustExistRule;
+import com.openpojo.validation.rule.impl.NoPrimitivesRule;
 import com.openpojo.validation.rule.impl.SerializableMustHaveSerialVersionUIDRule;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
 
 
-public class BBPojoTest extends BaseTest{
+public class BBPojoTest {
 	private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
 	@Test
@@ -52,6 +52,7 @@ public class BBPojoTest extends BaseTest{
 				.with(new GetterMustExistRule())
 				.with(new SetterTester())
 				.with(new GetterTester())
+				.with(new NoPrimitivesRule())
 				.with(new SerializableMustHaveSerialVersionUIDRule())
 				.build();
 		validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterNonConcrete());

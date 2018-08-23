@@ -46,7 +46,7 @@ public class L3Network implements Serializable, ShallowCopy<L3Network> {
 	@JsonProperty("network-id")
 	private String networkId;
 	@JsonProperty("cascaded")
-	private boolean cascaded;
+	private Boolean cascaded;
 	@JsonProperty("cloud-params")
 	private Map<String, String> cloudParams = new HashMap<>();
 	@JsonProperty("network-name")
@@ -60,7 +60,7 @@ public class L3Network implements Serializable, ShallowCopy<L3Network> {
 	@JsonProperty("network-role")
 	private String networkRole;
 	@JsonProperty("is-bound-to-vpn")
-    private boolean isBoundToVpn;
+    private Boolean isBoundToVpn;
 	@JsonProperty("service-id")
     private String serviceId;
 	@JsonProperty("network-role-instance")
@@ -82,11 +82,11 @@ public class L3Network implements Serializable, ShallowCopy<L3Network> {
 	@JsonProperty("physical-network-name")
     private String physicalNetworkName;
 	@JsonProperty("is-provider-network")
-    private boolean isProviderNetwork;
+    private Boolean isProviderNetwork;
 	@JsonProperty("is-shared-network")
-    private boolean isSharedNetwork;
+    private Boolean isSharedNetwork;
 	@JsonProperty("is-external-network")
-    private boolean isExternalNetwork;
+    private Boolean isExternalNetwork;
 	@JsonProperty("self-link")
     private String selflink;
 	@JsonProperty("operational-status")
@@ -142,10 +142,10 @@ public class L3Network implements Serializable, ShallowCopy<L3Network> {
 	public void setNetworkRole(String networkRole) {
 		this.networkRole = networkRole;
 	}
-	public boolean isBoundToVpn() {
+	public Boolean isIsBoundToVpn() {
 		return isBoundToVpn;
 	}
-	public void setIsBoundToVpn(boolean isBoundToVpn) {
+	public void setIsBoundToVpn(Boolean isBoundToVpn) {
 		this.isBoundToVpn = isBoundToVpn;
 	}
 	public String getServiceId() {
@@ -202,22 +202,22 @@ public class L3Network implements Serializable, ShallowCopy<L3Network> {
 	public void setPhysicalNetworkName(String physicalNetworkName) {
 		this.physicalNetworkName = physicalNetworkName;
 	}
-	public boolean isProviderNetwork() {
+	public Boolean isIsProviderNetwork() {
 		return isProviderNetwork;
 	}
-	public void setIsProviderNetwork(boolean isProviderNetwork) {
+	public void setIsProviderNetwork(Boolean isProviderNetwork) {
 		this.isProviderNetwork = isProviderNetwork;
 	}
-	public boolean isSharedNetwork() {
+	public Boolean isIsSharedNetwork() {
 		return isSharedNetwork;
 	}
-	public void setIsSharedNetwork(boolean isSharedNetwork) {
+	public void setIsSharedNetwork(Boolean isSharedNetwork) {
 		this.isSharedNetwork = isSharedNetwork;
 	}
-	public boolean isExternalNetwork() {
+	public Boolean isIsExternalNetwork() {
 		return isExternalNetwork;
 	}
-	public void setIsExternalNetwork(boolean isExternalNetwork) {
+	public void setIsExternalNetwork(Boolean isExternalNetwork) {
 		this.isExternalNetwork = isExternalNetwork;
 	}
 	public String getSelflink() {
@@ -242,10 +242,10 @@ public class L3Network implements Serializable, ShallowCopy<L3Network> {
 	public List<SegmentationAssignment> getSegmentationAssignments() {
 		return segmentationAssignments;
 	}
-	public boolean isCascaded() {
+	public Boolean isCascaded() {
 		return cascaded;
 	}
-	public void setIsCascaded(boolean cascaded) {
+	public void setIsCascaded(Boolean cascaded) {
 		this.cascaded = cascaded;
 	}
 	public Map<String, String> getCloudParams() {

@@ -35,8 +35,8 @@ public class ExecuteBuildingBlock implements Serializable{
 	private String resourceId;
 	private String requestAction;
 	private String vnfType;
-	private boolean aLaCarte;
-	private boolean homing;
+	private Boolean aLaCarte;
+	private Boolean homing;
 	private WorkflowResourceIds workflowResourceIds;
 	private RequestDetails requestDetails;
 	
@@ -70,10 +70,10 @@ public class ExecuteBuildingBlock implements Serializable{
 	public void setRequestAction(String requestAction) {
 		this.requestAction = requestAction;
 	}
-	public boolean isaLaCarte() {
+	public Boolean isaLaCarte() {
 		return aLaCarte;
 	}
-	public void setaLaCarte(boolean aLaCarte) {
+	public void setaLaCarte(Boolean aLaCarte) {
 		this.aLaCarte = aLaCarte;
 	}
 	public String getVnfType() {
@@ -82,10 +82,10 @@ public class ExecuteBuildingBlock implements Serializable{
 	public void setVnfType(String vnfType) {
 		this.vnfType = vnfType;
 	}
-	public boolean isHoming() {
+	public Boolean isHoming() {
 		return homing;
 	}
-	public void setHoming(boolean homing) {
+	public void setHoming(Boolean homing) {
 		this.homing = homing;
 	}
 	public WorkflowResourceIds getWorkflowResourceIds() {

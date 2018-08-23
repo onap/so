@@ -57,7 +57,7 @@ public class Subnet implements Serializable, ShallowCopy<Subnet>{
 	@JsonProperty("orchestration-status")
     private OrchestrationStatus orchestrationStatus;
 	@JsonProperty("dhcp-enabled")
-    private boolean dhcpEnabled;
+    private Boolean dhcpEnabled;
 	@JsonProperty("dhcp-start")
     private String dhcpStart;
 	@JsonProperty("dhcp-end")
@@ -119,10 +119,10 @@ public class Subnet implements Serializable, ShallowCopy<Subnet>{
 	public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
 		this.orchestrationStatus = orchestrationStatus;
 	}
-	public boolean isDhcpEnabled() {
+	public Boolean isDhcpEnabled() {
 		return dhcpEnabled;
 	}
-	public void setDhcpEnabled(boolean dhcpEnabled) {
+	public void setDhcpEnabled(Boolean dhcpEnabled) {
 		this.dhcpEnabled = dhcpEnabled;
 	}
 	public String getDhcpStart() {

@@ -43,7 +43,7 @@ public class ModelInfoCollection  implements Serializable {
 	@JsonProperty("description")
 	private String description;
 	@JsonProperty("quantity")
-	private int quantity;
+	private Integer quantity;
 	
 	public String getModelCustomizationUUID() {
 		return modelCustomizationUUID;
@@ -87,10 +87,10 @@ public class ModelInfoCollection  implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public int getQuantity() {
+	public Integer getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(int quantity) {
+	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
 	

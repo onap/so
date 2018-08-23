@@ -32,13 +32,13 @@ public class OrchestrationContext implements Serializable {
 	private static final long serialVersionUID = 6843015923244810369L;
 	
 	@JsonProperty("is-rollback-enabled")
-	private boolean isRollbackEnabled;
+	private Boolean isRollbackEnabled;
 
-	public boolean getIsRollbackEnabled() {
+	public Boolean getIsRollbackEnabled() {
 		return this.isRollbackEnabled;
 	}
 
-	public void setIsRollbackEnabled(boolean isRollbackEnabled) {
+	public void setIsRollbackEnabled(Boolean isRollbackEnabled) {
 		this.isRollbackEnabled = isRollbackEnabled;
 	}
 }

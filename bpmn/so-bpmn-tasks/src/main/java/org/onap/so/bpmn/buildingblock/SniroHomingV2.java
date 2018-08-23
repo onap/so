@@ -75,6 +75,7 @@ import org.springframework.web.util.UriUtils;
  */
 @Component("SniroHoming")
 public class SniroHomingV2 {
+
 	private static final MsoLogger log = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SniroHomingV2.class);
 	private JsonUtils jsonUtils = new JsonUtils();
 	@Autowired
@@ -135,8 +136,11 @@ public class SniroHomingV2 {
 			placementInfo.put("placementDemands", placementDemands);
 			request.setPlacementInformation(placementInfo.toString());
 
+			JSONObject licenseInfo = new JSONObject();
+
 			JSONArray licenseDemands = buildLicenseDemands(serviceInstance);
-			request.setLicenseInformation(licenseDemands.toString());
+			licenseInfo.put("licenseDemands", licenseDemands);
+			request.setLicenseInformation(licenseInfo.toString());
 
 			if(placementDemands.length() > 0 || licenseDemands.length() > 0){
 				client.postDemands(request);

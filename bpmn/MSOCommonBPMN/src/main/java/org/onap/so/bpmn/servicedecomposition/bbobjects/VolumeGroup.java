@@ -52,7 +52,7 @@ public class VolumeGroup implements Serializable, ShallowCopy<VolumeGroup> {
 	@JsonProperty("cloud-params")
 	private Map<String, String> cloudParams = new HashMap<>();
 	@JsonProperty("cascaded")
-	private boolean cascaded;
+	private Boolean cascaded;
 	@JsonProperty("heat-stack-id")
 	private String heatStackId;
 	@JsonProperty("model-info-vf-module")
@@ -100,7 +100,7 @@ public class VolumeGroup implements Serializable, ShallowCopy<VolumeGroup> {
 	public void setCloudParams(Map<String, String> cloudParams) {
 		this.cloudParams = cloudParams;
 	}
-	public boolean isCascaded() {
+	public Boolean isCascaded() {
 		return cascaded;
 	}
 	public void setCascaded(boolean cascaded) {

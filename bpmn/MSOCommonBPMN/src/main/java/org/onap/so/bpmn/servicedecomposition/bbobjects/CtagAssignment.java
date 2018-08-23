@@ -37,13 +37,13 @@ public class CtagAssignment implements Serializable, ShallowCopy<CtagAssignment>
 
 	@Id
 	@JsonProperty("vlan-id-inner")
-	private long vlanIdInner;
+	private Long vlanIdInner;
 	
-	public long getVlanIdInner() {
+	public Long getVlanIdInner() {
 		return vlanIdInner;
 	}
 
-	public void setVlanIdInner(long vlanIdInner) {
+	public void setVlanIdInner(Long vlanIdInner) {
 		this.vlanIdInner = vlanIdInner;
 	}
 

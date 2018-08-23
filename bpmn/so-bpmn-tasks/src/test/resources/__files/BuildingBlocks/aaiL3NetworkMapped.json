@@ -14,7 +14,6 @@
   "physicalNetworkName": "physicalNetworkName",
   "isProviderNetwork": false,
   "isSharedNetwork": false,
-  "isExternalNetwork": false,
   "selflink": "selflink",
   "operationalStatus": "operationalStatus"
 }

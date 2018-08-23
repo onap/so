@@ -48,9 +48,9 @@ public class PhysicalLink implements Serializable, ShallowCopy<PhysicalLink> {
     @JsonProperty("management-option")
 	private String managementOption;
     @JsonProperty("bandwidth-up")
-	private int bandwidthUp;
+	private Integer bandwidthUp;
     @JsonProperty("bandwidth-down")
-	private int bandwidthDown;
+	private Integer bandwidthDown;
     @JsonProperty("bandwidth-units")
 	private String bandwidthUnits;
     @JsonProperty("wan-port")
@@ -99,19 +99,19 @@ public class PhysicalLink implements Serializable, ShallowCopy<PhysicalLink> {
 		this.managementOption = managementOption;
 	}
 
-	public int getBandwidthUp(){
+	public Integer getBandwidthUp(){
 		return bandwidthUp;
 	}
 
-	public void setBandwidthUp(int bandwidthUp){
+	public void setBandwidthUp(Integer bandwidthUp){
 		this.bandwidthUp = bandwidthUp;
 	}
 
-	public int getBandwidthDown(){
+	public Integer getBandwidthDown(){
 		return bandwidthDown;
 	}
 
-	public void setBandwidthDown(int bandwidthDown){
+	public void setBandwidthDown(Integer bandwidthDown){
 		this.bandwidthDown = bandwidthDown;
 	}
 

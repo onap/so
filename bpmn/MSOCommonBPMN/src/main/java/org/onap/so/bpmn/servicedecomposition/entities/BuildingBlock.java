@@ -37,7 +37,7 @@ public class BuildingBlock implements Serializable{
 	@JsonProperty("key")
 	private String key;
 	@JsonProperty("is-virtual-link")
-	private boolean isVirtualLink;
+	private Boolean isVirtualLink;
 	@JsonProperty("virtual-link-key")
 	private String virtualLinkKey;
 
@@ -59,10 +59,10 @@ public class BuildingBlock implements Serializable{
 	public void setKey(String key) {
 		this.key = key;
 	}
-	public boolean getIsVirtualLink() {
+	public Boolean getIsVirtualLink() {
 		return isVirtualLink;
 	}
-	public void setIsVirtualLink(boolean isVirtualLink) {
+	public void setIsVirtualLink(Boolean isVirtualLink) {
 		this.isVirtualLink = isVirtualLink;
 	}
 	public String getVirtualLinkKey() {

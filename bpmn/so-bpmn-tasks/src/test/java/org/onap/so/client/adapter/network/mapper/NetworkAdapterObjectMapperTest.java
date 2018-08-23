@@ -187,6 +187,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		
 		Subnet actualSubnet = new Subnet();
 		actualSubnet.setSubnetId("subnetId");
+		actualSubnet.setDhcpEnabled(false);
 		actualSubnet.setIpVersion("4");
 		
 		RouteTarget routeTarget = new RouteTarget();
@@ -231,7 +232,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		expectedUpdateNetworkRequest.setNetworkParams(userInput);
 		expectedUpdateNetworkRequest.setMsoRequest(msoRequest);
 		expectedUpdateNetworkRequest.setSkipAAI(true);
-		expectedUpdateNetworkRequest.setBackout(!Boolean.valueOf(orchestrationContext.getIsRollbackEnabled()));
+		expectedUpdateNetworkRequest.setBackout(!Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
 		expectedUpdateNetworkRequest.setMessageId("messageId");
 		expectedUpdateNetworkRequest.setNotificationUrl("http://localhost:28080/mso/WorkflowMesssage/NetworkAResponse/messageId");
 

@@ -53,7 +53,7 @@ public class LagInterface implements Serializable, ShallowCopy<LagInterface>{
 	@JsonProperty("prov-status")
     private String provStatus;
 	@JsonProperty("in-maint")
-    private boolean inMaint;
+    private Boolean inMaint;
 	@JsonProperty("l-interfaces")
     private List<LInterface> lInterfaces = new ArrayList<>();
 
@@ -99,7 +99,7 @@ public class LagInterface implements Serializable, ShallowCopy<LagInterface>{
 	public void setProvStatus(String provStatus) {
 		this.provStatus = provStatus;
 	}
-	public boolean isInMaint() {
+	public Boolean isInMaint() {
 		return inMaint;
 	}
 	public void setInMaint(boolean inMaint) {

@@ -79,7 +79,7 @@ public class SDNCAssignTasks {
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 			Customer customer = gBBInput.getCustomer();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
-			String response = sdncVnfResources.assignVnf(vnf, serviceInstance, customer, cloudRegion, requestContext, vnf.isCallHoming());
+			String response = sdncVnfResources.assignVnf(vnf, serviceInstance, customer, cloudRegion, requestContext, Boolean.TRUE.equals(vnf.isCallHoming()));
 			execution.setVariable("SDNCResponse", response);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

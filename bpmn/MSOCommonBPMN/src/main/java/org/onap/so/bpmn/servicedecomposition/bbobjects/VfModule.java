@@ -50,7 +50,7 @@ public class VfModule implements Serializable, ShallowCopy<VfModule> {
 	@JsonProperty("cloud-params")
 	private Map<String, String> cloudParams = new HashMap<>();
 	@JsonProperty("cascaded")
-	private boolean cascaded;
+	private Boolean cascaded;
 	@JsonProperty("heat-stack-id")
     private String heatStackId;
 	@JsonProperty("contrail-service-instance-fqdn")
@@ -116,7 +116,7 @@ public class VfModule implements Serializable, ShallowCopy<VfModule> {
 	public void setCloudParams(Map<String, String> cloudParams) {
 		this.cloudParams = cloudParams;
 	}
-	public boolean isCascaded() {
+	public Boolean isCascaded() {
 		return cascaded;
 	}
 	public void setCascaded(boolean cascaded) {

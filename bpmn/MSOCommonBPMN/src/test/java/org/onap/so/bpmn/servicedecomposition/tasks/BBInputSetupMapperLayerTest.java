@@ -79,7 +79,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BBInputSetupMapperLayerTest {
-	@InjectMocks
+	
 	BBInputSetupMapperLayer bbInputSetupMapperLayer = new BBInputSetupMapperLayer();
 
 	ObjectMapper mapper = new ObjectMapper();

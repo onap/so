@@ -62,7 +62,7 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
 	@JsonProperty("platform")
 	private Platform platform;
 	@JsonProperty("cascaded")
-	private boolean cascaded;
+	private Boolean cascaded;
 	@JsonProperty("cloud-params")
 	private Map<String, String> cloudParams = new HashMap<>();
 	@JsonProperty("cloud-context")
@@ -104,9 +104,9 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
 	@JsonProperty("vdisk-units")
 	private String vdiskUnits;
 	@JsonProperty("in-maint")
-	private boolean inMaint;
+	private Boolean inMaint;
 	@JsonProperty("is-closed-loop-disabled")
-	private boolean isClosedLoopDisabled;
+	private Boolean isClosedLoopDisabled;
 	@JsonProperty("summary-status")
 	private String summaryStatus;
 	@JsonProperty("encrypted-access-flag")
@@ -138,7 +138,7 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
 	@JsonProperty("instance-groups")
     private List<InstanceGroup> instanceGroups = new ArrayList<InstanceGroup>();
 	@JsonProperty("call-homing")
-	private boolean callHoming;
+	private Boolean callHoming;
 
 
 	public List<InstanceGroup> getInstanceGroups() {
@@ -309,19 +309,19 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
 		this.vdiskUnits = vdiskUnits;
 	}
 
-	public boolean isInMaint() {
+	public Boolean isInMaint() {
 		return inMaint;
 	}
 
-	public void setInMaint(boolean inMaint) {
+	public void setInMaint(Boolean inMaint) {
 		this.inMaint = inMaint;
 	}
 
-	public boolean isClosedLoopDisabled() {
+	public Boolean isIsClosedLoopDisabled() {
 		return isClosedLoopDisabled;
 	}
 
-	public void setClosedLoopDisabled(boolean isClosedLoopDisabled) {
+	public void setClosedLoopDisabled(Boolean isClosedLoopDisabled) {
 		this.isClosedLoopDisabled = isClosedLoopDisabled;
 	}
 
@@ -453,11 +453,11 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
 		this.platform = platform;
 	}
 
-	public boolean isCascaded() {
+	public Boolean isCascaded() {
 		return cascaded;
 	}
 
-	public void setCascaded(boolean cascaded) {
+	public void setCascaded(Boolean cascaded) {
 		this.cascaded = cascaded;
 	}
 
@@ -485,11 +485,11 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
 		this.cloudRegion = cloudRegion;
 	}
 
-	public boolean isCallHoming() {
+	public Boolean isCallHoming() {
 		return callHoming;
 	}
 
-	public void setCallHoming(boolean callHoming) {
+	public void setCallHoming(Boolean callHoming) {
 			this.callHoming = callHoming;
 	}
 

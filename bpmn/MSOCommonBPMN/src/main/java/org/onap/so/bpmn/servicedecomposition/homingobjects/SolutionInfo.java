@@ -33,28 +33,28 @@ public class SolutionInfo implements Serializable {
 	private static final long serialVersionUID = 6903399488466840832L;
 
 	@JsonProperty("solution-id") //identifies which solution
-	private int solutionId;
+	private Integer solutionId;
 	@JsonProperty("homed")
-	private boolean homed;
+	private Boolean homed;
 	@JsonProperty("is-rehome")
-	private boolean isRehome;
+	private Boolean isRehome;
 	@JsonProperty("targeted-cloud")
 	private CloudRegion targetedCloudRegion;
 
 
-	public boolean isHomed() {
+	public Boolean isHomed() {
 		return homed;
 	}
 
-	public void setHomed(boolean homed) {
+	public void setHomed(Boolean homed) {
 		this.homed = homed;
 	}
 
-	public boolean isRehome() {
+	public Boolean isRehome() {
 		return isRehome;
 	}
 
-	public void setRehome(boolean isRehome) {
+	public void setRehome(Boolean isRehome) {
 		this.isRehome = isRehome;
 	}
 
@@ -63,7 +63,7 @@ public class SolutionInfo implements Serializable {
 	 * given resource or resource pair.
 	 * i.e. 1, 2, 3....
 	 */
-	public int getSolutionId() {
+	public Integer getSolutionId() {
 		return solutionId;
 	}
 
@@ -72,7 +72,7 @@ public class SolutionInfo implements Serializable {
 	 * given resource or resource pair.
 	 * i.e. 1, 2, 3....
 	 */
-	public void setSolutionId(int solutionId) {
+	public void setSolutionId(Integer solutionId) {
 		this.solutionId = solutionId;
 	}
 

@@ -59,11 +59,11 @@ public class Vlan implements Serializable, ShallowCopy<Vlan>{
 	@JsonProperty("orchestration-status")
     private OrchestrationStatus orchestrationStatus;
 	@JsonProperty("in-maint")
-    private boolean inMaint;
+    private Boolean inMaint;
 	@JsonProperty("prov-status")
     private String provStatus;
 	@JsonProperty("is-ip-unnumbered")
-    private boolean isIpUnnumbered;
+    private Boolean isIpUnnumbered;
 	@JsonProperty("l3-interface-ipv4-address-list")
     private List<L3InterfaceIpv4AddressList> l3InterfaceIpv4AddressList = new ArrayList<L3InterfaceIpv4AddressList>();
 	@JsonProperty("l3-interface-ipv6-address-list")
@@ -123,7 +123,7 @@ public class Vlan implements Serializable, ShallowCopy<Vlan>{
 	public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
 		this.orchestrationStatus = orchestrationStatus;
 	}
-	public boolean isInMaint() {
+	public Boolean isInMaint() {
 		return inMaint;
 	}
 	public void setInMaint(boolean inMaint) {
@@ -135,10 +135,10 @@ public class Vlan implements Serializable, ShallowCopy<Vlan>{
 	public void setProvStatus(String provStatus) {
 		this.provStatus = provStatus;
 	}
-	public boolean isIpUnnumbered() {
+	public Boolean isIsIpUnnumbered() {
 		return isIpUnnumbered;
 	}
-	public void setIpUnnumbered(boolean isIpUnnumbered) {
+	public void setIpUnnumbered(Boolean isIpUnnumbered) {
 		this.isIpUnnumbered = isIpUnnumbered;
 	}
 	public List<L3InterfaceIpv4AddressList> getL3InterfaceIpv4AddressList() {
