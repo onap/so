@@ -88,6 +88,7 @@ public class WorkflowAction {
 	private static final String VOLUMEGROUP = "VolumeGroup";
 	private static final String NETWORK = "Network";
 	private static final String NETWORKCOLLECTION = "NetworkCollection";
+	private static final String CONFIGURATION = "Configuration";
 	private static final String ASSIGNINSTANCE = "assignInstance";
 	private static final String CREATEINSTANCE = "createInstance";
 	private static final String USERPARAMSERVICE = "service";
@@ -799,6 +800,12 @@ public class WorkflowAction {
 			} else if (orchFlow.getFlowName().contains(NETWORKCOLLECTION)) {
 				for (int i = 0; i < resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType()).collect(Collectors.toList()).size(); i++) {
 					flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
+							.collect(Collectors.toList()).get(i).getResourceId(), apiVersion, resourceId,
+							requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, false, null));
+				}
+			} else if (orchFlow.getFlowName().contains(CONFIGURATION)) {
+				for (int i = 0; i < resourceCounter.stream().filter(x -> WorkflowType.CONFIGURATION == x.getResourceType()).collect(Collectors.toList()).size(); i++) {
+					flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resourceCounter.stream().filter(x -> WorkflowType.CONFIGURATION == x.getResourceType())
 							.collect(Collectors.toList()).get(i).getResourceId(), apiVersion, resourceId,
 							requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, false, null));
 				}
