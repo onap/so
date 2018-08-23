@@ -1,0 +1,19 @@
+{
+  "id": "5956a99d-9736-11e8-8caf-022ac9304eeb",
+  "businessKey": "203b9171-c113-435e-aaa6-f47cb836e3cb",
+  "processDefinitionId": "EricssonNetworkSliceV1:3:28f9e0fc-9b00-11e8-a57a-022ac90273ed",
+  "processDefinitionKey": "EricssonNetworkSliceV1",
+  "processDefinitionName": "EricssonNetworkSliceV1",
+  "processDefinitionVersion": 3,
+  "startTime": "2018-08-14T09:52:46.105+0000",
+  "endTime": "2018-08-14T09:53:50.499+0000",
+  "durationInMillis": 64394,
+  "startUserId": null,
+  "startActivityId": "createVCPE_startEvent",
+  "deleteReason": null,
+  "superProcessInstanceId": null,
+  "superCaseInstanceId": null,
+  "caseInstanceId": null,
+  "tenantId": null,
+  "state": "COMPLETED"
+}
