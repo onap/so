@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="UpdateNetworkBB" name="UpdateNetworkBB" isExecutable="true">
     <bpmn2:startEvent id="UpdateNetworkBB_Start" name="Start">
       <bpmn2:outgoing>SequenceFlow_074w2et</bpmn2:outgoing>
@@ -14,20 +14,15 @@
       <bpmn2:linkEventDefinition name="SDNC_to_AAI" />
     </bpmn2:intermediateThrowEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_04yezm3" sourceRef="SDNCChangeAssignNetwork" targetRef="SDNC_End" />
-    <bpmn2:serviceTask id="QueryNetworkAAI" name="Re-Query Network (AAI)" camunda:expression="${AAIQueryTasks.getNetworkWrapperById(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn2:incoming>SequenceFlow_1trqq6d</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_03janqs</bpmn2:outgoing>
-    </bpmn2:serviceTask>
     <bpmn2:intermediateCatchEvent id="AAI_Start" name="To AAI">
       <bpmn2:outgoing>SequenceFlow_1trqq6d</bpmn2:outgoing>
       <bpmn2:linkEventDefinition name="SDNC_to_AAI" />
     </bpmn2:intermediateCatchEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_1trqq6d" sourceRef="AAI_Start" targetRef="QueryNetworkAAI" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1trqq6d" sourceRef="AAI_Start" targetRef="QueryVpnBindingAAI" />
     <bpmn2:serviceTask id="QueryVpnBindingAAI" name="Query Vpn Binding (AAI)" camunda:expression="${AAIQueryTasks.queryNetworkVpnBinding(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn2:incoming>SequenceFlow_03janqs</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_1trqq6d</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1io4cl7</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_03janqs" sourceRef="QueryNetworkAAI" targetRef="QueryVpnBindingAAI" />
     <bpmn2:serviceTask id="QueryNetworkPolicyAAI" name="Query Network Policy (AAI)" camunda:expression="${AAIQueryTasks.queryNetworkPolicy(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_1io4cl7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_16fm47t</bpmn2:outgoing>
@@ -107,32 +102,22 @@
           <dc:Bounds x="432.5" y="74" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_0d05e4a_di" bpmnElement="QueryNetworkAAI">
-        <dc:Bounds x="104" y="193" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_1hbb3j8_di" bpmnElement="AAI_Start">
-        <dc:Bounds x="-1" y="215" width="36" height="36" />
+        <dc:Bounds x="144" y="215" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2" y="255" width="33" height="12" />
+          <dc:Bounds x="147" y="255" width="33" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1trqq6d_di" bpmnElement="SequenceFlow_1trqq6d">
-        <di:waypoint xsi:type="dc:Point" x="35" y="233" />
-        <di:waypoint xsi:type="dc:Point" x="104" y="233" />
+        <di:waypoint xsi:type="dc:Point" x="180" y="233" />
+        <di:waypoint xsi:type="dc:Point" x="280" y="233" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="69.5" y="212" width="0" height="12" />
+          <dc:Bounds x="185" y="212" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_09dctlw_di" bpmnElement="QueryVpnBindingAAI">
         <dc:Bounds x="280" y="193" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_03janqs_di" bpmnElement="SequenceFlow_03janqs">
-        <di:waypoint xsi:type="dc:Point" x="204" y="233" />
-        <di:waypoint xsi:type="dc:Point" x="280" y="233" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="242" y="212" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1slp95d_di" bpmnElement="QueryNetworkPolicyAAI">
         <dc:Bounds x="455" y="193" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -167,42 +152,42 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_0sx0nb6_di" bpmnElement="AIC_Start">
-        <dc:Bounds x="-1" y="332" width="36" height="36" />
+        <dc:Bounds x="144" y="332" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1" y="372" width="34" height="12" />
+          <dc:Bounds x="146" y="372" width="34" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_196cgux_di" bpmnElement="SequenceFlow_196cgux">
-        <di:waypoint xsi:type="dc:Point" x="35" y="350" />
-        <di:waypoint xsi:type="dc:Point" x="104" y="350" />
+        <di:waypoint xsi:type="dc:Point" x="180" y="350" />
+        <di:waypoint xsi:type="dc:Point" x="248" y="350" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="69.5" y="329" width="0" height="12" />
+          <dc:Bounds x="169" y="329" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0i66n9g_di" bpmnElement="UpdateNetworkAdapter">
-        <dc:Bounds x="104" y="310" width="100" height="80" />
+        <dc:Bounds x="248" y="310" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0hsvgje_di" bpmnElement="SequenceFlow_0hsvgje">
-        <di:waypoint xsi:type="dc:Point" x="204" y="350" />
-        <di:waypoint xsi:type="dc:Point" x="278" y="350" />
+        <di:waypoint xsi:type="dc:Point" x="348" y="350" />
+        <di:waypoint xsi:type="dc:Point" x="422" y="350" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="241" y="329" width="0" height="12" />
+          <dc:Bounds x="340" y="329" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1ydm5u9_di" bpmnElement="UpdateNetworkAAI">
-        <dc:Bounds x="278" y="310" width="100" height="80" />
+        <dc:Bounds x="422" y="310" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0fsts2w_di" bpmnElement="UpdateNetworkBB_End">
-        <dc:Bounds x="493" y="332" width="36" height="36" />
+        <dc:Bounds x="637" y="332" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="502" y="372" width="19" height="12" />
+          <dc:Bounds x="646" y="372" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0fhfitm_di" bpmnElement="SequenceFlow_0fhfitm">
-        <di:waypoint xsi:type="dc:Point" x="378" y="350" />
-        <di:waypoint xsi:type="dc:Point" x="493" y="350" />
+        <di:waypoint xsi:type="dc:Point" x="522" y="350" />
+        <di:waypoint xsi:type="dc:Point" x="637" y="350" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="435.5" y="329" width="0" height="12" />
+          <dc:Bounds x="535" y="329" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="SubProcess_11x1b8w_di" bpmnElement="SubProcess_1srp3f9" isExpanded="true">

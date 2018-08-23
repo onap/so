@@ -49,7 +49,6 @@ import org.springframework.stereotype.Component;
 public class AAIQueryTasks {
 
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AAIQueryTasks.class);
-	private static final String NETWORK_RESULT_WRAPPER_KEY = "l3NetworkAAIResultWrapper";
 	private static final String ERROR_MSG = "No relationships were returned from AAIResultWrapper.getRelationships()";
 	@Autowired
 	private ExtractPojosForBB extractPojosForBB;
@@ -58,23 +57,6 @@ public class AAIQueryTasks {
 	@Autowired
 	private AAINetworkResources aaiNetworkResources;
 	private static final ModelMapper modelMapper = new ModelMapper();
-
-	/**
-	 * BPMN access method to query L3Network object in AAI by it's Id
-	 * 
-	 * @param execution
-	 * @throws Exception
-	 */
-	public void getNetworkWrapperById(BuildingBlockExecution execution) {
-		try {
-			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
-				execution.getLookupMap().get(ResourceKey.NETWORK_ID));
-			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
-			execution.setVariable(NETWORK_RESULT_WRAPPER_KEY, aaiResultWrapper);
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
 	
 	/** 
 	 * BPMN access method to query data for VPN bindings from the AAI result wrapper.
@@ -85,9 +67,9 @@ public class AAIQueryTasks {
 
 	public void queryNetworkVpnBinding(BuildingBlockExecution execution) {
 		try {
-			org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			
-			AAIResultWrapper aaiResultWrapper = execution.getVariable(NETWORK_RESULT_WRAPPER_KEY);
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
+					execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
 			Optional<Relationships> networkRelationships = aaiResultWrapper.getRelationships();
 			if (!networkRelationships.isPresent()) {
 				throw (new Exception(ERROR_MSG));
@@ -120,7 +102,9 @@ public class AAIQueryTasks {
 	public void getNetworkVpnBinding(BuildingBlockExecution execution) {
 
 		try {
-			AAIResultWrapper aaiResultWrapper = execution.getVariable(NETWORK_RESULT_WRAPPER_KEY);
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
+					execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
 			CreateNetworkRequest createNetworkRequest = execution.getVariable("createNetworkRequest");
 
 			Optional<Relationships> networkRelationships = aaiResultWrapper.getRelationships();
@@ -174,9 +158,9 @@ public class AAIQueryTasks {
 	 */
 	public void queryNetworkPolicy(BuildingBlockExecution execution) {
 		try {
-			L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
-			
-			AAIResultWrapper aaiResultWrapper = execution.getVariable(NETWORK_RESULT_WRAPPER_KEY);
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
+					execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
 			Optional<Relationships> networkRelationships = aaiResultWrapper.getRelationships();
 			if (!networkRelationships.isPresent()) {
 				throw (new Exception(ERROR_MSG));
@@ -187,7 +171,7 @@ public class AAIQueryTasks {
 				for(AAIResourceUri netPolicyUri : netPoliciesUriList) {
 					Optional<NetworkPolicy> oNetPolicy = aaiNetworkResources.getNetworkPolicy(netPolicyUri);
 					if(oNetPolicy.isPresent()) {
-						l3Network.getNetworkPolicies().add(modelMapper.map(oNetPolicy.get(), org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy.class));
+						l3network.getNetworkPolicies().add(modelMapper.map(oNetPolicy.get(), org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy.class));
 					}
 				}
 			}
@@ -205,9 +189,9 @@ public class AAIQueryTasks {
 	 */
 	public void queryNetworkTableRef(BuildingBlockExecution execution) {
 		try {
-			L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
-			
-			AAIResultWrapper aaiResultWrapper = execution.getVariable(NETWORK_RESULT_WRAPPER_KEY);
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
+					execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
 			Optional<Relationships> networkRelationships = aaiResultWrapper.getRelationships();
 			if (!networkRelationships.isPresent()) {
 				throw (new Exception(ERROR_MSG));
@@ -219,7 +203,7 @@ public class AAIQueryTasks {
 					Optional<RouteTableReference> oRouteTableReference = aaiNetworkResources.getRouteTable(routeTableUri);
 					if(oRouteTableReference.isPresent()) {
 						org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference mappedRouteTableReference = modelMapper.map(oRouteTableReference.get(), org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference.class);
-						l3Network.getContrailNetworkRouteTableReferences().add(mappedRouteTableReference);
+						l3network.getContrailNetworkRouteTableReferences().add(mappedRouteTableReference);
 					}
 				}
 			}

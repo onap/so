@@ -36,7 +36,7 @@ public class UnassignNetworkBBTest  extends BaseBPMNTest {
     public void sunnyDayAssignNetwork_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignNetworkBB",variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_UnassignNetworkBB","Task_GetL3NetworkById","Task_VfModuleRelatioship","Task_GetCloudRegionVersion","Task_SNDCUnAssign","Task_DeleteNetwork","End_UnassignNetworkBB");     
+        assertThat(pi).isStarted().hasPassedInOrder("Start_UnassignNetworkBB","Task_VfModuleRelatioship","Task_GetCloudRegionVersion","Task_SNDCUnAssign","Task_DeleteNetwork","End_UnassignNetworkBB");     
         assertThat(pi).isEnded();
     }
 
@@ -46,7 +46,7 @@ public class UnassignNetworkBBTest  extends BaseBPMNTest {
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignNetworkBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
-				.hasPassedInOrder("Start_UnassignNetworkBB", "Task_GetL3NetworkById", "Task_VfModuleRelatioship")
+				.hasPassedInOrder("Start_UnassignNetworkBB", "Task_VfModuleRelatioship")
 				.hasNotPassed("End_UnassignNetworkBB");
 		assertThat(pi).isEnded();
 	}

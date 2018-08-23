@@ -38,7 +38,7 @@ public class UpdateNetworkBBTest extends BaseBPMNTest {
     	assertThat(processInstance).isNotNull();
     	assertThat(processInstance).isStarted().hasPassedInOrder(
     			"UpdateNetworkBB_Start", "SDNCChangeAssignNetwork", 
-    			"QueryNetworkAAI", "QueryVpnBindingAAI", "QueryNetworkPolicyAAI", "QueryNetworkTableRefAAI", 
+    			"QueryVpnBindingAAI", "QueryNetworkPolicyAAI", "QueryNetworkTableRefAAI", 
     			"UpdateNetworkAdapter", "UpdateNetworkAAI", "UpdateNetworkBB_End");
     	assertThat(processInstance).isEnded();
     }
@@ -49,8 +49,8 @@ public class UpdateNetworkBBTest extends BaseBPMNTest {
 		
 		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("UpdateNetworkBB", variables);
 		assertThat(processInstance).isStarted().hasPassedInOrder(
-				"UpdateNetworkBB_Start", "SDNCChangeAssignNetwork", 
-    			"QueryNetworkAAI", "QueryVpnBindingAAI")
+				"UpdateNetworkBB_Start", "SDNCChangeAssignNetwork",
+				"QueryVpnBindingAAI")
 			.hasNotPassed("QueryNetworkPolicyAAI", "QueryNetworkTableRefAAI", 
     			"UpdateNetworkAdapter", "UpdateNetworkAAI", "UpdateNetworkBB_End");
 		assertThat(processInstance).isEnded();
