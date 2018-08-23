@@ -37,6 +37,7 @@ import org.junit.rules.ExpectedException;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class WorkflowActionBBTasksTest extends BaseTaskTest {
@@ -77,6 +78,32 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		workflowActionBBTasks.selectBB(execution);
 		boolean success = (boolean) execution.getVariable("completed");
 		assertEquals(true,success);
+	}
+	
+	@Test
+	public void getUpdatedRequestTest() throws Exception{
+		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
+		ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
+		BuildingBlock bb1 = new BuildingBlock();
+		bb1.setBpmnFlowName("CreateNetworkBB");
+		flowsToExecute.add(ebb1);
+		ebb1.setBuildingBlock(bb1);
+		ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
+		BuildingBlock bb2 = new BuildingBlock();
+		bb2.setBpmnFlowName("ActivateNetworkBB");
+		flowsToExecute.add(ebb2);
+		ebb2.setBuildingBlock(bb2);
+		String requestId = "requestId";
+		execution.setVariable("mso-request-id", requestId);
+		execution.setVariable("flowsToExecute", flowsToExecute);
+		int currentSequence = 2;
+		String expectedStatusMessage = "Execution of CreateNetworkBB has completed successfully, next invoking ActivateNetworkBB (Execution Path progress: BBs completed = 1; BBs remaining = 1).";
+		Long expectedLong = new Long(52);
+		InfraActiveRequests mockedRequest = new InfraActiveRequests();
+		when(requestsDbClient.getInfraActiveRequestbyRequestId(requestId)).thenReturn(mockedRequest);
+		InfraActiveRequests actual = workflowActionBBTasks.getUpdatedRequest(execution, currentSequence);
+		assertEquals(expectedStatusMessage, actual.getStatusMessage());
+		assertEquals(expectedLong, actual.getProgress());
 	}
 	
 	@Test

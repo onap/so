@@ -81,6 +81,45 @@ public class WorkflowActionBBTasks {
 			execution.setVariable(G_CURRENT_SEQUENCE, currentSequence);
 		}
 	}
+	
+	public void updateFlowStatistics(DelegateExecution execution) {
+		int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+		if(currentSequence > 1) {
+			InfraActiveRequests request = this.getUpdatedRequest(execution, currentSequence);
+			requestDbclient.updateInfraActiveRequests(request);
+		}
+	}
+
+	protected InfraActiveRequests getUpdatedRequest(DelegateExecution execution, int currentSequence) {
+		List<ExecuteBuildingBlock> flowsToExecute = (List<ExecuteBuildingBlock>) execution
+				.getVariable("flowsToExecute");
+		String requestId = (String) execution.getVariable(G_REQUEST_ID);
+		InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
+		ExecuteBuildingBlock completedBB = flowsToExecute.get(currentSequence - 2);
+		ExecuteBuildingBlock nextBB = flowsToExecute.get(currentSequence - 1);
+		int completedBBs = currentSequence - 1;
+		int totalBBs = flowsToExecute.size();
+		int remainingBBs = totalBBs - completedBBs;
+		String statusMessage = this.getStatusMessage(completedBB.getBuildingBlock().getBpmnFlowName(), 
+				nextBB.getBuildingBlock().getBpmnFlowName(), completedBBs, remainingBBs);
+		Long percentProgress = this.getPercentProgress(completedBBs, totalBBs);
+		request.setStatusMessage(statusMessage);
+		request.setProgress(percentProgress);
+		request.setLastModifiedBy("CamundaBPMN");
+		return request;
+	}
+	
+	protected Long getPercentProgress(int completedBBs, int totalBBs) {
+		double ratio = (completedBBs / (totalBBs * 1.0));
+		int percentProgress = (int) (ratio * 95);
+		return new Long(percentProgress + 5);
+	}
+	
+	protected String getStatusMessage(String completedBB, String nextBB, int completedBBs, int remainingBBs) {
+		return "Execution of " + completedBB + " has completed successfully, next invoking " + nextBB
+				+ " (Execution Path progress: BBs completed = " + completedBBs + "; BBs remaining = " + remainingBBs
+				+ ").";
+	}
 
 	public void sendSyncAck(DelegateExecution execution) {
 		final String requestId = (String) execution.getVariable(G_REQUEST_ID);
