@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -281,14 +281,14 @@ class SDNCAdapterUtils {
 			}
 
 			boolean isAic3 = execution.getVariable("isAic3")
-			
+
 			if(isAic3) {
 				nnsl2HomingInformation = updateHomingInfo(nnsl2HomingInformation, "AIC3.0")
 			}
 			else {
 				nnsl2HomingInformation = updateHomingInfo(nnsl2HomingInformation, "AIC2.X")
 			}
-									
+
 			String content = """
 				<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:sdncadapterworkflow="http://openecomp.com/mso/workflow/schema/v1"
 						xmlns:sdncadapter="http://domain2.openecomp.com/workflow/sdnc/adapter/schema/v1">
@@ -319,7 +319,7 @@ class SDNCAdapterUtils {
 
 	/**
 	 * Builds an SDNC "reserve" request and stores it in the specified execution
-	 * variable. 
+	 * variable.
 	 * @param execution the execution
 	 * @param action the type of action: reserve, turnup, etc
 	 * @param resultVar the execution variable in which the result will be stored
@@ -424,7 +424,7 @@ class SDNCAdapterUtils {
 			if (additionalData == null) {
 				additionalData = ""
 			}
-			
+
 			if(isAic3) {
 				nnsl2HomingInformation = updateHomingInfo(nnsl2HomingInformation, "AIC3.0")
 			}
@@ -470,7 +470,7 @@ class SDNCAdapterUtils {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error")
 		}
 	}
-	
+
 	public String updateHomingInfo(String homingInfo, String aicVersion) {
 		String newHomingInfo
 		if(homingInfo == null || homingInfo.trim().length() == 0) {
@@ -480,7 +480,7 @@ class SDNCAdapterUtils {
 			newHomingInfo = homingInfo.substring(0, homingInfo.indexOf("</l2-homing-information>")) + "<aic-version>" + aicVersion + "</aic-version></l2-homing-information>"
 		}
 	}
-	
+
 	/**
 	 * Builds a topology SDNC request and return String request.
 	 * As V2 will use 1607-style request, region instead of aic clli code
@@ -506,7 +506,7 @@ class SDNCAdapterUtils {
 		 } else {
 			 hdrRequestId = testHdrRequestId
 		 }
-		 
+
 		 String requestId = ""
 		 try {
 			 requestId = execution.getVariable("mso-request-id")
@@ -561,6 +561,9 @@ class SDNCAdapterUtils {
 			 int subscriberNameEnd = siRelatedLink.indexOf("/service-subscriptions/")
 		     subscriberName = siRelatedLink.substring(subscriberNameStart + 19, subscriberNameEnd)
 			 subscriberName = UriUtils.decode(subscriberName,"UTF-8")
+		 }else{
+			 serviceType = execution.getVariable("serviceType")
+			 subscriberName = execution.getVariable("subscriberName")
 		 }
 
 		 String content =
@@ -635,11 +638,11 @@ class SDNCAdapterUtils {
 			  requestId = execution.getVariable("mso-request-id")
 			  if (requestId == null) {
 				  requestId = execution.getVariable("msoRequestId")
-			  }		
+			  }
 		  } else {
 		  	  requestId = testRequestId
-		  }		  
-		  
+		  }
+
 		  String aicCloudRegion = cloudRegionId
 		  String tenantId = ""
 		  if (utils.nodeExists(requestXML, "tenant-id")) {
@@ -717,7 +720,7 @@ class SDNCAdapterUtils {
 
 		  String content =
 		  """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
-   				                                    xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
+   				                                    xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
                                                     xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
 					   <sdncadapter:RequestHeader>
 						  <sdncadapter:RequestId>${MsoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
@@ -993,7 +996,7 @@ class SDNCAdapterUtils {
 					exceptionUtil.buildAndThrowWorkflowException(execution, 400, msg)
 				}
 			}
-			
+
 	public String modelInfoToEcompModelInformation(String jsonModelInfo) {
 		String modelInvariantUuid = jsonUtil.getJsonValue(jsonModelInfo, "modelInvariantUuid")
 		String modelUuid = jsonUtil.getJsonValue(jsonModelInfo, "modelUuid")
@@ -1004,11 +1007,11 @@ class SDNCAdapterUtils {
 		String modelCustomizationString = ""
 		if (modelCustomizationUuid != null) {
 			modelCustomizationString = "<model-customization-uuid>${MsoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>"
-		}			
+		}
 		String modelVersion = jsonUtil.getJsonValue(jsonModelInfo, "modelVersion")
 		if (modelVersion == null) {
 			modelVersion = ""
-		}		
+		}
 		String modelName = jsonUtil.getJsonValue(jsonModelInfo, "modelName")
 		String ecompModelInformation =
 				"""<onap-model-information>
@@ -1019,6 +1022,6 @@ class SDNCAdapterUtils {
 						<model-name>${MsoUtils.xmlEscape(modelName)}</model-name>
 				</onap-model-information>"""
 
-		return ecompModelInformation		
-	} 
+		return ecompModelInformation
+	}
 }

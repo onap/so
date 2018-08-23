@@ -328,6 +328,10 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 			if(!resourceClient.exists(uri)){
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Service Instance not found in aai")
+			}else{
+				Map<String, String> keys = uri.getURIKeys()
+				execution.setVariable("serviceType", keys.get("service-type"))
+				execution.setVariable("subscriberName", keys.get("global-customer-id"))
 			}
 
 		}catch(BpmnError e) {
