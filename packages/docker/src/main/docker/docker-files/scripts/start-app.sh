@@ -40,7 +40,7 @@ if [ -z "${LOG_PATH}" ]; then
 	export LOG_PATH="logs/${APP}"
 fi
 
-if [ ${APP} = "asdc-controller" ]; then
+if [ ${APP} = "sdc-controller" ]; then
 	ln -s ${LOG_PATH} ASDC
 fi
 
