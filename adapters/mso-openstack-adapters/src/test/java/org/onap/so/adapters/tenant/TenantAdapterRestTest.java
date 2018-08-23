@@ -53,7 +53,6 @@ import org.onap.so.adapters.tenantrest.DeleteTenantRequest;
 import org.onap.so.adapters.tenantrest.DeleteTenantResponse;
 import org.onap.so.adapters.vnf.BaseRestTestUtils;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
-import org.onap.so.cloud.CloudConfig;
 import org.onap.so.entity.MsoRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -66,14 +65,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class TenantAdapterRestTest extends BaseRestTestUtils {
 
 	@Autowired
-	private CloudConfig cloudConfig;
-	@Autowired
 	private JettisonStyleMapperProvider jettisonTypeObjectMapper;
 	
 	@Test
 	public void testCreateTenantCreated() throws JsonParseException, JsonMappingException, IOException {
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		CreateTenantRequest request = new CreateTenantRequest();
 		String cloudSiteId = "MTN13";
 		String requestId = "62265093-277d-4388-9ba6-449838ade586";
@@ -125,7 +121,6 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testCreateTenantExists() throws JsonParseException, JsonMappingException, IOException {
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		CreateTenantRequest request = new CreateTenantRequest();
 		String cloudSiteId = "MTN13";
 		String requestId = "62265093-277d-4388-9ba6-449838ade586";
@@ -171,7 +166,6 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testDeleteTenant() throws IOException {
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		DeleteTenantRequest request = new DeleteTenantRequest();
 		String cloudSiteId = "mtn13";
 		String tenantId = "tenantId";
@@ -210,7 +204,6 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testDeleteTenantFails() throws IOException {
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		DeleteTenantRequest request = new DeleteTenantRequest();
 		String cloudSiteId = "mtn13";
 		String tenantId = "tenantId";
@@ -247,7 +240,6 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testQuaryTenant() {
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		
 	}

@@ -1376,9 +1376,9 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     protected OpenstackConfig getOpenstackConfig (CloudSite cloudSite, String tenantId) {
         OpenstackConfig openstackConfig = new OpenstackConfig();
         openstackConfig.setRegion (cloudSite.getRegionId());
-        openstackConfig.setAuthUrl (cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getIdentityUrl());
-        openstackConfig.setUsername (cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getMsoId());
-        openstackConfig.setPassword (CryptoUtils.decryptCloudConfigPassword(cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getMsoPass()));
+        openstackConfig.setAuthUrl (cloudSite.getIdentityService().getIdentityUrl());
+        openstackConfig.setUsername (cloudSite.getIdentityService().getMsoId());
+        openstackConfig.setPassword (CryptoUtils.decryptCloudConfigPassword(cloudSite.getIdentityService().getMsoPass()));
         openstackConfig.setTenantName (tenantId);
         return openstackConfig;
     }

@@ -23,8 +23,6 @@ package org.onap.so.adapters.network;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.adapters.vnf.BaseRestTestUtils;
-import org.onap.so.cloud.CloudConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -62,14 +60,10 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	public static final String NETWORK_ID = "43173f6a-d699-414b-888f-ab243dda6dfe";
 	public static final String NETWORK_NAME = "vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0";
 
-	@Autowired
-	private CloudConfig cloudConfig;
+
 
 	@Test
 	public void createNetworkByModelNameNeutronModeGetNetworkException() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenstackGet("/mockPublicUrl/v2.0/networks",HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -82,8 +76,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
 	@Test
 	public void createNetworkByModelNameNeutronModeCreateNetworkException() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		mockOpenStackResponseAccess(wireMockPort);
 
@@ -102,8 +94,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createNetworkByModelNameNeutronMode() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetNeutronNetwork_404("dvspg-VCE_VPE-mtjnj40avbc");
@@ -121,8 +111,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createNetworkByModelNameAlreadyExistNeutronMode() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetAllNeutronNetworks_200("OpenstackGetNeutronNetworks.json");
@@ -136,8 +124,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createNetworkByModelNameAlreadyExistNeutronModeFailIfExistTrue() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetAllNeutronNetworks_200("OpenstackGetNeutronNetworks.json");
@@ -150,8 +136,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
 	@Test
 	public void createNetworkByModelNameHeatMode() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		mockOpenStackResponseAccess(wireMockPort);
 
@@ -170,8 +154,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createNetworkByModelNameAlreadyExistHeatMode() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackPostStack_200("OpenstackResponse_Stack.json");
@@ -187,8 +169,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createNetworkByModelNameAlreadyExistHeatModeFailIfExistTrue() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetStackCreated_200("OpenstackResponse_Stack_Created.json", "dvspg-VCE_VPE-mtjnj40avbc");
@@ -203,8 +183,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createNetworkByModelNameHeatModeQueryNetworkException() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenstackGet("/mockPublicUrl/stacks/dvspg-VCE_VPE-mtjnj40avbc",HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -217,8 +195,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
 	@Test
 	public void createNetworkByModelNameHeatModeCreateNetworkException() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		mockOpenStackResponseAccess(wireMockPort);
 
@@ -235,8 +211,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createNetworkByModelNameCloudSiteNotPresentError() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackPostStack_200("OpenstackResponse_Stack.json");
@@ -251,8 +225,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
 	@Test
 	public void deleteNetworkHeatModeSuccess() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		mockOpenStackResponseAccess(wireMockPort);
 
@@ -271,8 +243,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void deleteNetworkDeleteStackException() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetStackDeleteOrUpdateComplete_200("OpenstackResponse_Stack_DeleteComplete.json");
@@ -289,8 +259,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
 	@Test
 	public void deleteNetworkError() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		mockOpenStackResponseAccess(wireMockPort);
 
@@ -310,8 +278,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void deleteNetworkNeureonMode() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetNeutronNetwork("GetNeutronNetwork.json",NETWORK_ID,HttpStatus.SC_OK);
@@ -326,8 +292,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
 	@Test
 	public void deleteNetworkNeutronModeDeleteStackException() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		mockOpenStackResponseAccess(wireMockPort);
 
@@ -346,8 +310,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void updateNetworkNeutronModeSuccess() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetNeutronNetwork("GetNeutronNetwork.json",NETWORK_ID,HttpStatus.SC_OK);
@@ -362,8 +324,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void updateNetworkNeutronUpdateException() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetNeutronNetwork("GetNeutronNetwork.json",NETWORK_ID,HttpStatus.SC_OK);
@@ -377,8 +337,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
 	@Test
 	public void updateNetworkHeatUpdateException() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		mockOpenStackResponseAccess(wireMockPort);
 
@@ -395,8 +353,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void updateNetworkHeatQueryException() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetStack_500(NETWORK_NAME);
@@ -409,8 +365,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
 	@Test
 	public void updateNetworkHeatStackNotFound() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		mockOpenStackResponseAccess(wireMockPort);
 
@@ -425,8 +379,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void updateNetworkNeutronQueryException() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetNeutronNetwork(NETWORK_ID,HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -439,8 +391,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
 	@Test
 	public void updateNetworkNeutronStackNotFound() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		mockOpenStackResponseAccess(wireMockPort);
 
@@ -455,8 +405,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void queryNetworkHeatModesuccess() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetStackCreated_200("OpenstackResponse_Stack_Created.json", NETWORK_ID);
@@ -469,8 +417,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
 	@Test
 	public void queryNetworkHeatModeQueryException() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		mockOpenStackResponseAccess(wireMockPort);
 
@@ -485,8 +431,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void queryNetworkNeutronModeSuccess() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
 		mockOpenStackResponseAccess(wireMockPort);
 
 		mockOpenStackGetNeutronNetwork("GetNeutronNetwork.json",NETWORK_ID,HttpStatus.SC_OK);
@@ -499,8 +443,6 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
 	@Test
 	public void queryNetworkNeutronModeException() throws IOException{
-
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 
 		mockOpenStackResponseAccess(wireMockPort);
 

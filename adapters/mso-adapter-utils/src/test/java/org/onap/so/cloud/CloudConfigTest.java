@@ -56,26 +56,6 @@ public class CloudConfigTest extends BaseTest{
 		assertEquals ("3.0", site1.getCloudVersion());
 	}
 
-
-	/**
-	 * This method implements a test for the getIdentityServices method.
-	 * @throws MsoException
-	 */
-	@Test
-	public final void testGetIdentityServices () throws MsoException {
-
-		CloudIdentity identity1 = con.getIdentityService("mtn13");
-
-		assertEquals("m93945", identity1.getMsoId());
-		assertEquals("93937EA01B94A10A49279D4572B48369", identity1.getMsoPass());
-		assertEquals("admin", identity1.getAdminTenant());
-		assertEquals("admin", identity1.getMemberRole());
-		assertTrue(identity1.getIdentityUrl().contains("http://localhost:"));
-		assertEquals(ServerType.KEYSTONE, identity1.getIdentityServerType());
-		assertEquals(AuthenticationType.USERNAME_PASSWORD, identity1.getIdentityAuthenticationType());
-
-	}
-
 	/**
 	 * This method implements a test for the getCloudSite method.
 	 */

@@ -42,7 +42,7 @@ public class MsoTenantUtilsFactory {
 		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
 				() -> new MsoCloudSiteNotFound(cloudSiteId));
 
-		return getTenantUtilsByServerType(cloudConfig.getIdentityService(cloudSite.getIdentityServiceId()).getIdentityServerType());
+		return getTenantUtilsByServerType(cloudSite.getIdentityService().getIdentityServerType());
 	}
 
 	public MsoTenantUtils getTenantUtilsByServerType(ServerType serverType) {

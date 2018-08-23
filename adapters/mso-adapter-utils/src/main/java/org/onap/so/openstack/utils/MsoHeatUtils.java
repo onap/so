@@ -382,7 +382,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
             OpenStackRequest <Stack> request = heatClient.getStacks ().create (stack);
             // Begin X-Auth-User
             // Obtain an MSO token for the tenant
-            CloudIdentity cloudIdentity = cloudConfig.getIdentityService(cloudSite.getIdentityServiceId());
+            CloudIdentity cloudIdentity = cloudSite.getIdentityService();
             // cloudIdentity.getMsoId(), cloudIdentity.getMsoPass()
             //req
             request.header ("X-Auth-User", cloudIdentity.getMsoId ());
@@ -965,7 +965,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         }
 
         // Obtain an MSO token for the tenant
-        CloudIdentity cloudIdentity = cloudConfig.getIdentityService(cloudSite.getIdentityServiceId());
+        CloudIdentity cloudIdentity = cloudSite.getIdentityService();
         LOGGER.debug("Found: " + cloudIdentity.toString());
         MsoTenantUtils tenantUtils = tenantUtilsFactory.getTenantUtilsByServerType(cloudIdentity.getIdentityServerType());
         String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
@@ -1488,7 +1488,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		String keystone_url = null;
 		try {
 			CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
-			CloudIdentity cloudIdentity = cloudConfig.getIdentityService(cloudSite.getIdentityServiceId());
+			CloudIdentity cloudIdentity = cloudSite.getIdentityService();
 			keystone_url = cloudIdentity.getIdentityUrl();
 		} catch (Exception e) {
 			throw new MsoCloudSiteNotFound(cloudSiteId);

@@ -43,17 +43,14 @@ import org.onap.so.logging.jaxrs.filter.jersey.SpringClientFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import uk.co.blackpepper.bowman.Client;
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
-import uk.co.blackpepper.bowman.RestTemplateConfigurer;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -119,7 +116,7 @@ public class CatalogDbClient {
 	}
 
 	public CatalogDbClient() {
-		ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
+		ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
 		
 		ClientFactory clientFactory = Configuration.builder().setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
 			restTemplate.getInterceptors().add((new SpringClientFilter()));
@@ -316,9 +313,9 @@ public class CatalogDbClient {
 		return this.getSingleCloudIdentity(UriBuilder.fromUri(endpoint+"/cloudIdentity/"+id).build());
 	}
 	
-	public CloudSite getCloudSiteByClliAndAicVersion (String clli, String aicVersion){
-		return this.getSinglCloudSite(UriBuilder.fromUri(endpoint+"/cloud_sites/search/findByClliAndCloudVersion")
-		.queryParam("CLLI",clli).queryParam("AIC_VERSION",aicVersion)
+	public CloudSite getCloudSiteByClliAndAicVersion (String clli, String cloudVersion){
+		return this.getSinglCloudSite(UriBuilder.fromUri(endpoint+"/cloudSite/search/findByClliAndCloudVersion")
+		.queryParam("CLLI",clli).queryParam("CLOUD_VERSION",cloudVersion)
 		.build());
 	}
 

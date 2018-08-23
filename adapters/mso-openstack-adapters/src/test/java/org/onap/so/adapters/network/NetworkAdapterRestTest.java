@@ -58,7 +58,6 @@ import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.adapters.vnf.BaseRestTestUtils;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
-import org.onap.so.cloud.CloudConfig;
 import org.onap.so.entity.MsoRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -70,8 +69,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class NetworkAdapterRestTest extends BaseRestTestUtils {
 
-	@Autowired
-	private CloudConfig cloudConfig;
 	@Autowired
 	private JettisonStyleMapperProvider jettisonTypeObjectMapper;
 	private static final String CLOUDSITE_ID = "mtn13";
@@ -86,7 +83,6 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testCreateNetwork() throws JSONException, JsonParseException, JsonMappingException, IOException {
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		CreateNetworkRequest request = new CreateNetworkRequest();
 		request.setBackout(true);
 		request.setSkipAAI(true);
@@ -128,7 +124,7 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testCreateNetwork_JSON() throws JSONException, JsonParseException, JsonMappingException, IOException {
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
+
 
 		mockOpenStackResponseAccess(wireMockPort);
 
@@ -157,7 +153,6 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testDeleteNetwork() throws IOException{
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		DeleteNetworkRequest request = new DeleteNetworkRequest();
 		
 		MsoRequest msoReq = new MsoRequest();
@@ -197,7 +192,6 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 
 	@Test
 	public void testQueryNetwork_Exception() throws IOException{
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		MsoRequest msoReq = new MsoRequest();
 		msoReq.setRequestId(MSO_REQUEST_ID);
 		msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
@@ -216,7 +210,6 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testQueryNetwork() throws IOException{
 
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		mockOpenStackResponseAccess(wireMockPort);
 		mockOpenStackGetStackVfModule_200();
 
@@ -235,7 +228,6 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testUpdateNetwork() throws IOException{
 		
-		cloudConfig.getIdentityService("MTN13").setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
 		UpdateNetworkRequest request = new UpdateNetworkRequest();
 		
 		MsoRequest msoReq = new MsoRequest();
