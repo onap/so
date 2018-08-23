@@ -427,14 +427,20 @@ public class WorkflowActionTest extends BaseTaskTest {
 		orch12.setFlowName("ActivateVfModuleBB");
 		orchFlows.add(orch12);
 		OrchestrationFlow orch13 = new OrchestrationFlow();
-		orch13.setFlowName("ActivateVnfBB");
+		orch13.setFlowName("AssignFabricConfigurationBB");
 		orchFlows.add(orch13);
 		OrchestrationFlow orch14 = new OrchestrationFlow();
-		orch14.setFlowName("ActivateNetworkCollectionBB");
+		orch14.setFlowName("ActivateFabricConfigurationBB");
 		orchFlows.add(orch14);
 		OrchestrationFlow orch15 = new OrchestrationFlow();
-		orch15.setFlowName("ActivateServiceInstanceBB");
+		orch15.setFlowName("ActivateVnfBB");
 		orchFlows.add(orch15);
+		OrchestrationFlow orch16 = new OrchestrationFlow();
+		orch16.setFlowName("ActivateNetworkCollectionBB");
+		orchFlows.add(orch16);
+		OrchestrationFlow orch17 = new OrchestrationFlow();
+		orch17.setFlowName("ActivateServiceInstanceBB");
+		orchFlows.add(orch17);
 		
 		Service service = new Service();
 		doReturn(service).when(catalogDbClient).getServiceByID("3c40d244-808e-42ca-b09a-256d83d19d0a");
