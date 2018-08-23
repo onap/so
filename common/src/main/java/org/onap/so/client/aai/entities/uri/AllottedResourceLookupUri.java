@@ -28,13 +28,13 @@ import javax.ws.rs.core.UriBuilder;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 
-public class ServiceInstanceUri extends HttpLookupUri {
+public class AllottedResourceLookupUri extends HttpLookupUri {
 
-	protected ServiceInstanceUri(Object... values) {
-		super(AAIObjectType.SERVICE_INSTANCE, values);
+	protected AllottedResourceLookupUri(Object... values) {
+		super(AAIObjectType.ALLOTTED_RESOURCE, values);
 	}
-	protected ServiceInstanceUri(UriBuilder builder, Optional<String> cachedValue, Object... values) {
-		super(AAIObjectType.SERVICE_INSTANCE, builder, cachedValue, values);
+	protected AllottedResourceLookupUri(UriBuilder builder, Optional<String> cachedValue, Object... values) {
+		super(AAIObjectType.ALLOTTED_RESOURCE, builder, cachedValue, values);
 	}
 	
 	@Override
@@ -47,6 +47,6 @@ public class ServiceInstanceUri extends HttpLookupUri {
 	}
 	@Override
 	public URI buildNoNetwork() {
-		return super.build(new String[]{"NONE", "NONE", (String)this.values[0]});
+		return super.build(new String[]{"NONE", "NONE", "NONE", (String)this.values[0]});
 	}
 }

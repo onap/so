@@ -84,7 +84,7 @@ public class ServiceInstanceUriTest {
 		 
 		ServiceInstanceUri instance = new ServiceInstanceUri("key1");
 		ServiceInstanceUri spy = spy(instance);
-		doReturn("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3").when(spy).getSerivceInstance(any(Object.class));
+		doReturn("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3").when(spy).getObjectById(any(Object.class));
 		
 		final URI result = spy.build();
 		final URI expected = UriBuilder.fromPath("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3").build();
@@ -97,7 +97,7 @@ public class ServiceInstanceUriTest {
 		 
 		ServiceInstanceUri instance = new ServiceInstanceUri("key1");
 		ServiceInstanceUri spy = spy(instance);
-		doReturn("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3").when(spy).getSerivceInstance(any(Object.class));
+		doReturn("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3").when(spy).getObjectById(any(Object.class));
 		
 		final URI result = spy.resourceVersion("1234").build();
 		final URI expected = UriBuilder.fromUri("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3?resource-version=1234").build();
@@ -110,7 +110,7 @@ public class ServiceInstanceUriTest {
 		 
 		ServiceInstanceUri instance = new ServiceInstanceUri("key1");
 		ServiceInstanceUri spy = spy(instance);
-		doReturn("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3%20space").when(spy).getSerivceInstance(any(Object.class));
+		doReturn("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3%20space").when(spy).getObjectById(any(Object.class));
 		
 		final URI result = spy.build();
 		final URI expected = UriBuilder.fromUri("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3%20space").build();
@@ -123,7 +123,7 @@ public class ServiceInstanceUriTest {
 		 
 		ServiceInstanceUri instance = new ServiceInstanceUri("key1");
 		ServiceInstanceUri spy = spy(instance);
-		doReturn("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3%28space").when(spy).getSerivceInstance(any(Object.class));
+		doReturn("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3%28space").when(spy).getObjectById(any(Object.class));
 		
 		assertThat(spy.getURIKeys().values(), contains("key1", "key2", "key3(space"));
 		
@@ -133,7 +133,7 @@ public class ServiceInstanceUriTest {
 		ServiceInstanceUri instance = new ServiceInstanceUri("key1");
 		ServiceInstanceUri spy = spy(instance);
 		String uri = "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3";
-		doReturn(uri).when(spy).getSerivceInstance(any(Object.class));
+		doReturn(uri).when(spy).getObjectById(any(Object.class));
 		doReturn(Optional.of(uri)).when(spy).getCachedValue();
 		final URI result = spy.resourceVersion("1234").clone().build();
 		final URI expected = UriBuilder.fromUri("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3?resource-version=1234").build();

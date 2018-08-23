@@ -31,7 +31,12 @@ public class AAIUriFactory {
 	
 	/**
 	 * values are filled into the URI template specified in {@link AAIObjectType} in order
-	 * 
+	 * <br>
+	 * There are two special lookups performed on certain types when a single value is specified:
+	 * <br>
+	 * Service Instance and AllottedResources
+	 * <br>
+	 * These can be retrieved without all their required keys but an HTTP call is required to do so
 	 * @param type
 	 * @param values
 	 * @return
@@ -39,6 +44,8 @@ public class AAIUriFactory {
 	public static AAIResourceUri createResourceUri(AAIObjectType type, Object... values) {
 		if (AAIObjectType.SERVICE_INSTANCE.equals(type)) {
 			return new ServiceInstanceUri(values);
+		} else if (AAIObjectType.ALLOTTED_RESOURCE.equals(type)) {
+			return new AllottedResourceLookupUri(values);
 		} else {
 			return new AAISimpleUri(type, values);
 		}
