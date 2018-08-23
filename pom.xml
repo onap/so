@@ -29,6 +29,7 @@
 		<module>asdc-controller</module>
 		<module>bpmn</module>
 		<module>cloudify-client</module>
+        <module>so-monitoring</module>
 		<module>packages</module>
 	</modules>
 	<properties>
