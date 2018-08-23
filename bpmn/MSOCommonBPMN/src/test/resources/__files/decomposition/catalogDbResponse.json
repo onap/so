@@ -1,0 +1,33 @@
+{
+  "serviceResources": {
+    "serviceType": "",
+    "workloadContext": "testWorkloadContext",
+    "serviceAllottedResources": [],
+    "modelInfo": {
+      "modelInvariantUuid": "testModelInvariantId",
+      "modelName": "testModleName",
+      "modelVersion": "testModelVersion",
+      "modelUuid": "testModelUuid"
+    },
+    "environmentContext": "testEnvironmentContent",
+    "serviceRole": "",
+    "serviceVnfs": [],
+    "serviceNetworks": [
+      {
+        "toscaNodeType": "testToscaModelType",
+        "networkTechnology": "testNetworkTechnology",
+        "networkScope": "testNetworkScope",
+        "modelInfo": {
+          "modelInvariantUuid": "testModelInvariantId",
+          "modelName": "testModleName",
+          "modelVersion": "testModelVersion",
+          "modelCustomizationUuid": "testModelCustomizationUuid",
+          "modelInstanceName": "testModelInstanceName",
+          "modelUuid": "testModelUuid"
+        },
+        "networkRole": "testNetworkRole",
+        "networkType": "testNetworkType"
+      }
+    ]
+  }
+}

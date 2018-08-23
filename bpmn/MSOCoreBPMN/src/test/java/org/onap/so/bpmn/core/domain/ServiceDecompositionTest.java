@@ -103,6 +103,8 @@ public class ServiceDecompositionTest {
 		serviceDecomp.addResource(allottedResource);
 		serviceDecomp.addResource(configResource);
 		
+		System.out.println(serviceDecomp.toJsonString());
+		
 		assertThat(serviceDecomp.getServiceResource(vnfResource.getResourceId()), sameBeanAs(vnfResource));
 		assertThat(serviceDecomp.getServiceResource(networkResource.getResourceId()), sameBeanAs(networkResource));
 		assertThat(serviceDecomp.getServiceResource(allottedResource.getResourceId()), sameBeanAs(allottedResource));
