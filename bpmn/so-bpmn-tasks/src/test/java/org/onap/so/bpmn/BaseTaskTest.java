@@ -27,6 +27,7 @@ import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetworkBBUtils;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
+import org.onap.so.client.db.request.RequestsDbClient;
 import org.onap.so.client.orchestration.AAICollectionResources;
 import org.onap.so.client.orchestration.AAIInstanceGroupResources;
 import org.onap.so.client.orchestration.AAINetworkResources;
@@ -107,6 +108,9 @@ public abstract class BaseTaskTest extends TestDataSetup {
 	
 	@MockBean
 	protected CatalogDbClient catalogDbClient;
+	
+	@MockBean
+	protected RequestsDbClient requestsDbClient;
 	
 	@Mock
 	protected BBInputSetupUtils bbSetupUtils;
