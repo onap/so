@@ -2,6 +2,8 @@ package db.migration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.flywaydb.core.api.MigrationVersion;
@@ -14,10 +16,12 @@ import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.logger.MsoLogger;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 
@@ -74,7 +78,7 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         this.cloudConfig = cloudConfig;
     }
 
-    private CloudConfig loadCloudConfig(InputStream stream) throws Exception {
+    private CloudConfig loadCloudConfig(InputStream stream) throws JsonParseException, JsonMappingException, IOException  {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         R__CloudConfigMigration cloudConfigMigration =
         		mapper.readValue(stream, R__CloudConfigMigration.class);
@@ -92,7 +96,7 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         return "/application" + profile + ".yaml";
     }
 
-    private void migrateCloudIdentity(Collection<CloudIdentity> entities, Connection connection) throws Exception {
+    private void migrateCloudIdentity(Collection<CloudIdentity> entities, Connection connection) throws SQLException  {
         LOGGER.debug("Starting migration for CloudConfig-->IdentityService");
         String insert = "INSERT INTO `identity_services` (`ID`, `IDENTITY_URL`, `MSO_ID`, `MSO_PASS`, `ADMIN_TENANT`, `MEMBER_ROLE`, `TENANT_METADATA`, `IDENTITY_SERVER_TYPE`, `IDENTITY_AUTHENTICATION_TYPE`, `LAST_UPDATED_BY`) " +
                 "VALUES (?,?,?,?,?,?,?,?,?,?);";
@@ -122,7 +126,7 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         }
     }
 
-    private void migrateCloudSite(Collection<CloudSite> entities, Connection connection) throws Exception {
+    private void migrateCloudSite(Collection<CloudSite> entities, Connection connection) throws SQLException  {
         LOGGER.debug("Starting migration for CloudConfig-->CloudSite");
         String insert = "INSERT INTO `cloud_sites` (`ID`, `REGION_ID`, `IDENTITY_SERVICE_ID`, `CLOUD_VERSION`, `CLLI`, `CLOUDIFY_ID`, `PLATFORM`, `ORCHESTRATOR`, `LAST_UPDATED_BY`) " +
                 "VALUES (?,?,?,?,?,?,?,?,?);";
@@ -151,7 +155,7 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         }
     }
 
-    private void migrateCloudifyManagers(Collection<CloudifyManager> entities, Connection connection) throws Exception {
+    private void migrateCloudifyManagers(Collection<CloudifyManager> entities, Connection connection) throws SQLException  {
         String insert = "INSERT INTO `cloudify_managers` (`ID`, `CLOUDIFY_URL`, `USERNAME`, `PASSWORD`, `VERSION`, `LAST_UPDATED_BY`)" +
                 " VALUES (?,?,?,?,?,?);";
 
