@@ -73,7 +73,7 @@ public class RestRequest implements Callable<Response> {
 				mapper.get().map(response);
 			} catch (NotFoundException e) {
 				if (this.client.props.mapNotFoundToEmpty() && "GET".equals(method)) {
-					msoLogger.error(e);
+					msoLogger.debug("RestClient recieved not found on URL: " + this.client.getWebTarget().getUri());
 					return response;
 				} else {
 					throw e;
