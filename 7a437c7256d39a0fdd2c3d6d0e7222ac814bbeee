@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_68040b15",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/service/ServicePluginFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1089
+      },
+      "writtenOn": "2018-08-24T06:16:29Z",
+      "side": 1,
+      "message": "no need of else here, because if uuiObject is null, serviceObject will also remain null.",
+      "parentUuid": "1a76adc5_65e2f6d6",
+      "range": {
+        "startLine": 184,
+        "startChar": 4,
+        "endLine": 184,
+        "endChar": 37
+      },
+      "revId": "7a437c7256d39a0fdd2c3d6d0e7222ac814bbeee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_e5cda65e",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/service/ServicePluginFactory.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-08-23T11:48:06Z",
       "side": 1,
       "message": "what would be the else and exception behavior?",
+      "range": {
+        "startLine": 238,
+        "startChar": 2,
+        "endLine": 238,
+        "endChar": 28
+      },
+      "revId": "7a437c7256d39a0fdd2c3d6d0e7222ac814bbeee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c8143f46",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/service/ServicePluginFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1089
+      },
+      "writtenOn": "2018-08-24T06:16:29Z",
+      "side": 1,
+      "message": "vpnRequestInputs will not have those attributes if it is null.No need of else here",
+      "parentUuid": "1a76adc5_e5cda65e",
       "range": {
         "startLine": 238,
         "startChar": 2,
