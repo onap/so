@@ -35,19 +35,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AAIResultWrapper implements Serializable {
 
 	private static final long serialVersionUID = 5895841925807816737L;
-	private final Optional<String> jsonBody;
+	private final String jsonBody;
 	private final ObjectMapper mapper;
 	public AAIResultWrapper(String json) {
-		this.jsonBody = Optional.ofNullable(json);
+		this.jsonBody = json;
 		this.mapper = new AAICommonObjectMapperProvider().getMapper();
 	}
 	
 	public Optional<Relationships> getRelationships() {
 		final String path = "$.relationship-list";
-		if (!jsonBody.isPresent()) {
+		if (isEmpty()) {
 			return Optional.empty();
 		}
-		Optional<String> result = JsonPathUtil.getInstance().locateResult(jsonBody.get(), path);
+		Optional<String> result = JsonPathUtil.getInstance().locateResult(jsonBody, path);
 		if (result.isPresent()) {
 			return Optional.of(new Relationships(result.get()));
 		} else {
@@ -56,33 +56,37 @@ public class AAIResultWrapper implements Serializable {
 	}
 	
 	public String getJson() {
-		return jsonBody.orElse("{}");
+		if(jsonBody == null) {
+			return "{}";
+		} else {
+			return jsonBody;
+		}
 	}
 	
 	public Map<String, Object> asMap() {
-		if (!this.jsonBody.isPresent()) {
+		if (isEmpty()) {
 			return new HashMap<>();
 		}
 		try {
-			return mapper.readValue(this.jsonBody.get(), new TypeReference<Map<String, Object>>(){});
+			return mapper.readValue(this.jsonBody, new TypeReference<Map<String, Object>>(){});
 		} catch (IOException e) {
 			return new HashMap<>();
 		}
 	}
 	
 	public <T> Optional<T> asBean(Class<T> clazz) {
-		if (!this.jsonBody.isPresent()) {
+		if (isEmpty()) {
 			return Optional.empty();
 		}
 		try {
-			return Optional.of(mapper.readValue(this.jsonBody.get(), clazz));
+			return Optional.of(mapper.readValue(this.jsonBody, clazz));
 		} catch (IOException e) {
 			return Optional.empty();
 		}
 	}
 	
 	public boolean isEmpty() {
-		return !this.jsonBody.isPresent();
+		return jsonBody == null;
 	}
 	@Override
 	public String toString() {

@@ -20,9 +20,10 @@
 
 package org.onap.so.client.aai.entities;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -30,11 +31,15 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
+import org.springframework.util.SerializationUtils;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -43,7 +48,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(MockitoJUnitRunner.class) 
 public class AAIResultWrapperTest {
 	String json;
-
+	@Rule
+    public ExpectedException thrown= ExpectedException.none();
+	
 	AAIResultWrapper aaiResultWrapper;
 	AAIResultWrapper aaiResultWrapperEmpty;
 	
@@ -54,6 +61,14 @@ public class AAIResultWrapperTest {
 		
 		aaiResultWrapper = new AAIResultWrapper(json);
 		aaiResultWrapperEmpty = new AAIResultWrapper("{}");
+	}
+	
+	@Test
+	public void testAAIResultWrapperIsSerializable() throws IOException {
+		AAIResultWrapper original = new AAIResultWrapper("");
+		byte[] serialized = SerializationUtils.serialize(original);
+		AAIResultWrapper deserialized = (AAIResultWrapper) SerializationUtils.deserialize(serialized);
+		assertEquals(deserialized.getJson(), original.getJson());
 	}
 	
 	@Test
