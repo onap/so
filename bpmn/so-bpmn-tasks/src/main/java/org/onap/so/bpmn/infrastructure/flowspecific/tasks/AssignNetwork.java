@@ -21,10 +21,8 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
-import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,30 +33,9 @@ public class AssignNetwork {
 
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,
 			AssignNetwork.class);
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
+
 	@Autowired
 	private ExtractPojosForBB extractPojosForBB;
-
-	/**
-	 * Check if there are collection(s)
-	 * @param execution
-	 * @return boolean
-	 */
-	public boolean hasCollection(BuildingBlockExecution execution) {
-		boolean hasCollection = false;
-		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID,
-					execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			if (serviceInstance.getCollection() != null){
-				hasCollection = true;
-				msoLogger.debug("there are collections to create");
-			}
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-		return hasCollection;
-	}
 	
 	/**
 	 * Check if network was found by name
@@ -79,15 +56,5 @@ public class AssignNetwork {
 			// return false if no network present
 		}
 		return networkFound;
-	}
-	
-	/**
-	 * BPMN access method. Return flag if BPMN flow should skip AAI interaction
-	 * @param execution
-	 * @return TRUE if network collection was NOT present OR network WAS found by name
-	 */
-	public boolean skipNetworkCreationInAAI(BuildingBlockExecution execution) {
-
-		return !hasCollection(execution) || networkFoundByName(execution);
 	}
 }

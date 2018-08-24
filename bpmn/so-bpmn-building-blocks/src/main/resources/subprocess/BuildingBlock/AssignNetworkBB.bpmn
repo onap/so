@@ -23,13 +23,13 @@
       <bpmn2:incoming>SequenceFlow_0do51t8</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0ln3hj3</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:exclusiveGateway id="networkFoundByName_ExclusiveGateway" name="skip if network found by name or to be created by SDNC" default="SequenceFlow_0gkr871">
+    <bpmn2:exclusiveGateway id="networkFoundByName_ExclusiveGateway" name="skip if network found by name" default="SequenceFlow_0gkr871">
       <bpmn2:incoming>SequenceFlow_11op1ih</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_017131q</bpmn2:outgoing>
       <bpmn2:outgoing>SequenceFlow_0gkr871</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_017131q" name="Yes" sourceRef="networkFoundByName_ExclusiveGateway" targetRef="ServiceTask_get_cloud_region">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{AssignNetwork.skipNetworkCreationInAAI(execution.getVariable("gBuildingBlockExecution")) == true}]]></bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{AssignNetwork.networkFoundByName(execution.getVariable("gBuildingBlockExecution")) == true}]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_0gkr871" name="No" sourceRef="networkFoundByName_ExclusiveGateway" targetRef="ServiceTask_put_network_in_AAI" />
     <bpmn2:endEvent id="AssignNetworkBB_end" name="End Flow">
@@ -111,7 +111,7 @@
       <bpmndi:BPMNShape id="ExclusiveGateway_19hvq7h_di" bpmnElement="networkFoundByName_ExclusiveGateway" isMarkerVisible="true">
         <dc:Bounds x="838" y="-112" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="821" y="-176" width="83" height="24" />
+          <dc:Bounds x="833" y="-169" width="85" height="48" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_017131q_di" bpmnElement="SequenceFlow_017131q">
