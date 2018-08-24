@@ -153,6 +153,10 @@ public abstract class RestClient {
 		}
 		return builder;
 	}
+	
+	protected WebTarget getWebTarget() {
+		return this.webTarget;
+	}
 
 	protected abstract void initializeHeaderMap(Map<String, String> headerMap);
 
