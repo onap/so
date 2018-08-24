@@ -51,7 +51,8 @@ public class RESTClientTest {
 	private String jsonResponseAsString;
 	
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(28090));	
+	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());	
+	
 	
 	@Before
 	public void before() throws Exception {
@@ -62,7 +63,7 @@ public class RESTClientTest {
 		jsonResponse = new JSONObject();
 		jsonResponse.put("response", "responseValue");
 		jsonResponseAsString = jsonResponse.toString(); 
-		restClient = new RESTClient("http://localhost:28090/example", "localhost", 28090);
+		restClient = new RESTClient("http://localhost:" + wireMockRule.port() + "/example", "localhost", wireMockRule.port());
 	}	
 	
 	@Test
@@ -79,9 +80,9 @@ public class RESTClientTest {
 		assertEquals(1, restClient.getParameters().size());
 		restClient.addAuthorizationHeader("token");  
 		assertEquals("[token]", restClient.getHeaders().get("Authorization").toString());		
-		assertEquals("http://localhost:28090/example", restClient.getURL());
-		restClient = new RESTClient("http://localhost:28090/example1");
-		assertEquals("http://localhost:28090/example1", restClient.getURL());
+		assertEquals("http://localhost:" + wireMockRule.port() + "/example", restClient.getURL());
+		restClient = new RESTClient("http://localhost:" + wireMockRule.port() + "/example1");
+		assertEquals("http://localhost:" + wireMockRule.port() + "/example1", restClient.getURL());
 	}
 	
 	@Test
