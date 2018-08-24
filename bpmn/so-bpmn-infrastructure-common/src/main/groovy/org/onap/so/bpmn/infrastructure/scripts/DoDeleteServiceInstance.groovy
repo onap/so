@@ -310,11 +310,11 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 				uriList.addAll(wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.L3_NETWORK))
 
 				if(uriList.isEmpty){
-					ServiceInstance si = wrapper.asBean(ServiceInstance.class)
-					String orchestrationStatus = si.getOrchestrationStatus()
-					String serviceType = si.getServiceType()
+					Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+					String orchestrationStatus = si.get().getOrchestrationStatus()
+					String serviceType = si.get().getServiceType()
 					execution.setVariable("serviceType", serviceType)
-					execution.setVariable("serviceRole", si.getServiceRole())
+					execution.setVariable("serviceRole", si.get().getServiceRole())
 
 					if("TRANSPORT".equalsIgnoreCase(serviceType)){
 						if("PendingDelete".equals(orchestrationStatus)){
