@@ -822,6 +822,13 @@ create table if not exists model (
 	FOREIGN KEY (`RECIPE`) REFERENCES `model_recipe` (`MODEL_ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS `controller_selection_reference` (
+  `VNF_TYPE` VARCHAR(50) NOT NULL,
+  `CONTROLLER_NAME` VARCHAR(100) NOT NULL,
+  `ACTION_CATEGORY` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`VNF_TYPE`, `CONTROLLER_NAME`, `ACTION_CATEGORY`)
+) ;
+
 ALTER TABLE `vnf_recipe` 
 CHANGE COLUMN `VNF_TYPE` `NF_ROLE` VARCHAR(200) NULL DEFAULT NULL ;
 
@@ -841,7 +848,6 @@ CREATE TABLE IF NOT EXISTS `identity_services` (
   PRIMARY KEY (`ID`)
 ) ;
 
-
 CREATE TABLE IF NOT EXISTS `cloudify_managers` (
   `ID` varchar(50) NOT NULL,
   `CLOUDIFY_URL` varchar(200) DEFAULT NULL,
@@ -853,9 +859,6 @@ CREATE TABLE IF NOT EXISTS `cloudify_managers` (
   `UPDATE_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`ID`)
 ) ;
-
-
-
 
 CREATE TABLE IF NOT EXISTS `cloud_sites` (
   `ID` varchar(50) NOT NULL,

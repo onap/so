@@ -23,6 +23,7 @@ package org.onap.so.db.catalog.client;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationAction;
@@ -102,6 +103,8 @@ public class CatalogDbClient {
 
 	private Client<CloudifyManager> cloudifyManagerClient;
 
+	protected Client<ControllerSelectionReference> controllerSelectionReferenceClient;
+
 	@Value("${mso.catalog.db.spring.endpoint}")
 	private String endpoint;
 
@@ -145,6 +148,7 @@ public class CatalogDbClient {
 		cloudIdentityClient = clientFactory.create(CloudIdentity.class);
 		cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
 		serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
+		controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
 	}
 	
 	public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(String modelCustomizationUUID) {
@@ -296,6 +300,18 @@ public class CatalogDbClient {
 				.build());
 	}
 	
+	public ControllerSelectionReference getControllerSelectionReferenceByVnfType(String vnfType) {
+		return this.getSingleControllerSelectionReference(UriBuilder
+				.fromUri(endpoint + "/controllerSelectionReference/search/findControllerSelectionReferenceByVnfType")
+						.queryParam("VNF_TYPE", vnfType).build());
+
+	}
+	
+	public ControllerSelectionReference getControllerSelectionReferenceByVnfTypeAndActionCategory(String vnfType, String actionCategory) {
+		return this.getSingleControllerSelectionReference(UriBuilder
+				.fromUri(endpoint + "/controllerSelectionReference/search/findControllerSelectionReferenceByVnfTypeAndActionCategory")
+						.queryParam("VNF_TYPE", vnfType).queryParam("ACTION_CATEGORY", actionCategory).build());
+	}
 	
 	private CollectionNetworkResourceCustomization getSingleCollectionNetworkResourceCustomization(URI uri) {
 		return collectionNetworkResourceCustomizationClient.get(uri);
@@ -353,6 +369,10 @@ public class CatalogDbClient {
 
 	protected CloudifyManager getSingleCloudifyManager(URI uri) {
 		return cloudifyManagerClient.get(uri);
+	}
+
+	private ControllerSelectionReference getSingleControllerSelectionReference(URI uri) {
+		return controllerSelectionReferenceClient.get(uri);
 	}
 
 	public Service getServiceByModelVersionAndModelInvariantUUID(String modelVersion, String modelInvariantUUID) {
