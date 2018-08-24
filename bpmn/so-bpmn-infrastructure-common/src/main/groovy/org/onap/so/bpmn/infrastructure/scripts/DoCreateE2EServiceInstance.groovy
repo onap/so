@@ -319,8 +319,8 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
 			AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
 
-			ServiceInstance si = wrapper.asBean(ServiceInstance.class)
-			execution.setVariable("serviceInstanceName", si.getServiceInstanceName())
+			Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+			execution.setVariable("serviceInstanceName", si.get().getServiceInstanceName())
 
 		}catch(BpmnError e) {
 			throw e;

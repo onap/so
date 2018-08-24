@@ -177,10 +177,10 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
 			AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
 
-			ServiceInstance si = wrapper.asBean(ServiceInstance.class)
-			execution.setVariable("serviceInstanceName", si.getServiceInstanceName())
-			execution.setVariable("model-invariant-id-original", si.getModelInvariantId())
-			execution.setVariable("model-version-id-original", si.getModelVersionId())
+			Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+			execution.setVariable("serviceInstanceName", si.get().getServiceInstanceName())
+			execution.setVariable("model-invariant-id-original", si.get().getModelInvariantId())
+			execution.setVariable("model-version-id-original", si.get().getModelVersionId())
 
 			JSONObject ob = new JSONObject(wrapper.getJson())
 			JSONArray ar = ob.getJSONObject("relationship-list").getJSONArray("relationship")

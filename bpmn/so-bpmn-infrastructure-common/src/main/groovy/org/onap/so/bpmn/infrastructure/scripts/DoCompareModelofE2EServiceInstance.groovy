@@ -140,9 +140,9 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
 			AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
 
-			ServiceInstance si = wrapper.asBean(ServiceInstance.class)
-			execution.setVariable("model-invariant-id-original", si.getModelInvariantId())
-			execution.setVariable("model-version-id-original", si.getModelVersionId())
+			Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+			execution.setVariable("model-invariant-id-original", si.get().getModelInvariantId())
+			execution.setVariable("model-version-id-original", si.get().getModelVersionId())
 
 		}catch(BpmnError e) {
 			throw e;
