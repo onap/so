@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2018 Intel Corp. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -82,20 +82,20 @@ class OofUtils {
         //ServiceInstance Info
         ServiceInstance serviceInstance = decomposition.getServiceInstance()
         def serviceInstanceId = ""
-        def serviceInstanceName = ""
+        def serviceName = ""
 
         serviceInstanceId = execution.getVariable("serviceInstanceId")
-        serviceInstanceName = execution.getVariable("serviceInstanceName")
+        serviceName = execution.getVariable("subscriptionServiceType")
 
         if (serviceInstanceId == null || serviceInstanceId == "null") {
             utils.log("DEBUG", "Unable to obtain Service Instance Id", isDebugEnabled)
             exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - Unable to " +
-                    "obtain Service Instance Id, execution.getVariable(\"serviceInstanceName\") is null")
+                    "obtain Service Instance Id, execution.getVariable(\"serviceInstanceId\") is null")
         }
-        if (serviceInstanceName == null || serviceInstanceName == "null") {
-            utils.log("DEBUG", "Unable to obtain Service Instance Name", isDebugEnabled)
+        if (serviceName == null || serviceName == "null") {
+            utils.log("DEBUG", "Unable to obtain Service Name", isDebugEnabled)
             exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - Unable to " +
-                    "obtain Service Instance Name, execution.getVariable(\"serviceInstanceName\") is null")
+                    "obtain Service Name, execution.getVariable(\"subscriptionServiceType\") is null")
         }
         //Model Info
         ModelInfo model = decomposition.getModelInfo()
@@ -144,24 +144,12 @@ class OofUtils {
                 utils.log("DEBUG", "Allotted Resource: " + resource.toString(),
                         isDebugEnabled)
                 def serviceResourceId = resource.getResourceId()
-                def resourceModuleName = resource.getNfFunction()
-                utils.log("DEBUG", "resourceModuleName: " + resourceModuleName,
-                        isDebugEnabled)
-                def resourceModelInvariantId = "no-resourceModelInvariantId"
-                def resourceModelVersionId = "no-resourceModelVersionId"
-
-                List modelIdLst = execution.getVariable("homingModelIds")
-                utils.log("DEBUG", "Incoming modelIdLst is: " + modelIdLst.toString(), isDebugEnabled)
-                for (Map modelId : modelIdLst )
-                    if (resourceModuleName == modelId.resourceModuleName) {
-                        resourceModelInvariantId = modelId.resourceModelInvariantId
-                        resourceModelVersionId = modelId.resourceModelVersionId
-                    }
-
-                def resourceModelName = "" //Optional
-                def resourceModelVersion = "" //Optional
-                def resourceModelType = "" //Optional
-                def tenantId = "" //Optional
+                def resourceModelInvariantId = resource.getModelInfo().getModelInvariantUuid()
+                def resourceModelVersionId = resource.getModelInfo().getModelUuid()
+                def resourceModelName = resource.getModelInfo().getModelName()
+                def resourceModelVersion = resource.getModelInfo().getModelVersion()
+                def resourceModelType = resource.getModelInfo().getModelType()
+                def tenantId = execution.getVariable("tenantId")
                 def requiredCandidatesJson = ""
 
                 requiredCandidatesJson = createCandidateJson(
@@ -171,7 +159,7 @@ class OofUtils {
 
                 String demand =
                         "      {\n" +
-                        "      \"resourceModuleName\": \"${resourceModuleName}\",\n" +
+                        "      \"resourceModuleName\": \"${resourceModelName}\",\n" +
                         "      \"serviceResourceId\": \"${serviceResourceId}\",\n" +
                         "      \"tenantId\": \"${tenantId}\",\n" +
                         "      \"resourceModelInfo\": {\n" +
@@ -191,21 +179,18 @@ class OofUtils {
                         isDebugEnabled)
                 ModelInfo vnfResourceModelInfo = vnfResource.getModelInfo()
                 def serviceResourceId = vnfResource.getResourceId()
-                def resourceModuleName = vnfResource.getNfFunction()
-                utils.log("DEBUG", "resourceModuleName: " + resourceModuleName,
-                        isDebugEnabled)
                 def resourceModelInvariantId = vnfResourceModelInfo.getModelInvariantUuid()
                 def resourceModelName = vnfResourceModelInfo.getModelName()
                 def resourceModelVersion = vnfResourceModelInfo.getModelVersion()
                 def resourceModelVersionId = vnfResourceModelInfo.getModelUuid()
                 def resourceModelType = vnfResourceModelInfo.getModelType()
-                def tenantId = "" //Optional
+                def tenantId = execution.getVariable("tenantId")
                 def requiredCandidatesJson = ""
 
 
                 String placementDemand =
                         "      {\n" +
-                        "      \"resourceModuleName\": \"${resourceModuleName}\",\n" +
+                        "      \"resourceModuleName\": \"${resourceModelName}\",\n" +
                         "      \"serviceResourceId\": \"${serviceResourceId}\",\n" +
                         "      \"tenantId\": \"${tenantId}\",\n" +
                         "      \"resourceModelInfo\": {\n" +
@@ -297,7 +282,7 @@ class OofUtils {
                 "    },\n" +
                 "  \"serviceInfo\": {\n" +
                 "    \"serviceInstanceId\": \"${serviceInstanceId}\",\n" +
-                "    \"serviceName\": \"${serviceInstanceName}\",\n" +
+                "    \"serviceName\": \"${serviceName}\",\n" +
                 "    \"modelInfo\": {\n" +
                 "      \"modelType\": \"${modelType}\",\n" +
                 "      \"modelInvariantId\": \"${modelInvariantId}\",\n" +
