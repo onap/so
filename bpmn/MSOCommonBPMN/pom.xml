@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.onap.so</groupId>
@@ -81,14 +79,13 @@
 						<phase>compile</phase>
 						<configuration>
 							<tasks>
-								<mkdir dir="${basedir}/src/main/groovy" />
+								<mkdir dir="${basedir}/src/main/groovy"/>
 								<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc">
-									<classpath refid="maven.compile.classpath" />
+									<classpath refid="maven.compile.classpath"/>
 								</taskdef>
-								<mkdir dir="${project.build.outputDirectory}" />
-								<groovyc destdir="${project.build.outputDirectory}"
-									srcdir="${basedir}/src/main/groovy/" listfiles="true">
-									<classpath refid="maven.compile.classpath" />
+								<mkdir dir="${project.build.outputDirectory}"/>
+								<groovyc destdir="${project.build.outputDirectory}" srcdir="${basedir}/src/main/groovy/" listfiles="true">
+									<classpath refid="maven.compile.classpath"/>
 								</groovyc>
 							</tasks>
 						</configuration>
@@ -101,14 +98,13 @@
 						<phase>test-compile</phase>
 						<configuration>
 							<tasks>
-								<mkdir dir="${basedir}/src/test/groovy" />
+								<mkdir dir="${basedir}/src/test/groovy"/>
 								<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc">
-									<classpath refid="maven.test.classpath" />
+									<classpath refid="maven.test.classpath"/>
 								</taskdef>
-								<mkdir dir="${project.build.testOutputDirectory}" />
-								<groovyc destdir="${project.build.testOutputDirectory}"
-									srcdir="${basedir}/src/test/groovy/" listfiles="true">
-									<classpath refid="maven.test.classpath" />
+								<mkdir dir="${project.build.testOutputDirectory}"/>
+								<groovyc destdir="${project.build.testOutputDirectory}" srcdir="${basedir}/src/test/groovy/" listfiles="true">
+									<classpath refid="maven.test.classpath"/>
 								</groovyc>
 							</tasks>
 						</configuration>
@@ -174,7 +170,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore/>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
