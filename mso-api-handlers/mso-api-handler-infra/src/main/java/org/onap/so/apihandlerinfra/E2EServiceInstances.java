@@ -61,6 +61,7 @@ import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoAlarmLogger;
 import org.onap.so.logger.MsoLogger;
+import org.onap.so.requestsdb.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.RequestDetails;

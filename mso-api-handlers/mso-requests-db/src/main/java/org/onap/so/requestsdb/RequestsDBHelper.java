@@ -23,8 +23,8 @@ package org.onap.so.requestsdb;
 import java.sql.Timestamp;
 
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.logger.MsoLogger;
+import org.onap.so.requestsdb.client.RequestsDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +37,7 @@ public class RequestsDBHelper {
 	private String methodName = "";
 	private String classMethodMessage = "";
 	@Autowired
-	private InfraActiveRequestsRepository infraActiveRequestsRepository;
+	private RequestsDbClient requestsDbClient;
 	/**
 	 * This util method is to update the InfraRequest table to Complete
 	 * @param msg - string, unique message for each caller
@@ -51,7 +51,7 @@ public class RequestsDBHelper {
 		classMethodMessage = className + " " + methodName;
 		msoLogger.debug("Begin of " + classMethodMessage);
 			
-		InfraActiveRequests request = infraActiveRequestsRepository.findOneByRequestId(requestId);
+		InfraActiveRequests request = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
 	
 		request.setRequestStatus("COMPLETE");
 		request.setStatusMessage("SUCCESSFUL, operationalEnvironmentId - " + operationalEnvironmentId + "; Success Message: " + msg);
@@ -66,7 +66,7 @@ public class RequestsDBHelper {
 		}
 		Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
         request.setEndTime(endTimeStamp);
-		infraActiveRequestsRepository.save(request);
+		requestsDbClient.save(request);
 		
 		msoLogger.debug("End of " + classMethodMessage);
 		
@@ -85,7 +85,7 @@ public class RequestsDBHelper {
 		classMethodMessage = className + " " + methodName;
 		msoLogger.debug("Begin of " + classMethodMessage);
 		
-		InfraActiveRequests request = infraActiveRequestsRepository.findOneByRequestId(requestId);
+		InfraActiveRequests request = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
 		request.setRequestStatus("FAILED");
 		request.setStatusMessage("FAILURE, operationalEnvironmentId - " + operationalEnvironmentId + "; Error message: " + msg);
 		request.setProgress(100L);
@@ -99,7 +99,7 @@ public class RequestsDBHelper {
 		}
 		Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
         request.setEndTime(endTimeStamp);
-		infraActiveRequestsRepository.save(request);
+		requestsDbClient.save(request);
 		
 		msoLogger.debug("End of " + classMethodMessage);
 		

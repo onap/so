@@ -44,7 +44,7 @@ import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.Constants;
 import org.onap.so.apihandlerinfra.Messages;
-import org.onap.so.apihandlerinfra.RequestsDbClient;
+import org.onap.so.requestsdb.client.RequestsDbClient;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.AlarmLoggerInfo;

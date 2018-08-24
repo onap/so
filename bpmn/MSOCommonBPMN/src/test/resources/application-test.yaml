@@ -31,6 +31,9 @@ log:
     vnfAdapterRestV1: 'true'
 mso:
   adapters:
+    requestDb:
+      auth: Basic YnBlbDptc28tZGItMTUwNyE=
+      endpoint: http://localhost:8081  
     completemsoprocess:
       endpoint: http://localhost:${wiremock.server.port}/CompleteMsoProcess
     db:

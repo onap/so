@@ -32,8 +32,6 @@ import org.onap.so.apihandlerinfra.tenantisolation.process.CreateVnfOperationalE
 import org.onap.so.apihandlerinfra.tenantisolation.process.DeactivateVnfOperationalEnvironment;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Action;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.OperationalEnvironment;
-import org.onap.so.db.request.data.repository.OperationalEnvDistributionStatusRepository;
-import org.onap.so.db.request.data.repository.OperationalEnvServiceModelStatusRepository;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
@@ -46,7 +44,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class TenantIsolationRunnable {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, TenantIsolationRunnable.class);
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, TenantIsolationRunnable.class);
 	
 	@Autowired 
 	private RequestsDBHelper requestDb; 
@@ -60,10 +58,6 @@ public class TenantIsolationRunnable {
 	private DeactivateVnfOperationalEnvironment deactivateVnfOpEnv;
 	@Autowired 
 	private ActivateVnfStatusOperationalEnvironment activateVnfStatusOpEnv;
-	@Autowired
-	private OperationalEnvDistributionStatusRepository distributionStatusRepository;
-	@Autowired
-	private OperationalEnvServiceModelStatusRepository modelStatusRepository;
 	
 	@Async
 	public void run(Action action, String operationalEnvType, CloudOrchestrationRequest cor, String requestId) throws ApiException {
@@ -83,11 +77,11 @@ public class TenantIsolationRunnable {
                     throw validateException;
 				}
 			} else if(Action.activate.equals(action)) {
-				activateVnfOpEnv.execute(requestId, cor, distributionStatusRepository, modelStatusRepository);
+				activateVnfOpEnv.execute(requestId, cor);
 			} else if(Action.deactivate.equals(action)) {
 				deactivateVnfOpEnv.execute(requestId, cor);
 			} else if(Action.distributionStatus.equals(action)) {
-				activateVnfStatusOpEnv.execute(requestId, cor, distributionStatusRepository, modelStatusRepository);
+				activateVnfStatusOpEnv.execute(requestId, cor);
 			} else {
                 ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
                 ValidateException validateException = new ValidateException.Builder("Invalid Action specified: " + action,

@@ -20,16 +20,12 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation.process;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.apihandler.common.ErrorNumbers;
@@ -44,19 +40,20 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestInfo;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestParameters;
 import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 
 
 public class CreateEcompOperationalEnvironmentTest extends BaseTest{
 	
 	@Autowired
 	private CreateEcompOperationalEnvironment createEcompOpEn;
-	@Autowired
-	private InfraActiveRequestsRepository infraActiveRequestsRepository;
-	
+	private final ObjectMapper mapper = new ObjectMapper();
+
 	public CloudOrchestrationRequest getCloudOrchestrationRequest() {
 		CloudOrchestrationRequest request = new CloudOrchestrationRequest();
 		RequestDetails reqDetails = new RequestDetails();
@@ -75,7 +72,7 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest{
 	}
 	
 	@Test
-	public void testProcess() throws ApiException {
+	public void testProcess() throws ApiException, JsonProcessingException {
 		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		stubFor(post(urlPathMatching("/events/.*"))
@@ -87,18 +84,20 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestScope("create");
 		iar.setRequestStatus("PENDING");
 		iar.setRequestAction("UNKNOWN");
-		infraActiveRequestsRepository.saveAndFlush(iar);
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/123"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+				.withRequestBody(containing("{\"requestId\":\"123\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL, operationalEnvironmentId - operationalEnvId; Success Message: SUCCESSFULLY Created ECOMP OperationalEnvironment.\",\"progress\":100"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
 		
 		createEcompOpEn.execute("123", getCloudOrchestrationRequest());
-		
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOneByRequestId("123");
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("SUCCESS"));	
-		assertTrue(infraActiveRequest.getRequestStatus().equals("COMPLETE"));
 	}
 	
 	@Test
-	public void testProcessException() {
+	public void testProcessException() throws JsonProcessingException {
 		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		stubFor(post(urlPathMatching("/events/.*"))
@@ -113,18 +112,20 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestScope("create");
 		iar.setRequestStatus("PENDING");
 		iar.setRequestAction("UNKNOWN");
-		infraActiveRequestsRepository.saveAndFlush(iar);
-	
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/123"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+				.withRequestBody(containing("{\"requestId\":\"123\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE, operationalEnvironmentId - operationalEnvId; Error message: empty"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
+
 		try {
             createEcompOpEn.execute("123", getCloudOrchestrationRequest());
         }catch(ApiException e){
             assertThat(e, sameBeanAs((ApiException) expectedException).ignoring("cause"));
         }
-
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOneByRequestId("123");
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("FAILURE"));	
-		assertTrue(infraActiveRequest.getRequestStatus().equals("FAILED"));
 	}
 
 }
