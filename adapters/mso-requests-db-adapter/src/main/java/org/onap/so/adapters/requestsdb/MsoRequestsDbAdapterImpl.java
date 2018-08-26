@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,6 +53,8 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 	private static final String SUCCESSFUL = "Successful";
 
 	private static final String GET_INFRA_REQUEST = "Get Infra request";
+	
+	private static final String ERROR = "Error ";
 
 	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, MsoRequestsDbAdapterImpl.class);
 	
@@ -131,7 +135,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
 		} catch (Exception e) {
 			String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
-			logger.error("Error " + MsoLogger.ErrorCode.BusinessProcesssError + " for " + GET_INFRA_REQUEST + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
+			logger.error(ERROR + MsoLogger.ErrorCode.BusinessProcesssError + " for " + GET_INFRA_REQUEST + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
 			logger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
 			throw new MsoRequestsDbException(error, e);
 		}
@@ -165,7 +169,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 			}
 		} catch (Exception e) {
 			String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
-			logger.error("Error " + MsoLogger.ErrorCode.BusinessProcesssError + " for " + GET_INFRA_REQUEST + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
+			logger.error(ERROR + MsoLogger.ErrorCode.BusinessProcesssError + " for " + GET_INFRA_REQUEST + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
 			logger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
 			throw new MsoRequestsDbException(error, e);
 		}
@@ -223,7 +227,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 			String error = "Entity not found. Unable to retrieve OperationStatus Object ServiceId: " + serviceId + " operationId: "
 					+ operationId;
 			MsoRequestsDbException e = new MsoRequestsDbException(error);
-			logger.error("Error "+ MsoLogger.ErrorCode.BusinessProcesssError + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
+			logger.error(ERROR+ MsoLogger.ErrorCode.BusinessProcesssError + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
 			throw e;
 		}
 
