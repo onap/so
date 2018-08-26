@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +23,7 @@
 
 package org.onap.so.adapters.network;
 
-
+ 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +86,8 @@ import io.swagger.annotations.ApiResponses;
 public class NetworkAdapterRest {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,NetworkAdapterRest.class);
 	private static final String TESTING_KEYWORD = "___TESTING___";
-
+    private static final String EXCEPTION="Exception:";
+    private static final String RESP=", resp=";
    
 
 	@Autowired
@@ -239,7 +242,7 @@ public class NetworkAdapterRest {
 						rollback.value,
 						req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug ("Exception:", e);
+			    LOGGER.debug (EXCEPTION, e);
 				eresp = new CreateNetworkError(
 					e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
@@ -248,7 +251,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("CreateNetworkTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug ("CreateNetworkTask exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 	}
 
@@ -345,7 +348,7 @@ public class NetworkAdapterRest {
 				}
 				response = new DeleteNetworkResponse(req.getNetworkId(), networkDeleted.value, req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug ("Exception:", e);
+			    LOGGER.debug (EXCEPTION, e);
 				eresp = new DeleteNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -353,7 +356,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("DeleteNetworkTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug("DeleteNetworkTask exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 	}
 
@@ -501,7 +504,7 @@ public class NetworkAdapterRest {
 				adapter.rollbackNetwork(nwr);
 				response = new RollbackNetworkResponse(true, req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug ("Exception:", e);
+			    LOGGER.debug (EXCEPTION, e);
 				eresp = new RollbackNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -509,7 +512,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("RollbackNetworkTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug("RollbackNetworkTask exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 	}
 
@@ -649,7 +652,7 @@ public class NetworkAdapterRest {
 					subnetIdMap.value,
 					req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug ("Exception:", e);
+			    LOGGER.debug (EXCEPTION, e);
 				eresp = new UpdateNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -657,7 +660,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("UpdateNetworkTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug("UpdateNetworkTask exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 	}
 
