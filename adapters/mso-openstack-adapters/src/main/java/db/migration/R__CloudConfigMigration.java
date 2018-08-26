@@ -78,8 +78,8 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         this.cloudConfig = cloudConfig;
     }
 
-    private CloudConfig loadCloudConfig(InputStream stream) throws JsonParseException, JsonMappingException, IOException  {
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    private CloudConfig loadCloudConfig(InputStream stream) throws JsonMappingException, IOException  {
+    	ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         R__CloudConfigMigration cloudConfigMigration =
         		mapper.readValue(stream, R__CloudConfigMigration.class);
         CloudConfig cloudConfig = cloudConfigMigration.getCloudConfig();
