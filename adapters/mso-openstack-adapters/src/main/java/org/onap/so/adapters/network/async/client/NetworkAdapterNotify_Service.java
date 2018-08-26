@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,9 +43,9 @@ public class NetworkAdapterNotify_Service
     extends Service
 {
 
-    private final static URL NETWORKADAPTERNOTIFY_WSDL_LOCATION;
-    private final static WebServiceException NETWORKADAPTERNOTIFY_EXCEPTION;
-    private final static QName NETWORKADAPTERNOTIFY_QNAME = new QName("http://org.onap.so/networkNotify", "networkAdapterNotify");
+    private static final URL NETWORKADAPTERNOTIFY_WSDL_LOCATION;
+    private static final WebServiceException NETWORKADAPTERNOTIFY_EXCEPTION;
+    private static final QName NETWORKADAPTERNOTIFY_QNAME = new QName("http://org.onap.so/networkNotify", "networkAdapterNotify");
 
     static {
         NETWORKADAPTERNOTIFY_WSDL_LOCATION = org.onap.so.adapters.network.async.client.NetworkAdapterNotify_Service.class.getResource("/NetworkAdapterNotify.wsdl");
