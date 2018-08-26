@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,17 +44,17 @@ import javax.xml.namespace.QName;
  */
 @XmlRegistry
 public class ObjectFactory {
-
-    private final static QName _RollbackNetworkNotification_QNAME = new QName("http://org.onap.so/networkNotify", "rollbackNetworkNotification");
-    private final static QName _UpdateNetworkNotification_QNAME = new QName("http://org.onap.so/networkNotify", "updateNetworkNotification");
-    private final static QName _QueryNetworkNotificationResponse_QNAME = new QName("http://org.onap.so/networkNotify", "queryNetworkNotificationResponse");
-    private final static QName _UpdateNetworkNotificationResponse_QNAME = new QName("http://org.onap.so/networkNotify", "updateNetworkNotificationResponse");
-    private final static QName _CreateNetworkNotificationResponse_QNAME = new QName("http://org.onap.so/networkNotify", "createNetworkNotificationResponse");
-    private final static QName _DeleteNetworkNotification_QNAME = new QName("http://org.onap.so/networkNotify", "deleteNetworkNotification");
-    private final static QName _DeleteNetworkNotificationResponse_QNAME = new QName("http://org.onap.so/networkNotify", "deleteNetworkNotificationResponse");
-    private final static QName _CreateNetworkNotification_QNAME = new QName("http://org.onap.so/networkNotify", "createNetworkNotification");
-    private final static QName _QueryNetworkNotification_QNAME = new QName("http://org.onap.so/networkNotify", "queryNetworkNotification");
-    private final static QName _RollbackNetworkNotificationResponse_QNAME = new QName("http://org.onap.so/networkNotify", "rollbackNetworkNotificationResponse");
+    private static final QNAME_URL="http://org.onap.so/networkNotify";
+    private static final QName _RollbackNetworkNotification_QNAME = new QName(QNAME_URL, "rollbackNetworkNotification");
+    private static final QName _UpdateNetworkNotification_QNAME = new QName(QNAME_URL, "updateNetworkNotification");
+    private static final QName _QueryNetworkNotificationResponse_QNAME = new QName(QNAME_URL, "queryNetworkNotificationResponse");
+    private static final QName _UpdateNetworkNotificationResponse_QNAME = new QName(QNAME_URL, "updateNetworkNotificationResponse");
+    private static final QName _CreateNetworkNotificationResponse_QNAME = new QName(QNAME_URL, "createNetworkNotificationResponse");
+    private static final QName _DeleteNetworkNotification_QNAME = new QName(QNAME_URL, "deleteNetworkNotification");
+    private static final QName _DeleteNetworkNotificationResponse_QNAME = new QName(QNAME_URL, "deleteNetworkNotificationResponse");
+    private static final QName _CreateNetworkNotification_QNAME = new QName(QNAME_URL, "createNetworkNotification");
+    private final static QName _QueryNetworkNotification_QNAME = new QName(QNAME_URL, "queryNetworkNotification");
+    private static final QName _RollbackNetworkNotificationResponse_QNAME = new QName(QNAME_URL, "rollbackNetworkNotificationResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.onap.so.adapters.network.async.client
