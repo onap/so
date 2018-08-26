@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +47,8 @@ import org.onap.so.logger.MsoLogger;
 public class SDNCAdapterService extends Service {
 
 	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, SDNCAdapterService.class);
-
+    private static final String SDNC_ADAPTER_WSDL="SDNCAdapter.wsdl";
+	
     public static final URL WSDL_LOCATION;
 
     public static final QName SERVICE = new QName("http://org.onap/workflow/sdnc/adapter/wsdl/v1", "SDNCAdapterService");
@@ -55,13 +58,13 @@ public class SDNCAdapterService extends Service {
         try {
         	wsdlUrl = Thread.currentThread().getContextClassLoader().getResource("main/resources/SDNCAdapter.wsdl");
         } catch (Exception e) {
-            logger.error(MessageEnum.RA_WSDL_NOT_FOUND, "SDNCAdapter.wsdl", "", "", MsoLogger.ErrorCode.DataError, "Exception - WSDL not found", e);
+            logger.error(MessageEnum.RA_WSDL_NOT_FOUND, SDNC_ADAPTER_WSDL, "", "", MsoLogger.ErrorCode.DataError, "Exception - WSDL not found", e);
         }
         if(wsdlUrl == null) {
-        	logger.error(MessageEnum.RA_WSDL_NOT_FOUND, "SDNCAdapter.wsdl", "", "", MsoLogger.ErrorCode.DataError, "WSDL not found");
+        	logger.error(MessageEnum.RA_WSDL_NOT_FOUND, SDNC_ADAPTER_WSDL, "", "", MsoLogger.ErrorCode.DataError, "WSDL not found");
     	} else {
     		try {
-				logger.info(MessageEnum.RA_PRINT_URL, "SDNCAdpater.wsdl", wsdlUrl.toURI().toString(), "");
+				logger.info(MessageEnum.RA_PRINT_URL, SDNC_ADAPTER_WSDL, wsdlUrl.toURI().toString(), "");
 			} catch (Exception e) {
 				logger.error(MessageEnum.RA_WSDL_URL_CONVENTION_EXC, "SDNCAdapter.wsdl", "", "", MsoLogger.ErrorCode.DataError, "Exception - print URL", e);
 			}
