@@ -66,7 +66,10 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     private static final MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
     private static final String BPEL_AUTH_PROP = "org.onap.so.adapters.network.bpelauth";
     private static final String ENCRYPTION_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
-    
+    private static final String NETWORK_EXCEPTION_MSG="Got a NetworkException on createNetwork: ";
+    private static final String CREATE_NETWORK_ERROR_MSG="Error sending createNetwork notification ";
+    private static final String CREATE_NETWORK_EXCEPTON_MSG="Exception sending createNetwork notification";
+    private static final String MSO_INTERNAL_ERROR_MSG="MsoInternalError";
     @Autowired
     private Environment environment;
     
@@ -160,7 +163,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                           subnetIdMap,
                                           networkRollback);
         } catch (NetworkException e) {
-            LOGGER.debug ("Got a NetworkException on createNetwork: ", e);
+            LOGGER.debug (NETWORK_EXCEPTION_MSG, e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
             try {
@@ -174,9 +177,9 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 NetworkAdapterNotify notifyPort = getNotifyEP (notificationUrl);
                 notifyPort.createNetworkNotification (messageId, false, exCat, eMsg, null, null, null, null);
             } catch (Exception e1) {
-                error = "Error sending createNetwork notification " + e1.getMessage ();
-                LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception sending createNetwork notification", e1);
-                alarmLogger.sendAlarm ("MsoInternalError", MsoAlarmLogger.CRITICAL, error);
+                error = CREATE_NETWORK_ERROR_MSG + e1.getMessage ();
+                LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError,CREATE_NETWORK_EXCEPTON_MSG, e1);
+                alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
             }
             return;
         }
