@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1a76adc5_a62242ff",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/CreateVcpeResCustService.bpmn",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-08-27T23:30:42Z",
+      "side": 1,
+      "message": "The same subscriptionServiceType in the this block",
+      "range": {
+        "startLine": 89,
+        "startChar": 28,
+        "endLine": 89,
+        "endChar": 88
+      },
+      "revId": "963b2eb3fd0af7da96554860d17558242db4616f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_06df760e",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/CreateVcpeResCustService.bpmn",
         "patchSetId": 1
@@ -37,6 +60,30 @@
       "side": 1,
       "message": "This is for \"Call Create Service\".\n\nMy change concerns \"Call Homing Service\".",
       "parentUuid": "1a76adc5_06df760e",
+      "range": {
+        "startLine": 101,
+        "startChar": 28,
+        "endLine": 101,
+        "endChar": 85
+      },
+      "revId": "963b2eb3fd0af7da96554860d17558242db4616f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_86270612",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/CreateVcpeResCustService.bpmn",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-08-27T23:30:42Z",
+      "side": 1,
+      "message": "I understand. I found the some duplication in the doCreateServiceInstance_CallActivity, which is not your change.\nI will open another ticket for it. Thanks.",
+      "parentUuid": "1a76adc5_864066a6",
       "range": {
         "startLine": 101,
         "startChar": 28,
