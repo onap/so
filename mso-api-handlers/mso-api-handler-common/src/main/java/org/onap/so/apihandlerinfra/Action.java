@@ -41,5 +41,7 @@ public enum Action {
 	assignInstance, 
 	unassignInstance,
 	compareModel,
-	scaleInstance
+	scaleInstance,
+	deactivateAndCloudDelete,
+	scaleOut
 }

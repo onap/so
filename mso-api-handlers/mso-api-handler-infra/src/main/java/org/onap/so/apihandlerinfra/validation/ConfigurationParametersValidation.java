@@ -41,7 +41,7 @@ public class ConfigurationParametersValidation implements ValidationRule{
 		String requestScope = info.getRequestScope();
 		Actions action = info.getAction();
 		
-		if(requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.scaleOut && configParams.isEmpty()){
+		if(configParams.isEmpty() && requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.scaleOut){
 			throw new ValidationException("configuration parameters");
 		}
         return info;
