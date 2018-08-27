@@ -20,21 +20,15 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation.process;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +45,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
 
 public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 	
@@ -59,9 +56,7 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 	
 	@Autowired
 	private CreateVnfOperationalEnvironment createVnfOpEnv;
-	@Autowired
-	private InfraActiveRequestsRepository infraActiveRequestsRepository;
-	
+
 	@Before
 	public void testSetUp() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
@@ -70,7 +65,6 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 		String jsonServiceEndpoints = getFileContentsAsString("__files/vnfoperenv/endpoints.json");
 		serviceEndpoints = mapper.readValue(jsonServiceEndpoints, ServiceEndPointList.class);
 	}
-	
 	@Test
 	public void testGetEcompManagingEnvironmentId() throws Exception { 
 		createVnfOpEnv.setRequest(request);
@@ -84,7 +78,7 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 	}
 	
 	@Test
-	public void testGetEnvironmentName() throws Exception {
+	public void testGetEnvironmentName() {
 		createVnfOpEnv.setRequest(request);
 		List<Property> props = serviceEndpoints.getServiceEndPointList().get(0).getProperties();
 		assertEquals("DEV", createVnfOpEnv.getEnvironmentName(props));
@@ -120,7 +114,7 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 	}
 	
 	@Test
-	public void testExecute() throws ApiException{
+	public void testExecute() throws ApiException, JsonProcessingException {
 		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
 		stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/findRunning"))
@@ -136,11 +130,16 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestScope("create");
 		iar.setRequestStatus("PENDING");
 		iar.setRequestAction("UNKNOWN");
-		infraActiveRequestsRepository.saveAndFlush(iar);
+		ObjectMapper mapper = new ObjectMapper();
+		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+				.withRequestBody(containing("{\"requestId\":\""+ requestId+"\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
+
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
 		createVnfOpEnv.execute(requestId, request);
-		
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestId);
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("SUCCESS"));
 	}
 }

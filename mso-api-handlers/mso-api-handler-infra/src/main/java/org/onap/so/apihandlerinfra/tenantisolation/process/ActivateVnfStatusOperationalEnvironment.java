@@ -28,6 +28,7 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.onap.so.apihandler.common.ErrorNumbers;
+import org.onap.so.requestsdb.client.RequestsDbClient;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
@@ -38,8 +39,6 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.Distribution;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.DistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
-import org.onap.so.db.request.data.repository.OperationalEnvDistributionStatusRepository;
-import org.onap.so.db.request.data.repository.OperationalEnvServiceModelStatusRepository;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
@@ -72,17 +71,16 @@ public class ActivateVnfStatusOperationalEnvironment {
 	private RequestsDBHelper requestDb;
 	@Autowired 
 	private SDCClientHelper sdcClientHelper;		
+	@Autowired
+	private RequestsDbClient client;
 	
 	/**
 	 * The Point-Of-Entry from APIH with activate status from SDC
 	 * @param requestId - String
 	 * @param request - CloudOrchestrationRequest - object
-	 * @param distributionStatusRepository - OperationalEnvDistributionStatusRepository - object 
-	 * @param modelStatusRepository - OperationalEnvServiceModelStatusRepository - object 
 	 * @return void - nothing 
 	 */
-	public void execute(String requestId, CloudOrchestrationRequest request, OperationalEnvDistributionStatusRepository distributionStatusRepository,
-						OperationalEnvServiceModelStatusRepository modelStatusRepository) throws ApiException {
+	public void execute(String requestId, CloudOrchestrationRequest request) throws ApiException {
 
 
 		String operationalEnvironmentId = "";
@@ -91,18 +89,18 @@ public class ActivateVnfStatusOperationalEnvironment {
 			Distribution sdcStatus = request.getDistribution();
 
 			// Distribution, Query for operationalEnvironmentId, serviceModelVersionId
-			this.queryDistributionDbResponse = distributionStatusRepository.findOne(sdcDistributionId);
+			this.queryDistributionDbResponse = client.getDistributionStatusById(sdcDistributionId);
 			operationalEnvironmentId = this.queryDistributionDbResponse.getOperationalEnvId();
 			
 			// ServiceModel, Query for dbRequestId, recoveryAction, retryCountString
-			this.queryServiceModelResponse = modelStatusRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, queryDistributionDbResponse.getServiceModelVersionId());
+			this.queryServiceModelResponse = client.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, queryDistributionDbResponse.getServiceModelVersionId());
 			this.origRequestId = this.queryServiceModelResponse.getRequestId();
 			
-			processActivateSDCStatus(sdcDistributionId, sdcStatus, this.queryDistributionDbResponse, this.queryServiceModelResponse, distributionStatusRepository, modelStatusRepository);
+			processActivateSDCStatus(sdcDistributionId, sdcStatus, this.queryDistributionDbResponse, this.queryServiceModelResponse);
 			
 			// After EVERY status processed, need to query the status of all service modelId 
 			//  to determine the OVERALL status if "COMPLETE" or "FAILURE":
-			checkOrUpdateOverallStatus(operationalEnvironmentId, this.origRequestId, modelStatusRepository);			
+			checkOrUpdateOverallStatus(operationalEnvironmentId, this.origRequestId);			
 
 	}
 	
@@ -112,13 +110,10 @@ public class ActivateVnfStatusOperationalEnvironment {
 	 * @param sdcStatus - Distribution object
 	 * @param queryDistributionDbResponse - OperationalEnvDistributionStatus object
 	 * @param queryServiceModelResponse - OperationalEnvServiceModelStatus object
-	 * @param distributionStatusRepository - OperationalEnvDistributionStatusRepository object    
- 	 * @param modelStatusRepository - OperationalEnvServiceModelStatusRepository object
 	 * @return void - nothing  
 	 */		
 	public void processActivateSDCStatus(String sdcDistributionId, Distribution sdcStatus, OperationalEnvDistributionStatus queryDistributionDbResponse, 
-			OperationalEnvServiceModelStatus queryServiceModelResponse, OperationalEnvDistributionStatusRepository distributionStatusRepository, 
-			OperationalEnvServiceModelStatusRepository modelStatusRepository) throws ApiException {
+			OperationalEnvServiceModelStatus queryServiceModelResponse) throws ApiException {
 
 		String sdcStatusValue = sdcStatus.getStatus().toString();
 		String recoveryAction = queryServiceModelResponse.getRecoveryAction();
@@ -131,13 +126,13 @@ public class ActivateVnfStatusOperationalEnvironment {
 					dbHelper.updateStatusInOperationalEnvDistributionStatus(queryDistributionDbResponse, 
 																			sdcStatusValue,
 																			"");				
-			distributionStatusRepository.save(updateDistStatusOk);
+			client.save(updateDistStatusOk);
 			// should update 1 row, update status and retryCount = 0 (ie, serviceModelVersionId is DONE!)
 			OperationalEnvServiceModelStatus updateRetryCountZeroAndStatusOk = 
 					dbHelper.updateRetryCountAndStatusInOperationalEnvServiceModelStatus(queryServiceModelResponse, 
 																						 sdcStatusValue,
 																						 RETRY_COUNT_ZERO);			
-			modelStatusRepository.save(updateRetryCountZeroAndStatusOk);				
+			client.save(updateRetryCountZeroAndStatusOk);				
 		} else {
 			
 			  // "DISTRIBUTION_COMPLETE_ERROR", Check if recoveryAction is "RETRY" 
@@ -145,8 +140,7 @@ public class ActivateVnfStatusOperationalEnvironment {
 					
 				    // RESEND / RETRY serviceModelVersionId to SDC  
 
-				  JSONObject jsonResponse = callSDClientForRetry(queryDistributionDbResponse, queryServiceModelResponse, sdcStatus,
-						  distributionStatusRepository, modelStatusRepository);
+				  JSONObject jsonResponse = callSDClientForRetry(queryDistributionDbResponse, queryServiceModelResponse, sdcStatus);
 
 			 } else { // either RETRY & Count = 0, or 'ABORT', or 'SKIP' 
 
@@ -168,13 +162,13 @@ public class ActivateVnfStatusOperationalEnvironment {
 								dbHelper.updateRetryCountAndStatusInOperationalEnvServiceModelStatus(queryServiceModelResponse, 
 																									 modifiedStatus, 
 																									 RETRY_COUNT_ZERO);				 		
-						modelStatusRepository.save(updateRetryCountZeroAndStatus);
+						client.save(updateRetryCountZeroAndStatus);
 				 		// should update 1 row, modified status
 						OperationalEnvDistributionStatus updateDistStatus = 
 								dbHelper.updateStatusInOperationalEnvDistributionStatus(queryDistributionDbResponse, 
 																						modifiedStatus,
 																						errorReason);
-						distributionStatusRepository.save(updateDistStatus);
+						client.save(updateDistStatus);
 			 		} else {
 			 			// RETRY & Count = 0 (do nothing!)
 			 		}
@@ -187,15 +181,11 @@ public class ActivateVnfStatusOperationalEnvironment {
 	 * @param queryDistributionDbResponse - OperationalEnvDistributionStatus object
 	 * @param queryServiceModelResponse - OperationalEnvServiceModelStatus object   
 	 * @param sdcStatus - Distribution object
-	 * @param distributionStatusRepository - OperationalEnvDistributionStatusRepository object
-	 * @param modelStatusRepository - OperationalEnvServiceModelStatusRepository object
 	 * @return JSONObject object 
 	 */			
 	public JSONObject callSDClientForRetry(OperationalEnvDistributionStatus queryDistributionDbResponse, 
 											OperationalEnvServiceModelStatus queryServiceModelResponse,
-								            Distribution sdcStatus,
-								            OperationalEnvDistributionStatusRepository distributionStatusRepository, 
-											OperationalEnvServiceModelStatusRepository modelStatusRepository) throws ApiException {
+								            Distribution sdcStatus) throws ApiException {
 
 		JSONObject jsonResponse = null;		
 		
@@ -218,7 +208,7 @@ public class ActivateVnfStatusOperationalEnvironment {
 							originalRequestId,
 							DISTRIBUTION_STATUS_SENT,
 							"");
-			distributionStatusRepository.save(insertNewDistributionId);
+			client.save(insertNewDistributionId);
 						
 			// update retryCount (less 1) for the serviceModelServiceId
 			retryCount = retryCount - 1;
@@ -227,14 +217,14 @@ public class ActivateVnfStatusOperationalEnvironment {
 					dbHelper.updateRetryCountAndStatusInOperationalEnvServiceModelStatus(queryServiceModelResponse,
 							DISTRIBUTION_STATUS_SENT,
 							retryCount);
-			modelStatusRepository.save(updateRetryCountAndStatus);
+			client.save(updateRetryCountAndStatus);
 	
 			// should update 1 row, OLD distributionId set to status error (ie, old distributionId is DONE!).
 			OperationalEnvDistributionStatus updateStatus =
 					dbHelper.updateStatusInOperationalEnvDistributionStatus(queryDistributionDbResponse,
 							DISTRIBUTION_STATUS_ERROR,
 							sdcStatus.getErrorReason());
-			distributionStatusRepository.save(updateStatus);
+			client.save(updateStatus);
 		} else {
             String dbErrorMessage = "Failure calling SDC: statusCode: " + statusCode +
                     "; messageId: " + jsonResponse.get("messageId") +
@@ -255,12 +245,11 @@ public class ActivateVnfStatusOperationalEnvironment {
 	 * The Method to check the overall status of the Activation for an operationalEnvironmentId
 	 * @param operationalEnvironmentId - string
 	 * @param origRequestId - string
-	 * @param  modelStatusRepository - OperationalEnvServiceModelStatusRepository object
 	 * @return void - nothing 
 	 */			
-	public void checkOrUpdateOverallStatus(String operationalEnvironmentId, String origRequestId, OperationalEnvServiceModelStatusRepository modelStatusRepository) throws ApiException{
+	public void checkOrUpdateOverallStatus(String operationalEnvironmentId, String origRequestId) throws ApiException{
 
-		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = modelStatusRepository.findAllByOperationalEnvIdAndRequestId(operationalEnvironmentId, origRequestId);
+		List<OperationalEnvServiceModelStatus> queryServiceModelResponseList = client.getAllByOperationalEnvIdAndRequestId(operationalEnvironmentId, origRequestId);
 
 		String status = "Waiting";
 		int count = 0;

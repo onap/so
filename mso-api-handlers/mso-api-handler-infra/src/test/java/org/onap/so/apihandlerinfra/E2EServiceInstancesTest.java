@@ -187,7 +187,7 @@ private final ObjectMapper mapper = new ObjectMapper();
 		OperationStatus status = new OperationStatus();
 		status.setOperationId("operationId");
 		status.setServiceId("9b9f02c0-298b-458a-bc9c-be3692e4f35e");
-		stubFor(get(urlPathEqualTo("/operationStatusRepository/search/findOneByServiceIdAndOperationId"))
+		stubFor(get(urlPathEqualTo("/operationStatus/search/findOneByServiceIdAndOperationId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(status))
 						.withStatus(HttpStatus.SC_OK)));

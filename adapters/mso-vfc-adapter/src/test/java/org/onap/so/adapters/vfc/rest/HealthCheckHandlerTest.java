@@ -26,10 +26,10 @@ import static org.junit.Assert.*;
 
 import javax.ws.rs.core.Response;
 
-import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.vfc.MSOVfcApplication;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;

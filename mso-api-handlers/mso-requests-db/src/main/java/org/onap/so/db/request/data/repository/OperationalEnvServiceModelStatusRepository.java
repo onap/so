@@ -28,32 +28,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository
+@RepositoryRestResource(collectionResourceRel = "operationalEnvServiceModelStatus", path = "operationalEnvServiceModelStatus")
 public interface OperationalEnvServiceModelStatusRepository extends JpaRepository<OperationalEnvServiceModelStatus, OperationalEnvServiceModelStatusId>{
 
 	public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndRequestId(String operationalEnvId, String requestId);
-	public List<OperationalEnvServiceModelStatus> findAllByOperationalEnvIdAndRequestId(String operationalEnvId, String requestId);
-	public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndServiceModelVersionId(String operationalEnvId, String serviceModelVersionId);
+	public List<OperationalEnvServiceModelStatus> findAllByOperationalEnvIdAndRequestId(@Param("OPERATIONAL_ENV_ID") String operationalEnvId, 
+																						@Param("REQUEST_ID") String requestId);
+	public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndServiceModelVersionId(@Param("OPERATIONAL_ENV_ID") String operationalEnvId, 
+																							  @Param("SERVICE_MODEL_VERSION_ID") String serviceModelVersionId);
 	
-	@Modifying
-	@Transactional
-	@Query("update OperationalEnvServiceModelStatus set serviceModelVersionDistrStatus = :asdcStatus, retryCount = :retryCount where "
-					+ "operationalEnvId = :operationalEnvId and serviceModelVersionId = :serviceModelVersionId")
-	public int setServiceModelVersionDistrStatusAndRetryCountFor(@Param("asdcStatus") String serviceModelVersionDistrStatus,
-																 @Param("retryCount") int retryCount,
-																 @Param("operationalEnvId") String operationalEnvId,
-																 @Param("serviceModelVersionId") String serviceModelVersionId);
-	
-	@Modifying
-	@Transactional
-	@Query("update OperationalEnvServiceModelStatus set serviceModelVersionDistrStatus = :asdcStatus, retryCount = :retryCount where "
-					+ "operationalEnvId = :operationalEnvId and serviceModelVersionId = :serviceModelVersionId and requestId = :requestId")
-	public int setServiceModelVersionDistrStatusAndRetryCountFor(@Param("asdcStatus") String serviceModelVersionDistrStatus,
-																 @Param("retryCount") int retryCount,
-																 @Param("operationalEnvId") String operationalEnvId,
-																 @Param("serviceModelVersionId") String serviceModelVersionId,
-																 @Param("requestId") String requestId);
 }

@@ -21,22 +21,27 @@
 package org.onap.so.apihandlerinfra.tenantisolation.process;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Rule;
+import org.junit.After;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.rules.ExpectedException;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.BaseTest;
@@ -54,12 +59,11 @@ import org.onap.so.db.request.data.repository.OperationalEnvDistributionStatusRe
 import org.onap.so.db.request.data.repository.OperationalEnvServiceModelStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
 public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 
-	@Autowired
-	private OperationalEnvDistributionStatusRepository distributionDbRepository;
-	@Autowired
-	private OperationalEnvServiceModelStatusRepository serviceModelDbRepository;
 	@Autowired
 	private ActivateVnfStatusOperationalEnvironment activateVnfStatus;
 	@Autowired
@@ -69,30 +73,26 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-	private String requestId = "TEST_requestId";
-	private String requestIdOrig = "TEST_requestIdOrig";	
-	private String operationalEnvironmentId = "TEST_operationalEnvironmentId";	
-	private CloudOrchestrationRequest request = new CloudOrchestrationRequest();
-	private String workloadContext = "TEST_workloadContext";
-	private String recoveryActionRetry  = "RETRY";
-	private String recoveryActionAbort  = "ABORT";
-	private String recoveryActionSkip  = "SKIP";
-	private String serviceModelVersionId = "TEST_serviceModelVersionId";
-	private String serviceModelVersionId1 = "TEST_serviceModelVersionId1";	
-	private int retryCountThree = 3;
-	private int retryCountTwo = 2;	
-	private int retryCountZero = 0;	
-	private String sdcDistributionId = "TEST_distributionId";
-	private String sdcDistributionId1 = "TEST_distributionId1";	
-	private String statusOk = Status.DISTRIBUTION_COMPLETE_OK.toString();
-	private String statusError = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
-	private String statusSent = "SENT";
-	 
-	@After
-	public void after() throws Exception {
-		distributionDbRepository.deleteAll();
-		serviceModelDbRepository.deleteAll();		
-	}
+	private final String requestId = "TEST_requestId";
+	private final String requestIdOrig = "TEST_requestIdOrig";	
+	private final String operationalEnvironmentId = "TEST_operationalEnvironmentId";	
+	private final CloudOrchestrationRequest request = new CloudOrchestrationRequest();
+	private final String workloadContext = "TEST_workloadContext";
+	private final String recoveryActionRetry  = "RETRY";
+	private final String recoveryActionAbort  = "ABORT";
+	private final String recoveryActionSkip  = "SKIP";
+	private final String serviceModelVersionId = "TEST_serviceModelVersionId";
+	private final String serviceModelVersionId1 = "TEST_serviceModelVersionId1";	
+	private final int retryCountThree = 3;
+	private final int retryCountTwo = 2;	
+	private final int retryCountZero = 0;	
+	private final String sdcDistributionId = "TEST_distributionId";
+	private final String sdcDistributionId1 = "TEST_distributionId1";	
+	private final String statusOk = Status.DISTRIBUTION_COMPLETE_OK.toString();
+	private final String statusError = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
+	private final String statusSent = "SENT";
+	
+	private final ObjectMapper mapper = new ObjectMapper();
 
 	@Test
 	public void checkOrUpdateOverallStatusTest_Ok() throws Exception {
@@ -106,7 +106,6 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountZero);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusOk);
-		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 		
 		serviceModelDb.setRequestId(requestIdOrig);
 		serviceModelDb.setServiceModelVersionId(serviceModelVersionId1);
@@ -115,27 +114,27 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountZero);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusOk);
-		serviceModelDbRepository.saveAndFlush(serviceModelDb);	
-		
+
 		InfraActiveRequests iar = new InfraActiveRequests();
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
-		infraActiveRequestsRepository.saveAndFlush(iar);
+
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(serviceModelDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
 		
-		activateVnfStatus.checkOrUpdateOverallStatus(operationalEnvironmentId, requestIdOrig, serviceModelDbRepository);
+		activateVnfStatus.checkOrUpdateOverallStatus(operationalEnvironmentId, requestIdOrig);
 		
 		// overall is success
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("SUCCESSFUL"));
-		assertTrue(infraActiveRequest.getRequestStatus().contains("COMPLETE"));
-		
-		// cleanup
-		infraActiveRequestsRepository.delete(requestIdOrig);		
 	}
 
 	@Test
-	public void checkOrUpdateOverallStatusTest_Error() throws Exception {
+	public void checkOrUpdateOverallStatusTest_Error() throws JsonProcessingException {
 		
 		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
 		serviceModelDb.setRequestId(requestIdOrig);
@@ -145,29 +144,28 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountZero);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
-		serviceModelDbRepository.saveAndFlush(serviceModelDb);
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(serviceModelDb))
+						.withStatus(HttpStatus.SC_OK)));
 		
 		InfraActiveRequests iar = new InfraActiveRequests();
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
-		infraActiveRequestsRepository.saveAndFlush(iar);
+
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
 
         try {
-            activateVnfStatus.checkOrUpdateOverallStatus(operationalEnvironmentId, requestIdOrig, serviceModelDbRepository);
+            activateVnfStatus.checkOrUpdateOverallStatus(operationalEnvironmentId, requestIdOrig);
         }catch(ApiException e){
             assertThat(e.getMessage(), startsWith("Overall Activation process is a Failure. "));
             assertEquals(e.getHttpResponseCode(), HttpStatus.SC_BAD_REQUEST);
             assertEquals(e.getMessageID(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
         }
 		
-		// overall is failure
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("FAILURE"));
-		assertTrue(infraActiveRequest.getRequestStatus().contains("FAILED"));
-		
-		// cleanup		
-		infraActiveRequestsRepository.delete(requestIdOrig);
 	}	
 	
 	@Test
@@ -181,9 +179,12 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountTwo);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
-		serviceModelDbRepository.saveAndFlush(serviceModelDb);
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(serviceModelDb))
+						.withStatus(HttpStatus.SC_OK)));
 		
-		activateVnfStatus.checkOrUpdateOverallStatus(operationalEnvironmentId, requestIdOrig, serviceModelDbRepository);
+		activateVnfStatus.checkOrUpdateOverallStatus(operationalEnvironmentId, requestIdOrig);
 		
 		// do nothing, waiting for more
 		assertNull(infraActiveRequestsRepository.findOne(requestIdOrig));
@@ -200,7 +201,6 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusSent);
-		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 
 		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
 		distributionDb.setDistributionId(sdcDistributionId);
@@ -209,9 +209,6 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		distributionDb.setDistributionIdStatus(statusSent);
 		distributionDb.setServiceModelVersionId(serviceModelVersionId);
 		distributionDb.setDistributionIdErrorReason(null);
-		distributionDbRepository.saveAndFlush(distributionDb);
-		
-		
 		
 		// prepare distribution obj
 		Distribution distribution = new Distribution();
@@ -223,32 +220,30 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		InfraActiveRequests iar = new InfraActiveRequests();
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
-		infraActiveRequestsRepository.saveAndFlush(iar);
 		
-		activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);		
-		
-		// status ok
-		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId);
-		assertNotNull(distStatus);
-		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
-		assertEquals(statusOk, distStatus.getDistributionIdStatus());
-		assertEquals("", distStatus.getDistributionIdErrorReason());		
-		
-		// status ok		
-		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
-		assertNotNull(servStatus);
-		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
-		assertEquals(statusOk, servStatus.getServiceModelVersionDistrStatus());		
-		assertEquals(new Integer(retryCountZero), servStatus.getRetryCount());
-		
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("SUCCESSFUL"));
-		assertTrue(infraActiveRequest.getRequestStatus().contains("COMPLETE"));
-		
-		// cleanup		
-		infraActiveRequestsRepository.delete(requestIdOrig);
-		
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(serviceModelDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(distributionDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
+				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"RETRY\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
+
+		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
+				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
+
+		activateVnfStatus.execute(requestId, request);		
 	}				
 	
 	@Test
@@ -262,7 +257,10 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
-		serviceModelDbRepository.saveAndFlush(serviceModelDb);
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(serviceModelDb))
+						.withStatus(HttpStatus.SC_OK)));
 		
 		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
 		distributionDb.setDistributionId(sdcDistributionId);
@@ -271,7 +269,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		distributionDb.setDistributionIdStatus(statusError);
 		distributionDb.setServiceModelVersionId(serviceModelVersionId);
 		distributionDb.setDistributionIdErrorReason(null);
-		distributionDbRepository.saveAndFlush(distributionDb);
+		
 		
 		
 		
@@ -291,37 +289,34 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		
 		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
-		
-		activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);	
-		
-		// old distributionId, status error
-		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId);
-		assertNotNull(distStatus);
-		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
-		assertEquals(statusError, distStatus.getDistributionIdStatus());
-		assertEquals("Unable to process.", distStatus.getDistributionIdErrorReason());		
-		
-		// new distributionId, status sent
-		OperationalEnvDistributionStatus newDistStatus = distributionDbRepository.findOne(sdcDistributionId1);
-		assertNotNull(distStatus);
-		assertEquals(operationalEnvironmentId, newDistStatus.getOperationalEnvId());
-		assertEquals(statusSent, newDistStatus.getDistributionIdStatus());
-		assertEquals("", newDistStatus.getDistributionIdErrorReason());		
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(serviceModelDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(distributionDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
+				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_ERROR\",\"distributionIdErrorReason\":\"Unable to process.\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
 
-		// count is less 1, status sent
-		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
-		assertNotNull(servStatus);
-		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
-		assertEquals(statusSent, servStatus.getServiceModelVersionDistrStatus());		
-		assertEquals(new Integer(retryCountTwo), servStatus.getRetryCount());		
+		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
+				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId1\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"SENT\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null}"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
+
+		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
+				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":2,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
 		
-		// no update 
-		assertNull(infraActiveRequestsRepository.findOne(requestIdOrig));
-		
+		activateVnfStatus.execute(requestId, request);	
 	}
 
 	@Test
-	public void executionTest_ERROR_Status_And_RETRY_And_RetryZero() throws Exception {
+	public void executionTest_ERROR_Status_And_RETRY_And_RetryZero() throws JsonProcessingException {
 		
 		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
 		serviceModelDb.setRequestId(requestIdOrig);
@@ -331,7 +326,6 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountZero);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
-		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 		
 		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
 		distributionDb.setDistributionId(sdcDistributionId);
@@ -340,7 +334,6 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		distributionDb.setDistributionIdStatus(statusError);
 		distributionDb.setServiceModelVersionId(serviceModelVersionId);
 		distributionDb.setDistributionIdErrorReason(null);
-		distributionDbRepository.saveAndFlush(distributionDb);
 		
 	
 		
@@ -359,44 +352,41 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		InfraActiveRequests iar = new InfraActiveRequests();
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
-		infraActiveRequestsRepository.saveAndFlush(iar);
+
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(serviceModelDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(distributionDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
 		
 		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
 
+		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
+				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":2,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
+
         try {
-            activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);
+            activateVnfStatus.execute(requestId, request);
         }catch(ApiException e){
             assertThat(e.getMessage(), startsWith("Overall Activation process is a Failure. "));
             assertEquals(e.getHttpResponseCode(), HttpStatus.SC_BAD_REQUEST);
             assertEquals(e.getMessageID(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
         }
 
-		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId);
-		assertNotNull(distStatus);
-		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
-		assertEquals(statusError, distStatus.getDistributionIdStatus());
-		assertEquals(null, distStatus.getDistributionIdErrorReason());		
-		
-		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
-		assertNotNull(servStatus);
-		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
-		assertEquals(statusError, servStatus.getServiceModelVersionDistrStatus());		
-		assertEquals(new Integer(retryCountZero), servStatus.getRetryCount());		
-
-		// Retry count is zero, no more retry. all retry failed. 
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("FAILURE"));
-		assertTrue(infraActiveRequest.getRequestStatus().contains("FAILED"));
-		
-		// cleanup		
-		infraActiveRequestsRepository.delete(requestIdOrig);		
 		
 	}	
 	
 	@Test
-	public void executionTest_ERROR_Status_And_RETRY_And_ErrorSdc() throws Exception {
+	public void executionTest_ERROR_Status_And_RETRY_And_ErrorSdc() throws JsonProcessingException {
 		
 		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
 		serviceModelDb.setRequestId(requestIdOrig);
@@ -406,7 +396,6 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
-		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 		
 		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
 		distributionDb.setDistributionId(sdcDistributionId);
@@ -415,7 +404,6 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		distributionDb.setDistributionIdStatus(statusError);
 		distributionDb.setServiceModelVersionId(serviceModelVersionId);
 		distributionDb.setDistributionIdErrorReason(null);
-		distributionDbRepository.saveAndFlush(distributionDb);
 		
 		
 		
@@ -441,41 +429,33 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		InfraActiveRequests iar = new InfraActiveRequests();
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
-		infraActiveRequestsRepository.saveAndFlush(iar);
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(serviceModelDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(distributionDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+				.withRequestBody(containing("operationalEnvId\":\"TEST_operationalEnvironmentId\""))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
 		
 		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonMessages.toString()).withStatus(HttpStatus.SC_CONFLICT)));
 
 		try {
-            activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);
+            activateVnfStatus.execute(requestId, request);
         }catch(ApiException e){
             assertThat(e.getMessage(), startsWith("Failure calling SDC: statusCode: "));
             assertEquals(e.getHttpResponseCode(), HttpStatus.SC_BAD_REQUEST);
             assertEquals(e.getMessageID(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
         }
-		// status as-is / no changes
-		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId);
-		assertNotNull(distStatus);
-		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
-		assertEquals(statusError, distStatus.getDistributionIdStatus());
-		assertEquals(null, distStatus.getDistributionIdErrorReason());		
-		
-		// status as-is / no changes		
-		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
-		assertNotNull(servStatus);
-		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
-		assertEquals(statusError, servStatus.getServiceModelVersionDistrStatus());		
-		assertEquals(new Integer(retryCountThree), servStatus.getRetryCount());
-		
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("FAILURE"));
-		assertTrue(infraActiveRequest.getRequestStatus().contains("FAILED"));	
-		assertTrue(infraActiveRequest.getStatusMessage().contains("Undefined Error Message!"));
-		
-		// cleanup		
-		infraActiveRequestsRepository.delete(requestIdOrig);
-		
 	}	
 	
 	@Test
@@ -489,8 +469,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
-		serviceModelDbRepository.saveAndFlush(serviceModelDb);
-		
+
 		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
 		distributionDb.setDistributionId(sdcDistributionId);
 		distributionDb.setRequestId(requestIdOrig);
@@ -498,36 +477,48 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		distributionDb.setDistributionIdStatus(statusError);
 		distributionDb.setServiceModelVersionId(serviceModelVersionId);
 		distributionDb.setDistributionIdErrorReason(null);
-		distributionDbRepository.saveAndFlush(distributionDb);
-		
-		
 		
 		// prepare distribution obj
+		OperationalEnvDistributionStatus  distributionStatus = new OperationalEnvDistributionStatus(sdcDistributionId,operationalEnvironmentId,serviceModelVersionId);
+		distributionStatus.setDistributionIdStatus(Status.DISTRIBUTION_COMPLETE_ERROR.name());
+		
 		Distribution distribution = new Distribution();
 		distribution.setStatus(Status.DISTRIBUTION_COMPLETE_ERROR);
 		request.setDistribution(distribution);
 		request.setDistributionId(sdcDistributionId);
 		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		
 		InfraActiveRequests iar = new InfraActiveRequests();
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
-		infraActiveRequestsRepository.saveAndFlush(iar);
 
-		activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);			
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(serviceModelDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(distributionDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
+				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"SKIP\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
 
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("SUCCESSFUL"));
-		assertTrue(infraActiveRequest.getRequestStatus().contains("COMPLETE"));	
-		
-		// cleanup		
-		infraActiveRequestsRepository.delete(requestIdOrig);
-		
+		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
+				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
+
+		activateVnfStatus.execute(requestId, request);			
+
 	}	
 	
 	@Test
-	public void executionTest_ERROR_Status_And_ABORT() throws Exception {
+	public void executionTest_ERROR_Status_And_ABORT() throws JsonProcessingException {
 		
 		OperationalEnvServiceModelStatus serviceModelDb = new OperationalEnvServiceModelStatus();
 		serviceModelDb.setRequestId(requestIdOrig);
@@ -537,7 +528,6 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
-		serviceModelDbRepository.saveAndFlush(serviceModelDb);
 		
 		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
 		distributionDb.setDistributionId(sdcDistributionId);
@@ -546,7 +536,6 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		distributionDb.setDistributionIdStatus(statusError);
 		distributionDb.setServiceModelVersionId(serviceModelVersionId);
 		distributionDb.setDistributionIdErrorReason(null);
-		distributionDbRepository.saveAndFlush(distributionDb);
 		
 		
 		
@@ -560,23 +549,36 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		InfraActiveRequests iar = new InfraActiveRequests();
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
-		infraActiveRequestsRepository.saveAndFlush(iar);
 
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(serviceModelDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(distributionDb))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
+
+		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
+				.withRequestBody(containing("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_ERROR\""))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
+
+		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
+				.withRequestBody(containing("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_ERROR\""))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
         try {
-            activateVnfStatus.execute(requestId, request, distributionDbRepository, serviceModelDbRepository);
-        }catch(ApiException e){
-            assertThat(e.getMessage(), startsWith("Overall Activation process is a Failure. "));
-            assertEquals(e.getHttpResponseCode(), HttpStatus.SC_BAD_REQUEST);
-            assertEquals(e.getMessageID(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
-        }
-		
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestIdOrig);
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("FAILURE"));
-		assertTrue(infraActiveRequest.getRequestStatus().contains("FAILED"));
-		
-		// cleanup		
-		infraActiveRequestsRepository.delete(requestIdOrig);
+            activateVnfStatus.execute(requestId, request);
+        }catch(ApiException e) {
+			assertThat(e.getMessage(), startsWith("Overall Activation process is a Failure. "));
+			assertEquals(e.getHttpResponseCode(), HttpStatus.SC_BAD_REQUEST);
+			assertEquals(e.getMessageID(), ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
+		}
 		
 	}		
 	
@@ -617,24 +619,11 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
 		
-		JSONObject jsonResponse = activateVnfStatus.callSDClientForRetry(distributionDb, serviceModelDb, distribution,
-															distributionDbRepository, serviceModelDbRepository); 
+		JSONObject jsonResponse = activateVnfStatus.callSDClientForRetry(distributionDb, serviceModelDb, distribution); 
 		
 		assertEquals("TEST_distributionId1", jsonResponse.get("distributionId")); 
 		assertEquals("Success", jsonResponse.get("message"));
 		assertEquals("202", jsonResponse.get("statusCode"));		
 
-		// insert new record, status sent
-		OperationalEnvDistributionStatus distStatus = distributionDbRepository.findOne(sdcDistributionId1);
-		assertNotNull(distStatus);
-		assertEquals(operationalEnvironmentId, distStatus.getOperationalEnvId());
-		assertEquals(statusSent, distStatus.getDistributionIdStatus());		
-		
-		// insert new record, status sent		
-		OperationalEnvServiceModelStatus servStatus = serviceModelDbRepository.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, serviceModelVersionId);
-		assertNotNull(servStatus);
-		assertEquals(statusSent, servStatus.getServiceModelVersionDistrStatus());
-		assertEquals(operationalEnvironmentId, servStatus.getOperationalEnvId());
-		
-	}		
+	}
 }

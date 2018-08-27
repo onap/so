@@ -21,13 +21,13 @@
 package org.onap.so.apihandlerinfra.tenantisolation.process;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.onap.so.apihandler.common.ErrorNumbers;
+import org.onap.so.requestsdb.client.RequestsDbClient;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
@@ -40,8 +40,6 @@ import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.objects.AAIOperationalEnvironment;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
-import org.onap.so.db.request.data.repository.OperationalEnvDistributionStatusRepository;
-import org.onap.so.db.request.data.repository.OperationalEnvServiceModelStatusRepository;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
@@ -53,7 +51,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ActivateVnfOperationalEnvironment {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, ActivateVnfOperationalEnvironment.class);
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, ActivateVnfOperationalEnvironment.class);
 	private static final int DEFAULT_ACTIVATE_RETRY_COUNT = 3;
 	private static final String DISTRIBUTION_STATUS_SENT = "SENT";	
 	
@@ -69,16 +67,16 @@ public class ActivateVnfOperationalEnvironment {
 	@Value("${mso.tenant.isolation.retry.count}")
 	private String sdcRetryCount;
 	
+	@Autowired
+	RequestsDbClient client;
+	
 	/**
 	 * The Point-Of-Entry from APIH with VID request to send activate request
 	 * @param requestId - String
 	 * @param request - CloudOrchestrationRequest object
-	 * @param distributionStatusRepository - OperationalEnvDistributionStatusRepository object
-	 * @param modelStatusRepository - OperationalEnvServiceModelStatusRepository object
 	 * @return void - nothing
 	 */		
-	public void execute(String requestId, CloudOrchestrationRequest request, OperationalEnvDistributionStatusRepository distributionStatusRepository, 
-							OperationalEnvServiceModelStatusRepository modelStatusRepository) throws ApiException{
+	public void execute(String requestId, CloudOrchestrationRequest request) throws ApiException{
 		String operationalEnvironmentId = request.getOperationalEnvironmentId();
 
 		String vidWorkloadContext = request.getRequestDetails().getRequestParameters().getWorkloadContext();
@@ -96,7 +94,7 @@ public class ActivateVnfOperationalEnvironment {
 					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
 		}
 
-			processActivateSDCRequest(requestId, operationalEnvironmentId, serviceModelVersionIdList, workloadContext, distributionStatusRepository, modelStatusRepository);
+			processActivateSDCRequest(requestId, operationalEnvironmentId, serviceModelVersionIdList, workloadContext);
 
 	}	
 	
@@ -107,13 +105,11 @@ public class ActivateVnfOperationalEnvironment {
 	 * @param operationalEnvironmentId - String   
 	 * @param serviceModelVersionIdList - List<ServiceModelList> list
 	 * @param workloadContext - String	  
-	 * @param distributionStatusRepository - OperationalEnvDistributionStatusRepository object
-	 * @param modelStatusRepository - OperationalEnvServiceModelStatusRepository object
 	 * @return jsonResponse - JSONObject object  
 	 */		
-	public void processActivateSDCRequest(String requestId, String operationalEnvironmentId, List<ServiceModelList> serviceModelVersionIdList, 
-											String workloadContext, OperationalEnvDistributionStatusRepository distributionStatusRepository, 
-											OperationalEnvServiceModelStatusRepository modelStatusRepository) throws ApiException {
+	public void processActivateSDCRequest(String requestId, String operationalEnvironmentId, 
+										  List<ServiceModelList> serviceModelVersionIdList, 
+										  String workloadContext) throws ApiException {
 		
 		JSONObject jsonResponse = null;		
 		int retryCount = 0;
@@ -137,7 +133,7 @@ public class ActivateVnfOperationalEnvironment {
 																	    recoveryAction, 
 																	    retryCount,
 				 													    workloadContext); 					
-			modelStatusRepository.save(serviceModelStatus);
+			client.save(serviceModelStatus);
 			
 			String distributionId = "";
 
@@ -154,7 +150,7 @@ public class ActivateVnfOperationalEnvironment {
 								requestId,
 								DISTRIBUTION_STATUS_SENT,
 								"");
-				distributionStatusRepository.save(distStatus);
+				client.save(distStatus);
 
 			} else {
 				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();

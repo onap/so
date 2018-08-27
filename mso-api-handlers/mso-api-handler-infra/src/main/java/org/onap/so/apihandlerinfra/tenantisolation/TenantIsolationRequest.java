@@ -30,7 +30,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onap.so.apihandlerinfra.Constants;
-import org.onap.so.apihandlerinfra.RequestsDbClient;
+import org.onap.so.requestsdb.client.RequestsDbClient;
 import org.onap.so.apihandlerinfra.Status;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Action;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Manifest;

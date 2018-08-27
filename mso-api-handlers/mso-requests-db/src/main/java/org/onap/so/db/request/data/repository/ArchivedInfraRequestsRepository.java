@@ -22,9 +22,10 @@ package org.onap.so.db.request.data.repository;
 
 import org.onap.so.db.request.beans.ArchivedInfraRequests;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@RepositoryRestResource(collectionResourceRel = "archivedInfraRequests", path = "archivedInfraRequests")
 public interface ArchivedInfraRequestsRepository extends JpaRepository<ArchivedInfraRequests, String> {	
 
 }

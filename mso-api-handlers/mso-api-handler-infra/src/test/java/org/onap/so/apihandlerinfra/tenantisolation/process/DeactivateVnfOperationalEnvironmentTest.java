@@ -20,19 +20,14 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation.process;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -45,6 +40,9 @@ import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
 public class DeactivateVnfOperationalEnvironmentTest extends BaseTest{
 
     @Rule
@@ -52,13 +50,20 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest{
 
 	@Autowired
 	private DeactivateVnfOperationalEnvironment deactivate;
-	@Autowired
-	private InfraActiveRequestsRepository infraActiveRequestsRepository;
-	
+
 	private CloudOrchestrationRequest request = new CloudOrchestrationRequest();
 	private String operationalEnvironmentId = "ff3514e3-5a33-55df-13ab-12abad84e7ff";
 	private String requestId = "ff3514e3-5a33-55df-13ab-12abad84e7fe";
 	
+	private ObjectMapper mapper = new ObjectMapper();
+	
+	@Before
+	public void init(){
+		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+				.withRequestBody(containing("{\"requestId\":\""+ requestId+"\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
+	}
 	@Test
 	public void testDeactivateOperationalEnvironment() throws Exception {
 		request.setOperationalEnvironmentId(operationalEnvironmentId);
@@ -79,14 +84,11 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestScope("create");
 		iar.setRequestStatus("PENDING");
 		iar.setRequestAction("UNKNOWN");
-		infraActiveRequestsRepository.saveAndFlush(iar);
-		
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
 		deactivate.execute(requestId, request);
-		
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestId);
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("SUCCESSFUL"));
-
 	}
 	
 	@Test
@@ -110,8 +112,15 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestScope("create");
 		iar.setRequestStatus("PENDING");
 		iar.setRequestAction("UNKNOWN");
-		infraActiveRequestsRepository.saveAndFlush(iar);
-		
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
+		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+				.withRequestBody(containing("{\"requestId\":\""+ requestId+"\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
+
         deactivate.execute(requestId, request);
 	}
 	
@@ -131,13 +140,12 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestScope("create");
 		iar.setRequestStatus("PENDING");
 		iar.setRequestAction("UNKNOWN");
-		infraActiveRequestsRepository.saveAndFlush(iar);
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
 		
 		deactivate.execute(requestId, request);
-		
-		InfraActiveRequests infraActiveRequest = infraActiveRequestsRepository.findOne(requestId);
-		assertNotNull(infraActiveRequest);
-		assertTrue(infraActiveRequest.getStatusMessage().contains("SUCCESS"));
 	}
 	
 	@Test

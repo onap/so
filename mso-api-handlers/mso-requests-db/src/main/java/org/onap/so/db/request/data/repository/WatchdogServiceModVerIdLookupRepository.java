@@ -23,9 +23,10 @@ package org.onap.so.db.request.data.repository;
 import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
 import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookupId;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@RepositoryRestResource(collectionResourceRel = "watchdogServiceModVerIdLookup", path = "watchdogServiceModVerIdLookup")
 public interface WatchdogServiceModVerIdLookupRepository extends JpaRepository<WatchdogServiceModVerIdLookup, WatchdogServiceModVerIdLookupId> {
 
 	public WatchdogServiceModVerIdLookup findOneByDistributionId(String distributionId);

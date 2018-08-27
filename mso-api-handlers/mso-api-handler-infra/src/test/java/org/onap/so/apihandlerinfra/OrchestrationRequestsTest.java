@@ -31,6 +31,7 @@ import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.exceptions.ValidationException;
+import org.onap.so.requestsdb.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;

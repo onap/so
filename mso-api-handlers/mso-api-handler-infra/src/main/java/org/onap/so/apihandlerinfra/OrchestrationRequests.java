@@ -52,6 +52,7 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoAlarmLogger;
 import org.onap.so.logger.MsoLogger;
+import org.onap.so.requestsdb.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.GetOrchestrationListResponse;
 import org.onap.so.serviceinstancebeans.GetOrchestrationResponse;
 import org.onap.so.serviceinstancebeans.InstanceReferences;
