@@ -22,6 +22,30 @@
       "revId": "963b2eb3fd0af7da96554860d17558242db4616f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_864066a6",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/CreateVcpeResCustService.bpmn",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-08-27T23:09:55Z",
+      "side": 1,
+      "message": "This is for \"Call Create Service\".\n\nMy change concerns \"Call Homing Service\".",
+      "parentUuid": "1a76adc5_06df760e",
+      "range": {
+        "startLine": 101,
+        "startChar": 28,
+        "endLine": 101,
+        "endChar": 85
+      },
+      "revId": "963b2eb3fd0af7da96554860d17558242db4616f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
