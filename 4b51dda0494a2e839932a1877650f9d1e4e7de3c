@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_74e13899",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/async/client/NetworkAdapterNotify_Service.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-08-27T11:40:51Z",
+      "side": 1,
+      "message": "There is no difference between \"public static final\" and \"public final static\", but if you did for the styling, maybe.",
+      "range": {
+        "startLine": 46,
+        "startChar": 3,
+        "endLine": 48,
+        "endChar": 137
+      },
+      "revId": "4b51dda0494a2e839932a1877650f9d1e4e7de3c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
