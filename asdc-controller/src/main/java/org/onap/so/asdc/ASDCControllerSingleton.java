@@ -15,6 +15,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * Modifications Copyright (C) 2018 IBM.
  * ============LICENSE_END=========================================================
  */
 
@@ -22,14 +23,16 @@ package org.onap.so.asdc;
 
 import javax.annotation.PreDestroy;
 
+import org.onap.so.asdc.client.ASDCConfiguration;
 import org.onap.so.asdc.client.ASDCController;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
+import org.onap.so.logger.MsoLogger;
 import java.security.SecureRandom;
+
 
 @Component
 @Profile("!test")
@@ -37,7 +40,8 @@ public class ASDCControllerSingleton {
    
    
     @Autowired
-    private ASDCController asdcController;    
+    private ASDCController asdcController;
+    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.ASDC, ASDCControllerSingleton.class);
   
 
 
@@ -49,8 +53,8 @@ public class ASDCControllerSingleton {
 			asdcController.setControllerName("mso-controller"+randomNumber);
 			asdcController.initASDC();
 		} catch (ASDCControllerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			msoLogger.error(e);
+	
 		}
 	}
    
@@ -59,8 +63,7 @@ public class ASDCControllerSingleton {
 	   try {
 		asdcController.closeASDC ();
 	} catch (ASDCControllerException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+		msoLogger.error(e);
 	}
    }
 
