@@ -259,6 +259,9 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
 
 			if(resourceClient.exists(uri)){
+				Map<String, String> keys = uri.getURIKeys()
+				execution.setVariable("globalCustomer", keys.get("global-customer-id"))
+				execution.setVariable("serviceType", keys.get("service-type"))
 				execution.setVariable("GENGS_siResourceLink", uri.build().toString())
 
 			}else{
@@ -307,14 +310,9 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 
 			//Get Service Instance Info
 			String serviceInstanceId = getVariableEnforced(execution, "DoCVNF_serviceInstanceId")
-			String siRelatedLink = getVariableEnforced(execution, "GENGS_siResourceLink")
 
-			int custStart = siRelatedLink.indexOf("customer/")
-			int custEnd = siRelatedLink.indexOf("/service-subscriptions")
-			String globalCustId = siRelatedLink.substring(custStart + 9, custEnd)
-			int serviceStart = siRelatedLink.indexOf("service-subscription/")
-			int serviceEnd = siRelatedLink.indexOf("/service-instances/")
-			String serviceType = siRelatedLink.substring(serviceStart + 21, serviceEnd)
+			String globalCustId = execution.getVariable("global-customer-id")
+			String serviceType = execution.getVariable("service-type")
 
 			Map<String, String> payload = new LinkedHashMap<>();
 			payload.put("vnf-id", vnfId);
