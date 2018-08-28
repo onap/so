@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_3a4c0270",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/CreateVcpeResCustService.bpmn",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-08-28T01:22:36Z",
+      "side": 1,
+      "message": "Agreed. I took it out in my original change. But thought it would be cleaner to remove in a different change.",
+      "parentUuid": "1a76adc5_a62242ff",
+      "range": {
+        "startLine": 89,
+        "startChar": 28,
+        "endLine": 89,
+        "endChar": 88
+      },
+      "revId": "963b2eb3fd0af7da96554860d17558242db4616f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_06df760e",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/CreateVcpeResCustService.bpmn",
         "patchSetId": 1
