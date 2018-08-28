@@ -75,4 +75,12 @@ public class AAISimpleUriTest {
 		System.out.println(uri.build());
 		assertEquals("vserver1", keys.get("vserver-id"));
 	}
+	
+	@Test
+	public void getEncodedKeyTest() {
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "test1", "my value", "test3");
+		Map<String,String> keys = uri.getURIKeys();
+		
+		assertEquals("my value", keys.get("service-type"));
+	}
 }
