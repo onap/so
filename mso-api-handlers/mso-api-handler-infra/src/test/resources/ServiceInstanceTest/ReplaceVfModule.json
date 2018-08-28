@@ -16,8 +16,8 @@
 		},
 		"modelInfo":{
 			"modelInvariantId": "f7ce78bb-423b-11e7-93f8-0050569a7968",
-			"modelVersion":"1", 
-			"modelVersionId":"test", 
+			"modelVersion":"2", 
+			"modelVersionId":"78ca26d0-246d-11e7-93ae-92361f002671", 
 			"modelType":"vfModule",
 			"modelName":"serviceModel",
 			"modelCustomizationId": "a7f1d08e-b02d-11e6-80f5-76304dec7eb7"

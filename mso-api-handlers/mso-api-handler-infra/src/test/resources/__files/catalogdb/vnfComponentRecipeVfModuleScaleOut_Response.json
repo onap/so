@@ -1,0 +1,19 @@
+{
+  "id": 37,
+  "action": "scaleOut",
+  "description": "Gr api recipe to scale out vfModule",
+  "orchestrationUri": "/mso/async/services/WorkflowActionBB",
+  "recipeTimeout": 180,
+  "vnfType": null,
+  "paramXsd": null,
+  "vnfComponentType": "vfModule",
+  "vfModuleModelUUID": "GR-API-DEFAULT",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/37"
+    },
+    "vnfComponentsRecipe": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/37"
+    }
+  }
+}

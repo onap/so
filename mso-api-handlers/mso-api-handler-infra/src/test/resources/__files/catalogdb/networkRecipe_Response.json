@@ -1,0 +1,19 @@
+{
+  "id": 180,
+  "action": "deleteInstance",
+  "description": "Gr api recipe to delete network",
+  "orchestrationUri": "/mso/async/services/WorkflowActionBB",
+  "recipeTimeout": 180,
+  "serviceType": null,
+  "modelName": "GR-API-DEFAULT",
+  "paramXsd": null,
+  "created": "2018-08-23T05:09:35.000+0000",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/networkRecipe/180"
+    },
+    "networkRecipe": {
+      "href": "http://localhost:8090/networkRecipe/180"
+    }
+  }
+}

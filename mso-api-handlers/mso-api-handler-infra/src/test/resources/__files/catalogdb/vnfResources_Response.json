@@ -1,0 +1,71 @@
+{
+  "modelUUID": "fe6478e4-ea33-3346-ac12-ab121484a3fw",
+  "modelInvariantUUID": "2fff5b20-214b-11e7-93ae-92361f002671",
+  "modelName": "vSAMP10a",
+  "modelVersion": "1.0",
+  "toscaNodeType": "VF",
+  "description": "1607 vSAMP10a - inherent network",
+  "orchestrationMode": "HEAT",
+  "aicVersionMin": "",
+  "aicVersionMax": "",
+  "category": null,
+  "subCategory": null,
+  "created": "2017-04-14T16:16:28.000+0000",
+  "modelInvariantId": "2fff5b20-214b-11e7-93ae-92361f002671",
+  "_embedded": {
+    "vnfResourceCustomizations": [
+      {
+        "description": "1607 vSAMP10a - inherent network",
+        "modelName": "vSAMP10a",
+        "modelUUID": "fe6478e4-ea33-3346-ac12-ab121484a3fw",
+        "multiStageDesign": null,
+        "modelInvariantUUID": "2fff5b20-214b-11e7-93ae-92361f002671",
+        "modelInstanceName": "test",
+        "availabilityZoneMaxCount": "0",
+        "vfModuleCustomizations": [],
+        "modelCustomizationUUID": "68dc9a92-214c-11e7-93ae-92361f002674",
+        "orchestrationMode": "HEAT",
+        "nfFunction": "",
+        "modelVersion": "1.0",
+        "aicVersionMax": "",
+        "nfRole": "TEST",
+        "nfNamingCode": "",
+        "toscaNodeType": "VF",
+        "minInstances": "0",
+        "aicVersionMin": "",
+        "maxInstances": "0",
+        "created": "2017-04-14 21:46:28.0",
+        "nfType": "",
+        "_links": {
+          "self": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674{?projection}",
+            "templated": true
+          },
+          "vfModuleCustomizations": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674/vfModuleCustomizations"
+          },
+          "vnfResources": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674/vnfResources"
+          },
+          "vnfcInstanceGroupCustomizations": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674/vnfcInstanceGroupCustomizations"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfResource/fe6478e4-ea33-3346-ac12-ab121484a3fw"
+    },
+    "vnfResource": {
+      "href": "http://localhost:8090/vnfResource/fe6478e4-ea33-3346-ac12-ab121484a3fw"
+    },
+    "vnfResourceCustomizations": {
+      "href": "http://localhost:8090/vnfResource/fe6478e4-ea33-3346-ac12-ab121484a3fw/vnfResourceCustomizations"
+    },
+    "heatTemplates": {
+      "href": "http://localhost:8090/vnfResource/fe6478e4-ea33-3346-ac12-ab121484a3fw/heatTemplates"
+    }
+  }
+}

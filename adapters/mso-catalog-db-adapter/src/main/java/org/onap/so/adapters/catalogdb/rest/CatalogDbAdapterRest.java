@@ -53,19 +53,6 @@ min and initial counts can be 0. max can be null to indicate no maximum.
 Once the network-level distribution artifacts are defined, similar updates can be made to the NETWORK_RESOURCE table.
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.apache.http.HttpStatus;
 import org.onap.so.adapters.catalogdb.catalogrest.CatalogQuery;
 import org.onap.so.adapters.catalogdb.catalogrest.CatalogQueryException;
@@ -106,6 +93,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class services calls to the REST interface for VF Modules (http://host:port/ecomp/mso/catalog/v1)
@@ -203,7 +202,7 @@ public class CatalogDbAdapterRest {
                 service = serviceRepo.findFirstOneByModelUUIDOrderByModelVersionDesc(serviceModelUUID);
             else if (smiUuid != null && !"".equals(smiUuid))			
                 if (smVer != null && !"".equals(smVer)) 
-                    service = serviceRepo.findByModelVersionAndModelInvariantUUID(smVer,smiUuid);					
+                    service = serviceRepo.findFirstByModelVersionAndModelInvariantUUID(smVer,smiUuid);					
                 else 					
                     service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(smiUuid);
             else if (smName != null && !"".equals(smName)) {
@@ -287,7 +286,7 @@ public class CatalogDbAdapterRest {
             else if (serviceModelInvariantUuid != null && !"".equals(serviceModelInvariantUuid)) {
                 uuid = serviceModelInvariantUuid;
                 if (serviceModelVersion != null && !"".equals(serviceModelVersion)) {					
-                    service = serviceRepo.findByModelVersionAndModelInvariantUUID(serviceModelVersion, uuid);
+                    service = serviceRepo.findFirstByModelVersionAndModelInvariantUUID(serviceModelVersion, uuid);
                 }
                 else {					
                     service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(uuid);
@@ -347,7 +346,7 @@ public class CatalogDbAdapterRest {
                 uuid = modelInvariantUUID;
                 if (modelVersion != null && !"".equals(modelVersion)) {
                     logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: {}  serviceModelVersion: {}",uuid, modelVersion);
-                    Service serv = serviceRepo.findByModelVersionAndModelInvariantUUID(modelVersion, uuid);
+                    Service serv = serviceRepo.findFirstByModelVersionAndModelInvariantUUID(modelVersion, uuid);
                     ret.setService(serv);	
                 }
                 else {
@@ -419,7 +418,7 @@ public class CatalogDbAdapterRest {
             else if (serviceModelInvariantUuid != null && !"".equals(serviceModelInvariantUuid)) {
                 uuid = serviceModelInvariantUuid;
                 if (smVer != null && !"".equals(smVer)) {					
-                    service = serviceRepo.findByModelVersionAndModelInvariantUUID(smVer, uuid);
+                    service = serviceRepo.findFirstByModelVersionAndModelInvariantUUID(smVer, uuid);
                 }
                 else {				
                     service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(uuid);
@@ -558,10 +557,10 @@ public class CatalogDbAdapterRest {
                 logger.debug("Query recipe by resource model uuid: {}", rmUuid);
                 //check vnf and network and ar, the resource could be any resource.
                 VnfResource vnf = vnfResourceRepo.findResourceByModelUUID(rmUuid);
-                Recipe recipe = vnfRecipeRepo.findVnfRecipeByNfRoleAndAction(vnf.getModelName(), action);
+                Recipe recipe = vnfRecipeRepo.findFirstVnfRecipeByNfRoleAndAction(vnf.getModelName(), action);
                 if (null == recipe) {
                     NetworkResource nResource = networkResourceRepo.findResourceByModelUUID(rmUuid);
-                    recipe = networkRecipeRepo.findByModelNameAndAction(nResource.getModelName(), action);
+                    recipe = networkRecipeRepo.findFirstByModelNameAndAction(nResource.getModelName(), action);
                 }
                 if (null == recipe) {
                     AllottedResource arResource = arResourceRepo.findResourceByModelUUID(rmUuid);

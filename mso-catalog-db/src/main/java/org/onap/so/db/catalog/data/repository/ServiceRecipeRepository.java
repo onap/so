@@ -22,14 +22,13 @@ package org.onap.so.db.catalog.data.repository;
 
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "serviceRecipe", path = "serviceRecipe")
 public interface ServiceRecipeRepository extends JpaRepository<ServiceRecipe, Long> {
-	public ServiceRecipe findByActionAndServiceModelUUID(String action, String serviceModelUUID);
+	ServiceRecipe findByActionAndServiceModelUUID(String action, String serviceModelUUID);
 
-	public ServiceRecipe findByAction(String action);
+	ServiceRecipe findByAction(String action);
 
-	public ServiceRecipe findFirstByServiceModelUUIDAndAction(@Param("SERVICE_MODEL_UUID") String serviceModelUUID, @Param("ACTION") String action);
+	ServiceRecipe findFirstByServiceModelUUIDAndAction(String serviceModelUUID, String action);
 }

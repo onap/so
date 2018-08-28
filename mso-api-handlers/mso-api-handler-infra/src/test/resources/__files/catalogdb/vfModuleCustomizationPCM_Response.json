@@ -1,0 +1,26 @@
+{
+  "modelCustomizationUUID": "b4ea86b4-253f-11e7-93ae-92361f002672",
+  "label": "PCM",
+  "minInstances": 0,
+  "maxInstances": 0,
+  "initialCount": 0,
+  "availabilityZoneCount": 0,
+  "created": "2017-05-26 09:38:23.000",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672"
+    },
+    "vfModuleCustomization": {
+      "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672"
+    },
+    "volumeHeatEnv": {
+      "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/volumeHeatEnv"
+    },
+    "heatEnvironment": {
+      "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/heatEnvironment"
+    },
+    "vfModule": {
+      "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/vfModule"
+    }
+  }
+}

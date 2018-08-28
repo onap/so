@@ -35,7 +35,7 @@ public interface VnfResourceRepository extends JpaRepository<VnfResource, String
 
 	VnfResource findResourceByModelUUID(String modelUUID);
 
-	VnfResource findResourceByModelInvariantUUID(String modelInvariantId);
+	VnfResource findResourceByModelInvariantUUID(String modelInvariantUUID);
 
-	VnfResource findResourceByModelInvariantUUIDAndModelVersion(String relatedInstanceModelInvariantId, String relatedInstanceVersion);
+	VnfResource findFirstResourceByModelInvariantUUIDAndModelVersion(String modelInvariantUUID, String modelVersion);
 }

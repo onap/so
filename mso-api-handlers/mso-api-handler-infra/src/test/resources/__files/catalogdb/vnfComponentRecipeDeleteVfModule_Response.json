@@ -1,0 +1,19 @@
+{
+  "id": 33,
+  "action": "deleteInstance",
+  "description": "Gr api recipe to delete vf-module",
+  "orchestrationUri": "/mso/async/services/WorkflowActionBB",
+  "recipeTimeout": 180,
+  "vnfType": null,
+  "paramXsd": null,
+  "vnfComponentType": "vfModule",
+  "vfModuleModelUUID": "GR-API-DEFAULT",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/33"
+    },
+    "vnfComponentsRecipe": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/33"
+    }
+  }
+}

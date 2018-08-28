@@ -28,6 +28,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface ModelRecipeRepository extends JpaRepository<ModelRecipe, Integer> {
 
 	
-	public ModelRecipe findByModelIdAndAction(String modelId, String action);
+	ModelRecipe findByModelIdAndAction(String modelId, String action);
 	
 }

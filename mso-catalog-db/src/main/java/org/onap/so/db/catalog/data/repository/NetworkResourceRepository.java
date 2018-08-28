@@ -21,8 +21,6 @@
 package org.onap.so.db.catalog.data.repository;
 
 import org.onap.so.db.catalog.beans.NetworkResource;
-import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.VnfResource;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -38,6 +36,6 @@ public interface NetworkResourceRepository extends JpaRepository<NetworkResource
 	@Query(value = "SELECT * FROM network_resource WHERE MODEL_NAME = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
 	NetworkResource findFirstByModelNameOrderByModelVersionDesc(String modelName);
 	
-	public NetworkResource findResourceByModelUUID(String modelUUID);
+	NetworkResource findResourceByModelUUID(String modelUUID);
 	NetworkResource findOneByModelName(String modelName);
 }
