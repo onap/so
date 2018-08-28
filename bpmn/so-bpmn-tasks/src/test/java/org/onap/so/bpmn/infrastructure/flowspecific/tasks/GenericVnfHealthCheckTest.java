@@ -1,0 +1,101 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.onap.appc.client.lcm.model.Action;
+import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.db.catalog.beans.ControllerSelectionReference;
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class GenericVnfHealthCheckTest extends BaseTaskTest {
+	
+	@Autowired
+	private GenericVnfHealthCheck genericVnfHealthCheck;
+	
+	private GenericVnf genericVnf;
+	private RequestContext requestContext;
+	private String msoRequestId;
+
+	@Before
+	public void before() {
+		genericVnf = setGenericVnf();
+		msoRequestId = UUID.randomUUID().toString();
+		requestContext = setRequestContext();
+		requestContext.setMsoRequestId(msoRequestId);
+		gBBInput.setRequestContext(requestContext);
+	}
+	
+	@Test
+	public void setParamsForGenericVnfHealthCheckTest() throws Exception {
+		ControllerSelectionReference controllerSelectionReference = new ControllerSelectionReference();
+		controllerSelectionReference.setControllerName("testName");
+		controllerSelectionReference.setActionCategory("testAction");
+		controllerSelectionReference.setVnfType("testVnfType");
+		
+		doReturn(controllerSelectionReference).when(catalogDbClient).getControllerSelectionReferenceByVnfTypeAndActionCategory(genericVnf.getVnfType(), Action.HealthCheck.toString());
+		
+		genericVnfHealthCheck.setParamsForGenericVnfHealthCheck(execution);
+		
+		assertEquals(genericVnf.getVnfId(), execution.getVariable("vnfId"));
+		assertEquals(genericVnf.getVnfName(), execution.getVariable("vnfName"));
+		assertEquals(genericVnf.getIpv4OamAddress(), execution.getVariable("oamIpAddress"));
+		assertEquals("HealthCheck", execution.getVariable("action"));
+		assertEquals(requestContext.getMsoRequestId(), execution.getVariable("msoRequestId"));
+		assertEquals(controllerSelectionReference.getControllerName(), execution.getVariable("controllerType"));
+	}
+	@Test
+	public void callAppcClientTest() throws Exception {
+		Action action = Action.HealthCheck;
+		String vnfId = genericVnf.getVnfId();
+		String payload = "{\"testName\":\"testValue\",}";
+		String controllerType = "testType";
+		HashMap<String, String> payloadInfo = new HashMap<String, String>();
+		payloadInfo.put("vnfName", "testVnfName");
+		payloadInfo.put("vfModuleId", "testVfModuleId");
+		payloadInfo.put("oamIpAddress", "testOamIpAddress");
+		execution.setVariable("action", Action.HealthCheck.toString());
+		execution.setVariable("msoRequestId", msoRequestId);
+		execution.setVariable("controllerType", controllerType);
+		execution.setVariable("vnfId", "testVnfId1");
+		execution.setVariable("vnfName", "testVnfName");
+		execution.setVariable("vfModuleId", "testVfModuleId");
+		execution.setVariable("oamIpAddress", "testOamIpAddress");
+		execution.setVariable("payload", payload);
+		
+		doNothing().when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
+		
+		genericVnfHealthCheck.callAppcClient(execution);
+		verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
+	}
+}
