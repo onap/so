@@ -305,45 +305,47 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 				}
 
 				AAIResultWrapper wrapper = resourceClient.get(uri)
-				List<AAIResourceUri> uriList = wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.ALLOTTED_RESOURCE)
-				uriList.addAll(wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF))
-				uriList.addAll(wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.L3_NETWORK))
+				if(wrapper.getRelationships().isPresent()){
+					List<AAIResourceUri> uriList = wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.ALLOTTED_RESOURCE)
+					uriList.addAll(wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.GENERIC_VNF))
+					uriList.addAll(wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.L3_NETWORK))
 
-				if(uriList.isEmpty){
-					Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
-					String orchestrationStatus = si.get().getOrchestrationStatus()
-					String serviceType = si.get().getServiceType()
-					execution.setVariable("serviceType", serviceType)
-					execution.setVariable("serviceRole", si.get().getServiceRole())
+					if(uriList.isEmpty()){
+						Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+						String orchestrationStatus = si.get().getOrchestrationStatus()
+						String serviceType = si.get().getServiceType()
+						execution.setVariable("serviceType", serviceType)
+						execution.setVariable("serviceRole", si.get().getServiceRole())
 
-					if("TRANSPORT".equalsIgnoreCase(serviceType)){
-						if("PendingDelete".equals(orchestrationStatus)){
-							execution.setVariable("skipDeactivate", true)
-						}else{
-							exceptionUtil.buildAndThrowWorkflowException(execution, 500, "ServiceInstance of type TRANSPORT must in PendingDelete status to allow Delete. Orchestration-status: " + orchestrationStatus)
+						if("TRANSPORT".equalsIgnoreCase(serviceType)){
+							if("PendingDelete".equals(orchestrationStatus)){
+								execution.setVariable("skipDeactivate", true)
+							}else{
+								exceptionUtil.buildAndThrowWorkflowException(execution, 500, "ServiceInstance of type TRANSPORT must in PendingDelete status to allow Delete. Orchestration-status: " + orchestrationStatus)
+							}
 						}
-					}
 
-					String svcTypes = UrnPropertiesReader.getVariable("sdnc.si.svc.types",execution) ?: ""
-					List<String> svcList = Arrays.asList(svcTypes.split("\\s*,\\s*"));
-					boolean isSdncService= false
-					for(String listEntry : svcList){
-						if(listEntry.equalsIgnoreCase(serviceType)){
-							isSdncService = true
-							break;
+						String svcTypes = UrnPropertiesReader.getVariable("sdnc.si.svc.types",execution) ?: ""
+						List<String> svcList = Arrays.asList(svcTypes.split("\\s*,\\s*"));
+						boolean isSdncService= false
+						for(String listEntry : svcList){
+							if(listEntry.equalsIgnoreCase(serviceType)){
+								isSdncService = true
+								break;
+							}
 						}
-					}
-					execution.setVariable("sendToSDNC", true)
-					if(execution.getVariable("sdncVersion").equals("1610")){
-						if(!isSdncService){
-							execution.setVariable("sendToSDNC", false)
+						execution.setVariable("sendToSDNC", true)
+						if(execution.getVariable("sdncVersion").equals("1610")){
+							if(!isSdncService){
+								execution.setVariable("sendToSDNC", false)
+							}
 						}
-					}
 
-				}else{
-					execution.setVariable("siInUse", true)
-					msoLogger.debug("Stopped deleting Service Instance, it has dependencies")
-					exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Stopped deleting Service Instance, it has dependencies")
+					}else{
+						execution.setVariable("siInUse", true)
+						msoLogger.debug("Stopped deleting Service Instance, it has dependencies")
+						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Stopped deleting Service Instance, it has dependencies")
+					}
 				}
 			}else{
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "ServiceInstance not found in aai")
