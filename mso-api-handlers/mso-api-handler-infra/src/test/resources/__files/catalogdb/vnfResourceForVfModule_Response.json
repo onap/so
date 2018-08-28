@@ -1,0 +1,101 @@
+{
+  "modelUUID": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+  "modelInvariantUUID": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
+  "modelName": "vSAMP12",
+  "modelVersion": "1.0",
+  "toscaNodeType": "VF",
+  "description": "1607 vSAMP10a - inherent network",
+  "orchestrationMode": "HEAT",
+  "aicVersionMin": "",
+  "aicVersionMax": "",
+  "category": null,
+  "subCategory": null,
+  "created": "2017-04-14T16:16:28.000+0000",
+  "modelInvariantId": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
+  "_embedded": {
+    "vnfResourceCustomizations": [
+      {
+        "description": "1607 vSAMP10a - inherent network",
+        "modelName": "vSAMP12",
+        "modelUUID": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+        "modelInstanceName": "test",
+        "modelCustomizationUUID": "68dc9a92-214c-11e7-93ae-92361f002673",
+        "orchestrationMode": "HEAT",
+        "multiStageDesign": null,
+        "availabilityZoneMaxCount": "0",
+        "vfModuleCustomizations": [
+          {
+            "description": "v10 DEV PCM",
+            "modelName": "test::PCM::module-1",
+            "availabilityZoneCount": "0",
+            "isBase": false,
+            "initialCount": "0",
+            "label": "PCM",
+            "modelUUID": "066de97e-253e-11e7-93ae-92361f002672",
+            "modelCustomizationUUID": "b4ea86b4-253f-11e7-93ae-92361f002672",
+            "modelInvariantUUID": "64efd51a-2544-11e7-93ae-92361f002671",
+            "maxInstances": "0",
+            "modelVersion": "2",
+            "minInstances": "0",
+            "created": "2016-09-14 18:19:56.0",
+            "_links": {
+              "self": {
+                "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672"
+              },
+              "volumeHeatEnv": {
+                "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/volumeHeatEnv"
+              },
+              "heatEnvironment": {
+                "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/heatEnvironment"
+              },
+              "vfModule": {
+                "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/vfModule"
+              }
+            }
+          }
+        ],
+        "modelInvariantUUID": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
+        "maxInstances": "0",
+        "nfRole": "vSAMP",
+        "nfNamingCode": "vSAMP",
+        "toscaNodeType": "VF",
+        "nfType": "vSAMP",
+        "modelVersion": "1.0",
+        "minInstances": "0",
+        "aicVersionMax": "",
+        "nfFunction": "vSAMP",
+        "aicVersionMin": "",
+        "created": "2017-04-14 21:46:28.0",
+        "_links": {
+          "self": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002673{?projection}",
+            "templated": true
+          },
+          "vnfResources": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002673/vnfResources"
+          },
+          "vfModuleCustomizations": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002673/vfModuleCustomizations"
+          },
+          "vnfcInstanceGroupCustomizations": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002673/vnfcInstanceGroupCustomizations"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfResource/fe6478e4-ea33-3346-ac12-ab121484a3fe"
+    },
+    "vnfResource": {
+      "href": "http://localhost:8090/vnfResource/fe6478e4-ea33-3346-ac12-ab121484a3fe"
+    },
+    "heatTemplates": {
+      "href": "http://localhost:8090/vnfResource/fe6478e4-ea33-3346-ac12-ab121484a3fe/heatTemplates"
+    },
+    "vnfResourceCustomizations": {
+      "href": "http://localhost:8090/vnfResource/fe6478e4-ea33-3346-ac12-ab121484a3fe/vnfResourceCustomizations"
+    }
+  }
+}

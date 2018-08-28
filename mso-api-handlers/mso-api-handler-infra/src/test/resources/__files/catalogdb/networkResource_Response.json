@@ -1,0 +1,34 @@
+{
+  "modelUUID": "10b36f65-f4e6-4be6-ae49-9596dc1c47fc",
+  "orchestrationMode": "HEAT",
+  "description": "Contrail 30 GNDIRECT NW",
+  "neutronNetworkType": "BASIC",
+  "aicVersionMin": "3.0",
+  "aicVersionMax": "",
+  "modelName": "CONTRAIL30_GNDIRECT",
+  "modelInvariantUUID": "ce4ff476-9641-4e60-b4d5-b4abbec1271d",
+  "modelVersion": "1.0",
+  "toscaNodeType": "",
+  "category": null,
+  "subCategory": null,
+  "created": "2017-01-17T15:05:05.000+0000",
+  "handler": {},
+  "hibernateLazyInitializer": {},
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/networkResources/10b36f65-f4e6-4be6-ae49-9596dc1c47fc"
+    },
+    "networkResource": {
+      "href": "http://localhost:8090/networkResources/10b36f65-f4e6-4be6-ae49-9596dc1c47fc"
+    },
+    "collectionNetworkResourceCustomization": {
+      "href": "http://localhost:8090/networkResources/10b36f65-f4e6-4be6-ae49-9596dc1c47fc/collectionNetworkResourceCustomization"
+    },
+    "heatTemplate": {
+      "href": "http://localhost:8090/networkResources/10b36f65-f4e6-4be6-ae49-9596dc1c47fc/heatTemplate"
+    },
+    "networkResourceCustomization": {
+      "href": "http://localhost:8090/networkResources/10b36f65-f4e6-4be6-ae49-9596dc1c47fc/networkResourceCustomization"
+    }
+  }
+}

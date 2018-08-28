@@ -1,0 +1,177 @@
+{
+  "modelName": "GR-API-DEFAULT",
+  "description": "Gr api service for VID to use for infra APIH orchestration",
+  "modelUUID": "d88da85c-d9e8-4f73-b837-3a72a431622b",
+  "modelInvariantUUID": "944862ae-bb65-4429-8330-a6c9170d6672",
+  "created": "2018-08-10 09:49:12.000",
+  "modelVersion": "1.0",
+  "serviceType": null,
+  "serviceRole": null,
+  "environmentContext": null,
+  "workloadContext": null,
+  "category": null,
+  "_embedded": {
+    "networkCustomizations": [
+      {
+        "description": "Contrail 30 GNDIRECT NW",
+        "modelName": "CONTRAIL30_GNDIRECT",
+        "networkScope": "",
+        "networkRole": "",
+        "modelUUID": "10b36f65-f4e6-4be6-ae49-9596dc1c47fc",
+        "created": "2017-01-17T15:05:05.000+0000",
+        "networkType": "",
+        "modelVersion": "1.0",
+        "toscaNodeType": "",
+        "aicVersionMin": "3.0",
+        "aicVersionMax": "",
+        "modelCustomizationUUID": "3bdbb104-476c-483e-9f8b-c095b3d308ac",
+        "modelInstanceName": "CONTRAIL30_GNDIRECT 9",
+        "modelInvariantUUID": "ce4ff476-9641-4e60-b4d5-b4abbec1271d",
+        "orchestrationMode": "HEAT",
+        "neutronNetworkType": "BASIC",
+        "networkTechnology": "",
+        "_links": {
+          "self": {
+            "href": "http://localhost:8090/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac{?projection}",
+            "templated": true
+          },
+          "networkResource": {
+            "href": "http://localhost:8090/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac/networkResource"
+          }
+        }
+      }
+    ],
+    "vnfCustomizations": [
+      {
+        "description": "1607 v10 - inherent network1",
+        "modelName": "v10",
+        "modelUUID": "ff2ae348-214a-11e7-93ae-92361f002672",
+        "nfNamingCode": "vSAMP",
+        "created": "2017-04-14 21:46:28.0",
+        "nfRole": "vSAMP",
+        "modelVersion": "2.0",
+        "toscaNodeType": "VF",
+        "aicVersionMin": "",
+        "aicVersionMax": "",
+        "minInstances": "0",
+        "maxInstances": "0",
+        "nfFunction": "vSAMP",
+        "nfType": "vSAMP",
+        "modelCustomizationUUID": "68dc9a92-214c-11e7-93ae-92361f002672",
+        "modelInstanceName": "test",
+        "vfModuleCustomizations": [
+          {
+            "description": "v10 DEV PCM",
+            "modelName": "test::PCM::module-1",
+            "modelUUID": "066de97e-253e-11e7-93ae-92361f002672",
+            "created": "2016-09-14 18:19:56.0",
+            "modelVersion": "2",
+            "minInstances": "0",
+            "maxInstances": "0",
+            "modelCustomizationUUID": "b4ea86b4-253f-11e7-93ae-92361f002672",
+            "modelInvariantUUID": "64efd51a-2544-11e7-93ae-92361f002671",
+            "isBase": false,
+            "initialCount": "0",
+            "label": "PCM",
+            "availabilityZoneCount": "0",
+            "_links": {
+              "self": {
+                "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672"
+              },
+              "volumeHeatEnv": {
+                "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/volumeHeatEnv"
+              },
+              "vfModule": {
+                "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/vfModule"
+              },
+              "heatEnvironment": {
+                "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/heatEnvironment"
+              }
+            }
+          },
+          {
+            "description": "v10 DEV Base",
+            "modelName": "test::base::module-0",
+            "modelUUID": "20c4431c-246d-11e7-93ae-92361f002672",
+            "created": "2016-09-14 18:19:56.0",
+            "modelVersion": "2",
+            "minInstances": "0",
+            "maxInstances": "0",
+            "modelCustomizationUUID": "cb82ffd8-252a-11e7-93ae-92361f002672",
+            "modelInvariantUUID": "78ca26d0-246d-11e7-93ae-92361f002671",
+            "isBase": true,
+            "initialCount": "1",
+            "label": "base",
+            "availabilityZoneCount": "0",
+            "_links": {
+              "self": {
+                "href": "http://localhost:8090/vfModuleCustomization/cb82ffd8-252a-11e7-93ae-92361f002672"
+              },
+              "volumeHeatEnv": {
+                "href": "http://localhost:8090/vfModuleCustomization/cb82ffd8-252a-11e7-93ae-92361f002672/volumeHeatEnv"
+              },
+              "vfModule": {
+                "href": "http://localhost:8090/vfModuleCustomization/cb82ffd8-252a-11e7-93ae-92361f002672/vfModule"
+              },
+              "heatEnvironment": {
+                "href": "http://localhost:8090/vfModuleCustomization/cb82ffd8-252a-11e7-93ae-92361f002672/heatEnvironment"
+              }
+            }
+          }
+        ],
+        "modelInvariantUUID": "2fff5b20-214b-11e7-93ae-92361f002671",
+        "availabilityZoneMaxCount": "0",
+        "multiStageDesign": null,
+        "orchestrationMode": "HEAT",
+        "_links": {
+          "self": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002672{?projection}",
+            "templated": true
+          },
+          "vfModuleCustomizations": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002672/vfModuleCustomizations"
+          },
+          "vnfResources": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002672/vnfResources"
+          },
+          "vnfcInstanceGroupCustomizations": {
+            "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002672/vnfcInstanceGroupCustomizations"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/service/d88da85c-d9e8-4f73-b837-3a72a431622b"
+    },
+    "service": {
+      "href": "http://localhost:8090/service/d88da85c-d9e8-4f73-b837-3a72a431622b{?projection}",
+      "templated": true
+    },
+    "networkCustomizations": {
+      "href": "http://localhost:8090/service/d88da85c-d9e8-4f73-b837-3a72a431622b/networkCustomizations"
+    },
+    "collectionResourceCustomizations": {
+      "href": "http://localhost:8090/service/d88da85c-d9e8-4f73-b837-3a72a431622b/collectionResourceCustomizations"
+    },
+    "recipes": {
+      "href": "http://localhost:8090/service/d88da85c-d9e8-4f73-b837-3a72a431622b/recipes"
+    },
+    "vnfCustomizations": {
+      "href": "http://localhost:8090/service/d88da85c-d9e8-4f73-b837-3a72a431622b/vnfCustomizations"
+    },
+    "allottedCustomizations": {
+      "href": "http://localhost:8090/service/d88da85c-d9e8-4f73-b837-3a72a431622b/allottedCustomizations"
+    },
+    "serviceProxyCustomizations": {
+      "href": "http://localhost:8090/service/d88da85c-d9e8-4f73-b837-3a72a431622b/serviceProxyCustomizations"
+    },
+    "configurationCustomizations": {
+      "href": "http://localhost:8090/service/d88da85c-d9e8-4f73-b837-3a72a431622b/configurationCustomizations"
+    },
+    "csar": {
+      "href": "http://localhost:8090/service/d88da85c-d9e8-4f73-b837-3a72a431622b/csar"
+    }
+  }
+}

@@ -35,6 +35,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -70,7 +71,8 @@ public class AllottedResource implements Serializable {
 
 	@Column(name = "DESCRIPTION")
 	private String description;
-
+	
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
 	@Column(name = "CREATION_TIMESTAMP", updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date created;

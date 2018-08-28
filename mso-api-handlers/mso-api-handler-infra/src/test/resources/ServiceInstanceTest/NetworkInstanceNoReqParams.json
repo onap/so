@@ -1,7 +1,8 @@
 {
 	"requestDetails": {
 		"modelInfo": {
-			"modelType": "network"
+			"modelType": "network",
+			"modelName": "CONTRAIL30_GNDIRECT"
 		},
 		"cloudConfiguration": {
 			"lcpCloudRegionId": "mtn6",

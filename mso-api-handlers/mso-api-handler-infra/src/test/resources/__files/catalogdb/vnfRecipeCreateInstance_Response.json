@@ -1,0 +1,20 @@
+{
+  "id": 10006,
+  "nfRole": "GR-API-DEFAULT",
+  "paramXsd": null,
+  "vfModuleId": null,
+  "action": "createInstance",
+  "description": "Gr api recipe to create vnf",
+  "orchestrationUri": "/mso/async/services/WorkflowActionBB",
+  "recipeTimeout": 180,
+  "serviceType": null,
+  "created": "2018-08-10T09:49:12.000+0000",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfRecipe/10006"
+    },
+    "vnfRecipe": {
+      "href": "http://localhost:8090/vnfRecipe/10006"
+    }
+  }
+}

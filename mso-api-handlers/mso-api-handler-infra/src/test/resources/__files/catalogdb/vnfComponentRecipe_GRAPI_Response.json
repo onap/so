@@ -1,0 +1,19 @@
+{
+  "id": 34,
+  "action": "updateInstance",
+  "description": "Gr api recipe to update vf-module",
+  "orchestrationUri": "/mso/async/services/WorkflowActionBB",
+  "recipeTimeout": 180,
+  "vnfType": null,
+  "paramXsd": null,
+  "vnfComponentType": "vfModule",
+  "vfModuleModelUUID": "GR-API-DEFAULT",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/34"
+    },
+    "vnfComponentsRecipe": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/34"
+    }
+  }
+}

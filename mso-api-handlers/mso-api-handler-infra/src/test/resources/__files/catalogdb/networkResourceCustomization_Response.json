@@ -1,0 +1,21 @@
+{
+  "modelCustomizationUUID": "3bdbb104-476c-483e-9f8b-c095b3d308ac",
+  "modelInstanceName": "CONTRAIL30_GNDIRECT 9",
+  "created": "2017-04-19T08:58:32.000+0000",
+  "networkTechnology": "",
+  "networkType": "",
+  "networkScope": "",
+  "networkRole": "",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"
+    },
+    "networkResourceCustomization": {
+      "href": "http://localhost:8090/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac{?projection}",
+      "templated": true
+    },
+    "networkResource": {
+      "href": "http://localhost:8090/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac/networkResource"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": 10,
+  "action": "createInstance",
+  "description": "VID_DEFAULT recipe t",
+  "orchestrationUri": "/mso/async/services/CreateVfModuleInfra",
+  "recipeTimeout": 180,
+  "vnfType": null,
+  "paramXsd": null,
+  "vnfComponentType": "vfModule",
+  "vfModuleModelUUID": "VNF-API-DEFAULT",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/10"
+    },
+    "vnfComponentsRecipe": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/10"
+    }
+  }
+}
