@@ -20,13 +20,13 @@
 
 package org.onap.so.db.catalog.data.repository;
 
-import java.util.List;
-
-import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.data.projections.InlineVnf;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+
+import java.util.List;
 
 @RepositoryRestResource(collectionResourceRel = "vnfResourceCustomization", path = "vnfResourceCustomization", excerptProjection = InlineVnf.class)
 public interface VnfCustomizationRepository extends JpaRepository<VnfResourceCustomization, String> {
@@ -34,6 +34,7 @@ public interface VnfCustomizationRepository extends JpaRepository<VnfResourceCus
 
 	VnfResourceCustomization findOneByModelCustomizationUUID(String modelCustomizationUuid);
 
-	VnfResourceCustomization findByModelInstanceNameAndVnfResources(String modelInstanceName, VnfResource vnfResource);
+	@Query(value = "SELECT * FROM vnf_resource_customization WHERE MODEL_INSTANCE_NAME = ?1 AND VNF_RESOURCE_MODEL_UUID = ?2 LIMIT 1;", nativeQuery = true)
+	VnfResourceCustomization findByModelInstanceNameAndVnfResources(String modelInstanceName, String vnfResourceModelUUID);
 
 }

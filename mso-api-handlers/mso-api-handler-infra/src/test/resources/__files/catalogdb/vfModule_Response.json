@@ -1,0 +1,41 @@
+{
+  "modelUUID": "20c4431c-246d-11e7-93ae-92361f002671",
+  "modelInvariantUUID": "78ca26d0-246d-11e7-93ae-92361f002671",
+  "modelName": "test::base::module-0",
+  "modelVersion": "2",
+  "description": "v10 DEV Base",
+  "isBase": true,
+  "created": "2016-09-14 12:49:56.000",
+  "heatFiles": [
+    {
+      "artifactUuid": "00535bdd-0878-4478-b95a-c575c742bfb0",
+      "description": "created from csar",
+      "fileName": "nimbus-ethernet-gw",
+      "fileBody": "DEVICE=$dev\nBOOTPROTO=none\nNM_CONTROLLED=no\nIPADDR=$ip\nNETMASK=$netmask\nGATEWAY=$gateway\n",
+      "created": "2017-01-21T18:26:43.000+0000",
+      "artifactChecksum": "MANUAL RECORD",
+      "version": "1",
+      "asdcUuid": "00535bdd-0878-4478-b95a-c575c742bfb0"
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vfModule/20c4431c-246d-11e7-93ae-92361f002671"
+    },
+    "vfModule": {
+      "href": "http://localhost:8090/vfModule/20c4431c-246d-11e7-93ae-92361f002671"
+    },
+    "moduleHeatTemplate": {
+      "href": "http://localhost:8090/vfModule/20c4431c-246d-11e7-93ae-92361f002671/moduleHeatTemplate"
+    },
+    "volumeHeatTemplate": {
+      "href": "http://localhost:8090/vfModule/20c4431c-246d-11e7-93ae-92361f002671/volumeHeatTemplate"
+    },
+    "vfModuleCustomization": {
+      "href": "http://localhost:8090/vfModule/20c4431c-246d-11e7-93ae-92361f002671/vfModuleCustomization"
+    },
+    "vnfResources": {
+      "href": "http://localhost:8090/vfModule/20c4431c-246d-11e7-93ae-92361f002671/vnfResources"
+    }
+  }
+}

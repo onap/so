@@ -1,0 +1,19 @@
+{
+  "id": 19,
+  "action": "createInstance",
+  "description": "VID_DEFAULT recipe to create vf-module if no custom BPMN flow is found",
+  "orchestrationUri": "/mso/async/services/CreateVfModuleInfra",
+  "recipeTimeout": 180,
+  "vnfType": "vfModule",
+  "paramXsd": "",
+  "vnfComponentType": "vfModule",
+  "vfModuleModelUUID": "20c4431c-246d-11e7-93ae-92361f002671",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/19"
+    },
+    "vnfComponentsRecipe": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/19"
+    }
+  }
+}

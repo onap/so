@@ -1,0 +1,19 @@
+{
+  "id": 16,
+  "action": "createInstance",
+  "description": "Vnf api recipe to create network",
+  "orchestrationUri": "/mso/async/services/CreateNetworkInstance",
+  "recipeTimeout": 180,
+  "serviceType": null,
+  "modelName": "VNF-API-DEFAULT",
+  "paramXsd": null,
+  "created": "2017-10-05T13:22:03.000+0000",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/networkRecipe/16"
+    },
+    "networkRecipe": {
+      "href": "http://localhost:8090/networkRecipe/16"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "modelUUID": "066de97e-253e-11e7-93ae-92361f002672",
+  "modelInvariantUUID": "64efd51a-2544-11e7-93ae-92361f002671",
+  "modelName": "test::PCM::module-1",
+  "modelVersion": "2",
+  "description": "v10 DEV PCM",
+  "isBase": false,
+  "created": "2016-09-14 12:49:56.000",
+  "heatFiles": [],
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672"
+    },
+    "vfModule": {
+      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672"
+    },
+    "vfModuleCustomization": {
+      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672/vfModuleCustomization"
+    },
+    "volumeHeatTemplate": {
+      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672/volumeHeatTemplate"
+    },
+    "vnfResources": {
+      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672/vnfResources"
+    },
+    "moduleHeatTemplate": {
+      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672/moduleHeatTemplate"
+    }
+  }
+}

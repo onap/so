@@ -17,10 +17,10 @@
 		"modelInfo":{
 			"modelInvariantId": "f7ce78bb-423b-11e7-93f8-0050569a7968",
 			"modelVersion":"1", 
-			"modelVersionId":"test", 
+			"modelVersionId":"20c4431c-246d-11e7-93ae-92361f002671", 
 			"modelType":"vfModule",
 			"modelName":"serviceModel",
-			"modelCustomizationId": "b4ea86b4-253f-11e7-93ae-92361f002671"
+			"modelCustomizationId": "cb82ffd8-252a-11e7-93ae-92361f002671"
 		},
 	 	"subscriberInfo": {
       		"globalSubscriberId": "MSO_1610_dev", 

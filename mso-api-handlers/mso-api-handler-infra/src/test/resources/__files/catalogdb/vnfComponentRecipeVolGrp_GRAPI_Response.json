@@ -1,0 +1,19 @@
+{
+  "id": 29,
+  "action": "createInstance",
+  "description": "Gr api recipe to create volume-group",
+  "orchestrationUri": "/mso/async/services/WorkflowActionBB",
+  "recipeTimeout": 180,
+  "vnfType": null,
+  "paramXsd": null,
+  "vnfComponentType": "volumeGroup",
+  "vfModuleModelUUID": "GR-API-DEFAULT",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/29"
+    },
+    "vnfComponentsRecipe": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/29"
+    }
+  }
+}

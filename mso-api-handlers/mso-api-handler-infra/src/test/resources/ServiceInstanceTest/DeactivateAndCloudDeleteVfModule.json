@@ -1,7 +1,9 @@
 {
   "requestDetails": {
       "modelInfo": {
-          "modelType": "vfModule"
+          "modelType": "vfModule",
+          "modelInvariantId":"78ca26d0-246d-11e7-93ae-92361f002671",
+          "modelVersion": "2"
       },
       "cloudConfiguration": {
           "lcpCloudRegionId": "mdt1",

@@ -1,0 +1,32 @@
+{
+  "modelCustomizationUUID": "68dc9a92-214c-11e7-93ae-92361f002671",
+  "modelInstanceName": "v10 1",
+  "created": "2017-05-26 09:38:24.000",
+  "minInstances": 0,
+  "maxInstances": 0,
+  "availabilityZoneMaxCount": 0,
+  "nfFunction": "vSAMP",
+  "nfType": "vSAMP",
+  "nfRole": "vSAMP",
+  "nfNamingCode": "vSAMP",
+  "multiStageDesign": null,
+  "creationTimestamp": "2017-05-26T09:38:24.000+0000",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002671"
+    },
+    "vnfResourceCustomization": {
+      "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002671{?projection}",
+      "templated": true
+    },
+    "vnfResources": {
+      "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002671/vnfResources"
+    },
+    "vfModuleCustomizations": {
+      "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002671/vfModuleCustomizations"
+    },
+    "vnfcInstanceGroupCustomizations": {
+      "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002671/vnfcInstanceGroupCustomizations"
+    }
+  }
+}

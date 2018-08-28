@@ -1,0 +1,46 @@
+{
+  "modelName": "Infra_v10_Service",
+  "description": "MSO aLaCarte Vfmodule with addon",
+  "modelUUID": "5df8b6de-2083-11e7-93ae-92361f002672",
+  "modelInvariantUUID": "9647dfc4-2083-11e7-93ae-92361f002671",
+  "created": "2017-04-14 08:12:39.000",
+  "modelVersion": "2.0",
+  "serviceType": "NA",
+  "serviceRole": "NA",
+  "environmentContext": "Luna",
+  "workloadContext": "Oxygen",
+  "category": null,
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672"
+    },
+    "service": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672{?projection}",
+      "templated": true
+    },
+    "serviceProxyCustomizations": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672/serviceProxyCustomizations"
+    },
+    "csar": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672/csar"
+    },
+    "vnfCustomizations": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672/vnfCustomizations"
+    },
+    "configurationCustomizations": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672/configurationCustomizations"
+    },
+    "collectionResourceCustomizations": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672/collectionResourceCustomizations"
+    },
+    "networkCustomizations": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672/networkCustomizations"
+    },
+    "recipes": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672/recipes"
+    },
+    "allottedCustomizations": {
+      "href": "http://localhost:8090/service/5df8b6de-2083-11e7-93ae-92361f002672/allottedCustomizations"
+    }
+  }
+}

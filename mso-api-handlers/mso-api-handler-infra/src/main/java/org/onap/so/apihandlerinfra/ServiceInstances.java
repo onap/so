@@ -22,27 +22,13 @@
 package org.onap.so.apihandlerinfra;
 
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.transaction.Transactional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -70,21 +56,12 @@ import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfRecipe;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.data.repository.NetworkRecipeRepository;
-import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.ServiceRecipeRepository;
-import org.onap.so.db.catalog.data.repository.ServiceRepository;
-import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.VFModuleRepository;
-import org.onap.so.db.catalog.data.repository.VnfComponentRecipeRepository;
-import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.VnfRecipeRepository;
-import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.onap.so.requestsdb.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
@@ -104,14 +81,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import javax.transaction.Transactional;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Path("/onap/so/infra/serviceInstantiation")
@@ -129,37 +117,10 @@ public class ServiceInstances {
 	private RequestClientFactory reqClientFactory;
 	
 	@Autowired
-	private ServiceRepository serviceRepo;
-	
+	private CatalogDbClient catalogDbClient;
+
 	@Autowired
-	private ServiceRecipeRepository serviceRecipeRepo;
-	
-	@Autowired
-	private NetworkRecipeRepository networkRecipeRepo;
-	
-	@Autowired
-	private NetworkResourceCustomizationRepository networkCustomizationRepo;
-	
-	@Autowired
-	private VnfResourceRepository vnfRepo;
-	
-	@Autowired
-	private VnfCustomizationRepository vnfCustomRepo;
-	
-	@Autowired
-	private VnfRecipeRepository vnfRecipeRepo;
-	
-	@Autowired
-	private VFModuleCustomizationRepository vfModuleCustomRepo;
-	
-	@Autowired
-	private VFModuleRepository vfModuleRepo;
-	
-	@Autowired
-	private VnfComponentRecipeRepository vnfComponentRecipeRepo;
-	
-	@Autowired
-	private InfraActiveRequestsRepository iar;
+	private RequestsDbClient infraActiveRequestsClient;
 	
 	@Autowired
 	private ResponseBuilder builder;
@@ -707,9 +668,9 @@ public class ServiceInstances {
 				String modelVersionId = modelInfo.getModelVersionId();
 
 				if(modelVersionId != null) {
-					vfm = vfModuleRepo.findByModelUUID(modelVersionId);
+					vfm = catalogDbClient.getVfModuleByModelUUID(modelVersionId);
 				} else {
-					vfm = vfModuleRepo.findByModelInvariantUUIDAndModelVersion(modelInfo.getModelInvariantId(), modelInfo.getModelVersion()); 					
+					vfm = catalogDbClient.getVfModuleByModelInvariantUUIDAndModelVersion(modelInfo.getModelInvariantId(), modelInfo.getModelVersion()); 					
 				}
 
 				if (vfm != null) {
@@ -765,7 +726,7 @@ public class ServiceInstances {
 		if (sir.getCorrelationId() != null) {
 			correlationId = sir.getCorrelationId();
 		}
-		iar.save(currentActiveReq);
+		infraActiveRequestsClient.save(currentActiveReq);
 		
 		if(!requestScope.equalsIgnoreCase(ModelType.service.name())){
 			aLaCarte = true;
@@ -897,7 +858,7 @@ public class ServiceInstances {
 				currentActiveReq.setRequestStatus(Status.IN_PROGRESS.name());
 				setInstanceId(currentActiveReq, requestScope, jsonResponse.getRequestReferences().getInstanceId(), new HashMap<>());
 				
-				iar.save(currentActiveReq);
+				infraActiveRequestsClient.save(currentActiveReq);
 				return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestId, jsonResponse, apiVersion);
 			} 
 		}
@@ -1006,7 +967,7 @@ public class ServiceInstances {
 		InfraActiveRequests dup = null;
 		try {
 			if(!(instanceName==null && requestScope.equals("service") && (action == Action.createInstance || action == Action.activateInstance || action == Action.assignInstance))){
-				dup = iar.checkInstanceNameDuplicate (instanceIdMap, instanceName, requestScope);
+				dup = infraActiveRequestsClient.checkInstanceNameDuplicate (instanceIdMap, instanceName, requestScope);
 			}
 		} catch (Exception e) {
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
@@ -1036,32 +997,12 @@ public class ServiceInstances {
                     .errorInfo(errorLoggerInfo).build();
             String requestScope = requestScopeFromUri(requestUri);
 
-            createErrorRequestRecord(Status.FAILED, requestId, validateException.getMessage(), action, requestScope, requestJSON);
+            msoRequest.createErrorRequestRecord(Status.FAILED, requestId, validateException.getMessage(), action, requestScope, requestJSON);
 
             throw validateException;
 		}
 	}
-	//TODO MSO-4177 -- remove this and call the msoRequest instead
-	public void createErrorRequestRecord (Status status, String requestId, String errorMessage, Actions action, String requestScope, String requestJSON) {
-		try {
-			InfraActiveRequests request = new InfraActiveRequests(requestId);
-			Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
-			request.setStartTime (startTimeStamp);
-			request.setRequestStatus(status.toString());
-			request.setStatusMessage(errorMessage);
-			request.setProgress((long) 100);
-			request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
-			request.setRequestAction(action.toString());
-			request.setRequestScope(requestScope);
-			request.setRequestBody(requestJSON);
-			Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
-			request.setEndTime(endTimeStamp);
-			iar.save(request);
-		} catch (Exception e) {
-			msoLogger.error(MessageEnum.APIH_DB_UPDATE_EXC, e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "Exception when updating record in DB");
-			msoLogger.debug ("Exception: ", e);
-		}
-	}
+	
 	private void parseRequest(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action, String version, 
 								String requestJSON, Boolean aLaCarte, String requestId, InfraActiveRequests currentActiveReq) throws ValidateException {
 		int reqVersion = Integer.parseInt(version.substring(1));
@@ -1144,8 +1085,7 @@ public class ServiceInstances {
 		}
 		return recipeLookupResult;
 	}
-
-
+	
     private RecipeLookupResult getServiceURI(ServiceInstancesRequest servInstReq, Actions action, boolean alaCarteFlag) throws IOException {
 		// SERVICE REQUEST
 		// Construct the default service name
@@ -1158,18 +1098,18 @@ public class ServiceInstances {
 		ServiceRecipe recipe = null;
 		
 		if(alaCarteFlag){
-			serviceRecord = serviceRepo.findByModelNameOrderByModelVersionDesc(defaultServiceModelName);
-			if(serviceRecord !=null){
-				recipe = serviceRecord.getRecipes().get(action.toString());
+			serviceRecord = catalogDbClient.getFirstByModelNameOrderByModelVersionDesc(defaultServiceModelName);
+			if(serviceRecord !=null){					
+				recipe =catalogDbClient.getFirstByServiceModelUUIDAndAction(serviceRecord.getModelUUID(),action.toString());
 			}
 		}else{
-			serviceRecord = serviceRepo.findOneByModelUUID(modelInfo.getModelVersionId());
-			recipe = serviceRecipeRepo.findFirstByServiceModelUUIDAndAction(modelInfo.getModelVersionId(), action.toString());
+			serviceRecord = catalogDbClient.getServiceByID(modelInfo.getModelVersionId());
+			recipe = catalogDbClient.getFirstByServiceModelUUIDAndAction(modelInfo.getModelVersionId(), action.toString());
 			if (recipe == null){
-				serviceRecordList = serviceRepo.findByModelInvariantUUIDOrderByModelVersionDesc(modelInfo.getModelInvariantId());
+				serviceRecordList = catalogDbClient.getServiceByModelInvariantUUIDOrderByModelVersionDesc(modelInfo.getModelInvariantId());
 				if(!serviceRecordList.isEmpty()){
 					for(org.onap.so.db.catalog.beans.Service record : serviceRecordList){
-						recipe = record.getRecipes().get(action.toString());
+						recipe = catalogDbClient.getFirstByServiceModelUUIDAndAction(record.getModelUUID(),action.toString());
 						if(recipe != null){
 							break;
 						}
@@ -1185,8 +1125,8 @@ public class ServiceInstances {
 		} else if(!alaCarteFlag && recipe != null && Action.createInstance.equals(action)) {
 			mapToLegacyRequest(requestDetails);
 		}else if (recipe == null) {  //aLaCarte wasn't sent, so we'll try the default
-			serviceRecord = serviceRepo.findByModelNameOrderByModelVersionDesc(defaultServiceModelName);
-			recipe = serviceRecord.getRecipes().get( action.toString());
+			serviceRecord = catalogDbClient.getFirstByModelNameOrderByModelVersionDesc(defaultServiceModelName);
+			recipe = catalogDbClient.getFirstByServiceModelUUIDAndAction(serviceRecord.getModelUUID(),action.toString());
 		}
 		if(modelInfo.getModelVersionId() == null) {
 			modelInfo.setModelVersionId(serviceRecord.getModelUUID());
@@ -1381,14 +1321,14 @@ public class ServiceInstances {
 				// Validation for vnfResource
 
 				if(modelCustomizationId!=null) {
-                    vrc = vnfCustomRepo.findOneByModelCustomizationUUID(modelCustomizationId);
+                    vrc = catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(modelCustomizationId);
                     if(vrc != null){
                     	vnfResource = vrc.getVnfResources();
                     }
 				} else {
-					org.onap.so.db.catalog.beans.Service service = serviceRepo.findOneByModelUUID(relatedInstanceModelVersionId);
+					org.onap.so.db.catalog.beans.Service service = catalogDbClient.getServiceByID(relatedInstanceModelVersionId);
 					if(service == null) {
-						service = serviceRepo.findByModelVersionAndModelInvariantUUID(relatedInstanceVersion, relatedInstanceModelInvariantId);
+						service = catalogDbClient.getServiceByModelVersionAndModelInvariantUUID(relatedInstanceVersion, relatedInstanceModelInvariantId);
 					}
 
 		    		if(service == null) {
@@ -1420,12 +1360,12 @@ public class ServiceInstances {
 				if(vrc != null) {
 					String nfRole = vrc.getNfRole();
 					if(nfRole != null) {
-						vnfRecipe = vnfRecipeRepo.findVnfRecipeByNfRoleAndAction(vrc.getNfRole(), action.toString());
+						vnfRecipe = catalogDbClient.getFirstVnfRecipeByNfRoleAndAction(vrc.getNfRole(), action.toString());
 					}
 				}
 
 				if(vnfRecipe == null) {
-					vnfRecipe = vnfRecipeRepo.findVnfRecipeByNfRoleAndAction(defaultSource, action.toString());
+					vnfRecipe = catalogDbClient.getFirstVnfRecipeByNfRoleAndAction(defaultSource, action.toString());
 				}
 
 				if (vnfRecipe == null) {
@@ -1449,13 +1389,13 @@ public class ServiceInstances {
 				VfModule vfModule = null;
 
 				if(modelInfo.getModelCustomizationId() != null) {
-					vfmc = vfModuleCustomRepo.findByModelCustomizationUUID(modelInfo.getModelCustomizationId());
+					vfmc = catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(modelInfo.getModelCustomizationId());
 				} else {
-					vnfr = vnfRepo.findResourceByModelUUID(relatedInstanceModelVersionId);
+					vnfr = catalogDbClient.getVnfResourceByModelUUID(relatedInstanceModelVersionId);
 					if(vnfr == null){
-						vnfr = vnfRepo.findResourceByModelInvariantUUIDAndModelVersion(relatedInstanceModelInvariantId, relatedInstanceVersion);
+						vnfr = catalogDbClient.getFirstVnfResourceByModelInvariantUUIDAndModelVersion(relatedInstanceModelInvariantId, relatedInstanceVersion);
 					}
-					vnfrc = vnfCustomRepo.findByModelInstanceNameAndVnfResources(relatedInstanceModelCustomizationName, vnfr);
+					vnfrc = catalogDbClient.getFirstVnfResourceCustomizationByModelInstanceNameAndVnfResources(relatedInstanceModelCustomizationName, vnfr);
 					
 					List<VfModuleCustomization> list = vnfrc.getVfModuleCustomizations();
 							
@@ -1463,16 +1403,16 @@ public class ServiceInstances {
 					for(VfModuleCustomization vf : list) {
 						VfModuleCustomization vfmCustom;
 						if(vfModuleModelUUID != null){
-							vfmCustom = vfModuleCustomRepo.findByModelCustomizationUUIDAndVfModuleModelUUID(vf.getModelCustomizationUUID(), vfModuleModelUUID);
+							vfmCustom = catalogDbClient.getVfModuleCustomizationByModelCustomizationUUIDAndVfModuleModelUUID(vf.getModelCustomizationUUID(), vfModuleModelUUID);
 							if(vfmCustom != null){
 								vfModule = vfmCustom.getVfModule();
 							}
 						}else{ 
-							vfmCustom = vfModuleCustomRepo.findByModelCustomizationUUID(vf.getModelCustomizationUUID());
+							vfmCustom = catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(vf.getModelCustomizationUUID());
 							if(vfmCustom != null){
 								vfModule = vfmCustom.getVfModule();
 							}else{
-								vfModule = vfModuleRepo.findByModelInvariantUUIDAndModelVersion(relatedInstanceModelInvariantId, relatedInstanceVersion);
+								vfModule = catalogDbClient.getVfModuleByModelInvariantUUIDAndModelVersion(relatedInstanceModelInvariantId, relatedInstanceVersion);
 							}
 						}
 						
@@ -1495,12 +1435,12 @@ public class ServiceInstances {
 				}
 				
 				
-				recipe = vnfComponentRecipeRepo.findVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(vfModule.getModelUUID(), vnfComponentType, action.toString());
+				recipe = catalogDbClient.getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(vfModule.getModelUUID(), vnfComponentType, action.toString());
 				if(recipe == null){
-					List<VfModule> vfModuleRecords= vfModuleRepo.findByModelInvariantUUIDOrderByModelVersionDesc(vfModule.getModelInvariantUUID());
+					List<VfModule> vfModuleRecords= catalogDbClient.getVfModuleByModelInvariantUUIDOrderByModelVersionDesc(vfModule.getModelInvariantUUID());
 					if(!vfModuleRecords.isEmpty()){
 						for(VfModule record : vfModuleRecords){
-							recipe = vnfComponentRecipeRepo.findVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(record.getModelUUID(), vnfComponentType, action.toString());
+							recipe = catalogDbClient.getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(record.getModelUUID(), vnfComponentType, action.toString());
 							if(recipe != null){
 								break;
 							}
@@ -1508,9 +1448,9 @@ public class ServiceInstances {
 					}
 				}
 				if(recipe == null) {
-					recipe = vnfComponentRecipeRepo.findVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(defaultSource, vnfComponentType, action.toString());
+					recipe = catalogDbClient.getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(defaultSource, vnfComponentType, action.toString());
 					if (recipe == null) { 
-						recipe = vnfComponentRecipeRepo.findVnfComponentsRecipeByVnfComponentTypeAndAction(vnfComponentType, action.toString());
+						recipe = catalogDbClient.getFirstVnfComponentsRecipeByVnfComponentTypeAndAction(vnfComponentType, action.toString());
 					}
 
 					if(recipe == null) {
@@ -1521,12 +1461,12 @@ public class ServiceInstances {
 		} else {
 
 			if(modelInfo.getModelType().equals(ModelType.vnf)) {
-				recipe = vnfRecipeRepo.findVnfRecipeByNfRoleAndAction(defaultSource, action.toString());
+				recipe = catalogDbClient.getFirstVnfRecipeByNfRoleAndAction(defaultSource, action.toString());
 				if (recipe == null) {
 					return null;
 				}
 			} else {
-                recipe = vnfComponentRecipeRepo.findVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(defaultSource, vnfComponentType, action.toString());
+                recipe = catalogDbClient.getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(defaultSource, vnfComponentType, action.toString());
 
 				if (recipe == null) {
 					return null;
@@ -1541,7 +1481,7 @@ public class ServiceInstances {
     	
 		String defaultSource = getDefaultModel(sir);
 
-		VnfRecipe vnfRecipe = vnfRecipeRepo.findVnfRecipeByNfRoleAndAction(defaultSource, action.toString());
+		VnfRecipe vnfRecipe = catalogDbClient.getFirstVnfRecipeByNfRoleAndAction(defaultSource, action.toString());
 
 		if (vnfRecipe == null) {
 			return null;
@@ -1560,22 +1500,22 @@ public class ServiceInstances {
 		Recipe recipe = null;
 
 		if(modelInfo.getModelCustomizationId()!=null){
-            NetworkResource networkResource = networkCustomizationRepo.findOneByModelCustomizationUUID(modelInfo.getModelCustomizationId()).getNetworkResource();
+            NetworkResource networkResource = catalogDbClient.getNetworkResourceCustomizationByModelCustomizationUUID(modelInfo.getModelCustomizationId()).getNetworkResource();
 			if(networkResource!=null){
 				if(modelInfo.getModelVersionId() == null) {
 					modelInfo.setModelVersionId(networkResource.getModelUUID());
 				}
-				recipe = networkRecipeRepo.findByModelNameAndAction(networkResource.getModelName(), action.toString());
+				recipe = catalogDbClient.getFirstNetworkRecipeByModelNameAndAction(networkResource.getModelName(), action.toString());
 			}else{
 				throw new ValidationException("no catalog entry found");
 			}
 		}else{
 			//ok for version < 3 and action delete
-			recipe = networkRecipeRepo.findByModelNameAndAction(modelName, action.toString());
+			recipe = catalogDbClient.getFirstNetworkRecipeByModelNameAndAction(modelName, action.toString());
 		}
 
 		if(recipe == null){
-			recipe = networkRecipeRepo.findByModelNameAndAction(defaultNetworkType, action.toString());
+			recipe = catalogDbClient.getFirstNetworkRecipeByModelNameAndAction(defaultNetworkType, action.toString());
 		}
 		
 		return recipe !=null ? new RecipeLookupResult(recipe.getOrchestrationUri(), recipe.getRecipeTimeout()) : null;
@@ -1679,7 +1619,7 @@ public class ServiceInstances {
 		if (sir.getCorrelationId() != null) {
 			correlationId = sir.getCorrelationId();
 		}
-		iar.save(currentActiveReq);
+		infraActiveRequestsClient.save(currentActiveReq);
 		
 		if(!requestScope.equalsIgnoreCase(ModelType.service.name())){
 			aLaCarte = true;
@@ -1706,7 +1646,6 @@ public class ServiceInstances {
 			throw validateException;
     	}
     }
-	//TODO MSO-4177 -- remove this and call the msoRequest instead
 	public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage){
 		if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
 			aq.setStatusMessage (errorMessage);
@@ -1714,7 +1653,7 @@ public class ServiceInstances {
 			aq.setRequestStatus(status.toString());
 			Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
 			aq.setEndTime (endTimeStamp);
-			iar.save(aq);
+			infraActiveRequestsClient.save(aq);
 		}
 	}
 }

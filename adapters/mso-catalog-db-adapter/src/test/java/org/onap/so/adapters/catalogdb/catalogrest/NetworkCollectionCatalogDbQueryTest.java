@@ -39,7 +39,7 @@ import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
-import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.db.catalog.client.CatalogDbClientPortChanger;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
@@ -59,14 +59,14 @@ public class NetworkCollectionCatalogDbQueryTest {
 
 	@LocalServerPort
 	private int port;
-	
+	boolean isInitialized;
+
 	@Autowired
-	private CatalogDbClient client;
-	
+	CatalogDbClientPortChanger client;
+
 	@Before
-	public void setPort() {
-		client.removePortFromEndpoint();
-		client.setPortToEndpoint(Integer.toString(port));
+	public void initialize(){
+		client.wiremockPort= String.valueOf(port);
 	}
 	
 	@Test

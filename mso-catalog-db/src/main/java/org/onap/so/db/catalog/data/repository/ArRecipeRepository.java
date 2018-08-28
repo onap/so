@@ -27,5 +27,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "arRecipe", path = "arRecipe")
 public interface ArRecipeRepository extends JpaRepository<ArRecipe, String> {
 
-	public ArRecipe findByModelNameAndAction(String modelName, String action);
+	ArRecipe findByModelNameAndAction(String modelName, String action);
 }

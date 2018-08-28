@@ -1,0 +1,19 @@
+{
+  "id": 36,
+  "action": "deactivateAndCloudDelete",
+  "description": "Gr api recipe to soft delete vf-module",
+  "orchestrationUri": "/mso/async/services/WorkflowActionBB",
+  "recipeTimeout": 180,
+  "vnfType": null,
+  "paramXsd": null,
+  "vnfComponentType": "vfModule",
+  "vfModuleModelUUID": "GR-API-DEFAULT",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/36"
+    },
+    "vnfComponentsRecipe": {
+      "href": "http://localhost:8090/vnfComponentsRecipe/36"
+    }
+  }
+}
