@@ -45,7 +45,7 @@ import org.onap.so.logger.MsoLogger;
 public class SDNCCallbackAdapterService extends Service {
 
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, SDNCCallbackAdapterService.class);
-
+    private static final String SDNC_CALLBACK_ADAPTER_WSDL="SDNCCallbackAdapter.wsdl";
     public static final URL WSDL_LOCATION;
     public static final QName SERVICE = new QName("http://org.onap/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterService");
     public static final QName SDNCCallbackAdapterSoapHttpPort = new QName("http://org.onap/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterSoapHttpPort");
@@ -54,15 +54,15 @@ public class SDNCCallbackAdapterService extends Service {
         try {
         	wsdlUrl = Thread.currentThread().getContextClassLoader().getResource("main/resources/SDNCCallbackAdapter.wsdl");
         } catch (Exception e) {
-            msoLogger.error(MessageEnum.RA_WSDL_NOT_FOUND, "SDNCCallbackAdapter.wsdl", "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception - WSDL not found", e);
+            msoLogger.error(MessageEnum.RA_WSDL_NOT_FOUND, SDNC_CALLBACK_ADAPTER_WSDL, "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception - WSDL not found", e);
         }
         if(wsdlUrl == null) {
-        	msoLogger.error(MessageEnum.RA_WSDL_NOT_FOUND, "SDNCCallbackAdapter.wsdl", "SDNC", "", MsoLogger.ErrorCode.DataError, "WSDL not found");
+        	msoLogger.error(MessageEnum.RA_WSDL_NOT_FOUND, SDNC_CALLBACK_ADAPTER_WSDL, "SDNC", "", MsoLogger.ErrorCode.DataError, "WSDL not found");
     	} else {
     		try {
-    			msoLogger.info(MessageEnum.RA_PRINT_URL, "SDNCCallbackAdapter.wsdl", wsdlUrl.toURI().toString(), "SDNC");
+    			msoLogger.info(MessageEnum.RA_PRINT_URL, SDNC_CALLBACK_ADAPTER_WSDL, wsdlUrl.toURI().toString(), "SDNC");
 			} catch (Exception e) {
-				msoLogger.error(MessageEnum.RA_WSDL_URL_CONVENTION_EXC, "SDNCCallbackAdapter.wsdl", "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception - URL convention problem", e);
+				msoLogger.error(MessageEnum.RA_WSDL_URL_CONVENTION_EXC, SDNC_CALLBACK_ADAPTER_WSDL, "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception - URL convention problem", e);
 			}
     	}
         WSDL_LOCATION = wsdlUrl;
