@@ -66,7 +66,7 @@ public class SDNCAdapterService extends Service {
     		try {
 				logger.info(MessageEnum.RA_PRINT_URL, SDNC_ADAPTER_WSDL, wsdlUrl.toURI().toString(), "");
 			} catch (Exception e) {
-				logger.error(MessageEnum.RA_WSDL_URL_CONVENTION_EXC, "SDNCAdapter.wsdl", "", "", MsoLogger.ErrorCode.DataError, "Exception - print URL", e);
+				logger.error(MessageEnum.RA_WSDL_URL_CONVENTION_EXC, SDNC_ADAPTER_WSDL, "", "", MsoLogger.ErrorCode.DataError, "Exception - print URL", e);
 			}
     	}
         WSDL_LOCATION = wsdlUrl;
