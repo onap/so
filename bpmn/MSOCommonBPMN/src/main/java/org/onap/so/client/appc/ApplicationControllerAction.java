@@ -31,12 +31,13 @@ import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.client.appc.ApplicationControllerSupport.StatusCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+@Component
 public class ApplicationControllerAction {
 	protected ApplicationControllerOrchestrator client = new ApplicationControllerOrchestrator();
 	private String errorCode = "1002";
