@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,7 +49,8 @@ import org.springframework.core.env.Environment;
 public class BPRestCallback {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,BPRestCallback.class);
 	private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
-	
+	private static final String CAMUNDA="Camunda";
+	private static final String MSO_INTERNAL_ERROR="MsoInternalError";
 	@Autowired
 	private Environment env;
 
@@ -91,7 +94,7 @@ public class BPRestCallback {
 			+ " message=" + message
 			+ ")");
 
-		LOGGER.info(MessageEnum.RA_CALLBACK_BPEL, message == null ? "[no content]" : message, "Camunda", "");
+		LOGGER.info(MessageEnum.RA_CALLBACK_BPEL, message == null ? "[no content]" : message, CAMUNDA, "");
 
 		HttpPost method = null;
 		HttpResponse httpResponse = null;
@@ -121,9 +124,9 @@ public class BPRestCallback {
 				String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 				method.setHeader("Authorization", authorization);
 			} catch (Exception e) {
-				LOGGER.error(MessageEnum.RA_SET_CALLBACK_AUTH_EXC, "Camunda", "", MsoLogger.ErrorCode.BusinessProcesssError,
+				LOGGER.error(MessageEnum.RA_SET_CALLBACK_AUTH_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError,
 					"Unable to set authorization in callback request", e);
-				ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL,
+				ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL,
 					"Unable to set authorization in callback request: " + e.getMessage());
 				error = true;
 			}
@@ -140,15 +143,15 @@ public class BPRestCallback {
 
 				if (httpResponse.getStatusLine().getStatusCode() >= 300) {
 					String msg = "Received error response to callback request: " + httpResponse.getStatusLine();
-					LOGGER.error(MessageEnum.RA_CALLBACK_BPEL_EXC, "Camunda", "", MsoLogger.ErrorCode.BusinessProcesssError, msg);
-					ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, msg);
+					LOGGER.error(MessageEnum.RA_CALLBACK_BPEL_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError, msg);
+					ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, msg);
 				}
 			}
 			return true;
 		} catch (Exception e) {
-			LOGGER.error(MessageEnum.RA_CALLBACK_BPEL_EXC, "Camunda", "", MsoLogger.ErrorCode.BusinessProcesssError,
+			LOGGER.error(MessageEnum.RA_CALLBACK_BPEL_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError,
 				"Error sending callback request", e);
-			ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL,
+			ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL,
 				"Error sending callback request: " + e.getMessage());
 			return false;
 		} finally {
@@ -168,7 +171,7 @@ public class BPRestCallback {
 					LOGGER.debug("Exception:", e);
 				}
 			}
-			LOGGER.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE, "Camunda", "","");
+			LOGGER.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE, CAMUNDA, "","");
 		}
 	}
 }
