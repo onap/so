@@ -15,6 +15,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * Modifications Copyright (C) 2018 IBM
  * ============LICENSE_END=========================================================
  */
 
@@ -159,19 +160,19 @@ public class AAIObjectMapper {
 		return modelMapper.map(customer, org.onap.aai.domain.yang.Customer.class);
 	}
 
-	public Converter<List<Subnet>, org.onap.aai.domain.yang.Subnets> convertSubnets = new Converter<List<Subnet>, org.onap.aai.domain.yang.Subnets>() {
+	private Converter<List<Subnet>, org.onap.aai.domain.yang.Subnets> convertSubnets = new Converter<List<Subnet>, org.onap.aai.domain.yang.Subnets>() {
         public org.onap.aai.domain.yang.Subnets convert(MappingContext<List<Subnet>, org.onap.aai.domain.yang.Subnets> context) {
        		return mapToAAISubNets(context.getSource());
         }
  	};
 
- 	public Converter<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments> convertCtagAssignments = new Converter<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments>() {
+ 	private Converter<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments> convertCtagAssignments = new Converter<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments>() {
         public org.onap.aai.domain.yang.CtagAssignments convert(MappingContext<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments> context) {
        		return mapToAAICtagAssignmentList(context.getSource());
         }
  	};
 
- 	public Converter<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments> convertSegmentationAssignments = new Converter<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments>() {
+ 	private Converter<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments> convertSegmentationAssignments = new Converter<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments>() {
         public org.onap.aai.domain.yang.SegmentationAssignments convert(MappingContext<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments> context) {
        		return mapToAAISegmentationAssignmentList(context.getSource());
         }
