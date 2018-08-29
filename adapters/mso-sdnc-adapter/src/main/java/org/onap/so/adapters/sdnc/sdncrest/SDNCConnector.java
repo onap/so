@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -68,7 +70,8 @@ import org.springframework.core.env.Environment;
 public abstract class SDNCConnector {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SDNCConnector.class);
 	private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
-	
+	private static final String MSO_INTERNAL_ERROR="MsoInternalError";
+	private static final String XPATH_EXCEPTION="XPath Exception";
 	@Autowired
 	private Environment env;
 
@@ -146,7 +149,7 @@ public abstract class SDNCConnector {
 				}
 
 				logError(errMsg);
-				ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
+				ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, errMsg);
 				return createErrorResponse(statusCode, errMsg, rt);
 			}
 
@@ -196,13 +199,13 @@ public abstract class SDNCConnector {
 	protected void logError(String errMsg) {
 		LOGGER.error(MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC, "SDNC", "",
 			MsoLogger.ErrorCode.AvailabilityError, errMsg);
-		ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
+		ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, errMsg);
 	}
 
 	protected void logError(String errMsg, Throwable t) {
 		LOGGER.error(MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC, "SDNC", "",
 			MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
-		ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
+		ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, errMsg);
 	}
 
 	/**
@@ -286,7 +289,7 @@ public abstract class SDNCConnector {
 					info += "error-type:" + errorType;
 				} catch (XPathExpressionException e) {
 				    LOGGER.error(MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-type", error.toString(), "SDNC", "",
-				    	MsoLogger.ErrorCode.DataError, "XPath Exception", e);
+				    	MsoLogger.ErrorCode.DataError, XPATH_EXCEPTION, e);
 				}
 
 				try {
@@ -297,7 +300,7 @@ public abstract class SDNCConnector {
 					info += "error-tag:" + errorTag;
 				} catch (XPathExpressionException e) {
 					LOGGER.error(MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-tag", error.toString(), "SDNC", "",
-						MsoLogger.ErrorCode.DataError, "XPath Exception", e);
+						MsoLogger.ErrorCode.DataError, XPATH_EXCEPTION, e);
 				}
 
 				try {
@@ -308,7 +311,7 @@ public abstract class SDNCConnector {
 					info += "error-message:" + errorMessage;
 				} catch (Exception e) {
 					LOGGER.error(MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-message", error.toString(), "SDNC", "",
-						MsoLogger.ErrorCode.DataError, "XPath Exception", e);
+						MsoLogger.ErrorCode.DataError, XPATH_EXCEPTION, e);
 				}
 
 				if (!info.isEmpty()) {
