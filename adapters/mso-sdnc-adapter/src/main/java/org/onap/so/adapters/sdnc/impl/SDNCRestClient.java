@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -73,7 +75,9 @@ public class SDNCRestClient{
 
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SDNCRestClient.class);
 	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
-
+    private static final String EXCEPTION_MSG="Exception while evaluate xpath";
+    private static final String MSO_INTERNAL_ERROR="MsoInternalError";
+    private static final String CAMUNDA="Camunda";
 	@Async
 	public void executeRequest(SDNCAdapterRequest bpelRequest)
 	{
@@ -217,7 +221,7 @@ public class SDNCRestClient{
 									eType = xpath.evaluate("error-type", error);
 									sdncErrMsg = new StringBuilder(". SDNC Returned-[error-type:" + eType);
 								} catch (Exception e3) {
-								    msoLogger.error (MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-type", error.toString(), "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception while evaluate xpath", e3);
+								    msoLogger.error (MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-type", error.toString(), "SDNC", "", MsoLogger.ErrorCode.DataError, EXCEPTION_MSG, e3);
 								}
 
 								String eTag = null;
@@ -225,7 +229,7 @@ public class SDNCRestClient{
 									eTag = xpath.evaluate( "error-tag", error);
 									sdncErrMsg.append(", error-tag:").append(eTag);
 								} catch (Exception e3) {
-									msoLogger.error (MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-tag", error.toString(), "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception while evaluate xpath", e3);
+									msoLogger.error (MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-tag", error.toString(), "SDNC", "", MsoLogger.ErrorCode.DataError, EXCEPTION_MSG, e3);
 								}
 
 								String eMsg = null;
@@ -233,7 +237,7 @@ public class SDNCRestClient{
 									eMsg = xpath.evaluate("error-message", error);
 									sdncErrMsg.append(", error-message:").append(eMsg).append("]");
 								} catch (Exception e3) {
-									msoLogger.error (MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-message", error.toString(), "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception while evaluate xpath", e3);
+									msoLogger.error (MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-message", error.toString(), "SDNC", "", MsoLogger.ErrorCode.DataError, EXCEPTION_MSG, e3);
 								}
 							}
 						} catch (Exception e2) {
@@ -253,7 +257,7 @@ public class SDNCRestClient{
 			sdncResp.setRespMsg(respMsg);
 
 			msoLogger.error(MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC, "SDNC", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with SDNC", e);
-			alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, respMsg);
+			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, respMsg);
 			return sdncResp;
 		}
 		finally
@@ -275,15 +279,15 @@ public class SDNCRestClient{
 			{
 				cbReq.setRequestData(sdncResp.getSdncRespXml());
 			}
-			msoLogger.info(MessageEnum.RA_CALLBACK_BPEL.name() + ":\n" + cbReq.toString(), "Camunda", "");
+			msoLogger.info(MessageEnum.RA_CALLBACK_BPEL.name() + ":\n" + cbReq.toString(), CAMUNDA, "");
 
 			URL wsdlUrl = null;
 			try {
 				wsdlUrl = new URL (bpelUrl);
 			} catch (MalformedURLException e1) {
 				error = "Caught exception initializing Callback wsdl " + e1.getMessage();
-				msoLogger.error(MessageEnum.RA_INIT_CALLBACK_WSDL_ERR, "Camunda", "", MsoLogger.ErrorCode.DataError, "Exception initializing Callback wsdl", e1);
-				alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, error);
+				msoLogger.error(MessageEnum.RA_INIT_CALLBACK_WSDL_ERR, CAMUNDA, "", MsoLogger.ErrorCode.DataError, "Exception initializing Callback wsdl", e1);
+				alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, error);
 			}
 
 			SDNCCallbackAdapterService cbSvc = new SDNCCallbackAdapterService();
@@ -312,8 +316,8 @@ public class SDNCRestClient{
 			}
 			catch (Exception e2) {
 				error = "Unable to set authorization in callback request " + e2.getMessage();
-				msoLogger.error(MessageEnum.RA_SET_CALLBACK_AUTH_EXC, "Camunda", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - Unable to set authorization in callback request", e2);
-				alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, error);
+				msoLogger.error(MessageEnum.RA_SET_CALLBACK_AUTH_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - Unable to set authorization in callback request", e2);
+				alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, error);
 			}
 
 			msoLogger.debug("Invoking Bpel Callback. BpelCallbackUrl:" + bpelUrl);
@@ -324,9 +328,9 @@ public class SDNCRestClient{
 		{
 			error = "Error sending BpelCallback request" + e.getMessage();
 			msoLogger.error("Error " + MsoLogger.ErrorCode.BusinessProcesssError + " - " + MessageEnum.RA_CALLBACK_BPEL_EXC + " - " + error, e);
-			alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, error);
+			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, error);
 		}
-		msoLogger.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE.name(), "Camunda", "");
+		msoLogger.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE.name(), CAMUNDA, "");
 		return;
 	}
 
