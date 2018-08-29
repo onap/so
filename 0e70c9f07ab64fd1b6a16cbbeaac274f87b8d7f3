@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_044f6993",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/NetworkAdapterRest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 1089
+      },
+      "writtenOn": "2018-08-29T07:11:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_b450305f",
+      "range": {
+        "startLine": 245,
+        "startChar": 21,
+        "endLine": 245,
+        "endChar": 36
+      },
+      "revId": "0e70c9f07ab64fd1b6a16cbbeaac274f87b8d7f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_544f5cbd",
         "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/NetworkAdapterRest.java",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2018-08-27T11:35:36Z",
       "side": 1,
       "message": "no need \" \"",
+      "range": {
+        "startLine": 254,
+        "startChar": 70,
+        "endLine": 254,
+        "endChar": 74
+      },
+      "revId": "0e70c9f07ab64fd1b6a16cbbeaac274f87b8d7f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a4455571",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/NetworkAdapterRest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1089
+      },
+      "writtenOn": "2018-08-29T07:11:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_544f5cbd",
       "range": {
         "startLine": 254,
         "startChar": 70,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_c4489189",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/NetworkAdapterRest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 1089
+      },
+      "writtenOn": "2018-08-29T07:11:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_744a98ad",
+      "range": {
+        "startLine": 351,
+        "startChar": 22,
+        "endLine": 351,
+        "endChar": 31
+      },
+      "revId": "0e70c9f07ab64fd1b6a16cbbeaac274f87b8d7f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_14c9e425",
         "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/NetworkAdapterRest.java",
         "patchSetId": 2
@@ -82,6 +154,30 @@
       "writtenOn": "2018-08-27T11:35:36Z",
       "side": 1,
       "message": "no need \"\"",
+      "range": {
+        "startLine": 359,
+        "startChar": 69,
+        "endLine": 359,
+        "endChar": 73
+      },
+      "revId": "0e70c9f07ab64fd1b6a16cbbeaac274f87b8d7f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_645f3d42",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/NetworkAdapterRest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 1089
+      },
+      "writtenOn": "2018-08-29T07:11:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_14c9e425",
       "range": {
         "startLine": 359,
         "startChar": 69,
