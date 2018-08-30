@@ -57,7 +57,6 @@
 		<docker.buildArg.docker_repository>${dockerPullRepo}</docker.buildArg.docker_repository>
 		<enforcer.skip>true</enforcer.skip>
 		<nexusproxy>https://nexus.onap.org</nexusproxy>
-		<stagingNexusPath>content/repositories/staging/</stagingNexusPath>
 		<releaseNexusPath>content/repositories/releases/</releaseNexusPath>
 		<snapshotNexusPath>content/repositories/snapshots/</snapshotNexusPath>
 		<publicNexusPath>content/repositories/public/</publicNexusPath>
@@ -112,13 +111,6 @@
 			<url>http://maven.restlet.com</url>
 		</pluginRepository>
 		<pluginRepository>
-			<id>ecomp-staging</id>
-			<url>${nexusproxy}/${stagingNexusPath}</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
 			<id>ecomp-public</id>
 			<url>${nexusproxy}/${publicNexusPath}</url>
 			<snapshots>
@@ -141,13 +133,6 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<repositories>
-		<repository>
-			<id>ecomp-staging</id>
-			<url>https://nexus.onap.org/content/repositories/staging/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
 		<repository>
 			<id>ecomp-public</id>
 			<url>https://nexus.onap.org/content/repositories/public/</url>
