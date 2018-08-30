@@ -2,8 +2,6 @@ package db.migration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.flywaydb.core.api.MigrationVersion;
@@ -78,7 +76,7 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         this.cloudConfig = cloudConfig;
     }
 
-    private CloudConfig loadCloudConfig(InputStream stream) throws JsonMappingException, IOException  {
+    private CloudConfig loadCloudConfig(InputStream stream) throws IOException  {
     	ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         R__CloudConfigMigration cloudConfigMigration =
         		mapper.readValue(stream, R__CloudConfigMigration.class);
