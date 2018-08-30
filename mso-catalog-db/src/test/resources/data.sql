@@ -649,4 +649,5 @@ INSERT INTO `identity_services` (`ID`, `IDENTITY_URL`, `MSO_ID`, `MSO_PASS`, `AD
 INSERT INTO `cloud_sites` (`ID`, `REGION_ID`, `IDENTITY_SERVICE_ID`, `CLOUD_VERSION`, `CLLI`, `CLOUDIFY_ID`, `PLATFORM`, `ORCHESTRATOR`, `LAST_UPDATED_BY`, `CREATION_TIMESTAMP`, `UPDATE_TIMESTAMP`) VALUES ('mtn13', 'mtn13', 'MTN13', '2.5', 'MDT13', 'mtn13', NULL, 'orchestrator', 'MSO_USER', '2018-07-17 14:06:28', '2018-07-17 14:06:28');
 
 INSERT INTO `controller_selection_reference` (`VNF_TYPE`, `CONTROLLER_NAME`, `ACTION_CATEGORY`) VALUES
-('vLoadBalancerMS/vLoadBalancerMS 0', 'APPC', 'ConfigScaleOut');
+('vLoadBalancerMS/vLoadBalancerMS 0', 'APPC', 'ConfigScaleOut'),
+('vLoadBalancerMS/vLoadBalancerMS 0', 'APPC', 'HealthCheck');

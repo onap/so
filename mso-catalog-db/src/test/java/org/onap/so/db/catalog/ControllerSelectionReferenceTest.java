@@ -42,16 +42,6 @@ public class ControllerSelectionReferenceTest {
 	@Autowired
 	private ControllerSelectionReferenceRepository controllerSelectionReferenceRepository;
 	
-	
-	@Test
-	public void Find_ControllerNameByVnfType_Test() {
-		String vnfType = "vLoadBalancerMS/vLoadBalancerMS 0";
-		String controllerName = "APPC";
-		ControllerSelectionReference controller = controllerSelectionReferenceRepository.findControllerSelectionReferenceByVnfType(vnfType);
-		assertEquals(vnfType, controller.getVnfType());
-		assertEquals(controllerName, controller.getControllerName());
-	}
-	
 	@Test
 	public void Find_ControllerNameByVnfTypeAndAction_Test() {
 		String vnfType = "vLoadBalancerMS/vLoadBalancerMS 0";

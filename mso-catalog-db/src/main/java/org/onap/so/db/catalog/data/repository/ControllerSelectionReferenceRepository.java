@@ -29,8 +29,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 	@RepositoryRestResource(collectionResourceRel = "controllerSelectionReference", path = "controllerSelectionReference")
 	public interface ControllerSelectionReferenceRepository extends JpaRepository<ControllerSelectionReference, String> {
 		
-		public ControllerSelectionReference findControllerSelectionReferenceByVnfType(@Param("VNF_TYPE") String vnfType);
-		
 		public ControllerSelectionReference findControllerSelectionReferenceByVnfTypeAndActionCategory(@Param("VNF_TYPE") String vnfType, 
 				@Param("ACTION_CATEGORY") String actionCategory);
 		

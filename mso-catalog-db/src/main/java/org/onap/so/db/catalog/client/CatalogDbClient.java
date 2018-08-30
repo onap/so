@@ -433,13 +433,6 @@ public class CatalogDbClient {
 				.queryParam(ACTION,action).build());
 	}
 	
-	public ControllerSelectionReference getControllerSelectionReferenceByVnfType(String vnfType) {
-		return this.getSingleResource(controllerSelectionReferenceClient, UriBuilder
-				.fromUri(endpoint + "/controllerSelectionReference/search/findControllerSelectionReferenceByVnfType")
-						.queryParam("VNF_TYPE", vnfType).build());
-
-	}
-	
 	public ControllerSelectionReference getControllerSelectionReferenceByVnfTypeAndActionCategory(String vnfType, String actionCategory) {
 		return this.getSingleResource(controllerSelectionReferenceClient, UriBuilder
 				.fromUri(endpoint + "/controllerSelectionReference/search/findControllerSelectionReferenceByVnfTypeAndActionCategory")
