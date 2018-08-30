@@ -947,19 +947,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 	                LOGGER.debug ("Got Heat Environment from DB: " + heatEnvironment.getEnvironment());
 	            }
 			}
-            // Replace flavors in environment with those returned by OOF
-			if (!oldWay) {
-          		Map<String, Object> returnMap = updateFlavorsFromOof(heatEnvironment.getEnvironment(), inputs);
-           		String heatEnvironmentString = returnMap.get("heatEnvironmentString").toString();
-            	LOGGER.debug("After OOF Update Heat Env String is: " + heatEnvironmentString);
-           		if (returnMap.get("inputs") instanceof Map) {
-                	inputs = (Map<String, String>) returnMap.get("inputs");
-                	LOGGER.debug("After OOF Update inputs are: " + inputs.toString());
-            	} else {
-                	LOGGER.debug("inputs is not an instance of a Map: " + returnMap.get("inputs"));
-                	throw new VnfException("Updating inputs using OOF info failed.", MsoExceptionCategory.INTERNAL);
-            	}
-			}
 
             LOGGER.debug ("In MsoVnfAdapterImpl, about to call db.getNestedTemplates avec templateId="
                           + heatTemplate.getArtifactUuid ());
@@ -2043,19 +2030,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	return vfModuleName;
     }
 
-    private Map<String, Object> updateFlavorsFromOof(String heatEnvironmentString, Map<String, String> inputs) {
-        Map<String, Object> returnMap = new HashMap<>();
-        for (Map.Entry<String, String> input : inputs.entrySet()){
-            if (heatEnvironmentString.contains("label_" + input.getKey())){
-            heatEnvironmentString = heatEnvironmentString.replace("label_" + input.getKey(),
-            input.getValue());
-            inputs.remove("label_" + input.getKey());
-            }
-        }
-        returnMap.put("heatEnvironmentString", heatEnvironmentString);
-        returnMap.put("inputs", inputs);
-        return returnMap;
-    }
     /*
      * Helper method to check a boolean property value - on error return provided default
      */
