@@ -25,7 +25,7 @@ import javax.ws.rs.ApplicationPath;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.onap.so.adapters.catalogdb.rest.CatalogDbAdapterRest;
-import org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging;
+import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
 import org.springframework.context.annotation.Configuration;
 
 import io.swagger.jaxrs.config.BeanConfig;

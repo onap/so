@@ -33,7 +33,9 @@ import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.adapters.sdnc.sdncrest.SNIROResponse;
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging;
+import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
+import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
+import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -63,6 +65,11 @@ public class CXFConfiguration {
 	@Autowired 
 	private SNIROResponse sniroResponse;
 
+	@Autowired
+	private SOAPLoggingInInterceptor soapInInterceptor;
+	    
+	@Autowired
+	private SOAPLoggingOutInterceptor soapOutInterceptor;
     
 	@Autowired
 	private ObjectMapper mapper;
@@ -85,9 +92,12 @@ public class CXFConfiguration {
 
     @Bean
     public Endpoint sndcAdapter() {
-        EndpointImpl endpoint = new EndpointImpl(bus, sdncAdapterPortImpl);
-        endpoint.publish("/SDNCAdapter");
-        return endpoint;
+        EndpointImpl wsdlEndpoint = new EndpointImpl(bus, sdncAdapterPortImpl);
+        wsdlEndpoint.getInInterceptors().add(soapInInterceptor);
+        wsdlEndpoint.getOutInterceptors().add(soapOutInterceptor);
+        wsdlEndpoint.getOutFaultInterceptors().add(soapOutInterceptor);
+        wsdlEndpoint.publish("/SDNCAdapter");
+        return wsdlEndpoint;
     }
 
 

@@ -50,7 +50,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.onap.so.client.policy.CommonObjectMapperProvider;
 import org.onap.so.client.policy.LoggingFilter;
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.logging.jaxrs.filter.jersey.JaxRsClientLogging;
+import org.onap.so.logging.jaxrs.filter.JaxRsClientLogging;
 import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.TargetEntity;
 import org.slf4j.MDC;

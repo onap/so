@@ -60,13 +60,26 @@ public class MsoLogger {
     public static final String RESPONSECODE                = "ResponseCode";
     public static final String RESPONSEDESC                = "ResponseDesc";
     public static final String FQDN                        = "ServerFQDN";
+    public static final String ENTRY_TIMESTAMP             = "EntryTimestamp";
+    public static final String CLIENT_IPADDRESS            = "EntryTimestamp";
     
     
-    public static final String SERVICE_INSTANCE_ID         = "ServiceInstanceId";
+    //HTTP Headers
+    public static final String HEADER_FROM_APP_ID          = "X-FromAppId";
+    public static final String ONAP_PARTNER_NAME           = "X-ONAP-PartnerName";
+    public static final String HEADER_REQUEST_ID           = "X-RequestId";
+    public static final String TRANSACTION_ID              = "X-TransactionID";
+    public static final String ECOMP_REQUEST_ID            = "X-ECOMP-RequestID";
+    public static final String ONAP_REQUEST_ID            = "X-ONAP-RequestID";
+    public static final String CLIENT_ID                   = "X-ClientID";
+    public static final String INVOCATION_ID_HEADER        = "X-InvocationID";
     
+    //Default values for not found
+    public static final String UNKNOWN_PARTNER                 = "UnknownPartner";
+    
+    public static final String SERVICE_INSTANCE_ID         = "ServiceInstanceId";    
     public static final String SERVICE_NAME_IS_METHOD_NAME = "ServiceNameIsMethodName";
-    public static final String SERVER_IP                   = "ServerIPAddress";
-   
+    public static final String SERVER_IP                   = "ServerIPAddress";   
     
     public static final String REMOTE_HOST                 = "RemoteHost";
     public static final String ALERT_SEVERITY              = "AlertSeverity";
@@ -77,16 +90,15 @@ public class MsoLogger {
     public static final String CAT_LOG_LEVEL 			   = "CategoryLogLevel";
     public static final String AUDI_CAT_LOG_LEVEL 		   = "AuditCategoryLogLevel";
     
-    //For getting an identity of calling application
-    public static final String HEADER_FROM_APP_ID          = "X-FromAppId";
-    public static final String FROM_APP_ID                 = "FromAppId";
-    public static final String HEADER_REQUEST_ID           = "X-RequestId";
-    public static final String TRANSACTION_ID			   = "X-TransactionID";
-    public static final String ECOMP_REQUEST_ID			   = "X-ECOMP-RequestID";
-    public static final String ONAP_REQUEST_ID            = "X-ONAP-RequestID";
+
+
+    public static final String PARTNER_NAME                 = "PartnerName";
+
     
-    public static final String CLIENT_ID 				   = "X-ClientID";
-    public static final String INVOCATION_ID_HEADER        = "X-InvocationID";
+
+
+    
+
     
     // Audit/Metric log specific
     public static final String BEGINTIME                   = "BeginTimestamp";

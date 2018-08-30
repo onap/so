@@ -25,7 +25,7 @@ import java.util.HashMap;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onap.so.cloud.Application;
+import org.onap.so.TestApplication;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoIOException;
@@ -46,7 +46,7 @@ import com.woorea.openstack.heat.model.CreateStackParam;
  *
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = TestApplication.class)
 @ActiveProfiles("test")
 @Ignore
 public class MsoHeatUtilsTest extends MsoCommonUtils {

@@ -23,10 +23,8 @@
 package org.onap.so.adapters.requestsdb;
 
 import java.sql.Timestamp;
-
 import javax.jws.WebService;
 import javax.transaction.Transactional;
-
 import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
@@ -37,7 +35,6 @@ import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.db.request.data.repository.OperationStatusRepository;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
 import org.onap.so.db.request.data.repository.SiteStatusRepository;
-import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.onap.so.utils.UUIDChecker;
@@ -48,13 +45,7 @@ import org.springframework.stereotype.Component;
 @WebService(serviceName = "RequestsDbAdapter", endpointInterface = "org.onap.so.adapters.requestsdb.MsoRequestsDbAdapter", targetNamespace = "http://org.onap.so/requestsdb")
 @Component
 @Primary
-public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
-
-	private static final String SUCCESSFUL = "Successful";
-
-	private static final String GET_INFRA_REQUEST = "Get Infra request";
-	
-	private static final String ERROR = "Error ";
+public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {	
 
 	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, MsoRequestsDbAdapterImpl.class);
 	
@@ -76,8 +67,6 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 			RequestStatusType requestStatus, String progress, String vnfOutputs, String serviceInstanceId,
 			String networkId, String vnfId, String vfModuleId, String volumeGroupId, String serviceInstanceName,
 			String configurationId, String configurationName, String vfModuleName) throws MsoRequestsDbException {
-		MsoLogger.setLogContext(requestId, serviceInstanceId);
-		long startTime = System.currentTimeMillis();
 		try {
 			InfraActiveRequests request = infraActive.findOneByRequestIdOrClientRequestId(requestId, requestId);
 			if (request == null) {
@@ -132,15 +121,11 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 			}
 			request.setLastModifiedBy(lastModifiedBy);
 			infraActive.save(request);
-
 		} catch (Exception e) {
 			String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
-			logger.error(ERROR + MsoLogger.ErrorCode.BusinessProcesssError + " for " + GET_INFRA_REQUEST + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
-			logger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
-			throw new MsoRequestsDbException(error, e);
+			logger.error(error, e);
+			throw new MsoRequestsDbException(error, MsoLogger.ErrorCode.BusinessProcesssError, e);
 		}
-		logger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESSFUL);
-
 	}
 
 	private void setProgress(String progress, InfraActiveRequests request) {
@@ -153,15 +138,10 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
 	@Override
 	@Transactional
-	public InfraActiveRequests getInfraRequest(String requestId) throws MsoRequestsDbException {
-		long startTime = System.currentTimeMillis();
-		MsoLogger.setLogContext(requestId, null);
-
+	public InfraActiveRequests getInfraRequest(String requestId) throws MsoRequestsDbException {		
 		logger.debug("Call to MSO Infra RequestsDb adapter get method with request Id: " + requestId);
-
 		InfraActiveRequests request = null;
 		try {
-
 			request = infraActive.findOneByRequestIdOrClientRequestId(requestId, requestId);
 			if (request == null) {
 				String error = "Entity not found. Unable to retrieve MSO Infra Requests DB for Request ID " + requestId;
@@ -169,11 +149,9 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 			}
 		} catch (Exception e) {
 			String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
-			logger.error(ERROR + MsoLogger.ErrorCode.BusinessProcesssError + " for " + GET_INFRA_REQUEST + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
-			logger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError, error);
-			throw new MsoRequestsDbException(error, e);
+			logger.error(error,e);
+			throw new MsoRequestsDbException(error,MsoLogger.ErrorCode.BusinessProcesssError , e);
 		}
-		logger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESSFUL);
 		return request;
 	}
 
@@ -188,18 +166,14 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 	@Transactional
 	public boolean getSiteStatus(String siteName) {
 		UUIDChecker.generateUUID(logger);
-		long startTime = System.currentTimeMillis();
 		SiteStatus siteStatus;
 		logger.debug("Request database - get Site Status with Site name:" + siteName);
-
 		siteStatus = siteRepo.findOneBySiteName(siteName);
 		if (siteStatus == null) {
 			// if not exist in DB, it means the site is not disabled, thus
 			// return true
-			logger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESSFUL);
 			return true;
-		} else {
-			logger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESSFUL);
+		} else {			
 			return siteStatus.getStatus();
 		}
 	}
@@ -226,9 +200,8 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 		if (operStatus == null) {
 			String error = "Entity not found. Unable to retrieve OperationStatus Object ServiceId: " + serviceId + " operationId: "
 					+ operationId;
-			MsoRequestsDbException e = new MsoRequestsDbException(error);
-			logger.error(ERROR+ MsoLogger.ErrorCode.BusinessProcesssError + " - " + MessageEnum.RA_DB_REQUEST_NOT_EXIST + " - " + error, e);
-			throw e;
+			logger.error(error);
+			throw new MsoRequestsDbException(error,MsoLogger.ErrorCode.BusinessProcesssError);
 		}
 
 		operStatus.setUserId(userId);

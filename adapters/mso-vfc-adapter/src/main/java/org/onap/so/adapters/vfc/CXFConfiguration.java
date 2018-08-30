@@ -32,7 +32,7 @@ import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.adapters.vfc.rest.HealthCheckHandler;
 import org.onap.so.adapters.vfc.rest.VfcAdapterRest;
-import org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging;
+import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
