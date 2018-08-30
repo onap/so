@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -69,7 +71,9 @@ public class ValetClient {
 	private static final String DEFAULT_BASE_URL = "http://localhost:8080/";
 	private static final String DEFAULT_BASE_PATH = "api/valet/placement/v1";
 	private static final String DEFAULT_AUTH_STRING = "";
-	
+	private static final String REQUEST_ID="requestId";
+	private static final String HEADERS=", headers=";
+	private static final String BODY=", body=";
 	@Autowired
 	private ObjectMapper mapper;
 	
@@ -100,7 +104,7 @@ public class ValetClient {
 		GenericValetResponse<ValetCreateResponse> gvr = null;
 
 		try {
-			UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam("requestId", requestId);
+			UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam(REQUEST_ID, requestId);
 			URI uri = builder.build();
 			
 			ValetCreateRequest vcr = this.createValetCreateRequest(regionId, tenantId, serviceInstanceId, vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
@@ -108,7 +112,7 @@ public class ValetClient {
 			String body = mapper.writeValueAsString(vcr);
 			HttpHeaders headers = generateHeaders(requestId);
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);	
-			LOGGER.debug("valet create req: " + uri.toString() + ", headers=" + headers.toString() + ", body=" + body.toString());
+			LOGGER.debug("valet create req: " + uri.toString() + HEADERS + headers.toString() + BODY + body.toString());
 			
 			response = restTemplate.exchange(uri, HttpMethod.POST, entity, ValetCreateResponse.class);
 			gvr = this.getGVRFromResponse(response);
@@ -128,7 +132,7 @@ public class ValetClient {
 		GenericValetResponse<ValetUpdateResponse> gvr = null;
 
 		try {
-			UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam("requestId", requestId);
+			UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam(REQUEST_ID, requestId);
 			URI uri = builder.build();
 			
 			ValetUpdateRequest vur = this.createValetUpdateRequest(regionId, tenantId, serviceInstanceId, vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
@@ -136,7 +140,7 @@ public class ValetClient {
 			String body = mapper.writeValueAsString(vur);
 			HttpHeaders headers = generateHeaders(requestId);	
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet update req: " + uri.toString() + ", headers=" + headers.toString() + ", body=" + body.toString());
+			LOGGER.debug("valet update req: " + uri.toString() + HEADERS + headers.toString() + ", body=" + body.toString());
 			
 			response = restTemplate.exchange(uri, HttpMethod.PUT, entity, ValetUpdateResponse.class);
 			gvr = this.getGVRFromResponse(response);
@@ -155,7 +159,7 @@ public class ValetClient {
 		GenericValetResponse<ValetDeleteResponse> gvr = null;
 
 		try {
-			UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam("requestId", requestId);
+			UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam(REQUEST_ID, requestId);
 			URI uri = builder.build();
 			
 			ValetDeleteRequest vdr = this.createValetDeleteRequest(regionId, tenantId, vfModuleId, vfModuleName);
@@ -163,7 +167,7 @@ public class ValetClient {
 			String body = mapper.writeValueAsString(vdr);
 			HttpHeaders headers = generateHeaders(requestId);
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet delete req: " + uri.toString() + ", headers=" + headers.toString() + ", body=" + body.toString());
+			LOGGER.debug("valet delete req: " + uri.toString() + HEADERS + headers.toString() + ", body=" + body.toString());
 			
 			response = restTemplate.exchange(uri, HttpMethod.DELETE, entity, ValetDeleteResponse.class);
 			gvr = this.getGVRFromResponse(response);
@@ -190,7 +194,7 @@ public class ValetClient {
 			String body = mapper.writeValueAsString(vcr);
 			HttpHeaders headers = generateHeaders(requestId);
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet confirm req: " + uri.toString() + ", headers=" + headers.toString() + ", body=" + body);
+			LOGGER.debug("valet confirm req: " + uri.toString() + HEADERS + headers.toString() + BODY + body);
 			
 			response = restTemplate.exchange(uri, HttpMethod.PUT, entity, ValetConfirmResponse.class);
 			gvr = this.getGVRFromResponse(response);
@@ -217,7 +221,7 @@ public class ValetClient {
 			String body = mapper.writeValueAsString(vrr);
 			HttpHeaders headers = generateHeaders(requestId);
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet rollback req: " + uri.toString() + ", headers=" + headers.toString() + ", body=" + body.toString());
+			LOGGER.debug("valet rollback req: " + uri.toString() + HEADERS + headers.toString() + BODY + body.toString());
 			
 			response = restTemplate.exchange(uri, HttpMethod.PUT, entity, ValetRollbackResponse.class);
 			gvr = this.getGVRFromResponse(response);
