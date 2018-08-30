@@ -311,8 +311,8 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			//Get Service Instance Info
 			String serviceInstanceId = getVariableEnforced(execution, "DoCVNF_serviceInstanceId")
 
-			String globalCustId = execution.getVariable("global-customer-id")
-			String serviceType = execution.getVariable("service-type")
+			String globalCustId = execution.getVariable("globalCustomerId")
+			String serviceType = execution.getVariable("serviceType")
 
 			Map<String, String> payload = new LinkedHashMap<>();
 			payload.put("vnf-id", vnfId);
@@ -337,7 +337,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			resourceClient.connect(uri, siUri)
 
 		}catch(Exception ex) {
-			msoLogger.debug("Error Occured in DoCreateVnf CreateGenericVnf Process " + ex.getMessage())
+			msoLogger.debug("Error Occured in DoCreateVnf CreateGenericVnf Process ", ex)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf CreateGenericVnf Process")
 		}
 		msoLogger.trace("COMPLETED DoCreateVnf CreateGenericVnf Process")
