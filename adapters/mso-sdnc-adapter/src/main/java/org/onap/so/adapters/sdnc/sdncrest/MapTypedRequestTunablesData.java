@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +37,10 @@ public class MapTypedRequestTunablesData {
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,MapTypedRequestTunablesData.class);
 	
 	private static final MsoAlarmLogger alarmLogger = new MsoAlarmLogger();	
+	
+	private static final String MISSING_CONFIGURATION_ERROR_MSG= "Missing configuration for: ";
+	private static final String MISSING_CONFIG_PARAM_ERROR_MSG="Missing config param";
+	private static final String MSO_INTERNAL_ERROR="MsoInternalError";
 		
 	@Autowired
 	private Environment env;
@@ -47,9 +53,9 @@ public class MapTypedRequestTunablesData {
 		String value = env.getProperty(reqTunable.getKey().toLowerCase(), "");
 
 		if ("".equals(value)) {
-			error= "Missing configuration for: " + reqTunable.getKey();
-			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, reqTunable.getKey(), "SDNC", "", MsoLogger.ErrorCode.DataError, "Missing config param");
-			alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, reqTunable.getError());		
+			error= MISSING_CONFIGURATION_ERROR_MSG + reqTunable.getKey();
+			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, reqTunable.getKey(), "SDNC", "", MsoLogger.ErrorCode.DataError, MISSING_CONFIG_PARAM_ERROR_MSG);
+			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, reqTunable.getError());		
 			throw new SDNCAdapterException(error);
 		}
 
@@ -58,7 +64,7 @@ public class MapTypedRequestTunablesData {
 		if (parts.length != 5) {
 			error="Invalid configuration for: " + reqTunable.getKey();
 			msoLogger.error(MessageEnum.RA_SDNC_INVALID_CONFIG, reqTunable.getKey(), value, "SDNC", "", MsoLogger.ErrorCode.DataError, "Invalid config");
-			alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, reqTunable.getError());	
+			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, reqTunable.getError());	
 			throw new SDNCAdapterException(error);
 		}
 
@@ -72,9 +78,9 @@ public class MapTypedRequestTunablesData {
 		reqTunable.setSdncUrl(env.getProperty(urlPropKey, ""));
 
 		if ("".equals(reqTunable.getSdncUrl())) {
-			error="Missing configuration for: " + urlPropKey;
-			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, urlPropKey, "SDNC", "", MsoLogger.ErrorCode.DataError, "Missing config param");
-			alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, reqTunable.getError());
+			error=MISSING_CONFIGURATION_ERROR_MSG + urlPropKey;
+			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, urlPropKey, "SDNC", "", MsoLogger.ErrorCode.DataError, MISSING_CONFIG_PARAM_ERROR_MSG);
+			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, reqTunable.getError());
 			throw new SDNCAdapterException(error);
 		}
 
@@ -89,10 +95,10 @@ public class MapTypedRequestTunablesData {
 		reqTunable.setMyUrl(env.getProperty(Constants.MY_URL_PROP, ""));
 
 		if ("".equals(reqTunable.getMyUrl())) {
-			error="Missing configuration for: " + Constants.MY_URL_PROP;
+			error=MISSING_CONFIGURATION_ERROR_MSG + Constants.MY_URL_PROP;
 			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, Constants.MY_URL_PROP, "SDNC", "",
-				MsoLogger.ErrorCode.DataError, "Missing config param");
-			alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, reqTunable.getError());		
+				MsoLogger.ErrorCode.DataError, MISSING_CONFIG_PARAM_ERROR_MSG);
+			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, reqTunable.getError());		
 			throw new SDNCAdapterException(error);
 		}
 
