@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,12 +47,13 @@ import org.springframework.stereotype.Component;
 @WebService(serviceName = "TenantAdapter", endpointInterface = "org.onap.so.adapters.tenant.MsoTenantAdapter", targetNamespace = "http://org.onap.so/tenant")
 @Component
 public class MsoTenantAdapterImpl implements MsoTenantAdapter {
-	public static final String CREATE_TENANT = "CreateTenant";
+	public static final String CREATE_TENANT = "createTenant";
     public static final String OPENSTACK = "OpenStack";
     public static final String QUERY_TENANT = "QueryTenant";
     public static final String DELETE_TENANT = "DeleteTenant";
     public static final String ROLLBACK_TENANT = "RollbackTenant";
-	
+	private static final String SUCCESS_RESPONSE_OPENSTACK="Successfully received response from Open Stack";
+	private static final String OPENSTACK_COMMUNICATE_EXCEPTION_MSG="Exception while communicate with Open Stack";
     @Resource
     private WebServiceContext wsContext;
 
@@ -84,7 +87,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                               Boolean backout,
                               MsoRequest msoRequest,
                               Holder <String> tenantId,
-                              Holder <TenantRollback> rollback) throws TenantException, TenantAlreadyExists {
+                              Holder <TenantRollback> rollback) throws TenantException {
         MsoLogger.setLogContext (msoRequest);
         MsoLogger.setServiceName (CREATE_TENANT);
 
@@ -104,7 +107,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
 		try {
 			tUtils = tFactory.getTenantUtils (cloudSiteId);
 		} catch (MsoCloudSiteNotFound me) {
-            logger.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), OPENSTACK, "createTenant", MsoLogger.ErrorCode.DataError, "no implementation found for " + cloudSiteId, me);
+            logger.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), OPENSTACK, CREATE_TENANT, MsoLogger.ErrorCode.DataError, "no implementation found for " + cloudSiteId, me);
             throw new TenantException (me);
 		}
 
@@ -113,11 +116,11 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
         long queryTenantStartTime = System.currentTimeMillis ();
         try {
             newTenant = tUtils.queryTenantByName (tenantName, cloudSiteId);
-            logger.recordMetricEvent (queryTenantStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", OPENSTACK, QUERY_TENANT, null);
+            logger.recordMetricEvent (queryTenantStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_RESPONSE_OPENSTACK, OPENSTACK, QUERY_TENANT, null);
         } catch (MsoException me) {
-            logger.recordMetricEvent (queryTenantStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with Open Stack", OPENSTACK, QUERY_TENANT, null);
+            logger.recordMetricEvent (queryTenantStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, OPENSTACK_COMMUNICATE_EXCEPTION_MSG, OPENSTACK, QUERY_TENANT, null);
             String error = "Create Tenant " + tenantName + ": " + me;
-            logger.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), OPENSTACK, "createTenant", MsoLogger.ErrorCode.DataError, "Exception while communicate with Open Stack", me);
+            logger.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), OPENSTACK, CREATE_TENANT, MsoLogger.ErrorCode.DataError, OPENSTACK_COMMUNICATE_EXCEPTION_MSG, me);
             logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
             throw new TenantException (me);
         }
@@ -127,11 +130,11 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
             long createTenantStartTime = System.currentTimeMillis ();
             try {
                 newTenantId = tUtils.createTenant (tenantName, cloudSiteId, metadata, backout.booleanValue ());
-                logger.recordMetricEvent (createTenantStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", OPENSTACK, CREATE_TENANT, null);
+                logger.recordMetricEvent (createTenantStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_RESPONSE_OPENSTACK, OPENSTACK, CREATE_TENANT, null);
             } catch (MsoException me) {
-                logger.recordMetricEvent (createTenantStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with Open Stack", OPENSTACK, CREATE_TENANT, null);
+                logger.recordMetricEvent (createTenantStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, OPENSTACK_COMMUNICATE_EXCEPTION_MSG, OPENSTACK, CREATE_TENANT, null);
                 String error = "Create Tenant " + tenantName + ": " + me;
-                logger.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), OPENSTACK, "createTenant", MsoLogger.ErrorCode.DataError, "Exception while communicate with Open Stack", me);
+                logger.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), OPENSTACK, CREATE_TENANT, MsoLogger.ErrorCode.DataError, OPENSTACK_COMMUNICATE_EXCEPTION_MSG, me);
                 logger.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
                 throw new TenantException (me);
             }
@@ -176,7 +179,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
 		try {
 			tUtils = tFactory.getTenantUtils (cloudSiteId);
 		} catch (MsoCloudSiteNotFound me) {
-            logger.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), OPENSTACK, "createTenant", MsoLogger.ErrorCode.DataError, "no implementation found for " + cloudSiteId, me);
+            logger.error (MessageEnum.RA_CREATE_TENANT_ERR, me.getMessage(), OPENSTACK, CREATE_TENANT, MsoLogger.ErrorCode.DataError, "no implementation found for " + cloudSiteId, me);
             throw new TenantException (me);
 		}
         
@@ -184,7 +187,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
         long subStartTime = System.currentTimeMillis ();
         try {
             qTenant = tUtils.queryTenant (tenantNameOrId, cloudSiteId);
-            logger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", OPENSTACK, QUERY_TENANT, null);
+            logger.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_RESPONSE_OPENSTACK, OPENSTACK, QUERY_TENANT, null);
             if (qTenant == null) {
                 // Not found by ID, Try by name.
                 qTenant = tUtils.queryTenantByName (tenantNameOrId, cloudSiteId);
