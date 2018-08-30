@@ -37,7 +37,9 @@ import org.onap.so.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowResource;
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging;
+import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
+import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
+import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -76,6 +78,12 @@ public class CXFConfiguration {
 	@Autowired
 	private VnfAdapterNotify vnfAdapterNotifyServiceImpl;
 	
+	@Autowired
+	private SOAPLoggingInInterceptor soapInInterceptor;
+
+	@Autowired
+	private SOAPLoggingOutInterceptor soapOutInterceptor;
+	
 	@Bean
     public ServletRegistrationBean cxfServlet() {
         return new ServletRegistrationBean(new CXFServlet(), "/mso/*");
@@ -85,6 +93,9 @@ public class CXFConfiguration {
     public Endpoint vnfAdapterCallback() {
         EndpointImpl endpoint = new EndpointImpl(bus, vnfAdapterNotifyServiceImpl);
         endpoint.publish("/VNFAdaptercallback");
+        endpoint.getInInterceptors().add(soapInInterceptor);
+        endpoint.getOutInterceptors().add(soapOutInterceptor);
+        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
         return endpoint;
     }
 	
@@ -92,6 +103,9 @@ public class CXFConfiguration {
     public Endpoint sndcAdapterCallback() {
         EndpointImpl endpoint = new EndpointImpl(bus, sdncAdapterCallbackServiceImpl);
         endpoint.publish("/SDNCAdapterCallbackService");
+        endpoint.getInInterceptors().add(soapInInterceptor);
+        endpoint.getOutInterceptors().add(soapOutInterceptor);
+        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
         return endpoint;
     }
 		

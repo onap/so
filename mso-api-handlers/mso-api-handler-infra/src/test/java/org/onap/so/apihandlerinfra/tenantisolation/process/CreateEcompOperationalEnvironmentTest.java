@@ -23,7 +23,7 @@ package org.onap.so.apihandlerinfra.tenantisolation.process;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertThat;
-
+import java.util.UUID;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
@@ -107,22 +107,23 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest{
                 .errorInfo(errorLoggerInfo).build();
         
         InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("123");
+        String uuid = UUID.randomUUID().toString();
+		iar.setRequestId(uuid);
 		iar.setOperationalEnvName("myOpEnv");
 		iar.setRequestScope("create");
 		iar.setRequestStatus("PENDING");
 		iar.setRequestAction("UNKNOWN");
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/123"))
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+uuid))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
 		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
-				.withRequestBody(containing("{\"requestId\":\"123\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE, operationalEnvironmentId - operationalEnvId; Error message: empty"))
+				.withRequestBody(containing("{\"requestId\":\""+uuid+ "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE, operationalEnvironmentId - operationalEnvId; Error message:"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
 		try {
-            createEcompOpEn.execute("123", getCloudOrchestrationRequest());
+            createEcompOpEn.execute(uuid, getCloudOrchestrationRequest());
         }catch(ApiException e){
             assertThat(e, sameBeanAs((ApiException) expectedException).ignoring("cause"));
         }

@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.logging.jaxrs.filter.jersey;
+package org.onap.so.logging.jaxrs.filter;
 
 
 import org.apache.commons.io.IOUtils;

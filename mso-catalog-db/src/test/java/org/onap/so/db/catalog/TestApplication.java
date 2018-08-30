@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so;
+package org.onap.so.db.catalog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,9 +26,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(scanBasePackages = { "org.onap"})
+@SpringBootApplication(scanBasePackages = { "org.onap.so.db.catalog"})
 @EnableJpaRepositories("org.onap.so.db.catalog.data.repository")
-@EntityScan("org.onap.so.db.catalog.beans")
+@EntityScan("org.onap.so.db.catalog")
 @Profile("test")
 public class TestApplication {
 	private static final String LOGS_DIR = "logs_dir";

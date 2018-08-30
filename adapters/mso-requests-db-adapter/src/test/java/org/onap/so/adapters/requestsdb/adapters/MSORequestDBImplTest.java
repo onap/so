@@ -23,15 +23,20 @@ package org.onap.so.adapters.requestsdb.adapters;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.onap.so.adapters.requestsdb.application.TestAppender;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.requestsdb.MsoRequestsDbAdapter;
 import org.onap.so.adapters.requestsdb.RequestStatusType;
 import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
@@ -41,12 +46,17 @@ import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import org.onap.so.db.request.data.repository.OperationStatusRepository;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
+import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MSORequestDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -55,8 +65,7 @@ public class MSORequestDBImplTest {
 
 	@LocalServerPort
 	private int port;
-	
-	@Autowired
+
 	private MsoRequestsDbAdapter dbAdapter;
 		
     @Autowired
@@ -71,6 +80,16 @@ public class MSORequestDBImplTest {
 	public InfraActiveRequests setupTestEntities()   {	
 		return buildTestRequest();
 	}	
+	
+	@Before
+	public void before(){
+        JaxWsProxyFactoryBean jaxWsProxyFactory = new JaxWsProxyFactoryBean();
+        jaxWsProxyFactory.setServiceClass(MsoRequestsDbAdapter.class);
+        jaxWsProxyFactory.setAddress("http://localhost:" + port + "/services/RequestsDbAdapter");
+        jaxWsProxyFactory.setUsername("bpel");
+        jaxWsProxyFactory.setPassword("password1$");
+        dbAdapter = (MsoRequestsDbAdapter) jaxWsProxyFactory.create();
+	}
 
 	private InfraActiveRequests buildTestRequest() {	
 		InfraActiveRequests testRequest= new InfraActiveRequests();
@@ -94,11 +113,9 @@ public class MSORequestDBImplTest {
 		return testRequest;
 	}
 
-	
-
-
 	@Test
 	public void getByRequestId() throws MsoRequestsDbException  {
+	    
 		InfraActiveRequests testRequest = setupTestEntities();
 		// Given
 		String requestId = "00032ab7-3fb3-42e5-965d-8ea592502017";
@@ -121,10 +138,8 @@ public class MSORequestDBImplTest {
 		try {
 			dbAdapter.getInfraRequest(requestId);
 			fail("Expected MsoRequestsDbException to be thrown");
-		} catch (MsoRequestsDbException e) {
-			assertEquals(e.getMessage(),"Error retrieving MSO Infra Requests DB for Request ID invalidRequestId");
 		} catch (Exception e) {
-			fail("Expected MsoRequestsDbException to be thrown, unknown exception thrown");
+		    assertEquals(e.getMessage(),"Error retrieving MSO Infra Requests DB for Request ID invalidRequestId");
 		}		
 	}
 	
@@ -230,11 +245,9 @@ public class MSORequestDBImplTest {
 					null,
 					null,
 					null);
-			fail("Expected MsoRequestsDbException to be thrown");
-		} catch (MsoRequestsDbException e) {
-			assertEquals(e.getMessage(),"Error retrieving MSO Infra Requests DB for Request ID invalidRequestId");
+			fail("Expected MsoRequestsDbException to be thrown");	
 		} catch (Exception e) {
-			fail("Expected MsoRequestsDbException to be thrown, unknown exception thrown");
+		    assertEquals(e.getMessage(),"Error retrieving MSO Infra Requests DB for Request ID invalidRequestId");
 		}		
 	}
 	
@@ -328,6 +341,7 @@ public class MSORequestDBImplTest {
 	
 	@Test 
 	public void updateServiceOperation_Not_Found() throws MsoRequestsDbException{
+	    TestAppender.events.clear();
 		String serviceId = "badserviceId";
 		String operationId = "operationid";
 		String operation = "newOperationType";
@@ -349,12 +363,35 @@ public class MSORequestDBImplTest {
 		updatedOperationStatus.setProgress(progress);
 		updatedOperationStatus.setReason(reason);
 		updatedOperationStatus.setOperationContent(operationContent);
-		
-		thrown.expect(MsoRequestsDbException.class);
-		thrown.expectMessage("Unable to retrieve OperationStatus Object ServiceId: " + serviceId + " operationId: " + operationId);
-		
-		dbAdapter.updateServiceOperationStatus(serviceId, operationId, operation,  userId,
-	             result, operationContent,  progress, reason);		
+
+		try {
+            dbAdapter.updateServiceOperationStatus(serviceId, operationId, operation,  userId,
+                     result, operationContent,  progress, reason);
+            fail("Expected MsoRequestsDbException to be thrown");   
+        } catch (Exception e) {
+            assertEquals("Entity not found. Unable to retrieve OperationStatus Object ServiceId: " + serviceId + " operationId: " + operationId,e.getMessage());
+            for(ILoggingEvent logEvent : TestAppender.events)
+                if(logEvent.getLoggerName().equals("org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor") &&
+                        logEvent.getMarker().getName().equals("ENTRY")
+                        ){
+                    Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                    assertNotNull(mdc.get(ONAPLogConstants.MDCs.INSTANCE_UUID));
+                    assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                    assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
+                    assertEquals("",mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
+                    assertEquals("/services/RequestsDbAdapter",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
+                    assertEquals("INPROGRESS",mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
+                }else if(logEvent.getLoggerName().equals("org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor") &&
+                        logEvent.getMarker()!= null && logEvent.getMarker().getName().equals("EXIT")){
+                    Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                    assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
+                    assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
+                    assertEquals("500",mdc.get(ONAPLogConstants.MDCs.RESPONSE_CODE));
+                    assertEquals("",mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
+                    assertEquals("/services/RequestsDbAdapter",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
+                    assertEquals("ERROR",mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
+                }
+        }       	
 		
 	}
 	
@@ -423,6 +460,7 @@ public class MSORequestDBImplTest {
 
 	@Test
 	public void updateResourceOperationStatus() throws MsoRequestsDbException{
+	    TestAppender.events.clear();
 		String resourceTemplateUUID = "template1";
 		String serviceId = "serviceId";
 		String operationId = "operationId";
@@ -454,6 +492,28 @@ public class MSORequestDBImplTest {
 
 		ResourceOperationStatus actualResource = dbAdapter.getResourceOperationStatus(serviceId, operationId,"template1");
 		assertThat(actualResource, sameBeanAs(expectedResource));
+		
+		for(ILoggingEvent logEvent : TestAppender.events)
+            if(logEvent.getLoggerName().equals("org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor") &&
+                    logEvent.getMarker().getName().equals("ENTRY")
+                    ){
+                Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INSTANCE_UUID));
+                assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
+                assertEquals("",mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
+                assertEquals("/services/RequestsDbAdapter",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
+                assertEquals("INPROGRESS",mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
+            }else if(logEvent.getLoggerName().equals("org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor") &&
+                    logEvent.getMarker().getName().equals("EXIT")){
+                Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
+                assertEquals(null,mdc.get(ONAPLogConstants.MDCs.RESPONSE_CODE));
+                assertEquals("",mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
+                assertEquals("/services/RequestsDbAdapter",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
+                assertEquals("COMPLETED",mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
+            }
 	}
 
 

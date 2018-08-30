@@ -28,6 +28,8 @@ import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.adapters.requestsdb.MsoRequestsDbAdapter;
+import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
+import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -43,8 +45,12 @@ public class CXFConfiguration {
 	@Autowired
 	private MsoRequestsDbAdapter requestDbAdapterImpl;
 	
-
-
+	@Autowired
+	private SOAPLoggingInInterceptor soapInInterceptor;
+	
+	@Autowired
+	private SOAPLoggingOutInterceptor soapOutInterceptor;
+	
 	@Bean
 	public ServletRegistrationBean cxfServlet() {
 	
@@ -58,7 +64,10 @@ public class CXFConfiguration {
 		LoggingFeature logFeature = new LoggingFeature();
 		logFeature.setPrettyLogging(true);
 		logFeature.initialize(bus);
-		endpoint.getFeatures().add(logFeature); 
+		endpoint.getFeatures().add(logFeature);
+		endpoint.getInInterceptors().add(soapInInterceptor);
+		endpoint.getOutInterceptors().add(soapOutInterceptor);
+		endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
 		return endpoint;
 	}
 

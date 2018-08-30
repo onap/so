@@ -33,7 +33,6 @@ import org.onap.appc.client.lcm.model.ActionIdentifiers;
 import org.onap.appc.client.lcm.model.CheckLockInput;
 import org.onap.appc.client.lcm.model.Status;
 import org.onap.so.BaseTest;
-
 import java.util.Properties;
 import java.util.UUID;
 

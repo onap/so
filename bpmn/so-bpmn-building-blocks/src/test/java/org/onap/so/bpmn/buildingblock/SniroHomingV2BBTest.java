@@ -28,9 +28,9 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.onap.so.BaseTest;
 import org.onap.so.bpmn.buildingblock.SniroHomingV2;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.BaseTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 

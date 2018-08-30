@@ -98,7 +98,16 @@
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-rs-client</artifactId>
 			<version>${cxf.version}</version>
-			<scope>test</scope>
+		</dependency>
+		<dependency>
+    		<groupId>org.apache.cxf</groupId>
+    		<artifactId>cxf-rt-bindings-soap</artifactId>
+  			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.apache.cxf</groupId>
+    		<artifactId>cxf-rt-transports-http</artifactId>
+    		<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.shazam</groupId>
@@ -154,7 +163,17 @@
             <artifactId>spring-security-web</artifactId>
             <version>5.0.5.RELEASE</version>
         </dependency>
-
+		<dependency>
+			<groupId>org.onap.logging-analytics</groupId>
+  			<artifactId>logging-slf4j</artifactId>
+  			<version>1.2.2-SNAPSHOT</version>
+  			<exclusions>
+				<exclusion>
+					<groupId>com.att.eelf</groupId>
+					<artifactId>eelf-core</artifactId>
+				</exclusion>
+			</exclusions>
+  		</dependency>
     </dependencies>
 	<build>
 		<resources>

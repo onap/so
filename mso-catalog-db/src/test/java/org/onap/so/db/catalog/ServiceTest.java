@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onap.so.TestApplication;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;

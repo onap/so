@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onap.so.TestApplication;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;

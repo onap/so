@@ -81,7 +81,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.onap.so</groupId>
-			<artifactId>mso-catalog-db</artifactId>
+			<artifactId>mso-catalog-db</artifactId>	
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -92,7 +92,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -104,7 +103,6 @@
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>1.15</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -115,6 +113,21 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-client</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.apache.cxf</groupId>
+    		<artifactId>cxf-rt-bindings-soap</artifactId>
+  			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.apache.cxf</groupId>
+    		<artifactId>cxf-rt-transports-http</artifactId>
+    		<version>${cxf.version}</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -1,5 +1,7 @@
 # will be used as entry in DB to say SITE OFF/ON for healthcheck
-
+security:
+  basic:
+    enabled: false
 server:
     port: 8080
     tomcat:
@@ -8,7 +10,7 @@ ssl-enable: false
 mso:
   adapters:
     requestDb:
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
+      auth: Basic YnBlbDpwYXNzd29yZDEk
       endpoint: http://localhost:8081
   logPath: logs
   site-name: localSite
@@ -34,8 +36,8 @@ spring:
   security:
     usercredentials:
     -  
-      username: test
-      password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
+      username: bpel
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
       role: BPEL-Client
 mariaDB4j:
   dataDir: 

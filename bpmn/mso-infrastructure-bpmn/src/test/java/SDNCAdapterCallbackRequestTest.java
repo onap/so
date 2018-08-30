@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
-import org.onap.so.BaseTest;
 import org.onap.so.bpmn.common.adapter.sdnc.CallbackHeader;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 

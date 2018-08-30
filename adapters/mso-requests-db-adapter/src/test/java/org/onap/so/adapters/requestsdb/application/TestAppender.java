@@ -18,21 +18,20 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.cloud;
+package org.onap.so.adapters.requestsdb.application;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import java.util.ArrayList;
+import java.util.List;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.AppenderBase;
 
-@SpringBootApplication(scanBasePackages = { "org.onap"})
-@EnableJpaRepositories({"org.onap.so.db.catalog.data.repository", "org.onap.so.db.request.data.repository"})
-@EntityScan({"org.onap.so.db.catalog.beans", "org.onap.so.db.request.beans"})
-public class Application {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-        System.getProperties().setProperty("mso.db", "MARIADB");
-        System.getProperties().setProperty("server.name", "Springboot");    
-    }    
+
+public class TestAppender  extends AppenderBase<ILoggingEvent> {
+    public static List<ILoggingEvent> events = new ArrayList<>();
+ 
+	@Override
+	public void append(ILoggingEvent loggingEvent) {
+		events.add(loggingEvent);		
+	}
 }

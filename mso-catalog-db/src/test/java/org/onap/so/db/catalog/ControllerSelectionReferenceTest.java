@@ -26,7 +26,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onap.so.TestApplication;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.data.repository.ControllerSelectionReferenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;

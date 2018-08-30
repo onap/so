@@ -21,16 +21,10 @@
 package org.onap.so.config;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.onap.so.BaseTest;
-import org.onap.so.cloud.Application;
 import org.onap.so.config.beans.PoConfig;
+import org.onap.so.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 public class PoConfigTest extends BaseTest {
 
