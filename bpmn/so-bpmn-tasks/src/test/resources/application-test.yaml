@@ -190,6 +190,12 @@ sniro:
     headers.patchVersion: 1
     headers.minorVersion: 1
     headers.latestVersion: 2
+oof:
+  timeout: PT30M
+  host: http://localhost:${wiremock.server.port}
+  uri.v1: /api/oof/v1/placement
+  uri.v2: /api/oof/v2/placement
+  headers.auth: Basic dGVzdDp0ZXN0cHdk
 spring:
   datasource:
     url: jdbc:mariadb://localhost:3307/camundabpmn
