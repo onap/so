@@ -46,6 +46,8 @@ import org.onap.so.adapters.vnf.VolumeAdapterRest;
 import org.onap.so.adapters.vnf.VolumeAdapterRestV2;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.onap.so.logger.MsoLogger;
+import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
+import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -85,6 +87,11 @@ public class CXFConfiguration {
 	@Autowired
 	private JettisonStyleMapperProvider jettisonStyleObjectMapper; 	
 	
+	@Autowired
+	private SOAPLoggingInInterceptor soapInInterceptor;
+	    
+	@Autowired
+	private SOAPLoggingOutInterceptor soapOutInterceptor;
 	
     @Bean(name=Bus.DEFAULT_BUS_ID)
     public SpringBus springBus() {      
@@ -107,6 +114,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), networkAdapterImpl);
         endpoint.publish("/NetworkAdapter");
         endpoint.setWsdlLocation("NetworkAdapter.wsdl");
+        endpoint.getInInterceptors().add(soapInInterceptor);
+        endpoint.getOutInterceptors().add(soapOutInterceptor);
+        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
         return endpoint;
     }	
 	
@@ -115,6 +125,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), networkAdapterAsyncImpl);
         endpoint.publish("/NetworkAdapterAsync");
         endpoint.setWsdlLocation("NetworkAdapterAsync.wsdl");
+        endpoint.getInInterceptors().add(soapInInterceptor);
+        endpoint.getOutInterceptors().add(soapOutInterceptor);
+        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
         return endpoint;
     }		
 	
@@ -126,6 +139,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), tenantAdapterImpl);
         endpoint.publish("/TenantAdapter");
         endpoint.setWsdlLocation("TenantAdapter.wsdl");
+        endpoint.getInInterceptors().add(soapInInterceptor);
+        endpoint.getOutInterceptors().add(soapOutInterceptor);
+        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
         return endpoint;
     }
     
@@ -139,6 +155,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfAdapterImpl);
         endpoint.publish("/VnfAdapter");
         endpoint.setWsdlLocation("VnfAdapter.wsdl");
+        endpoint.getInInterceptors().add(soapInInterceptor);
+        endpoint.getOutInterceptors().add(soapOutInterceptor);
+        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
         return endpoint;
     }
     
@@ -147,6 +166,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfAdapterAsyncImpl);
         endpoint.publish("/VnfAsyncAdapter");
         endpoint.setWsdlLocation("VnfAsyncAdapter.wsdl");
+        endpoint.getInInterceptors().add(soapInInterceptor);
+        endpoint.getOutInterceptors().add(soapOutInterceptor);
+        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
         return endpoint;
     }
     
@@ -155,6 +177,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfCloudifyAdapterImpl);
         endpoint.publish("/VnfCloudifyAdapterImpl");
         endpoint.setWsdlLocation("VnfCloudifyAdapterImpl.wsdl");
+        endpoint.getInInterceptors().add(soapInInterceptor);
+        endpoint.getOutInterceptors().add(soapOutInterceptor);
+        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
         return endpoint;
     }
     

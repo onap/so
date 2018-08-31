@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.onap.so.BaseTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
@@ -38,6 +37,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.BaseTest;
 
 public class ExtractPojosForBBTest extends BaseTest{
 	ExtractPojosForBB extractPojos = new ExtractPojosForBB();

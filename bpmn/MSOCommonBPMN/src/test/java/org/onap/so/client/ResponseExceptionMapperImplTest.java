@@ -44,7 +44,6 @@ import javax.ws.rs.core.Response.Status;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.BaseTest;
-
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 

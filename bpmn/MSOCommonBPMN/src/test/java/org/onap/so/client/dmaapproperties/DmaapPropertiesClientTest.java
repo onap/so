@@ -32,9 +32,9 @@ import java.io.IOException;
 
 import org.apache.http.HttpStatus;
 import org.junit.Test;
-import org.onap.so.BaseTest;
 import org.onap.so.client.avpn.dmaap.beans.AVPNDmaapBean;
 import org.onap.so.client.exception.MapperException;
+import org.onap.so.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

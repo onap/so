@@ -24,8 +24,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Test;
-import org.onap.so.BaseTest;
 import org.onap.so.bpmn.mock.FileUtil;
+import org.onap.so.BaseTest;
 
 public class ExceptionBuilderTest extends BaseTest {
 

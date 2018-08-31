@@ -30,7 +30,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.onap.so.BaseTest;
 import org.onap.so.adapters.nwrest.CreateNetworkError;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
@@ -45,6 +44,7 @@ import org.onap.so.adapters.nwrest.RollbackNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkError;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
+import org.onap.so.BaseTest;
 import org.onap.so.openstack.beans.NetworkRollback;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

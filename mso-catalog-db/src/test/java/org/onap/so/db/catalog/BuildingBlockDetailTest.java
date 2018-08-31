@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onap.so.TestApplication;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.OrchestrationAction;
 import org.onap.so.db.catalog.beans.ResourceType;

@@ -76,8 +76,8 @@ public class CreateEcompOperationalEnvironment {
             requestDb.updateInfraFailureCompletion(e.getMessage(), requestId, request.getOperationalEnvironmentId());
             throw validateException;
         }
-			//Update request database
-			requestDb.updateInfraSuccessCompletion("SUCCESSFULLY Created ECOMP OperationalEnvironment.", requestId, request.getOperationalEnvironmentId());
+		//Update request database
+		requestDb.updateInfraSuccessCompletion("SUCCESSFULLY Created ECOMP OperationalEnvironment.", requestId, request.getOperationalEnvironmentId());
 
 	}
 }

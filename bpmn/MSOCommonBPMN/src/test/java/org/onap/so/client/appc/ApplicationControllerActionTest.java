@@ -38,9 +38,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.appc.client.lcm.model.Status;
-import org.onap.so.BaseTest;
 import org.onap.so.bpmn.appc.payload.PayloadClient;
-
+import org.onap.so.BaseTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 

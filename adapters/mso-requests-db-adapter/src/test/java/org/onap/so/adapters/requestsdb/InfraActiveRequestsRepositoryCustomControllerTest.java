@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -39,6 +40,9 @@ public class InfraActiveRequestsRepositoryCustomControllerTest {
 
     @LocalServerPort
     private int port;
+    
+    @Value("${mso.adapters.requestDb.auth}")
+    private String msoAdaptersAuth;
 
     private String createURLWithPort(String uri) {
         return "http://localhost:" + port + uri;
@@ -82,6 +86,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest {
 
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        headers.set("Authorization", msoAdaptersAuth);
 
         infraActiveRequests = new InfraActiveRequests();
 
@@ -181,12 +186,13 @@ public class InfraActiveRequestsRepositoryCustomControllerTest {
     @Test
     public void checkVnfIdStatusTest() {
 
-        HttpEntity<List<String>> entityList = new HttpEntity("", headers);
+        
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort("/infraActiveRequests" + "/checkVnfIdStatus/" + infraActiveRequests.getOperationalEnvId()));
+        HttpEntity<String> entity = new HttpEntity(HttpEntity.EMPTY, headers);
 
         ResponseEntity<InfraActiveRequests> response = restTemplate.exchange(
                 builder.toUriString(),
-                HttpMethod.GET, HttpEntity.EMPTY, InfraActiveRequests.class);
+                HttpMethod.GET,entity , InfraActiveRequests.class);
 
         infraActiveRequestsResponse = response.getBody();
 

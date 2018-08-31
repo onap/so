@@ -41,7 +41,6 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.onap.so.BaseTest;
 import org.onap.so.bpmn.mock.FileUtil;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.AllottedResource;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -55,7 +54,7 @@ import org.onap.so.bpmn.servicedecomposition.homingobjects.Candidate;
 import org.onap.so.bpmn.servicedecomposition.homingobjects.CandidateType;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
-
+import org.onap.so.BaseTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

@@ -2,7 +2,7 @@ package org.onap.so.db.catalog.data.repository;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.onap.so.BaseTest;
+import org.onap.so.db.catalog.BaseTest;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.springframework.beans.factory.annotation.Autowired;
 

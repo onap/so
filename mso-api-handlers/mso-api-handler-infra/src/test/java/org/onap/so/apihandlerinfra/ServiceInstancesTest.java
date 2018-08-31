@@ -29,6 +29,7 @@ import com.github.tomakehurst.wiremock.http.Fault;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -1934,7 +1935,7 @@ public class ServiceInstancesTest extends BaseTest{
     @Test
     public void invalidRequestId() throws IOException {
         String illegalRequestId = "1234";
-        headers.set("X-ECOMP-RequestID", illegalRequestId);
+        headers.set(ONAPLogConstants.Headers.REQUEST_ID, illegalRequestId);
 
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST);

@@ -23,6 +23,8 @@ package org.onap.so.adapters.requestsdb.exceptions;
 
 
 import javax.xml.ws.WebFault;
+import org.onap.so.exceptions.MSOException;
+import org.onap.so.logger.MsoLogger.ErrorCode;
 
 /**
  * This class simply extends Exception (without addition additional functionality)
@@ -31,32 +33,41 @@ import javax.xml.ws.WebFault;
  *
  */
 @WebFault (name="MsoRequestsDbException", faultBean="org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbExceptionBean", targetNamespace="http://org.onap.so/requestsdb")
-public class MsoRequestsDbException extends Exception {
+public class MsoRequestsDbException extends MSOException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private MsoRequestsDbExceptionBean faultInfo;
-	
-	public MsoRequestsDbException (String msg) {
-		super(msg);
-		faultInfo = new MsoRequestsDbExceptionBean (msg);
-	}
-	
-	public MsoRequestsDbException (Throwable e) {
-		super(e);
-		faultInfo = new MsoRequestsDbExceptionBean (e.getMessage());
-	}
-	
-	public MsoRequestsDbException (String msg, Throwable e) {
-		super (msg, e);
-		faultInfo = new MsoRequestsDbExceptionBean (msg);
-	}
+    private MsoRequestsDbExceptionBean faultInfo;
 
-	public MsoRequestsDbExceptionBean getFaultInfo() {
-		return faultInfo;
-	}
 
-	public void setFaultInfo(MsoRequestsDbExceptionBean faultInfo) {
-		this.faultInfo = faultInfo;
-	}
+    public MsoRequestsDbException (String msg) {
+        super(msg);
+        faultInfo = new MsoRequestsDbExceptionBean (msg);
+    }
+
+    public MsoRequestsDbException (Throwable e) {
+        super(e);
+        faultInfo = new MsoRequestsDbExceptionBean (e.getMessage());
+    }
+
+    public MsoRequestsDbException (String msg, Throwable e) {
+        super (msg, e);
+        faultInfo = new MsoRequestsDbExceptionBean (msg);
+    }
+
+    public MsoRequestsDbException(String msg, ErrorCode errorCode) {
+        super(msg,errorCode.getValue());
+    }
+
+    public MsoRequestsDbException(String msg, ErrorCode errorCode, Throwable t) {
+        super(msg,errorCode.getValue(), t);
+    }
+
+    public MsoRequestsDbExceptionBean getFaultInfo() {
+        return faultInfo;
+    }
+
+    public void setFaultInfo(MsoRequestsDbExceptionBean faultInfo) {
+        this.faultInfo = faultInfo;
+    }
 }

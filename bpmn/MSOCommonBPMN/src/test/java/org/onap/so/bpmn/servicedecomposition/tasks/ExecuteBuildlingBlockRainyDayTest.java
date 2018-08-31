@@ -28,13 +28,13 @@ import static org.mockito.Mockito.doThrow;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.so.BaseTest;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.BaseTest;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 

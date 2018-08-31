@@ -29,7 +29,7 @@ import org.onap.so.apihandler.filters.RequestUriFilter;
 import org.onap.so.apihandlerinfra.exceptions.ApiExceptionMapper;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestration;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudResourcesOrchestration;
-import org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging;
+import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
 import org.onap.so.web.exceptions.RuntimeExceptionMapper;
 import org.springframework.context.annotation.Configuration;
 

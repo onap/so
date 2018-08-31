@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.logging.jaxrs.filter.jersey;
+package org.onap.so.logging.jaxrs.filter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

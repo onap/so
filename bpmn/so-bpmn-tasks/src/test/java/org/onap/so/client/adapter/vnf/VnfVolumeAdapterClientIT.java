@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.onap.so.BaseTest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
@@ -43,6 +42,7 @@ import org.onap.so.adapters.vnfrest.RollbackVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.UpdateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.UpdateVolumeGroupResponse;
 import org.onap.so.client.adapter.rest.AdapterRestClient;
+import org.onap.so.BaseTest;
 
 
 @RunWith(MockitoJUnitRunner.class)
