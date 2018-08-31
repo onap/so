@@ -10,6 +10,6 @@ ONAP SO
 
    installconfigure/Install_Configure_SO.rst
    architecture/architecture.rst
-   offered_consumed_apis.rst
-   developer_information.rst
-   release-notes.rst
+   api/offered_consumed_apis.rst
+   developer_info/developer_information.rst
+   release_notes/release-notes.rst

@@ -86,7 +86,8 @@ SO Sub-Components
 
   Support self-service updates to models and artifacts
 
-** SO Monitoring**
+**SO Monitoring**
+
   Monitor BPMN Workflow execution by providing
   * Service list search based on search criteria
   * Service statistic
