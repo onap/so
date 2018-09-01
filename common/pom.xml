@@ -72,6 +72,10 @@
 			<artifactId>spring-web</artifactId>
 		</dependency>
 		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.onap.aai.aai-common</groupId>
 			<artifactId>aai-schema</artifactId>
 			<!-- TODO: replace with release a version when -->

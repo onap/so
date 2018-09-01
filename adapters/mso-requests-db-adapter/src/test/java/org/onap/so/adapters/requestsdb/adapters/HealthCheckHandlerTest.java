@@ -21,16 +21,16 @@
 package org.onap.so.adapters.requestsdb.adapters;
 
 import static org.junit.Assert.*;
-
-
-
+import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
-
+import org.onap.so.adapters.requestsdb.application.TestAppender;
+import org.onap.so.logger.MsoLogger;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -40,6 +40,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 
 
 @RunWith(SpringRunner.class)
@@ -65,6 +66,27 @@ public class HealthCheckHandlerTest {
 				HttpMethod.GET, entity, String.class);
 		
 		assertEquals(Response.Status.OK.getStatusCode(),response.getStatusCode().value());
+        for(ILoggingEvent logEvent : TestAppender.events)
+            if(logEvent.getLoggerName().equals("org.onap.so.logging.spring.interceptor.LoggingInterceptor") &&
+                    logEvent.getMarker().getName().equals("ENTRY")
+                    ){
+                Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INSTANCE_UUID));
+                assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
+                assertEquals("",mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
+                assertEquals("/manage/health",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
+                assertEquals("INPROGRESS",mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
+            }else if(logEvent.getLoggerName().equals("org.onap.so.logging.spring.interceptor.LoggingInterceptor") &&
+                    logEvent.getMarker()!= null && logEvent.getMarker().getName().equals("EXIT")){
+                Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
+                assertEquals("200",mdc.get(ONAPLogConstants.MDCs.RESPONSE_CODE));
+                assertEquals("",mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
+                assertEquals("/manage/health",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
+                assertEquals("COMPLETED",mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
+            }
 	}
 	
 	private String createURLWithPort(String uri) {

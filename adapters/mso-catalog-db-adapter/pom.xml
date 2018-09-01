@@ -153,11 +153,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.onap.so</groupId>
-			<artifactId>deployment-configs</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.so</groupId>
 			<artifactId>mso-catalog-db</artifactId>
 			<version>${project.version}</version>
 		</dependency>

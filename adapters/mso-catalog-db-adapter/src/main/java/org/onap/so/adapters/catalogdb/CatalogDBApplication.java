@@ -25,7 +25,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(scanBasePackages = {"org.onap.so.adapters.catalogdb", "org.onap.so.db.catalog.client","org.onap.so.logging.jaxrs.filter"})
+@SpringBootApplication(scanBasePackages = {"org.onap.so.adapters.catalogdb", "org.onap.so.db.catalog.client","org.onap.so.logging.jaxrs.filter","org.onap.so.logging.spring.interceptor"})
 @EnableJpaRepositories("org.onap.so.db.catalog.data.repository")
 @EntityScan("org.onap.so.db.catalog.beans")
 public class CatalogDBApplication {

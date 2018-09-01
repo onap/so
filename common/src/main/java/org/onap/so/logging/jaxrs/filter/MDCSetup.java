@@ -5,8 +5,11 @@ import java.net.UnknownHostException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,5 +50,41 @@ public class MDCSetup {
 
     public void setEntryTimeStamp() {
         MDC.put(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP,ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT));
+    }
+    
+    public void setServiceName(HttpServletRequest request) {
+        MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, request.getRequestURI());
+    }
+
+    public void setRequestId(Map<String, String> headers) {
+        String requestId=headers.get(ONAPLogConstants.Headers.REQUEST_ID);
+        if(requestId == null || requestId.isEmpty())
+            requestId = UUID.randomUUID().toString();
+        MDC.put(ONAPLogConstants.MDCs.REQUEST_ID,requestId);
+    }
+
+    public void setInvocationId(Map<String, String> headers) {
+        String invocationId = headers.get(ONAPLogConstants.Headers.INVOCATION_ID);
+        if(invocationId == null || invocationId.isEmpty())
+            invocationId =UUID.randomUUID().toString();
+        MDC.put(ONAPLogConstants.MDCs.INVOCATION_ID, invocationId);
+    }
+
+    public void setMDCPartnerName(Map<String, String> headers) {
+        String partnerName=headers.get(ONAPLogConstants.Headers.PARTNER_NAME);
+        if(partnerName == null || partnerName.isEmpty())
+            partnerName = "";
+        MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME,partnerName);
+    }
+    
+
+    public void setResponseStatusCode(HttpServletResponse response) {
+        String statusCode;
+        if(Response.Status.Family.familyOf(response.getStatus()).equals(Response.Status.Family.SUCCESSFUL)){     
+            statusCode=ONAPLogConstants.ResponseStatus.COMPLETED.toString();
+        }else{                          
+            statusCode= ONAPLogConstants.ResponseStatus.ERROR.toString();               
+        }           
+        MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, statusCode);
     }
 }
