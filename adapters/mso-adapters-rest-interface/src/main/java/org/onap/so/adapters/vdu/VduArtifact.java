@@ -20,8 +20,6 @@
 
 package org.onap.so.adapters.vdu;
 
-import java.util.Arrays;
-import java.util.Objects;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
