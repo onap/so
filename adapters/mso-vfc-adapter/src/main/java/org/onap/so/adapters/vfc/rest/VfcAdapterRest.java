@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,7 +53,7 @@ import org.springframework.stereotype.Component;
 public class VfcAdapterRest {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, VfcAdapterRest.class);
-
+    private static final String REQUEST_DEBUG_MSG="body from request is {}";
     @Autowired
     private VfcManager driverMgr ;
 
@@ -73,7 +75,7 @@ public class VfcAdapterRest {
     public Response createNfvoNs(String data) {
         try {
             ValidateUtil.assertObjectNotNull(data);
-            LOGGER.debug("body from request is {}" + data);
+            LOGGER.debug(REQUEST_DEBUG_MSG + data);
             NSResourceInputParameter nsInput = JsonUtil.unMarshal(data, NSResourceInputParameter.class);
             RestfulResponse rsp = driverMgr.createNs(nsInput);
             return buildResponse(rsp);
@@ -99,7 +101,7 @@ public class VfcAdapterRest {
         try {
 
             ValidateUtil.assertObjectNotNull(data);
-            LOGGER.debug("body from request is {}" + data);
+            LOGGER.debug(REQUEST_DEBUG_MSG + data);
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
             RestfulResponse rsp = driverMgr.deleteNs(nsOperationKey, nsInstanceId);
             return buildResponse(rsp);
@@ -124,7 +126,7 @@ public class VfcAdapterRest {
     public Response queryNfvoJobStatus(String data, @PathParam("jobId") String jobId) {
         try {
             ValidateUtil.assertObjectNotNull(data);
-            LOGGER.debug("body from request is {}" + data);
+            LOGGER.debug(REQUEST_DEBUG_MSG + data);
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
             RestfulResponse rsp = driverMgr.getNsProgress(nsOperationKey, jobId);
             return buildResponse(rsp);
@@ -149,7 +151,7 @@ public class VfcAdapterRest {
     public Response instantiateNfvoNs(String data, @PathParam("nsInstanceId") String nsInstanceId) {
         try {
             ValidateUtil.assertObjectNotNull(data);
-            LOGGER.debug("body from request is {}" + data);
+            LOGGER.debug(REQUEST_DEBUG_MSG + data);
             NSResourceInputParameter nsInput = JsonUtil.unMarshal(data, NSResourceInputParameter.class);
             RestfulResponse rsp = driverMgr.instantiateNs(nsInstanceId, nsInput);
             return buildResponse(rsp);
@@ -174,7 +176,7 @@ public class VfcAdapterRest {
     public Response terminateNfvoNs(String data, @PathParam("nsInstanceId") String nsInstanceId) {
         try {
             ValidateUtil.assertObjectNotNull(data);
-            LOGGER.debug("body from request is {}" + data);
+            LOGGER.debug(REQUEST_DEBUG_MSG + data);
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
             RestfulResponse rsp = driverMgr.terminateNs(nsOperationKey, nsInstanceId);
             return buildResponse(rsp);
