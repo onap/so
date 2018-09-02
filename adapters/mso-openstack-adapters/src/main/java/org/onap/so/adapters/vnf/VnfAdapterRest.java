@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,6 +84,7 @@ import io.swagger.annotations.ApiResponses;
 public class VnfAdapterRest {
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, VnfAdapterRest.class);
 	private static final String TESTING_KEYWORD = "___TESTING___";
+	private static final String RESP=", resp=";
 	
 	@Autowired
 	private MsoVnfAdapterImpl vnfAdapter;
@@ -214,7 +217,7 @@ public class VnfAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("Delete vfModule exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug ("Delete vfModule exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 	}
 
@@ -464,7 +467,7 @@ public class VnfAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("CreateVfModuleTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug ("CreateVfModuleTask exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 	}
 
@@ -576,7 +579,7 @@ public class VnfAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost (getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("Update VfModule exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug ("Update VfModule exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 	}
 	/*
@@ -685,7 +688,7 @@ public class VnfAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost (getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("RollbackVfModulesTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug ("RollbackVfModulesTask exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 	}
 }
