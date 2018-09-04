@@ -20,13 +20,22 @@
 
 package org.onap.so.utils;
 
+import java.util.EnumSet;
 
 public enum TargetEntity {
     OPENSTACK_ADAPTER, BPMN, GRM ,AAI, DMAAP, POLICY, CATALOG_DB, REQUEST_DB, VNF_ADAPTER, SDNC_ADAPTER, NARAD;
 
-    private static final String PREFIX = "MSO";
+    private static final String PREFIX = "SO";
+    
+    public static EnumSet<TargetEntity> getSOInternalComponents() {
+        return EnumSet.of(OPENSTACK_ADAPTER, BPMN,CATALOG_DB,REQUEST_DB,VNF_ADAPTER,SDNC_ADAPTER);
+    }
+    
     @Override
     public String toString(){
-        return TargetEntity.PREFIX + "." + this.name();
+        if(getSOInternalComponents().contains(this))
+            return TargetEntity.PREFIX + "." + this.name();
+        else
+            return this.name();
     }
 }

@@ -201,5 +201,10 @@
 			<artifactId>so-bpmn-tasks</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>cxf-logging</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

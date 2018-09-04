@@ -78,12 +78,6 @@ public class CXFConfiguration {
 	@Autowired
 	private VnfAdapterNotify vnfAdapterNotifyServiceImpl;
 	
-	@Autowired
-	private SOAPLoggingInInterceptor soapInInterceptor;
-
-	@Autowired
-	private SOAPLoggingOutInterceptor soapOutInterceptor;
-	
 	@Bean
     public ServletRegistrationBean cxfServlet() {
         return new ServletRegistrationBean(new CXFServlet(), "/mso/*");
@@ -93,9 +87,9 @@ public class CXFConfiguration {
     public Endpoint vnfAdapterCallback() {
         EndpointImpl endpoint = new EndpointImpl(bus, vnfAdapterNotifyServiceImpl);
         endpoint.publish("/VNFAdaptercallback");
-        endpoint.getInInterceptors().add(soapInInterceptor);
-        endpoint.getOutInterceptors().add(soapOutInterceptor);
-        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
+        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
+        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
+        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
 	
@@ -103,9 +97,9 @@ public class CXFConfiguration {
     public Endpoint sndcAdapterCallback() {
         EndpointImpl endpoint = new EndpointImpl(bus, sdncAdapterCallbackServiceImpl);
         endpoint.publish("/SDNCAdapterCallbackService");
-        endpoint.getInInterceptors().add(soapInInterceptor);
-        endpoint.getOutInterceptors().add(soapOutInterceptor);
-        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
+        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
+        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
+        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
 		

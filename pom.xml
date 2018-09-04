@@ -29,6 +29,7 @@
 		<module>asdc-controller</module>
 		<module>bpmn</module>
 		<module>cloudify-client</module>
+		<module>cxf-logging</module>
 		<module>packages</module>
 	</modules>
 	<properties>
@@ -427,7 +428,7 @@
 					<version>2.20</version>
 					<configuration>
 						<systemPropertyVariables>
-							<so.log.level>${so.log.level}</so.log.level>
+							<so.log.level>DEBUG</so.log.level>
 						</systemPropertyVariables>
 						<rerunFailingTestsCount>2</rerunFailingTestsCount>
 					</configuration>
@@ -439,7 +440,7 @@
 					<configuration>
 						<skip>true</skip>
 						<systemPropertyVariables>
-							<so.log.level>${so.log.level}</so.log.level>
+							<so.log.level>DEBUG</so.log.level>
 						</systemPropertyVariables>
 						<rerunFailingTestsCount>2</rerunFailingTestsCount>
 					</configuration>

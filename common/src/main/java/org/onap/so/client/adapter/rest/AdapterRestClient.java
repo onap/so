@@ -72,7 +72,7 @@ public class AdapterRestClient extends RestClient {
 			encodedString = "Basic " + encodedString;
 			return encodedString;
 		} catch (GeneralSecurityException e) {
-			this.msoLogger.debug(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return null;
 		}
 	}

@@ -36,7 +36,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation.Builder;
@@ -46,29 +45,28 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
-
 import org.onap.so.client.policy.CommonObjectMapperProvider;
-import org.onap.so.client.policy.LoggingFilter;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.logging.jaxrs.filter.JaxRsClientLogging;
+import org.onap.so.logging.jaxrs.filter.PayloadLoggingFilter;
 import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.TargetEntity;
-import org.slf4j.MDC;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
 
 
 public abstract class RestClient {
-	public static final String ECOMP_COMPONENT_NAME = "MSO";
+	private static final String APPLICATION_MERGE_PATCH_JSON = "application/merge-patch+json";
+
+    public static final String ECOMP_COMPONENT_NAME = "MSO";
 	
 	private static final int MAX_PAYLOAD_SIZE = 1024 * 1024;
 	private WebTarget webTarget;
 
 	protected final Map<String, String> headerMap;
-	protected final MsoLogger msoLogger;
+	protected final Logger logger = LoggerFactory.getLogger(RestClient.class);
 	protected URL host;
 	protected Optional<URI> path;
 	protected String accept;
@@ -79,11 +77,6 @@ public abstract class RestClient {
 
     protected RestClient(RestProperties props, Optional<URI> path) {
 		
-		msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, RestClient.class);
-		this.requestId = MDC.get(MsoLogger.REQUEST_ID);
-		if (requestId == null) {
-			requestId = "";
-		}
 		headerMap = new HashMap<>();
 		try {
 			host = props.getEndpoint();
@@ -99,24 +92,14 @@ public abstract class RestClient {
 		this(props, path);
 		this.accept = accept;
 		this.contentType = contentType;
-		this.requestId = MDC.get(MsoLogger.REQUEST_ID);
-		if (requestId == null) {
-			requestId = "";
-		}
 		this.props = props;
 	}
 
 	protected RestClient(URL host, String contentType) {
 		headerMap = new HashMap<>();
-	
-		msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, RestClient.class);
 		this.path = Optional.empty();
 		this.host = host;
 		this.contentType = contentType;
-		this.requestId = MDC.get(MsoLogger.REQUEST_ID);
-		if (requestId == null) {
-			requestId = "";
-		}
 		this.props = new DefaultProperties(host);
 	}
 
@@ -143,15 +126,13 @@ public abstract class RestClient {
 
 	    if (webTarget == null) {
 	        initializeClient(getClient());
-        }
-		Builder builder = webTarget.request();
-		initializeHeaderMap(headerMap);
-
-		headerMap.put("X-ECOMP-RequestID", requestId);
-		for (Entry<String, String> entry : headerMap.entrySet()) {
-			builder.header(entry.getKey(), entry.getValue());
-		}
-		return builder;
+	    }
+	    Builder builder = webTarget.request();
+	    initializeHeaderMap(headerMap);
+	    for (Entry<String, String> entry : headerMap.entrySet()) {
+	        builder.header(entry.getKey(), entry.getValue());
+	    }
+	    return builder;
 	}
 	
 	protected WebTarget getWebTarget() {
@@ -179,7 +160,7 @@ public abstract class RestClient {
 			String authHeaderValue = "Basic " + Base64.getEncoder().encodeToString(decryptedAuth);
 			headerMap.put("Authorization", authHeaderValue);
 		} catch (GeneralSecurityException e) {
-			msoLogger.error(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 		}
 	}
 
@@ -192,7 +173,7 @@ public abstract class RestClient {
 	}
 
 	protected String getMergeContentType() {
-		return "application/merge-patch+json";
+		return APPLICATION_MERGE_PATCH_JSON;
 	}
 
 	protected Client getClient() {
@@ -203,11 +184,11 @@ public abstract class RestClient {
 
 	protected void initializeClient(Client client) {
 		if (this.enableLogging()) {
-			client.register(new LoggingFilter(this.getMaxPayloadSize()));
+			client.register(new PayloadLoggingFilter(this.getMaxPayloadSize()));
 		}
 		CommonObjectMapperProvider provider = this.getCommonObjectMapperProvider();
 		client.register(new JacksonJsonProvider(provider.getMapper()));
-
+		
         jaxRsClientLogging = new JaxRsClientLogging();
         jaxRsClientLogging.setTargetService(getTargetEntity());
         client.register(jaxRsClientLogging);

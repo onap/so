@@ -64,15 +64,10 @@ public class CXFConfiguration {
 	
 	@Autowired 
 	private SNIROResponse sniroResponse;
-
-	@Autowired
-	private SOAPLoggingInInterceptor soapInInterceptor;
-	    
-	@Autowired
-	private SOAPLoggingOutInterceptor soapOutInterceptor;
     
 	@Autowired
 	private ObjectMapper mapper;
+	
     @Bean
     public Server rsServer() {
         endpoint = new JAXRSServerFactoryBean();
@@ -93,9 +88,9 @@ public class CXFConfiguration {
     @Bean
     public Endpoint sndcAdapter() {
         EndpointImpl wsdlEndpoint = new EndpointImpl(bus, sdncAdapterPortImpl);
-        wsdlEndpoint.getInInterceptors().add(soapInInterceptor);
-        wsdlEndpoint.getOutInterceptors().add(soapOutInterceptor);
-        wsdlEndpoint.getOutFaultInterceptors().add(soapOutInterceptor);
+        wsdlEndpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
+        wsdlEndpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
+        wsdlEndpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         wsdlEndpoint.publish("/SDNCAdapter");
         return wsdlEndpoint;
     }

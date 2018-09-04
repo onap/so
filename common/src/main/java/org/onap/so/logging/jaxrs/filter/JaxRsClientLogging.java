@@ -22,104 +22,126 @@ package org.onap.so.logging.jaxrs.filter;
 
 
 import org.apache.commons.io.IOUtils;
-import org.onap.so.logger.MsoLogger;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.utils.TargetEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.slf4j.MarkerFactory;
 import org.springframework.stereotype.Component;
-
+import javax.annotation.Priority;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Providers;
 import java.io.*;
-
-import java.time.Instant;
-import java.time.ZoneId;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @Component
+@Priority(0)
 public class JaxRsClientLogging implements ClientRequestFilter,ClientResponseFilter {
-	
-	private static MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,JaxRsClientLogging.class);
+    
+    @Context 
+    private Providers providers;
 
-	private TargetEntity targetEntity;
+    private static final String TRACE = "trace-#";
+    private static final String SO = "SO";
+    private static Logger logger = LoggerFactory.getLogger(JaxRsClientLogging.class);
 
-	public void setTargetService(TargetEntity targetEntity){
-	    this.targetEntity = targetEntity;
+    public void setTargetService(TargetEntity targetEntity){
+        MDC.put("TargetEntity", targetEntity.toString());
     }
 
-	@Override
-	public void filter(ClientRequestContext clientRequest) {
+    @Override
+    public void filter(ClientRequestContext clientRequest) {
         try{
-            MultivaluedMap<String, Object> headers = clientRequest.getHeaders();
-            
-            
-            Instant instant = Instant.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX" )
-                .withLocale( Locale.US )
-                .withZone( ZoneId.systemDefault() );
-
-            String requestId = MDC.get(MsoLogger.REQUEST_ID);
-            if(requestId == null || requestId.isEmpty()){
-                requestId = UUID.randomUUID().toString();
-                logger.warnSimple(clientRequest.getUri().getPath(),"Could not Find Request ID Generating New One");
-            }
-
-			MDC.put(MsoLogger.METRIC_BEGIN_TIME, formatter.format(instant));
-			MDC.put(MsoLogger.METRIC_START_TIME, String.valueOf(System.currentTimeMillis()));
-            MDC.put(MsoLogger.REQUEST_ID,requestId);	
-            MDC.put(MsoLogger.TARGETSERVICENAME, clientRequest.getUri().toString());
+            setupMDC(clientRequest);
+            setupHeaders(clientRequest);
+            logger.info(ONAPLogConstants.Markers.INVOKE, "Invoke");
         } catch (Exception e) {
-			logger.warnSimple("Error in incoming JAX-RS Inteceptor", e);
-		}
-	}	
+            logger.warn("Error in incoming JAX-RS Inteceptor", e);
+        }
+    }
+
+    private void setupHeaders(ClientRequestContext clientRequest) {
+        MultivaluedMap<String, Object> headers = clientRequest.getHeaders();
+        headers.add(ONAPLogConstants.Headers.REQUEST_ID, extractRequestID(clientRequest));
+        headers.add(ONAPLogConstants.Headers.INVOCATION_ID, MDC.get(ONAPLogConstants.MDCs.INVOCATION_ID));
+        headers.add(ONAPLogConstants.Headers.PARTNER_NAME, SO);
+    }
+
+    private void setupMDC(ClientRequestContext clientRequest) {
+        MDC.put(ONAPLogConstants.MDCs.INVOKE_TIMESTAMP, ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT));
+        MDC.put(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME, clientRequest.getUri().toString());
+        MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.INPROGRESS.toString());
+        setInvocationId();
+        MDC.put("TargetEntity",MDC.get("TargetEntity"));
+    }
+
+    private String extractRequestID(ClientRequestContext clientRequest) {
+        String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
+        if(requestId == null || requestId.isEmpty() || requestId.equals(TRACE)){
+            requestId = UUID.randomUUID().toString();
+            logger.warn("Could not Find Request ID Generating New One: {}",clientRequest.getUri().getPath());
+        }
+        return requestId;
+    }	
+
+    private void setInvocationId() {
+        String invocationId = MDC.get(ONAPLogConstants.MDCs.INVOCATION_ID);
+        if(invocationId == null || invocationId.isEmpty())
+            invocationId =UUID.randomUUID().toString();
+        MDC.put(ONAPLogConstants.MDCs.INVOCATION_ID, invocationId);
+    }
 
 
-	@Override
-	public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) {
+    @Override
+    public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) {
 
         try {
-			Instant instant = Instant.now();
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX" )
-			        .withLocale( Locale.US )
-			        .withZone( ZoneId.systemDefault() );
-			String startTime= MDC.get(MsoLogger.METRIC_START_TIME);
+            String statusCode;
+            if(Response.Status.Family.familyOf(responseContext.getStatus()).equals(Response.Status.Family.SUCCESSFUL)){		
+                statusCode=ONAPLogConstants.ResponseStatus.COMPLETED.toString();
+            }else{							
+                statusCode=ONAPLogConstants.ResponseStatus.ERROR.toString();				
+            }
+            MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(responseContext.getStatus()));
+            MDC.put(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION,getStringFromInputStream(responseContext));
+            MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, statusCode);
+            logger.info(MarkerFactory.getMarker("INVOKE_RETURN"), "InvokeReturn");
+            clearClientMDCs();
+        } catch ( Exception e) {
+            logger.warn("Error in outgoing JAX-RS Inteceptor", e);
+        }
+    }
 
-			long elapsedTime = System.currentTimeMillis()-Long.parseLong(startTime);
-			String statusCode;
-			if(Response.Status.Family.familyOf(responseContext.getStatus()).equals(Response.Status.Family.SUCCESSFUL)){		
-			    statusCode=MsoLogger.COMPLETE;
-			}else{							
-				statusCode=MsoLogger.StatusCode.ERROR.toString();				
-			}
-			MultivaluedMap<String, String> headers = responseContext.getHeaders();
-
-			String partnerName =  headers.getFirst(MsoLogger.HEADER_FROM_APP_ID );
-			if(partnerName == null || partnerName.isEmpty())
-				partnerName="UNKNOWN";
-			MDC.put(MsoLogger.RESPONSEDESC,getStringFromInputStream(responseContext));
-			MDC.put(MsoLogger.STATUSCODE, statusCode);
-			MDC.put(MsoLogger.RESPONSECODE,String.valueOf(responseContext.getStatus()));
-			MDC.put(MsoLogger.METRIC_TIMER, String.valueOf(elapsedTime));
-			MDC.put(MsoLogger.METRIC_END_TIME,formatter.format(instant));
-			MDC.put(MsoLogger.PARTNERNAME,partnerName);	
-            MDC.put(MsoLogger.TARGETENTITY, targetEntity.toString());
-			logger.recordMetricEvent();			
-		} catch ( Exception e) {
-			logger.warnSimple("Error in outgoing JAX-RS Inteceptor", e);
-		}
-	}
+    private void clearClientMDCs() {
+        MDC.remove(ONAPLogConstants.MDCs.INVOCATION_ID);
+        MDC.remove(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION);
+        MDC.remove(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE);
+        MDC.remove(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION);
+        MDC.remove(ONAPLogConstants.MDCs.RESPONSE_CODE);
+    }
 
     private static String getStringFromInputStream(ClientResponseContext clientResponseContext) {
 
-	    InputStream is = clientResponseContext.getEntityStream();
-	    ByteArrayOutputStream boas = new ByteArrayOutputStream();
+        InputStream is = clientResponseContext.getEntityStream();
+        ByteArrayOutputStream boas = new ByteArrayOutputStream();
 
         try {
             IOUtils.copy(is,boas);
@@ -128,8 +150,9 @@ public class JaxRsClientLogging implements ClientRequestFilter,ClientResponseFil
             return boas.toString();
 
         } catch (IOException e) {
-            logger.warnSimple("Failed to read response body", e);
+            logger.warn("Failed to read response body", e);
         }
         return "Unable to read input stream";
     }
+
 }
