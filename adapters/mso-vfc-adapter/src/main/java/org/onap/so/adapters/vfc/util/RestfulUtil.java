@@ -5,6 +5,8 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -73,6 +75,8 @@ public class RestfulUtil {
     private static final String DEFAULT_MSB_IP = "127.0.0.1";
 
     private static final Integer DEFAULT_MSB_PORT = 80;
+    
+    private static final String VFC_ADAPTER="VFC Adapter";
 
    @Autowired
    private Environment env;
@@ -95,7 +99,7 @@ public class RestfulUtil {
 
     public RestfulResponse send(String url, String methodType, String content) {
         String msbUrl = getMsbHost() + url;
-        LOGGER.info(MessageEnum.RA_NS_EXC, "Begin to sent message " + methodType +": " + msbUrl, "org.onap.so.adapters.vfc.util.RestfulUtil","VFC Adapter");
+        LOGGER.info(MessageEnum.RA_NS_EXC, "Begin to sent message " + methodType +": " + msbUrl, "org.onap.so.adapters.vfc.util.RestfulUtil",VFC_ADAPTER);
 
         HttpRequestBase method = null;
         HttpResponse httpResponse = null;
@@ -196,12 +200,12 @@ public class RestfulUtil {
     }
 
     private static void logError(String errMsg, Throwable t) {
-        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
+        LOGGER.error(MessageEnum.RA_NS_EXC, VFC_ADAPTER, "", MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
         ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
     }
 
     private static void logError(String errMsg) {
-        LOGGER.error(MessageEnum.RA_NS_EXC, "VFC Adapter", "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
+        LOGGER.error(MessageEnum.RA_NS_EXC, VFC_ADAPTER, "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
         ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
     }
 
