@@ -49,6 +49,7 @@ import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterImpl;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetwork;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetworkBBUtils;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignVnf;
+import org.onap.so.bpmn.infrastructure.flowspecific.tasks.ConfigurationScaleOut;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.CreateNetwork;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.CreateNetworkCollection;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.GenericVnfHealthCheck;
@@ -185,6 +186,9 @@ public abstract class BaseBPMNTest {
 	
 	@MockBean
 	protected GenericVnfHealthCheck genericVnfHealthCheck;
+	
+	@MockBean
+	protected ConfigurationScaleOut configurationScaleOut;
 	
 	@LocalServerPort
 	private int port;
