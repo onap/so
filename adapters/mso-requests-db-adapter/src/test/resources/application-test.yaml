@@ -39,6 +39,14 @@ spring:
       username: bpel
       password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
       role: BPEL-Client
+    -
+      username: bpel
+      password: '$2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO'
+      role: BPEL-Client
+    -  
+      username: mso_admin
+      password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
+      role: ACTUATOR
 mariaDB4j:
   dataDir: 
   port: 3307

@@ -44,7 +44,6 @@ public final class VfModuleArtifact {
 	public VfModuleArtifact(IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
 		artifactInfo=artifactinfo;
 		result = new String(clientResult.getArtifactPayload(), "UTF-8");
-		
 	}	
 
 	public HeatFiles getHeatFiles() {

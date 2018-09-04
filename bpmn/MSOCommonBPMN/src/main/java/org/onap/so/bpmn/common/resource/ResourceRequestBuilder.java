@@ -57,7 +57,7 @@ public class ResourceRequestBuilder {
 
     public static String CUSTOMIZATION_UUID = "customizationUUID";
 
-    public static String SERVICE_URL_TOSCA_CSAR = "/v3/serviceToscaCsar?serviceModelUuid=";
+    public static String SERVICE_URL_TOSCA_CSAR = "/v3/serviceToscaCsar";
 
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, ResourceRequestBuilder.class);
 
@@ -184,7 +184,7 @@ public class ResourceRequestBuilder {
 
     private static String getCsarFromUuid(String uuid) throws Exception {
 		String catalogEndPoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint");
-    	HttpClient client = new HttpClient(UriBuilder.fromUri(catalogEndPoint + SERVICE_URL_TOSCA_CSAR + uuid).build().toURL(), "application/json", TargetEntity.CATALOG_DB);
+    	HttpClient client = new HttpClient(UriBuilder.fromUri(catalogEndPoint).path(SERVICE_URL_TOSCA_CSAR).queryParam("serviceModelUuid", uuid).build().toURL(), "application/json", TargetEntity.CATALOG_DB);
     	
         Response response = client.get();
         String value = response.readEntity(String.class);

@@ -49,6 +49,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
@@ -71,6 +72,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.logger.MsoLogger;
@@ -267,32 +269,24 @@ public class BBInputSetup implements JavaDelegate {
 	}
 
 	protected void populateConfiguration(ModelInfo modelInfo, Service service, String bbName,
-			ServiceInstance serviceInstance, Map<ResourceKey, String> lookupKeyMap, String resourceId, String instanceName) {
-		boolean foundByName = false;
-		boolean foundById = false;
-		for (Configuration configuration : serviceInstance.getConfigurations()) {
+			ServiceInstance serviceInstance, Map<ResourceKey, String> lookupKeyMap, String resourceId, String instanceName, ConfigurationResourceKeys configurationResourceKeys) {
+		Configuration configuration = null;
+		for (Configuration configurationTemp : serviceInstance.getConfigurations()) {
 			if (lookupKeyMap.get(ResourceKey.CONFIGURATION_ID) != null
-					&& configuration.getConfigurationId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.CONFIGURATION_ID))) {
-				foundById = true;
+					&& configurationTemp.getConfigurationId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.CONFIGURATION_ID))) {
+				configuration = configurationTemp;
 				org.onap.aai.domain.yang.Configuration aaiConfiguration = bbInputSetupUtils.getAAIConfiguration(configuration.getConfigurationId());
 				if(aaiConfiguration!=null){
 					modelInfo.setModelCustomizationUuid(aaiConfiguration.getModelCustomizationId());
 				}
-				this.mapCatalogConfiguration(configuration, modelInfo, service);
-			} else if (instanceName != null && configuration.getConfigurationName().equalsIgnoreCase(instanceName)) {
-				foundByName = true;
-				lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, configuration.getConfigurationId());
-				org.onap.aai.domain.yang.Configuration aaiConfiguration = bbInputSetupUtils.getAAIConfiguration(configuration.getConfigurationId());
-				if(aaiConfiguration!=null){
-					modelInfo.setModelCustomizationUuid(aaiConfiguration.getModelCustomizationId());
-				}
-				this.mapCatalogConfiguration(configuration, modelInfo, service);
 			}
 		}
-		if (!foundByName && !foundById && bbName.equalsIgnoreCase(AssignFlows.FABRIC_CONFIGURATION.toString())) {
-			Configuration configuration = this.createConfiguration(lookupKeyMap, instanceName, resourceId);
+		if (configuration == null && bbName.equalsIgnoreCase(AssignFlows.FABRIC_CONFIGURATION.toString())) {
+			configuration = this.createConfiguration(lookupKeyMap, instanceName, resourceId);
 			serviceInstance.getConfigurations().add(configuration);
-			this.mapCatalogConfiguration(configuration, modelInfo, service);
+		}
+		if(configuration != null) {
+			this.mapCatalogConfiguration(configuration, modelInfo, service, configurationResourceKeys);
 		}
 	}
 
@@ -306,11 +300,28 @@ public class BBInputSetup implements JavaDelegate {
 		return configuration;
 	}
 
-	protected void mapCatalogConfiguration(Configuration configuration, ModelInfo modelInfo, Service service) {
+	protected void mapCatalogConfiguration(Configuration configuration, ModelInfo modelInfo, Service service, ConfigurationResourceKeys configurationResourceKeys) {
 		ConfigurationResourceCustomization configurationResourceCustomization = findConfigurationResourceCustomization(modelInfo, service);
-		if (configurationResourceCustomization != null) {
-			configuration.setModelInfoConfiguration(this.mapperLayer.mapCatalogConfigurationToConfiguration(configurationResourceCustomization));
+		VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = 
+				findVnfVfmoduleCvnfcConfigurationCustomization(configurationResourceKeys.getVfModuleCustomizationUUID(),
+						configurationResourceKeys.getVnfResourceCustomizationUUID(), configurationResourceKeys.getCvnfcCustomizationUUID(), configurationResourceCustomization);
+		if (configurationResourceCustomization != null && vnfVfmoduleCvnfcConfigurationCustomization != null) {
+			configuration.setModelInfoConfiguration(this.mapperLayer.mapCatalogConfigurationToConfiguration(configurationResourceCustomization
+					, vnfVfmoduleCvnfcConfigurationCustomization));
 		}
+	}
+
+	protected VnfVfmoduleCvnfcConfigurationCustomization findVnfVfmoduleCvnfcConfigurationCustomization(String vfModuleCustomizationUUID, 
+			String vnfResourceCustomizationUUID, String cvnfcCustomizationUUID, ConfigurationResourceCustomization configurationResourceCustomization) {
+		for(VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization : 
+			configurationResourceCustomization.getConfigurationResource().getVnfVfmoduleCvnfcConfigurationCustomization()) {
+			if(vnfVfmoduleCvnfcConfigurationCustomization.getVfModuleCustomization().getModelCustomizationUUID().equalsIgnoreCase(vfModuleCustomizationUUID)
+					&& vnfVfmoduleCvnfcConfigurationCustomization.getVnfResourceCustomization().getModelCustomizationUUID().equalsIgnoreCase(vnfResourceCustomizationUUID)
+					&& vnfVfmoduleCvnfcConfigurationCustomization.getCvnfcCustomization().getModelCustomizationUUID().equalsIgnoreCase(cvnfcCustomizationUUID)) {
+				return vnfVfmoduleCvnfcConfigurationCustomization;
+			}
+		}
+		return null;
 	}
 
 	protected ConfigurationResourceCustomization findConfigurationResourceCustomization(ModelInfo modelInfo, Service service) {
@@ -896,12 +907,7 @@ public class BBInputSetup implements JavaDelegate {
 			String configurationId = lookupKeyMap.get(ResourceKey.CONFIGURATION_ID);
 			ModelInfo configurationModelInfo = new ModelInfo();
 			configurationModelInfo.setModelCustomizationUuid(key);
-			ConfigurationResourceCustomization configurationCust = findConfigurationResourceCustomization(configurationModelInfo, service);
-			if(configurationCust != null) {
-				this.populateConfiguration(configurationModelInfo, service, bbName, serviceInstance, lookupKeyMap, configurationId, null);
-			} else {
-				msoLogger.debug("Could not find a configuration customization with key: " + key);
-			}
+			this.populateConfiguration(configurationModelInfo, service, bbName, serviceInstance, lookupKeyMap, configurationId, null, executeBB.getConfigurationResourceKeys());
 		}
 		if (executeBB.getWorkflowResourceIds() != null) {
 			this.populateNetworkCollectionAndInstanceGroupAssign(service, bbName, serviceInstance,
@@ -1019,7 +1025,7 @@ public class BBInputSetup implements JavaDelegate {
 							.getModelCustomizationId();
 					ModelInfo modelInfo = new ModelInfo();
 					modelInfo.setModelCustomizationUuid(configurationCustUUID);
-					this.mapCatalogConfiguration(configuration, modelInfo, service);
+					this.mapCatalogConfiguration(configuration, modelInfo, service, executeBB.getConfigurationResourceKeys());
 					break;
 				}
 			}
@@ -1087,7 +1093,7 @@ public class BBInputSetup implements JavaDelegate {
 			configurationModelInfo.setModelCustomizationUuid(key);
 			ConfigurationResourceCustomization configurationCust = findConfigurationResourceCustomization(configurationModelInfo, service);
 			if(configurationCust != null) {
-				this.populateConfiguration(configurationModelInfo, service, bbName, serviceInstance, lookupKeyMap, configurationId, null);
+				this.populateConfiguration(configurationModelInfo, service, bbName, serviceInstance, lookupKeyMap, configurationId, null, executeBB.getConfigurationResourceKeys());
 			} else {
 				msoLogger.debug("Could not find a configuration customization with key: " + key);
 			}

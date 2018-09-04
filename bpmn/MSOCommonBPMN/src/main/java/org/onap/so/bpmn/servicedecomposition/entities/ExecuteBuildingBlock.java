@@ -39,6 +39,7 @@ public class ExecuteBuildingBlock implements Serializable{
 	private Boolean homing;
 	private WorkflowResourceIds workflowResourceIds;
 	private RequestDetails requestDetails;
+	private ConfigurationResourceKeys configurationResourceKeys;
 	
 	public BuildingBlock getBuildingBlock() {
 		return buildingBlock;
@@ -99,5 +100,11 @@ public class ExecuteBuildingBlock implements Serializable{
 	}
 	public void setRequestDetails(RequestDetails requestDetails) {
 		this.requestDetails = requestDetails;
+	}
+	public ConfigurationResourceKeys getConfigurationResourceKeys() {
+		return configurationResourceKeys;
+	}
+	public void setConfigurationResourceKeys(ConfigurationResourceKeys configurationResourceKeys) {
+		this.configurationResourceKeys = configurationResourceKeys;
 	}
 }

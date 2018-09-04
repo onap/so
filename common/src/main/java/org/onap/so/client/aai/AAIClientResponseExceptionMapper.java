@@ -29,6 +29,7 @@ import javax.ws.rs.ext.Provider;
 import javax.annotation.Priority;
 import javax.ws.rs.ext.Provider;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.aai.entities.AAIError;
 import org.onap.so.logger.MsoLogger;
@@ -42,7 +43,7 @@ public class AAIClientResponseExceptionMapper extends ResponseExceptionMapper {
 
 	private final String requestId;
 	public AAIClientResponseExceptionMapper() {
-		this.requestId = MDC.get(MsoLogger.REQUEST_ID);
+		this.requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
 	}
 	@Override
 	public Optional<String> extractMessage(String entity) {

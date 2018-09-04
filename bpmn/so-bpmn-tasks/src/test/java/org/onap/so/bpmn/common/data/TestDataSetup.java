@@ -663,4 +663,20 @@ public class TestDataSetup{
 		
 		return ar;
 	}
+	
+	public Configuration setConfiguration () {
+		Configuration config = new Configuration();
+		config.setConfigurationId("testConfigurationId");
+		List<Configuration> configurations = new ArrayList<>();
+		configurations.add(config);
+		ServiceInstance serviceInstance = new ServiceInstance();
+		try {
+			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+		} catch(BBObjectNotFoundException e) {
+			serviceInstance = setServiceInstance();
+		}
+		lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "testConfigurationId");
+		serviceInstance.setConfigurations(configurations);
+		return config;
+	}
 }

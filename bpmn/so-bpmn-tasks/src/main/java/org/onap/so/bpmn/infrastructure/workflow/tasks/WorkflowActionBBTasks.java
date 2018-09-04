@@ -30,9 +30,10 @@ import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
-import org.onap.so.client.db.request.RequestsDbClient;
+
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.RequestReferences;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;

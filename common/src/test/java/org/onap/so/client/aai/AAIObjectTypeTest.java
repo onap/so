@@ -52,4 +52,18 @@ public class AAIObjectTypeTest {
 		AAIUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, id);
 		assertEquals("/network/collections/collection/test1", aaiUri.build().toString());
 	}
+	
+	@Test
+	public void genericVnfTest() {
+		AAIObjectType type = AAIObjectType.GENERIC_VNF;
+		assertEquals("/network/generic-vnfs/generic-vnf/{vnf-id}", type.uriTemplate());
+		assertEquals("/generic-vnfs/generic-vnf/{vnf-id}", type.partialUri());
+	}
+	
+	@Test
+	public void pInterfaceTest() {
+		AAIObjectType type = AAIObjectType.P_INTERFACE;
+		assertEquals("/cloud-infrastructure/pservers/pserver/{hostname}/p-interfaces/p-interface/{interface-name}", type.uriTemplate());
+		assertEquals("/p-interfaces/p-interface/{interface-name}", type.partialUri());
+	}
 }

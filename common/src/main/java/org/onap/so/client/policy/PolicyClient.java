@@ -20,6 +20,7 @@
 
 package org.onap.so.client.policy;
 
+import org.onap.so.client.policy.entities.Config;
 import org.onap.so.client.policy.entities.DictionaryData;
 import org.onap.so.client.policy.entities.PolicyDecision;
 
@@ -29,4 +30,6 @@ public interface PolicyClient {
 			String errorCode);
 	
 	public DictionaryData getAllowedTreatments(String bbID, String workStep);
+	
+	public Config getConfigWithPolicyName(String policyName);
 }

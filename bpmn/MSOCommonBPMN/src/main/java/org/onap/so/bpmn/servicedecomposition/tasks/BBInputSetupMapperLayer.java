@@ -76,6 +76,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestDetails;
@@ -454,11 +455,13 @@ public class BBInputSetupMapperLayer {
 	}
 
 	protected ModelInfoConfiguration mapCatalogConfigurationToConfiguration(
-			ConfigurationResourceCustomization configurationResourceCustomization) {
+			ConfigurationResourceCustomization configurationResourceCustomization, 
+			VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization) {
 		ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
 		modelInfoConfiguration.setModelVersionId(configurationResourceCustomization.getConfigurationResource().getModelUUID());
 		modelInfoConfiguration.setModelCustomizationId(configurationResourceCustomization.getModelCustomizationUUID());
 		modelInfoConfiguration.setModelInvariantId(configurationResourceCustomization.getConfigurationResource().getModelInvariantUUID());
+		modelInfoConfiguration.setPolicyName(vnfVfmoduleCvnfcConfigurationCustomization.getPolicyName());
 		return modelInfoConfiguration;
 	}
 
