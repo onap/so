@@ -67,7 +67,6 @@ public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
             AaiResponse aaiResponse = implementation.check(correlationId, aaiConnection);
 
             execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, aaiResponse.getContainsInfoAboutPnf());
-            execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_IP, aaiResponse.getContainsInfoAboutIp());
         } catch (IOException e) {
         	LOGGER.error("IOException",e);
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, e.getMessage());
