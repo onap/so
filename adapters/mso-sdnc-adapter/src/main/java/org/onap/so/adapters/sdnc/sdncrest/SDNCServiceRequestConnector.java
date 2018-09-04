@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -149,7 +151,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 				ackFinalIndicator = "Y";
 			}
 
-			if (!ackFinalIndicator.equals("Y") && !"N".equals(ackFinalIndicator)) {
+			if (!"Y".equals(ackFinalIndicator) && !"N".equals(ackFinalIndicator)) {
 				throw new ParseException("Invalid ack-final-indicator in SDNC response: '" + ackFinalIndicator + "'", 0);
 			}
 
@@ -161,7 +163,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 
 			// If the response code in the message from SDNC was not 2XX, return SDNCServiceError.
 
-			if (!responseCode.matches("2[0-9][0-9]") && !responseCode.equals("0")) {
+			if (!responseCode.matches("2[0-9][0-9]") && !("0").equals(responseCode)) {
 				// Not a 2XX response.  Return SDNCServiceError.
 				return new SDNCServiceError(svcRequestId, responseCode, responseMessage, ackFinalIndicator);
 			}
