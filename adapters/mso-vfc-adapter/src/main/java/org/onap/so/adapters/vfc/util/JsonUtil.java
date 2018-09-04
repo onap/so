@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,7 +53,7 @@ public class JsonUtil {
    * Mapper.
    */
   private static final ObjectMapper MAPPER = new ObjectMapper();
-
+  private static final String UNMARSHAL_FAIL_MSG="fail to unMarshal json";
   static {
     MAPPER.setConfig(MAPPER.getDeserializationConfig().without(
         DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
@@ -82,8 +84,8 @@ public class JsonUtil {
       return MAPPER.readValue(jsonstr, type);
     } catch (IOException e) {
       LOGGER.error(MessageEnum.RA_NS_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError,
-          "fail to unMarshal json", e);
-      throw new ApplicationException(HttpCode.BAD_REQUEST, "fail to unMarshal json");
+          UNMARSHAL_FAIL_MSG, e);
+      throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
     }
   }
 
@@ -100,8 +102,8 @@ public class JsonUtil {
       return MAPPER.readValue(jsonstr, type);
     } catch (IOException e) {
       LOGGER.error(MessageEnum.RA_NS_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError,
-          "fail to unMarshal json", e);
-      throw new ApplicationException(HttpCode.BAD_REQUEST, "fail to unMarshal json");
+          UNMARSHAL_FAIL_MSG, e);
+      throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
     }
   }
 
