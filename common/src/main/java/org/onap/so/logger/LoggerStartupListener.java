@@ -15,6 +15,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * Modifications Copyright (C) 2018 IBM.
  * ============LICENSE_END=========================================================
  */
 
@@ -23,6 +24,7 @@ package org.onap.so.logger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.onap.so.utils.UUIDChecker;
 import org.springframework.stereotype.Component;
 
 import ch.qos.logback.classic.Level;
@@ -37,6 +39,7 @@ import ch.qos.logback.core.spi.LifeCycle;
 public class LoggerStartupListener extends ContextAwareBase implements LoggerContextListener, LifeCycle {
 
     private boolean started = false;
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL, LoggerStartupListener.class);
 
     @Override
     public void start() {
@@ -46,7 +49,8 @@ public class LoggerStartupListener extends ContextAwareBase implements LoggerCon
 		try {
 			addr = InetAddress.getLocalHost();
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			LOGGER.error("UnknownHostException",e);
+			
 		}    
         Context context = getContext();
         if (addr != null) {
