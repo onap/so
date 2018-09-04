@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -465,7 +467,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                         Map <String, Object> outputs = heatStack.getOutputs ();
                         Map <String, String> sMap = new HashMap <> ();
                         if (outputs != null) {
-                        	for (String key : outputs.keySet ()) {
+                        	for (Map.Entry<String, Object> entry : outputs.entrySet()) {
+                        		String key=entry.getKey();
                         		if (key != null && key.startsWith ("subnet")) {
                         			if (aic3template) //one subnet_id output
                         			{
@@ -619,7 +622,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 Map <String, Object> outputs = heatStack.getOutputs ();
                 Map <String, String> sMap = new HashMap <> ();
                 if (outputs != null) {
-                    for (String key : outputs.keySet ()) {
+                    for (Map.Entry<String, Object> entry : outputs.entrySet()) {
+                    	String key = entry.getKey();
                         if (key != null && key.startsWith ("subnet")) {
                         	if (aic3template) //one subnet output expected
                 			{
@@ -1067,7 +1071,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 Map<String, Object> outputs = heatStack.getOutputs();
                 Map<String, String> sMap = new HashMap<>();
                 if (outputs != null) {
-                    for (String key : outputs.keySet()) {
+                    for (Map.Entry<String, Object> entry : outputs.entrySet()) {
+                    	String key=entry.getKey();
                         if (key != null && key.startsWith("subnet")) {
                             if (aic3template) //one subnet output expected
                             {
