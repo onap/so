@@ -161,7 +161,6 @@
 
     <root level="WARN">
         <appender-ref ref="asyncDebug" />
-        <appender-ref ref="SANE" />
         <appender-ref ref="asyncError" />
     </root>
 
