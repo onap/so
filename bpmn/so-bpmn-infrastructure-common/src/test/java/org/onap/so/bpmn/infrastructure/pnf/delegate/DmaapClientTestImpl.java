@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
-
 import java.util.Objects;
 
 public class DmaapClientTestImpl implements DmaapClient {

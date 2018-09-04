@@ -27,10 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl.ID_WITHOUT_ENTRY;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl.ID_WITH_ENTRY_AND_IP;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl.ID_WITH_ENTRY_NO_IP;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl.ID_WITH_IP_V6;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.AAI_CONTAINS_INFO_ABOUT_IP;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl.ID_WITH_ENTRY;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.AAI_CONTAINS_INFO_ABOUT_PNF;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
 
@@ -41,9 +38,6 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.onap.so.bpmn.core.WorkflowException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(Enclosed.class)
 public class CheckAaiForCorrelationIdDelegateTest {
@@ -81,36 +75,14 @@ public class CheckAaiForCorrelationIdDelegateTest {
         }
 
         @Test
-        public void shouldSetCorrectVariablesWhenAaiContainsInfoAboutPnf() throws Exception {
-            shouldSetCorrectVariablesWhenAaiContainsInfoAboutPnf(ID_WITH_ENTRY_AND_IP);
-        }
-
-        @Test
-        public void shouldSetCorrectVariablesWhenAaiContainsInfoAboutPnfWithIpV6() throws Exception {
-            shouldSetCorrectVariablesWhenAaiContainsInfoAboutPnf(ID_WITH_IP_V6);
-        }
-
-        private void shouldSetCorrectVariablesWhenAaiContainsInfoAboutPnf(String id) throws Exception {
-            // given
-            DelegateExecution execution = mock(DelegateExecution.class);
-            when(execution.getVariable(CORRELATION_ID)).thenReturn(id);
-            // when
-            delegate.execute(execution);
-            // then
-            verify(execution).setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, true);
-            verify(execution).setVariableLocal(AAI_CONTAINS_INFO_ABOUT_IP, true);
-        }
-
-        @Test
         public void shouldSetCorrectVariablesWhenAaiContainsInfoAboutPnfWithoutIp() throws Exception {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
-            when(execution.getVariable(CORRELATION_ID)).thenReturn(ID_WITH_ENTRY_NO_IP);
+            when(execution.getVariable(CORRELATION_ID)).thenReturn(ID_WITH_ENTRY);
             // when
             delegate.execute(execution);
             // then
             verify(execution).setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, true);
-            verify(execution).setVariableLocal(AAI_CONTAINS_INFO_ABOUT_IP, false);
         }
     }
 
@@ -128,7 +100,7 @@ public class CheckAaiForCorrelationIdDelegateTest {
         public void shouldThrowExceptionWhenIoExceptionOnConnectionToAai() {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
-            when(execution.getVariable(CORRELATION_ID)).thenReturn(ID_WITH_ENTRY_NO_IP);
+            when(execution.getVariable(CORRELATION_ID)).thenReturn(ID_WITH_ENTRY);
             when(execution.getVariable("testProcessKey")).thenReturn("testProcessKey");
             // when, then
             assertThatThrownBy(() -> delegate.execute(execution)).isInstanceOf(BpmnError.class);
