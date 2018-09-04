@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.policy;
+package org.onap.so.logging.jaxrs.filter;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,22 +40,24 @@ import javax.ws.rs.ext.WriterInterceptor;
 import javax.ws.rs.ext.WriterInterceptorContext;
 
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Provider
-@Priority(0)
-public class LoggingFilter implements ClientRequestFilter, ClientResponseFilter, WriterInterceptor {
+@Priority(1)
+public class PayloadLoggingFilter implements ClientRequestFilter, ClientResponseFilter, WriterInterceptor {
 
-	private static final MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, LoggingFilter.class);
+	private static final Logger logger = LoggerFactory.getLogger(PayloadLoggingFilter.class);
 	private static final String ENTITY_STREAM_PROPERTY = "LoggingFilter.entityStream";
 	private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 	private final int maxEntitySize;
 
-	public LoggingFilter() {
+	public PayloadLoggingFilter() {
 		maxEntitySize = 1024 * 1024;
 	}
 
-	public LoggingFilter(int maxPayloadSize) {
+	public PayloadLoggingFilter(int maxPayloadSize) {
 		this.maxEntitySize = Integer.min(maxPayloadSize, 1024 * 1024);
 	}
 

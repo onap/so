@@ -52,20 +52,6 @@
 			<groupId>org.onap.so</groupId>
 			<artifactId>common</artifactId>
 			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-         			<groupId>org.apache.cxf</groupId>
-          			<artifactId>cxf-rt-rs-client</artifactId>
-        		</exclusion>
-        		<exclusion>
-         			<groupId>org.apache.cxf</groupId>
-          			<artifactId>cxf-rt-bindings-soap</artifactId>
-        		</exclusion>
-        		<exclusion>
-         			<groupId>org.apache.cxf</groupId>
-          			<artifactId>cxf-rt-transports-http</artifactId>
-        		</exclusion>
-        	</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

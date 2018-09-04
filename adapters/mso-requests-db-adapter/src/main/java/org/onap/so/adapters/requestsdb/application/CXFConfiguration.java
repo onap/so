@@ -45,12 +45,6 @@ public class CXFConfiguration {
 	@Autowired
 	private MsoRequestsDbAdapter requestDbAdapterImpl;
 	
-	@Autowired
-	private SOAPLoggingInInterceptor soapInInterceptor;
-	
-	@Autowired
-	private SOAPLoggingOutInterceptor soapOutInterceptor;
-	
 	@Bean
 	public ServletRegistrationBean cxfServlet() {
 	
@@ -65,9 +59,9 @@ public class CXFConfiguration {
 		logFeature.setPrettyLogging(true);
 		logFeature.initialize(bus);
 		endpoint.getFeatures().add(logFeature);
-		endpoint.getInInterceptors().add(soapInInterceptor);
-		endpoint.getOutInterceptors().add(soapOutInterceptor);
-		endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
+		endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
+		endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
+		endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
 		return endpoint;
 	}
 

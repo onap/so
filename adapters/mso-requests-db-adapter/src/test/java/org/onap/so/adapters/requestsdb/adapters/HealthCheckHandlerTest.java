@@ -58,7 +58,7 @@ public class HealthCheckHandlerTest {
 	
 	@Test
 	public void testHealthcheck() throws JSONException {
-
+	    TestAppender.events.clear();
 		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
 		ResponseEntity<String> response = restTemplate.exchange(
@@ -87,6 +87,7 @@ public class HealthCheckHandlerTest {
                 assertEquals("/manage/health",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
                 assertEquals("COMPLETED",mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
             }
+        TestAppender.events.clear();
 	}
 	
 	private String createURLWithPort(String uri) {

@@ -1,38 +1,26 @@
 package org.onap.so.logging.cxf.interceptor;
 
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.namespace.QName;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
-import org.apache.cxf.service.model.MessageInfo;
-import org.apache.cxf.service.model.OperationInfo;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
-import org.onap.so.logging.jaxrs.filter.MDCSetup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
+
 public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor{
 
     protected static Logger logger = LoggerFactory.getLogger(SOAPLoggingInInterceptor.class);
-    
-    @Autowired
-    MDCSetup mdcSetup;
-    
+
     public SOAPLoggingInInterceptor() {
         super(Phase.READ);
     }
@@ -40,7 +28,7 @@ public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor{
     @Override
     public void handleMessage(SoapMessage message) throws Fault {
         try {
-  
+            SOAPMDCSetup mdcSetup = new SOAPMDCSetup();
             Map<String, List<String>> headers  = (Map<String,List<String>>) message.get(Message.PROTOCOL_HEADERS);
             HttpServletRequest request = (HttpServletRequest)message.get(AbstractHTTPDestination.HTTP_REQUEST);
             request.getRemoteAddr();

@@ -32,7 +32,8 @@ import javax.ws.rs.client.ClientBuilder;
 
 public abstract class RestClientSSL extends RestClient {
 	
-	public static final String SSL_KEY_STORE_KEY = "javax.net.ssl.keyStore";
+	private static final String TRUE = "true";
+    public static final String SSL_KEY_STORE_KEY = "javax.net.ssl.keyStore";
 	public static final String SSL_KEY_STORE_PASSWORD_KEY = "javax.net.ssl.keyStorePassword";
 	public static final String MSO_LOAD_SSL_CLIENT_KEYSTORE_KEY = "mso.load.ssl.client.keystore";
 	
@@ -51,19 +52,18 @@ public abstract class RestClientSSL extends RestClient {
 		Client client = null;
 		try {
 			String loadSSLKeyStore = System.getProperty(RestClientSSL.MSO_LOAD_SSL_CLIENT_KEYSTORE_KEY);
-			if(loadSSLKeyStore != null && loadSSLKeyStore.equalsIgnoreCase("true")) {
+			if(loadSSLKeyStore != null && loadSSLKeyStore.equalsIgnoreCase(TRUE)) {
 				KeyStore ks = getKeyStore();
 				if(ks != null) {
 					client = ClientBuilder.newBuilder().keyStore(ks, System.getProperty(RestClientSSL.SSL_KEY_STORE_PASSWORD_KEY)).build();
-					this.msoLogger.debug("RestClientSSL not using default SSL context - setting keystore here.");
+					logger.debug("RestClientSSL not using default SSL context - setting keystore here.");
 					return client;
 				}
 			}
 			//Use default SSL context 
 			client = ClientBuilder.newBuilder().sslContext(SSLContext.getDefault()).build();
-			this.msoLogger.debug("RestClientSSL using default SSL context!");
+			logger.info("RestClientSSL using default SSL context!");
 		} catch (NoSuchAlgorithmException e) {
-			//this.logger.error(MessageEnum.APIH_GENERAL_EXCEPTION, "AAI", "Client init", MsoLogger.ErrorCode.UnknownError, "could not create SSL client", e);
 			throw new RuntimeException(e);
 		}
 		return client;

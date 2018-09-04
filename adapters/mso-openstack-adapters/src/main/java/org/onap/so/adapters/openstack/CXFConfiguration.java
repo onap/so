@@ -86,13 +86,7 @@ public class CXFConfiguration {
 	private MsoVnfCloudifyAdapterImpl vnfCloudifyAdapterImpl;
 	@Autowired
 	private JettisonStyleMapperProvider jettisonStyleObjectMapper; 	
-	
-	@Autowired
-	private SOAPLoggingInInterceptor soapInInterceptor;
-	    
-	@Autowired
-	private SOAPLoggingOutInterceptor soapOutInterceptor;
-	
+
     @Bean(name=Bus.DEFAULT_BUS_ID)
     public SpringBus springBus() {      
         return new SpringBus();
@@ -114,9 +108,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), networkAdapterImpl);
         endpoint.publish("/NetworkAdapter");
         endpoint.setWsdlLocation("NetworkAdapter.wsdl");
-        endpoint.getInInterceptors().add(soapInInterceptor);
-        endpoint.getOutInterceptors().add(soapOutInterceptor);
-        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
+        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
+        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
+        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }	
 	
@@ -125,9 +119,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), networkAdapterAsyncImpl);
         endpoint.publish("/NetworkAdapterAsync");
         endpoint.setWsdlLocation("NetworkAdapterAsync.wsdl");
-        endpoint.getInInterceptors().add(soapInInterceptor);
-        endpoint.getOutInterceptors().add(soapOutInterceptor);
-        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
+        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
+        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
+        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }		
 	
@@ -139,9 +133,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), tenantAdapterImpl);
         endpoint.publish("/TenantAdapter");
         endpoint.setWsdlLocation("TenantAdapter.wsdl");
-        endpoint.getInInterceptors().add(soapInInterceptor);
-        endpoint.getOutInterceptors().add(soapOutInterceptor);
-        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
+        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
+        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
+        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
     
@@ -155,9 +149,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfAdapterImpl);
         endpoint.publish("/VnfAdapter");
         endpoint.setWsdlLocation("VnfAdapter.wsdl");
-        endpoint.getInInterceptors().add(soapInInterceptor);
-        endpoint.getOutInterceptors().add(soapOutInterceptor);
-        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
+        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
+        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
+        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
     
@@ -166,9 +160,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfAdapterAsyncImpl);
         endpoint.publish("/VnfAsyncAdapter");
         endpoint.setWsdlLocation("VnfAsyncAdapter.wsdl");
-        endpoint.getInInterceptors().add(soapInInterceptor);
-        endpoint.getOutInterceptors().add(soapOutInterceptor);
-        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
+        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
+        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
+        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
     
@@ -177,9 +171,9 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfCloudifyAdapterImpl);
         endpoint.publish("/VnfCloudifyAdapterImpl");
         endpoint.setWsdlLocation("VnfCloudifyAdapterImpl.wsdl");
-        endpoint.getInInterceptors().add(soapInInterceptor);
-        endpoint.getOutInterceptors().add(soapOutInterceptor);
-        endpoint.getOutFaultInterceptors().add(soapOutInterceptor);
+        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
+        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
+        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
     
