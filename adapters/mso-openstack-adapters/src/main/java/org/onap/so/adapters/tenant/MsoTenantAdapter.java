@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,7 +32,6 @@ import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.ws.Holder;
 
-import org.onap.so.adapters.tenant.exceptions.TenantAlreadyExists;
 import org.onap.so.adapters.tenant.exceptions.TenantException;
 import org.onap.so.adapters.tenantrest.TenantRollback;
 import org.onap.so.entity.MsoRequest;
