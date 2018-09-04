@@ -24,6 +24,7 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
@@ -40,6 +41,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAINetworkResources;
 import org.onap.so.client.orchestration.AAIServiceInstanceResources;
 import org.onap.so.client.orchestration.AAIVfModuleResources;
@@ -74,6 +76,8 @@ public class AAICreateTasks {
 	private AAINetworkResources aaiNetworkResources;
 	@Autowired
 	private AAIVpnBindingResources aaiVpnBindingResources;
+	@Autowired
+	private AAIConfigurationResources aaiConfigurationResources;
 
 	public void createServiceInstance(BuildingBlockExecution execution) {
 		try {
@@ -375,5 +379,14 @@ public class AAICreateTasks {
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}	
+	}
+	
+	public void createConfiguration(BuildingBlockExecution execution){
+		try{
+			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
+			aaiConfigurationResources.createConfiguration(configuration);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
 	}
 }

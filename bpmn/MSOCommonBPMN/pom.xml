@@ -134,6 +134,17 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>non-spring-tests</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>**/NonSpringSuite.java</include>
+							</includes>	
+						</configuration>
+					</execution>
+					<execution>
 						<id>groovy-tests</id>
 						<goals>
 							<goal>test</goal>
@@ -217,15 +228,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
-
 		<dependency>
 			<!-- Needed for InMemoryH2Test -->
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.fasterxml.uuid</groupId>
 			<artifactId>java-uuid-generator</artifactId>
@@ -247,6 +255,7 @@
 		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>mso-requests-db</artifactId>
+			<classifier>client</classifier>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

@@ -24,9 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.core.BaseTask;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
-import org.onap.so.db.request.beans.ResourceOperationStatusId;
-import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component

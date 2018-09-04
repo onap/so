@@ -665,4 +665,27 @@ public class BuildingBlockTestDataSetup{
 		
 		return ar;
 	}
+	
+	public Configuration setConfiguration () {
+		Configuration config = new Configuration();
+		config.setConfigurationId("testConfigurationId");
+		ModelInfoConfiguration modelInfoConfig = new ModelInfoConfiguration();
+		modelInfoConfig.setModelCustomizationId("modelCustomizationId");
+		modelInfoConfig.setModelVersionId("modelVersionId");
+		modelInfoConfig.setModelInvariantId("modelInvariantId");
+		modelInfoConfig.setPolicyName("policyName");
+		config.setModelInfoConfiguration(modelInfoConfig);
+		
+		List<Configuration> configurations = new ArrayList<>();
+		configurations.add(config);
+		ServiceInstance serviceInstance = new ServiceInstance();
+		try {
+			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+		} catch(BBObjectNotFoundException e) {
+			serviceInstance = setServiceInstance();
+		}
+		lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "testConfigurationId");
+		serviceInstance.setConfigurations(configurations);
+		return config;
+	}
 }

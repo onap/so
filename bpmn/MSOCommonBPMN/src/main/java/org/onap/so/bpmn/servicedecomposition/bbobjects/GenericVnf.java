@@ -139,7 +139,27 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
     private List<InstanceGroup> instanceGroups = new ArrayList<InstanceGroup>();
 	@JsonProperty("call-homing")
 	private Boolean callHoming;
+	@JsonProperty("nf-function")
+	private String nfFunction;
+	@JsonProperty("nf-role")
+	private String nfRole;
 
+
+	public String getNfFunction() {
+		return nfFunction;
+	}
+
+	public void setNfFunction(String nfFunction) {
+		this.nfFunction = nfFunction;
+	}
+
+	public String getNfRole() {
+		return nfRole;
+	}
+
+	public void setNfRole(String nfRole) {
+		this.nfRole = nfRole;
+	}
 
 	public List<InstanceGroup> getInstanceGroups() {
 		return instanceGroups;

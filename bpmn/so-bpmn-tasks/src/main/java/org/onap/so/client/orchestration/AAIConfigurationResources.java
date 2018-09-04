@@ -157,6 +157,15 @@ public class AAIConfigurationResources {
         AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
         injectionHelper.getAaiClient().delete(aaiResourceUri);
     }
+    /**
+     * method to delete Configuration details in A&AI
+     *
+     * @param configuration
+     */
+    public void deleteConfiguration(Configuration configuration) {
+        AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
+        injectionHelper.getAaiClient().delete(aaiResourceUri);
+    }
 
     /**
      * Get Configuration from AAI using related Link
@@ -167,4 +176,11 @@ public class AAIConfigurationResources {
         return injectionHelper.getAaiClient()
         		.get(org.onap.aai.domain.yang.Configuration.class, AAIUriFactory.createResourceFromExistingURI(AAIObjectType.CONFIGURATION, UriBuilder.fromPath(relatedLink).build()));
     }
+    
+    public void updateOrchestrationStatusConfiguration(Configuration configuration, OrchestrationStatus orchestrationStatus) {
+		AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
+		configuration.setOrchestrationStatus(orchestrationStatus);
+		org.onap.aai.domain.yang.Configuration aaiConfiguration = aaiObjectMapper.mapConfiguration(configuration);
+		injectionHelper.getAaiClient().update(aaiResourceUri, aaiConfiguration);
+	}
 }

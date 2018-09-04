@@ -562,7 +562,7 @@ public class AAIObjectMapperTest {
 		AAIObjectMapper aaiObjectMapper = new AAIObjectMapper();
 		org.onap.aai.domain.yang.CtagAssignments v12CtagAssingments = aaiObjectMapper.mapToAAICtagAssignmentList(ctagAssignments);
 
-		assertEquals(ctagAssignments.get(0).getVlanIdInner().longValue(), v12CtagAssingments.getCtagAssignment().get(0).getVlanIdInner());
+		assertEquals(new Long(ctagAssignments.get(0).getVlanIdInner().longValue()), new Long(v12CtagAssingments.getCtagAssignment().get(0).getVlanIdInner()));
 
 		String jsonToCompare = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiCtagAssingmentsMapped_to_aai.json")));
 		ObjectMapper omapper = new ObjectMapper();

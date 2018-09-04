@@ -65,12 +65,15 @@ import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.ConfigurationResource;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
+import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
+import org.onap.so.db.catalog.beans.VnfcCustomization;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 
@@ -613,17 +616,23 @@ public class BBInputSetupMapperLayerTest {
 		String modelCustUUID = "modelCustomizationUUID";
 		String modelInvariantUUID = "modelInvariantUUID";
 		String modelVersionUUID = "modelUUID";
+		String policyName = "policyName";
 		ModelInfoConfiguration expected = new ModelInfoConfiguration();
 		expected.setModelCustomizationId(modelCustUUID);
 		expected.setModelInvariantId(modelInvariantUUID);
 		expected.setModelVersionId(modelVersionUUID);
+		expected.setPolicyName(policyName);
 		ConfigurationResourceCustomization configurationResourceCustomization = new ConfigurationResourceCustomization();
 		configurationResourceCustomization.setModelCustomizationUUID(modelCustUUID);
 		configurationResourceCustomization.setConfigurationResource(new ConfigurationResource());
 		configurationResourceCustomization.getConfigurationResource().setModelInvariantUUID(modelInvariantUUID);
 		configurationResourceCustomization.getConfigurationResource().setModelUUID(modelVersionUUID);
+		VnfVfmoduleCvnfcConfigurationCustomization policyNameTable = new VnfVfmoduleCvnfcConfigurationCustomization();
+		policyNameTable.setCvnfcCustomization(new CvnfcCustomization());
+		policyNameTable.getCvnfcCustomization().setVnfcCustomization(new VnfcCustomization());
+		policyNameTable.setPolicyName(policyName);
 		
-		ModelInfoConfiguration actual = bbInputSetupMapperLayer.mapCatalogConfigurationToConfiguration(configurationResourceCustomization );
+		ModelInfoConfiguration actual = bbInputSetupMapperLayer.mapCatalogConfigurationToConfiguration(configurationResourceCustomization, policyNameTable);
 
 		assertThat(actual, sameBeanAs(expected));
 	}

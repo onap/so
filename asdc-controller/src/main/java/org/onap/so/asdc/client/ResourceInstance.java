@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 import org.onap.sdc.api.notification.IResourceInstance;
 
-final class ResourceInstance implements IResourceInstance {
+public class ResourceInstance implements IResourceInstance {
     
     @Override
     public String getResourceInstanceName(){

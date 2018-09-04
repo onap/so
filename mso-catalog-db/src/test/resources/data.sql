@@ -651,3 +651,98 @@ INSERT INTO `cloud_sites` (`ID`, `REGION_ID`, `IDENTITY_SERVICE_ID`, `CLOUD_VERS
 INSERT INTO `controller_selection_reference` (`VNF_TYPE`, `CONTROLLER_NAME`, `ACTION_CATEGORY`) VALUES
 ('vLoadBalancerMS/vLoadBalancerMS 0', 'APPC', 'ConfigScaleOut'),
 ('vLoadBalancerMS/vLoadBalancerMS 0', 'APPC', 'HealthCheck');
+
+INSERT INTO `configuration`
+            (`model_uuid`,
+             `model_invariant_uuid`,
+             `model_version`,
+             `model_name`,
+             `tosca_node_type`,
+             `description`,
+             `creation_timestamp`)
+VALUES      ( 'c59a41ca-9b3b-11e8-98d0-529269fb1459',
+              '15881e64-9b3c-11e8-98d0-529269fb1459',
+              'testModelVersion',
+              'testModelName',
+              'testToscaModelType',
+              'testConfigurationDescription',
+              '2018-07-17 14:05:08' );
+
+
+INSERT INTO `vnfc_customization`
+            (`model_customization_uuid`,
+             `model_instance_name`,
+             `model_uuid`,
+             `model_invariant_uuid`,
+             `model_version`,
+             `model_name`,
+             `tosca_node_type`,
+             `description`,
+             `creation_timestamp`)
+VALUES      ( '9bcce658-9b37-11e8-98d0-529269fb1459',
+              'testModelInstanceName',
+              'b25735fe-9b37-11e8-98d0-529269fb1459',
+              'ba7e6ef0-9b37-11e8-98d0-529269fb1459',
+              'testModelVersion',
+              'testModelName',
+              'toscaNodeType',
+              'testVnfcCustomizationDescription',
+              '2018-07-17 14:05:08');
+
+INSERT INTO `cvnfc_customization`
+            (`id`,
+             `model_customization_uuid`,
+             `model_instance_name`,
+             `model_uuid`,
+             `model_invariant_uuid`,
+             `model_version`,
+             `model_name`,
+             `tosca_node_type`,
+             `description`,
+             `nfc_function`,
+             `nfc_naming_code`,
+             `creation_timestamp`,
+             `vnf_resource_cust_model_customization_uuid`,
+             `vf_module_cust_model_customization_uuid`,
+             `vnfc_cust_model_customization_uuid`)
+VALUES      ( '1',
+              '9bcce658-9b37-11e8-98d0-529269fb1459',
+              'testModelInstanceName',
+              'b25735fe-9b37-11e8-98d0-529269fb1459',
+              'ba7e6ef0-9b37-11e8-98d0-529269fb1459',
+              'testModelVersion',
+              'testModelName',
+              'testToscaNodeType',
+              'testCvnfcCustomzationDescription',
+              'testNfcFunction',
+              'testNfcNamingCode',
+              '2018-07-17 14:05:08',
+              '68dc9a92-214c-11e7-93ae-92361f002671',
+              'cb82ffd8-252a-11e7-93ae-92361f002671',
+              '9bcce658-9b37-11e8-98d0-529269fb1459');
+
+INSERT INTO vnf_vfmodule_cvnfc_configuration_customization
+            (id,
+             model_customization_uuid,
+             vnf_resource_cust_model_customization_uuid,
+             vf_module_model_customization_uuid,
+             cvnfc_model_customization_uuid,
+             model_instance_name,
+             configuration_type,
+             configuration_role,
+             configuration_function,
+             policy_name,
+             creation_timestamp,
+             configuration_model_uuid)
+VALUES      ( '1',
+              '7bcce658-9b37-11e8-98d0-529269fb1450',
+              '68dc9a92-214c-11e7-93ae-92361f002671',
+              'cb82ffd8-252a-11e7-93ae-92361f002671',
+              '9bcce658-9b37-11e8-98d0-529269fb1459',
+              'testModelInstanceName',
+              'testConfigurationType',
+              'testConfigurationRole',
+              'testConfigurationFunction',
+              'testPolicyName',
+              '2018-07-17 14:05:08',
+              'c59a41ca-9b3b-11e8-98d0-529269fb1459'); 
