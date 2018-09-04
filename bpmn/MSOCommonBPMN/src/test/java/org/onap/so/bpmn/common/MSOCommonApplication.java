@@ -29,9 +29,7 @@ import org.camunda.bpm.application.ProcessApplicationInfo;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
 import org.onap.so.bpmn.common.DefaultToShortClassNameBeanNameGenerator;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl;
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.requestsdb.RequestsDBHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -51,9 +49,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableProcessApplication("MSO Common Application")
 @EnableAsync
 @ComponentScan(basePackages = { "org.onap" }, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class, excludeFilters = {
-				@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class),
-				@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = RequestsDBHelper.class),
-				@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = InfraActiveRequestsRepositoryImpl.class) })
+				@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
 public class MSOCommonApplication {
 
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,

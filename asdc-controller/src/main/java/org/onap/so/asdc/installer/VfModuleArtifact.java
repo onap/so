@@ -44,7 +44,15 @@ public final class VfModuleArtifact {
 	public VfModuleArtifact(IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
 		artifactInfo=artifactinfo;
 		result = new String(clientResult.getArtifactPayload(), "UTF-8");
-		
+	}
+	
+	public VfModuleArtifact(IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult, String modifiedHeatTemplate) throws UnsupportedEncodingException {
+		artifactInfo=artifactinfo;
+		if(modifiedHeatTemplate != null){
+			result = modifiedHeatTemplate;
+		}else{
+			result = new String(clientResult.getArtifactPayload(), "UTF-8");
+		}
 	}	
 
 	public HeatFiles getHeatFiles() {

@@ -268,7 +268,7 @@ public class ASDCController {
 
    
 
-    private IDistributionClientDownloadResult downloadTheArtifact (IArtifactInfo artifact,
+    protected IDistributionClientDownloadResult downloadTheArtifact (IArtifactInfo artifact,
                                                                    String distributionId) throws ASDCDownloadException {
 
         LOGGER.debug ("Trying to download the artifact : " + artifact.getArtifactURL ()
@@ -370,7 +370,7 @@ public class ASDCController {
     }
 
 
-    private void sendDeployNotificationsForResource(VfResourceStructure vfResourceStructure,DistributionStatusEnum distribStatus, String errorReason) {
+    protected void sendDeployNotificationsForResource(VfResourceStructure vfResourceStructure,DistributionStatusEnum distribStatus, String errorReason) {
 
     	for (IArtifactInfo artifactInfo : vfResourceStructure.getResourceInstance().getArtifacts()) {
 
@@ -397,7 +397,7 @@ public class ASDCController {
     	}
     }
     
-    private void sendCsarDeployNotification(INotificationData iNotif, VfResourceStructure resourceStructure, ToscaResourceStructure toscaResourceStructure, boolean deploySuccessful, String errorReason) {
+    protected void sendCsarDeployNotification(INotificationData iNotif, VfResourceStructure resourceStructure, ToscaResourceStructure toscaResourceStructure, boolean deploySuccessful, String errorReason) {
     	
 		IArtifactInfo csarArtifact = toscaResourceStructure.getToscaArtifact();
 		
@@ -424,7 +424,7 @@ public class ASDCController {
 		}
     }
     
-    private void deployResourceStructure (VfResourceStructure resourceStructure, ToscaResourceStructure toscaResourceStructure) throws ArtifactInstallerException {
+    protected void deployResourceStructure (VfResourceStructure resourceStructure, ToscaResourceStructure toscaResourceStructure) throws ArtifactInstallerException {
 
     	LOGGER.info (MessageEnum.ASDC_START_DEPLOY_ARTIFACT, resourceStructure.getResourceInstance().getResourceInstanceName(), resourceStructure.getResourceInstance().getResourceUUID(), "ASDC");
         try {
@@ -459,7 +459,7 @@ public class ASDCController {
     	DOWNLOAD, DEPLOY
     }
 
-    private void sendASDCNotification (NotificationType notificationType,
+    protected void sendASDCNotification (NotificationType notificationType,
                                        String artifactURL,
                                        String consumerID,
                                        String distributionID,
@@ -515,7 +515,7 @@ public class ASDCController {
         LOGGER.recordMetricEvent (subStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully sent notification to ASDC", "ASDC", action, null);
     }
     
-    private void sendFinalDistributionStatus (
+    protected void sendFinalDistributionStatus (
     		String distributionID,
     		DistributionStatusEnum status,
     		String errorReason) {
@@ -664,7 +664,7 @@ public class ASDCController {
         }
     }
 
-    private void processResourceNotification (INotificationData iNotif) {
+    protected void processResourceNotification (INotificationData iNotif) {
     	// For each artifact, create a structure describing the VFModule in a ordered flat level
     	VfResourceStructure resourceStructure = null;
     	ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
@@ -735,7 +735,7 @@ public class ASDCController {
     				"Exception caught during Installation of artifact", "ASDC", "processResourceNotification", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in processResourceNotification", e);
     	}
     }
-    private void processCsarServiceArtifacts (INotificationData iNotif, ToscaResourceStructure toscaResourceStructure) {
+    protected void processCsarServiceArtifacts (INotificationData iNotif, ToscaResourceStructure toscaResourceStructure) {
     	
     	List<IArtifactInfo> serviceArtifacts = iNotif.getServiceArtifacts();
     	
@@ -768,7 +768,7 @@ public class ASDCController {
     }
     
     private static final String UNKNOWN="Unknown";
-
+    
     /**
      * @return the address of the ASDC we are connected to.
      */

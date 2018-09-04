@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 
 import javax.ws.rs.core.UriBuilder;
 
+import org.onap.so.bpmn.common.baseclient.BaseClient;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.beans.SDNCProperties;

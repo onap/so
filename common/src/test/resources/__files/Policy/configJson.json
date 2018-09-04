@@ -1,0 +1,23 @@
+{
+	"configName": "Testing",
+	"riskLevel": "1",
+	"policyName": "fabric_configuration",
+	"policyScope": "resource=Test1,service=vSCP,type=configuration,closedLoopControlName=Firewall",
+	"guard": "False",
+	"description": "null",
+	"priority": "9",
+	"uuid": "1234",
+	"version": "1.0",
+	"content": {
+		"fabric-config-models": [
+			{
+				"vnfProfile": "v5",
+				"lagProfile": "N1"
+			}
+		]
+	},
+	"riskType": "test",
+	"service": "mso-fabric-configuration-model",
+	"location": " Edge",
+	"templateVersion": "1607"
+}

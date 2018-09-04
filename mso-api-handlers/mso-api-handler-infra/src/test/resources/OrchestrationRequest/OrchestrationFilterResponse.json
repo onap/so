@@ -1,0 +1,189 @@
+{
+  "requestList": [
+    {
+      "request": {
+        "requestId": "001619d2-a297-4a4b-a9f5-e2823c88458f",
+        "startTime": "Fri, 01 Jul 2016 04:41:42 GMT",
+        "requestScope": "vfModule",
+        "requestType": "createInstance",
+        "requestDetails": {
+          "modelInfo": {
+            "modelType": "vfModule",
+            "modelName": "test::base::module-0"
+          },
+          "requestInfo": {
+            "source": "VID",
+            "suppressRollback": false
+          },
+          "cloudConfiguration": {
+            "tenantId": "6accefef3cb442ff9e644d589fb04107",
+            "lcpCloudRegionId": "n6"
+          },
+          "instanceName": []
+        },
+        "instanceReferences": {
+          "vnfInstanceName": "test-vscp",
+          "vfModuleInstanceName": "MODULENAME1"
+        },
+        "requestStatus": {
+          "requestState": "COMPLETE",
+          "statusMessage": "COMPLETED",
+          "percentProgress": 100,
+          "finishTime": "Tue, 02 May 2017 06:33:34 GMT"
+        }
+      }
+    },
+    {
+      "request": {
+        "requestId": "00032ab7-3fb3-42e5-965d-8ea592502017",
+        "startTime": "Thu, 22 Dec 2016 08:29:54 GMT",
+        "requestScope": "vfModule",
+        "requestType": "deleteInstance",
+        "requestDetails": {
+          "modelInfo": {
+            "modelType": "vfModule",
+            "modelName": "test::base::module-0"
+          },
+          "requestInfo": {
+            "source": "VID",
+            "suppressRollback": false
+          },
+          "cloudConfiguration": {
+            "tenantId": "6accefef3cb442ff9e644d589fb04107",
+            "lcpCloudRegionId": "n6"
+          },
+          "instanceName": []
+        },
+        "instanceReferences": {
+          "serviceInstanceId": "e3b5744d-2ad1-4cdd-8390-c999a38829bc",
+          "vnfInstanceId": "b92f60c8-8de3-46c1-8dc1-e4390ac2b005",
+          "vfModuleInstanceId": "c7d527b1-7a91-49fd-b97d-1c8c0f4a7992"
+        },
+        "requestStatus": {
+          "requestState": "COMPLETE",
+          "statusMessage": "Vf Module has been deleted successfully.",
+          "percentProgress": 100,
+          "finishTime": "Thu, 22 Dec 2016 08:30:28 GMT"
+        }
+      }
+    },
+    {
+      "request": {
+        "requestId": "00032ab7-na18-42e5-965d-8ea592502018",
+        "startTime": "Thu, 22 Dec 2016 08:29:54 GMT",
+        "requestScope": "vfModule",
+        "requestType": "deleteInstance",
+        "requestDetails": {
+          "modelInfo": {
+            "modelType": "vfModule",
+            "modelName": "test::base::module-0"
+          },
+          "requestInfo": {
+            "source": "VID",
+            "suppressRollback": false
+          },
+          "cloudConfiguration": {
+            "tenantId": "6accefef3cb442ff9e644d589fb04107",
+            "lcpCloudRegionId": "n6"
+          },
+          "instanceName": []
+        },
+        "instanceReferences": {
+          "serviceInstanceId": "e3b5744d-2ad1-4cdd-8390-c999a38829bc",
+          "vnfInstanceId": "b92f60c8-8de3-46c1-8dc1-e4390ac2b005",
+          "vfModuleInstanceId": "c7d527b1-7a91-49fd-b97d-1c8c0f4a7992"
+        },
+        "requestStatus": {
+          "requestState": "PENDING",
+          "statusMessage": "Vf Module deletion pending.",
+          "percentProgress": 0,
+          "finishTime": "Thu, 22 Dec 2016 08:30:28 GMT"
+        }
+      }
+    },
+    {
+      "request": {
+        "requestId": "5ffbabd6-b793-4377-a1ab-082670fbc7ac",
+        "startTime": "Thu, 22 Dec 2016 08:29:54 GMT",
+        "requestScope": "vfModule",
+        "requestType": "deleteInstance",
+        "requestDetails": {
+          "modelInfo": {
+            "modelInvariantId": "78ca26d0-246d-11e7-93ae-92361f002671",
+            "modelType": "vfModule",
+            "modelId": "20c4431c-246d-11e7-93ae-92361f002671",
+            "modelName": "test::base::module-0",
+            "modelVersion": "2",
+            "modelCustomizationUuid": "cb82ffd8-252a-11e7-93ae-92361f002671",
+            "modelVersionId": "20c4431c-246d-11e7-93ae-92361f002671",
+            "modelCustomizationId": "cb82ffd8-252a-11e7-93ae-92361f002671",
+            "modelUuid": "20c4431c-246d-11e7-93ae-92361f002671",
+            "modelInvariantUuid": "78ca26d0-246d-11e7-93ae-92361f002671"
+          },
+          "requestInfo": {
+            "source": "VID",
+            "instanceName": "MSO-DEV-VF-1806BB-v10-base-it2-1",
+            "suppressRollback": false,
+            "requestorId": "xxxxxx"
+          },
+          "relatedInstanceList": [
+            {
+              "relatedInstance": {
+                "instanceId": "76fa8849-4c98-473f-b431-2590b192a653",
+                "modelInfo": {
+                  "modelInvariantId": "9647dfc4-2083-11e7-93ae-92361f002671",
+                  "modelType": "service",
+                  "modelId": "5df8b6de-2083-11e7-93ae-92361f002671",
+                  "modelName": "Infra_v10_Service",
+                  "modelVersion": "1.0",
+                  "modelVersionId": "5df8b6de-2083-11e7-93ae-92361f002671",
+                  "modelUuid": "5df8b6de-2083-11e7-93ae-92361f002671",
+                  "modelInvariantUuid": "9647dfc4-2083-11e7-93ae-92361f002671"
+                }
+              }
+            },
+            {
+              "relatedInstance": {
+                "instanceId": "d57970e1-5075-48a5-ac5e-75f2d6e10f4c",
+                "modelInfo": {
+                  "modelCustomizationName": "v10 1",
+                  "modelInvariantId": "2fff5b20-214b-11e7-93ae-92361f002671",
+                  "modelType": "vnf",
+                  "modelId": "ff2ae348-214a-11e7-93ae-92361f002671",
+                  "modelName": "v10",
+                  "modelVersion": "1.0",
+                  "modelCustomizationUuid": "68dc9a92-214c-11e7-93ae-92361f002671",
+                  "modelVersionId": "ff2ae348-214a-11e7-93ae-92361f002671",
+                  "modelCustomizationId": "68dc9a92-214c-11e7-93ae-92361f002671",
+                  "modelUuid": "ff2ae348-214a-11e7-93ae-92361f002671",
+                  "modelInvariantUuid": "2fff5b20-214b-11e7-93ae-92361f002671",
+                  "modelInstanceName": "v10 1"
+                }
+              }
+            }
+          ],
+          "cloudConfiguration": {
+            "tenantId": "0422ffb57ba042c0800a29dc85ca70f8",
+            "lcpCloudRegionId": "n6"
+          },
+          "requestParameters": {
+            "userParams": [],
+            "usePreload": true
+          },
+          "instanceName": []
+        },
+        "instanceReferences": {
+          "serviceInstanceId": "e3b5744d-2ad1-4cdd-8390-c999a38829bc",
+          "vnfInstanceId": "b92f60c8-8de3-46c1-8dc1-e4390ac2b005",
+          "vfModuleInstanceId": "c7d527b1-7a91-49fd-b97d-1c8c0f4a7992"
+        },
+        "requestStatus": {
+          "requestState": "UNLOCKED",
+          "statusMessage": "Vf Module deletion pending.",
+          "percentProgress": 0,
+          "finishTime": "Thu, 22 Dec 2016 08:30:28 GMT"
+        }
+      }
+    }
+  ]
+}

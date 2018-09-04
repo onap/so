@@ -22,8 +22,6 @@ package org.onap.so;
 
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
 import org.onap.so.bpmn.common.DefaultToShortClassNameBeanNameGenerator;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl;
-import org.onap.so.requestsdb.RequestsDBHelper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -35,9 +33,7 @@ import org.springframework.context.annotation.Profile;
 @Profile("test")
 @EnableProcessApplication("MSO CommonBPMN Test Application")
 @ComponentScan(basePackages = {"org.onap.so"}, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class, excludeFilters = {
-		@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class),
-		@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = RequestsDBHelper.class),
-		@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = InfraActiveRequestsRepositoryImpl.class) })
+		@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
 public class TestApplication {
 	public static void main(String... args) {
 		SpringApplication.run(TestApplication.class, args);

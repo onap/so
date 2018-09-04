@@ -36,6 +36,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.bpmn.common.workflow.context.WorkflowContext;
 import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder;
 import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
@@ -110,7 +111,7 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 			@PathParam("processKey") String processKey, VariableMapImpl variableMap){
 		Map<String, Object> inputVariables = getInputVariables(variableMap);	
 		try {		
-			MDC.put(MsoLogger.REQUEST_ID, getRequestId(inputVariables));
+			MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, getRequestId(inputVariables));
 			processor.startProcess(processKey, variableMap);
 			WorkflowResponse response = waitForResponse(getRequestId(inputVariables)); 
 			return Response.status(202).entity(response).build();	

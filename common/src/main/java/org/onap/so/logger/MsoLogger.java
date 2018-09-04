@@ -31,6 +31,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onap.so.entity.MsoRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -291,7 +292,9 @@ public class MsoLogger {
     
     public void recordAuditEvent(Long startTime, StatusCode statusCode, ResponseCode responseCode,
             String responseDesc) {
-    	MDC.put(MsoLogger.PARTNERNAME, "UNKNOWN");
+    	if (StringUtils.isEmpty(MDC.get(MsoLogger.PARTNERNAME))) {
+    		MDC.put(MsoLogger.PARTNERNAME, "UNKNOWN");
+    	}
         prepareAuditMsg(startTime, statusCode, responseCode.getValue(), responseDesc);
         auditLogger.info("");
         MDC.remove(TIMER);

@@ -23,6 +23,7 @@ package org.onap.so.apihandlerinfra;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,11 +49,12 @@ import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.AlarmLoggerInfo;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.beans.RequestProcessingData;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoAlarmLogger;
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.requestsdb.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.GetOrchestrationListResponse;
 import org.onap.so.serviceinstancebeans.GetOrchestrationResponse;
 import org.onap.so.serviceinstancebeans.InstanceReferences;
@@ -97,10 +99,11 @@ public class OrchestrationRequests {
 		GetOrchestrationResponse orchestrationResponse = new GetOrchestrationResponse();
 
 
-		InfraActiveRequests requestDB = null;
-
+		InfraActiveRequests infraActiveRequest = null;
+		List<org.onap.so.db.request.beans.RequestProcessingData> requestProcessingData = null;
 		try {
-			requestDB = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
+			infraActiveRequest = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
+	        requestProcessingData = requestsDbClient.getRequestProcessingDataBySoRequestId(requestId);
 
 		} catch (Exception e) {
 		    msoLogger.error(e);
@@ -115,8 +118,8 @@ public class OrchestrationRequests {
 			throw validateException;
 
 		}
-
-        if(requestDB == null) {
+		
+        if(infraActiveRequest == null) {
 
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).build();
 
@@ -126,8 +129,11 @@ public class OrchestrationRequests {
 
             throw validateException;
         }
-
-        Request request = mapInfraActiveRequestToRequest(requestDB);
+        
+        Request request = mapInfraActiveRequestToRequest(infraActiveRequest);
+        if(!requestProcessingData.isEmpty()){
+            request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
+        }
 		request.setRequestId(requestId);
         orchestrationResponse.setRequest(request);
         
@@ -171,8 +177,12 @@ public class OrchestrationRequests {
 		List<RequestList> requestLists = new ArrayList<>();
 		
 		for(InfraActiveRequests infraActive : activeRequests){
+			List<RequestProcessingData> requestProcessingData = requestsDbClient.getRequestProcessingDataBySoRequestId(infraActive.getRequestId());
 			RequestList requestList = new RequestList();
 			Request request = mapInfraActiveRequestToRequest(infraActive);
+			if(!requestProcessingData.isEmpty()){
+				request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
+	        }
 			requestList.setRequest(request);
 			requestLists.add(requestList);
 		}
@@ -336,5 +346,47 @@ public class OrchestrationRequests {
        request.setRequestStatus(status);
 
        return request;
+   }
+   
+   public List<org.onap.so.serviceinstancebeans.RequestProcessingData> mapRequestProcessingData(List<org.onap.so.db.request.beans.RequestProcessingData> processingData){
+	   List<org.onap.so.serviceinstancebeans.RequestProcessingData> addedRequestProcessingData = new ArrayList<>();
+	   org.onap.so.serviceinstancebeans.RequestProcessingData finalProcessingData = new org.onap.so.serviceinstancebeans.RequestProcessingData();
+	   String currentGroupingId = null;
+	   HashMap<String, String> tempMap = new HashMap<>();
+	   List<HashMap<String, String>> tempList = new ArrayList<>();
+	   for(RequestProcessingData data : processingData){
+		   String groupingId = data.getGroupingId();
+		   String tag = data.getTag();
+		   if(currentGroupingId == null || !currentGroupingId.equals(groupingId)){
+			   if(!tempMap.isEmpty()){
+				   tempList.add(tempMap);
+				   finalProcessingData.setDataPairs(tempList);
+				   addedRequestProcessingData.add(finalProcessingData);
+			   }
+			   finalProcessingData = new org.onap.so.serviceinstancebeans.RequestProcessingData();
+			   if(groupingId != null){
+				   finalProcessingData.setGroupingId(groupingId);
+			   }
+			   if(tag != null){
+				   finalProcessingData.setTag(tag);
+			   }
+			   currentGroupingId = groupingId;
+			   tempMap = new HashMap<>();
+			   tempList = new ArrayList<>();
+			   if(data.getName() != null && data.getValue() != null){
+				   tempMap.put(data.getName(), data.getValue());
+			   }
+		   }else{
+			   if(data.getName() != null && data.getValue() != null){
+				   tempMap.put(data.getName(), data.getValue());
+			   }
+		   }
+	   }
+	   if(tempMap.size() > 0){
+		   tempList.add(tempMap);
+		   finalProcessingData.setDataPairs(tempList);
+	   }
+	   addedRequestProcessingData.add(finalProcessingData);
+	   return addedRequestProcessingData;
    }
  }

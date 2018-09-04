@@ -30,3 +30,9 @@ insert into watchdog_service_mod_ver_id_lookup(distribution_id, service_model_ve
 
 insert into site_status(site_name, status, creation_timestamp) values
 ('testsite', 0, '2017-11-30 15:48:09');
+
+INSERT INTO requestdb.request_processing_data (ID, SO_REQUEST_ID, GROUPING_ID, NAME, VALUE, TAG)
+VALUES
+(1, '00032ab7-na18-42e5-965d-8ea592502018', '7d2e8c07-4d10-456d-bddc-37abf38ca714', 'requestAction', 'assign', 'pincFabricConfigRequest'),
+(2, '00032ab7-na18-42e5-965d-8ea592502018', '7d2e8c07-4d10-456d-bddc-37abf38ca715', 'configurationId', '52234bc0-d6a6-41d4-a901-79015e4877e2', 'pincFabricConfigRequest'),
+(3, '5ffbabd6-b793-4377-a1ab-082670fbc7ac', '5ffbabd6-b793-4377-a1ab-082670fbc7ac', 'configId', '52234bc0-d6a6-41d4-a901-79015e4877e2', 'pincFabricConfig');

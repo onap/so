@@ -44,6 +44,7 @@ public class AAIPServerTest {
 		List<Pserver> list = client.getListOfPservers(json);
 		
 		assertEquals("", list.get(0).getHostname(), "test");
+		assertEquals("", list.size(), 2);
 	}
 	
 	@Test

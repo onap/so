@@ -22,6 +22,9 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,6 +32,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -37,6 +41,7 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
@@ -85,7 +90,16 @@ public class VfModuleCustomization implements Serializable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "VF_MODULE_MODEL_UUID")
 	private VfModule vfModule;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "modelCustomizationUUID")
+	private Set<VnfcCustomization> vnfcCustomization;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "modelCustomizationUUID")
+	private Set<CvnfcCustomization> cvnfcCustomization;
 
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "modelCustomizationUUID")
+	private Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomization;
+	
 	@PrePersist
 	protected void onCreate() {
 		this.created = new Date();
@@ -195,5 +209,38 @@ public class VfModuleCustomization implements Serializable {
 
 	public void setVfModule(VfModule vfModule) {
 		this.vfModule = vfModule;
+	}
+	
+	@LinkedResource
+	public Set<VnfVfmoduleCvnfcConfigurationCustomization> getVnfVfmoduleCvnfcConfigurationCustomization() {
+		if (vnfVfmoduleCvnfcConfigurationCustomization == null)
+			vnfVfmoduleCvnfcConfigurationCustomization = new HashSet<>();
+		return vnfVfmoduleCvnfcConfigurationCustomization;
+	}
+	
+	public void setVnfVfmoduleCvnfcConfigurationCustomization(
+			Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomization) {
+		this.vnfVfmoduleCvnfcConfigurationCustomization = vnfVfmoduleCvnfcConfigurationCustomization;
+	}
+	
+	@LinkedResource
+	public Set<VnfcCustomization> getVnfcCustomization() {
+		return vnfcCustomization;
+	}
+	
+	public void setVnfcCustomization(
+			Set<VnfcCustomization> vnfcCustomization) {
+		this.vnfcCustomization = vnfcCustomization;
+	}
+	
+	@LinkedResource
+	public Set<CvnfcCustomization> getCvnfcCustomization() {
+		if (cvnfcCustomization == null)
+			cvnfcCustomization = new HashSet<>();
+		return cvnfcCustomization;
+	}
+
+	public void setCvnfcCustomization(Set<CvnfcCustomization> cvnfcCustomization) {
+		this.cvnfcCustomization = cvnfcCustomization;
 	}
 }

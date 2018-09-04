@@ -71,7 +71,7 @@ public abstract class RestClient {
 	protected Optional<URI> path;
 	protected String accept;
 	protected String contentType;
-	protected String requestId;
+	protected String requestId = "";
     protected JaxRsClientLogging jaxRsClientLogging;
     protected RestProperties props;
 

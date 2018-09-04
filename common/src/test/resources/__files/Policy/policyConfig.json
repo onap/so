@@ -1,0 +1,20 @@
+[
+	{
+		"policyConfigMessage": "Config Retrieved! ",
+		"policyConfigStatus": "CONFIG_RETRIEVED",
+		"type": "JSON",
+		"config": "{\"configName\":\"Testing\",\"riskLevel\":\"1\",\"policyName\":\"fabric_configuration\",\"policyScope\":\"resource=Test1,service=vSCP,type=configuration,closedLoopControlName=Firewall\",\"guard\":\"False\",\"description\":\"null\",\"priority\":\"9\",\"uuid\":\"1234\",\"version\":\"1.0\",\"content\":{\"fabric-config-models\":[{\"vnfProfile\":\"v5\",\"lagProfile\":\"N1\"}]},\"riskType\":\"test\",\"service\":\"mso-fabric-configuration-model\",\"location\":\" Edge\",\"templateVersion\":\"1607\"}",
+		"policyName": "MSO_Policy.Config_MS_fabric_configuration_vPE.2.xml",
+		"policyType": "MicroService",
+		"policyVersion": "2",
+		"matchingConditions": {
+			"ECOMPName": "MSO",
+			"ONAPName": "MSO",
+			"service": "mso-fabric-configuration-model"
+		},
+		"responseAttributes": {
+			
+		},
+		"property": null
+	}
+]
