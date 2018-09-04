@@ -28,6 +28,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -94,7 +95,7 @@ public class VfModule implements Serializable {
 	@OneToMany(mappedBy = "vfModule")
 	private List<VfModuleCustomization> vfModuleCustomization;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "VNF_RESOURCE_MODEL_UUID")
 	private VnfResource vnfResources;
 

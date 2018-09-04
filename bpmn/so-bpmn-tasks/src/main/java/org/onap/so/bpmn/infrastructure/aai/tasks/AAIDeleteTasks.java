@@ -23,6 +23,7 @@ package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -31,6 +32,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAINetworkResources;
 import org.onap.so.client.orchestration.AAIServiceInstanceResources;
 import org.onap.so.client.orchestration.AAIVfModuleResources;
@@ -56,6 +58,8 @@ public class AAIDeleteTasks {
 	private AAINetworkResources aaiNetworkResources;
 	@Autowired
 	private AAIVolumeGroupResources aaiVolumeGroupResources;
+	@Autowired
+	private AAIConfigurationResources aaiConfigurationResources;
 	
 	public void deleteVfModule(BuildingBlockExecution execution) throws Exception {		
 		GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
@@ -129,6 +133,14 @@ public class AAIDeleteTasks {
 			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
 			CloudRegion cloudRegion = execution.getGeneralBuildingBlock().getCloudRegion();
 			aaiVolumeGroupResources.deleteVolumeGroup(volumeGroup, cloudRegion);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	public void deleteConfiguration(BuildingBlockExecution execution) {
+		try {
+			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
+			aaiConfigurationResources.deleteConfiguration(configuration);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}

@@ -12,6 +12,7 @@ mso:
       endpoint: http://localhost:8081
   site-name: localDevEnv
   logPath: logs
+        
 # H2
 spring:
   datasource:

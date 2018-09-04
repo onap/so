@@ -24,8 +24,9 @@ import java.sql.Timestamp;
 
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.requestsdb.client.RequestsDbClient;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,6 +38,7 @@ public class RequestsDBHelper {
 	private String methodName = "";
 	private String classMethodMessage = "";
 	@Autowired
+	@Qualifier("RequestsDbClient")
 	private RequestsDbClient requestsDbClient;
 	/**
 	 * This util method is to update the InfraRequest table to Complete

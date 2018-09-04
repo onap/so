@@ -23,7 +23,9 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -67,6 +69,10 @@ public class VnfResourceCustomization implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date created;
 
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
 	@Column(name = "MIN_INSTANCES")
 	private Integer minInstances;
 
@@ -101,6 +107,12 @@ public class VnfResourceCustomization implements Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "vnfResourceCust")
 	private List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizations;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "modelCustomizationUUID")
+	private Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomization;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "modelCustomizationUUID")
+	private List<CvnfcCustomization> cvnfcCustomization;
 
 	@Override
 	public String toString() {
@@ -249,5 +261,26 @@ public class VnfResourceCustomization implements Serializable {
 	public void setVnfcInstanceGroupCustomizations(
 			List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizations) {
 		this.vnfcInstanceGroupCustomizations = vnfcInstanceGroupCustomizations;
+	}
+	
+	@LinkedResource
+	public Set<VnfVfmoduleCvnfcConfigurationCustomization> getVnfVfmoduleCvnfcConfigurationCustomization() {
+		if (vnfVfmoduleCvnfcConfigurationCustomization == null)
+			vnfVfmoduleCvnfcConfigurationCustomization = new HashSet<>();
+		return vnfVfmoduleCvnfcConfigurationCustomization;
+	}
+	
+	public void setVnfVfmoduleCvnfcConfigurationCustomization(
+			Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomization) {
+		this.vnfVfmoduleCvnfcConfigurationCustomization = vnfVfmoduleCvnfcConfigurationCustomization;
+	}
+	
+	@LinkedResource
+	public List<CvnfcCustomization> getCvnfcCustomization() {
+		return cvnfcCustomization;
+	}
+
+	public void setCvnfcCustomization(List<CvnfcCustomization> cvnfcCustomization) {
+		this.cvnfcCustomization = cvnfcCustomization;
 	}
 }

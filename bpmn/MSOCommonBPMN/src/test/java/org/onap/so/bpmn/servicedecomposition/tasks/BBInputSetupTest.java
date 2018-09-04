@@ -66,6 +66,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
@@ -1074,28 +1075,32 @@ public class BBInputSetupTest {
 		Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 		lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "configurationId");
 		String bbName = AssignFlows.FABRIC_CONFIGURATION.toString();
+		ConfigurationResourceKeys configResourceKeys = new ConfigurationResourceKeys();
+		configResourceKeys.setCvnfcCustomizationUUID("cvnfcCustomizationUUID");
+		configResourceKeys.setVfModuleCustomizationUUID("vfModuleCustomizationUUID");
+		configResourceKeys.setVnfResourceCustomizationUUID("vnfResourceCustomizationUUID");
 
-		doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration, modelInfo, service);
+		doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration, modelInfo, service, configResourceKeys);
 
 		SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-				instanceName);
-		verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration, modelInfo, service);
+				instanceName, configResourceKeys);
+		verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration, modelInfo, service, configResourceKeys);
 		
 		lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, null);
 
 		SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-				instanceName);
-		verify(SPY_bbInputSetup, times(2)).mapCatalogConfiguration(configuration, modelInfo, service);
+				instanceName, configResourceKeys);
+		verify(SPY_bbInputSetup, times(2)).mapCatalogConfiguration(configuration, modelInfo, service, configResourceKeys);
 
 		instanceName = "configurationName2";
 		resourceId = "resourceId2";
 		lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "configurationId2");
 		Configuration configuration2 = SPY_bbInputSetup.createConfiguration(lookupKeyMap, instanceName, resourceId);
 		doReturn(configuration2).when(SPY_bbInputSetup).createConfiguration(lookupKeyMap, instanceName, resourceId);
-		doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration2, modelInfo, service);
+		doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration2, modelInfo, service, configResourceKeys);
 		SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-				instanceName);
-		verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration2, modelInfo, service);
+				instanceName, configResourceKeys);
+		verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration2, modelInfo, service, configResourceKeys);
 	}
 
 	@Test
@@ -1666,6 +1671,12 @@ public class BBInputSetupTest {
 		String vnfType = "vnfType";
 		Service service = Mockito.mock(Service.class);
 		String requestAction = "createInstance";
+
+		ConfigurationResourceKeys configResourceKeys = new ConfigurationResourceKeys();
+		configResourceKeys.setCvnfcCustomizationUUID("cvnfcCustomizationUUID");
+		configResourceKeys.setVfModuleCustomizationUUID("vfModuleCustomizationUUID");
+		configResourceKeys.setVnfResourceCustomizationUUID("vnfResourceCustomizationUUID");
+		executeBB.setConfigurationResourceKeys(configResourceKeys);
 		doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
 				requestAction, resourceId);
 		doReturn(request).when(SPY_bbInputSetupUtils).getInfraActiveRequest(executeBB.getRequestId());
@@ -1714,13 +1725,13 @@ public class BBInputSetupTest {
 		doReturn(configurationCustList).when(service).getConfigurationCustomizations();
 		configurationCustList.add(configurationCust);
 		doNothing().when(SPY_bbInputSetup).populateConfiguration(isA(ModelInfo.class), isA(Service.class), 
-				any(String.class), isA(ServiceInstance.class), any(), any(String.class), any(String.class));
+				any(String.class), isA(ServiceInstance.class), any(), any(String.class), any(String.class), isA(ConfigurationResourceKeys.class));
 		
 		executeBB.getBuildingBlock().setBpmnFlowName("AssignFabricConfigurationBB");
 		executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
 		SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
 		verify(SPY_bbInputSetup, times(1)).populateConfiguration(isA(ModelInfo.class), isA(Service.class), 
-				any(String.class), isA(ServiceInstance.class), any(), any(String.class), any(String.class));
+				any(String.class), isA(ServiceInstance.class), any(), any(String.class), any(String.class), isA(ConfigurationResourceKeys.class));
 	}
 	
 	@Test
@@ -1998,6 +2009,13 @@ public class BBInputSetupTest {
 		lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, "volumeGroupId");
 		lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "serviceInstanceId");
 		lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "configurationId");
+
+		ConfigurationResourceKeys configResourceKeys = new ConfigurationResourceKeys();
+		configResourceKeys.setCvnfcCustomizationUUID("cvnfcCustomizationUUID");
+		configResourceKeys.setVfModuleCustomizationUUID("vfModuleCustomizationUUID");
+		configResourceKeys.setVnfResourceCustomizationUUID("vnfResourceCustomizationUUID");
+		executeBB.setConfigurationResourceKeys(configResourceKeys);
+		
 		String resourceId = "123";
 		String vnfType = "vnfType";
 		Service service = Mockito.mock(Service.class);
@@ -2037,6 +2055,7 @@ public class BBInputSetupTest {
 				executeBB.getBuildingBlock().getBpmnFlowName(), "ab153b6e-c364-44c0-bef6-1f2982117f04", gBB, service);
 		executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.FABRIC_CONFIGURATION.toString());
 		executeBB.getBuildingBlock().setKey("modelCustId");
+		doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(isA(Configuration.class), isA(ModelInfo.class), isA(Service.class), isA(ConfigurationResourceKeys.class));
 		SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
 		verify(SPY_bbInputSetup, times(1)).getGBBMacroNoUserParamsCreate(executeBB, lookupKeyMap,
 				executeBB.getBuildingBlock().getBpmnFlowName(), "modelCustId", gBB, service);
@@ -2167,6 +2186,12 @@ public class BBInputSetupTest {
 		cloudConfiguration.setLcpCloudRegionId("cloudRegionId");
 		String requestAction = "unassignInstance";
 
+		ConfigurationResourceKeys configResourceKeys = new ConfigurationResourceKeys();
+		configResourceKeys.setCvnfcCustomizationUUID("cvnfcCustomizationUUID");
+		configResourceKeys.setVfModuleCustomizationUUID("vfModuleCustomizationUUID");
+		configResourceKeys.setVnfResourceCustomizationUUID("vnfResourceCustomizationUUID");
+		executeBB.setConfigurationResourceKeys(configResourceKeys);
+		
 		L3Network network = new L3Network();
 		network.setNetworkId("networkId");
 		gBB.getServiceInstance().getNetworks().add(network);
@@ -2241,13 +2266,14 @@ public class BBInputSetupTest {
 		org.onap.aai.domain.yang.Configuration aaiConfiguration = new org.onap.aai.domain.yang.Configuration();
 		aaiConfiguration.setModelCustomizationId("modelCustId");
 		doReturn(aaiConfiguration).when(SPY_bbInputSetupUtils).getAAIConfiguration(configuration.getConfigurationId());
+		doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(isA(Configuration.class), isA(ModelInfo.class), isA(Service.class), isA(ConfigurationResourceKeys.class));
 		
 		executeBB.getBuildingBlock().setBpmnFlowName("ActivateFabricConfigurationBB");
 		executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
 		SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap,
 				executeBB.getBuildingBlock().getBpmnFlowName(), gBB, service, requestAction, cloudConfiguration);
 		verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(any(Configuration.class), any(ModelInfo.class),
-				any(Service.class));
+				any(Service.class), isA(ConfigurationResourceKeys.class));
 	}
 
 	@Test

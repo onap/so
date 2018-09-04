@@ -768,7 +768,7 @@ public class ASDCController {
     }
     
     private static final String UNKNOWN="Unknown";
-
+    
     /**
      * @return the address of the ASDC we are connected to.
      */

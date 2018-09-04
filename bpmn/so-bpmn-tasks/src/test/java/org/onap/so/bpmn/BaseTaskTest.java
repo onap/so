@@ -28,8 +28,8 @@ import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
 import org.onap.so.client.appc.ApplicationControllerAction;
-import org.onap.so.client.db.request.RequestsDbClient;
 import org.onap.so.client.orchestration.AAICollectionResources;
+import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAIInstanceGroupResources;
 import org.onap.so.client.orchestration.AAINetworkResources;
 import org.onap.so.client.orchestration.AAIServiceInstanceResources;
@@ -46,6 +46,8 @@ import org.onap.so.client.orchestration.VnfAdapterVfModuleResources;
 import org.onap.so.client.orchestration.VnfAdapterVolumeGroupResources;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.db.request.client.RequestsDbClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -111,6 +113,7 @@ public abstract class BaseTaskTest extends TestDataSetup {
 	protected CatalogDbClient catalogDbClient;
 	
 	@MockBean
+	@Qualifier("RequestsDbClient")
 	protected RequestsDbClient requestsDbClient;
 	
 	@Mock
@@ -118,10 +121,13 @@ public abstract class BaseTaskTest extends TestDataSetup {
 	
 	@Mock
 	protected BBInputSetup bbInputSetup;
-
+	
 	@SpyBean
 	protected SDNCClient SPY_sdncClient;
 	
 	@MockBean
 	protected ApplicationControllerAction appCClient;
+
+	@MockBean
+	protected AAIConfigurationResources aaiConfigurationResources;
 }

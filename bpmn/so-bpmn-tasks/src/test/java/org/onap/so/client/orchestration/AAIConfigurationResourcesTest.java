@@ -177,4 +177,13 @@ public class AAIConfigurationResourcesTest extends TestDataSetup{
         aaiConfigurationResources.deleteConfiguration("configurationId");
         verify(MOCK_aaiResourcesClient, times(1)).delete(aaiResourceUri);
     }
+    
+    @Test
+	public void updateOrchestrationStatusConfigurationTest() throws Exception {
+		configuration.setOrchestrationStatus(OrchestrationStatus.ACTIVE);
+		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Configuration.class));
+		aaiConfigurationResources.updateOrchestrationStatusConfiguration(configuration,OrchestrationStatus.ACTIVE);		
+		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.Configuration.class));
+		assertEquals(OrchestrationStatus.ACTIVE, configuration.getOrchestrationStatus());
+	}
 }
