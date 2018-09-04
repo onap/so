@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,21 +37,26 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.L3Network;
+import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
-import org.onap.so.db.catalog.beans.InstanceGroup;
+import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -103,6 +109,8 @@ public class WorkflowAction {
 	private ExceptionBuilder exceptionBuilder;
 	@Autowired
 	private CatalogDbClient catalogDbClient;
+	@Autowired
+	private AAIConfigurationResources aaiConfigurationResources;
 
 	public void setBbInputSetupUtils(BBInputSetupUtils bbInputSetupUtils) {
 		this.bbInputSetupUtils = bbInputSetupUtils;
@@ -125,7 +133,6 @@ public class WorkflowAction {
 		WorkflowResourceIds workflowResourceIds = populateResourceIdsFromApiHandler(execution);
 		List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
 		List<Resource> resourceCounter = new ArrayList<>();
-		
 		execution.setVariable("sentSyncResponse", false);
 		execution.setVariable("homing", false);
 		execution.setVariable("calledHoming", false);
@@ -212,7 +219,8 @@ public class WorkflowAction {
 				} else if (resourceType == WorkflowType.SERVICE
 						&& (requestAction.equalsIgnoreCase("activateInstance")
 								|| requestAction.equalsIgnoreCase("unassignInstance")
-								|| requestAction.equalsIgnoreCase("deleteInstance"))) {
+								|| requestAction.equalsIgnoreCase("deleteInstance")
+								|| requestAction.equalsIgnoreCase("activateFabricConfiguration"))) {
 					// SERVICE-MACRO-ACTIVATE, SERVICE-MACRO-UNASSIGN, and
 					// SERVICE-MACRO-DELETE
 					// Will never get user params with service, macro will have
@@ -230,7 +238,7 @@ public class WorkflowAction {
 					foundObjects = foundObjects + type + " - " + resourceCounter.stream().filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList()).size() + "    ";
 				}
 				msoLogger.info("Found " + foundObjects);
-			
+
 				if (orchFlows == null || orchFlows.isEmpty()) {
 					orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte);
 				}
@@ -267,7 +275,6 @@ public class WorkflowAction {
 			execution.setVariable("flowsToExecute", flowsToExecute);
 
 		} catch (Exception ex) {
-			msoLogger.error(ex);
 			buildAndThrowException(execution, "Exception in create execution list " + ex.getMessage(), ex);
 		}
 	}
@@ -278,7 +285,7 @@ public class WorkflowAction {
 			if(resource.isBaseVfModule()){
 				Collections.swap(vfModuleResources, 0, count);
 				break;
-			}
+		}
 			count++;
 		}
 		return vfModuleResources;
@@ -294,7 +301,7 @@ public class WorkflowAction {
 			List<Resource> resources = resourceCounter.stream().filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList());
 			for(int i = 0; i < resources.size(); i++){
 				updateWorkflowResourceIds(flowsToExecute, type, resources.get(i).getResourceId(), retrieveAAIResourceId(aaiResourceIds,type), null);
-			}
+		}
 		});
 	}
 
@@ -317,7 +324,7 @@ public class WorkflowAction {
 						.collect(Collectors.toList()).get(i);
 				updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(), null, resource.getVirtualLinkKey());			}
 		});
-	}
+	}	
 	
 	protected void updateWorkflowResourceIds(List<ExecuteBuildingBlock> flowsToExecute, WorkflowType resource, String key, String id, String virtualLinkKey){
 		String resourceId = id;
@@ -337,6 +344,8 @@ public class WorkflowAction {
 					workflowResourceIds.setNetworkId(resourceId);
 				}else if(resource == WorkflowType.NETWORKCOLLECTION){
 					workflowResourceIds.setNetworkCollectionId(resourceId);
+				}else if(resource == WorkflowType.CONFIGURATION){
+					workflowResourceIds.setConfigurationId(resourceId);
 				}
 				ebb.setWorkflowResourceIds(workflowResourceIds);
 			}
@@ -389,7 +398,7 @@ public class WorkflowAction {
 								String toscaNodeType = collectionResourceCustomization.getCollectionResource().getInstanceGroup().getToscaNodeType();
 								if (toscaNodeType != null && toscaNodeType.contains("NetworkCollection")) {
 									int minNetworks = 0;
-									InstanceGroup instanceGroup = collectionResourceCustomization.getCollectionResource().getInstanceGroup();
+									org.onap.so.db.catalog.beans.InstanceGroup instanceGroup = collectionResourceCustomization.getCollectionResource().getInstanceGroup();
 									CollectionResourceInstanceGroupCustomization collectionInstCust = null;
 									if(!instanceGroup.getCollectionInstanceGroupCustomizations().isEmpty()) {
 										for(CollectionResourceInstanceGroupCustomization collectionInstanceGroupTemp : instanceGroup.getCollectionInstanceGroupCustomizations()) {
@@ -418,14 +427,14 @@ public class WorkflowAction {
 										}
 									}
 								} else {
-										msoLogger.debug("Instance Group tosca node type does not contain NetworkCollection: " + toscaNodeType);
+									msoLogger.debug("Instance Group tosca node type does not contain NetworkCollection: " + toscaNodeType);
+								}
+							}else{
+								msoLogger.debug("No Instance Group found for network collection.");
 							}
 						}else{
-								msoLogger.debug("No Instance Group found for network collection.");
+							msoLogger.debug("No Network Collection found. collectionResource is null");
 						}
-					}else{
-						msoLogger.debug("No Network Collection found. collectionResource is null");
-					}
 					} else {
 						msoLogger.debug("No Network Collection Customization found");
 					}
@@ -484,6 +493,20 @@ public class WorkflowAction {
 				aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.NETWORKCOLLECTION, serviceInstanceMSO.getCollection().getId()));
 				resourceCounter.add(new Resource(WorkflowType.NETWORKCOLLECTION,serviceInstanceMSO.getCollection().getId(),false));
 			}
+			if (serviceInstanceMSO.getConfigurations() !=null) {
+				for(Configuration config : serviceInstanceMSO.getConfigurations()){
+					Optional<org.onap.aai.domain.yang.Configuration> aaiConfig = aaiConfigurationResources.getConfiguration(config.getConfigurationId());
+					if(aaiConfig.isPresent() && aaiConfig.get().getRelationshipList()!=null){
+						for(Relationship relationship : aaiConfig.get().getRelationshipList().getRelationship()){
+							if(relationship.getRelatedTo().contains("vnfc")){
+								aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION, config.getConfigurationId()));
+								resourceCounter.add(new Resource(WorkflowType.CONFIGURATION,config.getConfigurationId(),false));
+								break;
+							}
+						}
+					}
+				}
+			}
 		} catch (Exception ex) {
 			buildAndThrowException(execution,
 					"Could not find existing Service Instance or related Instances to execute the request on.");
@@ -495,6 +518,8 @@ public class WorkflowAction {
 			throws IOException {
 		boolean foundRelated = false;
 		boolean foundVfModuleOrVG = false;
+		String vnfCustomizationUUID = "";
+		String vfModuleCustomizationUUID = "";
 		if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
 			List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters().getUserParams();
 			for (Map<String, Object> params : userParams) {
@@ -507,18 +532,23 @@ public class WorkflowAction {
 						for (Vnfs vnf : validate.getResources().getVnfs()) {
 							resourceCounter.add(new Resource(WorkflowType.VNF,vnf.getModelInfo().getModelCustomizationId(),false));
 							foundRelated = true;
+							if(vnf.getModelInfo()!=null && vnf.getModelInfo().getModelCustomizationUuid()!=null){
+								vnfCustomizationUUID = vnf.getModelInfo().getModelCustomizationUuid();
+							}
 							if (vnf.getVfModules() != null) {
 								for (VfModules vfModule : vnf.getVfModules()) {
 									VfModuleCustomization vfModuleCustomization = catalogDbClient
 											.getVfModuleCustomizationByModelCuztomizationUUID(
 													vfModule.getModelInfo().getModelCustomizationUuid());
 									if (vfModuleCustomization != null) {
-										if(vfModuleCustomization.getVfModule()!=null && vfModuleCustomization.getVfModule().getVolumeHeatTemplate()!=null &&vfModuleCustomization.getVolumeHeatEnv() != null) {
+
+										if(vfModuleCustomization.getVfModule() != null && vfModuleCustomization.getVfModule().getVolumeHeatTemplate() != null && vfModuleCustomization.getVolumeHeatEnv() != null) {
 											resourceCounter.add(new Resource(WorkflowType.VOLUMEGROUP,vfModuleCustomization.getModelCustomizationUUID(),false));
 											foundRelated = true;
 											foundVfModuleOrVG = true;
 										}
-										if(vfModuleCustomization.getVfModule()!=null && vfModuleCustomization.getVfModule().getModuleHeatTemplate()!=null && vfModuleCustomization.getHeatEnvironment()!=null){
+
+										if(vfModuleCustomization.getVfModule() != null && vfModuleCustomization.getVfModule().getModuleHeatTemplate() != null && vfModuleCustomization.getHeatEnvironment() != null){
 											foundRelated = true;
 											foundVfModuleOrVG = true;
 											Resource resource = new Resource(WorkflowType.VFMODULE,vfModuleCustomization.getModelCustomizationUUID(),false);
@@ -528,6 +558,15 @@ public class WorkflowAction {
 												resource.setBaseVfModule(false);
 											}
 											resourceCounter.add(resource);
+											if(vfModule.getModelInfo()!=null && vfModule.getModelInfo().getModelCustomizationUuid()!=null){
+												vfModuleCustomizationUUID = vfModule.getModelInfo().getModelCustomizationUuid();
+											}
+											if(!vnfCustomizationUUID.equals("")&&!vfModuleCustomizationUUID.equals("")){
+												List<String> configs = traverseCatalogDbForConfiguration(vnfCustomizationUUID,vfModuleCustomizationUUID);
+												for(String config : configs){
+													resourceCounter.add(new Resource(WorkflowType.CONFIGURATION,config,false));
+												}
+											}
 										}
 										if(!foundVfModuleOrVG){
 											buildAndThrowException(execution, "Could not determine if vfModule was a vfModule or volume group. Heat template and Heat env are null");
@@ -555,6 +594,25 @@ public class WorkflowAction {
 			}
 		}
 		return foundRelated;
+	}
+	
+
+	private List<String> traverseCatalogDbForConfiguration(String vnfCustomizationUUID, String vfModuleCustomizationUUID) {
+		List<String> configurations = new ArrayList<>();
+		try{
+			List<CvnfcCustomization> cvnfcCustomizations = catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(vnfCustomizationUUID, vfModuleCustomizationUUID);
+			for(CvnfcCustomization cvnfc : cvnfcCustomizations){
+				for(VnfVfmoduleCvnfcConfigurationCustomization customization : cvnfc.getVnfVfmoduleCvnfcConfigurationCustomization()){
+					if(customization.getConfigurationResource().getToscaNodeType().contains("FabricConfiguration")){
+						configurations.add(customization.getConfigurationResource().getModelUUID());
+					}
+				}
+			}
+			msoLogger.debug("found " + configurations.size() + " configurations");
+			return configurations;
+		} catch (Exception ex){
+			return configurations;
+		}
 	}
 
 	protected String queryCatalogDBforNetworkCollection(DelegateExecution execution, ServiceInstancesRequest sIRequest) {
@@ -664,7 +722,6 @@ public class WorkflowAction {
 			}
 			return generatedResourceId;
 		} catch (Exception ex) {
-			msoLogger.error(ex);
 			throw new IllegalStateException(
 					"WorkflowAction was unable to verify if the instance name already exist in AAI.");
 		}
@@ -810,7 +867,7 @@ public class WorkflowAction {
 							.collect(Collectors.toList()).get(i).getResourceId(), apiVersion, resourceId,
 							requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, false, null));
 				}
-			} else {
+			}else {
 				flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, "", apiVersion, resourceId,
 						requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, false, null));
 			}
@@ -852,23 +909,23 @@ public class WorkflowAction {
 				buildAndThrowException(execution,"The request: Macro " + resourceName + " " + requestAction + " is not supported by GR_API.");
 			}
 		} else {
-			if(northBoundRequest.getIsToplevelflow()!=null){
-				execution.setVariable(G_ISTOPLEVELFLOW, northBoundRequest.getIsToplevelflow());
-			}
-			List<OrchestrationFlow> flows = northBoundRequest.getOrchestrationFlowList();
-			if (flows == null)
-				flows = new ArrayList<>();
-			for (OrchestrationFlow flow : flows) {
-				if (!flow.getFlowName().contains("BB")) {
-					List<OrchestrationFlow> macroQueryFlows = catalogDbClient
-							.getOrchestrationFlowByAction(flow.getFlowName());
-					for (OrchestrationFlow macroFlow : macroQueryFlows) {
-						listToExecute.add(macroFlow);
-					}
-				} else {
-					listToExecute.add(flow);
+		if(northBoundRequest.getIsToplevelflow()!=null){
+			execution.setVariable(G_ISTOPLEVELFLOW, northBoundRequest.getIsToplevelflow());
+		}
+		List<OrchestrationFlow> flows = northBoundRequest.getOrchestrationFlowList();
+		if (flows == null)
+			flows = new ArrayList<>();
+		for (OrchestrationFlow flow : flows) {
+			if (!flow.getFlowName().contains("BB")) {
+				List<OrchestrationFlow> macroQueryFlows = catalogDbClient
+						.getOrchestrationFlowByAction(flow.getFlowName());
+				for (OrchestrationFlow macroFlow : macroQueryFlows) {
+					listToExecute.add(macroFlow);
 				}
+			} else {
+				listToExecute.add(flow);
 			}
+		}
 		}
 		return listToExecute;
 	}

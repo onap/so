@@ -115,7 +115,7 @@ public class CatalogDBRestTest {
                     ){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INSTANCE_UUID));
-                assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
                 assertEquals("",mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
                 assertEquals("/manage/health",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
@@ -789,8 +789,8 @@ public class CatalogDBRestTest {
 	                logEvent.getMarker().getName().equals("ENTRY")
 	                ){
 	            Map<String,String> mdc = logEvent.getMDCPropertyMap();
-	            assertNotNull(mdc.get(MsoLogger.BEGINTIME));
-	            assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+	            assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
+	            assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
 	            assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));	           
 	            assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
 	            assertEquals("v2/vfModules",mdc.get(MsoLogger.SERVICE_NAME));
@@ -798,9 +798,9 @@ public class CatalogDBRestTest {
 	        }else if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
                     logEvent.getMarker().getName().equals("EXIT")){
 	            Map<String,String> mdc = logEvent.getMDCPropertyMap();
-                assertNotNull(mdc.get(MsoLogger.BEGINTIME));
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
                 assertNotNull(mdc.get(MsoLogger.ENDTIME));
-                assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));
                 assertEquals("500",mdc.get(MsoLogger.RESPONSECODE));
                 assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));

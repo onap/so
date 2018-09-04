@@ -376,7 +376,7 @@ public class MSORequestDBImplTest {
                         ){
                     Map<String,String> mdc = logEvent.getMDCPropertyMap();
                     assertNotNull(mdc.get(ONAPLogConstants.MDCs.INSTANCE_UUID));
-                    assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                    assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                     assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
                     assertEquals("",mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
                     assertEquals("/services/RequestsDbAdapter",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
@@ -499,7 +499,7 @@ public class MSORequestDBImplTest {
                     ){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INSTANCE_UUID));
-                assertNotNull(mdc.get(MsoLogger.REQUEST_ID));
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
                 assertEquals("",mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
                 assertEquals("/services/RequestsDbAdapter",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));

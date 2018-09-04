@@ -34,6 +34,8 @@ public class ModelInfoConfiguration implements Serializable{
 	private String modelVersionId;
 	@JsonProperty("model-customization-id")
 	private String modelCustomizationId;
+	@JsonProperty("policy-name")
+	private String policyName;
 	
 	public String getModelInvariantId() {
 		return modelInvariantId;
@@ -52,5 +54,11 @@ public class ModelInfoConfiguration implements Serializable{
 	}
 	public void setModelCustomizationId(String modelCustomizationId) {
 		this.modelCustomizationId = modelCustomizationId;
+	}
+	public String getPolicyName() {
+		return policyName;
+	}
+	public void setPolicyName(String policyName) {
+		this.policyName = policyName;
 	}
 }

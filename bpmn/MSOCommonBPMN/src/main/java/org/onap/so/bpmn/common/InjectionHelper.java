@@ -21,8 +21,10 @@
 package org.onap.so.bpmn.common;
 
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
+import org.onap.so.client.aai.AAIQueryClient;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.policy.PolicyClientImpl;
 import org.onap.so.client.sdno.SDNOValidator;
 import org.onap.so.client.sdno.SDNOValidatorImpl;
 import org.springframework.stereotype.Component;
@@ -46,6 +48,10 @@ public class InjectionHelper {
 		return new AAIResourcesClient();
 	}
 	
+	public AAIQueryClient getAaiQueryClient() {
+		return new AAIQueryClient();
+	}
+	
 	public SDNOValidator getSdnoValidator() {
 		return new SDNOValidatorImpl();
 	}
@@ -56,5 +62,9 @@ public class InjectionHelper {
 	
 	public AAIResultWrapper getAaiResultWrapper(String json) {
 		return new AAIResultWrapper(json);
+	}
+	
+	public PolicyClientImpl getPolicyClient() {
+		return new PolicyClientImpl();
 	}
 }

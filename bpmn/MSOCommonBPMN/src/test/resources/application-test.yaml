@@ -162,7 +162,7 @@ mso:
   global:
     dmaap:
       username: dmaapUsername
-      password: dmaapPassword
+      password: ZG1hYXBQYXNzd29yZA==
       host: http://localhost:${wiremock.server.port}
       publisher:
         topic: com.att.mso.asyncStatusUpdate

@@ -20,9 +20,10 @@
 
 package org.onap.so.serviceinstancebeans;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
 @JsonInclude(Include.NON_DEFAULT)
@@ -35,6 +36,7 @@ public class Request {
     protected RequestDetails requestDetails;
     protected InstanceReferences instanceReferences;
     protected RequestStatus requestStatus;
+    protected List<RequestProcessingData> requestProcessingData;
     
     
 	public String getRequestId() {
@@ -79,12 +81,19 @@ public class Request {
 	public void setRequestDetails(RequestDetails requestDetails) {
 		this.requestDetails = requestDetails;
 	}
+	public List<RequestProcessingData> getRequestProcessingData() {
+		return requestProcessingData;
+	}
+	public void setRequestProcessingData(List<RequestProcessingData> requestProcessingData) {
+		this.requestProcessingData = requestProcessingData;
+	}
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append("requestId", requestId).append("startTime", startTime)
-				.append("requestScope", requestScope).append("requestType", requestType)
-				.append("requestDetails", requestDetails).append("instanceReferences", instanceReferences)
-				.append("requestStatus", requestStatus).toString();
+		return "Request [requestId=" + requestId + ", startTime=" + startTime 
+				+ ", requestScope=" + requestScope + ", requestType=" + requestType 
+				+ ", requestDetails=" + requestDetails + ", instanceReferences=" + instanceReferences 
+				+ ", requestStatus=" + requestStatus + ", requestProcessingData=" + requestProcessingData + "]";
 	}
+	
 
 }

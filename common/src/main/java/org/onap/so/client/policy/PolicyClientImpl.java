@@ -20,6 +20,7 @@
 
 package org.onap.so.client.policy;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.onap.so.client.RestClient;
@@ -27,10 +28,13 @@ import org.onap.so.client.RestPropertiesLoader;
 import org.onap.so.client.defaultproperties.PolicyRestPropertiesImpl;
 import org.onap.so.client.policy.entities.AllowedTreatments;
 import org.onap.so.client.policy.entities.Bbid;
+import org.onap.so.client.policy.entities.Config;
+import org.onap.so.client.policy.entities.ConfigRequestParameters;
 import org.onap.so.client.policy.entities.DecisionAttributes;
 import org.onap.so.client.policy.entities.DictionaryData;
 import org.onap.so.client.policy.entities.DictionaryItemsRequest;
 import org.onap.so.client.policy.entities.DictionaryJson;
+import org.onap.so.client.policy.entities.PolicyConfig;
 import org.onap.so.client.policy.entities.PolicyDecision;
 import org.onap.so.client.policy.entities.PolicyDecisionRequest;
 import org.onap.so.client.policy.entities.PolicyServiceType;
@@ -38,11 +42,19 @@ import org.onap.so.client.policy.entities.Workstep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 
 public class PolicyClientImpl implements PolicyClient {
 
 	private static Logger logger = LoggerFactory.getLogger(PolicyClientImpl.class);
 	private PolicyRestProperties props;
+	private ObjectMapper mapper = new ObjectMapper();
+	
 	public PolicyClientImpl() {
 		props = RestPropertiesLoader.getInstance().getNewImpl(PolicyRestProperties.class);
 		if (props == null) {
@@ -63,7 +75,7 @@ public class PolicyClientImpl implements PolicyClient {
 	}
 
 	protected PolicyDecision getDecision(DecisionAttributes decisionAttributes) {
-		PolicyRestClient client = new PolicyRestClient(this.props, PolicyServiceType.GET_DECISION);
+		PolicyRestClient client = this.getPolicyRestClient(PolicyServiceType.GET_DECISION);
 		PolicyDecisionRequest decisionRequest = new PolicyDecisionRequest();
 		decisionRequest.setDecisionAttributes(decisionAttributes);
 		decisionRequest.setEcompcomponentName(RestClient.ECOMP_COMPONENT_NAME);
@@ -73,7 +85,7 @@ public class PolicyClientImpl implements PolicyClient {
 	
 	public DictionaryData getAllowedTreatments(String bbID, String workStep)
 	{
-		PolicyRestClient client = new PolicyRestClient(this.props, PolicyServiceType.GET_DICTIONARY_ITEMS);
+		PolicyRestClient client = this.getPolicyRestClient(PolicyServiceType.GET_DICTIONARY_ITEMS);
 		DictionaryItemsRequest dictionaryItemsRequest = new DictionaryItemsRequest();
 		dictionaryItemsRequest.setDictionaryType("Decision");
 		dictionaryItemsRequest.setDictionary("RainyDayTreatments");
@@ -92,5 +104,35 @@ public class PolicyClientImpl implements PolicyClient {
 		logger.error("There is no AllowedTreatments with that specified parameter set");
 		return null;
 	}
-
+	
+	@Override
+	public Config getConfigWithPolicyName(String policyName) {
+		PolicyRestClient client = this.getPolicyRestClient(PolicyServiceType.GET_CONFIG);
+		ConfigRequestParameters configReqParameters = new ConfigRequestParameters();
+		configReqParameters.setPolicyName(policyName);
+		PolicyConfig[] policyConfigList = client.post(configReqParameters, PolicyConfig[].class);
+		PolicyConfig policyConfig = null;
+		if(policyConfigList.length > 1) {
+			logger.debug("Too many configs for policyName: " + policyName);
+			return null;
+		}
+		try {
+			policyConfig = policyConfigList[0];
+			return this.getConfigFromStringJson(policyConfig.getConfig());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			return null;
+		}
+	}
+	
+	protected Config getConfigFromStringJson(String configJson) throws JsonParseException, JsonMappingException, IOException {
+		String unescapedJson = configJson.replaceAll("\\\\", "");
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+		mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false);
+		return mapper.readValue(unescapedJson, Config.class);
+	}
+	
+	protected PolicyRestClient getPolicyRestClient(PolicyServiceType policyServiceType) {
+		return new PolicyRestClient(this.props, policyServiceType);
+	}
 }
