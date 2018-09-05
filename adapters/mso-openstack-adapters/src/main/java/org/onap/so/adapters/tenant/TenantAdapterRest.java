@@ -142,14 +142,7 @@ public class TenantAdapterRest {
                 hrollback);
 		    newTenantId = htenant.value;
 		    tenantRollback = hrollback.value;
-//			TenantAdapterCore TAImpl = new TenantAdapterCore();
-//			newTenantId =  TAImpl.createTenant (req.getCloudSiteId(),
-//												req.getTenantName(),
-//												req.getFailIfExists(),
-//												req.getBackout(),
-//												req.getMetadata(),
-//												req.getMsoRequest(),
-//												tenantRollback);
+
 		}
 		catch (TenantAlreadyExists tae) {
 			LOGGER.debug(EXCEPTION,tae);
@@ -276,9 +269,7 @@ public class TenantAdapterRest {
 		    	metadata
 		    	);
 		    tenant = new MsoTenant(htenant.value, tenantName.value, metadata.value);
-//			TenantAdapterCore TAImpl = new TenantAdapterCore();
-//			MsoRequest msoReq = new MsoRequest();
-//			tenant = TAImpl.queryTenant (cloudSiteId, tenantId, msoReq);
+
 		}
 		catch (TenantException te) {
 			LOGGER.debug(EXCEPTION,te);
@@ -321,7 +312,7 @@ public class TenantAdapterRest {
 		@ApiResponse(code = 500, message = "rollback tenant failed") })	
 	public Response rollbackTenant(
 		@ApiParam(value = "rollback, command action", required = true)
-		@QueryParam("rollback") String action, // WTF?
+		@QueryParam("rollback") String action, 
 		@ApiParam(value = "RollbackTenantRequest", required = true)
 		RollbackTenantRequest req)
 	{
