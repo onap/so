@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0ky0lyw" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+  <bpmn:process id="ConfigurationScaleOutBB" name="ConfigurationScaleOutBB" isExecutable="true">
+    <bpmn:startEvent id="Start_ConfigScaleOutBB" name="Start">
+      <bpmn:outgoing>SequenceFlow_06ab7wm</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="QueryVfModule" name="Query VF Module (SDNC)" camunda:expression="${SDNCQueryTasks.queryVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_06ab7wm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_149xlbu</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_06ab7wm" sourceRef="Start_ConfigScaleOutBB" targetRef="QueryVfModule" />
+    <bpmn:endEvent id="End_ConfigScaleOutBB" name="End">
+      <bpmn:incoming>SequenceFlow_12srn62</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_12srn62" sourceRef="Call-AppC-ConfigScaleOut" targetRef="End_ConfigScaleOutBB" />
+    <bpmn:sequenceFlow id="SequenceFlow_149xlbu" sourceRef="QueryVfModule" targetRef="GetConfigScaleOutParams" />
+    <bpmn:sequenceFlow id="SequenceFlow_1juznaa" sourceRef="GetConfigScaleOutParams" targetRef="Call-AppC-ConfigScaleOut" />
+    <bpmn:serviceTask id="GetConfigScaleOutParams" name="Get Config Scale Out Params" camunda:expression="${ConfigurationScaleOut.setParamsForConfigurationScaleOut(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_149xlbu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1juznaa</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Call-AppC-ConfigScaleOut" name="Call APP-C For&#10;Configuration Scale Out&#10;" camunda:expression="${ConfigurationScaleOut.callAppcClient(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1juznaa</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12srn62</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ConfigurationScaleOutBB">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_ConfigScaleOutBB">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="179" y="145" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1juzqvs_di" bpmnElement="QueryVfModule">
+        <dc:Bounds x="261" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_06ab7wm_di" bpmnElement="SequenceFlow_06ab7wm">
+        <di:waypoint xsi:type="dc:Point" x="209" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="261" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_07e01q3_di" bpmnElement="End_ConfigScaleOutBB">
+        <dc:Bounds x="694" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="702" y="145" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_12srn62_di" bpmnElement="SequenceFlow_12srn62">
+        <di:waypoint xsi:type="dc:Point" x="653" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="694" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_149xlbu_di" bpmnElement="SequenceFlow_149xlbu">
+        <di:waypoint xsi:type="dc:Point" x="361" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="406" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1juznaa_di" bpmnElement="SequenceFlow_1juznaa">
+        <di:waypoint xsi:type="dc:Point" x="506" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="553" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1jq0gvz_di" bpmnElement="GetConfigScaleOutParams">
+        <dc:Bounds x="406" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1778mx4_di" bpmnElement="Call-AppC-ConfigScaleOut">
+        <dc:Bounds x="553" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

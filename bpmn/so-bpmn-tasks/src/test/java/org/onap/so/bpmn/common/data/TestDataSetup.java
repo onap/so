@@ -459,6 +459,7 @@ public class TestDataSetup{
 		genericVnf.setVnfId("testVnfId" + genericVnfCounter);
 		genericVnf.setVnfName("testVnfName" + genericVnfCounter);
 		genericVnf.setVnfType("testVnfType" + genericVnfCounter);
+		genericVnf.setIpv4OamAddress("10.222.22.2");
 		
 		Platform platform = new Platform();
 		platform.setPlatformName("testPlatformName");
