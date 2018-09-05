@@ -15,6 +15,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * Modifications Copyright (C) 2018 IBM.
  * ============LICENSE_END=========================================================
  */
 
@@ -64,8 +65,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class HttpClientConnector implements CloudifyClientConnector {
 
-	public static ObjectMapper DEFAULT_MAPPER;
-	public static ObjectMapper WRAPPED_MAPPER;
+	private static ObjectMapper DEFAULT_MAPPER;
+	private static ObjectMapper WRAPPED_MAPPER;
 	
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, HttpClientConnector.class);
 
