@@ -112,7 +112,7 @@ public class ValetClient {
 			String body = mapper.writeValueAsString(vcr);
 			HttpHeaders headers = generateHeaders(requestId);
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);	
-			LOGGER.debug("valet create req: " + uri.toString() + HEADERS + headers.toString() + BODY + body.toString());
+			LOGGER.debug("valet create req: " + uri.toString() + HEADERS + headers.toString() + BODY + body);
 			
 			response = restTemplate.exchange(uri, HttpMethod.POST, entity, ValetCreateResponse.class);
 			gvr = this.getGVRFromResponse(response);
@@ -140,7 +140,7 @@ public class ValetClient {
 			String body = mapper.writeValueAsString(vur);
 			HttpHeaders headers = generateHeaders(requestId);	
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet update req: " + uri.toString() + HEADERS + headers.toString() + ", body=" + body.toString());
+			LOGGER.debug("valet update req: " + uri.toString() + HEADERS + headers.toString() + ", body=" + body);
 			
 			response = restTemplate.exchange(uri, HttpMethod.PUT, entity, ValetUpdateResponse.class);
 			gvr = this.getGVRFromResponse(response);
@@ -167,7 +167,7 @@ public class ValetClient {
 			String body = mapper.writeValueAsString(vdr);
 			HttpHeaders headers = generateHeaders(requestId);
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet delete req: " + uri.toString() + HEADERS + headers.toString() + ", body=" + body.toString());
+			LOGGER.debug("valet delete req: " + uri.toString() + HEADERS + headers.toString() + ", body=" + body);
 			
 			response = restTemplate.exchange(uri, HttpMethod.DELETE, entity, ValetDeleteResponse.class);
 			gvr = this.getGVRFromResponse(response);
@@ -221,7 +221,7 @@ public class ValetClient {
 			String body = mapper.writeValueAsString(vrr);
 			HttpHeaders headers = generateHeaders(requestId);
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet rollback req: " + uri.toString() + HEADERS + headers.toString() + BODY + body.toString());
+			LOGGER.debug("valet rollback req: " + uri.toString() + HEADERS + headers.toString() + BODY + body);
 			
 			response = restTemplate.exchange(uri, HttpMethod.PUT, entity, ValetRollbackResponse.class);
 			gvr = this.getGVRFromResponse(response);
