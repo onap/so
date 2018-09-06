@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_3385df06",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/openstack/WebSecurityConfigImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-09-06T19:40:43Z",
+      "side": 1,
+      "message": "need ))",
+      "range": {
+        "startLine": 41,
+        "startChar": 76,
+        "endLine": 41,
+        "endChar": 89
+      },
+      "revId": "ac1cad3c7a5eacff134ac7e8c98e25cfe252c5c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
