@@ -362,7 +362,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
         	MsoLogger.setServiceName (serviceName);
-            LOGGER.debug ("Got a NetworkException on createNetwork: ", e);
+            LOGGER.debug (NETWORK_EXCEPTION_MSG, e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
             try {
@@ -449,7 +449,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
         	MsoLogger.setServiceName (serviceName);
-            LOGGER.debug ("Got a NetworkException on createNetwork: ", e);
+            LOGGER.debug (NETWORK_EXCEPTION_MSG, e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
             try {
