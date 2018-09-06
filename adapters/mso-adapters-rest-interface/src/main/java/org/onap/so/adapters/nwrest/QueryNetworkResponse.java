@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.NetworkStatus;
 import org.onap.so.openstack.beans.RouteTarget;
 
