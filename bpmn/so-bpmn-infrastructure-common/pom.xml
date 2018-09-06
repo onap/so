@@ -317,5 +317,11 @@
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.camunda.bpm.springboot</groupId>
+            <artifactId>camunda-bpm-spring-boot-starter-test</artifactId>
+            <version>2.3.0</version>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 </project>
