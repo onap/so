@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -110,7 +112,7 @@ public class CamundaClient extends RequestClient{
 	public HttpResponse post(RequestClientParameter parameterObject)
 					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
-		msoLogger.debug("Camunda url is: "+ url);
+		msoLogger.debug(CAMUNDA_URL_MESAGE+ url);
 		String jsonReq = wrapVIDRequest(parameterObject.getRequestId(), parameterObject.isBaseVfModule(), parameterObject.getRecipeTimeout(), parameterObject.getRequestAction(),
 				parameterObject.getServiceInstanceId(), parameterObject.getCorrelationId(), parameterObject.getVnfId(), parameterObject.getVfModuleId(), parameterObject.getVolumeGroupId(), parameterObject.getNetworkId(), parameterObject.getConfigurationId(),
 				parameterObject.getServiceType(), parameterObject.getVnfType(), parameterObject.getVfModuleType(), parameterObject.getNetworkType(), parameterObject.getRequestDetails(), parameterObject.getApiVersion(), parameterObject.isaLaCarte(), parameterObject.getRequestUri(), parameterObject.getRecipeParamXsd());
