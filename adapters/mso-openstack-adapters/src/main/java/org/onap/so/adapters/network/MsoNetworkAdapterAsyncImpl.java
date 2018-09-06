@@ -196,9 +196,9 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                                   copyCreateSubnetIdMap (subnetIdMap),
                                                   copyNrb (networkRollback));
         } catch (Exception e) {
-            error = "Error sending createNetwork notification " + e.getMessage ();
-            LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception sending createNetwork notification", e);
-            alarmLogger.sendAlarm ("MsoInternalError", MsoAlarmLogger.CRITICAL, error);
+            error = CREATE_NETWORK_ERROR_MSG + e.getMessage ();
+            LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, CREATE_NETWORK_EXCEPTON_MSG, e);
+            alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
         }
         return;
     }
