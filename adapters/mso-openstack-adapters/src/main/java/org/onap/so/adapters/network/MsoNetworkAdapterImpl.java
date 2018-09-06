@@ -104,7 +104,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     @Autowired
     private MsoCommonUtils commonUtils;
     
-    @Autowired
+    @Autowired 	
     private NetworkResourceCustomizationRepository  networkCustomRepo;
     
     @Autowired
@@ -259,7 +259,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                Holder <Map <String, String>> subnetIdMap,
                                Holder <NetworkRollback> rollback) throws NetworkException {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName ("CreateNetwork");
+        MsoLogger.setServiceName (CREATE_NETWORK_CONTEXT);
 
         LOGGER.debug ("*** CREATE Network: " + networkName
                       + " of type "
@@ -766,7 +766,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                Holder <Map <String, String>> subnetIdMap,
                                Holder <NetworkRollback> rollback) throws NetworkException {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName ("UpdateNetwork");
+        MsoLogger.setServiceName (UPDATE_NETWORK_CONTEXT);
         LOGGER.debug ("***UPDATE Network adapter with Network: " + networkName
                 + " of type "
                 + networkType
