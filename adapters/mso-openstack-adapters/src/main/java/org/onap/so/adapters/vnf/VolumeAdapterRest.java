@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -81,7 +83,9 @@ import io.swagger.annotations.ApiResponses;
 public class VolumeAdapterRest {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, VolumeAdapterRest.class);
 	private static final String TESTING_KEYWORD = "___TESTING___";
-	
+	private static final String EXCEPTION="Exception :";
+	private static final String RESP=", resp=";
+	private static final String VOLUME_GROUPID_IN_URL_DOESNT_MATCH_CONTENT="VolumeGroupId in URL does not match content";
 	@Autowired
 	private MsoVnfAdapterImpl vnfAdapter;
 
@@ -225,7 +229,7 @@ public class VolumeAdapterRest {
 						rb,
 						req.getMessageId());
 			} catch (VnfException e) {
-				LOGGER.debug("Exception :",e);
+				LOGGER.debug(EXCEPTION,e);
 				eresp = new VolumeGroupExceptionResponse(
 					e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
@@ -234,7 +238,7 @@ public class VolumeAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("CreateVFModule VolumesTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug ("CreateVFModule VolumesTask exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 	}
 
@@ -261,7 +265,7 @@ public class VolumeAdapterRest {
 			return Response
 				.status(HttpStatus.SC_BAD_REQUEST)
 				.type(MediaType.TEXT_PLAIN)
-				.entity("VolumeGroupId in URL does not match content")
+				.entity(VOLUME_GROUPID_IN_URL_DOESNT_MATCH_CONTENT)
 				.build();
 		}
 		DeleteVNFVolumesTask task = new DeleteVNFVolumesTask(req);
@@ -322,7 +326,7 @@ public class VolumeAdapterRest {
 				}
 				response = new DeleteVolumeGroupResponse(true, req.getMessageId());
 			} catch (VnfException e) {
-				LOGGER.debug("Exception :",e);
+				LOGGER.debug(EXCEPTION,e);
 				eresp = new VolumeGroupExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -330,7 +334,7 @@ public class VolumeAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("DeleteVNFVolumesTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug("DeleteVNFVolumesTask exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 	}
 
@@ -357,7 +361,7 @@ public class VolumeAdapterRest {
 			return Response
 				.status(HttpStatus.SC_BAD_REQUEST)
 				.type(MediaType.TEXT_PLAIN)
-				.entity("VolumeGroupId in URL does not match content")
+				.entity(VOLUME_GROUPID_IN_URL_DOESNT_MATCH_CONTENT)
 				.build();
 		}
 		RollbackVNFVolumesTask task = new RollbackVNFVolumesTask(req);
@@ -420,7 +424,7 @@ public class VolumeAdapterRest {
 				vnfAdapter.rollbackVnf(vrb);
 				response = new RollbackVolumeGroupResponse(true, req.getMessageId());
 			} catch (VnfException e) {
-				LOGGER.debug("Exception :",e);
+				LOGGER.debug(EXCEPTION,e);
 				eresp = new VolumeGroupExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -428,7 +432,7 @@ public class VolumeAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("DeleteVNFVolumesTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug("DeleteVNFVolumesTask exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 
 	}
@@ -456,7 +460,7 @@ public class VolumeAdapterRest {
 			return Response
 				.status(HttpStatus.SC_BAD_REQUEST)
 				.type(MediaType.TEXT_PLAIN)
-				.entity("VolumeGroupId in URL does not match content")
+				.entity(VOLUME_GROUPID_IN_URL_DOESNT_MATCH_CONTENT)
 				.build();
 		}
 		UpdateVNFVolumesTask task = new UpdateVNFVolumesTask(req);
@@ -552,7 +556,7 @@ public class VolumeAdapterRest {
 						req.getVolumeGroupId(), req.getVolumeGroupStackId(),
 						outputs.value, req.getMessageId());
 			} catch (VnfException e) {
-				LOGGER.debug("Exception :",e);
+				LOGGER.debug(EXCEPTION,e);
 				eresp = new VolumeGroupExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -560,7 +564,7 @@ public class VolumeAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("UpdateVNFVolumesTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug("UpdateVNFVolumesTask exit: code=" + getStatusCode() + RESP+ getResponse());
 		}
 	}
 
