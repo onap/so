@@ -46,9 +46,9 @@ public class HeatRequest implements Serializable {
 	@JsonProperty("environment")
 	private String environment;
 	@JsonProperty("files")
-	private Map<String, Object> files = new HashMap<String, Object>();
+	private Map<String, Object> files = new HashMap<>();
 	@JsonProperty("parameters")
-	private Map<String, Object> parameters = new HashMap<String, Object>();
+	private Map<String, Object> parameters = new HashMap<>();
 	
 	public HeatRequest(String stackName, boolean disableRollback, int timeoutMins, String template, String environment, Map<String, Object> files, Map<String, Object> parameters) {
 		super();
