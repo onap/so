@@ -22,6 +22,30 @@
       "revId": "ac1cad3c7a5eacff134ac7e8c98e25cfe252c5c8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c4170344",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/openstack/WebSecurityConfigImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1089
+      },
+      "writtenOn": "2018-09-07T10:03:03Z",
+      "side": 1,
+      "message": "no need of extra brackets..the indentation is all proper. Please check again.",
+      "parentUuid": "1a76adc5_3385df06",
+      "range": {
+        "startLine": 41,
+        "startChar": 76,
+        "endLine": 41,
+        "endChar": 89
+      },
+      "revId": "ac1cad3c7a5eacff134ac7e8c98e25cfe252c5c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
