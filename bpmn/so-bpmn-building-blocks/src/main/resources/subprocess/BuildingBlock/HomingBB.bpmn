@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0sqfbdm" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+  <bpmn:process id="Process_1" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" />
+    <bpmn:scriptTask id="ScriptTask_00wpefq" name="&#10;Call&#10;Sniro/Oof&#10;" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0e512ez</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0bqlijc</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+if(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")).getVariable("homingService") == "oof"){
+  OofHoming oofHoming = new OofHoming()
+  oofHoming.callOof(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")))
+}else{
+  SniroHomingV2 sniroHoming = new SniroHomingV2()
+  SniroHoming.callSniro(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")))
+}
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:callActivity id="CallActivity_0ch5mmx" name="Receive Async Callback" camunda:modelerTemplate="receiveWorkflowMessage" calledElement="ReceiveWorkflowMessage">
+      <bpmn:extensionElements>
+        <camunda:in source="true" target="isDebugLogEnabled" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="messageType" target="RCVWFMSG_messageType" />
+        <camunda:in source="correlator" target="RCVWFMSG_correlator" />
+        <camunda:in source="timeout" target="RCVWFMSG_timeout" />
+        <camunda:out source="WorkflowResponse" target="asyncCallbackResponse" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0bqlijc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0bwb834</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="ScriptTask_07dzggr" name="&#10;Process Solution&#10;" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0bwb834</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_07704iv</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+if(execution.getVariable("homingService") == "oof"){
+  OofHoming oofHoming = new OofHoming()
+  oofHoming.processHomingSolution(execution)
+}else{
+  SniroHomingV1  sniroHoming = new SniroHomingV1 ()
+  sniroHoming.processHomingSolution(execution)
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:startEvent id="StartEvent_0kkh9bq">
+      <bpmn:outgoing>SequenceFlow_0e512ez</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_14waxjv">
+      <bpmn:incoming>SequenceFlow_07704iv</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0gvu0mx" />
+    </bpmn:endEvent>
+    <bpmn:subProcess id="SubProcess_09tgonl" name="Error Handling Subprocess" triggeredByEvent="true">
+      <bpmn:endEvent id="EndEvent_0gup35z">
+        <bpmn:incoming>SequenceFlow_0klkmw6</bpmn:incoming>
+        <bpmn:terminateEventDefinition id="TerminateEventDefinition_0jwp5nz" />
+      </bpmn:endEvent>
+      <bpmn:startEvent id="StartEvent_0jqo1jy">
+        <bpmn:outgoing>SequenceFlow_0vvbaar</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_0iln8c5" />
+      </bpmn:startEvent>
+      <bpmn:scriptTask id="ScriptTask_0sfk3w6" name="Process Error" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_0vvbaar</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0klkmw6</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processSubflowsBPMNException(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_0klkmw6" sourceRef="ScriptTask_0sfk3w6" targetRef="EndEvent_0gup35z" />
+      <bpmn:sequenceFlow id="SequenceFlow_0vvbaar" sourceRef="StartEvent_0jqo1jy" targetRef="ScriptTask_0sfk3w6" />
+    </bpmn:subProcess>
+    <bpmn:subProcess id="SubProcess_0v0e6pz" name="Java Exception Sub Process" triggeredByEvent="true">
+      <bpmn:scriptTask id="ScriptTask_14itslv" name="Process Error" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_14p60yx</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_13i8yup</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processJavaException(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:startEvent id="StartEvent_10l0vfb">
+        <bpmn:outgoing>SequenceFlow_14p60yx</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_17opjf0" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_0sidfu1">
+        <bpmn:incoming>SequenceFlow_13i8yup</bpmn:incoming>
+        <bpmn:terminateEventDefinition id="TerminateEventDefinition_1tni4ho" />
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_14p60yx" name="" sourceRef="StartEvent_10l0vfb" targetRef="ScriptTask_14itslv" />
+      <bpmn:sequenceFlow id="SequenceFlow_13i8yup" name="" sourceRef="ScriptTask_14itslv" targetRef="EndEvent_0sidfu1" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="SequenceFlow_0e512ez" sourceRef="StartEvent_0kkh9bq" targetRef="ScriptTask_00wpefq" />
+    <bpmn:sequenceFlow id="SequenceFlow_0bqlijc" sourceRef="ScriptTask_00wpefq" targetRef="CallActivity_0ch5mmx" />
+    <bpmn:sequenceFlow id="SequenceFlow_0bwb834" sourceRef="CallActivity_0ch5mmx" targetRef="ScriptTask_07dzggr" />
+    <bpmn:sequenceFlow id="SequenceFlow_07704iv" sourceRef="ScriptTask_07dzggr" targetRef="EndEvent_14waxjv" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_00wpefq_di" bpmnElement="ScriptTask_00wpefq">
+        <dc:Bounds x="263" y="-164" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0ch5mmx_di" bpmnElement="CallActivity_0ch5mmx">
+        <dc:Bounds x="405" y="-164" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_07dzggr_di" bpmnElement="ScriptTask_07dzggr">
+        <dc:Bounds x="547" y="-164" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0kkh9bq_di" bpmnElement="StartEvent_0kkh9bq">
+        <dc:Bounds x="97" y="-142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_14waxjv_di" bpmnElement="EndEvent_14waxjv">
+        <dc:Bounds x="810" y="-142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_09tgonl_di" bpmnElement="SubProcess_09tgonl" isExpanded="true">
+        <dc:Bounds x="202" y="32" width="409" height="168" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_0v0e6pz_di" bpmnElement="SubProcess_0v0e6pz" isExpanded="true">
+        <dc:Bounds x="234" y="215" width="350" height="159" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0e512ez_di" bpmnElement="SequenceFlow_0e512ez">
+        <di:waypoint x="133" y="-124" />
+        <di:waypoint x="263" y="-124" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0bqlijc_di" bpmnElement="SequenceFlow_0bqlijc">
+        <di:waypoint x="363" y="-124" />
+        <di:waypoint x="405" y="-124" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0bwb834_di" bpmnElement="SequenceFlow_0bwb834">
+        <di:waypoint x="505" y="-124" />
+        <di:waypoint x="547" y="-124" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_07704iv_di" bpmnElement="SequenceFlow_07704iv">
+        <di:waypoint x="647" y="-124" />
+        <di:waypoint x="810" y="-124" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0gup35z_di" bpmnElement="EndEvent_0gup35z">
+        <dc:Bounds x="529" y="106" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0jqo1jy_di" bpmnElement="StartEvent_0jqo1jy">
+        <dc:Bounds x="249" y="106" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0sfk3w6_di" bpmnElement="ScriptTask_0sfk3w6">
+        <dc:Bounds x="356" y="84" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_14itslv_di" bpmnElement="ScriptTask_14itslv">
+        <dc:Bounds x="360" y="263" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_10l0vfb_di" bpmnElement="StartEvent_10l0vfb">
+        <dc:Bounds x="268" y="285" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0sidfu1_di" bpmnElement="EndEvent_0sidfu1">
+        <dc:Bounds x="517" y="285" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0klkmw6_di" bpmnElement="SequenceFlow_0klkmw6">
+        <di:waypoint x="456" y="124" />
+        <di:waypoint x="529" y="124" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0vvbaar_di" bpmnElement="SequenceFlow_0vvbaar">
+        <di:waypoint x="285" y="124" />
+        <di:waypoint x="313" y="124" />
+        <di:waypoint x="313" y="124" />
+        <di:waypoint x="356" y="124" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_14p60yx_di" bpmnElement="SequenceFlow_14p60yx">
+        <di:waypoint x="304" y="303" />
+        <di:waypoint x="360" y="303" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_13i8yup_di" bpmnElement="SequenceFlow_13i8yup">
+        <di:waypoint x="460" y="303" />
+        <di:waypoint x="517" y="303" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
