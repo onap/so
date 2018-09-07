@@ -46,6 +46,30 @@
       "revId": "ac1cad3c7a5eacff134ac7e8c98e25cfe252c5c8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_843eeb8a",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/openstack/WebSecurityConfigImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-09-07T11:58:11Z",
+      "side": 1,
+      "message": "It is good. Somehow the bracket was not displaced before.",
+      "parentUuid": "1a76adc5_3385df06",
+      "range": {
+        "startLine": 41,
+        "startChar": 76,
+        "endLine": 41,
+        "endChar": 89
+      },
+      "revId": "ac1cad3c7a5eacff134ac7e8c98e25cfe252c5c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
