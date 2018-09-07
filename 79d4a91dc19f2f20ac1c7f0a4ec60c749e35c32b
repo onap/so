@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_84326b5d",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/ServiceInstances.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-09-07T13:04:02Z",
+      "side": 1,
+      "message": "Could you make it all uppercase as other private static strings, e.g., CONFIGURATION_INSTANCE_ID_CONST, or CONFIGURATION_INSTANCE_ID ?",
+      "range": {
+        "startLine": 112,
+        "startChar": 29,
+        "endLine": 112,
+        "endChar": 57
+      },
+      "revId": "79d4a91dc19f2f20ac1c7f0a4ec60c749e35c32b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
