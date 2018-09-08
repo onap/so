@@ -32,7 +32,7 @@ import org.onap.aai.domain.yang.Customer;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.InstanceGroup;
 import org.onap.aai.domain.yang.L3Network;
-import org.onap.aai.domain.yang.LinesOfBusiness;
+import org.onap.aai.domain.yang.LineOfBusiness;
 import org.onap.aai.domain.yang.ModelVer;
 import org.onap.aai.domain.yang.NetworkPolicy;
 import org.onap.aai.domain.yang.OperationalEnvironment;
@@ -47,9 +47,9 @@ import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.ServiceSubscription;
 import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.TunnelXconnect;
+import org.onap.aai.domain.yang.Vce;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VlanTag;
-import org.onap.aai.domain.yang.Vce;
 import org.onap.aai.domain.yang.Vnfc;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
@@ -80,7 +80,7 @@ public enum AAIObjectType implements GraphInventoryObjectType {
 	SERVICE_SUBSCRIPTION(AAIObjectType.CUSTOMER.uriTemplate(), ServiceSubscription.class),
 	SERVICE_INSTANCE(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), ServiceInstance.class),
 	PROJECT(AAINamespaceConstants.BUSINESS, Project.class),
-	LINE_OF_BUSINESS(AAINamespaceConstants.BUSINESS, LinesOfBusiness.class),
+	LINE_OF_BUSINESS(AAINamespaceConstants.BUSINESS, LineOfBusiness.class),
 	PLATFORM(AAINamespaceConstants.BUSINESS, Platform.class),
 	OWNING_ENTITY(AAINamespaceConstants.BUSINESS, OwningEntity.class),
 	ALLOTTED_RESOURCE(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), AllottedResource.class),

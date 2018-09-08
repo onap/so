@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_EsMs0HcuEeW2U_kkOHX1ZQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.1" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_EsMs0HcuEeW2U_kkOHX1ZQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CompleteMsoProcess" name="CompleteMsoProcess" isExecutable="true">
     <bpmn2:scriptTask id="preProcessRequest" name="Pre-Process Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_18</bpmn2:incoming>
@@ -101,6 +101,7 @@ buildDataErrorMessage.buildDataError(execution, "Complete MSO  -- Update DB stat
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
         <camunda:in variables="all" />
         <camunda:out variables="all" />
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_81</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_13qdn1s</bpmn2:outgoing>

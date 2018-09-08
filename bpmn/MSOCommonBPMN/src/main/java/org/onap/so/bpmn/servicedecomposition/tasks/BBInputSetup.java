@@ -890,7 +890,7 @@ public class BBInputSetup implements JavaDelegate {
 		if (bbName.contains(NETWORK) && !bbName.contains(NETWORK_COLLECTION)) {
 			String networkId = lookupKeyMap.get(ResourceKey.NETWORK_ID);
 			ModelInfo networkModelInfo = new ModelInfo();
-			if(!Boolean.TRUE.equals(executeBB.getBuildingBlock().getIsVirtualLink())) {
+			if((!Boolean.TRUE.equals(executeBB.getBuildingBlock().getIsVirtualLink()))) {
 				NetworkResourceCustomization networkCust = getNetworkCustomizationByKey(key, service);
 				if (networkCust != null) {
 					networkModelInfo.setModelCustomizationUuid(networkCust.getModelCustomizationUUID());
@@ -901,7 +901,13 @@ public class BBInputSetup implements JavaDelegate {
 				}
 			} else {
 				msoLogger.debug("Orchestrating on Collection Network Resource Customization");
-				serviceInstance.getNetworks().add(getVirtualLinkL3Network(lookupKeyMap, bbName, key, networkId));
+				CollectionNetworkResourceCustomization collectionNetworkResourceCust = bbInputSetupUtils.getCatalogCollectionNetworkResourceCustByID(key);
+				L3Network l3Network = getVirtualLinkL3Network(lookupKeyMap, bbName, key, networkId, collectionNetworkResourceCust, serviceInstance);
+				NetworkResourceCustomization networkResourceCustomization = 
+						mapperLayer.mapCollectionNetworkResourceCustToNetworkResourceCust(collectionNetworkResourceCust);
+				if(l3Network != null) {
+					l3Network.setModelInfoNetwork(mapperLayer.mapCatalogNetworkToNetwork(networkResourceCustomization));
+				}
 			}
 		} else if(bbName.contains("Configuration")) {
 			String configurationId = lookupKeyMap.get(ResourceKey.CONFIGURATION_ID);
@@ -917,15 +923,18 @@ public class BBInputSetup implements JavaDelegate {
 	}
 
 	protected L3Network getVirtualLinkL3Network(Map<ResourceKey, String> lookupKeyMap, String bbName, String key,
-			String networkId) {
-		CollectionNetworkResourceCustomization collectionNetworkResourceCust = bbInputSetupUtils.getCatalogCollectionNetworkResourceCustByID(key);
-		if(collectionNetworkResourceCust != null && (bbName.equalsIgnoreCase(AssignFlows.NETWORK_A_LA_CARTE.toString()) 
+			String networkId, CollectionNetworkResourceCustomization collectionNetworkResourceCust, ServiceInstance serviceInstance) {
+		if(collectionNetworkResourceCust != null) {
+			if((bbName.equalsIgnoreCase(AssignFlows.NETWORK_A_LA_CARTE.toString())
 				|| bbName.equalsIgnoreCase(AssignFlows.NETWORK_MACRO.toString()))) {
-			NetworkResourceCustomization networkResourceCustomization = 
-					mapperLayer.mapCollectionNetworkResourceCustToNetworkResourceCust(collectionNetworkResourceCust);
-			L3Network l3Network = createNetwork(lookupKeyMap, null, networkId, null);
-			l3Network.setModelInfoNetwork(mapperLayer.mapCatalogNetworkToNetwork(networkResourceCustomization));
-			return l3Network;
+				serviceInstance.getNetworks().add(createNetwork(lookupKeyMap, null, networkId, null));
+			} else {
+				for (L3Network network : serviceInstance.getNetworks()) {
+					if (network.getNetworkId().equalsIgnoreCase(networkId)) {
+						return network;
+					}
+				}
+			}
 		}
 		return null;
 	}

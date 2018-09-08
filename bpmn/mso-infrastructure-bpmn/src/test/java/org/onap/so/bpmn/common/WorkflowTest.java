@@ -1487,7 +1487,7 @@ public abstract class WorkflowTest {
 					for(Resource resource:resourceList){
 						resourceId = resource.getResourceId();
 					}
-					String homingList = getJsonValue(content, "solutionInfo.placement");
+					String homingList = getJsonValue(content, "solutionInfo.placementInfo");
 					JSONArray placementArr = null;
 					try {
 						placementArr = new JSONArray(homingList);
