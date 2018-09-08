@@ -101,6 +101,7 @@ import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceProxyResourceCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.ServiceProxyResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.TempNetworkHeatTemplateRepository;
 import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
@@ -149,6 +150,9 @@ public class ToscaResourceInstaller {
 	
 	@Autowired
 	protected ServiceProxyResourceCustomizationRepository serviceProxyCustomizationRepo;
+	
+	@Autowired
+	protected ServiceProxyResourceRepository serviceProxyRepo;
 	
 	@Autowired
 	protected CollectionResourceRepository collectionRepo;
@@ -386,32 +390,48 @@ public class ToscaResourceInstaller {
 			}
 		}
 	}
-	
+		
 	protected void processServiceProxyAndConfiguration(ToscaResourceStructure toscaResourceStruct, Service service) {
 		
 		List<NodeTemplate> serviceProxyResourceList = toscaResourceStruct.getSdcCsarHelper().getServiceNodeTemplateBySdcType(SdcTypes.SERVICE_PROXY);
 		
 		List<NodeTemplate> configurationNodeTemplatesList = toscaResourceStruct.getSdcCsarHelper().getServiceNodeTemplateBySdcType(SdcTypes.CONFIGURATION);
 		
+		List<ServiceProxyResourceCustomization> serviceProxyList = new ArrayList<ServiceProxyResourceCustomization>();		
+		List<ConfigurationResourceCustomization> configurationResourceList = new ArrayList<ConfigurationResourceCustomization>();
+		
+		ServiceProxyResourceCustomization serviceProxy = null;
+		
 		if (serviceProxyResourceList != null) {
 			for (NodeTemplate spNode : serviceProxyResourceList) {
-				createServiceProxy(spNode, service, toscaResourceStruct);
-				serviceProxyCustomizationRepo.saveAndFlush(toscaResourceStruct.getCatalogServiceProxyResourceCustomization());	
+				serviceProxy = createServiceProxy(spNode, service, toscaResourceStruct);
+				
+				ServiceProxyResource serviceProxyResource = findExistingServiceProxyResource(serviceProxyList, serviceProxy.getServiceProxyResource().getModelUUID());
+				
+				if(serviceProxyResource == null){
+				
+				serviceProxyList.add(serviceProxy);
 
 				for (NodeTemplate configNode : configurationNodeTemplatesList) {
-					
+										
 						List<RequirementAssignment> requirementsList = toscaResourceStruct.getSdcCsarHelper().getRequirementsOf(configNode).getAll();
 						for (RequirementAssignment requirement :  requirementsList) {
 							if (requirement.getNodeTemplateName().equals(spNode.getName())) {
-								createConfiguration(configNode, toscaResourceStruct, toscaResourceStruct.getCatalogServiceProxyResourceCustomization());
-								configCustomizationRepo.saveAndFlush(toscaResourceStruct.getCatalogConfigurationResourceCustomization());	
+								ConfigurationResourceCustomization configurationResource = createConfiguration(configNode, toscaResourceStruct, serviceProxy);
+																
+								configurationResourceList.add(configurationResource);
 								break;
 							}
 						}
 				}
+				
+				}
 	
 			}
 		}
+		
+		service.setConfigurationCustomizations(configurationResourceList);
+		service.setServiceProxyCustomizations(serviceProxyList);
 	}
 	
 	protected void processNetworkCollections(ToscaResourceStructure toscaResourceStruct, Service service) {
@@ -731,9 +751,6 @@ public class ToscaResourceInstaller {
 		spCustomizationResource.setServiceProxyResource(spResource);
 		serviceProxyCustomizationSet.add(spCustomizationResource);
 
-		
-		spResource.setServiceProxyCustomization(serviceProxyCustomizationSet); 		
-		
 		toscaResourceStructure.setCatalogServiceProxyResource(spResource);
 		
 		toscaResourceStructure.setCatalogServiceProxyResourceCustomization(spCustomizationResource);
@@ -1237,8 +1254,6 @@ public class ToscaResourceInstaller {
 					vnfcCustomizations.add(vnfcCustomization);
 				}
 				
-			}
-			
 			CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
 			cvnfcCustomization.setModelCustomizationUUID(cvfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 			cvnfcCustomization.setModelInstanceName(cvfcTemplate.getName());
@@ -1293,11 +1308,12 @@ public class ToscaResourceInstaller {
 				vnfVfmoduleCvnfcConfigurationCustomizations.add(vnfVfmoduleCvnfcConfigurationCustomization);
 			}
 			
+		   }
+			
 		  }
 			
 		}
 		
-		vfModuleCustomization.setVnfcCustomization(vnfcCustomizations);
 		vfModuleCustomization.setCvnfcCustomization(cvnfcCustomizations);
 		vfModuleCustomization.setVnfVfmoduleCvnfcConfigurationCustomization(vnfVfmoduleCvnfcConfigurationCustomizations);
 		
@@ -1348,6 +1364,20 @@ public class ToscaResourceInstaller {
 			configResource = configRepo.findResourceByModelUUID(modelUUID);
 		
 		return configResource;
+	}
+	
+	protected ServiceProxyResource findExistingServiceProxyResource(List<ServiceProxyResourceCustomization> serviceProxyList, String modelUUID) {
+		ServiceProxyResource serviceProxyResource = null;
+		for(ServiceProxyResourceCustomization serviceProxyResourceCustom : serviceProxyList){
+			if (serviceProxyResourceCustom.getServiceProxyResource() != null
+					&& serviceProxyResourceCustom.getServiceProxyResource().getModelUUID().equals(modelUUID)) {
+				serviceProxyResource = serviceProxyResourceCustom.getServiceProxyResource();
+			}
+		}
+		if(serviceProxyResource==null)
+			serviceProxyResource = serviceProxyRepo.findResourceByModelUUID(modelUUID);
+		
+		return serviceProxyResource;
 	}
 	
 	protected VfModuleCustomization findExistingVfModuleCustomization(VnfResourceCustomization vnfResource,

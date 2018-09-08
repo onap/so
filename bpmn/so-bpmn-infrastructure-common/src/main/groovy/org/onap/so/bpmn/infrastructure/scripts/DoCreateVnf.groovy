@@ -260,7 +260,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 
 			if(resourceClient.exists(uri)){
 				Map<String, String> keys = uri.getURIKeys()
-				execution.setVariable("globalCustomer", keys.get("global-customer-id"))
+				execution.setVariable("globalCustomerId", keys.get("global-customer-id"))
 				execution.setVariable("serviceType", keys.get("service-type"))
 				execution.setVariable("GENGS_siResourceLink", uri.build().toString())
 
