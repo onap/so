@@ -1511,7 +1511,9 @@ public class ServiceInstances {
 			}
 		}else{
 			//ok for version < 3 and action delete
-			recipe = catalogDbClient.getFirstNetworkRecipeByModelNameAndAction(modelName, action.toString());
+			if(modelName != null){
+				recipe = catalogDbClient.getFirstNetworkRecipeByModelNameAndAction(modelName, action.toString());
+			}
 		}
 
 		if(recipe == null){
