@@ -30,8 +30,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+
 import static org.junit.Assert.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,7 +38,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.junit.Rule;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.rules.ExpectedException;
@@ -47,16 +45,12 @@ import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
-import org.onap.so.apihandlerinfra.tenantisolation.helpers.ActivateVnfDBHelper;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Distribution;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.DistributionStatus;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
-import org.onap.so.db.request.data.repository.OperationalEnvDistributionStatusRepository;
-import org.onap.so.db.request.data.repository.OperationalEnvServiceModelStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -66,10 +60,6 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 
 	@Autowired
 	private ActivateVnfStatusOperationalEnvironment activateVnfStatus;
-	@Autowired
-	private InfraActiveRequestsRepository infraActiveRequestsRepository;
-	@Autowired
-	private ActivateVnfDBHelper dbHelper;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -185,10 +175,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 						.withStatus(HttpStatus.SC_OK)));
 		
 		activateVnfStatus.checkOrUpdateOverallStatus(operationalEnvironmentId, requestIdOrig);
-		
-		// do nothing, waiting for more
-		assertNull(infraActiveRequestsRepository.findOne(requestIdOrig));
-	}		
+	}
 	
 	@Test
 	public void executionTest_Ok() throws Exception {

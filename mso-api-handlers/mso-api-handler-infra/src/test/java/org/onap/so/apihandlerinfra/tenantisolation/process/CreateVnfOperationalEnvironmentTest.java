@@ -40,7 +40,6 @@ import org.onap.so.client.aai.objects.AAIOperationalEnvironment;
 import org.onap.so.client.grm.beans.Property;
 import org.onap.so.client.grm.beans.ServiceEndPointList;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
