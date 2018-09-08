@@ -30,7 +30,6 @@ import org.onap.so.apihandlerinfra.Status;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Action;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.TenantIsolationRequest;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

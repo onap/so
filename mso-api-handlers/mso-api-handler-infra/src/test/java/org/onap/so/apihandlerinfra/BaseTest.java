@@ -28,7 +28,6 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.logger.MsoLogger.Catalog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +44,7 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -55,7 +53,7 @@ import java.nio.file.Paths;
 @ActiveProfiles("test")
 @ContextConfiguration
 @Transactional
-@Sql(executionPhase=ExecutionPhase.AFTER_TEST_METHOD,scripts="classpath:InfraActiveRequestsReset.sql")
+//@Sql(executionPhase=ExecutionPhase.AFTER_TEST_METHOD,scripts="classpath:InfraActiveRequestsReset.sql")
 @AutoConfigureWireMock(port = 0)
 public abstract class BaseTest {
 	protected MsoLogger logger = MsoLogger.getMsoLogger(Catalog.GENERAL, BaseTest.class);
@@ -65,18 +63,9 @@ public abstract class BaseTest {
 
 	@Autowired
 	protected Environment env;
-	
-	@Autowired
-	protected InfraActiveRequestsRepository iar;
-	
+
 	@LocalServerPort
 	private int port;
-	
-	protected String readJsonFileAsString(String fileLocation) throws JsonParseException, JsonMappingException, IOException{
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode jsonNode = mapper.readTree(new File(fileLocation));
-		return jsonNode.asText();
-	}
 	
 	protected String createURLWithPort(String uri) {
 		return "http://localhost:" + port + uri;
@@ -84,7 +73,6 @@ public abstract class BaseTest {
 	
 	@After
 	public void tearDown(){
-		iar.deleteAll();
 		WireMock.reset();
 	}
 

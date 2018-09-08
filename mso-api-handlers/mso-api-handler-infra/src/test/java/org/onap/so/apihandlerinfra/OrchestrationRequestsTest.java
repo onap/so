@@ -51,7 +51,6 @@ import org.junit.Test;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.GetOrchestrationListResponse;
 import org.onap.so.serviceinstancebeans.GetOrchestrationResponse;
@@ -73,15 +72,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OrchestrationRequestsTest extends BaseTest {
     @Autowired
-    private InfraActiveRequestsRepository iar;
-
-    @Autowired
     private RequestsDbClient requestsDbClient;
     
     @Autowired 
     private OrchestrationRequests orchReq;
 
-    private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title></title></head><body></body></html>";
     private static final GetOrchestrationListResponse ORCHESTRATION_LIST = generateOrchestrationList();
     private static final String INVALID_REQUEST_ID = "invalid-request-id";
 
@@ -341,7 +336,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         requests.setRequestId("requestId");
         requests.setRequestScope("service");
         requests.setRequestType("createInstance");
-        iar.save(requests);
+//        iar.save(requests);
 
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);

@@ -25,9 +25,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -44,15 +41,8 @@ import static org.junit.Assert.assertTrue;
 
 public class CloudResourcesOrchestrationTest extends BaseTest{
 	
-	@Autowired
-	private InfraActiveRequestsRepository iarRepo;
 	private String requestJSON = "{\"requestDetails\":{\"requestInfo\":{\"source\":\"VID\",\"requestorId\":\"xxxxxx\" } } }";
 	private static final String path = "/onap/so/infra/cloudResourcesRequests";
-	
-	@LocalServerPort
-	private int port;
-
-
 
 	HttpHeaders headers = new HttpHeaders();
 	@Before
@@ -275,8 +265,6 @@ public class CloudResourcesOrchestrationTest extends BaseTest{
 		iar.setRequestStatus("COMPLETE");
 		iar.setRequestAction("TEST");
 		
-		iarRepo.saveAndFlush(iar);
-
 		headers.set("Accept", MediaType.APPLICATION_JSON);
 		headers.set("Content-Type", MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>("", headers);
@@ -303,8 +291,6 @@ public class CloudResourcesOrchestrationTest extends BaseTest{
 		iar.setRequestStatus("COMPLETE");
 		iar.setRequestAction("TEST");
 		
-		iarRepo.saveAndFlush(iar);
-
 		headers.set("Accept", MediaType.APPLICATION_JSON);
 		headers.set("Content-Type", MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(null, headers);
