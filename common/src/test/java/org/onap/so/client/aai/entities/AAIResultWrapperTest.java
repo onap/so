@@ -102,8 +102,12 @@ public class AAIResultWrapperTest {
 		assertEquals(Optional.empty(), wrapper.asBean(GenericVnf.class));
 		assertEquals(true, wrapper.asMap().isEmpty());
 		assertEquals("{}", wrapper.toString());
-
-
 		
+	}
+	
+	@Test
+	public void objectConstructor() {
+		AAIResultWrapper wrapper = new AAIResultWrapper(new GenericVnf());
+		assertEquals("{}", wrapper.getJson());
 	}
 }
