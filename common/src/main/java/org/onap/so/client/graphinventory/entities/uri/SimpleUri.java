@@ -82,6 +82,12 @@ public class SimpleUri implements GraphInventoryResourceUri {
 		this.internalURI = UriBuilder.fromPath(this.getTemplate(type));
 		this.values = values;
 	}
+	protected SimpleUri(GraphInventoryResourceUri parentUri, GraphInventoryObjectType childType, Object... childValues) {
+		this.type = childType;
+		this.pluralType = null;
+		this.internalURI = UriBuilder.fromUri(parentUri.build()).path(childType.partialUri());
+		this.values = childValues;
+	}
 	
 	@Override
 	public SimpleUri relationshipAPI() {
