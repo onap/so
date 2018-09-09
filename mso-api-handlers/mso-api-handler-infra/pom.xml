@@ -151,6 +151,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.onap.so</groupId>
+			<artifactId>mso-requests-db-repositories</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
 			<artifactId>mso-catalog-db</artifactId>
 			<version>${project.version}</version>
 		</dependency>

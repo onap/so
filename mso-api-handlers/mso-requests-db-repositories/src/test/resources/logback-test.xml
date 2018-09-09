@@ -1,0 +1,46 @@
+<configuration >
+  
+  
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1024} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+
+  <logger name="com.att.ecomp.audit" level="info" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+  
+  <logger name="com.att.eelf.metrics" level="info" additivity="false">
+        <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="com.att.eelf.error" level="trace" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger> 
+
+	<logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+  <root level="debug">
+    <appender-ref ref="STDOUT" />
+  </root>
+  
+ 	<!-- Spring related loggers -->
+	<logger name="org.springframework" level="WARN" />
+	<logger name="org.springframework.beans" level="WARN" />
+	<logger name="org.springframework.web" level="WARN" />
+	<logger name="com.blog.spring.jms" level="WARN" />
+	
+	<logger name="org.hibernate" level="WARN" />
+
+	
+	<!-- Tomcat related loggers -->
+	<logger name="org.apache.tomcat.util.digester.Digester" level="WARN" />
+	<logger name="org.apache.tomcat.util.modeler.modules.*" level="WARN" />
+	<logger name="org.apache.tomcat.util.IntrospectionUtils" level="WARN" />
+	<logger name="org.apache.catalina.loader.WebappClassLoaderBase" level="WARN" />
+	<logger name="wiremock.org.eclipse.jetty" level="WARN" />
+
+</configuration>

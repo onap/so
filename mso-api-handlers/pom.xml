@@ -14,6 +14,7 @@
 
 	<modules>
 		<module>mso-requests-db</module>
+		<module>mso-requests-db-repositories</module>
 		<module>mso-api-handler-common</module>
 		<module>mso-api-handler-infra</module>
   </modules>
