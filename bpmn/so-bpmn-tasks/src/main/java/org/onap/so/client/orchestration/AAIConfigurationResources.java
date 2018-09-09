@@ -148,6 +148,18 @@ public class AAIConfigurationResources {
         AAIResourceUri vpnBindingURI = AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnId);
         injectionHelper.getAaiClient().connect(configurationURI, vpnBindingURI);
     }
+    
+    public void connectConfigurationToVfModule(String configurationId, String vfModuleId, String vnfId){
+    	 AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
+    	 AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
+    	 injectionHelper.getAaiClient().connect(configurationURI, vfModuleURI);
+    }
+    
+    public void connectConfigurationToVnfc(String configurationId, String vnfcName){
+    	 AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
+    	 AAIResourceUri vnfcURI = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, vnfcName);
+    	 injectionHelper.getAaiClient().connect(configurationURI, vnfcURI);
+    }
     /**
      * method to delete Configuration details in A&AI
      *

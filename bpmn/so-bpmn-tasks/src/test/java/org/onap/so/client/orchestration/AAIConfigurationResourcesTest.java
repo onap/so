@@ -43,6 +43,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceProxy;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
@@ -63,6 +64,7 @@ public class AAIConfigurationResourcesTest extends TestDataSetup{
     private ServiceInstance serviceInstance;
     private GenericVnf genericVnf;
     private VpnBinding vpnBinding;
+    private VfModule vfModule;
     
 	@Mock
 	protected AAIResourcesClient MOCK_aaiResourcesClient;
@@ -82,6 +84,7 @@ public class AAIConfigurationResourcesTest extends TestDataSetup{
         serviceProxy = buildServiceProxy();
         serviceInstance = buildServiceInstance();
         genericVnf = buildGenericVnf();
+        vfModule = buildVfModule();
         vpnBinding = buildVpnBinding();
         doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
     }
@@ -124,6 +127,20 @@ public class AAIConfigurationResourcesTest extends TestDataSetup{
     public void connectConfigurationToGenericVnfTest() {
         doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
         aaiConfigurationResources.connectConfigurationToGenericVnf(configuration.getConfigurationId(), genericVnf.getVnfId());
+        verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
+    }
+    
+    @Test
+    public void connectConfigurationToVfModuleTest() {
+        doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
+        aaiConfigurationResources.connectConfigurationToVfModule(configuration.getConfigurationId(), vfModule.getVfModuleId(),genericVnf.getVnfId());
+        verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
+    }
+    
+    @Test
+    public void connectConfigurationToVnfcTest() {
+        doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
+        aaiConfigurationResources.connectConfigurationToVnfc(configuration.getConfigurationId(), "vnfcName");
         verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
     }
 
