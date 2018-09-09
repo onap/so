@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,33 +20,22 @@
 
 package org.onap.so.client.aai.entities.uri;
 
-import java.net.URI;
-import java.util.Optional;
+import static org.junit.Assert.assertEquals;
 
-import javax.ws.rs.core.UriBuilder;
-
+import org.junit.Test;
 import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.AAIResourcesClient;
 
-public class AllottedResourceLookupUri extends HttpLookupUri {
+public class AAISimpleUriFromParentUriTest {
 
-	protected AllottedResourceLookupUri(Object... values) {
-		super(AAIObjectType.ALLOTTED_RESOURCE, values);
-	}
-	protected AllottedResourceLookupUri(UriBuilder builder, Optional<String> cachedValue, Object... values) {
-		super(AAIObjectType.ALLOTTED_RESOURCE, builder, cachedValue, values);
-	}
 	
-	@Override
-	public AllottedResourceLookupUri clone() {
-		return new AllottedResourceLookupUri(this.internalURI.clone(), this.getCachedValue(), values);
-	}
-	
-	public AAIResourcesClient getResourcesClient() {
-		return new AAIResourcesClient();
-	}
-	@Override
-	public URI buildNoNetwork() {
-		return super.build(new String[]{"NONE", "NONE", "NONE", (String)this.values[0]});
+	@Test
+	public void appendChildren() {
+		
+		AAIResourceUri parentUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "key1", "key2", "key3");
+		
+		AAIUri uri = new AAISimpleUri(parentUri, AAIObjectType.ALLOTTED_RESOURCE, "key4");
+		
+		assertEquals("path appended", "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/allotted-resources/allotted-resource/key4", uri.build().toString());
+		
 	}
 }
