@@ -48,8 +48,6 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 @Configuration("CXFConfiguration")
 public class CXFConfiguration {
-    
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,CXFConfiguration.class);
 	
 	JAXRSServerFactoryBean endpoint;
 	
