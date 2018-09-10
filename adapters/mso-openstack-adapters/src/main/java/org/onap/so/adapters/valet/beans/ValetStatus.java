@@ -35,11 +35,7 @@ public class ValetStatus implements Serializable {
 	private String status;
 	@JsonProperty("message")
 	private String message;
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("status", status).append("message", message).toString();
-	}
+
 
 	public ValetStatus() {
 		super();
@@ -49,6 +45,12 @@ public class ValetStatus implements Serializable {
 		super();
 		this.status = statusCode;
 		this.message = statusMessage;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("status", status).append("message", message).toString();
 	}
 	
 	public String getStatus() {
