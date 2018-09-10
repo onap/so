@@ -1804,6 +1804,7 @@ public class BBInputSetupTest {
 		doReturn(aaiVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(any(String.class));
 		executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString());
 		executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
+		executeBB.getBuildingBlock().setIsVirtualLink(Boolean.FALSE);
 		SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
 		verify(SPY_bbInputSetup, times(1)).getGBBMacroNoUserParamsCreate(any(ExecuteBuildingBlock.class), any(),
 				any(String.class), any(String.class), any(GeneralBuildingBlock.class), any(Service.class));
@@ -2047,18 +2048,20 @@ public class BBInputSetupTest {
 		doReturn(networkResourceCustomization).when(bbInputSetupMapperLayer).mapCollectionNetworkResourceCustToNetworkResourceCust(collectionNetworkResourceCust);
 		ModelInfoNetwork modelInfoNetwork = Mockito.mock(ModelInfoNetwork.class);
 		doReturn(modelInfoNetwork ).when(bbInputSetupMapperLayer).mapCatalogNetworkToNetwork(networkResourceCustomization);
+		
 		executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString());
 		executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
 		executeBB.getBuildingBlock().setIsVirtualLink(true);
 		SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
 		verify(SPY_bbInputSetup, times(2)).getGBBMacroNoUserParamsCreate(executeBB, lookupKeyMap,
 				executeBB.getBuildingBlock().getBpmnFlowName(), "ab153b6e-c364-44c0-bef6-1f2982117f04", gBB, service);
-		executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.FABRIC_CONFIGURATION.toString());
-		executeBB.getBuildingBlock().setKey("modelCustId");
-		doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(isA(Configuration.class), isA(ModelInfo.class), isA(Service.class), isA(ConfigurationResourceKeys.class));
+		
+		executeBB.getBuildingBlock().setBpmnFlowName("CreateNetworkBB");
+		executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
+		executeBB.getBuildingBlock().setIsVirtualLink(true);
 		SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
 		verify(SPY_bbInputSetup, times(1)).getGBBMacroNoUserParamsCreate(executeBB, lookupKeyMap,
-				executeBB.getBuildingBlock().getBpmnFlowName(), "modelCustId", gBB, service);
+				executeBB.getBuildingBlock().getBpmnFlowName(), "ab153b6e-c364-44c0-bef6-1f2982117f04", gBB, service);
 	}
 	
 	@Test
