@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_82db364e",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/onap/so/adapters/sdncrest/SDNCEvent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-09-10T12:06:09Z",
+      "side": 1,
+      "message": "Question: is there any reason the params becomes a transient? No one uses it after deserialization?",
+      "range": {
+        "startLine": 68,
+        "startChar": 9,
+        "endLine": 68,
+        "endChar": 20
+      },
+      "revId": "d1461526c0f85d5a695aadc6beb1300eb79b8aba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
