@@ -109,7 +109,8 @@ public class ServiceInstances {
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH,MsoRequest.class);
 	private static String NAME = "name";
 	private static String VALUE = "value";
-	private static final String configurationInstanceIdConst="configurationInstanceId";
+	
+	private static final String CONFIGURATION_INSTANCE_ID_CONST="configurationInstanceId";
 	
 	@Autowired
 	private Environment env;
@@ -227,7 +228,7 @@ public class ServiceInstances {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put(configurationInstanceIdConst, configurationInstanceId);
+		instanceIdMap.put(CONFIGURATION_INSTANCE_ID_CONST, configurationInstanceId);
 		return configurationRecipeLookup(request, Action.deleteInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -242,7 +243,7 @@ public class ServiceInstances {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put(configurationInstanceIdConst, configurationInstanceId);
+		instanceIdMap.put(CONFIGURATION_INSTANCE_ID_CONST, configurationInstanceId);
 		return configurationRecipeLookup(request, Action.enablePort, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -257,7 +258,7 @@ public class ServiceInstances {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put(configurationInstanceIdConst, configurationInstanceId);
+		instanceIdMap.put(CONFIGURATION_INSTANCE_ID_CONST, configurationInstanceId);
 		return configurationRecipeLookup(request, Action.disablePort, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -272,7 +273,7 @@ public class ServiceInstances {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put(configurationInstanceIdConst, configurationInstanceId);
+		instanceIdMap.put(CONFIGURATION_INSTANCE_ID_CONST, configurationInstanceId);
 		return configurationRecipeLookup(request, Action.activateInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -287,7 +288,7 @@ public class ServiceInstances {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put(configurationInstanceIdConst, configurationInstanceId);
+		instanceIdMap.put(CONFIGURATION_INSTANCE_ID_CONST, configurationInstanceId);
 		return configurationRecipeLookup(request, Action.deactivateInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -920,8 +921,8 @@ public class ServiceInstances {
         	if(instanceIdMap.get("networkInstanceId") != null){
         		currentActiveReq.setNetworkId(instanceIdMap.get("networkInstanceId"));
         	}
-        	if(instanceIdMap.get(configurationInstanceIdConst) != null){
-        		currentActiveReq.setConfigurationId(instanceIdMap.get(configurationInstanceIdConst));
+        	if(instanceIdMap.get(CONFIGURATION_INSTANCE_ID_CONST) != null){
+        		currentActiveReq.setConfigurationId(instanceIdMap.get(CONFIGURATION_INSTANCE_ID_CONST));
         	}
 		}
 	}
