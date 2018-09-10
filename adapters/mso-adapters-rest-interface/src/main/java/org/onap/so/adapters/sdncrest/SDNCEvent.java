@@ -65,7 +65,7 @@ public class SDNCEvent implements Serializable {
 	private String eventCorrelator;
 
 	// Map of response parameters (possibly none).
-	private Map<String, String> params = null;
+	private transient Map<String, String> params = null;
 
 	public SDNCEvent(String eventType, String eventCorrelatorType, String eventCorrelator) {
 		this.eventType = eventType;
