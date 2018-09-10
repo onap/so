@@ -22,9 +22,6 @@
 
 package org.onap.so.adapters.sdnc.impl;
 
-
-
-import org.onap.so.logger.MsoLogger;
 public class RequestTunables {
 
 	
