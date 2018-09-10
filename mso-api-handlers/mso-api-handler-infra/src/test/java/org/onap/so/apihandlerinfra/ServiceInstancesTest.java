@@ -1633,7 +1633,7 @@ public class ServiceInstancesTest extends BaseTest{
                         .withStatus(HttpStatus.SC_OK)));
 
         stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]" +
-                "modelName=GR-API-DEFAULT&action=deleteInstance"))
+                "modelName=VNF-API-DEFAULT&action=deleteInstance"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
