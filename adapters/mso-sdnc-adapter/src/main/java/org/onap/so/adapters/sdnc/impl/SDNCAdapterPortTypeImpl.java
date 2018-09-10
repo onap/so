@@ -77,8 +77,6 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 			sdncResp.setRespMsg(respMsg);
 			sdncClient.sendRespToBpel(callbackUrl, sdncResp);
 		}
-
-		SDNCAdapterResponse wsResp = new SDNCAdapterResponse();	
-		return wsResp;
+		return (new SDNCAdapterResponse());
 	}
 }
