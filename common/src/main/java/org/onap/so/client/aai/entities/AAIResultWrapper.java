@@ -26,9 +26,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.log4j.Logger;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.jsonpath.JsonPathUtil;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,11 +39,26 @@ public class AAIResultWrapper implements Serializable {
 	private static final long serialVersionUID = 5895841925807816737L;
 	private final String jsonBody;
 	private final ObjectMapper mapper;
+	private final transient Logger logger = Logger.getLogger(AAIResultWrapper.class);
+	
 	public AAIResultWrapper(String json) {
 		this.jsonBody = json;
 		this.mapper = new AAICommonObjectMapperProvider().getMapper();
 	}
 	
+	public AAIResultWrapper(Object aaiObject) {
+		this.mapper = new AAICommonObjectMapperProvider().getMapper();
+		this.jsonBody = mapObjectToString(aaiObject);
+	}
+	
+	protected String mapObjectToString(Object aaiObject) {
+		try {
+			return mapper.writeValueAsString(aaiObject);
+		} catch (JsonProcessingException e) {
+			logger.warn("could not parse object into json - defaulting to {}");
+			return "{}";
+		}
+	}
 	public Optional<Relationships> getRelationships() {
 		final String path = "$.relationship-list";
 		if (isEmpty()) {
