@@ -102,6 +102,15 @@ public class VfResourceStructure {
 	
 	public void addArtifactToStructure(IDistributionClient distributionClient,IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
 		VfModuleArtifact vfModuleArtifact = new VfModuleArtifact(artifactinfo,clientResult);
+		addArtifactByType(artifactinfo,clientResult,vfModuleArtifact);
+	}
+	
+	public void addArtifactToStructure(IDistributionClient distributionClient,IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult, String modifiedHeatTemplate) throws UnsupportedEncodingException {
+		VfModuleArtifact vfModuleArtifact = new VfModuleArtifact(artifactinfo,clientResult,modifiedHeatTemplate);
+		addArtifactByType(artifactinfo,clientResult,vfModuleArtifact);
+	}
+	
+	protected void addArtifactByType(IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult, VfModuleArtifact vfModuleArtifact) throws UnsupportedEncodingException {
 
 		switch(artifactinfo.getArtifactType()) {
 			case ASDCConfiguration.HEAT:

@@ -26,6 +26,7 @@ import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
+import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkRecipe;
@@ -195,6 +196,8 @@ public class CatalogDbClient {
 	private final Client<CloudSite> cloudSiteClient;
 
 	private final Client<CloudifyManager> cloudifyManagerClient;
+	
+	private Client<CvnfcCustomization> cvnfcCustomizationClient;
 
 	private final Client<ControllerSelectionReference> controllerSelectionReferenceClient;
 
@@ -240,6 +243,7 @@ public class CatalogDbClient {
 		instanceGroupURI = endpoint + INSTANCE_GROUP + URI_SEPARATOR;
 		cloudifyManagerURI = endpoint + CLOUDIFY_MANAGER + URI_SEPARATOR;
 		cloudSiteURI = endpoint + CLOUD_SITE + URI_SEPARATOR;
+
 	}
 
 	public CatalogDbClient() {
@@ -278,6 +282,7 @@ public class CatalogDbClient {
 		cloudSiteClient = clientFactory.create(CloudSite.class);
 		cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
 		serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
+		cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
 		controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
 	}
 
@@ -536,6 +541,21 @@ public class CatalogDbClient {
 		Iterator<T> it = iterator.iterator();
 		it.forEachRemaining(list::add);
 		return list;
+	}
+	
+	public List<CvnfcCustomization> getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(String vnfCustomizationUUID, String vfModuleCustomizationUUID){
+		return this.getMultipleVnfcCustomizations(
+				UriBuilder.fromUri(endpoint + "/vnfcCustomization/search/findByVnfCustomizationUUIDAndVfModuleCustomizationUUID")
+						.queryParam("VNF_CUSTOMIZATION_UUID", vnfCustomizationUUID)
+						.queryParam("VFMODULE_CUSTOMIZATION_UUID", vfModuleCustomizationUUID).build());
+	}
+	
+	private List<CvnfcCustomization> getMultipleVnfcCustomizations(URI uri) {
+		Iterable<CvnfcCustomization> vnfcIterator = cvnfcCustomizationClient.getAll(uri);
+		List<CvnfcCustomization> vnfcList = new ArrayList<>();
+		Iterator<CvnfcCustomization> it = vnfcIterator.iterator();
+		it.forEachRemaining(vnfcList::add);
+		return vnfcList;
 	}
 
 }

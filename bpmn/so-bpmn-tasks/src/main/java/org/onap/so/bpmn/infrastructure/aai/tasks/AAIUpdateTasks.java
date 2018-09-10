@@ -24,6 +24,7 @@ import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -35,6 +36,7 @@ import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAICollectionResources;
+import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAINetworkResources;
 import org.onap.so.client.orchestration.AAIServiceInstanceResources;
 import org.onap.so.client.orchestration.AAIVfModuleResources;
@@ -64,6 +66,8 @@ public class AAIUpdateTasks {
 	private AAINetworkResources aaiNetworkResources;
 	@Autowired
 	private AAICollectionResources aaiCollectionResources;
+	@Autowired
+	private AAIConfigurationResources aaiConfigurationResources;
 	
 	public void updateOrchestrationStatusAssignedService(BuildingBlockExecution execution) {
 		try {
@@ -390,6 +394,23 @@ public class AAIUpdateTasks {
 			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 			aaiVfModuleResources.changeAssignVfModule(vfModule, vnf);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	public void updateOrchestrationStatusActivateFabricConfiguration(BuildingBlockExecution execution) {
+		try {
+			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
+			aaiConfigurationResources.updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ACTIVE);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	
+	public void updateOrchestrationStatusDeactivateFabricConfiguration(BuildingBlockExecution execution) {
+		try {
+			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
+			aaiConfigurationResources.updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ASSIGNED);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}

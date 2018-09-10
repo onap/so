@@ -28,7 +28,7 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.onap.so.apihandler.common.ErrorNumbers;
-import org.onap.so.requestsdb.client.RequestsDbClient;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;

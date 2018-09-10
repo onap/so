@@ -20,12 +20,18 @@
 
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
+import static org.hamcrest.CoreMatchers.any;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.bpmn.core.WorkflowException;
@@ -76,8 +82,9 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 	@Test
 	public void setRetryTimerExceptionTest() {
 		expectedException.expect(BpmnError.class);
-		
-		executeBuildingBlockRainyDay.setRetryTimer(null);
+		DelegateExecution execution = mock(DelegateExecution.class);
+		when(execution.getVariable(eq("retryCount"))).thenThrow(Exception.class);
+		executeBuildingBlockRainyDay.setRetryTimer(execution);
 	}
 	
 	@Test

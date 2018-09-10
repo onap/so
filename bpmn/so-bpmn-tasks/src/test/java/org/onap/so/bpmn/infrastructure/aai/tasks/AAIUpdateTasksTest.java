@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -50,6 +51,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	private GenericVnf genericVnf;
 	private VolumeGroup volumeGroup;
 	private CloudRegion cloudRegion;
+	private Configuration configuration;
 	
 	@Before
 	public void before() {
@@ -59,6 +61,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 		volumeGroup = setVolumeGroup();
 		cloudRegion = setCloudRegion();
 		network = setL3Network();
+		configuration = setConfiguration();
 	}
 	
 	@Test
@@ -461,5 +464,24 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 		expectedException.expect(BpmnError.class);
 		doThrow(Exception.class).when(aaiVfModuleResources).changeAssignVfModule(vfModule, genericVnf);
 		aaiUpdateTasks.updateModelVfModule(execution);
+	}
+	
+	@Test
+	public void updateOrchestrationStatusDeactivateFabricConfigurationTest() throws Exception {
+		gBBInput = execution.getGeneralBuildingBlock();
+		doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ASSIGNED);
+
+		aaiUpdateTasks.updateOrchestrationStatusDeactivateFabricConfiguration(execution);
+
+		verify(aaiConfigurationResources, times(1)).updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ASSIGNED);
+	}
+	@Test
+	public void updateOrchestrationStatusActivateFabricConfigurationTest() throws Exception {
+		gBBInput = execution.getGeneralBuildingBlock();
+		doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ACTIVE);
+
+		aaiUpdateTasks.updateOrchestrationStatusActivateFabricConfiguration(execution);
+
+		verify(aaiConfigurationResources, times(1)).updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ACTIVE);
 	}
 }

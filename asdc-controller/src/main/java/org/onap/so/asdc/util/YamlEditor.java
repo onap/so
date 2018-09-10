@@ -39,9 +39,9 @@ import org.onap.so.db.catalog.beans.HeatTemplateParam;
 
 public class YamlEditor {
 
-    private static final String REFER_PATTERN = "file:///";
-    private Map <String, Object> yml;
-    private Yaml yaml = new Yaml ();
+    protected static final String REFER_PATTERN = "file:///";
+    protected Map <String, Object> yml;
+    protected Yaml yaml = new Yaml ();
 
     public YamlEditor () {
 
@@ -52,7 +52,7 @@ public class YamlEditor {
     }
 
     @SuppressWarnings("unchecked")
-    private synchronized void init (byte[] body) {
+    protected synchronized void init (byte[] body) {
         InputStream input = new ByteArrayInputStream (body);
         yml = (Map <String, Object>) yaml.load (input);
     }

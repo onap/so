@@ -30,7 +30,6 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onap.so.apihandlerinfra.Constants;
-import org.onap.so.requestsdb.client.RequestsDbClient;
 import org.onap.so.apihandlerinfra.Status;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Action;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Manifest;
@@ -44,6 +43,7 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.ResourceType;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.ServiceModelList;
 import org.onap.so.apihandlerinfra.vnfbeans.RequestStatusType;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;

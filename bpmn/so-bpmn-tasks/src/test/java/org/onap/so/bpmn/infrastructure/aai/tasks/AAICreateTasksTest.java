@@ -26,6 +26,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,6 +36,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
@@ -54,6 +58,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 	private CloudRegion cloudRegion;
 	private VfModule vfModule;
 	private Customer customer;
+	private Configuration configuration;
 	
 	 @Rule
 	 public final ExpectedException exception = ExpectedException.none();
@@ -67,6 +72,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		volumeGroup = setVolumeGroup();
 		cloudRegion = setCloudRegion();
 		vfModule = setVfModule();
+		configuration = setConfiguration();
 
 	}
 	
@@ -383,5 +389,13 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		doNothing().when(aaiNetworkResources).connectNetworkToTenant(network, gBBInput.getCloudRegion());
 		aaiCreateTasks.connectNetworkToTenant(execution);
 		verify(aaiNetworkResources, times(1)).connectNetworkToTenant(network, gBBInput.getCloudRegion());
+	}
+	
+	@Test
+	public void createConfigurationTest() throws Exception {
+		gBBInput = execution.getGeneralBuildingBlock();
+		doNothing().when(aaiConfigurationResources).createConfiguration(configuration);
+		aaiCreateTasks.createConfiguration(execution);
+		verify(aaiConfigurationResources, times(1)).createConfiguration(configuration);
 	}
 }

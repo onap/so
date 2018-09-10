@@ -32,6 +32,7 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.junit.Before;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.MockLoggerDelegate;
@@ -40,6 +41,7 @@ import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupMapperLayer;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.test.categories.SpringAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.LocalServerPort;
@@ -62,6 +64,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 @ActiveProfiles("test")
 @ContextConfiguration
 @AutoConfigureWireMock(port = 0)
+@Category(SpringAware.class)
 public abstract class BaseTest extends BuildingBlockTestDataSetup {
 	
 
