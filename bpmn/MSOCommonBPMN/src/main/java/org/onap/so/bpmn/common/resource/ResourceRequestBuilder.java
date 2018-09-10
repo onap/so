@@ -15,6 +15,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * Modifications Copyright (C) 2018 IBM.
  * ============LICENSE_END=========================================================
  */
 
@@ -55,9 +56,9 @@ import com.google.gson.reflect.TypeToken;
 
 public class ResourceRequestBuilder {
 
-    public static String CUSTOMIZATION_UUID = "customizationUUID";
+    private static String CUSTOMIZATION_UUID = "customizationUUID";
 
-    public static String SERVICE_URL_TOSCA_CSAR = "/v3/serviceToscaCsar?serviceModelUuid=";
+    private static String SERVICE_URL_TOSCA_CSAR = "/v3/serviceToscaCsar?serviceModelUuid=";
 
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, ResourceRequestBuilder.class);
 
