@@ -34,11 +34,7 @@ public class GenericValetResponse<T> {
 	private String errorMessage;
 	private T returnObject;
 	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("statusCode", statusCode).append("errorMessage", errorMessage)
-				.append("returnObject", returnObject).toString();
-	}
+
 	public GenericValetResponse(int statusCode, String errorMessage, T obj) {
 		super();
 		this.statusCode = statusCode;
@@ -47,6 +43,11 @@ public class GenericValetResponse<T> {
 	}
 	public GenericValetResponse() {
 		this(-1, "not set", null);
+	}
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("statusCode", statusCode).append("errorMessage", errorMessage)
+				.append("returnObject", returnObject).toString();
 	}
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
