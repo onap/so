@@ -109,7 +109,14 @@ public class ServiceInstances {
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH,MsoRequest.class);
 	private static String NAME = "name";
 	private static String VALUE = "value";
-	private static final String configurationInstanceIdConst="configurationInstanceId";
+	
+	private static final String SERVICE_INSTANCE_ID="serviceInstanceId";
+	private static final String CONFIGURATION_INSTANCE_ID="configurationInstanceId";
+	private static final String VNF_INSTANCE_ID="vnfInstanceId";
+	private static final String VF_MODULE_INSTANCE_ID="vfModuleInstanceId";
+	private static final String VOLUME_GROUP_INSTANCE_ID="volumeGroupInstanceId";
+	private static final String NETWORK_INSTANCE_ID="networkInstanceId";
+	private static final String SERVICE="service";
 	
 	@Autowired
 	private Environment env;
@@ -149,7 +156,7 @@ public class ServiceInstances {
     public Response activateServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
 		return serviceInstances(request, Action.activateInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -162,7 +169,7 @@ public class ServiceInstances {
     public Response deactivateServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
 		return serviceInstances(request, Action.deactivateInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -175,7 +182,7 @@ public class ServiceInstances {
     public Response deleteServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
 		return serviceInstances(request, Action.deleteInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -199,7 +206,7 @@ public class ServiceInstances {
 	public Response unassignServiceInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<String,String>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
 		return serviceInstances(request, Action.unassignInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -212,7 +219,7 @@ public class ServiceInstances {
     public Response createPortConfiguration(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
 		return configurationRecipeLookup(request, Action.createInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -226,8 +233,8 @@ public class ServiceInstances {
                                             @PathParam("configurationInstanceId") String configurationInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put(configurationInstanceIdConst, configurationInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(CONFIGURATION_INSTANCE_ID, configurationInstanceId);
 		return configurationRecipeLookup(request, Action.deleteInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -241,8 +248,8 @@ public class ServiceInstances {
                                @PathParam("configurationInstanceId") String configurationInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put(configurationInstanceIdConst, configurationInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(CONFIGURATION_INSTANCE_ID, configurationInstanceId);
 		return configurationRecipeLookup(request, Action.enablePort, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -256,8 +263,8 @@ public class ServiceInstances {
                                 @PathParam("configurationInstanceId") String configurationInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put(configurationInstanceIdConst, configurationInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(CONFIGURATION_INSTANCE_ID, configurationInstanceId);
 		return configurationRecipeLookup(request, Action.disablePort, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -271,8 +278,8 @@ public class ServiceInstances {
                                  @PathParam("configurationInstanceId") String configurationInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put(configurationInstanceIdConst, configurationInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(CONFIGURATION_INSTANCE_ID, configurationInstanceId);
 		return configurationRecipeLookup(request, Action.activateInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -286,8 +293,8 @@ public class ServiceInstances {
                                    @PathParam("configurationInstanceId") String configurationInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put(configurationInstanceIdConst, configurationInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(CONFIGURATION_INSTANCE_ID, configurationInstanceId);
 		return configurationRecipeLookup(request, Action.deactivateInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -300,7 +307,7 @@ public class ServiceInstances {
     public Response addRelationships(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
 		return configurationRecipeLookup(request, Action.addRelationships, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -313,7 +320,7 @@ public class ServiceInstances {
     public Response removeRelationships(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
 		return configurationRecipeLookup(request, Action.removeRelationships, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -326,7 +333,7 @@ public class ServiceInstances {
     public Response createVnfInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
 		return serviceInstances(request, Action.createInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -340,8 +347,8 @@ public class ServiceInstances {
                                        @PathParam("vnfInstanceId") String vnfInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);
 		return serviceInstances(request, Action.replaceInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -355,8 +362,8 @@ public class ServiceInstances {
                                       @PathParam("vnfInstanceId") String vnfInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);		
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);		
 		return serviceInstances(request, Action.updateInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -369,8 +376,8 @@ public class ServiceInstances {
                                        @PathParam("vnfInstanceId") String vnfInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);		
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);		
 		return serviceInstances(request, Action.applyUpdatedConfig, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -385,8 +392,8 @@ public class ServiceInstances {
                                       @PathParam("vnfInstanceId") String vnfInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);
 		return serviceInstances(request, Action.deleteInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -400,8 +407,8 @@ public class ServiceInstances {
                                            @PathParam("vnfInstanceId") String vnfInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);
 		return serviceInstances(request, Action.createInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -416,9 +423,9 @@ public class ServiceInstances {
                                             @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
-		instanceIdMap.put("vfModuleInstanceId", vfmoduleInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);
+		instanceIdMap.put(VF_MODULE_INSTANCE_ID, vfmoduleInstanceId);
 		return serviceInstances(request, Action.replaceInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -433,9 +440,9 @@ public class ServiceInstances {
                                            @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
-		instanceIdMap.put("vfModuleInstanceId", vfmoduleInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);
+		instanceIdMap.put(VF_MODULE_INSTANCE_ID, vfmoduleInstanceId);
 		return serviceInstances(request, Action.updateInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -449,8 +456,8 @@ public class ServiceInstances {
                                           @PathParam("vnfInstanceId") String vnfInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);		
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);		
 		return serviceInstances(request, Action.inPlaceSoftwareUpdate, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -465,9 +472,9 @@ public class ServiceInstances {
                                            @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
-		instanceIdMap.put("vfModuleInstanceId", vfmoduleInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);
+		instanceIdMap.put(VF_MODULE_INSTANCE_ID, vfmoduleInstanceId);
 		return serviceInstances(request, Action.deleteInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -481,9 +488,9 @@ public class ServiceInstances {
 			@PathParam("vnfInstanceId") String vnfInstanceId, @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
-		instanceIdMap.put("vfModuleInstanceId", vfmoduleInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);
+		instanceIdMap.put(VF_MODULE_INSTANCE_ID, vfmoduleInstanceId);
 		Response response = serviceInstances(request, Action.deactivateAndCloudDelete, instanceIdMap, version, requestId, getRequestUri(requestContext));
 		return response;
 	}
@@ -498,8 +505,8 @@ public class ServiceInstances {
                                            @PathParam("vnfInstanceId") String vnfInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);
 		return serviceInstances(request, Action.scaleOut, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -514,8 +521,8 @@ public class ServiceInstances {
                                               @PathParam("vnfInstanceId") String vnfInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);
 		return serviceInstances(request, Action.createInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -530,9 +537,9 @@ public class ServiceInstances {
                                               @PathParam("volumeGroupInstanceId") String volumeGroupInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
-		instanceIdMap.put("volumeGroupInstanceId", volumeGroupInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);
+		instanceIdMap.put(VOLUME_GROUP_INSTANCE_ID, volumeGroupInstanceId);
 		return serviceInstances(request, Action.updateInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -547,9 +554,9 @@ public class ServiceInstances {
                                               @PathParam("volumeGroupInstanceId") String volumeGroupInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
-		instanceIdMap.put("volumeGroupInstanceId", volumeGroupInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(VNF_INSTANCE_ID, vnfInstanceId);
+		instanceIdMap.put(VOLUME_GROUP_INSTANCE_ID, volumeGroupInstanceId);
 		return serviceInstances(request, Action.deleteInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -562,7 +569,7 @@ public class ServiceInstances {
     public Response createNetworkInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
 		return serviceInstances(request, Action.createInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -576,8 +583,8 @@ public class ServiceInstances {
                                           @PathParam("networkInstanceId") String networkInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("networkInstanceId", networkInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(NETWORK_INSTANCE_ID, networkInstanceId);
 		return serviceInstances(request, Action.updateInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -591,8 +598,8 @@ public class ServiceInstances {
                                           @PathParam("networkInstanceId") String networkInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		instanceIdMap.put("networkInstanceId", networkInstanceId);
+		instanceIdMap.put(SERVICE_INSTANCE_ID, serviceInstanceId);
+		instanceIdMap.put(NETWORK_INSTANCE_ID, networkInstanceId);
 		return serviceInstances(request, Action.deleteInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -603,7 +610,7 @@ public class ServiceInstances {
 	}
     
 	public Response serviceInstances(String requestJSON, Actions action, HashMap<String, String> instanceIdMap, String version, String requestId, String requestUri) throws ApiException {
-		String serviceInstanceId = (instanceIdMap ==null)? null:instanceIdMap.get("serviceInstanceId");
+		String serviceInstanceId = (instanceIdMap ==null)? null:instanceIdMap.get(SERVICE_INSTANCE_ID);
 		Boolean aLaCarte = null;
 		long startTime = System.currentTimeMillis ();
 		ServiceInstancesRequest sir = null;
@@ -905,23 +912,23 @@ public class ServiceInstances {
 				currentActiveReq.setConfigurationId(instanceId);
 			}
 		} else if(instanceIdMap != null && !instanceIdMap.isEmpty()) {
-			if(instanceIdMap.get("serviceInstanceId") != null){
-				currentActiveReq.setServiceInstanceId(instanceIdMap.get("serviceInstanceId"));
+			if(instanceIdMap.get(SERVICE_INSTANCE_ID) != null){
+				currentActiveReq.setServiceInstanceId(instanceIdMap.get(SERVICE_INSTANCE_ID));
         	}
-        	if(instanceIdMap.get("vnfInstanceId") != null){
-        		currentActiveReq.setVnfId(instanceIdMap.get("vnfInstanceId"));
+        	if(instanceIdMap.get(VNF_INSTANCE_ID) != null){
+        		currentActiveReq.setVnfId(instanceIdMap.get(VNF_INSTANCE_ID));
         	}
-        	if(instanceIdMap.get("vfModuleInstanceId") != null){
-        		currentActiveReq.setVfModuleId(instanceIdMap.get("vfModuleInstanceId"));
+        	if(instanceIdMap.get(VF_MODULE_INSTANCE_ID) != null){
+        		currentActiveReq.setVfModuleId(instanceIdMap.get(VF_MODULE_INSTANCE_ID));
         	}
-        	if(instanceIdMap.get("volumeGroupInstanceId") != null){
-        		currentActiveReq.setVolumeGroupId(instanceIdMap.get("volumeGroupInstanceId"));
+        	if(instanceIdMap.get(VOLUME_GROUP_INSTANCE_ID) != null){
+        		currentActiveReq.setVolumeGroupId(instanceIdMap.get(VOLUME_GROUP_INSTANCE_ID));
         	}
-        	if(instanceIdMap.get("networkInstanceId") != null){
-        		currentActiveReq.setNetworkId(instanceIdMap.get("networkInstanceId"));
+        	if(instanceIdMap.get(NETWORK_INSTANCE_ID) != null){
+        		currentActiveReq.setNetworkId(instanceIdMap.get(NETWORK_INSTANCE_ID));
         	}
-        	if(instanceIdMap.get(configurationInstanceIdConst) != null){
-        		currentActiveReq.setConfigurationId(instanceIdMap.get(configurationInstanceIdConst));
+        	if(instanceIdMap.get(CONFIGURATION_INSTANCE_ID) != null){
+        		currentActiveReq.setConfigurationId(instanceIdMap.get(CONFIGURATION_INSTANCE_ID));
         	}
 		}
 	}
@@ -967,7 +974,7 @@ public class ServiceInstances {
                                                MsoRequest msoRequest, String instanceName, String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
 		InfraActiveRequests dup = null;
 		try {
-			if(!(instanceName==null && requestScope.equals("service") && (action == Action.createInstance || action == Action.activateInstance || action == Action.assignInstance))){
+			if(!(instanceName==null && requestScope.equals(SERVICE) && (action == Action.createInstance || action == Action.activateInstance || action == Action.assignInstance))){
 				dup = infraActiveRequestsClient.checkInstanceNameDuplicate (instanceIdMap, instanceName, requestScope);
 			}
 		} catch (Exception e) {
@@ -1164,7 +1171,7 @@ public class ServiceInstances {
 	protected CloudConfiguration configureCloudConfig(RequestParameters reqParams) throws IOException {
 
 		for(Map<String, Object> params : reqParams.getUserParams()){
-			if(params.containsKey("service")){
+			if(params.containsKey(SERVICE)){
 				Service service = serviceMapper(params);
 				
 				Optional<CloudConfiguration> targetConfiguration = addCloudConfig(service.getCloudConfiguration());
@@ -1217,7 +1224,7 @@ public class ServiceInstances {
     	Map<String, Object> userParams = new HashMap<>();
     	
     	for(Map<String, Object> params : reqParams.getUserParams()){
-    		if(params.containsKey("service")){
+    		if(params.containsKey(SERVICE)){
     			Service service = serviceMapper(params);
 				
 				addUserParams(userParams, service.getInstanceParams());
@@ -1242,7 +1249,7 @@ public class ServiceInstances {
 	private Service serviceMapper(Map<String, Object> params)
 			throws JsonProcessingException, IOException, JsonParseException, JsonMappingException {
 		ObjectMapper obj = new ObjectMapper();
-		String input = obj.writeValueAsString(params.get("service"));
+		String input = obj.writeValueAsString(params.get(SERVICE));
 		return obj.readValue(input, Service.class);
 	}
 
@@ -1557,7 +1564,7 @@ public class ServiceInstances {
     }
 	
     private Response configurationRecipeLookup(String requestJSON, Action action, HashMap<String, String> instanceIdMap, String version, String requestId, String requestUri) throws ApiException {
-		String serviceInstanceId = (instanceIdMap ==null)? null:instanceIdMap.get("serviceInstanceId");
+		String serviceInstanceId = (instanceIdMap ==null)? null:instanceIdMap.get(SERVICE_INSTANCE_ID);
 		Boolean aLaCarte = null;
 		String apiVersion = version.substring(1);
 		
