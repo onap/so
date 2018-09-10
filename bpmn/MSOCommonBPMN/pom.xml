@@ -254,8 +254,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.onap.so</groupId>
-			<artifactId>mso-requests-db</artifactId>
-			<classifier>client</classifier>
+			<artifactId>mso-requests-db</artifactId>			
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

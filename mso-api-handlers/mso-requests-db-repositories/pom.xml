@@ -8,24 +8,40 @@
 		<version>1.3.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mso-requests-db</artifactId>
-	<name>mso-requests-db</name>
-	<description>MSO Requests Database definition and Hibernate objects</description>
+	<artifactId>mso-requests-db-repositories</artifactId>
+
+	<name>mso-requests-db-repositories</name>
+	<description>SO Request Database JPA Respositories</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>uk.co.blackpepper.bowman</groupId>
-			<artifactId>bowman-client</artifactId>
-			<version>0.3.0</version>
-		</dependency>	
+	<dependencies>		
 		<dependency>
 			<groupId>org.onap.so</groupId>
-			<artifactId>common</artifactId>
+			<artifactId>mso-requests-db</artifactId>
 			<version>${project.version}</version>
 		</dependency>		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

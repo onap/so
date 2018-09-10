@@ -1,9 +1,10 @@
 target
-.settings
-.classpath
-.project
-.buildpath
-.factorypath
+**/.settings
+**/.classpath
+**/.project
+**/.buildpath
+**/.factorypath
+**/.springBeans
 .idea
 .checkstyle
 .DS_Store
