@@ -1,0 +1,45 @@
+# will be used as entry in DB to say SITE OFF/ON for healthcheck
+
+server:
+    port: 8080
+    tomcat:
+        max-threads: 50
+ssl-enable: false
+mso:
+  adapters:
+    requestDb:
+      auth: Basic YnBlbDptc28tZGItMTUwNyE=
+      endpoint: http://localhost:8081
+  site-name: localDevEnv
+  logPath: logs
+        
+# H2
+spring:
+  datasource:
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2
+
+  jpa:
+      show-sql: true
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        ddl-auto: none
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        enable-lazy-load-no-trans: true
+
+
+#Actuator
+management:
+  security:
+    enabled: false
+    basic:
+      enabled: false
+
+
+
