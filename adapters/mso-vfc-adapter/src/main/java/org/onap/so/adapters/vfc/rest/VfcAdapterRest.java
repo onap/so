@@ -54,6 +54,7 @@ public class VfcAdapterRest {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, VfcAdapterRest.class);
     private static final String REQUEST_DEBUG_MSG="body from request is {}";
+    private static final String APPLICATION_EXCEPTION="ApplicationException: ";
     @Autowired
     private VfcManager driverMgr ;
 
@@ -80,7 +81,7 @@ public class VfcAdapterRest {
             RestfulResponse rsp = driverMgr.createNs(nsInput);
             return buildResponse(rsp);
         } catch(ApplicationException e) {
-            LOGGER.debug("ApplicationException: ", e);
+            LOGGER.debug(APPLICATION_EXCEPTION, e);
             return e.buildErrorResponse();
         }
     }
@@ -106,7 +107,7 @@ public class VfcAdapterRest {
             RestfulResponse rsp = driverMgr.deleteNs(nsOperationKey, nsInstanceId);
             return buildResponse(rsp);
         } catch(ApplicationException e) {
-            LOGGER.debug("ApplicationException: ", e);
+            LOGGER.debug(APPLICATION_EXCEPTION, e);
             return e.buildErrorResponse();
         }
     }
@@ -131,7 +132,7 @@ public class VfcAdapterRest {
             RestfulResponse rsp = driverMgr.getNsProgress(nsOperationKey, jobId);
             return buildResponse(rsp);
         } catch(ApplicationException e) {
-            LOGGER.debug("ApplicationException: ", e);
+            LOGGER.debug(APPLICATION_EXCEPTION, e);
             return e.buildErrorResponse();
         }
     }
@@ -156,7 +157,7 @@ public class VfcAdapterRest {
             RestfulResponse rsp = driverMgr.instantiateNs(nsInstanceId, nsInput);
             return buildResponse(rsp);
         } catch(ApplicationException e) {
-            LOGGER.debug("ApplicationException: ", e);
+            LOGGER.debug(APPLICATION_EXCEPTION, e);
             return e.buildErrorResponse();
         }
     }
@@ -181,7 +182,7 @@ public class VfcAdapterRest {
             RestfulResponse rsp = driverMgr.terminateNs(nsOperationKey, nsInstanceId);
             return buildResponse(rsp);
         } catch(ApplicationException e) {
-            LOGGER.debug("ApplicationException: ", e);
+            LOGGER.debug(APPLICATION_EXCEPTION, e);
             return e.buildErrorResponse();
         }
     }
@@ -207,7 +208,7 @@ public class VfcAdapterRest {
     		RestfulResponse rsp = driverMgr.scaleNs(nsInstanceId, nsInput);
     		return buildResponse(rsp);
     	} catch(ApplicationException e) {
-		    LOGGER.debug("ApplicationException: ", e);
+		    LOGGER.debug(APPLICATION_EXCEPTION, e);
     		return e.buildErrorResponse();
     	}
     }
