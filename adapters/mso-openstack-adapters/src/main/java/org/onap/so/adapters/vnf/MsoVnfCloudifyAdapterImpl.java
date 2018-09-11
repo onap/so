@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,6 +84,9 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
     private static final String CHECK_REQD_PARAMS = "org.onap.so.adapters.vnf.checkRequiredParameters";
     private static final String ADD_GET_FILES_ON_VOLUME_REQ = "org.onap.so.adapters.vnf.addGetFilesOnVolumeReq";
+    private static final String CLOUDIFY_RESPONSE_SUCCESS="Successfully received response from Cloudify";
+    private static final String CLOUDIFY="Cloudify";
+    		
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     
     @Autowired
@@ -210,7 +215,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     	
     	try {
     		deployment = cloudifyUtils.queryDeployment(cloudSiteId, tenantId, vnfName);
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Cloudify", "Cloudify", "QueryDeployment", vnfName);
+            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, CLOUDIFY_RESPONSE_SUCCESS, CLOUDIFY, "QueryDeployment", vnfName);
     	}
     	catch (MsoCloudifyManagerNotFound e) {
     		// This site does not have a Cloudify Manager.
@@ -222,8 +227,8 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             // Convert to a generic VnfException
             me.addContext ("QueryVNF");
             String error = "Query VNF (Cloudify): " + vnfName + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "Cloudify", "QueryDeployment", vnfName);
-            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vnfName, cloudSiteId, tenantId, "Cloudify", "QueryVNF", MsoLogger.ErrorCode.DataError, "Exception - queryDeployment", me);
+            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, CLOUDIFY, "QueryDeployment", vnfName);
+            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vnfName, cloudSiteId, tenantId, CLOUDIFY, "QueryVNF", MsoLogger.ErrorCode.DataError, "Exception - queryDeployment", me);
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
             throw new VnfException (me);
     	}
@@ -318,14 +323,14 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         	// TODO: Get a reasonable timeout.  Use a global property, or store the creation timeout in rollback object and use that.
             deployment = cloudifyUtils.uninstallAndDeleteDeployment(cloudSiteId, tenantName, vfModuleId, 5);
             LOGGER.debug("Rolled back deployment: " + deployment.getId());
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Cloudify", "Cloudify", "DeleteDeployment", null);
+            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, CLOUDIFY_RESPONSE_SUCCESS, CLOUDIFY, "DeleteDeployment", null);
         } catch (MsoException me) {
             // Failed to rollback the VNF due to a cloudify exception.
             // Convert to a generic VnfException
             me.addContext ("RollbackVNF");
             String error = "Rollback VF Module: " + vfModuleId + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "Cloudify", "DeleteDeployment", null);
-            LOGGER.error (MessageEnum.RA_DELETE_VNF_ERR, vfModuleId, cloudSiteId, tenantId, "Cloudify", "DeleteDeployment", MsoLogger.ErrorCode.DataError, "Exception - DeleteDeployment", me);
+            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, CLOUDIFY, "DeleteDeployment", null);
+            LOGGER.error (MessageEnum.RA_DELETE_VNF_ERR, vfModuleId, cloudSiteId, tenantId, CLOUDIFY, "DeleteDeployment", MsoLogger.ErrorCode.DataError, "Exception - DeleteDeployment", me);
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
             throw new VnfException (me);
         }
@@ -579,7 +584,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 			LOGGER.debug("Missing required input: modelCustomizationUuid");
 			String error = "Create vfModule error: Missing required input: modelCustomizationUuid";
             LOGGER.error(MessageEnum.RA_VNF_UNKNOWN_PARAM,
-                    "VF Module ModelCustomizationUuid", "null", "Cloudify", "", MsoLogger.ErrorCode.DataError, "Create VF Module: Missing required input: modelCustomizationUuid");
+                    "VF Module ModelCustomizationUuid", "null", CLOUDIFY, "", MsoLogger.ErrorCode.DataError, "Create VF Module: Missing required input: modelCustomizationUuid");
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
             throw new VnfException(error, MsoExceptionCategory.USERDATA);
         }
@@ -687,13 +692,13 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         long subStartTime1 = System.currentTimeMillis ();
         try {
             cloudifyDeployment = cloudifyUtils.queryDeployment (cloudSiteId, tenantId, vfModuleName);
-            LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Cloudify", "Cloudify", "QueryDeployment", vfModuleName);
+            LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, CLOUDIFY_RESPONSE_SUCCESS, CLOUDIFY, "QueryDeployment", vfModuleName);
         }
         catch (MsoException me) {
             // Failed to query the Deployment due to a cloudify exception.
             String error = "Create VF Module: Query " + vfModuleName + " in " + cloudSiteId + "/" + tenantId + ": " + me ;
-            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, "Cloudify", "queryDeployment", MsoLogger.ErrorCode.DataError, "Exception - queryDeployment", me);
-            LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "Cloudify", "QueryDeployment", vfModuleName);
+            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment", MsoLogger.ErrorCode.DataError, "Exception - queryDeployment", me);
+            LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, CLOUDIFY, "QueryDeployment", vfModuleName);
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
 
             // Convert to a generic VnfException
@@ -711,7 +716,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         		// fail - it exists
         		if (failIfExists != null && failIfExists) {
         			String error = "Create VF: Deployment " + vfModuleName + " already exists in " + cloudSiteId + "/" + tenantId;
-        			LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, "Cloudify", "queryDeployment", MsoLogger.ErrorCode.DataError, "Deployment " + vfModuleName + " already exists");
+        			LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment", MsoLogger.ErrorCode.DataError, "Deployment " + vfModuleName + " already exists");
                     LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
         			throw new VnfAlreadyExists (vfModuleName, cloudSiteId, tenantId, cloudifyDeployment.getId());
         		} else {
@@ -728,28 +733,28 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         	if (status == DeploymentStatus.INSTALLING || status == DeploymentStatus.UNINSTALLING) {
         		// fail - it's in progress - return meaningful error
                 String error = "Create VF: Deployment " + vfModuleName + " already exists and has status " + status.toString() + " in " + cloudSiteId + "/" + tenantId + "; please wait for it to complete, or fix manually.";
-                LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, "Cloudify", "queryDeployment", MsoLogger.ErrorCode.DataError, "Deployment " + vfModuleName + " already exists");
+                LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment", MsoLogger.ErrorCode.DataError, "Deployment " + vfModuleName + " already exists");
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
                 throw new VnfAlreadyExists (vfModuleName, cloudSiteId, tenantId, cloudifyDeployment.getId());
         	}
         	else if (status == DeploymentStatus.FAILED) {
         		// fail - it exists and is in a FAILED state
                 String error = "Create VF: Deployment " + vfModuleName + " already exists and is in FAILED state in " + cloudSiteId + "/" + tenantId + "; requires manual intervention.";
-                LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, "Cloudify", "queryDeployment", MsoLogger.ErrorCode.DataError, "Deployment " + vfModuleName + " already exists and is in FAILED state");
+                LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment", MsoLogger.ErrorCode.DataError, "Deployment " + vfModuleName + " already exists and is in FAILED state");
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
                 throw new VnfAlreadyExists (vfModuleName, cloudSiteId, tenantId, cloudifyDeployment.getId());
         	}
         	else if (status == DeploymentStatus.UNKNOWN || status == DeploymentStatus.CREATED) {
         		// fail - it exists and is in a UNKNOWN state
                 String error = "Create VF: Deployment " + vfModuleName + " already exists and has status " + status.toString() + " in " + cloudSiteId + "/" + tenantId + "; requires manual intervention.";
-                LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, "Cloudify", "queryDeployment", MsoLogger.ErrorCode.DataError, "Deployment " + vfModuleName + " already exists and is in " + status.toString() + " state");
+                LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment", MsoLogger.ErrorCode.DataError, "Deployment " + vfModuleName + " already exists and is in " + status.toString() + " state");
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
                 throw new VnfAlreadyExists (vfModuleName, cloudSiteId, tenantId, cloudifyDeployment.getId());
         	}
         	else {
         		// Unexpected, since all known status values have been tested for
                 String error = "Create VF: Deployment " + vfModuleName + " already exists with unexpected status " + status.toString() + " in " + cloudSiteId + "/" + tenantId + "; requires manual intervention.";
-                LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, "Cloudify", "queryDeployment", MsoLogger.ErrorCode.DataError, "Deployment " + vfModuleName + " already exists and is in an unknown state");
+                LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment", MsoLogger.ErrorCode.DataError, "Deployment " + vfModuleName + " already exists and is in an unknown state");
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
                 throw new VnfAlreadyExists (vfModuleName, cloudSiteId, tenantId, cloudifyDeployment.getId());
         	}
@@ -766,13 +771,13 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             DeploymentInfo volumeDeployment = null;
             try {
                 volumeDeployment = cloudifyUtils.queryDeployment (cloudSiteId, tenantId, volumeGroupId);
-                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Success response from Cloudify", "Cloudify", "QueryDeployment", volumeGroupId);
+                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Success response from Cloudify", CLOUDIFY, "QueryDeployment", volumeGroupId);
             }
             catch (MsoException me) {
                 // Failed to query the Volume GroupDeployment due to a cloudify exception.
                 String error = "Create VF Module: Query Volume Group " + volumeGroupId + " in " + cloudSiteId + "/" + tenantId + ": " + me ;
-                LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, volumeGroupId, cloudSiteId, tenantId, "Cloudify", "queryDeployment(volume)", MsoLogger.ErrorCode.DataError, "Exception - queryDeployment(volume)", me);
-                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "Cloudify", "QueryDeployment(volume)", volumeGroupId);
+                LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, volumeGroupId, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment(volume)", MsoLogger.ErrorCode.DataError, "Exception - queryDeployment(volume)", me);
+                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, CLOUDIFY, "QueryDeployment(volume)", volumeGroupId);
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
 
                 // Convert to a generic VnfException
@@ -782,7 +787,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             
 	        if (volumeDeployment == null || volumeDeployment.getStatus() == DeploymentStatus.NOTFOUND) {
         	    String error = "Create VFModule: Attached Volume Group DOES NOT EXIST " + volumeGroupId + " in " + cloudSiteId + "/" + tenantId + " USER ERROR"  ;
-        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, volumeGroupId, cloudSiteId, tenantId, error, "Cloudify", "queryDeployment(volume)", MsoLogger.ErrorCode.BusinessProcesssError, "Create VFModule: Attached Volume Group DOES NOT EXIST");
+        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, volumeGroupId, cloudSiteId, tenantId, error, CLOUDIFY, "queryDeployment(volume)", MsoLogger.ErrorCode.BusinessProcesssError, "Create VFModule: Attached Volume Group DOES NOT EXIST");
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
         	    LOGGER.debug(error);
         	    throw new VnfException (error, MsoExceptionCategory.USERDATA);
@@ -814,13 +819,13 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 	            DeploymentInfo baseDeployment = null;
 	            try {
 	                baseDeployment = cloudifyUtils.queryDeployment (cloudSiteId, tenantId, baseVfModuleId);
-	                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Success response from Cloudify", "Cloudify", "QueryDeployment(Base)", baseVfModuleId);
+	                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Success response from Cloudify", CLOUDIFY, "QueryDeployment(Base)", baseVfModuleId);
 	            }
 	            catch (MsoException me) {
 	                // Failed to query the Volume GroupDeployment due to a cloudify exception.
 	                String error = "Create VF Module: Query Base " + baseVfModuleId + " in " + cloudSiteId + "/" + tenantId + ": " + me ;
-	                LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, baseVfModuleId, cloudSiteId, tenantId, "Cloudify", "queryDeployment(Base)", MsoLogger.ErrorCode.DataError, "Exception - queryDeployment(Base)", me);
-	                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "Cloudify", "QueryDeployment(Base)", baseVfModuleId);
+	                LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, baseVfModuleId, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment(Base)", MsoLogger.ErrorCode.DataError, "Exception - queryDeployment(Base)", me);
+	                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, CLOUDIFY, "QueryDeployment(Base)", baseVfModuleId);
 	                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
 	
 	                // Convert to a generic VnfException
@@ -830,7 +835,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 	            
 		        if (baseDeployment == null || baseDeployment.getStatus() == DeploymentStatus.NOTFOUND) {
 	        	    String error = "Create VFModule: Base Module DOES NOT EXIST " + baseVfModuleId + " in " + cloudSiteId + "/" + tenantId + " USER ERROR"  ;
-	        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, baseVfModuleId, cloudSiteId, tenantId, error, "Cloudify", "queryDeployment(Base)", MsoLogger.ErrorCode.BusinessProcesssError, "Create VFModule: Base Module DOES NOT EXIST");
+	        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, baseVfModuleId, cloudSiteId, tenantId, error, CLOUDIFY, "queryDeployment(Base)", MsoLogger.ErrorCode.BusinessProcesssError, "Create VFModule: Base Module DOES NOT EXIST");
 	                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
 	        	    LOGGER.debug(error);
 	        	    throw new VnfException (error, MsoExceptionCategory.USERDATA);
@@ -1012,7 +1017,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 	            	if (checkRequiredParameters) {
 	            		// Problem - missing one or more required parameters
 	            		String error = "Create VFModule: Missing Required inputs: " + missingParams;
-	            		LOGGER.error (MessageEnum.RA_MISSING_PARAM, missingParams, "Cloudify", "", MsoLogger.ErrorCode.DataError, "Create VFModule: Missing Required inputs");
+	            		LOGGER.error (MessageEnum.RA_MISSING_PARAM, missingParams, CLOUDIFY, "", MsoLogger.ErrorCode.DataError, "Create VFModule: Missing Required inputs");
 	                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
 	            		throw new VnfException (error, MsoExceptionCategory.USERDATA);
 	            	} else {
@@ -1072,7 +1077,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 			catch (MsoException me) {
                 me.addContext ("CreateVFModule");
                 String error = "Create VF Module: Upload blueprint failed.  Blueprint=" + blueprintName + ": " + me;
-                LOGGER.error (MessageEnum.RA_CREATE_VNF_ERR, vfModuleType, cloudSiteId, tenantId, "Cloudify", "", MsoLogger.ErrorCode.DataError, "MsoException - uploadBlueprint", me);
+                LOGGER.error (MessageEnum.RA_CREATE_VNF_ERR, vfModuleType, cloudSiteId, tenantId, CLOUDIFY, "", MsoLogger.ErrorCode.DataError, "MsoException - uploadBlueprint", me);
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
                 throw new VnfException (me);
 				
@@ -1100,24 +1105,24 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                                               heatTemplate.getTimeoutMinutes (),
                                               backout.booleanValue());
             	
-                LOGGER.recordMetricEvent (createDeploymentStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Cloudify", "Cloudify", "CreateDeployment", vfModuleName);
+                LOGGER.recordMetricEvent (createDeploymentStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, CLOUDIFY_RESPONSE_SUCCESS, CLOUDIFY, "CreateDeployment", vfModuleName);
             } catch (MsoException me) {
                 me.addContext ("CreateVFModule");
                 String error = "Create VF Module " + vfModuleType + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-                LOGGER.recordMetricEvent (createDeploymentStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "Cloudify", "CreateDeployment", vfModuleName);
-                LOGGER.error (MessageEnum.RA_CREATE_VNF_ERR, vfModuleType, cloudSiteId, tenantId, "Cloudify", "", MsoLogger.ErrorCode.DataError, "MsoException - createDeployment", me);
+                LOGGER.recordMetricEvent (createDeploymentStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, CLOUDIFY, "CreateDeployment", vfModuleName);
+                LOGGER.error (MessageEnum.RA_CREATE_VNF_ERR, vfModuleType, cloudSiteId, tenantId, CLOUDIFY, "", MsoLogger.ErrorCode.DataError, "MsoException - createDeployment", me);
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
                 throw new VnfException (me);
             } catch (NullPointerException npe) {
                 String error = "Create VFModule " + vfModuleType + " in " + cloudSiteId + "/" + tenantId + ": " + npe;
-                LOGGER.recordMetricEvent (createDeploymentStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "Cloudify", "CreateDeployment", vfModuleName);
-                LOGGER.error (MessageEnum.RA_CREATE_VNF_ERR, vfModuleType, cloudSiteId, tenantId, "Cloudify", "", MsoLogger.ErrorCode.DataError, "NullPointerException - createDeployment", npe);
+                LOGGER.recordMetricEvent (createDeploymentStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, CLOUDIFY, "CreateDeployment", vfModuleName);
+                LOGGER.error (MessageEnum.RA_CREATE_VNF_ERR, vfModuleType, cloudSiteId, tenantId, CLOUDIFY, "", MsoLogger.ErrorCode.DataError, "NullPointerException - createDeployment", npe);
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
                 LOGGER.debug("NULL POINTER EXCEPTION at cloudify.createAndInstallDeployment");
                 //npe.addContext ("CreateVNF");
                 throw new VnfException ("NullPointerException during cloudify.createAndInstallDeployment");
             } catch (Exception e) {
-                LOGGER.recordMetricEvent (createDeploymentStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while creating deployment with Cloudify", "Cloudify", "CreateDeployment", vfModuleName);
+                LOGGER.recordMetricEvent (createDeploymentStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while creating deployment with Cloudify", CLOUDIFY, "CreateDeployment", vfModuleName);
                 LOGGER.debug("unhandled exception at cloudify.createAndInstallDeployment");
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while creating deployment with Cloudify");
             	throw new VnfException("Exception during cloudify.createAndInstallDeployment! " + e.getMessage());
@@ -1162,8 +1167,8 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             // Failed to query the deployment.  Convert to a generic VnfException
             me.addContext ("DeleteVFModule");
             String error = "Delete VFModule: Query to get outputs: " + vnfName + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "Cloudify", "QueryDeployment", null);
-            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vnfName, cloudSiteId, tenantId, "Cloudify", "QueryDeployment", MsoLogger.ErrorCode.DataError, "Exception - QueryDeployment", me);
+            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, CLOUDIFY, "QueryDeployment", null);
+            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vnfName, cloudSiteId, tenantId, CLOUDIFY, "QueryDeployment", MsoLogger.ErrorCode.DataError, "Exception - QueryDeployment", me);
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
             throw new VnfException (me);
         }
@@ -1177,7 +1182,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         long subStartTime = System.currentTimeMillis ();
         try {
             cloudifyUtils.uninstallAndDeleteDeployment(cloudSiteId, tenantId, vnfName, 5);
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from DeleteDeployment", "Cloudify", "DeleteDeployment", vnfName);
+            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from DeleteDeployment", CLOUDIFY, "DeleteDeployment", vnfName);
         } catch (MsoException me) {
             me.addContext ("DeleteVfModule");
             // Convert to a generic VnfException
