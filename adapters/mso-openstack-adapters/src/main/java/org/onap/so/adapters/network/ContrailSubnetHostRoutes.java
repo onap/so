@@ -21,7 +21,6 @@
 package org.onap.so.adapters.network;
 
 
-import org.onap.so.openstack.beans.HostRoute;
 
 import java.util.ArrayList;
 import java.util.List;
