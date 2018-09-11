@@ -319,7 +319,7 @@ public class CreateVnfNotification {
          */
         public List<CreateVnfNotification.Outputs.Entry> getEntry() {
             if (entry == null) {
-                entry = new ArrayList<CreateVnfNotification.Outputs.Entry>();
+                entry = new ArrayList<>();
             }
             return this.entry;
         }

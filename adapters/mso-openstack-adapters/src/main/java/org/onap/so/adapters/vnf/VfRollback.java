@@ -95,11 +95,6 @@ public class VfRollback {
 	public void setRequestType(String requestType) {
 		this.requestType = requestType;
 	}
-	/*
-	private String volumeGroupHeatStackId;
-	private String baseGroupHeatStackId;
-	private boolean isBase = false;
-	*/
 	public String getVolumeGroupHeatStackId() {
 		return this.volumeGroupHeatStackId;
 	}
