@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,7 +60,7 @@ public interface MsoVnfAdapter
 							@WebParam(name="vnfId", mode=Mode.OUT) Holder<String> vnfId,
 							@WebParam(name="outputs", mode=Mode.OUT) Holder<Map<String,String>> outputs,
 							@WebParam(name="rollback", mode=Mode.OUT) Holder<VnfRollback> rollback )
-		throws VnfException, VnfAlreadyExists;
+		throws VnfException;
 
 	@WebMethod
 	public void updateVnf (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
@@ -115,7 +117,7 @@ public interface MsoVnfAdapter
 							@WebParam(name="vnfId", mode=Mode.OUT) Holder<String> vnfId,
 							@WebParam(name="outputs", mode=Mode.OUT) Holder<Map<String,String>> outputs,
 							@WebParam(name="rollback", mode=Mode.OUT) Holder<VnfRollback> rollback )
-		throws VnfException, VnfAlreadyExists;
+		throws VnfException;
 
 	@WebMethod
 	public void deleteVfModule (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
