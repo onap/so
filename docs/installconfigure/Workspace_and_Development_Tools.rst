@@ -81,7 +81,7 @@ In the eclipse directory, edit eclipse.ini
 	
 	Example:
 	
-.. image:: images/Workspace_and_Development_Tools.png	
+.. image:: ../images/Workspace_and_Development_Tools.png	
 	
 Eclipse Settings
 ----------------
@@ -93,15 +93,15 @@ Eclipse Settings
 	
 	Click "Finish"
 	
-.. image:: images/Workspace_and_Development_Tools_2.png
+.. image:: ../images/Workspace_and_Development_Tools_2.png
 
 Make sure the external installation is selected:
 
-.. image:: images/Workspace_and_Development_Tools_3.png
+.. image:: ../images/Workspace_and_Development_Tools_3.png
 
 **Configure eclipse to use your settings.xml**
 	Go to Window→Preferences→Maven→User Settings
 	
 	Type the full path to your settings.xml file into the "User Settings" box and click "OK".
 	
-.. image:: images/Workspace_and_Development_Tools_4.png
+.. image:: ../images/Workspace_and_Development_Tools_4.png

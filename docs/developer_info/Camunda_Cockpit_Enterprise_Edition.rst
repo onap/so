@@ -140,4 +140,4 @@ If you can use a browser on the docker host system, then use a localhost address
 
 The user is "admin" and the password is the same as the jboss admin password, which is not displayed here.
 
-.. image:: images/Camunda_Cockpit_Enterprise_1.png
+.. image:: ../images/Camunda_Cockpit_Enterprise_1.png
