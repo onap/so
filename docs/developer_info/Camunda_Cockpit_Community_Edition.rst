@@ -26,19 +26,19 @@ If you can use a browser on the docker host system, then use a localhost address
 
 The user is "admin" and the password is the same as the jboss admin password, which is not displayed here.
 
-.. image:: images/Camunda_Cockpit_1.png
+.. image:: ../images/Camunda_Cockpit_1.png
 
 Viewing Process Definitions
 ---------------------------
 
 Use the drop-down menu next to the home icon and select the "Cockpit" option:
 
-.. image:: images/Camunda_Cockpit_2.png
+.. image:: ../images/Camunda_Cockpit_2.png
 
 The number of deployed process definitions should be displayed.  Click on it.
 
-.. image:: images/Camunda_Cockpit_3.png
+.. image:: ../images/Camunda_Cockpit_3.png
 
 Now you should see an actual list of deployed process definitions.  You can click on any of them to view them.
 
-.. image:: images/Camunda_Cockpit_4.png
+.. image:: ../images/Camunda_Cockpit_4.png
