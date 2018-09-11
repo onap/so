@@ -27,6 +27,9 @@ public class Resource {
 	private boolean generated;
 	private boolean baseVfModule;
 	private String virtualLinkKey;
+	private String vnfCustomizationId;
+	private String vfModuleCustomizationId;
+	private String cvnfModuleCustomizationId;
 	
 	public Resource(WorkflowType resourceType, String resourceId, boolean generated){
 		this.resourceId = resourceId;
@@ -63,5 +66,23 @@ public class Resource {
 	}
 	public void setVirtualLinkKey(String virtualLinkKey) {
 		this.virtualLinkKey = virtualLinkKey;
+	}
+	public String getVnfCustomizationId() {
+		return vnfCustomizationId;
+	}
+	public void setVnfCustomizationId(String vnfCustomizationId) {
+		this.vnfCustomizationId = vnfCustomizationId;
+	}
+	public String getVfModuleCustomizationId() {
+		return vfModuleCustomizationId;
+	}
+	public void setVfModuleCustomizationId(String vfModuleCustomizationId) {
+		this.vfModuleCustomizationId = vfModuleCustomizationId;
+	}
+	public String getCvnfModuleCustomizationId() {
+		return cvnfModuleCustomizationId;
+	}
+	public void setCvnfModuleCustomizationId(String cvnfModuleCustomizationId) {
+		this.cvnfModuleCustomizationId = cvnfModuleCustomizationId;
 	}
 }
