@@ -99,13 +99,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.json4s</groupId>
-			<artifactId>json4s-jackson_2.9.1-1</artifactId>
-			<version>${json4s-jackson-version}</version>
+			<artifactId>json4s-jackson_2.12</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.json4s</groupId>
-			<artifactId>json4s-core_2.9.2</artifactId>
-			<version>${json4s-core-version}</version>
+			<artifactId>json4s-core_2.12</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

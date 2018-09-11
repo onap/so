@@ -65,6 +65,7 @@
 		<siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
 		<cxf.version>3.2.5</cxf.version>
 		<jax.ws.rs>2.1</jax.ws.rs>
+                <groovy.version>2.4.15</groovy.version>
 	</properties>
 	<distributionManagement>
 		<repository>
@@ -757,12 +758,67 @@
 			    <version>0.18.2</version>
 			</dependency>
 			<dependency>
-    			<groupId>org.flywaydb</groupId>
-    			<artifactId>flyway-core</artifactId>
-    			<version>4.2.0</version>
+                            <groupId>org.flywaydb</groupId>
+                            <artifactId>flyway-core</artifactId>
+                            <version>4.2.0</version>
 			</dependency>
-		</dependencies>
-	</dependencyManagement>
+                        <dependency>
+                                <groupId>org.json4s</groupId>
+                                <artifactId>json4s-jackson_2.12</artifactId>
+                                <version>3.6.0</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>org.json4s</groupId>
+                                <artifactId>json4s-core_2.12</artifactId>
+                                <version>3.6.0</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>org.apache.tomcat.embed</groupId>
+                                <artifactId>tomcat-embed-core</artifactId>
+                                <version>8.5.33</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>org.apache.tomcat.embed</groupId>
+                                <artifactId>tomcat-embed-el</artifactId>
+                                <version>8.5.33</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>org.apache.tomcat.embed</groupId>
+                                <artifactId>tomcat-embed-websocket</artifactId>
+                                <version>8.5.33</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>org.apache.tomcat</groupId>
+                                <artifactId>tomcat-annotations-api</artifactId>
+                                <version>8.5.33</version>
+                        </dependency>
+			<dependency>
+			    <groupId>org.apache.commons</groupId>
+			    <artifactId>commons-email</artifactId>
+			    <version>1.5</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.codehaus.groovy</groupId>
+			    <artifactId>groovy-all</artifactId>
+			    <version>${groovy.version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.immutables</groupId>
+			    <artifactId>value</artifactId>
+			    <version>2.7.1</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.hibernate</groupId>
+			    <artifactId>hibernate-validator</artifactId>
+			    <version>6.0.10.Final</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.eclipse.jetty</groupId>
+			    <artifactId>jetty-server</artifactId>
+			    <version>9.4.12.v20180830</version>
+			</dependency>
+                </dependencies>
+        </dependencyManagement>
 	<profiles>
 		<profile>
 			<id>docker-image-build</id>
