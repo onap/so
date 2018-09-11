@@ -20,6 +20,9 @@
 
 package org.onap.so.client.aai.entities.uri;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.graphinventory.GraphInventoryObjectPlurals;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
@@ -30,14 +33,18 @@ public class NodesUri extends AAISimpleUri {
 		super(type, values);
 	}
 	
+	protected NodesUri(AAIObjectPlurals type) {
+		super(type);
+	}
+	
 	
 	@Override
 	protected String getTemplate(GraphInventoryObjectType type) {
-		return "/nodes" + type.partialUri();
+		return UriBuilder.fromUri("/nodes").path(type.partialUri()).toTemplate();
 	}
 	
 	@Override
 	protected String getTemplate(GraphInventoryObjectPlurals type) {
-		return "/nodes" + type.partialUri();
+		return UriBuilder.fromUri("/nodes").path(type.partialUri()).toTemplate();
 	}
 }
