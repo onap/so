@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_2ea23ffd",
+        "filename": "so-monitoring/so-monitoring-ui/src/main/frontend/src/app/home/home.component.ts",
+        "patchSetId": 13
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-09-11T23:24:27Z",
+      "side": 1,
+      "message": "Consider using array.filter() method; .e.g, \nvar completeVal \u003d this.processData.filter(function(item) {\nreturn item.requestStatus \u003d\u003d\u003d \"COMPLETE\";\n});\n\nIf this code works, no need the for loop. Just a suggestion...",
+      "range": {
+        "startLine": 96,
+        "startChar": 10,
+        "endLine": 96,
+        "endChar": 67
+      },
+      "revId": "6b425dc28fd78e48fc2028e5cb06552455cf7609",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4e61bbd1",
+        "filename": "so-monitoring/so-monitoring-ui/src/main/frontend/src/app/home/home.component.ts",
+        "patchSetId": 13
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-09-11T23:24:27Z",
+      "side": 1,
+      "message": "totalVal could be equal to data.length. In that case, we don\u0027t have to calculate the totalVal this way. Just this.totalVal\u003ddata.length",
+      "range": {
+        "startLine": 98,
+        "startChar": 14,
+        "endLine": 98,
+        "endChar": 33
+      },
+      "revId": "6b425dc28fd78e48fc2028e5cb06552455cf7609",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
