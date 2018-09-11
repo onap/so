@@ -37,4 +37,4 @@ Characteristics
 Example: CreateVfModuleVolumeInfraV1.bpmn
 ------------------------------------------
 
-.. image:: images/BPMN_Main_Process_Flows_1.png
+.. image:: ../images/BPMN_Main_Process_Flows_1.png
