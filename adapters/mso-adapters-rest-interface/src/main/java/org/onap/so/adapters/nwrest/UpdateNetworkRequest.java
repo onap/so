@@ -31,7 +31,6 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onap.so.entity.MsoRequest;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.Subnet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
