@@ -353,15 +353,16 @@ public class BBInputSetupMapperLayerTest {
 	}
 
 	@Test
-	public void testMapAAIServiceInstanceIntoServiceInstance() throws IOException {
+	public void testMapAAIServiceInstanceIntoServiceInstance() throws IOException, JsonParseException, JsonMappingException {
+		
 		ServiceInstance expected = mapper.readValue(
 				new File(RESOURCE_PATH + "ServiceInstance_aaiServiceInstanceToSI.json"),
 				ServiceInstance.class);
-
+		
 		org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = mapper.readValue(
 				new File(RESOURCE_PATH + "ServiceInstanceAAIInput.json"),
 				org.onap.aai.domain.yang.ServiceInstance.class);
-
+		
 		ServiceInstance actual = bbInputSetupMapperLayer.mapAAIServiceInstanceIntoServiceInstance(serviceInstanceAAI);
 
 		assertThat(actual, sameBeanAs(expected));
