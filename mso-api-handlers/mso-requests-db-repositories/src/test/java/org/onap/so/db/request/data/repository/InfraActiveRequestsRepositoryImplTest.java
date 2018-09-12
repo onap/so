@@ -49,8 +49,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class InfraActiveRequestsRepositoryImplTest {
 
     private static final int MAX_LIMIT = 1;
-    private static final long END_TIME_IN_MILISEC = 1482436800000l;
-    private static final long START_TIME_IN_MILISEC = 1482429600000l;
+    private static final long END_TIME_IN_MILISEC = 1482580740000l;      // December 23, 2016 23:59 PM
+    private static final long START_TIME_IN_MILISEC = 1482282000000l;    // December 21, 2016 01:00 AM
     private static final String REQUEST_ID_VALUE = "00032ab7-3fb3-42e5-965d-8ea592502017";
     private static final String SERVICE_INSTANCE_ID_VALUE = "e3b5744d-2ad1-4cdd-8390-c999a38829bc";
 
