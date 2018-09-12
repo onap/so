@@ -8,7 +8,7 @@ SO Interfaces
 .. image:: ../images/SO_1.png
 
 SO APIs
-=================================
+----------------
 
 North Bound APIs
 ----------------
