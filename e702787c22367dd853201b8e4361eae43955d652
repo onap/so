@@ -22,6 +22,30 @@
       "revId": "e702787c22367dd853201b8e4361eae43955d652",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ffdf0f38",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-12T12:24:23Z",
+      "side": 1,
+      "message": "Sorry did not see you just moved to constructor",
+      "parentUuid": "1a76adc5_7f145fe8",
+      "range": {
+        "startLine": 49,
+        "startChar": 12,
+        "endLine": 49,
+        "endChar": 17
+      },
+      "revId": "e702787c22367dd853201b8e4361eae43955d652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
