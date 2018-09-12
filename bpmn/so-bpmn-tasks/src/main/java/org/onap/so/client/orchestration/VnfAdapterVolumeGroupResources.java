@@ -22,7 +22,6 @@ package org.onap.so.client.orchestration;
 
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
-import org.onap.so.adapters.vnfrest.DeleteVolumeGroupResponse;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -49,9 +48,7 @@ public class VnfAdapterVolumeGroupResources {
 		return vnfAdapterObjectMapper.createVolumeGroupRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
 	}
 	
-	public DeleteVolumeGroupResponse deleteVolumeGroup(RequestContext requestContext, CloudRegion cloudRegion, ServiceInstance serviceInstance, VolumeGroup volumeGroup) throws Exception {
-		DeleteVolumeGroupRequest deleteVolumeGroupRequest = vnfAdapterObjectMapper.deleteVolumeGroupRequestMapper(requestContext, cloudRegion, serviceInstance, volumeGroup);
-		msoLogger.debug(deleteVolumeGroupRequest.toString());
-		return vnfVolumeAdapterClient.deleteVNFVolumes(volumeGroup.getVolumeGroupId(), deleteVolumeGroupRequest);
+	public DeleteVolumeGroupRequest deleteVolumeGroupRequest(RequestContext requestContext, CloudRegion cloudRegion, ServiceInstance serviceInstance, VolumeGroup volumeGroup) throws Exception {
+		return vnfAdapterObjectMapper.deleteVolumeGroupRequestMapper(requestContext, cloudRegion, serviceInstance, volumeGroup);		
 	}
 }

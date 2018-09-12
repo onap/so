@@ -1,0 +1,23 @@
+{
+   "requestDetails":{
+      "modelInfo":{
+         "modelType":"vfModule",
+         "modelName":"InframsoVsamp1214..vSAMP12_base..module-0"
+      },
+      "cloudConfiguration":{
+         "lcpCloudRegionId":"mtn6",
+         "tenantId":"0422ffb57ba042c0800a29dc85ca70f8"
+      },
+      "requestInfo":{
+         "instanceName":"bdb-vSAMP12_14_1.0-VF-Base-1810-est01-VNF_API-10201",
+         "source":"VID",
+         "requestorId":"xxxxxx"
+      },
+      "requestParameters":{
+         "testApi":"VNF_API",
+         "userParams":[
+
+         ]
+      }
+   }
+}

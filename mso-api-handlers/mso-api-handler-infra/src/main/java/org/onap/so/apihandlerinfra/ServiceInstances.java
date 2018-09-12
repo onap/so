@@ -663,14 +663,14 @@ public class ServiceInstances {
 				
 
 				// Get VF Module-specific base module indicator
-				VfModule vfm;
+				VfModule vfm = null;
 
 				String modelVersionId = modelInfo.getModelVersionId();
 
 				if(modelVersionId != null) {
 					vfm = catalogDbClient.getVfModuleByModelUUID(modelVersionId);
-				} else {
-					vfm = catalogDbClient.getVfModuleByModelInvariantUUIDAndModelVersion(modelInfo.getModelInvariantId(), modelInfo.getModelVersion()); 					
+				} else if(modelInfo.getModelInvariantId() != null && modelInfo.getModelVersion() != null){
+					vfm = catalogDbClient.getVfModuleByModelInvariantUUIDAndModelVersion(modelInfo.getModelInvariantId(), modelInfo.getModelVersion());
 				}
 
 				if (vfm != null) {
@@ -831,9 +831,8 @@ public class ServiceInstances {
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             ValidateException validateException = new ValidateException.Builder("Exception caught mapping Camunda JSON response to object", HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                         .errorInfo(errorLoggerInfo).build();
-            currentActiveReq.setRequestStatus(Status.FAILED.name());
-            currentActiveReq.setStatusMessage(validateException.getMessage());
-           throw validateException;
+            updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+            throw validateException;
         }
 
 		// BPEL accepted the request, the request is in progress
@@ -850,8 +849,7 @@ public class ServiceInstances {
 					ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 					ValidateException validateException = new ValidateException.Builder("Exception caught mapping Camunda JSON response to object", HttpStatus.SC_NOT_ACCEPTABLE, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
 			                    .errorInfo(errorLoggerInfo).build();
-					currentActiveReq.setRequestStatus(Status.FAILED.name());
-					currentActiveReq.setStatusMessage(validateException.getMessage());
+					updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
 					throw validateException;
 				}
 			

@@ -927,7 +927,9 @@ public class BBInputSetup implements JavaDelegate {
 		if(collectionNetworkResourceCust != null) {
 			if((bbName.equalsIgnoreCase(AssignFlows.NETWORK_A_LA_CARTE.toString())
 				|| bbName.equalsIgnoreCase(AssignFlows.NETWORK_MACRO.toString()))) {
-				serviceInstance.getNetworks().add(createNetwork(lookupKeyMap, null, networkId, null));
+				L3Network network = createNetwork(lookupKeyMap, null, networkId, null);				
+				serviceInstance.getNetworks().add(network);
+				return network;
 			} else {
 				for (L3Network network : serviceInstance.getNetworks()) {
 					if (network.getNetworkId().equalsIgnoreCase(networkId)) {

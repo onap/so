@@ -727,6 +727,7 @@ public class WorkflowAction {
 			}
 			return generatedResourceId;
 		} catch (Exception ex) {
+			msoLogger.error(ex);
 			throw new IllegalStateException(
 					"WorkflowAction was unable to verify if the instance name already exist in AAI.");
 		}

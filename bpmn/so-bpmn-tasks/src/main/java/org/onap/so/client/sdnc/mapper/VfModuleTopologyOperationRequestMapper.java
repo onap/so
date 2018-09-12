@@ -30,6 +30,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 import org.onap.so.logger.MessageEnum;
@@ -58,7 +59,7 @@ public class VfModuleTopologyOperationRequestMapper {
 
 	public GenericResourceApiVfModuleOperationInformation reqMapper(SDNCSvcOperation svcOperation,
 			SDNCSvcAction svcAction,  VfModule vfModule, VolumeGroup volumeGroup, GenericVnf vnf, ServiceInstance serviceInstance,
-			Customer customer, CloudRegion cloudRegion, RequestContext requestContext, String sdncAssignResponse) {
+			Customer customer, CloudRegion cloudRegion, RequestContext requestContext, String sdncAssignResponse) throws MapperException {
 		GenericResourceApiVfModuleOperationInformation req = new GenericResourceApiVfModuleOperationInformation();
 		
 		boolean includeModelInformation = false;	

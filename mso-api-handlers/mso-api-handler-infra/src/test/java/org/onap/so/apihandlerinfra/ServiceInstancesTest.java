@@ -1392,6 +1392,33 @@ public class ServiceInstancesTest extends BaseTest{
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
     }
     @Test
+    public void deleteVfModuleNoModelInvariantId() throws IOException {
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        
+        stubFor(get(urlMatching(".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction" +
+                "[?]vfModuleModelUUID=VNF-API-DEFAULT&vnfComponentType=vfModule&action=deleteInstance"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("vnfComponentRecipeDeleteVfModule_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        //expected response
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "v7" + "/serviceInstances/196b4a84-0858-4317-a1f6-497e2e52ae43/vnfs/36e4f902-ec32-451e-8d53-e3edc19e40a4/vfModules/09f3a38d-933f-450a-8784-9e6c4dec3f72";
+        ResponseEntity<String> response = sendRequest(inputStream("/DeleteVfModuleNoModelInvariantId.json"), uri, HttpMethod.DELETE);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
+    @Test
     public void deactivateAndCloudDeleteVfModuleInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1980,6 +2007,43 @@ public class ServiceInstancesTest extends BaseTest{
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Request Failed due to BPEL error with HTTP Status = 202{\"instanceId\": \"1882939\"}", realResponse.getServiceException().getText());
     }
+    @Test
+    public void unauthorizedBPELResponse() throws IOException{
+
+        ServiceRecipe serviceRecipe = new ServiceRecipe();
+        serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
+        serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        serviceRecipe.setAction(Action.createInstance.toString());
+        serviceRecipe.setId(1);
+        serviceRecipe.setRecipeTimeout(180);
+        Service defaultService = new Service();
+        defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+	    
+	    stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/UnauthorizedResponse.json").withStatus(org.apache.http.HttpStatus.SC_UNAUTHORIZED)));
+
+        stubFor(get(urlMatching(".*/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
+
+        stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
+        
+        uri = servInstanceuri + "v5/serviceInstances";
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        assertEquals("Exception caught mapping Camunda JSON response to object", realResponse.getServiceException().getText());
+    }
 
     @Test
     public void invalidBPELResponse2() throws IOException{
@@ -2144,5 +2208,41 @@ public class ServiceInstancesTest extends BaseTest{
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
         assertTrue(response.getBody().contains("1882939"));
+    }
+    @Test
+    public void createServiceInstanceBadResponse() throws IOException{
+    	  ServiceRecipe serviceRecipe = new ServiceRecipe();
+          serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
+          serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+          serviceRecipe.setAction(Action.createInstance.toString());
+          serviceRecipe.setId(1);
+          serviceRecipe.setRecipeTimeout(180);
+          Service defaultService = new Service();
+          defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+  	    
+  	    stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                  .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                          .withBodyFile("Camunda/TestBadResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+          stubFor(get(urlMatching(".*/service/.*"))
+                  .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                          .withBody(mapper.writeValueAsString(defaultService))
+                          .withStatus(HttpStatus.SC_OK)));
+
+          stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
+                  .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                          .withBody(mapper.writeValueAsString(serviceRecipe))
+                          .withStatus(HttpStatus.SC_OK)));
+          
+          uri = servInstanceuri + "v5/serviceInstances";
+          ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST);
+
+          ObjectMapper mapper = new ObjectMapper();
+          mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+          mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
+          assertEquals(Response.Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode().value());
+          RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+          assertEquals("Exception caught mapping Camunda JSON response to object", realResponse.getServiceException().getText());
     }
 }

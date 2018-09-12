@@ -110,13 +110,10 @@ public class VnfAdapterVolumeGroupResourcesTest  extends TestDataSetup {
 		DeleteVolumeGroupRequest deleteVolumeGroupRequest = new DeleteVolumeGroupRequest();
 		doReturn(deleteVolumeGroupRequest).when(MOCK_vnfAdapterObjectMapper).deleteVolumeGroupRequestMapper(requestContext, cloudRegion, serviceInstance, volumeGroup);
 	
-		DeleteVolumeGroupResponse expectedDeleteVolumeGroupResponse = new DeleteVolumeGroupResponse();
-		doReturn(expectedDeleteVolumeGroupResponse).when(MOCK_vnfVolumeAdapterClient).deleteVNFVolumes(volumeGroup.getVolumeGroupId(), deleteVolumeGroupRequest);
+		DeleteVolumeGroupRequest expectedDeleteVolumeGroupRequest = new DeleteVolumeGroupRequest();		
+		DeleteVolumeGroupRequest actualDeleteVolumeGroupRequest = vnfAdapterVolumeGroupResources.deleteVolumeGroupRequest(requestContext, cloudRegion, serviceInstance, volumeGroup);		
 		
-		DeleteVolumeGroupResponse actualDeleteVolumeGroupResponse = vnfAdapterVolumeGroupResources.deleteVolumeGroup(requestContext, cloudRegion, serviceInstance, volumeGroup);
-		
-		verify(MOCK_vnfVolumeAdapterClient, times(1)).deleteVNFVolumes(volumeGroup.getVolumeGroupId(), deleteVolumeGroupRequest);
 		verify(MOCK_vnfAdapterObjectMapper, times(1)).deleteVolumeGroupRequestMapper(requestContext, cloudRegion, serviceInstance, volumeGroup);
-		assertThat(expectedDeleteVolumeGroupResponse, Matchers.sameBeanAs(actualDeleteVolumeGroupResponse));
+		assertThat(expectedDeleteVolumeGroupRequest, Matchers.sameBeanAs(actualDeleteVolumeGroupRequest));
 	}
 }

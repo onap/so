@@ -25,6 +25,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.springframework.stereotype.Component;
+import org.onap.so.client.exception.MapperException;
 
 @Component
 public class GeneralTopologyObjectMapper {
@@ -109,16 +110,21 @@ public class GeneralTopologyObjectMapper {
 	/*
 	 * Build GenericResourceApiVfModuleinformationVfModuleInformation
 	 */
-	public GenericResourceApiVfmoduleinformationVfModuleInformation buildVfModuleInformation(VfModule vfModule, GenericVnf vnf, ServiceInstance serviceInstance, boolean includeModelInformation){
+	public GenericResourceApiVfmoduleinformationVfModuleInformation buildVfModuleInformation(VfModule vfModule, GenericVnf vnf, ServiceInstance serviceInstance, boolean includeModelInformation) throws MapperException {
 		GenericResourceApiVfmoduleinformationVfModuleInformation vfModuleInformation = new GenericResourceApiVfmoduleinformationVfModuleInformation();
 		if (includeModelInformation) {
-			GenericResourceApiOnapmodelinformationOnapModelInformation onapModelInformation = new GenericResourceApiOnapmodelinformationOnapModelInformation();
-			onapModelInformation.setModelInvariantUuid(vfModule.getModelInfoVfModule().getModelInvariantUUID());
-			onapModelInformation.setModelName(vfModule.getModelInfoVfModule().getModelName());
-			onapModelInformation.setModelVersion(vfModule.getModelInfoVfModule().getModelVersion());
-			onapModelInformation.setModelUuid(vfModule.getModelInfoVfModule().getModelUUID());
-			onapModelInformation.setModelCustomizationUuid(vfModule.getModelInfoVfModule().getModelCustomizationUUID());
-			vfModuleInformation.setOnapModelInformation(onapModelInformation);
+			if (vfModule.getModelInfoVfModule() == null) {
+				throw new MapperException("VF Module model info is null for " + vfModule.getVfModuleId());
+			}
+			else {
+				GenericResourceApiOnapmodelinformationOnapModelInformation onapModelInformation = new GenericResourceApiOnapmodelinformationOnapModelInformation();
+				onapModelInformation.setModelInvariantUuid(vfModule.getModelInfoVfModule().getModelInvariantUUID());
+				onapModelInformation.setModelName(vfModule.getModelInfoVfModule().getModelName());
+				onapModelInformation.setModelVersion(vfModule.getModelInfoVfModule().getModelVersion());
+				onapModelInformation.setModelUuid(vfModule.getModelInfoVfModule().getModelUUID());
+				onapModelInformation.setModelCustomizationUuid(vfModule.getModelInfoVfModule().getModelCustomizationUUID());
+				vfModuleInformation.setOnapModelInformation(onapModelInformation);
+			}
 		}
 		if (vfModule.getModelInfoVfModule() != null) {
 			vfModuleInformation.setVfModuleType(vfModule.getModelInfoVfModule().getModelName());

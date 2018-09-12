@@ -506,33 +506,35 @@ public class VnfAdapterVfModuleObjectMapper {
 		
 		String vmTypeKey = vnfcNetworkdata.getVnfcType();
 		GenericResourceApiVnfcnetworkdataVnfcnetworkdataVnfcPorts vnfcPorts = vnfcNetworkdata.getVnfcPorts();
-		List<GenericResourceApiVnfcnetworkdataVnfcnetworkdataVnfcportsVnfcPort> vnfcPortList = vnfcPorts.getVnfcPort();
-		if (vnfcPortList != null) {									
-			for(int portIdx = 0; portIdx < vnfcPortList.size(); portIdx++){
-			
-				GenericResourceApiVnfcnetworkdataVnfcnetworkdataVnfcportsVnfcPort vnfcPort = vnfcPortList.get(portIdx);
-				GenericResourceApiSubInterfaceNetworkData vnicSubInterfaces = vnfcPort.getVnicSubInterfaces();
-			
-				String vnicSubInterfacesString = convertToString(vnicSubInterfaces);
-				String  networkRoleKey = vnfcPort.getCommonSubInterfaceRole();	
-				String subInterfaceKey = createVnfcSubInterfaceKey(vmTypeKey, networkDataIdx, networkRoleKey, portIdx);
-				String globalSubInterfaceKey = createGlobalVnfcSubInterfaceKey(vmTypeKey, networkRoleKey, portIdx);
+		if (vnfcPorts != null) {
+			List<GenericResourceApiVnfcnetworkdataVnfcnetworkdataVnfcportsVnfcPort> vnfcPortList = vnfcPorts.getVnfcPort();		
+			if (vnfcPortList != null) {									
+				for(int portIdx = 0; portIdx < vnfcPortList.size(); portIdx++){
 				
-				buildVfModuleSubInterfacesCount(paramsMap, globalSubInterfaceKey, vnicSubInterfaces);
-			
-				buildVfModuleVlanTag(paramsMap, subInterfaceKey, vnicSubInterfacesString);
-			
-				buildVfModuleNetworkName(paramsMap, subInterfaceKey, vnicSubInterfacesString);
-			
-				buildVfModuleNetworkId(paramsMap, subInterfaceKey, vnicSubInterfacesString);
-
-				buildVfModuleIpV4AddressHeatTemplate(paramsMap, subInterfaceKey, vnicSubInterfacesString);
-			
-				buildVfModuleIpV6AddressHeatTemplate(paramsMap, subInterfaceKey, vnicSubInterfacesString);
-			
-				buildVfModuleFloatingIpV4HeatTemplate(paramsMap, globalSubInterfaceKey, vnicSubInterfacesString);
-
-				buildVfModuleFloatingIpV6HeatTemplate(paramsMap, globalSubInterfaceKey, vnicSubInterfacesString);
+					GenericResourceApiVnfcnetworkdataVnfcnetworkdataVnfcportsVnfcPort vnfcPort = vnfcPortList.get(portIdx);
+					GenericResourceApiSubInterfaceNetworkData vnicSubInterfaces = vnfcPort.getVnicSubInterfaces();
+				
+					String vnicSubInterfacesString = convertToString(vnicSubInterfaces);
+					String  networkRoleKey = vnfcPort.getCommonSubInterfaceRole();	
+					String subInterfaceKey = createVnfcSubInterfaceKey(vmTypeKey, networkDataIdx, networkRoleKey, portIdx);
+					String globalSubInterfaceKey = createGlobalVnfcSubInterfaceKey(vmTypeKey, networkRoleKey, portIdx);
+					
+					buildVfModuleSubInterfacesCount(paramsMap, globalSubInterfaceKey, vnicSubInterfaces);
+				
+					buildVfModuleVlanTag(paramsMap, subInterfaceKey, vnicSubInterfacesString);
+				
+					buildVfModuleNetworkName(paramsMap, subInterfaceKey, vnicSubInterfacesString);
+				
+					buildVfModuleNetworkId(paramsMap, subInterfaceKey, vnicSubInterfacesString);
+	
+					buildVfModuleIpV4AddressHeatTemplate(paramsMap, subInterfaceKey, vnicSubInterfacesString);
+				
+					buildVfModuleIpV6AddressHeatTemplate(paramsMap, subInterfaceKey, vnicSubInterfacesString);
+				
+					buildVfModuleFloatingIpV4HeatTemplate(paramsMap, globalSubInterfaceKey, vnicSubInterfacesString);
+	
+					buildVfModuleFloatingIpV6HeatTemplate(paramsMap, globalSubInterfaceKey, vnicSubInterfacesString);
+				}
 			}
 		}
 	}

@@ -18,18 +18,26 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client;
+package org.onap.so.client.sdnc;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
+import static org.junit.Assert.*;
 
-@Configuration
-public class RestTemplateConfig {
+import java.util.LinkedHashMap;
+import java.util.Optional;
 
-	@Bean
-	public RestTemplate restTemplate() {
-		return new RestTemplate( new HttpComponentsClientHttpRequestFactory());
-	}
+import org.junit.Test;
+
+public class SDNCClientLogResponseTest {
+
+	private SDNCClient sdncClient = new SDNCClient();
+
+    @Test
+    public void logSDNCResponseTest() {
+    	LinkedHashMap<String, String> output = new LinkedHashMap<>();
+    	output.put("response-code", "404");
+    	output.put("response-message", "not found");
+    	Optional<String> response = sdncClient.logSDNCResponse(output);
+    	assertEquals(true, response.isPresent());
+    	assertEquals("{\"response-code\":\"404\",\"response-message\":\"not found\"}",response.get());
+    }
 }
