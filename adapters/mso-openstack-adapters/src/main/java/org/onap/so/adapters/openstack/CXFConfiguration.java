@@ -47,7 +47,6 @@ import org.onap.so.adapters.vnf.VnfAdapterRestV2;
 import org.onap.so.adapters.vnf.VolumeAdapterRest;
 import org.onap.so.adapters.vnf.VolumeAdapterRestV2;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
