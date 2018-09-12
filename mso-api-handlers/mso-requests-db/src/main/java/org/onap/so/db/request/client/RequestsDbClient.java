@@ -82,10 +82,6 @@ public class RequestsDbClient {
 	private static final String VALUE = "VALUE";
 	private static final String TAG = "TAG";
 	
-	private Client<InfraActiveRequests> infraActiveRequestClient;
-	private Client<RequestProcessingData> requestProcessingDataClient;
-	private final Client<OperationalEnvDistributionStatus> distributionStatusClient;
-	private final Client<OperationalEnvServiceModelStatus> serviceModelStatusClient;
 
 	@Value("${mso.adapters.requestDb.endpoint}")
 	protected String endpoint;
@@ -140,11 +136,12 @@ public class RequestsDbClient {
 		findOneByOperationalEnvIdAndServiceModelVersionIdURI = endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH + findOneByOperationalEnvIdAndServiceModelVersionIdURI;
 		findAllByOperationalEnvIdAndRequestIdURI = endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH + findAllByOperationalEnvIdAndRequestIdURI;
 	}
-
-	public RequestsDbClient() {
+	
+	public ClientFactory getClientFactory(){
+		URI baseUri = UriBuilder.fromUri(endpoint).build();		
 		ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
-		ClientFactory clientFactory = Configuration.builder().setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
+		return Configuration.builder().setBaseUri(baseUri).setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
 			restTemplate.getInterceptors().add((new SpringClientFilter()));
 
 			restTemplate.getInterceptors().add((request, body, execution) -> {
@@ -153,11 +150,8 @@ public class RequestsDbClient {
 				return execution.execute(request, body);
 			});
 		}).build().buildClientFactory();
-		infraActiveRequestClient = clientFactory.create(InfraActiveRequests.class);
-		requestProcessingDataClient = clientFactory.create(RequestProcessingData.class);
-		distributionStatusClient = clientFactory.create(OperationalEnvDistributionStatus.class);
-		serviceModelStatusClient = clientFactory.create(OperationalEnvServiceModelStatus.class);
 	}
+
 	
 	public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(Map<String, String> orchestrationMap){
 		URI uri = getUri(cloudOrchestrationFiltersFromInfraActive);
@@ -176,7 +170,10 @@ public class RequestsDbClient {
 
     public InfraActiveRequests getInfraActiveRequestbyRequestId(String requestId) {
         try {
-            InfraActiveRequests infraActiveRequests = restTemplate.exchange(getUri(endpoint + "/infraActiveRequests/" + requestId), HttpMethod.GET, HttpEntity.EMPTY, InfraActiveRequests.class).getBody();
+        	HttpHeaders headers = new HttpHeaders();
+    		headers.set("Authorization", msoAdaptersAuth);
+    		HttpEntity<?> entity = new HttpEntity<>(headers);
+            InfraActiveRequests infraActiveRequests = restTemplate.exchange(getUri(endpoint + "/infraActiveRequests/" + requestId), HttpMethod.GET, entity, InfraActiveRequests.class).getBody();
             if (infraActiveRequests != null) {
                 infraActiveRequests.setRequestId(requestId);
             }
@@ -198,9 +195,13 @@ public class RequestsDbClient {
 	}
 
 	public InfraActiveRequests checkVnfIdStatus(String operationalEnvironmentId) {
+    	HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", msoAdaptersAuth);
+		HttpEntity<?> entity = new HttpEntity<>(headers);
 		URI uri = getUri(checkVnfIdStatus + operationalEnvironmentId);
-		return restTemplate.exchange(uri, HttpMethod.GET, HttpEntity.EMPTY, InfraActiveRequests.class).getBody();
+		return restTemplate.exchange(uri, HttpMethod.GET, entity, InfraActiveRequests.class).getBody();
 	}
+	
 	public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName, String requestScope) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", msoAdaptersAuth);
@@ -219,10 +220,13 @@ public class RequestsDbClient {
 
 	public OperationStatus getOneByServiceIdAndOperationId(String serviceId, String operationId) {
 		try {
+	    	HttpHeaders headers = new HttpHeaders();
+			headers.set("Authorization", msoAdaptersAuth);
+			HttpEntity<?> entity = new HttpEntity<>(headers);
 			OperationStatus operationStatus = restTemplate.exchange(UriBuilder.fromUri(getUri(findOneByServiceIdAndOperationIdURI))
 					.queryParam(SERVICE_ID, serviceId)
 					.queryParam(OPERATION_ID, operationId)
-					.build(), HttpMethod.GET, HttpEntity.EMPTY, OperationStatus.class).getBody();
+					.build(), HttpMethod.GET, entity, OperationStatus.class).getBody();
 			if (operationStatus != null) {
 				operationStatus.setServiceId(serviceId);
 				operationStatus.setOperationId(operationId);
@@ -256,11 +260,11 @@ public class RequestsDbClient {
 	}
 	
 	private OperationalEnvServiceModelStatus getSingleOperationalEnvServiceModelStatus(URI uri){
-		return serviceModelStatusClient.get(uri);
+		return getClientFactory().create(OperationalEnvServiceModelStatus.class).get(uri);
 	}
 
 	private List<OperationalEnvServiceModelStatus> getMultipleOperationalEnvServiceModelStatus(URI uri){
-		Iterable <OperationalEnvServiceModelStatus> iterable = serviceModelStatusClient.getAll(uri);
+		Iterable <OperationalEnvServiceModelStatus> iterable = getClientFactory().create(OperationalEnvServiceModelStatus.class).getAll(uri);
 		List<OperationalEnvServiceModelStatus> serviceModelStatuses = new ArrayList<>();
 		Iterator<OperationalEnvServiceModelStatus> statusIterator = iterable.iterator();
 		statusIterator.forEachRemaining(serviceModelStatuses::add);
@@ -284,11 +288,17 @@ public class RequestsDbClient {
 	}
 	
 	private OperationalEnvDistributionStatus getSingleOperationalEnvDistributionStatus(URI uri){
-		return distributionStatusClient.get(uri);
+		return getClientFactory().create(OperationalEnvDistributionStatus.class).get(uri);
 	}
 
-	public void updateInfraActiveRequests(InfraActiveRequests request) {		
-		infraActiveRequestClient.put(request);
+	public void updateInfraActiveRequests(InfraActiveRequests request) {				
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", msoAdaptersAuth);
+		headers.set(HttpHeaders.CONTENT_TYPE,"application/json");
+		headers.set(HttpHeaders.ACCEPT,  "application/json");
+		URI uri = getUri(infraActiveRequestURI+request.getRequestId());
+		HttpEntity<InfraActiveRequests> entity = new HttpEntity<>(request, headers);
+		restTemplate.put(uri, entity);
 	}
 	
 	protected URI getUri(String uri) {
@@ -319,11 +329,11 @@ public class RequestsDbClient {
 	}
 	
 	public RequestProcessingData getSingleRequestProcessingData(URI uri){
-		return requestProcessingDataClient.get(uri);
+		return getClientFactory().create(RequestProcessingData.class).get(uri);
 	}
 	
 	private List<RequestProcessingData> getRequestProcessingData(URI uri) {
-		Iterable<RequestProcessingData> requestProcessingDataIterator = requestProcessingDataClient.getAll(uri);
+		Iterable<RequestProcessingData> requestProcessingDataIterator = getClientFactory().create(RequestProcessingData.class).getAll(uri);
 		List<RequestProcessingData> requestProcessingDataList = new ArrayList<>();
 		Iterator<RequestProcessingData> it = requestProcessingDataIterator.iterator();
 		it.forEachRemaining(requestProcessingDataList::add);
@@ -335,8 +345,8 @@ public class RequestsDbClient {
 		return (List<RequestProcessingData>) this.getAllRequestProcessingData(UriBuilder.fromUri(endpoint + "/requestProcessingData").build());
 	}
 	
-	private Iterable<RequestProcessingData> getAllRequestProcessingData(URI uri) {
-		return requestProcessingDataClient.getAll(uri);
+	private Iterable<RequestProcessingData> getAllRequestProcessingData(URI uri) {		
+		return getClientFactory().create(RequestProcessingData.class).getAll(uri);
 	}
 
 	@Component

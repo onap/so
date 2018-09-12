@@ -21,6 +21,7 @@
 package org.onap.so.client.sdnc;
 
 import java.util.LinkedHashMap;
+import java.util.Optional;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -34,6 +35,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class SDNCClient {
@@ -62,10 +66,25 @@ public class SDNCClient {
 			STOClient.setHttpHeader(httpHeader);
 			msoLogger.info("Running SDNC CLIENT for TargetUrl: " + targetUrl);
 			LinkedHashMap<?, ?> output = STOClient.post(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
+			Optional<String> sdncResponse = logSDNCResponse(output);
+			if(sdncResponse.isPresent()){
+				msoLogger.info(sdncResponse.get());
+			}
 			msoLogger.info("Validating output...");
 			return sdnCommonTasks.validateSDNResponse(output);
 	}
 
+	protected Optional<String> logSDNCResponse(LinkedHashMap<?, ?> output) {
+		ObjectMapper mapper = new ObjectMapper();
+		String sdncOutput = "";
+		try {
+			sdncOutput = mapper.writeValueAsString(output);
+			return Optional.of(sdncOutput);
+		} catch (JsonProcessingException e) {
+			msoLogger.debug("Failed to map response from sdnc to json string for logging purposes.");
+		}
+		return Optional.empty();
+	}
 
 	/**
 	 * 

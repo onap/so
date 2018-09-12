@@ -30,7 +30,7 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
-import org.onap.so.adapters.vnfrest.DeleteVolumeGroupResponse;
+import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -95,20 +95,22 @@ public class VnfAdapterDeleteTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void test_deleteVolumeGroup() throws Exception {
-		DeleteVolumeGroupResponse deleteVolumeGroupResponse = new DeleteVolumeGroupResponse();
+		DeleteVolumeGroupRequest deleteVolumeGroupRequest = new DeleteVolumeGroupRequest();
+		deleteVolumeGroupRequest.setVolumeGroupId("volumeGroupId");
 		
-		doReturn(deleteVolumeGroupResponse).when(vnfAdapterVolumeGroupResources).deleteVolumeGroup(requestContext, cloudRegion, serviceInstance, volumeGroup);
+		doReturn(deleteVolumeGroupRequest).when(vnfAdapterVolumeGroupResources).deleteVolumeGroupRequest(requestContext, cloudRegion, serviceInstance, volumeGroup);
 		
 		vnfAdapterDeleteTasks.deleteVolumeGroup(execution);
 		
-		verify(vnfAdapterVolumeGroupResources, times(1)).deleteVolumeGroup(requestContext, cloudRegion, serviceInstance, volumeGroup);
+		verify(vnfAdapterVolumeGroupResources, times(1)).deleteVolumeGroupRequest(requestContext, cloudRegion, serviceInstance, volumeGroup);
+		assertEquals(execution.getVariable("VNFREST_Request"), deleteVolumeGroupRequest.toXmlString());
 	}
 	
 	@Test
 	public void deleteVolumeGroupExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(vnfAdapterVolumeGroupResources).deleteVolumeGroup(requestContext, cloudRegion, serviceInstance, volumeGroup);
+		doThrow(Exception.class).when(vnfAdapterVolumeGroupResources).deleteVolumeGroupRequest(requestContext, cloudRegion, serviceInstance, volumeGroup);
 	
 		vnfAdapterDeleteTasks.deleteVolumeGroup(execution);
 	}

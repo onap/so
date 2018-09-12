@@ -29,7 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -41,6 +43,7 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
+import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 
@@ -50,6 +53,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class VfModuleTopologyOperationRequestMapperTest {
 
 	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
+	private final static String ERRORMESSAGE = "VF Module model info is null for testVfModuleId";
+	
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
 
 	@Test
 	public void assignGenericResourceApiVfModuleInformationTest() throws Exception {
@@ -219,6 +226,58 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		assertNull(vfModuleSDNCrequest.getServiceInformation().getOnapModelInformation().getModelCustomizationUuid());
 		assertEquals("vnfModelCustomizationUuid", vfModuleSDNCrequest.getVnfInformation().getOnapModelInformation().getModelCustomizationUuid());
 		assertEquals("vfModuleModelCustomizationUuid", vfModuleSDNCrequest.getVfModuleInformation().getOnapModelInformation().getModelCustomizationUuid());
+	}
+	
+	@Test
+	public void reqMapperNoModelInfoTest() throws Exception {
+
+		// prepare and set service instance
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setServiceInstanceId("serviceInstanceId");
+		ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
+		modelInfoServiceInstance.setModelInvariantUuid("serviceModelInvariantUuid");
+		modelInfoServiceInstance.setModelName("serviceModelName");
+		modelInfoServiceInstance.setModelUuid("serviceModelUuid");
+		modelInfoServiceInstance.setModelVersion("serviceModelVersion");
+
+		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
+		// prepare Customer object
+		Customer customer = new Customer();
+		customer.setGlobalCustomerId("globalCustomerId");
+		customer.setServiceSubscription(new ServiceSubscription());
+		// set Customer on service instance
+		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
+		//
+		RequestContext requestContext = new RequestContext();
+		HashMap<String, String> userParams = new HashMap<String, String>();
+		userParams.put("key1", "value1");
+		requestContext.setUserParams(userParams);
+		requestContext.setProductFamilyId("productFamilyId");
+
+		GenericVnf vnf = new GenericVnf();
+		vnf.setVnfId("testVnfId");
+		vnf.setVnfType("testVnfType");
+		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
+		modelInfoGenericVnf.setModelInvariantUuid("vnfModelInvariantUuid");
+		modelInfoGenericVnf.setModelName("vnfModelName");
+		modelInfoGenericVnf.setModelVersion("vnfModelVersion");
+		modelInfoGenericVnf.setModelUuid("vnfModelUuid");
+		modelInfoGenericVnf.setModelCustomizationUuid("vnfModelCustomizationUuid");
+		vnf.setModelInfoGenericVnf(modelInfoGenericVnf);
+
+		VfModule vfModule = new VfModule();
+		vfModule.setVfModuleId("testVfModuleId");
+		vfModule.setVfModuleName("testVfModuleName");		
+		vfModule.setModelInfoVfModule(null);
+
+		CloudRegion cloudRegion = new CloudRegion();
+		
+		VfModuleTopologyOperationRequestMapper mapper = new VfModuleTopologyOperationRequestMapper();
+		expectedException.expect(MapperException.class);
+		expectedException.expectMessage(ERRORMESSAGE);
+		
+		mapper.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule, null, vnf, serviceInstance, customer,
+			cloudRegion, requestContext, null);		
 	}
 
 }

@@ -1,0 +1,7 @@
+{
+	"timestamp": 1533899092159,
+	"status": 401,
+	"error": "Unauthorized",
+	"message": "Bad credentials",
+	"path": "/onap/so/infra/serviceInstances/v7"
+}

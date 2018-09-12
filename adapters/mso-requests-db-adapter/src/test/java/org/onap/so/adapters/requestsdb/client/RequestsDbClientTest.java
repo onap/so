@@ -142,9 +142,12 @@ public class RequestsDbClientTest {
     @Test
     public void getInfraActiveRequestbyRequestIdTest(){
         InfraActiveRequests infraActiveRequestsResponse = requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
-        verifyInfraActiveRequests(infraActiveRequestsResponse);
+        verifyInfraActiveRequests(infraActiveRequestsResponse);       
+        infraActiveRequestsResponse = requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
+        
         assertNull(requestsDbClient.getInfraActiveRequestbyRequestId(UUID.randomUUID().toString()));
     }
+    
 
     @Test
     public void getOneByServiceIdAndOperationIdTest(){

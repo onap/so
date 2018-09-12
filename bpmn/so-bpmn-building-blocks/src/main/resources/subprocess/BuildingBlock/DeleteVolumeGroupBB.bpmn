@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
   <bpmn:process id="DeleteVolumeGroupBB" name="DeleteVolumeGroupBB" isExecutable="true">
     <bpmn:startEvent id="DeleteVolumeGroupBB_Start" name="Start">
       <bpmn:outgoing>SequenceFlow_1wz1rfg</bpmn:outgoing>
@@ -9,15 +9,30 @@
       <bpmn:incoming>SequenceFlow_0mh0v9h</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:serviceTask id="UpdateVolumeGroupAAI" name="Update Volume Group A&#38;AI (AAI Assigned)" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusAssignedVolumeGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_13ngwev</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0fkan8t</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0mh0v9h</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0mh0v9h" sourceRef="UpdateVolumeGroupAAI" targetRef="DeleteVolumeGroupBB_End" />
-    <bpmn:sequenceFlow id="SequenceFlow_13ngwev" sourceRef="DeleteVolumeGroupVnfAdapter" targetRef="UpdateVolumeGroupAAI" />
+    <bpmn:sequenceFlow id="SequenceFlow_13ngwev" sourceRef="DeleteVolumeGroupVnfAdapter" targetRef="VnfAdapter" />
     <bpmn:serviceTask id="DeleteVolumeGroupVnfAdapter" name="Delete Volume Group Vnf Adapter (AIC Delete)" camunda:expression="${VnfAdapterDeleteTasks.deleteVolumeGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1wz1rfg</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_13ngwev</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0fkan8t" sourceRef="VnfAdapter" targetRef="UpdateVolumeGroupAAI" />
+    <bpmn:callActivity id="VnfAdapter" name="Vnf Adapter" calledElement="VnfAdapter">
+      <bpmn:extensionElements>
+        <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+        <camunda:inputOutput>
+          <camunda:outputParameter name="Output_3bec9ju" />
+        </camunda:inputOutput>
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="heatStackId" target="heatStackId" />
+        <camunda:in source="deleteVolumeGroupRequest" target="deleteVolumeGroupRequest" />
+        <camunda:in source="VNFREST_Request" target="VNFREST_Request" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_13ngwev</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0fkan8t</bpmn:outgoing>
+    </bpmn:callActivity>
   </bpmn:process>
   <bpmn:error id="Error_0pz4sdi" name="gDelegateError" errorCode="7000" />
   <bpmn:escalation id="Escalation_1hjulni" name="Escalation_2cgup2p" />
@@ -37,30 +52,40 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_1k6463v_di" bpmnElement="DeleteVolumeGroupBB_End">
-        <dc:Bounds x="684" y="102" width="36" height="36" />
+        <dc:Bounds x="824" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="657" y="142" width="90" height="12" />
+          <dc:Bounds x="842" y="142" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0rytcj0_di" bpmnElement="UpdateVolumeGroupAAI">
-        <dc:Bounds x="525" y="80" width="100" height="80" />
+        <dc:Bounds x="665" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0mh0v9h_di" bpmnElement="SequenceFlow_0mh0v9h">
-        <di:waypoint xsi:type="dc:Point" x="625" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="684" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="765" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="824" y="120" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="609.5" y="98.5" width="90" height="13" />
+          <dc:Bounds x="795" y="99" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_13ngwev_di" bpmnElement="SequenceFlow_13ngwev">
         <di:waypoint xsi:type="dc:Point" x="488" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="525" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="526" y="120" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="506.5" y="99" width="0" height="12" />
+          <dc:Bounds x="507" y="105" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1nrp0hb_di" bpmnElement="DeleteVolumeGroupVnfAdapter">
         <dc:Bounds x="388" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0fkan8t_di" bpmnElement="SequenceFlow_0fkan8t">
+        <di:waypoint xsi:type="dc:Point" x="626" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="665" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="646" y="105" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0li7q97_di" bpmnElement="VnfAdapter">
+        <dc:Bounds x="526" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

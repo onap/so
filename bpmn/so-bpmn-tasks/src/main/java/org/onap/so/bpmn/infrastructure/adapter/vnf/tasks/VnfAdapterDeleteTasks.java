@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.adapter.vnf.tasks;
 
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
+import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -57,7 +58,9 @@ public class VnfAdapterDeleteTasks {
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
 			
-			vnfAdapterVolumeGroupResources.deleteVolumeGroup(gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, volumeGroup);
+			DeleteVolumeGroupRequest deleteVolumeGroupRequest = vnfAdapterVolumeGroupResources.deleteVolumeGroupRequest(gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, volumeGroup);
+			execution.setVariable(VNFREST_REQUEST, deleteVolumeGroupRequest.toXmlString());
+			execution.setVariable("deleteVolumeGroupRequest", "true");
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}

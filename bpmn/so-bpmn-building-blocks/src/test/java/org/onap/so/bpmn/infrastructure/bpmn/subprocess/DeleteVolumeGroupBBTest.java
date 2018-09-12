@@ -35,7 +35,7 @@ public class DeleteVolumeGroupBBTest extends BaseBPMNTest {
 	public void sunnyDayDeleteVolumeGroup_Test() throws InterruptedException {
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVolumeGroupBB", variables);
 		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter", "UpdateVolumeGroupAAI", "DeleteVolumeGroupBB_End");
+		assertThat(pi).isStarted().hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter", "VnfAdapter", "UpdateVolumeGroupAAI", "DeleteVolumeGroupBB_End");
 		assertThat(pi).isEnded();
 	}
 
@@ -45,7 +45,7 @@ public class DeleteVolumeGroupBBTest extends BaseBPMNTest {
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVolumeGroupBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
-				.hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter", "UpdateVolumeGroupAAI")
+				.hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter", "VnfAdapter", "UpdateVolumeGroupAAI")
 				.hasNotPassed("DeleteVolumeGroupBB_End");
 		assertThat(pi).isEnded();
 	}

@@ -141,7 +141,8 @@ public abstract class WorkflowTest {
 	 */
 	protected static final String JSON = "application/json; charset=UTF-8";
 
-
+	private static final int timeout = 2000;
+	
 	/**
 	 * Constructor.
 	 */
@@ -580,10 +581,27 @@ public abstract class WorkflowTest {
 	 *     reserve, assign, delete:ERR
 	 * </pre>
 	 * Errors are handled with junit assertions and will cause the test to fail.
+	 * Uses the static/default timeout value for backward compatibility.
 	 * @param callbacks an object containing callback data for the program
 	 * @param program the program to execute
 	 */
 	protected void injectSDNCCallbacks(CallbackSet callbacks, String program) {
+		injectSDNCCallbacks(callbacks, program, timeout);
+	}
+
+	/**
+	 * Runs a program to inject SDNC callback data into the test environment.
+	 * A program is essentially just a list of keys that identify callback data
+	 * to be injected, in sequence. An example program:
+	 * <pre>
+	 *     reserve, assign, delete:ERR
+	 * </pre>
+	 * Errors are handled with junit assertions and will cause the test to fail.
+	 * @param callbacks an object containing callback data for the program
+	 * @param program the program to execute
+	 * @param timeout a timeout value to wait for the callback
+	 */
+	protected void injectSDNCCallbacks(CallbackSet callbacks, String program, int timeout) {
 
 		String[] cmds = program.replaceAll("\\s+", "").split(",");
 
