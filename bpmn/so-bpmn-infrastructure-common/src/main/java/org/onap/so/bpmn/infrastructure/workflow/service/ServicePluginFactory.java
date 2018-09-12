@@ -233,8 +233,11 @@ public class ServicePluginFactory {
 
 		Map<String, Object> vpnRequestInputs = getVPNResourceRequestInputs(resources);
 		// here we put client signal to vpn resource inputs
-		vpnRequestInputs.put("src-client-signal", srcClientSignal);
-		vpnRequestInputs.put("dst-client-signal", dstClientSignal);
+		if(null!=vpnRequestInputs) {
+			vpnRequestInputs.put("src-client-signal", srcClientSignal);
+			vpnRequestInputs.put("dst-client-signal", dstClientSignal);
+		}
+		
 
 		// Now we need to query terminal points from SP resourcemgr system.
 		List<Object> locationTerminalPointList = queryTerminalPointsFromServiceProviderSystem(srcLocation, dstLocation);
