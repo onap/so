@@ -32,6 +32,8 @@ import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
 import net.javacrumbs.shedlock.spring.ScheduledLockConfiguration;
 import net.javacrumbs.shedlock.spring.ScheduledLockConfigurationBuilder;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @since Version 1.0
@@ -67,4 +69,6 @@ public class MSORequestDBApplication {
 	        .withDefaultLockAtMostFor(Duration.ofMinutes(10))
 	        .build();
 	}
+
+
 }
