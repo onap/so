@@ -66,7 +66,7 @@ public class PayloadClientTest {
 	
 	@Test
 	public void healthCheckFormatTest()  throws Exception {
-		String payloadResult = "{\"request-parameters\":{\"vnf-name\":\"vnfName1\"},\"configuration-parameters\":{\"vnf_name\":\"vnfName1\"}}";
+		String payloadResult = "{\\\"request-parameters\\\":{\\\"vnf-host-ip-address\\\":\\\"vnfHostIpAddress1\\\"}}";
 		Optional<String> payloadClient = PayloadClient.healthCheckFormat("vnfName1", "vnfHostIpAddress1"); 
 		assertEquals(payloadResult, payloadClient.get());
 	}	

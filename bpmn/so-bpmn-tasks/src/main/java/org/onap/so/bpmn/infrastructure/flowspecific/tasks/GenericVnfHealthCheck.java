@@ -67,6 +67,7 @@ public class GenericVnfHealthCheck {
 			execution.setVariable("vnfId", vnfId);
 			execution.setVariable("vnfName", vnfName);
 			execution.setVariable("oamIpAddress", oamIpAddress);
+			execution.setVariable("vnfHostIpAddress", oamIpAddress);
 			execution.setVariable("msoRequestId", gBBInput.getRequestContext().getMsoRequestId());
 			execution.setVariable("action", actionCategory);
 			execution.setVariable("controllerType", controllerName);
@@ -93,6 +94,7 @@ public class GenericVnfHealthCheck {
 			payloadInfo.put("vnfName", execution.getVariable("vnfName"));
 			payloadInfo.put("vfModuleId",execution.getVariable("vfModuleId"));
 			payloadInfo.put("oamIpAddress",execution.getVariable("oamIpAddress"));
+			payloadInfo.put("vnfHostIpAddress",execution.getVariable("vnfHostIpAddress"));
 			//PayloadInfo contains extra information that adds on to payload before making request to appc
 			appCClient.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
 		
