@@ -91,7 +91,6 @@ public class DistributionClientEmulator implements IDistributionClient {
 		try {
 			inputStream = getData(filename);
 		} catch (IOException e) {			
-			e.printStackTrace();
 			logger.debug("InputStream is NULL for:"+ resourcePath + filename);
 		}		
 	
