@@ -7,12 +7,13 @@ ARG https_proxy
 ENV HTTPS_PROXY=$https_proxy
 ENV https_proxy=$HTTPS_PROXY
 
-RUN mkdir /app && mkdir /app/config && mkdir /app/certificates && mkdir /app/logs
+RUN mkdir /app && mkdir /app/config && mkdir /app/certificates && mkdir /app/logs  && mkdir /app/ca-certificates
 
 COPY maven/app.jar /app
 COPY configs/logging/logback-spring.xml /app
 COPY scripts/start-app.sh /app
 COPY scripts/wait-for.sh /app
+COPY ca-certificates/onap-ca.crt /app/ca-certificates/onap-ca.crt
 
 RUN chown -R so:so /app && chmod 700 /app/*.sh
 
