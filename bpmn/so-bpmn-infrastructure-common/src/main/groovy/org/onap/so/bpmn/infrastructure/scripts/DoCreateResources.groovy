@@ -20,7 +20,6 @@
  
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.codehaus.jackson.map.ObjectMapper
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
 
 import java.util.ArrayList

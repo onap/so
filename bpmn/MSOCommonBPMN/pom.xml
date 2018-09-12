@@ -15,7 +15,6 @@
 	<properties>
 		<camunda.version>7.8.0</camunda.version>
 		<httpclient.version>4.5.5</httpclient.version>
-		<jackson.version>1.1.1</jackson.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
@@ -311,10 +310,6 @@
 			<artifactId>aspectjrt</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-base</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>

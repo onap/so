@@ -23,7 +23,6 @@
 		<reflections-version>0.9.9-RC1</reflections-version>
 		<paranamer-version>2.5.2</paranamer-version>
 		<scannotation-version>1.0.3</scannotation-version>
-		<jackson-version>1.9.2</jackson-version>
 		<java.version>1.8</java.version>
 	</properties>
 	<dependencyManagement>
@@ -108,18 +107,6 @@
 			<version>${json4s-core-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
@@ -131,16 +118,6 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-base</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-providers</artifactId>
-			<version>2.9.2</version>
-			<type>pom</type>
 		</dependency>
 
 		<!-- Dependencies on other MSO Projects -->
