@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_118c4435",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 511,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-09-12T06:56:27Z",
+      "side": 1,
+      "message": "The 2.8.10 also has a highest Policy threat against it.\nThis would not clear the CLM /Nexus IQ issue but is a good fix otherwise to remove the unnecessary dependencies.\n\n\nGroup:\tcom.fasterxml.jackson.core\nArtifact:\tjackson-databind\nVersion:\t2.8.10\nDeclared License:\tApache-2.0\nObserved License:\tNo Source License\nEffective License:\tApache-2.0Selected\nHighest Policy Threat:\t10\nHighest CVSS Score:\t9.8\nCataloged:\t1 year ago\nMatch State:\texact\nIdentification Source:\tSonatype",
+      "revId": "db566f414f36c36bcaddf9215a340fdfdc71d1b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
