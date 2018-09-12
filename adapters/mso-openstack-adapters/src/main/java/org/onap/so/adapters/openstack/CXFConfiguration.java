@@ -47,7 +47,6 @@ import org.onap.so.adapters.vnf.VnfAdapterRestV2;
 import org.onap.so.adapters.vnf.VolumeAdapterRest;
 import org.onap.so.adapters.vnf.VolumeAdapterRestV2;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +98,7 @@ public class CXFConfiguration {
     }	
 	
 	@Bean
-	public ServletRegistrationBean SoapDispatcherServlet() {
+	public ServletRegistrationBean soapDispatcherServlet() {
 		ServletRegistrationBean servletRegistrationBean = 
 					new ServletRegistrationBean(new CXFServlet(), "/services/*");
         servletRegistrationBean.setName("services");
@@ -162,7 +161,7 @@ public class CXFConfiguration {
     }
     
     @Bean
-    public Endpoint VnfAsyncAdapterEndpoint() {
+    public Endpoint vnfAsyncAdapterEndpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfAdapterAsyncImpl);
         endpoint.publish("/VnfAsyncAdapter");
         endpoint.setWsdlLocation("VnfAsyncAdapter.wsdl");
@@ -173,7 +172,7 @@ public class CXFConfiguration {
     }
     
     @Bean
-    public Endpoint VnfCloudAdapterEndpoint() {
+    public Endpoint vnfCloudAdapterEndpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfCloudifyAdapterImpl);
         endpoint.publish("/VnfCloudifyAdapterImpl");
         endpoint.setWsdlLocation("VnfCloudifyAdapterImpl.wsdl");

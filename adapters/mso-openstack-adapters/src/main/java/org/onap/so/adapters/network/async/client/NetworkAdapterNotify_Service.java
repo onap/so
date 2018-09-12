@@ -45,8 +45,8 @@ public class NetworkAdapterNotify_Service
 
     private static final URL NETWORKADAPTERNOTIFY_WSDL_LOCATION;
     private static final WebServiceException NETWORKADAPTERNOTIFY_EXCEPTION;
-    private static final URL="http://org.onap.so/networkNotify";
-    private static final QName NETWORKADAPTERNOTIFY_QNAME = new QName(URL, "networkAdapterNotify");
+    private static final String TARGET_URL="http://org.onap.so/networkNotify";
+    private static final QName NETWORKADAPTERNOTIFY_QNAME = new QName(TARGET_URL, "networkAdapterNotify");
 
     static {
         NETWORKADAPTERNOTIFY_WSDL_LOCATION = org.onap.so.adapters.network.async.client.NetworkAdapterNotify_Service.class.getResource("/NetworkAdapterNotify.wsdl");
@@ -58,11 +58,11 @@ public class NetworkAdapterNotify_Service
     }
 
     public NetworkAdapterNotify_Service() {
-        super(__getWsdlLocation(), NETWORKADAPTERNOTIFY_QNAME);
+        super(_getWsdlLocation(), NETWORKADAPTERNOTIFY_QNAME);
     }
 
     public NetworkAdapterNotify_Service(WebServiceFeature... features) {
-        super(__getWsdlLocation(), NETWORKADAPTERNOTIFY_QNAME, features);
+        super(_getWsdlLocation(), NETWORKADAPTERNOTIFY_QNAME, features);
     }
 
     public NetworkAdapterNotify_Service(URL wsdlLocation) {
@@ -88,7 +88,7 @@ public class NetworkAdapterNotify_Service
      */
     @WebEndpoint(name = "MsoNetworkAdapterAsyncImplPort")
     public NetworkAdapterNotify getMsoNetworkAdapterAsyncImplPort() {
-        return super.getPort(new QName(URL, "MsoNetworkAdapterAsyncImplPort"), NetworkAdapterNotify.class);
+        return super.getPort(new QName(TARGET_URL, "MsoNetworkAdapterAsyncImplPort"), NetworkAdapterNotify.class);
     }
 
     /**
@@ -100,7 +100,7 @@ public class NetworkAdapterNotify_Service
      */
     @WebEndpoint(name = "MsoNetworkAdapterAsyncImplPort")
     public NetworkAdapterNotify getMsoNetworkAdapterAsyncImplPort(WebServiceFeature... features) {
-        return super.getPort(new QName(URL, "MsoNetworkAdapterAsyncImplPort"), NetworkAdapterNotify.class, features);
+        return super.getPort(new QName(TARGET_URL, "MsoNetworkAdapterAsyncImplPort"), NetworkAdapterNotify.class, features);
     }
 
     private static URL _getWsdlLocation() {

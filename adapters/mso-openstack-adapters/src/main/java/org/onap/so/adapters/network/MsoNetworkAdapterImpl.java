@@ -89,6 +89,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private static final String MSO_CONFIGURATION_ERROR = "MsoConfigurationError";
     private static final String NEUTRON_MODE = "NEUTRON";
     
+    private static final String CLOUDSITE_ERR ="CloudSite does not exist in MSO Configuration";
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,MsoNetworkAdapterImpl.class);
     private static final MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
     @Autowired
@@ -112,6 +113,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     /**
      * Health Check web method. Does nothing but return to show the adapter is deployed.
      */
+    public MsoNetworkAdapterImpl() {
+    }
+    
     @Override
     public void healthCheck () {
         LOGGER.debug ("Health check call in Network Adapter");
@@ -122,8 +126,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      *
   	 * @see MsoNetworkAdapterImpl#MsoNetworkAdapterImpl(MsoPropertiesFactory)
      */
-    public MsoNetworkAdapterImpl() {
-    }
+    
 
     @Override
     public void createNetwork (String cloudSiteId,
@@ -291,7 +294,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         			+ "/"
         			+ tenantId
         			+ ": "
-        			+ " CloudSite does not exist in MSO Configuration";
+        			+ CLOUDSITE_ERR;
         	LOGGER.error (MessageEnum.RA_CONFIG_EXC, error, "", "", MsoLogger.ErrorCode.DataError, "Configuration Error");
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, error);
         	// Set the detailed error as the Exception 'message'
@@ -362,10 +365,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                                      networkName,
                                                      physicalNetworkName,
                                                      vlans);
-                    LOGGER.recordMetricEvent (createNetworkStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Response successfully received from OpenStack", "OpenStack", "CreateNetwork", null);
+                    LOGGER.recordMetricEvent (createNetworkStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Response successfully received from OpenStack", "OpenStack", CREATE_NETWORK_CONTEXT, null);
                 } catch (MsoException me) {
                 	me.addContext (CREATE_NETWORK_CONTEXT);
-                    LOGGER.recordMetricEvent (createNetworkStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with OpenStack", "OpenStack", "CreateNetwork", null);
+                    LOGGER.recordMetricEvent (createNetworkStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with OpenStack", "OpenStack", CREATE_NETWORK_CONTEXT, null);
                 	String error = "Create Network: type " + neutronNetworkType
                                    + " in "
                                    + cloudSiteId
@@ -792,7 +795,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                        + "/"
                        + tenantId
                        + ": "
-                       + " CloudSite does not exist in MSO Configuration";
+                       + CLOUDSITE_ERR;
         	   LOGGER.error (MessageEnum.RA_CONFIG_EXC, error, "Openstack", "", MsoLogger.ErrorCode.DataError, "CloudSite does not exist in MSO Configuration");
                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, error);
         	   // Set the detailed error as the Exception 'message'
@@ -1311,7 +1314,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         			+ "/"
         			+ tenantId
         			+ ": "
-        			+ " CloudSite does not exist in MSO Configuration";
+        			+ CLOUDSITE_ERR;
         	LOGGER.error (MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Configuration Error");
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, error);
         	// Set the detailed error as the Exception 'message'
@@ -1984,16 +1987,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     				+ "      network_id: { get_resource: network }\n"
     				+ "      cidr: %cidr%\n";
 
-    		/* make these optional
-                               + "      ip_version: %ipversion%\n"
-                               + "      enable_dhcp: %enabledhcp%\n"
-                               + "      gateway_ip: %gatewayip%\n"
-                               + "      allocation_pools:\n"
-                               + "       - start: %poolstart%\n"
-                               + "         end: %poolend%\n";
-
-    		 */
-
+    		
     		String outputTempl = "  subnet_id_%subnetId%:\n" + "    description: Openstack subnet identifier\n"
     				+ "    value: {get_resource: subnet_%subnetId%}\n";
 
