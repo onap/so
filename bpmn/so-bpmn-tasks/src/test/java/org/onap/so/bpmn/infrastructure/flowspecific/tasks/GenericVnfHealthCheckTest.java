@@ -84,6 +84,7 @@ public class GenericVnfHealthCheckTest extends BaseTaskTest {
 		payloadInfo.put("vnfName", "testVnfName");
 		payloadInfo.put("vfModuleId", "testVfModuleId");
 		payloadInfo.put("oamIpAddress", "testOamIpAddress");
+		payloadInfo.put("vnfHostIpAddress", "testOamIpAddress");
 		execution.setVariable("action", Action.HealthCheck.toString());
 		execution.setVariable("msoRequestId", msoRequestId);
 		execution.setVariable("controllerType", controllerType);
@@ -91,6 +92,7 @@ public class GenericVnfHealthCheckTest extends BaseTaskTest {
 		execution.setVariable("vnfName", "testVnfName");
 		execution.setVariable("vfModuleId", "testVfModuleId");
 		execution.setVariable("oamIpAddress", "testOamIpAddress");
+		execution.setVariable("vnfHostIpAddress", "testOamIpAddress");
 		execution.setVariable("payload", payload);
 		
 		doNothing().when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);

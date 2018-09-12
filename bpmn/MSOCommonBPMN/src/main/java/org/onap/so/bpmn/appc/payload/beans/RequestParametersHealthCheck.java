@@ -32,16 +32,27 @@ public class RequestParametersHealthCheck {
 
 @JsonProperty("vnf-name")
 private String vnfName;
-
+@JsonProperty("vnf-host-ip-address")
+private String vnfHostIpAddress;
 
 @JsonProperty("vnf-name")
 public String getVnfName() {
-return vnfName;
+	return vnfName;
 }
 
 @JsonProperty("vnf-name")
 public void setVnfName(String vnfName) {
-this.vnfName = vnfName;
+	this.vnfName = vnfName;
+}
+
+@JsonProperty("vnf-host-ip-address")
+public void setVnfHostIpAddress(String vnfHostIpAddress) {
+	this.vnfHostIpAddress = vnfHostIpAddress;
+}
+
+@JsonProperty("vnf-host-ip-address")
+public String getVnfHostIpAddress() {
+	return vnfHostIpAddress;
 }
 
 }
