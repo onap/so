@@ -399,7 +399,6 @@ public class ServicePluginFactory {
 			jsonStr = mapper.writeValueAsString(srcObj);
 		} catch (JsonProcessingException e) {
 			LOGGER.debug("SdcToscaParserException", e);
-			e.printStackTrace();
 		}
 		return jsonStr;
 	}
@@ -452,9 +451,9 @@ public class ServicePluginFactory {
 				try {
 					responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
 				} catch (ParseException e) {
-					e.printStackTrace();
+					LOGGER.debug("ParseException in sendrequest", e);
 				} catch (IOException e) {
-					e.printStackTrace();
+					LOGGER.debug("IOException in sendrequest", e);
 				}
 			}
 			if (null != method) {
