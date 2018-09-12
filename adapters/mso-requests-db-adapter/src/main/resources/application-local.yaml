@@ -12,10 +12,9 @@ mso:
       endpoint: http://localhost:8081
   logPath: logs
   site-name: localSite
-  adapters:
-    requestDb:
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
-      endpoint: http://localhost:8081
+  infra-requests:
+    archived:
+      period: 180
 spring:
   datasource:
     url: jdbc:mariadb://localhost:3306/requestdb
@@ -50,6 +49,6 @@ management:
 flyway:
   baseline-on-migrate: false
   url: jdbc:mariadb://localhost:3306/requestdb
-  user: mso
-  password: mso123
+  user: catalog
+  password: catalog123
       
