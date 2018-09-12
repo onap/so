@@ -34,6 +34,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -82,16 +83,16 @@ public class PnfEventReadyDmaapClientTest {
     private static final String CONSUMER_GROUP = "consumerGroupTest";
     @Mock
     private Environment env;
-    @InjectMocks
-    private PnfEventReadyDmaapClient testedObject = new PnfEventReadyDmaapClient();
-;
+    private PnfEventReadyDmaapClient testedObject;
+
     private DmaapTopicListenerThread testedObjectInnerClassThread;
     private HttpClient httpClientMock;
     private Runnable threadMockToNotifyCamundaFlow;
-    private ScheduledExecutorService executorMock;
+    private ScheduledThreadPoolExecutor executorMock;
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException {
+        testedObject = new PnfEventReadyDmaapClient(env);
     	when(env.getProperty(eq("pnf.dmaap.port"), eq(Integer.class))).thenReturn(PORT);
     	when(env.getProperty(eq("pnf.dmaap.host"))).thenReturn(HOST);
         testedObject.setDmaapProtocol(PROTOCOL);
@@ -104,7 +105,7 @@ public class PnfEventReadyDmaapClientTest {
         testedObjectInnerClassThread = testedObject.new DmaapTopicListenerThread();
         httpClientMock = mock(HttpClient.class);
         threadMockToNotifyCamundaFlow = mock(Runnable.class);
-        executorMock = mock(ScheduledExecutorService.class);
+        executorMock = mock(ScheduledThreadPoolExecutor.class);
         setPrivateField();
     }
 
@@ -127,7 +128,7 @@ public class PnfEventReadyDmaapClientTest {
                 .hasPath(
                         "/" + URI_PATH_PREFIX + "/" + EVENT_TOPIC_TEST + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
         verify(threadMockToNotifyCamundaFlow).run();
-        verify(executorMock).shutdownNow();
+        verify(executorMock).shutdown();
     }
 
     /**
