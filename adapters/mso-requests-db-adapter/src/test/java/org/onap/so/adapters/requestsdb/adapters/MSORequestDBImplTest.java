@@ -87,7 +87,7 @@ public class MSORequestDBImplTest {
         jaxWsProxyFactory.setServiceClass(MsoRequestsDbAdapter.class);
         jaxWsProxyFactory.setAddress("http://localhost:" + port + "/services/RequestsDbAdapter");
         jaxWsProxyFactory.setUsername("bpel");
-        jaxWsProxyFactory.setPassword("password1$");
+        jaxWsProxyFactory.setPassword("mso-db-1507!");
         dbAdapter = (MsoRequestsDbAdapter) jaxWsProxyFactory.create();
 	}
 

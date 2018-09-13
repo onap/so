@@ -10,7 +10,7 @@ ssl-enable: false
 mso:
   adapters:
     requestDb:
-      auth: Basic YnBlbDpwYXNzd29yZDEk
+      auth: Basic YnBlbDptc28tZGItMTUwNyE=
       endpoint: http://localhost:8081
   logPath: logs
   site-name: localSite
@@ -35,10 +35,6 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   security:
     usercredentials:
-    -  
-      username: bpel
-      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
-      role: BPEL-Client
     -
       username: bpel
       password: '$2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO'

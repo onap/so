@@ -33,15 +33,19 @@ import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
+import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -116,8 +120,8 @@ public class RequestsDbClient {
 
 	private String findBySoRequestIdOrderByGroupingIdDesc = "/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/";
 
-	protected HttpHeaders headers;
 
+	@Autowired
 	protected RestTemplate restTemplate;
 	
 	@Autowired
@@ -135,26 +139,19 @@ public class RequestsDbClient {
 		operationalEnvDistributionStatusURI = endpoint + operationalEnvDistributionStatusURI;
 		findOneByOperationalEnvIdAndServiceModelVersionIdURI = endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH + findOneByOperationalEnvIdAndServiceModelVersionIdURI;
 		findAllByOperationalEnvIdAndRequestIdURI = endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH + findAllByOperationalEnvIdAndRequestIdURI;
-		headers = new HttpHeaders();
-		headers.set("Authorization", msoAdaptersAuth);
-		restTemplate = restTemplate();
 	}
 
 	public RequestsDbClient() {
-		ClientFactory clientFactory = Configuration.builder().setRestTemplateConfigurer(new RestTemplateConfigurer() {
+		ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
-			public void configure(RestTemplate restTemplate) {
+		ClientFactory clientFactory = Configuration.builder().setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
+			restTemplate.getInterceptors().add((new SpringClientFilter()));
 
-				restTemplate.getInterceptors().add(new ClientHttpRequestInterceptor() {
+			restTemplate.getInterceptors().add((request, body, execution) -> {
 
-					public ClientHttpResponse intercept(HttpRequest request, byte[] body,
-							ClientHttpRequestExecution execution) throws IOException {
-
-						request.getHeaders().add("Authorization", msoAdaptersAuth);
-						return execution.execute(request, body);
-					}
-				});
-			}
+				request.getHeaders().add(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
+				return execution.execute(request, body);
+			});
 		}).build().buildClientFactory();
 		infraActiveRequestClient = clientFactory.create(InfraActiveRequests.class);
 		requestProcessingDataClient = clientFactory.create(RequestProcessingData.class);
@@ -164,6 +161,8 @@ public class RequestsDbClient {
 	
 	public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(Map<String, String> orchestrationMap){
 		URI uri = getUri(cloudOrchestrationFiltersFromInfraActive);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", msoAdaptersAuth);
 		HttpEntity<Map> entity = new HttpEntity<>(orchestrationMap, headers);
 		try{
 			return restTemplate.exchange(uri, HttpMethod.POST, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {}).getBody();
@@ -191,6 +190,8 @@ public class RequestsDbClient {
     }
 
 	public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(Map<String, List<String>> orchestrationMap) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", msoAdaptersAuth);
 		URI uri = getUri(getOrchestrationFilterURI);
 		HttpEntity<Map<String, List<String>>> entity = new HttpEntity<>(orchestrationMap, headers);
 		return restTemplate.exchange(uri, HttpMethod.POST, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {}).getBody();
@@ -201,6 +202,8 @@ public class RequestsDbClient {
 		return restTemplate.exchange(uri, HttpMethod.GET, HttpEntity.EMPTY, InfraActiveRequests.class).getBody();
 	}
 	public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName, String requestScope) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", msoAdaptersAuth);
 		URI uri = getUri(checkInstanceNameDuplicate);
 		HttpEntity<InstanceNameDuplicateCheckRequest> entity = new HttpEntity<>(new InstanceNameDuplicateCheckRequest(instanceIdMap, instanceName, requestScope), headers);
 		try{
@@ -265,12 +268,16 @@ public class RequestsDbClient {
 	}
 
 	public void save(InfraActiveRequests infraActiveRequests) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", msoAdaptersAuth);
 		URI uri = getUri(infraActiveRequestURI);
 		HttpEntity<InfraActiveRequests> entity = new HttpEntity<>(infraActiveRequests, headers);
 		restTemplate.postForLocation(uri, entity);
 	}
 
 	public <T> void save(T object){
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", msoAdaptersAuth);
 		URI uri = getUri(endpoint+classURLMapper.getURI(object.getClass()));
 		HttpEntity<T> entity = new HttpEntity<>(object, headers);
 		restTemplate.postForLocation(uri, entity);
@@ -289,6 +296,8 @@ public class RequestsDbClient {
 	}
 
 	public void saveRequestProcessingData(RequestProcessingData requestProcessingData) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", msoAdaptersAuth);
 		URI uri = getUri(endpoint + requestProcessingDataURI);
 		HttpEntity<RequestProcessingData> entity = new HttpEntity<>(requestProcessingData, headers);
 		restTemplate.postForLocation(uri, entity);
@@ -328,10 +337,6 @@ public class RequestsDbClient {
 	
 	private Iterable<RequestProcessingData> getAllRequestProcessingData(URI uri) {
 		return requestProcessingDataClient.getAll(uri);
-	}
-
-	public RestTemplate restTemplate() {
-		return new RestTemplate( new HttpComponentsClientHttpRequestFactory());
 	}
 
 	@Component
