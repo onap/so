@@ -20,17 +20,6 @@
 
 package org.onap.so.db.request.client;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.ws.rs.core.UriBuilder;
-
 import org.apache.http.HttpStatus;
 import org.onap.so.db.request.beans.ArchivedInfraRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -46,7 +35,6 @@ import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -60,11 +48,20 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
 import uk.co.blackpepper.bowman.Client;
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
 import uk.co.blackpepper.bowman.RestTemplateConfigurer;
+
+import javax.annotation.PostConstruct;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @Component("RequestsDbClient")
 @Primary
@@ -82,7 +79,6 @@ public class RequestsDbClient {
 	private static final String TAG = "TAG";
 	
 	private Client<InfraActiveRequests> infraActiveRequestClient;
-	private Client<OperationStatus> operationStatusClient;
 	private Client<RequestProcessingData> requestProcessingDataClient;
 	private final Client<OperationalEnvDistributionStatus> distributionStatusClient;
 	private final Client<OperationalEnvServiceModelStatus> serviceModelStatusClient;
@@ -122,9 +118,6 @@ public class RequestsDbClient {
 
 	protected HttpHeaders headers;
 
-	protected ClientFactory clientFactory;
-	
-	@Autowired
 	protected RestTemplate restTemplate;
 	
 	@Autowired
@@ -144,6 +137,7 @@ public class RequestsDbClient {
 		findAllByOperationalEnvIdAndRequestIdURI = endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH + findAllByOperationalEnvIdAndRequestIdURI;
 		headers = new HttpHeaders();
 		headers.set("Authorization", msoAdaptersAuth);
+		restTemplate = restTemplate();
 	}
 
 	public RequestsDbClient() {
@@ -163,7 +157,6 @@ public class RequestsDbClient {
 			}
 		}).build().buildClientFactory();
 		infraActiveRequestClient = clientFactory.create(InfraActiveRequests.class);
-		operationStatusClient = clientFactory.create(OperationStatus.class);
 		requestProcessingDataClient = clientFactory.create(RequestProcessingData.class);
 		distributionStatusClient = clientFactory.create(OperationalEnvDistributionStatus.class);
 		serviceModelStatusClient = clientFactory.create(OperationalEnvServiceModelStatus.class);
@@ -181,9 +174,21 @@ public class RequestsDbClient {
 			throw e;
 		}
 	}
-	public InfraActiveRequests getInfraActiveRequestbyRequestId(String requestId) {
-		return this.getSingleInfraActiveRequests(this.getUri(endpoint + "/infraActiveRequests/" + requestId));
-	}
+
+    public InfraActiveRequests getInfraActiveRequestbyRequestId(String requestId) {
+        try {
+            InfraActiveRequests infraActiveRequests = restTemplate.exchange(getUri(endpoint + "/infraActiveRequests/" + requestId), HttpMethod.GET, HttpEntity.EMPTY, InfraActiveRequests.class).getBody();
+            if (infraActiveRequests != null) {
+                infraActiveRequests.setRequestId(requestId);
+            }
+            return infraActiveRequests;
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                return null;
+            }
+            throw e;
+        }
+    }
 
 	public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(Map<String, List<String>> orchestrationMap) {
 		URI uri = getUri(getOrchestrationFilterURI);
@@ -208,12 +213,25 @@ public class RequestsDbClient {
 		}
 
 	}
-	
-	public  OperationStatus getOneByServiceIdAndOperationId(String serviceId, String operationId){
-		return this.getSingleOperationStatus(UriBuilder.fromUri(findOneByServiceIdAndOperationIdURI)
-				.queryParam(SERVICE_ID,serviceId)
-				.queryParam(OPERATION_ID,operationId)
-				.build());
+
+	public OperationStatus getOneByServiceIdAndOperationId(String serviceId, String operationId) {
+		try {
+			OperationStatus operationStatus = restTemplate.exchange(UriBuilder.fromUri(getUri(findOneByServiceIdAndOperationIdURI))
+					.queryParam(SERVICE_ID, serviceId)
+					.queryParam(OPERATION_ID, operationId)
+					.build(), HttpMethod.GET, HttpEntity.EMPTY, OperationStatus.class).getBody();
+			if (operationStatus != null) {
+				operationStatus.setServiceId(serviceId);
+				operationStatus.setOperationId(operationId);
+			}
+
+			return operationStatus;
+		} catch (HttpClientErrorException e) {
+			if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+				return null;
+			}
+			throw e;
+		}
 	}
 	
 	public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndServiceModelVersionId(String operationalEnvironmentId, String serviceModelVersionId) {
@@ -261,10 +279,6 @@ public class RequestsDbClient {
 	private OperationalEnvDistributionStatus getSingleOperationalEnvDistributionStatus(URI uri){
 		return distributionStatusClient.get(uri);
 	}
-	
-	protected InfraActiveRequests getSingleInfraActiveRequests(URI uri) {
-		return infraActiveRequestClient.get(uri);
-	}
 
 	public void updateInfraActiveRequests(InfraActiveRequests request) {		
 		infraActiveRequestClient.put(request);
@@ -272,12 +286,6 @@ public class RequestsDbClient {
 	
 	protected URI getUri(String uri) {
 		return URI.create(uri);
-	}
-	
-	
-	
-	public OperationStatus getSingleOperationStatus(URI uri){
-		return operationStatusClient.get(uri);
 	}
 
 	public void saveRequestProcessingData(RequestProcessingData requestProcessingData) {
@@ -322,7 +330,6 @@ public class RequestsDbClient {
 		return requestProcessingDataClient.getAll(uri);
 	}
 
-	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate( new HttpComponentsClientHttpRequestFactory());
 	}

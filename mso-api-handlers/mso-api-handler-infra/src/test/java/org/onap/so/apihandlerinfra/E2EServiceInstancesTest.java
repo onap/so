@@ -154,6 +154,9 @@ private final ObjectMapper mapper = new ObjectMapper();
 	@Test
 	public void getE2EServiceInstanceNullOperationalStatus() throws IOException{
 		String uri = e2eServInstancesUri + "v5/9b9f02c0-298b-458a-bc9c-be3692e4f35e/operations/9b9f02c0-298b-458a-bc9c-be3692e4f35e";
+		stubFor(get(urlPathEqualTo("/operationStatus/search/findOneByServiceIdAndOperationId"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
 		ResponseEntity<String> response = sendRequest(inputStream("/Request.json"), uri, HttpMethod.GET);
 		
 		assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatusCode().value());

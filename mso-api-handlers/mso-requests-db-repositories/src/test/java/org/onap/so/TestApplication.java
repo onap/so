@@ -22,7 +22,10 @@ package org.onap.so;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication(scanBasePackages = { "org.onap.so.db" })
 @Profile("test")
@@ -31,5 +34,9 @@ public class TestApplication {
 		SpringApplication.run(TestApplication.class, args);
 		System.getProperties().setProperty("mso.db", "MARIADB");
 		System.getProperties().setProperty("server.name", "Springboot");
+	}
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate( new HttpComponentsClientHttpRequestFactory());
 	}
 }

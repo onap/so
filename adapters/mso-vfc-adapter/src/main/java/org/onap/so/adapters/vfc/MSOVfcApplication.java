@@ -20,7 +20,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vfc; 
+package org.onap.so.adapters.vfc;
 
 
 import org.springframework.boot.SpringApplication;
@@ -34,5 +34,4 @@ public class MSOVfcApplication {
     public static void main(String... args) {
         SpringApplication.run(MSOVfcApplication.class, args);
     }
-
 }
