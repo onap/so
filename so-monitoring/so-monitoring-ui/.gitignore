@@ -1,0 +1,27 @@
+# compiled output
+dist
+dist-server
+tmp
+
+# dependencies
+node_modules
+node_modules/*
+
+# # IDEs and editors
+/.idea
+.project
+.classpath
+*.launch
+.settings/
+
+# e2e
+e2e/*.js
+e2e/*.map
+
+
+#java
+.project
+.idea/
+/target/
+.settings*
+.classpath
