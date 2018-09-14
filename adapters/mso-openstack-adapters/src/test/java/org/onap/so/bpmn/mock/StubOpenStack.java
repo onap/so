@@ -49,6 +49,12 @@ public class StubOpenStack {
 				.withStatus(HttpStatus.SC_OK)));
 	}
 
+	public static void mockOpenStackResponseAccessMulticloud(int port) throws IOException {
+		stubFor(post(urlPathEqualTo("/v2.0/tokens")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+				.withBody(getBodyFromFile("OpenstackResponse_AccessMulticloud.json", port, "/mockPublicUrl"))
+				.withStatus(HttpStatus.SC_OK)));
+	}
+
 	public static void mockOpenStackResponseAccessQueryNetwork(int port) throws IOException {
 		stubFor(post(urlPathEqualTo("/v2.0/tokens"))
 				.withRequestBody(containing("tenantId"))

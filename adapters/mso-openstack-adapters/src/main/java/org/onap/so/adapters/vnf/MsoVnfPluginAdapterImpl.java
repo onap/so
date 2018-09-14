@@ -29,7 +29,7 @@
  * - base and volume module queries
  * - rollback logic
  * - logging and error handling
- * 
+ *
  * Then based on the orchestration mode of the VNF, it will invoke different VDU plug-ins
  * to perform the low level instantiations, deletions, and queries.  At this time, the
  * set of available plug-ins is hard-coded, though in the future a dynamic selection
@@ -81,6 +81,7 @@ import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.onap.so.openstack.utils.MsoHeatEnvironmentEntry;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.onap.so.openstack.utils.MsoKeystoneUtils;
+import org.onap.so.openstack.utils.MsoMulticloudUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -100,28 +101,31 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
     private static final String CHECK_REQD_PARAMS = "org.onap.so.adapters.vnf.checkRequiredParameters";
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-    
+
     @Autowired
     protected CloudConfig cloudConfig;
-    
+
     @Autowired
     private VFModuleCustomizationRepository vfModuleCustomRepo;
-    
+
     @Autowired
     private Environment environment;
 
     @Autowired
     protected MsoKeystoneUtils keystoneUtils;
-    
+
     @Autowired
     protected MsoCloudifyUtils cloudifyUtils;
-    
+
     @Autowired
     protected MsoHeatUtils heatUtils;
-    
+
+    @Autowired
+    protected MsoMulticloudUtils multicloudUtils;
+
 	@Autowired
 	protected VfModuleCustomizationToVduMapper vduMapper;
-	
+
 	/**
      * Health Check web method. Does nothing but return to show the adapter is deployed.
      */
@@ -192,9 +196,9 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
     /**
      * This is the "Query VNF" web service implementation.
-     * 
+     *
      * This really should be QueryVfModule, but nobody ever changed it.
-     * 
+     *
      * The method returns an indicator that the VNF exists, along with its status and outputs.
      * The input "vnfName" will also be reflected back as its ID.
      *
@@ -244,7 +248,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
             throw new VnfException (e);
     	}
-        	
+
     	if (vduInstance != null  &&  vduInstance.getStatus().getState() != VduStateType.NOTFOUND) {
             vnfExists.value = Boolean.TRUE;
             status.value = vduStatusToVnfStatus(vduInstance);
@@ -265,7 +269,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         return;
     }
 
-    
+
     /**
      * This is the "Delete VNF" web service implementation.
      * This function is now unsupported and will return an error.
@@ -278,7 +282,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                            MsoRequest msoRequest) throws VnfException {
         MsoLogger.setLogContext (msoRequest);
     	MsoLogger.setServiceName ("DeleteVnf");
-    	
+
     	// This operation is no longer supported at the VNF level.  The adapter is only called to deploy modules.
     	LOGGER.debug ("DeleteVNF command attempted but not supported");
     	throw new VnfException ("DeleteVNF:  Unsupported command", MsoExceptionCategory.USERDATA);
@@ -289,7 +293,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
      * A rollback object is returned to the client in a successful creation
      * response. The client can pass that object as-is back to the rollbackVnf
      * operation to undo the creation.
-     * 
+     *
      * TODO: This should be rollbackVfModule and/or rollbackVolumeGroup,
      * but APIs were apparently never updated.
      */
@@ -309,7 +313,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Rollback VF Module - nothing to roll back");
             return;
         }
-        
+
         // Get the elements of the VnfRollback object for easier access
         String cloudSiteId = rollback.getCloudSiteId ();
         String tenantId = rollback.getTenantId ();
@@ -330,7 +334,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         try {
         	// TODO: Get a reasonable timeout.  Use a global property, or store the creation timeout in rollback object and use that.
             vduInstance = vduPlugin.deleteVdu(cloudInfo, vfModuleId, 5);
-            
+
             LOGGER.debug("Rolled back VDU instantiation: " + vduInstance.getVduInstanceId());
             LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from VDU Plugin", "VDU", "DeleteVdu", null);
         }
@@ -354,7 +358,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     	// DeploymentInfo object should be enhanced to report a better status internally.
     	VduStatus vduStatus = vdu.getStatus();
     	VduStateType status = vduStatus.getState();
-    	
+
     	if (status == null) {
     		return VnfStatus.UNKNOWN;
     	}
@@ -379,7 +383,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 	{
 		String type = templateParam.getParamType();
 		LOGGER.debug("Parameter: " + templateParam.getParamName() + " is of type " + type);
-		
+
 		if (type.equalsIgnoreCase("number")) {
 			try {
 				return Integer.valueOf(inputValue);
@@ -400,7 +404,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 		} else if (type.equalsIgnoreCase("boolean")) {
 			return new Boolean(inputValue);
 		}
-		
+
 		// Nothing else matched.  Return the original string
 		return inputValue;
 	}
@@ -464,9 +468,9 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     		}
     	}
     	LOGGER.debug(sb.toString());
-    	return;	
+    	return;
     }
-    
+
     private void sendMapToDebug(Map<String, String> inputs) {
     	int i = 0;
     	StringBuilder sb = new StringBuilder("inputs:");
@@ -600,7 +604,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             String volumeGroupId,
             String baseVfModuleId,
             String modelCustomizationUuid,
-            Map <String, String> inputs,
+            Map <String, String> inputs,    // EWMMC - will OOF come in here? - or should they be added to the arguments - maybe the latter ?
             Boolean failIfExists,
             Boolean backout,
             Boolean enableBridge,
@@ -612,7 +616,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     {
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
-        
+
     	MsoLogger.setLogContext (msoRequest);
     	MsoLogger.setServiceName ("CreateVfModule");
 
@@ -625,14 +629,14 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
             throw new VnfException(error, MsoExceptionCategory.USERDATA);
         }
-        
+
         // Clean up some inputs to make comparisons easier
         if (requestType == null)
         	requestType = "";
-        
+
         if ("".equals(volumeGroupId) || "null".equals(volumeGroupId))
-        	volumeGroupId = null;  
-        
+        	volumeGroupId = null;
+
         if ("".equals(baseVfModuleId) || "null".equals(baseVfModuleId))
         	baseVfModuleId = null;
 
@@ -643,7 +647,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         } else {
         	this.sendMapToDebug(inputs);
         }
-        
+
         // Check if this is for a "Volume" module
         boolean isVolumeRequest = false;
         if (requestType.startsWith("VOLUME")) {
@@ -663,7 +667,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         vfRollback.setBaseGroupHeatStackId(baseVfModuleId);
         vfRollback.setModelCustomizationUuid(modelCustomizationUuid);
         vfRollback.setMode("CFY");
-        
+
 		rollback.value = vfRollback; // Default rollback - no updates performed
 
         // Get the VNF/VF Module definition from the Catalog DB first.
@@ -675,7 +679,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
         try {
         	vfModuleCust = vfModuleCustomRepo.findByModelCustomizationUUID(modelCustomizationUuid);
-        	
+
             if (vfModuleCust == null) {
         		String error = "Create vfModule error: Unable to find vfModuleCust with modelCustomizationUuid=" + modelCustomizationUuid;
         		LOGGER.debug(error);
@@ -692,7 +696,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         	vnfResource = vfModuleCust.getVfModule().getVnfResources();
         }
         catch (Exception e) {
-           
+
         	LOGGER.debug("unhandled exception in create VF - [Query]" + e.getMessage());
         	throw new VnfException("Exception during create VF " + e.getMessage());
         }
@@ -706,10 +710,10 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         CloudSite cloudSite = cloudSiteOp.get();
 		MavenLikeVersioning aicV = new MavenLikeVersioning();
 		aicV.setVersion(cloudSite.getCloudVersion());
-    
+
 		String vnfMin = vnfResource.getAicVersionMin();
 		String vnfMax = vnfResource.getAicVersionMax();
-		
+
 		if ( (vnfMin != null && !(aicV.isMoreRecentThan(vnfMin) || aicV.isTheSameVersion(vnfMin))) ||
 		     (vnfMax != null && aicV.isMoreRecentThan(vnfMax)))
 		{
@@ -720,11 +724,11 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 			throw new VnfException(error, MsoExceptionCategory.USERDATA);
 		}
 		// End Version check
-        
-        
+
+
         VduInstance vduInstance = null;
         CloudInfo cloudInfo = new CloudInfo (cloudSiteId, tenantId, null);
-        
+
         // Use the VduPlugin.
         VduPlugin vduPlugin = getVduPlugin(cloudSiteId);
 
@@ -732,7 +736,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
         long subStartTime1 = System.currentTimeMillis ();
         try {
-            vduInstance = vduPlugin.queryVdu (cloudInfo, vfModuleName);
+            vduInstance = vduPlugin.queryVdu (cloudInfo, vfModuleName);   // EWMMC - check on multicloud query , add to MsoMulticloudUtils
             LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from VduPlugin", "VDU", "QueryVDU", vfModuleName);
         }
         catch (VduException me) {
@@ -746,12 +750,12 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             me.addContext ("CreateVFModule");
             throw new VnfException (me);
         }
-        
+
         // More precise handling/messaging if the Module already exists
         if (vduInstance != null && !(vduInstance.getStatus().getState() == VduStateType.NOTFOUND)) {
         	VduStateType status = vduInstance.getStatus().getState();
 			LOGGER.debug ("Found Existing VDU, status=" + status);
-			
+
         	if (status == VduStateType.INSTANTIATED) {
         		if (failIfExists != null && failIfExists) {
             		// fail - it exists
@@ -770,6 +774,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         		}
         	}
         	// Check through various detailed error cases
+            // EWMMC - will need to find out what kinds of status return from multicloud
         	else if (status == VduStateType.INSTANTIATING || status == VduStateType.DELETING || status == VduStateType.UPDATING) {
         		// fail - it's in progress - return meaningful error
                 String error = "Create VF: Deployment " + vfModuleName + " already exists and has status " + status.toString() + " in " + cloudSiteId + "/" + tenantId + "; please wait for it to complete, or fix manually.";
@@ -799,8 +804,8 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 throw new VnfAlreadyExists (vfModuleName, cloudSiteId, tenantId, vduInstance.getVduInstanceId());
         	}
         }
-   
-        
+
+
         // Collect outputs from Base Modules and Volume Modules
         Map<String, Object> baseModuleOutputs = null;
         Map<String, Object> volumeGroupOutputs = null;
@@ -824,7 +829,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 me.addContext ("CreateVFModule(QueryVolume)");
                 throw new VnfException (me);
             }
-            
+
 	        if (volumeVdu == null || volumeVdu.getStatus().getState() == VduStateType.NOTFOUND) {
         	    String error = "Create VFModule: Attached Volume Group DOES NOT EXIST " + volumeGroupId + " in " + cloudSiteId + "/" + tenantId + " USER ERROR"  ;
         	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, volumeGroupId, cloudSiteId, tenantId, error, "VDU", "queryVdu(volume)", MsoLogger.ErrorCode.BusinessProcesssError, "Create VFModule: Attached Volume Group DOES NOT EXIST");
@@ -837,7 +842,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         		this.sendMapToDebug(volumeGroupOutputs, "volumeGroupOutputs");
         	}
         }
-	
+
         // If this is an Add-On Module, query the Base Module outputs
         // Note: This will be performed whether or not the current request is for an
         //       Add-On Volume Group or Add-On VF Module
@@ -847,7 +852,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             vfRollback.setIsBase(true);
         } else {
             LOGGER.debug("This is an Add-On Module request");
-            
+
             // Add-On Modules should always have a Base, but just treat as a warning if not provided.
             // Add-on Volume requests may or may not specify a base.
             if (!isVolumeRequest && baseVfModuleId == null) {
@@ -867,12 +872,12 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 	                LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, baseVfModuleId, cloudSiteId, tenantId, "VDU", "queryVdu(Base)", MsoLogger.ErrorCode.DataError, "Exception - queryVdu(Base)", me);
 	                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "VDU", "QueryVdu(Base)", baseVfModuleId);
 	                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
-	
+
 	                // Convert to a generic VnfException
 	                me.addContext ("CreateVFModule(QueryBase)");
 	                throw new VnfException (me);
 	            }
-	            
+
 		        if (baseVdu == null || baseVdu.getStatus().getState() == VduStateType.NOTFOUND) {
 	        	    String error = "Create VFModule: Base Module DOES NOT EXIST " + baseVfModuleId + " in " + cloudSiteId + "/" + tenantId + " USER ERROR"  ;
 	        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, baseVfModuleId, cloudSiteId, tenantId, error, "VDU", "queryVdu(Base)", MsoLogger.ErrorCode.BusinessProcesssError, "Create VFModule: Base Module DOES NOT EXIST");
@@ -886,14 +891,14 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 	        	}
             }
         }
-	
+
 
         // NOTE:  For this section, heatTemplate is used for all template artifacts.
         // In final implementation (post-POC), the template object would either be generic or there would
         // be a separate DB Table/Object for different sub-orchestrators.
 
         // NOTE: The template is fixed for the VF Module.  The environment is part of the customization.
-        
+
         HeatTemplate heatTemplate = null;
         HeatEnvironment heatEnvironment = null;
         if (isVolumeRequest) {
@@ -903,7 +908,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 			heatTemplate = vfModule.getModuleHeatTemplate();
 			heatEnvironment = vfModuleCust.getHeatEnvironment();
 		}
-        
+
 		if (heatTemplate == null) {
 			String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType + ", reqType=" + requestType;
 			LOGGER.error(MessageEnum.RA_VNF_UNKNOWN_PARAM, "Heat Template ID", vfModuleType, "VNF", "", MsoLogger.ErrorCode.DataError, error);
@@ -914,7 +919,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 		} else {
 			LOGGER.debug ("Got HEAT Template from DB: " + heatTemplate.getHeatTemplate());
 		}
-		
+
         if (heatEnvironment == null) {
            String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType;
                 LOGGER.error (MessageEnum.RA_VNF_UNKNOWN_PARAM, "Heat Environment ID", "OpenStack", "", MsoLogger.ErrorCode.DataError, error);
@@ -927,15 +932,15 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             LOGGER.debug ("Got Heat Environment from DB: " + heatEnvironment.getEnvironment());
         }
 
-        
+
         // Create the combined set of parameters from the incoming request, base-module outputs,
         // volume-module outputs.  Also, convert all variables to their native object types.
-        
+
         HashMap<String, Object> goldenInputs = new HashMap<String,Object>();
         List<String> extraInputs = new ArrayList<String>();
 
 		Boolean skipInputChecks = false;
-        
+
 		if (skipInputChecks) {
 			goldenInputs = new HashMap<String,Object>();
 			for (String key : inputs.keySet()) {
@@ -945,10 +950,10 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 		else {
 			// Build maps for the parameters (including aliases) to simplify checks
 			HashMap<String, HeatTemplateParam> params = new HashMap<String, HeatTemplateParam>();
-			
+
 			Set<HeatTemplateParam> paramSet = heatTemplate.getParameters();
 			LOGGER.debug("paramSet has " + paramSet.size() + " entries");
-			
+
 			for (HeatTemplateParam htp : paramSet) {
 				params.put(htp.getParamName(), htp);
 
@@ -958,7 +963,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 					params.put(alias, htp);
 				}
 			}
-			
+
 			// First, convert all inputs to their "template" type
 			for (String key : inputs.keySet()) {
 				if (params.containsKey(key)) {
@@ -973,11 +978,22 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 					extraInputs.add(key);
 				}
 			}
-			
+
 			if (!extraInputs.isEmpty()) {
+				// Add directive inputs
+				String[] directives = { "oof_directives", "sdnc_directives" };
+				for (String key : directives) {
+					if (extraInputs.contains(key)) {
+						goldenInputs.put(key, inputs.get(key));
+						extraInputs.remove(key);
+						if (extraInputs.isEmpty()) {
+							break;
+						}
+					}
+				}
 				LOGGER.debug("Ignoring extra inputs: " + extraInputs);
 			}
-			
+
 			// Next add in Volume Group Outputs if there are any.  Copy directly without conversions.
 			if (volumeGroupOutputs != null  &&  !volumeGroupOutputs.isEmpty()) {
 				for (String key : volumeGroupOutputs.keySet()) {
@@ -986,7 +1002,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 					}
 				}
 			}
-			
+
 			// Next add in Base Module Outputs if there are any.  Copy directly without conversions.
 			if (baseModuleOutputs != null  &&  !baseModuleOutputs.isEmpty()) {
 				for (String key : baseModuleOutputs.keySet()) {
@@ -995,14 +1011,17 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 					}
 				}
 			}
-			
+
 			// TODO:  The model should support a mechanism to pre-assign default parameter values
 			// per "customization" (i.e. usage) of a given module.  In HEAT, this is specified by
 			// an Environment file.  There is not a general mechanism in the model to handle this.
 			// For the general case, any such parameter/values can be added dynamically to the
 			// inputs (only if not already specified).
-			
-			
+            //
+            //
+            // EWMMC - probably this is where OOF directives should be added to the goldenInputs ?
+
+
             // Check that required parameters have been supplied from any of the sources
             String missingParams = null;
             boolean checkRequiredParameters = true;
@@ -1017,7 +1036,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 // No problem - default is true
                 LOGGER.debug ("An exception occured trying to get property " + MsoVnfPluginAdapterImpl.CHECK_REQD_PARAMS, e);
             }
-            
+
             // Do the actual parameter checking.
             // Include looking at the ENV file as a valid definition of a parameter value.
             // TODO:  This handling of ENV applies only to Heat.  A general mechanism to
@@ -1040,7 +1059,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                     }
                 }
             }
-		
+
             if (missingParams != null) {
             	if (checkRequiredParameters) {
             		// Problem - missing one or more required parameters
@@ -1056,12 +1075,12 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             }
 
 		} // NOTE: END PARAMETER CHECKING
-		
-		
+
+
 		// Here we go...  ready to deploy the VF Module.
         long instantiateVduStartTime = System.currentTimeMillis ();
         if (backout == null) backout = true;
-        
+
 		try {
 			// Construct the VDU Model structure to pass to the targeted VduPlugin
 			VduModelInfo vduModel = null;
@@ -1070,10 +1089,10 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 			} else {
 				vduModel = vduMapper.mapVfModuleCustVolumeToVdu(vfModuleCust);
 			}
-		
+
 			// Invoke the VduPlugin to instantiate the VF Module
 			vduInstance = vduPlugin.instantiateVdu(cloudInfo, vfModuleName, goldenInputs, vduModel, backout);
-			
+
             LOGGER.recordMetricEvent (instantiateVduStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from VduPlugin", "VDU", "instantiateVdu", vfModuleName);
 		}
 		catch (VduException me) {
@@ -1100,7 +1119,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 	        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.UnknownError, error);
 	        LOGGER.debug("Unhandled exception at vduPlugin.instantiateVdu", e);
 	    	throw new VnfException("Exception during instantiateVdu: " + e.getMessage());
-	    }      	
+	    }
 
 
         // Reach this point if create is successful.
@@ -1108,7 +1127,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         vfRollback.setVnfCreated (true);
         vfRollback.setVnfId (vduInstance.getVduInstanceId());
         vnfId.value = vduInstance.getVduInstanceId();
-        outputs.value = copyStringOutputs (vduInstance.getOutputs ());        	
+        outputs.value = copyStringOutputs (vduInstance.getOutputs ());
 
         rollback.value = vfRollback;
 
@@ -1117,7 +1136,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         return;
     }
 
-    
+
     public void deleteVfModule (String cloudSiteId,
                            String tenantId,
                            String vfModuleId,
@@ -1126,15 +1145,15 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     {
         MsoLogger.setLogContext (msoRequest);
     	MsoLogger.setServiceName ("DeleteVfModule");
-    	
+
         LOGGER.debug ("Deleting VF Module " + vfModuleId + " in " + cloudSiteId + "/" + tenantId);
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
-    	
+
         // Capture the output parameters on a delete, so need to query first
     	VduInstance vduInstance = null;
     	CloudInfo cloudInfo = new CloudInfo(cloudSiteId, tenantId, null);
-    	
+
         // Use the VduPlugin.
         VduPlugin vduPlugin = getVduPlugin(cloudSiteId);
 
@@ -1152,7 +1171,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
             throw new VnfException (e);
     	}
-    	
+
         // call method which handles the conversion from Map<String,Object> to Map<String,String> for our expected Object types
         outputs.value = convertMapStringObjectToStringString(vduInstance.getOutputs());
 
@@ -1214,16 +1233,18 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     	if (cloudSiteOp.isPresent()) {
     		CloudSite cloudSite = cloudSiteOp.get();
     		String orchestrator = cloudSite.getOrchestrator();
-    		
+
     		if (orchestrator.equalsIgnoreCase("CLOUDIFY")) {
-    			return cloudifyUtils;   			
+    			return cloudifyUtils;
     		}
     		else if (orchestrator.equalsIgnoreCase("HEAT")) {
     			return heatUtils;
     		}
+            if (orchestrator.equalsIgnoreCase("MULTICLOUD")) {
+                LOGGER.debug ("Got MulticloudUtils for vduPlugin");
+                return multicloudUtils; }
     	}
-    	
-    	// Default - return HEAT plugin, though will fail later
+        // Default - return HEAT plugin, though will fail later
     	return heatUtils;
     }
 }
