@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,16 +32,19 @@ import org.springframework.stereotype.Component;
 public class VnfAdapterRestUtils
 {
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, VnfAdapterRestUtils.class);
-	
+
 	@Autowired
 	private CloudConfig cloudConfig;
-	
+
 	@Autowired
 	private MsoVnfCloudifyAdapterImpl cloudifyImpl;
-	
+
 	@Autowired
 	private MsoVnfAdapterImpl vnfImpl;
-	
+
+	@Autowired
+	private MsoVnfPluginAdapterImpl vnfPluginImpl;
+
 	/*
 	 * Choose which implementation of VNF Adapter to use, based on the orchestration mode.
 	 * Currently, the two supported orchestrators are HEAT and CLOUDIFY.
@@ -72,7 +75,7 @@ public class VnfAdapterRestUtils
 		LOGGER.debug ("GetVnfAdapterImpl: mode=" + mode);
 
 		MsoVnfAdapter vnfAdapter = null;
-		
+
 		// TODO:  Make this more dynamic (e.g. Service Loader)
 		if ("CLOUDIFY".equalsIgnoreCase(mode)) {
 			LOGGER.debug ("GetVnfAdapterImpl: Return Cloudify Adapter");
@@ -82,12 +85,16 @@ public class VnfAdapterRestUtils
 			LOGGER.debug ("GetVnfAdapterImpl: Return Heat Adapter");
 			vnfAdapter = vnfImpl;
 		}
+		else if ("MULTICLOUD".equalsIgnoreCase(mode)) {
+			LOGGER.debug ("GetVnfAdapterImpl: Return Plugin (multicloud) Adapter");
+			vnfAdapter = vnfPluginImpl;
+		}
 		else {
 			// Don't expect this, but default is the HEAT adapter
 			LOGGER.debug ("GetVnfAdapterImpl: Return Default (Heat) Adapter");
 			vnfAdapter = vnfImpl;
 		}
-		
+
 		return vnfAdapter;
 	}
 
