@@ -600,7 +600,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             String volumeGroupId,
             String baseVfModuleId,
             String modelCustomizationUuid,
-            Map <String, String> inputs,
+            Map <String, String> inputs,    // EWMMC - will OOF come in here - ore should they be added to the arguments - maybe the latter ?
             Boolean failIfExists,
             Boolean backout,
             Boolean enableBridge,
@@ -732,7 +732,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
         long subStartTime1 = System.currentTimeMillis ();
         try {
-            vduInstance = vduPlugin.queryVdu (cloudInfo, vfModuleName);
+            vduInstance = vduPlugin.queryVdu (cloudInfo, vfModuleName);   // EWMMC - check on multicloud query , add to MsoMulticloudUtils
             LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from VduPlugin", "VDU", "QueryVDU", vfModuleName);
         }
         catch (VduException me) {
@@ -770,6 +770,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         		}
         	}
         	// Check through various detailed error cases
+            // EWMMC - will need to find out what kinds of status return from multicloud
         	else if (status == VduStateType.INSTANTIATING || status == VduStateType.DELETING || status == VduStateType.UPDATING) {
         		// fail - it's in progress - return meaningful error
                 String error = "Create VF: Deployment " + vfModuleName + " already exists and has status " + status.toString() + " in " + cloudSiteId + "/" + tenantId + "; please wait for it to complete, or fix manually.";
@@ -1001,6 +1002,9 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 			// an Environment file.  There is not a general mechanism in the model to handle this.
 			// For the general case, any such parameter/values can be added dynamically to the
 			// inputs (only if not already specified).
+            //
+            //
+            // EWMMC - probably this is where OOF directives should be added to the goldenInputs ?
 			
 			
             // Check that required parameters have been supplied from any of the sources
