@@ -50,6 +50,12 @@ public class HeatCacheEntry implements Serializable {
         return heatClient;
     }
 
+    public MulticloudHeat getMulticloudHeatClient () {
+        MulticloudHeat heatClient = new MulticloudHeat(heatUrl);
+        heatClient.token (token);
+        return heatClient;
+    }
+
     public boolean isExpired () {
         if (expires == null) {
             return true;
