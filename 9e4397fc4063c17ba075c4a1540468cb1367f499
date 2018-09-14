@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_e39e90b8",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/async/client/NetworkAdapterNotify_Service.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-14T12:07:18Z",
+      "side": 1,
+      "message": "This should be target namespace not target url",
+      "revId": "9e4397fc4063c17ba075c4a1540468cb1367f499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
