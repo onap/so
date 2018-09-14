@@ -88,6 +88,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private static final String CREATE_NETWORK_CONTEXT = "CreateNetwork";
     private static final String MSO_CONFIGURATION_ERROR = "MsoConfigurationError";
     private static final String NEUTRON_MODE = "NEUTRON";
+    private static final String QUERY_STACK = "queryStack";
     
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,MsoNetworkAdapterImpl.class);
     private static final MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
@@ -905,7 +906,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                             + ": "
                             + me;
                     LOGGER.recordMetricEvent(queryStackStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", null);
-                    LOGGER.error(MessageEnum.RA_QUERY_NETWORK_EXC, networkId, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Exception - QueryStack", me);
+                    LOGGER.error(MessageEnum.RA_QUERY_NETWORK_EXC, networkId, cloudSiteId, tenantId, "OpenStack", QUERY_STACK, MsoLogger.ErrorCode.DataError, "Exception - QueryStack", me);
                     LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
                     throw new NetworkException(me);
                 }
@@ -916,7 +917,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                             + cloudSiteId
                             + "/"
                             + tenantId;
-                    LOGGER.error(MessageEnum.RA_NETWORK_NOT_FOUND, networkId, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Network not found");
+                    LOGGER.error(MessageEnum.RA_NETWORK_NOT_FOUND, networkId, cloudSiteId, tenantId, "OpenStack", QUERY_STACK, MsoLogger.ErrorCode.DataError, "Network not found");
                     LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
                     // Network stack does not exist. Return an error
                     throw new NetworkException(error, MsoExceptionCategory.USERDATA);
@@ -1338,7 +1339,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                            + ": "
                            + me;
             LOGGER.recordMetricEvent (queryStackStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "BPMN", "QueryStack", null);
-            LOGGER.error (MessageEnum.RA_QUERY_NETWORK_EXC, networkNameOrId, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Exception - Query Network (heat)", me);
+            LOGGER.error (MessageEnum.RA_QUERY_NETWORK_EXC, networkNameOrId, cloudSiteId, tenantId, "OpenStack", QUERY_STACK, MsoLogger.ErrorCode.DataError, "Exception - Query Network (heat)", me);
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
             throw new NetworkException (me);
         }
