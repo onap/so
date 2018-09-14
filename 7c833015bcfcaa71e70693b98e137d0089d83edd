@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_2361e8d2",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-14T12:06:20Z",
+      "side": 1,
+      "message": "I know this is copied from existing code, but this method is far too large, please break it up some",
+      "revId": "7c833015bcfcaa71e70693b98e137d0089d83edd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
