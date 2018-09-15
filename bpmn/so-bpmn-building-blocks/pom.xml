@@ -12,7 +12,6 @@
 		<httpclient.version>3.1</httpclient.version>
 		<camunda.bpm.assert.version>1.2</camunda.bpm.assert.version>
 		<h2.version>1.4.196</h2.version>
-		<groovy.version>2.4.7</groovy.version>
 		<saxon.version>9.5.1-8</saxon.version>
 		<xmlunit.version>1.6</xmlunit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

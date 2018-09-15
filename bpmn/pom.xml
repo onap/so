@@ -19,7 +19,6 @@
 		<camunda.bpm.assert.version>1.2</camunda.bpm.assert.version>
 		<camunda.bpm.webapp.artifact>camunda-webapp-jboss-standalone</camunda.bpm.webapp.artifact>
 		<h2.version>1.4.196</h2.version>
-		<groovy.version>2.4.7</groovy.version>
 		<saxon.version>9.5.1-8</saxon.version>
 		<xmlunit.version>2.4.0</xmlunit.version>
 
@@ -46,11 +45,6 @@
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
 				<version>${h2.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
-				<artifactId>groovy-all</artifactId>
-				<version>${groovy.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.saxon</groupId>
