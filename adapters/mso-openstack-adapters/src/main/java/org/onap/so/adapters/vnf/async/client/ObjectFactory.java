@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,11 +45,12 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _QueryVnfNotification_QNAME = new QName("http://org.onap.so/vnfNotify", "queryVnfNotification");
-    private final static QName _RollbackVnfNotification_QNAME = new QName("http://org.onap.so/vnfNotify", "rollbackVnfNotification");
-    private final static QName _CreateVnfNotification_QNAME = new QName("http://org.onap.so/vnfNotify", "createVnfNotification");
-    private final static QName _DeleteVnfNotification_QNAME = new QName("http://org.onap.so/vnfNotify", "deleteVnfNotification");
-    private final static QName _UpdateVnfNotification_QNAME = new QName("http://org.onap.so/vnfNotify", "updateVnfNotification");
+	private static final String URL= "http://org.onap.so/vnfNotify";
+    private final static QName _QueryVnfNotification_QNAME = new QName(URL, "queryVnfNotification");
+    private final static QName _RollbackVnfNotification_QNAME = new QName(URL, "rollbackVnfNotification");
+    private final static QName _CreateVnfNotification_QNAME = new QName(URL, "createVnfNotification");
+    private final static QName _DeleteVnfNotification_QNAME = new QName(URL, "deleteVnfNotification");
+    private final static QName _UpdateVnfNotification_QNAME = new QName(URL, "updateVnfNotification");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.onap.so.adapters.vnf.async.client
@@ -164,7 +167,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link QueryVnfNotification }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://org.onap.so/vnfNotify", name = "queryVnfNotification")
+    @XmlElementDecl(namespace = URL, name = "queryVnfNotification")
     public JAXBElement<QueryVnfNotification> createQueryVnfNotification(QueryVnfNotification value) {
         return new JAXBElement<QueryVnfNotification>(_QueryVnfNotification_QNAME, QueryVnfNotification.class, null, value);
     }
@@ -173,7 +176,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link RollbackVnfNotification }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://org.onap.so/vnfNotify", name = "rollbackVnfNotification")
+    @XmlElementDecl(namespace = URL, name = "rollbackVnfNotification")
     public JAXBElement<RollbackVnfNotification> createRollbackVnfNotification(RollbackVnfNotification value) {
         return new JAXBElement<RollbackVnfNotification>(_RollbackVnfNotification_QNAME, RollbackVnfNotification.class, null, value);
     }
@@ -182,7 +185,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link CreateVnfNotification }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://org.onap.so/vnfNotify", name = "createVnfNotification")
+    @XmlElementDecl(namespace = URL, name = "createVnfNotification")
     public JAXBElement<CreateVnfNotification> createCreateVnfNotification(CreateVnfNotification value) {
         return new JAXBElement<CreateVnfNotification>(_CreateVnfNotification_QNAME, CreateVnfNotification.class, null, value);
     }
@@ -191,7 +194,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteVnfNotification }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://org.onap.so/vnfNotify", name = "deleteVnfNotification")
+    @XmlElementDecl(namespace = URL, name = "deleteVnfNotification")
     public JAXBElement<DeleteVnfNotification> createDeleteVnfNotification(DeleteVnfNotification value) {
         return new JAXBElement<DeleteVnfNotification>(_DeleteVnfNotification_QNAME, DeleteVnfNotification.class, null, value);
     }
@@ -200,7 +203,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link UpdateVnfNotification }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://org.onap.so/vnfNotify", name = "updateVnfNotification")
+    @XmlElementDecl(namespace = URL, name = "updateVnfNotification")
     public JAXBElement<UpdateVnfNotification> createUpdateVnfNotification(UpdateVnfNotification value) {
         return new JAXBElement<UpdateVnfNotification>(_UpdateVnfNotification_QNAME, UpdateVnfNotification.class, null, value);
     }
