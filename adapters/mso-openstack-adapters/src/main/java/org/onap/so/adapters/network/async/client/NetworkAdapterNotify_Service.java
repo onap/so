@@ -45,7 +45,8 @@ public class NetworkAdapterNotify_Service
 
     private static final URL NETWORKADAPTERNOTIFY_WSDL_LOCATION;
     private static final WebServiceException NETWORKADAPTERNOTIFY_EXCEPTION;
-    private static final QName NETWORKADAPTERNOTIFY_QNAME = new QName("http://org.onap.so/networkNotify", "networkAdapterNotify");
+    private static final String URL="http://org.onap.so/networkNotify";
+    private static final QName NETWORKADAPTERNOTIFY_QNAME = new QName(URL, "networkAdapterNotify");
 
     static {
         NETWORKADAPTERNOTIFY_WSDL_LOCATION = org.onap.so.adapters.network.async.client.NetworkAdapterNotify_Service.class.getResource("/NetworkAdapterNotify.wsdl");
@@ -87,7 +88,7 @@ public class NetworkAdapterNotify_Service
      */
     @WebEndpoint(name = "MsoNetworkAdapterAsyncImplPort")
     public NetworkAdapterNotify getMsoNetworkAdapterAsyncImplPort() {
-        return super.getPort(new QName("http://org.onap.so/networkNotify", "MsoNetworkAdapterAsyncImplPort"), NetworkAdapterNotify.class);
+        return super.getPort(new QName(URL, "MsoNetworkAdapterAsyncImplPort"), NetworkAdapterNotify.class);
     }
 
     /**
@@ -99,7 +100,7 @@ public class NetworkAdapterNotify_Service
      */
     @WebEndpoint(name = "MsoNetworkAdapterAsyncImplPort")
     public NetworkAdapterNotify getMsoNetworkAdapterAsyncImplPort(WebServiceFeature... features) {
-        return super.getPort(new QName("http://org.onap.so/networkNotify", "MsoNetworkAdapterAsyncImplPort"), NetworkAdapterNotify.class, features);
+        return super.getPort(new QName(URL, "MsoNetworkAdapterAsyncImplPort"), NetworkAdapterNotify.class, features);
     }
 
     private static URL __getWsdlLocation() {
