@@ -140,7 +140,7 @@ public class ValetClient {
 			String body = mapper.writeValueAsString(vur);
 			HttpHeaders headers = generateHeaders(requestId);	
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet update req: " + uri.toString() + HEADERS + headers.toString() + ", body=" + body);
+			LOGGER.debug("valet update req: " + uri.toString() + HEADERS + headers.toString() + BODY + body);
 			
 			response = restTemplate.exchange(uri, HttpMethod.PUT, entity, ValetUpdateResponse.class);
 			gvr = this.getGVRFromResponse(response);
