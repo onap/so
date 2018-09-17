@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.aai.entities.bulkprocess;
+package org.onap.so.client.aai.entities.singletransaction;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,17 +28,33 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+"action",
 "uri",
 "body"
 })
-public class OperationBody {
+public class OperationBodyRequest {
 
+@JsonProperty("action")
+private String action;
 @JsonProperty("uri")
 private String uri;
 @JsonProperty("body")
-@JsonSerialize(using = OperationBodySerializer.class)
+@JsonSerialize(using = OperationBodyRequestSerializer.class)
 private Object body;
 
+
+public String getAction() {
+	return action;
+}
+
+public void setAction(String action) {
+	this.action = action;
+}
+
+public OperationBodyRequest withAction(String action) {
+	this.action = action;
+	return this;
+}
 @JsonProperty("uri")
 public String getUri() {
 return uri;
@@ -49,7 +65,7 @@ public void setUri(String uri) {
 this.uri = uri;
 }
 
-public OperationBody withUri(String uri) {
+public OperationBodyRequest withUri(String uri) {
 this.uri = uri;
 return this;
 }
@@ -64,7 +80,7 @@ public void setBody(Object body) {
 this.body = body;
 }
 
-public OperationBody withBody(Object body) {
+public OperationBodyRequest withBody(Object body) {
 this.body = body;
 return this;
 }

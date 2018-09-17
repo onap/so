@@ -1,0 +1,26 @@
+{
+  "operations": [
+    {
+      "action": "put",
+      "uri": "/cloud-infrastructure/pservers/pserver/pserver-hostname",
+      "body": {
+        "hostname": "pserver-hostname",
+        "fqdn": "pserver-bulk-process-single-transactions-multiple-actions-1-fqdn"
+      }
+    },
+    {
+      "action": "patch",
+      "uri": "/cloud-infrastructure/pservers/pserver/pserver-hostname",
+      "body": {
+        "fqdn": "patched-fqdn"
+      }
+    },
+    {
+      "action": "put",
+      "uri": "/cloud-infrastructure/complexes/complex/my-complex",
+      "body": {
+        "city": "my-city"
+      }
+    }
+  ]
+}

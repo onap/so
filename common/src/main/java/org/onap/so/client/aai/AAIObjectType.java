@@ -27,6 +27,7 @@ import org.onap.aai.annotations.Metadata;
 import org.onap.aai.domain.yang.AllottedResource;
 import org.onap.aai.domain.yang.CloudRegion;
 import org.onap.aai.domain.yang.Collection;
+import org.onap.aai.domain.yang.Complex;
 import org.onap.aai.domain.yang.Configuration;
 import org.onap.aai.domain.yang.Customer;
 import org.onap.aai.domain.yang.GenericVnf;
@@ -64,6 +65,7 @@ public enum AAIObjectType implements GraphInventoryObjectType {
 	CUSTOMER(AAINamespaceConstants.BUSINESS, Customer.class),
 	GENERIC_QUERY("/search", "/generic-query"),
 	BULK_PROCESS("/bulkprocess", ""),
+	SINGLE_TRANSACTION("/bulk/single-transaction", ""),
 	GENERIC_VNF(AAINamespaceConstants.NETWORK, GenericVnf.class),
 	VF_MODULE(AAIObjectType.GENERIC_VNF.uriTemplate(), VfModule.class),
 	L3_NETWORK(AAINamespaceConstants.NETWORK, L3Network.class),
@@ -98,6 +100,7 @@ public enum AAIObjectType implements GraphInventoryObjectType {
 	COLLECTION(AAINamespaceConstants.NETWORK, Collection.class),
 	VNFC(AAINamespaceConstants.NETWORK, Vnfc.class),
 	VLAN_TAG(AAINamespaceConstants.NETWORK, VlanTag.class),
+	COMPLEX(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, Complex.class),
 	UNKNOWN("", "");
 
 	private final String uriTemplate;

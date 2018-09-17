@@ -309,6 +309,15 @@ public class AAIResourcesClient extends AAIClient {
 		return new AAITransactionalClient(this.getVersion());
 	}
 	
+	/**
+	 * Starts a transaction groups multiple A&AI mutations
+	 * 
+	 * @return
+	 */
+	public AAISingleTransactionClient beginSingleTransaction() {
+		return new AAISingleTransactionClient(this.getVersion());
+	}
+	
 	private AAIUri addParams(Optional<Depth> depth, boolean nodesOnly, AAIUri uri) {
 		AAIUri clone = uri.clone();
 		if (depth.isPresent()) {

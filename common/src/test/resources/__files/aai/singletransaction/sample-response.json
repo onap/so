@@ -1,0 +1,22 @@
+{
+  "operation-responses": [
+    {
+      "action": "put",
+      "uri": "/cloud-infrastructure/pservers/pserver/pserver-hostname",
+      "response-status-code": 201,
+      "response-body": null
+    },
+    {
+      "action": "patch",
+      "uri": "/cloud-infrastructure/pservers/pserver/pserver-hostname",
+      "response-status-code": 200,
+      "response-body": null
+    },
+    {
+      "action": "put",
+      "uri": "/cloud-infrastructure/complexes/complex/my-complex",
+      "response-status-code": 201,
+      "response-body": null
+    }
+  ]
+}
