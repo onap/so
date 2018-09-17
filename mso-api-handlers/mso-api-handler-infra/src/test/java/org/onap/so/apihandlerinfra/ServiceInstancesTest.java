@@ -21,11 +21,28 @@
 package org.onap.so.apihandlerinfra;
 
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.http.Fault;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,32 +61,18 @@ import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.http.Fault;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 
 
 public class ServiceInstancesTest extends BaseTest{
@@ -109,10 +112,14 @@ public class ServiceInstancesTest extends BaseTest{
 
 	}
 	
-	
-    public ResponseEntity<String> sendRequest(String requestJson, String uriPath, HttpMethod reqMethod){		 
-        headers.set("Accept", MediaType.APPLICATION_JSON);
-        headers.set(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON);
+	public ResponseEntity<String> sendRequest(String requestJson, String uriPath, HttpMethod reqMethod, HttpHeaders headers){
+		
+		if (!headers.containsKey(HttpHeaders.ACCEPT)) {
+			headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
+		}
+		if (!headers.containsKey(HttpHeaders.CONTENT_TYPE)) {
+			headers.set(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON);
+		}
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(uriPath));
 
@@ -120,6 +127,10 @@ public class ServiceInstancesTest extends BaseTest{
 
         return restTemplate.exchange(builder.toUriString(),
                 reqMethod, request, String.class);
+    }
+	
+    public ResponseEntity<String> sendRequest(String requestJson, String uriPath, HttpMethod reqMethod){
+    	return sendRequest(requestJson, uriPath, reqMethod, new HttpHeaders());
     }
 
     @Test
@@ -163,7 +174,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(serviceRecipe))
                         .withStatus(HttpStatus.SC_OK)));
-			
+        HttpHeaders headers = new HttpHeaders();
 		headers.set(MsoLogger.TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(MsoLogger.CLIENT_ID, "VID");
         //expect
@@ -172,7 +183,7 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setInstanceId("1882939");
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v5/serviceInstances";
-        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST);
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -347,8 +358,9 @@ public class ServiceInstancesTest extends BaseTest{
     @Test
     public void activateServiceInstanceNoRecipeALaCarte() throws IOException{
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/activate";
+        HttpHeaders headers = new HttpHeaders();
         headers.set("X-ECOMP-RequestID", "32807a28-1a14-4b88-b7b3-2950918aa76d");
-        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceALaCarteTrueNoRecipe.json"), uri, HttpMethod.POST);
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceALaCarteTrueNoRecipe.json"), uri, HttpMethod.POST, headers);
 
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
@@ -407,7 +419,7 @@ public class ServiceInstancesTest extends BaseTest{
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceRecipe))
 						.withStatus(HttpStatus.SC_OK)));
-
+		HttpHeaders headers = new HttpHeaders();
         headers.set("X-TransactionID", "32807a28-1a14-4b88-b7b3-2950918aa76d");
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -415,7 +427,7 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setInstanceId("1882939");
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/activate";
-        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceActivate.json"), uri, HttpMethod.POST);
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceActivate.json"), uri, HttpMethod.POST, headers);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -608,6 +620,7 @@ public class ServiceInstancesTest extends BaseTest{
         stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        HttpHeaders headers = new HttpHeaders();
         headers.set("X-TransactionID", "32807a28-1a14-4b88-b7b3-2950918aa76d");
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -615,7 +628,7 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setInstanceId("1882939");
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations";
-        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstancePortConfiguration.json"), uri, HttpMethod.POST);
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstancePortConfiguration.json"), uri, HttpMethod.POST, headers);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -638,6 +651,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
+        HttpHeaders headers = new HttpHeaders();
         headers.set("X-ECOMP-RequestID", "32807a28-1a14-4b88-b7b3-2950918aa76d");
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -645,7 +659,7 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setInstanceId("1882939");
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations/f7ce78bb-423b-11e7-93f8-0050569a7970";
-        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstance.json"), uri, HttpMethod.DELETE);
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstance.json"), uri, HttpMethod.DELETE, headers);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -840,6 +854,7 @@ public class ServiceInstancesTest extends BaseTest{
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         String requestId = "b7a6b76f-2ee2-416c-971b-548472a8c5c3";
+        HttpHeaders headers = new HttpHeaders();
         headers.set(MsoLogger.ONAP_REQUEST_ID, requestId);
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -847,7 +862,7 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setInstanceId("1882939");
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vnfs";
-        ResponseEntity<String> response = sendRequest(inputStream("/VnfWithServiceRelatedInstance.json"), uri, HttpMethod.POST);
+        ResponseEntity<String> response = sendRequest(inputStream("/VnfWithServiceRelatedInstance.json"), uri, HttpMethod.POST, headers);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -1035,6 +1050,7 @@ public class ServiceInstancesTest extends BaseTest{
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
         
         String requestId = "b7a6b76f-2ee2-416c-971b-548472a8c5c5";
+        HttpHeaders headers = new HttpHeaders();
         headers.set(MsoLogger.ONAP_REQUEST_ID, requestId);
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -1042,7 +1058,7 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setInstanceId("1882939");
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/applyUpdatedConfig";
-        ResponseEntity<String> response = sendRequest(inputStream("/ApplyUpdatedConfig.json"), uri, HttpMethod.POST);
+        ResponseEntity<String> response = sendRequest(inputStream("/ApplyUpdatedConfig.json"), uri, HttpMethod.POST, headers);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -1343,6 +1359,7 @@ public class ServiceInstancesTest extends BaseTest{
     }
     @Test
     public void createVfModuleNoModelType() throws IOException{
+    	HttpHeaders headers = new HttpHeaders();
         headers.set(MsoLogger.ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         InfraActiveRequests expectedRecord = new InfraActiveRequests();
         expectedRecord.setRequestStatus("FAILED");
@@ -1362,7 +1379,7 @@ public class ServiceInstancesTest extends BaseTest{
         expectedRecord.setVnfType("");
         uri = servInstanceuri + "v5/serviceInstances/32807a28-1a14-4b88-b7b3-2950918aa76d/vnfs/32807a28-1a14-4b88-b7b3-2950918aa76d/vfModules";
 
-        ResponseEntity<String> response = sendRequest(inputStream("/VfModuleNoModelType.json"), uri, HttpMethod.POST);
+        ResponseEntity<String> response = sendRequest(inputStream("/VfModuleNoModelType.json"), uri, HttpMethod.POST, headers);
         //ActualRecord
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
     }
@@ -1626,6 +1643,7 @@ public class ServiceInstancesTest extends BaseTest{
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
         
         String requestId = "b7a6b76f-2ee2-416c-971b-548472a8c5c4";
+        HttpHeaders headers = new HttpHeaders();
         headers.set(MsoLogger.ONAP_REQUEST_ID, requestId);
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -1633,7 +1651,7 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setInstanceId("1882939");
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks";
-        ResponseEntity<String> response = sendRequest(inputStream("/NetworkCreate.json"), uri, HttpMethod.POST);
+        ResponseEntity<String> response = sendRequest(inputStream("/NetworkCreate.json"), uri, HttpMethod.POST, headers);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -1746,6 +1764,7 @@ public class ServiceInstancesTest extends BaseTest{
     }
     @Test
     public void convertJsonToServiceInstanceRequestFail() throws IOException {
+    	HttpHeaders headers = new HttpHeaders();
         headers.set(MsoLogger.ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         //ExpectedRecord
         InfraActiveRequests expectedRecord = new InfraActiveRequests();
@@ -1759,7 +1778,7 @@ public class ServiceInstancesTest extends BaseTest{
         expectedRecord.setRequestId("32807a28-1a14-4b88-b7b3-2950918aa76d");
 
         uri = servInstanceuri + "v6" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks/1710966e-097c-4d63-afda-e0d3bb7015fb";
-        ResponseEntity<String> response = sendRequest(inputStream("/ConvertRequestFail.json"), uri, HttpMethod.DELETE);
+        ResponseEntity<String> response = sendRequest(inputStream("/ConvertRequestFail.json"), uri, HttpMethod.DELETE, headers);
 
         //ActualRecord
 
@@ -1967,6 +1986,7 @@ public class ServiceInstancesTest extends BaseTest{
 	    stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+	    HttpHeaders headers = new HttpHeaders();
         headers.set("X-ECOMP-RequestID", "32807a28-1a14-4b88-b7b3-2950918aa76d");
 
         stubFor(get(urlMatching(".*/service/.*"))
@@ -1985,7 +2005,7 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setInstanceId("1882939");
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7999/activate";
-        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstancePrev8.json"), uri, HttpMethod.POST);
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstancePrev8.json"), uri, HttpMethod.POST, headers);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -1998,10 +2018,11 @@ public class ServiceInstancesTest extends BaseTest{
     @Test
     public void invalidRequestId() throws IOException {
         String illegalRequestId = "1234";
+        HttpHeaders headers = new HttpHeaders();
         headers.set(ONAPLogConstants.Headers.REQUEST_ID, illegalRequestId);
 
         uri = servInstanceuri + "v5/serviceInstances";
-        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST);
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         assertTrue(response.getBody().contains("Request Id " + illegalRequestId + " is not a valid UUID"));

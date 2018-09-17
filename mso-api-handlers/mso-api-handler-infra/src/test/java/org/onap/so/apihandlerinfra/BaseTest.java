@@ -59,8 +59,6 @@ public abstract class BaseTest {
 	protected MsoLogger logger = MsoLogger.getMsoLogger(Catalog.GENERAL, BaseTest.class);
 	protected TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 
-	protected HttpHeaders headers = new HttpHeaders();	
-
 	@Autowired
 	protected Environment env;
 

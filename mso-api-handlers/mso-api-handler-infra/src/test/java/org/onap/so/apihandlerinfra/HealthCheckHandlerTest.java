@@ -39,7 +39,7 @@ public class HealthCheckHandlerTest extends BaseTest{
 		
 	@Test
 	public void testHealthcheckGet() throws JSONException {
-
+		HttpHeaders headers = new HttpHeaders();
 		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
 		ResponseEntity<String> response = restTemplate.exchange(
