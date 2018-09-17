@@ -1,0 +1,24 @@
+{
+   "requestDetails":{
+      "modelInfo":{
+         "modelType":"vnf",
+         "modelVersionId":"254583ad-b38c-498b-bdbd-b8de5e07541b",
+         "modelName":"vSAMP12",
+         "modelVersion":"2.0",
+         "modelCustomizationName":"vSAMP12 1",
+         "modelCustomizationId":"c539433a-84a6-4082-a12e-5c9b00c3b960"
+      },
+      "cloudConfiguration":{
+         "lcpCloudRegionId":"mdt1",
+         "tenantId":"88a6ca3ee0394ade9403f075db23167e"
+      },
+      "requestInfo":{
+         "source":"source",
+         "suppressRollback":false,
+         "requestorId":"xxxxxx"
+      },
+      "requestParameters":{
+         "rebuildVolumeGroups":false
+      }
+   }
+}
