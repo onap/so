@@ -84,8 +84,8 @@ import io.swagger.annotations.ApiResponses;
 public class NetworkAdapterRest {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,NetworkAdapterRest.class);
 	private static final String TESTING_KEYWORD = "___TESTING___";
-
-   
+	private String APPEND_RESPONSE = ", resp=";
+	private String EXCEPTION = "Exception:";
 
 	@Autowired
 	private MsoNetworkAdapterImpl adapter;
@@ -239,7 +239,7 @@ public class NetworkAdapterRest {
 						rollback.value,
 						req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug ("Exception:", e);
+			    LOGGER.debug (EXCEPTION, e);
 				eresp = new CreateNetworkError(
 					e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
@@ -248,7 +248,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("CreateNetworkTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug ("CreateNetworkTask exit: code=" + getStatusCode() + APPEND_RESPONSE+ getResponse());
 		}
 	}
 
@@ -345,7 +345,7 @@ public class NetworkAdapterRest {
 				}
 				response = new DeleteNetworkResponse(req.getNetworkId(), networkDeleted.value, req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug ("Exception:", e);
+			    LOGGER.debug (EXCEPTION, e);
 				eresp = new DeleteNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -353,7 +353,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("DeleteNetworkTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug("DeleteNetworkTask exit: code=" + getStatusCode() + APPEND_RESPONSE+ getResponse());
 		}
 	}
 
@@ -501,7 +501,7 @@ public class NetworkAdapterRest {
 				adapter.rollbackNetwork(nwr);
 				response = new RollbackNetworkResponse(true, req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug ("Exception:", e);
+			    LOGGER.debug (EXCEPTION, e);
 				eresp = new RollbackNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -509,7 +509,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("RollbackNetworkTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug("RollbackNetworkTask exit: code=" + getStatusCode() + APPEND_RESPONSE+ getResponse());
 		}
 	}
 
@@ -649,7 +649,7 @@ public class NetworkAdapterRest {
 					subnetIdMap.value,
 					req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug ("Exception:", e);
+			    LOGGER.debug (EXCEPTION, e);
 				eresp = new UpdateNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -657,7 +657,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("UpdateNetworkTask exit: code=" + getStatusCode() + ", resp="+ getResponse());
+			LOGGER.debug("UpdateNetworkTask exit: code=" + getStatusCode() + APPEND_RESPONSE+ getResponse());
 		}
 	}
 
