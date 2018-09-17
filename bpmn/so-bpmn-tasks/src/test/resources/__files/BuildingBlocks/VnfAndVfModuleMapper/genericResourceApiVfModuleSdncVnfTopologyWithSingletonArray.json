@@ -1,4 +1,5 @@
 {
+"vnf-topology":{
   "vnf-resource-assignments": {
     "availability-zones": {
       "availability-zone": "zone0"      
@@ -41,4 +42,4 @@
   "vnf-topology-identifier-structure": {},
   "onap-model-information": {},
   "aic-cloud-region": ""
-}
+}}

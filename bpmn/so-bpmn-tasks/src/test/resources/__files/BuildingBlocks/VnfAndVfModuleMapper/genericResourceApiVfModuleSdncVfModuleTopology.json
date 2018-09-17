@@ -1,4 +1,5 @@
 {
+"vf-module-topology":{
   "vf-module-assignments": {
     "vms": {
       "vm": [
@@ -175,4 +176,4 @@
       }
     ]
   }
-}
+}}

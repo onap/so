@@ -1,4 +1,5 @@
 {
+"vnf-topology":{
   "vnf-resource-assignments": {
     "availability-zones": {
       "availability-zone": [
@@ -44,4 +45,4 @@
   "onap-model-information": {},
   "aic-cloud-region": "",
   "sdnc-generated-cloud-resources": "true"
-}
+}}

@@ -31,11 +31,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiSubInterfaceNetworkData;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiSubinterfacenetworkdataSubInterfaceNetworkData;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleTopology;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmoduleassignmentsVfModuleAssignments;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmoduleassignmentsVfmoduleassignmentsVms;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmoduletopologyVfModuleTopology;
@@ -52,6 +54,7 @@ import org.onap.sdnc.northbound.client.model.GenericResourceApiVmtopologydataVmN
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVmtopologydataVmNetworks;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVmtopologydataVmnamesVnfcNames;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfNetworkData;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfTopology;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfcNetworkData;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfcnetworkdataVnfcNetworkData;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfcnetworkdataVnfcnetworkdataVnfcPorts;
@@ -157,8 +160,11 @@ public class VnfAdapterVfModuleObjectMapper {
 	private Map<String,String> buildVfModuleParamsMap(RequestContext requestContext, ServiceInstance serviceInstance, GenericVnf genericVnf, 
 				VfModule vfModule, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse) throws JsonParseException, JsonMappingException, IOException {
 		
-		GenericResourceApiVnftopologyVnfTopology vnfTopology = mapper.readValue(sdncVnfQueryResponse, GenericResourceApiVnftopologyVnfTopology.class);
-		GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology = mapper.readValue(sdncVfModuleQueryResponse, GenericResourceApiVfmoduletopologyVfModuleTopology.class);
+		
+		GenericResourceApiVnfTopology vnfTop= mapper.readValue(sdncVnfQueryResponse, GenericResourceApiVnfTopology.class);
+		GenericResourceApiVfModuleTopology vfModuleTop = mapper.readValue(sdncVfModuleQueryResponse, GenericResourceApiVfModuleTopology.class);
+		GenericResourceApiVnftopologyVnfTopology vnfTopology = vnfTop.getVnfTopology();
+		GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology = vfModuleTop.getVfModuleTopology();
 		Map<String,String> paramsMap = new HashMap<>();
 
 		if(vnfTopology.getSdncGeneratedCloudResources() && vfModuleTopology.getSdncGeneratedCloudResources()) {

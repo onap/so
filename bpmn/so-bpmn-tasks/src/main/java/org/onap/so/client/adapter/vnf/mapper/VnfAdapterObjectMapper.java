@@ -31,6 +31,7 @@ import javax.annotation.PostConstruct;
 
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleTopology;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmoduletopologyVfModuleTopology;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
@@ -108,8 +109,9 @@ public class VnfAdapterObjectMapper {
 		final String USER_PARAM_NAME_KEY = "name";
         final String USER_PARAM_VALUE_KEY = "value";
 		// sdncVfModuleQueryResponse will not be available in aLaCarte case
-		if (sdncVfModuleQueryResponse != null) {			
-			GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology = mapper.readValue(sdncVfModuleQueryResponse, GenericResourceApiVfmoduletopologyVfModuleTopology.class);
+		if (sdncVfModuleQueryResponse != null) {		
+			GenericResourceApiVfModuleTopology vfModuleTop = mapper.readValue(sdncVfModuleQueryResponse, GenericResourceApiVfModuleTopology.class);
+			GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology  = vfModuleTop.getVfModuleTopology();
 			buildParamsMapFromSdncParams(volumeGroupParams, vfModuleTopology.getVfModuleParameters());
 		}
 

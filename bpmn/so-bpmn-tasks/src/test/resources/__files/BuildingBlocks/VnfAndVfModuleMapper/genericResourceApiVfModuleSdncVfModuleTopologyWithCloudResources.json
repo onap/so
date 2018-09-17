@@ -1,4 +1,5 @@
 {
+"vf-module-topology":{
   "vf-module-assignments": {
     "vms": {
       "vm": [
@@ -176,4 +177,4 @@
     ]
   },
   "sdnc-generated-cloud-resources": "true"
-}
+}}
