@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -76,8 +78,7 @@ public abstract class RequestClient {
 	
 	protected String decryptPropValue(String prop, String defaultValue, String encryptionKey) {
 		 try {
-			 String result = CryptoUtils.decrypt(prop, encryptionKey);
-			 return result;
+			 return CryptoUtils.decrypt(prop, encryptionKey);
 		 }	
 		 catch (GeneralSecurityException e) {
 			 msoLogger.debug("Security exception", e);
@@ -87,8 +88,7 @@ public abstract class RequestClient {
 	
 	protected String getEncryptedPropValue (String prop, String defaultValue, String encryptionKey) {
 		 try {
-			 String result = CryptoUtils.decrypt(prop, encryptionKey);
-			 return result;
+			 return CryptoUtils.decrypt(prop, encryptionKey);
 		 }	
 		 catch (GeneralSecurityException e) {
 			 msoLogger.debug("Security exception", e);
