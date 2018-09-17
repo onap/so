@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_b5e681e6",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/montoring/rest/service/CamundaProcessDataServiceProviderImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2787
+      },
+      "writtenOn": "2018-09-17T15:20:49Z",
+      "side": 1,
+      "message": "Do you really have to use this logger. THere was discussion in Policy of moving away from this older logger type.",
+      "range": {
+        "startLine": 28,
+        "startChar": 26,
+        "endLine": 28,
+        "endChar": 35
+      },
+      "revId": "715463cfc8a08ff658332c3522f16e07e8454227",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_35c35139",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/montoring/rest/service/CamundaProcessDataServiceProviderImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 2787
+      },
+      "writtenOn": "2018-09-17T15:20:49Z",
+      "side": 1,
+      "message": "\u003e120 chartacters",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 71,
+        "endChar": 128
+      },
+      "revId": "715463cfc8a08ff658332c3522f16e07e8454227",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_55d5ade2",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/montoring/rest/service/HttpRestServiceProviderImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2787
+      },
+      "writtenOn": "2018-09-17T15:20:49Z",
+      "side": 1,
+      "message": "\u003e120 characters",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 134
+      },
+      "revId": "715463cfc8a08ff658332c3522f16e07e8454227",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b5fd2170",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/montoring/rest/service/HttpRestServiceProviderImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 2787
+      },
+      "writtenOn": "2018-09-17T15:20:49Z",
+      "side": 1,
+      "message": "120++",
+      "range": {
+        "startLine": 86,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 134
+      },
+      "revId": "715463cfc8a08ff658332c3522f16e07e8454227",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d500dd67",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/montoring/rest/service/HttpRestServiceProviderImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 2787
+      },
+      "writtenOn": "2018-09-17T15:20:49Z",
+      "side": 1,
+      "message": "120++",
+      "range": {
+        "startLine": 96,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 145
+      },
+      "revId": "715463cfc8a08ff658332c3522f16e07e8454227",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
