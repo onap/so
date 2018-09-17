@@ -33,7 +33,8 @@ public enum AAIObjectPlurals implements GraphInventoryObjectPlurals {
 	SERVICE_SUBSCRIPTION(AAIObjectType.CUSTOMER.uriTemplate(), "/service-subscriptions"),
 	SERVICE_INSTANCE(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), "/service-instances"),
 	OWNING_ENTITIES(AAINamespaceConstants.BUSINESS, "/owning-entities"),
-	VOLUME_GROUP(AAIObjectType.CLOUD_REGION.uriTemplate(), "/volume-groups/");
+	VOLUME_GROUP(AAIObjectType.CLOUD_REGION.uriTemplate(), "/volume-groups/"),
+	AVAILIBILITY_ZONE(AAIObjectType.CLOUD_REGION.uriTemplate(), "/availability-zones/");
 
 
 	private final String uriTemplate;

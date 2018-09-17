@@ -322,7 +322,6 @@ class SniroUtils{
 					}
 					if((isBlank(placements) || placements.equalsIgnoreCase("[]")) && (isBlank(licenses) || licenses.equalsIgnoreCase("[]"))){
 						msoLogger.debug("Sniro Async Response does not contain: licenses or placements")
-						exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Sniro Async Callback Response does not contain: licenses or placements")
 					}else{
 						return
 					}

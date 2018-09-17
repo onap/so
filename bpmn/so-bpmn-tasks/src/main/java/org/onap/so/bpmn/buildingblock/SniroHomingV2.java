@@ -244,8 +244,8 @@ public class SniroHomingV2 {
 		ModelInfoServiceInstance modelInfo = serviceInstance.getModelInfoServiceInstance();
 		if(isNotBlank(modelInfo.getModelInvariantUuid()) && isNotBlank(modelInfo.getModelUuid())){
 			info.put("serviceInstanceId", serviceInstance.getServiceInstanceId());
-			if(modelInfo.getServiceType() != null){ //temp solution
-				info.put("serviceName", serviceInstance.getModelInfoServiceInstance().getServiceType());
+			if(modelInfo.getServiceType() != null && modelInfo.getServiceType().length() > 0){ //temp solution
+				info.put("serviceName", modelInfo.getServiceType());
 			}
 			info.put("modelInfo", buildModelInfo(serviceInstance.getModelInfoServiceInstance()));
 		}else{

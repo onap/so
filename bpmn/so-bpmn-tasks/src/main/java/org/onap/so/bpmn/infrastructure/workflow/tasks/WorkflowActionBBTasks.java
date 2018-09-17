@@ -30,13 +30,13 @@ import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
-
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.RequestReferences;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +50,7 @@ public class WorkflowActionBBTasks {
 	private static final String G_REQUEST_ID = "mso-request-id";
 	private static final String G_ALACARTE = "aLaCarte";
 	private static final String G_ACTION = "requestAction";
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, WorkflowActionBBTasks.class);
+	private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBTasks.class);
 
 	@Autowired
 	private RequestsDbClient requestDbclient;
@@ -84,10 +84,14 @@ public class WorkflowActionBBTasks {
 	}
 	
 	public void updateFlowStatistics(DelegateExecution execution) {
-		int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
-		if(currentSequence > 1) {
-			InfraActiveRequests request = this.getUpdatedRequest(execution, currentSequence);
-			requestDbclient.updateInfraActiveRequests(request);
+		try{
+			int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+			if(currentSequence > 1) {
+				InfraActiveRequests request = this.getUpdatedRequest(execution, currentSequence);
+				requestDbclient.updateInfraActiveRequests(request);
+			}
+		}catch (Exception ex){
+			logger.warn("Bpmn Flow Statistics was unable to update Request Db with the new completion percentage. Competion percentage may be invalid.");
 		}
 	}
 
@@ -146,7 +150,7 @@ public class WorkflowActionBBTasks {
 				.getProcessDefinition(execution.getProcessDefinitionId()).getKey();
 		WorkflowContextHolder.getInstance().processCallback(processKey, execution.getProcessInstanceId(), requestId,
 				callbackResponse);
-		msoLogger.info("Successfully sent sync ack.");
+		logger.info("Successfully sent sync ack.");
 	}
 
 	public void sendErrorSyncAck(DelegateExecution execution) {
@@ -169,7 +173,7 @@ public class WorkflowActionBBTasks {
 					callbackResponse);
 			execution.setVariable("sentSyncResponse", true);
 		} catch (Exception ex) {
-			msoLogger.debug(" Sending Sync Error Activity Failed. " + "\n" + ex.getMessage());
+			logger.error(" Sending Sync Error Activity Failed. {}"  , ex.getMessage(), ex);
 		}
 	}
 
@@ -265,8 +269,7 @@ public class WorkflowActionBBTasks {
 
 	public void abortCallErrorHandling(DelegateExecution execution) {
 		String msg = "Flow has failed. Rainy day handler has decided to abort the process.";
-		Exception exception = new Exception(msg);
-		msoLogger.error(exception);
+		logger.error(msg);
 		throw new BpmnError(msg);
 	}
 
@@ -280,14 +283,14 @@ public class WorkflowActionBBTasks {
 				request.setStatusMessage(exception.getErrorMessage());
 			} catch (Exception ex) {
 				//log error and attempt to extact WorkflowExceptionMessage
-				msoLogger.error(ex);
+				logger.error("Failed to extract workflow exception from execution.",ex);
 			}
 			if (errorMsg == null){
 				try {
 					errorMsg = (String) execution.getVariable("WorkflowExceptionErrorMessage");
 					request.setStatusMessage(errorMsg);
 				} catch (Exception ex) {
-					msoLogger.error(ex);
+					logger.error("Failed to extract workflow exception message from WorkflowException",ex);
 					request.setStatusMessage("Unexpected Error in BPMN");
 				}
 			}

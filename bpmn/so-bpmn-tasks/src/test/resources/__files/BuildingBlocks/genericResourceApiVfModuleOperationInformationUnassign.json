@@ -21,8 +21,9 @@
     "svc-action" : "unassign"
   },
   "vf-module-information" : {    
-    "vf-module-id" : "testVfModuleId"   
-  },
+    "vf-module-id" : "testVfModuleId",
+    "from-preload": null  
+ },
   "vnf-information" : {    
     "vnf-id" : "testVnfId",
     "vnf-type" : "testVnfType"

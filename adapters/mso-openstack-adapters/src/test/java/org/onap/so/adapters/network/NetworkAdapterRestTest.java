@@ -142,13 +142,15 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 
 		ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
 				createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
-
+		
 		CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
 				new File("src/test/resources/__files/CreateNetworkResponse2.json"), CreateNetworkResponse.class);
 
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 		assertThat(response.getBody(), sameBeanAs(expectedResponse));
 	}
+	
+
 	
 	@Test
 	public void testDeleteNetwork() throws IOException{
@@ -266,6 +268,33 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 		assertThat(response.getBody(), sameBeanAs(expectedResponse));
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 	}	
+	
+	@Test
+	public void testCreateNetworkCNRC_JSON() throws JSONException, JsonParseException, JsonMappingException, IOException {
+		
+		mockOpenStackResponseAccess(wireMockPort);
+
+		mockOpenStackPostPublicUrlWithBodyFile_200();
+
+		mockOpenStackGetStackCreatedAppC_200();
+		
+		mockOpenStackGetStackAppC_404();
+		
+		headers.add("Content-Type", MediaType.APPLICATION_JSON);
+		headers.add("Accept", MediaType.APPLICATION_JSON);
+		
+		String request = readJsonFileAsString("src/test/resources/CreateNetwork3.json");
+		HttpEntity<String> entity = new HttpEntity<String>(request, headers);
+
+		ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
+				createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
+
+		CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
+				new File("src/test/resources/__files/CreateNetworkResponse3.json"), CreateNetworkResponse.class);
+		
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+		assertThat(response.getBody(), sameBeanAs(expectedResponse));
+	}
 	
 	@Override
 	protected String readJsonFileAsString(String fileLocation) throws JsonParseException, JsonMappingException, IOException{

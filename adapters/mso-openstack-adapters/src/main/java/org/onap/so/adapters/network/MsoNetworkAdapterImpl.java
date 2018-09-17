@@ -42,6 +42,8 @@ import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
+import org.onap.so.db.catalog.data.repository.CollectionNetworkResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.onap.so.db.catalog.utils.MavenLikeVersioning;
@@ -106,6 +108,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     
     @Autowired 	
     private NetworkResourceCustomizationRepository  networkCustomRepo;
+    
+    @Autowired
+    private CollectionNetworkResourceCustomizationRepository collectionNetworkCustomRepo;
     
     @Autowired
     private NetworkResourceRepository  networkResourceRepo;
@@ -1124,18 +1129,26 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // Retrieve the Network Resource definition
         NetworkResource networkResource = null;
         NetworkResourceCustomization networkCust = null;
+        CollectionNetworkResourceCustomization collectionNetworkCust = null;
 			if (commonUtils.isNullOrEmpty(modelCustomizationUuid)) {
 				if (!commonUtils.isNullOrEmpty(networkType)) {
-					networkResource = networkResourceRepo.findOneByModelName(networkType);
+					networkResource = networkResourceRepo.findFirstByModelNameOrderByModelVersionDesc(networkType);
 				}
 			} else {
 				networkCust = networkCustomRepo.findOneByModelCustomizationUUID(modelCustomizationUuid);
+				if (networkCust == null) {
+					collectionNetworkCust = collectionNetworkCustomRepo.findOneByModelCustomizationUUID(modelCustomizationUuid);
+				}
 			}
 			if(networkCust != null){
 				LOGGER.debug("Got Network Customization definition from Catalog: "
 						+ networkCust.toString());
 
 				networkResource = networkCust.getNetworkResource();
+			} else if (collectionNetworkCust != null) {
+				LOGGER.debug("Retrieved Collection Network Resource Customization from Catalog: " 
+						+ collectionNetworkCust.toString());
+				networkResource = collectionNetworkCust.getNetworkResource();
 			}
 			if (networkResource == null) {
 				String error = "Create/UpdateNetwork: Unable to get network resource with NetworkType:"

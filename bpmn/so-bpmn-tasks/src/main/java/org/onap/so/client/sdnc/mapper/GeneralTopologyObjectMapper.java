@@ -83,6 +83,8 @@ public class GeneralTopologyObjectMapper {
 			onapModelInformation.setModelCustomizationUuid(network.getModelInfoNetwork().getModelCustomizationUUID());
 			networkInformation.setOnapModelInformation(onapModelInformation);
 		}
+
+		networkInformation.setFromPreload(null);
 		networkInformation.setNetworkId(network.getNetworkId());
 		//TODO fix this after network type filed included in L3Network object type
 		//networkInformation.setNetworkType(network.getNetwork);
@@ -130,6 +132,7 @@ public class GeneralTopologyObjectMapper {
 			vfModuleInformation.setVfModuleType(vfModule.getModelInfoVfModule().getModelName());
 		}
 		vfModuleInformation.setVfModuleId(vfModule.getVfModuleId());
+		vfModuleInformation.setFromPreload(null);
 		return vfModuleInformation;
 	}
 	public GenericResourceApiSdncrequestheaderSdncRequestHeader buildSdncRequestHeader(SDNCSvcAction svcAction, String sdncReqId){
