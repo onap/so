@@ -279,6 +279,31 @@
 								</assembly>
 							</build>
 						</image>
+						<image>
+							<name>onap/so/so-monitoring</name>
+							<build>
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>Dockerfile.so-app</dockerFile>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>${project.version}-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
+								</tags>
+								<assembly>
+									<inline>
+										<dependencySets>
+											<dependencySet>
+												<includes>
+													<include>org.onap.so.monitoring:so-monitoring-service</include>
+												</includes>
+												<outputFileNameMapping>app.jar</outputFileNameMapping>
+											</dependencySet>
+										</dependencySets>
+									</inline>
+								</assembly>
+							</build>
+						</image>
 					</images>
 				</configuration>
 
@@ -310,7 +335,7 @@
 							<goal>push</goal>
 						</goals>
 						<configuration>
-							<image>onap/so/catalog-db-adapter,onap/so/request-db-adapter,onap/so/sdnc-adapter,onap/so/openstack-adapter,onap/so/vfc-adapter,onap/so/sdc-controller,onap/so/bpmn-infra,onap/so/api-handler-infra</image>
+							<image>onap/so/catalog-db-adapter,onap/so/request-db-adapter,onap/so/sdnc-adapter,onap/so/openstack-adapter,onap/so/vfc-adapter,onap/so/sdc-controller,onap/so/bpmn-infra,onap/so/api-handler-infra,onap/so/so-monitoring</image>
 						</configuration>
 					</execution>
 				</executions>
@@ -366,6 +391,11 @@
 		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>mso-api-handler-infra</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so-monitoring</groupId>
+			<artifactId>so-monitoring-service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

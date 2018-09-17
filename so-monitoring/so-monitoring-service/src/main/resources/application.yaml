@@ -13,5 +13,5 @@ mso:
   database:
     rest:
       api:
-        url: http://request-db-adapter:8083/infraActiveRequests/
+        url: http://so-request-db-adapter:8083/infraActiveRequests/
         auth: Basic YnBlbDpwYXNzd29yZDEk
