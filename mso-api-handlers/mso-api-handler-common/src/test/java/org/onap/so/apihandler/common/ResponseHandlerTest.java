@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,8 +29,6 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolVersion;
@@ -38,13 +38,7 @@ import org.apache.http.message.BasicStatusLine;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.onap.so.apihandler.common.ErrorNumbers;
-import org.onap.so.apihandler.common.ResponseHandler;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
-import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 
 /**
@@ -68,13 +62,14 @@ public class ResponseHandlerTest{
         HttpResponse response = createResponse (200, body, "application/json");
 
         ResponseHandler respHandler = new ResponseHandler (response, 1);
-
+        
         int status = respHandler.getStatus ();
         assertEquals (status, HttpStatus.SC_ACCEPTED);
+        assertEquals (respHandler.getResponseBody(), body);
         assertEquals (respHandler.getResponse ().getMessage (), "Successfully started the process");
 
     }
-
+    
     @Test
     public void tesParseBpelResponse () throws ApiException{
         String body = "<test:service-response xmlns:test=\"http://org.onap/so/test\">"
@@ -99,7 +94,7 @@ public class ResponseHandlerTest{
         thrown.expectMessage(startsWith("Cannot parse Camunda Response"));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_BAD_REQUEST)));
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
-    	
+        
         HttpResponse response = createResponse (HttpStatus.SC_NOT_FOUND, "<html>error</html>", "text/html");
         ResponseHandler respHandler = new ResponseHandler (response, 1);
 
