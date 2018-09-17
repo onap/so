@@ -60,7 +60,7 @@ public class ModelInfoValidation implements ValidationRule{
         }
         
         // modelCustomizationId or modelCustomizationName are required for VNF Replace
-        if(requestParameters != null && reqVersion > 4 && requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.replaceInstance) {
+        if(requestParameters != null && reqVersion > 4 && requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.replaceInstance || action == Action.recreateInstance) {
         	if(!UUIDChecker.isValidUUID(modelInfo.getModelCustomizationId()) && modelInfo.getModelCustomizationName() == null) {
         		throw new ValidationException("modelCustomizationId or modelCustomizationName");
         	}
@@ -77,20 +77,26 @@ public class ModelInfoValidation implements ValidationRule{
         if(empty(modelInfo.getModelInvariantId()) && (requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.scaleOut)){
         	throw new ValidationException("modelInvariantId");
         }
-
+        if(empty(modelInfo.getModelInvariantId()) && (requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.recreateInstance)){
+        	throw new ValidationException("modelInvariantId", true);
+        }
         if (!empty (modelInfo.getModelInvariantId ()) && !UUIDChecker.isValidUUID (modelInfo.getModelInvariantId ())) {
         	throw new ValidationException ("modelInvariantId format");
         }
 
         if(reqVersion >= 4 && !(requestScope.equalsIgnoreCase(ModelType.configuration.name())) && empty (modelInfo.getModelName ()) && (action == Action.createInstance || action == Action.updateInstance || 
-        		action == Action.addRelationships || action == Action.removeRelationships || ((action == Action.deleteInstance || action == Action.scaleOut) && (requestScope.equalsIgnoreCase (ModelType.vfModule.name ()))))){
-        	throw new ValidationException ("modelName");
+        		action == Action.addRelationships || action == Action.removeRelationships || action == Action.recreateInstance || ((action == Action.deleteInstance || action == Action.scaleOut) && (requestScope.equalsIgnoreCase (ModelType.vfModule.name ()))))){
+        	throw new ValidationException ("modelName", true);
         }
 
         if (empty (modelInfo.getModelVersion ()) && !(requestScope.equalsIgnoreCase(ModelType.configuration.name())) && 
         		(!(reqVersion < 4 && requestScope.equalsIgnoreCase (ModelType.network.name ())) 
         				&& (action == Action.createInstance || action == Action.updateInstance || action == Action.addRelationships || action == Action.removeRelationships || action == Action.scaleOut))) {
         	throw new ValidationException ("modelVersion");
+        }
+        
+        if(empty(modelInfo.getModelVersion()) && (requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.recreateInstance)){
+        	throw new ValidationException("modelVersion", true);
         }
 
         // is required for serviceInstance delete macro when aLaCarte=false in v4
@@ -99,6 +105,9 @@ public class ModelInfoValidation implements ValidationRule{
         		(requestScope.equalsIgnoreCase(ModelType.configuration.name()) && (action == Action.activateInstance || action == Action.deactivateInstance))))) {
         	throw new ValidationException ("modelVersionId");
          }
+        if(empty(modelInfo.getModelVersionId()) && (requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.recreateInstance)){
+        	throw new ValidationException("modelVersionId", true);
+        }
         if(empty(modelInfo.getModelVersionId()) && (requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.scaleOut)){
         	throw new ValidationException("modelVersionId");
         }

@@ -949,6 +949,42 @@ public class ServiceInstancesTest extends BaseTest{
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
     }
     @Test
+    public void recreateVnfInstance() throws IOException {
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        stubFor(get(urlMatching(".*/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("vnfResourceCustomization_Response"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        stubFor(get(urlMatching(".*/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674/vnfResources"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("vnfResources_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+		
+        stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]nfRole=GR-API-DEFAULT&action=recreateInstance"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(getWiremockResponseForCatalogdb("vnfRecipe_ResponseWorkflowAction.json"))
+						.withStatus(org.apache.http.HttpStatus.SC_OK)));
+		
+        //expected response
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/recreate";
+        ResponseEntity<String> response = sendRequest(inputStream("/VnfRecreate.json"), uri, HttpMethod.POST);
+        logger.debug(response.getBody());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
+    @Test
     public void updateVnfInstance() throws IOException {	
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)

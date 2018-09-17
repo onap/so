@@ -43,5 +43,6 @@ public enum Action {
 	compareModel,
 	scaleInstance,
 	deactivateAndCloudDelete,
-	scaleOut
+	scaleOut,
+	recreateInstance
 }

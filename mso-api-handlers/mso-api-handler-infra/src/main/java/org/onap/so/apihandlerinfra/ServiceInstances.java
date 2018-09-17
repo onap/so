@@ -372,6 +372,20 @@ public class ServiceInstances {
 		instanceIdMap.put("vnfInstanceId", vnfInstanceId);		
 		return serviceInstances(request, Action.applyUpdatedConfig, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
+	
+	@POST
+	@Path("/{version:[vV][7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/recreate")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Recreate VNF Instance",response=Response.class)
+	public Response recreateVnfInstance(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+                                       @PathParam("vnfInstanceId") String vnfInstanceId, @Context ContainerRequestContext requestContext) throws ApiException {
+		String requestId = getRequestId(requestContext);
+		HashMap<String, String> instanceIdMap = new HashMap<>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put("vnfInstanceId", vnfInstanceId);		
+		return serviceInstances(request, Action.recreateInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
+	}
 
 
 	@DELETE

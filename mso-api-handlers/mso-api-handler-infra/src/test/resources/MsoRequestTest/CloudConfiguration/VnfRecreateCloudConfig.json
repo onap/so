@@ -1,0 +1,21 @@
+{
+   "requestDetails":{
+      "modelInfo":{
+         "modelType":"vnf",
+         "modelInvariantId":"ff5256d1-5a33-55df-13ab-12abad84e7ff",
+         "modelVersionId":"254583ad-b38c-498b-bdbd-b8de5e07541b",
+         "modelName":"vSAMP12",
+         "modelVersion":"2.0",
+         "modelCustomizationName":"vSAMP12 1",
+         "modelCustomizationId":"c539433a-84a6-4082-a12e-5c9b00c3b960"
+      },
+      "requestInfo":{
+         "source":"source",
+         "suppressRollback":false,
+         "requestorId":"xxxxxx"
+      },
+      "requestParameters":{
+         "rebuildVolumeGroups":false
+      }
+   }
+}

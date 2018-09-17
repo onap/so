@@ -1,0 +1,20 @@
+{
+  "id": 21,
+  "nfRole": "GR-API-DEFAULT",
+  "paramXsd": "",
+  "vfModuleId": "1882934",
+  "action": "recreateInstance",
+  "description": "gr-api-default for vnf recreate",
+  "orchestrationUri": "/mso/async/services/WorkflowActionBB",
+  "recipeTimeout": 180,
+  "serviceType": "GR-API-DEFAULT",
+  "created": "2016-06-03T04:44:10.000+0000",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/vnfRecipe/21"
+    },
+    "vnfRecipe": {
+      "href": "http://localhost:8090/vnfRecipe/21"
+    }
+  }
+}
