@@ -2,14 +2,16 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Copyright (C) 2018 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +19,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.so.cloudify.utils;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
@@ -42,6 +43,7 @@ import org.onap.so.adapters.vdu.VduModelInfo;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.cloud.CloudConfig;
+import org.onap.so.cloudify.beans.DeploymentInfoBuilder;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.cloudify.beans.DeploymentInfo;
@@ -82,9 +84,10 @@ public class MsoCloudifyUtilsTest2 {
 		List<VduArtifact> artifacts = new ArrayList<>();
 		artifacts.add(artifact);
 		vduModel.setArtifacts(artifacts);
-		DeploymentInfo deployment = new DeploymentInfo();
-		deployment.setId("id");
-		deployment.setStatus(DeploymentStatus.INSTALLED);
+		DeploymentInfo deployment = new DeploymentInfoBuilder()
+			.withId("id")
+			.withStatus(DeploymentStatus.INSTALLED)
+			.build();
 		Map<String, byte[]> blueprintFiles = new HashMap<>();
 		blueprintFiles.put(artifact.getName(), artifact.getContent());
 		String instanceName = "instanceName";
@@ -118,9 +121,10 @@ public class MsoCloudifyUtilsTest2 {
 		CloudInfo cloudInfo = new CloudInfo();
 		cloudInfo.setCloudSiteId("cloudSiteId");
 		cloudInfo.setTenantId("tenantId");
-		DeploymentInfo deployment = new DeploymentInfo();
-		deployment.setId("id");
-		deployment.setStatus(DeploymentStatus.INSTALLED);
+		DeploymentInfo deployment = new DeploymentInfoBuilder()
+			.withId("id")
+			.withStatus(DeploymentStatus.INSTALLED)
+			.build();
 		String instanceId = "instanceId";
 
 		MsoCloudifyUtils cloudify = Mockito.spy(MsoCloudifyUtils.class);
@@ -148,14 +152,12 @@ public class MsoCloudifyUtilsTest2 {
 		cloudInfo.setTenantId("tenantId");
 		String instanceId = "instanceId";
 		int timeoutMinutes = 1;
-		DeploymentInfo deployment = Mockito.mock(DeploymentInfo.class);
-		deployment.setId("id");
-		deployment.setStatus(DeploymentStatus.CREATED);
-		when(deployment.getId()).thenReturn("id");
-		when(deployment.getStatus()).thenReturn(DeploymentStatus.CREATED);
-		when(deployment.getLastAction()).thenReturn("deleting");
+		DeploymentInfo deploymentInfo = new DeploymentInfoBuilder()
+			.withId("id")
+			.withStatus(DeploymentStatus.CREATED)
+			.withLastAction("deleting").build();
 		MsoCloudifyUtils cloudify = Mockito.spy(MsoCloudifyUtils.class);
-		doReturn(deployment).when(cloudify).uninstallAndDeleteDeployment(cloudInfo.getCloudSiteId(),
+		doReturn(deploymentInfo).when(cloudify).uninstallAndDeleteDeployment(cloudInfo.getCloudSiteId(),
 				cloudInfo.getTenantId(), instanceId, timeoutMinutes);
 
 		VduInstance actual = cloudify.deleteVdu(cloudInfo, instanceId, timeoutMinutes);
@@ -173,16 +175,14 @@ public class MsoCloudifyUtilsTest2 {
 		status.setLastAction(new PluginAction("deleting", null, null));
 		expected.setStatus(status);
 
-		DeploymentInfo deployment = Mockito.mock(DeploymentInfo.class);
-		deployment.setId("id");
-		deployment.setStatus(DeploymentStatus.CREATED);
-		when(deployment.getId()).thenReturn("id");
-		when(deployment.getStatus()).thenReturn(DeploymentStatus.CREATED);
-		when(deployment.getLastAction()).thenReturn("deleting");
+		DeploymentInfo deploymentInfo = new DeploymentInfoBuilder()
+			.withId("id")
+			.withStatus(DeploymentStatus.CREATED)
+			.withLastAction("deleting").build();
 
 		MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
 
-		VduInstance actual = cloudify.deploymentInfoToVduInstance(deployment);
+		VduInstance actual = cloudify.deploymentInfoToVduInstance(deploymentInfo);
 
 		assertThat(actual, sameBeanAs(expected));
 	}
@@ -193,16 +193,14 @@ public class MsoCloudifyUtilsTest2 {
 		expected.setState(VduStateType.DELETING);
 		expected.setLastAction(new PluginAction("deleting", null, null));
 
-		DeploymentInfo deployment = Mockito.mock(DeploymentInfo.class);
-		deployment.setId("id");
-		deployment.setStatus(DeploymentStatus.CREATED);
-		when(deployment.getId()).thenReturn("id");
-		when(deployment.getStatus()).thenReturn(DeploymentStatus.CREATED);
-		when(deployment.getLastAction()).thenReturn("deleting");
+		DeploymentInfo deploymentInfo = new DeploymentInfoBuilder()
+			.withId("id")
+			.withStatus(DeploymentStatus.CREATED)
+			.withLastAction("deleting").build();
 
 		MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
 
-		VduStatus actual = cloudify.deploymentStatusToVduStatus(deployment);
+		VduStatus actual = cloudify.deploymentStatusToVduStatus(deploymentInfo);
 
 		assertThat(actual, sameBeanAs(expected));
 	}
