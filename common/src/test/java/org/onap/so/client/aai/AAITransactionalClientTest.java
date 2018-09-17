@@ -21,8 +21,12 @@
 package org.onap.so.client.aai;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -134,6 +138,15 @@ public class AAITransactionalClientTest {
 	
 		assertEquals("success status", Optional.empty(), transactions.locateErrorMessages(getJson("response-success.json")));
 		assertEquals(transactions.locateErrorMessages(getJson("response-failure.json")).get(), "another error message\nmy great error");
+	}
+	
+	@Test
+	public void confirmPatchFormat() {
+		AAITransactionalClient client = spy(new AAITransactionalClient(AAIVersion.LATEST));
+		AAIPatchConverter mock = mock(AAIPatchConverter.class);
+		doReturn(mock).when(client).getPatchConverter();
+		client.update(uriA, "{}");
+		verify(mock, times(1)).convertPatchFormat(any());
 	}
 	
 	private String getJson(String filename) throws IOException {

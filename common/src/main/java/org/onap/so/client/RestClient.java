@@ -271,7 +271,7 @@ public abstract class RestClient {
 		return format(method("DELETE", obj), resultClass).orElse(null);
 	}
 	
-	private Response method(String method, Object entity) {
+	public Response method(String method, Object entity) {
 		RetryPolicy policy = new RetryPolicy();
 		
 		List<Predicate<Throwable>> items = retryOn();

@@ -20,6 +20,8 @@
 
 package org.onap.so.client.aai;
 
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +43,9 @@ public class AAIRestClient extends RestClientSSL {
 
 	private final AAIProperties aaiProperties;
 	private static final AAICommonObjectMapperProvider standardProvider = new AAICommonObjectMapperProvider();
-	private static final AAICommonObjectMapperPatchProvider patchProvider = new AAICommonObjectMapperPatchProvider();
-	private static final Pattern LOCATE_COMPLEX_OBJECT = Pattern.compile("^((?!relationship-list).)+?\\['[^\\[\\]]+?'\\]$");
 
+	private final AAIPatchConverter patchConverter = new AAIPatchConverter();
+	
 	protected AAIRestClient(AAIProperties props, URI uri) {
 		super(props, Optional.of(uri));
 		this.aaiProperties = props;
@@ -79,53 +81,20 @@ public class AAIRestClient extends RestClientSSL {
 
 	@Override
 	public Response patch(Object obj) {
-		String value = convertObjectToPatchFormat(obj);
-		validatePatchObject(value);
-		return super.patch(value);
+		return super.patch(convertToPatchFormat(obj));
 	}
 
 	@Override
 	public <T> T patch(Object obj, Class<T> resultClass) {
-		String value = convertObjectToPatchFormat(obj);
-		validatePatchObject(value);
-		return super.patch(value, resultClass);
+		return super.patch(convertToPatchFormat(obj), resultClass);
 	}
 	
-	protected String convertObjectToPatchFormat(Object obj) {
-		Object value = obj;
-		try {
-			if (!(obj instanceof Map || obj instanceof String)) {
-				value = patchProvider.getMapper().writeValueAsString(obj);
-			} else if (obj instanceof Map) {
-				value = standardProvider.getMapper().writeValueAsString(obj);
-			}
-		} catch (JsonProcessingException e) {
-			value = "{}";
-		}
-		
-		return (String)value;
+	protected AAIPatchConverter getPatchConverter() {
+		return this.patchConverter;
 	}
 	
-	
-	protected void validatePatchObject(String payload) {
-		if (hasComplexObject(payload)) {
-			throw new GraphInventoryPatchDepthExceededException(payload);
-		}
+	protected String convertToPatchFormat(Object obj) {
+		return getPatchConverter().convertPatchFormat(obj);
 	}
-	
-	/** validates client side that json does not include any complex objects
-	 * relationship-list is omitted from this validation
-	 */
-	protected boolean hasComplexObject(String json) {
-		if (json.isEmpty()) {
-			return false;
-		}
-		String complex = "$.*.*";
-		String array = "$.*.*.*";
-		List<String> result = JsonPathUtil.getInstance().getPathList(json, complex);
-		List<String> result2 = JsonPathUtil.getInstance().getPathList(json, array);
-		
-		result.addAll(result2);
-		return result.stream().anyMatch(item -> LOCATE_COMPLEX_OBJECT.matcher(item).find());
-	}
+
 }
