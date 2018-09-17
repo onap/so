@@ -1,0 +1,17 @@
+FROM onap/so/base-image:1.0
+
+RUN apk update
+
+RUN apk add openssh
+
+RUN mkdir /app && mkdir /app/config && mkdir /app/certificates && mkdir /app/logs
+
+COPY configs/logging/logback.xml /app
+
+COPY maven/app.jar /app
+
+RUN chown -R so:so /app
+
+WORKDIR /app
+
+CMD java -Xms1G -Xmx1G -XX:+UseParallelOldGC -XX:MaxGCPauseMillis=2 -XX:ParallelGCThreads=2 -XX:+ScavengeBeforeFullGC -DINSTANCE_NAME=so-monitoring  -server -XX:+AggressiveOpts -XX:+UseCompressedOops -XX:+UseFastAccessorMethods -XX:+TieredCompilation -XX:+UseBiasedLocking -XX:+UseStringCache -Djava.net.preferIPv4Stack=true -XX:+DisableExplicitGC -Dlogging.config=/app/logback.xml -jar /app/app.jar
