@@ -32,12 +32,10 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
-import org.apache.log4j.MDC;
 import org.junit.Test;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandlerinfra.tasksbeans.RequestDetails;
@@ -47,6 +45,7 @@ import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
 import org.onap.so.apihandlerinfra.tasksbeans.ValidResponses;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -82,7 +81,7 @@ public class ManualTasksTest extends BaseTest{
         //expected response
         TaskRequestReference expectedResponse = new TaskRequestReference();
         expectedResponse.setTaskId(taskId);	
-
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         headers.set(MsoLogger.ECOMP_REQUEST_ID, "987654321");

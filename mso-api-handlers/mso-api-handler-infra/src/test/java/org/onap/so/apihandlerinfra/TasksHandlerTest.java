@@ -34,7 +34,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -45,6 +44,7 @@ import org.onap.so.apihandlerinfra.tasksbeans.TaskList;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksGetResponse;
 import org.onap.so.apihandlerinfra.tasksbeans.ValidResponses;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -93,7 +93,7 @@ public class TasksHandlerTest extends BaseTest{
 		taskList.add(taskList1);
 	
 		expectedResponse.setTaskList(taskList);
-				
+		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", MediaType.APPLICATION_JSON);
 		headers.set("Content-Type", MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<String>(null, headers);

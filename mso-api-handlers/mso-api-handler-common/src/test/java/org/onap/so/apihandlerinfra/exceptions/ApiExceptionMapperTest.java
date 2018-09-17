@@ -18,21 +18,40 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.apihandlerinfra;
+package org.onap.so.apihandlerinfra.exceptions;
 
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.List;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.apache.http.HttpStatus;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ApiExceptionMapper;
@@ -45,17 +64,29 @@ import org.onap.so.apihandlerinfra.exceptions.VfModuleNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ApiExceptionMapperTest extends BaseTest {
 
+@RunWith(MockitoJUnitRunner.class)
+public class ApiExceptionMapperTest {
+
+	@Mock
+	private HttpHeaders headers;
+	@Mock
+	private Marshaller marshaller;
+	
+	@InjectMocks
     ApiExceptionMapper mapper = new ApiExceptionMapper();
 
 
+	@Before
+	public void setUp() {
+		when(headers.getAcceptableMediaTypes()).thenReturn(Arrays.asList(MediaType.APPLICATION_JSON_TYPE));
+	}
     @Test
     public void testObjectMapperError() throws JsonProcessingException {
         ObjectMapper mockedMapper = Mockito.mock(ObjectMapper.class);
         Mockito.when(mockedMapper.writeValueAsString(anyObject())).thenThrow(JsonProcessingException.class);
         ValidateException validateException = new ValidateException.Builder("Test", 0 , null).build();
-        ApiExceptionMapper mockedException = Mockito.spy(new ApiExceptionMapper());
+        ApiExceptionMapper mockedException = Mockito.spy(mapper);
         Mockito.doReturn(mockedMapper).when(mockedException).createObjectMapper();
         Response resp = mockedException.toResponse((ApiException) validateException);
 
@@ -98,5 +129,32 @@ public class ApiExceptionMapperTest extends BaseTest {
         Response resp =  mapper.toResponse((ApiException) duplicateRequestException);
 
         assertEquals(resp.getStatus(), HttpStatus.SC_BAD_GATEWAY);
+    }
+    
+    @Test
+    public void verifyXMLPath() throws JAXBException {
+		when(headers.getAcceptableMediaTypes()).thenReturn(Arrays.asList(MediaType.APPLICATION_XML_TYPE));
+        BPMNFailureException bpmnException = new BPMNFailureException.Builder("Test Message", HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER).build();
+        ApiExceptionMapper mapperSpy = Mockito.spy(mapper);
+        doReturn(marshaller).when(mapperSpy).getMarshaller();
+        Response resp =  mapperSpy.toResponse((ApiException) bpmnException);
+        verify(marshaller, times(1)).marshal(any(Object.class), any(Writer.class));
+    }
+    
+    @Test
+    public void verifyMediaType() {
+    	ApiExceptionMapper mapperSpy = Mockito.spy(mapper);
+        BPMNFailureException bpmnException = new BPMNFailureException.Builder("Test Message", HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER).build();
+		when(headers.getAcceptableMediaTypes()).thenReturn(Arrays.asList(MediaType.APPLICATION_XML_TYPE.withCharset("UTF-8")));
+    	mapperSpy.toResponse(bpmnException);
+    	verify(mapperSpy, times(1)).buildServiceErrorResponse(any(String.class), any(String.class), any(List.class), eq(MediaType.APPLICATION_XML_TYPE));
+		when(headers.getAcceptableMediaTypes()).thenReturn(Arrays.asList(MediaType.APPLICATION_JSON_TYPE.withCharset("UTF-8")));
+    	mapperSpy = Mockito.spy(mapper);
+    	mapperSpy.toResponse(bpmnException);
+    	verify(mapperSpy, times(1)).buildServiceErrorResponse(any(String.class), any(String.class), any(List.class), eq(MediaType.APPLICATION_JSON_TYPE));
+		when(headers.getAcceptableMediaTypes()).thenReturn(null);
+    	mapperSpy = Mockito.spy(mapper);
+    	mapperSpy.toResponse(bpmnException);
+    	verify(mapperSpy, times(1)).buildServiceErrorResponse(any(String.class), any(String.class), any(List.class), eq(MediaType.APPLICATION_JSON_TYPE));
     }
 }

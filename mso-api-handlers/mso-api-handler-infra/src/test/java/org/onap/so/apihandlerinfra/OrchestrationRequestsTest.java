@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -60,6 +59,7 @@ import org.onap.so.serviceinstancebeans.RequestProcessingData;
 import org.onap.so.serviceinstancebeans.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -105,7 +105,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         Request request = ORCHESTRATION_LIST.getRequestList().get(1).getRequest();
         testResponse.setRequest(request);
         String testRequestId = request.getRequestId();
-
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
@@ -136,6 +136,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         testResponse.setRequest(request);
         String testRequestId = request.getRequestId();
 
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
@@ -158,9 +159,10 @@ public class OrchestrationRequestsTest extends BaseTest {
 
     @Test
     public void testGetOrchestrationRequestNoRequestID() {
+    	HttpHeaders headers = new HttpHeaders();
+    	headers.set("Accept", "application/json; charset=UTF-8");
+        headers.set("Content-Type", "application/json; charset=UTF-8"); 
         HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
-        headers.set("Accept", MediaType.APPLICATION_JSON);
-
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v6/"));
 
@@ -185,9 +187,10 @@ public class OrchestrationRequestsTest extends BaseTest {
         List<GetOrchestrationResponse> testResponses = new ArrayList<>();
 
         List<InfraActiveRequests> requests = requestsDbClient.getOrchestrationFiltersFromInfraActive(orchestrationMap);
-        HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
-
+        HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
+        
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v6?filter=modelType:EQUALS:vfModule"));
 
@@ -206,7 +209,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
         String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
-
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
@@ -240,7 +243,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
         String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
-
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
@@ -274,7 +277,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         setupTestUnlockOrchestrationRequest_Valid_Status("5ffbabd6-b793-4377-a1ab-082670fbc7ac", "PENDING");
         ObjectMapper mapper = new ObjectMapper();
         String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
-
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<String>(requestJSON, headers);
@@ -305,7 +308,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         String json = mapper.writeValueAsString(requests);
 
         requestsDbClient.save(requests);
-
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
@@ -337,7 +340,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         requests.setRequestScope("service");
         requests.setRequestType("createInstance");
 //        iar.save(requests);
-
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
