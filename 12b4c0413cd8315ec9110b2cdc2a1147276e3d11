@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_2b0212b4",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignVnfBB.bpmn",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-17T19:29:19Z",
+      "side": 1,
+      "message": "It seems to me that this is the only thing that should be changing in this file. Please unstage the rest of the changes and resubmit.",
+      "range": {
+        "startLine": 42,
+        "startChar": 78,
+        "endLine": 42,
+        "endChar": 86
+      },
+      "revId": "12b4c0413cd8315ec9110b2cdc2a1147276e3d11",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2bc77265",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/HomingBB.bpmn",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-17T19:29:19Z",
+      "side": 1,
+      "message": "HomingV2 had these camunda:in variables as:\n\nasyncCorrelator\nasyncMessageType\nasyncTimeout\n\nI don\u0027t know that this naming matters, but something to note.",
+      "revId": "12b4c0413cd8315ec9110b2cdc2a1147276e3d11",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_abb38208",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/HomingBB.bpmn",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-17T19:29:19Z",
+      "side": 1,
+      "message": "Presumably this should be SniroHomingV2. Please change to call V2.",
+      "range": {
+        "startLine": 38,
+        "startChar": 2,
+        "endLine": 38,
+        "endChar": 15
+      },
+      "revId": "12b4c0413cd8315ec9110b2cdc2a1147276e3d11",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
