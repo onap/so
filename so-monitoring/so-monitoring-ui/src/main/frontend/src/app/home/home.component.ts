@@ -35,9 +35,9 @@ import { SearchData } from '../model/searchData.model';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormControl } from '@angular/forms';
 import { SearchRequest } from '../model/SearchRequest.model';
-import { ViewChild } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { Input } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-home',
@@ -56,6 +56,9 @@ export class HomeComponent implements OnInit {
   unlockedVal = 0;
   percentageComplete = 0;
   percentageFailed = 0;
+  percentageInProg = 0;
+  percentagePending = 0;
+  percentageUnlocked = 0;
 
   options = [{ name: "EQUAL", value: "EQ" }, { name: "NOT EQUAL", value: "NEQ" }, { name: "LIKE", value: "LIKE" }];
   statusOptions = [{ name: "ALL", value: "ALL" }, { name: "COMPLETE", value: "COMPLETE" }, { name: "IN_PROGRESS", value: "IN_PROGRESS" },
@@ -77,17 +80,22 @@ export class HomeComponent implements OnInit {
   displayedColumns = ['requestId', 'serviceInstanceId', 'serviceIstanceName', 'networkId', 'requestStatus', 'serviceType', 'startTime', 'endTime'];
 
   constructor(private route: ActivatedRoute, private data: DataService,
-    private router: Router, private popup: ToastrNotificationService) {
+    private router: Router, private popup: ToastrNotificationService,
+    private spinner: NgxSpinnerService) {
     this.searchData = new SearchData();
   }
 
   makeCall() {
+    this.spinner.show();
+
     var search = this.searchData.getSearchRequest().subscribe((result: SearchRequest) => {
 
       this.data.retrieveInstance(result.getFilters(), result.getStartTimeInMilliseconds(), result.getEndTimeInMilliseconds())
         .subscribe((data: Process[]) => {
+          this.spinner.hide();
           this.processData = data;
-          this.popup.info("Number of records found: " + data.length);
+          this.popup.info("Number of records found: " + data.length)
+
           // Calculate Statistics for Service Statistics tab
           this.completeVal = this.processData.filter(i => i.requestStatus === "COMPLETE").length;
           this.inProgressVal = this.processData.filter(i => i.requestStatus === "IN_PROGRESS").length;
@@ -95,28 +103,40 @@ export class HomeComponent implements OnInit {
           this.pendingVal = this.processData.filter(i => i.requestStatus === "PENDING").length;
           this.unlockedVal = this.processData.filter(i => i.requestStatus === "UNLOCKED").length;
           this.totalVal = this.processData.length;
-          this.percentageComplete = Math.round(((this.completeVal / this.totalVal) * 100) * 100) / 100;
-          this.percentageFailed = Math.round(((this.failedVal / this.totalVal) * 100) * 100) / 100;
 
+          // Calculate percentages to 2 decimal places and compare to 0 to avoid NaN error
+          if (this.totalVal != 0) {
+            this.percentageComplete = Math.round(((this.completeVal / this.totalVal) * 100) * 100) / 100;
+            this.percentageFailed = Math.round(((this.failedVal / this.totalVal) * 100) * 100) / 100;
+            this.percentageInProg = Math.round(((this.inProgressVal / this.totalVal) * 100) * 100) / 100;
+            this.percentagePending = Math.round(((this.pendingVal / this.totalVal) * 100) * 100) / 100;
+            this.percentageUnlocked = Math.round(((this.unlockedVal / this.totalVal) * 100) * 100) / 100;
+          }
           console.log("COMPLETE: " + this.completeVal);
           console.log("FAILED: " + this.failedVal);
         }, error => {
           console.log(error);
           this.popup.error("Unable to perform search Error code:" + error.status);
+          this.spinner.hide();
         });
     }, error => {
       console.log("Data validation error " + error);
       this.popup.error(error);
+      this.spinner.hide();
     });
   }
 
   getProcessIsntanceId(requestId: string) {
+    this.spinner.show();
+
     var response = this.data.getProcessInstanceId(requestId).subscribe((data) => {
       if (data.status == 200) {
+        this.spinner.hide();
         var processInstanceId = (data.body as ProcessInstanceId).processInstanceId;
         this.router.navigate(['/details/' + processInstanceId]);
       } else {
         this.popup.error('No process instance id found: ' + requestId);
+        this.spinner.hide();
         console.log('No process instance id found: ' + requestId);
       }
     });

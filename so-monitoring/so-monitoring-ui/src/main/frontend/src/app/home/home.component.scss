@@ -19,7 +19,6 @@ SPDX-License-Identifier: Apache-2.0
 
 @authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
 */
-
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 .searchArea {
@@ -77,7 +76,7 @@ SPDX-License-Identifier: Apache-2.0
 }
 
 .fa {
- float: left;
+  float: left;
   width: 120px;
   padding: 10px;
   background: #2196F3;
@@ -103,28 +102,29 @@ form.example::after {
   display: inline-flex;
 }
 
-.startDate, .endDate{
+.endDate,
+.startDate {
   margin-left: 90px;
   width: 140px;
 }
 
-.selectHour, .selectMinute{
+.selectHour,
+.selectMinute {
   margin-left: 30px;
-  width: 100px
+  width: 100px;
 }
 
-#servStats{
+#servStats {
   background-color: white;
   padding: 10px;
   font-size: 17px;
   font-family: 'Montserrat', sans-serif;
 }
 
-hr {
-    display: block;
-    height: 1px;
-    border: 0;
-    border-top: 1px solid #ccc;
-    margin: 1em 0;
-    padding: 0;
+.statsTable {
+  td {
+    padding: 12px 80px 12px 12px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+  }
 }

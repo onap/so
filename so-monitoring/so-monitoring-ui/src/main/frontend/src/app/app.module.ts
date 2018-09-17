@@ -40,6 +40,7 @@ import { MatFormFieldModule, MatInputModule } from '@angular/material';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material';
 import { MatCardModule } from '@angular/material/card';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { MatCardModule } from '@angular/material/card';
     MatInputModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatCardModule
+    MatCardModule,
+    NgxSpinnerModule
   ],
   providers: [ToastrNotificationService],
   bootstrap: [AppComponent]
