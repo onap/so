@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_1a8f622b",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/NetworkAdapterRest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-09-17T13:43:34Z",
+      "side": 1,
+      "message": "Please use upper case for them",
+      "range": {
+        "startLine": 87,
+        "startChar": 15,
+        "endLine": 88,
+        "endChar": 30
+      },
+      "revId": "40f238654710b0b4db79d8b3f855b4e75bbebecc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
