@@ -32,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.onap.so.logger.MsoLogger;
 import org.onap.so.montoring.db.service.DatabaseServiceProvider;
 import org.onap.so.montoring.exception.InvalidRestRequestException;
 import org.onap.so.montoring.exception.RestProcessingException;
@@ -42,8 +43,6 @@ import org.onap.so.montoring.model.ProcessInstanceIdDetail;
 import org.onap.so.montoring.model.ProcessInstanceVariableDetail;
 import org.onap.so.montoring.model.SoInfraRequest;
 import org.onap.so.montoring.rest.service.CamundaProcessDataServiceProvider;
-import org.slf4j.ext.XLogger;
-import org.slf4j.ext.XLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +57,8 @@ public class SoMonitoringController {
 
     private static final String INVALID_PROCESS_INSTANCE_ERROR_MESSAGE = "Invalid process instance id: ";
 
-    private static final XLogger LOGGER = XLoggerFactory.getXLogger(SoMonitoringController.class);
+    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, SoMonitoringController.class);
+
 
     private final DatabaseServiceProvider databaseServiceProvider;
 
@@ -85,7 +85,7 @@ public class SoMonitoringController {
                 return Response.status(Status.OK).entity(processInstanceId.get()).build();
             }
 
-            LOGGER.error("Unable to find process instance id for : {}", requestId);
+            LOGGER.error("Unable to find process instance id for : " + requestId);
             return Response.status(Status.NO_CONTENT).build();
 
         } catch (final InvalidRestRequestException extensions) {
@@ -114,7 +114,7 @@ public class SoMonitoringController {
                 return Response.status(Status.OK).entity(processInstanceDetail.get()).build();
             }
 
-            LOGGER.error("Unable to find process instance id for : {}", processInstanceId);
+            LOGGER.error("Unable to find process instance id for : " + processInstanceId);
             return Response.status(Status.NO_CONTENT).build();
 
         } catch (final InvalidRestRequestException extensions) {
@@ -143,7 +143,7 @@ public class SoMonitoringController {
                 final ProcessDefinitionDetail definitionDetail = response.get();
                 return Response.status(Status.OK).entity(definitionDetail).build();
             }
-            LOGGER.error("Unable to find process definition xml for processDefinitionId: {}", processDefinitionId);
+            LOGGER.error("Unable to find process definition xml for processDefinitionId: " + processDefinitionId);
             return Response.status(Status.NO_CONTENT).build();
 
         } catch (final InvalidRestRequestException extensions) {
@@ -217,7 +217,7 @@ public class SoMonitoringController {
         try {
             final List<SoInfraRequest> requests =
                     databaseServiceProvider.getSoInfraRequest(filters, startTime, endTime, maxResult);
-            LOGGER.info("result size: {}", requests.size());
+            LOGGER.info("result size: " + requests.size());
             return Response.status(Status.OK).entity(requests).build();
 
         } catch (final InvalidRestRequestException extensions) {
