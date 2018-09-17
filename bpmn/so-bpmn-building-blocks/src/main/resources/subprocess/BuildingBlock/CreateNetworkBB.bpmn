@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CreateNetworkBB" name="CreateNetworkBB" isExecutable="true">
-    <bpmn2:startEvent id="createNetwork_startEvent" name="Start Flow">
+    <bpmn2:startEvent id="createNetwork_startEvent">
       <bpmn2:outgoing>SequenceFlow_1maepy7</bpmn2:outgoing>
     </bpmn2:startEvent>
-    <bpmn2:endEvent id="createNetwork_EndEvent" name="End Flow">
+    <bpmn2:endEvent id="createNetwork_EndEvent">
       <bpmn2:incoming>SequenceFlow_0sissul</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:serviceTask id="QueryVpnBinding_ServiceTask" name="Query Vpn Binding in AAI" camunda:expression="${AAIQueryTasks.queryNetworkVpnBinding(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="QueryVpnBinding_ServiceTask" name="&#10;AAI&#10;Query&#10;(vpn binding)&#10;" camunda:expression="${AAIQueryTasks.queryNetworkVpnBinding(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_1oc7wcr</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0n42zi5</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="Create_Network_ServiceTask" name="Create Network" camunda:expression="${NetworkAdapterCreateTasks.createNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="Create_Network_ServiceTask" name="&#10;AIC&#10;Create&#10;(network)&#10;" camunda:expression="${NetworkAdapterCreateTasks.createNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_1eqfh23</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0innva6</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="QueryNetworkPolicy_ServiceTask" name="Query Network Policy in AAI" camunda:expression="${AAIQueryTasks.queryNetworkPolicy(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="QueryNetworkPolicy_ServiceTask" name="&#10;AAI&#10;Query&#10;(net policy)&#10;" camunda:expression="${AAIQueryTasks.queryNetworkPolicy(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_0n42zi5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1yy4aik</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="QueryNetworkTableRef_ServiceTask" name="Query Network TableRef in AAI" camunda:expression="${AAIQueryTasks.queryNetworkTableRef(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="QueryNetworkTableRef_ServiceTask" name="&#10;AAI&#10;Query&#10;(net table)&#10;" camunda:expression="${AAIQueryTasks.queryNetworkTableRef(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_1yy4aik</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1h9kkhb</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="Update_Network_AAI_ServiceTask" name="Update Network in AAI" camunda:expression="${AAIUpdateTasks.updateNetworkCreated(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="Update_Network_AAI_ServiceTask" name="&#10;AAI&#10;Update (network)&#10;" camunda:expression="${AAIUpdateTasks.updateNetworkCreated(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_0innva6</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0sissul</bpmn2:outgoing>
     </bpmn2:serviceTask>
@@ -64,13 +64,13 @@
       <bpmndi:BPMNShape id="StartEvent_0lbwmd1_di" bpmnElement="createNetwork_startEvent">
         <dc:Bounds x="236" y="-55" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="230" y="-14" width="48" height="14" />
+          <dc:Bounds x="229" y="-14" width="50" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_10l9a3s_di" bpmnElement="createNetwork_EndEvent">
         <dc:Bounds x="656" y="326" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="652" y="362" width="45" height="14" />
+          <dc:Bounds x="652" y="362" width="46" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1k7d8ih_di" bpmnElement="QueryVpnBinding_ServiceTask">

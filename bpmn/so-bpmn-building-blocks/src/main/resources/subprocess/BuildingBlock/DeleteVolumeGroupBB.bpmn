@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="DeleteVolumeGroupBB" name="DeleteVolumeGroupBB" isExecutable="true">
     <bpmn:startEvent id="DeleteVolumeGroupBB_Start" name="Start">
       <bpmn:outgoing>SequenceFlow_1wz1rfg</bpmn:outgoing>
@@ -8,7 +8,7 @@
     <bpmn:endEvent id="DeleteVolumeGroupBB_End">
       <bpmn:incoming>SequenceFlow_0mh0v9h</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="UpdateVolumeGroupAAI" name="Update Volume Group A&#38;AI (AAI Assigned)" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusAssignedVolumeGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="UpdateVolumeGroupAAI" name="&#10;AAI&#10;Update&#10;(volume grp)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusAssignedVolumeGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0fkan8t</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0mh0v9h</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -33,6 +33,16 @@
       <bpmn:incoming>SequenceFlow_13ngwev</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0fkan8t</bpmn:outgoing>
     </bpmn:callActivity>
+    <bpmn:subProcess id="SubProcess_089t601" name="Sub Process Error" triggeredByEvent="true">
+      <bpmn:endEvent id="EndEvent_18lpeyi" name="End">
+        <bpmn:incoming>SequenceFlow_07rsz9o</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:startEvent id="StartEvent_1gun94q" name="Start">
+        <bpmn:outgoing>SequenceFlow_07rsz9o</bpmn:outgoing>
+        <bpmn:errorEventDefinition />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_07rsz9o" sourceRef="StartEvent_1gun94q" targetRef="EndEvent_18lpeyi" />
+    </bpmn:subProcess>
   </bpmn:process>
   <bpmn:error id="Error_0pz4sdi" name="gDelegateError" errorCode="7000" />
   <bpmn:escalation id="Escalation_1hjulni" name="Escalation_2cgup2p" />
@@ -87,6 +97,30 @@
       <bpmndi:BPMNShape id="CallActivity_0li7q97_di" bpmnElement="VnfAdapter">
         <dc:Bounds x="526" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_089t601_di" bpmnElement="SubProcess_089t601" isExpanded="true">
+        <dc:Bounds x="459" y="242" width="233" height="135" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_18lpeyi_di" bpmnElement="EndEvent_18lpeyi">
+        <dc:Bounds x="613" y="287" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="622" y="327" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1gun94q_di" bpmnElement="StartEvent_1gun94q">
+        <dc:Bounds x="498" y="287" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="505" y="327" width="24" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_07rsz9o_di" bpmnElement="SequenceFlow_07rsz9o">
+        <di:waypoint xsi:type="dc:Point" x="534" y="305" />
+        <di:waypoint xsi:type="dc:Point" x="573" y="305" />
+        <di:waypoint xsi:type="dc:Point" x="573" y="305" />
+        <di:waypoint xsi:type="dc:Point" x="613" y="305" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="543" y="305" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

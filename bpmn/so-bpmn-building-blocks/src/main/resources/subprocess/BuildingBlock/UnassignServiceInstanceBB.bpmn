@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="UnassignServiceInstanceBB" name="UnassignServiceInstanceBB" isExecutable="true">
-    <bpmn:startEvent id="Start_UnassignServiceInstanceBB" name="start">
+    <bpmn:startEvent id="Start_UnassignServiceInstanceBB">
       <bpmn:outgoing>SequenceFlow_0fzrhkc</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="Task_AAIDeleteServiceInstance" name="Delete Service Instance (AAI)" camunda:expression="${AAIDeleteTasks.deleteServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_AAIDeleteServiceInstance" name="&#10;AAI&#10;Delete &#10;(svc instance)&#10;" camunda:expression="${AAIDeleteTasks.deleteServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0pu9j6i</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0sfeg65</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0sfeg65" sourceRef="Task_AAIDeleteServiceInstance" targetRef="End_UnassignServiceInstanceBB" />
-    <bpmn:serviceTask id="Task_SdncUnassignServiceInstance" name="Unassign Service Instance (SDNC)" camunda:expression="${SDNCUnassignTasks.unassignServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_SdncUnassignServiceInstance" name="&#10;SDNC&#10;Unassign&#10;(svc instance)&#10;" camunda:expression="${SDNCUnassignTasks.unassignServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0fzrhkc</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0pu9j6i</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0pu9j6i" sourceRef="Task_SdncUnassignServiceInstance" targetRef="Task_AAIDeleteServiceInstance" />
-    <bpmn:endEvent id="End_UnassignServiceInstanceBB" name="end">
+    <bpmn:endEvent id="End_UnassignServiceInstanceBB">
       <bpmn:incoming>SequenceFlow_0sfeg65</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0fzrhkc" sourceRef="Start_UnassignServiceInstanceBB" targetRef="Task_SdncUnassignServiceInstance" />
@@ -24,9 +24,9 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="UnassignServiceInstanceBB">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_UnassignServiceInstanceBB">
-        <dc:Bounds x="474" y="213" width="36" height="36" />
+        <dc:Bounds x="444" y="213" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="482" y="256" width="22" height="12" />
+          <dc:Bounds x="452" y="256" width="23" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0ltb3dj_di" bpmnElement="Task_AAIDeleteServiceInstance">
@@ -34,9 +34,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0sfeg65_di" bpmnElement="SequenceFlow_0sfeg65">
         <di:waypoint xsi:type="dc:Point" x="808" y="231" />
-        <di:waypoint xsi:type="dc:Point" x="853" y="231" />
+        <di:waypoint xsi:type="dc:Point" x="871" y="231" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="785.5" y="210" width="90" height="12" />
+          <dc:Bounds x="794.5" y="210" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_11klnmn_di" bpmnElement="Task_SdncUnassignServiceInstance">
@@ -50,16 +50,16 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_1p34ka9_di" bpmnElement="End_UnassignServiceInstanceBB">
-        <dc:Bounds x="853" y="213" width="36" height="36" />
+        <dc:Bounds x="871" y="213" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="863" y="255" width="21" height="12" />
+          <dc:Bounds x="883" y="255" width="18" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0fzrhkc_di" bpmnElement="SequenceFlow_0fzrhkc">
-        <di:waypoint xsi:type="dc:Point" x="510" y="231" />
+        <di:waypoint xsi:type="dc:Point" x="480" y="231" />
         <di:waypoint xsi:type="dc:Point" x="563" y="231" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="536.5" y="210" width="0" height="12" />
+          <dc:Bounds x="476.5" y="210" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

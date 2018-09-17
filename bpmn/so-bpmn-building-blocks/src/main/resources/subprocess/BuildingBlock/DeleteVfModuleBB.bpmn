@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="DeleteVfModuleBB" name="Start" isExecutable="true">
-    <bpmn:startEvent id="DeleteVfModuleBB_Start" name="Start">
+    <bpmn:startEvent id="DeleteVfModuleBB_Start">
       <bpmn:outgoing>SequenceFlow_1537yw5</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:serviceTask id="DeleteVfModuleVnfAdapter" name="Delete Vf Module VnfAdapter" camunda:expression="${VnfAdapterDeleteTasks.deleteVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
@@ -9,12 +9,12 @@
       <bpmn:outgoing>SequenceFlow_08tvhtf</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_1537yw5" sourceRef="DeleteVfModuleBB_Start" targetRef="DeleteVfModuleVnfAdapter" />
-    <bpmn:serviceTask id="UpdateVfModuleDeleteStatus" name="Update OStatus (AAI)" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusDeleteVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="UpdateVfModuleDeleteStatus" name="&#10;AAI &#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusDeleteVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_02lpx87</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1mxrfqv</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_08tvhtf" sourceRef="DeleteVfModuleVnfAdapter" targetRef="VnfAdapter" />
-    <bpmn:endEvent id="DeleteVfModuleBB_End" name="End">
+    <bpmn:endEvent id="DeleteVfModuleBB_End">
       <bpmn:incoming>SequenceFlow_1mxrfqv</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1mxrfqv" sourceRef="UpdateVfModuleDeleteStatus" targetRef="DeleteVfModuleBB_End" />
@@ -30,6 +30,17 @@
       <bpmn:outgoing>SequenceFlow_02lpx87</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="SequenceFlow_02lpx87" sourceRef="VnfAdapter" targetRef="UpdateVfModuleDeleteStatus" />
+    <bpmn:subProcess id="SubProcess_11p7mrh" name="Error Handling&#10;&#10;" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_1xp6ewt">
+        <bpmn:outgoing>SequenceFlow_0h607z0</bpmn:outgoing>
+        <bpmn:errorEventDefinition />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_0guhjau">
+        <bpmn:incoming>SequenceFlow_0h607z0</bpmn:incoming>
+        <bpmn:terminateEventDefinition />
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0h607z0" sourceRef="StartEvent_1xp6ewt" targetRef="EndEvent_0guhjau" />
+    </bpmn:subProcess>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DeleteVfModuleBB">
@@ -80,6 +91,28 @@
         <di:waypoint xsi:type="dc:Point" x="593" y="120" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="560" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_11p7mrh_di" bpmnElement="SubProcess_11p7mrh" isExpanded="true">
+        <dc:Bounds x="261" y="276" width="231" height="135" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1xp6ewt_di" bpmnElement="StartEvent_1xp6ewt">
+        <dc:Bounds x="304" y="338" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="277" y="374" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0guhjau_di" bpmnElement="EndEvent_0guhjau">
+        <dc:Bounds x="433" y="338" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="406" y="374" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0h607z0_di" bpmnElement="SequenceFlow_0h607z0">
+        <di:waypoint xsi:type="dc:Point" x="340" y="356" />
+        <di:waypoint xsi:type="dc:Point" x="433" y="356" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="386.5" y="335" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

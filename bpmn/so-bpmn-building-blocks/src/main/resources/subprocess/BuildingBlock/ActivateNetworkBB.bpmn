@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="ActivateNetworkBB" name="ActivateNetworkBB" isExecutable="true">
-    <bpmn2:startEvent id="activateNetwork_startEvent" name="Start Flow">
+    <bpmn2:startEvent id="activateNetwork_startEvent">
       <bpmn2:outgoing>SequenceFlow_05elmhj</bpmn2:outgoing>
     </bpmn2:startEvent>
-    <bpmn2:endEvent id="activateNetwork_EndEvent" name="End Flow">
+    <bpmn2:endEvent id="activateNetwork_EndEvent">
       <bpmn2:incoming>SequenceFlow_18atf08</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:serviceTask id="Activate_Network_SDNC_ServiceTask" name="Activate Network (SDNC)" camunda:expression="${SDNCActivateTasks.activateNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="Activate_Network_SDNC_ServiceTask" name="&#10;SDNC&#10;Activate&#10;(network)&#10;" camunda:expression="${SDNCActivateTasks.activateNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_05elmhj</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0xbvwsu</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="Activate_Network_AAI_ServiceTask" name="Activate Network (AAI)" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusActiveNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="Activate_Network_AAI_ServiceTask" name="&#10;AAI&#10;Update&#10;(network)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusActiveNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_0xbvwsu</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_18atf08</bpmn2:outgoing>
     </bpmn2:serviceTask>
@@ -26,13 +26,13 @@
       <bpmndi:BPMNShape id="StartEvent_0lbwmd1_di" bpmnElement="activateNetwork_startEvent">
         <dc:Bounds x="545" y="-55" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="538" y="-14" width="49" height="12" />
+          <dc:Bounds x="538" y="-14" width="50" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_10l9a3s_di" bpmnElement="activateNetwork_EndEvent">
         <dc:Bounds x="975" y="-55" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="971" y="-19" width="45" height="12" />
+          <dc:Bounds x="971" y="-19" width="46" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1k7d8ih_di" bpmnElement="Activate_Network_SDNC_ServiceTask">

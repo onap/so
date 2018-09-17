@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="DeactivateVfModuleBB" name="DeactivateVfModuleBB" isExecutable="true">
     <bpmn:startEvent id="DeactivateVfModuleBB_Start" name="Start">
       <bpmn:outgoing>SequenceFlow_0m379r2</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="DeactivateVfModule" name="SDNC Vf Module Deactivate&#10;" camunda:expression="${SDNCDeactivateTasks.deactivateVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="DeactivateVfModule" name="&#10;SDNC &#10;Deactivate&#10;(vf module)&#10;" camunda:expression="${SDNCDeactivateTasks.deactivateVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0m379r2</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_01bdpek</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0m379r2" sourceRef="DeactivateVfModuleBB_Start" targetRef="DeactivateVfModule" />
-    <bpmn:serviceTask id="UpdateVfModuleDeactivateStatus" name="Deactivate OStatus (AAI)" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusDeactivateVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="UpdateVfModuleDeactivateStatus" name="&#10;AAI &#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusDeactivateVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_01bdpek</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1y1c7fh</bpmn:outgoing>
     </bpmn:serviceTask>

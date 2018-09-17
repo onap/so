@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,9 +37,9 @@ public class ExceptionBuilder {
 		String msg = "Exception in %s.%s ";
 		try{
 			msoLogger.error(exception);
-			
+
 			String errorVariable = "Error%s%s";
-	
+
 			StackTraceElement[] trace = Thread.currentThread().getStackTrace();
 			for (StackTraceElement traceElement : trace) {
 				if (!traceElement.getClassName().equals(this.getClass().getName()) && !traceElement.getClassName().equals(Thread.class.getName())) {
@@ -49,7 +49,7 @@ public class ExceptionBuilder {
 					break;
 				}
 			}
-			
+
 			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, msg.toString());
 			execution.setVariable(errorVariable, exception.getMessage());
 		} catch (Exception ex){
