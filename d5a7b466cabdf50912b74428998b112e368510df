@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_da0b2a22",
+        "filename": "packages/docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1581
+      },
+      "writtenOn": "2018-09-17T12:55:04Z",
+      "side": 1,
+      "message": "Add your image name here for your image to be pushed to nexus",
+      "range": {
+        "startLine": 338,
+        "startChar": 7,
+        "endLine": 338,
+        "endChar": 202
+      },
+      "revId": "d5a7b466cabdf50912b74428998b112e368510df",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1a06821d",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-monitoring",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1581
+      },
+      "writtenOn": "2018-09-17T12:55:04Z",
+      "side": 1,
+      "message": "consider using a start script instead of giving the java command here",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 399
+      },
+      "revId": "d5a7b466cabdf50912b74428998b112e368510df",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
