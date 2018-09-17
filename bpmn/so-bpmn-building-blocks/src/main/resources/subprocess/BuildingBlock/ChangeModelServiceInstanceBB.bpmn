@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="ChangeModelServiceInstanceBB" name="ChangeModelServiceInstanceBB" isExecutable="true">
-    <bpmn2:startEvent id="ChangeModelServiceInstance_Start" name="Start">
+    <bpmn2:startEvent id="ChangeModelServiceInstance_Start">
       <bpmn2:outgoing>SequenceFlow_18i4a05</bpmn2:outgoing>
     </bpmn2:startEvent>
-    <bpmn2:endEvent id="ChangeModelServiceInstance_End" name="End">
+    <bpmn2:endEvent id="ChangeModelServiceInstance_End">
       <bpmn2:incoming>SequenceFlow_0g502yj</bpmn2:incoming>
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_18i4a05" sourceRef="ChangeModelServiceInstance_Start" targetRef="SDNCChangeModelServiceInstance" />
     <bpmn2:sequenceFlow id="SequenceFlow_19kfk17" sourceRef="SDNCChangeModelServiceInstance" targetRef="AAIUpdateModelServiceInstance" />
     <bpmn2:sequenceFlow id="SequenceFlow_0g502yj" sourceRef="AAIUpdateModelServiceInstance" targetRef="ChangeModelServiceInstance_End" />
-    <bpmn2:serviceTask id="SDNCChangeModelServiceInstance" name="SDNC ChangeModel ServiceInstance" camunda:expression="${SDNCChangeAssignTasks.changeModelServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="SDNCChangeModelServiceInstance" name="&#10;SDNC &#10;Change&#10;(svc instance)&#10;" camunda:expression="${SDNCChangeAssignTasks.changeModelServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_18i4a05</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_19kfk17</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="AAIUpdateModelServiceInstance" name="AAI Update Model ServiceInstance" camunda:expression="${AAIUpdateTasks.updateServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="AAIUpdateModelServiceInstance" name="&#10;AAI &#10;Update&#10;(svc Instance)&#10;" camunda:expression="${AAIUpdateTasks.updateServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_19kfk17</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0g502yj</bpmn2:outgoing>
     </bpmn2:serviceTask>
@@ -38,30 +38,30 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_18i4a05_di" bpmnElement="SequenceFlow_18i4a05">
         <di:waypoint xsi:type="dc:Point" x="111" y="106" />
-        <di:waypoint xsi:type="dc:Point" x="213" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="234" y="106" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="162" y="85" width="0" height="12" />
+          <dc:Bounds x="127.5" y="85" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_19kfk17_di" bpmnElement="SequenceFlow_19kfk17">
-        <di:waypoint xsi:type="dc:Point" x="313" y="106" />
-        <di:waypoint xsi:type="dc:Point" x="423" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="334" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="390" y="106" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="368" y="85" width="0" height="12" />
+          <dc:Bounds x="317" y="85" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0g502yj_di" bpmnElement="SequenceFlow_0g502yj">
-        <di:waypoint xsi:type="dc:Point" x="523" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="490" y="106" />
         <di:waypoint xsi:type="dc:Point" x="632" y="106" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="577.5" y="85" width="0" height="12" />
+          <dc:Bounds x="516" y="85" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_03km5f0_di" bpmnElement="SDNCChangeModelServiceInstance">
-        <dc:Bounds x="213" y="66" width="100" height="80" />
+        <dc:Bounds x="234" y="66" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_10b2mxq_di" bpmnElement="AAIUpdateModelServiceInstance">
-        <dc:Bounds x="423" y="66" width="100" height="80" />
+        <dc:Bounds x="390" y="66" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

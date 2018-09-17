@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="CreateVolumeGroupBB" name="CreateVolumeGroupBB" isExecutable="true">
     <bpmn:startEvent id="CreateVolumeGroupBB_Start" name="Start">
       <bpmn:outgoing>SequenceFlow_1wz1rfg</bpmn:outgoing>
@@ -8,17 +8,17 @@
     <bpmn:endEvent id="CreateVolumeGroupBB_End">
       <bpmn:incoming>SequenceFlow_0mh0v9h</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="CreateVolumeGroupVnfAdapter" name="CreateVolumeGroupVnfAdapter Request" camunda:expression="${VnfAdapterCreateTasks.createVolumeGroupRequest(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="CreateVolumeGroupVnfAdapter" name="Create Request" camunda:expression="${VnfAdapterCreateTasks.createVolumeGroupRequest(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_06q6g74</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0kfkpbh</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0kfkpbh" sourceRef="CreateVolumeGroupVnfAdapter" targetRef="Vnf_Adapter" />
-    <bpmn:serviceTask id="UpdateVolumeGroupAAI" name="UpdateVolumeGroupAAI" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusCreatedVolumeGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="UpdateVolumeGroupAAI" name="&#10;AAI&#10;Update&#10;(volume)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusCreatedVolumeGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1d5nux2</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0mh0v9h</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0mh0v9h" sourceRef="UpdateVolumeGroupAAI" targetRef="CreateVolumeGroupBB_End" />
-    <bpmn:serviceTask id="QueryVfModuleSDNC" name="Query Vf Module (SDNC)" camunda:expression="${SDNCQueryTasks.queryVfModuleForVolumeGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="QueryVfModuleSDNC" name="&#10;SDNC&#10;Get&#10;(vnf)&#10;" camunda:expression="${SDNCQueryTasks.queryVfModuleForVolumeGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1wz1rfg</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_06q6g74</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -35,10 +35,21 @@
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="SequenceFlow_06flg6h" sourceRef="Vnf_Adapter" targetRef="UpdateVolumeGroupHeatStackId" />
     <bpmn:sequenceFlow id="SequenceFlow_1d5nux2" sourceRef="UpdateVolumeGroupHeatStackId" targetRef="UpdateVolumeGroupAAI" />
-    <bpmn:serviceTask id="UpdateVolumeGroupHeatStackId" name="Update VolumeGroup HeatStackId (AAI)" camunda:expression="${AAIUpdateTasks.updateHeatStackIdVolumeGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="UpdateVolumeGroupHeatStackId" name="&#10;AAI&#10;Update&#10;(volume)&#10;" camunda:expression="${AAIUpdateTasks.updateHeatStackIdVolumeGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_06flg6h</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1d5nux2</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:subProcess id="SubProcess_14koudj" name="Error Handling&#10;&#10;" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_1f7qpgu">
+        <bpmn:outgoing>SequenceFlow_1wtq4y7</bpmn:outgoing>
+        <bpmn:errorEventDefinition />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_0zycnsk">
+        <bpmn:incoming>SequenceFlow_1wtq4y7</bpmn:incoming>
+        <bpmn:terminateEventDefinition />
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1wtq4y7" sourceRef="StartEvent_1f7qpgu" targetRef="EndEvent_0zycnsk" />
+    </bpmn:subProcess>
   </bpmn:process>
   <bpmn:error id="Error_0pz4sdi" name="gDelegateError" errorCode="7000" />
   <bpmn:escalation id="Escalation_1hjulni" name="Escalation_2cgup2p" />
@@ -113,6 +124,28 @@
       <bpmndi:BPMNShape id="ServiceTask_0m035ns_di" bpmnElement="UpdateVolumeGroupHeatStackId">
         <dc:Bounds x="774" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_14koudj_di" bpmnElement="SubProcess_14koudj" isExpanded="true">
+        <dc:Bounds x="310" y="264" width="231" height="135" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1f7qpgu_di" bpmnElement="StartEvent_1f7qpgu">
+        <dc:Bounds x="350" y="323" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="323" y="359" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0zycnsk_di" bpmnElement="EndEvent_0zycnsk">
+        <dc:Bounds x="487" y="323" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="460" y="359" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wtq4y7_di" bpmnElement="SequenceFlow_1wtq4y7">
+        <di:waypoint xsi:type="dc:Point" x="386" y="341" />
+        <di:waypoint xsi:type="dc:Point" x="487" y="341" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="436.5" y="320" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

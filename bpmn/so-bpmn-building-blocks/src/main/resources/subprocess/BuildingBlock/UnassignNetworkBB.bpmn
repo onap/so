@@ -4,7 +4,7 @@
     <bpmn:startEvent id="Start_UnassignNetworkBB" name="start">
       <bpmn:outgoing>SequenceFlow_0zaz9o2</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="Task_SNDCUnAssign" name="Call SDNC Adapter Topology UnAssign" camunda:expression="${SDNCUnassignTasks.unassignNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_SNDCUnAssign" name="&#10;SDNC&#10;Unassign&#10;(network)&#10;" camunda:expression="${SDNCUnassignTasks.unassignNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0le4vrj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ks8kmt</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -14,7 +14,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_0zaz9o2" sourceRef="Start_UnassignNetworkBB" targetRef="Task_VfModuleRelatioship" />
     <bpmn:sequenceFlow id="SequenceFlow_1ks8kmt" sourceRef="Task_SNDCUnAssign" targetRef="Task_DeleteNetwork" />
     <bpmn:sequenceFlow id="SequenceFlow_0csh9dc" sourceRef="Task_DeleteNetwork" targetRef="End_UnassignNetworkBB" />
-    <bpmn:serviceTask id="Task_DeleteNetwork" name="Delete Network (AAI)" camunda:expression="${AAIDeleteTasks.deleteNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_DeleteNetwork" name="&#10;AAI&#10;Delete&#10;(network)&#10;" camunda:expression="${AAIDeleteTasks.deleteNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1ks8kmt</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0csh9dc</bpmn:outgoing>
     </bpmn:serviceTask>

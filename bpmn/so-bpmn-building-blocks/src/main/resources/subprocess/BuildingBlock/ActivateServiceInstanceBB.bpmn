@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="ActivateServiceInstanceBB" name="ActivateServiceInstanceBB" isExecutable="true">
-    <bpmn:startEvent id="Start_ActivateServiceInstanceBB" name="start">
+    <bpmn:startEvent id="Start_ActivateServiceInstanceBB">
       <bpmn:outgoing>SequenceFlow_1byfr8v</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:endEvent id="End_ActivateServiceInstanceBB" name="end">
+    <bpmn:endEvent id="End_ActivateServiceInstanceBB">
       <bpmn:incoming>SequenceFlow_0pioehv</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_00q7fsg" sourceRef="Task_NoOpServiceInstance" targetRef="Task_UpdateServiceOrchestrationStatusToActive" />
@@ -13,7 +13,7 @@
       <bpmn:outgoing>SequenceFlow_00q7fsg</bpmn:outgoing>
     </bpmn:task>
     <bpmn:sequenceFlow id="SequenceFlow_0pioehv" sourceRef="Task_UpdateServiceOrchestrationStatusToActive" targetRef="End_ActivateServiceInstanceBB" />
-    <bpmn:serviceTask id="Task_UpdateServiceOrchestrationStatusToActive" name="Update Service Orchestration Status to Active (AAI)" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusActiveService(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_UpdateServiceOrchestrationStatusToActive" name="&#10;AAI&#10;Update&#10;(svc instance)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusActiveService(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_00q7fsg</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0pioehv</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -24,7 +24,7 @@
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_ActivateServiceInstanceBB">
         <dc:Bounds x="174" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="181" y="138" width="22" height="12" />
+          <dc:Bounds x="181" y="138" width="23" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1qdtskz_di" bpmnElement="End_ActivateServiceInstanceBB">

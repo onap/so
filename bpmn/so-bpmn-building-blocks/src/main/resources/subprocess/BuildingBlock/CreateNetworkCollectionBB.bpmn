@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CreateNetworkCollectionBB" name="CreateNetworkCollectionBB" isExecutable="true">
-    <bpmn2:startEvent id="createNetworkCollection_startEvent" name="Start Flow">
+    <bpmn2:startEvent id="createNetworkCollection_startEvent">
       <bpmn2:outgoing>SequenceFlow_1maepy7</bpmn2:outgoing>
     </bpmn2:startEvent>
-    <bpmn2:endEvent id="createNetworkCollection_EndEvent" name="End Flow">
+    <bpmn2:endEvent id="createNetworkCollection_EndEvent">
       <bpmn2:incoming>SequenceFlow_0hhklb4</bpmn2:incoming>
     </bpmn2:endEvent>
     <bpmn2:serviceTask id="BuildName_ServiceTask" name="Buld Collection and Instance Names" camunda:expression="${CreateNetworkCollection.buildNetworkCollectionName(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}  ">
@@ -12,22 +12,22 @@
       <bpmn2:outgoing>SequenceFlow_06rq9pi</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1maepy7" sourceRef="createNetworkCollection_startEvent" targetRef="BuildName_ServiceTask" />
-    <bpmn2:serviceTask id="ServiceTask_create_NetworkCollection" name="Create Network Collection in AAI&#10;" camunda:expression="${AAICreateTasks.createNetworkCollection(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="ServiceTask_create_NetworkCollection" name="&#10;AAI&#10;Create&#10;(net collection)&#10;" camunda:expression="${AAICreateTasks.createNetworkCollection(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_06rq9pi</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_05yxpu5</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_06rq9pi" sourceRef="BuildName_ServiceTask" targetRef="ServiceTask_create_NetworkCollection" />
-    <bpmn2:serviceTask id="ServiceTask_create_NetworkCollectionInstanceGroup" name="Create Network Collection Instance Group in AAI&#10;" camunda:expression="${AAICreateTasks.createNetworkCollectionInstanceGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="ServiceTask_create_NetworkCollectionInstanceGroup" name="&#10;AAI&#10;Create&#10;(instance grp)&#10;" camunda:expression="${AAICreateTasks.createNetworkCollectionInstanceGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_05yxpu5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0z4c30j</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="ServiceTask_Connect_Collection_to_InstanceGroup" name="Connect Collection to InstanceGroup&#10;" camunda:expression="${CreateNetworkCollection.connectCollectionToInstanceGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}  ">
+    <bpmn2:serviceTask id="ServiceTask_Connect_Collection_to_InstanceGroup" name="&#10;AAI&#10;Connect&#10;(net collection)&#10;" camunda:expression="${CreateNetworkCollection.connectCollectionToInstanceGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}  ">
       <bpmn2:incoming>SequenceFlow_0z4c30j</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1hij1px</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_05yxpu5" sourceRef="ServiceTask_create_NetworkCollection" targetRef="ServiceTask_create_NetworkCollectionInstanceGroup" />
     <bpmn2:sequenceFlow id="SequenceFlow_0z4c30j" sourceRef="ServiceTask_create_NetworkCollectionInstanceGroup" targetRef="ServiceTask_Connect_Collection_to_InstanceGroup" />
-    <bpmn2:serviceTask id="ServiceTask_Connect_Collection_to_ServiceInstance" name="Connect Collection to ServiceInstance&#10;" camunda:expression="${CreateNetworkCollection.connectCollectionToServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}  ">
+    <bpmn2:serviceTask id="ServiceTask_Connect_Collection_to_ServiceInstance" name="&#10;AAI&#10;Connect&#10;(svc instance)&#10;" camunda:expression="${CreateNetworkCollection.connectCollectionToServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}  ">
       <bpmn2:incoming>SequenceFlow_1hij1px</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0hhklb4</bpmn2:outgoing>
     </bpmn2:serviceTask>
@@ -41,13 +41,13 @@
       <bpmndi:BPMNShape id="StartEvent_0lbwmd1_di" bpmnElement="createNetworkCollection_startEvent">
         <dc:Bounds x="236" y="-55" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="230" y="-14" width="48" height="14" />
+          <dc:Bounds x="229" y="-14" width="50" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_10l9a3s_di" bpmnElement="createNetworkCollection_EndEvent">
         <dc:Bounds x="1132" y="-55" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1128" y="-19" width="45" height="12" />
+          <dc:Bounds x="1128" y="-19" width="46" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_08q9eo4_di" bpmnElement="BuildName_ServiceTask">

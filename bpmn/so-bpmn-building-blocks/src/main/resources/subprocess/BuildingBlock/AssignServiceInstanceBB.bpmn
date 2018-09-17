@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="AssignServiceInstanceBB" name="AssignServiceInstanceBB" isExecutable="true">
-    <bpmn:startEvent id="Start_AssignServiceInstanceBB" name="start">
+    <bpmn:startEvent id="Start_AssignServiceInstanceBB">
       <bpmn:outgoing>SequenceFlow_1xr6chl</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="Task_CreateServiceInstance" name="Create Service Instance (AAI)" camunda:expression="${AAICreateTasks.createServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_CreateServiceInstance" name="&#10;AAI&#10;Create&#10;(svc instance)&#10;" camunda:expression="${AAICreateTasks.createServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1h6t7yr</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0czewtx</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_CreateProject" name="Create Project (AAI)" camunda:expression="${AAICreateTasks.createProject(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_CreateProject" name="&#10;AAI&#10;Create&#10;(project)&#10;" camunda:expression="${AAICreateTasks.createProject(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0czewtx</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1t55i01</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_CreateOwningEntity" name="Create Owning Entity (AAI)" camunda:expression="${AAICreateTasks.createOwningEntity(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_CreateOwningEntity" name="&#10;AAI&#10;Create&#10;(owning entity)&#10;" camunda:expression="${AAICreateTasks.createOwningEntity(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1t55i01</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0aef1l8</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_AssignServiceInstance" name="Assign Service Instance (SDNC)" camunda:expression="${SDNCAssignTasks.assignServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_AssignServiceInstance" name="&#10;SDNC&#10;Assign&#10;(svc instance)&#10;" camunda:expression="${SDNCAssignTasks.assignServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0aef1l8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_07ea5ui</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -24,16 +24,16 @@
     <bpmn:sequenceFlow id="SequenceFlow_0czewtx" sourceRef="Task_CreateServiceInstance" targetRef="Task_CreateProject" />
     <bpmn:sequenceFlow id="SequenceFlow_1t55i01" sourceRef="Task_CreateProject" targetRef="Task_CreateOwningEntity" />
     <bpmn:sequenceFlow id="SequenceFlow_07ea5ui" sourceRef="Task_AssignServiceInstance" targetRef="Task_UpdateServiceOstatusToAssigned" />
-    <bpmn:endEvent id="End_AssignServiceInstanceBB" name="end">
+    <bpmn:endEvent id="End_AssignServiceInstanceBB">
       <bpmn:incoming>SequenceFlow_14xl505</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_14xl505" sourceRef="Task_UpdateServiceOstatusToAssigned" targetRef="End_AssignServiceInstanceBB" />
-    <bpmn:serviceTask id="Task_UpdateServiceOstatusToAssigned" name="Update Service Ostatus to Assigned (AAI)" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusAssignedService(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_UpdateServiceOstatusToAssigned" name="&#10;AAI&#10;Update&#10;(svc instance)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusAssignedService(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_07ea5ui</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_14xl505</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_1h6t7yr" sourceRef="Task_CreateServiceSubscription" targetRef="Task_CreateServiceInstance" />
-    <bpmn:serviceTask id="Task_CreateServiceSubscription" name="Create Service Subscription (AAI)" camunda:expression="${AAICreateTasks.createServiceSubscription(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_CreateServiceSubscription" name="&#10;AAI&#10;Create&#10;(svc subscrip)&#10;" camunda:expression="${AAICreateTasks.createServiceSubscription(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1xr6chl</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1h6t7yr</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -43,82 +43,82 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="AssignServiceInstanceBB">
       <bpmndi:BPMNShape id="StartEvent_0kxwniy_di" bpmnElement="Start_AssignServiceInstanceBB">
-        <dc:Bounds x="75" y="-3" width="36" height="36" />
+        <dc:Bounds x="68" y="90" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="82" y="33" width="23" height="12" />
+          <dc:Bounds x="75" y="126" width="23" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0028k7a_di" bpmnElement="Task_CreateServiceInstance">
-        <dc:Bounds x="285" y="-25" width="100" height="80" />
+        <dc:Bounds x="290" y="68" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0oh47a9_di" bpmnElement="Task_CreateProject">
-        <dc:Bounds x="426" y="-25" width="100" height="80" />
+        <dc:Bounds x="431" y="68" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_06hn530_di" bpmnElement="Task_CreateOwningEntity">
-        <dc:Bounds x="572" y="-25" width="100" height="80" />
+        <dc:Bounds x="577" y="68" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_13t22km_di" bpmnElement="Task_AssignServiceInstance">
-        <dc:Bounds x="714" y="-25" width="100" height="80" />
+        <dc:Bounds x="719" y="68" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1xr6chl_di" bpmnElement="SequenceFlow_1xr6chl">
-        <di:waypoint xsi:type="dc:Point" x="111" y="15" />
-        <di:waypoint xsi:type="dc:Point" x="148" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="104" y="108" />
+        <di:waypoint xsi:type="dc:Point" x="153" y="108" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="84.5" y="-6" width="90" height="12" />
+          <dc:Bounds x="83.5" y="87" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0czewtx_di" bpmnElement="SequenceFlow_0czewtx">
-        <di:waypoint xsi:type="dc:Point" x="385" y="15" />
-        <di:waypoint xsi:type="dc:Point" x="426" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="390" y="108" />
+        <di:waypoint xsi:type="dc:Point" x="431" y="108" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="361.5" y="-6" width="0" height="12" />
+          <dc:Bounds x="322" y="87" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1t55i01_di" bpmnElement="SequenceFlow_1t55i01">
-        <di:waypoint xsi:type="dc:Point" x="526" y="15" />
-        <di:waypoint xsi:type="dc:Point" x="572" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="531" y="108" />
+        <di:waypoint xsi:type="dc:Point" x="577" y="108" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="504" y="-6" width="0" height="12" />
+          <dc:Bounds x="464" y="87" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_07ea5ui_di" bpmnElement="SequenceFlow_07ea5ui">
-        <di:waypoint xsi:type="dc:Point" x="814" y="15" />
-        <di:waypoint xsi:type="dc:Point" x="864" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="819" y="108" />
+        <di:waypoint xsi:type="dc:Point" x="869" y="108" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="794" y="-6" width="90" height="12" />
+          <dc:Bounds x="799" y="87" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_0qdq7wj_di" bpmnElement="End_AssignServiceInstanceBB">
-        <dc:Bounds x="1007" y="-3" width="36" height="36" />
+        <dc:Bounds x="1030" y="90" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1016" y="37" width="18" height="12" />
+          <dc:Bounds x="1039" y="130" width="18" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_14xl505_di" bpmnElement="SequenceFlow_14xl505">
-        <di:waypoint xsi:type="dc:Point" x="964" y="15" />
-        <di:waypoint xsi:type="dc:Point" x="1007" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="969" y="108" />
+        <di:waypoint xsi:type="dc:Point" x="1030" y="108" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="940.5" y="-6" width="90" height="12" />
+          <dc:Bounds x="954.5" y="87" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1dgenhy_di" bpmnElement="Task_UpdateServiceOstatusToAssigned">
-        <dc:Bounds x="864" y="-25" width="100" height="80" />
+        <dc:Bounds x="869" y="68" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1h6t7yr_di" bpmnElement="SequenceFlow_1h6t7yr">
-        <di:waypoint xsi:type="dc:Point" x="248" y="15" />
-        <di:waypoint xsi:type="dc:Point" x="285" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="253" y="108" />
+        <di:waypoint xsi:type="dc:Point" x="290" y="108" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="266.5" y="-6" width="0" height="12" />
+          <dc:Bounds x="227" y="87" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_09fq3rp_di" bpmnElement="Task_CreateServiceSubscription">
-        <dc:Bounds x="148" y="-25" width="100" height="80" />
+        <dc:Bounds x="153" y="68" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0aef1l8_di" bpmnElement="SequenceFlow_0aef1l8">
-        <di:waypoint xsi:type="dc:Point" x="672" y="15" />
-        <di:waypoint xsi:type="dc:Point" x="714" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="677" y="108" />
+        <di:waypoint xsi:type="dc:Point" x="719" y="108" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="693" y="-6" width="0" height="12" />
+          <dc:Bounds x="653" y="87" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

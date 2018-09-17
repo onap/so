@@ -1,23 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="ChangeModelVnfBB" name="ChangeModelVnfBB" isExecutable="true">
-    <bpmn2:startEvent id="ChangeModelVnf_Start" name="Start">
+    <bpmn2:startEvent id="ChangeModelVnf_Start">
       <bpmn2:outgoing>SequenceFlow_18i4a05</bpmn2:outgoing>
     </bpmn2:startEvent>
-    <bpmn2:endEvent id="ChangeModelVnf_End" name="End">
+    <bpmn2:endEvent id="ChangeModelVnf_End">
       <bpmn2:incoming>SequenceFlow_0g502yj</bpmn2:incoming>
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_18i4a05" sourceRef="ChangeModelVnf_Start" targetRef="SDNCChangeModel" />
     <bpmn2:sequenceFlow id="SequenceFlow_19kfk17" sourceRef="SDNCChangeModel" targetRef="AAIUpdateModel" />
     <bpmn2:sequenceFlow id="SequenceFlow_0g502yj" sourceRef="AAIUpdateModel" targetRef="ChangeModelVnf_End" />
-    <bpmn2:serviceTask id="SDNCChangeModel" name="SDNC ChangeModel Vnf" camunda:expression="${SDNCChangeAssignTasks.changeModelVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="SDNCChangeModel" name="&#10;SDNC&#10;Change &#10;(vnf model)&#10;" camunda:expression="${SDNCChangeAssignTasks.changeModelVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_18i4a05</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_19kfk17</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="AAIUpdateModel" name="AAI Update Model Vnf" camunda:expression="${AAIUpdateTasks.updateObjectVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn2:serviceTask id="AAIUpdateModel" name="&#10;AAI &#10;Update &#10;(vnf model)&#10;" camunda:expression="${AAIUpdateTasks.updateObjectVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_19kfk17</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0g502yj</bpmn2:outgoing>
     </bpmn2:serviceTask>
+    <bpmn2:subProcess id="SubProcess_1nibii6" name="Error Handling&#10;&#10;" triggeredByEvent="true">
+      <bpmn2:startEvent id="StartEvent_1fnfrm5">
+        <bpmn2:outgoing>SequenceFlow_0s2743f</bpmn2:outgoing>
+        <bpmn2:errorEventDefinition />
+      </bpmn2:startEvent>
+      <bpmn2:endEvent id="EndEvent_124ugc0">
+        <bpmn2:incoming>SequenceFlow_0s2743f</bpmn2:incoming>
+        <bpmn2:terminateEventDefinition />
+      </bpmn2:endEvent>
+      <bpmn2:sequenceFlow id="SequenceFlow_0s2743f" sourceRef="StartEvent_1fnfrm5" targetRef="EndEvent_124ugc0" />
+    </bpmn2:subProcess>
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -63,6 +74,28 @@
       <bpmndi:BPMNShape id="ServiceTask_10b2mxq_di" bpmnElement="AAIUpdateModel">
         <dc:Bounds x="423" y="66" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_1nibii6_di" bpmnElement="SubProcess_1nibii6" isExpanded="true">
+        <dc:Bounds x="164" y="244" width="231" height="135" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1fnfrm5_di" bpmnElement="StartEvent_1fnfrm5">
+        <dc:Bounds x="201" y="300" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="174" y="336" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_124ugc0_di" bpmnElement="EndEvent_124ugc0">
+        <dc:Bounds x="338" y="300" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="311" y="336" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0s2743f_di" bpmnElement="SequenceFlow_0s2743f">
+        <di:waypoint xsi:type="dc:Point" x="237" y="318" />
+        <di:waypoint xsi:type="dc:Point" x="338" y="318" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="287.5" y="297" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn2:definitions>
