@@ -161,7 +161,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology = mapper.readValue(sdncVfModuleQueryResponse, GenericResourceApiVfmoduletopologyVfModuleTopology.class);
 		Map<String,String> paramsMap = new HashMap<>();
 
-		if(vnfTopology.getSdncGeneratedCloudResources() && vfModuleTopology.getSdncGeneratedCloudResources()) {
+		if( vfModuleTopology.getSdncGeneratedCloudResources()) {
 			buildParamsMapFromVfModuleSdncResponse(paramsMap, vfModuleTopology, true);
 			buildParamsMapFromVnfSdncResponse(paramsMap, vnfTopology, null, true);
 		}

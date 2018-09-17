@@ -88,6 +88,19 @@ insert into network_resource(model_uuid, model_name, model_invariant_uuid, descr
 insert into network_resource_customization(model_customization_uuid, model_instance_name, network_technology, network_type, network_role, network_scope, creation_timestamp, network_resource_model_uuid) values
 ('3bdbb104-476c-483e-9f8b-c095b3d308ac', 'CONTRAIL30_GNDIRECT 9', '', '', '', '', '2017-04-19 14:28:32', '10b36f65-f4e6-4be6-ae49-9596dc1c47fc');
 
+insert into instance_group(model_uuid, model_name, model_invariant_uuid, model_version, tosca_node_type, role, object_type, cr_model_uuid, instance_group_type) values
+('21e43a7c-d823-4f5b-a427-5235f63035ff', 'dror_cr_network_resource_1806..NetworkCollection..0', '81c94263-c01e-4046-b0c7-51878d658eab', '1', 'org.openecomp.groups.NetworkCollection', 'SUB_INTERFACE', 'L3_NETWORK', '5e3fca45-e2d8-4987-bef1-016d9bda1a8c', 'L3_NETWORK');
+
+insert into collection_resource(model_uuid, model_name, model_invariant_uuid, model_version, tosca_node_type, description) values
+('5e3fca45-e2d8-4987-bef1-016d9bda1a8c', 'Dror_CR_Network_Resource_1806', 'fe243154-ac18-405f-94c2-ef629d26b8bb', '2.0', 'org.openecomp.resource.cr.DrorCrNetworkResource1806', 'Creation date: 07/25/18');
+
+insert into collection_resource_customization(model_customization_uuid, model_instance_name, role, object_type, function, collection_resource_type, cr_model_uuid) values
+('c51096a4-6081-41f4-a540-3ed015a8064a', 'Dror_CR_Network_Resource_1806', 'Dror2', 'NetworkCollection', 'Dror1', 'Dror3', '5e3fca45-e2d8-4987-bef1-016d9bda1a8c');
+
+insert into collection_network_resource_customization(model_customization_uuid, model_instance_name, network_technology, network_type, network_role, network_scope, network_resource_model_uuid, instance_group_model_uuid, crc_model_customization_uuid) values
+('3bdbb104-ffff-483e-9f8b-c095b3d30844', 'ExtVL 0', 'CONTRAIL', 'L3-NETWORK', '', '', '10b36f65-f4e6-4be6-ae49-9596dc1c47fz', '21e43a7c-d823-4f5b-a427-5235f63035ff', 'c51096a4-6081-41f4-a540-3ed015a8064a'),
+('3bdbb104-ffff-483e-9f8b-c095b3d3068c', 'ExtVL 01', 'CONTRAIL', 'L3-NETWORK', '', '', '10b36f65-f4e6-4be6-ae49-9596dc1c47fz', '21e43a7c-d823-4f5b-a427-5235f63035ff', 'c51096a4-6081-41f4-a540-3ed015a8064a');
+
 insert into vnf_resource(orchestration_mode, description, creation_timestamp, model_uuid, aic_version_min, aic_version_max, model_invariant_uuid, model_version, model_name, tosca_node_type, heat_template_artifact_uuid) values
 ('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002672', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '2.0', 'vSAMP10a', 'VF', null);
 

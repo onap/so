@@ -20,7 +20,9 @@
 
 package org.onap.so.client.sdnc;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
@@ -29,10 +31,16 @@ import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -79,6 +87,9 @@ public class SdnCommonTasks {
         HttpHeaders httpHeader = new HttpHeaders();
         httpHeader.set("Authorization", auth);
         httpHeader.setContentType(MediaType.APPLICATION_JSON);
+        List<MediaType> acceptMediaTypes = new ArrayList<MediaType>();
+        acceptMediaTypes.add(MediaType.APPLICATION_JSON);
+        httpHeader.setAccept(acceptMediaTypes);
         return httpHeader;
     }
 

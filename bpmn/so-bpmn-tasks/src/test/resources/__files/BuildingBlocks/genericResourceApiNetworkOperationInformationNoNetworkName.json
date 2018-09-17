@@ -46,6 +46,7 @@
       "model-uuid" : "modelUuid",
       "model-invariant-uuid" : "modelInvariantUuid"
     },
+    "from-preload": null,
     "network-id" : "TEST_NETWORK_ID",
     "network-type" : null
   }

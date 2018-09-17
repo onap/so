@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.onap.so.adapters.vnfrest.CreateVfModuleResponse;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleResponse;
+import org.onap.so.adapters.vnfrest.DeleteVolumeGroupResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
@@ -72,8 +73,8 @@ public class VnfAdapterImpl {
 	}
 	
 	public void postProcessVnfAdapter(BuildingBlockExecution execution) {
-		try {
-            String vnfAdapterResponse = execution.getVariable("vnfAdapterRestV1Response");
+		try {			
+            String vnfAdapterResponse = execution.getVariable("vnfAdapterRestV1Response");           
             if (!StringUtils.isEmpty( vnfAdapterResponse)) {
                 Object vnfRestResponse = unMarshal(vnfAdapterResponse);
                 if(vnfRestResponse instanceof CreateVfModuleResponse) {
@@ -98,8 +99,15 @@ public class VnfAdapterImpl {
                         execution.setVariable("heatStackId", heatStackId);
                     }else{
                         exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "HeatStackId is missing from create VolumeGroup Vnf Adapter response.");
-                    }
-                }                
+                    }                    
+                } else if(vnfRestResponse instanceof DeleteVolumeGroupResponse) {                	
+                	VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+                	Boolean volumeGroupDelete = ((DeleteVolumeGroupResponse) vnfRestResponse).getVolumeGroupDeleted();
+                	if(null!= volumeGroupDelete && volumeGroupDelete) {                		
+                		volumeGroup.setHeatStackId(null);
+                		execution.setVariable("heatStackId", null);
+                	}
+                }
             }
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -116,7 +124,7 @@ public class VnfAdapterImpl {
             XMLReader xmlReader = spf.newSAXParser().getXMLReader();
 
             JAXBContext jaxbContext = JAXBContext.newInstance(CreateVfModuleResponse.class,
-                    CreateVolumeGroupResponse.class,DeleteVfModuleResponse.class);
+                    CreateVolumeGroupResponse.class,DeleteVfModuleResponse.class,DeleteVolumeGroupResponse.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
             InputSource inputSource = new InputSource(new StringReader(input));

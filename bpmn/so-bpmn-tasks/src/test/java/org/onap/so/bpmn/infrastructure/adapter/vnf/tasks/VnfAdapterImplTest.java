@@ -46,8 +46,9 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 	private static final String VNF_ADAPTER_REST_DELETE_RESPONSE = FileUtil.readResourceFile("__files/VfModularity/VNFAdapterRestDeleteResponse.xml");
 	private static final String VNF_ADAPTER_REST_CREATE_RESPONSE =  FileUtil.readResourceFile("__files/VfModularity/VNFAdapterRestCreateCallback.xml");
     private static final String VNF_ADAPTER_VOLUME_CREATE_RESPONSE =  FileUtil.readResourceFile("__files/VfModularity/CreateVfModuleVolumeCallbackResponse.xml");
+    private static final String VNF_ADAPTER_VOLUME_DELETE_RESPONSE =  FileUtil.readResourceFile("__files/VfModularity/DeleteVfModuleVolumeCallbackResponse.xml");
 	private static final String TEST_VFMODULE_HEATSTACK_ID = "slowburn";
-    private static final String TEST_VOLUME_HEATSTACK_ID = "testHeatStackId1";
+    private static final String TEST_VOLUME_HEATSTACK_ID = "testHeatStackId1";   
 
 	@Before
 	public void before() {
@@ -56,6 +57,7 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 		vfModule = setVfModule();
         volumeGroup = setVolumeGroup();
 		vfModule.setHeatStackId(null);
+		volumeGroup.setHeatStackId(null);
 	}
 
 	@Test
@@ -98,13 +100,14 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 
 	@Test
 	public void postProcessVnfAdapter_DeleteResponseTest() {
+		vfModule.setHeatStackId(TEST_VFMODULE_HEATSTACK_ID);
 		execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_DELETE_RESPONSE);
 		vnfAdapterImpl.postProcessVnfAdapter(execution);
 		assertNull(vfModule.getHeatStackId());
 	}
 	
 	@Test
-	public void postProcessVnfAdapter_ResponseNullTest() {
+	public void postProcessVnfAdapter_ResponseNullTest() {		
 		execution.setVariable("vnfAdapterRestV1Response", null);
 		vnfAdapterImpl.postProcessVnfAdapter(execution);
 		assertNull(vfModule.getHeatStackId());
@@ -119,9 +122,10 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 	
 	@Test
 	public void postProcessVnfAdapter_DeleteResponseTest_VfModuleDeletedFalse() {
+		vfModule.setHeatStackId(TEST_VFMODULE_HEATSTACK_ID);
 		execution.setVariable("vnfAdapterRestV1Response", "<deleteVfModuleResponse><vfModuleDeleted>false</vfModuleDeleted></deleteVfModuleResponse>");
 		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertNull(vfModule.getHeatStackId());
+		assertEquals(TEST_VFMODULE_HEATSTACK_ID, vfModule.getHeatStackId());
 	}
 	
 	@Test
@@ -133,9 +137,10 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 	
 	@Test
 	public void postProcessVnfAdapter_DeleteResponseTest_EmptyVfModuleDeletedTag() {
+		vfModule.setHeatStackId(TEST_VFMODULE_HEATSTACK_ID);
 		execution.setVariable("vnfAdapterRestV1Response", "<deleteVfModuleResponse></deleteVfModuleResponse>");
 		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertNull(vfModule.getHeatStackId());
+		assertEquals(TEST_VFMODULE_HEATSTACK_ID, vfModule.getHeatStackId());
 	}
 
 	@Test
@@ -157,10 +162,43 @@ public class VnfAdapterImplTest extends BaseTaskTest {
         expectedException.expect(BpmnError.class);
         execution.setVariable("vnfAdapterRestV1Response", "<createVolumeGroupResponse></createVolumeGroupResponse>");
         vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertNull(volumeGroup.getHeatStackId());
     }
+    
+    @Test
+	public void postProcessVnfAdapter_DeleteResponseTest_DeleteVolumeGroup() {
+    	volumeGroup.setHeatStackId(TEST_VOLUME_HEATSTACK_ID);
+		execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_VOLUME_DELETE_RESPONSE);
+		vnfAdapterImpl.postProcessVnfAdapter(execution);
+		assertNull(volumeGroup.getHeatStackId());
+	}
+	
+    
+    @Test
+	public void postProcessVnfAdapter_DeleteResponseTest_VolumeGroupDeletedFalse() {
+    	volumeGroup.setHeatStackId(TEST_VOLUME_HEATSTACK_ID);
+		execution.setVariable("vnfAdapterRestV1Response", "<deleteVolumeGroupResponse><volumeGroupDeleted>false</volumeGroupDeleted></deleteVolumeGroupResponse>");
+		vnfAdapterImpl.postProcessVnfAdapter(execution);
+		assertEquals(TEST_VOLUME_HEATSTACK_ID, volumeGroup.getHeatStackId());		
+	}
+	
+	@Test
+	public void postProcessVnfAdapter_DeleteResponseTest_EmptyDeleteVolumeGroupResponseTag() {
+        expectedException.expect(BpmnError.class);
+		execution.setVariable("vnfAdapterRestV1Response", "<volumeGroupDeleted></volumeGroupDeleted>");
+		vnfAdapterImpl.postProcessVnfAdapter(execution);	
+	}
+	
+	@Test
+	public void postProcessVnfAdapter_DeleteResponseTest_EmptyVolumeGroupDeletedTag() {
+		volumeGroup.setHeatStackId(TEST_VOLUME_HEATSTACK_ID);
+		execution.setVariable("vnfAdapterRestV1Response", "<deleteVolumeGroupResponse></deleteVolumeGroupResponse>");
+		vnfAdapterImpl.postProcessVnfAdapter(execution);
+		assertEquals(TEST_VOLUME_HEATSTACK_ID, volumeGroup.getHeatStackId());
+	}
 
 	@Test
-	public void postProcessVnfAdapterExceptionTest() {
+	public void postProcessVnfAdapterExceptionTest() {		
 		execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_CREATE_RESPONSE);
 		expectedException.expect(BpmnError.class);
 		lookupKeyMap.clear();

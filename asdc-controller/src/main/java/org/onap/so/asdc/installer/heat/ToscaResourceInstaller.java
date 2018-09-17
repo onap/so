@@ -488,13 +488,11 @@ public class ToscaResourceInstaller {
 							.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
 					IVfModuleData vfMetadata = vfModuleStructure.getVfModuleMetadata();	
 					
-					logger.debug("Comparing VFModule Metadata CustomizationUUID : " + vfMetadata.getVfModuleModelCustomizationUUID());
-					for(Group group : vfGroups){
-						logger.debug("To Group VFModuleModelCustomizationUUID " + group.getMetadata().getValue("vfModuleModelCustomizationUUID"));
-					}
+					logger.debug("Comparing VFModuleMetadata CustomizationUUID : " + vfMetadata.getVfModuleModelCustomizationUUID());
 					
-					Optional<org.onap.sdc.toscaparser.api.Group> matchingObject = vfGroups.stream().
-						    filter(group -> group.getMetadata().getValue("vfModuleModelCustomizationUUID").equals(vfMetadata.getVfModuleModelCustomizationUUID())).
+					Optional<org.onap.sdc.toscaparser.api.Group> matchingObject = vfGroups.stream()
+							.peek(group -> logger.debug("To Csar Group VFModuleModelCustomizationUUID " + group.getMetadata().getValue("vfModuleModelCustomizationUUID")))
+						    .filter(group -> group.getMetadata().getValue("vfModuleModelCustomizationUUID").equals(vfMetadata.getVfModuleModelCustomizationUUID())).
 						    findFirst();
 					if(matchingObject.isPresent()){
 						VfModuleCustomization vfModuleCustomization = createVFModuleResource(matchingObject.get(), nodeTemplate, toscaResourceStruct, 
