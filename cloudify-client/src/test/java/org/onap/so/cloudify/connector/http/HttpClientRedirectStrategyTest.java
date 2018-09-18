@@ -20,7 +20,15 @@
 package org.onap.so.cloudify.connector.http;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -29,6 +37,8 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
 
 public class HttpClientRedirectStrategyTest {
@@ -49,5 +59,45 @@ public class HttpClientRedirectStrategyTest {
         assertThat(httpClientRedirectStrategy.isRedirectable(HttpGet.METHOD_NAME)).isTrue();
         assertThat(httpClientRedirectStrategy.isRedirectable(HttpDelete.METHOD_NAME)).isTrue();
         assertThat(httpClientRedirectStrategy.isRedirectable(HttpHead.METHOD_NAME)).isTrue();
+    }
+
+    @Test
+    public void getRedirect_shouldReturnHttpHeadUriRequest() throws URISyntaxException, ProtocolException {
+        assertHttpUriRequestFor(HttpHead.METHOD_NAME, HttpHead.class);
+    }
+
+    @Test
+    public void getRedirect_shouldReturnHttpGetUriRequest() throws URISyntaxException, ProtocolException {
+        assertHttpUriRequestFor(HttpGet.METHOD_NAME, HttpGet.class);
+    }
+
+    private void assertHttpUriRequestFor(String methodName, Class<? extends HttpUriRequest> expectedHttpMethodClass)
+        throws URISyntaxException, ProtocolException {
+        // GIVEN
+        HttpRequest request = mock(HttpRequest.class, RETURNS_DEEP_STUBS);
+        given(request.getRequestLine().getMethod()).willReturn(methodName);
+        HttpResponse response = null;
+        HttpContext context = null;
+        URI expectedUri = new URI("http://localhost/host");
+        // WHEN
+        HttpUriRequest httpUriRequest = new TestableHttpClientRedirectStrategy(expectedUri)
+            .getRedirect(request, response, context);
+        // THEN
+        assertThat(httpUriRequest).isInstanceOf(expectedHttpMethodClass);
+        assertThat(httpUriRequest.getURI()).isEqualTo(expectedUri);
+    }
+
+    private static class TestableHttpClientRedirectStrategy extends HttpClientRedirectStrategy {
+
+        private final URI expectedUri;
+
+        public TestableHttpClientRedirectStrategy(URI expectedUri) {
+            this.expectedUri = expectedUri;
+        }
+
+        @Override
+        public URI getLocationURI(HttpRequest request, HttpResponse response, HttpContext context) {
+            return expectedUri;
+        }
     }
 }
