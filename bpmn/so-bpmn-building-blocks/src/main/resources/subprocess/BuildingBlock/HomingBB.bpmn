@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="_vwRmIBsREeeIQtzUKIjH4g" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="Homing" name="Homing" isExecutable="true">
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>SequenceFlow_1x9usa6</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:scriptTask id="callSniro" name="&#10;Call&#10;Sniro/Oof&#10;" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1x9usa6</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0lc15i7</bpmn2:outgoing>
+      <bpmn2:script>import org.onap.so.bpmn.common.scripts.*
+if(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")).getVariable("homingService") == "oof"){
+  OofHoming oofHoming = new OofHoming()
+  oofHoming.callOof(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")))
+}else{
+  SniroHomingV2 sniroHoming = new SniroHomingV2()
+  SniroHoming.callSniro(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")))
+}</bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_1x9usa6" sourceRef="StartEvent_1" targetRef="callSniro" />
+    <bpmn2:subProcess id="bpmnErrorSubprocess" name="Error Handling Subprocess" triggeredByEvent="true">
+      <bpmn2:endEvent id="EndEvent_07tjq3v">
+        <bpmn2:incoming>SequenceFlow_1rf4vs8</bpmn2:incoming>
+        <bpmn2:terminateEventDefinition />
+      </bpmn2:endEvent>
+      <bpmn2:startEvent id="StartEvent_1qiitb2">
+        <bpmn2:outgoing>SequenceFlow_00nlh7l</bpmn2:outgoing>
+        <bpmn2:errorEventDefinition />
+      </bpmn2:startEvent>
+      <bpmn2:scriptTask id="processMsoWorkflowException" name="Process Error" scriptFormat="groovy">
+        <bpmn2:incoming>SequenceFlow_00nlh7l</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_1rf4vs8</bpmn2:outgoing>
+        <bpmn2:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processSubflowsBPMNException(execution)</bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:sequenceFlow id="SequenceFlow_1rf4vs8" sourceRef="processMsoWorkflowException" targetRef="EndEvent_07tjq3v" />
+      <bpmn2:sequenceFlow id="SequenceFlow_00nlh7l" sourceRef="StartEvent_1qiitb2" targetRef="processMsoWorkflowException" />
+    </bpmn2:subProcess>
+    <bpmn2:subProcess id="javaExceptionSubProcess" name="Java Exception Sub Process" triggeredByEvent="true">
+      <bpmn2:scriptTask id="processJavaException" name="Process Error" scriptFormat="groovy">
+        <bpmn2:incoming>SequenceFlow_0kamg53</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_1o7154s</bpmn2:outgoing>
+        <bpmn2:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processJavaException(execution)</bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:startEvent id="StartEvent_1fbpeuw">
+        <bpmn2:outgoing>SequenceFlow_0kamg53</bpmn2:outgoing>
+        <bpmn2:errorEventDefinition errorRef="Error_1lwpypa" />
+      </bpmn2:startEvent>
+      <bpmn2:endEvent id="EndEvent_0jbvnr0">
+        <bpmn2:incoming>SequenceFlow_1o7154s</bpmn2:incoming>
+        <bpmn2:terminateEventDefinition />
+      </bpmn2:endEvent>
+      <bpmn2:sequenceFlow id="SequenceFlow_0kamg53" name="" sourceRef="StartEvent_1fbpeuw" targetRef="processJavaException" />
+      <bpmn2:sequenceFlow id="SequenceFlow_1o7154s" name="" sourceRef="processJavaException" targetRef="EndEvent_0jbvnr0" />
+    </bpmn2:subProcess>
+    <bpmn2:scriptTask id="processSniroHomingSolution" name="&#10;Process Solution&#10;" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1fipbmk</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_01apjvo</bpmn2:outgoing>
+      <bpmn2:script>import org.onap.so.bpmn.common.scripts.*
+if(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")).getVariable("homingService") == "oof"){
+  OofHoming oofHoming = new OofHoming()
+  oofHoming.processHomingSolution(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")))
+}else{
+  SniroHomingV2  sniroHoming = new SniroHomingV2 ()
+  sniroHoming.processSolution(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")), asyncResponse)
+}</bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:callActivity id="receiveAsyncCallback" name="Receive Async Callback" camunda:modelerTemplate="receiveWorkflowMessage" calledElement="ReceiveWorkflowMessage">
+      <bpmn2:extensionElements>
+        <camunda:in source="true" target="isDebugLogEnabled" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="asyncMessageType" target="RCVWFMSG_messageType" />
+        <camunda:in source="asyncCorrelator" target="RCVWFMSG_correlator" />
+        <camunda:in source="asyncTimeout" target="RCVWFMSG_timeout" />
+        <camunda:out source="WorkflowResponse" target="asyncCallbackResponse" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_0lc15i7</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1fipbmk</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_1fipbmk" sourceRef="receiveAsyncCallback" targetRef="processSniroHomingSolution" />
+    <bpmn2:sequenceFlow id="SequenceFlow_01apjvo" sourceRef="processSniroHomingSolution" targetRef="EndEvent_0rrbz2a" />
+    <bpmn2:endEvent id="EndEvent_0rrbz2a">
+      <bpmn2:incoming>SequenceFlow_01apjvo</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition />
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_0lc15i7" sourceRef="callSniro" targetRef="receiveAsyncCallback" />
+  </bpmn2:process>
+  <bpmn2:error id="Error_10hit0u" name="MSO Workflow Exception" errorCode="MSOWorkflowException" />
+  <bpmn2:error id="Error_1lwpypa" name="Java Lang Exception" errorCode="java.lang.Exception" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Homing">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="147" y="275" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0qmfpdr_di" bpmnElement="callSniro">
+        <dc:Bounds x="313" y="253" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1x9usa6_di" bpmnElement="SequenceFlow_1x9usa6">
+        <di:waypoint x="183" y="293" />
+        <di:waypoint x="313" y="293" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="203" y="278" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_16p12qo_di" bpmnElement="bpmnErrorSubprocess" isExpanded="true">
+        <dc:Bounds x="254" y="449" width="409" height="168" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_12gjiy8_di" bpmnElement="javaExceptionSubProcess" isExpanded="true">
+        <dc:Bounds x="284" y="632" width="350" height="159" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_07tjq3v_di" bpmnElement="EndEvent_07tjq3v">
+        <dc:Bounds x="579" y="523" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="552" y="564" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1qiitb2_di" bpmnElement="StartEvent_1qiitb2">
+        <dc:Bounds x="299" y="523" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="272" y="564" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_03hs6s9_di" bpmnElement="processMsoWorkflowException">
+        <dc:Bounds x="406" y="501" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_19gqykh_di" bpmnElement="processJavaException">
+        <dc:Bounds x="410" y="680" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1fbpeuw_di" bpmnElement="StartEvent_1fbpeuw">
+        <dc:Bounds x="318" y="702" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="291" y="743" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0jbvnr0_di" bpmnElement="EndEvent_0jbvnr0">
+        <dc:Bounds x="567" y="702" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="540" y="743" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rf4vs8_di" bpmnElement="SequenceFlow_1rf4vs8">
+        <di:waypoint x="506" y="541" />
+        <di:waypoint x="579" y="541" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="498" y="526" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00nlh7l_di" bpmnElement="SequenceFlow_00nlh7l">
+        <di:waypoint x="335" y="541" />
+        <di:waypoint x="363" y="541" />
+        <di:waypoint x="363" y="541" />
+        <di:waypoint x="406" y="541" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="333" y="541" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kamg53_di" bpmnElement="SequenceFlow_0kamg53">
+        <di:waypoint x="354" y="720" />
+        <di:waypoint x="410" y="720" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="337" y="705" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1o7154s_di" bpmnElement="SequenceFlow_1o7154s">
+        <di:waypoint x="510" y="720" />
+        <di:waypoint x="567" y="720" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="494" y="705" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1aapkvq_di" bpmnElement="processSniroHomingSolution">
+        <dc:Bounds x="597" y="253" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_031b5m3_di" bpmnElement="receiveAsyncCallback">
+        <dc:Bounds x="455" y="253" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fipbmk_di" bpmnElement="SequenceFlow_1fipbmk">
+        <di:waypoint x="555" y="293" />
+        <di:waypoint x="597" y="293" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="531" y="272" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_01apjvo_di" bpmnElement="SequenceFlow_01apjvo">
+        <di:waypoint x="697" y="293" />
+        <di:waypoint x="860" y="293" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="778.5" y="272" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_07i1a5x_di" bpmnElement="EndEvent_0rrbz2a">
+        <dc:Bounds x="860" y="275" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="877.17" y="315" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0lc15i7_di" bpmnElement="SequenceFlow_0lc15i7">
+        <di:waypoint x="413" y="293" />
+        <di:waypoint x="455" y="293" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="434" y="272" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

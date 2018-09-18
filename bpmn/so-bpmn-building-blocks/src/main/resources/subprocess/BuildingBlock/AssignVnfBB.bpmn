@@ -32,8 +32,8 @@
     <bpmn:sequenceFlow id="SequenceFlow_1uiok7v" name="yes" sourceRef="ExclusiveGateway_02tchpp" targetRef="Task_callHoming">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("callHoming")}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0v8d14a" sourceRef="Task_callHoming" targetRef="ExclusiveGateway_1blf52g" />
-    <bpmn:callActivity id="Task_callHoming" name="Call Homing" calledElement="HomingV2">
+    <bpmn:sequenceFlow id="SequenceFlow_0v8d14a" sourceRef="Task_callHoming" targetRef="Task_SDNCAdapterVnfTopologyAssign" />
+    <bpmn:callActivity id="Task_callHoming" name="Call Homing" calledElement="HomingBB">
       <bpmn:extensionElements>
         <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
