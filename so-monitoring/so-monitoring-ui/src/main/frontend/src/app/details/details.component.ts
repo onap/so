@@ -33,6 +33,7 @@ import { ViewEncapsulation } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { VarInstance } from '../model/variableInstance.model';
 import { ToastrNotificationService } from '../toastr-notification-service.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-details',
@@ -63,7 +64,8 @@ export class DetailsComponent implements OnInit {
 
   displayedColumnsVariable = ['name', 'type', 'value'];
 
-  constructor(private route: ActivatedRoute, private data: DataService, private popup: ToastrNotificationService, private router: Router) { }
+  constructor(private route: ActivatedRoute, private data: DataService, private popup: ToastrNotificationService,
+    private router: Router, private spinner: NgxSpinnerService) { }
 
   getActInst(procInstId: string) {
     this.data.getActivityInstance(procInstId).subscribe(
@@ -104,12 +106,15 @@ export class DetailsComponent implements OnInit {
   }
 
   displayCamundaflow(bpmnXml, activities: ACTINST[], r: Router) {
+    this.spinner.show();
 
     this.bpmnViewer.importXML(bpmnXml, (error) => {
       if (error) {
         console.error('Unable to load BPMN flow ', error);
         this.popup.error('Unable to load BPMN flow ');
+        this.spinner.hide();
       } else {
+        this.spinner.hide();
         let canvas = this.bpmnViewer.get('canvas');
         var eventBus = this.bpmnViewer.get('eventBus');
         eventBus.on('element.click', function(e) {
@@ -118,6 +123,7 @@ export class DetailsComponent implements OnInit {
             if (a.activityId == e.element.id && a.calledProcessInstanceId !== null) {
               console.log("will drill down to : " + a.calledProcessInstanceId);
               r.navigate(['/details/' + a.calledProcessInstanceId]);
+              this.spinner.show();
             }
           });
         });
