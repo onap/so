@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_55a12892",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1209
+      },
+      "writtenOn": "2018-09-18T07:16:25Z",
+      "side": 1,
+      "message": "I assume sdnc-directives contains vnf data taken from SDNC. Correct me if I\u0027m wrong.",
+      "range": {
+        "startLine": 190,
+        "startChar": 7,
+        "endLine": 190,
+        "endChar": 58
+      },
+      "revId": "7cd1708e88944069060b6bc141730a95b8af2af3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b5bd1cda",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1209
+      },
+      "writtenOn": "2018-09-18T07:16:25Z",
+      "side": 1,
+      "message": "Do we have any API contract in place to query multicloud?\nWith this line here, the create Vf-module request fails everytime.",
+      "range": {
+        "startLine": 260,
+        "startChar": 0,
+        "endLine": 261,
+        "endChar": 73
+      },
+      "revId": "7cd1708e88944069060b6bc141730a95b8af2af3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1570903e",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1209
+      },
+      "writtenOn": "2018-09-18T07:16:25Z",
+      "side": 1,
+      "message": "Can we make this more generic(Object type) so that a csar file can also be passed to multicloud?",
+      "range": {
+        "startLine": 300,
+        "startChar": 4,
+        "endLine": 300,
+        "endChar": 68
+      },
+      "revId": "7cd1708e88944069060b6bc141730a95b8af2af3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_35fcacb7",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfPluginAdapterImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 984,
+      "author": {
+        "id": 1209
+      },
+      "writtenOn": "2018-09-18T07:16:25Z",
+      "side": 1,
+      "message": "Where are we going to set these directives data? I guess, all the input params will be populated taken from the SDNC vnf \u0026 vf-module data.",
+      "range": {
+        "startLine": 984,
+        "startChar": 4,
+        "endLine": 984,
+        "endChar": 66
+      },
+      "revId": "7cd1708e88944069060b6bc141730a95b8af2af3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_950b4023",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/VnfAdapterRestUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1209
+      },
+      "writtenOn": "2018-09-18T07:16:25Z",
+      "side": 1,
+      "message": "Here the mode is set to HEAT if not cloudify. One way is to refer to the Orchestrator type based on cloudSiteId to select the mode.",
+      "range": {
+        "startLine": 67,
+        "startChar": 4,
+        "endLine": 71,
+        "endChar": 5
+      },
+      "revId": "7cd1708e88944069060b6bc141730a95b8af2af3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
