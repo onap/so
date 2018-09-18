@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +24,7 @@ package org.onap.so.apihandler.common;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -122,45 +125,60 @@ public class CamundaClientTest{
     }
     
     public String inputStream(String JsonInput)throws IOException{
-		JsonInput = "src/test/resources/CamundaClientTest" + JsonInput;
-		String input = new String(Files.readAllBytes(Paths.get(JsonInput)));
-		return input;
-	}
+        JsonInput = "src/test/resources/CamundaClientTest" + JsonInput;
+        String input = new String(Files.readAllBytes(Paths.get(JsonInput)));
+        return input;
+    }
     
     @Test
     public void wrapVIDRequestTest() throws IOException{
-    	CamundaClient testClient = new CamundaClient();
-    	testClient.setUrl("/mso/async/services/CreateGenericALaCarteServiceInstance");
-    	
-    	String requestId = "f7ce78bb-423b-11e7-93f8-0050569a796";
-    	boolean isBaseVfModule = true;
-    	int recipeTimeout = 10000;
-    	String requestAction = "createInstance";
-    	String serviceInstanceId = "12345679";
-    	String correlationId = "12345679";
-    	String vnfId = "234567891";
-    	String vfModuleId = "345678912";
-    	String volumeGroupId = "456789123";
-    	String networkId = "567891234";
-    	String configurationId = "678912345";
-    	String serviceType = "testService";
-    	String vnfType = "testVnf";
-    	String vfModuleType = "vfModuleType";
-    	String networkType = "networkType";
-    	String requestDetails = "{requestDetails: }";
-    	String apiVersion = "6";
-    	boolean aLaCarte = true;
-    	String requestUri = "v7/serviceInstances/assign";
-    	
-    	String testResult = testClient.wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction, serviceInstanceId, correlationId,
-    						vnfId, vfModuleId, volumeGroupId, networkId, configurationId, serviceType, 
-    						vnfType, vfModuleType, networkType, requestDetails, apiVersion, aLaCarte, requestUri, "");
-    	String expected = inputStream("/WrappedVIDRequest.json");
-    	
-    	assertEquals(expected, testResult);
+        CamundaClient testClient = new CamundaClient();
+        testClient.setUrl("/mso/async/services/CreateGenericALaCarteServiceInstance");
+        
+        String requestId = "f7ce78bb-423b-11e7-93f8-0050569a796";
+        boolean isBaseVfModule = true;
+        int recipeTimeout = 10000;
+        String requestAction = "createInstance";
+        String serviceInstanceId = "12345679";
+        String correlationId = "12345679";
+        String vnfId = "234567891";
+        String vfModuleId = "345678912";
+        String volumeGroupId = "456789123";
+        String networkId = "567891234";
+        String configurationId = "678912345";
+        String serviceType = "testService";
+        String vnfType = "testVnf";
+        String vfModuleType = "vfModuleType";
+        String networkType = "networkType";
+        String requestDetails = "{requestDetails: }";
+        String apiVersion = "6";
+        boolean aLaCarte = true;
+        String requestUri = "v7/serviceInstances/assign";
+        
+        String testResult = testClient.wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction, serviceInstanceId, correlationId,
+                            vnfId, vfModuleId, volumeGroupId, networkId, configurationId, serviceType, 
+                            vnfType, vfModuleType, networkType, requestDetails, apiVersion, aLaCarte, requestUri, "");
+        String expected = inputStream("/WrappedVIDRequest.json");
+        
+        assertEquals(expected, testResult);
     }
 
-
+    @Test
+    public void testPost() throws Exception{
+        CamundaClient testClient = new CamundaClient();
+        String orchestrationURI = "/engine-rest/process-definition/key/dummy/start";
+        MockEnvironment environment = new MockEnvironment();
+        
+        environment.setProperty("mso.camundaUR", "yourValue1");
+        testClient.setProps(environment);
+        testClient.setClient(mockHttpClient);
+        
+        testClient.setUrl(orchestrationURI);
+        
+        String responseBody ="{\"links\":[{\"method\":\"GET\",\"href\":\"http://localhost:9080/engine-rest/process-instance/2047c658-37ae-11e5-9505-7a1020524153\",\"rel\":\"self\"}],\"id\":\"2047c658-37ae-11e5-9505-7a1020524153\",\"definitionId\":\"dummy:10:73298961-37ad-11e5-9505-7a1020524153\",\"businessKey\":null,\"caseInstanceId\":null,\"ended\":true,\"suspended\":false}";
+        assertNull(testClient.post(responseBody));
+        
+    }
 
 
 }
