@@ -18,7 +18,7 @@
 						"adminURL": null
 					}
 				],
-				"endpointsLinks": null
+				"endpoints_links": null
 			},
 			{
 				"type": "network",
@@ -31,7 +31,7 @@
 						"adminURL": null
 					}
 				],
-				"endpointsLinks": null
+				"endpoints_links": null
 			},
 			{
 				"type": "identity",
@@ -44,7 +44,7 @@
 						"adminURL": null
 					}
 				],
-				"endpointsLinks": null
+				"endpoints_links": null
 			}
 		],
 		"user": null,

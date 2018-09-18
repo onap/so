@@ -1,11 +1,11 @@
 {
     "description" : "description",
     "links" : [],
-    "stackStatusReason" : "stackStatusReason",
-    "stackName" : "stackName",
-    "updatedTime" : null,
-    "creationTime" : null,
-    "stackStatus" : "stackStatus",
+    "stack_status_reason" : "stackStatusReason",
+    "stack_name" : "stackName",
+    "updated_time" : null,
+    "creation_time" : null,
+    "stack_status" : "stackStatus",
     "id" : "id",
     "files" : {}
 }
