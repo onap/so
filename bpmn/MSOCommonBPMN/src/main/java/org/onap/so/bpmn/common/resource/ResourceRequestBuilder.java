@@ -191,7 +191,9 @@ public class ResourceRequestBuilder {
 
         HashMap<String, String> map = new Gson().fromJson(value, new TypeToken<HashMap<String, String>>() {}.getType());
 
-        File csarFile = new File(System.getProperty("mso.config.path") + "ASDC/" + map.get("name"));
+        String filePath = System.getProperty("mso.config.path") + "ASDC/" +  map.get("version") + "/" + map.get("name");
+
+        File csarFile = new File(filePath);
 
         if(!csarFile.exists()) {
             throw new Exception("csar file does not exist.");
