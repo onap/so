@@ -35,21 +35,21 @@ import org.onap.so.montoring.model.ProcessDefinitionDetail;
 import org.onap.so.montoring.model.ProcessInstanceDetail;
 import org.onap.so.montoring.model.ProcessInstanceIdDetail;
 import org.onap.so.montoring.model.ProcessInstanceVariableDetail;
-import org.slf4j.ext.XLogger;
-import org.slf4j.ext.XLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author waqas.ikram@ericsson.com
  */
 @Service
 public class CamundaProcessDataServiceProviderImpl implements CamundaProcessDataServiceProvider {
-    private static final XLogger LOGGER = XLoggerFactory.getXLogger(CamundaProcessDataServiceProviderImpl.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CamundaProcessDataServiceProviderImpl.class);
     private final CamundaRestUrlProvider urlProvider;
 
     private final HttpRestServiceProvider httpRestServiceProvider;
@@ -69,7 +69,9 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
 
         if (processInstances.isPresent()) {
             final ProcessInstance[] instances = processInstances.get();
-            LOGGER.debug("found process instance for request id: {}, result size: {}", requestId, instances.length);
+            final String message = "found process instance for request id: " + requestId + 
+                ", result size: " + instances.length;
+            LOGGER.debug(message);
 
             if (instances.length > 0) {
                 for (int index = 0; index < instances.length; index++) {
@@ -77,12 +79,12 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
                     if (processInstance.getSuperProcessInstanceId() == null) {
                         return Optional.of(new ProcessInstanceIdDetail(processInstance.getId()));
                     }
-                    LOGGER.debug("found sub process instance id with super process instanceId: {}",
+                    LOGGER.debug("found sub process instance id with super process instanceId: " +
                             processInstance.getSuperProcessInstanceId());
                 }
             }
         }
-        LOGGER.error("Unable to find process intance for request id: {}", requestId);
+        LOGGER.error("Unable to find process intance for request id: " + requestId);
         return Optional.absent();
     }
 
@@ -101,7 +103,7 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
             return Optional.of(instanceDetail);
 
         }
-        LOGGER.error("Unable to find process intance for id: {}", processInstanceId);
+        LOGGER.error("Unable to find process intance for id: " + processInstanceId);
         return Optional.absent();
     }
 
@@ -118,7 +120,8 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
                 return Optional.of(new ProcessDefinitionDetail(processDefinitionId, xmlDefinition));
             }
         }
-        LOGGER.error("Unable to find process definition for processDefinitionId: {}", processDefinitionId);
+        LOGGER.error("Unable to find process definition for processDefinitionId: " + 
+                     processDefinitionId);
         return Optional.absent();
     }
 
@@ -145,7 +148,8 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
             }
             return activityInstanceDetails;
         }
-        LOGGER.error("Unable to find activity intance detail for process instance id: {}", processInstanceId);
+        LOGGER.error("Unable to find activity intance detail for process instance id: " + 
+                     processInstanceId);
         return Collections.emptyList();
     }
 
@@ -167,7 +171,8 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
             }
             return instanceVariableDetails;
         }
-        LOGGER.error("Unable to find process intance variable details for process instance id: {}", processInstanceId);
+        LOGGER.error("Unable to find process intance variable details for process instance id: " 
+                     + processInstanceId);
         return Collections.emptyList();
     }
 

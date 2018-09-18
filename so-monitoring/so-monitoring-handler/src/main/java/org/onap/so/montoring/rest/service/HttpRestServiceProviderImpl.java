@@ -21,8 +21,6 @@ package org.onap.so.montoring.rest.service;
 
 import org.onap.so.montoring.exception.InvalidRestRequestException;
 import org.onap.so.montoring.exception.RestProcessingException;
-import org.slf4j.ext.XLogger;
-import org.slf4j.ext.XLoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -33,13 +31,15 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author waqas.ikram@ericsson.com
  */
 public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
 
-    private static final XLogger LOGGER = XLoggerFactory.getXLogger(HttpRestServiceProviderImpl.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpRestServiceProviderImpl.class);
     private final RestTemplate restTemplate;
 
     public HttpRestServiceProviderImpl(final RestTemplate restTemplate) {
@@ -48,12 +48,13 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
 
     @Override
     public <T> Optional<T> getHttpResponse(final String url, final Class<T> clazz) {
-        LOGGER.trace("Will invoke HTTP GET using URL: {}", url);
+        LOGGER.trace("Will invoke HTTP GET using URL: " + url);
         try {
             final ResponseEntity<T> response = restTemplate.exchange(url, HttpMethod.GET, null, clazz);
             if (!response.getStatusCode().equals(HttpStatus.OK)) {
-                LOGGER.error("Unable to invoke HTTP GET using URL: {}, Response Code: {}", url,
-                        response.getStatusCode());
+                final String message = "Unable to invoke HTTP GET using URL: " + url + 
+                    ", Response Code: " + response.getStatusCode();
+                LOGGER.error(message);
                 return Optional.absent();
             }
 
@@ -61,8 +62,9 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
                 return Optional.of(response.getBody());
             }
         } catch (final HttpClientErrorException httpClientErrorException) {
-            LOGGER.error("Unable to invoke HTTP GET using url: {}, Response: {}", url,
-                    httpClientErrorException.getRawStatusCode(), httpClientErrorException);
+            final String message = "Unable to invoke HTTP GET using url: " + url + ", Response: " +
+                    httpClientErrorException.getRawStatusCode();
+            LOGGER.error(message, httpClientErrorException);
             final int rawStatusCode = httpClientErrorException.getRawStatusCode();
             if (rawStatusCode == HttpStatus.BAD_REQUEST.value() || rawStatusCode == HttpStatus.NOT_FOUND.value()) {
                 throw new InvalidRestRequestException("No result found for given url: " + url);
@@ -70,8 +72,9 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
             throw new RestProcessingException("Unable to invoke HTTP GET using URL: " + url);
 
         } catch (final RestClientException restClientException) {
-            LOGGER.error("Unable to invoke HTTP GET using url: {}", url, restClientException);
-            throw new RestProcessingException("Unable to invoke HTTP GET using URL: " + url, restClientException);
+            LOGGER.error("Unable to invoke HTTP GET using url: " + url, restClientException);
+            throw new RestProcessingException("Unable to invoke HTTP GET using URL: " + 
+                                              url, restClientException);
         }
 
         return Optional.absent();
@@ -83,8 +86,9 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
             final HttpEntity<?> request = new HttpEntity<>(object);
             final ResponseEntity<T> response = restTemplate.exchange(url, HttpMethod.POST, request, clazz);
             if (!response.getStatusCode().equals(HttpStatus.OK)) {
-                LOGGER.error("Unable to invoke HTTP GET using URL: {}, Response Code: {}", url,
-                        response.getStatusCode());
+                final String message = "Unable to invoke HTTP GET using URL: " + url + 
+                    ", Response Code: " + response.getStatusCode();
+                LOGGER.error(message);
                 return Optional.absent();
             }
 
@@ -93,8 +97,9 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
             }
 
         } catch (final HttpClientErrorException httpClientErrorException) {
-            LOGGER.error("Unable to invoke HTTP POST using url: {}, Response: {}", url,
-                    httpClientErrorException.getRawStatusCode(), httpClientErrorException);
+            final String message = "Unable to invoke HTTP POST using url: " + url + 
+                ", Response: " + httpClientErrorException.getRawStatusCode();
+            LOGGER.error(message, httpClientErrorException);
             final int rawStatusCode = httpClientErrorException.getRawStatusCode();
             if (rawStatusCode == HttpStatus.BAD_REQUEST.value() || rawStatusCode == HttpStatus.NOT_FOUND.value()) {
                 throw new InvalidRestRequestException("No result found for given url: " + url);
@@ -102,8 +107,9 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
             throw new RestProcessingException("Unable to invoke HTTP POST using URL: " + url);
 
         } catch (final RestClientException restClientException) {
-            LOGGER.error("Unable to invoke HTTP POST using url: {}", url, restClientException);
-            throw new RestProcessingException("Unable to invoke HTTP POST using URL: " + url, restClientException);
+            LOGGER.error("Unable to invoke HTTP POST using url: " + url, restClientException);
+            throw new RestProcessingException("Unable to invoke HTTP POST using URL: " 
+                                              + url, restClientException);
         }
 
         return Optional.absent();
