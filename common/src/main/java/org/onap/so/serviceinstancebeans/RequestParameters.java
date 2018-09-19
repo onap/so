@@ -43,6 +43,8 @@ public class RequestParameters implements Serializable {
 	private List<Map<String, Object>> userParams = new ArrayList<>();
 	@JsonProperty("aLaCarte")
 	private Boolean aLaCarte;
+	@JsonProperty("payload")
+	private String payload;
 	
 	// DONOT USE. It is intended to handle older VID requests(prior to 1802)
 	@Deprecated
@@ -57,9 +59,7 @@ public class RequestParameters implements Serializable {
 	@JsonProperty("usePreload")
 	private Boolean usePreload; // usePreload would always be true for Update
 	@JsonProperty("rebuildVolumeGroups")
-	private Boolean rebuildVolumeGroups;
-	@JsonProperty("payload")
-	private String payload;
+	private Boolean rebuildVolumeGroups;	
 
 	public String getSubscriptionServiceType() {
 		return subscriptionServiceType;
@@ -79,6 +79,13 @@ public class RequestParameters implements Serializable {
 	
 	public Boolean isaLaCarte() {
 		return aLaCarte;
+	}
+	
+	public String getPayload(){
+		return payload;
+	}
+	public void setPayload(String value){
+		this.payload = value;
 	}
 
 	@Deprecated
@@ -151,13 +158,7 @@ public class RequestParameters implements Serializable {
 
 	public void setRebuildVolumeGroups(Boolean rebuildVolumeGroups) {
 		this.rebuildVolumeGroups = rebuildVolumeGroups;
-	}
-	public String getPayload(){
-		return payload;
-	}
-	public void setPayload(String value){
-		this.payload = value;
-	}
+	}	
 	
 	@Override
 	public String toString() {

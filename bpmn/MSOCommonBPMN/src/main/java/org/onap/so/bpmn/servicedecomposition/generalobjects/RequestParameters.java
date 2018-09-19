@@ -47,7 +47,8 @@ public class RequestParameters implements Serializable {
 	private List<Map<String, Object>> userParams = new ArrayList<>();
 	@JsonProperty("aLaCarte")
 	private Boolean aLaCarte;
-
+	@JsonProperty("payload")
+	private String payload;
 
 	public String getSubscriptionServiceType() {
 		return subscriptionServiceType;
@@ -67,6 +68,13 @@ public class RequestParameters implements Serializable {
 
 	public Boolean isaLaCarte() {
 		return aLaCarte;
+	}
+	
+	public String getPayload(){
+		return payload;
+	}
+	public void setPayload(String value){
+		this.payload = value;
 	}
 
 	public List<Map<String, Object>> getUserParams() {

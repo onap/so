@@ -38,6 +38,7 @@ import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAICommonTasks;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAICreateTasks;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAIDeleteTasks;
+import org.onap.so.bpmn.infrastructure.aai.tasks.AAIFlagTasks;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAIQueryTasks;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAIUpdateTasks;
 import org.onap.so.bpmn.infrastructure.adapter.network.tasks.NetworkAdapterCreateTasks;
@@ -46,6 +47,7 @@ import org.onap.so.bpmn.infrastructure.adapter.network.tasks.NetworkAdapterUpdat
 import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterCreateTasks;
 import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterDeleteTasks;
 import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterImpl;
+import org.onap.so.bpmn.infrastructure.appc.tasks.AppcRunTasks;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetwork;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetworkBBUtils;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignVnf;
@@ -105,6 +107,13 @@ public abstract class BaseBPMNTest {
 
 	@MockBean
 	protected AAIDeleteTasks aaiDeleteTasks;
+	
+	@MockBean
+	protected AAIFlagTasks aaiFlagTasks;
+	
+	
+	@MockBean
+	protected AppcRunTasks appcRunTasks;
 
 	@MockBean
 	protected SDNCActivateTasks sdncActivateTasks;
