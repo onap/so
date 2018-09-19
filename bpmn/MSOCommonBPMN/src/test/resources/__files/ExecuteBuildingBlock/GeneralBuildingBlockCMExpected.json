@@ -1,0 +1,29 @@
+{
+  "requestContext": {
+    "source": "VID",
+    "mso-request-id": "requestId",
+    "action": "createInstance",
+    "requestParameters": {
+      "userParams": [],
+      "aLaCarte": true
+    },
+    "configurationParameters": []
+  },
+  "orchContext": {
+    "is-rollback-enabled": true
+  },
+  "cloudRegion": {
+    "cloud-owner": "att-aic"
+  },
+  "userInput": null,
+  "customer": {
+    "vpn-bindings": []
+  },
+  "serviceInstance": {
+    "vnfs": [null],
+    "pnfs": [],
+    "allotted-resources": [],
+    "networks": [],
+    "configurations": []
+  }
+}
