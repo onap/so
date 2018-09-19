@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,9 @@ import org.junit.runner.RunWith;
 import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
+import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
+import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
+import org.onap.so.db.request.beans.RequestProcessingData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +44,8 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MSORequestDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -89,6 +94,7 @@ public class RequestsDbClientTest {
     private void verifyOperationStatus(OperationStatus request,OperationStatus response){
         assertThat(request, sameBeanAs(response).ignoring("operateAt").ignoring("finishedAt"));
    }
+
 
     private void verifyInfraActiveRequests(InfraActiveRequests infraActiveRequestsResponse) {
         assertThat(infraActiveRequestsResponse, sameBeanAs(infraActiveRequests).ignoring("modifyTime").ignoring("log"));
@@ -188,5 +194,38 @@ public class RequestsDbClientTest {
         verifyOperationStatus(operationStatus,operationStatusResponse);
 
         assertNull(requestsDbClient.getOneByServiceIdAndOperationId(UUID.randomUUID().toString(),operationStatus.getOperationId()));
+    }
+
+
+    @Test
+    public void getRequestProcessingDataBySoRequestIdTest(){
+        List<RequestProcessingData> requestProcessingDataList = requestsDbClient
+                .getRequestProcessingDataBySoRequestId("00032ab7-na18-42e5-965d-8ea592502018");
+        assertNotNull(requestProcessingDataList);
+        assertFalse(requestProcessingDataList.isEmpty());
+        assertEquals(2,requestProcessingDataList.size());
+    }
+
+    @Test
+    public void findOneByOperationalEnvIdAndServiceModelVersionIdTest(){
+        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus =requestsDbClient.findOneByOperationalEnvIdAndServiceModelVersionId("1234","TEST1234");
+        assertNotNull(operationalEnvServiceModelStatus);
+        assertEquals("1234",operationalEnvServiceModelStatus.getOperationalEnvId());
+        assertEquals("TEST1234",operationalEnvServiceModelStatus.getServiceModelVersionId());
+    }
+
+    @Test
+    public void getAllByOperationalEnvIdAndRequestId(){
+        List<OperationalEnvServiceModelStatus> operationalEnvServiceModelStatuses =requestsDbClient.getAllByOperationalEnvIdAndRequestId("1234","00032ab7-3fb3-42e5-965d-8ea592502017");
+        assertNotNull(operationalEnvServiceModelStatuses);
+        assertFalse(operationalEnvServiceModelStatuses.isEmpty());
+        assertEquals(2,operationalEnvServiceModelStatuses.size());
+    }
+
+    @Test
+    public void getDistributionStatusByIdTest(){
+        OperationalEnvDistributionStatus operationalEnvDistributionStatus =requestsDbClient.getDistributionStatusById("111");
+        assertNotNull(operationalEnvDistributionStatus);
+        assertEquals("111",operationalEnvDistributionStatus.getDistributionId());
     }
 }

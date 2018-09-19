@@ -488,21 +488,24 @@ public class ToscaResourceInstaller {
 							.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
 					IVfModuleData vfMetadata = vfModuleStructure.getVfModuleMetadata();	
 					
-					logger.debug("Comparing VFModuleMetadata CustomizationUUID : " + vfMetadata.getVfModuleModelCustomizationUUID());
+					logger.debug("Comparing Vf_Modules_Metadata CustomizationUUID : " + vfMetadata.getVfModuleModelCustomizationUUID());
 					
 					Optional<org.onap.sdc.toscaparser.api.Group> matchingObject = vfGroups.stream()
 							.peek(group -> logger.debug("To Csar Group VFModuleModelCustomizationUUID " + group.getMetadata().getValue("vfModuleModelCustomizationUUID")))
-						    .filter(group -> group.getMetadata().getValue("vfModuleModelCustomizationUUID").equals(vfMetadata.getVfModuleModelCustomizationUUID())).
-						    findFirst();
+						    .filter(group -> group.getMetadata().getValue("vfModuleModelCustomizationUUID").equals(vfMetadata.getVfModuleModelCustomizationUUID()))
+						    .findFirst();
 					if(matchingObject.isPresent()){
 						VfModuleCustomization vfModuleCustomization = createVFModuleResource(matchingObject.get(), nodeTemplate, toscaResourceStruct, 
 																							 vfResourceStructure,vfMetadata, vnfResource, service, existingCvnfcSet, existingVnfcSet);
 						vfModuleCustomization.getVfModule().setVnfResources(vnfResource.getVnfResources());
 					}else
-						throw new Exception("Cannot find matching VFModule Customization for VF Module Metadata: " + vfMetadata.getVfModuleModelCustomizationUUID());
+						throw new Exception("Cannot find matching VFModule Customization in Csar for Vf_Modules_Metadata: " + vfMetadata.getVfModuleModelCustomizationUUID());
 					
 				}
 				service.getVnfCustomizations().add(vnfResource);
+			} else{
+				logger.debug("Notification VF ResourceCustomizationUUID: " + vfNotificationResource.getResourceCustomizationUUID() + " doesn't match " +
+						     "Tosca VF Customization UUID: " +  vfCustomizationUUID);
 			}
 		}
 	}
@@ -1150,7 +1153,7 @@ public class ToscaResourceInstaller {
 			vfcInstanceGroup.setModelInvariantUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
 			vfcInstanceGroup.setModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 			vfcInstanceGroup.setModelVersion(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
-		vfcInstanceGroup.setToscaNodeType(group.getType());
+			vfcInstanceGroup.setToscaNodeType(group.getType());
 			vfcInstanceGroup.setRole("SUB-INTERFACE");   // Set Role
 			vfcInstanceGroup.setType(InstanceGroupType.VNFC);  // Set type	
 			
@@ -1201,7 +1204,7 @@ public class ToscaResourceInstaller {
 			if(vfModule==null)
 				vfModule=createVfModule(group, toscaResourceStructure, vfModuleData, vfMetadata);
 			
-			vfModuleCustomization = createVfModuleCustomzation(group, toscaResourceStructure, vfModule, vfModuleData);
+			vfModuleCustomization = createVfModuleCustomization(group, toscaResourceStructure, vfModule, vfModuleData);
 			setHeatInformationForVfModule(toscaResourceStructure, vfResourceStructure, vfModule, vfModuleCustomization,
 					vfMetadata);
 			vfModuleCustomization.setVfModule(vfModule);
@@ -1416,7 +1419,7 @@ public class ToscaResourceInstaller {
 		return vfModule;
 	}
 
-	protected VfModuleCustomization createVfModuleCustomzation(Group group,
+	protected VfModuleCustomization createVfModuleCustomization(Group group,
 			ToscaResourceStructure toscaResourceStructure, VfModule vfModule, IVfModuleData vfModuleData) {
 		VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
 		
@@ -1691,6 +1694,8 @@ public class ToscaResourceInstaller {
 				testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
 		vnfResource.setAicVersionMin(
 				testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
+		vnfResource.setCategory(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
+		vnfResource.setSubCategory(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY));
 		
 		return vnfResource;
 	}

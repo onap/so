@@ -221,7 +221,7 @@ public class WorkflowActionBBTasks {
 	}
 
 	public void checkRetryStatus(DelegateExecution execution) {
-		if (execution.getVariable("handlingCode") == "Retry") {
+		if (execution.getVariable("handlingCode").equals("Retry")) {
 			int currSequence = (int) execution.getVariable("gCurrentSequence");
 			currSequence--;
 			execution.setVariable("gCurrentSequence", currSequence);
@@ -239,8 +239,9 @@ public class WorkflowActionBBTasks {
 		List<ExecuteBuildingBlock> flowsToExecute = (List<ExecuteBuildingBlock>) execution
 				.getVariable("flowsToExecute");
 		List<ExecuteBuildingBlock> rollbackFlows = new ArrayList();
-		int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE) - 1;
-		for (int i = flowsToExecute.size() - 1; i >= 0; i--) {
+		int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE) + 1;
+		int listSize = flowsToExecute.size();
+		for (int i = listSize - 1; i >= 0; i--) {
 			if (i >= currentSequence) {
 				flowsToExecute.remove(i);
 			} else {
@@ -248,11 +249,13 @@ public class WorkflowActionBBTasks {
 				BuildingBlock bb = flowsToExecute.get(i).getBuildingBlock();
 				String flowName = flowsToExecute.get(i).getBuildingBlock().getBpmnFlowName();
 				if (flowName.contains("Assign")) {
-					flowName = "Unassign" + flowName.substring(7, flowName.length());
+					flowName = "Unassign" + flowName.substring(6, flowName.length());
 				} else if (flowName.contains("Create")) {
 					flowName = "Delete" + flowName.substring(6, flowName.length());
 				} else if (flowName.contains("Activate")) {
 					flowName = "Deactivate" + flowName.substring(8, flowName.length());
+				}else{
+					continue;
 				}
 				flowsToExecute.get(i).getBuildingBlock().setBpmnFlowName(flowName);
 				rollbackFlows.add(flowsToExecute.get(i));
@@ -262,7 +265,6 @@ public class WorkflowActionBBTasks {
 			execution.setVariable("isRollbackNeeded", false);
 		else
 			execution.setVariable("isRollbackNeeded", true);
-
 		execution.setVariable("flowsToExecute", rollbackFlows);
 		execution.setVariable("handlingCode", "PreformingRollback");
 	}

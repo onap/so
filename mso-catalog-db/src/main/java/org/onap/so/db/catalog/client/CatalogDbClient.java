@@ -417,11 +417,11 @@ public class CatalogDbClient {
 
 	public RainyDayHandlerStatus getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(
 			String flowName, String serviceType, String vnfType, String errorCode, String workStep) {
-		return this.getSingleResource(rainyDayHandlerStatusClient, UriBuilder
+		return this.getSingleResource(rainyDayHandlerStatusClient, getUri(UriBuilder
 				.fromUri(findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep)
 				.queryParam(FLOW_NAME, flowName).queryParam(SERVICE_TYPE, serviceType)
 				.queryParam(VNF_TYPE, vnfType).queryParam(ERROR_CODE, errorCode).queryParam(WORK_STEP, workStep)
-				.build());
+				.build().toString()));
 	}
 
 	public  ServiceRecipe getFirstByServiceModelUUIDAndAction(String modelUUID, String action){

@@ -38,6 +38,7 @@ import org.onap.so.db.catalog.beans.VnfComponentsRecipe;
 import org.onap.so.db.catalog.beans.VnfRecipe;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,6 +61,18 @@ public class CatalogDbClientTest {
     @Before
     public void initialize() {
         client.wiremockPort = String.valueOf(port);
+    }
+
+    @Test
+    public void testGetRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(){
+        RainyDayHandlerStatus rainyDayHandlerStatus = client.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep("AssignServiceInstanceBB", "*", "*", "*", "*");
+        Assert.assertEquals("Rollback", rainyDayHandlerStatus.getPolicy());
+    }
+
+    @Test
+    public void testGetRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStepRecordNotFound(){
+        RainyDayHandlerStatus rainyDayHandlerStatus = client.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(UUID.randomUUID().toString(), "*", "*", "*", "*");
+        Assert.assertNull(rainyDayHandlerStatus);
     }
 
     @Test

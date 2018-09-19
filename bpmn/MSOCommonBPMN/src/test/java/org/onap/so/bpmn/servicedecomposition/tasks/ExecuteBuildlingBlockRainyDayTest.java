@@ -53,6 +53,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 	private GenericVnf vnf;
 	private BuildingBlock buildingBlock;
 	private ExecuteBuildingBlock executeBuildingBlock;
+	private static final String ASTERISK = "*";
 	
 	@Before
 	public void before() {
@@ -99,7 +100,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		rainyDayHandlerStatus.setServiceType("st1");
 		rainyDayHandlerStatus.setVnfType("vnft1");
 		rainyDayHandlerStatus.setPolicy("Rollback");
-		rainyDayHandlerStatus.setWorkStep("ASTERISK");
+		rainyDayHandlerStatus.setWorkStep(ASTERISK);
 		
 		doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep("AssignServiceInstanceBB", "st1", "vnft1", "7000", "*");
 		
@@ -115,15 +116,15 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		vnf.setVnfType("vnft1");
 
 		RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
-		rainyDayHandlerStatus.setErrorCode("ASTERISK");
+		rainyDayHandlerStatus.setErrorCode(ASTERISK);
 		rainyDayHandlerStatus.setFlowName("AssignServiceInstanceBB");
-		rainyDayHandlerStatus.setServiceType("ASTERISK");
-		rainyDayHandlerStatus.setVnfType("ASTERISK");
+		rainyDayHandlerStatus.setServiceType(ASTERISK);
+		rainyDayHandlerStatus.setVnfType(ASTERISK);
 		rainyDayHandlerStatus.setPolicy("Rollback");
-		rainyDayHandlerStatus.setWorkStep("ASTERISK");
+		rainyDayHandlerStatus.setWorkStep(ASTERISK);
 		
-		doReturn(null).when(MOCK_catalogDbClient).getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep("AssignServiceInstanceBB", "st1", "vnft1", "7000", "ASTERISK");
-		doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep("AssignServiceInstanceBB", "ASTERISK", "ASTERISK", "ASTERISK", "ASTERISK");
+		doReturn(null).when(MOCK_catalogDbClient).getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep("AssignServiceInstanceBB", "st1", "vnft1", "7000", ASTERISK);
+		doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep("AssignServiceInstanceBB", ASTERISK, ASTERISK, ASTERISK, ASTERISK);
 		
 		executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution);
 		

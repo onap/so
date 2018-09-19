@@ -153,55 +153,56 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
 		ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
 		BuildingBlock bb1 = new BuildingBlock();
-		bb1.setBpmnFlowName("CreateNetworkBB");
+		bb1.setBpmnFlowName("AssignVfModuleBB");
 		flowsToExecute.add(ebb1);
 		ebb1.setBuildingBlock(bb1);
 		ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
 		BuildingBlock bb2 = new BuildingBlock();
-		bb2.setBpmnFlowName("ActivateNetworkBB");
+		bb2.setBpmnFlowName("CreateVfModuleBB");
 		flowsToExecute.add(ebb2);
 		ebb2.setBuildingBlock(bb2);
 		ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
 		BuildingBlock bb3 = new BuildingBlock();
-		bb3.setBpmnFlowName("CreateVolumeGroupBB");
+		bb3.setBpmnFlowName("ActivateVfModuleBB");
 		flowsToExecute.add(ebb3);
 		ebb3.setBuildingBlock(bb3);
-		ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
-		BuildingBlock bb4 = new BuildingBlock();
-		bb4.setBpmnFlowName("ActivateVolumeGroupBB");
-		flowsToExecute.add(ebb4);
-		ebb4.setBuildingBlock(bb4);
-		ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock();
-		BuildingBlock bb5 = new BuildingBlock();
-		bb5.setBpmnFlowName("CreateVfModuleBB");
-		flowsToExecute.add(ebb5);
-		ebb5.setBuildingBlock(bb5);
-		ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock();
-		BuildingBlock bb6 = new BuildingBlock();
-		bb6.setBpmnFlowName("ActivateVfModuleBB");
-		flowsToExecute.add(ebb6);
-		ebb6.setBuildingBlock(bb6);
-		ExecuteBuildingBlock ebb7 = new ExecuteBuildingBlock();
-		BuildingBlock bb7 = new BuildingBlock();
-		bb7.setBpmnFlowName("ActivateVnfBB");
-		ebb7.setBuildingBlock(bb7);
-		flowsToExecute.add(ebb7);
-		ExecuteBuildingBlock ebb8 = new ExecuteBuildingBlock();
-		BuildingBlock bb8 = new BuildingBlock();
-		bb8.setBpmnFlowName("ActivateServiceInstance");
-		ebb8.setBuildingBlock(bb8);
-		flowsToExecute.add(ebb8);
 		
 		execution.setVariable("flowsToExecute", flowsToExecute);
-		execution.setVariable("gCurrentSequence", 6);
+		execution.setVariable("gCurrentSequence", 2);
+		
+		workflowActionBBTasks.rollbackExecutionPath(execution);
+		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"DeactivateVfModuleBB");
+		assertEquals(ebbs.get(1).getBuildingBlock().getBpmnFlowName(),"DeleteVfModuleBB");
+		assertEquals(ebbs.get(2).getBuildingBlock().getBpmnFlowName(),"UnassignVfModuleBB");	
+	}
+	
+	@Test
+	public void rollbackExecutionPathUnfinishedFlowTest(){
+		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
+		ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
+		BuildingBlock bb1 = new BuildingBlock();
+		bb1.setBpmnFlowName("AssignVfModuleBB");
+		flowsToExecute.add(ebb1);
+		ebb1.setBuildingBlock(bb1);
+		ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
+		BuildingBlock bb2 = new BuildingBlock();
+		bb2.setBpmnFlowName("CreateVfModuleBB");
+		flowsToExecute.add(ebb2);
+		ebb2.setBuildingBlock(bb2);
+		ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
+		BuildingBlock bb3 = new BuildingBlock();
+		bb3.setBpmnFlowName("ActivateVfModuleBB");
+		flowsToExecute.add(ebb3);
+		ebb3.setBuildingBlock(bb3);
+		
+		execution.setVariable("flowsToExecute", flowsToExecute);
+		execution.setVariable("gCurrentSequence", 1);
 		
 		workflowActionBBTasks.rollbackExecutionPath(execution);
 		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
 		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"DeleteVfModuleBB");
-		assertEquals(ebbs.get(1).getBuildingBlock().getBpmnFlowName(),"DeactivateVolumeGroupBB");
-		assertEquals(ebbs.get(2).getBuildingBlock().getBpmnFlowName(),"DeleteVolumeGroupBB");
-		assertEquals(ebbs.get(3).getBuildingBlock().getBpmnFlowName(),"DeactivateNetworkBB");
-		assertEquals(ebbs.get(4).getBuildingBlock().getBpmnFlowName(),"DeleteNetworkBB");		
+		assertEquals(ebbs.get(1).getBuildingBlock().getBpmnFlowName(),"UnassignVfModuleBB");	
 	}
 	
 	@Test

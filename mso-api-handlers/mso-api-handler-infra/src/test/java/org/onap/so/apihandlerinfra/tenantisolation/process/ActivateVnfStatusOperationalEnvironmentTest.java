@@ -76,8 +76,8 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 	private final int retryCountThree = 3;
 	private final int retryCountTwo = 2;	
 	private final int retryCountZero = 0;	
+	private final String sdcDistributionId1 = "TEST_distributionId1";
 	private final String sdcDistributionId = "TEST_distributionId";
-	private final String sdcDistributionId1 = "TEST_distributionId1";	
 	private final String statusOk = Status.DISTRIBUTION_COMPLETE_OK.toString();
 	private final String statusError = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
 	private final String statusSent = "SENT";
@@ -221,12 +221,12 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
 		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
-				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"RETRY\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"RETRY\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
 		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
-				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
@@ -290,12 +290,11 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 						.withStatus(HttpStatus.SC_OK)));
 
 		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
-				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId1\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"SENT\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
 		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
-				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":2,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":2,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 		
@@ -491,12 +490,12 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
 		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
-				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"SKIP\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"SKIP\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
 		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
-				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
+				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
