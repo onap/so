@@ -301,6 +301,35 @@ public class BBInputSetupTest {
 
 		assertThat(actual, sameBeanAs(expected));
 	}
+	
+	@Test
+	public void testGetGBBCM() throws Exception {
+		GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockCMExpected.json"),
+				GeneralBuildingBlock.class);
+
+		ExecuteBuildingBlock executeBB = new ExecuteBuildingBlock();
+		executeBB.setRequestId("requestId");
+		RequestDetails requestDetails = new RequestDetails();		
+		requestDetails.setModelInfo(null);
+		RequestParameters requestParams = new RequestParameters();
+		requestParams.setaLaCarte(true);
+		requestDetails.setRequestParameters(requestParams);
+		RequestInfo requestInfo = new RequestInfo();
+		requestInfo.setSuppressRollback(true);
+		requestDetails.setRequestInfo(requestInfo);
+		doReturn(requestDetails).when(SPY_bbInputSetupUtils).getRequestDetails(executeBB.getRequestId());
+		Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+		String resourceId = "123";
+		String requestAction = "createInstance";
+		doReturn(expected).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
+				requestAction, resourceId);
+		doNothing().when(SPY_bbInputSetup).populateLookupKeyMapWithIds(any(WorkflowResourceIds.class), any());
+		doReturn(null).when(bbInputSetupMapperLayer).mapAAIGenericVnfIntoGenericVnf(any(org.onap.aai.domain.yang.GenericVnf.class));
+		GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBCM(executeBB, requestDetails, lookupKeyMap, requestAction, 
+				resourceId);
+
+		assertThat(actual, sameBeanAs(expected));
+	}
 
 	@Test
 	public void testGetGBBALaCarteNonService() throws Exception {

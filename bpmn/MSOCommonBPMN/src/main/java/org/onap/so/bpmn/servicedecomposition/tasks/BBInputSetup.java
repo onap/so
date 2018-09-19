@@ -190,14 +190,19 @@ public class BBInputSetup implements JavaDelegate {
 		if(requestDetails == null) {
 			requestDetails = bbInputSetupUtils.getRequestDetails(requestId);
 		}
-		ModelType modelType = requestDetails.getModelInfo().getModelType();
-		if (aLaCarte && modelType.equals(ModelType.service)) {
-			return this.getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId);
-		} else if (aLaCarte && !modelType.equals(ModelType.service)) {
-			return this.getGBBALaCarteNonService(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId,
-					vnfType);
-		} else {
-			return this.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
+		if (requestDetails.getModelInfo() == null) {
+			return this.getGBBCM(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId);
+		}
+		else {
+			ModelType modelType = requestDetails.getModelInfo().getModelType();
+			if (aLaCarte && modelType.equals(ModelType.service)) {
+				return this.getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId);
+			} else if (aLaCarte && !modelType.equals(ModelType.service)) {
+				return this.getGBBALaCarteNonService(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId,
+						vnfType);
+			} else {
+				return this.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
+			}
 		}
 	}
 
@@ -235,6 +240,25 @@ public class BBInputSetup implements JavaDelegate {
 			msoLogger.debug("Related Service Instance Model Info from AAI: " + service);
 			throw new Exception("Could not find relevant information for related Service Instance");
 		}
+	}
+	
+	protected GeneralBuildingBlock getGBBCM(ExecuteBuildingBlock executeBB,
+			RequestDetails requestDetails, Map<ResourceKey, String> lookupKeyMap, String requestAction,
+			String resourceId) throws Exception {		
+		ServiceInstance serviceInstance = new ServiceInstance();
+		String serviceInstanceId = lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID);
+		serviceInstance.setServiceInstanceId(serviceInstanceId);
+		
+		List<GenericVnf> genericVnfs = serviceInstance.getVnfs();
+		
+		String vnfId = lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID);
+		org.onap.aai.domain.yang.GenericVnf aaiGenericVnf = bbInputSetupUtils.getAAIGenericVnf(vnfId);
+		
+		GenericVnf genericVnf = this.mapperLayer.mapAAIGenericVnfIntoGenericVnf(aaiGenericVnf);
+		genericVnfs.add(genericVnf);		
+		
+		return this.populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, new Customer());
+		
 	}
 
 	protected void populateObjectsOnAssignAndCreateFlows(RequestDetails requestDetails, Service service, String bbName,
@@ -790,7 +814,9 @@ public class BBInputSetup implements JavaDelegate {
 			customer = mapCustomer(globalCustomerId, subscriptionServiceType);
 		}
 		outputBB.setServiceInstance(serviceInstance);
-		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
+		if (customer.getServiceSubscription() != null) {
+			customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
+		}
 		outputBB.setCustomer(customer);
 		return outputBB;
 	}
