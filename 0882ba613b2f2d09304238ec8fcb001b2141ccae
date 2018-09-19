@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_ec742637",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 2363
+      },
+      "writtenOn": "2018-09-19T05:52:07Z",
+      "side": 1,
+      "message": "[1] https://gerrit.onap.org/r/#/c/61225/5/docs/specs/multicloud_infra_workload.rst\nThis is lower case in [1]\n\n\"template_type\":\"\u003cheat/tosca/etc.\u003e\",",
+      "range": {
+        "startLine": 199,
+        "startChar": 41,
+        "endLine": 199,
+        "endChar": 45
+      },
+      "revId": "0882ba613b2f2d09304238ec8fcb001b2141ccae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
