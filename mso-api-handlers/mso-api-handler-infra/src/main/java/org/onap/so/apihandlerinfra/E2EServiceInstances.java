@@ -80,8 +80,8 @@ import io.swagger.annotations.ApiOperation;
 
 
 @Component
-@Path("/e2eServiceInstances")
-@Api(value = "/e2eServiceInstances", description = "API Requests for E2E Service Instances")
+@Path("/onap/so/infra/e2eServiceInstances")
+@Api(value = "/onap/so/infra/e2eServiceInstances", description = "API Requests for E2E Service Instances")
 public class E2EServiceInstances {
 
 	private HashMap<String, String> instanceIdMap = new HashMap<>();

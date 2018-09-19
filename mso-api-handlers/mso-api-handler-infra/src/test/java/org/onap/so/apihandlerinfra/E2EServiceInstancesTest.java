@@ -59,7 +59,7 @@ import com.github.tomakehurst.wiremock.http.Fault;
 public class E2EServiceInstancesTest extends BaseTest {
 private final ObjectMapper mapper = new ObjectMapper();	
 	
-	private final String e2eServInstancesUri = "/e2eServiceInstances/";
+	private final String e2eServInstancesUri = "/onap/so/infra/e2eServiceInstances/";
 	
 	
 	@Before
