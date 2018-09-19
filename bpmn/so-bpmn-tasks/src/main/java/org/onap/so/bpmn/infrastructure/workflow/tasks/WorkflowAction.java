@@ -103,6 +103,7 @@ public class WorkflowAction {
 	private static final String CREATEINSTANCE = "createInstance";
 	private static final String USERPARAMSERVICE = "service";
 	private static final String supportedTypes = "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances";
+	private static final String HOMINGSOLUTION = "Homing_Solution";
 	private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
 	
 	@Autowired
@@ -159,6 +160,17 @@ public class WorkflowAction {
 			}
 			execution.setVariable("resourceId", resourceId);
 			execution.setVariable("resourceType", resourceType);
+
+			if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
+				List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters()
+						.getUserParams();
+				for (Map<String, Object> params : userParams) {
+					if (params.containsKey(HOMINGSOLUTION)) {
+						execution.setVariable("homing", true);
+						execution.setVariable("callHoming", true);
+						execution.setVariable("homingSolution", params.get(HOMINGSOLUTION));
+					}
+			}
 
 			if (aLaCarte) {
 				if (orchFlows == null || orchFlows.isEmpty()) {
