@@ -341,6 +341,7 @@ public class BBInputSetupMapperLayer {
 		requestParams.setaLaCarte(requestParameters.getALaCarte());
 		requestParams.setSubscriptionServiceType(requestParameters.getSubscriptionServiceType());
 		requestParams.setUserParams(requestParameters.getUserParams());
+		requestParams.setPayload(requestParameters.getPayload());
 		return requestParams;
 	}
 
