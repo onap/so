@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_8228db33",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-19T12:29:17Z",
+      "side": 1,
+      "message": "Please extend the base client like we have for Policy/AAI/etc\n\norg.onap.so.client.RestClient",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a2d63726",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-19T12:29:17Z",
+      "side": 1,
+      "message": "I have been working to remove MSO logger please utilize SLF4J Logger",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_421e430d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-19T12:29:17Z",
+      "side": 1,
+      "message": "If you extend the base client the interceptor will log all of this properly.",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0214cbe6",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-19T12:29:17Z",
+      "side": 1,
+      "message": "We should not use strings to set header items, we should utilize constants or enumerations from the Jax-RS Library",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_42e5e306",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-19T12:29:17Z",
+      "side": 1,
+      "message": "Please use SLF4J Logger",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_62dc9f46",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-19T12:29:17Z",
+      "side": 1,
+      "message": "Does OOF not have a bean we can marshal this into?",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e2ef4fe7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-19T12:29:17Z",
+      "side": 1,
+      "message": "Why is this a static method? It seems not needed.",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
