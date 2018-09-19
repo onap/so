@@ -1,0 +1,14 @@
+{
+  "name": "VNFUpgradePreCheckActivity",
+  "description": "Activity to UpgradePreCheck on VNF",
+  "categoryList": [
+    "VNF"
+  ],
+  "inputParameters": [],
+  "outputParameters": [
+    {
+      "name": "WorkflowException",
+      "type": "WorkflowException"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "VNFQuiesceTrafficActivity",
+  "description": "Activity to QuiesceTraffic on VNF",
+  "categoryList": [
+    "VNF"
+  ],
+  "inputParameters": [],
+  "outputParameters": [
+    {
+      "name": "WorkflowException",
+      "type": "WorkflowException"
+    }
+  ]
+}

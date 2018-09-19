@@ -1,0 +1,14 @@
+{
+  "name": "VNFResumeTrafficActivity",
+  "description": "Activity to ResumeTraffic on VNF",
+  "categoryList": [
+    "VNF"
+  ],
+  "inputParameters": [],
+  "outputParameters": [
+    {
+      "name": "WorkflowException",
+      "type": "WorkflowException"
+    }
+  ]
+}

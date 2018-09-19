@@ -1,0 +1,14 @@
+{
+  "name": "VNFHealthCheckActivity",
+  "description": "Activity to HealthCheck VNF",
+  "categoryList": [
+    "VNF"
+  ],
+  "inputParameters": [],
+  "outputParameters": [
+    {
+      "name": "WorkflowException",
+      "type": "WorkflowException"
+    }
+  ]
+}

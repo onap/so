@@ -1,0 +1,14 @@
+{
+  "name": "VNFUnsetInMaintFlagActivity",
+  "description": "Activity to Unset InMaint Flag in A&AI",
+  "categoryList": [
+    "VNF"
+  ],
+  "inputParameters": [],
+  "outputParameters": [
+    {
+      "name": "WorkflowException",
+      "type": "WorkflowException"
+    }
+  ]
+}

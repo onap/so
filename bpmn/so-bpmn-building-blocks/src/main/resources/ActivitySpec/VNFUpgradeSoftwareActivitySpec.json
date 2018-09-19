@@ -1,0 +1,14 @@
+{
+  "name": "VNFUpgradeSoftwareActivity",
+  "description": "Activity to UpgradeSoftware on VNF",
+  "categoryList": [
+    "VNF"
+  ],
+  "inputParameters": [],
+  "outputParameters": [
+    {
+      "name": "WorkflowException",
+      "type": "WorkflowException"
+    }
+  ]
+}
