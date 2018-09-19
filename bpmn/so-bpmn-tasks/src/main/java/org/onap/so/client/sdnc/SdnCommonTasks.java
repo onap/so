@@ -26,21 +26,14 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
-import org.json.JSONObject;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -99,24 +92,32 @@ public class SdnCommonTasks {
      * @return
      * @throws BadResponseException
      */
-    public String validateSDNResponse(LinkedHashMap<?, ?> output) throws BadResponseException {
-        if (CollectionUtils.isEmpty(output)) {
-            msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, NO_RESPONSE_FROM_SDNC, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, NO_RESPONSE_FROM_SDNC);
-            throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
+	public String validateSDNResponse(LinkedHashMap<?, ?> output) throws BadResponseException {
+		if (CollectionUtils.isEmpty(output)) {
+			msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, NO_RESPONSE_FROM_SDNC, "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, NO_RESPONSE_FROM_SDNC);
+			throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
+		}
+        LinkedHashMap<?, ?> embeddedResponse =(LinkedHashMap<?, ?>) output.get("output");
+        String responseCode = "";
+        String responseMessage = "";
+        if (embeddedResponse != null) {
+        	responseCode = (String) embeddedResponse.get(RESPONSE_CODE);
+            responseMessage = (String) embeddedResponse.get(RESPONSE_MESSAGE);
         }
-        String responseCode = (String) output.get(RESPONSE_CODE);
-        String responseMessage = (String) output.get(RESPONSE_MESSAGE);
-        msoLogger.info("ResponseCode: " + responseCode + " ResponseMessage: " + responseMessage);
-        int code = StringUtils.isNotEmpty(responseCode) ? Integer.parseInt(responseCode) : 0;
-        if (isHttpCodeSuccess(code)) {
-            msoLogger.info("Successful Response from SDNC");
-            return responseMessage;
-        } else {
-            String errorMessage = String.format(SDNC_CODE_NOT_0_OR_IN_200_299, responseMessage);
-            msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, errorMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError, errorMessage);
-            throw new BadResponseException(errorMessage);
-        }
-    }
+        
+		msoLogger.info("ResponseCode: " + responseCode + " ResponseMessage: " + responseMessage);
+		int code = StringUtils.isNotEmpty(responseCode) ? Integer.parseInt(responseCode) : 0;
+		if (isHttpCodeSuccess(code)) {
+			msoLogger.info("Successful Response from SDNC");
+			return responseMessage;
+		} else {
+			String errorMessage = String.format(SDNC_CODE_NOT_0_OR_IN_200_299, responseMessage);
+			msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, errorMessage, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.DataError, errorMessage);
+			throw new BadResponseException(errorMessage);
+		}
+	}
     
     /***
      * 

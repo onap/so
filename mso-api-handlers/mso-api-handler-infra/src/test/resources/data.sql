@@ -275,7 +275,16 @@ VALUES
 ('vfModule', 'replaceInstance', '1', 'Gr api recipe to replace vf-module', '/mso/async/services/WorkflowActionBB', 180, 'GR-API-DEFAULT'),
 ('vfModule', 'deactivateAndCloudDelete', '1', 'Gr api recipe to deactivateAndCloudDelete vf-module', '/mso/async/services/WorkflowActionBB', 180, 'GR-API-DEFAULT'),
 ('vfModule', 'scaleOut', '1', 'Gr api recipe to scale out vfModule', '/mso/async/services/WorkflowActionBB', '180', 'GR-API-DEFAULT');               
+INSERT INTO requestdb.activate_operational_env_service_model_distribution_status (OPERATIONAL_ENV_ID, SERVICE_MODEL_VERSION_ID, REQUEST_ID,SERVICE_MOD_VER_FINAL_DISTR_STATUS,RECOVERY_ACTION,RETRY_COUNT_LEFT,WORKLOAD_CONTEXT, CREATE_TIME, MODIFY_TIME)
+VALUES
+('1234', 'TEST1234', '00032ab7-3fb3-42e5-965d-8ea592502017', "Test", "Test", 1, 'DEFAULT', '2018-08-14 16:50:59',  '2018-08-14 16:50:59');
+INSERT INTO requestdb.activate_operational_env_service_model_distribution_status (OPERATIONAL_ENV_ID, SERVICE_MODEL_VERSION_ID, REQUEST_ID,SERVICE_MOD_VER_FINAL_DISTR_STATUS,RECOVERY_ACTION,RETRY_COUNT_LEFT,WORKLOAD_CONTEXT, CREATE_TIME, MODIFY_TIME)
+VALUES
+('1234', 'TEST1235', '00032ab7-3fb3-42e5-965d-8ea592502017', "Test", "Test", 2, 'DEFAULT', '2018-08-14 16:50:59',  '2018-08-14 16:50:59');
 
+INSERT INTO requestdb.activate_operational_env_per_distributionid_status (DISTRIBUTION_ID, DISTRIBUTION_ID_STATUS, DISTRIBUTION_ID_ERROR_REASON, CREATE_TIME, MODIFY_TIME, OPERATIONAL_ENV_ID, SERVICE_MODEL_VERSION_ID, REQUEST_ID)
+VALUES
+('111', 'TEST', 'ERROR', '2018-09-12 19:29:24', '2018-09-12 19:29:25', '1234', 'TEST1234', '00032ab7-3fb3-42e5-965d-8ea592502017');
 
 UPDATE vnf_components_recipe
 SET vf_module_model_uuid = 'VNF-API-DEFAULT'

@@ -1,0 +1,15 @@
+{
+  "output": {
+    "svc-request-id": "5d24d40e-4c77-4c06-94a3-6d168c47a57c",
+    "network-response-information": {
+      "instance-id": "4063e0aa-af13-4872-8473-b40c94f9316b",
+      "object-path": "restconf/config/GENERIC-RESOURCE-API:services/service/2c9c7996-75a7-4f92-becc-9e13e8bd288a/service-data/networks/network/4063e0aa-af13-4872-8473-b40c94f9316b/network-data/network-topology/"
+    },
+    "response-code": "200",
+    "service-response-information": {
+      "instance-id": "2c9c7996-75a7-4f92-becc-9e13e8bd288a"
+    },
+    "response-message": "",
+    "ack-final-indicator": "Y"
+  }
+}

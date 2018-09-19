@@ -42,7 +42,7 @@ public class ExecuteBuildingBlockRainyDay {
 	
 	@Autowired
 	private CatalogDbClient catalogDbClient;
-	private static final String ASTERISK = "ASTERISK";
+	private static final String ASTERISK = "*";
 
 	public void setRetryTimer(DelegateExecution execution) {
 		try {

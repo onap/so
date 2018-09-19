@@ -203,11 +203,11 @@ public class ASDCNotificationLogging {
 		
         List<NodeTemplate> vfNodeTemplatesList = toscaResourceStructure.getSdcCsarHelper().getServiceVfList();
         for (NodeTemplate vfNodeTemplate :  vfNodeTemplatesList) {
-        	
+        	  
+        	buffer.append(System.lineSeparator());
         	buffer.append(System.lineSeparator());
     		buffer.append("VNF Properties:");
-    		buffer.append(System.lineSeparator());
-        	
+    		buffer.append(System.lineSeparator());       	
     		buffer.append("Model Name:");
     		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
     		buffer.append(System.lineSeparator());
@@ -262,6 +262,7 @@ public class ASDCNotificationLogging {
      			for (Group group : groupList) { 	
      				Metadata instanceMetadata = group.getMetadata();
      				
+     				buffer.append(System.lineSeparator());
      	    		buffer.append(System.lineSeparator());
      	    		buffer.append("VNFC Instance Group Properties:");
      	    		buffer.append(System.lineSeparator());
@@ -277,18 +278,19 @@ public class ASDCNotificationLogging {
      	    		buffer.append(System.lineSeparator());
      	      		buffer.append("InvariantUuid:");
      	    		buffer.append(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
-     	    		buffer.append(System.lineSeparator());     				
+     	    		buffer.append(System.lineSeparator());       	    		
      			}
      			
      		}
      		
-     			
+     		
     		List<Group> vfGroups = toscaResourceStructure.getSdcCsarHelper().getVfModulesByVf(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
     		
     		for(Group group : vfGroups){
         		
     			Metadata vfMetadata = group.getMetadata();
     			
+    			buffer.append(System.lineSeparator());
     	   		buffer.append(System.lineSeparator());
         		buffer.append("VF Module Properties:");
         		buffer.append(System.lineSeparator());
@@ -306,13 +308,14 @@ public class ASDCNotificationLogging {
         		buffer.append(System.lineSeparator()); 
          		buffer.append("Description:");
         		buffer.append(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
-        		buffer.append(System.lineSeparator());     
+        		buffer.append(System.lineSeparator());
     		}
     		
     		List<NodeTemplate> cvfcList = toscaResourceStructure.getSdcCsarHelper().getNodeTemplateBySdcType(vfNodeTemplate, SdcTypes.CVFC);
     		
     		for(NodeTemplate cvfcTemplate : cvfcList) {
     			
+    			buffer.append(System.lineSeparator());
            		buffer.append(System.lineSeparator());
         		buffer.append("CVNFC Properties:");
         		buffer.append(System.lineSeparator());
@@ -339,6 +342,7 @@ public class ASDCNotificationLogging {
         		List<NodeTemplate> vfcList = toscaResourceStructure.getSdcCsarHelper().getNodeTemplateBySdcType(cvfcTemplate, SdcTypes.VFC);
         		
         		for(NodeTemplate vfcTemplate : vfcList) {
+        			buffer.append(System.lineSeparator());
               		buffer.append(System.lineSeparator());
             		buffer.append("VNFC Properties:");
             		buffer.append(System.lineSeparator());
@@ -370,13 +374,13 @@ public class ASDCNotificationLogging {
 		List<NodeTemplate> nodeTemplatesVLList = toscaResourceStructure.getSdcCsarHelper().getServiceVlList();
 					
     	if(nodeTemplatesVLList != null){
-    		
-    		buffer.append(System.lineSeparator());
-    		buffer.append("NETWORK Level Properties:");
-    		buffer.append(System.lineSeparator());
-    		
+    		 		
     		for(NodeTemplate vlNode : nodeTemplatesVLList){
 			
+    			buffer.append(System.lineSeparator());
+        		buffer.append(System.lineSeparator());
+        		buffer.append("NETWORK Level Properties:");
+        		buffer.append(System.lineSeparator());
     			buffer.append("Model Name:");
     			buffer.append(testNull(vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
     			buffer.append(System.lineSeparator()); 
@@ -414,6 +418,7 @@ public class ASDCNotificationLogging {
 		
 		if (networkCollectionList != null) {
 			for (NodeTemplate crNode : networkCollectionList) {	
+				buffer.append(System.lineSeparator());
 		   		buffer.append("Model Name:");
 	    		buffer.append(crNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
 	    		buffer.append(System.lineSeparator());
@@ -448,6 +453,7 @@ public class ASDCNotificationLogging {
 	    			
 	    			Metadata vlMetadata = vlNodeTemplate.getMetaData();
 	    			
+	    			buffer.append(System.lineSeparator());
     		  		buffer.append(System.lineSeparator());
     				buffer.append("Network CR VL Properties:");
     				buffer.append(System.lineSeparator());
@@ -481,7 +487,8 @@ public class ASDCNotificationLogging {
 	    		if(groupList != null){
 	    			for (Group group : groupList) { 
 	    				Metadata instanceMetadata = group.getMetadata();
-	    		  		buffer.append(System.lineSeparator());
+	    				buffer.append(System.lineSeparator());
+	    				buffer.append(System.lineSeparator());
 	    				buffer.append("Network Instance Group Properties:");
 	    				buffer.append(System.lineSeparator());
 	    				
