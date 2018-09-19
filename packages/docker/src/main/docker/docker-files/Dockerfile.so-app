@@ -7,7 +7,7 @@ ARG https_proxy
 ENV HTTPS_PROXY=$https_proxy
 ENV https_proxy=$HTTPS_PROXY
 
-RUN mkdir /app && mkdir /app/config && mkdir /app/certificates && mkdir /app/logs  && mkdir /app/ca-certificates
+RUN mkdir /app && mkdir /app/ASDC && mkdir /app/config && mkdir /app/certificates && mkdir /app/logs  && mkdir /app/ca-certificates
 
 COPY maven/app.jar /app
 COPY configs/logging/logback-spring.xml /app
