@@ -1,23 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.0">
   <bpmn:process id="DeleteSDNCNetworkResource" name="DeleteSDNCNetworkResource" isExecutable="true">
-    <bpmn:startEvent id="deleteNetworkResource_StartEvent" name="deleteNetworkResource_StartEvent">
-      <bpmn:outgoing>SequenceFlow_1qo2pln</bpmn:outgoing>
+    <bpmn:startEvent id="deleteNetworkResource_StartEvent_delete" name="deleteNetworkResource_StartEvent">
+      <bpmn:outgoing>SequenceFlow_1qo2pln_delete</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1qo2pln" sourceRef="deleteNetworkResource_StartEvent" targetRef="Task_1dlrfiw" />
-    <bpmn:sequenceFlow id="SequenceFlow_0khtova" sourceRef="PreprocessIncomingRequest_task" targetRef="Task_0tezqd4" />
-    <bpmn:scriptTask id="PreprocessIncomingRequest_task" name="prepare SDNC Request" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_0jh88qw</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_00vqgvt</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0khtova</bpmn:outgoing>
-      <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
+    <bpmn:sequenceFlow id="SequenceFlow_1qo2pln_delete" sourceRef="deleteNetworkResource_StartEvent_delete" targetRef="Task_1dlrfiw_delete" />
+    <bpmn:sequenceFlow id="SequenceFlow_0khtova_delete" sourceRef="PreprocessIncomingRequest_task_delete" targetRef="Task_0tfzqd4_delete" />
+    <bpmn:scriptTask id="PreprocessIncomingRequest_task_delete" name="prepare SDNC Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0jh88qw_delete</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_00vqgvt_delete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0khtova_delete</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new DeleteSDNCNetworkResource()
 dcsi.prepareSDNCRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:endEvent id="EndEvent_1x6k78c" name="delete SDNC call end">
-      <bpmn:incoming>SequenceFlow_15wux6a</bpmn:incoming>
+    <bpmn:endEvent id="EndEvent_1x6k78c_delete" name="delete SDNC call end">
+      <bpmn:incoming>SequenceFlow_15wux6a_delete</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="CallActivity_1600xlj" name="Call SDNC RSRC &#10; Adapter V1&#10;" calledElement="sdncAdapter">
+    <bpmn:sequenceFlow id="SequenceFlow_0ow44q0_delete" sourceRef="Task_023hred_delete" targetRef="ScriptTask_1emjxm2_delete" />
+    <bpmn:scriptTask id="Task_023hred_delete" name="post SDNC delete call">
+      <bpmn:incoming>SequenceFlow_0ds04u5_delete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ow44q0_delete</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new DeleteSDNCNetworkResource()
+dcsi.postDeleteSDNCCall(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0w2es8j_delete" sourceRef="Task_1dlrfiw_delete" targetRef="Task_13sx2bp_delete" />
+    <bpmn:sequenceFlow id="SequenceFlow_18l3crb_delete" sourceRef="Task_13sx2bp_delete" targetRef="ExclusiveGateway_0xrgeq3_delete" />
+    <bpmn:scriptTask id="Task_1dlrfiw_delete" name="Set the Recipe DesignTimeParam" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1qo2pln_delete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0w2es8j_delete</bpmn:outgoing>
+      <bpmn:script>String recipeParamXsdDemo="""{"operationType":"GRE"}"""
+String recipeParamXsd=""
+execution.setVariable("recipeParamXsd", recipeParamXsd)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_13sx2bp_delete" name="Pre Process Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0w2es8j_delete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_18l3crb_delete</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new DeleteSDNCNetworkResource()
+dcsi.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1mz0vdx_delete" sourceRef="Task_0tfzqd4_delete" targetRef="Task_18tomkl_delete" />
+    <bpmn:sequenceFlow id="SequenceFlow_15mvedq_delete" sourceRef="Task_18tomkl_delete" targetRef="CallActivity_0bj0odq" />
+    <bpmn:scriptTask id="Task_0tfzqd4_delete" name="Delete progress update parameters before delete" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0khtova_delete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1mz0vdx_delete</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new DeleteSDNCNetworkResource()
+dcsi.prepareUpdateBeforeDeleteSDNCResource(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Task_18tomkl_delete" name="update progress update">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic QlBFTENsaWVudDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1mz0vdx_delete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_15mvedq_delete</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ServiceTask_1cm8iwr_delete" name="update progress update">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic QlBFTENsaWVudDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0yooswe_delete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ds04u5_delete</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="ScriptTask_1emjxm2_delete" name="Send Sync Ack Response" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0ow44q0_delete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_15wux6a_delete</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def csi = new  DeleteSDNCNetworkResource()
+csi.sendSyncResponse(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_15wux6a_delete" sourceRef="ScriptTask_1emjxm2_delete" targetRef="EndEvent_1x6k78c_delete" />
+    <bpmn:sequenceFlow id="SequenceFlow_0ds04u5_delete" sourceRef="ServiceTask_1cm8iwr_delete" targetRef="Task_023hred_delete" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0xrgeq3_delete" name="is Deactivate Required">
+      <bpmn:incoming>SequenceFlow_18l3crb_delete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jh88qw_delete</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0h3klf0_delete</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0jh88qw_delete" name="No" sourceRef="ExclusiveGateway_0xrgeq3_delete" targetRef="PreprocessIncomingRequest_task_delete">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("isActivateRequired") != "true")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0h3klf0_delete" name="Yes" sourceRef="ExclusiveGateway_0xrgeq3_delete" targetRef="Task_1xychp0_delete">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("isActivateRequired") == "true")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_00vqgvt_delete" sourceRef="Task_1xychp0_delete" targetRef="PreprocessIncomingRequest_task_delete" />
+    <bpmn:callActivity id="Task_1xychp0_delete" name="Call Deactivate SDNC Network Resource" calledElement="DeActivateSDNCNetworkResource">
+      <bpmn:extensionElements>
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+        <camunda:in source="requestAction" target="requestAction" />
+        <camunda:in source="recipeParams" target="recipeParams" />
+        <camunda:in source="recipeParamXsd" target="recipeParamXsd" />
+        <camunda:in source="URN_mso_workflow_sdncadapter_callback" target="URN_mso_workflow_sdncadapter_callback" />
+        <camunda:in source="resourceInput" target="resourceInput" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0h3klf0_delete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_00vqgvt_delete</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="Task_1ikbt2h_delete" name="Create progress update parameters After delete" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0lplazm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0yooswe_delete</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcsi = new DeleteSDNCNetworkResource()
+dcsi.prepareUpdateAfterDeleteSDNCResource(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0yooswe_delete" sourceRef="Task_1ikbt2h_delete" targetRef="ServiceTask_1cm8iwr_delete" />
+    <bpmn:callActivity id="CallActivity_0bj0odq" name="Call SDNC RSRC &#10; Adapter V1&#10;" calledElement="sdncAdapter">
       <bpmn:extensionElements>
         <camunda:in source="sdncAdapterWorkflowRequest" target="sdncAdapterWorkflowRequest" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
@@ -28,263 +146,126 @@ dcsi.prepareSDNCRequest(execution)</bpmn:script>
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="sdncAdapterWorkflowRequest" target="sdncAdapterWorkflowRequest" />
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_15mvedq</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1xk5xed</bpmn:outgoing>
+      <bpmn:incoming>SequenceFlow_15mvedq_delete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0lplazm</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:sequenceFlow id="SequenceFlow_1xk5xed" sourceRef="CallActivity_1600xlj" targetRef="Task_0uwlr22" />
-    <bpmn:sequenceFlow id="SequenceFlow_0ow44q0" sourceRef="Task_023hred" targetRef="ScriptTask_1emjxm2" />
-    <bpmn:scriptTask id="Task_023hred" name="post SDNC delete call">
-      <bpmn:incoming>SequenceFlow_0ds04u5</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0ow44q0</bpmn:outgoing>
-      <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DeleteSDNCNetworkResource()
-dcsi.postDeleteSDNCCall(execution)</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="SequenceFlow_0w2es8j" sourceRef="Task_1dlrfiw" targetRef="Task_13sx2bp" />
-    <bpmn:sequenceFlow id="SequenceFlow_18l3crb" sourceRef="Task_13sx2bp" targetRef="ExclusiveGateway_0xrgeq3" />
-    <bpmn:scriptTask id="Task_1dlrfiw" name="Set the Recipe DesignTimeParam" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_1qo2pln</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0w2es8j</bpmn:outgoing>
-      <bpmn:script>String recipeParamXsdDemo="""{"operationType":"GRE"}"""
-String recipeParamXsd=""
-execution.setVariable("recipeParamXsd", recipeParamXsd)</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:scriptTask id="Task_13sx2bp" name="Pre Process Request" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_0w2es8j</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_18l3crb</bpmn:outgoing>
-      <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DeleteSDNCNetworkResource()
-dcsi.preProcessRequest(execution)</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="SequenceFlow_1mz0vdx" sourceRef="Task_0tezqd4" targetRef="Task_18tomkl" />
-    <bpmn:sequenceFlow id="SequenceFlow_15mvedq" sourceRef="Task_18tomkl" targetRef="CallActivity_1600xlj" />
-    <bpmn:scriptTask id="Task_0tezqd4" name="Delete progress update parameters before delete" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_0khtova</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1mz0vdx</bpmn:outgoing>
-      <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DeleteSDNCNetworkResource()
-dcsi.prepareUpdateBeforeDeleteSDNCResource(execution)</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:scriptTask id="Task_0uwlr22" name="Create progress update parameters After delete" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_1xk5xed</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1jr6zi0</bpmn:outgoing>
-      <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def dcsi = new DeleteSDNCNetworkResource()
-dcsi.prepareUpdateAfterDeleteSDNCResource(execution)</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:serviceTask id="Task_18tomkl" name="update progress update">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic QlBFTENsaWVudDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_1mz0vdx</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_15mvedq</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="ServiceTask_1cm8iwr" name="update progress update">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic QlBFTENsaWVudDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_1jr6zi0</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0ds04u5</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_1jr6zi0" sourceRef="Task_0uwlr22" targetRef="ServiceTask_1cm8iwr" />
-    <bpmn:scriptTask id="ScriptTask_1emjxm2" name="Send Sync Ack Response" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_0ow44q0</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_15wux6a</bpmn:outgoing>
-      <bpmn:script>import org.openecomp.mso.bpmn.infrastructure.scripts.*
-def csi = new  DeleteSDNCNetworkResource()
-csi.sendSyncResponse(execution)</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="SequenceFlow_15wux6a" sourceRef="ScriptTask_1emjxm2" targetRef="EndEvent_1x6k78c" />
-    <bpmn:sequenceFlow id="SequenceFlow_0ds04u5" sourceRef="ServiceTask_1cm8iwr" targetRef="Task_023hred" />
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0xrgeq3" name="is Deactivate Required">
-      <bpmn:incoming>SequenceFlow_18l3crb</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0jh88qw</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_0h3klf0</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_0jh88qw" name="No" sourceRef="ExclusiveGateway_0xrgeq3" targetRef="PreprocessIncomingRequest_task" />
-    <bpmn:sequenceFlow id="SequenceFlow_0h3klf0" name="Yes" sourceRef="ExclusiveGateway_0xrgeq3" targetRef="Task_1xychp0">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("isActivateRequired") == "true")}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_00vqgvt" sourceRef="Task_1xychp0" targetRef="PreprocessIncomingRequest_task" />
-    <bpmn:callActivity id="Task_1xychp0" name="Call Deactivate SDNC Network Resource" calledElement="DeActivateSDNCNetworkResource">
-      <bpmn:extensionElements>
-        <camunda:in source="mso-request-id" target="mso-request-id" />
-        <camunda:in source="requestAction" target="requestAction" />
-        <camunda:in source="recipeParams" target="recipeParams" />
-        <camunda:in source="recipeParams" target="recipeParams" />
-        <camunda:in source="recipeParamXsd" target="recipeParamXsd" />
-        <camunda:in source="URN_mso_workflow_sdncadapter_callback" target="URN_mso_workflow_sdncadapter_callback" />
-        <camunda:in source="resourceInput" target="resourceInput" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0h3klf0</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_00vqgvt</bpmn:outgoing>
-    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_0lplazm" sourceRef="CallActivity_0bj0odq" targetRef="Task_1ikbt2h_delete" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DeleteSDNCNetworkResource">
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="deleteNetworkResource_StartEvent">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="deleteNetworkResource_StartEvent_delete">
         <dc:Bounds x="-111" y="111" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-136" y="147" width="89" height="28" />
+          <dc:Bounds x="-135" y="147" width="88" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1qo2pln_di" bpmnElement="SequenceFlow_1qo2pln">
+      <bpmndi:BPMNEdge id="SequenceFlow_1qo2pln_di" bpmnElement="SequenceFlow_1qo2pln_delete">
         <di:waypoint x="-75" y="129" />
         <di:waypoint x="-10" y="129" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="-87.5" y="108" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0khtova_di" bpmnElement="SequenceFlow_0khtova">
+      <bpmndi:BPMNEdge id="SequenceFlow_0khtova_di" bpmnElement="SequenceFlow_0khtova_delete">
         <di:waypoint x="593" y="129" />
         <di:waypoint x="684" y="129" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="391.5" y="108" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ScriptTask_03j6ogo_di" bpmnElement="PreprocessIncomingRequest_task">
+      <bpmndi:BPMNShape id="ScriptTask_03j6ogo_di" bpmnElement="PreprocessIncomingRequest_task_delete">
         <dc:Bounds x="493" y="89" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_15pcuuc_di" bpmnElement="EndEvent_1x6k78c">
+      <bpmndi:BPMNShape id="EndEvent_15pcuuc_di" bpmnElement="EndEvent_1x6k78c_delete">
         <dc:Bounds x="898" y="317" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="862" y="359" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_1600xlj_di" bpmnElement="CallActivity_1600xlj">
-        <dc:Bounds x="42" y="295" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1xk5xed_di" bpmnElement="SequenceFlow_1xk5xed">
-        <di:waypoint x="142" y="335" />
-        <di:waypoint x="200" y="335" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="210.5" y="314" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0ow44q0_di" bpmnElement="SequenceFlow_0ow44q0">
+      <bpmndi:BPMNEdge id="SequenceFlow_0ow44q0_di" bpmnElement="SequenceFlow_0ow44q0_delete">
         <di:waypoint x="624" y="335" />
         <di:waypoint x="709" y="335" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="719" y="314" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ScriptTask_0gyej62_di" bpmnElement="Task_023hred">
+      <bpmndi:BPMNShape id="ScriptTask_0gyej62_di" bpmnElement="Task_023hred_delete">
         <dc:Bounds x="524" y="295" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0w2es8j_di" bpmnElement="SequenceFlow_0w2es8j">
+      <bpmndi:BPMNEdge id="SequenceFlow_0w2es8j_di" bpmnElement="SequenceFlow_0w2es8j_delete">
         <di:waypoint x="90" y="129" />
         <di:waypoint x="148" y="129" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="74" y="108" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_18l3crb_di" bpmnElement="SequenceFlow_18l3crb">
+      <bpmndi:BPMNEdge id="SequenceFlow_18l3crb_di" bpmnElement="SequenceFlow_18l3crb_delete">
         <di:waypoint x="248" y="129" />
         <di:waypoint x="325" y="129" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="235.5" y="108" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ScriptTask_0lc6l7a_di" bpmnElement="Task_1dlrfiw">
+      <bpmndi:BPMNShape id="ScriptTask_0lc6l7a_di" bpmnElement="Task_1dlrfiw_delete">
         <dc:Bounds x="-10" y="89" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScriptTask_14l9mlv_di" bpmnElement="Task_13sx2bp">
+      <bpmndi:BPMNShape id="ScriptTask_14l9mlv_di" bpmnElement="Task_13sx2bp_delete">
         <dc:Bounds x="148" y="89" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1mz0vdx_di" bpmnElement="SequenceFlow_1mz0vdx">
+      <bpmndi:BPMNEdge id="SequenceFlow_1mz0vdx_di" bpmnElement="SequenceFlow_1mz0vdx_delete">
         <di:waypoint x="784" y="129" />
         <di:waypoint x="900" y="129" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="608" y="123" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_15mvedq_di" bpmnElement="SequenceFlow_15mvedq">
+      <bpmndi:BPMNEdge id="SequenceFlow_15mvedq_di" bpmnElement="SequenceFlow_15mvedq_delete">
         <di:waypoint x="950" y="169" />
-        <di:waypoint x="950" y="218" />
-        <di:waypoint x="0" y="218" />
-        <di:waypoint x="0" y="335" />
-        <di:waypoint x="42" y="335" />
+        <di:waypoint x="950" y="246" />
+        <di:waypoint x="-106" y="246" />
+        <di:waypoint x="-106" y="335" />
+        <di:waypoint x="9" y="335" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="349" y="197" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ScriptTask_1kqf4ge_di" bpmnElement="Task_0tezqd4">
+      <bpmndi:BPMNShape id="ScriptTask_1kqf4ge_di" bpmnElement="Task_0tfzqd4_delete">
         <dc:Bounds x="684" y="89" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScriptTask_0hu4lhm_di" bpmnElement="Task_0uwlr22">
-        <dc:Bounds x="200" y="295" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1q6ssz7_di" bpmnElement="Task_18tomkl">
+      <bpmndi:BPMNShape id="ServiceTask_1q6ssz7_di" bpmnElement="Task_18tomkl_delete">
         <dc:Bounds x="900" y="89" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1cm8iwr_di" bpmnElement="ServiceTask_1cm8iwr">
+      <bpmndi:BPMNShape id="ServiceTask_1cm8iwr_di" bpmnElement="ServiceTask_1cm8iwr_delete">
         <dc:Bounds x="355" y="295" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1jr6zi0_di" bpmnElement="SequenceFlow_1jr6zi0">
-        <di:waypoint x="300" y="335" />
-        <di:waypoint x="355" y="335" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="444.5" y="314" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ScriptTask_1emjxm2_di" bpmnElement="ScriptTask_1emjxm2">
+      <bpmndi:BPMNShape id="ScriptTask_1emjxm2_di" bpmnElement="ScriptTask_1emjxm2_delete">
         <dc:Bounds x="709" y="295" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_15wux6a_di" bpmnElement="SequenceFlow_15wux6a">
+      <bpmndi:BPMNEdge id="SequenceFlow_15wux6a_di" bpmnElement="SequenceFlow_15wux6a_delete">
         <di:waypoint x="809" y="335" />
         <di:waypoint x="898" y="335" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="930" y="313" width="0" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0ds04u5_di" bpmnElement="SequenceFlow_0ds04u5">
+      <bpmndi:BPMNEdge id="SequenceFlow_0ds04u5_di" bpmnElement="SequenceFlow_0ds04u5_delete">
         <di:waypoint x="455" y="335" />
         <di:waypoint x="524" y="335" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0xrgeq3_di" bpmnElement="ExclusiveGateway_0xrgeq3" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_0xrgeq3_di" bpmnElement="ExclusiveGateway_0xrgeq3_delete" isMarkerVisible="true">
         <dc:Bounds x="325" y="104" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="320" y="161" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0jh88qw_di" bpmnElement="SequenceFlow_0jh88qw">
+      <bpmndi:BPMNEdge id="SequenceFlow_0jh88qw_di" bpmnElement="SequenceFlow_0jh88qw_delete">
         <di:waypoint x="375" y="129" />
         <di:waypoint x="493" y="129" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="427" y="111" width="14" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0h3klf0_di" bpmnElement="SequenceFlow_0h3klf0">
+      <bpmndi:BPMNEdge id="SequenceFlow_0h3klf0_di" bpmnElement="SequenceFlow_0h3klf0_delete">
         <di:waypoint x="350" y="104" />
         <di:waypoint x="350" y="-12" />
         <di:waypoint x="493" y="-12" />
@@ -292,13 +273,27 @@ csi.sendSyncResponse(execution)</bpmn:script>
           <dc:Bounds x="356" y="43" width="19" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_00vqgvt_di" bpmnElement="SequenceFlow_00vqgvt">
+      <bpmndi:BPMNEdge id="SequenceFlow_00vqgvt_di" bpmnElement="SequenceFlow_00vqgvt_delete">
         <di:waypoint x="543" y="28" />
         <di:waypoint x="543" y="89" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="CallActivity_1lddjec_di" bpmnElement="Task_1xychp0">
+      <bpmndi:BPMNShape id="CallActivity_1lddjec_di" bpmnElement="Task_1xychp0_delete">
         <dc:Bounds x="493" y="-52" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1wj862v_di" bpmnElement="Task_1ikbt2h_delete">
+        <dc:Bounds x="205" y="295" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0yooswe_di" bpmnElement="SequenceFlow_0yooswe_delete">
+        <di:waypoint x="305" y="335" />
+        <di:waypoint x="355" y="335" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0bj0odq_di" bpmnElement="CallActivity_0bj0odq">
+        <dc:Bounds x="9" y="295" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0lplazm_di" bpmnElement="SequenceFlow_0lplazm">
+        <di:waypoint x="109" y="335" />
+        <di:waypoint x="205" y="335" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
