@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_95a1eef9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-19T23:25:31Z",
+      "side": 1,
+      "message": "Looking at this.",
+      "parentUuid": "1a76adc5_8228db33",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_a2d63726",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofClient.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2018-09-19T12:29:17Z",
       "side": 1,
       "message": "I have been working to remove MSO logger please utilize SLF4J Logger",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_759e92ba",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-19T23:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_a2d63726",
       "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_35a49a06",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-19T23:25:31Z",
+      "side": 1,
+      "message": "Looking at this.",
+      "parentUuid": "1a76adc5_421e430d",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_0214cbe6",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofClient.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2018-09-19T12:29:17Z",
       "side": 1,
       "message": "We should not use strings to set header items, we should utilize constants or enumerations from the Jax-RS Library",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f5df0267",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-19T23:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_0214cbe6",
       "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_8ae0edcd",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-19T23:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_42e5e306",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_62dc9f46",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofValidator.java",
         "patchSetId": 2
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_0a613d04",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-19T23:25:31Z",
+      "side": 1,
+      "message": "Not that I know of. OOF codebase is python.",
+      "parentUuid": "1a76adc5_62dc9f46",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_e2ef4fe7",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofValidator.java",
         "patchSetId": 2
@@ -115,6 +223,24 @@
       "writtenOn": "2018-09-19T12:29:17Z",
       "side": 1,
       "message": "Why is this a static method? It seems not needed.",
+      "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2a5c394a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-19T23:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_e2ef4fe7",
       "revId": "0a4a6704ed4d3958873e3fbc530ddede3a5b13c1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
