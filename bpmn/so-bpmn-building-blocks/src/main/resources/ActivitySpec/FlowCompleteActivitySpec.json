@@ -1,0 +1,14 @@
+{
+  "name": "FlowCompleteActivity",
+  "description": "Activity to Complete the BPMN Flow",
+  "categoryList": [
+    "VNF"
+  ],
+  "inputParameters": [
+    {
+      "name": "WorkflowException",
+      "type": "WorkflowException"
+    }
+  ],
+  "outputParameters": []    
+}
