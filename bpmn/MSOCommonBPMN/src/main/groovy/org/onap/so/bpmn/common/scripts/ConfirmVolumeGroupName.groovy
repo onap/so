@@ -43,7 +43,6 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 		execution.setVariable("CVGN_queryVolumeGroupResponseCode",null)
 		execution.setVariable("CVGN_queryVolumeGroupResponse","")
 		execution.setVariable("CVGN_ResponseCode",null)
-//		execution.setVariable("CVGN_ErrorResponse","")
 		execution.setVariable("RollbackData", null)
 	}
 
@@ -125,10 +124,6 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 	// generates a WorkflowException if the A&AI query returns a response code other than 200/404
 	public void handleAAIQueryFailure(DelegateExecution execution) {
 		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Error occurred attempting to query AAI, Response Code " + execution.getVariable("CVGN_queryVolumeGroupResponseCode"), "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "ErrorResponse is:\n" + execution.getVariable("CVGN_queryVolumeGroupResponse"));
-		//String processKey = getProcessKey(execution);
-		//WorkflowException exception = new WorkflowException(processKey, 5000,
-			//execution.getVariable("CVGN_queryVolumeGroupResponse"))
-		//execution.setVariable("WorkflowException", exception)
 	}
 
 	// generates a WorkflowException if the volume group name does not match AAI record for this volume group
@@ -137,16 +132,6 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 			" is not associated with  " + execution.getVariable("CVGN_volumeGroupName")
 		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, errorNotAssociated, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 		exceptionUtil.buildAndThrowWorkflowException(execution, 1002, errorNotAssociated)
-		//String processKey = getProcessKey(execution);
-		//WorkflowException exception = new WorkflowException(processKey, 1002,
-		//	errorNotAssociated)
-		//execution.setVariable("WorkflowException", exception)
 	}
 
-	// sends a successful WorkflowResponse
-	public void reportSuccess(DelegateExecution execution) {
-		msoLogger.debug("Sending 200 back to the caller")
-		def responseXML = ""
-		execution.setVariable("WorkflowResponse", responseXML)
-	}
 }
