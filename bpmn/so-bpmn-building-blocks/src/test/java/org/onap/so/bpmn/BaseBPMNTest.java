@@ -63,6 +63,7 @@ import org.onap.so.bpmn.infrastructure.sdnc.tasks.SDNCChangeAssignTasks;
 import org.onap.so.bpmn.infrastructure.sdnc.tasks.SDNCDeactivateTasks;
 import org.onap.so.bpmn.infrastructure.sdnc.tasks.SDNCQueryTasks;
 import org.onap.so.bpmn.infrastructure.sdnc.tasks.SDNCUnassignTasks;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.FlowCompletionTasks;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.OrchestrationStatusValidator;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowAction;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionBBTasks;
@@ -198,6 +199,9 @@ public abstract class BaseBPMNTest {
 	
 	@MockBean
 	protected ConfigurationScaleOut configurationScaleOut;
+	
+	@MockBean
+	protected FlowCompletionTasks flowCompletionTasks;
 	
 	@LocalServerPort
 	private int port;
