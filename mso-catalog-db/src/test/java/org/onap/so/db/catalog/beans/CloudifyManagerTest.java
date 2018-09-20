@@ -21,8 +21,11 @@
 package org.onap.so.db.catalog.beans;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.onap.so.db.catalog.beans.CloudifyManager;
+
 
 public class CloudifyManagerTest {
 	
@@ -32,6 +35,24 @@ public class CloudifyManagerTest {
 	private static final String USERNAME = "testUsername";
 	private static final String PASSWORD = "testPassword";
 	private static final String VERSION = "testVersion";
+	
+	@Test
+	public final void testCloudifyManager () {
+		CloudifyManager id = new CloudifyManager();
+		id.setId("testId");
+		id.setCloudifyUrl("testCloudifyUrl");
+		id.setUsername("testUsername");
+		id.setPassword("testPassword");
+		id.setVersion("testVersion");
+        
+
+        assertTrue (id.getId().equals("testId"));
+        assertTrue (id.getCloudifyUrl().equals("testCloudifyUrl"));
+        assertTrue (id.getUsername().equals("testUsername"));
+        assertTrue (id.getPassword().equals("testPassword"));
+        assertTrue (id.getVersion().equals("testVersion"));
+    }
+	
 	
 	@Test
 	public void cloneTest() {
