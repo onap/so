@@ -42,6 +42,52 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_5e34cefa",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-20T20:21:45Z",
+      "side": 1,
+      "message": "Steve has been working on eliminating MsoLogger.\n\nPlease use \"private static final Logger logger \u003d LoggerFactory.getLogger(MsoMulticloudUtils.class);\"",
+      "range": {
+        "startLine": 113,
+        "startChar": 4,
+        "endLine": 113,
+        "endChar": 116
+      },
+      "revId": "6dc2192a195dbbfd9ae16a1391c813ebb20d2283",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_fe5b5a51",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-20T20:21:45Z",
+      "side": 1,
+      "message": "I added this, but it can be removed since we will only have one multicloudClient",
+      "range": {
+        "startLine": 115,
+        "startChar": 1,
+        "endLine": 120,
+        "endChar": 81
+      },
+      "revId": "6dc2192a195dbbfd9ae16a1391c813ebb20d2283",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_1e82d6c7",
         "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
         "patchSetId": 8
