@@ -8,6 +8,22 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
+Version: 1.3.1
+--------------
+
+:Release Date: 2018-09-23
+
+Temp release for Casablanca at M4.
+**New Features**
+
+* Support PNF resource type.
+* Extend the support of homing to vFW, VDNS usecases.
+* Workflow Designer Integration.
+* Monitoring BPMN worflow capabiliities through UI.
+* Support to the CCVPN Usecase.
+* SO internal architecture improvements 
+
+
 Version: 1.2.2
 --------------
 
@@ -17,7 +33,7 @@ The Beijing release is the second release of the Service Orchestrator (SO) proje
 
 **New Features**
 
-* Enhance Platform maturity by improving CLAMP maturity matrix see `Wiki <https://wiki.onap.org/display/DW/Beijing+Release+Platform+Maturity>`_.
+* Enhance Platform maturity by improving SO maturity matrix see `Wiki <https://wiki.onap.org/display/DW/Beijing+Release+Platform+Maturity>`_.
 * Manual scaling of network services and VNFs.
 * Homing and placement capabiliities through OOF interaction. 
 * Ability to perform change management.
