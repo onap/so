@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">
-  <bpmn:process id="CreateDeviceResource.bpmn" name="CreateDeviceResource.bpmn" isExecutable="true">
+  <bpmn:process id="CreateDeviceResource" name="CreateDeviceResource" isExecutable="true">
     <bpmn:endEvent id="EndEvent_1x6k78c" name="create Dev end">
       <bpmn:incoming>SequenceFlow_0auvfvm</bpmn:incoming>
     </bpmn:endEvent>
@@ -8,7 +8,7 @@
       <bpmn:incoming>SequenceFlow_05niqbf</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0auvfvm</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
-def csi = new  CreateDeviceResource.bpmn()
+def csi = new  CreateDeviceResource()
 csi.sendSyncResponse(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_05niqbf" sourceRef="Task_0bga3e8" targetRef="ScriptTask_1g5zyi6" />
@@ -43,11 +43,11 @@ csi.sendSyncResponse(execution)]]></bpmn:script>
 def dcsi = new CreateDeviceResource()
 dcsi.checkDevType(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0kba700" name="Dev Type" default="SequenceFlow_076ma0v">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0kba700" name="Dev Type" default="SequenceFlow_0b5nrig">
       <bpmn:incoming>SequenceFlow_1hp2h5t</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ss02ik</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0h4378g</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_076ma0v</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0b5nrig</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1chnlq6" name="GoTo StartCreateDevinSDNC">
       <bpmn:incoming>SequenceFlow_0h4378g</bpmn:incoming>
@@ -91,10 +91,6 @@ dcsi.preProcessRequest(execution)]]></bpmn:script>
       <bpmn:outgoing>SequenceFlow_0pkp4ce</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="SequenceFlow_0pkp4ce" sourceRef="CallActivity_0pyrfca" targetRef="ScriptTask_0u1piih" />
-    <bpmn:endEvent id="EndEvent_0ymfq61">
-      <bpmn:incoming>SequenceFlow_076ma0v</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_076ma0v" sourceRef="ExclusiveGateway_0kba700" targetRef="EndEvent_0ymfq61" />
     <bpmn:scriptTask id="ScriptTask_02rli65" name="Get VNF Template fom SDC" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1ss02ik</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0pg3072</bpmn:outgoing>
@@ -111,9 +107,47 @@ def dcsi = new CreateDeviceResource()
 dcsi.postVNFInfoProcess(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1ylvnxq" sourceRef="ScriptTask_0u1piih" targetRef="IntermediateThrowEvent_1caax8u" />
+    <bpmn:scriptTask id="ScriptTask_0p4b5vu" name="Prepare Create resource progress" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0b5nrig</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_09s5dfc</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+execution.setVariable("progress", "100")
+execution.setVariable("status", "finished")
+execution.setVariable("statusDescription", "Finished for the devType")
+def dcsi = new CreateDeviceResource()
+dcsi.prepareUpdateProgress(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0b5nrig" sourceRef="ExclusiveGateway_0kba700" targetRef="ScriptTask_0p4b5vu" />
+    <bpmn:serviceTask id="ServiceTask_08e6hpm" name="resource progress update">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic QlBFTENsaWVudDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_09s5dfc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0kt3xbf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_09s5dfc" sourceRef="ScriptTask_0p4b5vu" targetRef="ServiceTask_08e6hpm" />
+    <bpmn:endEvent id="EndEvent_0ntv40y">
+      <bpmn:incoming>SequenceFlow_0kt3xbf</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0kt3xbf" sourceRef="ServiceTask_08e6hpm" targetRef="EndEvent_0ntv40y" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateDeviceResource.bpmn">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateDeviceResource">
       <bpmndi:BPMNShape id="EndEvent_15pcuuc_di" bpmnElement="EndEvent_1x6k78c">
         <dc:Bounds x="1026" y="111" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -158,7 +192,7 @@ dcsi.postVNFInfoProcess(execution)]]></bpmn:script>
       <bpmndi:BPMNShape id="ExclusiveGateway_0kba700_di" bpmnElement="ExclusiveGateway_0kba700" isMarkerVisible="true">
         <dc:Bounds x="334" y="-152" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="309" y="-166" width="34" height="12" />
+          <dc:Bounds x="302" y="-166" width="48" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_1chnlq6_di" bpmnElement="IntermediateThrowEvent_1chnlq6">
@@ -228,19 +262,6 @@ dcsi.postVNFInfoProcess(execution)]]></bpmn:script>
           <dc:Bounds x="760.5" y="-148" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_0ymfq61_di" bpmnElement="EndEvent_0ymfq61">
-        <dc:Bounds x="341" y="-251" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="359" y="-211" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_076ma0v_di" bpmnElement="SequenceFlow_076ma0v">
-        <di:waypoint xsi:type="dc:Point" x="359" y="-152" />
-        <di:waypoint xsi:type="dc:Point" x="359" y="-215" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="374" y="-189.5" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_02rli65_di" bpmnElement="ScriptTask_02rli65">
         <dc:Bounds x="480" y="-167" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -259,6 +280,43 @@ dcsi.postVNFInfoProcess(execution)]]></bpmn:script>
         <di:waypoint xsi:type="dc:Point" x="1026" y="-127" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="987.5" y="-148" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0p4b5vu_di" bpmnElement="ScriptTask_0p4b5vu">
+        <dc:Bounds x="309" y="-290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0b5nrig_di" bpmnElement="SequenceFlow_0b5nrig">
+        <di:waypoint xsi:type="dc:Point" x="359" y="-152" />
+        <di:waypoint xsi:type="dc:Point" x="359" y="-181" />
+        <di:waypoint xsi:type="dc:Point" x="359" y="-181" />
+        <di:waypoint xsi:type="dc:Point" x="359" y="-210" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="374" y="-187" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_08e6hpm_di" bpmnElement="ServiceTask_08e6hpm">
+        <dc:Bounds x="530" y="-290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_09s5dfc_di" bpmnElement="SequenceFlow_09s5dfc">
+        <di:waypoint xsi:type="dc:Point" x="409" y="-250" />
+        <di:waypoint xsi:type="dc:Point" x="477" y="-250" />
+        <di:waypoint xsi:type="dc:Point" x="477" y="-250" />
+        <di:waypoint xsi:type="dc:Point" x="530" y="-250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="492" y="-256" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0ntv40y_di" bpmnElement="EndEvent_0ntv40y">
+        <dc:Bounds x="705" y="-268" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="723" y="-228" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kt3xbf_di" bpmnElement="SequenceFlow_0kt3xbf">
+        <di:waypoint xsi:type="dc:Point" x="630" y="-250" />
+        <di:waypoint xsi:type="dc:Point" x="705" y="-250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="667.5" y="-271" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

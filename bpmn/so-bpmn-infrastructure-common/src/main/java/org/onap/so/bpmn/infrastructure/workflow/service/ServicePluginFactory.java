@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.workflow.service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +55,7 @@ import org.onap.so.bpmn.common.scripts.AaiUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.springframework.web.util.UriUtils;
 
 public class ServicePluginFactory {
 
@@ -78,6 +80,10 @@ public class ServicePluginFactory {
 			instance = new ServicePluginFactory();
 		}
 		return instance;
+	}
+
+	private ServicePluginFactory() {
+
 	}
 	
 	private String getInventoryOSSEndPoint(){
@@ -110,13 +116,18 @@ public class ServicePluginFactory {
 			return newRequest;
 		}
 
-		List<Resource> addResourceList = serviceDecomposition.getServiceResources();
+		List<Resource> addResourceList = new ArrayList<Resource>();
+		addResourceList.addAll(serviceDecomposition.getServiceResources());
+		
+		serviceDecomposition.setVnfResources(null);
+		serviceDecomposition.setAllottedResources(null);
+		serviceDecomposition.setNetworkResources(null);
+		serviceDecomposition.setConfigResources(null);
 		for (Resource resource : addResourceList) {
 			String resourcemodelName = resource.getModelInfo().getModelName();
-			if (!StringUtils.containsIgnoreCase(resourcemodelName, "sp-partner") 
-					|| !StringUtils.containsIgnoreCase(resourcemodelName, "sppartner")) {
+			if (StringUtils.containsIgnoreCase(resourcemodelName, "sppartner")) {
 				// change serviceDecomposition
-				serviceDecomposition.deleteResource(resource);
+				serviceDecomposition.addResource(resource);
 				break;
 			}
 		}
@@ -149,7 +160,7 @@ public class ServicePluginFactory {
 		accessTPInfo.put("access-ltp-id", tpInfoMap.get("access-ltp-id"));
 
 		// change resources
-		String resourceName = (String) accessTPInfo.get("resourceName");
+		String resourceName = (String) tpInfoMap.get("resourceName");
 		for(Object curResource : resources) {
 			Map<String, Object> resource = (Map<String, Object>)curResource;
 			String curResourceName = (String) resource.get("resourceName");
@@ -165,9 +176,9 @@ public class ServicePluginFactory {
 	
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getTPforVPNAttachment(Map<String, Object> serviceRequestInputs) {
-		Object location = "";
-		Object clientSignal = "";
-		String vpnAttachmentResourceName = "";
+		Object location = null;
+		Object clientSignal = null;
+		String vpnAttachmentResourceName = null;
 
 		// support R2 uuiReq and R1 uuiReq
 		// logic for R2 uuiRequest params in service level
@@ -185,7 +196,7 @@ public class ServicePluginFactory {
 		Map<String, Object> tpInfoMap =  new HashMap<String, Object>();
 		
 		// Site resource has location param and SOTNAttachment resource has clientSignal param
-		if("".equals(location) || "".equals(clientSignal) ) {
+		if(location == null || clientSignal == null ) {
 			return tpInfoMap;
 		}
 		
@@ -193,9 +204,16 @@ public class ServicePluginFactory {
 		String locationAddress = (String) location;		
 		List<Object> locationTPList = queryAccessTPbyLocationFromInventoryOSS(locationAddress);
 		if(locationTPList != null && !locationTPList.isEmpty()) {
-			tpInfoMap = (Map<String, Object>) locationTPList.get(0);
-			// add resourceName
-			tpInfoMap.put("resourceName", vpnAttachmentResourceName);
+		    for(Object tp: locationTPList) {
+		        Map<String, Object> tpJson = (Map<String, Object>) tp;
+		        String loc =  (String)tpJson.get ("location");
+		        if(StringUtils.equalsIgnoreCase (locationAddress, loc)) {
+		            tpInfoMap = tpJson;
+		            // add resourceName
+		            tpInfoMap.put("resourceName", vpnAttachmentResourceName);
+		            break;
+		        }
+		    }
 			LOGGER.debug("Get Terminal TP from InventoryOSS");
 			return tpInfoMap;
 		}
@@ -205,11 +223,14 @@ public class ServicePluginFactory {
 	
 	@SuppressWarnings("unchecked")
 	private List<Object> queryAccessTPbyLocationFromInventoryOSS(String locationAddress) {
-		Map<String, String> locationSrc = new HashMap<String, String>();
-		locationSrc.put("location", locationAddress);
-		String reqContent = getJsonString(locationSrc);
 		String url = getInventoryOSSEndPoint();
-		String responseContent = sendRequest(url, "POST", reqContent);
+		try {
+			url += "/oss/inventory?location=" +  UriUtils.encode(locationAddress,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String responseContent = sendRequest(url, "GET", "");
 		List<Object> accessTPs = new ArrayList<Object>();
 		if (null != responseContent) {
 			accessTPs = getJsonObject(responseContent, List.class);
@@ -227,8 +248,14 @@ public class ServicePluginFactory {
 		if(resource.containsKey("parameters")) {
 			Map<String, Object> resParametersObject = (Map<String, Object>) resource.get("parameters");
 			if(resParametersObject.containsKey("requestInputs")) {
-				Map<String, Object> resRequestInputs = (Map<String, Object>) resourceParametersObject.get("requestInputs");
-				resRequestInputs.putAll(resourceInputs);				
+				Map<String, Object> resRequestInputs = (Map<String, Object>) resourceRequestInputs.get("requestInputs");
+				Map<String, Object> oldRequestInputs = (Map<String, Object>) resParametersObject.get("requestInputs");
+				if(oldRequestInputs != null) {					
+					oldRequestInputs.putAll(resRequestInputs);
+				}
+				else {
+					resParametersObject.put("requestInputs", resRequestInputs);
+				}
 			}
 			else {
 				resParametersObject.putAll(resourceRequestInputs);				
@@ -267,14 +294,20 @@ public class ServicePluginFactory {
 			if("ExternalAPI".equalsIgnoreCase(callSource)) {
 				return false;
 			}							
-		}				
-		return true;
+		}
+		for (String input : serviceRequestInputs.keySet())
+		{
+			if(input.toLowerCase().contains("sotnconnectivity")) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void allocateCrossTPResources(DelegateExecution execution, Map<String, Object> serviceRequestInputs) {
 
-		AaiUtil aai = new AaiUtil(null);
+		AaiUtil aai = new AaiUtil();
 		Map<String, Object> crossTPs = aai.getTPsfromAAI(execution);
 		
 		if(crossTPs == null || crossTPs.isEmpty()) {
@@ -581,6 +614,8 @@ public class ServicePluginFactory {
 			} else if ("GET".equals(methodType.toUpperCase())) {
 				HttpGet httpGet = new HttpGet(msbUrl);
 				httpGet.setConfig(requestConfig);
+				httpGet.addHeader("X-FromAppId", "MSO");
+				httpGet.addHeader("Accept","application/json");
 				method = httpGet;
 			} else if ("DELETE".equals(methodType.toUpperCase())) {
 				HttpDelete httpDelete = new HttpDelete(msbUrl);

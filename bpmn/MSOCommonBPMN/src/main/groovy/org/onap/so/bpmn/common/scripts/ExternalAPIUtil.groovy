@@ -37,9 +37,9 @@ class ExternalAPIUtil {
 	public MsoUtils utils = new MsoUtils()
 	
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
-    
+
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExternalAPIUtil.class)
-	
+
 	public static final String PostServiceOrderRequestsTemplate =
 	"{\n" +
 	"\t\"externalId\": <externalId>,\n" +
@@ -83,6 +83,8 @@ class ExternalAPIUtil {
     "\t} \n" + 
     "}"
 
+	public ExternalAPIUtil() {
+	}
 
 //	public String getUri(DelegateExecution execution, resourceName) {
 //

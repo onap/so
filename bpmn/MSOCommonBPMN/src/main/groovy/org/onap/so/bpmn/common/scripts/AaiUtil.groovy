@@ -25,7 +25,7 @@ import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.rest.APIResponse;
 import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
-import org.onap.so.logger.MessageEnum
+import org.springframework.web.util.UriUtils
 import org.onap.so.logger.MsoLogger
 
 class AaiUtil {
@@ -42,6 +42,8 @@ class AaiUtil {
 
 	public AaiUtil(AbstractServiceTaskProcessor taskProcessor) {
 		this.taskProcessor = taskProcessor
+	}
+	public AaiUtil() {
 	}
 
 	public String getNetworkGenericVnfEndpoint(DelegateExecution execution) {
@@ -87,6 +89,12 @@ class AaiUtil {
 		return uri
 	}
 
+	public String getNetworkDeviceUri(DelegateExecution execution) {
+		def uri = getUri(execution, 'device')
+		msoLogger.debug('AaiUtil.getNetworkDeviceUri() - AAI URI: ' + uri)
+		return uri
+	}
+
 	public String getBusinessCustomerUri(DelegateExecution execution) {
 		def uri = getUri(execution, 'customer')
 		msoLogger.debug('AaiUtil.getBusinessCustomerUri() - AAI URI: ' + uri)
@@ -109,7 +117,7 @@ class AaiUtil {
 	}
 
 	//public String getBusinessCustomerUriv7(DelegateExecution execution) {
-	//	//	//def uri = getUri(execution, BUSINESS_CUSTOMERV7)
+	//	//def uri = getUri(execution, BUSINESS_CUSTOMERV7)
 	//	def uri = getUri(execution, 'Customer')
 	//	msoLogger.debug('AaiUtil.getBusinessCustomerUriv7() - AAI URI: ' + uri)
 	//	return uri
@@ -178,9 +186,30 @@ class AaiUtil {
 		(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, "Internal Error: One of the following should be defined in MSO URN properties file: ${versionWithResourceKey}, ${versionWithProcessKey}, ${DEFAULT_VERSION_KEY}")
 	}
 
+	public String getMainProcessKey(DelegateExecution execution) {
+		DelegateExecution exec = execution
+
+		while (true) {
+			DelegateExecution parent = exec.getSuperExecution()
+
+			if (parent == null) {
+				parent = exec.getParent()
+
+				if (parent == null) {
+					break
+				}
+			}
+
+			exec = parent
+		}
+
+		return execution.getProcessEngineServices().getRepositoryService()
+			.getProcessDefinition(exec.getProcessDefinitionId()).getKey()
+	}
+
 	public String getUri(DelegateExecution execution, resourceName) {
 
-		def processKey = taskProcessor.getMainProcessKey(execution)
+		def processKey = getMainProcessKey(execution)
 
 		//set namespace
 		setNamespace(execution)
@@ -656,9 +685,9 @@ class AaiUtil {
 
 	private def getPInterface(DelegateExecution execution, String aai_uri) {
 
-		String namespace = getNamespaceFromUri(aai_uri)
+		String namespace = getNamespaceFromUri(execution, aai_uri)
 		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
-		String serviceAaiPath = ${aai_endpoint}${aai_uri}
+		String serviceAaiPath = aai_endpoint + aai_uri
 
 		APIResponse response = executeAAIGetCall(execution, serviceAaiPath)
 		return new XmlParser().parseText(response.getResponseBodyAsString())
@@ -680,58 +709,102 @@ class AaiUtil {
 		String aai_uri = '/aai/v14/network/logical-links'
 
 		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
-		String serviceAaiPath = ${aai_endpoint}${aai_uri}
+		String serviceAaiPath = aai_endpoint + aai_uri
 
 		APIResponse response = executeAAIGetCall(execution, serviceAaiPath)
 
 		def logicalLinks = new XmlParser().parseText(response.getResponseBodyAsString())
 
-		logicalLinks."logical-links".find { link ->
-			def pInterface = []
+		logicalLinks."logical-link".each { link ->
+			def isRemoteLink = false
+			def pInterfaces = []
 			def relationship = link."relationship-list"."relationship"
-			relationship.each {
-				if ("p-interface".compareToIgnoreCase(it."related-to")) {
-					pInterface.add(it)
+			relationship.each { rel ->
+				if ("ext-aai-network".compareToIgnoreCase("${rel."related-to"[0]?.text()}") == 0) {
+					isRemoteLink = true
+				}
+				if ("p-interface".compareToIgnoreCase("${rel."related-to"[0]?.text()}") == 0) {
+					pInterfaces.add(rel)
 				}
 			}
-			if (pInterface.size() == 2) {
+
+			// if remote link then process
+			if (isRemoteLink) {
+
+				// find remote p interface
 				def localTP = null
 				def remoteTP = null
 
-				if (pInterface[0]."related-link".contains("ext-aai-networks")) {
-					remoteTP = pInterface[0]
-					localTP = pInterface[1]
-				}
+				def pInterface0 = pInterfaces[0]
+				def pIntfUrl = "${pInterface0."related-link"[0].text()}"
 
-				if (pInterface[1]."related-link".contains("ext-aai-networks")) {
-					localTP = pInterface[0]
-					remoteTP = pInterface[1]
+				if (isRemotePInterface(execution, pIntfUrl)) {
+					remoteTP = pInterfaces[0]
+					localTP = pInterfaces[1]
+				} else {
+					localTP = pInterfaces[0]
+					remoteTP = pInterfaces[1]
 				}
 
 				if (localTP != null && remoteTP != null) {
 				
 					// give local tp
-					var intfLocal = getPInterface(execution, localTP."related-link")
-					tpInfotpInfo.put("local-access-node-id", localTP."related-link".split("/")[6])
+					def tpUrl = "${localTP."related-link"[0]?.text()}"
+					def intfLocal = getPInterface(execution, "${localTP?."related-link"[0]?.text()}")
+					tpInfo.put("local-access-node-id", tpUrl.split("/")[6])
 				
-					def networkRef = intfLocal."network-ref".split("/")
-					tpInfo.put("local-access-provider-id", networkRef[1])
-					tpInfo.put("local-access-client-id", networkRef[3])
-					tpInfo.put("local-access-topology-id", networkRef[5])
-					tpInfo.put("local-access-ltp-id", localTP."interface-name")
+					def networkRef = "${intfLocal."network-ref"[0]?.text()}".split("/")
+					if (networkRef.size() == 6) {
+						tpInfo.put("local-access-provider-id", networkRef[1])
+						tpInfo.put("local-access-client-id", networkRef[3])
+						tpInfo.put("local-access-topology-id", networkRef[5])
+					}
+					def ltpIdStr = tpUrl?.substring(tpUrl?.lastIndexOf("/") + 1)
+					if (ltpIdStr?.contains("-")) {
+						tpInfo.put("local-access-ltp-id", ltpIdStr?.substring(ltpIdStr?.lastIndexOf("-") + 1))
+					}
 					
-					// give local tp
-					var intfRemote = getPInterface(execution, remoteTP."related-link")
-					tpInfo.put("remote-access-node-id", remoteTP."related-link".split("/")[6])					
-					def networkRefRemote = intfRemote."network-ref".split("/")
-					tpInfo.put("remote-access-provider-id", networkRefRemote[1])
-					tpInfo.put("remote-access-client-id", networkRefRemote[3])
-					tpInfo.put("remote-access-topology-id", networkRefRemote[5])
-					tpInfo.put("remote-access-ltp-id", remoteTP."interface-name")
+					// give remote tp
+					tpUrl = "${remoteTP."related-link"[0]?.text()}"
+					def intfRemote = getPInterface(execution, "${remoteTP."related-link"[0].text()}")
+					tpInfo.put("remote-access-node-id", tpUrl.split("/")[6])
+
+					def networkRefRemote = "${intfRemote."network-ref"[0]?.text()}".split("/")
+
+					if (networkRefRemote.size() == 6) {
+						tpInfo.put("remote-access-provider-id", networkRefRemote[1])
+						tpInfo.put("remote-access-client-id", networkRefRemote[3])
+						tpInfo.put("remote-access-topology-id", networkRefRemote[5])
+					}
+					def ltpIdStrR = tpUrl?.substring(tpUrl?.lastIndexOf("/") + 1)
+					if (ltpIdStrR?.contains("-")) {
+						tpInfo.put("remote-access-ltp-id", ltpIdStrR?.substring(ltpIdStr?.lastIndexOf("-") + 1))
+					}
+					return tpInfo
 				}
 			}
 
 		}
 		return tpInfo
+	}
+
+	// this method check if pInterface is remote
+	private def isRemotePInterface(DelegateExecution execution, String uri) {
+		def aai_uri = uri.substring(0, uri.indexOf("/p-interfaces"))
+
+		String namespace = getNamespaceFromUri(execution, aai_uri)
+		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+		String serviceAaiPath = aai_endpoint + aai_uri
+
+		APIResponse response = executeAAIGetCall(execution, serviceAaiPath)
+		def pnf =  new XmlParser().parseText(response.getResponseBodyAsString())
+
+		def relationship = pnf."relationship-list"."relationship"
+		relationship.each {
+			if ("ext-aai-network".compareToIgnoreCase("${it."related-to"[0]?.text()}") == 0) {
+				return true
+			}
+		}
+		return false
 	}
 }
