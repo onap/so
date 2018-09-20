@@ -1,0 +1,302 @@
+DistributionID:a2872f55-8628-4486-8548-7b132c9a47db
+ServiceName:Vf zrdm5bpxmc02092017-Service
+ServiceVersion:1.0
+ServiceUUID:bad955c3-29b2-4a27-932e-28e942cc6480
+ServiceInvariantUUID:b16a9398-ffa3-4041-b78c-2956b8ad9c7b
+ServiceDescription:Demo
+
+
+
+Service Artifacts List:
+{
+Service Artifacts Info:
+ArtifactName:service-VfZrdm5bpxmc02092017Service-csar.csar
+ArtifactVersion:1
+ArtifactType:TOSCA_CSAR
+ArtifactDescription:TOSCA definition package of the asset
+ArtifactTimeout:0
+ArtifactURL:service-VfZrdm5bpxmc02092017Service-csar.csar
+ArtifactUUID:396cfd49-0f4b-4fec-9f33-0fd7e90d5a22
+ArtifactChecksum:MWQ3Y2FmMWExNDQyYWI2N2YwNjEwZGUzN2IzMzI3NjE=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+
+}
+
+Resource Instances List:
+{
+Resource Instance Info:
+ResourceInstanceName:Vf zrdm5bpxmc02092017-VF 0
+ResourceCustomizationUUID:96c23a4a-6887-4b2c-9cce-1e4ea35eaade
+ResourceInvariantUUID:23122c9b-dd7f-483f-bf0a-e069303db2f7
+ResourceName:Vf zrdm5bpxmc02092017-VF
+ResourceType:VF
+ResourceUUID:14ba5d1e-3862-407c-a236-1cbaebccce77
+ResourceVersion:1.0
+Category:Generic
+SubCategory:Network Elements
+Resource Artifacts List:
+{
+Service Artifacts Info:
+ArtifactName:pxmc_mmn_volume.env
+ArtifactVersion:2
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_mmn_volume.env
+ArtifactUUID:c1ae6284-48d9-4437-a195-b2cf2ba23070
+ArtifactChecksum:NmEyZjc1Y2UwZDMwYjFhNGRlMTMzN2JhNzdiMThjMGU=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+,
+Service Artifacts Info:
+ArtifactName:pxmc_base.env
+ArtifactVersion:2
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_base.env
+ArtifactUUID:6dd99c31-c52e-4c45-b99b-d223c877a296
+ArtifactChecksum:OGM2MWIzZTA2OTc5YjQwNTM1NGVhODA0YTFkNzM4ZTg=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:vfzrdm5bpxmc02092017vf0_modules.json
+ArtifactVersion:1
+ArtifactType:VF_MODULES_METADATA
+ArtifactDescription:Auto-generated VF Modules information artifact
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/vfzrdm5bpxmc02092017vf0_modules.json
+ArtifactUUID:e3b82cd6-485e-4d56-8d2c-17ccf6a59533
+ArtifactChecksum:MjY0NzcxMjJkZGI4YzQ1MDU2NjhkNWYyM2IwNmYzYmU=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:pxmc_vmt.yaml
+ArtifactVersion:1
+ArtifactType:HEAT
+ArtifactDescription:created from csar
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_vmt.yaml
+ArtifactUUID:ad12ab80-5419-4346-a5d7-dac2fc15575f
+ArtifactChecksum:ODE0YTRiYzc2YzkxOTliZjJhNjc0M2RhMWU4M2VlZmE=
+GeneratedArtifact:{Service Artifacts Info:
+ArtifactName:pxmc_vmt.env
+ArtifactVersion:2
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_vmt.env
+ArtifactUUID:bc1640f1-69f0-4760-8fc3-3318ec2ff129
+ArtifactChecksum:MjdkYzY5ZGU0ZTlkZDlhNzI2ZGVhMjk1ODVhZTg1NTY=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+}
+RelatedArtifacts:{
+Service Artifacts Info:
+ArtifactName:user_data_zrdm5bpxmc02vmt001.txt
+ArtifactVersion:1
+ArtifactType:HEAT_ARTIFACT
+ArtifactDescription:created from csar
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/user_data_zrdm5bpxmc02vmt001.txt
+ArtifactUUID:53acdabe-689f-45e5-8578-f1514d3529da
+ArtifactChecksum:MzJmZjgyZWYwOTBjMTg5M2ExNWZhMmMwNzc1NWY1YjQ=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:pxmc_mmn.yaml
+ArtifactVersion:1
+ArtifactType:HEAT
+ArtifactDescription:created from csar
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_mmn.yaml
+ArtifactUUID:b8bca13b-811f-44ab-9d27-45b842c664d8
+ArtifactChecksum:YmNiYTU5YTM4ODVhYTlhODc5NGMwNWZkZjI5MTRmNTE=
+GeneratedArtifact:{Service Artifacts Info:
+ArtifactName:pxmc_mmn.env
+ArtifactVersion:2
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_mmn.env
+ArtifactUUID:e88ce0b9-1496-4d03-ab1d-6d8d79bfc737
+ArtifactChecksum:ZGI1NzI2Y2FmYjFhOTM2ZDYwNzg1YWRhZjBmMTk2OTQ=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+}
+RelatedArtifacts:{
+Service Artifacts Info:
+ArtifactName:user_data_zrdm5bpxmc02mmn001.txt
+ArtifactVersion:1
+ArtifactType:HEAT_ARTIFACT
+ArtifactDescription:created from csar
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/user_data_zrdm5bpxmc02mmn001.txt
+ArtifactUUID:5bc62c72-5f7a-40bc-a167-1a4fed9afdef
+ArtifactChecksum:OTMxMjk5Mzc1YmIxMzRlYmRlZWJhMjg0MWQ4YTI1NWU=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:pxmc_mmn.env
+ArtifactVersion:2
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_mmn.env
+ArtifactUUID:e88ce0b9-1496-4d03-ab1d-6d8d79bfc737
+ArtifactChecksum:ZGI1NzI2Y2FmYjFhOTM2ZDYwNzg1YWRhZjBmMTk2OTQ=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:pxmc_vmt.env
+ArtifactVersion:2
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_vmt.env
+ArtifactUUID:bc1640f1-69f0-4760-8fc3-3318ec2ff129
+ArtifactChecksum:MjdkYzY5ZGU0ZTlkZDlhNzI2ZGVhMjk1ODVhZTg1NTY=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+,
+Service Artifacts Info:
+ArtifactName:user_data_zrdm5bpxmc02mmn001.txt
+ArtifactVersion:1
+ArtifactType:HEAT_ARTIFACT
+ArtifactDescription:created from csar
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/user_data_zrdm5bpxmc02mmn001.txt
+ArtifactUUID:5bc62c72-5f7a-40bc-a167-1a4fed9afdef
+ArtifactChecksum:OTMxMjk5Mzc1YmIxMzRlYmRlZWJhMjg0MWQ4YTI1NWU=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:pxmc_base.yaml
+ArtifactVersion:1
+ArtifactType:HEAT
+ArtifactDescription:created from csar
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_base.yaml
+ArtifactUUID:7e7f7356-11bd-4f2f-bbbc-5c10954e3189
+ArtifactChecksum:YThkNGFhZjAwNmM4NzMzODc0YzNhYTUxOTljNGQwNmM=
+GeneratedArtifact:{Service Artifacts Info:
+ArtifactName:pxmc_base.env
+ArtifactVersion:2
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_base.env
+ArtifactUUID:6dd99c31-c52e-4c45-b99b-d223c877a296
+ArtifactChecksum:OGM2MWIzZTA2OTc5YjQwNTM1NGVhODA0YTFkNzM4ZTg=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+}
+RelatedArtifacts:{
+}
+,
+Service Artifacts Info:
+ArtifactName:user_data_zrdm5bpxmc02vmt001.txt
+ArtifactVersion:1
+ArtifactType:HEAT_ARTIFACT
+ArtifactDescription:created from csar
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/user_data_zrdm5bpxmc02vmt001.txt
+ArtifactUUID:53acdabe-689f-45e5-8578-f1514d3529da
+ArtifactChecksum:MzJmZjgyZWYwOTBjMTg5M2ExNWZhMmMwNzc1NWY1YjQ=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+,
+Service Artifacts Info:
+ArtifactName:pxmc_mmn_volume.yaml
+ArtifactVersion:2
+ArtifactType:HEAT_VOL
+ArtifactDescription:created from csar
+ArtifactTimeout:120
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_mmn_volume.yaml
+ArtifactUUID:2f372a02-df1b-46ca-b81e-822e3f406965
+ArtifactChecksum:MzA5MGY5ODQ0NDY5MDhiMDM3YjFlNGIwNzJkNjFhOTI=
+GeneratedArtifact:{Service Artifacts Info:
+ArtifactName:pxmc_mmn_volume.env
+ArtifactVersion:2
+ArtifactType:HEAT_ENV
+ArtifactDescription:Auto-generated HEAT Environment deployment artifact
+ArtifactTimeout:0
+ArtifactURL:/sdc/v1/catalog/services/VfZrdm5bpxmc02092017Service/1.0/resourceInstances/vfzrdm5bpxmc02092017vf0/artifacts/pxmc_mmn_volume.env
+ArtifactUUID:c1ae6284-48d9-4437-a195-b2cf2ba23070
+ArtifactChecksum:NmEyZjc1Y2UwZDMwYjFhNGRlMTMzN2JhNzdiMThjMGU=
+GeneratedArtifact:{NULL
+}
+RelatedArtifacts:{
+}
+
+
+}
+RelatedArtifacts:{
+}
+
+
+
+}
+
+
+
+}

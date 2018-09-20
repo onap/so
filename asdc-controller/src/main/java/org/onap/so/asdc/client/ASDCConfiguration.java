@@ -70,6 +70,7 @@ public class ASDCConfiguration implements IConfiguration {
     public static final String HEAT_VOL="HEAT_VOL";
     public static final String OTHER="OTHER";
     public static final String TOSCA_CSAR="TOSCA_CSAR";
+    public static final String WORKFLOWS="Workflows";
     public static final String VF_MODULES_METADATA="VF_MODULES_METADATA";
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.ASDC,ASDCConfiguration.class);
     

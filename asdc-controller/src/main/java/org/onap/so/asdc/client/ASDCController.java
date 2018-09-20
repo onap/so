@@ -48,6 +48,7 @@ import org.onap.so.asdc.installer.IVfResourceInstaller;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.asdc.installer.VfModuleStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
+import org.onap.so.asdc.installer.bpmn.BpmnInstaller;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.asdc.tenantIsolation.DistributionStatus;
 import org.onap.so.asdc.tenantIsolation.WatchdogDistribution;
@@ -77,6 +78,9 @@ public class ASDCController {
 
     @Autowired
     private ToscaResourceInstaller toscaInstaller;
+    
+    @Autowired
+    private BpmnInstaller bpmnInstaller;
     
     @Autowired
     private WatchdogDistributionStatusRepository wdsRepo;
@@ -684,6 +688,13 @@ public class ASDCController {
     		
    			this.processCsarServiceArtifacts(iNotif, toscaResourceStructure);
    			
+   			if (toscaResourceStructure.getServiceVersion() == null) {
+   				LOGGER.debug("Deploy the workflow");
+   				IArtifactInfo iArtifact = toscaResourceStructure.getToscaArtifact();
+   				String csarFilePath = System.getProperty("mso.config.path") + "/ASDC" + "/" + iArtifact.getArtifactName();   				
+   				bpmnInstaller.installBpmn(csarFilePath);
+   			} 			
+
    			// Install a service with no resources, only the service itself
    			if (iNotif.getResources() == null || iNotif.getResources().size() < 1) {
    				
@@ -772,6 +783,26 @@ public class ASDCController {
     							"Exception caught during processCsarServiceArtifacts", "ASDC", "processCsarServiceArtifacts", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in processCsarServiceArtifacts", e);
     				}
     			}
+    			else if(artifact.getArtifactType().equals(ASDCConfiguration.WORKFLOWS)){
+     				
+    				try{   					
+    					
+    					IDistributionClientDownloadResult resultArtifact = this.downloadTheArtifact(artifact,iNotif.getDistributionID());
+    					
+    					writeArtifactToFile(artifact, resultArtifact);
+    					
+    					toscaResourceStructure.setToscaArtifact(artifact);
+    					
+    					LOGGER.debug(ASDCNotificationLogging.dumpASDCNotification(iNotif));
+    					
+
+    				} catch(Exception e){
+    					System.out.println("Whats the error " + e.getMessage());
+    					LOGGER.error(MessageEnum.ASDC_GENERAL_EXCEPTION_ARG,
+    							"Exception caught during processCsarServiceArtifacts", "ASDC", "processCsarServiceArtifacts", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in processCsarServiceArtifacts", e);
+    				}
+    			}
+
     				
     		}
     }

@@ -1,0 +1,20 @@
+{
+    "serviceName": "Vf zrdm5bpxmc02092017-Service",
+    "serviceInvariantUUID": "b16a9398-ffa3-4041-b78c-2956b8ad9c7b",
+    "serviceUUID": "bad955c3-29b2-4a27-932e-28e942cc6480",
+    "serviceVersion": "1.0",
+    "serviceArtifacts": 
+    [{
+		"artifactName": "service-CxSvc-csar.csar",
+		"artifactType": "Workflow",
+		"artifactURL": "service-CxSvc-csar.csar",
+		"artifactChecksum": "MWQ3Y2FmMWExNDQyYWI2N2YwNjEwZGUzN2IzMzI3NjE=",
+		"artifactDescription": "TOSCA definition package of the asset",
+		"artifactTimeout": 0,
+		"artifactUUID": "396cfd49-0f4b-4fec-9f33-0fd7e90d5a22",
+		"artifactVersion": "1"
+    }]
+    ,
+    "serviceDescription": "Demo",
+    "distributionID": "a2872f55-8628-4486-8548-7b132c9a47db"
+}

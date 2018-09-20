@@ -1,0 +1,20 @@
+{
+    "distributionID": "a2872f55-8628-4486-8548-7b132c9a47db",
+    "serviceName": "Service-CxSvc",
+    "serviceVersion": "1.0",
+    "serviceUUID": "bad955c3-29b2-4a27-932e-28e942cc6480",
+    "serviceInvariantUUID": "b16a9398-ffa3-4041-b78c-2956b8ad9c7b",
+    "serviceDescription": "Demo",
+    "serviceArtifacts": [
+        {
+            "artifactName": "service-CxSvc-csar.csar",
+            "artifactVersion": "1",
+            "artifactType": "Workflows",
+            "artifactDescription": "Workflows Container",
+            "artifactTimeout": "0",
+            "artifactURL": "service-CxSvc-csar.csar",
+            "artifactUUID": "396cfd49-0f4b-4fec-9f33-0fd7e90d5a22",
+            "artifactChecksum": "MWQ3Y2FmMWExNDQyYWI2N2YwNjEwZGUzN2IzMzI3NjE="
+        }
+    ]
+}
