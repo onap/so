@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(scanBasePackages = { "org.onap.so" })
 public class Application {
 
+	private static final String MSO_CONFIG_PATH = "mso.config.path";
 	private static final String LOGS_DIR = "logs_dir";
 
 	private static void setLogsDir() {
@@ -33,11 +34,16 @@ public class Application {
 			System.getProperties().setProperty(LOGS_DIR, "./logs/asdc/");
 		}
 	}
+	
+	private static void setConfigPath() {
+		if(System.getProperty(MSO_CONFIG_PATH) == null)
+			System.getProperties().setProperty(MSO_CONFIG_PATH, ".");
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 		System.getProperties().setProperty("mso.db", "MARIADB");
-		System.getProperties().setProperty("mso.config.path", ".");
+
 		System.getProperties().setProperty("server.name", "Springboot");
 		setLogsDir();
 	}

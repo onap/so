@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2018 ONAP - SO
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client;
+package org.onap.so.logger;
 
-import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
-
-@Configuration
-public class RestTemplateConfig {
-
-	@Bean
-	public RestTemplate restTemplate() {
-		RestTemplate restTemplate = new RestTemplate();		
-		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
-		restTemplate.getInterceptors().add(new SpringClientFilter());
-		return restTemplate;
-	}
+public class LogConstants {
+	public static final String TARGET_ENTITY_HEADER="X-Target-Entity";
+	public static final String UNKNOWN_TARGET_ENTITY="Unknown-Target-Entity";
 }

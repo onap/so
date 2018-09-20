@@ -68,7 +68,7 @@ public class HealthCheckHandlerTest {
 		assertEquals(Response.Status.OK.getStatusCode(),response.getStatusCode().value());
         for(ILoggingEvent logEvent : TestAppender.events)
             if(logEvent.getLoggerName().equals("org.onap.so.logging.spring.interceptor.LoggingInterceptor") &&
-                    logEvent.getMarker().getName().equals("ENTRY")
+            		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")
                     ){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INSTANCE_UUID));
@@ -78,7 +78,7 @@ public class HealthCheckHandlerTest {
                 assertEquals("/manage/health",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
                 assertEquals("INPROGRESS",mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
             }else if(logEvent.getLoggerName().equals("org.onap.so.logging.spring.interceptor.LoggingInterceptor") &&
-                    logEvent.getMarker()!= null && logEvent.getMarker().getName().equals("EXIT")){
+            		logEvent.getMarker() != null &&  logEvent.getMarker()!= null && logEvent.getMarker().getName().equals("EXIT")){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));

@@ -22,17 +22,19 @@ package org.onap.so.apihandlerinfra;
 
 import java.util.concurrent.Executor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.onap.so.logging.jaxrs.filter.MDCTaskDecorator;
 
 @SpringBootApplication(scanBasePackages = { "org.onap"})
 @EnableAsync
 public class ApiHandlerApplication {
-
+	
 	@Value("${mso.async.core-pool-size}")
 	private int corePoolSize;
 
@@ -64,6 +66,7 @@ public class ApiHandlerApplication {
 		executor.setMaxPoolSize(maxPoolSize);
 		executor.setQueueCapacity(queueCapacity);
 		executor.setThreadNamePrefix("mso-apihandler-infra-");
+		executor.setTaskDecorator(new MDCTaskDecorator());
 		executor.initialize();
 		return executor;
 	}

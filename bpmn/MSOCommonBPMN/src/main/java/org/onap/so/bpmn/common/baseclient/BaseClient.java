@@ -20,13 +20,14 @@
 
 package org.onap.so.bpmn.common.baseclient;
 
+import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -59,11 +60,12 @@ public class BaseClient<I,O> {
 	public O post(I data, ParameterizedTypeReference<O> typeRef, Object... uriVariables) throws RestClientException {
 		return run(data, HttpMethod.POST, typeRef, uriVariables);
 	}
-
+	
 	public O run(I data, HttpMethod method, ParameterizedTypeReference<O> typeRef, Object... uriVariables) throws RestClientException {
 		HttpEntity<I> requestEntity = new HttpEntity<I>(data, getHttpHeader());
 		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
+		restTemplate.getInterceptors().add(new SpringClientFilter());
 		ResponseEntity<O> responseEntity = restTemplate.exchange(getTargetUrl(), method, requestEntity, typeRef,
 				uriVariables);
 		return responseEntity.getBody();

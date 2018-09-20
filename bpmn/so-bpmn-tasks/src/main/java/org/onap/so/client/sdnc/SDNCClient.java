@@ -64,26 +64,8 @@ public class SDNCClient {
 			STOClient.setTargetUrl(targetUrl);
 			HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
 			STOClient.setHttpHeader(httpHeader);
-			msoLogger.info("Running SDNC CLIENT for TargetUrl: " + targetUrl);
 			LinkedHashMap<?, ?> output = STOClient.post(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
-			Optional<String> sdncResponse = logSDNCResponse(output);
-			if(sdncResponse.isPresent()){
-				msoLogger.info(sdncResponse.get());
-			}
-			msoLogger.info("Validating output...");
 			return sdnCommonTasks.validateSDNResponse(output);
-	}
-
-	protected Optional<String> logSDNCResponse(LinkedHashMap<?, ?> output) {
-		ObjectMapper mapper = new ObjectMapper();
-		String sdncOutput = "";
-		try {
-			sdncOutput = mapper.writeValueAsString(output);
-			return Optional.of(sdncOutput);
-		} catch (JsonProcessingException e) {
-			msoLogger.debug("Failed to map response from sdnc to json string for logging purposes.");
-		}
-		return Optional.empty();
 	}
 
 	/**
@@ -102,12 +84,9 @@ public class SDNCClient {
 			String jsonRequest = sdnCommonTasks.buildJsonRequest(request);
 			String targetUrl = UriBuilder.fromUri(properties.getHost()).path(queryLink).build().toString();			
 			STOClient.setTargetUrl(targetUrl);
-			msoLogger.info("TargetUrl: " + targetUrl);
 			HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
 			STOClient.setHttpHeader(httpHeader);
-			msoLogger.info("Running SDNC CLIENT...");
 			LinkedHashMap<?, ?> output = STOClient.get(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
-			msoLogger.info("Validating output...");
 			return sdnCommonTasks.validateSDNGetResponse(output);
 	}
 

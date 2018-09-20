@@ -107,7 +107,7 @@ public class ManualTasksTest extends BaseTest{
         
         for(ILoggingEvent logEvent : TestAppender.events)
             if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
-                    logEvent.getMarker().getName().equals("ENTRY")
+            		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")
                     ){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
@@ -117,7 +117,7 @@ public class ManualTasksTest extends BaseTest{
                 assertEquals("tasks/v1/55/complete",mdc.get(MsoLogger.SERVICE_NAME));
                 assertEquals("INPROGRESS",mdc.get(MsoLogger.STATUSCODE));
             }else if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
-                    logEvent.getMarker().getName().equals("EXIT")){
+            		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("EXIT")){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
                 assertNotNull(mdc.get(MsoLogger.ENDTIME));

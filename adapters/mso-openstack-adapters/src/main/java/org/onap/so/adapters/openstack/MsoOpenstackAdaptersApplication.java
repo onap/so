@@ -22,6 +22,8 @@ package org.onap.so.adapters.openstack;
 
 import java.util.concurrent.Executor;
 
+import org.onap.so.logging.jaxrs.filter.MDCTaskDecorator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,6 +39,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 		"org.onap.so.db.request.data.repository"})
 @EntityScan({ "org.onap.so.db.catalog.beans", "org.onap.so.db.request.beans"})
 public class MsoOpenstackAdaptersApplication {
+
 
 	@Value("${mso.async.core-pool-size}")
 	private int corePoolSize;
@@ -63,6 +66,7 @@ public class MsoOpenstackAdaptersApplication {
 	@Bean
 	public Executor asyncExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setTaskDecorator(new MDCTaskDecorator());
 		executor.setCorePoolSize(corePoolSize);
 		executor.setMaxPoolSize(maxPoolSize);
 		executor.setQueueCapacity(queueCapacity);

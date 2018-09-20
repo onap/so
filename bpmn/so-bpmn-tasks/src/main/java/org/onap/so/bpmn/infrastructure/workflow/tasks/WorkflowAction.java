@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
+import org.slf4j.LoggerFactory;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.Relationship;
@@ -61,8 +62,6 @@ import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.Networks;
@@ -71,6 +70,7 @@ import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.VfModules;
 import org.onap.so.serviceinstancebeans.Vnfs;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -79,6 +79,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class WorkflowAction {
 
+	private static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
+	private static final String SERVICE_INSTANCES = "serviceInstances";
+	private static final String WORKFLOW_ACTION_WAS_UNABLE_TO_VERIFY_IF_THE_INSTANCE_NAME_ALREADY_EXIST_IN_AAI = "WorkflowAction was unable to verify if the instance name already exist in AAI.";
 	private static final String G_ORCHESTRATION_FLOW = "gOrchestrationFlow";
 	private static final String G_ACTION = "requestAction";
 	private static final String G_CURRENT_SEQUENCE = "gCurrentSequence";
@@ -100,7 +103,7 @@ public class WorkflowAction {
 	private static final String CREATEINSTANCE = "createInstance";
 	private static final String USERPARAMSERVICE = "service";
 	private static final String supportedTypes = "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances";
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, WorkflowAction.class);
+	private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
 	
 	@Autowired
 	protected BBInputSetup bbInputSetup;
@@ -239,7 +242,7 @@ public class WorkflowAction {
 				for(WorkflowType type : WorkflowType.values()){
 					foundObjects = foundObjects + type + " - " + resourceCounter.stream().filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList()).size() + "    ";
 				}
-				msoLogger.info("Found " + foundObjects);
+				logger.info("Found {}", foundObjects);
 
 				if (orchFlows == null || orchFlows.isEmpty()) {
 					orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte);
@@ -247,7 +250,7 @@ public class WorkflowAction {
 				flowsToExecute = buildExecuteBuildingBlockList(orchFlows, resourceCounter, requestId, apiVersion, resourceId,
 						resourceType, requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails);
 				if (!resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType()).collect(Collectors.toList()).isEmpty()) {
-					msoLogger.info("Sorting for Vlan Tagging");
+					logger.info("Sorting for Vlan Tagging");
 					flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
 				}
 				if (resourceType == WorkflowType.SERVICE
@@ -267,9 +270,9 @@ public class WorkflowAction {
 				throw new IllegalStateException("Macro did not come up with a valid execution path.");
 			}
 
-			msoLogger.info("List of BuildingBlocks to execute:");
+			logger.info("List of BuildingBlocks to execute:");
 			for (ExecuteBuildingBlock ebb : flowsToExecute) {
-				msoLogger.info(ebb.getBuildingBlock().getBpmnFlowName());
+				logger.info(ebb.getBuildingBlock().getBpmnFlowName());
 			}
 
 			execution.setVariable(G_CURRENT_SEQUENCE, 0);
@@ -296,7 +299,7 @@ public class WorkflowAction {
 	private void updateResourceIdsFromAAITraversal(List<ExecuteBuildingBlock> flowsToExecute,
 			List<Resource> resourceCounter, List<Pair<WorkflowType, String>> aaiResourceIds) {
 		for(Pair<WorkflowType,String> pair : aaiResourceIds){
-			msoLogger.debug(pair.getValue0() + ", " + pair.getValue1());
+			logger.debug(pair.getValue0() + ", " + pair.getValue1());
 		}
 		
 		Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE)).forEach(type -> {
@@ -389,12 +392,12 @@ public class WorkflowAction {
 			if (service.getVnfCustomizations() == null || service.getVnfCustomizations().isEmpty()) {
 				List<CollectionResourceCustomization> customizations = service.getCollectionResourceCustomizations();
 				if(customizations.isEmpty()) {
-					msoLogger.debug("No Collections found. CollectionResourceCustomization list is empty.");
+					logger.debug("No Collections found. CollectionResourceCustomization list is empty.");
 				}else{
 					CollectionResourceCustomization collectionResourceCustomization = findCatalogNetworkCollection(execution, service);
 					if(collectionResourceCustomization!=null){
 						resourceCounter.add(new Resource(WorkflowType.NETWORKCOLLECTION,collectionResourceCustomization.getModelCustomizationUUID(),false));
-						msoLogger.debug("Found a network collection");
+						logger.debug("Found a network collection");
 						if(collectionResourceCustomization.getCollectionResource()!=null){
 							if(collectionResourceCustomization.getCollectionResource().getInstanceGroup() != null){
 								String toscaNodeType = collectionResourceCustomization.getCollectionResource().getInstanceGroup().getToscaNodeType();
@@ -413,7 +416,7 @@ public class WorkflowAction {
 											minNetworks = collectionInstCust.getSubInterfaceNetworkQuantity();
 										}
 									}
-									msoLogger.debug("minNetworks: " + minNetworks);
+									logger.debug("minNetworks: {}" , minNetworks);
 									CollectionNetworkResourceCustomization collectionNetworkResourceCust = null;
 									for(CollectionNetworkResourceCustomization collectionNetworkTemp : instanceGroup.getCollectionNetworkResourceCustomizations()) {
 										if(collectionNetworkTemp.getNetworkResourceCustomization().getModelCustomizationUUID().equalsIgnoreCase(collectionResourceCustomization.getModelCustomizationUUID())) {
@@ -429,21 +432,21 @@ public class WorkflowAction {
 										}
 									}
 								} else {
-									msoLogger.debug("Instance Group tosca node type does not contain NetworkCollection: " + toscaNodeType);
+									logger.debug("Instance Group tosca node type does not contain NetworkCollection:  {}" , toscaNodeType);
 								}
 							}else{
-								msoLogger.debug("No Instance Group found for network collection.");
+								logger.debug("No Instance Group found for network collection.");
 							}
 						}else{
-							msoLogger.debug("No Network Collection found. collectionResource is null");
+							logger.debug("No Network Collection found. collectionResource is null");
 						}
 					} else {
-						msoLogger.debug("No Network Collection Customization found");
+						logger.debug("No Network Collection Customization found");
 					}
 				}
 				if (resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType()).collect(Collectors.toList()).isEmpty()) {
 					if (service.getNetworkCustomizations() == null) {
-						msoLogger.debug("No networks were found on this service model");
+						logger.debug("No networks were found on this service model");
 					} else {
 						for (int i = 0; i < service.getNetworkCustomizations().size(); i++) {
 							resourceCounter.add(new Resource(WorkflowType.NETWORK,service.getNetworkCustomizations().get(i).getModelCustomizationUUID(),false));
@@ -491,7 +494,7 @@ public class WorkflowAction {
 				}
 			}
 			if (serviceInstanceMSO.getCollection() != null) {
-				msoLogger.debug("found networkcollection");
+				logger.debug("found networkcollection");
 				aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.NETWORKCOLLECTION, serviceInstanceMSO.getCollection().getId()));
 				resourceCounter.add(new Resource(WorkflowType.NETWORKCOLLECTION,serviceInstanceMSO.getCollection().getId(),false));
 			}
@@ -613,9 +616,10 @@ public class WorkflowAction {
 					}
 				}
 			}
-			msoLogger.debug("found " + configurations.size() + " configurations");
+			logger.debug("found {} configurations" , configurations.size() );
 			return configurations;
 		} catch (Exception ex){
+			logger.error("Error in finding configurations", ex);
 			return configurations;
 		}
 	}
@@ -649,7 +653,7 @@ public class WorkflowAction {
 		Boolean generated = false;
 
 		if (m.find()) {
-			msoLogger.debug("found match on " + uri + ": " + m);
+			logger.debug("found match on {} : {} " , uri ,  m);
 			String type = m.group("type");
 			String id = m.group("id");
 			String action = m.group("action");
@@ -657,7 +661,7 @@ public class WorkflowAction {
 				throw new IllegalArgumentException("Uri could not be parsed. No type found. " + uri);
 			}
 			if (action == null) {
-				if (type.equals("serviceInstances") && (id == null || id.equals("assign"))) {
+				if (type.equals(SERVICE_INSTANCES) && (id == null || id.equals("assign"))) {
 					id = UUID.randomUUID().toString();
 					generated = true;
 				}
@@ -727,9 +731,9 @@ public class WorkflowAction {
 			}
 			return generatedResourceId;
 		} catch (Exception ex) {
-			msoLogger.error(ex);
+			logger.error(WORKFLOW_ACTION_WAS_UNABLE_TO_VERIFY_IF_THE_INSTANCE_NAME_ALREADY_EXIST_IN_AAI, ex);
 			throw new IllegalStateException(
-					"WorkflowAction was unable to verify if the instance name already exist in AAI.");
+					WORKFLOW_ACTION_WAS_UNABLE_TO_VERIFY_IF_THE_INSTANCE_NAME_ALREADY_EXIST_IN_AAI);
 		}
 	}
 
@@ -737,7 +741,7 @@ public class WorkflowAction {
 		if (!type.matches(supportedTypes)) {
 			return type;
 		} else {
-			if (type.equals("serviceInstances")) {
+			if (type.equals(SERVICE_INSTANCES)) {
 				return SERVICE;
 			} else {
 				return type.substring(0, 1).toUpperCase() + type.substring(1, type.length() - 1);
@@ -948,20 +952,19 @@ public class WorkflowAction {
 	}
 
 	protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
-		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(),
-				MsoLogger.ErrorCode.UnknownError, msg, ex);
-		execution.setVariable("WorkflowActionErrorMessage", msg);
+		logger.error(msg, ex);
+		execution.setVariable(WORKFLOW_ACTION_ERROR_MESSAGE, msg);
 		exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
 	}
 
 	protected void buildAndThrowException(DelegateExecution execution, String msg) {
-		msoLogger.error(msg);
-		execution.setVariable("WorkflowActionErrorMessage", msg);
+		logger.error(msg);
+		execution.setVariable(WORKFLOW_ACTION_ERROR_MESSAGE, msg);
 		exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
 	}
 	
 	public void handleRuntimeException (DelegateExecution execution){
-		StringBuffer wfeExpMsg = new StringBuffer("Runtime error ");
+		StringBuilder wfeExpMsg = new StringBuilder("Runtime error ");
 		String runtimeErrorMessage = null;
 		try{
 			String javaExpMsg = (String) execution.getVariable("BPMN_javaExpMsg");
@@ -969,10 +972,10 @@ public class WorkflowAction {
 				wfeExpMsg = wfeExpMsg.append(": ").append(javaExpMsg);
 			}
 			runtimeErrorMessage = wfeExpMsg.toString();
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, runtimeErrorMessage, "BPMN", MsoLogger.getServiceName(),
-					MsoLogger.ErrorCode.UnknownError, runtimeErrorMessage);
-			execution.setVariable("WorkflowActionErrorMessage", runtimeErrorMessage);
+			logger.error(runtimeErrorMessage);
+			execution.setVariable(WORKFLOW_ACTION_ERROR_MESSAGE, runtimeErrorMessage);
 		} catch (Exception e){
+			logger.error("Runtime error", e);
 			//if runtime message was mulformed
 			runtimeErrorMessage = "Runtime error";
 		}

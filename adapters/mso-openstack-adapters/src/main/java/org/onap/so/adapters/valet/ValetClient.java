@@ -50,6 +50,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.stereotype.Component;
 
@@ -108,19 +110,23 @@ public class ValetClient {
 			URI uri = builder.build();
 			
 			ValetCreateRequest vcr = this.createValetCreateRequest(regionId, tenantId, serviceInstanceId, vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
-			RestTemplate restTemplate = new RestTemplate();
 			String body = mapper.writeValueAsString(vcr);
 			HttpHeaders headers = generateHeaders(requestId);
-			HttpEntity<String> entity = new HttpEntity<>(body, headers);	
-			LOGGER.debug("valet create req: " + uri.toString() + HEADERS + headers.toString() + BODY + body);
+			HttpEntity<String> entity = new HttpEntity<>(body, headers);				
 			
-			response = restTemplate.exchange(uri, HttpMethod.POST, entity, ValetCreateResponse.class);
+			response = getRestTemplate().exchange(uri, HttpMethod.POST, entity, ValetCreateResponse.class);
 			gvr = this.getGVRFromResponse(response);
 		} catch (Exception e) {
 			LOGGER.error("An exception occurred in callValetCreateRequest", e);
 			throw e;
 		}
 		return gvr;
+	}
+	
+	private RestTemplate getRestTemplate(){
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
+		return restTemplate;
 	}
 	
 	/*
@@ -135,14 +141,13 @@ public class ValetClient {
 			UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam(REQUEST_ID, requestId);
 			URI uri = builder.build();
 			
-			ValetUpdateRequest vur = this.createValetUpdateRequest(regionId, tenantId, serviceInstanceId, vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
-			RestTemplate restTemplate = new RestTemplate();
+			ValetUpdateRequest vur = this.createValetUpdateRequest(regionId, tenantId, serviceInstanceId, vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);			
 			String body = mapper.writeValueAsString(vur);
 			HttpHeaders headers = generateHeaders(requestId);	
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet update req: " + uri.toString() + HEADERS + headers.toString() + BODY + body);
+		
 			
-			response = restTemplate.exchange(uri, HttpMethod.PUT, entity, ValetUpdateResponse.class);
+			response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetUpdateResponse.class);
 			gvr = this.getGVRFromResponse(response);
 		} catch (Exception e) {
 			LOGGER.error("An exception occurred in callValetUpdateRequest", e);
@@ -163,13 +168,13 @@ public class ValetClient {
 			URI uri = builder.build();
 			
 			ValetDeleteRequest vdr = this.createValetDeleteRequest(regionId, tenantId, vfModuleId, vfModuleName);
-			RestTemplate restTemplate = new RestTemplate();
+			
 			String body = mapper.writeValueAsString(vdr);
 			HttpHeaders headers = generateHeaders(requestId);
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet delete req: " + uri.toString() + HEADERS + headers.toString() + ", body=" + body);
 			
-			response = restTemplate.exchange(uri, HttpMethod.DELETE, entity, ValetDeleteResponse.class);
+			
+			response = getRestTemplate().exchange(uri, HttpMethod.DELETE, entity, ValetDeleteResponse.class);
 			gvr = this.getGVRFromResponse(response);
 		} catch (Exception e) {
 			LOGGER.error("An exception occurred in callValetDeleteRequest", e);
@@ -190,13 +195,13 @@ public class ValetClient {
 			URI uri = builder.build(requestId);
 			
 			ValetConfirmRequest vcr = this.createValetConfirmRequest(stackId);
-			RestTemplate restTemplate = new RestTemplate();
+			
 			String body = mapper.writeValueAsString(vcr);
 			HttpHeaders headers = generateHeaders(requestId);
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
 			LOGGER.debug("valet confirm req: " + uri.toString() + HEADERS + headers.toString() + BODY + body);
 			
-			response = restTemplate.exchange(uri, HttpMethod.PUT, entity, ValetConfirmResponse.class);
+			response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetConfirmResponse.class);
 			gvr = this.getGVRFromResponse(response);
 		} catch (Exception e) {
 			LOGGER.error("An exception occurred in callValetConfirmRequest", e);
@@ -217,13 +222,13 @@ public class ValetClient {
 			URI uri = builder.build(requestId);
 			
 			ValetRollbackRequest vrr = this.createValetRollbackRequest(stackId, suppressRollback, errorMessage);
-			RestTemplate restTemplate = new RestTemplate();
+		
 			String body = mapper.writeValueAsString(vrr);
 			HttpHeaders headers = generateHeaders(requestId);
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet rollback req: " + uri.toString() + HEADERS + headers.toString() + BODY + body);
 			
-			response = restTemplate.exchange(uri, HttpMethod.PUT, entity, ValetRollbackResponse.class);
+			
+			response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetRollbackResponse.class);
 			gvr = this.getGVRFromResponse(response);
 		} catch (Exception e) {
 			LOGGER.error("An exception occurred in callValetRollbackRequest", e);

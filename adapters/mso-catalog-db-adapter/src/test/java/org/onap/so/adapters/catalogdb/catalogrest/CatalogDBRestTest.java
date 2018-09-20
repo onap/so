@@ -111,7 +111,7 @@ public class CatalogDBRestTest {
 		assertEquals(Response.Status.OK.getStatusCode(),response.getStatusCode().value());
         for(ILoggingEvent logEvent : TestAppender.events)
             if(logEvent.getLoggerName().equals("org.onap.so.logging.spring.interceptor.LoggingInterceptor") &&
-                    logEvent.getMarker().getName().equals("ENTRY")
+            		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")
                     ){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INSTANCE_UUID));

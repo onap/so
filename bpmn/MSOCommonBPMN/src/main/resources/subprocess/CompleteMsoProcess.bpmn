@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_EsMs0HcuEeW2U_kkOHX1ZQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_EsMs0HcuEeW2U_kkOHX1ZQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.1" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CompleteMsoProcess" name="CompleteMsoProcess" isExecutable="true">
     <bpmn2:scriptTask id="preProcessRequest" name="Pre-Process Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_18</bpmn2:incoming>
@@ -56,6 +56,7 @@ completeMsoProcess.setUpdateDBstatustoSuccessPayload(execution)]]></bpmn2:script
               <camunda:map>
                 <camunda:entry key="content-type">application/soap+xml</camunda:entry>
                 <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
+                <camunda:entry key="X-ONAP-RequestID">#{CMSO_request_id}</camunda:entry>
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
@@ -88,7 +89,7 @@ buildDataErrorMessage.buildDataError(execution, "Complete MSO  -- Update DB stat
     <bpmn2:sequenceFlow id="SequenceFlow_1" name="" sourceRef="ExclusiveGateway_7" targetRef="BuildErrorMessage" />
     <bpmn2:boundaryEvent id="BoundaryEvent_7" name="" attachedToRef="updateInfraRequest">
       <bpmn2:outgoing>SequenceFlow_0mipf25</bpmn2:outgoing>
-      <bpmn2:errorEventDefinition id="_ErrorEventDefinition_84" errorRef="Error_1" />
+      <bpmn2:errorEventDefinition id="_ErrorEventDefinition_84" errorRef="Error_1" camunda:errorCodeVariable="gJavaErrorCode" camunda:errorMessageVariable="gJavaErrorMessage" />
     </bpmn2:boundaryEvent>
     <bpmn2:endEvent id="EndEvent_1">
       <bpmn2:incoming>SequenceFlow_1pzb94j</bpmn2:incoming>

@@ -70,9 +70,7 @@ import org.springframework.stereotype.Component;
  * Plugin for MSO logging and URN mapping.
  */
 @Component
-public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, LoggingAndURNMappingPlugin.class);
-	private static final String FSPROPKEY = "URNMapping.FileSystemLoading.Enabled";
+public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {	
 	
 	@Autowired
 	private LoggingParseListener loggingParseListener;
@@ -198,7 +196,6 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 
                 @Override
 		public void parseSequenceFlow(Element sequenceFlowElement, ScopeImpl scopeElement, TransitionImpl transition) {
-			//injectLogExecutionListener(activity);
 		}
 
                 @Override
@@ -216,9 +213,9 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 			injectLogExecutionListener(timerActivity);
 		}
 
-                @Override
+       @Override
 		public void parseRootElement(Element rootElement, List<ProcessDefinitionEntity> processDefinitions) {
-			//injectLogExecutionListener(activity);
+
 		}
 
                 @Override
@@ -298,17 +295,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 		}
 
 		@Override
-		public void notify(DelegateExecution execution) throws Exception {
-			logger.trace("Logging for activity---------------:" + event + ":"
-						+ execution.getCurrentActivityName()
-						+ ", processDefinitionId="
-						+ execution.getProcessDefinitionId() + ", activtyId="
-						+ execution.getCurrentActivityId() + ", activtyName='"
-						+ execution.getCurrentActivityName() + "'"
-						+ ", processInstanceId="
-						+ execution.getProcessInstanceId() + ", businessKey="
-						+ execution.getProcessBusinessKey() + ", executionId="
-						+ execution.getId());
+		public void notify(DelegateExecution execution) throws Exception {			
 			//required for legacy groovy processing in camunda
 			execution.setVariable("isDebugLogEnabled", "true");
 			if (!isBlank(execution.getCurrentActivityName())) {
@@ -322,20 +309,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 						  .singleResult()
 						  .getName();
 						
-						if (execution.getBpmnModelElementInstance() instanceof StartEvent) {
-							logger.debug("Starting process: " + processName);
-						}
-						if (execution.getBpmnModelElementInstance() instanceof EndEvent) {
-							logger.debug("Ending process: " + processName);
-						}
-						
-						String serviceName = MDC.get(MsoLogger.SERVICE_NAME);
-						
-						if(serviceName != null && !serviceName.contains(processName))
-							MsoLogger.setServiceName( serviceName + "." + processName);
-						else if(serviceName == null)
-							MsoLogger.setServiceName(processName);
-						
+						MsoLogger.setServiceName(processName);						
 						String requestId = (String) execution.getVariable("mso-request-id");
 						String svcid = (String) execution.getVariable("mso-service-instance-id");
 						MsoLogger.setLogContext(requestId, svcid);							

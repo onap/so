@@ -207,30 +207,9 @@ public class MsoLogger {
     private MsoLogger(MsoLogger.Catalog cat, Class<?> clazz) {
         this.logger = LoggerFactory.getLogger(clazz);
         this.auditLogger = LoggerFactory.getLogger("AUDIT");
-        this.metricsLogger = LoggerFactory.getLogger("METRIC");
-        MsoLogger.initialization();       
+        this.metricsLogger = LoggerFactory.getLogger("METRIC");       
         setDefaultLogCatalog(cat);
     }
-
-    private static synchronized void initialization() {
-        if (instanceUUID == null || ("").equals(instanceUUID)) {
-            instanceUUID = getInstanceUUID();
-        }
-
-        if (serverIP == null || serverName == null || ("").equals(serverIP) || ("").equals(serverName)) {
-            try {
-                InetAddress server = InetAddress.getLocalHost();
-                serverIP = server.getHostAddress();
-                serverName = server.getHostName();
-            } catch (UnknownHostException e) {
-                initLOGGER.error("Could not get local hostname", e);
-                serverIP = "";
-                serverName = "";
-            }
-        }
-    }
-
-
     
     public static MsoLogger getMsoLogger(MsoLogger.Catalog cat, Class<?> clazz) {
         return new MsoLogger(cat,clazz);

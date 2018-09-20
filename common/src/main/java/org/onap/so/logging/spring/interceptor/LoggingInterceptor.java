@@ -45,7 +45,7 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
     Logger logger = LoggerFactory.getLogger(LoggingInterceptor.class);
 
     @Autowired
-    MDCSetup mdcSetup;
+    private MDCSetup mdcSetup;
     
     @Context 
     private Providers providers;
@@ -53,7 +53,8 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        Map<String, String> headers = Collections.list(((HttpServletRequest) request).getHeaderNames())
+    	
+        Map<String, String> headers = Collections.list((request).getHeaderNames())
                 .stream()
                 .collect(Collectors.toMap(h -> h, request::getHeader));
         setRequestId(headers);
@@ -64,12 +65,27 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
         mdcSetup.setEntryTimeStamp();
         mdcSetup.setInstanceUUID();
         mdcSetup.setServerFQDN();
-        MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, "INPROGRESS");
+        MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.INPROGRESS.toString());
         logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
+        if (logger.isDebugEnabled()) 
+        	logRequestInformation(request);
         return true;
     }
     
-    @Override
+    protected void logRequestInformation(HttpServletRequest request) {
+    	Map<String, String> headers = Collections.list((request).getHeaderNames())
+    		    .stream()
+    		    .collect(Collectors.toMap(h -> h, request::getHeader));
+
+    	logger.debug("===========================request begin================================================");
+    	logger.debug("URI         : {}", request.getRequestURI());
+    	logger.debug("Method      : {}", request.getMethod());
+    	logger.debug("Headers     : {}", headers);
+    	logger.debug("==========================request end================================================");
+		
+	}
+
+	@Override
     public void postHandle(
             HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
             throws Exception {
@@ -80,7 +96,7 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
         MDC.clear();
     }
 
-    private void setResponseStatusCode(HttpServletResponse response) {
+	protected void setResponseStatusCode(HttpServletResponse response) {
         String statusCode;
         if(Response.Status.Family.familyOf(response.getStatus()).equals(Response.Status.Family.SUCCESSFUL)){     
             statusCode=ONAPLogConstants.ResponseStatus.COMPLETED.toString();
@@ -90,26 +106,26 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
         MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, statusCode);
     }
 
-    private void setServiceName(HttpServletRequest request) {
+	protected void setServiceName(HttpServletRequest request) {
         MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, request.getRequestURI());
     }
 
-    private void setRequestId(Map<String, String> headers) {
-        String requestId=headers.get(ONAPLogConstants.Headers.REQUEST_ID);
+	protected void setRequestId(Map<String, String> headers) {
+        String requestId=headers.get(ONAPLogConstants.Headers.REQUEST_ID.toLowerCase());      
         if(requestId == null || requestId.isEmpty())
-            requestId = UUID.randomUUID().toString();
+        	requestId = UUID.randomUUID().toString();    
         MDC.put(ONAPLogConstants.MDCs.REQUEST_ID,requestId);
     }
 
-    private void setInvocationId(Map<String, String> headers) {
-        String invocationId = headers.get(ONAPLogConstants.Headers.INVOCATION_ID);
+	protected void setInvocationId(Map<String, String> headers) {
+        String invocationId = headers.get(ONAPLogConstants.Headers.INVOCATION_ID.toLowerCase());
         if(invocationId == null || invocationId.isEmpty())
             invocationId =UUID.randomUUID().toString();
         MDC.put(ONAPLogConstants.MDCs.INVOCATION_ID, invocationId);
     }
 
-    private void setMDCPartnerName(Map<String, String> headers) {
-        String partnerName=headers.get(ONAPLogConstants.Headers.PARTNER_NAME);
+	protected void setMDCPartnerName(Map<String, String> headers) {
+        String partnerName=headers.get(ONAPLogConstants.Headers.PARTNER_NAME.toLowerCase());
         if(partnerName == null || partnerName.isEmpty())
             partnerName = "";
         MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME,partnerName);

@@ -27,6 +27,7 @@ import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
+import org.onap.so.db.catalog.beans.ExternalServiceToInternalService;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkRecipe;
@@ -47,6 +48,7 @@ import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
+import org.onap.so.logger.LogConstants;
 import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -118,6 +120,8 @@ public class CatalogDbClient {
 	private static final String WORK_STEP = "workStep";
 	private static final String CLLI = "clli";
 	private static final String CLOUD_VERSION = "cloudVersion";
+	
+	private static final String TARGET_ENTITY = "SO:CatalogDB";
 
 	private String findFirstByModelNameURI = "/findFirstByModelNameOrderByModelVersionDesc";
 	private String findFirstByServiceModelUUIDAndActionURI = "/findFirstByServiceModelUUIDAndAction";
@@ -255,6 +259,7 @@ public class CatalogDbClient {
 			restTemplate.getInterceptors().add((request, body, execution) -> {
 
 				request.getHeaders().add(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
+				request.getHeaders().add(LogConstants.TARGET_ENTITY_HEADER,TARGET_ENTITY);
 				return execution.execute(request, body);
 			});
 		}).build().buildClientFactory();

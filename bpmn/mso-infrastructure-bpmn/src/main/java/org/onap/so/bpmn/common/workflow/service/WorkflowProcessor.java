@@ -31,7 +31,6 @@ import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
 import org.onap.so.logger.MsoLogger;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowProcessorException;
-import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -46,19 +45,14 @@ public class WorkflowProcessor extends ProcessEngineAwareService {
 	@Async
 	public void startProcess( String processKey, VariableMapImpl variableMap) throws InterruptedException
 	{
-		MDC.getCopyOfContextMap();
+		
 		long startTime = System.currentTimeMillis();
 		Map<String, Object> inputVariables = null;
 		String processInstanceId = null;
 		try {
 			inputVariables = getInputVariables(variableMap);
-			setLogContext(processKey, inputVariables);
-
 			// This variable indicates that the flow was invoked asynchronously
 			inputVariables.put("isAsyncProcess", "true");
-			
-			
-			setLogContext(processKey, inputVariables);
 
 			// Note: this creates a random businessKey if it wasn't specified.
 			String businessKey = getBusinessKey(inputVariables);
@@ -84,14 +78,6 @@ public class WorkflowProcessor extends ProcessEngineAwareService {
 			workflowResponse.setMessageCode(500);
 			workflowResponse.setMessage("Fail");
 			throw new WorkflowProcessorException(workflowResponse);
-		}
-	}
-	
-	protected static void setLogContext(String processKey,
-			Map<String, Object> inputVariables) {
-		MsoLogger.setServiceName("MSO." + processKey);
-		if (inputVariables != null) {
-			MsoLogger.setLogContext(getKeyValueFromInputVariables(inputVariables,"mso-request-id"), getKeyValueFromInputVariables(inputVariables,"mso-service-instance-id"));
 		}
 	}
 	

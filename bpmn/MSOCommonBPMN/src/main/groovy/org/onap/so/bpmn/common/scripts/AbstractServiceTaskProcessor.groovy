@@ -755,8 +755,6 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	public void setBasicDBAuthHeader(DelegateExecution execution, isDebugLogEnabled) {
 		try {
 			String basicAuthValueDB = UrnPropertiesReader.getVariable("mso.adapters.db.auth", execution)
-			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB, isDebugLogEnabled)
-			
 			def encodedString = utils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
 			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
 		} catch (IOException ex) {

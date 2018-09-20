@@ -30,6 +30,8 @@ import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
 import org.onap.so.bpmn.common.DefaultToShortClassNameBeanNameGenerator;
 import org.onap.so.logger.MsoLogger;
+import org.onap.so.logging.jaxrs.filter.MDCTaskDecorator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -102,7 +104,7 @@ public class MSOInfrastructureApplication {
 	@Primary
 	public Executor asyncExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-
+		executor.setTaskDecorator(new MDCTaskDecorator());
 		executor.setCorePoolSize(corePoolSize);
 		executor.setMaxPoolSize(maxPoolSize);
 		executor.setQueueCapacity(queueCapacity);

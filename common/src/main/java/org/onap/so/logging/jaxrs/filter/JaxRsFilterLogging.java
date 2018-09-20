@@ -76,7 +76,7 @@ public class JaxRsFilterLogging implements ContainerRequestFilter,ContainerRespo
             mdcSetup.setClientIPAddress(httpServletRequest);
             mdcSetup.setInstanceUUID();
             mdcSetup.setEntryTimeStamp();
-            MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, "INPROGRESS");
+            MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.INPROGRESS.toString());
             logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
         } catch (Exception e) {
             logger.warn("Error in incoming JAX-RS Inteceptor", e);
@@ -163,6 +163,16 @@ public class JaxRsFilterLogging implements ContainerRequestFilter,ContainerRespo
         MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, containerRequest.getUriInfo().getPath());
     }
 
+    private void clearClientMDCs() {
+        MDC.remove(ONAPLogConstants.MDCs.INVOCATION_ID);
+        MDC.remove(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION);
+        MDC.remove(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE);
+        MDC.remove(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION);
+        MDC.remove(ONAPLogConstants.MDCs.RESPONSE_CODE);
+        MDC.remove(ONAPLogConstants.MDCs.TARGET_ENTITY);
+        MDC.remove(ONAPLogConstants.MDCs.PARTNER_NAME);
+        MDC.remove(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME);
+    }
 
 
 

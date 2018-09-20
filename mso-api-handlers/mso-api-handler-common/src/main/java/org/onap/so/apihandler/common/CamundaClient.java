@@ -24,6 +24,7 @@ package org.onap.so.apihandler.common;
 
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -32,6 +33,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.camundabeans.CamundaBooleanInput;
 import org.onap.so.apihandler.camundabeans.CamundaInput;
 import org.onap.so.apihandler.camundabeans.CamundaIntegerInput;
@@ -39,6 +41,7 @@ import org.onap.so.apihandler.camundabeans.CamundaRequest;
 import org.onap.so.apihandler.camundabeans.CamundaVIDRequest;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.MDC;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -63,6 +66,22 @@ public class CamundaClient extends RequestClient{
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
 		msoLogger.info("Camunda Request Content: " + jsonReq);
+		
+
+		post.setEntity(input);
+		setupHeaders(post);
+
+		HttpResponse response = client.execute(post);
+		msoLogger.debug("Response is: " + response);
+		
+		return response;
+	}
+
+
+	private void setupHeaders(HttpPost post) {
+		post.addHeader(ONAPLogConstants.Headers.REQUEST_ID, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
+		post.addHeader(ONAPLogConstants.Headers.INVOCATION_ID, UUID.randomUUID().toString());
+		
 		String encryptedCredentials = null;
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
@@ -73,12 +92,6 @@ public class CamundaClient extends RequestClient{
 				}
 			}
 		}
-
-		post.setEntity(input);
-		HttpResponse response = client.execute(post);
-		msoLogger.debug("Response is: " + response);
-		
-		return response;
 	}
 
 	@Override
@@ -86,10 +99,10 @@ public class CamundaClient extends RequestClient{
 					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
 		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
-		//String jsonReq = wrapRequest(camundaReqXML, requestId, serviceInstanceId, requestTimeout,  schemaVersion);
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
+		setupHeaders(post);
 
 		String encryptedCredentials = null;
 		if(props!=null){
@@ -101,6 +114,7 @@ public class CamundaClient extends RequestClient{
 				}
 			}
 		}
+
 
 		post.setEntity(input);
 		HttpResponse response = client.execute(post);
@@ -119,6 +133,9 @@ public class CamundaClient extends RequestClient{
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
+
+
+		setupHeaders(post);
 
 		String encryptedCredentials = null;
 		if(props!=null){

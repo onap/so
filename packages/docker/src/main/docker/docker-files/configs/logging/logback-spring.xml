@@ -10,32 +10,36 @@
     language governing permissions and limitations under the License. ============LICENSE_END========================================================= -->
 
 <configuration scan="true" debug="false">
-    <contextListener class="org.onap.so.logger.LoggerStartupListener" />
-    <include resource="org/springframework/boot/logging/logback/base.xml" />
+	<contextListener class="org.onap.so.logger.LoggerStartupListener" />
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
 
-    <property name="queueSize" value="256" />
-    <property name="maxFileSize" value="200MB" />
-    <property name="maxHistory" value="30" />
-    <property name="totalSizeCap" value="10GB" />
+	<property name="queueSize" value="256" />
+	<property name="maxFileSize" value="200MB" />
+	<property name="maxHistory" value="30" />
+	<property name="totalSizeCap" value="10GB" />
 
-    <!-- log file names -->
-    <property name="errorLogName" value="error" />
-    <property name="metricsLogName" value="metrics" />
-    <property name="auditLogName" value="audit" />
-    <property name="debugLogName" value="debug" />
-    <property name="saneLogName" value="sane" />
+	<!-- log file names -->
+	<property name="errorLogName" value="error" />
+	<property name="metricsLogName" value="metrics" />
+	<property name="auditLogName" value="audit" />
+	<property name="debugLogName" value="debug" />
+	
+	<property name="currentTimeStamp" value="%d{&quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;,UTC}"/>
 
-    <property name="errorPattern"
-        value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestId}|%thread|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%.-5level|%X{ErrorCode}|%X{ErrorDesc}|%msg%n" />
+	<property name="errorPattern"
+		value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestID}|%thread|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%.-5level|%X{ErrorCode}|%X{ErrorDesc}|%msg%n" />
 
-    <property name="auditPattern"
-        value="%X{BeginTimestamp}|%X{EndTimestamp}|%X{RequestId}|%X{ServiceInstanceId}|%thread||%X{ServiceName}|%X{PartnerName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDesc}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{Timer}|%X{ServerFQDN}|%X{RemoteHost}||||||||%msg%n" />
+	<property name="debugPattern"
+		value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestID}| %logger{50} - %msg%n" />
 
-    <property name="metricPattern"
-        value="%X{BeginTimestamp}|%X{EndTimestamp}|%X{RequestId}|%X{ServiceInstanceId}|%thread||%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDesc}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{Timer}|%X{ServerFQDN}|%X{RemoteHost}||||%X{TargetVirtualEntity}|||||%msg%n" />
+	<property name="auditPattern"
+		value="%X{EntryTimestamp}|%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX,UTC}|%X{RequestID}|%X{ServiceInstanceId}|%thread||%X{ServiceName}|%X{PartnerName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDesc}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{Timer}|%X{ServerFQDN}|%X{RemoteHost}||||||||%msg%n" />
 
-    <property name="defaultPattern"
-        value="%nopexception%logger
+	<property name="metricPattern"
+		value="%X{InvokeTimestamp}|%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX,UTC}|%X{RequestID}|%X{ServiceInstanceId}|%thread||%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDesc}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{Timer}|%X{ServerFQDN}|%X{RemoteHost}||||%X{TargetVirtualEntity}|||||%msg%n" />
+
+	<property name="defaultPattern"
+		value="%nopexception%logger
                 \t%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX,UTC}
                 \t%level
                 \t%replace(%replace(%message){'\t','\\\\t'}){'\n','\\\\n'}
@@ -45,123 +49,151 @@
                 \t%thread
                 \t%n" />
 
-    <appender name="Audit"
-        class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${logs_dir:-.}/${auditLogName}.log</file>
-        <rollingPolicy
-            class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${logs_dir:-.}/${auditLogName}.%d{yyyy-MM-dd}.%i.log.zip
-            </fileNamePattern>
-            <maxFileSize>${maxFileSize}</maxFileSize>
-            <maxHistory>${maxHistory}</maxHistory>
-            <totalSizeCap>${totalSizeCap}</totalSizeCap>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${auditPattern}</pattern>
-        </encoder>
-    </appender>
+	<appender name="Audit"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">				
+				<marker>EXIT</marker>
+			</evaluator>
+			<onMismatch>DENY</onMismatch>
+			<onMatch>ACCEPT</onMatch>
+		</filter>
+		<file>${logs_dir:-.}/${auditLogName}.log</file>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logs_dir:-.}/${auditLogName}.%d{yyyy-MM-dd}.%i.log.zip
+			</fileNamePattern>
+			<maxFileSize>${maxFileSize}</maxFileSize>
+			<maxHistory>${maxHistory}</maxHistory>
+			<totalSizeCap>${totalSizeCap}</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${auditPattern}</pattern>
+		</encoder>
+	</appender>
 
-    <appender name="asyncAudit" class="ch.qos.logback.classic.AsyncAppender">
-        <queueSize>256</queueSize>
-        <appender-ref ref="Audit" />
-    </appender>
+	<appender name="asyncAudit" class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>256</queueSize>
+		<appender-ref ref="Audit" />
+	</appender>
 
-    <appender name="Metric"
-        class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${logs_dir:-.}/${metricsLogName}.log</file>
-        <rollingPolicy
-            class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${logs_dir:-.}/${metricsLogName}.%d{yyyy-MM-dd}.%i.log.zip
-            </fileNamePattern>
-            <maxFileSize>${maxFileSize}</maxFileSize>
-            <maxHistory>${maxHistory}</maxHistory>
-            <totalSizeCap>${totalSizeCap}</totalSizeCap>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${metricPattern}</pattern>
-        </encoder>
-    </appender>
+	<appender name="Metric"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">				
+				<marker>INVOKE_RETURN</marker>
+			</evaluator>
+			<onMismatch>DENY</onMismatch>
+			<onMatch>ACCEPT</onMatch>
+		</filter>
+		<file>${logs_dir:-.}/${metricsLogName}.log</file>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logs_dir:-.}/${metricsLogName}.%d{yyyy-MM-dd}.%i.log.zip
+			</fileNamePattern>
+			<maxFileSize>${maxFileSize}</maxFileSize>
+			<maxHistory>${maxHistory}</maxHistory>
+			<totalSizeCap>${totalSizeCap}</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${metricPattern}</pattern>
+		</encoder>
+	</appender>
 
 
-    <appender name="asyncMetric" class="ch.qos.logback.classic.AsyncAppender">
-        <queueSize>256</queueSize>
-        <appender-ref ref="Metric" />
-    </appender>
+	<appender name="asyncMetric" class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>256</queueSize>
+		<appender-ref ref="Metric" />
+	</appender>
 
-    <appender name="Error"
-        class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-        <file>${logs_dir:-.}/${errorLogName}.log</file>
-        <rollingPolicy
-            class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${logs_dir:-.}/${errorLogName}.%d{yyyy-MM-dd}.%i.log.zip
-            </fileNamePattern>
-            <maxFileSize>${maxFileSize}</maxFileSize>
-            <maxHistory>${maxHistory}</maxHistory>
-            <totalSizeCap>${totalSizeCap}</totalSizeCap>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${errorPattern}</pattern>
-        </encoder>
-    </appender>
+	<appender name="Error"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<file>${logs_dir:-.}/${errorLogName}.log</file>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logs_dir:-.}/${errorLogName}.%d{yyyy-MM-dd}.%i.log.zip
+			</fileNamePattern>
+			<maxFileSize>${maxFileSize}</maxFileSize>
+			<maxHistory>${maxHistory}</maxHistory>
+			<totalSizeCap>${totalSizeCap}</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${errorPattern}</pattern>
+		</encoder>
+	</appender>
 
-    <appender name="asyncError" class="ch.qos.logback.classic.AsyncAppender">
-        <queueSize>256</queueSize>
-        <appender-ref ref="Error" />
-    </appender>
+	<appender name="asyncError" class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>256</queueSize>
+		<appender-ref ref="Error" />
+	</appender>
 
-    <appender name="Debug"
-        class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${logs_dir:-.}/${debugLogName}.log</file>
-        <rollingPolicy
-            class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${logs_dir:-.}/${debugLogName}.%d{yyyy-MM-dd}.%i.log.zip
-            </fileNamePattern>
-            <maxFileSize>${maxFileSize}</maxFileSize>
-            <maxHistory>${maxHistory}</maxHistory>
-            <totalSizeCap>${totalSizeCap}</totalSizeCap>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${defaultPattern}</pattern>
-        </encoder>
-    </appender>
+	<appender name="Debug"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+				<marker>INVOKE</marker>
+				<marker>INVOKE_RETURN</marker>
+				<marker>ENTRY</marker>
+				<marker>EXIT</marker>
+			</evaluator>
+			<onMismatch>ACCEPT</onMismatch>
+			<onMatch>DENY</onMatch>
+		</filter>
+		<file>${logs_dir:-.}/${debugLogName}.log</file>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logs_dir:-.}/${debugLogName}.%d{yyyy-MM-dd}.%i.log.zip
+			</fileNamePattern>
+			<maxFileSize>${maxFileSize}</maxFileSize>
+			<maxHistory>${maxHistory}</maxHistory>
+			<totalSizeCap>${totalSizeCap}</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${debugPattern}</pattern>
+		</encoder>
+	</appender>
 
-    <appender name="asyncDebug" class="ch.qos.logback.classic.AsyncAppender">
-        <queueSize>256</queueSize>
-        <appender-ref ref="Debug" />
-        <includeCallerData>true</includeCallerData>
-    </appender>
+	<appender name="asyncDebug" class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>256</queueSize>
+		<appender-ref ref="Debug" />
+		<includeCallerData>true</includeCallerData>
+	</appender>
 
-    <!-- Spring related loggers -->
-    <logger name="org.springframework" level="WARN" />
+	<!-- Spring related loggers -->
+	<logger name="org.springframework" level="WARN" />
+	<logger
+		name="org.springframework.security.authentication.dao.DaoAuthenticationProvider"
+		level="DEBUG" />
 
-    <!-- Camunda related loggers -->
-    <logger name="org.camunda.bpm.engine.jobexecutor.level" level="WARN" />
-    <logger
-        name="org.camunda.bpm.engine.impl.persistence.entity.JobEntity.level"
-        level="WARN" />
+	<!-- Camunda related loggers -->
+	<logger name="org.camunda.bpm.engine.jobexecutor.level" level="WARN" />
+	<logger
+		name="org.camunda.bpm.engine.impl.persistence.entity.JobEntity.level"
+		level="WARN" />
 
-    <logger name="db.migration" level="DEBUG" />
-    <logger name="org.apache.wire" level="DEBUG" />
-    <logger name="org.onap" level="DEBUG" />
-    <logger name="com.att.ecomp" level="DEBUG" />
-    <logger name="org.apache.cxf" level="INFO" />
+	<logger name="org.apache.wire" level="DEBUG" />
+	<logger name="org.onap" level="DEBUG" />
+	<logger name="com.att.ecomp" level="DEBUG" />
+	<logger name="org.apache.cxf.interceptor" level="DEBUG" />
 
-    <logger name="AUDIT" level="INFO" additivity="false">
-        <appender-ref ref="asyncAudit" />
-    </logger>
+	<logger name="AUDIT" level="INFO" additivity="false">
+		<appender-ref ref="asyncAudit" />
+	</logger>
 
-    <logger name="METRIC" level="INFO" additivity="false">
-        <appender-ref ref="asyncMetric" />
-    </logger>
+	<logger name="METRIC" level="INFO" additivity="false">
+		<appender-ref ref="asyncMetric" />
+	</logger>
 
-    <root level="WARN">
-        <appender-ref ref="asyncDebug" />
-        <appender-ref ref="asyncError" />
-    </root>
+	<root level="WARN">
+		<appender-ref ref="asyncDebug" />
+		<appender-ref ref="asyncError" />
+		<appender-ref ref="asyncAudit" />
+		<appender-ref ref="asyncMetric" />
+	</root>
 
 </configuration>

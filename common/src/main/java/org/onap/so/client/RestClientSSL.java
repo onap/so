@@ -56,7 +56,7 @@ public abstract class RestClientSSL extends RestClient {
 				KeyStore ks = getKeyStore();
 				if(ks != null) {
 					client = ClientBuilder.newBuilder().keyStore(ks, System.getProperty(RestClientSSL.SSL_KEY_STORE_PASSWORD_KEY)).build();
-					logger.debug("RestClientSSL not using default SSL context - setting keystore here.");
+					logger.info("RestClientSSL not using default SSL context - setting keystore here.");
 					return client;
 				}
 			}

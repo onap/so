@@ -64,7 +64,7 @@ public class JaxRsClientLogging implements ClientRequestFilter,ClientResponseFil
     private static Logger logger = LoggerFactory.getLogger(JaxRsClientLogging.class);
 
     public void setTargetService(TargetEntity targetEntity){
-        MDC.put("TargetEntity", targetEntity.toString());
+        MDC.put(ONAPLogConstants.MDCs.TARGET_ENTITY, targetEntity.toString());
     }
 
     @Override
@@ -90,7 +90,7 @@ public class JaxRsClientLogging implements ClientRequestFilter,ClientResponseFil
         MDC.put(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME, clientRequest.getUri().toString());
         MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.INPROGRESS.toString());
         setInvocationId();
-        MDC.put("TargetEntity",MDC.get("TargetEntity"));
+        MDC.put(ONAPLogConstants.MDCs.TARGET_ENTITY,MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
     }
 
     private String extractRequestID(ClientRequestContext clientRequest) {
@@ -123,7 +123,7 @@ public class JaxRsClientLogging implements ClientRequestFilter,ClientResponseFil
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(responseContext.getStatus()));
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION,getStringFromInputStream(responseContext));
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, statusCode);
-            logger.info(MarkerFactory.getMarker("INVOKE_RETURN"), "InvokeReturn");
+            logger.info(ONAPLogConstants.Markers.INVOKE_RETURN, "InvokeReturn");
             clearClientMDCs();
         } catch ( Exception e) {
             logger.warn("Error in outgoing JAX-RS Inteceptor", e);
@@ -136,6 +136,10 @@ public class JaxRsClientLogging implements ClientRequestFilter,ClientResponseFil
         MDC.remove(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE);
         MDC.remove(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION);
         MDC.remove(ONAPLogConstants.MDCs.RESPONSE_CODE);
+        MDC.remove(ONAPLogConstants.MDCs.TARGET_ENTITY);
+        MDC.remove(ONAPLogConstants.MDCs.PARTNER_NAME);
+        MDC.remove(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME);
+        MDC.remove(ONAPLogConstants.MDCs.INVOKE_TIMESTAMP);
     }
 
     private static String getStringFromInputStream(ClientResponseContext clientResponseContext) {
