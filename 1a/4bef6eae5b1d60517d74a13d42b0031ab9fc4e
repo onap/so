@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review-1: Rob Daugherty <rd472p@att.com>
+Code-Review+2: Seshu Kumar M <seshu.kumar.m@huawei.com>
+Submitted-by: Seshu Kumar M <seshu.kumar.m@huawei.com>
+Submitted-at: Thu, 20 Sep 2018 06:21:27 +0000
+Reviewed-on: https://gerrit.onap.org/r/65981
+Project: so
+Branch: refs/heads/master
