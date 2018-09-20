@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_10a16c93",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1355,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-09-20T04:47:56Z",
+      "side": 1,
+      "message": "same can be applied to \"OpenStack\" string.",
+      "range": {
+        "startLine": 1355,
+        "startChar": 100,
+        "endLine": 1355,
+        "endChar": 111
+      },
+      "revId": "3f06f00a0d61a552062c14b173d9b68451b81b55",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
