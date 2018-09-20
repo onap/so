@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_f09870c1",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/beans/HeatCacheEntry.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 399
+      },
+      "writtenOn": "2018-09-20T03:00:17Z",
+      "side": 1,
+      "message": "You don\u0027t need token anymore if involve with this new MultiCloud API.",
+      "range": {
+        "startLine": 55,
+        "startChar": 8,
+        "endLine": 55,
+        "endChar": 33
+      },
+      "revId": "8691a75fdeab76fd32b7890ad3e8273cf7c2c46b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
