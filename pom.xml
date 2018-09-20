@@ -52,6 +52,7 @@
 		<springboot.version>1.5.13.RELEASE</springboot.version>	
 		<springframework.version>5.0.8.RELEASE</springframework.version>
 		<tomcat.version>8.5.33</tomcat.version>
+                <h2.version>1.4.196</h2.version>
 		<originalClassifier>original</originalClassifier>
 		<docker.skip>true</docker.skip>
 		<docker.skip.build>true</docker.skip.build>
@@ -808,6 +809,11 @@
                             <artifactId>jetty-server</artifactId>
                             <version>9.4.12.v20180830</version>
                         </dependency>
+			<dependency>
+			    <groupId>com.h2database</groupId>
+			    <artifactId>h2</artifactId>
+			    <version>${h2.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<profiles>
