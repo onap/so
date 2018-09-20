@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_9e7586fb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-20T19:55:22Z",
+      "side": 1,
+      "message": "We should remove this and add something like:\n    Add multicloud to VnfPluginAdapter\n\n    Adds new mode \u0027multicloud\u0027 to VnfPluginAdapter\n    along with MsoMulticloudUtils and supporting\n    code.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 31
+      },
+      "revId": "6dc2192a195dbbfd9ae16a1391c813ebb20d2283",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7e7f4ae0",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/beans/MulticloudHeat.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-20T19:55:22Z",
+      "side": 1,
+      "message": "Seems like we should remove this.",
+      "revId": "6dc2192a195dbbfd9ae16a1391c813ebb20d2283",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1e82d6c7",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-20T19:55:22Z",
+      "side": 1,
+      "message": "Seems we should remove this and replace with multicloudClient",
+      "range": {
+        "startLine": 232,
+        "startChar": 33,
+        "endLine": 232,
+        "endChar": 58
+      },
+      "revId": "6dc2192a195dbbfd9ae16a1391c813ebb20d2283",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
