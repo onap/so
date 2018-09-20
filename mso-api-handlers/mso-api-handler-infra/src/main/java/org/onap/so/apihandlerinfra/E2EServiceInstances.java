@@ -371,7 +371,7 @@ public class E2EServiceInstances {
 
 		}
 
-		e2eServiceResponse.setOperationStatus(operationStatus);
+		e2eServiceResponse.setOperation(operationStatus);
 
 		return builder.buildResponse(HttpStatus.SC_OK, null, e2eServiceResponse, apiVersion);
 	}
