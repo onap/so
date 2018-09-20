@@ -150,8 +150,11 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 
         // get delete resource list and order list
         List<Resource> delResourceList = execution.getVariable("deleteResourceList")
+
+        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+        String serviceModelName = serviceDecomposition.getModelInfo().getModelName();
         
-        def resourceSequence = BPMNProperties.getResourceSequenceProp()
+        def resourceSequence = BPMNProperties.getResourceSequenceProp(serviceModelName)
 
         if(resourceSequence != null) {
             for (resourceType in resourceSequence.reverse()) {
@@ -186,6 +189,11 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         }
 
         String isContainsWanResource = wanResources.isEmpty() ? "false" : "true"
+        //if no networkResource, get SDNC config from properties file
+        if( "false".equals(isContainsWanResource)) {
+            String serviceNeedSDNC = "mso.workflow.custom." + serviceModelName + ".sdnc.need";
+            isContainsWanResource = BPMNProperties.getProperty(serviceNeedSDNC, isContainsWanResource)
+        }
         execution.setVariable("isContainsWanResource", isContainsWanResource)
         execution.setVariable("currentResourceIndex", 0)
         execution.setVariable("sequencedResourceList", sequencedResourceList)
@@ -244,7 +252,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 	        resourceInput.setResourceInstanceName(currentResource.getResourceInstanceName())
 	        resourceInput.setResourceInstancenUuid(currentResource.getResourceId())
 	        resourceInput.setOperationId(execution.getVariable("operationId"))
-        resourceInput.setOperationType(execution.getVariable("operationType"))
+	        resourceInput.setOperationType(execution.getVariable("operationType"))
 	        String globalSubscriberId = execution.getVariable("globalSubscriberId") 
 	        resourceInput.setGlobalSubscriberId(globalSubscriberId)
 	        resourceInput.setResourceModelInfo(currentResource.getModelInfo());

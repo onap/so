@@ -104,7 +104,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         
         String serviceModelUUID = execution.getVariable("modelUuid")      
                
-        List<Resource> addResourceList = execution.getVariable("addResourceList")        
+        List<Resource> addResourceList = execution.getVariable("addResourceList")
 
         List<NetworkResource> networkResourceList = new ArrayList<NetworkResource>()
 
@@ -149,17 +149,22 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         }
 
         String isContainsWanResource = networkResourceList.isEmpty() ? "false" : "true"
+        //if no networkResource, get SDNC config from properties file
+        if( "false".equals(isContainsWanResource)) {
+            String serviceNeedSDNC = "mso.workflow.custom." + serviceModelName + ".sdnc.need";
+            isContainsWanResource = BPMNProperties.getProperty(serviceNeedSDNC, isContainsWanResource)
+        }
+				
         execution.setVariable("isContainsWanResource", isContainsWanResource)
         execution.setVariable("currentResourceIndex", 0)
         execution.setVariable("sequencedResourceList", sequencedResourceList)
         msoLogger.info("sequencedResourceList: " + sequencedResourceList) 
         msoLogger.trace("COMPLETED sequenceResoure Process ")
-    }   
-   
+    }
+
     public prepareServiceTopologyRequest(DelegateExecution execution) {
 
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO", "======== Start prepareServiceTopologyRequest Process ======== ", isDebugEnabled)
+        msoLogger.trace("======== Start prepareServiceTopologyRequest Process ======== ")
 
         String serviceDecompose = execution.getVariable("serviceDecomposition")
 
@@ -174,7 +179,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         execution.setVariable("modelUuid", serviceUuid)
         execution.setVariable("serviceModelName", serviceModelName)
 
-        utils.log("INFO", "======== End prepareServiceTopologyRequest Process ======== ", isDebugEnabled)
+        msoLogger.trace("======== End prepareServiceTopologyRequest Process ======== ")
     }
    
     public void getCurrentResoure(DelegateExecution execution){
@@ -205,7 +210,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 		 msoLogger.trace("Start prepareResourceRecipeRequest Process ")
 		 ResourceInput resourceInput = new ResourceInput()
 		 String serviceInstanceName = execution.getVariable("serviceInstanceName")
-         String resourceType = execution.getVariable("resourceType")
+		 String resourceType = execution.getVariable("resourceType")
 		 String resourceInstanceName = resourceType + "_" + serviceInstanceName
 		 resourceInput.setResourceInstanceName(resourceInstanceName)
 		 msoLogger.info("Prepare Resource Request resourceInstanceName:" + resourceInstanceName)
@@ -252,19 +257,19 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 			 String requestAction = "createInstance"
 			 JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceModelInfo().getModelUuid(), requestAction)
 
-	         if (resourceRecipe != null) {
-		         String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + resourceRecipe.getString("orchestrationUri")
-				 int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
-				 String recipeParamXsd = resourceRecipe.get("paramXSD")
-				 HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
-	         } else {
-	             String exceptionMessage = "Resource receipe is not found for resource modeluuid: " +
+			 if (resourceRecipe != null) {
+	                     String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + resourceRecipe.getString("orchestrationUri")
+	                     int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
+	                     String recipeParamXsd = resourceRecipe.get("paramXSD")
+	                     HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+			 } else {
+	                     String exceptionMessage = "Resource receipe is not found for resource modeluuid: " +
 	                     resourceInput.getResourceModelInfo().getModelUuid()
-	             msoLogger.trace(exceptionMessage)
-	             exceptionUtil.buildAndThrowWorkflowException(execution, 500, exceptionMessage)
-	         }
+	                     msoLogger.trace(exceptionMessage)
+	                     exceptionUtil.buildAndThrowWorkflowException(execution, 500, exceptionMessage)
+			 }
 
-	         msoLogger.trace("======== end executeResourceRecipe Process ======== ")
+			 msoLogger.trace("======== end executeResourceRecipe Process ======== ")
 		 }catch(BpmnError b){
 			 msoLogger.debug("Rethrowing MSOWorkflowException")
 			 throw b
@@ -273,7 +278,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 			 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured during DoCreateResources executeResourceRecipe Catalog")
 		 }
 	 }
-	 
+
      public void postConfigRequest(DelegateExecution execution){
          //now do noting
      }

@@ -28,13 +28,15 @@ import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
-import org.json.JSONObject;
+import org.json.JSONObject
+import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.Resource
-import org.onap.so.bpmn.core.domain.ServiceDecomposition;
+import org.onap.so.bpmn.core.domain.ServiceDecomposition
+import org.onap.so.rest.APIResponse
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.springframework.web.util.UriUtils;
 import org.w3c.dom.Document
@@ -314,9 +316,9 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 		JSONObject jObj = new JSONObject()
 		
 		def relation  = utils.nodeToString(node)
-		def rt  = utils.getNodeText1(relation, "related-to")
+		def rt  = utils.getNodeText(relation, "related-to")
 		
-		def rl  = utils.getNodeText1(relation, "related-link")
+		def rl  = utils.getNodeText(relation, "related-link")
 		utils.log("INFO", "ServiceInstance Related NS/Configuration :" + rl, isDebugEnabled)
 		
 		def rl_datas = utils.getIdenticalChildren(node, "relationship-data")
@@ -331,16 +333,13 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 				jObj.put("resourceInstanceId", eValue)
 			}
 			// for sp-partner and others
-			else if(eKey.equals(rt + ".id")){				
+			else if(eKey.endsWith("-id")){
 				jObj.put("resourceInstanceId", eValue)
 				String resourceName = rt + eValue;
 				jObj.put("resourceType", resourceName)
 			}
-			else if(eKey.equals(rt + ".id")){				
-				jObj.put("resourceInstanceId", eValue)
-				String resourceName = rt + eValue;
-				jObj.put("resourceType", resourceName)
-			}
+
+			jObj.put("resourceLinkUrl", rl)
 		}
 
 		def rl_props = utils.getIdenticalChildren(node, "related-to-property")
@@ -398,6 +397,71 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         }
     }
 
+	private void generateRelatedResourceInfo(String response, JSONObject jObj){
+		
+		def xml = new XmlSlurper().parseText(response)
+		def rtn = xml.childNodes()
+		while (rtn.hasNext()) {
+			groovy.util.slurpersupport.Node node = rtn.next()
+			def key = node.name()
+			def value = node.text()
+			jObj.put(key, value)
+		}
+	}
+	
+	private JSONObject getRelatedResourceInAAI (DelegateExecution execution, JSONObject jObj)
+	{
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+		utils.log("INFO"," ***** Started getRelatedResourceInAAI *****",  isDebugEnabled)		
+			
+		AaiUtil aaiUriUtil = new AaiUtil()
+		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+		String urlLink = jObj.get("resourceLinkUrl")
+		String serviceAaiPath = "${aai_endpoint}${urlLink}"
+		APIResponse response = aaiUriUtil.executeAAIGetCall(execution, serviceAaiPath)
+		int responseCode = response.getStatusCode()
+		execution.setVariable(Prefix + "GeRelatedResourceResponseCode", responseCode)
+		utils.log("DEBUG", "  Get RelatedResource code is: " + responseCode, isDebugEnabled)
+
+		String aaiResponse = response.getResponseBodyAsString()
+		aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
+		aaiResponse = aaiResponse.replaceAll("&", "&amp;")
+		execution.setVariable(Prefix + "GetRelatedResourceResponse", aaiResponse)
+		
+		//Process Response
+		if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
+			//200 OK 201 CREATED 202 ACCEPTED
+		{
+			utils.log("DEBUG", "GET RelatedResource Received a Good Response", isDebugEnabled)
+			execution.setVariable(Prefix + "SuccessIndicator", true)
+			execution.setVariable(Prefix + "FoundIndicator", true)
+			
+			generateRelatedResourceInfo(aaiResponse, jObj)
+			
+			//get model-invariant-uuid and model-uuid
+			String modelInvariantId = ""
+			String modelUuid = ""
+			String modelCustomizationId = ""
+			if(jObj.has("model-invariant-id")) {
+				modelInvariantId = jObj.get("model-invariant-id")
+				modelUuid = jObj.get("model-version-id")
+				modelCustomizationId = jObj.get("model-customization-id")
+			}
+			
+			jObj.put("modelInvariantId", modelInvariantId)			
+			jObj.put("modelVersionId", modelUuid)			
+			jObj.put("modelCustomizationId", modelCustomizationId)
+		}
+		else
+		{
+			utils.log("ERROR", "Get RelatedResource Received a Bad Response Code. Response Code is: " + responseCode, isDebugEnabled)			
+		}
+		
+		utils.log("INFO", " ***** Exit getRelatedResourceInAAI *****", isDebugEnabled)
+		return jObj;	
+		
+	}
+
     public void postDecomposeService(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
@@ -417,27 +481,38 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             if (serviceRelationShip != null) {
                 relationShipList = jsonSlurper.parseText(serviceRelationShip)
             }
-			
-            List<Resource> deleteRealResourceList = new ArrayList<Resource>();
+
+            List<Resource> deleteRealResourceList = new ArrayList<Resource>()
 
             //Set the real resource instance id to the decomosed resource list
-            for (Resource resource: deleteResourceList) {
-                //reset the resource instance id , because in the decompose flow ,its a random one.
-                resource.setResourceId("");
-                //match the resource-instance-name and the model name
-                if (relationShipList != null) {
-                    relationShipList.each {
-                        if (StringUtils.containsIgnoreCase(it.resourceType, resource.getModelInfo().getModelName())) {
-                            resource.setResourceId(it.resourceInstanceId)
+            //reset the resource instance id , because in the decompose flow ,its a random one.
+            //match the resource-instance-name and the model name
+            if (relationShipList != null) {
+                relationShipList.each {
+
+                    JSONObject obj = getRelatedResourceInAAI(execution, (JSONObject)it)
+					
+                    for (Resource resource : deleteResourceList) {
+
+                        String modelName = resource.getModelInfo().getModelName()
+
+                        String modelCustomizationUuid = resource.getModelInfo().getModelCustomizationUuid()
+                        if (StringUtils.containsIgnoreCase(obj.get("resourceType"), modelName)) {
+                            resource.setResourceId(obj.get("resourceInstanceId"))
+                            deleteRealResourceList.add(resource)
+                        }
+                        else if (modelCustomizationUuid.equals(obj.get("modelCustomizationId"))) {
+                            resource.setResourceId(obj.get("resourceInstanceId"))
+                            resource.setResourceInstanceName(obj.get("resourceType"))
                             deleteRealResourceList.add(resource)
                         }
                     }
                 }
-            }
-			
+            }          
+
             // only delete real existing resources
             execution.setVariable("deleteResourceList", deleteRealResourceList)
-			
+
             utils.log("DEBUG", "delete resource list : " + deleteRealResourceList, isDebugEnabled)
         } catch (Exception ex) {
             String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. processDecomposition() - " + ex.getMessage()

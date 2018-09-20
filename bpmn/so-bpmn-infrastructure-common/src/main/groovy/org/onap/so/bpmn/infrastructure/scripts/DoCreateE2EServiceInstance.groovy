@@ -332,38 +332,6 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		}
 	}
 
-
-	public void saveServiceInputToAAI(DelegateExecution execution) {
-		AaiUtil aaiUriUtil = new AaiUtil(this)
-
-		// create url for AAI requestInput
-		String aai_uri = aaiUriUtil.getAAIServiceInstanceUri(execution)
-		String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
-
-		String serviceInstanceId = execution.getVariable("serviceInstanceId")
-		String serviceInstanceName = execution.getVariable("serviceInstanceName")
-		String serviceType = execution.getVariable("serviceType")
-		String uuiRequest = execution.getVariable("uuiRequest")
-
-		String payload =
-				"""< xmlns=\"${namespace}\">
-					<service-instance>
-						<service-instance-id>${serviceInstanceId}</service-instance-id>
-						<service-instance-name>${serviceInstanceName}</service-instance-name>
-						<service-type>${serviceType}</service-type>
-				        <customer-request>${uuiRequest}</customer-request>
-					</service-instance>""".trim()
-		utils.logAudit(payload)
-
-		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
-		String serviceAaiPath = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(serviceInstanceId,"UTF-8")
-
-		APIResponse response = aaiUriUtil.executeAAIPutCall(execution, serviceAaiPath, payload)
-		int responseCode = response.getStatusCode()
-		execution.setVariable(Prefix + "PutSppartnerResponseCode", responseCode)
-	}
-
-
 	public void postProcessAAIGET2(DelegateExecution execution) {
 		msoLogger.trace("postProcessAAIGET2 ")
 		String msg = ""

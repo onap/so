@@ -65,6 +65,7 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 
     public void preProcessRequest(DelegateExecution execution){
         msoLogger.info(" ***** Started preProcessRequest *****")
+        String msg = ""
         try {           
             
             //get bpmn inputs from resource request.
@@ -77,25 +78,52 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
             msoLogger.info("The resourceInput is: " + resourceInput)
             //Get ResourceInput Object
             ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
-            execution.setVariable(Prefix + "resourceInput", resourceInputObj)
-			String resourceInputPrameters = resourceInputObj.getResourceParameters()
-			String inputParametersJson = jsonUtil.getJsonValue(resourceInputPrameters, "requestInputs")
-			JSONObject inputParameters = new JSONObject(customizeResourceParam(inputParametersJson))
-			execution.setVariable(Prefix + "resourceRequestInputs", inputParameters)
+            execution.setVariable(Prefix + "ResourceInput", resourceInputObj)
+
+            String resourceInputPrameters = resourceInputObj.getResourceParameters()
+            String inputParametersJson = jsonUtil.getJsonValue(resourceInputPrameters, "requestInputs")
+            JSONObject inputParameters = new JSONObject(inputParametersJson)
+            execution.setVariable(Prefix + "ResourceRequestInputs", inputParameters)
+
+//            String incomingRequest = resourceInputObj.getRequestsInputs()
+//            String serviceParameters = JsonUtils.getJsonValue(incomingRequest, "service.parameters")
+//            String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
+//            JSONObject serviceInputParameters = new JSONObject(requestInputs)
+//            execution.setVariable(Prefix + "ServiceParameters", serviceInputParameters)
             
             //Deal with recipeParams
             String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
-            String resourceName = resourceInputObj.getResourceInstanceName()            
-            //For sdnc requestAction default is "createNetworkInstance"
-            String operationType = "Network"    
-            if(!StringUtils.isBlank(recipeParamsFromRequest)){
-                //the operationType from worflow(first node) is second priority.
-                operationType = jsonUtil.getJsonValue(recipeParamsFromRequest, "operationType")
+            String resourceName = resourceInputObj.getResourceInstanceName() 
+            if (isBlank(resourceName)) {
+                msg = "Input resourceName is null"
+                msoLogger.error(msg)
             }
-            if(!StringUtils.isBlank(recipeParamsFromWf)){
-                //the operationType from worflow(first node) is highest priority.
-                operationType = jsonUtil.getJsonValue(recipeParamsFromWf, "operationType")
+            execution.setVariable("resourceName", resourceName)
+            msoLogger.info("resourceName:" + resourceName)
+
+            String resourceModelInvariantUuid = resourceInputObj.getResourceModelInfo().getModelInvariantUuid()
+            if (isBlank(resourceModelInvariantUuid)) {
+                msg = "Input resourceModelInvariantUuid is null"
+                msoLogger.error(msg)
             }
+            execution.setVariable(Prefix + "ResourceModelInvariantUuid", resourceModelInvariantUuid)
+            msoLogger.info("resourceModelInvariantUuid:" + resourceModelInvariantUuid)
+				
+            String resourceModelUuid = resourceInputObj.getResourceModelInfo().getModelUuid()
+            if (isBlank(resourceModelUuid)) {
+                msg = "Input resourceModelUuid is null"
+                msoLogger.error(msg)
+            }
+            execution.setVariable(Prefix + "ResourceModelUuid", resourceModelUuid)
+            msoLogger.info("resourceModelUuid:" + resourceModelUuid)
+			
+            String resourceModelCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+            if (isBlank(resourceModelCustomizationUuid)) {
+                msg = "Input resourceModelCustomizationUuid is null"
+                msoLogger.error(msg)
+            }
+            execution.setVariable(Prefix + "ResourceModelCustomizationUuid", resourceModelCustomizationUuid)
+            msoLogger.info("resourceModelCustomizationUuid:" + resourceModelCustomizationUuid)
 
             execution.setVariable(Prefix + "serviceInstanceId", resourceInputObj.getServiceInstanceId())
             execution.setVariable("mso-request-id", requestId)
@@ -103,40 +131,26 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
         } catch (BpmnError e) {
             throw e;
         } catch (Exception ex){
-            String msg = "Exception in preProcessRequest " + ex.getMessage()
+            msg = "Exception in preProcessRequest " + ex.getMessage()
             msoLogger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 	
-	String customizeResourceParam(String networkInputParametersJson) {
-        List<Map<String, Object>> paramList = new ArrayList();
-        JSONObject jsonObject = new JSONObject(networkInputParametersJson);
-        Iterator iterator = jsonObject.keys();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            HashMap<String, String> hashMap = new HashMap();
-            hashMap.put("name", key);
-            hashMap.put("value", jsonObject.get(key))
-            paramList.add(hashMap)
-        }
-        Map<String, List<Map<String, Object>>> paramMap = new HashMap();
-        paramMap.put("param", paramList);
-
-        return  new JSONObject(paramMap).toString();
-    }
-	
 	public void checkDevType(DelegateExecution execution){
 		msoLogger.info(" ***** Started checkDevType *****")
 		try {
-			
-			JSONObject inputParameters = execution.getVariable(Prefix + "resourceRequestInputs")
 
-			String devType = inputParameters.get("device_class")
+			JSONObject resourceInputParameters = execution.getVariable(Prefix + "ResourceRequestInputs")
+			String devType = resourceInputParameters.get("device_class")
 			
 			if(StringUtils.isBlank(devType)) {
 				devType = "OTHER"
 			}
+			// support VNF as PNF, to modify 
+			else if(StringUtils.equalsIgnoreCase(devType, "VNF")) {
+				devType = "PNF"
+			}			
 			
 			execution.setVariable("device_class", devType)
 
@@ -145,6 +159,45 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 			msoLogger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
+	}
+	
+	private void setProgressUpdateVariables(DelegateExecution execution, String body) {
+		def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+		execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+		execution.setVariable("CVFMI_updateResOperStatusRequest", body)
+	}
+	
+	public void prepareUpdateProgress(DelegateExecution execution) {
+		msoLogger.info(" ***** Started prepareUpdateProgress *****")
+		ResourceInput resourceInputObj = execution.getVariable(Prefix + "ResourceInput")
+		String operType = resourceInputObj.getOperationType()
+		String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+		String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
+		String modelName = resourceInputObj.getResourceModelInfo().getModelName()
+		String operationId = resourceInputObj.getOperationId()
+		String progress = execution.getVariable("progress")
+		String status = execution.getVariable("status")
+		String statusDescription = execution.getVariable("statusDescription")
+
+		String body = """
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.openecomp.mso/requestsdb">
+                        <soapenv:Header/>
+                <soapenv:Body>
+                    <ns:updateResourceOperationStatus>
+                               <operType>${operType}</operType>
+                               <operationId>${operationId}</operationId>
+                               <progress>${progress}</progress>
+                               <resourceTemplateUUID>${resourceCustomizationUuid}</resourceTemplateUUID>
+                               <serviceId>${ServiceInstanceId}</serviceId>
+                               <status>${status}</status>
+                               <statusDescription>${statusDescription}</statusDescription>
+                    </ns:updateResourceOperationStatus>
+                </soapenv:Body>
+                </soapenv:Envelope>"""
+
+		setProgressUpdateVariables(execution, body)
+		msoLogger.info(" ***** Exit prepareUpdateProgress *****")
 	}
 	
 	public void getVNFTemplatefromSDC(DelegateExecution execution){

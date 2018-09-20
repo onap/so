@@ -25,7 +25,6 @@ import org.json.XML;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
-import groovy.json.*
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.recipe.ResourceInput;
@@ -50,8 +49,8 @@ import org.onap.so.rest.APIResponse;
 import org.onap.so.bpmn.common.scripts.AaiUtil
 
 /**
- * This groovy class supports the <class>CreateDeviceResource.bpmn</class> process.
- * flow for Device Resource Create
+ * This groovy class supports the <class>DeleteDeviceResource.bpmn</class> process.
+ * flow for Device Resource Delete
  */
 public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
 
@@ -77,25 +76,21 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
             msoLogger.info("The resourceInput is: " + resourceInput)
             //Get ResourceInput Object
             ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
-            execution.setVariable(Prefix + "resourceInput", resourceInputObj)
+            execution.setVariable(Prefix + "ResourceInput", resourceInputObj)
             String resourceInputPrameters = resourceInputObj.getResourceParameters()
             String inputParametersJson = jsonUtil.getJsonValue(resourceInputPrameters, "requestInputs")
-            JSONObject inputParameters = new JSONObject(customizeResourceParam(inputParametersJson))
-            execution.setVariable(Prefix + "resourceRequestInputs", inputParameters)
+            JSONObject inputParameters = new JSONObject(inputParametersJson)
+            execution.setVariable(Prefix + "ResourceRequestInputs", inputParameters)
 
             //Deal with recipeParams
             String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
             String resourceName = resourceInputObj.getResourceInstanceName()
-            //For sdnc requestAction default is "createNetworkInstance"
-            String operationType = "Network"
-            if(!StringUtils.isBlank(recipeParamsFromRequest)){
-                //the operationType from worflow(first node) is second priority.
-                operationType = jsonUtil.getJsonValue(recipeParamsFromRequest, "operationType")
-            }
-            if(!StringUtils.isBlank(recipeParamsFromWf)){
-                //the operationType from worflow(first node) is highest priority.
-                operationType = jsonUtil.getJsonValue(recipeParamsFromWf, "operationType")
-            }
+
+            String resourceInstanceId = resourceInputObj.getResourceInstancenUuid()
+            String deviceId = resourceInstanceId
+            execution.setVariable(Prefix + "DeviceId", deviceId)
+
+            getDeviceInAAI(execution)
 
             execution.setVariable(Prefix + "serviceInstanceId", resourceInputObj.getServiceInstanceId())
             execution.setVariable("mso-request-id", requestId)
@@ -104,35 +99,58 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
             throw e;
         } catch (Exception ex){
             String msg = "Exception in preProcessRequest " + ex.getMessage()
-            msoLogger.debug( msg)
+            msoLogger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
-    String customizeResourceParam(String networkInputParametersJson) {
-        List<Map<String, Object>> paramList = new ArrayList();
-        JSONObject jsonObject = new JSONObject(networkInputParametersJson);
-        Iterator iterator = jsonObject.keys();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            HashMap<String, String> hashMap = new HashMap();
-            hashMap.put("name", key);
-            hashMap.put("value", jsonObject.get(key))
-            paramList.add(hashMap)
-        }
-        Map<String, List<Map<String, Object>>> paramMap = new HashMap();
-        paramMap.put("param", paramList);
+	private void getDeviceInAAI(DelegateExecution execution) {
+		msoLogger.info(" ***** Started getDeviceInAAI *****")
+		
+		String deviceId = execution.getVariable(Prefix + "DeviceId")
+		AaiUtil aaiUriUtil = new AaiUtil()
+		String aai_uri = aaiUriUtil.getNetworkDeviceUri(execution)
+		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+		String serviceAaiPath = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(deviceId,"UTF-8")
+		execution.setVariable(Prefix + "ServiceAaiPath", serviceAaiPath)
+		
+		APIResponse response = aaiUriUtil.executeAAIGetCall(execution, serviceAaiPath)
+		int responseCode = response.getStatusCode()
+		execution.setVariable(Prefix + "GetDeviceResponseCode", responseCode)
+		msoLogger.debug("  Get device response code is: " + responseCode)
 
-        return  new JSONObject(paramMap).toString();
-    }
+		String aaiResponse = response.getResponseBodyAsString()
+		aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
+		aaiResponse = aaiResponse.replaceAll("&", "&amp;")
+		execution.setVariable(Prefix + "GetDeviceResponse", aaiResponse)
+
+		//Process Response
+		if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
+			//200 OK 201 CREATED 202 ACCEPTED
+		{
+			msoLogger.debug("GET Device Received a Good Response")
+			execution.setVariable(Prefix + "SuccessIndicator", true)
+			execution.setVariable(Prefix + "FoundIndicator", true)
+			
+			String devClass = utils.getNodeText1(aaiResponse, "device_class")
+			execution.setVariable(Prefix + "DeviceClass", devClass)
+			msoLogger.debug(" DeviceClass is: " + devClass)
+
+		}
+		else
+		{
+			msoLogger.debug("Get DeviceInAAI Received a Bad Response Code. Response Code is: " + responseCode)
+
+		}
+
+		msoLogger.info(" ***** Exit getDeviceInAAI *****")
+	}
 
     public void checkDevType(DelegateExecution execution){
-        utils.log("INFO"," ***** Started checkDevType *****")
+        msoLogger.info(" ***** Started checkDevType *****")
         try {
 
-            JSONObject inputParameters = execution.getVariable(Prefix + "resourceRequestInputs")
-
-            String devType = inputParameters.get("device_class")
+            String devType = execution.getVariable(Prefix + "DeviceClass")
 
             if(StringUtils.isBlank(devType)) {
                 devType = "OTHER"
@@ -147,8 +165,47 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
         }
     }
 
+	private void setProgressUpdateVariables(DelegateExecution execution, String body) {
+		def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+		execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+		execution.setVariable("CVFMI_updateResOperStatusRequest", body)
+	}
+
+	public void prepareUpdateProgress(DelegateExecution execution) {
+		msoLogger.info(" ***** Started prepareUpdateProgress *****")
+		ResourceInput resourceInputObj = execution.getVariable(Prefix + "ResourceInput")
+		String operType = resourceInputObj.getOperationType()
+		String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+		String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
+		String modelName = resourceInputObj.getResourceModelInfo().getModelName()
+		String operationId = resourceInputObj.getOperationId()
+		String progress = execution.getVariable("progress")
+		String status = execution.getVariable("status")
+		String statusDescription = execution.getVariable("statusDescription")
+
+		String body = """
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.openecomp.mso/requestsdb">
+                        <soapenv:Header/>
+                <soapenv:Body>
+                    <ns:updateResourceOperationStatus>
+                               <operType>${operType}</operType>
+                               <operationId>${operationId}</operationId>
+                               <progress>${progress}</progress>
+                               <resourceTemplateUUID>${resourceCustomizationUuid}</resourceTemplateUUID>
+                               <serviceId>${ServiceInstanceId}</serviceId>
+                               <status>${status}</status>
+                               <statusDescription>${statusDescription}</statusDescription>
+                    </ns:updateResourceOperationStatus>
+                </soapenv:Body>
+                </soapenv:Envelope>"""
+
+		setProgressUpdateVariables(execution, body)
+		msoLogger.info(" ***** Exit prepareUpdateProgress *****")
+	}
+
     public void getVNFTemplatefromSDC(DelegateExecution execution){
-        utils.log("INFO"," ***** Started getVNFTemplatefromSDC *****")
+        msoLogger.info(" ***** Started getVNFTemplatefromSDC *****")
         try {
             // To do
 
@@ -161,7 +218,7 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
     }
 
     public void postVNFInfoProcess(DelegateExecution execution){
-        utils.log("INFO"," ***** Started postVNFInfoProcess *****")
+        msoLogger.info(" ***** Started postVNFInfoProcess *****")
         try {
             // To do
 
