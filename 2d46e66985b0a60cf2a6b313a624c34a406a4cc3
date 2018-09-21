@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_4f297a88",
+        "filename": "mso-catalog-db/src/test/java/org/onap/so/db/catalog/beans/CloudifyManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-09-21T04:48:48Z",
+      "side": 1,
+      "message": "please avoid white line",
+      "revId": "2d46e66985b0a60cf2a6b313a624c34a406a4cc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2f22fea2",
+        "filename": "mso-catalog-db/src/test/java/org/onap/so/db/catalog/beans/CloudifyManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-09-21T04:48:48Z",
+      "side": 1,
+      "message": "please remove tab character :)",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 3
+      },
+      "revId": "2d46e66985b0a60cf2a6b313a624c34a406a4cc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
