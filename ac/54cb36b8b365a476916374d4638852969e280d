@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review-1: Steve Smokowski <ss835w@att.com>
+Code-Review+1: Marcus Williams <marcus.williams@intel.com>
+Code-Review+2: Byung-Woo Jun <byung-woo.jun@ericsson.com>
+Submitted-by: Byung-Woo Jun <byung-woo.jun@ericsson.com>
+Submitted-at: Fri, 21 Sep 2018 00:36:41 +0000
+Reviewed-on: https://gerrit.onap.org/r/67581
+Project: so
+Branch: refs/heads/master
