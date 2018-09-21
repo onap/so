@@ -1,0 +1,40 @@
+{
+	"access": {
+		"token": {
+			"id": "tokenId1234",
+			"issued_at": null,
+			"expires": "1517418429142",
+			"tenant": null
+		},
+		"serviceCatalog": [
+			{
+				"type": "orchestration",
+				"name": null,
+				"endpoints": [
+					{
+						"region": "MTN13",
+						"publicURL": "port",
+						"internalURL": null,
+						"adminURL": null
+					}
+				],
+				"endpointsLinks": null
+			},
+			{
+				"type": "network",
+				"name": null,
+				"endpoints": [
+					{
+						"region": "MTN13",
+						"publicURL": "port",
+						"internalURL": null,
+						"adminURL": null
+					}
+				],
+				"endpointsLinks": null
+			}
+		],
+		"user": null,
+		"metadata": null
+	}
+}
