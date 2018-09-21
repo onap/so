@@ -20,6 +20,17 @@
 
 package org.onap.so.db.request.client;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+
 import org.apache.http.HttpStatus;
 import org.onap.so.db.request.beans.ArchivedInfraRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -41,6 +52,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -49,16 +61,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
-
-import javax.annotation.PostConstruct;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
 
 @Component("RequestsDbClient")
 @Primary
@@ -188,7 +190,12 @@ public class RequestsDbClient {
 		URI uri = getUri(checkInstanceNameDuplicate);
 		HttpEntity<InstanceNameDuplicateCheckRequest> entity = new HttpEntity<>(new InstanceNameDuplicateCheckRequest(instanceIdMap, instanceName, requestScope), headers);
 		try{
-			return restTemplate.exchange(uri, HttpMethod.POST, entity, InfraActiveRequests.class).getBody();
+			ResponseEntity<InfraActiveRequests> response = restTemplate.exchange(uri, HttpMethod.POST, entity, InfraActiveRequests.class);
+			if(response != null && response.hasBody()) {
+				return restTemplate.exchange(uri, HttpMethod.POST, entity, InfraActiveRequests.class).getBody();
+			} else {
+				return null;
+			}
 		}catch(HttpClientErrorException e){
 			if(HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()){
 				return null;
