@@ -39,6 +39,30 @@
       "revId": "2d46e66985b0a60cf2a6b313a624c34a406a4cc3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_33802846",
+        "filename": "mso-catalog-db/src/test/java/org/onap/so/db/catalog/beans/CloudifyManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-21T12:01:05Z",
+      "side": 1,
+      "message": "This test is not needed at all, if its int he beans package it is already tested",
+      "parentUuid": "1a76adc5_2f22fea2",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 3
+      },
+      "revId": "2d46e66985b0a60cf2a6b313a624c34a406a4cc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
