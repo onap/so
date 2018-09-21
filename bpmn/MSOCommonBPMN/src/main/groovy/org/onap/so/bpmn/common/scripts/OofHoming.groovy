@@ -24,8 +24,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.bpmn.core.domain.CloudFlavor
+
 import org.onap.so.bpmn.core.domain.InventoryType
 import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.domain.ResourceType
@@ -33,7 +32,8 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.logger.MsoLogger
+import org.onap.so.db.catalog.beans.CloudIdentity
+import org.onap.so.db.catalog.beans.CloudSite
 import org.onap.so.rest.APIResponse
 import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
@@ -52,7 +52,6 @@ import static org.onap.so.bpmn.common.scripts.GenericUtils.*
  */
 class OofHoming extends AbstractServiceTaskProcessor {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, OofHoming.class);
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
     OofUtils oofUtils = new OofUtils(this)
@@ -114,10 +113,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 def authHeader = ""
                 String basicAuth = UrnPropertiesReader.getVariable("mso.oof.auth", execution)
                 String msokey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
-				
 
-				
-				
                 String basicAuthValue = utils.encrypt(basicAuth, msokey)
                 if (basicAuthValue != null) {
                     utils.log("DEBUG", "Obtained BasicAuth username and password for OOF Adapter: " + basicAuthValue,
@@ -156,8 +152,8 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 execution.setVariable("oofRequest", oofRequest)
                 utils.log("DEBUG", "OOF Request is: " + oofRequest, isDebugEnabled)
 
-                String endpoint = UrnPropertiesReader.getVariable("mso.oof.service.agnostic.endpoint", execution);
-                String host = UrnPropertiesReader.getVariable("mso.oof.service.agnostic.host", execution); 
+                String endpoint = UrnPropertiesReader.getVariable("mso.oof.service.agnostic.endpoint", execution)
+                String host = UrnPropertiesReader.getVariable("mso.oof.service.agnostic.host", execution)
                 String url = host + endpoint
                 utils.log("DEBUG", "Posting to OOF Url: " + url, isDebugEnabled)
 
@@ -240,30 +236,12 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             }
                             resource.getHomingSolution().setInventoryType(InventoryType.valueOf(inventoryType))
 
-                            // TODO Deal with Placement Solutions & Assignment Info here
                             JSONArray assignmentArr = placement.getJSONArray("assignmentInfo")
-                            Integer arrayIndex = 0
-                            Integer flavorsIndex = null
-                            Boolean foundFlavors = false
-                            String flavors = null
-                            Map<String, String> flavorsMap = null
-                            ArrayList<CloudFlavor> flavorsArrayList = new ArrayList<CloudFlavor>()
+                            String oofDirectives = null
                             assignmentArr.each { element ->
                                 JSONObject jsonObject = new JSONObject(element.toString())
-                                if (jsonUtil.getJsonRawValue(jsonObject.toString(), "key") == "flavors") {
-                                    flavors = jsonUtil.getJsonRawValue(jsonObject.toString(), "value")
-                                    foundFlavors = true
-                                    flavorsIndex = arrayIndex
-                                } else {
-                                    arrayIndex += 1
-                                }
-                            }
-                            if (foundFlavors) {
-                                assignmentArr.remove(flavorsIndex)
-                                flavorsMap = jsonUtil.jsonStringToMap(execution, flavors.toString())
-                                flavorsMap.each { label, flavor ->
-                                    CloudFlavor cloudFlavor = new CloudFlavor(label, flavor)
-                                    flavorsArrayList.add(cloudFlavor)
+                                if (jsonUtil.getJsonRawValue(jsonObject.toString(), "key") == "oof_directives") {
+                                    oofDirectives = jsonUtil.getJsonRawValue(jsonObject.toString(), "value")
                                 }
                             }
                             Map<String, String> assignmentMap = jsonUtil.entryArrayToMap(execution,
@@ -272,10 +250,26 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             String cloudRegionId = assignmentMap.get("locationId")
                             resource.getHomingSolution().setCloudOwner(cloudOwner)
                             resource.getHomingSolution().setCloudRegionId(cloudRegionId)
-                            if (flavorsArrayList != null && flavorsArrayList.size != 0) {
-                                resource.getHomingSolution().setFlavors(flavorsArrayList)
-                                execution.setVariable(cloudRegionId + "_flavorList", flavorsArrayList)
-                                utils.log("DEBUG", "***** _flavorList is: " + flavorsArrayList.toString() +
+
+                            CloudSite cloudSite = new CloudSite();
+                            cloudSite.setId(cloudRegionId)
+                            cloudSite.setRegionId(cloudRegionId)
+                            String orchestrator = execution.getVariable("orchestrator")
+                            if ((orchestrator != null) || (orchestrator != "")) {
+                                cloudSite.setOrchestrator(orchestrator)
+                            }
+
+                            CloudIdentity cloudIdentity = new CloudIdentity();
+                            cloudIdentity.setId(cloudRegionId);
+                            cloudIdentity.setIdentityUrl("/api/multicloud /v1/" + cloudOwner + "/" + cloudRegionId + "/infra_workload")
+                            cloudSite.setIdentityService(cloudIdentity);
+
+                            // Set cloudsite in catalog DB here
+                            oofUtils.createCloudSiteCatalogDb(cloudSite)
+
+                            if (oofDirectives != null && oofDirectives != "") {
+                                resource.getHomingSolution().setOofDirectives(oofDirectives)
+                                utils.log("DEBUG", "***** OofDirectives is: " + oofDirectives +
                                         " *****", "true")
                             }
 

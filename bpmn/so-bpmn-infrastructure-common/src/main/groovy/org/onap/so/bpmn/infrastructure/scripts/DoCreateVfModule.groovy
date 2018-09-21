@@ -23,7 +23,6 @@ package org.onap.so.bpmn.infrastructure.scripts
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
@@ -38,7 +37,7 @@ import org.onap.so.bpmn.common.scripts.VfModuleBase
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.domain.CloudFlavor
+
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.DecomposeJsonUtil
 import org.onap.so.bpmn.core.json.JsonUtils
@@ -174,8 +173,8 @@ public class DoCreateVfModule extends VfModuleBase {
 				execution.setVariable("DCVFM_serviceInstanceId", serviceInstanceId)
 				rollbackData.put("VFMODULE", "serviceInstanceId", serviceInstanceId)
 				msoLogger.debug("serviceInstanceId: " + serviceInstanceId)
-				//flavorList
-				ArrayList<CloudFlavor> flavorList = execution.getVariable(cloudSiteId + "_flavorList")
+				//OofDirectives
+				String oofDirectives = execution.getVariable(cloudSiteId + "_oofDirectives")
 				if (flavorList != null) {
 					execution.setVariable("DCVFM_flavorList", flavorList)
 					logDebug("flavorList is: " + flavorList, isDebugLogEnabled)
@@ -921,8 +920,8 @@ public class DoCreateVfModule extends VfModuleBase {
 		def serviceId = execution.getVariable("DCVFM_serviceId")
 		//serviceInstanceId
 		def serviceInstanceId = execution.getVariable("DCVFM_serviceInstanceId")
-		//flavorList
-		ArrayList<CloudFlavor> flavorList = execution.getVariable("DCVFM_flavorList")
+		//OofDirectives
+		String oofDirectives = execution.getVariable("DCVFM_oofDirectives")
 		//backoutOnFailure
 		def backoutOnFailure = execution.getVariable("DCVFM_backoutOnFailure")
 		//volumeGroupId
