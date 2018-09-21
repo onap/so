@@ -45,7 +45,7 @@ public class HomingSolution extends JsonWrapper implements Serializable  {
 	private String aicVersion;
 	private String tenant;
 	private VnfResource vnf;
-	private List<CloudFlavor> flavors;
+	private String oofDirectives;
 	private License license = new License();
 
 
@@ -130,12 +130,12 @@ public class HomingSolution extends JsonWrapper implements Serializable  {
 	/**
 	 * @return a map<string, string> key is label name, value is any flavor
 	 */
-	public List<CloudFlavor> getFlavors() {
-		return flavors;
+	public String getOofDirectives() {
+		return oofDirectives;
 	}
 
-	public void setFlavors(List<CloudFlavor> flavors) {
-		this.flavors = flavors;
+	public void setOofDirectives(String oofDirectives) {
+		this.oofDirectives = oofDirectives;
 	}
 
 	public License getLicense() {

@@ -23,7 +23,7 @@ package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.MsoUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.domain.HomingSolution
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.Resource
@@ -33,22 +33,32 @@ import org.onap.so.bpmn.core.domain.ServiceInstance
 import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.logger.MsoLogger
+import org.onap.so.db.catalog.beans.CloudSite
+import org.onap.so.rest.APIResponse
+import org.onap.so.rest.RESTClient
+import org.onap.so.rest.RESTConfig
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.ResponseEntity
+import org.springframework.http.client.BufferingClientHttpRequestFactory
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
+import org.springframework.web.client.RestTemplate
+import org.springframework.web.util.UriComponentsBuilder
 
-import java.lang.reflect.Array
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
+import javax.xml.ws.http.HTTPException
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
 
 class OofUtils {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, OofUtils.class);
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
 
     private AbstractServiceTaskProcessor utils
 
-    public MsoUtils msoUtils = new MsoUtils()
-
-    public OofUtils(AbstractServiceTaskProcessor taskProcessor) {
+    OofUtils(AbstractServiceTaskProcessor taskProcessor) {
         this.utils = taskProcessor
     }
 
@@ -465,5 +475,40 @@ class OofUtils {
         }
         if (candidatesJson != "") {candidatesJson = candidatesJson.substring(0, candidatesJson.length() - 1)}
         return candidatesJson
+    }
+    /**
+     * This method creates a cloudsite in catalog database.
+     *
+     * @param CloudSite cloudSite
+     *
+     * @return void
+     */
+    Void createCloudSiteCatalogDb(CloudSite cloudSite, DelegateExecution execution) {
+
+        String endpoint = UrnPropertiesReader.getVariable("mso.catalog.db.spring.endpoint", execution)
+        String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution)
+        String uri = "/cloudSite"
+
+        HttpHeaders headers = new HttpHeaders()
+
+        headers.set(HttpHeaders.AUTHORIZATION, auth)
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(endpoint + uri)
+        HttpEntity<CloudSite> request = new HttpEntity<CloudSite>(cloudSite, headers)
+        RESTConfig config = new RESTConfig(endpoint + uri)
+        RESTClient client = new RESTClient(config).addAuthorizationHeader(auth).
+                addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON).addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        APIResponse response = client.httpPost(request.getBody().toString())
+
+        int responseCode = response.getStatusCode()
+        logDebug("CatalogDB response code is: " + responseCode, isDebugEnabled)
+        String syncResponse = response.getResponseBodyAsString()
+        logDebug("CatalogDB response is: " + syncResponse, isDebugEnabled)
+
+        if(responseCode != 202){
+            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from CatalogDB.")
+        }
     }
 }
