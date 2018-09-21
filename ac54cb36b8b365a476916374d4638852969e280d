@@ -34,6 +34,24 @@
       "revId": "ac54cb36b8b365a476916374d4638852969e280d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_aff5ae51",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/oof/OofClient.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-09-21T09:22:35Z",
+      "side": 1,
+      "message": "I believe my logging changes will cover it.",
+      "parentUuid": "1a76adc5_99e5a039",
+      "revId": "ac54cb36b8b365a476916374d4638852969e280d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
