@@ -20,6 +20,8 @@
 
 package org.onap.so.client.sdn.common;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.LinkedHashMap;
 
 import org.junit.Assert;
@@ -58,10 +60,12 @@ public class SdnCommonTasksTest{
 
     @Test
     public void validateSDNResponseTest() throws BadResponseException {
-        LinkedHashMap responseMap = new LinkedHashMap();
-        responseMap.put("response-code", "0");
-        responseMap.put("response-message", "success");
-        Assert.assertNotNull(sdnCommonTasks.validateSDNResponse(responseMap));
+        LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+        LinkedHashMap<String, Object> output = new LinkedHashMap<>();
+        output.put("response-code", "0");
+        output.put("response-message", "success");
+        responseMap.put("output", output);
+        assertEquals("success", sdnCommonTasks.validateSDNResponse(responseMap));
     }
 
     @Test
@@ -74,10 +78,12 @@ public class SdnCommonTasksTest{
     @Test
     public void validateSDNResponseTestRespCodeNot200() throws BadResponseException {
         expectedException.expect(BadResponseException.class);
-        LinkedHashMap responseMap = new LinkedHashMap();
-        responseMap.put("response-code", "300");
-        responseMap.put("response-message", "Failed");
-        Assert.assertNotNull(sdnCommonTasks.validateSDNResponse(responseMap));
+        LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+        LinkedHashMap<String, Object> output = new LinkedHashMap<>();
+        output.put("response-code", "300");
+        output.put("response-message", "Failed");
+        responseMap.put("output", output);
+        sdnCommonTasks.validateSDNResponse(responseMap);
     }
 
 }

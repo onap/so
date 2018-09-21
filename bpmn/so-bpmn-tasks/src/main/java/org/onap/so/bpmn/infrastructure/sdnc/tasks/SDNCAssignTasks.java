@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -73,7 +73,7 @@ public class SDNCAssignTasks {
 
 	public void assignVnf(BuildingBlockExecution execution) {
 		try {
-			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+			GeneralBuildingBlock gBBInput = execution.getVariable("generalBuildingBlock");
 			RequestContext requestContext = gBBInput.getRequestContext();
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
@@ -85,7 +85,7 @@ public class SDNCAssignTasks {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
 	}
-	
+
 	public void assignVfModule(BuildingBlockExecution execution) {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -101,14 +101,14 @@ public class SDNCAssignTasks {
 			}
 			Customer customer = gBBInput.getCustomer();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
-		
-			String response = sdncVfModuleResources.assignVfModule(vfModule, volumeGroup, vnf, serviceInstance, customer, cloudRegion, requestContext);		
+
+			String response = sdncVfModuleResources.assignVfModule(vfModule, volumeGroup, vnf, serviceInstance, customer, cloudRegion, requestContext);
 			execution.setVariable("SDNCAssignResponse_"+ vfModule.getVfModuleId(), response);
-		} catch (Exception ex) {			
+		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
 	}
-	
+
 	/**
 	 * BPMN access method to perform Assign action on SDNC for L3Network
 	 * @param execution
@@ -117,14 +117,14 @@ public class SDNCAssignTasks {
 	public void assignNetwork(BuildingBlockExecution execution) {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			
+
 			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-	
+
 			Customer customer = gBBInput.getCustomer();
 			RequestContext requestContext = gBBInput.getRequestContext();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
-		
+
 			sdncNetworkResources.assignNetwork(l3network, serviceInstance, customer, requestContext, cloudRegion);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

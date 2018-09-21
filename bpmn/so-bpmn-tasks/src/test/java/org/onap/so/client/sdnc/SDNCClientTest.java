@@ -22,7 +22,9 @@ package org.onap.so.client.sdnc;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 import java.io.IOException;
@@ -34,6 +36,7 @@ import org.junit.Test;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
+import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -54,5 +57,32 @@ public class SDNCClientTest extends BaseTaskTest {
                         .withHeader("Content-Type", "application/json").withBody(responseJson)));
         String response = SPY_sdncClient.get(queryLink);
         JSONAssert.assertEquals(responseJson, response, false);
+    }
+    
+    @Test(expected = BadResponseException.class)
+    public void post404Test() throws BadResponseException, MapperException, IOException {
+    	String responseJson =  new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "SDNCClientPut404Response.json")));
+        
+    	String queryLink = "/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation/";
+    			
+    	wireMockRule.stubFor(post(urlMatching(queryLink))
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json").withBody(responseJson)));
+    	
+        SPY_sdncClient.post("", SDNCTopology.NETWORK);
+    }
+    
+    @Test
+    public void post200Test() throws BadResponseException, MapperException, IOException {
+    	String responseJson =  new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "SDNCClientPut200Response.json")));
+        
+    	String queryLink = "/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation/";
+    			
+    	wireMockRule.stubFor(post(urlMatching(queryLink))
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json").withBody(responseJson)));
+    	
+        String response = SPY_sdncClient.post("", SDNCTopology.NETWORK);
+        JSONAssert.assertEquals("", response, false);
     }
 }

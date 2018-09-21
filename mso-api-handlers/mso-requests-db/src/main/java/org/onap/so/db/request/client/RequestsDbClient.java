@@ -36,36 +36,29 @@ import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
 import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import uk.co.blackpepper.bowman.Client;
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
-import uk.co.blackpepper.bowman.RestTemplateConfigurer;
 
 import javax.annotation.PostConstruct;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 
 @Component("RequestsDbClient")
 @Primary
@@ -74,14 +67,10 @@ public class RequestsDbClient {
 	private static final String SERVICE_ID = "SERVICE_ID";
 	private static final String OPERATION_ID = "OPERATION_ID";
 	private static final String SO_REQUEST_ID = "SO_REQUEST_ID";
-	private static final String GROUPING_ID = "GROUPING_ID";
 	private static final String REQUEST_ID = "REQUEST_ID";
-	private static final String OPERATIONAL_ENVIRONMENT_ID = "OPERATIONAL_ENVIRONMENT_ID";
+	private static final String OPERATIONAL_ENVIRONMENT_ID = "OPERATIONAL_ENV_ID";
 	private static final String SERVICE_MODEL_VERSION_ID = "SERVICE_MODEL_VERSION_ID";
-	private static final String NAME = "NAME";
-	private static final String VALUE = "VALUE";
-	private static final String TAG = "TAG";
-	
+
 
 	@Value("${mso.adapters.requestDb.endpoint}")
 	protected String endpoint;
@@ -112,9 +101,7 @@ public class RequestsDbClient {
 	
 	private String requestProcessingDataURI = "/requestProcessingData";
 	
-	private String findOneBySoRequestIdAndGroupingIdAndNameAndTagURI = "/requestProcessingData/search/findOneBySoRequestIdAndGroupingIdAndNameAndTag/";
-
-	private String findBySoRequestIdOrderByGroupingIdDesc = "/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/";
+	private final String findBySoRequestIdOrderByGroupingIdDesc = "/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc";
 
 
 	@Autowired
@@ -137,8 +124,8 @@ public class RequestsDbClient {
 		findAllByOperationalEnvIdAndRequestIdURI = endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH + findAllByOperationalEnvIdAndRequestIdURI;
 	}
 	
-	public ClientFactory getClientFactory(){
-		URI baseUri = UriBuilder.fromUri(endpoint).build();		
+	private ClientFactory getClientFactory(){
+		URI baseUri = UriBuilder.fromUri(endpoint).build();
 		ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
 		return Configuration.builder().setBaseUri(baseUri).setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
@@ -152,11 +139,10 @@ public class RequestsDbClient {
 		}).build().buildClientFactory();
 	}
 
-	
+
 	public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(Map<String, String> orchestrationMap){
 		URI uri = getUri(cloudOrchestrationFiltersFromInfraActive);
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", msoAdaptersAuth);
+		HttpHeaders headers = getHttpHeaders();
 		HttpEntity<Map> entity = new HttpEntity<>(orchestrationMap, headers);
 		try{
 			return restTemplate.exchange(uri, HttpMethod.POST, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {}).getBody();
@@ -170,10 +156,8 @@ public class RequestsDbClient {
 
     public InfraActiveRequests getInfraActiveRequestbyRequestId(String requestId) {
         try {
-        	HttpHeaders headers = new HttpHeaders();
-    		headers.set("Authorization", msoAdaptersAuth);
-    		HttpEntity<?> entity = new HttpEntity<>(headers);
-            InfraActiveRequests infraActiveRequests = restTemplate.exchange(getUri(endpoint + "/infraActiveRequests/" + requestId), HttpMethod.GET, entity, InfraActiveRequests.class).getBody();
+			HttpEntity<?> entity = getHttpEntity();
+			InfraActiveRequests infraActiveRequests = restTemplate.exchange(getUri(endpoint + "/infraActiveRequests/" + requestId), HttpMethod.GET, entity, InfraActiveRequests.class).getBody();
             if (infraActiveRequests != null) {
                 infraActiveRequests.setRequestId(requestId);
             }
@@ -187,24 +171,20 @@ public class RequestsDbClient {
     }
 
 	public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(Map<String, List<String>> orchestrationMap) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", msoAdaptersAuth);
+		HttpHeaders headers = getHttpHeaders();
 		URI uri = getUri(getOrchestrationFilterURI);
 		HttpEntity<Map<String, List<String>>> entity = new HttpEntity<>(orchestrationMap, headers);
 		return restTemplate.exchange(uri, HttpMethod.POST, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {}).getBody();
 	}
 
 	public InfraActiveRequests checkVnfIdStatus(String operationalEnvironmentId) {
-    	HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", msoAdaptersAuth);
-		HttpEntity<?> entity = new HttpEntity<>(headers);
+		HttpEntity<?> entity = getHttpEntity();
 		URI uri = getUri(checkVnfIdStatus + operationalEnvironmentId);
 		return restTemplate.exchange(uri, HttpMethod.GET, entity, InfraActiveRequests.class).getBody();
 	}
 	
 	public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName, String requestScope) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", msoAdaptersAuth);
+		HttpHeaders headers = getHttpHeaders();
 		URI uri = getUri(checkInstanceNameDuplicate);
 		HttpEntity<InstanceNameDuplicateCheckRequest> entity = new HttpEntity<>(new InstanceNameDuplicateCheckRequest(instanceIdMap, instanceName, requestScope), headers);
 		try{
@@ -220,13 +200,11 @@ public class RequestsDbClient {
 
 	public OperationStatus getOneByServiceIdAndOperationId(String serviceId, String operationId) {
 		try {
-	    	HttpHeaders headers = new HttpHeaders();
-			headers.set("Authorization", msoAdaptersAuth);
-			HttpEntity<?> entity = new HttpEntity<>(headers);
-			OperationStatus operationStatus = restTemplate.exchange(UriBuilder.fromUri(getUri(findOneByServiceIdAndOperationIdURI))
+			HttpEntity<?> entity = getHttpEntity();
+			OperationStatus operationStatus = restTemplate.exchange(getUri(UriBuilder.fromUri(getUri(findOneByServiceIdAndOperationIdURI))
 					.queryParam(SERVICE_ID, serviceId)
 					.queryParam(OPERATION_ID, operationId)
-					.build(), HttpMethod.GET, entity, OperationStatus.class).getBody();
+					.build().toString()), HttpMethod.GET, entity, OperationStatus.class).getBody();
 			if (operationStatus != null) {
 				operationStatus.setServiceId(serviceId);
 				operationStatus.setOperationId(operationId);
@@ -240,27 +218,49 @@ public class RequestsDbClient {
 			throw e;
 		}
 	}
-	
+
 	public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndServiceModelVersionId(String operationalEnvironmentId, String serviceModelVersionId) {
-		return this.getSingleOperationalEnvServiceModelStatus(UriBuilder.fromUri(findOneByOperationalEnvIdAndServiceModelVersionIdURI)
-				.queryParam(OPERATIONAL_ENVIRONMENT_ID,operationalEnvironmentId)
-				.queryParam(SERVICE_MODEL_VERSION_ID,serviceModelVersionId)
-				.build());
+		try {
+			HttpEntity<?> entity = getHttpEntity();
+			OperationalEnvServiceModelStatus modelStatus = restTemplate.exchange(getUri(UriBuilder.fromUri(findOneByOperationalEnvIdAndServiceModelVersionIdURI)
+					.queryParam(OPERATIONAL_ENVIRONMENT_ID, operationalEnvironmentId)
+					.queryParam(SERVICE_MODEL_VERSION_ID, serviceModelVersionId)
+					.build().toString()), HttpMethod.GET, entity, OperationalEnvServiceModelStatus.class).getBody();
+			if (null != modelStatus) {
+				modelStatus.setOperationalEnvId(operationalEnvironmentId);
+				modelStatus.setServiceModelVersionId(serviceModelVersionId);
+			}
+			return modelStatus;
+		}catch(HttpClientErrorException e){
+			if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+				return null;
+			}
+			throw e;
+		}
 	}
 
 	public List<OperationalEnvServiceModelStatus> getAllByOperationalEnvIdAndRequestId(String operationalEnvironmentId, String requestId){
-		return this.getMultipleOperationalEnvServiceModelStatus(UriBuilder.fromUri(findAllByOperationalEnvIdAndRequestIdURI)
+		return this.getMultipleOperationalEnvServiceModelStatus(getUri(UriBuilder.fromUri(findAllByOperationalEnvIdAndRequestIdURI)
 				.queryParam(OPERATIONAL_ENVIRONMENT_ID,operationalEnvironmentId)
 				.queryParam(REQUEST_ID,requestId)
-				.build());
+				.build().toString()));
 	}
 	
 	public OperationalEnvDistributionStatus getDistributionStatusById(String distributionId){
-		return this.getSingleOperationalEnvDistributionStatus(UriBuilder.fromUri(operationalEnvDistributionStatusURI+distributionId).build());
-	}
-	
-	private OperationalEnvServiceModelStatus getSingleOperationalEnvServiceModelStatus(URI uri){
-		return getClientFactory().create(OperationalEnvServiceModelStatus.class).get(uri);
+		try {
+			HttpEntity<?> entity = getHttpEntity();
+			OperationalEnvDistributionStatus distributionStatus = restTemplate.exchange(getUri(operationalEnvDistributionStatusURI + distributionId),
+					HttpMethod.GET, entity, OperationalEnvDistributionStatus.class).getBody();
+			if(null != distributionStatus){
+				distributionStatus.setDistributionId(distributionId);
+			}
+			return distributionStatus;
+		}catch(HttpClientErrorException e){
+			if(HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()){
+				return null;
+			}
+			throw e;
+		}
 	}
 
 	private List<OperationalEnvServiceModelStatus> getMultipleOperationalEnvServiceModelStatus(URI uri){
@@ -270,32 +270,23 @@ public class RequestsDbClient {
 		statusIterator.forEachRemaining(serviceModelStatuses::add);
 		return serviceModelStatuses;
 	}
-
+	
 	public void save(InfraActiveRequests infraActiveRequests) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", msoAdaptersAuth);
+		HttpHeaders headers = getHttpHeaders();
 		URI uri = getUri(infraActiveRequestURI);
 		HttpEntity<InfraActiveRequests> entity = new HttpEntity<>(infraActiveRequests, headers);
 		restTemplate.postForLocation(uri, entity);
 	}
 
 	public <T> void save(T object){
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", msoAdaptersAuth);
+		HttpHeaders headers = getHttpHeaders();
 		URI uri = getUri(endpoint+classURLMapper.getURI(object.getClass()));
 		HttpEntity<T> entity = new HttpEntity<>(object, headers);
 		restTemplate.postForLocation(uri, entity);
 	}
 	
-	private OperationalEnvDistributionStatus getSingleOperationalEnvDistributionStatus(URI uri){
-		return getClientFactory().create(OperationalEnvDistributionStatus.class).get(uri);
-	}
-
-	public void updateInfraActiveRequests(InfraActiveRequests request) {				
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", msoAdaptersAuth);
-		headers.set(HttpHeaders.CONTENT_TYPE,"application/json");
-		headers.set(HttpHeaders.ACCEPT,  "application/json");
+	public void updateInfraActiveRequests(InfraActiveRequests request) {
+		HttpHeaders headers = getHttpHeaders();
 		URI uri = getUri(infraActiveRequestURI+request.getRequestId());
 		HttpEntity<InfraActiveRequests> entity = new HttpEntity<>(request, headers);
 		restTemplate.put(uri, entity);
@@ -306,47 +297,24 @@ public class RequestsDbClient {
 	}
 
 	public void saveRequestProcessingData(RequestProcessingData requestProcessingData) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", msoAdaptersAuth);
+		HttpHeaders headers = getHttpHeaders();
 		URI uri = getUri(endpoint + requestProcessingDataURI);
 		HttpEntity<RequestProcessingData> entity = new HttpEntity<>(requestProcessingData, headers);
 		restTemplate.postForLocation(uri, entity);
 	}
-	
-	public RequestProcessingData getRequestProcessingDataBySoRequestIdAndGroupingIdAndNameAndTag(String soRequestId,
-			String groupingId, String name, String tag) {
-		return this.getSingleRequestProcessingData(UriBuilder.fromUri(endpoint + findOneBySoRequestIdAndGroupingIdAndNameAndTagURI)
-				.queryParam(SO_REQUEST_ID,soRequestId)
-				.queryParam(GROUPING_ID,groupingId)
-				.queryParam(NAME,name)
-				.queryParam(TAG,tag)
-				.build());
-	}
+
 	public List<RequestProcessingData> getRequestProcessingDataBySoRequestId(String soRequestId) {
-		return this.getRequestProcessingData(UriBuilder.fromUri(endpoint + findBySoRequestIdOrderByGroupingIdDesc)
+		return this.getRequestProcessingData(getUri(UriBuilder.fromUri(endpoint + findBySoRequestIdOrderByGroupingIdDesc)
 				.queryParam(SO_REQUEST_ID,soRequestId)
-				.build());
+				.build().toString()));
 	}
-	
-	public RequestProcessingData getSingleRequestProcessingData(URI uri){
-		return getClientFactory().create(RequestProcessingData.class).get(uri);
-	}
-	
+
 	private List<RequestProcessingData> getRequestProcessingData(URI uri) {
 		Iterable<RequestProcessingData> requestProcessingDataIterator = getClientFactory().create(RequestProcessingData.class).getAll(uri);
 		List<RequestProcessingData> requestProcessingDataList = new ArrayList<>();
 		Iterator<RequestProcessingData> it = requestProcessingDataIterator.iterator();
 		it.forEachRemaining(requestProcessingDataList::add);
 		return requestProcessingDataList;
-	}
-	
-	public List<RequestProcessingData> getAllRequestProcessingData() {
-		
-		return (List<RequestProcessingData>) this.getAllRequestProcessingData(UriBuilder.fromUri(endpoint + "/requestProcessingData").build());
-	}
-	
-	private Iterable<RequestProcessingData> getAllRequestProcessingData(URI uri) {		
-		return getClientFactory().create(RequestProcessingData.class).getAll(uri);
 	}
 
 	@Component
@@ -385,4 +353,18 @@ public class RequestsDbClient {
 	public void removePortFromEndpoint() {
 		endpoint = endpoint.substring(0, endpoint.lastIndexOf(':') + 1);
 	}
+
+	private HttpHeaders getHttpHeaders() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
+		headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+		headers.set(HttpHeaders.ACCEPT,  MediaType.APPLICATION_JSON);
+		return headers;
+	}
+
+	private HttpEntity<?> getHttpEntity() {
+		HttpHeaders headers = getHttpHeaders();
+		return new HttpEntity<>(headers);
+	}
+
 }

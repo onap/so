@@ -4,7 +4,7 @@
     <bpmn2:scriptTask id="sendSyncAckResponse_ScriptTask" name="Send Sync Ack Response" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
 CreateVcpeResCustService.sendSyncResponse(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -16,7 +16,7 @@ CreateVcpeResCustService.sendSyncResponse(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="preProcessRequest_ScriptTask" name="PreProcess Incoming Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
 CreateVcpeResCustService.preProcessRequest(execution)
 ]]></bpmn2:script>
@@ -29,7 +29,7 @@ CreateVcpeResCustService.preProcessRequest(execution)
     <bpmn2:scriptTask id="postProcessAndCompletionRequest_ScriptTask" name="Post Process &#38; Completion Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0afe2pg</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_29</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
 CreateVcpeResCustService.postProcessResponse(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -72,7 +72,7 @@ execution.setVariable("CreateVcpeResCustServiceSuccessIndicator", true)]]></bpmn
       <bpmn2:scriptTask id="ScriptTask_1" name="Log / Print Unexpected Error" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.common.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
 ExceptionUtil ex = new ExceptionUtil()
 ex.processJavaException(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
@@ -124,7 +124,7 @@ ex.processJavaException(execution)]]></bpmn2:script>
       <bpmn2:scriptTask id="ScriptTask_0yk02h3" name="Prepare FalloutHandler" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_0jg47xm</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_0807ukc</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
 CreateVcpeResCustService.prepareFalloutRequest(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
@@ -176,14 +176,14 @@ CreateVcpeResCustService.prepareFalloutRequest(execution)]]></bpmn2:script>
       <bpmn2:scriptTask id="ScriptTask_17doerz" name="Pre Process Rollback" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_02o4yqx</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_0ftzjjm</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService= new CreateVcpeResCustService()
 CreateVcpeResCustService.preProcessRollback(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:scriptTask id="ScriptTask_0wyub4x" name="Post Process Rollback" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_0dvsqpp</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1rabks0</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService= new CreateVcpeResCustService()
 CreateVcpeResCustService.postProcessRollback(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
@@ -332,7 +332,7 @@ CreateVcpeResCustService.postProcessRollback(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_0cdtchu" name="Prepare&#10;Decompose&#10;Service&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1eu60rt</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_00h6hmd</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
 CreateVcpeResCustService.prepareDecomposeService(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
@@ -350,7 +350,7 @@ CreateVcpeResCustService.prepareDecomposeService(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_0lpv2da" name="PostProcess&#10;Decompose&#10;Service&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_17g05fd</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11efpvh</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.openecomp.mso.bpmn.vcpe.scripts.*
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
 CreateVcpeResCustService.processDecomposition(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>

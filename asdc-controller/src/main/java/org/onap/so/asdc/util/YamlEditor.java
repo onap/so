@@ -50,6 +50,10 @@ public class YamlEditor {
     public YamlEditor (byte[] body) {
         init (body);
     }
+    
+    public YamlEditor (Yaml yaml) {
+    	this.yaml = yaml;
+    }
 
     @SuppressWarnings("unchecked")
     protected synchronized void init (byte[] body) {
