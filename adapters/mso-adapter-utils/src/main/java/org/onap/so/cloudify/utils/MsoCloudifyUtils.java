@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Copyright (C) 2018 Nokia.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +22,9 @@
 
 package org.onap.so.cloudify.utils;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,7 +35,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
 import org.onap.so.adapters.vdu.VduArtifact;
@@ -42,14 +46,13 @@ import org.onap.so.adapters.vdu.VduPlugin;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.cloudify.base.client.CloudifyBaseException;
 import org.onap.so.cloudify.base.client.CloudifyClientTokenProvider;
 import org.onap.so.cloudify.base.client.CloudifyConnectException;
 import org.onap.so.cloudify.base.client.CloudifyRequest;
 import org.onap.so.cloudify.base.client.CloudifyResponseException;
 import org.onap.so.cloudify.beans.DeploymentInfo;
+import org.onap.so.cloudify.beans.DeploymentInfoBuilder;
 import org.onap.so.cloudify.beans.DeploymentStatus;
 import org.onap.so.cloudify.exceptions.MsoCloudifyException;
 import org.onap.so.cloudify.exceptions.MsoCloudifyManagerNotFound;
@@ -77,6 +80,8 @@ import org.onap.so.cloudify.v3.model.Executions;
 import org.onap.so.cloudify.v3.model.OpenstackConfig;
 import org.onap.so.cloudify.v3.model.StartExecutionParams;
 import org.onap.so.config.beans.PoConfig;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoAlarmLogger;
@@ -92,10 +97,6 @@ import org.onap.so.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
@@ -155,7 +156,6 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
      * @param inputs A map of key/value inputs
      * @param pollForCompletion Indicator that polling should be handled in Java vs. in the client
      * @param timeoutMinutes Timeout after which the "install" will be cancelled
-     * @param environment An optional yaml-format string to specify environmental parameters
      * @param backout Flag to delete deployment on install Failure - defaulted to True
      * @return A DeploymentInfo object
      * @throws MsoCloudifyException Thrown if the Cloudify API call returns an exception.
@@ -256,7 +256,12 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 	        	//  Success!
 	        	//  Create and return a DeploymentInfo structure.  Include the Runtime outputs
                 DeploymentOutputs outputs = getDeploymentOutputs (cloudify, deploymentId);
-	        	return new DeploymentInfo (deployment, outputs, installWorkflow);
+				return new DeploymentInfoBuilder()
+					.withId(deployment.getId())
+					.withDeploymentInputs(deployment.getInputs())
+					.withDeploymentOutputs(outputs.getOutputs())
+					.fromExecution(installWorkflow)
+					.build();
 	        }
         	else {
         		// The workflow completed with errors.  Must try to back it out.
@@ -538,7 +543,6 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
      *
      * @param tenantId The Openstack ID of the tenant in which to query
      * @param cloudSiteId The cloud identifier (may be a region) in which to query
-     * @param stackName The name of the stack to query (may be simple or canonical)
      * @return A StackInfo object
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception.
      */
@@ -556,7 +560,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         Cloudify cloudify = getCloudifyClient (cloudSite.get());
         
     	// Build and send the Cloudify request
-		Deployment deployment = null;
+		Deployment deployment = new Deployment();
 		DeploymentOutputs outputs = null;
     	try {
     		GetDeployment queryDeployment = cloudify.deployments().byId(deploymentId);
@@ -573,10 +577,18 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     		
     		//  If no executions, does this give NOT_FOUND or empty set?
     		if (executions.getItems().isEmpty()) {
-    			return new DeploymentInfo (deployment);
+    			return new DeploymentInfoBuilder()
+					.withId(deployment.getId())
+					.withDeploymentInputs(deployment.getInputs())
+					.build();
     		}
     		else {
-    			return new DeploymentInfo (deployment, outputs, executions.getItems().get(0));
+				return new DeploymentInfoBuilder()
+					.withId(deployment.getId())
+					.withDeploymentInputs(deployment.getInputs())
+					.withDeploymentOutputs(outputs.getOutputs())
+					.fromExecution(executions.getItems().get(0))
+					.build();
     		}
     	}
     	catch (CloudifyConnectException ce) {
@@ -589,10 +601,14 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
             	// Got a NOT FOUND error.  React differently based on deployment vs. execution
             	if (deployment != null) {
             		// Got NOT_FOUND on the executions.  Assume this is a valid "empty" set
-            		return new DeploymentInfo (deployment, outputs, null);
+					return new DeploymentInfoBuilder()
+						.withId(deployment.getId())
+						.withDeploymentInputs(deployment.getInputs())
+						.withDeploymentOutputs(outputs.getOutputs())
+						.build();
             	} else {
             		// Deployment not found.  Default status of a DeploymentInfo object is NOTFOUND
-            		return new DeploymentInfo (deploymentId);
+            		return new DeploymentInfoBuilder().withId(deploymentId).build();
             	}
             }
             throw new MsoCloudifyException (re.getStatus(), re.getMessage(), re.getLocalizedMessage(), re);
@@ -615,8 +631,6 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
      *
      * @param tenantId The Openstack ID of the tenant in which to perform the delete
      * @param cloudSiteId The cloud identifier (may be a region) from which to delete the stack.
-     * @param stackName The name/id of the stack to delete. May be simple or canonical
-     * @param pollForCompletion Indicator that polling should be handled in Java vs. in the client
      * @return A StackInfo object
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception.
      * @throws MsoCloudSiteNotFound
@@ -651,7 +665,10 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
                 // Deployment doesn't exist.  Return a "NOTFOUND" DeploymentInfo object
             	// TODO:  Should return NULL?
             	LOGGER.debug("Deployment requested for deletion does not exist: " + deploymentId);
-            	return new DeploymentInfo (deploymentId, DeploymentStatus.NOTFOUND);
+				return new DeploymentInfoBuilder()
+					.withId(deploymentId)
+					.withStatus(DeploymentStatus.NOTFOUND)
+					.build();
            } else {
                 // Convert the CloudifyResponseException to an MsoOpenstackException
             	LOGGER.debug("ERROR STATUS = " + e.getStatus() + ",\n" + e.getMessage() + "\n" + e.getLocalizedMessage());
@@ -741,7 +758,12 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         }
 
     	// Return the deleted deployment info (with runtime outputs) along with the completed uninstall workflow status
-        return new DeploymentInfo (deployment, outputs, uninstallWorkflow);
+		return new DeploymentInfoBuilder()
+			.withId(deployment.getId())
+			.withDeploymentInputs(deployment.getInputs())
+			.withDeploymentOutputs(outputs.getOutputs())
+			.fromExecution(uninstallWorkflow)
+			.build();
     }
 
     
