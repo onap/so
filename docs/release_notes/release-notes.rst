@@ -19,7 +19,7 @@ Temp release for Casablanca at M4.
 * Support PNF resource type.
 * Extend the support of homing to vFW, VDNS usecases.
 * Workflow Designer Integration.
-* Monitoring BPMN worflow capabiliities through UI.
+* Monitoring BPMN worflow capabilities through UI.
 * Support to the CCVPN Usecase.
 * SO internal architecture improvements 
 
@@ -35,7 +35,7 @@ The Beijing release is the second release of the Service Orchestrator (SO) proje
 
 * Enhance Platform maturity by improving SO maturity matrix see `Wiki <https://wiki.onap.org/display/DW/Beijing+Release+Platform+Maturity>`_.
 * Manual scaling of network services and VNFs.
-* Homing and placement capabiliities through OOF interaction. 
+* Homing and placement capabilities through OOF interaction. 
 * Ability to perform change management.
 * Integrated to APPC
 * Integrated to OOF 
@@ -102,7 +102,7 @@ It executes end-to-end service activities by processing workflows and business l
 The orchestration engine is a reusable service. Any component of the architecture can execute SO orchestration capabilities. 
 
 * Orchestration services will process workflows based on defined models and recipe. 
-* The service model maintains consistency and reusability across all orchestration activities and ensures consistent methods, structure and version of the workflow execution environment.
+* The service model maintains consistency and re-usability across all orchestration activities and ensures consistent methods, structure and version of the workflow execution environment.
 * Orchestration processes interact with other platform components or external systems via standard and well-defined APIs.
 
 
