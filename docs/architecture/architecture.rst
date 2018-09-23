@@ -89,10 +89,10 @@ SO Sub-Components
 **SO Monitoring**
 
   Monitor BPMN Workflow execution by providing
-  * Service list search based on search criteria
-  * Service statistic
-  * Service Process Instance Rendering and Detail
-  
+   * Service list search based on search criteria
+   * Service statistic
+   * Service Process Instance Rendering and Detail
+
 Third Party and Open Source
 ---------------------------
 
