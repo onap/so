@@ -27,7 +27,6 @@ import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
-import org.onap.so.db.catalog.beans.ExternalServiceToInternalService;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkRecipe;
@@ -291,6 +290,47 @@ public class CatalogDbClient {
 		controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
 	}
 
+	public CatalogDbClient(String baseUri, String auth) {
+		ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
+
+		ClientFactory clientFactory = Configuration.builder().setBaseUri(baseUri).setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
+			restTemplate.getInterceptors().add((new SpringClientFilter()));
+
+			restTemplate.getInterceptors().add((request, body, execution) -> {
+
+				request.getHeaders().add(HttpHeaders.AUTHORIZATION, auth);
+				request.getHeaders().add(LogConstants.TARGET_ENTITY_HEADER,TARGET_ENTITY);
+				return execution.execute(request, body);
+			});
+		}).build().buildClientFactory();
+		serviceClient = clientFactory.create(Service.class);
+		networkRecipeClient = clientFactory.create(NetworkRecipe.class);
+		networkResourceCustomizationClient = clientFactory.create(NetworkResourceCustomization.class);
+		vnfResourceClient = clientFactory.create(VnfResource.class);
+		vnfResourceCustomizationClient = clientFactory.create(VnfResourceCustomization.class);
+		vnfRecipeClient = clientFactory.create(VnfRecipe.class);
+		orchestrationClient = clientFactory.create(OrchestrationFlow.class);
+		vfModuleCustomizationClient = clientFactory.create(VfModuleCustomization.class);
+		vfModuleClient = clientFactory.create(VfModule.class);
+		vnfComponentsRecipeClient = clientFactory.create(VnfComponentsRecipe.class);
+		northBoundRequestClient = clientFactory.create(NorthBoundRequest.class);
+		rainyDayHandlerStatusClient = clientFactory.create(RainyDayHandlerStatus.class);
+		buildingBlockDetailClient = clientFactory.create(BuildingBlockDetail.class);
+		orchestrationStatusStateTransitionDirectiveClient = clientFactory
+				.create(OrchestrationStatusStateTransitionDirective.class);
+		vnfcInstanceGroupCustomizationClient = clientFactory.create(VnfcInstanceGroupCustomization.class);
+		collectionResourceInstanceGroupCustomizationClient = clientFactory
+				.create(CollectionResourceInstanceGroupCustomization.class);
+		instanceGroupClient = clientFactory.create(InstanceGroup.class);
+		networkCollectionResourceCustomizationClient = clientFactory.create(NetworkCollectionResourceCustomization.class);
+		collectionNetworkResourceCustomizationClient = clientFactory.create(CollectionNetworkResourceCustomization.class);
+		cloudSiteClient = clientFactory.create(CloudSite.class);
+		cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
+		serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
+		cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
+		controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
+	}
+
 	public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(String modelCustomizationUUID) {
 		NetworkCollectionResourceCustomization networkCollectionResourceCustomization =
 				this.getSingleResource(networkCollectionResourceCustomizationClient, getUri(networkCollectionResourceCustomizationURI + modelCustomizationUUID));
@@ -504,6 +544,11 @@ public class CatalogDbClient {
 		return this.getSingleResource(cloudSiteClient, getUri(cloudSiteURI + id));
 	}
 
+	public void postCloudSite(CloudSite cloudSite){
+		this.postSingleResource(cloudSiteClient, cloudSite);
+	}
+
+
 	public CloudSite getCloudSiteByClliAndAicVersion (String clli, String cloudVersion){
 		return this.getSingleResource(cloudSiteClient, getUri(UriBuilder
 				.fromUri(findByClliAndCloudVersion)
@@ -546,6 +591,10 @@ public class CatalogDbClient {
 		Iterator<T> it = iterator.iterator();
 		it.forEachRemaining(list::add);
 		return list;
+	}
+
+	private <T> URI postSingleResource(Client<T> client, T type){
+		return client.post(type);
 	}
 	
 	public List<CvnfcCustomization> getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(String vnfCustomizationUUID, String vfModuleCustomizationUUID){

@@ -29,6 +29,15 @@ public class CatalogDbClientPortChanger extends CatalogDbClient {
 
     public String wiremockPort;
 
+    CatalogDbClientPortChanger(){
+
+    }
+
+    CatalogDbClientPortChanger(String baseUri, String auth, String wiremockPort) {
+        super(baseUri, auth);
+        this.wiremockPort = wiremockPort;
+    }
+
     protected URI getUri(String template) {
         URI uri = URI.create(template);
         String path = uri.getPath();
