@@ -1,0 +1,4683 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.2.0",
+    "title": "DistributionAndExternalAPIs"
+  },
+  "basePath": "/sdc",
+  "tags": [
+    {
+      "name": "Distribution Catalog Servlet"
+    },
+    {
+      "name": "Distribution Servlet"
+    },
+    {
+      "name": "Artifact External Servlet"
+    },
+    {
+      "name": "Asset Metadata External Servlet"
+    },
+    {
+      "name": "CRUD External Servlet"
+    },
+    {
+      "name": "Service Activation External Servlet"
+    }
+  ],
+  "paths": {
+    "/v1/catalog/services/{serviceName}/{serviceVersion}/artifacts/{artifactName}": {
+      "get": {
+        "tags": [
+          "Distribution Catalog Servlet"
+        ],
+        "summary": "Download service artifact",
+        "description": "Returns downloaded artifact",
+        "operationId": "downloadServiceArtifact",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/octet-stream"
+        ],
+        "parameters": [
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "serviceName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "serviceVersion",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "artifactName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The artifact is found and streamed.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Specified artifact is  not found - SVC4505"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/services/{serviceName}/{serviceVersion}/resourceInstances/{resourceInstanceName}/artifacts/{artifactName}": {
+      "get": {
+        "tags": [
+          "Distribution Catalog Servlet"
+        ],
+        "summary": "Download resource instance artifact",
+        "description": "Returns downloaded artifact",
+        "operationId": "downloadResourceInstanceArtifactByName",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/octet-stream"
+        ],
+        "parameters": [
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "serviceName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "serviceVersion",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "resourceInstanceName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "artifactName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The artifact is found and streamed.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Specified artifact is  not found - SVC4505"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/services/{serviceName}/{serviceVersion}/resources/{resourceName}/{resourceVersion}/artifacts/{artifactName}": {
+      "get": {
+        "tags": [
+          "Distribution Catalog Servlet"
+        ],
+        "summary": "Download resource artifact",
+        "description": "Returns downloaded artifact",
+        "operationId": "downloadResourceArtifact",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/octet-stream"
+        ],
+        "parameters": [
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "serviceName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "serviceVersion",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "resourceName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "resourceVersion",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "artifactName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The artifact is found and streamed.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Specified artifact is  not found - SVC4505"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/registerForDistribution": {
+      "post": {
+        "tags": [
+          "Distribution Servlet"
+        ],
+        "summary": "Subscription status",
+        "description": "Subscribes for distribution notifications",
+        "operationId": "registerForDistribution",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Determines the format of the body of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Content-Length",
+            "in": "header",
+            "description": "Length  of  the request body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "requestJson",
+            "description": "json describe the artifact",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegistrationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ECOMP component is successfully registered for distribution",
+            "schema": {
+              "$ref": "#/definitions/TopicRegistrationResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "405": {
+            "description": "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET  will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/artifactTypes": {
+      "get": {
+        "tags": [
+          "Distribution Servlet"
+        ],
+        "summary": "Artifact types list",
+        "description": "Fetches available artifact types list",
+        "operationId": "getValidArtifactTypes",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artifact types list fetched successfully",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "405": {
+            "description": "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( POST,PUT,DELETE  will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/unRegisterForDistribution": {
+      "post": {
+        "tags": [
+          "Distribution Servlet"
+        ],
+        "summary": "Subscription status",
+        "description": "Removes from subscription for distribution notifications",
+        "operationId": "unRegisterForDistribution",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Determines the format of the body of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Content-Length",
+            "in": "header",
+            "description": "Length  of  the request body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "requestJson",
+            "description": "json describe the artifact",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegistrationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "ECOMP component is successfully unregistered",
+            "schema": {
+              "$ref": "#/definitions/TopicUnregistrationResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "405": {
+            "description": "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/distributionUebCluster": {
+      "get": {
+        "tags": [
+          "Distribution Servlet"
+        ],
+        "summary": "UEB Server List",
+        "description": "return the available UEB Server List",
+        "operationId": "getUebServerList",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ECOMP component is authenticated and list of Cambria API server’s FQDNs is returned",
+            "schema": {
+              "$ref": "#/definitions/ServerListResponse"
+            }
+          },
+          "400": {
+            "description": "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its credentials  for  Basic Authentication - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/{assetType}/{uuid}/artifacts": {
+      "post": {
+        "tags": [
+          "Artifact External Servlet"
+        ],
+        "summary": "uploads of artifact to a resource or service",
+        "description": "uploads of artifact to a resource or service",
+        "operationId": "uploadArtifact",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Determines the format of the body of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Content-MD5",
+            "in": "header",
+            "description": "The value for this header must be the MD5 checksum over the whole json body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user ID of the DCAE Designer. This user must also have Designer role in SDC",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "The uuid of the asset as published in the metadata",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "json describe the artifact",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artifact uploaded",
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          },
+          "400": {
+            "description": "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Specified resource is not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/{assetType}/{uuid}/artifacts/{artifactUUID}": {
+      "get": {
+        "tags": [
+          "Artifact External Servlet"
+        ],
+        "summary": "Download component artifact",
+        "description": "Returns downloaded artifact",
+        "operationId": "downloadComponentArtifact",
+        "produces": [
+          "application/octet-stream"
+        ],
+        "parameters": [
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user ID of the DCAE Designer. This user must also have Designer role in SDC",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "The uuid of the asset as published in the metadata",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "artifactUUID",
+            "in": "path",
+            "description": "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artifact downloaded",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Artifact was not found - SVC4505"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Artifact External Servlet"
+        ],
+        "summary": "updates an artifact on a resource or service",
+        "description": "uploads of artifact to a resource or service",
+        "operationId": "updateArtifact",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Determines the format of the body of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Content-MD5",
+            "in": "header",
+            "description": "The value for this header must be the MD5 checksum over the whole json body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user ID of the DCAE Designer. This user must also have Designer role in SDC",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "The uuid of the asset as published in the metadata",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "artifactUUID",
+            "in": "path",
+            "description": "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "json describe the artifact",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artifact updated",
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          },
+          "400": {
+            "description": "Artifact name is missing in input - SVC4128"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"
+          },
+          "404": {
+            "description": "Specified resource is not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "409": {
+            "description": "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Artifact External Servlet"
+        ],
+        "summary": "deletes an artifact of a resource or service",
+        "description": "deletes an artifact of a resource or service",
+        "operationId": "deleteArtifact",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user ID of the DCAE Designer. This user must also have Designer role in SDC",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "The uuid of the asset as published in the metadata",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "artifactUUID",
+            "in": "path",
+            "description": "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artifact deleted",
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          },
+          "400": {
+            "description": "Artifact name is missing in input - SVC4128"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"
+          },
+          "404": {
+            "description": "Specified resource is not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "409": {
+            "description": "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts": {
+      "post": {
+        "tags": [
+          "Artifact External Servlet"
+        ],
+        "summary": "uploads an artifact to a resource instance",
+        "description": "uploads an artifact to a resource instance",
+        "operationId": "uploadArtifactToInstance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Determines the format of the body of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Content-MD5",
+            "in": "header",
+            "description": "The value for this header must be the MD5 checksum over the whole json body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user ID of the DCAE Designer. This user must also have Designer role in SDC",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "The uuid of the asset as published in the metadata",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "resourceInstanceName",
+            "in": "path",
+            "description": "The component instance name (as publishedin the response of the detailed query)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "json describe the artifact",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artifact uploaded",
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          },
+          "400": {
+            "description": "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Specified resource is not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}": {
+      "get": {
+        "tags": [
+          "Artifact External Servlet"
+        ],
+        "summary": "Download resource instance artifact",
+        "description": "Returns downloaded artifact",
+        "operationId": "downloadResourceInstanceArtifact",
+        "produces": [
+          "application/octet-stream"
+        ],
+        "parameters": [
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user ID of the DCAE Designer. This user must also have Designer role in SDC",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "The uuid of the asset as published in the metadata",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "artifactUUID",
+            "in": "path",
+            "description": "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "resourceInstanceName",
+            "in": "path",
+            "description": "The component instance name (as publishedin the response of the detailed query)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artifact downloaded",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Artifact was not found - SVC4505"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Artifact External Servlet"
+        ],
+        "summary": "updates an artifact on a resource instance",
+        "description": "uploads of artifact to a resource or service",
+        "operationId": "updateArtifactOnResourceInstance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Determines the format of the body of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Content-MD5",
+            "in": "header",
+            "description": "The value for this header must be the MD5 checksum over the whole json body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user ID of the DCAE Designer. This user must also have Designer role in SDC",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "The uuid of the asset as published in the metadata",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "artifactUUID",
+            "in": "path",
+            "description": "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "resourceInstanceName",
+            "in": "path",
+            "description": "The component instance name (as publishedin the response of the detailed query)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "json describe the artifact",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artifact updated",
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          },
+          "400": {
+            "description": "Artifact name is missing in input - SVC4128"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"
+          },
+          "404": {
+            "description": "Specified resource is not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "409": {
+            "description": "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Artifact External Servlet"
+        ],
+        "summary": "deletes an artifact of a resource insatnce",
+        "description": "deletes an artifact of a resource insatnce",
+        "operationId": "deleteArtifactOnResourceInstance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user ID of the DCAE Designer. This user must also have Designer role in SDC",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "The uuid of the asset as published in the metadata",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "artifactUUID",
+            "in": "path",
+            "description": "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "resourceInstanceName",
+            "in": "path",
+            "description": "The component instance name (as publishedin the response of the detailed query)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artifact deleted",
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          },
+          "400": {
+            "description": "Artifact name is missing in input - SVC4128"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"
+          },
+          "404": {
+            "description": "Specified resource is not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "409": {
+            "description": "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/resources/{uuid}/interfaces/{operationUUID}/artifacts/{artifactUUID}": {
+      "post": {
+        "tags": [
+          "Artifact External Servlet"
+        ],
+        "summary": "uploads of artifact to VF operation workflow",
+        "description": "uploads of artifact to VF operation workflow",
+        "operationId": "uploadInterfaceOperationArtifact",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Determines the format of the body of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Content-MD5",
+            "in": "header",
+            "description": "The value for this header must be the MD5 checksum over the whole json body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user ID of the DCAE Designer. This user must also have Designer role in SDC",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "The uuid of the asset as published in the metadata",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "operationUUID",
+            "in": "path",
+            "description": "The uuid of the operation",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "artifactUUID",
+            "in": "path",
+            "description": "The uuid of the artifact",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "json describe the artifact",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artifact uploaded",
+            "schema": {
+              "$ref": "#/definitions/ArtifactDefinition"
+            }
+          },
+          "400": {
+            "description": "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Specified resource is not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/{assetType}": {
+      "get": {
+        "tags": [
+          "Asset Metadata External Servlet"
+        ],
+        "summary": "Fetch list of assets",
+        "description": "Returns list of assets",
+        "operationId": "getAssetListExternal",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "The filter key (resourceType only for resources)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "subCategory",
+            "in": "query",
+            "description": "The filter key (resourceType only for resources)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "distributionStatus",
+            "in": "query",
+            "description": "The filter key (resourceType only for resources)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "resourceType",
+            "in": "query",
+            "description": "The filter key (resourceType only for resources)",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ECOMP component is authenticated and list of Catalog Assets Metadata is returned",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AssetMetadata"
+              }
+            }
+          },
+          "400": {
+            "description": "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "405": {
+            "description": "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "CRUD External Servlet"
+        ],
+        "summary": "creates a resource",
+        "description": "Creates a resource",
+        "operationId": "createResourceExternal",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Determines the format of the body of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "json describe the created resource",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Resource"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ECOMP component is authenticated and Asset created",
+            "schema": {
+              "$ref": "#/definitions/Resource"
+            }
+          },
+          "400": {
+            "description": "Create VFCMT request: VFCMT name exceeds character limit - SVC4073"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Error: Requested '%1' (uuid) resource was not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/{assetType}/{uuid}/metadata": {
+      "get": {
+        "tags": [
+          "Asset Metadata External Servlet"
+        ],
+        "summary": "Detailed metadata of asset by uuid",
+        "description": "Returns detailed metadata of an asset by uuid",
+        "operationId": "getAssetSpecificMetadataByUuidExternal",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "The requested asset uuid",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ECOMP component is authenticated and list of Catalog Assets Metadata is returned",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AssetMetadata"
+              }
+            }
+          },
+          "400": {
+            "description": "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Error: Requested '%1' (uuid) resource was not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/{assetType}/{uuid}/toscaModel": {
+      "get": {
+        "tags": [
+          "Asset Metadata External Servlet"
+        ],
+        "summary": "Fetch assets CSAR",
+        "description": "Returns asset csar",
+        "operationId": "getToscaModelExternal",
+        "produces": [
+          "application/octet-stream"
+        ],
+        "parameters": [
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "The requested asset type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "The requested asset uuid",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ECOMP component is authenticated and list of Catalog Assets Metadata is returned",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Error: Requested '%1' (uuid) resource was not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/{assetType}/{uuid}/lifecycleState/{lifecycleOperation}": {
+      "post": {
+        "tags": [
+          "CRUD External Servlet"
+        ],
+        "summary": "Change Resource lifecycle State",
+        "description": "",
+        "operationId": "changeResourceStateExternal",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Determines the format of the body of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "lifecycleOperation",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "checkout",
+              "checkin"
+            ]
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "id of component to be changed",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assetType",
+            "in": "path",
+            "description": "validValues: resources / services ",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "resources",
+              "services"
+            ]
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "userRemarks - Short description (free text) about the asset version being changed",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LifecycleChangeInfoWithAction"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource state changed",
+            "schema": {
+              "$ref": "#/definitions/AssetMetadata"
+            }
+          },
+          "400": {
+            "description": "Missing X-ECOMP-InstanceID HTTP header - POL5001"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4080"
+          },
+          "404": {
+            "description": "Error: Requested '%1' (uuid) resource was not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500": {
+            "description": "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        }
+      }
+    },
+    "/v1/catalog/services/{serviceUUID}/distribution/{opEnvId}/activate": {
+      "post": {
+        "tags": [
+          "Service Activation External Servlet"
+        ],
+        "summary": "activate a service",
+        "description": "Activates a service",
+        "operationId": "activateServiceExternal",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Determines the format of the body of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "USER_ID",
+            "in": "header",
+            "description": "The user id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-RequestID",
+            "in": "header",
+            "description": "X-ECOMP-RequestID header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-ECOMP-InstanceID",
+            "in": "header",
+            "description": "X-ECOMP-InstanceID header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Determines the format of the body of the response",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "The username and password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "serviceUUID",
+            "in": "path",
+            "description": "The serviceUUid to activate",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "opEnvId",
+            "in": "path",
+            "description": "The operational environment on which to activate the service on",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "ECOMP component is authenticated and required service may be distributed"
+          },
+          "400": {
+            "description": "The resource name is missing in the request body - SVC4062"
+          },
+          "401": {
+            "description": "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          },
+          "403": {
+            "description": "ECOMP component is not authorized - POL5003"
+          },
+          "404": {
+            "description": "Error: Requested '%1' (uuid) resource was not found - SVC4063"
+          },
+          "405": {
+            "description": "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "409": {
+            "description": "Service state is invalid for this action"
+          },
+          "500": {
+            "description": "The request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          },
+          "502": {
+            "description": "The server was acting as a gateway or proxy and received an invalid response from the upstream server"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "TopicRegistrationResponse": {
+      "type": "object",
+      "properties": {
+        "distrNotificationTopicName": {
+          "type": "string"
+        },
+        "distrStatusTopicName": {
+          "type": "string"
+        }
+      }
+    },
+    "RegistrationRequest": {
+      "type": "object",
+      "properties": {
+        "apiPublicKey": {
+          "type": "string"
+        },
+        "distrEnvName": {
+          "type": "string"
+        },
+        "isConsumerToSdcDistrStatusTopic": {
+          "type": "boolean"
+        },
+        "distEnvEndPoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TopicUnregistrationResponse": {
+      "type": "object",
+      "properties": {
+        "distrNotificationTopicName": {
+          "type": "string"
+        },
+        "distrStatusTopicName": {
+          "type": "string"
+        },
+        "notificationUnregisterResult": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "CONNNECTION_ERROR",
+            "NOT_FOUND",
+            "TOPIC_ALREADY_EXIST",
+            "OBJECT_NOT_FOUND",
+            "INTERNAL_SERVER_ERROR",
+            "AUTHENTICATION_ERROR",
+            "UNKNOWN_HOST_ERROR"
+          ]
+        },
+        "statusUnregisterResult": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "CONNNECTION_ERROR",
+            "NOT_FOUND",
+            "TOPIC_ALREADY_EXIST",
+            "OBJECT_NOT_FOUND",
+            "INTERNAL_SERVER_ERROR",
+            "AUTHENTICATION_ERROR",
+            "UNKNOWN_HOST_ERROR"
+          ]
+        }
+      }
+    },
+    "ServerListResponse": {
+      "type": "object",
+      "properties": {
+        "uebServerList": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ArtifactDefinition": {
+      "type": "object",
+      "properties": {
+        "payloadData": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "listHeatParameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HeatParameterDefinition"
+          }
+        },
+        "creationDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timeout": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "esId": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "artifactLabel": {
+          "type": "string"
+        },
+        "artifactUUID": {
+          "type": "string"
+        },
+        "artifactVersion": {
+          "type": "string"
+        },
+        "heatParameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HeatParameterDataDefinition"
+          }
+        },
+        "artifactGroupType": {
+          "type": "string",
+          "enum": [
+            "INFORMATIONAL",
+            "DEPLOYMENT",
+            "LIFE_CYCLE",
+            "SERVICE_API",
+            "TOSCA",
+            "OTHER"
+          ]
+        },
+        "heatParamsUpdateDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "artifactChecksum": {
+          "type": "string"
+        },
+        "generatedFromId": {
+          "type": "string"
+        },
+        "mandatory": {
+          "type": "boolean"
+        },
+        "serviceApi": {
+          "type": "boolean"
+        },
+        "payloadUpdateDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "artifactName": {
+          "type": "string"
+        },
+        "artifactType": {
+          "type": "string"
+        },
+        "artifactRef": {
+          "type": "string"
+        },
+        "apiUrl": {
+          "type": "string"
+        },
+        "artifactRepository": {
+          "type": "string"
+        },
+        "userIdCreator": {
+          "type": "string"
+        },
+        "artifactCreator": {
+          "type": "string"
+        },
+        "userIdLastUpdater": {
+          "type": "string"
+        },
+        "updaterFullName": {
+          "type": "string"
+        },
+        "isFromCsar": {
+          "type": "boolean"
+        },
+        "requiredArtifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "creatorFullName": {
+          "type": "string"
+        },
+        "artifactDisplayName": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "generated": {
+          "type": "boolean"
+        },
+        "duplicated": {
+          "type": "boolean"
+        },
+        "lastUpdateDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "HeatParameterDataDefinition": {
+      "type": "object",
+      "properties": {
+        "uniqueId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "currentValue": {
+          "type": "string"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "HeatParameterDefinition": {
+      "type": "object",
+      "properties": {
+        "uniqueId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "currentValue": {
+          "type": "string"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "AssetMetadata": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "invariantUUID": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "toscaModelURL": {
+          "type": "string"
+        }
+      }
+    },
+    "LifecycleChangeInfoWithAction": {
+      "type": "object",
+      "properties": {
+        "userRemarks": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "CREATE_FROM_CSAR",
+            "UPDATE_FROM_EXTERNAL_API",
+            "UPGRADE_MIGRATION"
+          ]
+        }
+      }
+    },
+    "AdditionalInfoParameterInfo": {
+      "type": "object",
+      "properties": {
+        "uniqueId": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "AdditionalInformationDefinition": {
+      "type": "object",
+      "properties": {
+        "uniqueId": {
+          "type": "string"
+        },
+        "creationTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "modificationTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "lastCreatedCounter": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AdditionalInfoParameterInfo"
+          }
+        },
+        "parentUniqueId": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "ArtifactDataDefinition": {
+      "type": "object",
+      "properties": {
+        "creationDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timeout": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "esId": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "artifactLabel": {
+          "type": "string"
+        },
+        "artifactUUID": {
+          "type": "string"
+        },
+        "artifactVersion": {
+          "type": "string"
+        },
+        "heatParameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HeatParameterDataDefinition"
+          }
+        },
+        "artifactGroupType": {
+          "type": "string",
+          "enum": [
+            "INFORMATIONAL",
+            "DEPLOYMENT",
+            "LIFE_CYCLE",
+            "SERVICE_API",
+            "TOSCA",
+            "OTHER"
+          ]
+        },
+        "heatParamsUpdateDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "artifactChecksum": {
+          "type": "string"
+        },
+        "generatedFromId": {
+          "type": "string"
+        },
+        "mandatory": {
+          "type": "boolean"
+        },
+        "serviceApi": {
+          "type": "boolean"
+        },
+        "payloadUpdateDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "artifactName": {
+          "type": "string"
+        },
+        "artifactType": {
+          "type": "string"
+        },
+        "artifactRef": {
+          "type": "string"
+        },
+        "apiUrl": {
+          "type": "string"
+        },
+        "artifactRepository": {
+          "type": "string"
+        },
+        "userIdCreator": {
+          "type": "string"
+        },
+        "artifactCreator": {
+          "type": "string"
+        },
+        "userIdLastUpdater": {
+          "type": "string"
+        },
+        "updaterFullName": {
+          "type": "string"
+        },
+        "isFromCsar": {
+          "type": "boolean"
+        },
+        "requiredArtifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "creatorFullName": {
+          "type": "string"
+        },
+        "artifactDisplayName": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "generated": {
+          "type": "boolean"
+        },
+        "duplicated": {
+          "type": "boolean"
+        },
+        "lastUpdateDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "CapabilityDataDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "parentName": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "capabilitySources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "minOccurrences": {
+          "type": "string"
+        },
+        "maxOccurrences": {
+          "type": "string"
+        },
+        "validSourceTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "leftOccurrences": {
+          "type": "string"
+        },
+        "ownerName": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        }
+      }
+    },
+    "CapabilityDefinition": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ComponentInstanceProperty"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "parentName": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "capabilitySources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "minOccurrences": {
+          "type": "string"
+        },
+        "maxOccurrences": {
+          "type": "string"
+        },
+        "validSourceTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "leftOccurrences": {
+          "type": "string"
+        },
+        "ownerName": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        }
+      }
+    },
+    "CapabilityRequirementRelationship": {
+      "type": "object",
+      "properties": {
+        "relation": {
+          "$ref": "#/definitions/RelationshipInfo"
+        },
+        "capability": {
+          "$ref": "#/definitions/CapabilityDataDefinition"
+        },
+        "requirement": {
+          "$ref": "#/definitions/RequirementDataDefinition"
+        }
+      }
+    },
+    "CategoryDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "normalizedName": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "icons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subcategories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubCategoryDefinition"
+          }
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "ComponentInstance": {
+      "type": "object",
+      "properties": {
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/CapabilityDefinition"
+            }
+          }
+        },
+        "requirements": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/RequirementDefinition"
+            }
+          }
+        },
+        "deploymentArtifacts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ArtifactDefinition"
+          }
+        },
+        "artifacts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ArtifactDefinition"
+          }
+        },
+        "groupInstances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GroupInstance"
+          }
+        },
+        "actualComponentUid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "normalizedName": {
+          "type": "string"
+        },
+        "creationTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "sourceModelInvariant": {
+          "type": "string"
+        },
+        "sourceModelUuid": {
+          "type": "string"
+        },
+        "sourceModelName": {
+          "type": "string"
+        },
+        "sourceModelUid": {
+          "type": "string"
+        },
+        "invariantName": {
+          "type": "string"
+        },
+        "posX": {
+          "type": "string"
+        },
+        "posY": {
+          "type": "string"
+        },
+        "originType": {
+          "type": "string",
+          "enum": [
+            "PRODUCT",
+            "SERVICE",
+            "VF",
+            "VFC",
+            "CP",
+            "VL",
+            "Configuration",
+            "VFCMT",
+            "CVFC",
+            "PNF",
+            "CR",
+            "ServiceProxy"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "propertyValueCounter": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "customizationUUID": {
+          "type": "string"
+        },
+        "modificationTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "componentUid": {
+          "type": "string"
+        },
+        "componentVersion": {
+          "type": "string"
+        },
+        "componentName": {
+          "type": "string"
+        },
+        "toscaComponentName": {
+          "type": "string"
+        },
+        "isProxy": {
+          "type": "boolean"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "attributeValueCounter": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "inputValueCounter": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "ComponentInstanceInput": {
+      "type": "object",
+      "properties": {
+        "uniqueId": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "definition": {
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/definitions/SchemaDefinition"
+        },
+        "password": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "inputPath": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "inputId": {
+          "type": "string"
+        },
+        "instanceUniqueId": {
+          "type": "string"
+        },
+        "propertyId": {
+          "type": "string"
+        },
+        "parentUniqueId": {
+          "type": "string"
+        },
+        "getInputValues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GetInputValueDataDefinition"
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PropertyConstraint"
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ComponentInstanceInput"
+          }
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ComponentInstanceProperty"
+          }
+        },
+        "valueUniqueUid": {
+          "type": "string"
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PropertyRule"
+          }
+        },
+        "componentInstanceName": {
+          "type": "string"
+        },
+        "componentInstanceId": {
+          "type": "string"
+        },
+        "schemaType": {
+          "type": "string"
+        },
+        "getInputProperty": {
+          "type": "boolean"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "ComponentInstanceProperty": {
+      "type": "object",
+      "properties": {
+        "uniqueId": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "definition": {
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/definitions/SchemaDefinition"
+        },
+        "password": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "inputPath": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "inputId": {
+          "type": "string"
+        },
+        "instanceUniqueId": {
+          "type": "string"
+        },
+        "propertyId": {
+          "type": "string"
+        },
+        "parentUniqueId": {
+          "type": "string"
+        },
+        "getInputValues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GetInputValueDataDefinition"
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PropertyConstraint"
+          }
+        },
+        "valueUniqueUid": {
+          "type": "string"
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PropertyRule"
+          }
+        },
+        "componentInstanceName": {
+          "type": "string"
+        },
+        "componentInstanceId": {
+          "type": "string"
+        },
+        "schemaType": {
+          "type": "string"
+        },
+        "getInputProperty": {
+          "type": "boolean"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "GetInputValueDataDefinition": {
+      "type": "object",
+      "properties": {
+        "propName": {
+          "type": "string"
+        },
+        "inputName": {
+          "type": "string"
+        },
+        "inputId": {
+          "type": "string"
+        },
+        "indexValue": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "getInputIndex": {
+          "$ref": "#/definitions/GetInputValueDataDefinition"
+        },
+        "list": {
+          "type": "boolean"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "GroupDefinition": {
+      "type": "object",
+      "properties": {
+        "typeUid": {
+          "type": "string"
+        },
+        "propertyValueCounter": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PropertyDataDefinition"
+          }
+        },
+        "type": {
+          "type": "string"
+        },
+        "members": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "version": {
+          "type": "string"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "invariantUUID": {
+          "type": "string"
+        },
+        "artifactsUuid": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "groupUUID": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "GroupInstance": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PropertyDataDefinition"
+          }
+        },
+        "type": {
+          "type": "string"
+        },
+        "creationTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "version": {
+          "type": "string"
+        },
+        "groupName": {
+          "type": "string"
+        },
+        "posX": {
+          "type": "string"
+        },
+        "posY": {
+          "type": "string"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "groupUid": {
+          "type": "string"
+        },
+        "groupInstanceArtifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "groupInstanceArtifactsUuid": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "invariantUUID": {
+          "type": "string"
+        },
+        "artifactsUuid": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "groupUUID": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "propertyValueCounter": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "customizationUUID": {
+          "type": "string"
+        },
+        "modificationTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "normalizedName": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "GroupingDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "normalizedName": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "InputDefinition": {
+      "type": "object",
+      "properties": {
+        "uniqueId": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "definition": {
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/definitions/SchemaDefinition"
+        },
+        "password": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "inputPath": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "inputId": {
+          "type": "string"
+        },
+        "instanceUniqueId": {
+          "type": "string"
+        },
+        "propertyId": {
+          "type": "string"
+        },
+        "parentUniqueId": {
+          "type": "string"
+        },
+        "getInputValues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GetInputValueDataDefinition"
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PropertyConstraint"
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ComponentInstanceInput"
+          }
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ComponentInstanceProperty"
+          }
+        },
+        "schemaType": {
+          "type": "string"
+        },
+        "getInputProperty": {
+          "type": "boolean"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "InterfaceDefinition": {
+      "type": "object",
+      "properties": {
+        "definition": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string"
+        },
+        "creationDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "operations": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/OperationDataDefinition"
+          }
+        },
+        "toscaResourceName": {
+          "type": "string"
+        },
+        "lastUpdateDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "InterfaceOperationDataDefinition": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "artifactUUID": {
+          "type": "string"
+        },
+        "inputParams": {
+          "$ref": "#/definitions/ListDataDefinitionInterfaceOperationParamDataDefinition"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "toscaResourceName": {
+          "type": "string"
+        },
+        "outputParams": {
+          "$ref": "#/definitions/ListDataDefinitionInterfaceOperationParamDataDefinition"
+        },
+        "operationType": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "InterfaceOperationParamDataDefinition": {
+      "type": "object",
+      "properties": {
+        "paramName": {
+          "type": "string"
+        },
+        "paramId": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "ListDataDefinition": {
+      "type": "object",
+      "properties": {
+        "listToscaDataDefinition": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ToscaDataDefinition"
+          }
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "ListDataDefinitionInterfaceOperationParamDataDefinition": {
+      "type": "object",
+      "properties": {
+        "listToscaDataDefinition": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InterfaceOperationParamDataDefinition"
+          }
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "ListDataDefinitionOperationInputDefinition": {
+      "type": "object",
+      "properties": {
+        "listToscaDataDefinition": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationInputDefinition"
+          }
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "OperationDataDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "creationDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "inputs": {
+          "$ref": "#/definitions/ListDataDefinitionOperationInputDefinition"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "lastUpdateDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "implementation": {
+          "$ref": "#/definitions/ArtifactDataDefinition"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "OperationInputDefinition": {
+      "type": "object",
+      "properties": {
+        "uniqueId": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "definition": {
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/definitions/SchemaDefinition"
+        },
+        "password": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "inputPath": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "inputId": {
+          "type": "string"
+        },
+        "instanceUniqueId": {
+          "type": "string"
+        },
+        "propertyId": {
+          "type": "string"
+        },
+        "parentUniqueId": {
+          "type": "string"
+        },
+        "getInputValues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GetInputValueDataDefinition"
+          }
+        },
+        "schemaType": {
+          "type": "string"
+        },
+        "getInputProperty": {
+          "type": "boolean"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "PolicyDefinition": {
+      "type": "object",
+      "properties": {
+        "normalizedName": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PropertyDataDefinition"
+          }
+        },
+        "version": {
+          "type": "string"
+        },
+        "invariantName": {
+          "type": "string"
+        },
+        "invariantUUID": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "derivedFrom": {
+          "type": "string"
+        },
+        "targets": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "isFromCsar": {
+          "type": "boolean"
+        },
+        "policyTypeName": {
+          "type": "string"
+        },
+        "policyTypeUid": {
+          "type": "string"
+        },
+        "policyUUID": {
+          "type": "string"
+        },
+        "componentName": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "PropertyConstraint": {
+      "type": "object"
+    },
+    "PropertyDataDefinition": {
+      "type": "object",
+      "properties": {
+        "uniqueId": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "definition": {
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/definitions/SchemaDefinition"
+        },
+        "password": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "inputPath": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "inputId": {
+          "type": "string"
+        },
+        "instanceUniqueId": {
+          "type": "string"
+        },
+        "propertyId": {
+          "type": "string"
+        },
+        "parentUniqueId": {
+          "type": "string"
+        },
+        "getInputValues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GetInputValueDataDefinition"
+          }
+        },
+        "schemaType": {
+          "type": "string"
+        },
+        "getInputProperty": {
+          "type": "boolean"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "PropertyDefinition": {
+      "type": "object",
+      "properties": {
+        "uniqueId": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "definition": {
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/definitions/SchemaDefinition"
+        },
+        "password": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "inputPath": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "inputId": {
+          "type": "string"
+        },
+        "instanceUniqueId": {
+          "type": "string"
+        },
+        "propertyId": {
+          "type": "string"
+        },
+        "parentUniqueId": {
+          "type": "string"
+        },
+        "getInputValues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GetInputValueDataDefinition"
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PropertyConstraint"
+          }
+        },
+        "schemaType": {
+          "type": "string"
+        },
+        "getInputProperty": {
+          "type": "boolean"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "PropertyRule": {
+      "type": "object",
+      "properties": {
+        "rule": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "value": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "RelationshipImpl": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "RelationshipInfo": {
+      "type": "object",
+      "properties": {
+        "requirement": {
+          "type": "string"
+        },
+        "capabilityOwnerId": {
+          "type": "string"
+        },
+        "requirementOwnerId": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "relationship": {
+          "$ref": "#/definitions/RelationshipImpl"
+        },
+        "capability": {
+          "type": "string"
+        },
+        "capabilityUid": {
+          "type": "string"
+        },
+        "requirementUid": {
+          "type": "string"
+        }
+      }
+    },
+    "RequirementCapabilityRelDef": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "toNode": {
+          "type": "string"
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CapabilityRequirementRelationship"
+          }
+        },
+        "fromNode": {
+          "type": "string"
+        }
+      }
+    },
+    "RequirementDataDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "node": {
+          "type": "string"
+        },
+        "parentName": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "minOccurrences": {
+          "type": "string"
+        },
+        "maxOccurrences": {
+          "type": "string"
+        },
+        "capability": {
+          "type": "string"
+        },
+        "leftOccurrences": {
+          "type": "string"
+        },
+        "ownerName": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "relationship": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        }
+      }
+    },
+    "RequirementDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "node": {
+          "type": "string"
+        },
+        "parentName": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "minOccurrences": {
+          "type": "string"
+        },
+        "maxOccurrences": {
+          "type": "string"
+        },
+        "capability": {
+          "type": "string"
+        },
+        "leftOccurrences": {
+          "type": "string"
+        },
+        "ownerName": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "relationship": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Resource": {
+      "type": "object",
+      "properties": {
+        "artifacts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ArtifactDefinition"
+          }
+        },
+        "deploymentArtifacts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ArtifactDefinition"
+          }
+        },
+        "toscaArtifacts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ArtifactDefinition"
+          }
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CategoryDefinition"
+          }
+        },
+        "componentInstances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ComponentInstance"
+          }
+        },
+        "componentInstancesRelations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RequirementCapabilityRelDef"
+          }
+        },
+        "componentInstancesInputs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ComponentInstanceInput"
+            }
+          }
+        },
+        "componentInstancesProperties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ComponentInstanceProperty"
+            }
+          }
+        },
+        "componentInstancesAttributes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ComponentInstanceProperty"
+            }
+          }
+        },
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/CapabilityDefinition"
+            }
+          }
+        },
+        "requirements": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/RequirementDefinition"
+            }
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InputDefinition"
+          }
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GroupDefinition"
+          }
+        },
+        "policies": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/PolicyDefinition"
+          }
+        },
+        "derivedFromGenericType": {
+          "type": "string"
+        },
+        "derivedFromGenericVersion": {
+          "type": "string"
+        },
+        "toscaType": {
+          "type": "string"
+        },
+        "additionalInformation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AdditionalInformationDefinition"
+          }
+        },
+        "derivedFrom": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "derivedList": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PropertyDefinition"
+          }
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PropertyDefinition"
+          }
+        },
+        "interfaces": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/InterfaceDefinition"
+          }
+        },
+        "defaultCapabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "interfaceOperations": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/InterfaceOperationDataDefinition"
+          }
+        },
+        "abstract": {
+          "type": "boolean"
+        },
+        "vendorName": {
+          "type": "string"
+        },
+        "vendorRelease": {
+          "type": "string"
+        },
+        "resourceVendorModelNumber": {
+          "type": "string"
+        },
+        "resourceType": {
+          "type": "string",
+          "enum": [
+            "VFC",
+            "VF",
+            "CR",
+            "CP",
+            "PNF",
+            "CVFC",
+            "VL",
+            "VFCMT",
+            "Configuration",
+            "ServiceProxy",
+            "ABSTRACT"
+          ]
+        },
+        "licenseType": {
+          "type": "string"
+        },
+        "cost": {
+          "type": "string"
+        },
+        "toscaResourceName": {
+          "type": "string"
+        },
+        "componentType": {
+          "type": "string",
+          "enum": [
+            "RESOURCE",
+            "SERVICE",
+            "RESOURCE_INSTANCE",
+            "PRODUCT",
+            "SERVICE_INSTANCE"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "creationDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "topologyTemplate": {
+          "type": "boolean"
+        },
+        "invariantUUID": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "isDeleted": {
+          "type": "boolean"
+        },
+        "csarVersion": {
+          "type": "string"
+        },
+        "allVersions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "allArtifacts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ArtifactDefinition"
+          }
+        },
+        "csarUUID": {
+          "type": "string"
+        },
+        "importedToscaChecksum": {
+          "type": "string"
+        },
+        "lastUpdaterUserId": {
+          "type": "string"
+        },
+        "lastUpdaterFullName": {
+          "type": "string"
+        },
+        "creatorUserId": {
+          "type": "string"
+        },
+        "highestVersion": {
+          "type": "boolean"
+        },
+        "creatorFullName": {
+          "type": "string"
+        },
+        "normalizedName": {
+          "type": "string"
+        },
+        "contactId": {
+          "type": "string"
+        },
+        "conformanceLevel": {
+          "type": "string"
+        },
+        "projectCode": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "lifecycleState": {
+          "type": "string",
+          "enum": [
+            "READY_FOR_CERTIFICATION",
+            "CERTIFICATION_IN_PROGRESS",
+            "CERTIFIED",
+            "NOT_CERTIFIED_CHECKIN",
+            "NOT_CERTIFIED_CHECKOUT"
+          ]
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "systemName": {
+          "type": "string"
+        },
+        "lastUpdateDate": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "icon": {
+          "type": "string"
+        }
+      }
+    },
+    "SchemaDefinition": {
+      "type": "object",
+      "properties": {
+        "derivedFrom": {
+          "type": "string"
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/PropertyDataDefinition"
+          }
+        },
+        "property": {
+          "$ref": "#/definitions/PropertyDataDefinition"
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "SubCategoryDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "normalizedName": {
+          "type": "string"
+        },
+        "uniqueId": {
+          "type": "string"
+        },
+        "icons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "groupings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GroupingDefinition"
+          }
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    },
+    "ToscaDataDefinition": {
+      "type": "object",
+      "properties": {
+        "empty": {
+          "type": "boolean"
+        },
+        "ownerId": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
