@@ -69,7 +69,6 @@ import io.swagger.annotations.ApiOperation;
 @Component
 public class ManualTasks {
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, ManualTasks.class);
-	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
 	
 	@org.springframework.beans.factory.annotation.Value("${mso.camunda.rest.task.uri}")
 	private String taskUri;
@@ -131,7 +130,7 @@ public class ManualTasks {
 
 
 			ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON Object failed. " + e.getMessage(),
-					HttpStatus.SC_BAD_REQUEST,ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
+					HttpStatus.SC_BAD_REQUEST,ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
 			throw validateException;
 
 		}
@@ -161,13 +160,12 @@ public class ManualTasks {
 
 
 			ValidateException validateException = new ValidateException.Builder("Mapping of JSON object to Camunda request failed",
-					HttpStatus.SC_INTERNAL_SERVER_ERROR,ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+					HttpStatus.SC_INTERNAL_SERVER_ERROR,ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).cause(e).errorInfo(errorLoggerInfo).build();
 			throw validateException;
 		}
 		
 		RequestClient requestClient = null;
 		HttpResponse response = null;
-		long subStartTime = System.currentTimeMillis();
 		String requestUrl = taskUri + "/" + taskId + "/complete";
 		try {
 			requestClient = reqClientFactory.getRequestClient (requestUrl);
@@ -183,7 +181,7 @@ public class ManualTasks {
 
 
             BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
-                    HttpStatus.SC_BAD_GATEWAY,ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).alarmInfo(alarmLoggerInfo).build();
+                    HttpStatus.SC_BAD_GATEWAY,ErrorNumbers.SVC_NO_SERVER_RESOURCES).cause(e).errorInfo(errorLoggerInfo).alarmInfo(alarmLoggerInfo).build();
 
 		    throw bpmnFailureException;
 		}
@@ -221,7 +219,7 @@ public class ManualTasks {
 
 
                 ValidateException validateException = new ValidateException.Builder("Request Failed due to bad response format" ,
-                        bpelStatus,ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+                        bpelStatus,ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).errorInfo(errorLoggerInfo).build();
 
                 throw validateException;
 			}

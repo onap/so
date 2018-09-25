@@ -290,7 +290,7 @@ public class E2EServiceInstances {
 			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL,
 					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
 			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine",e);
+					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine", e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
 			msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity().toString());
@@ -504,7 +504,7 @@ public class E2EServiceInstances {
 			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
 					MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.AvailabilityError,
-					"Exception while communicate with BPMN engine");
+					"Exception while communicate with BPMN engine", e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
 					MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
@@ -801,7 +801,7 @@ public class E2EServiceInstances {
 			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL,
 					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
 			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
+					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine", e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
 					"Exception while communicate with BPMN engine");
 			msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
@@ -1114,7 +1114,6 @@ public class E2EServiceInstances {
 
 		ServiceInstancesRequest sir = new ServiceInstancesRequest();
 
-		String returnString = null;
 		RequestDetails requestDetails = new RequestDetails();
 		ModelInfo modelInfo = new ModelInfo();
 

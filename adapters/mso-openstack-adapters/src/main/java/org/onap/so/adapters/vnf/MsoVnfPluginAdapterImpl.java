@@ -463,6 +463,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     				outputString = inputs.get(str).toString();
     			} catch (Exception e) {
     				outputString = "Unable to call toString() on the value for " + str;
+    				LOGGER.debug("Unable to call .toString() " + e.getMessage(), e);
     			}
     			sb.append("\t\nitem " + i++ + ": '" + str + "'='" + outputString + "'");
     		}
@@ -494,9 +495,9 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             final String json = JSON_MAPPER.writeValueAsString(obj);
             return json;
         } catch (JsonParseException jpe) {
-            LOGGER.debug("Error converting json to string " + jpe.getMessage());
+            LOGGER.debug("Error converting json to string " + jpe);
         } catch (Exception e) {
-            LOGGER.debug("Error converting json to string " + e.getMessage());
+            LOGGER.debug("Error converting json to string " + e);
         }
         return "[Error converting json to string]";
     }
@@ -697,7 +698,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         }
         catch (Exception e) {
 
-        	LOGGER.debug("unhandled exception in create VF - [Query]" + e.getMessage());
+        	LOGGER.debug("unhandled exception in create VF - [Query]" + e);
         	throw new VnfException("Exception during create VF " + e.getMessage());
         }
 
