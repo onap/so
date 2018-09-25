@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.onap.sdc.api.IDistributionClient;
@@ -46,7 +45,6 @@ import org.onap.so.asdc.client.exceptions.ASDCParametersException;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.IVfResourceInstaller;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
-import org.onap.so.asdc.installer.VfModuleStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.asdc.installer.bpmn.BpmnInstaller;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
@@ -596,7 +594,7 @@ public class ASDCController {
     				distributionStatus = wd.getOverallDistributionStatus(iNotif.getDistributionID());
     				Thread.sleep(watchDogTimeout / 10);    		
     			}catch(Exception e){
-    				LOGGER.debug ("Exception in Watchdog Loop " + e.getMessage());
+    				LOGGER.debug ("Exception in Watchdog Loop " + e);
     				Thread.sleep(watchDogTimeout / 10);
     			}
     			
@@ -628,7 +626,7 @@ public class ASDCController {
         		LOGGER.debug ("A&AI Updated succefully with Distribution Status!");
         	}
         	catch(Exception e) {
-        		LOGGER.debug ("Exception in Watchdog executePatchAAI(): " + e.getMessage());
+        		LOGGER.debug ("Exception in Watchdog executePatchAAI(): " + e);
         		watchdogError = "Error calling A&AI " + e.getMessage();
         		if(e.getCause() != null) {
         			LOGGER.debug ("Exception caused by: " + e.getCause().getMessage());
@@ -660,7 +658,7 @@ public class ASDCController {
         		LOGGER.debug ("A&AI Updated succefully with Distribution Status of " + DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name());
         	}
         	catch(Exception aaiException) {
-        		LOGGER.debug ("Exception in executePatchAAI(): " + aaiException.getMessage());
+        		LOGGER.debug ("Exception in executePatchAAI(): " + aaiException);
         		if(aaiException.getCause() != null) {
         			LOGGER.debug ("Exception caused by: " + aaiException.getCause().getMessage());
         		}
@@ -708,6 +706,7 @@ public class ASDCController {
 			 	} catch(ArtifactInstallerException e){
 			 		deploySuccessful = false;
 			 		errorMessage = e.getMessage();
+			 		LOGGER.debug ("Exception in processResourceNotification(): " + e);
 			 	}  
    			} else { // Services with resources
    		 	
@@ -744,6 +743,7 @@ public class ASDCController {
 			 	} catch(ArtifactInstallerException e){
 			 		deploySuccessful = false;
 			 		errorMessage = e.getMessage();
+			 		LOGGER.debug ("Exception in processResourceNotification(): " + e);
 			 	}  
 				
     		} 	
