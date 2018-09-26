@@ -1,0 +1,5 @@
+{
+  "template_type":"heat",
+  "workload_id": "vfname",
+  "workload_status":"STATUS"
+ }
