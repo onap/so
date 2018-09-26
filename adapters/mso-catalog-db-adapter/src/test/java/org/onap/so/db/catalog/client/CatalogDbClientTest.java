@@ -26,10 +26,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.catalogdb.CatalogDBApplication;
+import org.onap.so.db.catalog.beans.AuthenticationType;
+import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.catalog.beans.VfModule;
@@ -40,11 +43,13 @@ import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,12 +60,16 @@ public class CatalogDbClientTest {
     public static final String MTN13 = "mtn13";
     @LocalServerPort
     private int port;
+
+    @Value("${mso.db.auth}")
+    private String msoAdaptersAuth;
+
     @Autowired
     CatalogDbClientPortChanger client;
 
     @Before
-    public void initialize() {
-        client.wiremockPort = String.valueOf(port);
+    public void initialize(){
+        client.wiremockPort= String.valueOf(port);
     }
 
     @Test
@@ -375,5 +384,34 @@ public class CatalogDbClientTest {
         Assert.assertEquals(2, moduleList.size());
         VfModule module = moduleList.get(0);
         Assert.assertEquals("vSAMP10a DEV Base",module.getDescription());
+    }
+
+    @Test
+    public void testPostCloudSite() {
+        CatalogDbClientPortChanger localClient = new CatalogDbClientPortChanger("http://localhost:" + client.wiremockPort, msoAdaptersAuth, client.wiremockPort);
+        CloudSite cloudSite = new CloudSite();
+        cloudSite.setId("MTN6");
+        cloudSite.setClli("TESTCLLI");
+        cloudSite.setRegionId("regionId");
+        cloudSite.setCloudVersion("VERSION");
+        cloudSite.setPlatform("PLATFORM");
+
+        CloudIdentity cloudIdentity = new CloudIdentity();
+        cloudIdentity.setId("RANDOMID");
+        cloudIdentity.setIdentityUrl("URL");
+        cloudIdentity.setMsoId("MSO_ID");
+        cloudIdentity.setMsoPass("MSO_PASS");
+        cloudIdentity.setAdminTenant("ADMIN_TENANT");
+        cloudIdentity.setMemberRole("ROLE");
+        cloudIdentity.setIdentityServerType(ServerType.KEYSTONE);
+        cloudIdentity.setIdentityAuthenticationType(AuthenticationType.RACKSPACE_APIKEY);
+        cloudSite.setIdentityService(cloudIdentity);
+        localClient.postCloudSite(cloudSite);
+        CloudSite getCloudSite = this.client.getCloudSite("MTN6");
+        Assert.assertNotNull(getCloudSite);
+        Assert.assertNotNull(getCloudSite.getIdentityService());
+        Assert.assertEquals("TESTCLLI", getCloudSite.getClli());
+        Assert.assertEquals("regionId", getCloudSite.getRegionId());
+        Assert.assertEquals("RANDOMID", getCloudSite.getIdentityServiceId());
     }
 }

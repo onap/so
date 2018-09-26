@@ -21,14 +21,19 @@
 package org.onap.so.db.catalog.beans;
 
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
+import com.openpojo.reflection.java.packageloader.impl.URLToFileSystemAdapter;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
+import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -40,6 +45,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.persistence.TemporalType;
 
 /**
@@ -48,6 +54,7 @@ import javax.persistence.TemporalType;
  * object, of which it is a component
  *
  */
+@RemoteResource("/cloudSite")
 @Entity
 @Table(name = "cloud_sites")
 public class CloudSite {
@@ -115,6 +122,9 @@ public class CloudSite {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
+    @Transient
+    private URI uri;
+
     public CloudSite() {
 
     }
@@ -135,14 +145,21 @@ public class CloudSite {
         this.regionId = site.getRegionId();
         this.identityServiceId = site.getIdentityServiceId();
     }
-    
-    
+
+
     public String getId() {
         return this.id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @ResourceId
+    public URI getUri() {return this.uri;}
+
+    public void setUri(URI uri) {
+            this.uri = uri;
     }
 
     public String getRegionId() {

@@ -1,5 +1,5 @@
 # TEST FILE
-catalog.db.endpoint: "http://localhost:"
+catalog.db.endpoint: http://localhost:${wiremock.server.port}
 
 ssl-enable: false 
 mso:
@@ -8,7 +8,7 @@ mso:
   catalog:
     db:
       spring:
-        endpoint: "http://localhost:"
+        endpoint: http://localhost:${wiremock.server.port}
   db:
     auth: Basic YnBlbDptc28tZGItMTUwNyE=
 
@@ -50,7 +50,7 @@ mariaDB4j:
   databaseName: catalogdb
   
 server:
-    port: 8080
+    port: ${wiremock.server.port}
     tomcat:
         max-threads: 50
 
