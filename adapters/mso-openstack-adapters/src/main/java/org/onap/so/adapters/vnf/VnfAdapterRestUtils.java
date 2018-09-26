@@ -33,6 +33,10 @@ public class VnfAdapterRestUtils
 {
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, VnfAdapterRestUtils.class);
 
+	private static final String HEAT_MODE = "HEAT";
+	private static final String CLOUDIFY_MODE = "CLOUDIFY";
+	private static final String MULTICLOUD_MODE = "MULTICLOUD";
+
 	@Autowired
 	private CloudConfig cloudConfig;
 
@@ -65,9 +69,12 @@ public class VnfAdapterRestUtils
 			if (cloudSite.isPresent()) {
 				LOGGER.debug("Got CloudSite: " + cloudSite.toString());
 				if (cloudConfig.getCloudifyManager(cloudSite.get().getCloudifyId()) != null) {
-					mode = "CLOUDIFY";
-				} else {
-					mode = "HEAT";
+					mode = CLOUDIFY_MODE;
+				} else if (MULTICLOUD_MODE.equalsIgnoreCase(cloudSite.get().getOrchestrator())) {
+					mode = MULTICLOUD_MODE;
+				}
+				else {
+					mode = HEAT_MODE;
 				}
 			}
 		}
@@ -77,15 +84,15 @@ public class VnfAdapterRestUtils
 		MsoVnfAdapter vnfAdapter = null;
 
 		// TODO:  Make this more dynamic (e.g. Service Loader)
-		if ("CLOUDIFY".equalsIgnoreCase(mode)) {
+		if (CLOUDIFY_MODE.equalsIgnoreCase(mode)) {
 			LOGGER.debug ("GetVnfAdapterImpl: Return Cloudify Adapter");
 			vnfAdapter = cloudifyImpl;
 		}
-		else if ("HEAT".equalsIgnoreCase(mode)) {
+		else if (HEAT_MODE.equalsIgnoreCase(mode)) {
 			LOGGER.debug ("GetVnfAdapterImpl: Return Heat Adapter");
 			vnfAdapter = vnfImpl;
 		}
-		else if ("MULTICLOUD".equalsIgnoreCase(mode)) {
+		else if (MULTICLOUD_MODE.equalsIgnoreCase(mode)) {
 			LOGGER.debug ("GetVnfAdapterImpl: Return Plugin (multicloud) Adapter");
 			vnfAdapter = vnfPluginImpl;
 		}

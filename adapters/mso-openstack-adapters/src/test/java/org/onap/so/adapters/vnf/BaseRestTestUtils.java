@@ -77,7 +77,10 @@ public class BaseRestTestUtils {
 	private int port;
 
 	public ObjectMapper mapper;
-	
+
+	public String orchestrator = "orchestrator";
+	public String cloudEndpoint = "/v2.0";
+
 	
 	protected String readJsonFileAsString(String fileLocation) throws JsonParseException, JsonMappingException, IOException{
 		ObjectMapper mapper = new ObjectMapper();
@@ -111,7 +114,6 @@ public class BaseRestTestUtils {
 	public void setUp() throws Exception {
 		reset();
 		mapper = new ObjectMapper();
-
 		CloudIdentity identity = new CloudIdentity();
 		identity.setId("MTN13");
 		identity.setMsoId("m93945");
@@ -119,7 +121,8 @@ public class BaseRestTestUtils {
 		identity.setAdminTenant("admin");
 		identity.setMemberRole("admin");
 		identity.setTenantMetadata(new Boolean(true));
-		identity.setIdentityUrl("http://localhost:"+wireMockPort+"/v2.0");
+		identity.setIdentityUrl("http://localhost:" + wireMockPort + cloudEndpoint);
+
 		identity.setIdentityAuthenticationType(AuthenticationType.USERNAME_PASSWORD);
 
 		CloudSite cloudSite = new CloudSite();
@@ -127,11 +130,9 @@ public class BaseRestTestUtils {
 		cloudSite.setCloudVersion("3.0");
 		cloudSite.setClli("MDT13");
 		cloudSite.setRegionId("mtn13");
-		cloudSite.setOrchestrator("orchestrator" +
-				"");
+		cloudSite.setOrchestrator(orchestrator);
 		identity.setIdentityServerType(ServerType.KEYSTONE);
 		cloudSite.setIdentityService(identity);
-
 
 		stubFor(get(urlPathEqualTo("/cloudSite/MTN13")).willReturn(aResponse()
 				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
@@ -145,8 +146,7 @@ public class BaseRestTestUtils {
 				.withBody(getBody(mapper.writeValueAsString(identity),wireMockPort, ""))
 				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
-		cloudConfig.getCloudSite("MTN13").get().getIdentityService().setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
-
+			cloudConfig.getCloudSite("MTN13").get().getIdentityService().setIdentityUrl("http://localhost:" + wireMockPort + cloudEndpoint);
 	}
 
 	protected static String getBody(String body, int port, String urlPath) throws IOException {

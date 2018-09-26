@@ -21,13 +21,21 @@
 package org.onap.so.openstack.utils;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
+import javax.ws.rs.core.Response.StatusType;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HttpStatus;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.onap.so.adapters.vdu.CloudInfo;
@@ -48,24 +56,20 @@ import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.onap.so.openstack.mappers.StackInfoMapper;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.RestClient;
-import org.onap.so.cloud.CloudConfig;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.utils.TargetEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.heat.model.CreateStackParam;
 import com.woorea.openstack.heat.model.Stack;
 
 @Component
 public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
-    @Autowired
-    protected CloudConfig cloudConfig;
-
-    @Autowired
-    private Environment env;
 
     private static final String ONAP_IP = "ONAP_IP";
 
@@ -74,6 +78,8 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     private static final Integer DEFAULT_MSB_PORT = 80;
 
     private static final Logger logger = LoggerFactory.getLogger(MsoMulticloudUtils.class);
+
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     /******************************************************************************
      *
@@ -135,59 +141,102 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                                   Map <String, Object> heatFiles,
                                   boolean backout) throws MsoException {
 
-        // Get the directives, if present.
-        String oofDirectives = null;
-        String sdncDirectives = null;
-        String genericVnfId = null;
-        String vfModuleId = null;
+        logger.trace("Started MsoMulticloudUtils.createStack");
 
-        String key = "oof_directives";
-        if (!stackInputs.isEmpty() && stackInputs.containsKey(key)) {
-            oofDirectives = (String) stackInputs.get(key);
-            stackInputs.remove(key);
-        }
-        key = "sdnc_directives";
-        if (!stackInputs.isEmpty() && stackInputs.containsKey(key)) {
-            sdncDirectives = (String) stackInputs.get(key);
-            stackInputs.remove(key);
-        }
-        key = "generic_vnf_id";
-        if (!stackInputs.isEmpty() && stackInputs.containsKey(key)) {
-            genericVnfId = (String) stackInputs.get(key);
-            stackInputs.remove(key);
-        }
-        key = "vf_module_id";
-        if (!stackInputs.isEmpty() && stackInputs.containsKey(key)) {
-            vfModuleId = (String) stackInputs.get(key);
-            stackInputs.remove(key);
+        // Get the directives, if present.
+        String oofDirectives = "";
+        String sdncDirectives = "";
+        String genericVnfId = "";
+        String vfModuleId = "";
+
+        List<String> inputKeys = Arrays.asList("oof_directives", "sdnc_directives", "generic_vnf_id", "vf_module_id");
+        for (String key: inputKeys) {
+            if (!stackInputs.isEmpty() && stackInputs.containsKey(key)) {
+                if ( key == "oof_directives") {oofDirectives = (String) stackInputs.get(key);}
+                if ( key == "sdnc_directives") {sdncDirectives = (String) stackInputs.get(key);}
+                if ( key == "generic_vnf_id") {genericVnfId = (String) stackInputs.get(key);}
+                if ( key == "vf_module_id") {vfModuleId = (String) stackInputs.get(key);}
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("Found %s: %s", key, stackInputs.get(key)));
+                }
+                stackInputs.remove(key);
+            }
         }
 
         // create the multicloud payload
         CreateStackParam stack = createStackParam(stackName, heatTemplate, stackInputs, timeoutMinutes, environment, files, heatFiles);
 
-        MsoMulticloudParam multicloudParam = new MsoMulticloudParam();
-        multicloudParam.setGenericVnfId(genericVnfId);
-        multicloudParam.setVfModuleId(vfModuleId);
-        multicloudParam.setOofDirectives(oofDirectives);
-        multicloudParam.setSdncDirectives(sdncDirectives);
-        multicloudParam.setTemplateType("heat");
-        multicloudParam.setTemplateData(stack.toString());
+        MulticloudRequest multicloudRequest= new MulticloudRequest();
+        HttpEntity<MulticloudRequest> request = null;
 
+        try {
+            multicloudRequest.setGenericVnfId(genericVnfId);
+            multicloudRequest.setVfModuleId(vfModuleId);
+            multicloudRequest.setOofDirectives(oofDirectives);
+            multicloudRequest.setSdncDirectives(sdncDirectives);
+            multicloudRequest.setTemplateType("heat");
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Stack Template Data is: %s", stack.toString().substring(16)));
+            }
+            multicloudRequest.setTemplateData(JSON_MAPPER.writeValueAsString(stack));
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Multicloud Request is: %s", multicloudRequest.toString()));
+            }
 
+            CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() ->
+                    new MsoCloudSiteNotFound(cloudSiteId));
+            CloudIdentity cloudIdentity = cloudSite.getIdentityService();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set ("X-Auth-User", cloudIdentity.getMsoId ());
+            headers.set ("X-Auth-Key", CryptoUtils.decryptCloudConfigPassword(cloudIdentity.getMsoPass ()));
+            headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
+            headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
+
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Multicloud Request Headers: %s", headers.toString()));
+            }
+            request = new HttpEntity<>(multicloudRequest, headers);
+        } catch (Exception e) {
+            logger.debug("ERROR making multicloud JSON body ", e);
+        }
         String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, null);
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Multicloud Endpoint is: %s", multicloudEndpoint));
+        }
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
-        if (multicloudClient != null) {
-            Response res = multicloudClient.post(multicloudParam);
-            logger.debug("Multicloud Post response is: " + res);
+        Stack responseStack = new Stack();
+        responseStack.setStackName(stackName);
+
+        Response response = multicloudClient.post(request);
+
+        Scanner scanner = new Scanner((java.io.ByteArrayInputStream)response.getEntity());
+        scanner.useDelimiter("\\Z");
+        String data = "";
+        if (scanner.hasNext()) {
+            data = scanner.next();
+        }
+        scanner.close();
+        logger.debug("MULTICLOUD CREATE POST RESPONSE = " + data);
+
+        try {
+            MulticloudCreateResponse multicloudResponse =
+                    new ObjectMapper().readerFor(MulticloudCreateResponse.class).readValue(data);
+            logger.debug("the multicloud response is: " + multicloudResponse.toString());
+        } catch (Exception e) {
+            logger.debug("MULTICLOUD EXCEPTION" + e);
         }
 
-        Stack responseStack = new Stack();
-        responseStack.setStackStatus(HeatStatus.CREATED.toString());
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Multicloud Post response is: %s", response.getEntity().toString()));
+        }
+        logger.debug("Multicloud Post response is: " + response.getStatus() + response.getEntity().toString());
+        responseStack.setStackStatus(mapResponseToHeatStatus(response).toString());
 
         return new StackInfoMapper(responseStack).map();
     }
 
+    @Override
     public Map<String, Object> queryStackForOutputs(String cloudSiteId,
                                                            String tenantId, String stackName) throws MsoException {
         logger.debug("MsoHeatUtils.queryStackForOutputs)");
@@ -211,64 +260,85 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
      */
     @Override
     public StackInfo queryStack (String cloudSiteId, String tenantId, String stackName) throws MsoException {
-        logger.debug ("Query multicloud HEAT stack: " + stackName + " in tenant " + tenantId);
+        if (logger.isDebugEnabled()) {
+            logger.debug (String.format("Query multicloud HEAT stack: %s in tenant %s", stackName, tenantId));
+        }
+
+        StackInfo returnInfo = new StackInfo();
+        returnInfo.setName(stackName);
 
         String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, stackName);
-
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
         if (multicloudClient != null) {
             Response response = multicloudClient.get();
-            logger.debug("Multicloud Get response is: " + response);
-
-            return new StackInfo (stackName, HeatStatus.CREATED);
+            if (logger.isDebugEnabled()) {
+                logger.debug (String.format("Mulicloud GET Response: %s", response.toString()));
+            }
+            returnInfo.setStatus(mapResponseToHeatStatus(response));
         }
 
-        return new StackInfo (stackName, HeatStatus.NOTFOUND);
+        return returnInfo;
+
     }
 
     public StackInfo deleteStack (String cloudSiteId, String tenantId, String stackName) throws MsoException {
-        logger.debug ("Delete multicloud HEAT stack: " + stackName + " in tenant " + tenantId);
+        if (logger.isDebugEnabled()) {
+            logger.debug (String.format("Delete multicloud HEAT stack: %s in tenant %s", stackName, tenantId));
+        }
+        StackInfo returnInfo = new StackInfo();
+        returnInfo.setName(stackName);
+        Response response = null;
 
         String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, stackName);
-
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
         if (multicloudClient != null) {
-            Response response = multicloudClient.delete();
-            logger.debug("Multicloud Get response is: " + response);
-
-            return new StackInfo (stackName, HeatStatus.DELETING);
+            response = multicloudClient.delete();
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Multicloud Delete response is: %s", response.getEntity().toString()));
+            }
         }
-
-        return new StackInfo (stackName, HeatStatus.FAILED);
+        returnInfo.setStatus(mapResponseToHeatStatus(response));
+        return returnInfo;
     }
 
     // ---------------------------------------------------------------
     // PRIVATE FUNCTIONS FOR USE WITHIN THIS CLASS
-
-
-    private String getMsbHost() {
-        // MSB_IP will be set as ONAP_IP environment parameter in install flow.
-        String msbIp = System.getenv().get(ONAP_IP);
-
-        // if ONAP IP is not set. get it from config file.
-        if (null == msbIp || msbIp.isEmpty()) {
-            msbIp = env.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
+    private HeatStatus mapResponseToHeatStatus(Response response) {
+        if (response.getStatusInfo().getStatusCode() == Response.Status.OK.getStatusCode()) {
+            return HeatStatus.CREATED;
+        } else if (response.getStatusInfo().getStatusCode() == Response.Status.CREATED.getStatusCode()) {
+            return HeatStatus.CREATED;
+        } else if (response.getStatusInfo().getStatusCode() == Response.Status.NO_CONTENT.getStatusCode()) {
+            return HeatStatus.CREATED;
+        } else if (response.getStatusInfo().getStatusCode() == Response.Status.BAD_REQUEST.getStatusCode()) {
+            return HeatStatus.FAILED;
+        } else if (response.getStatusInfo().getStatusCode() == Response.Status.UNAUTHORIZED.getStatusCode()) {
+            return HeatStatus.FAILED;
+        } else if (response.getStatusInfo().getStatusCode() == Response.Status.NOT_FOUND.getStatusCode()) {
+            return HeatStatus.NOTFOUND;
+        } else if (response.getStatusInfo().getStatusCode() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()) {
+            return HeatStatus.FAILED;
+        } else {
+            return HeatStatus.UNKNOWN;
         }
-        Integer msbPort = env.getProperty("mso.msb-port", Integer.class, DEFAULT_MSB_PORT);
-
-        return UriBuilder.fromPath("").host(msbIp).port(msbPort).scheme("http").build().toString();
     }
 
     private String getMulticloudEndpoint(String cloudSiteId, String workloadId) throws MsoCloudSiteNotFound {
 
         CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
-        String endpoint = getMsbHost() + cloudSite.getIdentityService().getIdentityUrl();
+        String endpoint = cloudSite.getIdentityService().getIdentityUrl();
 
         if (workloadId != null) {
-            return endpoint + workloadId;
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Multicloud Endpoint is: %s/%s", endpoint, workloadId));
+            }
+            return String.format("%s/%s", endpoint, workloadId);
         } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Multicloud Endpoint is: %s", endpoint));
+            }
             return endpoint;
         }
     }
@@ -277,13 +347,13 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         RestClient client = null;
         try {
             client= new HttpClient(UriBuilder.fromUri(endpoint).build().toURL(),
-            "application/json", TargetEntity.OPENSTACK_ADAPTER);
+                    MediaType.APPLICATION_JSON.toString(), TargetEntity.MULTICLOUD);
         } catch (MalformedURLException e) {
-            logger.debug("Encountered malformed URL error getting multicloud rest client " + e.getMessage());
+            logger.debug(String.format("Encountered malformed URL error getting multicloud rest client %s", e.getMessage()));
         } catch (IllegalArgumentException e) {
-            logger.debug("Encountered illegal argument getting multicloud rest client " + e.getMessage());
+            logger.debug(String.format("Encountered illegal argument getting multicloud rest client %s",e.getMessage()));
         } catch (UriBuilderException e) {
-            logger.debug("Encountered URI builder error getting multicloud rest client " + e.getMessage());
+            logger.debug(String.format("Encountered URI builder error getting multicloud rest client %s", e.getMessage()));
         }
         return client;
     }
@@ -382,7 +452,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
         try {
             // Delete the Multicloud stack
-            StackInfo stackInfo = deleteStack (tenantId, cloudSiteId, instanceId, true);
+            StackInfo stackInfo = deleteStack (tenantId, cloudSiteId, instanceId);
 
             // Populate a VduInstance based on the deleted Cloudify Deployment object
             VduInstance vduInstance = stackInfoToVduInstance(stackInfo);
@@ -425,6 +495,9 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     {
         VduInstance vduInstance = new VduInstance();
 
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("StackInfo to convert: %s", stackInfo.getParameters().toString()));
+        }
         // The full canonical name as the instance UUID
         vduInstance.setVduInstanceId(stackInfo.getCanonicalName());
         vduInstance.setVduInstanceName(stackInfo.getName());
@@ -447,6 +520,12 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         // There are lots of HeatStatus values, so this is a bit long...
         HeatStatus heatStatus = stackInfo.getStatus();
         String statusMessage = stackInfo.getStatusMessage();
+        logger.debug("HeatStatus = " + heatStatus + " msg = " + statusMessage);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Stack Status: %s", heatStatus.toString()));
+            logger.debug(String.format("Stack Status Message: %s", statusMessage));
+        }
 
         if (heatStatus == HeatStatus.INIT  ||  heatStatus == HeatStatus.BUILDING) {
             vduStatus.setState(VduStateType.INSTANTIATING);

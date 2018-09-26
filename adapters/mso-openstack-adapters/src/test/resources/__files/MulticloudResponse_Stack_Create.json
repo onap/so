@@ -1,0 +1,16 @@
+{
+  "template_type": "heat",
+  "workload_id": "workload-id",
+  "template_response":
+    {
+      "stack": {
+        "id": "abcdef00-1234-abcd-5678-ef9123456789",
+        "links": [
+          {
+            "href": "http://localhost:1234/v1/id12345678/stacks/workload-id/abcdef00-1234-abcd-5678-ef9123456789",
+            "rel": "self"
+          }
+        ]
+      }
+    }
+}
