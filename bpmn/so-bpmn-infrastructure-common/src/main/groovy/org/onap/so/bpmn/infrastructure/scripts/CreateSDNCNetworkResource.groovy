@@ -60,7 +60,6 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
     public void preProcessRequest(DelegateExecution execution){
         
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         msoLogger.info(" ***** Started preProcessRequest *****")
         try {
 
@@ -244,7 +243,6 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
      * generate the nsParameters
      */
     public void prepareSDNCRequest (DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         msoLogger.info(" ***** Started prepareSDNCRequest *****")
 
         try {
@@ -530,7 +528,6 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void afterCreateSDNCCall(DelegateExecution execution){
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         msoLogger.info(" ***** Started prepareSDNCRequest *****")
         String responseCode = execution.getVariable(Prefix + "sdncCreateReturnCode")
         String responseObj = execution.getVariable(Prefix + "SuccessIndicator")
@@ -577,7 +574,6 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void sendSyncResponse (DelegateExecution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         msoLogger.debug(" *** sendSyncResponse *** ")
 
         try {

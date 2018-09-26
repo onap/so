@@ -53,7 +53,6 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
     SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 
     public void preProcessRequest(DelegateExecution execution){
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         msoLogger.info(" ***** Started preProcessRequest *****")
         try {
 
@@ -161,7 +160,6 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
      * generate the nsParameters
      */
     public void prepareSDNCRequest (DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         msoLogger.info(" ***** Started prepareSDNCRequest *****")
 
         try {
@@ -440,7 +438,6 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void postDeleteSDNCCall(DelegateExecution execution){
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         msoLogger.info(" ***** Started prepareSDNCRequest *****")
         String responseCode = execution.getVariable(Prefix + "sdncDeleteReturnCode")
         String responseObj = execution.getVariable(Prefix + "SuccessIndicator")
@@ -450,7 +447,6 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void sendSyncResponse (DelegateExecution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         msoLogger.debug( " *** sendSyncResponse *** ")
 
         try {

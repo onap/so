@@ -129,7 +129,6 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void prepareUpdateAfterActivateSDNCResource(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         msoLogger.info("started prepareUpdateAfterActivateSDNCResource ")
 
         ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
@@ -187,7 +186,6 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void prepareSDNCRequest (DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         msoLogger.info("Started prepareSDNCRequest ")
 
         try {
@@ -405,7 +403,6 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void postActivateSDNCCall(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         msoLogger.info("started postCreateSDNCCall ")
 
         String responseCode = execution.getVariable(Prefix + "sdncCreateReturnCode")
@@ -415,7 +412,6 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void sendSyncResponse(DelegateExecution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         msoLogger.dubug(" *** sendSyncResponse *** ")
 
         try {
