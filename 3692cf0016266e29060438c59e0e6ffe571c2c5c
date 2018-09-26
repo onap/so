@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_ce6259ad",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-26T15:48:06Z",
+      "side": 1,
+      "message": "We should probably pull this from inputs as well. In the future hard coding this will cause issues with other template types.",
+      "range": {
+        "startLine": 176,
+        "startChar": 12,
+        "endLine": 176,
+        "endChar": 53
+      },
+      "revId": "3692cf0016266e29060438c59e0e6ffe571c2c5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0e5131d8",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-26T15:48:06Z",
+      "side": 1,
+      "message": "No need to log this twice. We should prefer putting debug log in \"if (loogger.isDebugEnabled()\".",
+      "range": {
+        "startLine": 214,
+        "startChar": 8,
+        "endLine": 214,
+        "endChar": 111
+      },
+      "revId": "3692cf0016266e29060438c59e0e6ffe571c2c5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_8ecea1b3",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 504,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-26T15:48:06Z",
+      "side": 1,
+      "message": "Probably don\u0027t need to log status message twice",
+      "range": {
+        "startLine": 504,
+        "startChar": 8,
+        "endLine": 504,
+        "endChar": 79
+      },
+      "revId": "3692cf0016266e29060438c59e0e6ffe571c2c5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4e1c0914",
+        "filename": "adapters/mso-openstack-adapters/src/test/java/org/onap/so/adapters/vnf/MsoVnfMulticloudAdapterImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-26T15:48:06Z",
+      "side": 1,
+      "message": "We need to add volumeGroupId here in separate test and make sure it works. It will require a stubFor with a response.",
+      "range": {
+        "startLine": 89,
+        "startChar": 80,
+        "endLine": 89,
+        "endChar": 84
+      },
+      "revId": "3692cf0016266e29060438c59e0e6ffe571c2c5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ae04bdc6",
+        "filename": "adapters/mso-openstack-adapters/src/test/java/org/onap/so/adapters/vnf/MsoVnfMulticloudAdapterImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-09-26T15:48:06Z",
+      "side": 1,
+      "message": "We need to add these tests in TODOs and make sure they work.",
+      "revId": "3692cf0016266e29060438c59e0e6ffe571c2c5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
