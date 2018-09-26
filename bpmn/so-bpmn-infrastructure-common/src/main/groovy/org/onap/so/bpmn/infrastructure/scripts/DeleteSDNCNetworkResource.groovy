@@ -20,22 +20,18 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.onap.so.logger.MsoLogger
-
-import static org.apache.commons.lang3.StringUtils.*;
-
 import org.apache.commons.lang3.*
-import org.camunda.bpm.engine.delegate.BpmnError 
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.common.recipe.ResourceInput;
-import org.onap.so.bpmn.common.resource.ResourceRequestBuilder 
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor 
+import org.onap.so.bpmn.common.recipe.ResourceInput
+import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MsoLogger
 
-import groovy.json.*
+import static org.apache.commons.lang3.StringUtils.*
 
 /**
  * This groovy class supports the <class>DeleteSDNCCNetworkResource.bpmn</class> process.

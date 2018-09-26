@@ -20,30 +20,21 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.json.JSONObject
-import org.json.XML
-import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiResponse;
-
-import static org.apache.commons.lang3.StringUtils.*;
-import groovy.xml.XmlUtil
-import groovy.json.*
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.recipe.ResourceInput;
-import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder.AbstractBuilder
-import org.onap.so.rest.APIResponse
-import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.bpmn.common.scripts.AaiUtil
-
-import java.util.UUID;
-
+import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.apache.commons.lang3.*
+import org.json.JSONObject
+import org.json.XML
+import org.onap.so.bpmn.common.recipe.ResourceInput
+import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
+import org.onap.so.bpmn.common.scripts.AaiUtil
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MsoLogger
+import org.onap.so.rest.APIResponse
+
+import static org.apache.commons.lang3.StringUtils.*
 
 /**
  * This groovy class supports the <class>CreateSDNCCNetworkResource.bpmn</class> process.
