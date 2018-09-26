@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_eb6067d1",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/buildingblock/SniroHomingV2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-09-26T10:29:34Z",
+      "side": 1,
+      "message": "I think, we should add error message instead of passing e.",
+      "range": {
+        "startLine": 159,
+        "startChar": 94,
+        "endLine": 159,
+        "endChar": 97
+      },
+      "revId": "022025af505ed630ea28e957bd2fadda148ca338",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
