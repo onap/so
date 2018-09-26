@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_eb4707bb",
+        "filename": "docs/api/swagger.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-09-26T12:25:58Z",
+      "side": 1,
+      "message": "duplicated operationId unlockOrchestrationRequest (line 1440)",
+      "range": {
+        "startLine": 1,
+        "startChar": 4612,
+        "endLine": 1,
+        "endChar": 4634
+      },
+      "revId": "4cf25558e97c22e5f58ec5543557127a45238e40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0bee03b5",
+        "filename": "docs/api/swagger.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-09-26T12:25:58Z",
+      "side": 1,
+      "message": "duplicated operationId getOrchestrationRequest (line 238)",
+      "range": {
+        "startLine": 1,
+        "startChar": 5543,
+        "endLine": 1,
+        "endChar": 5569
+      },
+      "revId": "4cf25558e97c22e5f58ec5543557127a45238e40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ab110fb1",
+        "filename": "docs/api/swagger.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2018-09-26T12:25:58Z",
+      "side": 1,
+      "message": "add title",
+      "range": {
+        "startLine": 1,
+        "startChar": 25,
+        "endLine": 1,
+        "endChar": 27
+      },
+      "revId": "4cf25558e97c22e5f58ec5543557127a45238e40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
