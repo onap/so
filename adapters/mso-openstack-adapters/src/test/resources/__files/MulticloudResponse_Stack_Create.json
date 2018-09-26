@@ -1,0 +1,16 @@
+{
+  "template_type":"heat",
+  "workload_id": "<The ID of infrastructure workload resource>",
+  "template_response":
+    {
+      "stack": {
+        "id": "<The UUID of stack>",
+        "links": [
+          {
+            "href": "<A list of URLs for the stack>",
+            "rel": "self"
+          }
+        ]
+      }
+    }
+}
