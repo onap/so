@@ -18,7 +18,7 @@ Create service instance
 +--------------------+-------------------------------------+
 |Interface Definition|Description                          |
 +====================+=====================================+
-|URI                 |{serverRoot}/serviceInstances/v6     |
+|URI                 |/onap/so/infra/serviceInstantiation/serviceInstances/v6     |
 +--------------------+-------------------------------------+
 |Operation Type      |POST                                 |
 +--------------------+-------------------------------------+
@@ -210,7 +210,7 @@ Delete service instance
 +--------------------+---------------------------------------------------------+
 |Interface Definition|Description                                              |
 +====================+=========================================================+
-|URI                 |{serverRoot}/serviceInstances/v6/{serviceInstanceId}     |
+|URI                 |/onap/so/infra/serviceInstantiation/serviceInstances/v6/{serviceInstanceId}     |
 +--------------------+---------------------------------------------------------+
 |Operation Type      |DELETE                                                   |
 +--------------------+---------------------------------------------------------+
@@ -263,7 +263,7 @@ Create Volume Group
 +--------------------+-------------------------------------------------------------------------------------------+
 |Interface Definition|Description                                                                                |
 +====================+===========================================================================================+
-|URI                 |{serverRoot}/serviceInstances/v6/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups     |
+|URI                 |/onap/so/infra/serviceInstantiation/serviceInstances/v6/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups     |
 +--------------------+-------------------------------------------------------------------------------------------+
 |Operation Type      |POST                                                                                       |
 +--------------------+-------------------------------------------------------------------------------------------+
@@ -394,7 +394,7 @@ Delete Volume Group
 +--------------------+---------------------------------------------------------------------------------------------------------------------+
 |Interface Definition|Description                                                                                                          |
 +====================+=====================================================================================================================+
-|URI                 |{serverRoot}/serviceInstances/v6/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volume-groupinstance-id}     |
+|URI                 |/onap/so/infra/serviceInstantiation/serviceInstances/v6/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volume-groupinstance-id}     |
 +--------------------+---------------------------------------------------------------------------------------------------------------------+
 |Operation Type      |DELETE                                                                                                               |
 +--------------------+---------------------------------------------------------------------------------------------------------------------+
@@ -455,7 +455,7 @@ Create VF Module
 +--------------------+----------------------------------------------------------------------------------------+
 |Interface Definition|Description                                                                             |
 +====================+========================================================================================+
-|URI                 |{serverRoot}/serviceInstances/v6/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules     |
+|URI                 |/onap/so/infra/serviceInstantiation/serviceInstances/v6/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules     |
 +--------------------+----------------------------------------------------------------------------------------+
 |Operation Type      |POST                                                                                    |
 +--------------------+----------------------------------------------------------------------------------------+
@@ -550,7 +550,7 @@ Delete VF Module
 +--------------------+--------------------------------------------------------------------------------------------------------------+
 |Interface Definition|Description                                                                                                   |
 +====================+==============================================================================================================+
-|URI                 |{serverRoot}/serviceInstances/v6/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleinstance-id}     |
+|URI                 |/onap/so/infra/serviceInstantiation/serviceInstances/v6/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleinstance-id}     |
 +--------------------+--------------------------------------------------------------------------------------------------------------+
 |Operation Type      |DELETE                                                                                                        |
 +--------------------+--------------------------------------------------------------------------------------------------------------+
@@ -619,7 +619,7 @@ Create VNF
 +--------------------+--------------------------------------------------------------+
 |Interface Definition|Description                                                   |
 +====================+==============================================================+
-|URI                 |{serverRoot}/serviceInstances/v6/{serviceInstanceId}/vnfs     |
+|URI                 |/onap/so/infra/serviceInstantiation/serviceInstances/v6/{serviceInstanceId}/vnfs     |
 +--------------------+--------------------------------------------------------------+
 |Operation Type      |POST                                                          |
 +--------------------+--------------------------------------------------------------+
@@ -766,7 +766,7 @@ Delete VNF
 +--------------------+------------------------------------------------------------------------------+
 |Interface Definition|Description                                                                   |
 +====================+==============================================================================+
-|URI                 |{serverRoot}/serviceInstances/v6/{serviceInstanceId}/vnfs/{vnfInstanceId}     |
+|URI                 |/onap/so/infra/serviceInstantiation/serviceInstances/v6/{serviceInstanceId}/vnfs/{vnfInstanceId}     |
 +--------------------+------------------------------------------------------------------------------+
 |Operation Type      |DELETE                                                                        |
 +--------------------+------------------------------------------------------------------------------+
@@ -847,7 +847,7 @@ GET Orchestration Request
 +--------------------+--------------------------------------------------------------+
 |Interface Definition|Description                                                   |
 +====================+==============================================================+
-|URI                 |{serverRoot}/orchestrationRequests/v6/{request-id}            |
+|URI                 |/onap/so/infra/serviceInstantiation/orchestrationRequests/v6/{request-id}            |
 +--------------------+--------------------------------------------------------------+
 |Operation Type      |GET                                                           |
 +--------------------+--------------------------------------------------------------+
@@ -998,7 +998,7 @@ GET Orchestration Requests
 +--------------------+--------------------------------------------------------------+
 |Interface Definition|Description                                                   |
 +====================+==============================================================+
-|URI                 |{serverRoot}/orchestrationRequests/v6                         |
+|URI                 |/onap/so/infra/serviceInstantiation/orchestrationRequests/v6                         |
 +--------------------+--------------------------------------------------------------+
 |Operation Type      |GET                                                           |
 +--------------------+--------------------------------------------------------------+
@@ -1751,7 +1751,7 @@ Create E2E service instance
 +--------------------+-------------------------------------+
 |Interface Definition|Description                          |
 +====================+=====================================+
-|URI                 |{serverRoot}/e2eServiceInstances/v3  |
+|URI                 |/onap/so/infra/serviceInstantiation/e2eServiceInstances/v3  |
 +--------------------+-------------------------------------+
 |Operation Type      |POST                                 |
 +--------------------+-------------------------------------+
@@ -1848,7 +1848,7 @@ Delete E2E service instance
 +--------------------+-----------------------------------------------+
 |Interface Definition|Description                                    |
 +====================+===============================================+
-|URI                 |{serverRoot}/e2eServiceInstances/v3/{serviceId}|
+|URI                 |/onap/so/infra/serviceInstantiation/e2eServiceInstances/v3/{serviceId}|
 +--------------------+-----------------------------------------------+
 |Operation Type      |DELETE                                         |
 +--------------------+-----------------------------------------------+
@@ -1877,7 +1877,7 @@ Query E2E service operation result
 +--------------------+------------------------------------------------------------------------+
 |Interface Definition|Description                                                             |
 +====================+========================================================================+
-|URI                 |{serverRoot}/e2eServiceInstances/v3/{serviceId}/operations/{operationId}|
+|URI                 |/onap/so/infra/serviceInstantiation/e2eServiceInstances/v3/{serviceId}/operations/{operationId}|
 +--------------------+------------------------------------------------------------------------+
 |Operation Type      |GET                                                                     |
 +--------------------+------------------------------------------------------------------------+
