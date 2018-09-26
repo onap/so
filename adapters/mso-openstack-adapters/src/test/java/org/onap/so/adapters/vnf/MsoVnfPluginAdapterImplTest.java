@@ -96,7 +96,7 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         cloudSite.setCloudVersion("3.0");
         cloudSite.setClli("MDT13");
         cloudSite.setRegionId("MTN13");
-        cloudSite.setOrchestrator("multicloud" +
+        cloudSite.setOrchestrator("heat" +
                 "");
         identity.setIdentityServerType(ServerType.KEYSTONE);
         cloudSite.setIdentityService(identity);
@@ -116,6 +116,37 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
                 .withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
                 .withStatus(HttpStatus.SC_OK)));
         cloudConfig.getCloudSite("MTN13").get().getIdentityService().setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
+
+        CloudIdentity mcIdentity = new CloudIdentity();
+        mcIdentity.setId("MC13");
+        mcIdentity.setMsoId("m93945");
+        mcIdentity.setMsoPass("93937EA01B94A10A49279D4572B48369");
+        mcIdentity.setAdminTenant("admin");
+        mcIdentity.setMemberRole("admin");
+        mcIdentity.setTenantMetadata(new Boolean(true));
+        mcIdentity.setIdentityUrl("http://localhost:" + wireMockPort + "/mockPublicUrl/stacks");
+        mcIdentity.setIdentityAuthenticationType(AuthenticationType.USERNAME_PASSWORD);
+
+        CloudSite mcCloudSite = new CloudSite();
+        mcCloudSite.setId("MC13");
+        mcCloudSite.setCloudVersion("3.0");
+        mcCloudSite.setClli("MCT13");
+        mcCloudSite.setRegionId("MC13");
+        mcCloudSite.setOrchestrator("multicloud" +
+                "");
+        mcIdentity.setIdentityServerType(ServerType.KEYSTONE);
+        mcCloudSite.setIdentityService(mcIdentity);
+
+        stubFor(get(urlPathEqualTo("/cloudSite/MC13")).willReturn(aResponse()
+                .withBody(getBody(mapper.writeValueAsString(mcCloudSite),wireMockPort, ""))
+                .withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlPathEqualTo("/cloudIdentity/MC13")).willReturn(aResponse()
+                .withBody(getBody(mapper.writeValueAsString(mcIdentity),wireMockPort, ""))
+                .withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
+                .withStatus(HttpStatus.SC_OK)));
+//        cloudConfig.getCloudSite("MC13").get().getIdentityService().setIdentityUrl("http://localhost:" + wireMockPort + "/api/multicloud/v1/admin/MC13/infra_workload");
+
 
     }
 
@@ -177,16 +208,15 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         MsoRequest msoRequest = getMsoRequest();
         Map<String, String> map = new HashMap<>();
         map.put("key1", "value1");
-        msoVnfPluginAdapter.createVfModule("MTN13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+        msoVnfPluginAdapter.createVfModule("MC13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
                 null, "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
                 Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
                 new Holder<VnfRollback>());
     }
 
-    /*
     @Test
     public void createVfModule_Multicloud() throws Exception {
-        expectedException.expect(VnfException.class);
+        //expectedException.expect(VnfException.class);
         mockOpenStackResponseAccessMulticloud(wireMockPort);
         mockOpenStackGetStackVfModule_404();
 
@@ -195,12 +225,11 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         map.put("key1", "value1");
         map.put("oof_directives", "{ abc: 123 }");
         map.put("sdnc_directives", "{ def: 456 }");
-        msoVnfPluginAdapter.createVfModule("MTN13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+        msoVnfPluginAdapter.createVfModule("MC13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
                 null, "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
                 Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
                 new Holder<VnfRollback>());
     }
-    */
 
     @Test
     public void createVfModule_queryVduNotFoundWithVolumeGroupId() throws Exception {
