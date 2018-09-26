@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.buildingblock;
 
 import static org.apache.commons.lang3.StringUtils.*;
-
+import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -157,10 +157,13 @@ public class SniroHomingV2 {
 			log.trace("Completed Sniro Homing Call Sniro");
 		}catch(BpmnError e){
 			exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
+			log.debug("BpmnError Exception occured in callSniro() ", e);
 		}catch(BadResponseException e){
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
+			log.debug("BadResponse Exception occured in callSniro() ", e);
 		}catch(Exception e){
 			exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL, "Internal Error - occurred while preparing sniro request: " + e.getMessage());
+			log.debug("Exception occured in callSniro() ", e);
 		}
 	}
 
@@ -204,10 +207,13 @@ public class SniroHomingV2 {
 			log.trace("Completed Sniro Homing Process Solution");
 		}catch(BpmnError e){
 			exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
+			log.debug("BpmnError Exception occured in processSolution() ", e);
 		}catch(BadResponseException e){
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
+			log.debug("BadResponse Exception occured in processSolution() ", e);
 		}catch(Exception e){
 			exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL, "Internal Error - occurred while processing sniro asynchronous response: " + e.getMessage());
+			log.debug("Exception occured in processSolution() ", e);
 		}
 	}
 
@@ -216,7 +222,7 @@ public class SniroHomingV2 {
 	 *
 	 * @throws Exception
 	 */
-	private JSONObject buildRequestInfo(String requestId, String timeout) throws Exception{
+	private JSONObject buildRequestInfo(String requestId, String timeout) throws UnsupportedEncodingException{
 		log.trace("Building request information");
 		JSONObject requestInfo = new JSONObject();
 		if(requestId != null){
@@ -480,7 +486,7 @@ public class SniroHomingV2 {
 
 		ServiceInstance si = new ServiceInstance();
 		CloudRegion cloud = setCloud(assignmentsMap);
-		if(type.equals("service")){
+		if("service".equals(type)){
 			if(identifierType.equals(CandidateType.SERVICE_INSTANCE_ID.toString())){
 				solutionInfo.setHomed(true);
 				si.setServiceInstanceId(identifierValue);
@@ -507,7 +513,7 @@ public class SniroHomingV2 {
 				log.debug(invalidMessage + IDENTIFIER_TYPE);
 				throw new BpmnError(UNPROCESSABLE, invalidMessage + IDENTIFIER_TYPE);
 			}
-		}else if(type.equals("cloud")){
+		}else if("cloud".equals(type)){
 			if(identifierType.equals(CandidateType.CLOUD_REGION_ID.toString())){
 				log.debug("Resources has been homed to a cloud region");
 				cloud.setLcpCloudRegionId(identifierValue);
