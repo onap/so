@@ -710,6 +710,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         CloudSite cloudSite = cloudSiteOp.get();
 		MavenLikeVersioning aicV = new MavenLikeVersioning();
 		aicV.setVersion(cloudSite.getCloudVersion());
+		Boolean usingMulticloud = getUsingMulticloud(cloudSite);
 
 		String vnfMin = vnfResource.getAicVersionMin();
 		String vnfMax = vnfResource.getAicVersionMax();
@@ -732,23 +733,25 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         // Use the VduPlugin.
         VduPlugin vduPlugin = getVduPlugin(cloudSiteId);
 
-        // First, look up to see if the VF already exists.
+        // First, look up to see if the VF already exists, unless using multicloud adapter
 
         long subStartTime1 = System.currentTimeMillis ();
-        try {
-            vduInstance = vduPlugin.queryVdu (cloudInfo, vfModuleName);
-            LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from VduPlugin", "VDU", "QueryVDU", vfModuleName);
-        }
-        catch (VduException me) {
-            // Failed to query the VDU due to a plugin exception.
-            String error = "Create VF Module: Query " + vfModuleName + " in " + cloudSiteId + "/" + tenantId + ": " + me ;
-            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, "VDU", "queryVdu", MsoLogger.ErrorCode.DataError, "Exception - queryVdu", me);
-            LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "VDU", "QueryVdu", vfModuleName);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+        if (!usingMulticloud) {
+            try {
+                vduInstance = vduPlugin.queryVdu (cloudInfo, vfModuleName);
+                LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from VduPlugin", "VDU", "QueryVDU", vfModuleName);
+            }
+            catch (VduException me) {
+                // Failed to query the VDU due to a plugin exception.
+                String error = "Create VF Module: Query " + vfModuleName + " in " + cloudSiteId + "/" + tenantId + ": " + me ;
+                LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, "VDU", "queryVdu", MsoLogger.ErrorCode.DataError, "Exception - queryVdu", me);
+                LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "VDU", "QueryVdu", vfModuleName);
+                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
 
-            // Convert to a generic VnfException
-            me.addContext ("CreateVFModule");
-            throw new VnfException (me);
+                // Convert to a generic VnfException
+                me.addContext ("CreateVFModule");
+                throw new VnfException (me);
+            }
         }
 
         // More precise handling/messaging if the Module already exists
@@ -810,7 +813,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         Map<String, Object> volumeGroupOutputs = null;
 
         // If a Volume Group was provided, query its outputs for inclusion in Module input parameters
-        if (volumeGroupId != null) {
+        if (!usingMulticloud && volumeGroupId != null) {
             long subStartTime2 = System.currentTimeMillis ();
             VduInstance volumeVdu = null;
             try {
@@ -858,7 +861,8 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 LOGGER.debug ("WARNING:  Add-on Module request - no Base Module ID provided");
             }
 
-            if (baseVfModuleId != null) {
+            // Need to verify if multicloud needs to have the vaseVfModuleId passed to it.  Ignoring this for now.
+            if (!usingMulticloud && baseVfModuleId != null) {
 	            long subStartTime2 = System.currentTimeMillis ();
 	            VduInstance baseVdu = null;
 	            try {
@@ -979,9 +983,8 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 			}
 
 			if (!extraInputs.isEmpty()) {
-				// Add directive inputs
-				String[] directives = { "oof_directives", "sdnc_directives" };
-				for (String key : directives) {
+				// Add multicloud inputs
+				for (String key : MsoMulticloudUtils.MULTICLOUD_INPUTS) {
 					if (extraInputs.contains(key)) {
 						goldenInputs.put(key, inputs.get(key));
 						extraInputs.remove(key);
@@ -1241,5 +1244,13 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     	}
         // Default - return HEAT plugin, though will fail later
     	return heatUtils;
+    }
+
+    private Boolean getUsingMulticloud (CloudSite cloudSite) {
+        if (cloudSite.getOrchestrator().equalsIgnoreCase("MULTICLOUD")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

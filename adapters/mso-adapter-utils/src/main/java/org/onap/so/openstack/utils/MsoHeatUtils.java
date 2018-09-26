@@ -277,8 +277,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                                   boolean backout) throws MsoException {
 
         // Take out the multicloud inputs, if present.
-        String[] directives = { "oof_directives", "sdnc_directives", "generic_vnf_id", "vf_module_id" };
-        for (String key : directives) {
+        for (String key : MsoMulticloudUtils.MULTICLOUD_INPUTS) {
             if (stackInputs.containsKey(key)) {
                 stackInputs.remove(key);
                 if (stackInputs.isEmpty()) {
