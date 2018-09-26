@@ -32,7 +32,6 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.logger.MsoLogger
-import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.logger.MsoLogger
 
 /**
@@ -49,9 +48,6 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     JsonUtils jsonUtil = new JsonUtils()
 
     SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
-
-    MsoUtils msoUtils = new MsoUtils()
-
 
     public void preProcessRequest(DelegateExecution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")

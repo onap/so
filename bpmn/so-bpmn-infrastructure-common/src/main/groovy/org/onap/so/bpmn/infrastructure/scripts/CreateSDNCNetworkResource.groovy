@@ -36,7 +36,6 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder.AbstractBuilder
 import org.onap.so.rest.APIResponse
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.AaiUtil
 
 import java.util.UUID;
@@ -44,7 +43,6 @@ import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
-import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.logger.MsoLogger
 
 /**
@@ -59,8 +57,6 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
-
-    MsoUtils msoUtils = new MsoUtils()
 
     public void preProcessRequest(DelegateExecution execution){
         
