@@ -121,8 +121,6 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
             execution.setVariable(Prefix + "serviceInstanceId", resourceInputObj.getServiceInstanceId())
             execution.setVariable("mso-request-id", requestId)
             execution.setVariable("mso-service-instance-id", resourceInputObj.getServiceInstanceId())
-            //TODO Here build networkrequest
-
         } catch (BpmnError e) {
             throw e;
         } catch (Exception ex){
@@ -397,11 +395,11 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
             execution.setVariable("sentSyncResponse", true)
 
         } catch (Exception ex) {
-            String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
+            String msg = "Exception in sendSyncResponse:" + ex.getMessage()
             msoLogger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger("DEBUG"," ***** Exit sendSyncResopnse *****")
+        msoLogger.debug(" ***** Exit sendSyncResponse *****")
     }
 
 }

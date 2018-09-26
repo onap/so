@@ -423,10 +423,10 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             execution.setVariable("sentSyncResponse", true)
 
         } catch (Exception ex) {
-            String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
+            String msg = "Exception in sendSyncResponse:" + ex.getMessage()
             msoLogger.debug( msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.dubug(" ***** Exit sendSyncResopnse *****")
+        msoLogger.dubug(" ***** Exit sendSyncResponse *****")
     }
 }
