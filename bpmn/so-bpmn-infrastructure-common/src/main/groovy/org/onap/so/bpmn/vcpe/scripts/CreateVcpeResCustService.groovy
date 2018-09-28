@@ -21,7 +21,6 @@ package org.onap.so.bpmn.vcpe.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -32,6 +31,7 @@ import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.*
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.springframework.web.util.UriUtils;
@@ -61,7 +61,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
      * This method is executed during the preProcessRequest task of the <class>CreateServiceInstance.bpmn</class> process.
      * @param execution
      */
-    public InitializeProcessVariables(DelegateExecution execution) {
+    private InitializeProcessVariables(DelegateExecution execution) {
         /* Initialize all the process variables in this block */
 
         execution.setVariable("createVcpeServiceRequest", "")
@@ -99,9 +99,9 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             InitializeProcessVariables(execution)
 
             //Config Inputs
-            String aaiDistDelay = execution.getVariable('URN_mso_workflow_aai_distribution_delay')
+            String aaiDistDelay = UrnPropertiesReader.getVariable("aai.workflowAaiDistributionDelay")
             if (isBlank(aaiDistDelay)) {
-                msg = "URN_mso_workflow_aai_distribution_delay is null"
+                String msg = "workflowAaiDistributionDelay is null"
                 msoLogger.debug(msg)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             }

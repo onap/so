@@ -3,6 +3,7 @@ aai:
   dme2:
     timeout: '30000'
   endpoint: http://localhost:8443
+  workflowAaiDistributionDelay: PT30S
 camunda:
   bpm:
     admin-user:
