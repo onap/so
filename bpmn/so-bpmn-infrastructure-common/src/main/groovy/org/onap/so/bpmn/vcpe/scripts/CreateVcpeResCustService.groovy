@@ -21,7 +21,6 @@ package org.onap.so.bpmn.vcpe.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -32,6 +31,7 @@ import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.*
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.springframework.web.util.UriUtils;
@@ -61,7 +61,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
      * This method is executed during the preProcessRequest task of the <class>CreateServiceInstance.bpmn</class> process.
      * @param execution
      */
-    public InitializeProcessVariables(DelegateExecution execution) {
+    private InitializeProcessVariables(DelegateExecution execution) {
         /* Initialize all the process variables in this block */
 
         execution.setVariable("createVcpeServiceRequest", "")
@@ -99,9 +99,9 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             InitializeProcessVariables(execution)
 
             //Config Inputs
-            String aaiDistDelay = execution.getVariable('URN_mso_workflow_aai_distribution_delay')
+            String aaiDistDelay = UrnPropertiesReader.getVariable("aai.workflowAaiDistributionDelay")
             if (isBlank(aaiDistDelay)) {
-                msg = "URN_mso_workflow_aai_distribution_delay is null"
+                String msg = "workflowAaiDistributionDelay is null"
                 msoLogger.debug(msg)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             }
@@ -191,7 +191,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             * Extracting User Parameters from incoming Request and converting into a Map
             */
             def jsonSlurper = new JsonSlurper()
-            def jsonOutput = new JsonOutput()
 
             Map reqMap = jsonSlurper.parseText(createVcpeServiceRequest)
 
@@ -270,7 +269,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     }
 
     public void sendSyncResponse(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
 
         msoLogger.trace("Inside sendSyncResponse of CreateVcpeResCustService ")
 
@@ -296,7 +294,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     //
     // *******************************
     public void prepareDecomposeService(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
 
         try {
             msoLogger.trace("Inside prepareDecomposeService of CreateVcpeResCustService ")
@@ -319,7 +316,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     //
     // *******************************
     public void prepareCreateServiceInstance(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
 
         try {
             msoLogger.trace("Inside prepareCreateServiceInstance of CreateVcpeResCustService ")
@@ -351,7 +347,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 
     public void postProcessServiceInstanceCreate(DelegateExecution execution) {
         def method = getClass().getSimpleName() + '.postProcessServiceInstanceCreate(' + 'execution=' + execution.getId() + ')'
-        def isDebugLogEnabled = execution.getVariable(DebugFlag)
         msoLogger.trace('Entered ' + method)
 
         String requestId = execution.getVariable("mso-request-id")
@@ -387,7 +382,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 
 
     public void processDecomposition(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
 
         msoLogger.trace("Inside processDecomposition() of CreateVcpeResCustService ")
 
@@ -450,7 +444,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 
 
     public void prepareCreateAllottedResourceTXC(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
 
         try {
             msoLogger.trace("Inside prepareCreateAllottedResourceTXC of CreateVcpeResCustService ")
@@ -461,7 +454,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
              *      ModelInfo modelInfo = serviceDecomposition.getModelInfo()
              *
              */
-            String createVcpeServiceRequest = execution.getVariable("createVcpeServiceRequest")
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 
             //allottedResourceModelInfo
@@ -504,7 +496,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     }
 
     public void prepareCreateAllottedResourceBRG(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
 
         try {
             msoLogger.trace("Inside prepareCreateAllottedResourceBRG of CreateVcpeResCustService ")
@@ -515,7 +506,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
              *      ModelInfo modelInfo = serviceDecomposition.getModelInfo()
              *
              */
-            String createVcpeServiceRequest = execution.getVariable("createVcpeServiceRequest")
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 
             //allottedResourceModelInfo
@@ -561,7 +551,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     //     Generate Network request Section
     // *******************************
     public void prepareVnfAndModulesCreate(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
 
         try {
             msoLogger.trace("Inside prepareVnfAndModulesCreate of CreateVcpeResCustService ")
@@ -630,7 +619,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     //     Validate Vnf request Section -> increment count
     // *******************************
     public void validateVnfCreate(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
 
         try {
             msoLogger.trace("Inside validateVnfCreate of CreateVcpeResCustService ")
@@ -652,7 +640,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     //     Prepare Completion request Section
     // *****************************************
     public void postProcessResponse(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
 
         msoLogger.trace("Inside postProcessResponse of CreateVcpeResCustService ")
 
@@ -691,7 +678,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     }
 
     public void preProcessRollback(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
         msoLogger.trace("preProcessRollback of CreateVcpeResCustService ")
         try {
 
@@ -712,7 +698,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     }
 
     public void postProcessRollback(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
         msoLogger.trace("postProcessRollback of CreateVcpeResCustService ")
         String msg = ""
         try {
@@ -732,7 +717,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     }
 
     public void prepareFalloutRequest(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
 
         msoLogger.trace("STARTED CreateVcpeResCustService prepareFalloutRequest Process ")
 
@@ -764,7 +748,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 
 
     public void sendSyncError(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
         execution.setVariable("prefix", Prefix)
 
         msoLogger.trace("Inside sendSyncError() of CreateVcpeResCustService ")
@@ -792,7 +775,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     }
 
     public void processJavaException(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
         execution.setVariable("prefix", Prefix)
         try {
             msoLogger.debug("Caught a Java Exception")
