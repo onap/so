@@ -20,23 +20,15 @@
 
 package org.onap.so.bpmn.common.scripts
 
-// JUnit 4
-import org.junit.Test
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-
-import static groovy.test.GroovyAssert.shouldFail
-
 import groovy.util.slurpersupport.NodeChild
+import org.junit.Before
+import org.junit.Ignore
+import org.junit.Test
+import org.onap.so.bpmn.common.scripts.MsoUtils
 
-import static groovy.test.GroovyAssert.assertTrue
 import static groovy.test.GroovyAssert.assertEquals
-import static groovy.test.GroovyAssert.assertNotNull;
 
-import org.onap.so.bpmn.common.scripts.MsoUtils;
-import org.apache.commons.lang3.*
-
+// JUnit 4
 
 class MsoUtilsTest {
 		   
@@ -198,22 +190,20 @@ class MsoUtilsTest {
 		
 		@Test
 		public void testGetBasicAuth(){
-			def encodedAuth = utils.getBasicAuth("3E3CFA7BE2F6107AAD4AAA65F8976690","07a7159d3bf51a0e53be7a8f89699be7")
+			def encodedAuth = utils.getBasicAuth(utils.encrypt("myString","07a7159d3bf51a0e53be7a8f89699be7"),"07a7159d3bf51a0e53be7a8f89699be7")
 			assertEquals("Basic bXlTdHJpbmc=", encodedAuth)
 		}
 		
 		@Test
 		public void testEncrypt(){
 			def encrypted = utils.encrypt("myString","07a7159d3bf51a0e53be7a8f89699be7")
-			assertEquals("3E3CFA7BE2F6107AAD4AAA65F8976690", encrypted)
+			assertEquals("myString", utils.decrypt(encrypted,"07a7159d3bf51a0e53be7a8f89699be7"))
 			
-			//use to get value for urn properties
-			//println(utils.encrypt("password"))
 		}
 		
 		@Test
 		public void testDecrypt(){
-			def decrypted = utils.decrypt("3E3CFA7BE2F6107AAD4AAA65F8976690", "07a7159d3bf51a0e53be7a8f89699be7")
+			def decrypted = utils.decrypt(utils.encrypt("myString","07a7159d3bf51a0e53be7a8f89699be7"), "07a7159d3bf51a0e53be7a8f89699be7")
 			assertEquals("myString", decrypted)
 		}
 		

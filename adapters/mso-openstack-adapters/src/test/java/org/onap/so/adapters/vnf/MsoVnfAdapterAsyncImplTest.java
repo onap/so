@@ -43,7 +43,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_200;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackResponseAccess;

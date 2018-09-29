@@ -21,22 +21,20 @@
 package org.onap.so.adapters.vfc;
 
 import java.util.Arrays;
-import javax.xml.ws.Endpoint;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
-import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
-import org.onap.so.adapters.vfc.rest.HealthCheckHandler;
 import org.onap.so.adapters.vfc.rest.VfcAdapterRest;
 import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
@@ -49,9 +47,6 @@ public class CXFConfiguration {
 
 	@Autowired
     private VfcAdapterRest vfcAdapterRest;
-
-    @Autowired
-    private HealthCheckHandler healthCheckHandler;
     
     @Autowired
     private JaxRsFilterLogging jaxRsFilterLogging;
@@ -68,7 +63,7 @@ public class CXFConfiguration {
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
         endpoint.setBus(bus);
-        endpoint.setServiceBeans(Arrays.<Object>asList(vfcAdapterRest, healthCheckHandler));
+        endpoint.setServiceBeans(Arrays.<Object>asList(vfcAdapterRest));
         endpoint.setAddress("/");       
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
         endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper),jaxRsFilterLogging));
@@ -79,11 +74,11 @@ public class CXFConfiguration {
 	public Swagger2Feature createSwaggerFeature() {
 		Swagger2Feature swagger2Feature = new Swagger2Feature();
 		swagger2Feature.setPrettyPrint(true);
-		swagger2Feature.setTitle("SO Request Adapter");
+		swagger2Feature.setTitle("SO VFC Adapter");
 		swagger2Feature.setContact("The ONAP SO team");
 		swagger2Feature.setDescription("This project is the SO Orchestration Engine");
 		swagger2Feature.setVersion("1.0.0");
-		swagger2Feature.setResourcePackage("org.onap.so.adapters.requestdb");
+		swagger2Feature.setResourcePackage("org.onap.so.adapters.vfc.rest");
 		swagger2Feature.setScan(true);
 		return swagger2Feature;
 	}

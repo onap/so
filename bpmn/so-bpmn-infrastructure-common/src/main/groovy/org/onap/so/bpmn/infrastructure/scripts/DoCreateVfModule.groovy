@@ -28,6 +28,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
 import org.json.JSONObject
 import org.onap.aai.domain.yang.GenericVnf
+import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -38,11 +39,9 @@ import org.onap.so.bpmn.common.scripts.VfModuleBase
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
-
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.DecomposeJsonUtil
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient
@@ -50,13 +49,13 @@ import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
 import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
-import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.NamedNodeMap
@@ -1861,50 +1860,17 @@ public class DoCreateVfModule extends VfModuleBase {
 						def networkPolicyId = UUID.randomUUID().toString()
 						msoLogger.debug("Adding network-policy with network-policy-id " + networkPolicyId)
 
-						String aaiNamespace = aaiUriUtil.getNamespace()
-						msoLogger.debug('AAI namespace is: ' + aaiNamespace)
-						String payload = """<network-policy xmlns="${aaiNamespace}">
-							   	<network-policy-id>${MsoUtils.xmlEscape(networkPolicyId)}</network-policy-id>
-								<network-policy-fqdn>${MsoUtils.xmlEscape(fqdn)}</network-policy-fqdn>
-								<heat-stack-id>${MsoUtils.xmlEscape(execution.getVariable("DCVFM_heatStackId"))}</heat-stack-id>
-								</network-policy>""" as String
+						NetworkPolicy policy = new NetworkPolicy()
+						policy.setNetworkPolicyId(networkPolicyId)
+						policy.setNetworkPolicyFqdn(fqdn)
+						policy.setHeatStackId(execution.getVariable("DCVFM_heatStackId"))
+						
+						AAIResourceUri netUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId)
+						resourceClient.create(netUri, policy)
 
-						execution.setVariable("DCVFM_addNetworkPolicyAAIRequestBody", payload)
-
-						AAIResourceUri addUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId)
-						String addNetworkPolicyAAIRequest = aaiUriUtil.createAaiUri(addUri)
-
-						msoLogger.debug("AAI request endpoint: " + addNetworkPolicyAAIRequest)
-
-						def aaiRequestIdPut = UUID.randomUUID().toString()
-						RESTConfig configPut = new RESTConfig(addNetworkPolicyAAIRequest);
-						RESTClient clientPut = new RESTClient(configPut).addHeader("X-TransactionId", aaiRequestIdPut)
-								.addHeader("X-FromAppId", "MSO")
-								.addHeader("Content-Type", "application/xml")
-								.addHeader("Accept","application/xml");
-						msoLogger.debug("invoking PUT call to AAI with payload:"+System.lineSeparator()+payload)
-						APIResponse responsePut = clientPut.httpPut(payload)
-						int returnCodePut = responsePut.getStatusCode()
-						execution.setVariable("DCVFM_aaiAddNetworkPolicyReturnCode", returnCodePut)
-						msoLogger.debug(" ***** AAI add network policy Response Code, NetworkPolicy #" + counting + " : " + returnCodePut)
-
-						String aaiResponseAsStringPut = responsePut.getResponseBodyAsString()
-						if (isOneOf(returnCodePut, 200, 201)) {
-							msoLogger.debug("The return code from adding network policy is: "  + returnCodePut)
-							// This network policy was created in AAI successfully
-							execution.setVariable("DCVFM_addNetworkPolicyAAIResponse", aaiResponseAsStringPut)
-							msoLogger.debug(" AddAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : " + "\n" + aaiResponseAsStringPut)
-							rollbackData.put("VFMODULE", "rollbackCreateNetworkPoliciesAAI", "true")
-							rollbackData.put("VFMODULE", "contrailNetworkPolicyFqdn" + i, fqdn)
-							execution.setVariable("rollbackData", rollbackData)
-
-						} else {
-							// aai all errors
-							String putErrorMessage = "Unable to add network-policy to AAI createNetworkPoliciesInAAI - " + returnCodePut
-							msoLogger.debug(putErrorMessage)
-							exceptionUtil.buildAndThrowWorkflowException(execution, 2500, putErrorMessage)
-						}
-
+						rollbackData.put("VFMODULE", "rollbackCreateNetworkPoliciesAAI", "true")
+						rollbackData.put("VFMODULE", "contrailNetworkPolicyFqdn" + i, fqdn)
+						execution.setVariable("rollbackData", rollbackData)
 					}
 
 				} // end loop

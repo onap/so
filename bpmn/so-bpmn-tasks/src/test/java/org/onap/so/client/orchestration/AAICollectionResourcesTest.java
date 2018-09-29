@@ -22,7 +22,7 @@ package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -32,7 +32,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
@@ -41,20 +42,12 @@ import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-@RunWith(MockitoJUnitRunner.class)
-public class AAICollectionResourcesTest extends TestDataSetup{
+
+public class AAICollectionResourcesTest extends BaseTaskTest{
 	
 	@InjectMocks
 	private AAICollectionResources aaiCollectionResources = new AAICollectionResources();
 	
-	@Mock
-	protected AAIResourcesClient MOCK_aaiResourcesClient;
-    
-    @Mock
-    protected AAIObjectMapper MOCK_aaiObjectMapper;
-    
-    @Mock
-    protected InjectionHelper MOCK_injectionHelper;
 	
 	private Collection networkCollection;
 	

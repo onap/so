@@ -18,26 +18,20 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.vcpe.scripts;
+package org.onap.so.bpmn.vcpe.scripts
 
-import org.onap.so.bpmn.common.scripts.*;
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.common.scripts.AaiUtil
-import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.rest.APIResponse
-
-import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.apache.commons.lang3.*
-import org.springframework.web.util.UriUtils;
-import static org.apache.commons.lang3.StringUtils.*
-
+import org.onap.aai.domain.yang.AllottedResource
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.scripts.AllottedResourceUtils
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
+import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+
+import static org.apache.commons.lang3.StringUtils.isBlank
 
 /**
  * This groovy class supports the <class>CreateAllottedResourceBRGRollback.bpmn</class> process.
@@ -141,12 +135,12 @@ public class DoCreateAllottedResourceBRGRollback extends AbstractServiceTaskProc
 		AllottedResourceUtils arUtils = new AllottedResourceUtils(this)
 		String aaiARPath  = execution.getVariable("aaiARPath")
 		msoLogger.debug(" aaiARPath:" + aaiARPath)
-		String ar = null; //need this for getting resourceVersion for delete
+		Optional<AllottedResource> ar = Optional.empty(); //need this for getting resourceVersion for delete
 		if (!isBlank(aaiARPath))
 		{
 			ar = arUtils.getARbyLink(execution, aaiARPath, "")
 		}
-		if (isBlank(ar))
+		if(!ar.isPresent())
 		{
 			msg = "AR not found in AAI at:" + aaiARPath
 			msoLogger.debug(msg)
@@ -202,13 +196,8 @@ public class DoCreateAllottedResourceBRGRollback extends AbstractServiceTaskProc
 		try{
 			msoLogger.trace("start deleteAaiAR")
 			AllottedResourceUtils arUtils = new AllottedResourceUtils(this)
-			String ar = null //need to get resource-version 
 			String arLink = execution.getVariable("aaiARPath")
-			if (!isBlank(arLink))
-			{
-				ar = arUtils.getARbyLink(execution, arLink, "")
-			}
-			arUtils.deleteAR(execution, arLink + '?resource-version=' + UriUtils.encode(execution.getVariable("aaiARResourceVersion"),"UTF-8"))
+			arUtils.deleteAR(execution, arLink )
 		} catch (BpmnError e) {
 			throw e;
 		}catch(Exception ex){

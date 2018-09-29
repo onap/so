@@ -31,13 +31,13 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.onap.so.bpmn.common.scripts.SDNCAdapter;
 
 import org.onap.so.bpmn.mock.FileUtil
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class SDNCAdapterTest {
 	
 	@Before
@@ -821,7 +821,7 @@ def sdncAdapterResponseError =
 
 		String sdncAdapterWorkflowRequest = FileUtil.readResourceFile("__files/SDN-ETHERNET-INTERNET/SDNCAdapterV1/sdncadapterworkflowrequest.xml");
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-		when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("3141634BF7E070AA289CF2892C986C0B")
+		when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C")
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 		when(mockExecution.getVariable("sdncAdapterWorkflowRequest")).thenReturn(sdncAdapterWorkflowRequest)
 		when(mockExecution.getVariable("mso.workflow.sdncadapter.callback")).thenReturn("http://someurl.someting.com:28080/mso/sdncAdapterCallbackServiceImpl")
@@ -842,12 +842,12 @@ def sdncAdapterResponseError =
 		verify(mockExecution).setVariable("sdncAdapterResponse","")
 		verify(mockExecution).setVariable("asynchronousResponseTimeout",false)
 		verify(mockExecution).setVariable("continueListening",false)
-		verify(mockExecution).setVariable("BasicAuthHeaderValue","Basic cGFzc3dvcmQ=")
 		verify(mockExecution).setVariable("serviceConfigActivate",false)
 		verify(mockExecution).setVariable("SDNCA_requestId", "745b1b50-e39e-4685-9cc8-c71f0bde8bf0")
 		verify(mockExecution).setVariable("SDNCA_SuccessIndicator",false)
-		verify(mockExecution).setVariable("source","")
 		verify(mockExecution).setVariable("SDNCA_InterimNotify",false)
+		verify(mockExecution).setVariable("BasicAuthHeaderValue","Basic dGVzdDp0ZXN0")
+		verify(mockExecution).setVariable("source","")
 		verify(mockExecution).setVariable("sdncAdapterRequest", sdncAdapterRequest)
 	}
 	

@@ -22,21 +22,31 @@ package org.onap.so.bpmn.infrastructure.adapter.vnf.tasks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.FileUtil;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class VnfAdapterImplTest extends BaseTaskTest {
-	@Autowired
-	private VnfAdapterImpl vnfAdapterImpl;
+	
+	@InjectMocks
+	private VnfAdapterImpl vnfAdapterImpl = new VnfAdapterImpl();
 
 	private RequestContext requestContext;
 	private ServiceInstance serviceInstance;
@@ -51,20 +61,24 @@ public class VnfAdapterImplTest extends BaseTaskTest {
     private static final String TEST_VOLUME_HEATSTACK_ID = "testHeatStackId1";   
 
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		requestContext = setRequestContext();
 		serviceInstance = setServiceInstance();
 		vfModule = setVfModule();
         volumeGroup = setVolumeGroup();
 		vfModule.setHeatStackId(null);
 		volumeGroup.setHeatStackId(null);
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
+    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
+    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
 	}
 
 	@Test
 	public void preProcessVnfAdapterTest() {
 		vnfAdapterImpl.preProcessVnfAdapter(execution);
 
-		assertEquals("true", execution.getVariable("isDebugLogEnabled"));
 		assertEquals(requestContext.getMsoRequestId(), execution.getVariable("mso-request-id"));
 		assertEquals(serviceInstance.getServiceInstanceId(), execution.getVariable("mso-service-instance-id"));
 	}
@@ -144,9 +158,10 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 	}
 
 	@Test
-	public void preProcessVnfAdapterExceptionTest() {
+	public void preProcessVnfAdapterExceptionTest() throws BBObjectNotFoundException {
 		expectedException.expect(BpmnError.class);
-		lookupKeyMap.clear();
+		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any());
+		
 		vnfAdapterImpl.preProcessVnfAdapter(execution);
 	}
 
@@ -198,10 +213,12 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 	}
 
 	@Test
-	public void postProcessVnfAdapterExceptionTest() {		
+	public void postProcessVnfAdapterExceptionTest() throws BBObjectNotFoundException {	
+		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any());
+
 		execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_CREATE_RESPONSE);
 		expectedException.expect(BpmnError.class);
-		lookupKeyMap.clear();
+		
 		vnfAdapterImpl.postProcessVnfAdapter(execution);
 	}
 }

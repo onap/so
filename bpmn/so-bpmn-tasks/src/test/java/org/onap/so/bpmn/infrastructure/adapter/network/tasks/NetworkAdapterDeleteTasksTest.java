@@ -21,9 +21,14 @@
 package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Optional;
@@ -31,52 +36,66 @@ import java.util.Optional;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.onap.so.adapters.nwrest.DeleteNetworkResponse;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.client.adapter.network.NetworkAdapterClientException;
+import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.orchestration.NetworkAdapterResources;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class NetworkAdapterDeleteTasksTest extends BaseTaskTest{
-	@Autowired
-	private NetworkAdapterDeleteTasks networkAdapterDeleteTasks;
+
+public class NetworkAdapterDeleteTasksTest extends BaseTaskTest{	
+	
+	@InjectMocks
+	private NetworkAdapterDeleteTasks networkAdapterDeleteTasks = new NetworkAdapterDeleteTasks();
 
 	private ServiceInstance serviceInstance;
 	private L3Network l3Network;
 	private RequestContext requestContext;
 	private CloudRegion cloudRegion;
-	private String cloudRegionPo;
+
 
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		serviceInstance = setServiceInstance();
 		l3Network = setL3Network();
 		requestContext = setRequestContext();
 		cloudRegion = setCloudRegion();
+
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(l3Network);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
 	}
-	
+
 	@Test
-	public void test_deleteNetwork() throws UnsupportedEncodingException, NetworkAdapterClientException {
-		
+	public void test_deleteNetwork() throws UnsupportedEncodingException, NetworkAdapterClientException {		
 		DeleteNetworkResponse deleteNetworkResponse = new DeleteNetworkResponse();
 		deleteNetworkResponse.setNetworkDeleted(true);
 		deleteNetworkResponse.setNetworkId(l3Network.getNetworkId());
 		Optional<DeleteNetworkResponse> oDeleteNetworkResponse = Optional.of(deleteNetworkResponse);
-		doReturn(oDeleteNetworkResponse).when(networkAdapterResources).deleteNetwork(requestContext, cloudRegion, serviceInstance, l3Network);
 		
+		when(networkAdapterResources.deleteNetwork(any(RequestContext.class), any(CloudRegion.class), eq(serviceInstance), eq(l3Network))).thenReturn(oDeleteNetworkResponse);
+
 		networkAdapterDeleteTasks.deleteNetwork(execution);
-		
+
 		verify(networkAdapterResources, times(1)).deleteNetwork(requestContext, cloudRegion, serviceInstance, l3Network);
 		assertEquals(deleteNetworkResponse, execution.getVariable("deleteNetworkResponse"));
 	}
-	
+
 	@Test
-	public void test_deleteNetwork_exception() {
+	public void test_deleteNetwork_exception() throws UnsupportedEncodingException, NetworkAdapterClientException {
 		expectedException.expect(BpmnError.class);
-		
+
+		doThrow(NetworkAdapterClientException.class).when(networkAdapterResources).
+		deleteNetwork(any(RequestContext.class), any(CloudRegion.class), any(ServiceInstance.class), eq(l3Network));
 		networkAdapterDeleteTasks.deleteNetwork(execution);
 	}
 }

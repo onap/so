@@ -28,13 +28,8 @@ public interface Constants {
 		public static final String DEFAULT_BPEL_URL = "http://localhost:8080//active-bpel/services/SDNCAdapterCallbackV1";
 
 		public static final String MY_URL_PROP = "org.onap.so.adapters.sdnc.myurl";
-		public static final String DEFAULT_MY_URL = "https://localhost:8443/adapters/rest/SDNCNotify";
-
 		public static final String SDNC_AUTH_PROP = "org.onap.so.adapters.sdnc.sdncauth";
-		public static final String DEFAULT_SDNC_AUTH = "406B2AE613211B6FB52466DE6E1769AC";
-
-		public static final String DEFAULT_BPEL_AUTH = "05FDA034C27D1CA51AAB8FAE512EDE45241E16FC8C137D292AA3A964431C82DB";
-	    public static final String BPEL_AUTH_PROP = "org.onap.so.adapters.sdnc.bpelauth";
+		public static final String BPEL_AUTH_PROP = "org.onap.so.adapters.sdnc.bpelauth";
 
 
 		public static final String SDNC_SVCCFGRESP_ROOT = "input";
@@ -42,7 +37,7 @@ public interface Constants {
 		public static final String SDNC_RESP_CODE = "/response-code";
 		public static final String SDNC_RESP_MSG = "/response-message";
 		public static final String SDNC_CONNECTTIME_PROP = "org.onap.so.adapters.sdnc.sdncconnecttime";
-		public static final String ENCRYPTION_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
+		public static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
 
 		public static final String REQUEST_TUNABLES = "org.onap.so.adapters.sdnc";
 }

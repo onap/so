@@ -34,6 +34,7 @@ import org.onap.so.TestApplication;
 import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.beans.OperationStatusId;
 import org.onap.so.db.request.data.repository.OperationStatusRepository;
+import org.onap.so.db.request.exceptions.NoEntityFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -49,7 +50,7 @@ public class OperationStatusTest {
 	
 	@Test
 	@Transactional
-	public void timeStampCreated() throws InterruptedException {
+	public void timeStampCreated() throws InterruptedException, NoEntityFoundException {
 		
 		final String testServiceId = "test-service-id";
 		final String testOperationId = "test-operation-id";
@@ -61,7 +62,8 @@ public class OperationStatusTest {
 		
 		status = repository.saveAndFlush(status);
 		
-		OperationStatus found = repository.findOne(id);
+		OperationStatus found = repository.findById(id).
+				orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
 		
 		Date operateAt = found.getOperateAt();
 		assertNotNull(operateAt);
@@ -72,7 +74,8 @@ public class OperationStatusTest {
 		Thread.sleep(1000);
 		repository.saveAndFlush(status);
 		
-		OperationStatus foundUpdate = repository.findOne(id);
+		OperationStatus foundUpdate = repository.findById(id).
+				orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
 
 		assertEquals(operateAt.toString(), foundUpdate.getOperateAt().toString());
 		assertNotNull(foundUpdate.getFinishedAt());

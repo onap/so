@@ -291,70 +291,19 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
 	public void getAAICustomerById (DelegateExecution execution) {
 		// https://{aaiEP}/aai/v8/business/customers/customer/{globalCustomerId}
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		String msg = ""
 		try {
 
 			String globalCustomerId = execution.getVariable("globalSubscriberId") //VID to AAI name map
 			msoLogger.debug(" ***** getAAICustomerById ***** globalCustomerId:" + globalCustomerId)
 
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-
 			AAIUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalCustomerId)
-			String getAAICustomerUrl = aaiUriUtil.createAaiUri(uri)
-
-			if (isBlank(getAAICustomerUrl))
-			{
-				msg = "AAI URL is invalid. Endpoint:" + getAAICustomerUrl
-				msoLogger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+			if(!getAAIClient().exists(uri)){
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "GlobalCustomerId:" + globalCustomerId + " not found (404) in AAI")
 			}
-
-			msoLogger.debug("getAAICustomerById Url:" + getAAICustomerUrl)
-			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, getAAICustomerUrl)
-			String returnCode = response.getStatusCode()
-			String aaiResponseAsString = response.getResponseBodyAsString()
-
-			msg = "getAAICustomerById ResponseCode:" + returnCode + " ResponseString:" + aaiResponseAsString
-			msoLogger.debug(msg)
-
-			if (returnCode=='200') {
-				// Customer found by ID. FLow to proceed.
-				msoLogger.debug(msg)
-
-				//TODO Deferred
-				//we might verify that service-subscription with matching name exists
-				//and throw error if not. If not checked, we will get exception in subsequent step on Create call
-				//in 1610 we assume both customer & service subscription were pre-created
-
-			} else {
-				if (returnCode=='404') {
-					msg = "GlobalCustomerId:" + globalCustomerId + " not found (404) in AAI"
-					msoLogger.debug(msg)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-
-				} else {
-					if (aaiResponseAsString.contains("RESTFault")) {
-						msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, aaiResponseAsString, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
-						WorkflowException workflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-						execution.setVariable("WorkflowException", workflowException)
-						throw new BpmnError("MSOWorkflowException")
-
-					} else {
-						// aai all errors
-						msg = "Error in getAAICustomerById ResponseCode:" + returnCode
-						msoLogger.debug(msg)
-						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-					}
-				}
-			}
-
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
-			msg = "Exception in getAAICustomerById. " + ex.getMessage()
-			msoLogger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception in getAAICustomerById. " + ex.getMessage())
 		}
 		msoLogger.trace("Exit getAAICustomerById")
 

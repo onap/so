@@ -143,7 +143,7 @@ public class SDNCRestClient{
 		    con.setConnectTimeout(Integer.parseInt(env.getProperty(Constants.SDNC_CONNECTTIME_PROP)));
 		    con.setReadTimeout(Integer.parseInt(rt.getTimeout()));
 			con.setRequestProperty("Accept", "application/yang.data+xml"); //for response in xml
-			String userCredentials = CryptoUtils.decryptProperty(env.getProperty(Constants.SDNC_AUTH_PROP), Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
+			String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.SDNC_AUTH_PROP), env.getProperty(Constants.ENCRYPTION_KEY_PROP));
 
 			String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 			con.setRequestProperty ("Authorization", basicAuth);
@@ -308,7 +308,7 @@ public class SDNCRestClient{
 			{
 				Map<String, Object> reqCtx = bp.getRequestContext();
 				Map<String, List<String>> headers = new HashMap<>();
-				String userCredentials = CryptoUtils.decryptProperty(env.getProperty(Constants.BPEL_AUTH_PROP), Constants.DEFAULT_BPEL_AUTH, Constants.ENCRYPTION_KEY);
+				String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.BPEL_AUTH_PROP), env.getProperty(Constants.ENCRYPTION_KEY_PROP));
 
 				String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 				reqCtx.put(MessageContext.HTTP_REQUEST_HEADERS, headers);

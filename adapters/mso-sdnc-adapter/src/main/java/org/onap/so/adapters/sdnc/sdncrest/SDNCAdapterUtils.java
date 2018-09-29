@@ -64,12 +64,7 @@ public final class SDNCAdapterUtils {
 	 * @param pathSegment the path segment to encode
 	 * @return the encoded path segment
 	 */
-	public static String encodeURLPathSegment(String pathSegment) {
-		try {
+	public static String encodeURLPathSegment(String pathSegment) {		
 			return UriUtils.encodePathSegment(pathSegment, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-		    LOGGER.debug("Exception:", e);
-			throw new RuntimeException("UTF-8 encoding is not supported");
-		}
 	}
 }

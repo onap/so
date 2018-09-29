@@ -18,31 +18,24 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.scripts;
+package org.onap.so.bpmn.common.scripts
 
-import javax.ws.rs.core.UriBuilder
+import groovy.xml.XmlUtil
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.logger.MsoLogger
+import org.w3c.dom.Document
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+import org.xml.sax.InputSource
+
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
-
-import org.apache.commons.lang3.*
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.logger.MsoLogger
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource
-
-import groovy.xml.XmlUtil
-
 
 /**
  * This groovy class supports the any Network processes that need the methods defined here.
@@ -318,46 +311,6 @@ class NetworkUtils {
 
 		return requestPayload
 	}
-	
-	def String createCloudRegionVolumeRequest(groupId, volumeName, vnfType, vnfId, tenantId, cloudOwner, cloudRegion, namespace, modelCustomizationId) {
-		
-		String requestPayload =
-		"""<volume-group xmlns="${namespace}">
-			<volume-group-id>${MsoUtils.xmlEscape(groupId)}</volume-group-id>
-			<volume-group-name>${MsoUtils.xmlEscape(volumeName)}</volume-group-name>
-			<heat-stack-id></heat-stack-id>
-			<vnf-type>${MsoUtils.xmlEscape(vnfType)}</vnf-type>
-			<orchestration-status>Pending</orchestration-status>
-			<vf-module-model-customization-id>${MsoUtils.xmlEscape(modelCustomizationId)}</vf-module-model-customization-id>
-			<relationship-list>
-				<relationship>
-				   <related-to>generic-vnf</related-to>
-				   <relationship-data>
-					   <relationship-key>generic-vnf.vnf-id</relationship-key>
-					   <relationship-value>${MsoUtils.xmlEscape(vnfId)}</relationship-value>
-				   </relationship-data>
-			   </relationship>
-			   <relationship>
-				   <related-to>tenant</related-to>
-				   <relationship-data>
-					   <relationship-key>tenant.tenant-id</relationship-key>
-					   <relationship-value>${MsoUtils.xmlEscape(tenantId)}</relationship-value>
-				   </relationship-data>
-				   <relationship-data>
-					   <relationship-key>cloud-region.cloud-owner</relationship-key>
-					   <relationship-value>${cloudOwner}</relationship-value>
-				   </relationship-data>
-				   <relationship-data>
-					   <relationship-key>cloud-region.cloud-region-id</relationship-key>
-					   <relationship-value>${MsoUtils.xmlEscape(cloudRegion)}</relationship-value>
-				   </relationship-data>
-			   </relationship>
-		   </relationship-list>
-		</volume-group>"""
-
-		return requestPayload
-	}
-
 
 	/**
 	 * This method returns the string for Update Volume Request payload
@@ -783,68 +736,7 @@ class NetworkUtils {
 		return rtn
 	}
 
-	def isVfRelationshipExist(xmlInput) {
-		Boolean rtn = false
-		if (xmlInput!=null) {
-			def relationshipList = getListWithElements(xmlInput, 'relationship')
-			def relationshipListSize = relationshipList.size()
-			if (relationshipListSize > 0) {
-				for (i in 0..relationshipListSize-1) {
-				   def relationshipXml = XmlUtil.serialize(relationshipList[i])
-				   if (utils.getNodeText(relationshipXml, 'related-to') == "vf-module") {
-					     rtn = true
-				   }
-				}
-			}
-		}
-		return rtn
-
-	}
-
-	def getCloudRegion(xmlInput) {
-		String lcpCloudRegion = ""
-		if (xmlInput!=null) {
-			def relationshipList = getListWithElements(xmlInput, 'relationship')
-			def relationshipListSize = relationshipList.size()
-			if (relationshipListSize > 0) {
-				for (i in 0..relationshipListSize-1) {
-				   def relationshipXml = XmlUtil.serialize(relationshipList[i])
-				   if (utils.getNodeText(relationshipXml, 'related-to') == "cloud-region") {
-					  def relatedLink = utils.getNodeText(relationshipXml, 'related-link')
-					  if (relatedLink != null || relatedLink != "") {
-					  	AAIResourceUri aaiUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.CLOUD_REGION, UriBuilder.fromUri(relatedLink).build())
-					  	lcpCloudRegion = aaiUri.getURIKeys().getOrDefault("cloud-region", "")
-					  }
-				   }
-				}
-			}
-		}
-		return lcpCloudRegion
-	}
-
-	def getTenantId(xmlInput) {
-		String tenantId = ""
-		if (xmlInput!=null) {
-			def relationshipList = getListWithElements(xmlInput, 'relationship')
-			def relationshipListSize = relationshipList.size()
-			if (relationshipListSize > 0) {
-				for (i in 0..relationshipListSize-1) {
-				   def relationshipXml = XmlUtil.serialize(relationshipList[i])
-				   if (utils.getNodeText(relationshipXml, 'related-to') == "tenant") {
-					  def relatedLink = utils.getNodeText(relationshipXml, 'related-link')
-					  if (relatedLink != null || relatedLink != "") {
-						 tenantId = relatedLink.substring(relatedLink.indexOf("/tenant/")+8, relatedLink.length())
-						 if (tenantId.contains('/')) {
-							 tenantId = relatedLink.substring(relatedLink.indexOf("/tenant/")+8, relatedLink.length()-1)
-						 }
-					  }
-				   }
-				}
-			}
-		}
-		return tenantId
-	}
-
+	
 	def isInstanceValueMatch(linkResource, globalSubscriberId, serviceType) {
 		Boolean rtn = false
 		try {

@@ -23,7 +23,7 @@ package org.onap.so.client.aai;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -35,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.domain.yang.Pserver;
@@ -66,7 +67,7 @@ public class AAISingleTransactionClientTest {
 	}
 	
 	@Test
-	public void testRequest() throws IOException {
+	public void testRequest() throws JSONException,IOException {
 		AAIResourcesClient client = createClient();
 		Pserver pserver = new Pserver();
 		pserver.setHostname("pserver-hostname");

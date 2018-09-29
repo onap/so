@@ -19,9 +19,9 @@
  */
 package org.onap.so.bpmn.common.aai.tasks;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -33,9 +33,11 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
@@ -49,30 +51,11 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIVnfResources;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AAIFlagTasksTest extends TestDataSetup {
+
+public class AAIFlagTasksTest extends BaseTaskTest {
 
 	@InjectMocks
 	private AAIFlagTasks aaiFlagTasks = new AAIFlagTasks();
-
-	@Mock
-	private AAIVnfResources aaiVnfResources;
-
-	@Mock
-	protected AAIObjectMapper MOCK_aaiObjectMapper;
-
-	@Mock
-	protected InjectionHelper MOCK_injectionHelper;
-	
-	@Mock
-	protected AAIResourcesClient MOCK_aaiResourcesClient;
-	
-
-	@Mock
-	private ExtractPojosForBB extractPojosForBB;
-
-	@Mock
-	private ExceptionBuilder exceptionUtil;
 
 	private GenericVnf genericVnf;
 
@@ -107,7 +90,7 @@ public class AAIFlagTasksTest extends TestDataSetup {
 	public void checkVnfInMaintFlagExceptionTest() {
 
 		doThrow(new BpmnError("Unknown Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
-		doThrow(Exception.class).when(aaiVnfResources).checkInMaintFlag(isA(String.class));
+		doThrow(RuntimeException.class).when(aaiVnfResources).checkInMaintFlag(isA(String.class));
 		try {
 			aaiFlagTasks.checkVnfInMaintFlag(execution);
 		} catch (Exception e) {
@@ -119,16 +102,16 @@ public class AAIFlagTasksTest extends TestDataSetup {
 
 	@Test
 	public void modifyVnfInMaintFlagTest() throws Exception {
-		doNothing().when(aaiVnfResources).updateObjectVnf(isA(GenericVnf.class));
+		doNothing().when(aaiVnfResources).updateObjectVnf(ArgumentMatchers.any(GenericVnf.class));
 		aaiFlagTasks.modifyVnfInMaintFlag(execution, true);
-		verify(aaiVnfResources, times(1)).updateObjectVnf(genericVnf);
+		verify(aaiVnfResources, times(1)).updateObjectVnf(ArgumentMatchers.any(GenericVnf.class));
 	}
 
 	@Test
 	public void modifyVnfInMaintFlagExceptionTest() {
 		
 		doThrow(new BpmnError("Unknown Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
-		doThrow(Exception.class).when(aaiVnfResources).updateObjectVnf(isA(GenericVnf.class));
+		doThrow(RuntimeException.class).when(aaiVnfResources).updateObjectVnf(isA(GenericVnf.class));
 		try {
 			aaiFlagTasks.modifyVnfInMaintFlag(execution, true);
 		} catch (Exception e) {

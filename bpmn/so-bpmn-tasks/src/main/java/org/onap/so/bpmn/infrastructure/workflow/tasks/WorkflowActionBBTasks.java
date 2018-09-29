@@ -274,6 +274,7 @@ public class WorkflowActionBBTasks {
 			execution.setVariable("handlingCode", "PreformingRollback");
 			execution.setVariable("isRollback", true);
 			execution.setVariable("gCurrentSequence", 0);
+			execution.setVariable(RETRY_COUNT, 0);
 		}else{
 			workflowAction.buildAndThrowException(execution, "Rollback has already been called. Cannot rollback a request that is currently in the rollback state.");
 		}

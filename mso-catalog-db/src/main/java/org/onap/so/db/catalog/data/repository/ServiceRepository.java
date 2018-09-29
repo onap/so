@@ -21,14 +21,13 @@
 package org.onap.so.db.catalog.data.repository;
 
 import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.data.projections.InlineService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
-@RepositoryRestResource(collectionResourceRel = "service", path = "service", excerptProjection = InlineService.class)
+@RepositoryRestResource(collectionResourceRel = "service", path = "service")
 public interface ServiceRepository extends JpaRepository<Service, String> {
 	List<Service> findByModelName(String modelName);
 

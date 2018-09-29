@@ -17,14 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.bpmn.infrastructure.scripts;
+package org.onap.so.bpmn.infrastructure.scripts
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.common.scripts.AaiUtil
+import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -308,8 +310,8 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		try {
 			org.onap.aai.domain.yang.ServiceInstance si = execution.getVariable("serviceInstanceData")
 
-			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+            AAIResourcesClient client = new AAIResourcesClient()
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
 			client.update(uri, si)
 
 		} catch (BpmnError e) {

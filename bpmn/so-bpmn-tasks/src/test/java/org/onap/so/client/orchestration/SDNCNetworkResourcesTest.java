@@ -21,9 +21,9 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,9 +31,10 @@ import static org.mockito.Mockito.verify;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -53,7 +54,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class SDNCNetworkResourcesTest extends TestDataSetup{
 	
 	@InjectMocks
@@ -92,7 +93,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup{
 		
 		sdncNetworkResources.assignNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
 
-		verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiNetworkOperationInformation.class), eq(SDNCTopology.NETWORK));
+		verify(MOCK_sdncClient, times(1)).post(ArgumentMatchers.isNull(), eq(SDNCTopology.NETWORK));
 		
 		assertEquals(OrchestrationStatus.ASSIGNED, network.getOrchestrationStatus());
 	}
@@ -105,7 +106,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup{
 		
 		sdncNetworkResources.rollbackAssignNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
 
-		verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiNetworkOperationInformation.class), eq(SDNCTopology.NETWORK));
+		verify(MOCK_sdncClient, times(1)).post(ArgumentMatchers.isNull(), eq(SDNCTopology.NETWORK));
 		
 		assertEquals(OrchestrationStatus.ASSIGNED, network.getOrchestrationStatus());
 	}
@@ -118,7 +119,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup{
 		
 		sdncNetworkResources.activateNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
 
-		verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiNetworkOperationInformation.class), eq(SDNCTopology.NETWORK));
+		verify(MOCK_sdncClient, times(1)).post(ArgumentMatchers.isNull(), eq(SDNCTopology.NETWORK));
 		
 		assertEquals(OrchestrationStatus.ASSIGNED, network.getOrchestrationStatus());
 	}
@@ -131,7 +132,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup{
 		
 		sdncNetworkResources.deleteNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
 
-		verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiNetworkOperationInformation.class), eq(SDNCTopology.NETWORK));
+		verify(MOCK_sdncClient, times(1)).post(ArgumentMatchers.isNull(), eq(SDNCTopology.NETWORK));
 		
 		assertEquals(OrchestrationStatus.ASSIGNED, network.getOrchestrationStatus());
 	}
@@ -197,7 +198,7 @@ public class SDNCNetworkResourcesTest extends TestDataSetup{
  		sdncNetworkResources.unassignNetwork(network, serviceInstance, customer,
  				requestContext, cloudRegion);
  
- 		verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiNetworkOperationInformation.class), eq(SDNCTopology.NETWORK));
+ 		verify(MOCK_sdncClient, times(1)).post(ArgumentMatchers.isNull(), eq(SDNCTopology.NETWORK));
  		
  		assertEquals(OrchestrationStatus.CREATED, network.getOrchestrationStatus());		
 	}		

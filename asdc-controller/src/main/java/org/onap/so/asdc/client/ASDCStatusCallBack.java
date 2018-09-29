@@ -56,7 +56,8 @@ public final class ASDCStatusCallBack implements IStatusCallback {
 
 		  if(iStatus.getStatus() != null){	
 			if(iStatus.getStatus().equals(DistributionStatusEnum.COMPONENT_DONE_OK) || iStatus.getStatus().equals(DistributionStatusEnum.COMPONENT_DONE_ERROR)) {
-				WatchdogDistributionStatus watchdogDistributionStatus = watchdogDistributionStatusRepository.findOne(iStatus.getDistributionID ());
+				WatchdogDistributionStatus watchdogDistributionStatus = watchdogDistributionStatusRepository.findById(iStatus.getDistributionID ())
+				        .orElseGet( () -> null);
 				if(watchdogDistributionStatus==null){
 					watchdogDistributionStatus = new WatchdogDistributionStatus();
 					watchdogDistributionStatus.setDistributionId(iStatus.getDistributionID ());

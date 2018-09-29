@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -982,55 +983,26 @@ public class DoUpdateVfModule extends VfModuleBase {
 
 		try {
 			def vnfId = execution.getVariable('DOUPVfMod_vnfId')
-			def vfModuleId = execution.getVariable('DOUPVfMod_vfModuleId')
-
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
-			String endPoint = aaiUriUtil.createAaiUri(uri)
-
-			msoLogger.debug("AAI endPoint: " + endPoint)
 
 			try {
-				def aaiRequestId = UUID.randomUUID().toString()
-				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
-				APIResponse response = aaiUriUtil.executeAAIGetCall(execution, endPoint)
-				msoLogger.debug("createVfModule - invoking httpGet() to AAI")
-
-				def responseData = response.getResponseBodyAsString()
-				if (responseData != null) {
-					msoLogger.debug("Received generic VNF data: " + responseData)
-
-				}
-
-				msoLogger.debug("createVfModule - queryAAIVfModule Response: " + responseData)
-				msoLogger.debug("createVfModule - queryAAIVfModule ResponseCode: " + response.getStatusCode())
-
-				execution.setVariable('DOUPVfMod_queryAAIVfModuleResponseCode', response.getStatusCode())
-				execution.setVariable('DOUPVfMod_queryAAIVfModuleResponse', responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
-				if (response.getStatusCode() == 200) {
-					// Parse the VNF record from A&AI to find base module info
+				Optional<GenericVnf> genericVnf = getAAIClient().get(GenericVnf.class,uri)
+				if (genericVnf.isPresent()) {
+                    execution.setVariable('DOUPVfMod_queryAAIVfModuleResponseCode', 200)
+                    execution.setVariable('DOUPVfMod_queryAAIVfModuleResponse', genericVnf.get())
+                    // Parse the VNF record from A&AI to find base module info
 					msoLogger.debug('Parsing the VNF data to find base module info')
-					if (responseData != null) {
-						def vfModulesText = utils.getNodeXml(responseData, "vf-modules")
-						def xmlVfModules= new XmlSlurper().parseText(vfModulesText)
-						def vfModules = xmlVfModules.'**'.findAll {it.name() == "vf-module"}
-						int vfModulesSize = 0
-						for (i in 0..vfModules.size()-1) {
-							def vfModuleXml = groovy.xml.XmlUtil.serialize(vfModules[i])
-							def isBaseVfModule = utils.getNodeText(vfModuleXml, "is-base-vf-module")
-
-							if (isBaseVfModule == "true") {
-							    String baseModuleId = utils.getNodeText(vfModuleXml, "vf-module-id")
+					if (genericVnf.get().getVfModules()!=null && !genericVnf.get().getVfModules().getVfModule().isEmpty()) {
+                        Optional<org.onap.aai.domain.yang.VfModule> vfmodule =  genericVnf.get().getVfModules().getVfModule().stream().
+                                filter{v-> v.isIsBaseVfModule()}.findFirst()
+							if (vfmodule.isPresent()) {
+							    String baseModuleId = vfmodule.get().getVfModuleId()
 							    execution.setVariable("DOUPVfMod_baseVfModuleId", baseModuleId)
 							    msoLogger.debug('Received baseVfModuleId: ' + baseModuleId)
-							    String baseModuleHeatStackId = utils.getNodeText(vfModuleXml, "heat-stack-id")
+							    String baseModuleHeatStackId = vfmodule.get().getHeatStackId()
 							    execution.setVariable("DOUPVfMod_baseVfModuleHeatStackId", baseModuleHeatStackId)
 							    msoLogger.debug('Received baseVfModuleHeatStackId: ' + baseModuleHeatStackId)
 							}
-						}
 					}
 				}
 			} catch (Exception ex) {

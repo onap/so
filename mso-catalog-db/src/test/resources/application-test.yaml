@@ -14,12 +14,11 @@ mso:
 
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3307/
+    jdbc-url: jdbc:mariadb://localhost:3307/
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver    
-    initialize: true
-    initialization-mode: never
+    initialization-mode: always
   jpa:   
     generate-ddl: false
     show-sql: true
@@ -44,7 +43,7 @@ spring:
       role: ACTUATOR 
 mariaDB4j:
   dataDir: 
-  port: 3307
+  port: 0
   databaseName: catalog_db
   
 server:

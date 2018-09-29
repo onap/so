@@ -119,8 +119,8 @@ public class BPRestCallback {
 			boolean error = false;
 
 			try {	
-				String userCredentials = CryptoUtils.decryptProperty(env.getProperty(Constants.BPEL_AUTH_PROP),
-					Constants.DEFAULT_BPEL_AUTH, Constants.ENCRYPTION_KEY);
+				String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.BPEL_AUTH_PROP),
+					env.getProperty(Constants.ENCRYPTION_KEY_PROP));
 				String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 				method.setHeader("Authorization", authorization);
 			} catch (Exception e) {

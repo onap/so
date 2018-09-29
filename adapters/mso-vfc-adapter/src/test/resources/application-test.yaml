@@ -16,7 +16,7 @@ mso:
       period: 1
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3307/requestdb
+    jdbc-url: jdbc:mariadb://localhost:3307/requestdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
@@ -43,10 +43,19 @@ mariaDB4j:
 
 #Actuator
 management:
-  security:
-    enabled: false
-    basic:
-      enabled: false
+  endpoints:
+    web:
+      base-path: /manage
+  server:
+    servlet:
+      context-path: /manage
+  metrics:
+    se-global-registry: false
+    export:
+      prometheus:
+        enabled: true # Whether exporting of metrics to Prometheus is enabled.
+        step: 1m # Step size (i.e. reporting frequency) to use.  
+
 
 flyway:
   baseline-on-migrate: false

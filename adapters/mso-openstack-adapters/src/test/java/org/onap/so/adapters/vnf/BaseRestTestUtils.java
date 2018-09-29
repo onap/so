@@ -37,7 +37,7 @@ import org.onap.so.db.catalog.beans.ServerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
@@ -61,7 +61,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 @SpringBootTest(classes = MsoOpenstackAdaptersApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureWireMock(port = 0)
-public class BaseRestTestUtils {
+public abstract class BaseRestTestUtils {
 	@Value("${wiremock.server.port}")
     protected int wireMockPort;
 	@Autowired

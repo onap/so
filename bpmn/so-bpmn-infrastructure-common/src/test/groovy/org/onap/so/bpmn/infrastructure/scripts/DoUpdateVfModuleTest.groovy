@@ -35,7 +35,9 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import org.mockito.Spy
 import org.mockito.runners.MockitoJUnitRunner
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.common.scripts.VfModule
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
@@ -45,7 +47,7 @@ import static org.mockito.Mockito.*
 import org.onap.so.bpmn.common.scripts.utils.XmlComparator
 
 @RunWith(MockitoJUnitRunner.class)
-class DoUpdateVfModuleTest {
+class DoUpdateVfModuleTest extends MsoGroovyTest{
 
     def prefix = "DOUPVfMod_"
     String doUpdateVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/DoUpdateVfModuleRequest.xml");
@@ -56,11 +58,16 @@ class DoUpdateVfModuleTest {
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090);
+    public WireMockRule wireMockRule = new WireMockRule(28090)
+
+    @Spy
+    DoUpdateVfModule doUpdateVfModule
 
     @Before
     public void init() {
+        super.init("DoUpdateVfModule")
         MockitoAnnotations.initMocks(this)
+        when(doUpdateVfModule.getAAIClient()).thenReturn(client)
     }
 
     @Test
@@ -258,18 +265,15 @@ class DoUpdateVfModuleTest {
 
     @Test
     void testQueryAAIVfModule() {
-        ExecutionEntity mockExecution = setupMock()
         when(mockExecution.getVariable("prefix")).thenReturn(prefix)
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable(prefix + "vnfId")).thenReturn("12345")
-        when(mockExecution.getVariable("mso.workflow.default.aai.generic-vnf.version")).thenReturn("8")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
-        when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
 
-        mockData()
-        DoUpdateVfModule obj = new DoUpdateVfModule()
-        obj.queryAAIVfModule(mockExecution)
+        mockAAIGenericVnf("12345","__files/AAI/GenericVnfVfModule.json")
+        doUpdateVfModule.queryAAIVfModule(mockExecution)
         Mockito.verify(mockExecution).setVariable(prefix + "queryAAIVfModuleResponseCode", 200)
+        Mockito.verify(mockExecution).setVariable("DOUPVfMod_baseVfModuleId", "lukewarm")
+        Mockito.verify(mockExecution).setVariable("DOUPVfMod_baseVfModuleHeatStackId", "fastburn")
+
     }
 
 

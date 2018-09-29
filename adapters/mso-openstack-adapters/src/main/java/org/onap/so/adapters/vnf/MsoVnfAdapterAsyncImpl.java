@@ -62,7 +62,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoVnfAdapterAsyncImpl.class);
     private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
     private static final String BPEL_AUTH_PROP = "org.onap.so.adapters.vnf.bpelauth";
-    private static final String ENCRYPTION_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
+    private static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
     
     @Autowired
     private Environment environment;
@@ -640,7 +640,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             Map <String, Object> reqCtx = bp.getRequestContext ();
             Map <String, List <String>> headers = new HashMap <> ();
 
-            String userCredentials = this.getEncryptedProperty(BPEL_AUTH_PROP, "", ENCRYPTION_KEY);
+            String userCredentials = this.getEncryptedProperty(BPEL_AUTH_PROP, "", ENCRYPTION_KEY_PROP);
 
             String basicAuth = "Basic " + DatatypeConverter.printBase64Binary (userCredentials.getBytes ());
             reqCtx.put (MessageContext.HTTP_REQUEST_HEADERS, headers);
@@ -655,7 +655,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
     
     public String getEncryptedProperty(String key, String defaultValue, String encryptionKey) {
     	try {
-			return CryptoUtils.decrypt(this.environment.getProperty(key), encryptionKey);
+			return CryptoUtils.decrypt(this.environment.getProperty(key), this.environment.getProperty(encryptionKey));
 		} catch (GeneralSecurityException e) {
 			LOGGER.debug("Exception while decrypting property: " + this.environment.getProperty(key), e);
 		}

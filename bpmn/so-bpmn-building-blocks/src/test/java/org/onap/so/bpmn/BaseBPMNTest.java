@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onap.so.TestApplication;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
+import org.onap.so.bpmn.common.validation.BuildingBlockValidatorRunner;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAICommonTasks;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAICreateTasks;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAIDeleteTasks;
@@ -67,11 +68,13 @@ import org.onap.so.bpmn.infrastructure.workflow.tasks.FlowCompletionTasks;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.OrchestrationStatusValidator;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowAction;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionBBTasks;
+import org.onap.so.bpmn.sdno.tasks.SDNOHealthCheckTasks;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExecuteBuildingBlockRainyDay;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -203,8 +206,14 @@ public abstract class BaseBPMNTest {
 	@MockBean
 	protected FlowCompletionTasks flowCompletionTasks;
 	
+	@MockBean
+	protected BuildingBlockValidatorRunner buildingBlockValidatorRunner;
+	
+	@MockBean
+	protected SDNOHealthCheckTasks sdnoHealthCheckTasks;
+	
 	@LocalServerPort
-	private int port;
+	protected int port;
 
 	protected String createURLWithPort(String uri) {
 		return "http://localhost:" + port + uri;
