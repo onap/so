@@ -20,6 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
+import java.util.List;
+import java.util.Map;
+
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -28,6 +31,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -336,6 +340,18 @@ public class AAIUpdateTasks {
 			copiedl3network.setNeutronNetworkId(response.getNeutronNetworkId());
 
 			aaiNetworkResources.updateNetwork(copiedl3network);
+			
+			Map<String, String> subnetMap = response.getSubnetMap();
+			List<Subnet> subnets = l3network.getSubnets();
+			if (subnets != null && subnetMap != null){
+				for (Subnet subnet: subnets){
+					Subnet copiedSubnet = subnet.shallowCopyId();
+					copiedSubnet.setNeutronSubnetId(subnetMap.get(copiedSubnet.getSubnetId()));
+					copiedSubnet.setOrchestrationStatus(OrchestrationStatus.CREATED);
+					aaiNetworkResources.updateSubnet(copiedl3network, copiedSubnet);
+				}
+			}
+			
 			execution.setVariable("aaiNetworkActivateRollback", true);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

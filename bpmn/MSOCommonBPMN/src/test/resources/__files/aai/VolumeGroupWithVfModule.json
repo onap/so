@@ -1,0 +1,26 @@
+{
+	"volume-group-id":"volumeGroupId",	
+	"volume-group-name":"volumeGroupName",	
+	"vnf-type":"vnfType",	
+	"orchestration-status":"PRECREATED",	
+	"cloud-params":{},	
+	"cascaded":false,
+	"heat-stack-id":"heatStackId",
+	"relationship-list": {
+		"relationship": [
+			{
+				"related-to": "vf-module",
+				"related-link": "/aai/v11/network/generic-vnfs/generic-vnf/GENERIC-VNFSAT-vig30001vm001vig001/vf-modules/vf-module/a62d14f0-421e-4e64-980a-a368722819db",
+				"relationship-data": [
+					{
+						"relationship-key": "generic-vnf.vnf-id",
+						"relationship-value": "GENERIC-VNFSAT-vig30001vm001vig001"
+					},
+					{
+						"relationship-key": "vf-module.vf-module-id",
+						"relationship-value": "a62d14f0-421e-4e64-980a-a368722819db"
+					}
+				]
+			}]
+	}
+}

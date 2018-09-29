@@ -21,27 +21,33 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CreateNetworkTest extends BaseTaskTest{
-	@Autowired
-	private CreateNetwork createNetwork;
+	@InjectMocks
+	private CreateNetwork createNetwork = new CreateNetwork();
 	
 	private L3Network network;
 	private ServiceInstance serviceInstance;
@@ -53,7 +59,7 @@ public class CreateNetworkTest extends BaseTaskTest{
 	private Customer customer;
 	
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		customer = setCustomer();
 		serviceInstance = setServiceInstance();
 		network = setL3Network();
@@ -64,7 +70,8 @@ public class CreateNetworkTest extends BaseTaskTest{
 		userInput = setUserInput();
 
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
-
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(network);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
 	}
 	
 	@Test

@@ -21,13 +21,14 @@
 package org.onap.so.bpmn.infrastructure.workflow.service;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
@@ -45,17 +46,27 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.runtime.Execution;
+import org.onap.aai.domain.yang.LogicalLink;
+import org.onap.aai.domain.yang.LogicalLinks;
+import org.onap.aai.domain.yang.PInterface;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.onap.so.bpmn.core.domain.ServiceDecomposition;
 import org.onap.so.bpmn.core.domain.Resource;
+import org.onap.so.bpmn.core.domain.ServiceDecomposition;
 import org.onap.so.bpmn.core.json.JsonUtils;
+import org.onap.so.client.aai.AAIObjectPlurals;
+import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.Relationships;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.bpmn.common.scripts.AaiUtil;
+import org.springframework.web.util.UriUtils;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.springframework.web.util.UriUtils;
 
 public class ServicePluginFactory {
 
@@ -224,12 +235,7 @@ public class ServicePluginFactory {
 	@SuppressWarnings("unchecked")
 	private List<Object> queryAccessTPbyLocationFromInventoryOSS(String locationAddress) {
 		String url = getInventoryOSSEndPoint();
-		try {
-			url += "/oss/inventory?location=" +  UriUtils.encode(locationAddress,"UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		url += "/oss/inventory?location=" +  UriUtils.encode(locationAddress,"UTF-8");
 		String responseContent = sendRequest(url, "GET", "");
 		List<Object> accessTPs = new ArrayList<Object>();
 		if (null != responseContent) {
@@ -307,8 +313,7 @@ public class ServicePluginFactory {
 	@SuppressWarnings("unchecked")
 	private void allocateCrossTPResources(DelegateExecution execution, Map<String, Object> serviceRequestInputs) {
 
-		AaiUtil aai = new AaiUtil();
-		Map<String, Object> crossTPs = aai.getTPsfromAAI(execution);
+		Map<String, Object> crossTPs = this.getTPsfromAAI();
 		
 		if(crossTPs == null || crossTPs.isEmpty()) {
 			serviceRequestInputs.put("local-access-provider-id", "");
@@ -336,6 +341,106 @@ public class ServicePluginFactory {
 		}
 		
 		return;
+	}
+
+	// This method returns Local and remote TPs information from AAI	
+	public Map getTPsfromAAI() {
+		Map<String, Object> tpInfo = new HashMap<>();
+		
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.LOGICAL_LINK);
+		AAIResourcesClient client = new AAIResourcesClient();
+		Optional<LogicalLinks> result = client.get(LogicalLinks.class, uri);
+		
+		if (result.isPresent()) {
+			LogicalLinks links = result.get();
+			boolean isRemoteLink = false;
+			
+			links.getLogicalLink();
+			
+			for (LogicalLink link : links.getLogicalLink()) {
+				AAIResultWrapper wrapper = new AAIResultWrapper(link);
+				Optional<Relationships> optRelationships = wrapper.getRelationships();
+				List<AAIResourceUri> pInterfaces = new ArrayList<>();
+				if (optRelationships.isPresent()) {
+					Relationships relationships = optRelationships.get();
+					if (!relationships.getRelatedAAIUris(AAIObjectType.EXT_AAI_NETWORK).isEmpty()) {
+						isRemoteLink = true;
+					}
+					pInterfaces.addAll(relationships.getRelatedAAIUris(AAIObjectType.P_INTERFACE));
+				}
+				
+				if (isRemoteLink) {
+					// find remote p interface
+					AAIResourceUri localTP = null;
+					AAIResourceUri remoteTP = null;
+
+					AAIResourceUri pInterface0 = pInterfaces.get(0);
+
+					if (isRemotePInterface(client, pInterface0)) {
+						remoteTP = pInterfaces.get(0);
+						localTP = pInterfaces.get(1);
+					} else {
+						localTP = pInterfaces.get(0);
+						remoteTP = pInterfaces.get(1);
+					}
+
+					if (localTP != null && remoteTP != null) {
+						// give local tp
+						String tpUrl = localTP.build().toString();
+						PInterface intfLocal = client.get(PInterface.class, localTP).get();
+						tpInfo.put("local-access-node-id", tpUrl.split("/")[6]);
+					
+						String[] networkRef = intfLocal.getNetworkRef().split("/");
+						if (networkRef.length == 6) {
+							tpInfo.put("local-access-provider-id", networkRef[1]);
+							tpInfo.put("local-access-client-id", networkRef[3]);
+							tpInfo.put("local-access-topology-id", networkRef[5]);
+						}
+						String ltpIdStr = tpUrl.substring(tpUrl.lastIndexOf("/") + 1);
+						if (ltpIdStr.contains("-")) {
+							tpInfo.put("local-access-ltp-id", ltpIdStr.substring(ltpIdStr.lastIndexOf("-") + 1));
+						}
+						
+						// give remote tp
+						tpUrl = remoteTP.build().toString();
+						PInterface intfRemote = client.get(PInterface.class, remoteTP).get();
+						tpInfo.put("remote-access-node-id", tpUrl.split("/")[6]);
+
+						String[] networkRefRemote = intfRemote.getNetworkRef().split("/");
+
+						if (networkRefRemote.length == 6) {
+							tpInfo.put("remote-access-provider-id", networkRefRemote[1]);
+							tpInfo.put("remote-access-client-id", networkRefRemote[3]);
+							tpInfo.put("remote-access-topology-id", networkRefRemote[5]);
+						}
+						String ltpIdStrR = tpUrl.substring(tpUrl.lastIndexOf("/") + 1);
+						if (ltpIdStrR.contains("-")) {
+							tpInfo.put("remote-access-ltp-id", ltpIdStrR.substring(ltpIdStr.lastIndexOf("-") + 1));
+						}
+						return tpInfo;
+					}
+				}
+			}
+		}
+		return tpInfo;
+	}
+
+	// this method check if pInterface is remote
+	private boolean isRemotePInterface(AAIResourcesClient client, AAIResourceUri uri) {
+		
+		Map<String, String> keys = uri.getURIKeys();
+		String uriString = uri.build().toString();
+		AAIResourceUri parent = AAIUriFactory.createResourceUri(AAIObjectType.PNF, keys.get("pnf-name"));
+		
+		AAIResultWrapper wrapper = client.get(parent);
+		Optional<Relationships> optRelationships = wrapper.getRelationships();
+		if (optRelationships.isPresent()) {
+			Relationships relationships = optRelationships.get();
+			
+			return !relationships.getRelatedAAIUris(AAIObjectType.EXT_AAI_NETWORK).isEmpty();
+		}
+		
+		return false;
 	}
 
 	public String preProcessService(ServiceDecomposition serviceDecomposition, String uuiRequest) {

@@ -21,29 +21,40 @@
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class AAIUpdateTasksTest extends BaseTaskTest{
-	@Autowired
-	private AAIUpdateTasks aaiUpdateTasks;
+	
+	@InjectMocks
+	private AAIUpdateTasks aaiUpdateTasks = new AAIUpdateTasks();
 	
 	private L3Network network;
 	private ServiceInstance serviceInstance;
@@ -52,9 +63,10 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	private VolumeGroup volumeGroup;
 	private CloudRegion cloudRegion;
 	private Configuration configuration;
+	private Subnet subnet;
 	
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		serviceInstance = setServiceInstance();
 		genericVnf = setGenericVnf();
 		vfModule = setVfModule();
@@ -62,6 +74,17 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 		cloudRegion = setCloudRegion();
 		network = setL3Network();
 		configuration = setConfiguration();
+		subnet = buildSubnet();
+
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(network);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.CONFIGURATION_ID), any())).thenReturn(configuration);
+		
+
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
 	}
 	
 	@Test
@@ -77,7 +100,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	public void updateOrchestrationStatusAssignedServiceExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ASSIGNED);
+		doThrow(RuntimeException.class).when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ASSIGNED);
 
 		aaiUpdateTasks.updateOrchestrationStatusAssignedService(execution);
 	}
@@ -95,7 +118,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	public void updateOrchestrationStatusActiveServiceExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ACTIVE);
+		doThrow(RuntimeException.class).when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ACTIVE);
 
 		aaiUpdateTasks.updateOrchestrationStatusActiveService(execution);
 	}
@@ -113,7 +136,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	public void updateOrchestrationStatusAssignedVnfExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ASSIGNED);
+		doThrow(RuntimeException.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ASSIGNED);
 
 		aaiUpdateTasks.updateOrchestrationStatusAssignedVnf(execution);
 	}
@@ -131,7 +154,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	public void updateOrchestrationStatusActiveVnfExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ACTIVE);
+		doThrow(RuntimeException.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ACTIVE);
 
 		aaiUpdateTasks.updateOrchestrationStatusActiveVnf(execution);
 	}
@@ -146,7 +169,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void updateOrchestrationStatusAssignVfModuleExceptionTest() throws Exception {
-		doThrow(Exception.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
+		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
 		
 		expectedException.expect(BpmnError.class);
 		
@@ -162,7 +185,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void updateOrchestrationStatusCreatedVfModuleExceptionTest() throws Exception {
-		doThrow(Exception.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
+		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
 		
 		expectedException.expect(BpmnError.class);
 		
@@ -180,7 +203,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void updateOrchestrationStatusPendingActivatefModuleExceptionTest() throws Exception {
-		doThrow(Exception.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
+		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
 		
 		expectedException.expect(BpmnError.class);
 	
@@ -198,7 +221,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void updateOrchestrationStatusDectivateVfModuleExceptionTest() throws Exception {
-		doThrow(Exception.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
+		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
 		
 		expectedException.expect(BpmnError.class);
 	
@@ -218,7 +241,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void updateHeatStackIdVfModuleExceptionTest() throws Exception {
-		doThrow(Exception.class).when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
+		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
 		
 		expectedException.expect(BpmnError.class);
 	
@@ -237,7 +260,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	@Test
 	public void updateOrchestrationStatusActiveVolumeGroupExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ACTIVE);
+		doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ACTIVE);
 		aaiUpdateTasks.updateOrchestrationStatusActiveVolumeGroup(execution);
 	}
 	
@@ -253,7 +276,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	@Test
 	public void updateOrchestrationStatusCreatedVolumeGroupExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.CREATED);
+		doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.CREATED);
 		aaiUpdateTasks.updateOrchestrationStatusCreatedVolumeGroup(execution);
 	}	
 	
@@ -270,7 +293,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	@Test
 	public void test_updateOrchestrationStatusAssignedVolumeGroup_exception() throws Exception {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ASSIGNED);
+		doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ASSIGNED);
 		aaiUpdateTasks.updateOrchestrationStatusAssignedVolumeGroup(execution);
 	}
 	@Test
@@ -287,7 +310,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	@Test
 	public void updateHeatStackIdVolumeGroupExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+		doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
 		aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
 	}
 	
@@ -305,7 +328,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	public void updateOstatusAssignedNetworkExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(aaiNetworkResources).updateNetwork(network);
+		doThrow(RuntimeException.class).when(aaiNetworkResources).updateNetwork(network);
 		
 		aaiUpdateTasks.updateOrchestrationStatusAssignedNetwork(execution);
 	}
@@ -332,7 +355,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	public void updateOstatusActiveNetworkExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 
-		doThrow(Exception.class).when(aaiNetworkResources).updateNetwork(network);
+		doThrow(RuntimeException.class).when(aaiNetworkResources).updateNetwork(network);
 		
 		aaiUpdateTasks.updateOrchestrationStatusActiveNetwork(execution);
 	}
@@ -347,7 +370,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	@Test
 	public void updateOstatusActiveNetworkColectionExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(aaiCollectionResources).updateCollection(serviceInstance.getCollection());
+		doThrow(RuntimeException.class).when(aaiCollectionResources).updateCollection(serviceInstance.getCollection());
 		aaiUpdateTasks.updateOrchestrationStatusActiveNetworkCollection(execution);
 	}
 
@@ -362,7 +385,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void updateOrchestrationStatusActivateVfModuleExceptionTest() throws Exception {
-		doThrow(Exception.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ACTIVE);
+		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ACTIVE);
 		
 		expectedException.expect(BpmnError.class);
 		
@@ -374,23 +397,33 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 		CreateNetworkResponse createNetworkResponse = new CreateNetworkResponse();
 		createNetworkResponse.setNetworkFqdn("testNetworkFqdn");
 		createNetworkResponse.setNetworkStackId("testNetworkStackId");
+		HashMap<String, String> subnetMap = new HashMap<>();
+		subnetMap.put("testSubnetId", "testNeutronSubnetId");
+		createNetworkResponse.setSubnetMap(subnetMap);
+		
+		network.getSubnets().add(subnet);
 		
 		execution.setVariable("createNetworkResponse", createNetworkResponse);
 		
 		doNothing().when(aaiNetworkResources).updateNetwork(network);
+		doNothing().when(aaiNetworkResources).updateSubnet(network, subnet);
+
 		aaiUpdateTasks.updateNetworkCreated(execution);
 		verify(aaiNetworkResources, times(1)).updateNetwork(network);
+		verify(aaiNetworkResources, times(1)).updateSubnet(network, subnet);
 		
 		assertEquals(createNetworkResponse.getNetworkFqdn(), network.getContrailNetworkFqdn());
 		assertEquals(OrchestrationStatus.CREATED, network.getOrchestrationStatus());
 		assertEquals(createNetworkResponse.getNetworkStackId(), network.getHeatStackId());
 		assertEquals(createNetworkResponse.getNeutronNetworkId(), network.getNeutronNetworkId());
+		String neutronSubnetId = createNetworkResponse.getSubnetMap().entrySet().iterator().next().getValue();
+		assertEquals(neutronSubnetId, network.getSubnets().get(0).getNeutronSubnetId());
 	}
 
 	@Test
 	public void updateNetworkCreatedkExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(aaiNetworkResources).updateNetwork(network);
+		doThrow(RuntimeException.class).when(aaiNetworkResources).updateNetwork(network);
 		aaiUpdateTasks.updateNetworkCreated(execution);
 	}
 	
@@ -407,7 +440,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	public void updateObjectNetworkExceptionText() {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(aaiNetworkResources).updateNetwork(network);
+		doThrow(RuntimeException.class).when(aaiNetworkResources).updateNetwork(network);
 		
 		aaiUpdateTasks.updateObjectNetwork(execution);
 	}
@@ -422,7 +455,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	@Test
 	public void test_updateServiceInstance_exception() {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(aaiServiceInstanceResources).updateServiceInstance(serviceInstance);
+		doThrow(RuntimeException.class).when(aaiServiceInstanceResources).updateServiceInstance(serviceInstance);
 		aaiUpdateTasks.updateServiceInstance(execution);
 	}
 	
@@ -438,7 +471,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	@Test
 	public void updateObjectVnfExceptionTest() {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(aaiVnfResources).updateObjectVnf(genericVnf);
+		doThrow(RuntimeException.class).when(aaiVnfResources).updateObjectVnf(genericVnf);
 		aaiUpdateTasks.updateObjectVnf(execution);
 	}
 	
@@ -462,7 +495,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	@Test
 	public void updateModelVfModuleExceptionTest() {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(aaiVfModuleResources).changeAssignVfModule(vfModule, genericVnf);
+		doThrow(RuntimeException.class).when(aaiVfModuleResources).changeAssignVfModule(vfModule, genericVnf);
 		aaiUpdateTasks.updateModelVfModule(execution);
 	}
 	

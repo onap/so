@@ -29,6 +29,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIInstanceGroupResources;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +56,10 @@ public class AssignVnf {
 				if(ModelInfoInstanceGroup.TYPE_VNFC.equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {
 					instanceGroup.setInstanceGroupName(aaiObjectInstanceNameGenerator.generateInstanceGroupName(instanceGroup, vnf));
 					aaiInstanceGroupResources.createInstanceGroup(instanceGroup);
-					aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf);
+					aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.BELONGS_TO);
 				}
 				else if(ModelInfoInstanceGroup.TYPE_NETWORK_INSTANCE_GROUP.equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {
-					aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf);
+					aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.USES);
 				}
 			}
 		} 

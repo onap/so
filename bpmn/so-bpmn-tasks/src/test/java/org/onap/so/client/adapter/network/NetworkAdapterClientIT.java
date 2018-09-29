@@ -44,14 +44,14 @@ import org.onap.so.adapters.nwrest.RollbackNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkError;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
-import org.onap.so.BaseTest;
+import org.onap.so.BaseIntegrationTest;
 import org.onap.so.openstack.beans.NetworkRollback;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
-public class NetworkAdapterClientIT extends BaseTest{
+public class NetworkAdapterClientIT extends BaseIntegrationTest{
 
 	private static final String TESTING_ID = "___TESTING___";
 	private static final String AAI_NETWORK_ID = "test";

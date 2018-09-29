@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.logger.MsoLogger.Catalog;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
@@ -53,7 +53,6 @@ import java.nio.file.Paths;
 @ActiveProfiles("test")
 @ContextConfiguration
 @Transactional
-//@Sql(executionPhase=ExecutionPhase.AFTER_TEST_METHOD,scripts="classpath:InfraActiveRequestsReset.sql")
 @AutoConfigureWireMock(port = 0)
 public abstract class BaseTest {
 	protected MsoLogger logger = MsoLogger.getMsoLogger(Catalog.GENERAL, BaseTest.class);

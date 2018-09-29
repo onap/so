@@ -20,12 +20,7 @@
 
 package org.onap.so.bpmn.vcpe.scripts
 
-
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -33,33 +28,19 @@ import org.junit.Test
 import org.junit.Ignore
 import org.mockito.MockitoAnnotations
 import org.camunda.bpm.engine.delegate.BpmnError
+import org.mockito.Spy
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
-
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import static com.github.tomakehurst.wiremock.client.WireMock.delete
-import static com.github.tomakehurst.wiremock.client.WireMock.get
-import static com.github.tomakehurst.wiremock.client.WireMock.patch
-import static com.github.tomakehurst.wiremock.client.WireMock.put
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockDeleteAllottedResource
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetAllottedResource
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchAllottedResource
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockQueryAllottedResourceById
-
-import java.util.Map
-
-import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.vcpe.scripts.MapSetter
-
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 
 class DoDeleteAllottedResourceBRGTest extends GroovyTestBase {
-	
+
 	@Rule
 	public WireMockRule wireMockRule = new WireMockRule(PORT)
 
@@ -69,11 +50,16 @@ class DoDeleteAllottedResourceBRGTest extends GroovyTestBase {
 	public static void setUpBeforeClass() {
 		super.setUpBeforeClass()
 	}
+
+	@Spy
+	DoDeleteAllottedResourceBRG doDeleteAllottedResourceBRG
 	  
     @Before
 	public void init()
 	{
 		MockitoAnnotations.initMocks(this)
+        super.init()
+		when(doDeleteAllottedResourceBRG.getAllottedResourceUtils()).thenReturn(allottedResourceUtils_MOCK)
 	}
 	
 	public DoDeleteAllottedResourceBRGTest() {
@@ -131,40 +117,21 @@ class DoDeleteAllottedResourceBRGTest extends GroovyTestBase {
 	// ***** getAaiAR *****
 	
 	@Test
-	@Ignore
+    @Ignore
 	public void getAaiAR() {
-		MockQueryAllottedResourceById(ARID, "GenericFlows/getARUrlById.xml")
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceBRG/arGetById.xml")
-		
 		ExecutionEntity mex = setupMock()
 		initGetAaiAR(mex)
-		
-		DoDeleteAllottedResourceBRG DoDeleteAllottedResourceBRG = new DoDeleteAllottedResourceBRG()
-		DoDeleteAllottedResourceBRG.getAaiAR(mex)
-		
+        when(client_MOCK.exists(any(AAIResourceUri.class))).thenReturn(true)
+		doDeleteAllottedResourceBRG.getAaiAR(mex)
 		verify(mex).setVariable("parentServiceInstanceId", INST)
 	}
 	
 	@Test
-//	@Ignore
 	public void getAaiAR_EmptyResponse() {
-		
-		// note: empty result-link
-		wireMockRule
-			.stubFor(get(urlMatching("/aai/.*/search/.*"))
-					.willReturn(aResponse()
-						.withStatus(200)
-						.withHeader("Content-Type", "text/xml")
-						.withBody("<result-data></result-data>")))
-			
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceBRG/arGetById.xml")
-		
 		ExecutionEntity mex = setupMock()
 		initGetAaiAR(mex)
-		
-		DoDeleteAllottedResourceBRG DoDeleteAllottedResourceBRG = new DoDeleteAllottedResourceBRG()
-		
-		assertTrue(doBpmnError( { _ -> DoDeleteAllottedResourceBRG.getAaiAR(mex) }))
+        when(client_MOCK.exists(any(AAIResourceUri.class))).thenReturn(false)
+		assertTrue(doBpmnError( { _ -> doDeleteAllottedResourceBRG.getAaiAR(mex) }))
 	}
 	
 	
@@ -562,13 +529,13 @@ class DoDeleteAllottedResourceBRGTest extends GroovyTestBase {
 		when(mex.getVariable("mso.workflow.global.default.aai.version")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.global.default.aai.version"))
 		when(mex.getVariable("mso.workflow.default.aai.v8.nodes.query.uri")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.default.aai.v8.nodes-query.uri"))
 		when(mex.getVariable("aai.endpoint")).thenReturn(aaiUriPfx)
-		when(mex.getVariable("aaiARPath")).thenReturn(aaiUriPfx + "/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
+		when(mex.getVariable("aaiARPath")).thenReturn("/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
 		when(mex.getVariable("aaiAROrchStatus")).thenReturn("Active")
 	}
 	
 	private initUpdateAaiAROrchStatus(ExecutionEntity mex) {
 		when(mex.getVariable(DBGFLAG)).thenReturn("true")
-		when(mex.getVariable("aaiARPath")).thenReturn(aaiUriPfx + "/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
+		when(mex.getVariable("aaiARPath")).thenReturn("/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
 	}
 	
 	private initBuildSDNCRequest(ExecutionEntity mex) {
@@ -598,7 +565,7 @@ class DoDeleteAllottedResourceBRGTest extends GroovyTestBase {
 	
 	private initDeleteAaiAR(ExecutionEntity mex) {
 		when(mex.getVariable(DBGFLAG)).thenReturn("true")
-		when(mex.getVariable("aaiARPath")).thenReturn(aaiUriPfx + "/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
+		when(mex.getVariable("aaiARPath")).thenReturn("/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
 		when(mex.getVariable("aaiARResourceVersion")).thenReturn("myvers")
 		when(mex.getVariable("aai.endpoint")).thenReturn(aaiUriPfx)
 	}

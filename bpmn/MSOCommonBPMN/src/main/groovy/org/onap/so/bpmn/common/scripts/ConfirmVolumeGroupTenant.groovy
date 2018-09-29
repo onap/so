@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,21 +20,15 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.onap.so.bpmn.core.UrnPropertiesReader
-
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
-
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.rest.APIResponse
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
-import org.xml.sax.InputSource
+import org.onap.aai.domain.yang.VolumeGroup
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.Relationships
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
@@ -55,63 +49,26 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 	public void preProcessRequest(DelegateExecution execution){
 		execution.setVariable("prefix", Prefix)
 		msoLogger.trace("STARTED Confirm Volume Group Tenant Subflow ")
-		String processKey = getProcessKey(execution);
 		try{
 			msoLogger.trace("Started QueryAAIForVolumeGroup Process ")
 
 			String volumeGroupId = execution.getVariable("volumeGroupId")
 			String incomingGroupName = execution.getVariable("volumeGroupName")
 			String incomingTenantId = execution.getVariable("tenantId")
-			def aicCloudRegion = execution.getVariable("aicCloudRegion")
-			String aai = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getCloudInfrastructureCloudRegionUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-
-			String path = aai + "${aai_uri}/${aicCloudRegion}/volume-groups/volume-group/" + volumeGroupId
-
-			APIResponse queryAAIForVolumeGroupResponse = aaiUriUtil.executeAAIGetCall(execution, path)
-
-			def responseCode = queryAAIForVolumeGroupResponse.getStatusCode()
-			execution.setVariable("queryVolumeGroupResponseCode", responseCode)
-			String response = queryAAIForVolumeGroupResponse.getResponseBodyAsString()
-
-			msoLogger.debug("ConfirmVolumeGroup Response: " + response)
-			msoLogger.debug("ConfirmVolumeGroup Response Code: " + responseCode)
-
-			if(responseCode == 200 && response != null){
-				execution.setVariable("queryAAIVolumeGroupResponse", response)
-				msoLogger.debug("QueryAAIForVolumeGroup Received a Good REST Response is: \n" + response)
-
+			String aicCloudRegion = execution.getVariable("aicCloudRegion")
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), aicCloudRegion, volumeGroupId)
+			AAIResultWrapper wrapper = getAAIClient().get(uri);
+			Optional<VolumeGroup> volumeGroup = wrapper.asBean(VolumeGroup.class)
+			Optional<Relationships> relationships = wrapper.getRelationships()
+			if(volumeGroup.isPresent()){
+				execution.setVariable("queryAAIVolumeGroupResponse", volumeGroup.get())
 				String volumeGroupTenantId = ""
-				InputSource source = new InputSource(new StringReader(response));
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-				docFactory.setNamespaceAware(true)
-				DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-				Document createVCERequestXml = docBuilder.parse(source)
-				NodeList nodeList = createVCERequestXml.getElementsByTagNameNS("*", "relationship")
-				for (int x = 0; x < nodeList.getLength(); x++) {
-					Node node = nodeList.item(x)
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Element eElement = (Element) node
-						String e = eElement.getElementsByTagNameNS("*", "related-to").item(0).getTextContent()
-						if(e.equals("tenant")){
-							NodeList relationDataList = eElement.getElementsByTagNameNS("*", "relationship-data")
-							for (int d = 0; d < relationDataList.getLength(); d++) {
-								Node dataNode = relationDataList.item(d)
-								if (dataNode.getNodeType() == Node.ELEMENT_NODE) {
-									Element dElement = (Element) dataNode
-									String key = dElement.getElementsByTagNameNS("*", "relationship-key").item(0).getTextContent()
-									if(key.equals("tenant.tenant-id")){
-										volumeGroupTenantId = dElement.getElementsByTagNameNS("*", "relationship-value").item(0).getTextContent()
-									}
-								}
-							}
-						}
+				if(relationships.isPresent()){
+					List<AAIResourceUri> tenantUris = relationships.get().getRelatedAAIUris(AAIObjectType.TENANT)
+					for (AAIResourceUri tenantURI: tenantUris){
+							volumeGroupTenantId = tenantURI.getURIKeys().get("tenant-id")
 					}
 				}
-
 				//Determine if Tenant Ids match
 				if(incomingTenantId.equals(volumeGroupTenantId)){
 					msoLogger.debug("Tenant Ids Match")
@@ -122,7 +79,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 				}
 
 				//Determine if Volume Group Names match
-				String volumeGroupName = utils.getNodeText(response, "volume-group-name")
+				String volumeGroupName = volumeGroup.get().getVolumeGroupName()
 				if(incomingGroupName == null || incomingGroupName.length() < 1){
 					msoLogger.debug("Incoming Volume Group Name is NOT Provided.")
 					execution.setVariable("groupNamesMatch", true)
@@ -144,7 +101,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 		}catch(BpmnError b){
 			throw b
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing queryAAIForVolumeGroup.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e);
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing queryAAIForVolumeGroup.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.getMessage());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in preProcessRequest.")
 		}
 		msoLogger.trace("COMPLETED queryAAIForVolumeGroup Process ")
@@ -155,8 +112,8 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 		try{
 			msoLogger.trace("Started assignVolumeHeatId Process ")
 
-			String response = execution.getVariable("queryAAIVolumeGroupResponse")
-			String heatStackId = utils.getNodeText(response, "heat-stack-id")
+			VolumeGroup volumeGroup = execution.getVariable("queryAAIVolumeGroupResponse")
+			String heatStackId = volumeGroup.getHeatStackId()
 			execution.setVariable("volumeHeatStackId", heatStackId)
 			execution.setVariable("ConfirmVolumeGroupTenantResponse", heatStackId)
 			// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead

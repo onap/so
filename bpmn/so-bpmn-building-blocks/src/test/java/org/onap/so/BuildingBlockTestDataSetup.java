@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,12 +23,13 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.assertj.core.util.Arrays;
+
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.impl.pvm.runtime.ExecutionImpl;
 import org.junit.Before;
@@ -88,20 +89,20 @@ public class BuildingBlockTestDataSetup{
 	private int volumeGroupCounter;
 	private int vpnBindingCounter;
 	private int vpnBondingLinkCounter;
-	
+
 	protected BuildingBlockExecution execution;
-	
+
 	protected GeneralBuildingBlock gBBInput;
-	
+
 	protected HashMap<ResourceKey, String> lookupKeyMap;
-	
+
 	protected ExtractPojosForBB extractPojosForBB = new ExtractPojosForBB();
-	
+
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
-	
+
 	protected DelegateExecution delegateExecution;
-	
+
 	@Before
 	public void buildingBlockTestDataSetupBefore() {
 		collectionCounter = 0;
@@ -120,183 +121,183 @@ public class BuildingBlockTestDataSetup{
 		volumeGroupCounter = 0;
 		vpnBindingCounter = 0;
 		vpnBondingLinkCounter = 0;
-		
+
 		execution = new DelegateExecutionImpl(new ExecutionImpl());
 		execution.setVariable("testProcessKey", "testProcessKeyValue");
-		
+
 		gBBInput = new GeneralBuildingBlock();
 		execution.setVariable("gBBInput", gBBInput);
-		
+
 		lookupKeyMap = new HashMap<ResourceKey, String>();
 		execution.setVariable("lookupKeyMap", lookupKeyMap);
-		
+
 	    ExecutionImpl mockExecutionImpl = mock(ExecutionImpl.class);
     	doReturn("test").when(mockExecutionImpl).getProcessInstanceId();
-    	
+
     	ExecutionImpl executionImpl = new ExecutionImpl();
     	executionImpl.setProcessInstance(mockExecutionImpl);
-    	
+
     	delegateExecution = (DelegateExecution) executionImpl;
     	delegateExecution.setVariable("testProcessKey", "testProcessKeyValue");
 	}
-	
+
 	public Map<String, String> buildUserInput() {
 		Map<String, String> userInput = new HashMap<>();
 		userInput.put("testUserInputKey", "testUserInputValue");
-		
+
 		return userInput;
 	}
-	
+
 	public Map<String, String> setUserInput() {
 		Map<String, String> userInput = buildUserInput();
-		
+
 		gBBInput.setUserInput(userInput);
-		
+
 		return userInput;
 	}
-	
+
 	public RequestContext buildRequestContext() {
 		RequestContext requestContext = new RequestContext();
 		requestContext.setMsoRequestId(UUID.randomUUID().toString());
 		requestContext.setProductFamilyId("testProductFamilyId");
 		requestContext.setRequestorId("testRequestorId");
-		
+
 		requestContext.setUserParams(new HashMap<>());
-		
+
         Map<String,Object> dataMap = new HashMap<>();
         dataMap.put("vpnId","testVpnId");
         dataMap.put("vpnRegion","testVpnRegion");
         dataMap.put("vpnRt","testVpnRt");
         dataMap.put("vpnName","vpnName");
         dataMap.put("vpnRegion", Arrays.asList(new String[] {"USA", "EMEA", "APAC"}));
-        
+
         HashMap<String,Object> userParams = new HashMap<>();
         userParams.put("vpnData",dataMap);
-		
+
 		List<Map<String,Object>> userParamsList = new ArrayList<>();
 		userParamsList.add(userParams);
-		
+
 		RequestParameters requestParameters = new RequestParameters();
 		requestParameters.setUserParams(userParamsList);
 		requestContext.setRequestParameters(requestParameters);
-		
+
 		return requestContext;
 	}
-	
+
 	public RequestContext setRequestContext() {
 		RequestContext requestContext = buildRequestContext();
-		
+
 		gBBInput.setRequestContext(requestContext);
-		
+
 		return requestContext;
 	}
-	
+
 	public CloudRegion buildCloudRegion() {
 		CloudRegion cloudRegion = new CloudRegion();
 		cloudRegion.setLcpCloudRegionId("testLcpCloudRegionId");
 		cloudRegion.setTenantId("testTenantId");
 		cloudRegion.setCloudOwner("testCloudOwner");
-		
+
 		return cloudRegion;
 	}
-	
+
 	public CloudRegion setCloudRegion() {
 		CloudRegion cloudRegion = buildCloudRegion();
-		
+
 		gBBInput.setCloudRegion(cloudRegion);
-		
+
 		return cloudRegion;
 	}
-	
+
 	public OrchestrationContext buildOrchestrationContext() {
 		OrchestrationContext orchestrationContext = new OrchestrationContext();
-		
+
 		return orchestrationContext;
 	}
-	
+
 	public OrchestrationContext setOrchestrationContext() {
 		OrchestrationContext orchestrationContext = buildOrchestrationContext();
-		
+
 		gBBInput.setOrchContext(orchestrationContext);
-		
+
 		return orchestrationContext;
 	}
-	
+
 	public Collection buildCollection() {
 		collectionCounter++;
-		
+
 		Collection collection = new Collection();
 		collection.setId("testId" + collectionCounter);
 		collection.setInstanceGroup(buildInstanceGroup());
-		
+
 		return collection;
 	}
-	
+
 	public Configuration buildConfiguration() {
 		configurationCounter++;
-		
+
 		Configuration configuration = new Configuration();
 		configuration.setConfigurationId("testConfigurationId" + configurationCounter);
 		configuration.setConfigurationName("testConfigurationName" + configurationCounter);
-		
+
 		ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
 		modelInfoConfiguration.setModelVersionId("testModelVersionId" + configurationCounter);
 		modelInfoConfiguration.setModelInvariantId("testModelInvariantId" + configurationCounter);
 		modelInfoConfiguration.setModelCustomizationId("testModelCustomizationId" + configurationCounter);
-		
+
 		configuration.setModelInfoConfiguration(modelInfoConfiguration);
-		
+
 		return configuration;
 	}
-	
+
 	public OwningEntity buildOwningEntity() {
 		owningEntityCounter++;
-		
+
 		OwningEntity owningEntity = new OwningEntity();
 		owningEntity.setOwningEntityId("testOwningEntityId" + owningEntityCounter);
 		owningEntity.setOwningEntityName("testOwningEntityName" + owningEntityCounter);
-		
+
 		return owningEntity;
 	}
-	
+
 	public Project buildProject() {
 		projectCounter++;
-		
+
 		Project project = new Project();
 		project.setProjectName("testProjectName" + projectCounter);
-		
+
 		return project;
 	}
-	
+
 	public ServiceSubscription buildServiceSubscription() {
 		serviceSubscriptionCounter++;
-		
+
 		ServiceSubscription serviceSubscription = new ServiceSubscription();
 		serviceSubscription.setTempUbSubAccountId("testTempUbSubAccountId" + serviceSubscriptionCounter);
 		serviceSubscription.setServiceType("testServiceType" + serviceSubscriptionCounter);
-		
+
 		return serviceSubscription;
 	}
-	
+
 	public Customer buildCustomer() {
 		customerCounter++;
-		
+
 		Customer customer = new Customer();
 		customer.setGlobalCustomerId("testGlobalCustomerId" + customerCounter);
 		customer.setSubscriberType("testSubscriberType" + customerCounter);
 
 		customer.setServiceSubscription(buildServiceSubscription());
-		
+
 		return customer;
 	}
-	
+
 	public ServiceInstance buildServiceInstance() {
 		serviceInstanceCounter++;
-		
+
 		ServiceInstance serviceInstance = new ServiceInstance();
 		serviceInstance.setServiceInstanceId("testServiceInstanceId" + serviceInstanceCounter);
 		serviceInstance.setServiceInstanceName("testServiceInstanceName" + serviceInstanceCounter);
-		
+
 		ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
 		modelInfoServiceInstance.setModelInvariantUuid("testModelInvariantUUID" + serviceInstanceCounter);
 		modelInfoServiceInstance.setModelUuid("testModelUUID" + serviceInstanceCounter);
@@ -304,30 +305,30 @@ public class BuildingBlockTestDataSetup{
 		modelInfoServiceInstance.setModelName("testModelName" + serviceInstanceCounter);
 		modelInfoServiceInstance.setServiceType("testServiceType" + serviceInstanceCounter);
 		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
-		
+
 		serviceInstance.setProject(buildProject());
-		
+
 		serviceInstance.setOwningEntity(buildOwningEntity());
-		
+
 		serviceInstance.setCollection(buildCollection());
-		
+
 		serviceInstance.getConfigurations().add(buildConfiguration());
-		
+
 		return serviceInstance;
 	}
-	
+
 	public ServiceInstance setServiceInstance() {
 		ServiceInstance serviceInstance = buildServiceInstance();
-		
+
 		if(gBBInput.getCustomer() == null) {
 			gBBInput.setCustomer(buildCustomer());
 		}
 		gBBInput.getCustomer().getServiceSubscription().getServiceInstances().add(serviceInstance);
 		lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstance.getServiceInstanceId());
-		
+
 		return serviceInstance;
 	}
-	
+
 	public Customer setCustomer() {
 		if(gBBInput.getCustomer() != null) return gBBInput.getCustomer();
 		Customer customer = new Customer();
@@ -337,64 +338,64 @@ public class BuildingBlockTestDataSetup{
 		customer.setServiceSubscription(buildServiceSubscription());
 
 		gBBInput.setCustomer(customer);
-		
+
 		return customer;
 	}
-	
+
 	public Collection setCollection() {
 		Collection collection = new Collection();
 		collection.setId("testId");
-		
+
 		ServiceInstance serviceInstance = null;
-		
+
 		try {
 			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 		} catch(BBObjectNotFoundException e) {
 			serviceInstance = setServiceInstance();
 		}
-		
+
 		serviceInstance.setCollection(collection);
-		
+
 		return collection;
 	}
-	
+
 	public InstanceGroup setInstanceGroup() {
 		InstanceGroup instanceGroup = new InstanceGroup();
 		instanceGroup.setId("testId");
 		instanceGroup.setInstanceGroupFunction("testInstanceGroupFunction");
-		
+
 		Collection collection = null;
-		
+
 		try {
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 			collection = serviceInstance.getCollection();
-			
+
 			if (collection == null) {
 				collection = setCollection();
 			}
 		} catch(BBObjectNotFoundException e) {
 			collection = setCollection();
 		}
-		
+
 		collection.setInstanceGroup(instanceGroup);
-		
+
 		return instanceGroup;
 	}
-	
+
 	public VpnBinding buildVpnBinding() {
 		vpnBindingCounter++;
-		
+
 		VpnBinding vpnBinding = new VpnBinding();
 		vpnBinding.setVpnId("testVpnId" + vpnBindingCounter);
 		vpnBinding.setVpnName("testVpnName" + vpnBindingCounter);
 		vpnBinding.setCustomerVpnId("testCustomerVpnId" + vpnBindingCounter);
-		
+
 		return vpnBinding;
 	}
-	
+
 	public VpnBinding setVpnBinding() {
 		VpnBinding vpnBinding = buildVpnBinding();
-		
+
 		Customer customer = gBBInput.getCustomer();
 
 		if(customer == null){
@@ -403,106 +404,107 @@ public class BuildingBlockTestDataSetup{
 
 		customer.getVpnBindings().add(vpnBinding);
 		lookupKeyMap.put(ResourceKey.VPN_ID, vpnBinding.getVpnId());
-		
+
 		return vpnBinding;
 	}
-	
+
 	public InstanceGroup buildInstanceGroup() {
 		instanceGroupCounter++;
-		
+
 		InstanceGroup instanceGroup = new InstanceGroup();
 		instanceGroup.setId("testId" + instanceGroupCounter);
 		instanceGroup.setInstanceGroupFunction("testInstanceGroupFunction" + instanceGroupCounter);
-		
+
 		return instanceGroup;
 	}
-	
+
 	public L3Network buildL3Network() {
 		l3NetworkCounter++;
-		
+
 		L3Network network = new L3Network();
 		network.setNetworkId("testNetworkId" + l3NetworkCounter);
 		network.setNetworkName("testNetworkName" + l3NetworkCounter);
 		network.setNetworkType("testNetworkType" + l3NetworkCounter);
-		
+
 		ModelInfoNetwork modelInfoNetwork = new ModelInfoNetwork();
 		modelInfoNetwork.setModelInvariantUUID("testModelInvariantUUID" + l3NetworkCounter);
 		modelInfoNetwork.setModelName("testModelName" + l3NetworkCounter);
 		modelInfoNetwork.setModelVersion("testModelVersion" + l3NetworkCounter);
 		modelInfoNetwork.setModelUUID("testModelUUID" + l3NetworkCounter);
 		network.setModelInfoNetwork(modelInfoNetwork);
-		
+
 		return network;
 	}
-	
+
 	public L3Network setL3Network() {
 		L3Network network = buildL3Network();
-		
+
 		ServiceInstance serviceInstance = null;
-		
+
 		try {
 			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 		} catch(BBObjectNotFoundException e) {
 			serviceInstance = setServiceInstance();
 		}
-		
+
 		serviceInstance.getNetworks().add(network);
 		lookupKeyMap.put(ResourceKey.NETWORK_ID, network.getNetworkId());
-		
+
 		return network;
 	}
-	
+
 	public GenericVnf buildGenericVnf() {
 		genericVnfCounter++;
-		
+
 		GenericVnf genericVnf = new GenericVnf();
 		genericVnf.setVnfId("testVnfId" + genericVnfCounter);
 		genericVnf.setVnfName("testVnfName" + genericVnfCounter);
 		genericVnf.setVnfType("testVnfType" + genericVnfCounter);
-		
+
 		Platform platform = new Platform();
 		platform.setPlatformName("testPlatformName");
 		genericVnf.setPlatform(platform);
-		
+
 		LineOfBusiness lob = new LineOfBusiness();
 		lob.setLineOfBusinessName("testLineOfBusinessName");
 		genericVnf.setLineOfBusiness(lob);
-		
+
 		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
 		modelInfoGenericVnf.setModelName("testModelName" + genericVnfCounter);
 		modelInfoGenericVnf.setModelCustomizationUuid("testModelCustomizationUUID" + genericVnfCounter);
 		modelInfoGenericVnf.setModelInvariantUuid("testModelInvariantUUID" + genericVnfCounter);
 		modelInfoGenericVnf.setModelVersion("testModelVersion" + genericVnfCounter);
 		modelInfoGenericVnf.setModelUuid("testModelUUID" + genericVnfCounter);
+		modelInfoGenericVnf.setModelInstanceName("testModelInstanceName" + genericVnfCounter);
 		genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
-		
+
 		return genericVnf;
 	}
-	
+
 	public GenericVnf setGenericVnf() {
 		GenericVnf genericVnf = buildGenericVnf();
-		
+
 		ServiceInstance serviceInstance = null;
-		
+
 		try {
 			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 		} catch(BBObjectNotFoundException e) {
 			serviceInstance = setServiceInstance();
 		}
-		
+
 		serviceInstance.getVnfs().add(genericVnf);
 		lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, genericVnf.getVnfId());
-		
+
 		return genericVnf;
 	}
-	
+
 	public VfModule buildVfModule() {
 		vfModuleCounter++;
-		
+
 		VfModule vfModule = new VfModule();
 		vfModule.setVfModuleId("testVfModuleId" + vfModuleCounter);
 		vfModule.setVfModuleName("testVfModuleName" + vfModuleCounter);
-		
+
 		ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
 		modelInfoVfModule.setModelInvariantUUID("testModelInvariantUUID" + vfModuleCounter);
 		modelInfoVfModule.setModelVersion("testModelVersion" + vfModuleCounter);
@@ -510,128 +512,128 @@ public class BuildingBlockTestDataSetup{
 		modelInfoVfModule.setModelName("testModelName" + vfModuleCounter);
 		modelInfoVfModule.setModelCustomizationUUID("testModelCustomizationUUID" + vfModuleCounter);
 		vfModule.setModelInfoVfModule(modelInfoVfModule);
-		
+
 		return vfModule;
 	}
-	
+
 	public VfModule setVfModule() {
 		VfModule vfModule = buildVfModule();
-		
+
 		GenericVnf genericVnf = null;
-		
+
 		try {
 			genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 		} catch(BBObjectNotFoundException e) {
 			genericVnf = setGenericVnf();
 		}
-		
+
 		genericVnf.getVfModules().add(vfModule);
 		lookupKeyMap.put(ResourceKey.VF_MODULE_ID, vfModule.getVfModuleId());
-		
+
 		return vfModule;
 	}
-	
+
 	public VolumeGroup buildVolumeGroup() {
 		volumeGroupCounter++;
-		
+
 		VolumeGroup volumeGroup = new VolumeGroup();
 		volumeGroup.setVolumeGroupId("testVolumeGroupId" + volumeGroupCounter);
 		volumeGroup.setVolumeGroupName("testVolumeGroupName" + volumeGroupCounter);
 		volumeGroup.setHeatStackId("testHeatStackId" + volumeGroupCounter);
-		
+
 		return volumeGroup;
 	}
-	
+
 	public VolumeGroup setVolumeGroup() {
 		VolumeGroup volumeGroup = buildVolumeGroup();
-		
+
 		GenericVnf genericVnf = null;
-		
+
 		try {
 			genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 		} catch(BBObjectNotFoundException e) {
 			genericVnf = setGenericVnf();
 		}
-		
+
 		genericVnf.getVolumeGroups().add(volumeGroup);
 		lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, volumeGroup.getVolumeGroupId());
-		
+
 		return volumeGroup;
 	}
-	
+
 	public Pnf buildPnf() {
 		pnfCounter++;
-		
+
 		Pnf pnf = new Pnf();
 		pnf.setPnfId("testPnfId" + pnfCounter);
 		pnf.setPnfName("testPnfName" + pnfCounter);
-		
+
 		return pnf;
 	}
-	
+
 	public ServiceProxy buildServiceProxy() {
 		serviceProxyCounter++;
-		
+
         ServiceProxy serviceProxy = new ServiceProxy();
         serviceProxy.setServiceInstance(buildServiceInstance());
         serviceProxy.getServiceInstance().getVnfs().add(buildGenericVnf());
-        
+
         Pnf primaryPnf = buildPnf();
         primaryPnf.setRole("Primary");
         serviceProxy.getServiceInstance().getPnfs().add(primaryPnf);
-        
+
         Pnf secondaryPnf = buildPnf();
         secondaryPnf.setRole("Secondary");
         serviceProxy.getServiceInstance().getPnfs().add(secondaryPnf);
-        
+
         return serviceProxy;
 	}
-	
+
 	public VpnBondingLink buildVpnBondingLink() {
 		vpnBondingLinkCounter++;
-		
+
 		VpnBondingLink vpnBondingLink = new VpnBondingLink();
 		vpnBondingLink.setVpnBondingLinkId("testVpnBondingLinkId" + vpnBondingLinkCounter);
-		
+
 		Configuration vnrConfiguration = buildConfiguration();
-		vnrConfiguration.setNetwork(buildL3Network());		
+		vnrConfiguration.setNetwork(buildL3Network());
 		vpnBondingLink.setVnrConfiguration(vnrConfiguration);
 
 		vpnBondingLink.setVrfConfiguration(buildConfiguration());
-		
+
         vpnBondingLink.setInfrastructureServiceProxy(buildServiceProxy());
-        
+
         vpnBondingLink.setTransportServiceProxy(buildServiceProxy());
-		
+
 		return vpnBondingLink;
 	}
-	
+
 	public VpnBondingLink setVpnBondingLink() {
 		VpnBondingLink vpnBondingLink = buildVpnBondingLink();
-		
+
 		ServiceInstance serviceInstance = null;
-		
+
 		try {
 			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 		} catch(BBObjectNotFoundException e) {
 			serviceInstance = setServiceInstance();
 		}
-		
+
 		serviceInstance.getVpnBondingLinks().add(vpnBondingLink);
 		lookupKeyMap.put(ResourceKey.VPN_BONDING_LINK_ID, vpnBondingLink.getVpnBondingLinkId());
 
 
 		return vpnBondingLink;
 	}
-	
+
 	public Customer setAvpnCustomer() {
 		Customer customer = buildCustomer();
-		
+
 		gBBInput.setCustomer(customer);
-		
+
 		return customer;
 	}
-	
+
 	public ServiceProxy setServiceProxy(String uniqueIdentifier, String type) {
 		ServiceProxy serviceProxy = new ServiceProxy();
 		serviceProxy.setId("testProxyId" + uniqueIdentifier);
@@ -642,6 +644,7 @@ public class BuildingBlockTestDataSetup{
 		modelInfo.setModelName("testProxyModelName" + uniqueIdentifier);
 		modelInfo.setModelUuid("testProxyModelUuid" + uniqueIdentifier);
 		modelInfo.setModelVersion("testProxyModelVersion" + uniqueIdentifier);
+		modelInfo.setModelInstanceName("testProxyModelInstanceName" + uniqueIdentifier);
 
 		serviceProxy.setModelInfoServiceProxy(modelInfo);
 
@@ -653,13 +656,14 @@ public class BuildingBlockTestDataSetup{
 		ar.setId("testAllottedResourceId" + uniqueIdentifier);
 
 		ModelInfoAllottedResource modelInfo = new ModelInfoAllottedResource();
-		modelInfo.setModelInvariantUuid("testProxyModelInvariantUuid" + uniqueIdentifier);
-		modelInfo.setModelName("testProxyModelName" + uniqueIdentifier);
-		modelInfo.setModelUuid("testProxyModelUuid" + uniqueIdentifier);
-		modelInfo.setModelVersion("testProxyModelVersion" + uniqueIdentifier);
-		
+		modelInfo.setModelInvariantUuid("testAllottedModelInvariantUuid" + uniqueIdentifier);
+		modelInfo.setModelName("testAllottedModelName" + uniqueIdentifier);
+		modelInfo.setModelUuid("testAllottedModelUuid" + uniqueIdentifier);
+		modelInfo.setModelVersion("testAllottedModelVersion" + uniqueIdentifier);
+		modelInfo.setModelInstanceName("testAllottedModelInstanceName" + uniqueIdentifier);
+
 		ar.setModelInfoAllottedResource(modelInfo);
-		
+
 		return ar;
 	}
 }

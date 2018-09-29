@@ -55,7 +55,7 @@ public class OrchestrationStatusValidator {
 		try {
 			execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, null);
 			
-			String buildingBlockFlowName = (String) execution.getVariable("flowToBeCalled");
+			String buildingBlockFlowName = execution.getFlowToBeCalled();
 			
 			BuildingBlockDetail buildingBlockDetail = catalogDbClient.getBuildingBlockDetail(buildingBlockFlowName);
 			

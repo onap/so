@@ -23,16 +23,22 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
@@ -44,13 +50,18 @@ public class UnassignNetworkBBTest extends BaseTaskTest {
 	
 	@Mock
 	private NetworkBBUtils networkBBUtils;
-	@Mock
-	private ExtractPojosForBB extractPojosForBB;
-	@Autowired
-	private UnassignNetworkBB unassignNetworkBB;
+
+	@InjectMocks
+	private UnassignNetworkBB unassignNetworkBB = new UnassignNetworkBB();
 	
 	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/Network/";	
 	private L3Network network;
+	
+	@Before
+	public void setup(){
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+	}
 	
 	@Test
 	public void checkRelationshipRelatedToTrueTest() throws Exception {
@@ -60,9 +71,12 @@ public class UnassignNetworkBBTest extends BaseTaskTest {
 		final String aaiResponse = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "unassignNetworkBB_queryAAIResponse_.json")));
 		AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(aaiResponse); 
 		Optional<org.onap.aai.domain.yang.L3Network> l3network = aaiResultWrapper.asBean(org.onap.aai.domain.yang.L3Network.class);
+		
 		doReturn(network).when(extractPojosForBB).extractByKey(execution, ResourceKey.NETWORK_ID, "testNetworkId1");
 		doReturn(aaiResultWrapper).when(aaiNetworkResources).queryNetworkWrapperById(network);
-		doReturn(true).when(networkBBUtils).isRelationshipRelatedToExists(l3network, "vf-module");
+		
+		doReturn(true).when(networkBBUtils).isRelationshipRelatedToExists(any(Optional.class), eq("vf-module"));
+		
 		unassignNetworkBB.checkRelationshipRelatedTo(execution, "vf-module");
 		assertThat(execution.getVariable("ErrorUnassignNetworkBB"), notNullValue());
 	}	

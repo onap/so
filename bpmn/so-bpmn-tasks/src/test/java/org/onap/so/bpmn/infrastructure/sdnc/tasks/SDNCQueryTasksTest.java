@@ -22,24 +22,33 @@ package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SDNCQueryTasksTest extends BaseTaskTest{
-	@Autowired
-	private SDNCQueryTasks sdncQueryTasks;
+	@InjectMocks
+	private SDNCQueryTasks sdncQueryTasks = new SDNCQueryTasks();
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
@@ -48,9 +57,15 @@ public class SDNCQueryTasksTest extends BaseTaskTest{
 	private VfModule vfModule;
 	
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		genericVnf = setGenericVnf();
 		vfModule = setVfModule();
+		
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+
 	}
 	
 	@Test
@@ -105,8 +120,8 @@ public class SDNCQueryTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void queryVfModuleForVolumeGroupVfObjectExceptionTest() throws Exception {
-		gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0).getVnfs().get(0).getVfModules().clear();
-		
+		expectedException.expect(BpmnError.class);
+		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any());	
 		sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
 		
 		verify(sdncVfModuleResources, times(0)).queryVfModule(any(VfModule.class));

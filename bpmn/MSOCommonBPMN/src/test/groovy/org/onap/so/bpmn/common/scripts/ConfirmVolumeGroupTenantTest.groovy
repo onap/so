@@ -20,106 +20,80 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*
-
-import org.onap.so.rest.HttpHeader
-import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-import org.mockito.internal.debugging.MockitoDebuggerImpl
-import org.junit.Before
-import org.onap.so.bpmn.common.scripts.AaiUtil;
-import org.junit.Rule;
-import org.junit.Test
-import org.junit.Ignore
-import org.junit.runner.RunWith
-import org.junit.Before;
-import org.junit.Test;
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
-import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
-import org.mockito.runners.MockitoJUnitRunner
+import org.onap.aai.domain.yang.AllottedResource
+import org.onap.aai.domain.yang.CloudRegion
+import org.onap.aai.domain.yang.Relationship
+import org.onap.aai.domain.yang.RelationshipData
+import org.onap.aai.domain.yang.RelationshipList
+import org.onap.aai.domain.yang.VolumeGroup
 import org.onap.so.bpmn.common.scripts.ConfirmVolumeGroupTenant
-import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.constants.Defaults
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*
-import static org.mockito.Mockito.*
+import javax.ws.rs.core.UriBuilder
 
-@RunWith(MockitoJUnitRunner.class)
-@Ignore
+import static com.shazam.shazamcrest.MatcherAssert.assertThat
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs
+import static org.mockito.Mockito.doReturn
+import static org.mockito.Mockito.spy
+import static org.mockito.Mockito.times
+import static org.mockito.Mockito.verify
+import static org.mockito.Mockito.when
+
 class ConfirmVolumeGroupTenantTest extends MsoGroovyTest {
 
     @Captor
-    ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class);
+    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(8090);
-
+    @Before
+    public void init(){
+        super.init("ConfirmVolumeGroupTenant")
+    }
     @Test
-    public void testpreProcessRequest() {
-        ExecutionEntity mockExecution = setupMock()
+    void testpreProcessRequest() {
+        VolumeGroup expectedVolumeGroup = new VolumeGroup();
+        expectedVolumeGroup.setVolumeGroupId("VolumeGroupId")
+        RelationshipList relationshipList = new RelationshipList();
+        Relationship relationship = new Relationship();
+        relationship.setRelatedTo("tenant")
+        RelationshipData data = new RelationshipData();
+        data.setRelationshipKey("tenant.tenant-id")
+        data.setRelationshipValue("tenantId")
+        relationship.setRelatedLink("/cloud-infrastructure/cloud-regions/cloud-region/att-aic/cloudRegionId/tenants/tenant/tenantId")
+        relationship.getRelationshipData().add(data)
+        relationshipList.getRelationship().add(relationship)
+        expectedVolumeGroup.setRelationshipList(relationshipList)
+        
+        
+        expectedVolumeGroup.setRelationshipList(relationshipList)
+        ConfirmVolumeGroupTenant confirmVolumeGroupTenant = spy(ConfirmVolumeGroupTenant.class)
+        when(confirmVolumeGroupTenant.getAAIClient()).thenReturn(client)
+        when(mockExecution.getVariable("aicCloudRegion")).thenReturn("aicCloudRegionId");
+        when(mockExecution.getVariable("volumeGroupId")).thenReturn("volumeGroupId");
         when(mockExecution.getVariable("aai.endpoint")).thenReturn('http://localhost:8090')
-        when(mockExecution.getVariable("volumeGroupId")).thenReturn('testVolumeGroupId')
         when(mockExecution.getVariable("volumeGroupName")).thenReturn('testVolumeGroupName')
         when(mockExecution.getVariable("tenantId")).thenReturn('tenantId')
-        when(mockExecution.getVariable("aicCloudRegion")).thenReturn('aicCloudRegion')
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
         when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
         when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn('/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic')
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-
-        mockData()
-
-
-        ConfirmVolumeGroupTenant confirmVolumeGroupTenant = new ConfirmVolumeGroupTenant()
+        AAIResourceUri arURI = AAIUriFactory. createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), "aicCloudRegionId","volumeGroupId")
+        AAIResultWrapper wrapper = new AAIResultWrapper(expectedVolumeGroup)
+        when(client.get(arURI)).thenReturn(wrapper)
         confirmVolumeGroupTenant.preProcessRequest(mockExecution)
-      /*  Mockito.verify(mockExecution, times(5)).setVariable(captor.capture(), captor.capture())*/
-        verify(mockExecution).setVariable("prefix", "CVGT_")
-        verify(mockExecution).setVariable("queryVolumeGroupResponseCode", 200)
-        verify(mockExecution).setVariable("queryAAIVolumeGroupResponse", "<volume-group xmlns=\"http://org.openecomp.aai.inventory/v10\"><volume-group-id>17ef4658-bd1f-4ef0-9ca0-ea76e2bf122c</volume-group-id><volume-group-name>MSOTESTVOL103a-vSAMP12_base_module-0_vol</volume-group-name><heat-stack-id>9d1f53e3-3158-44f8-8032-a6bf40bbc9db</heat-stack-id><vnf-type>pcrf-capacity</vnf-type><orchestration-status>Active</orchestration-status><resource-version>0000020</resource-version><relationship-list><relationship><related-to>tenant</related-to><relationship-data><relationship-key>cloud-region.cloud-owner</relationship-key><relationship-value>att-aic</relationship-value></relationship-data><relationship-data><relationship-key>cloud-region.cloud-region-id</relationship-key><relationship-value>RegionOne</relationship-value></relationship-data><relationship-data><relationship-key>tenant.tenant-id</relationship-key><relationship-value>22eb191dd41a4f3c9be370fc638322f4</relationship-value></relationship-data></relationship></relationship-list></volume-group>")
-        verify(mockExecution).setVariable("tenantIdsMatch", false)
-        verify(mockExecution).setVariable("groupNamesMatch", false)
-    }
+        Mockito.verify(mockExecution, times(4)).setVariable(captor.capture(), captor.capture())
+        List<ExecutionEntity> executionEntities = captor.getAllValues()
 
-
-    private void mockData() {
-        stubFor(get(urlMatching("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic/aicCloudRegion/volume-groups/volume-group/testVolumeGroupId"))
-                .willReturn(aResponse()
-                .withStatus(200)
-                .withBody("<volume-group xmlns=\"http://org.openecomp.aai.inventory/v10\"><volume-group-id>17ef4658-bd1f-4ef0-9ca0-ea76e2bf122c</volume-group-id><volume-group-name>MSOTESTVOL103a-vSAMP12_base_module-0_vol</volume-group-name><heat-stack-id>9d1f53e3-3158-44f8-8032-a6bf40bbc9db</heat-stack-id><vnf-type>pcrf-capacity</vnf-type><orchestration-status>Active</orchestration-status><resource-version>0000020</resource-version><relationship-list><relationship><related-to>tenant</related-to><relationship-data><relationship-key>cloud-region.cloud-owner</relationship-key><relationship-value>att-aic</relationship-value></relationship-data><relationship-data><relationship-key>cloud-region.cloud-region-id</relationship-key><relationship-value>RegionOne</relationship-value></relationship-data><relationship-data><relationship-key>tenant.tenant-id</relationship-key><relationship-value>22eb191dd41a4f3c9be370fc638322f4</relationship-value></relationship-data></relationship></relationship-list></volume-group>")))
-    }
-
-    private ExecutionEntity setupMock() {
-
-        ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
-        when(mockProcessDefinition.getKey()).thenReturn("ConfirmVolumeGroupTenant")
-        RepositoryService mockRepositoryService = mock(RepositoryService.class)
-        when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
-        when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("ConfirmVolumeGroupTenant")
-        when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-        ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-        when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
-
-        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-        when(mockExecution.getId()).thenReturn("100")
-        when(mockExecution.getProcessDefinitionId()).thenReturn("ConfirmVolumeGroupTenant")
-        when(mockExecution.getProcessInstanceId()).thenReturn("ConfirmVolumeGroupTenant")
-        when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-        when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
-
-        return mockExecution
+        assertThat(executionEntities.get(3), sameBeanAs(expectedVolumeGroup))
     }
 }

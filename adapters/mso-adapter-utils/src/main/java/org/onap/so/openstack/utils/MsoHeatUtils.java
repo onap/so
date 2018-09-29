@@ -119,9 +119,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoHeatUtils.class);
 
     // Properties names and variables (with default values)
-    protected String createPollIntervalProp = "ecomp.mso.adapters.po.pollInterval";
-    private String deletePollIntervalProp = "ecomp.mso.adapters.po.pollInterval";
-    private String deletePollTimeoutProp = "ecomp.mso.adapters.po.pollTimeout";
+    protected String createPollIntervalProp = "onap.so.adapters.po.pollInterval";
+    private String deletePollIntervalProp = "onap.so.adapters.po.pollInterval";
+    private String deletePollTimeoutProp = "onap.so.adapters.po.pollTimeout";
 
     protected static final String createPollIntervalDefault = "15";
     private static final String deletePollIntervalDefault = "15";

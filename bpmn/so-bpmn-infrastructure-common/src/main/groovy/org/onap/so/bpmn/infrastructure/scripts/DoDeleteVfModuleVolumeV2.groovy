@@ -20,9 +20,12 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.apache.commons.lang3.*
+import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.Relationship
+import org.onap.aai.domain.yang.RelationshipData
+import org.onap.aai.domain.yang.VolumeGroup
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -30,9 +33,14 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.Relationships
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.constants.Defaults
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils
+import javax.ws.rs.NotFoundException
 
 class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteVfModuleVolumeV2.class);
@@ -86,6 +94,8 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 			execution.setVariable("tenantId", tenantId)
 			cloudSiteId = jsonUtil.getJsonValue(cloudConfiguration, "lcpCloudRegionId")
 			execution.setVariable("lcpCloudRegionId", cloudSiteId)
+			cloudOwner = jsonUtil.getJsonValue(cloudConfiguration, "cloudOwner")
+			execution.setVariable("cloudOwner", cloudOwner)
 		}
 	}
 	
@@ -107,14 +117,12 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	 * @param isDebugEnabled
 	 */
 	public void callRESTQueryAAICloudRegion(DelegateExecution execution, isDebugEnabled) {
-		
-		String cloudRegion = execution.getVariable('lcpCloudRegionId')					
-		String aai_endpoint =  UrnPropertiesReader.getVariable("aai.endpoint",execution)
+
+		String cloudRegion = execution.getVariable('lcpCloudRegionId')
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aai_uri = aaiUtil.getCloudInfrastructureCloudRegionUri(execution)
-		String queryCloudRegionRequest = "${aai_endpoint}${aai_uri}/" + cloudRegion
-		msoLogger.debug(queryCloudRegionRequest)
-		msoLogger.debug("AAI query cloud region URI - " + queryCloudRegionRequest)
+
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+		def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
 
 		cloudRegion = aaiUtil.getAAICloudReqion(execution,  queryCloudRegionRequest, "PO", cloudRegion)
 
@@ -149,61 +157,52 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 		}
 		String cloudRegion = execution.getVariable(prefix+'aicCloudRegion')
 
-		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String queryAAIVolumeGroupRequest = aaiEndpoint + '/' + URLEncoder.encode(cloudRegion, "UTF-8") + "/volume-groups/volume-group/" + UriUtils.encode(volumeGroupId, "UTF-8")
+		try {
+			AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP , Defaults.CLOUD_OWNER.toString(), cloudRegion,volumeGroupId)
+			Optional<VolumeGroup> volumeGroupOps = getAAIClient().get(VolumeGroup.class,resourceUri)
+            if(volumeGroupOps.present) {
+                VolumeGroup volumeGroup = volumeGroupOps.get()
+                execution.setVariable(prefix + "queryAAIVolGrpResponse", volumeGroup)
+                def heatStackId = volumeGroup.getHeatStackId()==null ? '' : volumeGroup.getHeatStackId()
+                execution.setVariable(prefix+'volumeGroupHeatStackId', heatStackId)
 
-		msoLogger.debug('Query AAI volume group by ID: ' + queryAAIVolumeGroupRequest)
-		msoLogger.debug('Query AAI volume group by ID: ' + queryAAIVolumeGroupRequest)
+                msoLogger.debug('Heat stack id from AAI response: ' + heatStackId)
+				AAIResultWrapper wrapper = getAAIClient().get(uri);
+				Optional<Relationships> relationships = wrapper.getRelationships()
+				String volumeGroupTenantId = null
 
-		APIResponse response = aaiUtil.executeAAIGetCall(execution, queryAAIVolumeGroupRequest)
+				if(relationships.isPresent()){
+					if(relationships.get().getRelatedAAIUris(AAIObjectType.VF_MODULE)){
+						msoLogger.debug('Volume Group ' + volumeGroupId + ' currently in use')
+						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume Group ${volumeGroupId} currently in use - found vf-module relationship.")
+					}
+					for(AAIResourceUri aaiResourceUri: relationships.get().getRelatedAAIUris(AAIObjectType.TENANT)){
+						volumeGroupTenantId = aaiResourceUri.getURIKeys().get("tenant-id")
+					}
+				}
 
-		String returnCode = response.getStatusCode()
-		String aaiResponseAsString = response.getResponseBodyAsString()
+                msoLogger.debug('Tenant ID from AAI response: ' + volumeGroupTenantId)
 
-		msoLogger.debug("AAI query volume group by id return code: " + returnCode)
-		msoLogger.debug("AAI query volume group by id response: " + aaiResponseAsString)
-		msoLogger.debug('AAI query volume group by id return code: ' + returnCode)
-		msoLogger.debug('AAI query volume group by id response: ' + aaiResponseAsString)
+                if (volumeGroupTenantId == null) {
+                    msoLogger.debug("Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
+                }
 
-		execution.setVariable(prefix+"queryAAIVolGrpResponse", aaiResponseAsString)
-
-		if (returnCode=='200' || returnCode == '204') {
-
-			def heatStackId = getNodeTextForce(aaiResponseAsString, 'heat-stack-id')
-			execution.setVariable(prefix+'volumeGroupHeatStackId', heatStackId)
-
-			msoLogger.debug('Heat stack id from AAI response: ' + heatStackId)
-			
-			if(hasVfModuleRelationship(aaiResponseAsString)){
-				msoLogger.debug('Volume Group ' + volumeGroupId + ' currently in use')
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume Group ${volumeGroupId} currently in use - found vf-module relationship.")
-			}
-
-			def volumeGroupTenantId = getTenantIdFromVolumeGroup(aaiResponseAsString)
-			msoLogger.debug('Tenant ID from AAI response: ' + volumeGroupTenantId)
-			
-			if (volumeGroupTenantId == null) {
-				msoLogger.debug("Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
-			}
-			
-			if (volumeGroupTenantId != tenantId) {
-				def String errorMessage = 'TenantId ' + tenantId + ' in incoming request does not match Tenant Id ' + volumeGroupTenantId +	' retrieved from AAI for Volume Group Id ' + volumeGroupId
-				msoLogger.debug("Error in DeleteVfModuleVolume: " + errorMessage)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 5000, errorMessage)
-			}
-			msoLogger.debug('Received Tenant Id ' + volumeGroupTenantId + ' from AAI for Volume Group with Volume Group Id ' + volumeGroupId )
-		}
-		else {
-			if (returnCode=='404') {
-				msoLogger.debug("Volume Group ${volumeGroupId} not found in AAI")
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume Group ${volumeGroupId} not found in AAI. Response code: 404")
-			}
-			else {
-				WorkflowException aWorkflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-				throw new BpmnError("MSOWorkflowException")
-			}
+                if (volumeGroupTenantId != tenantId) {
+                    def String errorMessage = 'TenantId ' + tenantId + ' in incoming request does not match Tenant Id ' + volumeGroupTenantId +	' retrieved from AAI for Volume Group Id ' + volumeGroupId
+                    msoLogger.debug("Error in DeleteVfModuleVolume: " + errorMessage)
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 5000, errorMessage)
+                }
+                msoLogger.debug('Received Tenant Id ' + volumeGroupTenantId + ' from AAI for Volume Group with Volume Group Id ' + volumeGroupId )
+            }else{
+                execution.setVariable(prefix + "queryAAIVolGrpResponse", "Volume Group ${volumeGroupId} not found in AAI. Response code: 404")
+                msoLogger.debug("Volume Group ${volumeGroupId} not found in AAI")
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume Group ${volumeGroupId} not found in AAI. Response code: 404")
+            }
+		}catch (Exception ex) {
+            execution.setVariable(prefix+"queryAAIVolGrpResponse", ex.getMessage())
+            WorkflowException aWorkflowException = exceptionUtil.MapAAIExceptionToWorkflowException(ex.getMessage(), execution)
+            throw new BpmnError("MSOWorkflowException")
 		}
 	}
 	
@@ -257,99 +256,20 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	public void callRESTDeleteAAIVolumeGroup(DelegateExecution execution, isDebugEnabled) {
 		
 		// get variables
-		String queryAAIVolGrpIdResponse = execution.getVariable(prefix+"queryAAIVolGrpResponse")
-		String groupId = utils.getNodeText(queryAAIVolGrpIdResponse, "volume-group-id")
-		String resourceVersion = utils.getNodeText(queryAAIVolGrpIdResponse, "resource-version")
-		
-		String messageId = UUID.randomUUID().toString()
+		VolumeGroup volumeGroupResponse = execution.getVariable(prefix+"queryAAIVolGrpResponse")
+		String volumeGroupId = volumeGroupResponse.getVolumeGroupId()
 		String cloudRegion = execution.getVariable(prefix+'aicCloudRegion')
 
-		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String deleteAAIVolumeGrpIdRequest = aaiEndpoint + '/' + URLEncoder.encode(cloudRegion, "UTF-8")  + "/volume-groups/volume-group/" +  UriUtils.encode(groupId, "UTF-8")
-
-		if(resourceVersion !=null){
-			deleteAAIVolumeGrpIdRequest = deleteAAIVolumeGrpIdRequest +'?resource-version=' + UriUtils.encode(resourceVersion, 'UTF-8')
-		}
-
-		msoLogger.debug('Delete AAI volume group : ' + deleteAAIVolumeGrpIdRequest)
-		msoLogger.debug("Delete AAI volume group : " + deleteAAIVolumeGrpIdRequest)
-
-		APIResponse response = aaiUtil.executeAAIDeleteCall(execution, deleteAAIVolumeGrpIdRequest)
-
-		String returnCode = response.getStatusCode()
-		String aaiResponseAsString = response.getResponseBodyAsString()
-
-		msoLogger.debug("AAI delete volume group return code: " + returnCode)
-		msoLogger.debug("AAI delete volume group response: " + aaiResponseAsString)
-		msoLogger.debug("AAI delete volume group return code: " + returnCode)
-		msoLogger.debug("AAI delete volume group response: " + aaiResponseAsString)
-
-		ExceptionUtil exceptionUtil = new ExceptionUtil()
-		if (returnCode=='200' || (returnCode == '204')) {
-			msoLogger.debug("Volume group $groupId deleted.")
-		} else {
-			if (returnCode=='404') {
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume group $groupId not found for delete in AAI Response code: 404")
-			} else {
-				WorkflowException aWorkflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-				throw new BpmnError("MSOWorkflowException")
-			}
-		}
-	}
-	
-	
-	/**
-	 * Check if volume group has a relationship to vf-module
-	 * @param volumeGroupXml
-	 * @return
-	 */
-	private boolean hasVfModuleRelationship(String volumeGroupXml) {
-		def Node volumeGroupNode = xmlParser.parseText(volumeGroupXml)
-		def Node relationshipList = utils.getChildNode(volumeGroupNode, 'relationship-list')
-		if (relationshipList != null) {
-			def NodeList relationships = utils.getIdenticalChildren(relationshipList, 'relationship')
-			for (Node relationship in relationships) {
-				def Node relatedTo = utils.getChildNode(relationship, 'related-to')
-				if ((relatedTo != null) && (relatedTo.text().equals('vf-module'))) {
-					def Node relatedLink = utils.getChildNode(relationship, 'related-link')
-					if (relatedLink !=null && relatedLink.text() != null){
-						return true
-					}
-				}
-			}
-		}
-		return false
+        try {
+            AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId)
+            getAAIClient().delete(resourceUri)
+            msoLogger.debug("Volume group $volumeGroupId deleted.")
+        }catch (NotFoundException ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume group $volumeGroupId not found for delete in AAI Response code: 404")
+        }catch (Exception ex) {
+            WorkflowException aWorkflowException = exceptionUtil.MapAAIExceptionToWorkflowException(ex.getMessage(), execution)
+            throw new BpmnError("MSOWorkflowException")
+        }
 	}
 
-	
-	/**
-	 * Extract the Tenant Id from the Volume Group information returned by AAI.
-	 * @param volumeGroupXml Volume Group XML returned by AAI.
-	 * @return the Tenant Id extracted from the Volume Group information. 'null' is returned if
-	 * the Tenant Id is missing or could not otherwise be extracted.
-	 */
-	private String getTenantIdFromVolumeGroup(String volumeGroupXml) {
-		def Node volumeGroupNode = xmlParser.parseText(volumeGroupXml)
-		def Node relationshipList = utils.getChildNode(volumeGroupNode, 'relationship-list')
-		if (relationshipList != null) {
-			def NodeList relationships = utils.getIdenticalChildren(relationshipList, 'relationship')
-			for (Node relationship in relationships) {
-				def Node relatedTo = utils.getChildNode(relationship, 'related-to')
-				if ((relatedTo != null) && (relatedTo.text().equals('tenant'))) {
-					def NodeList relationshipDataList = utils.getIdenticalChildren(relationship, 'relationship-data')
-					for (Node relationshipData in relationshipDataList) {
-						def Node relationshipKey = utils.getChildNode(relationshipData, 'relationship-key')
-						if ((relationshipKey != null) && (relationshipKey.text().equals('tenant.tenant-id'))) {
-							def Node relationshipValue = utils.getChildNode(relationshipData, 'relationship-value')
-							if (relationshipValue != null) {
-								return relationshipValue.text()
-							}
-						}
-					}
-				}
-			}
-		}
-		return null
-	}
 }

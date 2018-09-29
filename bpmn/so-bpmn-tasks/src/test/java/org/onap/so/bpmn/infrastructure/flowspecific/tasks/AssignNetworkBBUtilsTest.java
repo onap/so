@@ -23,11 +23,13 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 
 public class AssignNetworkBBUtilsTest extends BaseTaskTest {
-	//Necessary because AssignNetworkBBUtils is already mocked using MockBean in the base class for use in other tests
+	
+	@InjectMocks
 	private AssignNetworkBBUtils nonMockAssignNetworkBBUtils = new AssignNetworkBBUtils();
 	
 	private CloudRegion cloudRegion;

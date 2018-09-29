@@ -170,6 +170,8 @@ public class UpdateVnfInfra extends VnfCmBase {
 			def cloudConfiguration = reqMap.requestDetails?.cloudConfiguration
 			def lcpCloudRegionId	= cloudConfiguration.lcpCloudRegionId
 			execution.setVariable('lcpCloudRegionId', lcpCloudRegionId)
+			def cloudOwner	= jsonUtils.getJsonValue(cloudConfiguration, "cloudOwner")
+			execution.setVariable('cloudOwner', cloudOwner)
 			def tenantId = cloudConfiguration.tenantId
 			execution.setVariable('tenantId', tenantId)
 			

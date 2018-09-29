@@ -24,6 +24,7 @@ import static org.apache.commons.lang3.StringUtils.*
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -105,7 +106,13 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 
 			String vnfName = execution.getVariable("vnfName")
 			if (vnfName.equals("") || vnfName.equals("null")) {
-				vnfName = null
+				AAIResourcesClient resourceClient = new AAIResourcesClient()
+				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, execution.getVariable("vnfId"))
+				if(resourceClient.exists(uri)){
+					exceptionUtil.buildWorkflowException(execution, 5000, "Generic Vnf Already Exist.")
+				}
+
+
 			}
 			execution.setVariable("DoCVNF_vnfName", vnfName)
 			msoLogger.debug("Incoming Vnf Name is: " + vnfName)

@@ -36,7 +36,6 @@ import org.junit.runner.RunWith;
 import org.onap.so.bpmn.buildingblock.SniroHomingV2;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.common.InjectionHelper;
-import org.onap.so.bpmn.common.MockLoggerDelegate;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAIFlagTasks;
 import org.onap.so.bpmn.sdno.tasks.SDNOHealthCheckTasks;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
@@ -53,7 +52,7 @@ import org.onap.so.client.sniro.SniroClient;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -73,17 +72,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ContextConfiguration
 @AutoConfigureWireMock(port = 0)
 public abstract class BaseTest extends BuildingBlockTestDataSetup {
-	
+
 
 	protected Map<String, Object> variables = new HashMap<>();
 
 	protected TestRestTemplate restTemplate = new TestRestTemplate();
 
 	protected HttpHeaders headers = new HttpHeaders();
-	
-	@Value("${wiremock.server.port")
+
+	@Value("${wiremock.server.port}")
 	protected String wireMockPort;
-	
+
 	@Autowired
 	protected RuntimeService runtimeService;
 
@@ -92,13 +91,13 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
 	/*
 	 * Mocked for injection via autowiring
 	 */
-	
+
 	@Value("${mso.catalog.db.spring.endpoint}")
 	protected String endpoint;
-	
+
 	@MockBean
 	protected CatalogDbClient MOCK_catalogDbClient;
-	
+
 	@SpyBean
 	protected InjectionHelper MOCK_injectionHelper;
 
@@ -111,21 +110,20 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
 	protected NetworkAdapterClientImpl MOCK_networkAdapterClient;
 	@SpyBean
 	protected SDNCClient MOCK_sdncClient;
-	
+
 	@SpyBean
 	protected AAIFlagTasks aaiFlagTasks;
-	
+
 	@SpyBean
 	protected AAIVnfResources aaiVnfResources;
-	
+
 	@SpyBean
 	protected ExceptionBuilder exceptionUtil;
-	
+
 	@SpyBean
 	protected SDNOHealthCheckResources MOCK_sdnoHealthCheckResources;
-	
 
-	
+
 
 
 
@@ -138,8 +136,8 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
 	 */
 
 
-	
-	
+
+
 	@SpyBean
 	protected BBInputSetupMapperLayer SPY_bbInputSetupMapperLayer;
 	@SpyBean
@@ -148,38 +146,38 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
 	protected BBInputSetup SPY_bbInputSetup;
 	@SpyBean
 	protected SniroHomingV2 sniroHoming;
-	
+
 	@SpyBean
 	protected SniroClient sniroClient;
-	
+
 	@SpyBean
-	protected SDNOHealthCheckTasks sdnoHealthCheckTasks;	
-	
+	protected SDNOHealthCheckTasks sdnoHealthCheckTasks;
+
 	/*
 	 *  Mocked for injection via the IntectionHelper
 	 */
-	
 
-	
+
+
 	@Before
 	public void baseTestBefore() {
 		variables.put("gBuildingBlockExecution", new DelegateExecutionImpl(new HashMap<>()));
-	
-		
+
+
 	}
 
 	@LocalServerPort
 	private int port;
-	
+
 	protected String readFile(String path) throws IOException {
 		return readFile(path, Charset.defaultCharset());
 	}
-	
+
 	protected String readFile(String path, Charset encoding) throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded, encoding);
 	}
-	
+
 	protected String readJsonFileAsString(String fileLocation) throws IOException{
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode jsonNode = mapper.readTree(new File(fileLocation));
@@ -205,5 +203,5 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
 				.camundaClass(MockLoggerDelegate.class.getName()).endEvent().name("End Point").done();
 		repositoryService.createDeployment().addModelInstance(fileName + ".bpmn", modelInstance).deploy();
 	}
-	
+
 }

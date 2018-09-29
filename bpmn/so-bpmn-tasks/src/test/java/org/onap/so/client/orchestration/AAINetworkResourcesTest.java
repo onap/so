@@ -25,9 +25,9 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -44,7 +44,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.NetworkPolicy;
 import org.onap.aai.domain.yang.RouteTableReference;
 import org.onap.aai.domain.yang.VpnBinding;
@@ -55,6 +55,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
@@ -64,7 +65,7 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class AAINetworkResourcesTest extends TestDataSetup{
 	
 	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
@@ -74,6 +75,7 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 	private InstanceGroup instanceGroup;
 	private ServiceInstance serviceInstance;
 	private CloudRegion cloudRegion;
+	private Subnet subnet;
 	
 	@Mock
 	protected AAIResourcesClient MOCK_aaiResourcesClient;
@@ -101,6 +103,9 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 		serviceInstance = buildServiceInstance();
 		
 		cloudRegion = buildCloudRegion();
+		
+		subnet = buildSubnet();
+		
 		doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
 	}
 	
@@ -313,5 +318,16 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 		doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
 		aaiNetworkResources.deleteNetworkInstanceGroup(instanceGroup);
 		verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
+	}
+	
+	@Test
+	public void updateSubnetTest() throws Exception {
+
+		doReturn(new org.onap.aai.domain.yang.Subnet()).when(MOCK_aaiObjectMapper).mapSubnet(subnet);
+		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Subnet.class));
+		
+		aaiNetworkResources.updateSubnet(network, subnet);
+
+		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Subnet.class));
 	}
 }

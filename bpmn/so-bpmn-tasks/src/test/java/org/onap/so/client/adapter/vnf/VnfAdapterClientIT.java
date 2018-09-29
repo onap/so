@@ -42,11 +42,11 @@ import org.onap.so.adapters.vnfrest.UpdateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.UpdateVfModuleResponse;
 import org.onap.so.adapters.vnfrest.VfModuleExceptionResponse;
 import org.onap.so.adapters.vnfrest.VfModuleRollback;
-import org.onap.so.BaseTest;
+import org.onap.so.BaseIntegrationTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class VnfAdapterClientIT extends BaseTest{
+public class VnfAdapterClientIT extends BaseIntegrationTest{
 
 	private static final String TESTING_ID = "___TESTING___";
 	private static final String AAI_VNF_ID = "test";
