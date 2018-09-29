@@ -20,125 +20,157 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
-import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.mock.StubResponseAAI
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
-@Ignore
-class DeleteAAIVfModuleTest {
+import javax.ws.rs.NotFoundException
+
+import org.camunda.bpm.engine.ProcessEngineServices
+import org.camunda.bpm.engine.RepositoryService
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
+import org.camunda.bpm.engine.repository.ProcessDefinition
+import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Test
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.Mockito
+import org.mockito.Spy
+import org.onap.aai.domain.yang.GenericVnf
+import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+
+class DeleteAAIVfModuleTest extends  MsoGroovyTest{
 
     def prefix = "DAAIVfMod_"
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
+    @Spy
+    DeleteAAIVfModule deleteAAIVfModule ;
 
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
     @Before
     void init() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        super.init("DeleteAAIVfModule")
+        when(deleteAAIVfModule.getAAIClient()).thenReturn(client)
     }
 
     @Test
     void testQueryAAIForGenericVnf() {
         ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("prefix")).thenReturn(prefix)
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable(prefix + "genericVnfEndpoint")).thenReturn("/aai/v8/network/generic-vnfs/generic-vnf/skask")
-        when(mockExecution.getVariable(prefix + "vfModuleId")).thenReturn("supercool")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
-        when(mockExecution.getVariable("aai.auth")).thenReturn("9B2278E8B8E95F256A560719055F4DF3")
-        when(mockExecution.getVariable("mso.msoKey")).thenReturn("aa3871669d893c7fb8abbcda31b88b4f")
-
-        StubResponseAAI.MockAAIVfModule()
-        DeleteAAIVfModule obj = new DeleteAAIVfModule()
-        obj.queryAAIForGenericVnf(mockExecution)
-
+        when(mockExecution.getVariable("DAAIVfMod_vnfId")).thenReturn("vnfId1")
+        mockAAIGenericVnf("vnfId1")
+        deleteAAIVfModule.queryAAIForGenericVnf(mockExecution)
         Mockito.verify(mockExecution).setVariable(prefix + "queryGenericVnfResponseCode", 200)
     }
 
     @Test
-    void testQueryAAIForGenericVnfEndpointNull() {
+    void testQueryAAIForGenericVnfNotFound() {
         ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable(prefix + "genericVnfEndpoint")).thenReturn("/aai/v8/network/generic-vnfs/generic-vnf/skask")
-        when(mockExecution.getVariable(prefix + "vfModuleId")).thenReturn("supercool")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn(null)
-        when(mockExecution.getVariable("aai.auth")).thenReturn("9B2278E8B8E95F256A560719055F4DF3")
-        when(mockExecution.getVariable("mso.msoKey")).thenReturn("aa3871669d893c7fb8abbcda31b88b4f")
-
-        StubResponseAAI.MockAAIVfModule()
+        when(mockExecution.getVariable("DAAIVfMod_vnfId")).thenReturn("vnfId1")
+        mockAAIGenericVnfNotFound("vnfId1")
+        deleteAAIVfModule.queryAAIForGenericVnf(mockExecution)
+        Mockito.verify(mockExecution).setVariable(prefix + "queryGenericVnfResponseCode", 404)
+    }
+    @Test
+    void testQueryAAIForGenericVnfEndpointNull() {
+        DelegateExecution execution = new DelegateExecutionFake();
+        execution.setVariable("DAAIVfMod_vnfId", "vnfId1")
         try {
-            DeleteAAIVfModule obj = new DeleteAAIVfModule()
-            obj.queryAAIForGenericVnf(mockExecution)
+            deleteAAIVfModule.queryAAIForGenericVnf(execution)
         } catch (Exception ex) {
             println " Test End - Handle catch-throw BpmnError()! "
         }
 
-        Mockito.verify(mockExecution, times(2)).setVariable(captor.capture(), captor.capture())
-        WorkflowException workflowException = captor.getValue()
-        Assert.assertEquals(5000, workflowException.getErrorCode())
-        Assert.assertEquals("Internal Error - Occured during queryAAIForGenericVnf", workflowException.getErrorMessage())
+        Assert.assertEquals(404, execution.getVariable("DAAIVfMod_queryGenericVnfResponseCode"))
+        Assert.assertEquals("Vnf Not Found!", execution.getVariable("DAAIVfMod_queryGenericVnfResponse"))
     }
 
     @Test
     void testDeleteGenericVnf() {
         ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable(prefix + "genericVnfEndpoint")).thenReturn("/aai/v9/cloud-infrastructure/volume-groups/volume-group/78987")
-        when(mockExecution.getVariable(prefix + "genVnfRsrcVer")).thenReturn("0000020")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
-        when(mockExecution.getVariable("aai.auth")).thenReturn("9B2278E8B8E95F256A560719055F4DF3")
-        when(mockExecution.getVariable("mso.msoKey")).thenReturn("aa3871669d893c7fb8abbcda31b88b4f")
-
-        stubFor(delete(urlMatching("/aai/v[0-9]+/cloud-infrastructure/volume-groups/volume-group/78987/[?]resource-version=0000020"))
-                .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "text/xml")
-                .withBodyFile("")))
-
-        StubResponseAAI.MockAAIVfModule()
-        DeleteAAIVfModule obj = new DeleteAAIVfModule()
-        obj.deleteGenericVnf(mockExecution)
-
+        when(mockExecution.getVariable("DAAIVfMod_vnfId")).thenReturn("vnfId1")
+        doNothing().when(client).delete(isA(AAIResourceUri.class))
+        deleteAAIVfModule.deleteGenericVnf(mockExecution)
         Mockito.verify(mockExecution).setVariable(prefix + "deleteGenericVnfResponseCode", 200)
     }
 
     @Test
+    void testParseForVfModule() {
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable("DAAIVfMod_vfModuleId")).thenReturn("testVfModuleIdGWSec")
+        Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
+        when(mockExecution.getVariable("DAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf.get())
+        deleteAAIVfModule.parseForVfModule(mockExecution)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_moduleExists", true)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_isBaseModule", false)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_isLastModule", false)
+    }
+
+    @Test
+    void testParseForVfModuleNotFound() {
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable("DAAIVfMod_vfModuleId")).thenReturn("notFound")
+        when(mockExecution.getVariable("DAAIVfMod_moduleExists")).thenReturn(false)
+        Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
+        when(mockExecution.getVariable("DAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf.get())
+        deleteAAIVfModule.parseForVfModule(mockExecution)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_moduleExists", false)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_isBaseModule", false)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_isLastModule", false)
+    }
+
+    @Test
+    void testParseForVfModuleBase() {
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable("DAAIVfMod_vfModuleId")).thenReturn("lukewarm")
+        Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
+        when(mockExecution.getVariable("DAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf.get())
+        deleteAAIVfModule.parseForVfModule(mockExecution)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_moduleExists", true)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_isBaseModule", true)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_isLastModule", false)
+    }
+
+    @Test
+    void testParseForVfModuleLast() {
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable("DAAIVfMod_vfModuleId")).thenReturn("testVfModuleIdGWSec")
+        Optional<GenericVnf> genericVnfOps = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
+        GenericVnf genericVnf =  genericVnfOps.get();
+        genericVnf.getVfModules().getVfModule().remove(0)
+        when(mockExecution.getVariable("DAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf)
+        deleteAAIVfModule.parseForVfModule(mockExecution)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_moduleExists", true)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_isBaseModule", false)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_isLastModule", true)
+    }
+
+    @Test
+    void testParseForVfModuleBaseLast() {
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable("DAAIVfMod_vfModuleId")).thenReturn("lukewarm")
+        Optional<GenericVnf> genericVnfOps = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
+        GenericVnf genericVnf =  genericVnfOps.get();
+        genericVnf.getVfModules().getVfModule().remove(1)
+        when(mockExecution.getVariable("DAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf)
+        deleteAAIVfModule.parseForVfModule(mockExecution)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_moduleExists", true)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_isBaseModule", true)
+        Mockito.verify(mockExecution).setVariable("DAAIVfMod_isLastModule", true)
+    }
+
+
+
+    @Test
     void testDeleteGenericVnfEndpointNull() {
         ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable(prefix + "genericVnfEndpoint")).thenReturn("/aai/v9/cloud-infrastructure/volume-groups/volume-group/78987")
-        when(mockExecution.getVariable(prefix + "genVnfRsrcVer")).thenReturn("0000020")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn(null)
-        when(mockExecution.getVariable("aai.auth")).thenReturn("9B2278E8B8E95F256A560719055F4DF3")
-        when(mockExecution.getVariable("mso.msoKey")).thenReturn("aa3871669d893c7fb8abbcda31b88b4f")
-
-        StubResponseAAI.MockAAIVfModule()
+        when(mockExecution.getVariable("DAAIVfMod_vnfId")).thenReturn("vnfId1")
         try {
-            DeleteAAIVfModule obj = new DeleteAAIVfModule()
-            obj.deleteGenericVnf(mockExecution)
+            doThrow(new NotFoundException("Vnf Not Found")).when(client).delete(isA(AAIResourceUri.class))
+            deleteAAIVfModule.deleteGenericVnf(mockExecution)
         } catch (Exception ex) {
             println " Test End - Handle catch-throw BpmnError()! "
         }
@@ -152,39 +184,21 @@ class DeleteAAIVfModuleTest {
     @Test
     void testDeleteVfModule() {
         ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable(prefix + "vfModuleEndpoint")).thenReturn("/aai/v9/cloud-infrastructure/volume-groups/volume-group/78987")
-        when(mockExecution.getVariable(prefix + "vfModRsrcVer")).thenReturn("0000020")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
-        when(mockExecution.getVariable("aai.auth")).thenReturn("9B2278E8B8E95F256A560719055F4DF3")
-        when(mockExecution.getVariable("mso.msoKey")).thenReturn("aa3871669d893c7fb8abbcda31b88b4f")
-
-        stubFor(delete(urlMatching("/aai/v[0-9]+/cloud-infrastructure/volume-groups/volume-group/78987/[?]resource-version=0000020"))
-                .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "text/xml")
-                .withBodyFile("")))
-
-        DeleteAAIVfModule obj = new DeleteAAIVfModule()
-        obj.deleteVfModule(mockExecution)
-
+        when(mockExecution.getVariable("DAAIVfMod_vnfId")).thenReturn("vnfId1")
+        when(mockExecution.getVariable("DAAIVfMod_vfModuleId")).thenReturn("vfModuleId1")
+        doNothing().when(client).delete(isA(AAIResourceUri.class))
+        deleteAAIVfModule.deleteVfModule(mockExecution)
         Mockito.verify(mockExecution).setVariable(prefix + "deleteVfModuleResponseCode", 200)
     }
 
     @Test
     void testDeleteVfModuleEndpointNull() {
         ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable(prefix + "vfModuleEndpoint")).thenReturn("/aai/v9/cloud-infrastructure/volume-groups/volume-group/78987")
-        when(mockExecution.getVariable(prefix + "vfModRsrcVer")).thenReturn("0000020")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn(null)
-        when(mockExecution.getVariable("aai.auth")).thenReturn("9B2278E8B8E95F256A560719055F4DF3")
-        when(mockExecution.getVariable("mso.msoKey")).thenReturn("aa3871669d893c7fb8abbcda31b88b4f")
-
-        StubResponseAAI.MockAAIVfModule()
+        when(mockExecution.getVariable("DAAIVfMod_vnfId")).thenReturn("vnfId1")
+        when(mockExecution.getVariable("DAAIVfMod_vfModuleId")).thenReturn("vfModuleId1")
         try {
-            DeleteAAIVfModule obj = new DeleteAAIVfModule()
-            obj.deleteVfModule(mockExecution)
+            doThrow(new NotFoundException("Vnf Not Found")).when(client).delete(isA(AAIResourceUri.class))
+            deleteAAIVfModule.deleteVfModule(mockExecution)
         } catch (Exception ex) {
             println " Test End - Handle catch-throw BpmnError()! "
         }

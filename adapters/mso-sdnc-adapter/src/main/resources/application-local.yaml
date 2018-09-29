@@ -17,7 +17,7 @@ org:
     onap:
         so:
             adapters:
-                sdnc:                   
+                sdnc:
                     '.':
                         put: PUT|60000|sdncurl5|
                         query: GET|60000|sdncurl2|
@@ -57,7 +57,7 @@ org:
                             changedelete: POST|270000|sdncurl6|sdnc-request-header|org:onap:sdnctl:vnf
                             delete: POST|270000|sdncurl6|sdnc-request-header|org:onap:sdnctl:vnf
                             rollback: POST|270000|sdncurl6|sdnc-request-header|org:onap:sdnctl:vnf
-                    bpelauth: 9997930a04f74e8dfd3acedf6be6f8c2ec4fb3720521304f64a468ba54ef1e14
+                    bpelauth: BBD450258299BD2FEF7E3EBA3CD2B58AD417355332319856D761654AA876830A9839820D33DE8426A81E5D48649A4BE6FE7021F5
                     bpelurl: http://localhost:8080/mso/SDNCAdapterCallbackService                    
                     generic-resource:
                         network-topology-operation:
@@ -92,7 +92,7 @@ org:
                     myurl: http://localhost:8080/adapters/rest/SDNCNotify
                     rest:
                         bpelurl: http://localhost:8080/mso/WorkflowMessage
-                    sdncauth: 406B2AE613211B6FB52466DE6E1769AC
+                    sdncauth: 1C2DC9B30545C5F673B3C33904608E942476F0C969B3CF7A2509459AB83C9062EFAAE89E91D6DB
                     sdncconnecttime: 5000                
                     sdncurl10: 'https://localhost:8443/restconf/operations/GENERIC-RESOURCE-API:'                   
                     sdncurl12: https://localhost:8443/                 
@@ -101,6 +101,8 @@ org:
                     vfmodule:
                         '':
                             query: GET|60000|sdncurl12|
+                network:
+                  encryptionKey: aa3871669d893c7fb8abbcda31b88b4f
 spring:  
   security:
     usercredentials:

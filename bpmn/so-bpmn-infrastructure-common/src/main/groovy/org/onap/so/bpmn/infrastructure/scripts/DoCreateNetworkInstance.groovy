@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts;
 
+import javax.ws.rs.core.UriBuilder
+
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -33,21 +35,26 @@ import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.graphinventory.entities.uri.Depth
+import org.onap.so.constants.Defaults
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse;
 import org.springframework.web.util.UriUtils
-import org.onap.so.client.aai.AAIResourcesClient
-import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.entities.AAIResultWrapper
-import org.onap.so.client.aai.entities.Relationships
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.json.JSONObject
+import org.onap.aai.domain.yang.VpnBinding
+import org.onap.aai.domain.yang.RouteTarget
+
+import com.fasterxml.jackson.jaxrs.util.EndpointAsBeanProperty
+
 import javax.ws.rs.NotFoundException
 
 import groovy.json.*
 import groovy.xml.XmlUtil
-
 
 /**
  * This groovy class supports the <class>DoCreateNetworkInstance.bpmn</class> process.
@@ -360,8 +367,11 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		// Prepare AA&I url with network-name
 		String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 		AaiUtil aaiUriUtil = new AaiUtil(this)
-		String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-		String queryAAINameRequest = "${aai_endpoint}${aai_uri}" + "?network-name=" + networkName
+
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK)
+		uri.queryParam("network-name", networkName)
+		String queryAAINameRequest = aaiUriUtil.createAaiUri(uri)
+
 		execution.setVariable(Prefix + "queryNameAAIRequest", queryAAINameRequest)
 		msoLogger.debug(Prefix + "queryNameAAIRequest - " + "\n" + queryAAINameRequest)
 
@@ -429,15 +439,14 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		try {
 			String networkInputs  = execution.getVariable(Prefix + "networkInputs")
 			String cloudRegion = utils.getNodeText(networkInputs, "aic-cloud-region")
-			cloudRegion = UriUtils.encode(cloudRegion,"UTF-8")
 
 			// Prepare AA&I url
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUtil = new AaiUtil(this)
-			String aai_uri = aaiUtil.getCloudInfrastructureCloudRegionUri(execution)
-			String queryCloudRegionRequest = "${aai_endpoint}${aai_uri}/" + cloudRegion
+
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+			def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
+
 			execution.setVariable(Prefix + "queryCloudRegionRequest", queryCloudRegionRequest)
-			msoLogger.debug(Prefix + "queryCloudRegionRequest - " + "\n" + queryCloudRegionRequest)
 
 			String cloudRegionPo = aaiUtil.getAAICloudReqion(execution,  queryCloudRegionRequest, "PO", cloudRegion)
 			String cloudRegionSdnc = aaiUtil.getAAICloudReqion(execution,  queryCloudRegionRequest, "SDNC", cloudRegion)
@@ -508,11 +517,11 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 			networkId = UriUtils.encode(networkId,"UTF-8")
 
-			// Prepare AA&I url
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-			String queryIdAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=all"
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId)
+			uri.depth(Depth.ALL)
+			String queryIdAAIRequest = aaiUriUtil.createAaiUri(uri)
+
 			execution.setVariable(Prefix + "queryIdAAIRequest", queryIdAAIRequest)
 			msoLogger.debug(Prefix + "queryIdAAIRequest - " + "\n" + queryIdAAIRequest)
 
@@ -580,10 +589,11 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			networkId = UriUtils.encode(networkId,"UTF-8")
 
 			// Prepare AA&I url
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-			String requeryIdAAIRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=all"
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId)
+			uri.depth(Depth.ALL)
+			String requeryIdAAIRequest = aaiUriUtil.createAaiUri(uri)
+
 			execution.setVariable(Prefix + "requeryIdAAIRequest", requeryIdAAIRequest)
 			msoLogger.debug(Prefix + "requeryIdAAIRequest - " + "\n" + requeryIdAAIRequest)
 
@@ -660,91 +670,37 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "vpnCount", vpnCount)
 			msoLogger.debug(Prefix + "vpnCount - " + vpnCount)
 
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-
 			if (vpnCount > 0) {
 				execution.setVariable(Prefix + "vpnBindings", vpnBindingUri)
 				msoLogger.debug(" vpnBindingUri List - " + vpnBindingUri)
 
 				String routeTargets = ""
 				// AII loop call using list vpnBindings
-				for (i in 0..vpnBindingUri.size()-1) {
-
+				for(i in 0..vpnBindingUri.size()-1) {
 					int counting = i+1
 
-					// prepare url using vpnBinding
-					String queryVpnBindingAAIRequest = ""
-					String aai_uri = aaiUriUtil.getNetworkVpnBindingUri(execution)
-
-					// Note: By default, the vpnBinding url is found in 'related-link' of the response,
-					//       so, the default in URN mappings for this is set to "" (ie, space), unless forced to use the URN mapping.
-					if (aai_uri == null || aai_uri == "") {
-						// using value of 'related-link' from response
-						if (vpnBindingUri[i].charAt(vpnBindingUri[i].length()-1) == '/') {
-						    queryVpnBindingAAIRequest = "${aai_endpoint}" + vpnBindingUri[i].substring(0, vpnBindingUri[i].length()-1) + "?depth=all"
-						} else {
-						    queryVpnBindingAAIRequest = "${aai_endpoint}" + vpnBindingUri[i] + "?depth=all"
-						}
-
-					} else {
-					    // using uri value in URN mapping
-						String vpnBindingId = vpnBindingUri[i].substring(vpnBindingUri[i].indexOf("/vpn-binding/")+13, vpnBindingUri[i].length())
-						if (vpnBindingId.charAt(vpnBindingId.length()-1) == '/') {
-							vpnBindingId = vpnBindingId.substring(0, vpnBindingId.length()-1)
-						}
-					    queryVpnBindingAAIRequest = "${aai_endpoint}${aai_uri}/" + vpnBindingId + "?depth=all"
+					String vpnBindingId = vpnBindingUri[i].substring(vpnBindingUri[i].indexOf("/vpn-binding/")+13, vpnBindingUri[i].length())
+					if (vpnBindingId.charAt(vpnBindingId.length()-1) == '/') {
+						vpnBindingId = vpnBindingId.substring(0, vpnBindingId.length()-1)
 					}
 
-					execution.setVariable(Prefix + "queryVpnBindingAAIRequest", queryVpnBindingAAIRequest)
-					msoLogger.debug(Prefix + "queryVpnBindingAAIRequest, , vpnBinding #" + counting + " : " + "\n" + queryVpnBindingAAIRequest)
+					AAIResourcesClient resourceClient = new AAIResourcesClient()
+					AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnBindingId)
+					AAIResultWrapper wrapper = resourceClient.get(uri.depth(Depth.TWO), NotFoundException.class)
 
-					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryVpnBindingAAIRequest)
-					String returnCode = response.getStatusCode()
-					execution.setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", returnCode)
-					msoLogger.debug(" ***** AAI query vpn binding Response Code, vpnBinding #" + counting + " : " + returnCode)
+					Optional<VpnBinding> binding = wrapper.asBean(VpnBinding.class)
 
-					String aaiResponseAsString = response.getResponseBodyAsString()
-
-					if (returnCode=='200') {
-						execution.setVariable(Prefix + "queryVpnBindingAAIResponse", aaiResponseAsString)
-						msoLogger.debug(" AAI Query Vpn Binding Success REST Response, , vpnBinding #" + counting + " : " + "\n" + aaiResponseAsString)
-
-						String routeTarget = ""
-						String routeRole = ""
-						if (utils.nodeExists(aaiResponseAsString, "route-targets")) {
-							String aaiRouteTargets = utils.getNodeXml(aaiResponseAsString, "route-targets", false)
-							def aaiRouteTargetsXml = new XmlSlurper().parseText(aaiRouteTargets)
-							def aaiRouteTarget = aaiRouteTargetsXml.'**'.findAll {it.name() == "route-target"}
-							for (j in 0..aaiRouteTarget.size()-1) {
-								routeTarget  = utils.getNodeText(XmlUtil.serialize(aaiRouteTarget[j]), "global-route-target")
-								routeRole  = utils.getNodeText(XmlUtil.serialize(aaiRouteTarget[j]), "route-target-role")
-								routeTargets += "<routeTargets>" + '\n' +
-								                " <routeTarget>" + routeTarget + "</routeTarget>" + '\n' +
-												" <routeTargetRole>" + routeRole + "</routeTargetRole>" + '\n' +
-												"</routeTargets>" + '\n'
-							}
-						}
-
-					} else {
-						if (returnCode=='404') {
-							String dataErrorMessage = "Response Error from AAINetworkVpnBinding is 404 (Not Found)."
-							msoLogger.debug(dataErrorMessage)
-							exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-						} else {
-						   if (aaiResponseAsString.contains("RESTFault")) {
-							   WorkflowException exceptionObject = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-							   execution.setVariable("WorkflowException", exceptionObject)
-							   throw new BpmnError("MSOWorkflowException")
-
-							   } else {
-									// aai all errors
-									String dataErrorMessage = " Unexpected Response from AAINetworkVpnBinding - " + returnCode
-									msoLogger.debug(dataErrorMessage)
-									exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-							  }
+					String routeTarget = ""
+					String routeRole = ""
+					if(binding.get().getRouteTargets() != null) {
+						List<RouteTarget> targets = binding.get().getRouteTargets().getRouteTarget()
+						for(RouteTarget target : targets) {
+							routeTarget  = target.getGlobalRouteTarget()
+							routeRole  = target.getRouteTargetRole()
+							routeTargets += "<routeTargets>" + '\n' +
+									" <routeTarget>" + routeTarget + "</routeTarget>" + '\n' +
+									" <routeTargetRole>" + routeRole + "</routeTargetRole>" + '\n' +
+									"</routeTargets>" + '\n'
 						}
 					}
 
@@ -756,8 +712,8 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			} else {
 				// reset return code to success
 				execution.setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
-			    String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-				String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
+				AaiUtil aaiUriUtil = new AaiUtil(this)
+				String schemaVersion = aaiUriUtil.getNamespace()
 			    String aaiStubResponse =
 					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<vpn-binding xmlns="${schemaVersion}">
@@ -771,9 +727,9 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 			}
 
-		} catch (BpmnError e) {
-			throw e;
-
+		} catch (NotFoundException e) {
+			msoLogger.debug("Response Error from AAINetworkVpnBinding is 404 (Not Found).")
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Response Error from AAINetworkVpnBinding is 404 (Not Found).")
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoCreateNetworkInstance flow. callRESTQueryAAINetworkVpnBinding() - " + ex.getMessage()
 			msoLogger.debug(exceptionMessage)
@@ -801,7 +757,6 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "networkPolicyCount", networkPolicyCount)
 			msoLogger.debug(Prefix + "networkPolicyCount - " + networkPolicyCount)
 
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 
 			if (networkPolicyCount > 0) {
@@ -814,31 +769,14 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 					int counting = i+1
 
-					// prepare url using vpnBinding
-					String queryNetworkPolicyAAIRequest = ""
-
-					String aai_uri = aaiUriUtil.getNetworkPolicyUri(execution)
-
 					// Note: By default, the network policy url is found in 'related-link' of the response,
 					//       so, the default in URN mappings for this is set to "" (ie, space), unless forced to use the URN mapping.
-					if (aai_uri == null || aai_uri == "") {
-						// using value of 'related-link' from response
-						if (networkPolicyUriList[i].charAt(networkPolicyUriList[i].length()-1) == '/') {
-							queryNetworkPolicyAAIRequest = "${aai_endpoint}" + networkPolicyUriList[i].substring(0, networkPolicyUriList[i].length()-1) + "?depth=all"
-						} else {
-							queryNetworkPolicyAAIRequest = "${aai_endpoint}" + networkPolicyUriList[i] + "?depth=all"
-						}
-					} else {
-						// using uri value in URN mapping
-						String networkPolicyId = networkPolicyUriList[i].substring(networkPolicyUriList[i].indexOf("/network-policy/")+16, networkPolicyUriList[i].length())
-						println " networkPolicyId - " + networkPolicyId
-						if (networkPolicyId.charAt(networkPolicyId.length()-1) == '/') {
-							networkPolicyId = networkPolicyId.substring(0, networkPolicyId.length()-1)
-						}
-						queryNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + networkPolicyId + "?depth=all"
 
-					}
+					URI uri = UriBuilder.fromUri(networkPolicyUriList[i]).build()
 
+					AAIResourceUri aaiUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.NETWORK_POLICY, uri)
+					aaiUri.depth(Depth.ALL)
+					String queryNetworkPolicyAAIRequest = aaiUriUtil.createAaiUri(aaiUri)
 
 					execution.setVariable(Prefix + "queryNetworkPolicyAAIRequest", queryNetworkPolicyAAIRequest)
 					msoLogger.debug(Prefix + "queryNetworkPolicyAAIRequest, , NetworkPolicy #" + counting + " : " + "\n" + queryNetworkPolicyAAIRequest)
@@ -890,8 +828,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			} else {
 				// reset return code to success
 				execution.setVariable(Prefix + "aaiQqueryNetworkPolicyReturnCode", "200")
-				String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-				String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
+				String schemaVersion = aaiUriUtil.getNamespace()
 				String aaiStubResponse =
 					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<network-policy xmlns="${schemaVersion}">
@@ -949,30 +886,11 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 					int counting = i+1
 
 					// prepare url using tableRef
-					String queryNetworkTableRefAAIRequest = ""
+					URI uri = UriBuilder.fromUri(networkTableRefUriList[i]).build()
 
-					String aai_uri = aaiUriUtil.getNetworkTableReferencesUri(execution)
-
-					// Note: By default, the network policy url is found in 'related-link' of the response,
-					//       so, the default in URN mappings for this is set to "" (ie, space), unless forced to use the URN mapping.
-					if (aai_uri == null || aai_uri == "") {
-						// using value of 'related-link' from response
-						if (networkTableRefUriList[i].charAt(networkTableRefUriList[i].length()-1) == '/') {
-							queryNetworkTableRefAAIRequest = "${aai_endpoint}" + networkTableRefUriList[i].substring(0, networkTableRefUriList[i].length()-1) + "?depth=all"
-						} else {
-							queryNetworkTableRefAAIRequest = "${aai_endpoint}" + networkTableRefUriList[i] + "?depth=all"
-						}
-					} else {
-						// using uri value in URN mapping
-						String networkTableRefId = networkTableRefUriList[i].substring(networkTableRefUriList[i].indexOf("/route-table-reference/")+23, networkTableRefUriList[i].length())
-
-						if (networkTableRefId.charAt(networkTableRefId.length()-1) == '/') {
-							networkTableRefId = networkTableRefId.substring(0, networkTableRefId.length()-1)
-						}
-						queryNetworkTableRefAAIRequest = "${aai_endpoint}${aai_uri}/" + networkTableRefId + "?depth=all"
-
-					}
-
+					AAIResourceUri aaiUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ROUTE_TABLE_REFERENCE, uri)
+					aaiUri.depth(Depth.ALL)
+					String queryNetworkTableRefAAIRequest = aaiUriUtil.createAaiUri(aaiUri)
 
 					execution.setVariable(Prefix + "queryNetworkTableRefAAIRequest", queryNetworkTableRefAAIRequest)
 					msoLogger.debug(Prefix + "queryNetworkTableRefAAIRequest, , NetworkTableRef #" + counting + " : " + "\n" + queryNetworkTableRefAAIRequest)
@@ -1024,8 +942,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			} else {
 				// reset return code to success
 				execution.setVariable(Prefix + "aaiQqueryNetworkTableRefReturnCode", "200")
-				String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-				String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
+				String schemaVersion = aaiUriUtil.getNamespace()
 				String aaiStubResponse =
 					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<route-table-references xmlns="${schemaVersion}">
@@ -1066,16 +983,17 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String createNetworkResponse   = execution.getVariable(Prefix + "createNetworkResponse")
 
 			// Prepare url
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getNetworkL3NetworkUri(execution)
-			String updateContrailAAIUrlRequest = "${aai_endpoint}${aai_uri}/" + networkId + "?depth=all"
+
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId)
+			uri.depth(Depth.ALL)
+			String updateContrailAAIUrlRequest = aaiUriUtil.createAaiUri(uri)
 
 			execution.setVariable(Prefix + "updateContrailAAIUrlRequest", updateContrailAAIUrlRequest)
 			msoLogger.debug(Prefix + "updateContrailAAIUrlRequest - " + "\n" + updateContrailAAIUrlRequest)
 
 			//Prepare payload (PUT)
-			String schemaVersion = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
+			String schemaVersion = aaiUriUtil.getNamespaceFromUri(updateContrailAAIUrlRequest)
 			String payload = networkUtils.ContrailNetworkCreatedUpdate(requeryIdAAIResponse, createNetworkResponse, schemaVersion)
 			String payloadXml = utils.formatXml(payload)
 			execution.setVariable(Prefix + "updateContrailAAIPayloadRequest", payloadXml)

@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.infrastructure.bpmn.activity;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,14 +30,18 @@ import org.apache.http.ProtocolVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicHttpResponse;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.onap.so.bpmn.BaseBPMNTest;
 
-public class DeployActivitySpecsTest {
+
+public class DeployActivitySpecsTest extends BaseBPMNTest{
 	private static final String RESULT_STRING = "HTTP/1.1 404 ";
-	private static final String HOSTNAME = "http://localhost:8080";
+
 	
 	@Test 
     public void DeployActivitySpecsMain_Test() throws Exception {    	
+		String HOSTNAME = createURLWithPort("");
 		ProtocolVersion protocolVersion = new ProtocolVersion("", 1, 1);
 		HttpResponse response = new BasicHttpResponse(protocolVersion, 1, "");
 		response.setStatusCode(404);
@@ -49,7 +53,9 @@ public class DeployActivitySpecsTest {
     }
 	
 	@Test 
+	@Ignore
     public void DeployActivitySpec_Test() throws Exception {    	
+		String HOSTNAME = createURLWithPort("");
 		ProtocolVersion protocolVersion = new ProtocolVersion("", 1, 1);
 		HttpResponse response = new BasicHttpResponse(protocolVersion, 1, "");
 		response.setStatusCode(404);

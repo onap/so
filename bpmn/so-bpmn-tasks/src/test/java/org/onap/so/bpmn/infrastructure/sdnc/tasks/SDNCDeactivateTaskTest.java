@@ -24,15 +24,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -41,11 +47,12 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SDNCDeactivateTaskTest extends BaseTaskTest {
-	@Autowired
-	private SDNCDeactivateTasks sdncDeactivateTasks;
+	@InjectMocks
+	private SDNCDeactivateTasks sdncDeactivateTasks = new SDNCDeactivateTasks();
 	
 	private ServiceInstance serviceInstance;
 	private CloudRegion cloudRegion;
@@ -56,7 +63,7 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
 	private Customer customer;
 	
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		customer = setCustomer();
 		serviceInstance = setServiceInstance();
 		cloudRegion = setCloudRegion();
@@ -64,6 +71,12 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
 		genericVnf = setGenericVnf();
 		vfModule = setVfModule();
 		network = setL3Network();
+		
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(network);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
 
 	}
 	
@@ -80,7 +93,7 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
 	public void deactivateVfModuleExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(sdncVfModuleResources).deactivateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+		doThrow(RuntimeException.class).when(sdncVfModuleResources).deactivateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
 
 		sdncDeactivateTasks.deactivateVfModule(execution);
 	}
@@ -96,7 +109,7 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
 	
 	@Test
 	public void deactivateVnfExceptionTest() throws Exception {
-		doThrow(Exception.class).when(sdncVnfResources).deactivateVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+		doThrow(RuntimeException.class).when(sdncVnfResources).deactivateVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
 		expectedException.expect(BpmnError.class);
 		sdncDeactivateTasks.deactivateVnf(execution);
 	}
@@ -114,7 +127,7 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
 	
 	@Test
 	public void deactivateServiceInstanceExceptionTest() throws Exception {
-		doThrow(Exception.class).when(sdncServiceInstanceResources).deactivateServiceInstance(serviceInstance, customer, requestContext);
+		doThrow(RuntimeException.class).when(sdncServiceInstanceResources).deactivateServiceInstance(serviceInstance, customer, requestContext);
 		expectedException.expect(BpmnError.class);
 		sdncDeactivateTasks.deactivateServiceInstance(execution);
 	}
@@ -139,7 +152,7 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
 		expectedException.expect(BpmnError.class);
 		
 		try {
-			lookupKeyMap.remove(ResourceKey.NETWORK_ID);
+			doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any());
 			
 			sdncDeactivateTasks.deactivateNetwork(execution);
 		} finally {

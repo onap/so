@@ -20,151 +20,67 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
-
 import static org.mockito.Mockito.*
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
+
+import javax.ws.rs.core.UriBuilder
+
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.repository.ProcessDefinition
+import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake
 import org.junit.Assert
-import org.junit.Rule
+import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
-import org.mockito.runners.MockitoJUnitRunner
-import org.onap.so.bpmn.core.WorkflowException
+import org.mockito.MockitoAnnotations
+import org.mockito.Spy
+import org.onap.aai.domain.yang.VolumeGroup
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*
-
-@RunWith(MockitoJUnitRunner.class)
 class ConfirmVolumeGroupNameTest extends MsoGroovyTest {
-
-	private static final def AAA_URI = "uri_test"
-	private static final def AIC_CLOUD_REGION = "AicClReg_test"
-	private static final def VOLUME_GROUP_NAME = "volumeTestGName"
-	private static final def VOLUME_GROUP_ID = "vol_gr_id_test"
 
 	@Captor
 	ArgumentCaptor<ExecutionEntity> captor=  ArgumentCaptor.forClass(ExecutionEntity.class);
 
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
+	@Spy
+	ConfirmVolumeGroupName confirmVolumeGroupName;
 
-	@Test
-	void preProcessRequestSuccessful() {
-		ExecutionEntity mockExecution = setupMock()
-		when(mockExecution.getVariable("ConfirmVolumeGroupName_volumeGroupId")).thenReturn(VOLUME_GROUP_ID)
-		when(mockExecution.getVariable("ConfirmVolumeGroupName_volumeGroupName")).thenReturn(VOLUME_GROUP_NAME)
-		when(mockExecution.getVariable("ConfirmVolumeGroupName_aicCloudRegion")).thenReturn(AIC_CLOUD_REGION)
+	@Before
+	public void init() throws IOException {
+		super.init("ConfirmVolumeGroupName")
+		MockitoAnnotations.initMocks(this);
+		when(confirmVolumeGroupName.getAAIClient()).thenReturn(client)
 
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('namespace_test')
-		when(mockExecution.getVariable("mso.workflow.ConfirmVolumeGroupName.aai.cloud-region.uri")).thenReturn(AAA_URI)
-		new ConfirmVolumeGroupName().preProcessRequest(mockExecution)
-
-		verifyInitProcessVariables(mockExecution)
-		verify(mockExecution).setVariable("CVGN_volumeGroupId", VOLUME_GROUP_ID)
-		verify(mockExecution).setVariable("CVGN_volumeGroupName", "volumeTestGName")
-		verify(mockExecution).setVariable("CVGN_aicCloudRegion", AIC_CLOUD_REGION)
-		verify(mockExecution).setVariable("CVGN_volumeGroupGetEndpoint",
-				"${AAA_URI}/${AIC_CLOUD_REGION}/volume-groups/volume-group/" + VOLUME_GROUP_ID)
-	}
-
-	private void verifyInitProcessVariables(ExecutionEntity mockExecution) {
-		verify(mockExecution).setVariable("prefix", "CVGN_")
-		verify(mockExecution).setVariable("CVGN_volumeGroupId", null)
-		verify(mockExecution).setVariable("CVGN_volumeGroupName", null)
-		verify(mockExecution).setVariable("CVGN_aicCloudRegion", null)
-		verify(mockExecution).setVariable("CVGN_volumeGroupGetEndpoint", null)
-		verify(mockExecution).setVariable("CVGN_volumeGroupNameMatches", false)
-		verify(mockExecution).setVariable("CVGN_queryVolumeGroupResponseCode", null)
-		verify(mockExecution).setVariable("CVGN_queryVolumeGroupResponse", "")
-		verify(mockExecution).setVariable("CVGN_ResponseCode", null)
-		verify(mockExecution).setVariable("RollbackData", null)
-	}
-
-	@Test
-	void checkAAIQueryResult_volumeGroupNamesMatch() {
-		ExecutionEntity mockExecution = setupMock()
-		commonPartOfCheckAAIQueryTest(mockExecution, VOLUME_GROUP_NAME)
-		verify(mockExecution).setVariable("CVGN_volumeGroupNameMatches", true)
-	}
-
-	@Test
-	void checkAAIQueryResult_volumeGroupNamesDoNotMatch() {
-		ExecutionEntity mockExecution = setupMock()
-		commonPartOfCheckAAIQueryTest(mockExecution, "grName2")
-		verify(mockExecution, Mockito.times(0)).setVariable("CVGN_volumeGroupNameMatches", true)
-	}
-
-	private void commonPartOfCheckAAIQueryTest(ExecutionEntity mockExecution, def volumeGroupName) {
-		when(mockExecution.getVariable("CVGN_volumeGroupName")).thenReturn(VOLUME_GROUP_NAME)
-		def xml = "<volume-group-name>" + volumeGroupName + "</volume-group-name>"
-		when(mockExecution.getVariable("CVGN_queryVolumeGroupResponse")).thenReturn(xml)
-		new ConfirmVolumeGroupName().checkAAIQueryResult(mockExecution)
-		verify(mockExecution).setVariable("CVGN_volumeGroupNameMatches", false)
 	}
 
 	@Test
 	public void testQueryAAIForVolumeGroupId() {
-		ExecutionEntity mockExecution = setupMock()
-		when(mockExecution.getVariable("aai.endpoint")).thenReturn('http://localhost:8090')
-		when(mockExecution.getVariable("CVGN_volumeGroupGetEndpoint")).thenReturn('/aai/test/volume-groups/volume-group/testVolumeGroup')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
 
-		mockData()
-
-		ConfirmVolumeGroupName confirmVolumeGroupName = new ConfirmVolumeGroupName()
+		AAIResourceUri resourceUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.VOLUME_GROUP, UriBuilder.fromPath('/aai/test/volume-groups/volume-group/testVolumeGroup').build());
+		when(mockExecution.getVariable("CVGN_volumeGroupGetEndpoint")).thenReturn(resourceUri)
+		VolumeGroup volumeGroup = new VolumeGroup()
+		volumeGroup.setVolumeGroupId("Test")
+		when(client.get(VolumeGroup.class,resourceUri)).thenReturn(Optional.of(volumeGroup))
 		confirmVolumeGroupName.queryAAIForVolumeGroupId(mockExecution)
-		verify(mockExecution).setVariable("CVGN_queryVolumeGroupResponseCode",200)
-		verify(mockExecution).setVariable("CVGN_queryVolumeGroupResponse","")
+        Mockito.verify(mockExecution).setVariable("CVGN_queryVolumeGroupResponseCode",200)
+        Mockito.verify(mockExecution).setVariable("CVGN_queryVolumeGroupResponse",volumeGroup)
 	}
 
 	@Test
 	public void testQueryAAIForVolumeGroupId_404() {
-
-		ExecutionEntity mockExecution = setupMock()
+		AAIResourceUri resourceUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.VOLUME_GROUP, UriBuilder.fromPath('/aai/test/volume-groups/volume-group/testVolumeGroup').build());
+		when(client.get(VolumeGroup.class,  resourceUri)).thenReturn(Optional.empty())
+		DelegateExecution execution = new DelegateExecutionFake()
 		try {
-			when(mockExecution.getVariable("CVGN_volumeGroupGetEndpoint")).thenReturn('/aai/test/volume-groups/volume-group/testVolumeGroup')
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-
-			mockData()
-
-			ConfirmVolumeGroupName confirmVolumeGroupName = new ConfirmVolumeGroupName()
-			confirmVolumeGroupName.queryAAIForVolumeGroupId(mockExecution)
+			execution.setVariable("CVGN_volumeGroupGetEndpoint", resourceUri)
+			confirmVolumeGroupName.queryAAIForVolumeGroupId(execution)
 		}
-		catch(Exception ex){
-
-		}
-		Mockito.verify(mockExecution,times(4)).setVariable(captor.capture(),captor.capture())
-		WorkflowException workflowException = captor.getValue()
-		Assert.assertEquals("AAI GET Failed",workflowException.getErrorMessage())
-		Assert.assertEquals(500,workflowException.getErrorCode())
-	}
-	private void  mockData() {
-		stubFor(get(urlMatching("/aai/test/volume-groups/volume-group/testVolumeGroup"))
-				.willReturn(aResponse()
-				.withStatus(200)))
-	}
-
-	private ExecutionEntity setupMock() {
-
-		ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
-		when(mockProcessDefinition.getKey()).thenReturn("ConfirmVolumeGroupName")
-		RepositoryService mockRepositoryService = mock(RepositoryService.class)
-		when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
-		when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("ConfirmVolumeGroupName")
-		when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-		ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-		when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
-		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-		when(mockExecution.getId()).thenReturn("100")
-		when(mockExecution.getProcessDefinitionId()).thenReturn("ConfirmVolumeGroupName")
-		when(mockExecution.getProcessInstanceId()).thenReturn("ConfirmVolumeGroupName")
-		when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-		when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
-		return mockExecution
+		catch(Exception ex){}
+		Assert.assertEquals(404, execution.getVariable("CVGN_queryVolumeGroupResponseCode"))
+		Assert.assertEquals("Volume Group not Found!", execution.getVariable("CVGN_queryVolumeGroupResponse"))
+		
 	}
 }

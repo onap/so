@@ -190,6 +190,8 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			execution.setVariable('cloudConfiguration', cloudConfiguration)
 			def lcpCloudRegionId	= jsonUtils.getJsonValue(cloudConfiguration, "lcpCloudRegionId")
 			execution.setVariable('lcpCloudRegionId', lcpCloudRegionId)
+			def cloudOwner	= jsonUtils.getJsonValue(cloudConfiguration, "cloudOwner")
+			execution.setVariable('cloudOwner', cloudOwner)
 			def tenantId = jsonUtils.getJsonValue(cloudConfiguration, "tenantId")
 			execution.setVariable('tenantId', tenantId)
 			

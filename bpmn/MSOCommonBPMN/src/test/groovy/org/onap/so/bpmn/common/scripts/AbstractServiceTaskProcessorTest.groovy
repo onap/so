@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*
 
 import org.onap.so.rest.HttpHeader
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.internal.debugging.MockitoDebuggerImpl
 import org.junit.Before
 import org.onap.so.bpmn.common.scripts.AaiUtil;
@@ -58,7 +58,8 @@ class AbstractServiceTaskProcessorImpl extends  AbstractServiceTaskProcessor{
 	}
 }
 
-@RunWith(MockitoJUnitRunner.class)
+
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class AbstractServiceTaskProcessorTest extends MsoGroovyTest {
 
 	@Captor
@@ -171,12 +172,12 @@ public class AbstractServiceTaskProcessorTest extends MsoGroovyTest {
 	@Test
 	public void testSetBasicDBAuthHeader_Success() {
 		ExecutionEntity mockExecution = setupMock()
-		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn('9B2278E8B8E95F256A560719055F4DF3')
-		when(mockExecution.getVariable("mso.msoKey")).thenReturn('aa3871669d893c7fb8abbcda31b88b4f')
+		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn('5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C')
+		when(mockExecution.getVariable("mso.msoKey")).thenReturn('07a7159d3bf51a0e53be7a8f89699be7')
 
 		AbstractServiceTaskProcessorImpl  serviceTaskProcessor = new AbstractServiceTaskProcessorImpl();
 		serviceTaskProcessor.setBasicDBAuthHeader(mockExecution, "true")
-		verify(mockExecution).setVariable("BasicAuthHeaderValueDB",'Basic dXAyMTE4OnVwMjExOA==')
+		verify(mockExecution).setVariable("BasicAuthHeaderValueDB",'Basic dGVzdDp0ZXN0')
 	}
 
 }

@@ -25,15 +25,14 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
-import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions;
-import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests;
+
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit4.SpringRunner;import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,19 +60,18 @@ public class CreateAndActivatePnfResourceTest {
     @Deployment(resources = {"process/CreateAndActivatePnfResource.bpmn"})
     public void shouldWaitForMessageFromDmaapAndUpdateAaiEntryWhenAaiEntryExists() {
         // given
-        aaiConnection.reset();
-        BpmnAwareTests.init(processEngineRule.getProcessEngine());
+        aaiConnection.reset();       
         Map<String, Object> variables = new HashMap<>();
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITH_ENTRY);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
-        BpmnAwareAssertions.assertThat(instance).isWaitingAt("WaitForDmaapPnfReadyNotification").isWaitingFor("WorkflowMessage");
+        assertThat(instance).isWaitingAt("WaitForDmaapPnfReadyNotification").isWaitingFor("WorkflowMessage");
         dmaapClientTestImpl.sendMessage();
 
         // then
-        BpmnAwareAssertions.assertThat(instance).isEnded().hasPassedInOrder(
+        assertThat(instance).isEnded().hasPassedInOrder(
                 "CreateAndActivatePnf_StartEvent",
                 "CheckInputs",
                 "CheckAiiForCorrelationId",
@@ -90,18 +88,18 @@ public class CreateAndActivatePnfResourceTest {
     public void shouldCreateAaiEntryWaitForMessageFromDmaapAndUpdateAaiEntryWhenNoAaiEntryExists() {
         // given
         aaiConnection.reset();
-        BpmnAwareTests.init(processEngineRule.getProcessEngine());
+       
         Map<String, Object> variables = new HashMap<>();
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
-        BpmnAwareAssertions.assertThat(instance).isWaitingAt("WaitForDmaapPnfReadyNotification").isWaitingFor("WorkflowMessage");
+        assertThat(instance).isWaitingAt("WaitForDmaapPnfReadyNotification").isWaitingFor("WorkflowMessage");
         dmaapClientTestImpl.sendMessage();
 
         // then
-        BpmnAwareAssertions.assertThat(instance).isEnded().hasPassedInOrder(
+        assertThat(instance).isEnded().hasPassedInOrder(
                 "CreateAndActivatePnf_StartEvent",
                 "CheckInputs",
                 "CheckAiiForCorrelationId",

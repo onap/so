@@ -20,21 +20,22 @@
 
 package org.onap.so.bpmn.common.util;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.onap.so.BaseTest;
+
+import static org.junit.Assert.assertEquals;
 
 public class CryptoHandlerTest {
 	private static final String plainPswd = "mso0206";
-	private static final String encryptPwd = "C1FC4A39E16419DD41DFC1212843F440";
 	private CryptoHandler cryptoHandler;
-	
+	private static String encryptPwd;
+
+
 	@Before
 	public void setup() {
 		cryptoHandler = new CryptoHandler();
+		encryptPwd = cryptoHandler.encryptMsoPassword(plainPswd);
 	}
 	
 	@Test
@@ -45,7 +46,7 @@ public class CryptoHandlerTest {
 	
 	@Test
 	public void encryptMsoPasswordTest() {
-		assertEquals(encryptPwd, cryptoHandler.encryptMsoPassword(plainPswd));
+		assertEquals(plainPswd,cryptoHandler.decryptMsoPassword(cryptoHandler.encryptMsoPassword(plainPswd)));
 	}
 	
 	@Test

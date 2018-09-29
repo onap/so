@@ -17,7 +17,7 @@
 	},
 	"cloudRegion": {
 		"lcp-cloud-region-id": "lcpCloudRegionId",
-		"cloud-owner": "att-aic",
+		"cloud-owner": "test-owner-name",
 		"tenant-id": "tenantId",
 		"complex": "complexName"
 	},

@@ -48,11 +48,7 @@
 		<jacoco.version>0.7.5.201505241946</jacoco.version>
 		<org.apache.maven.user-settings/>
 		<openstack.version>1.3.0</openstack.version>
-		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
-		<springboot.version>1.5.13.RELEASE</springboot.version>	
-		<springframework.version>5.0.8.RELEASE</springframework.version>
-		<tomcat.version>8.5.33</tomcat.version>
-                <h2.version>1.4.196</h2.version>
+		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>		
 		<originalClassifier>original</originalClassifier>
 		<docker.skip>true</docker.skip>
 		<docker.skip.build>true</docker.skip.build>
@@ -68,6 +64,8 @@
 		<siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
 		<cxf.version>3.2.5</cxf.version>
 		<jax.ws.rs>2.1</jax.ws.rs>
+		<springboot.version>2.0.5.RELEASE</springboot.version>	
+		<camunda.springboot.version>3.0.0</camunda.springboot.version>
 	</properties>
 	<distributionManagement>
 		<repository>
@@ -510,32 +508,27 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
+			<artifactId>jackson-core</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jaxb-annotations</artifactId>
-			<version>2.4.0</version>
+			<artifactId>jackson-module-jaxb-annotations</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.8.10</version>
+			<artifactId>jackson-databind</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>2.8.10</version>
+			<artifactId>jackson-annotations</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-base</artifactId>
-			<version>2.9.2</version>
+			<artifactId>jackson-jaxrs-base</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-json-provider</artifactId>
-			<version>2.9.2</version>
+			<artifactId>jackson-jaxrs-json-provider</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
@@ -553,37 +546,20 @@
 			<version>1</version>
 		</dependency>
 		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-core</artifactId>
-			<version>1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
-			<version>1.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito</artifactId>
-			<version>1.6.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-			<version>1.6.2</version>
-			<scope>test</scope>
+			<artifactId>hamcrest-library</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<artifactId>junit</artifactId>		
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -664,7 +640,6 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>3.9.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -695,19 +670,7 @@
 				<artifactId>commons-io</artifactId>
 				<version>2.5</version>
 				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>1.2.17</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>1.7.15</version>
-				<scope>compile</scope>
-			</dependency>
+			</dependency>		
 			<dependency>
 				<groupId>com.sun.xml.fastinfoset</groupId>
 				<artifactId>FastInfoset</artifactId>
@@ -727,6 +690,11 @@
 				<version>1.23</version>
 			</dependency>
 			<dependency>
+				<groupId>javax.interceptor</groupId>
+				<artifactId>javax.interceptor-api</artifactId>
+				<version>1.2.2</version>
+			</dependency>
+			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-test</artifactId>
 				<version>${springboot.version}</version>
@@ -738,74 +706,29 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-			    <groupId>net.javacrumbs.shedlock</groupId>
-			    <artifactId>shedlock-spring</artifactId>
-			    <version>0.18.2</version>
+				<groupId>net.javacrumbs.shedlock</groupId>
+				<artifactId>shedlock-spring</artifactId>
+				<version>0.18.2</version>
 			</dependency>
 			<dependency>
-			    <groupId>net.javacrumbs.shedlock</groupId>
-			    <artifactId>shedlock-provider-jdbc-template</artifactId>
-			    <version>0.18.2</version>
+				<groupId>net.javacrumbs.shedlock</groupId>
+				<artifactId>shedlock-provider-jdbc-template</artifactId>
+				<version>0.18.2</version>
 			</dependency>
 			<dependency>
-			    <groupId>net.javacrumbs.shedlock</groupId>
-			    <artifactId>shedlock-provider-jdbc-template</artifactId>
-			    <version>0.18.2</version>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-core</artifactId>
+				<version>5.1.4</version>
 			</dependency>
 			<dependency>
-    			<groupId>org.flywaydb</groupId>
-    			<artifactId>flyway-core</artifactId>
-    			<version>4.2.0</version>
+				<groupId>org.json</groupId>
+				<artifactId>json</artifactId>
+				<version>20140107</version>
 			</dependency>
-                        <dependency>
-                                <groupId>org.apache.tomcat.embed</groupId>
-                                <artifactId>tomcat-embed-core</artifactId>
-                                <version>${tomcat.version}</version>
-                        </dependency>
-                        <dependency>
-                                <groupId>org.apache.tomcat.embed</groupId>
-                                <artifactId>tomcat-embed-el</artifactId>
-                                <version>${tomcat.version}</version>
-                        </dependency>
-                        <dependency>
-                                <groupId>org.apache.tomcat.embed</groupId>
-                                <artifactId>tomcat-embed-websocket</artifactId>
-                                <version>${tomcat.version}</version>
-                        </dependency>
-                        <dependency>
-                                <groupId>org.apache.tomcat</groupId>
-                                <artifactId>tomcat-annotations-api</artifactId>
-                                <version>${tomcat.version}</version>
-                        </dependency>
-                        <dependency>
-                                <groupId>org.json4s</groupId>
-                                <artifactId>json4s-jackson_2.12</artifactId>
-                                <version>3.6.0</version>
-                        </dependency>
-                        <dependency>
-                                <groupId>org.json4s</groupId>
-                                <artifactId>json4s-core_2.12</artifactId>
-                                <version>3.6.0</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.commons</groupId>
-                            <artifactId>commons-email</artifactId>
-                            <version>1.5</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.immutables</groupId>
-                            <artifactId>value</artifactId>
-                            <version>2.7.1</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.eclipse.jetty</groupId>
-                            <artifactId>jetty-server</artifactId>
-                            <version>9.4.12.v20180830</version>
-                        </dependency>
 			<dependency>
-			    <groupId>com.h2database</groupId>
-			    <artifactId>h2</artifactId>
-			    <version>${h2.version}</version>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>1.19</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

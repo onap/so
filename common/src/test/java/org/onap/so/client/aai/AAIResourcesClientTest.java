@@ -93,7 +93,7 @@ public class AAIResourcesClientTest {
 		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
 		wireMockRule.stubFor(get(
 				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))
-				.withHeader("Authorization", equalTo("Basic TVNPOk1TTw=="))
+				.withHeader("Authorization", equalTo("Basic dGVzdDp0ZXN0"))
 				.willReturn(
 					aResponse()
 					.withHeader("Content-Type", "application/json")

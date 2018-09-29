@@ -351,15 +351,6 @@ public class RESTClient {
     }
 
     /**
-     * Alias for httpGet().
-     *
-     * @see RESTClient#httpGet()
-     */
-    public APIResponse get() throws RESTException {
-        return httpGet();
-    }
-
-    /**
      * Sends an http GET request using the parameters and headers previously
      * set.
      *

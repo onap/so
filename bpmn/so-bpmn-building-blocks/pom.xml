@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.onap.so</groupId>
 		<artifactId>bpmn</artifactId>
@@ -9,15 +10,8 @@
 	<artifactId>so-bpmn-building-blocks</artifactId>
 	<packaging>jar</packaging>
 	<properties>
-		<httpclient.version>3.1</httpclient.version>
-		<camunda.bpm.assert.version>1.2</camunda.bpm.assert.version>
-		<h2.version>1.4.196</h2.version>
-		<groovy.version>2.4.8</groovy.version>
-		<saxon.version>9.5.1-8</saxon.version>
-		<xmlunit.version>1.6</xmlunit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<camunda-os.version>7.8.0</camunda-os.version>
 	</properties>
 	<build>
 		<plugins>
@@ -37,18 +31,7 @@
 						</goals>
 						<configuration>
 							<includes>
-								<include>**/AllTasksTestsTestSuite.java</include>
-							</includes>
-						</configuration>
-					</execution>
-					<execution>
-						<id>bpmn-tests</id>
-						<goals>
-							<goal>test</goal>
-						</goals>
-						<configuration>
-							<includes>
-								<include>**/AllBPMNTestSuites.java</include>
+								<include>**/AllTestSuites.java</include>
 							</includes>
 						</configuration>
 					</execution>
@@ -83,7 +66,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore/>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -93,116 +76,61 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.camunda.bpm</groupId>
-				<artifactId>camunda-bom</artifactId>
-				<version>${camunda-os.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine</artifactId>
+			<version>${camunda.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.camunda.bpm.springboot</groupId>
 			<artifactId>camunda-bpm-spring-boot-starter</artifactId>
-			<version>2.3.0-alpha2</version>
+			<version>${camunda.springboot.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.camunda.bpm.springboot</groupId>
+			<artifactId>camunda-bpm-spring-boot-starter-webapp-ee</artifactId>
+			<version>${camunda.springboot.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.camunda.bpm.extension.mockito</groupId>
+			<artifactId>camunda-bpm-mockito</artifactId>
+			<version>3.2.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.camunda.bpm.extension</groupId>
+			<artifactId>camunda-bpm-assert</artifactId>
+			<version>1.2</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jdbc</artifactId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>		
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.uuid</groupId>
-			<artifactId>java-uuid-generator</artifactId>
-		</dependency>		
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.camunda.bpm</groupId>
-			<artifactId>camunda-engine-spring</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>MSOCommonBPMN</artifactId>
 			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.onap.so</groupId>
-			<artifactId>MSOCommonBPMN</artifactId>
+			<artifactId>so-bpmn-tasks</artifactId>
 			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
-			<type>test-jar</type>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.onap.so</groupId>
-			<artifactId>MSOCoreBPMN</artifactId>
+			<artifactId>so-bpmn-infrastructure-common</artifactId>
 			<version>${project.version}</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>commons-lang3</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
-		<dependency>
-            <groupId>org.onap.so</groupId>
-            <artifactId>so-bpmn-tasks</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.so</groupId>
-            <artifactId>so-bpmn-infrastructure-common</artifactId>
-            <version>${project.version}</version>            
-        </dependency>
 		<dependency>
 			<groupId>commons-net</groupId>
 			<artifactId>commons-net</artifactId>
@@ -213,6 +141,6 @@
 			<artifactId>mariaDB4j</artifactId>
 			<version>2.2.3</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency>		
 	</dependencies>
 </project>

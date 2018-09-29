@@ -20,8 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,11 +30,17 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class PnfCheckInputsTest {
 
-    private PnfCheckInputs delegate;
+    private PnfCheckInputs delegate; 
+    
+    
+    @Rule
+	public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -53,7 +58,8 @@ public class PnfCheckInputsTest {
         // given
         DelegateExecution delegateExecution = mockDelegateExecution();
         // when, then
-        assertThatThrownBy(() -> delegate.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        expectedException.expect(BpmnError.class);
+        delegate.execute(delegateExecution);
     }
 
     private DelegateExecution mockDelegateExecutionWithCorrelationId() {
@@ -67,7 +73,8 @@ public class PnfCheckInputsTest {
         // given
         DelegateExecution delegateExecution = mockDelegateExecutionWithCorrelationId();
         // when, then
-        assertThatThrownBy(() -> delegate.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        expectedException.expect(BpmnError.class);
+        delegate.execute(delegateExecution);
     }
 
     @Test

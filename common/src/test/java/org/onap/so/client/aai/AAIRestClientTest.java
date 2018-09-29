@@ -21,7 +21,7 @@
 package org.onap.so.client.aai;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -39,7 +39,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.client.RestClientSSL;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPatchDepthExceededException;
 

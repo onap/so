@@ -21,26 +21,34 @@ package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SDNCChangeAssignTasksTest extends BaseTaskTest{
-	@Autowired
-	private SDNCChangeAssignTasks sdncChangeAssignTasks;
+	@InjectMocks
+	private SDNCChangeAssignTasks sdncChangeAssignTasks = new SDNCChangeAssignTasks();
 	
 	private ServiceInstance serviceInstance;
 	private RequestContext requestContext;
@@ -50,7 +58,7 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest{
 	private Customer customer;
 	
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		customer = setCustomer();
 		serviceInstance = setServiceInstance();
 		genericVnf = setGenericVnf();
@@ -58,6 +66,10 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest{
 		cloudRegion = setCloudRegion();
 		requestContext = setRequestContext();
 
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
 	}
 	
 	@Test
@@ -76,7 +88,7 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest{
 	@Test
 	public void changeModelVnfExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(sdncVnfResources).changeModelVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+		doThrow(RuntimeException.class).when(sdncVnfResources).changeModelVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
 		sdncChangeAssignTasks.changeModelVnf(execution);
 	}
 	
@@ -94,7 +106,7 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest{
 	@Test
 	public void changeAssignModelVfModuleExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(sdncVfModuleResources).changeAssignVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+		doThrow(RuntimeException.class).when(sdncVfModuleResources).changeAssignVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
 		sdncChangeAssignTasks.changeAssignModelVfModule(execution);
 	}
 }

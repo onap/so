@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,41 +21,35 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
-import org.mockito.Mockito
+import org.junit.rules.ExpectedException
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceInstance
 import org.onap.so.bpmn.mock.StubResponseAAI
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
 
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
-class DoCreateServiceInstanceTest {
+class DoCreateServiceInstanceTest extends MsoGroovyTest{
     def prefix = "DCRESI_"
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(28090)
 
-    @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    @Rule
+    public ExpectedException thrown = ExpectedException.none()
 
     @Before
     void init() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        super.init("DoCreateServiceInstance")
+        MockitoAnnotations.initMocks(this)
     }
 
     @Test
@@ -83,7 +77,6 @@ class DoCreateServiceInstanceTest {
         when(mockExecution.getVariable("serviceDecomposition")).thenReturn(decomposition)
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
         when(mockExecution.getVariable("mso.workflow.default.aai.customer.version")).thenReturn("8")
-        when(mockExecution.getVariable("mso.workflow.default.aai.v8.customer.uri")).thenReturn('/aai/v8/business/customers/customer')
 
 
         DoCreateServiceInstance obj = new DoCreateServiceInstance()
@@ -93,43 +86,52 @@ class DoCreateServiceInstanceTest {
         verify(mockExecution).setVariable("sdncCallbackUrl", "http://localhost:28080/mso/SDNCAdapterCallbackService")
     }
 
- 
+
 
     @Test
     void testGetAAICustomerById() {
-        ExecutionEntity mockExecution = setupMock()
         when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("12345")
-        when(mockExecution.getVariable("mso.workflow.default.aai.v8.customer.uri")).thenReturn("/aai/v9/business/customers/customer")
         when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
         when(mockExecution.getVariable("mso.workflow.custom.DoCreateServiceInstance.aai.version")).thenReturn('8')
         StubResponseAAI.MockGetCustomer("12345", "")
-        DoCreateServiceInstance obj = new DoCreateServiceInstance()
+        DoCreateServiceInstance obj = spy(DoCreateServiceInstance.class)
+        when(obj.getAAIClient()).thenReturn(client)
+        when(client.exists(isA(AAIResourceUri.class))).thenReturn(true)
         obj.getAAICustomerById(mockExecution)
-
-        verify(mockExecution, times(1)).getVariable("aai.endpoint")
     }
 
-    private static ExecutionEntity setupMock() {
-        ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
-        when(mockProcessDefinition.getKey()).thenReturn("DoCreateServiceInstance")
-        RepositoryService mockRepositoryService = mock(RepositoryService.class)
-        when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
-        when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("DoCreateServiceInstance")
-        when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-        ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-        when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
+    @Test
+    void testGetAAICustomerById_NoCustFound() {
+        when(mockExecution.getVariable("prefix")).thenReturn(prefix)
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("globalSubscriberId")).thenReturn("12345")
+        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
+        when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
+        when(mockExecution.getVariable("mso.workflow.custom.DoCreateServiceInstance.aai.version")).thenReturn('8')
+        StubResponseAAI.MockGetCustomer("12345", "")
+        DoCreateServiceInstance obj = spy(DoCreateServiceInstance.class)
+        when(obj.getAAIClient()).thenReturn(client)
+        when(client.exists(isA(AAIResourceUri.class))).thenReturn(false)
+        thrown.expect(BpmnError.class)
+        obj.getAAICustomerById(mockExecution)
+    }
 
-        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-        // Initialize prerequisite variables
-        when(mockExecution.getId()).thenReturn("100")
-        when(mockExecution.getProcessDefinitionId()).thenReturn("DoCreateServiceInstance")
-        when(mockExecution.getProcessInstanceId()).thenReturn("DoCreateServiceInstance")
-        when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-        when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
-
-        return mockExecution
+    @Test
+    void testGetAAICustomerById_Exception() {
+        when(mockExecution.getVariable("prefix")).thenReturn(prefix)
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("globalSubscriberId")).thenReturn("12345")
+        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
+        when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
+        when(mockExecution.getVariable("mso.workflow.custom.DoCreateServiceInstance.aai.version")).thenReturn('8')
+        StubResponseAAI.MockGetCustomer("12345", "")
+        DoCreateServiceInstance obj = spy(DoCreateServiceInstance.class)
+        when(obj.getAAIClient()).thenReturn(client)
+        when(client.exists(isA(AAIResourceUri.class))).thenThrow(Exception.class)
+        thrown.expect(Exception.class)
+        obj.getAAICustomerById(mockExecution)
     }
 }

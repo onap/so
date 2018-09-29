@@ -984,31 +984,6 @@ public class StubResponseAAI {
 				.willReturn(aResponse()
 						.withStatus(404)));
 	}
-	@Deprecated
-	public static void MockGENPSIPutServiceInstance(){
-		stubFor(put(urlMatching("/aai/v[0-9]+/business/customers/customer/1604-MVM-26/service-subscriptions/service-subscription/SDN-ETHERNET-INTERNET/service-instances/service-instance/MIS%252F1604%252F0026%252FSW_INTERNET"))
-				.willReturn(aResponse()
-						.withStatus(200)
-						.withHeader("Content-Type", "text/xml")
-						.withBodyFile("GenericPutServiceInstance/GenericPutServiceInstance_PutServiceInstance_AAIResponse_Success.xml")));
-	}
-
-	@Deprecated
-	public static void MockGENPSIPutServiceSubscription(){
-		stubFor(put(urlMatching("/aai/v[0-9]+/business/customers/customer/1604-MVM-26/service-subscriptions/service-subscription/SDN-ETHERNET-INTERNET"))
-				.willReturn(aResponse()
-						.withStatus(200)
-						.withHeader("Content-Type", "text/xml")
-						.withBodyFile("GenericPutServiceInstance/GenericPutServiceInstance_PutServiceInstance_AAIResponse_Success.xml")));
-	}
-	@Deprecated
-	public static void MockGENPSIPutServiceInstance_get500(){
-		stubFor(put(urlMatching("/aai/v[0-9]+/business/customers/customer/1604-MVM-26/service-subscriptions/service-subscription/SDN-ETHERNET-INTERNET/service-instances/service-instance/MIS%252F1604%252F0026%252FSW_INTERNET"))
-				.willReturn(aResponse()
-						.withStatus(500)
-						.withHeader("Content-Type", "text/xml")
-						.withBodyFile("GenericPutServiceInstance/aaiFault.xml")));
-	}
 
 	@Deprecated
 	public static void MockGetGenericVnfById(){

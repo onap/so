@@ -20,35 +20,35 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.GenericVnf
+import org.onap.aai.domain.yang.VolumeGroup
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.common.scripts.NetworkUtils
-import org.onap.so.bpmn.common.scripts.VfModuleBase;
+import org.onap.so.bpmn.common.scripts.VfModuleBase
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.json.JsonUtils;
-import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils
-import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.entities.AAIResultWrapper
-import org.onap.so.client.aai.entities.Relationships
+import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.json.JSONObject
+import org.onap.so.constants.Defaults
+import org.onap.so.db.catalog.beans.OrchestrationStatus
+import org.onap.so.logger.MsoLogger
+
 import javax.ws.rs.NotFoundException
 
 class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateVfModuleVolumeV2.class);
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateVfModuleVolumeV2.class)
 	String prefix='DCVFMODVOLV2_'
 	JsonUtils jsonUtil = new JsonUtils()
+	private ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 
     /**
@@ -82,7 +82,9 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		if (cloudSiteId == null) {
 			String cloudConfiguration = execution.getVariable("cloudConfiguration")
 			cloudSiteId = jsonUtil.getJsonValue(cloudConfiguration, "cloudConfiguration.lcpCloudRegionId")
+			def cloudOwner = jsonUtil.getJsonValue(cloudConfiguration, "cloudConfiguration.cloudOwner")
 			execution.setVariable("lcpCloudRegionId", cloudSiteId)
+			execution.setVariable("cloudOwner", cloudOwner)
 		}
 
 		// Extract attributes from modelInfo
@@ -152,7 +154,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 			}
 
 		}catch(BpmnError e) {
-			throw e;
+			throw e
 		}catch (Exception ex){
 			String msg = "Exception in getServiceInstance. " + ex.getMessage()
 			msoLogger.debug(msg)
@@ -171,10 +173,9 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		msoLogger.debug('Request cloud region is: ' + cloudRegion)
 
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String queryCloudRegionRequest = aaiEndpoint + '/' + cloudRegion
 
-		msoLogger.debug(queryCloudRegionRequest)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+		def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
 
 		cloudRegion = aaiUtil.getAAICloudReqion(execution,  queryCloudRegionRequest, "PO", cloudRegion)
 
@@ -213,42 +214,22 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		def volumeGroupName = execution.getVariable('volumeGroupName')
 		def cloudRegion = execution.getVariable('lcpCloudRegionId')
 
-		// This is for stub testing
-		def testVolumeGroupName = execution.getVariable('test-volume-group-name')
-		if (testVolumeGroupName != null && testVolumeGroupName.length() > 0) {
-			volumeGroupName = testVolumeGroupName
-		}
-
-		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String queryAAIVolumeNameRequest = aaiEndpoint + '/' + cloudRegion + "/volume-groups" + "?volume-group-name=" + UriUtils.encode(volumeGroupName, 'UTF-8')
-
-		msoLogger.debug('Query AAI volume group by name: ' + queryAAIVolumeNameRequest)
-
-		APIResponse response = aaiUtil.executeAAIGetCall(execution, queryAAIVolumeNameRequest)
-
-		String returnCode = response.getStatusCode()
-		String aaiResponseAsString = response.getResponseBodyAsString()
-
-		msoLogger.debug("AAI query volume group by name return code: " + returnCode)
-		msoLogger.debug("AAI query volume group by name response: " + aaiResponseAsString)
-
-		ExceptionUtil exceptionUtil = new ExceptionUtil()
-
-		execution.setVariable(prefix+"queryAAIVolGrpNameResponse", aaiResponseAsString)
-		execution.setVariable(prefix+'AaiReturnCode', returnCode)
-
-		if (returnCode=='200') {
-			execution.setVariable(prefix+'queryAAIVolGrpNameResponse', aaiResponseAsString)
-			msoLogger.debug("Volume Group Name $volumeGroupName exists in AAI.")
-		} else {
-			if (returnCode=='404') {
-				msoLogger.debug("Volume Group Name $volumeGroupName does not exist in AAI.")
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume group $volumeGroupName not found in AAI. Response code: 404")
-			} else {
-				WorkflowException aWorkflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-				throw new BpmnError("MSOWorkflowException")
+		try {
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion).queryParam("volume-group-name", volumeGroupName)
+			Optional<VolumeGroup> volumeGroup = getAAIClient().get(VolumeGroup.class,uri)
+			if(volumeGroup.isPresent()){
+				execution.setVariable(prefix+'AaiReturnCode', 200)
+				execution.setVariable("queriedVolumeGroupId",volumeGroup.get().getVolumeGroupId())
+				msoLogger.debug("Volume Group Name $volumeGroupName exists in AAI.")
+			}else{
+				execution.setVariable(prefix+'AaiReturnCode', 404)
+				exceptionUtil.buildAndThrowWorkflowException(execution,25000, "Volume Group Name $volumeGroupName does not exist in AAI.")
 			}
+		}catch(BpmnError error){
+			throw error
+		}catch(Exception e){
+			execution.setVariable(prefix+'AaiReturnCode', 500)
+			exceptionUtil.buildAndThrowWorkflowException(execution,25000, "Exception in get volume group by name: " + e.getMessage())
 		}
 	}
 
@@ -292,8 +273,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		def vnfType = execution.getVariable("vnfType")
 		def tenantId = execution.getVariable("tenantId")
 		def cloudRegion = execution.getVariable('lcpCloudRegionId')
-
-		msoLogger.debug("volumeGroupId: " + volumeGroupId)
+		def cloudOwner = execution.getVariable('cloudOwner')
 
 		def testGroupId = execution.getVariable('test-volume-group-id')
 		if (testGroupId != null && testGroupId.trim() != '') {
@@ -302,50 +282,32 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 			execution.setVariable("test-volume-group-name", "MSOTESTVOL101a-vSAMP12_base_vol_module-0")
 		}
 
+		VolumeGroup volumeGroup = new VolumeGroup()
+		volumeGroup.setVolumeGroupId(volumeGroupId)
+		volumeGroup.setVolumeGroupName(volumeName)
+		volumeGroup.setVnfType(vnfType)
+		volumeGroup.setOrchestrationStatus(OrchestrationStatus.PENDING.toString())
+		volumeGroup.setModelCustomizationId(modelCustomizationId)
+
 		msoLogger.debug("volumeGroupId to be used: " + volumeGroupId)
 
-		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String createAAIVolumeGrpNameUrlRequest = aaiEndpoint + '/' + cloudRegion + "/volume-groups/volume-group/" + UriUtils.encode(volumeGroupId, "UTF-8")
-
-		String namespace =  aaiUtil.getNamespaceFromUri(aaiUtil.getCloudInfrastructureCloudRegionUri(execution))
-		msoLogger.debug("AAI namespace is: " + namespace)
-
-		msoLogger.debug("Request URL for PUT: " + createAAIVolumeGrpNameUrlRequest)
-
-		NetworkUtils networkUtils = new NetworkUtils()
-		String payload = networkUtils.createCloudRegionVolumeRequest(volumeGroupId, volumeName, vnfType, vnfId, tenantId, cloudRegion, namespace, modelCustomizationId)
-		String payloadXml = utils.formatXml(payload)
-		msoLogger.debug("Request payload for PUT: " + payloadXml)
-
-		APIResponse response = aaiUtil.executeAAIPutCall(execution, createAAIVolumeGrpNameUrlRequest, payloadXml)
-
-		String returnCode = response.getStatusCode()
-		String aaiResponseAsString = response.getResponseBodyAsString()
-
-		msoLogger.debug("AAI create volume group return code: " + returnCode)
-		msoLogger.debug("AAI create volume group response: " + aaiResponseAsString)
-
-		execution.setVariable(prefix+"createAAIVolumeGrpNameReturnCode", returnCode)
-		execution.setVariable(prefix+"createAAIVolumeGrpNameResponse", aaiResponseAsString)
-
-		ExceptionUtil exceptionUtil = new ExceptionUtil()
-
-		if (returnCode =='201') {
+		AAIResourceUri volumeGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwner, cloudRegion, volumeGroupId)
+		AAIResourceUri tenantUri = AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudOwner, cloudRegion, tenantId)
+		AAIResourceUri vnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+		try {
+			getAAIClient().create(volumeGroupUri, volumeGroup)
+			getAAIClient().connect(volumeGroupUri, vnfUri)
+			getAAIClient().connect(volumeGroupUri, tenantUri)
 			RollbackData rollbackData = execution.getVariable("rollbackData")
 			rollbackData.put("DCVFMODULEVOL", "isAAIRollbackNeeded", "true")
-		} else {
-			execution.setVariable(prefix+"isErrorMessageException", true)
-			if (returnCode=='404') {
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Unable to create volume group in AAI. Response code: 404")
-			} else {
-				WorkflowException aWorkflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-				msoLogger.debug(" AAI Adapter Query Failed.  WorkflowException - " + "\n" + aWorkflowException)
-				throw new BpmnError("MSOWorkflowException")
-			}
+		} catch (NotFoundException ignored) {
+			execution.setVariable(prefix + "isErrorMessageException", true)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Unable to create volume group in AAI. Response code: 404")
+		} catch (Exception ex) {
+			execution.setVariable(prefix + "isErrorMessageException", true)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, ex.getMessage())
 		}
 	}
-
 
 	/**
 	 * Prepare VNF adapter create request XML
@@ -353,10 +315,10 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 */
 	public void prepareVnfAdapterCreateRequest(DelegateExecution execution, isDebugEnabled) {
 
-		def aaiGenericVnfResponse = execution.getVariable(prefix+'AAIQueryGenericVfnResponse')
-		def vnfId = utils.getNodeText(aaiGenericVnfResponse, 'vnf-id')
-		def vnfName = utils.getNodeText(aaiGenericVnfResponse, 'vnf-name')
-		def vnfType = utils.getNodeText(aaiGenericVnfResponse, "vnf-type")
+		GenericVnf aaiGenericVnfResponse = execution.getVariable(prefix+'AAIQueryGenericVfnResponse')
+		def vnfId = aaiGenericVnfResponse.getVnfId()
+		def vnfName = aaiGenericVnfResponse.getVnfName()
+		def vnfType = aaiGenericVnfResponse.getVnfType()
 
 		def requestId = execution.getVariable('msoRequestId')
 		def serviceId = execution.getVariable('serviceInstanceId')
@@ -387,7 +349,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		Map<String, String> paramsMap = execution.getVariable("vfModuleInputParams")
 		for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
 			String paramsXml
-			String paramName = entry.getKey();
+			String paramName = entry.getKey()
 			String paramValue = entry.getValue()
 			paramsXml =
 				"""	<entry>
@@ -534,53 +496,30 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param isDebugEnabled
 	 */
 	public void callRESTUpdateCreatedVolGrpName(DelegateExecution execution, isDebugEnabled) {
-
-		String requeryAAIVolGrpNameResponse = execution.getVariable(prefix+"queryAAIVolGrpNameResponse")
-		String volumeGroupId = utils.getNodeText(requeryAAIVolGrpNameResponse, "volume-group-id")
+		String volumeGroupId = execution.getVariable("queriedVolumeGroupId")
 		String modelCustomizationId = execution.getVariable("modelCustomizationId")
 		String cloudRegion = execution.getVariable("lcpCloudRegionId")
-
-		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String updateAAIVolumeGroupUrlRequest = aaiEndpoint + '/' + cloudRegion + "/volume-groups/volume-group/" + UriUtils.encode(volumeGroupId, 'UTF-8')
-
-		String namespace =  aaiUtil.getNamespaceFromUri(aaiUtil.getCloudInfrastructureCloudRegionUri(execution))
-
-		msoLogger.debug("updateAAIVolumeGroupUrlRequest - " +  updateAAIVolumeGroupUrlRequest)
-
+		String cloudOwner = execution.getVariable('cloudOwner')
 		String createVnfAResponse = execution.getVariable(prefix+"createVnfAResponse")
 		def heatStackID = utils.getNodeText(createVnfAResponse, "volumeGroupStackId")
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwner, cloudRegion, volumeGroupId)
 
 		execution.setVariable(prefix+"heatStackId", heatStackID)
 
-		NetworkUtils networkUtils = new NetworkUtils()
-		String payload = networkUtils.updateCloudRegionVolumeRequest(requeryAAIVolGrpNameResponse, heatStackID, namespace, modelCustomizationId)
-		String payloadXml = utils.formatXml(payload)
-
-		msoLogger.debug("Payload to Update Created VolumeGroupName - " + "\n" + payloadXml)
-
-		APIResponse response = aaiUtil.executeAAIPutCall(execution, updateAAIVolumeGroupUrlRequest, payloadXml)
-
-		String returnCode = response.getStatusCode()
-		String aaiResponseAsString = response.getResponseBodyAsString()
-
-		msoLogger.debug("AAI create volume group return code: " + returnCode)
-		msoLogger.debug("AAI create volume group response: " + aaiResponseAsString)
-
-		ExceptionUtil exceptionUtil = new ExceptionUtil()
-
-		if (returnCode =='200') {
-			execution.setVariable(prefix+"updateCreatedAAIVolumeGrpNameResponse", aaiResponseAsString)
+		VolumeGroup volumeGroup = new VolumeGroup()
+		volumeGroup.setHeatStackId(heatStackID)
+		volumeGroup.setModelCustomizationId(modelCustomizationId)
+		try {
+			getAAIClient().update(uri, volumeGroup)
 			execution.setVariable(prefix+"isPONR", true)
-		} else {
+		}catch(NotFoundException ignored){
 			execution.setVariable(prefix+"isErrorMessageException", true)
-			if (returnCode=='404') {
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Unable to update volume group in AAI. Response code: 404")
-			} else {
-				WorkflowException aWorkflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-				msoLogger.debug(" AAI Adapter Query Failed.  WorkflowException - " + "\n" + aWorkflowException)
-				throw new BpmnError("MSOWorkflowException")
-			}
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Unable to update volume group in AAI. Response code: 404")
+		}catch(BpmnError error){
+			throw error
+		}catch(Exception e){
+			execution.setVariable(prefix+"isErrorMessageException", true)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "AAI Adapter Query Failed. "+ e.getMessage())
 		}
 	}
 
@@ -593,35 +532,16 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	public void callRESTQueryAAIGenericVnf(DelegateExecution execution, isDebugEnabled) {
 
 		def vnfId = execution.getVariable('vnfId')
-
-		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getNetworkGenericVnfEndpoint(execution)
-		def String queryAAIRequest = aaiEndpoint + "/" + UriUtils.encode(vnfId, "UTF-8")
-
-		msoLogger.debug("AAI query generic vnf request: " + queryAAIRequest)
-
-		APIResponse response = aaiUtil.executeAAIGetCall(execution, queryAAIRequest)
-
-		String returnCode = response.getStatusCode()
-		String aaiResponseAsString = response.getResponseBodyAsString()
-
-		msoLogger.debug("AAI query generic vnf return code: " + returnCode)
-		msoLogger.debug("AAI query generic vnf response: " + aaiResponseAsString)
-
-		ExceptionUtil exceptionUtil = new ExceptionUtil()
-
-		if (returnCode=='200') {
-			msoLogger.debug('Generic vnf ' + vnfId + ' found in AAI.')
-			execution.setVariable(prefix+'AAIQueryGenericVfnResponse', aaiResponseAsString)
-		} else {
-			if (returnCode=='404') {
-				def message = 'Generic vnf ' + vnfId + ' was not found in AAI. Return code: 404.'
-				msoLogger.debug(message)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, message)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+		try {
+			Optional<GenericVnf> genericVnf = getAAIClient().get(GenericVnf.class, uri)
+			if (genericVnf.isPresent()) {
+				execution.setVariable(prefix + 'AAIQueryGenericVfnResponse', genericVnf.get())
 			} else {
-				WorkflowException aWorkflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-				throw new BpmnError("MSOWorkflowException")
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, 'Generic vnf ' + vnfId + ' was not found in AAI. Return code: 404.')
 			}
+		}catch(Exception e){
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Exception in get generic VNF: " + e.getMessage())
 		}
 	}
 

@@ -63,7 +63,7 @@ public class ArchiveInfraRequestsSchedulerTest {
 	
 	@Test 
 	@Transactional
-	public void testArchiveInfraRequests() {
+	public void testArchiveInfraRequests() throws Exception {
 		String requestId1 = "requestId1";
 		String requestId2 = "requestId2";
 		
@@ -78,32 +78,15 @@ public class ArchiveInfraRequestsSchedulerTest {
 		List<InfraActiveRequests> requests = new ArrayList<>();
 		requests.add(iar1);
 		requests.add(iar2);
-		iarRepo.save(requests);
+		iarRepo.saveAll(requests);
 		
 		scheduler.archiveInfraRequests(requests);
 		
 		assertEquals(2, archivedRepo.count());
-		assertEquals(requestId1, archivedRepo.findOne(requestId1).getRequestId());
-		assertEquals(requestId2, archivedRepo.findOne(requestId2).getRequestId());
+		assertEquals(requestId1, archivedRepo.findById(requestId1)
+		        .orElseThrow( () -> new Exception("Request Not Found")).getRequestId());
+		assertEquals(requestId2, archivedRepo.findById(requestId2).
+		        orElseThrow( () -> new Exception("Request Not Found")).getRequestId());
 	}
 
-	@Test	
-	@Ignore
-	public void testInfraRequestsScheduledTask() {
-		Date currentDate= new Date();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(currentDate);
-		calendar.add(Calendar.DATE, -archivedPeriod);
-		Date archivingDate = calendar.getTime();
-		
-		List<InfraActiveRequests> requests = iarRepo.findByEndTimeLessThan(archivingDate, new PageRequest(0, 100));
-		List<InfraActiveRequests> requests2 = iarRepo.findByStartTimeLessThanAndEndTime(archivingDate, null, new PageRequest(0, 100));
-		
-		int total = requests.size() + requests2.size();
-		
-		scheduler.infraRequestsScheduledTask();
-		
-		assertTrue(archivedRepo.count() >= total);
-		assertTrue(iarRepo.count() < total);
-	}
 }

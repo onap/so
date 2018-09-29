@@ -20,20 +20,24 @@
 
 package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.graphinventory.entities.uri.Depth
+import org.onap.so.db.catalog.beans.OrchestrationStatus
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils
 
 public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateAAIVfModule.class);
 
-	def Prefix="CAAIVfMod_"
+	def prefix="CAAIVfMod_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	public void initProcessVariables(DelegateExecution execution) {
-		execution.setVariable("prefix",Prefix)
+		execution.setVariable("prefix",prefix)
 		execution.setVariable("CAAIVfMod_vnfId",null)
 		execution.setVariable("CAAIVfMod_vnfName",null)
 		execution.setVariable("CAAIVfMod_vnfType",null)
@@ -67,8 +71,6 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		execution.setVariable("CAAIVfMod_deleteGenericVnfResponse","")
 		execution.setVariable("CAAIVfMod_deleteVfModuleResponseCode",null)
 		execution.setVariable("CAAIVfMod_deleteVfModuleResponse","")
-//		execution.setVariable("CAAIVfMod_ResponseCode",null)
-//		execution.setVariable("CAAIVfMod_ErrorResponse","")
 		execution.setVariable("CreateAAIVfModuleResponse","")
 		execution.setVariable("RollbackData", null)
 
@@ -158,48 +160,36 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		execution.setVariable("CAAIVfMod_moduleModelName",execution.getVariable("vfModuleModelName"))
 
 		AaiUtil aaiUriUtil = new AaiUtil(this)
-		def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-		msoLogger.debug('AAI URI is: ' + aai_uri)
-		String aaiNamespace = aaiUriUtil.getNamespaceFromUri(execution, aai_uri)
+		String aaiNamespace = aaiUriUtil.getNamespace()
 		msoLogger.debug('AAI namespace is: ' + aaiNamespace)
-		
-		execution.setVariable("CAAIVfMod_aaiNamespace","${aaiNamespace}")		
-	
-		if (vnfId == null || vnfId.isEmpty()) {
-			// TBD - assert that the vnfName is not empty
-			execution.setVariable("CAAIVfMod_genericVnfGetEndpoint",
-				"${aai_uri}/?vnf-name=" +
-					UriUtils.encode(vnfName,"UTF-8") + "&depth=1")
-		} else {
-			execution.setVariable("CAAIVfMod_genericVnfGetEndpoint",
-				"${aai_uri}/" + UriUtils.encode(vnfId,"UTF-8") + "?depth=1")
-		}
 
-		msoLogger.debug("CreateAAIVfModule VNF PUT Endpoint:   ${aai_uri}/")
-		execution.setVariable("CAAIVfMod_genericVnfPutEndpoint","${aai_uri}/")
+		execution.setVariable("CAAIVfMod_aaiNamespace","${aaiNamespace}")
+
 	}
 	
 	// send a GET request to AA&I to retrieve the Generic VNF/VF Module information based on a Vnf Name
 	// expect a 200 response with the information in the response body or a 404 if the Generic VNF does not exist
 	public void queryAAIForGenericVnf(DelegateExecution execution) {
-		def endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + execution.getVariable("CAAIVfMod_genericVnfGetEndpoint")
 
+		AAIResourceUri uri
+		def vnfId = execution.getVariable("CAAIVfMod_vnfId")
+		def vnfName = execution.getVariable("CAAIVfMod_vnfName")
+		if (vnfId == null || vnfId.isEmpty()) {
+			uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF)
+			uri.queryParam("vnf-name", vnfName)
+		} else {
+			uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+		}
+		uri.depth(Depth.ONE)
 		try {
-			msoLogger.debug("queryAAIForGenericVnf() endpoint-" + endPoint)
-			msoLogger.debug("invoking GET call to AAI endpoint :"+System.lineSeparator()+endPoint)
-			msoLogger.debug("CreateAAIVfModule sending GET call to AAI Endpoint: " + endPoint)
-
-			AaiUtil aaiUtil = new AaiUtil(this)
-			APIResponse response = aaiUtil.executeAAIGetCall(execution, endPoint)
-			def responseData = response.getResponseBodyAsString()
-			def statusCode = response.getStatusCode()
-			execution.setVariable("CAAIVfMod_queryGenericVnfResponseCode", statusCode)
-			execution.setVariable("CAAIVfMod_queryGenericVnfResponse", responseData)
-
-			msoLogger.debug("CreateAAIVfModule Response Code: " + statusCode)
-			msoLogger.debug("CreateAAIVfModule Response data: " + responseData)
-			msoLogger.debug("Response code:" + statusCode)
-			msoLogger.debug("Response:" + System.lineSeparator()+responseData)
+			Optional<GenericVnf> genericVnfOp = getAAIClient().get(GenericVnf.class,  uri)
+            if(genericVnfOp.isPresent()){
+                execution.setVariable("CAAIVfMod_queryGenericVnfResponseCode", 200)
+                execution.setVariable("CAAIVfMod_queryGenericVnfResponse", genericVnfOp.get())
+            }else{
+                execution.setVariable("CAAIVfMod_queryGenericVnfResponseCode", 404)
+                execution.setVariable("CAAIVfMod_queryGenericVnfResponse", "Generic Vnf not Found!")
+            }
 		} catch (Exception ex) {
 			msoLogger.debug("Exception occurred while executing AAI GET:" + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in queryAAIForGenericVnf.")
@@ -238,45 +228,22 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	public void createGenericVnf(DelegateExecution execution) {
 		// TBD - is this how we want to generate the Id for the new Generic VNF?
 		def newVnfId = UUID.randomUUID().toString()
-		def endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) +
-			execution.getVariable("CAAIVfMod_genericVnfPutEndpoint") + newVnfId
-		// update the flow execution with the new Vnf Id
 		execution.setVariable("CAAIVfMod_vnfId",newVnfId)
-		
-	//	AaiUriUtil aaiUriUtil = new AaiUriUtil(this)
-	//	def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-	//	msoLogger.debug('AAI URI is: ' + aai_uri)
-	//	String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
-	//	msoLogger.debug('AAI namespace is: ' + namespace)
-		
-				
-		String payload = """<generic-vnf xmlns="${execution.getVariable("CAAIVfMod_aaiNamespace")}">
-								<vnf-id>${MsoUtils.xmlEscape(newVnfId)}</vnf-id>
-								<vnf-name>${MsoUtils.xmlEscape(execution.getVariable("CAAIVfMod_vnfName"))}</vnf-name>
-								<vnf-type>${MsoUtils.xmlEscape(execution.getVariable("CAAIVfMod_vnfType"))}</vnf-type>
-								<service-id>${MsoUtils.xmlEscape(execution.getVariable("CAAIVfMod_serviceId"))}</service-id>
-								<orchestration-status>Active</orchestration-status>
-								<model-invariant-id>${MsoUtils.xmlEscape(execution.getVariable("CAAIVfMod_vnfPersonaId"))}</model-invariant-id>
-								<model-version-id>${MsoUtils.xmlEscape(execution.getVariable("CAAIVfMod_vnfPersonaVer"))}</model-version-id>
-							</generic-vnf>""" as String
-		execution.setVariable("CAAIVfMod_createGenericVnfPayload", payload)
+
+        GenericVnf genericVnf = new GenericVnf()
+        genericVnf.setVnfId(newVnfId)
+        genericVnf.setVnfName(execution.getVariable("CAAIVfMod_vnfName"))
+        genericVnf.setVnfType(execution.getVariable("CAAIVfMod_vnfType"))
+        genericVnf.setServiceId(execution.getVariable("CAAIVfMod_serviceId"))
+        genericVnf.setOrchestrationStatus(OrchestrationStatus.ACTIVE.toString())
+        genericVnf.setModelInvariantId(execution.getVariable("CAAIVfMod_vnfPersonaId"))
+        genericVnf.setModelVersionId(execution.getVariable("CAAIVfMod_vnfPersonaVer"))
 
 		try {
-			msoLogger.debug("createGenericVnf() endpoint-" + endPoint)
-			msoLogger.debug("invoking PUT call to AAI with payload:"+System.lineSeparator()+payload)
-			msoLogger.debug("Sending PUT call to AAI with Endpoint /n" + endPoint + " with payload /n" + payload)
-
-			AaiUtil aaiUtil = new AaiUtil(this);
-			APIResponse response = aaiUtil.executeAAIPutCall(execution, endPoint, payload);
-			def	responseData = response.getResponseBodyAsString()
-			def responseStatusCode = response.getStatusCode()
-			execution.setVariable("CAAIVfMod_createGenericVnfResponseCode", responseStatusCode)
-			execution.setVariable("CAAIVfMod_createGenericVnfResponse", responseData)
-			
-			msoLogger.debug("Response Code: " + responseStatusCode)
-			msoLogger.debug("Response Data: " + responseData)
-			msoLogger.debug("Response code:" + responseStatusCode)
-			msoLogger.debug("Response:" + System.lineSeparator()+responseData)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, newVnfId)
+            getAAIClient().create(uri,genericVnf)
+			execution.setVariable("CAAIVfMod_createGenericVnfResponseCode", 201)
+			execution.setVariable("CAAIVfMod_createGenericVnfResponse", "Vnf Created")
 		} catch (Exception ex) {
 			ex.printStackTrace()
 			msoLogger.debug("Exception occurred while executing AAI PUT:" + ex.getMessage())
@@ -293,28 +260,13 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		if (newModuleId == null || newModuleId.isEmpty()) {
 			newModuleId = UUID.randomUUID().toString()
 		}
-		def endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + execution.getVariable("CAAIVfMod_genericVnfPutEndpoint")
-		// need to append the existing Vnf Id or the one generated in createGenericVnf() to the url
-		endPoint = endPoint + UriUtils.encode(execution.getVariable("CAAIVfMod_vnfId"), "UTF-8") +
-			"/vf-modules/vf-module/" + newModuleId;
+
+		String vnfId = execution.getVariable("CAAIVfMod_vnfId")
+
 		int moduleIndex = 0
 		if (!isBaseModule) {
-			def aaiVnfResponse = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
-			AaiUtil aaiUtil = new AaiUtil(this)
-			def personaModelId = execution.getVariable("CAAIVfMod_personaId")
-			
-			// Check if the response includes model-invariant-id or persona-model-id
-			// note: getRequiredNodeText() throws an exception if the field is missing
-			// need to retun a null for the subsequent "either/or" logic to work properly
-//			def modelInvariantId = getRequiredNodeText(execution, aaiVnfResponse,'model-invariant-id')
-			def modelInvariantId = getNodeText(aaiVnfResponse,'model-invariant-id', null)
-			def fieldToCheck = 'model-invariant-id'
-			if (!modelInvariantId) {
-				fieldToCheck = 'persona-model-id'
-			}
-			
-			moduleIndex = aaiUtil.getLowestUnusedVfModuleIndexFromAAIVnfResponse(execution, aaiVnfResponse, 
-				fieldToCheck, personaModelId)
+            GenericVnf aaiVnfResponse = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
+            moduleIndex = getLowestUnusedVfModuleIndexFromAAIVnfResponse(aaiVnfResponse,execution)
 		}
 		def moduleIndexString = String.valueOf(moduleIndex)
 
@@ -329,34 +281,26 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		rollbackData.put("VFMODULE", "isBaseModule", isBaseModule.toString())
 		execution.setVariable("RollbackData", rollbackData)
 		msoLogger.debug("RollbackData:" + rollbackData)
-		String payload = """<vf-module xmlns="${execution.getVariable("CAAIVfMod_aaiNamespace")}">
-								<vf-module-id>${MsoUtils.xmlEscape(newModuleId)}</vf-module-id>
-								<vf-module-name>${MsoUtils.xmlEscape(execution.getVariable("CAAIVfMod_moduleName"))}</vf-module-name>
-								<model-invariant-id>${MsoUtils.xmlEscape(execution.getVariable("CAAIVfMod_personaId"))}</model-invariant-id>
-								<model-version-id>${MsoUtils.xmlEscape(execution.getVariable("CAAIVfMod_personaVer"))}</model-version-id>
-								<model-customization-id>${MsoUtils.xmlEscape(execution.getVariable("CAAIVfMod_modelCustomizationId"))}</model-customization-id>
-								<is-base-vf-module>${MsoUtils.xmlEscape(isBaseModule)}</is-base-vf-module>
-								<orchestration-status>PendingCreate</orchestration-status>
-								<module-index>${MsoUtils.xmlEscape(moduleIndex)}</module-index>
-								</vf-module>""" as String
-		execution.setVariable("CAAIVfMod_createVfModulePayload", payload)
+
+        org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule()
+        vfModule.setVfModuleId(newModuleId)
+        vfModule.setVfModuleName(execution.getVariable("CAAIVfMod_moduleName"))
+        vfModule.setModelInvariantId(execution.getVariable("CAAIVfMod_personaId"))
+        vfModule.setModelVersionId(execution.getVariable("CAAIVfMod_personaVer"))
+        vfModule.setModelCustomizationId(execution.getVariable("CAAIVfMod_modelCustomizationId"))
+        vfModule.setIsBaseVfModule(isBaseModule)
+        vfModule.setOrchestrationStatus(OrchestrationStatus.PENDING_CREATE.toString())
+        vfModule.setModuleIndex(moduleIndex)
 
 		try {
-			msoLogger.debug("createVfModule() endpoint-" + endPoint)
-			msoLogger.debug("invoking PUT call to AAI with payload:"+System.lineSeparator()+payload)
-			msoLogger.debug("CreateAAIVfModule sending PUT call to AAI with endpoint /n" + endPoint + " with payload /n " + payload)
 
-			AaiUtil aaiUtil = new AaiUtil(this)
-			APIResponse response = aaiUtil.executeAAIPutCall(execution, endPoint, payload)	
-			def responseData = response.getResponseBodyAsString()
-			def statusCode = response.getStatusCode()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, newModuleId)
+            getAAIClient().create(uri,vfModule)
+            def statusCode = 201
 			execution.setVariable("CAAIVfMod_createVfModuleResponseCode", statusCode)
-			execution.setVariable("CAAIVfMod_createVfModuleResponse", responseData)
-			
-			msoLogger.debug("Response code:" + statusCode)
-			msoLogger.debug("Response:" + System.lineSeparator()+responseData)
-			msoLogger.debug("Response Code: " + statusCode)
-			msoLogger.debug("Response data: " + responseData)
+			execution.setVariable("CAAIVfMod_createVfModuleResponse", "Vf Module Created")
+
+
 			// the base or add-on VF Module was successfully created,
 			// add the module name to the rollback data and the response
 			if (isOneOf(statusCode, 200, 201)) {
@@ -391,26 +335,55 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 				msoLogger.debug("CreateAAIVfModule Response /n " + responseOut)
 			}
 		} catch (Exception ex) {
+            execution.setVariable("CAAIVfMod_createVfModuleResponseCode", 500)
+            execution.setVariable("CAAIVfMod_createVfModuleResponse", ex.getMessage())
 			msoLogger.debug("Exception occurred while executing AAI PUT:" + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in createVfModule.")
 		}
 	}
-	
+
+    private int getLowestUnusedVfModuleIndexFromAAIVnfResponse(GenericVnf genericVnf,DelegateExecution execution){
+        String personaModelId = execution.getVariable("CAAIVfMod_personaId")
+        if(genericVnf!=null && genericVnf.getVfModules()!= null &&
+                !genericVnf.getVfModules().getVfModule().isEmpty()){
+            Set<Integer> moduleIndices = new TreeSet<>()
+            for(org.onap.aai.domain.yang.VfModule vfModule in genericVnf.getVfModules().getVfModule()){
+                if(genericVnf.getModelInvariantId()==null){
+                    if(vfModule.getPersonaModelVersion().equals(personaModelId) && vfModule.getModuleIndex()!=null)
+                        moduleIndices.add(vfModule.getModuleIndex())
+                }else{
+                    if(vfModule.getModelInvariantId().equals(personaModelId) && vfModule.getModuleIndex()!=null)
+                        moduleIndices.add(vfModule.getModuleIndex())
+                }
+            }
+            for(i in 0..moduleIndices.size()-1){
+                if(moduleIndices.getAt(i) != i){
+                    return i;
+                }
+            }
+            return moduleIndices.size()
+        }else{
+            return 0
+        }
+
+    }
+
 	// parses the output from the result from queryAAIForGenericVnf() to determine if the vf-module-name
 	// requested for an Add-on VF Module does not already exist for the specified Generic VNF
 	// also retrieves VNF name from AAI response for existing VNF
 	public void parseForAddOnModule(DelegateExecution execution) {
-		def xml = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
-		def vnfNameFromAAI = utils.getNodeText(xml, "vnf-name")
+		GenericVnf genericVnf = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
+		def vnfNameFromAAI = genericVnf.getVnfName()
 		execution.setVariable("CAAIVfMod_vnfNameFromAAI", vnfNameFromAAI)
 		msoLogger.debug("Obtained vnf-name from AAI for existing VNF: " + vnfNameFromAAI)	
 		def newModuleName = execution.getVariable("CAAIVfMod_moduleName")
 		msoLogger.debug("VF Module to be added: " + newModuleName)
-		def qryModuleNameList = utils.getMultNodes(xml, "vf-module-name")
 		execution.setVariable("CAAIVfMod_moduleExists", false)
-		if (qryModuleNameList != null) {
-			msoLogger.debug("Existing VF Module List: " + qryModuleNameList)
-			for (String qryModuleName : qryModuleNameList) {
+		if (genericVnf !=null && genericVnf.getVfModules()!=null && !genericVnf.getVfModules().getVfModule().isEmpty()) {
+            def qryModuleList =  genericVnf.getVfModules().getVfModule()
+			msoLogger.debug("Existing VF Module List: " + qryModuleList)
+			for (org.onap.aai.domain.yang.VfModule qryModule : qryModuleList) {
+                def qryModuleName = qryModule.getVfModuleName()
 				if (newModuleName.equals(qryModuleName)) {
 					// a module with the requested name already exists - failure
 					msoLogger.debug("VF Module " + qryModuleName + " already exists for Generic VNF " + execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
@@ -434,33 +407,33 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	// requested for an Add-on VF Module does not already exist for the specified Generic VNF; 
 	// also retrieves VNF name from AAI response for existing VNF
 	public void parseForBaseModule(DelegateExecution execution) {
-		def xml = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
-		def vnfNameFromAAI = utils.getNodeText(xml, "vnf-name")
+        GenericVnf genericVnf = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
+		def vnfNameFromAAI = genericVnf.getVnfName()
 		execution.setVariable("CAAIVfMod_vnfNameFromAAI", vnfNameFromAAI)
 		msoLogger.debug("Obtained vnf-name from AAI for existing VNF: " + vnfNameFromAAI)	
 		def newModuleName = execution.getVariable("CAAIVfMod_moduleName")
 		msoLogger.debug("VF Module to be added: " + newModuleName)
-		def qryModuleNameList = utils.getMultNodes(xml, "vf-module-name")
+		def qryModuleList = genericVnf !=null ? genericVnf.getVfModules():null;
 		execution.setVariable("CAAIVfMod_moduleExists", false)
-		if (qryModuleNameList != null) {
-			msoLogger.debug("Existing VF Module List: " + qryModuleNameList)
-			for (String qryModuleName : qryModuleNameList) {
-				if (newModuleName.equals(qryModuleName)) {
+		if (qryModuleList != null && !qryModuleList.getVfModule().isEmpty()) {
+            def qryModules = qryModuleList.getVfModule()
+			msoLogger.debug("Existing VF Module List: " + qryModules)
+			for (org.onap.aai.domain.yang.VfModule qryModule : qryModules) {
+				if (newModuleName.equals(qryModule.getVfModuleName())) {
 					// a module with the requested name already exists - failure
-					msoLogger.debug("VF Module " + qryModuleName + " already exists for Generic VNF " + execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
+					msoLogger.debug("VF Module " + qryModule.getVfModuleName() + " already exists for Generic VNF " + execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
 					execution.setVariable("CAAIVfMod_baseModuleConflict", true)
 					execution.setVariable("CAAIVfMod_parseModuleResponse",
-						"VF Module " + qryModuleName + " already exists for Generic VNF " +
+						"VF Module " + qryModule.getVfModuleName() + " already exists for Generic VNF " +
 						execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
 					break
 				}
 			}
 		}
-		def isBaseVfModuleList = utils.getMultNodes(xml, "is-base-vf-module")
-		if (isBaseVfModuleList != null && !execution.getVariable("CAAIVfMod_baseModuleConflict")) {
-			
-			for (String baseValue : isBaseVfModuleList) {
-				if (baseValue.equals("true")) {
+		if (qryModuleList != null && !qryModuleList.getVfModule().isEmpty() && !execution.getVariable("CAAIVfMod_baseModuleConflict")) {
+            def qryModules = qryModuleList.getVfModule()
+			for (org.onap.aai.domain.yang.VfModule qryModule : qryModules) {
+				if (qryModule.isBaseVfModule) {
 					// a base module already exists in this VNF - failure
 					msoLogger.debug("Base VF Module already exists for Generic VNF " + execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
 					execution.setVariable("CAAIVfMod_baseModuleConflict", true)
@@ -554,9 +527,6 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			msoLogger.debug("RollbackData:" + rollbackData)
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-			msoLogger.debug("CreateAAIVfModule rollback AAI URI: " + aai_uri)
 			
 			if (rollbackData != null) {
 				if (rollbackData.hasType("VFMODULE")) {
@@ -566,9 +536,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 					def isBaseModule = rollbackData.get("VFMODULE", "isBaseModule")
 					execution.setVariable("DAAIVfMod_vnfId", vnfId)		
 					execution.setVariable("DAAIVfMod_vfModuleId", vfModuleId)
-					execution.setVariable("DAAIVfMod_genericVnfEndpoint", "${aai_uri}/" + vnfId)
-					execution.setVariable("DAAIVfMod_vfModuleEndpoint", "${aai_uri}/" + vnfId +
-						 "/vf-modules/vf-module/" + vfModuleId)
+
 					DeleteAAIVfModule dvm = new DeleteAAIVfModule()
 					// query A&AI to get the needed information for the delete(s)
 					dvm.queryAAIForGenericVnf(execution)
@@ -581,13 +549,14 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 
 					if (isOneOf(responseCode, 200, 204)) {
 						msoLogger.debug("Received " + responseCode + " to VF Module rollback request")
-//						execution.setVariable("RollbackResult", "SUCCESS")
 					} else {
 						msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Received " + responseCode + " to VF Module rollback request", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, rollbackData + System.lineSeparator() + "Response: " + response);
 					}
 					
 					// a new Generic VNF was created that needs to be rolled back
 					if (isBaseModule.equals("true")) {
+						dvm.queryAAIForGenericVnf(execution)
+						dvm.parseForResourceVersion(execution)
 						dvm.deleteGenericVnf(execution)
 						responseCode = execution.getVariable("DAAIVfMod_deleteGenericVnfResponseCode")
 						response = execution.getVariable("DAAIVfMod_deleteGenericVnfResponse")

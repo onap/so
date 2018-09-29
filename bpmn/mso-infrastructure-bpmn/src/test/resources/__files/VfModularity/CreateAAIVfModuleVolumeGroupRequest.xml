@@ -1,0 +1,7 @@
+<CreateAAIVfModuleVolumeGroupRequest>
+	<vnf-id>skask</vnf-id>
+	<vf-module-id>lukewarm</vf-module-id>
+	<aic-cloud-region>pdk1</aic-cloud-region>
+	<cloud-owner>test-owner</cloud-owner>
+	<volume-group-id>78987</volume-group-id>
+</CreateAAIVfModuleVolumeGroupRequest>

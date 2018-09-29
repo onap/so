@@ -20,18 +20,20 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.aai.domain.yang.AllottedResource
+
+import javax.ws.rs.core.UriBuilder
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
@@ -40,7 +42,6 @@ import org.springframework.web.util.UriUtils;
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.AAIResultWrapper
-import org.onap.so.client.aai.entities.Relationships
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.json.JSONObject
@@ -371,19 +372,15 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
             			if (StringUtils.equalsIgnoreCase(relatedTo, "allotted-resource")) {
                 			msoLogger.info("allotted-resource exists ")
 
-							String aaiArRsp = getAaiAr(execution, relatedLink)
+                            Optional<AllottedResource>  aaiArRsp = getAaiAr(execution, relatedLink)
 							msoLogger.info("aaiArRsp: " + aaiArRsp)
-							if (! isBlank(aaiArRsp)) {
-								def type = utils.getNodeText(aaiArRsp, "type")
-								def id = utils.getNodeText(aaiArRsp, "id")
-							    def role = utils.getNodeText(aaiArRsp, "role")
-								def resourceVersion = utils.getNodeText(aaiArRsp, "resource-version")
+							if (aaiArRsp.isPresent()) {
 
 								JSONObject jObject = new JSONObject()
-								jObject.put("resourceType", type)
-								jObject.put("resourceInstanceId", id)
-								jObject.put("resourceRole", role)
-								jObject.put("resourceVersion", resourceVersion)
+								jObject.put("resourceType", aaiArRsp.get().getType())
+								jObject.put("resourceInstanceId", aaiArRsp.get().getId())
+								jObject.put("resourceRole", aaiArRsp.get().getRole())
+								jObject.put("resourceVersion", aaiArRsp.get().getResourceVersion())
 
 								allResources.put(jObject)
 								msoLogger.info("allResources: " + allResources)
@@ -577,27 +574,11 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		msoLogger.info("Exited " + method)
 	}
 
-	private String getAaiAr(DelegateExecution execution, String relink) {
+	private Optional<AllottedResource>  getAaiAr(DelegateExecution execution, String relink) {
 		def method = getClass().getSimpleName() + '.getAaiAr(' +'execution=' + execution.getId() +')'
 		msoLogger.info("Entered " + method)
-		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = execution.getVariable("URN_aai_endpoint") + relink
-
-		msoLogger.debug("get AR info " + aaiEndpoint)
-		APIResponse response = aaiUtil.executeAAIGetCall(execution, aaiEndpoint)
-
-		int responseCode = response.getStatusCode()
-		msoLogger.debug("get AR info responseCode:" + responseCode)
-
-		String aaiResponse = response.getResponseBodyAsString()
-		msoLogger.debug("get AR info " + aaiResponse)
-
-		if(responseCode < 200 || responseCode >= 300 || isBlank(aaiResponse)) {
-			return null
-		}
-
-		msoLogger.info("Exited " + method)
-		return aaiResponse
+		AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(relink).build())
+        return getAAIClient().get(AllottedResource.class,uri)
 	}
 	/**
 	 * prepare Decompose next resource to create request

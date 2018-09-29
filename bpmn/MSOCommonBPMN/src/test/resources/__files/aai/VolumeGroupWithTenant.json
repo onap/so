@@ -1,0 +1,20 @@
+{
+	"volume-group-id":"volumeGroupId",	
+	"volume-group-name":"volumeGroupName",	
+	"vnf-type":"vnfType",	
+	"orchestration-status":"PRECREATED",	
+	"cloud-params":{},	
+	"cascaded":false,
+	"heat-stack-id":"heatStackId",
+	"relationship-list": {
+		"relationship": [
+			{
+				"related-to": "tenant",
+				"related-link": "/aai/v11/network/Test",
+                "relationship-data": [{
+                  "relationship-key": "tenant.tenant-id",
+                  "relationship-value": "Tenant123"
+                }]
+			}]
+	}
+}

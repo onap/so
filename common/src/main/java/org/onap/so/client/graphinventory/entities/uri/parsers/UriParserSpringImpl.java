@@ -56,11 +56,7 @@ public class UriParserSpringImpl implements UriParser {
 	  final Map<String, String> result = new LinkedHashMap<>();
 	  
 	  for (Entry<String, String> entry : map.entrySet()) {
-		  try {
-			result.put(entry.getKey(), UriUtils.decode(entry.getValue(), "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			result.put(entry.getKey(), "");
-		}
+		result.put(entry.getKey(), UriUtils.decode(entry.getValue(), "UTF-8"));		
 	  }
 	  
 	  return result;

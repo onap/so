@@ -20,16 +20,15 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import javax.ws.rs.NotFoundException
+
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils
-import org.onap.so.logger.MessageEnum
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MsoLogger
-
-
 
 
 public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
@@ -103,31 +102,21 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 		try {
 			def vnfId = execution.getVariable('UAAIVfMod_vnfId')
 			def vfModuleId = execution.getVariable('UAAIVfMod_vfModuleId')
-
-			// Construct endpoint
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8") + '/vf-modules/vf-module/' + UriUtils.encode(vfModuleId, "UTF-8")
-
 			try {
-				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
-				msoLogger.debug("UpdateAAIVfModule sending GET to AAI endpoint: " + endPoint)
-
-				APIResponse response = aaiUriUtil.executeAAIGetCall(execution, endPoint)
-				def responseData = response.getResponseBodyAsString()
-				execution.setVariable('UAAIVfMod_getVfModuleResponseCode', response.getStatusCode())
-				execution.setVariable('UAAIVfMod_getVfModuleResponse', responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
-				msoLogger.debug("UpdateAAIVfModule response data: " + responseData)
+				AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
+				Optional<org.onap.aai.domain.yang.VfModule> vfModule = getAAIClient().get(org.onap.aai.domain.yang.VfModule.class, resourceUri)
+				if (vfModule.isPresent()) {
+					execution.setVariable('UAAIVfMod_getVfModuleResponseCode', 200)
+					execution.setVariable('UAAIVfMod_getVfModuleResponse', vfModule.get())
+				} else {
+					execution.setVariable('UAAIVfMod_getVfModuleResponseCode', 404)
+					execution.setVariable('UAAIVfMod_getVfModuleResponse', "VF Module not found in AAI")
+				}
 			} catch (Exception ex) {
-				ex.printStackTrace()
 				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				execution.setVariable('UAAIVfMod_getVfModuleResponseCode', 500)
 				execution.setVariable('UAAIVfMod_getVfModuleResponse', 'AAI GET Failed:' + ex.getMessage())
 			}
-			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
@@ -150,18 +139,10 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 		try {
 			def vnfId = execution.getVariable('UAAIVfMod_vnfId')
 			def vfModuleId = execution.getVariable('UAAIVfMod_vfModuleId')
-			def vfModule = execution.getVariable('UAAIVfMod_getVfModuleResponse')
+			org.onap.aai.domain.yang.VfModule vfModule = execution.getVariable('UAAIVfMod_getVfModuleResponse')
 			def origRequest = execution.getVariable('UpdateAAIVfModuleRequest')
-			def Node vfModuleNode = xmlParser.parseText(vfModule)
-			
+
 			msoLogger.debug("UpdateAAIVfModule request: " + origRequest)
-			// Confirm resource-version is in retrieved VF Module
-			if (utils.getChildNode(vfModuleNode, 'resource-version') == null) {
-				def msg = 'Can\'t update VF Module ' + vfModuleId + ' since \'resource-version\' is missing'
-				msoLogger.error(msg);
-				throw new Exception(msg)
-			}
-			
 			// Handle persona-model-id/persona-model-version
 			def boolean doPersonaModelVersion = true
 			def String newPersonaModelId = utils.getNodeText(origRequest, 'persona-model-id')
@@ -170,10 +151,10 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 				doPersonaModelVersion = false
 			} else {
 				// Confirm "new" persona-model-id is same as "current" persona-model-id
-				def String currPersonaModelId = utils.getChildNodeText(vfModuleNode, 'model-invariant-id')
+				def String currPersonaModelId = vfModule.getModelInvariantId()
 				if (currPersonaModelId == null) {
 					// check the old attribute name
-					currPersonaModelId = utils.getChildNodeText(vfModuleNode, 'model-version-id')
+					currPersonaModelId = vfModule.getModelVersionId()
 				}
 				if (currPersonaModelId == null) {
 					currPersonaModelId = ''
@@ -186,13 +167,13 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			}
 			
 			// Construct payload
-			String orchestrationStatusEntry = updateVfModuleNode(origRequest, vfModuleNode, 'orchestration-status')
-			String heatStackIdEntry = updateVfModuleNode(origRequest, vfModuleNode, 'heat-stack-id')
+			String orchestrationStatusEntry = updateVfModuleNode(origRequest , 'orchestration-status')
+			String heatStackIdEntry = updateVfModuleNode(origRequest,  'heat-stack-id')
 			String personaModelVersionEntry = ""
 			if (doPersonaModelVersion) {
-				personaModelVersionEntry = updateVfModuleNode(origRequest, vfModuleNode, 'persona-model-version')
+				personaModelVersionEntry = updateVfModuleNode(origRequest,  'persona-model-version')
 			}
-			String contrailServiceInstanceFqdnEntry = updateVfModuleNode(origRequest, vfModuleNode, 'contrail-service-instance-fqdn')
+			String contrailServiceInstanceFqdnEntry = updateVfModuleNode(origRequest,  'contrail-service-instance-fqdn')
 			def payload = """
 					{	${orchestrationStatusEntry}
 						${heatStackIdEntry}
@@ -202,31 +183,16 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 					}
 			"""
 
-
-			// Construct endpoint
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8") + '/vf-modules/vf-module/' + UriUtils.encode(vfModuleId, "UTF-8")
-
-			try {
-				msoLogger.debug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload)
-				msoLogger.debug("Sending PATCH to AAI endpoint: " + endPoint)
-
-				APIResponse response = aaiUriUtil.executeAAIPatchCall(execution, endPoint, payload)
-				def responseData = response.getResponseBodyAsString()
-				execution.setVariable('UAAIVfMod_updateVfModuleResponseCode', response.getStatusCode())
-				execution.setVariable('UAAIVfMod_updateVfModuleResponse', responseData)
-				msoLogger.debug("UpdateAAIVfModule Response data: " + responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
-			} catch (Exception ex) {
-				ex.printStackTrace()
-				msoLogger.debug('Exception occurred while executing AAI PATCH:' + ex.getMessage())
-				execution.setVariable('UAAIVfMod_updateVfModuleResponseCode', 500)
-				execution.setVariable('UAAIVfMod_updateVfModuleResponse', 'AAI PATCH Failed:' + ex.getMessage())
-			}
-			msoLogger.trace('Exited ' + method)
+            try {
+                AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
+                getAAIClient().update(resourceUri, payload)
+            }catch(NotFoundException ignored){
+                msoLogger.debug("VF-Module not found!!")
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "vf-module " + vfModuleId + " not found for under vnf " + vnfId + " in A&AI!")
+            }
+            catch(Exception ex){
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, 'Exception occurred while executing AAI PATCH:' + ex.getMessage())
+            }
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
@@ -239,10 +205,9 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 	 * Sets up json attributes for PATCH request for Update
 	 *
 	 * @param origRequest Incoming update request with VF Module elements to be updated.
-	 * @param vfModule Current VF Module retrieved from AAI.
 	 * @param element Name of element to be inserted.
 	 */	
-	private String updateVfModuleNode(String origRequest, Node vfModuleNode, String elementName) {
+	private String updateVfModuleNode(String origRequest, String elementName) {
 
 		if (!utils.nodeExists(origRequest, elementName)) {
 			return "" 
@@ -343,27 +308,6 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			execution.getVariable('UAAIVfMod_getVfModuleResponse'))
 		execution.setVariable('WorkflowException', exception)
 		msoLogger.debug("UpdateAAIVfModule query failure: " + exception.getErrorMessage())
-		msoLogger.trace('Exited ' + method)
-	}
-
-	/**
-	 * Generates a WorkflowException if updating a VF Module in AAI returns a response code other than 200.
-	 *
-	 * @param execution The flow's execution instance.
-	 */
-	public void handleUpdateVfModuleFailure(DelegateExecution execution) {
-		def method = getClass().getSimpleName() + '.handleUpdateVfModuleFailure(' +
-			'execution=' + execution.getId() +
-			')'
-		msoLogger.trace('Entered ' + method)
-
-		msoLogger.error('Error occurred attempting to update VF Module in AAI, Response Code ' + execution.getVariable('UAAIVfMod_updateVfModuleResponseCode'));
-		String processKey = getProcessKey(execution);
-		WorkflowException exception = new WorkflowException(processKey, 5000,
-			execution.getVariable('UAAIVfMod_updateVfModuleResponse'))
-		execution.setVariable('WorkflowException', exception)
-
-		msoLogger.debug("UpdateAAIVfModule failure: " + exception.getErrorMessage())
 		msoLogger.trace('Exited ' + method)
 	}
 }

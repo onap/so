@@ -20,9 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,8 +33,10 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.onap.so.bpmn.core.WorkflowException;
 
@@ -45,6 +46,9 @@ public class CheckAaiForCorrelationIdDelegateTest {
     public static class ConnectionOkTests {
 
         private CheckAaiForCorrelationIdDelegate delegate;
+        
+        @Rule
+    	public ExpectedException expectedException = ExpectedException.none();
 
         @Before
         public void setUp() {
@@ -53,13 +57,14 @@ public class CheckAaiForCorrelationIdDelegateTest {
         }
 
         @Test
-        public void shouldThrowExceptionWhenCorrelationIdIsNotSet() {
+        public void shouldThrowExceptionWhenCorrelationIdIsNotSet() throws Exception {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
             when(execution.getVariable(CORRELATION_ID)).thenReturn(null);
             when(execution.getVariable("testProcessKey")).thenReturn("testProcessKeyValue");
             // when, then
-            assertThatThrownBy(() -> delegate.execute(execution)).isInstanceOf(BpmnError.class);
+            expectedException.expect(BpmnError.class);
+            delegate.execute(execution);
             verify(execution).setVariable(eq("WorkflowException"), any(WorkflowException.class));
         }
 
@@ -89,6 +94,9 @@ public class CheckAaiForCorrelationIdDelegateTest {
     public static class NoConnectionTests {
 
         private CheckAaiForCorrelationIdDelegate delegate;
+        
+        @Rule
+    	public ExpectedException expectedException = ExpectedException.none();
 
         @Before
         public void setUp() {
@@ -97,13 +105,14 @@ public class CheckAaiForCorrelationIdDelegateTest {
         }
 
         @Test
-        public void shouldThrowExceptionWhenIoExceptionOnConnectionToAai() {
+        public void shouldThrowExceptionWhenIoExceptionOnConnectionToAai() throws Exception {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
             when(execution.getVariable(CORRELATION_ID)).thenReturn(ID_WITH_ENTRY);
             when(execution.getVariable("testProcessKey")).thenReturn("testProcessKey");
             // when, then
-            assertThatThrownBy(() -> delegate.execute(execution)).isInstanceOf(BpmnError.class);
+            expectedException.expect(BpmnError.class);
+            delegate.execute(execution);
             verify(execution).setVariable(eq("WorkflowException"), any(WorkflowException.class));
         }
     }

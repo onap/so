@@ -150,9 +150,9 @@ public class ArchiveInfraRequestsScheduler {
 		}
 		
 		logger.info("Creating archivedInfraRequest records: " + newArchivedReqs.size());
-		archivedInfraRepo.save(newArchivedReqs);
+		archivedInfraRepo.saveAll(newArchivedReqs);
 		
 		logger.info("Deleting InfraActiveRequest records:  "+ oldInfraReqs.size());
-		infraActiveRepo.delete(oldInfraReqs);
+		infraActiveRepo.deleteAll(oldInfraReqs);
 	}
 }

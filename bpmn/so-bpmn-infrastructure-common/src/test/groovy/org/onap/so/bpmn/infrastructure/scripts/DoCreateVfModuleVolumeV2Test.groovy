@@ -20,25 +20,41 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
+import org.onap.aai.domain.yang.GenericVnf
+import org.onap.aai.domain.yang.Volume
+import org.onap.aai.domain.yang.VolumeGroup
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.bpmn.core.RollbackData
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.constants.Defaults
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
+import static org.mockito.Matchers.anyObject
+import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.times
+import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
 
 
-@RunWith(MockitoJUnitRunner.class)
 class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
+
+	private DoCreateVfModuleVolumeV2 doCreateVfModuleVolumeV2;
 
 	@Captor
 	static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
@@ -86,6 +102,9 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 	@Before
 	public void init()
 	{
+		super.init("DoCreateVfModuleVolumeV2")
+		doCreateVfModuleVolumeV2 = spy(DoCreateVfModuleVolumeV2.class)
+		when(doCreateVfModuleVolumeV2.getAAIClient()).thenReturn(client)
 		MockitoAnnotations.initMocks(this)
 	}
 	
@@ -117,6 +136,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		ExecutionEntity mockExecution = setupMock('DoCreateVfModuleVolumeV2')
 
 		when(mockExecution.getVariable("prefix")).thenReturn('DCVFMODVOLV2_')
+		when(mockExecution.getVariable("DCVFMODVOLV2_AAIQueryGenericVfnResponse")).thenReturn(new GenericVnf())
 		when(mockExecution.getVariable("serviceInstanceId")).thenReturn('')
 		when(mockExecution.getVariable("vnfId")).thenReturn('test-vnf-id')
 		when(mockExecution.getVariable("mso-request-id")).thenReturn('1234')
@@ -131,5 +151,127 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		Mockito.verify(mockExecution,times(2)).setVariable(captor.capture(), captor.capture())
 		String DCVFMODVOLV2_createVnfARequest = captor.getValue();
 		assertNotNull(DCVFMODVOLV2_createVnfARequest)
+	}
+
+	@Test
+	void testcallRESTQueryAAIVolGrpName(){
+		String volumeGroupName = "volumeGroupName"
+		String lcpCloudRegionId = "lcpCloudRegionId"
+		when(mockExecution.getVariable(volumeGroupName)).thenReturn(volumeGroupName)
+		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), lcpCloudRegionId).queryParam("volume-group-name", volumeGroupName)
+		VolumeGroup volumeGroup = new  VolumeGroup()
+		volumeGroup.setVolumeGroupId("volumeGroupId")
+		when(client.get(VolumeGroup.class,uri)).thenReturn(Optional.of(volumeGroup))
+		doCreateVfModuleVolumeV2.callRESTQueryAAIVolGrpName(mockExecution,null)
+		verify(mockExecution).setVariable("DCVFMODVOLV2_AaiReturnCode",200)
+	}
+
+	@Test
+	void testcallRESTQueryAAIVolGrpName_NoData(){
+		String volumeGroupName = "volumeGroupName"
+		String lcpCloudRegionId = "lcpCloudRegionId"
+		when(mockExecution.getVariable(volumeGroupName)).thenReturn(volumeGroupName)
+		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), lcpCloudRegionId).queryParam("volume-group-name", volumeGroupName)
+		when(client.get(VolumeGroup.class,uri)).thenReturn(Optional.empty())
+		thrown.expect(BpmnError.class)
+		doCreateVfModuleVolumeV2.callRESTQueryAAIVolGrpName(mockExecution,null)
+	}
+
+	@Test
+	void testcallRESTUpdateCreatedVolGrpName(){
+		String queriedVolumeGroupId = "queriedVolumeGroupId"
+		String modelCustomizationId = "modelCustomizationId"
+		String lcpCloudRegionId = "lcpCloudRegionId"
+		when(mockExecution.getVariable(queriedVolumeGroupId)).thenReturn(queriedVolumeGroupId)
+		when(mockExecution.getVariable(modelCustomizationId)).thenReturn(modelCustomizationId)
+		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
+		when(mockExecution.getVariable("DCVFMODVOLV2_createVnfAResponse")).thenReturn("<createVnfAResponse><volumeGroupStackId>volumeGroupStackId</volumeGroupStackId></createVnfAResponse>")
+		doCreateVfModuleVolumeV2.callRESTUpdateCreatedVolGrpName(mockExecution,null)
+		verify(mockExecution).setVariable("DCVFMODVOLV2_heatStackId","volumeGroupStackId")
+	}
+
+	@Test
+	void testcallRESTUpdateCreatedVolGrpNameException(){
+		String queriedVolumeGroupId = "queriedVolumeGroupId"
+		String modelCustomizationId = "modelCustomizationId"
+		String lcpCloudRegionId = "lcpCloudRegionId"
+		when(mockExecution.getVariable(queriedVolumeGroupId)).thenReturn(queriedVolumeGroupId)
+		when(mockExecution.getVariable(modelCustomizationId)).thenReturn(modelCustomizationId)
+		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
+		when(mockExecution.getVariable("DCVFMODVOLV2_createVnfAResponse")).thenReturn("<createVnfAResponse><volumeGroupStackId>volumeGroupStackId</volumeGroupStackId></createVnfAResponse>")
+		when(client.update(anyObject(),anyObject())).thenThrow(Exception.class)
+		thrown.expect(BpmnError.class)
+		doCreateVfModuleVolumeV2.callRESTUpdateCreatedVolGrpName(mockExecution,null)
+		verify(mockExecution).setVariable("DCVFMODVOLV2_heatStackId","volumeGroupStackId")
+	}
+
+	@Test
+	void testcallRESTQueryAAIGenericVnf(){
+		String vnfId = "vnfId"
+		when(mockExecution.getVariable(vnfId)).thenReturn(vnfId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+		GenericVnf genericVnf = new GenericVnf()
+		genericVnf.setVnfId(vnfId)
+		when(client.get(GenericVnf.class,uri)).thenReturn(Optional.of(genericVnf))
+		doCreateVfModuleVolumeV2.callRESTQueryAAIGenericVnf(mockExecution,null)
+		verify(mockExecution).setVariable("DCVFMODVOLV2_AAIQueryGenericVfnResponse",genericVnf)
+	}
+
+	@Test
+	void testcallRESTQueryAAIGenericVnf_NotFound(){
+		String vnfId = "vnfId"
+		when(mockExecution.getVariable(vnfId)).thenReturn(vnfId)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+		when(client.get(GenericVnf.class,uri)).thenReturn(Optional.empty())
+		thrown.expect(BpmnError.class)
+		doCreateVfModuleVolumeV2.callRESTQueryAAIGenericVnf(mockExecution,null)
+	}
+
+	@Test
+	void testcallRESTCreateAAIVolGrpName(){
+		String vnfId = "vnfId"
+		String volumeGroupId = "volumeGroupId"
+		String volumeGroupName = "volumeGroupName"
+		String modelCustomizationId = "modelCustomizationId"
+		String vnfType= "vnfType"
+		String tenantId = "tenantId"
+		String lcpCloudRegionId= "lcpCloudRegionId"
+		String cloudOwner = "cloudOwner"
+
+		when(mockExecution.getVariable(vnfId)).thenReturn(vnfId)
+		when(mockExecution.getVariable(volumeGroupId)).thenReturn(volumeGroupId)
+		when(mockExecution.getVariable(volumeGroupName)).thenReturn(volumeGroupName)
+		when(mockExecution.getVariable(modelCustomizationId)).thenReturn(modelCustomizationId)
+		when(mockExecution.getVariable(vnfType)).thenReturn(vnfType)
+		when(mockExecution.getVariable(tenantId)).thenReturn(tenantId)
+		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
+		when(mockExecution.getVariable(cloudOwner)).thenReturn(cloudOwner)
+		when(mockExecution.getVariable("rollbackData")).thenReturn(new RollbackData())
+		doCreateVfModuleVolumeV2.callRESTCreateAAIVolGrpName(mockExecution,null)
+	}
+
+	@Test
+	void testcallRESTCreateAAIVolGrpNameException(){
+		String vnfId = "vnfId"
+		String volumeGroupId = "volumeGroupId"
+		String volumeGroupName = "volumeGroupName"
+		String modelCustomizationId = "modelCustomizationId"
+		String vnfType= "vnfType"
+		String tenantId = "tenantId"
+		String lcpCloudRegionId= "lcpCloudRegionId"
+		String cloudOwner = "cloudOwner"
+
+		when(mockExecution.getVariable(vnfId)).thenReturn(vnfId)
+		when(mockExecution.getVariable(volumeGroupId)).thenReturn(volumeGroupId)
+		when(mockExecution.getVariable(volumeGroupName)).thenReturn(volumeGroupName)
+		when(mockExecution.getVariable(modelCustomizationId)).thenReturn(modelCustomizationId)
+		when(mockExecution.getVariable(vnfType)).thenReturn(vnfType)
+		when(mockExecution.getVariable(tenantId)).thenReturn(tenantId)
+		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
+		when(mockExecution.getVariable(cloudOwner)).thenReturn(cloudOwner)
+		thrown.expect(BpmnError.class)
+		doCreateVfModuleVolumeV2.callRESTCreateAAIVolGrpName(mockExecution,null)
 	}
 }

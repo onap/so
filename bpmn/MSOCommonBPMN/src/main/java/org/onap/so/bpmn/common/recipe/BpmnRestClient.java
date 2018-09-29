@@ -37,6 +37,7 @@ import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -54,11 +55,11 @@ public class BpmnRestClient {
 
     public static final String DEFAULT_BPEL_AUTH = "admin:admin";
 
-    public static final String ENCRYPTION_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
+    public static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
 
     public static final String CONTENT_TYPE_JSON = "application/json";
 
-    public static final String CAMUNDA_AUTH = "camundaAuth";
+    public static final String CAMUNDA_AUTH = "mso.camundaAuth";
 
     private static final  String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
     @Autowired
@@ -108,7 +109,7 @@ public class BpmnRestClient {
         String encryptedCredentials;
         encryptedCredentials = urnPropertiesReader.getVariable(CAMUNDA_AUTH);
         if(encryptedCredentials != null) {
-            String userCredentials = getEncryptedPropValue(encryptedCredentials, DEFAULT_BPEL_AUTH, ENCRYPTION_KEY);
+            String userCredentials = getEncryptedPropValue(encryptedCredentials, DEFAULT_BPEL_AUTH, ENCRYPTION_KEY_PROP);
             if(userCredentials != null) {
                 post.addHeader("Authorization", "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes()));
             }
@@ -195,7 +196,7 @@ public class BpmnRestClient {
      */
     protected String getEncryptedPropValue(String prop, String defaultValue, String encryptionKey) {
         try {
-            return CryptoUtils.decrypt(prop, encryptionKey);
+            return CryptoUtils.decrypt(prop, urnPropertiesReader.getVariable(encryptionKey));
         } catch(GeneralSecurityException e) {
             msoLogger.debug("Security exception", e);
         }

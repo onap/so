@@ -20,6 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.aai.domain.yang.NetworkPolicies
+import org.onap.aai.domain.yang.NetworkPolicy
+
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -34,6 +37,10 @@ import org.onap.so.bpmn.common.scripts.VfModule
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
@@ -470,100 +477,50 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			execution.setVariable("DoDVfMod_networkPolicyFqdnCount", fqdnCount)
 			msoLogger.debug("DoDVfMod_networkPolicyFqdnCount - " + fqdnCount)
 
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getNetworkPolicyUri(execution)
-
 			if (fqdnCount > 0) {
 				// AII loop call over contrail network policy fqdn list
 				for (i in 0..fqdnCount-1) {
-
-					int counting = i+1
 					String fqdn = fqdnList[i]
-
 					// Query AAI for this network policy FQDN
-
-					String queryNetworkPolicyByFqdnAAIRequest = "${aai_endpoint}${aai_uri}?network-policy-fqdn=" + UriUtils.encode(fqdn, "UTF-8")
-					msoLogger.debug("AAI request endpoint: " + queryNetworkPolicyByFqdnAAIRequest)
-					msoLogger.debug("AAI request endpoint: "  + queryNetworkPolicyByFqdnAAIRequest)
-
-					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryNetworkPolicyByFqdnAAIRequest)
-					int returnCode = response.getStatusCode()
-					execution.setVariable("DCVFM_aaiQueryNetworkPolicyByFqdnReturnCode", returnCode)
-					msoLogger.debug(" ***** AAI query network policy Response Code, NetworkPolicy #" + counting + " : " + returnCode)
-
-					String aaiResponseAsString = response.getResponseBodyAsString()
-
-					if (isOneOf(returnCode, 200, 201)) {
-						msoLogger.debug("The return code is: "  + returnCode)
-						// This network policy FQDN exists in AAI - need to delete it now
-						msoLogger.debug(aaiResponseAsString)
-						execution.setVariable("DoDVfMod_queryNetworkPolicyByFqdnAAIResponse", aaiResponseAsString)
-						msoLogger.debug("QueryAAINetworkPolicyByFQDN Success REST Response, , NetworkPolicy #" + counting + " : " + "\n" + aaiResponseAsString)
-						// Retrieve the network policy id for this FQDN
-						def networkPolicyId = utils.getNodeText(aaiResponseAsString, "network-policy-id")
-						msoLogger.debug("Deleting network-policy with network-policy-id " + networkPolicyId)
-
-						// Retrieve the resource version for this network policy
-						def resourceVersion = utils.getNodeText(aaiResponseAsString, "resource-version")
-						msoLogger.debug("Deleting network-policy with resource-version " + resourceVersion)
-
-						String delNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(networkPolicyId, "UTF-8") +
-							"?resource-version=" + UriUtils.encode(resourceVersion, "UTF-8")
-						msoLogger.debug("AAI request endpoint: " + delNetworkPolicyAAIRequest)
-						msoLogger.debug("AAI request endpoint: " + delNetworkPolicyAAIRequest)
-
-						msoLogger.debug("invoking DELETE call to AAI")
-						msoLogger.debug("Sending DELETE call to AAI with Endpoint /n" + delNetworkPolicyAAIRequest)
-						APIResponse responseDel = aaiUriUtil.executeAAIDeleteCall(execution, delNetworkPolicyAAIRequest)
-						int returnCodeDel = responseDel.getStatusCode()
-						execution.setVariable("DoDVfMod_aaiDeleteNetworkPolicyReturnCode", returnCodeDel)
-						msoLogger.debug(" ***** AAI delete network policy Response Code, NetworkPolicy #" + counting + " : " + returnCodeDel)
-
-						if (isOneOf(returnCodeDel, 200, 201, 204)) {
-							msoLogger.debug("The return code from deleting network policy is: "  + returnCodeDel)
-							// This network policy was deleted from AAI successfully
-							msoLogger.debug(" DelAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : ")
-
+					AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+					uri.queryParam("network-policy-fqdn", fqdn)
+					try {
+						Optional<NetworkPolicies> networkPolicies = getAAIClient().get(NetworkPolicies.class, uri)
+						if (networkPolicies.isPresent() && !networkPolicies.get().getNetworkPolicy().isEmpty()) {
+							// This network policy FQDN exists in AAI - need to delete it now
+							NetworkPolicy networkPolicy = networkPolicies.get().getNetworkPolicy().get(0)
+							execution.setVariable("DCVFM_aaiQueryNetworkPolicyByFqdnReturnCode", 200)
+							// Retrieve the network policy id for this FQDN
+							def networkPolicyId = networkPolicy.getNetworkPolicyId()
+							msoLogger.debug("Deleting network-policy with network-policy-id " + networkPolicyId)
+							try {
+								AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId)
+								getAAIClient().delete(delUri)
+								execution.setVariable("DoDVfMod_aaiDeleteNetworkPolicyReturnCode", 200)
+							} catch (Exception e) {
+								execution.setVariable("DoDVfMod_aaiDeleteNetworkPolicyReturnCode", 500)
+								String delErrorMessage = "Unable to delete network-policy to AAI deleteNetworkPoliciesFromAAI - " + e.getMessage()
+								msoLogger.debug(delErrorMessage)
+								exceptionUtil.buildAndThrowWorkflowException(execution, 2500, delErrorMessage)
+							}
 						} else {
-								// aai all errors
-								String delErrorMessage = "Unable to delete network-policy to AAI deleteNetworkPoliciesFromAAI - " + returnCodeDel
-							 msoLogger.debug(delErrorMessage)
-							 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, delErrorMessage)
+							execution.setVariable("DCVFM_aaiQueryNetworkPolicyByFqdnReturnCode", 404)
+							// This network policy FQDN is not in AAI. No need to delete.
+							msoLogger.debug("The return code is: " + 404)
+							msoLogger.debug("This network policy FQDN is not in AAI: " + fqdn)
+							msoLogger.debug("Network policy FQDN is not in AAI")
 						}
-					} else if (returnCode == 404) {
-						// This network policy FQDN is not in AAI. No need to delete.
-						msoLogger.debug("The return code is: "  + returnCode)
-						msoLogger.debug("This network policy FQDN is not in AAI: " + fqdn)
-						msoLogger.debug("Network policy FQDN is not in AAI")
-					} else {
-					   if (aaiResponseAsString.contains("RESTFault")) {
-						   WorkflowException exceptionObject = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-						   execution.setVariable("WorkflowException", exceptionObject)
-						   throw new BpmnError("MSOWorkflowException")
-
-						   } else {
+					}catch(Exception e ) {
 								// aai all errors
-								String dataErrorMessage = "Unexpected Response from deleteNetworkPoliciesFromAAI - " + returnCode
+								String dataErrorMessage = "Unexpected Response from deleteNetworkPoliciesFromAAI - " + e.getMessage()
 								msoLogger.debug(dataErrorMessage)
-								exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-						  }
 					}
-
-
-
 				} // end loop
-
-
 			} else {
 				   msoLogger.debug("No contrail network policies to query/create")
-
 			}
-
 		} catch (BpmnError e) {
 			throw e;
-
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoDeletVfModule flow. deleteNetworkPoliciesFromAAI() - " + ex.getMessage()
 			msoLogger.debug(exceptionMessage)
@@ -643,53 +600,18 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			def vnfId = execution.getVariable('vnfId')
 			def vfModuleId = execution.getVariable('vfModuleId')
 
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String  aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint",execution) + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") +
-					"/vf-modules/vf-module/" + UriUtils.encode(vfModuleId, "UTF-8")
-			msoLogger.debug("AAI endPoint: " + endPoint)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
 
 			try {
-				RESTConfig config = new RESTConfig(endPoint);
-				def responseData = ''
-				def aaiRequestId = UUID.randomUUID().toString()
-				RESTClient client = new RESTClient(config).
-					addHeader('X-TransactionId', aaiRequestId).
-					addHeader('X-FromAppId', 'MSO').
-					addHeader('Content-Type', 'application/xml').
-					addHeader('Accept','application/xml');
-				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
-				APIResponse response = client.httpGet()
-				msoLogger.debug("createVfModule - invoking httpGet() to AAI")
-
-				responseData = response.getResponseBodyAsString()
-				if (responseData != null) {
-					msoLogger.debug("Received generic VNF data: " + responseData)
-
-				}
-
-				msoLogger.debug("deleteVfModule - queryAAIVfModule Response: " + responseData)
-				msoLogger.debug("deleteVfModule - queryAAIVfModule ResponseCode: " + response.getStatusCode())
-
-				execution.setVariable(Prefix + 'queryAAIVfModuleForStatusResponseCode', response.getStatusCode())
-				execution.setVariable(Prefix + 'queryAAIVfModuleForStatusResponse', responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
+                Optional<org.onap.aai.domain.yang.VfModule> vfModule = getAAIClient().get(org.onap.aai.domain.yang.VfModule.class, uri);
 				// Retrieve VF Module info and its orchestration status; if not found, do nothing
-				if (response.getStatusCode() == 200) {
-					// Parse the VNF record from A&AI to find base module info
-					msoLogger.debug('Parsing the VNF data to find orchestration status')
-					if (responseData != null) {
-						def vfModuleText = utils.getNodeXml(responseData, "vf-module")
-						//def xmlVfModule= new XmlSlurper().parseText(vfModuleText)
-						def orchestrationStatus = utils.getNodeText(vfModuleText, "orchestration-status")
-						execution.setVariable(Prefix + "orchestrationStatus", orchestrationStatus)
-						msoLogger.debug("Received orchestration status from A&AI: " + orchestrationStatus)
-						
-					}
-				}
+                if (vfModule.isPresent()) {
+                    execution.setVariable(Prefix + 'queryAAIVfModuleForStatusResponseCode', 200)
+                    execution.setVariable(Prefix + 'queryAAIVfModuleForStatusResponse', vfModule.get())
+                    def orchestrationStatus = vfModule.get().getOrchestrationStatus()
+                    execution.setVariable(Prefix + "orchestrationStatus", orchestrationStatus)
+                    msoLogger.debug("Received orchestration status from A&AI: " + orchestrationStatus)
+                }
 			} catch (Exception ex) {
 				ex.printStackTrace()
 				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())

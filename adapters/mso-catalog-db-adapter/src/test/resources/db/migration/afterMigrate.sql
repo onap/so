@@ -60,6 +60,12 @@ insert into tosca_csar(artifact_uuid, name, version, description, artifact_check
 insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values
 ('5df8b6de-2083-11e7-93ae-92361f002671', 'MSOTADevInfra_vSAMP10a_Service', '9647dfc4-2083-11e7-93ae-92361f002671', '1.0', 'MSO aLaCarte Vfmodule with addon', '2017-04-14 13:42:39', '0513f839-459d-46b6-aa3d-2edfef89a079', 'NA', 'NA', 'Luna', 'Oxygen');
 
+insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values
+('5df8b6de-2083-11e7-93ae-92361f002679', 'MSOTADevInfra_Test_Service', '9647dfc4-2083-11e7-93ae-92361f002673', '3.0', 'MSO aLaCarte Vfmodule with addon', '2017-04-14 13:42:39', '0513f839-459d-46b6-aa3d-2edfef89a079', 'NA', 'NA', 'Luna', 'Oxygen');
+
+INSERT INTO external_service_to_internal_model_mapping(id,SERVICE_NAME,PRODUCT_FLAVOR,SUBSCRIPTION_SERVICE_TYPE,SERVICE_MODEL_UUID) VALUES
+(3,'AVPNBondingToIPFlexReach','Gold','Test','c94b1098-3c71-11e8-b467-0ed5f89f7199');
+
 insert into tosca_csar(ARTIFACT_UUID,NAME,VERSION,DESCRIPTION,ARTIFACT_CHECKSUM,URL,CREATION_TIMESTAMP) values
 ('266eaf78-af74-45cd-83ec-9c477f189dc1','service-NetworkCollectionSvc0106-csar.csar','1','TOSCA definition package of the asset','OGQ1M2QyYjU0OWMzZTY4MWVlYTNhOWIxNmQ2NjEyZDQ=','/sdc/v1/catalog/services/NetworkCollectionSvc0106/1.0/artifacts/service-NetworkCollectionSvc0106-csar.csar','2018-06-01 16:06:52');
 insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values

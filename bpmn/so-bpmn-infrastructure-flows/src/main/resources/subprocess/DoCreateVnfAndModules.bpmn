@@ -36,6 +36,7 @@ doCreateVnfAndModules.preProcessRequest(execution)]]></bpmn:script>
         <camunda:in source="vnfModelInfo" target="vnfModelInfo" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="sdncVersion" target="sdncVersion" />
+        <camunda:in source="cloudOwner" target="cloudOwner" />
         <camunda:in source="lcpCloudRegionId" target="lcpCloudRegionId" />
         <camunda:in source="tenantId" target="tenantId" />
         <camunda:in source="false" target="usePreload" />
@@ -71,6 +72,7 @@ doCreateVnfAndModules.preProcessRequest(execution)]]></bpmn:script>
         <camunda:in source="vnfModelInfo" target="vnfModelInfo" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="sdncVersion" target="sdncVersion" />
+        <camunda:in source="cloudOwner" target="cloudOwner" />
         <camunda:in source="lcpCloudRegionId" target="lcpCloudRegionId" />
         <camunda:in source="tenantId" target="tenantId" />
         <camunda:in source="false" target="usePreload" />
@@ -123,6 +125,7 @@ doCreateVnfAndModules.validateAddOnModule(execution)]]></bpmn:script>
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="sdncVersion" target="sdncVersion" />
         <camunda:out source="vnfName" target="vnfName" />
+        <camunda:in source="cloudOwner" target="cloudOwner" />
         <camunda:in source="lcpCloudRegionId" target="lcpCloudRegionId" />
         <camunda:in source="tenantId" target="tenantId" />
         <camunda:in source="rollbackData" target="rollbackData" />
