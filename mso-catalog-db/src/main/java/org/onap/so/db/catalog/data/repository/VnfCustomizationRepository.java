@@ -20,15 +20,14 @@
 
 package org.onap.so.db.catalog.data.repository;
 
+import java.util.List;
+
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.data.projections.InlineVnf;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import java.util.List;
-
-@RepositoryRestResource(collectionResourceRel = "vnfResourceCustomization", path = "vnfResourceCustomization", excerptProjection = InlineVnf.class)
+@RepositoryRestResource(collectionResourceRel = "vnfResourceCustomization", path = "vnfResourceCustomization")
 public interface VnfCustomizationRepository extends JpaRepository<VnfResourceCustomization, String> {
 	List<VnfResourceCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);
 

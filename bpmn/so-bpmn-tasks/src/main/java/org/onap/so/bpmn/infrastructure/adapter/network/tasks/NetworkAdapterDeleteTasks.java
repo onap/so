@@ -38,7 +38,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NetworkAdapterDeleteTasks {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, NetworkAdapterDeleteTasks.class);
 	
 	@Autowired
 	private ExtractPojosForBB extractPojosForBB;

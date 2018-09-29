@@ -23,8 +23,11 @@
 package org.onap.so.apihandler.common;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,15 +41,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.onap.so.apihandler.common.CamundaClient;
-import org.onap.so.apihandler.common.CommonConstants;
-import org.onap.so.apihandler.common.RequestClient;
-import org.onap.so.apihandler.common.RequestClientFactory;
 import org.springframework.mock.env.MockEnvironment;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -64,6 +65,7 @@ public class CamundaClientTest{
 
     @Mock
     private HttpClient mockHttpClient;
+    private static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
     @Before
     public void setUp() {
@@ -79,6 +81,7 @@ public class CamundaClientTest{
 
         HttpResponse mockResponse = createResponse(200, responseBody);
         mockHttpClient = Mockito.mock(HttpClient.class);
+        ArgumentCaptor<HttpPost> httpPostCaptor = ArgumentCaptor.forClass(HttpPost.class);
         Mockito.when(mockHttpClient.execute(Mockito.any(HttpPost.class)))
         .thenReturn(mockResponse);
 
@@ -87,6 +90,8 @@ public class CamundaClientTest{
         MockEnvironment environment = new MockEnvironment();
         
         environment.setProperty("mso.camundaUR", "yourValue1");
+        environment.setProperty("mso.camundaAuth", "E8E19DD16CC90D2E458E8FF9A884CC0452F8F3EB8E321F96038DE38D5C1B0B02DFAE00B88E2CF6E2A4101AB2C011FC161212EE");
+        environment.setProperty("org.onap.so.adapters.network.encryptionKey", "aa3871669d893c7fb8abbcda31b88b4f");
  
         
         RequestClientFactory reqClientFactory = new RequestClientFactory();
@@ -107,6 +112,9 @@ public class CamundaClientTest{
         response = requestClient.post(null, "reqId", null, null, null, null);
         assertEquals(requestClient.getType(), CommonConstants.CAMUNDA);
         assertEquals(statusCode, HttpStatus.SC_OK);
+        verify(mockHttpClient,times(2)).execute(httpPostCaptor.capture());
+        assertThat(httpPostCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)).isNotEmpty();
+        Assert.assertEquals("Basic YXBpaEJwbW46Y2FtdW5kYS1SMTUxMiE=",httpPostCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)[0].getValue());
     }
 
     private HttpResponse createResponse(int respStatus,
@@ -132,35 +140,35 @@ public class CamundaClientTest{
     
     @Test
     public void wrapVIDRequestTest() throws IOException{
-        CamundaClient testClient = new CamundaClient();
-        testClient.setUrl("/mso/async/services/CreateGenericALaCarteServiceInstance");
-        
-        String requestId = "f7ce78bb-423b-11e7-93f8-0050569a796";
-        boolean isBaseVfModule = true;
-        int recipeTimeout = 10000;
-        String requestAction = "createInstance";
-        String serviceInstanceId = "12345679";
-        String correlationId = "12345679";
-        String vnfId = "234567891";
-        String vfModuleId = "345678912";
-        String volumeGroupId = "456789123";
-        String networkId = "567891234";
-        String configurationId = "678912345";
-        String serviceType = "testService";
-        String vnfType = "testVnf";
-        String vfModuleType = "vfModuleType";
-        String networkType = "networkType";
-        String requestDetails = "{requestDetails: }";
-        String apiVersion = "6";
-        boolean aLaCarte = true;
-        String requestUri = "v7/serviceInstances/assign";
-        
-        String testResult = testClient.wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction, serviceInstanceId, correlationId,
-                            vnfId, vfModuleId, volumeGroupId, networkId, configurationId, serviceType, 
-                            vnfType, vfModuleType, networkType, requestDetails, apiVersion, aLaCarte, requestUri, "");
-        String expected = inputStream("/WrappedVIDRequest.json");
-        
-        assertEquals(expected, testResult);
+    	CamundaClient testClient = new CamundaClient();
+    	testClient.setUrl("/mso/async/services/CreateGenericALaCarteServiceInstance");
+
+    	String requestId = "f7ce78bb-423b-11e7-93f8-0050569a796";
+    	boolean isBaseVfModule = true;
+    	int recipeTimeout = 10000;
+    	String requestAction = "createInstance";
+    	String serviceInstanceId = "12345679";
+    	String correlationId = "12345679";
+    	String vnfId = "234567891";
+    	String vfModuleId = "345678912";
+    	String volumeGroupId = "456789123";
+    	String networkId = "567891234";
+    	String configurationId = "678912345";
+    	String serviceType = "testService";
+    	String vnfType = "testVnf";
+    	String vfModuleType = "vfModuleType";
+    	String networkType = "networkType";
+    	String requestDetails = "{requestDetails: }";
+    	String apiVersion = "6";
+    	boolean aLaCarte = true;
+    	String requestUri = "v7/serviceInstances/assign";
+    	
+    	String testResult = testClient.wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction, serviceInstanceId, correlationId,
+    						vnfId, vfModuleId, volumeGroupId, networkId, configurationId, serviceType, 
+    						vnfType, vfModuleType, networkType, requestDetails, apiVersion, aLaCarte, requestUri, "");
+    	String expected = inputStream("/WrappedVIDRequest.json");
+    	
+    	assertEquals(expected, testResult);
     }
 
     @Test

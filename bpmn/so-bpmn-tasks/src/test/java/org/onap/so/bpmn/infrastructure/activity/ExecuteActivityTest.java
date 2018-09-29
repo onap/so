@@ -31,14 +31,15 @@ import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ExecuteActivityTest extends BaseTaskTest {
-	@Autowired
-	protected ExecuteActivity executeActivity;
+	@InjectMocks
+	protected ExecuteActivity executeActivity = new ExecuteActivity();
 	
 	private DelegateExecution execution;
 	

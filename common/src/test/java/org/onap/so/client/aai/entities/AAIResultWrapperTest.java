@@ -35,7 +35,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.springframework.util.SerializationUtils;

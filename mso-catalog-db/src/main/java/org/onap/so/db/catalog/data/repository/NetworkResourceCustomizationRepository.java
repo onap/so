@@ -23,11 +23,10 @@ package org.onap.so.db.catalog.data.repository;
 import java.util.List;
 
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.data.projections.InlineNetworks;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "networkResourceCustomization", path = "networkResourceCustomization", excerptProjection = InlineNetworks.class)
+@RepositoryRestResource(collectionResourceRel = "networkResourceCustomization", path = "networkResourceCustomization")
 public interface NetworkResourceCustomizationRepository extends JpaRepository<NetworkResourceCustomization, String> {
 	List<NetworkResourceCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);
 

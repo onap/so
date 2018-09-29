@@ -72,7 +72,7 @@ class FalloutHandlerTest {
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 
 		when(mockExecution.getVariable("FalloutHandlerRequest")).thenReturn(falloutHandlerRequest)
-		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
+		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C");
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
 
 		FalloutHandler falloutHandler = new FalloutHandler()

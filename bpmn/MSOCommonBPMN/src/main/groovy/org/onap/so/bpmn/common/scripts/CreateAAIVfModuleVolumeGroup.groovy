@@ -22,12 +22,9 @@ package org.onap.so.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.rest.APIResponse
-import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
 public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
@@ -110,24 +107,17 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 		try {
 			def vnfId = execution.getVariable('CAAIVfModVG_vnfId')
 			def vfModuleId = execution.getVariable('CAAIVfModVG_vfModuleId')
-
-			AaiUtil aaiUtil = new AaiUtil(this)
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
-			String endPoint = aaiUtil.createAaiUri(uri)
-					
 			try {
-				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
-				msoLogger.debug("aaiResponse GET TO AAI Endpoint: " + endPoint)
-				APIResponse response = aaiUtil.executeAAIGetCall(execution, endPoint)
-				def responseData = response.getResponseBodyAsString()
-				execution.setVariable('CAAIVfModVG_getVfModuleResponseCode', response.getStatusCode())
-				execution.setVariable('CAAIVfModVG_getVfModuleResponse', responseData)
-				
-				msoLogger.debug("CreateAAIVfModule Response Code: " + response.getStatusCode())
-				msoLogger.debug("CreateAAIVfModule Response: " + response)
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
-			} catch (Exception ex) {
+				AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
+				Optional<org.onap.aai.domain.yang.VfModule> vfModule = getAAIClient().get(org.onap.aai.domain.yang.VfModule.class, resourceUri)
+				if(vfModule.isPresent()){
+					execution.setVariable('CAAIVfModVG_getVfModuleResponseCode', 200)
+					execution.setVariable('CAAIVfModVG_getVfModuleResponse', vfModule.get())
+				}else{
+					execution.setVariable('CAAIVfModVG_getVfModuleResponseCode', 404)
+					execution.setVariable('CAAIVfModVG_getVfModuleResponse', "VF-Module Not found!!")
+				}
+			}catch (Exception ex) {
 				ex.printStackTrace()
 				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				execution.setVariable('CAAIVfModVG_getVfModuleResponseCode', 500)
@@ -157,12 +147,10 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 		try {
 			def vnfId = execution.getVariable('CAAIVfModVG_vnfId')
 			def vfModuleId = execution.getVariable('CAAIVfModVG_vfModuleId')
-			def vfModule = execution.getVariable('CAAIVfModVG_getVfModuleResponse')
-			def origRequest = execution.getVariable('CreateAAIVfModuleVolumeGroupRequest')
-			def Node vfModuleNode = xmlParser.parseText(vfModule)
-			
+			org.onap.aai.domain.yang.VfModule vfModule = execution.getVariable('CAAIVfModVG_getVfModuleResponse')
+
 			// Confirm resource-version is in retrieved VF Module
-			if (utils.getChildNode(vfModuleNode, 'resource-version') == null) {
+			if (vfModule.getResourceVersion() == null) {
 				def msg = 'Can\'t update VF Module ' + vfModuleId + ' since \'resource-version\' is missing'
 				msoLogger.error( msg);
 				throw new Exception(msg)
@@ -172,26 +160,16 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			def aicCloudRegion = execution.getVariable('CAAIVfModVG_aicCloudRegion')
 			def cloudOwner = execution.getVariable('CAAIVfModVG_cloudOwner')
 			def volumeGroupId = execution.getVariable('CAAIVfModVG_volumeGroupId')
-			def Node vgRelationshipNode = createVolumeGroupRelationshipNode(cloudOwner, aicCloudRegion, volumeGroupId)
-			insertVolumeGroupRelationshipNode(vfModuleNode, vgRelationshipNode)
-			def payload = utils.nodeToString(vfModuleNode)
 
-			AaiUtil aaiUtil = new AaiUtil(this)
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
-			String endPoint = aaiUtil.createAaiUri(uri)
-	
 			try {
-				msoLogger.debug("CreateAAIVfModuleVolume Sendind PUT to AAI Endpoint \n " + endPoint + " with payload \n " + payload)
-				msoLogger.debug('sending PUT to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload)
-				APIResponse response = aaiUtil.executeAAIPutCall(execution, endPoint, payload)
-				def responseData = response.getResponseBodyAsString()
-				execution.setVariable('CAAIVfModVG_updateVfModuleResponseCode', response.getStatusCode())
-				execution.setVariable('CAAIVfModVG_updateVfModuleResponse', responseData)
-				
-				msoLogger.debug("CreateAAIVfModule Response code: " + response.getStatusCode())
-				msoLogger.debug("CreateAAIVfModule Response: " + responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
+				AAIResourceUri vfModuleUri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId,vfModuleId);
+				AAIResourceUri volumeGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwner, aicCloudRegion,volumeGroupId);
+				msoLogger.debug("Creating relationship between Vf Module: " + vfModuleUri.build().toString() + " and Volume Group: " + volumeGroupUri.build().toString())
+				getAAIClient().connect(vfModuleUri,volumeGroupUri)
+				execution.setVariable('CAAIVfModVG_updateVfModuleResponseCode', 200)
+				execution.setVariable('CAAIVfModVG_updateVfModuleResponse', "Success")
+				msoLogger.debug("CreateAAIVfModule Response code: " + 200)
+				msoLogger.debug("CreateAAIVfModule Response: " + "Success")
 			} catch (Exception ex) {
 				ex.printStackTrace()
 				msoLogger.debug('Exception occurred while executing AAI PUT:' + ex.getMessage())
@@ -204,72 +182,6 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			msoLogger.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
-		}
-	}
-
-	/**
-	 * Construct a Volume Group relationship Node with the given AIC Cloud Region and
-	 * Volume Group ID for insertion into a VF Module.
-	 * 
-	 * @param aicCloudRegion Cloud Region ID to use in the Volume Group relationship
-	 * @param volumeGroupId Volume Group ID to use in the Volume Group relationship
-	 * @return a Node representing the new Volume Group relationship
-	 */
-	private Node createVolumeGroupRelationshipNode(String cloudOwner, String aicCloudRegion, String volumeGroupId) {
-		
-		def Node relatedTo = new Node(null, 'related-to', 'volume-group')
-		
-		def Node relationshipKeyCO = new Node(null, 'relationship-key', 'cloud-region.cloud-owner')
-		def Node relationshipValueCO = new Node(null, 'relationship-value', cloudOwner)
-		def Node relationshipDataCO = new Node(null, 'relationship-data')
-		relationshipDataCO.append(relationshipKeyCO)
-		relationshipDataCO.append(relationshipValueCO)
-		
-		def Node relationshipKeyCRI = new Node(null, 'relationship-key', 'cloud-region.cloud-region-id')
-		def Node relationshipValueCRI = new Node(null, 'relationship-value', aicCloudRegion)
-		def Node relationshipDataCRI = new Node(null, 'relationship-data')
-		relationshipDataCRI.append(relationshipKeyCRI)
-		relationshipDataCRI.append(relationshipValueCRI)
-
-		def Node relationshipKeyVGI = new Node(null, 'relationship-key', 'volume-group.volume-group-id')
-		def Node relationshipValueVGI = new Node(null, 'relationship-value', volumeGroupId)
-		def Node relationshipDataVGI = new Node(null, 'relationship-data')
-		relationshipDataVGI.append(relationshipKeyVGI)
-		relationshipDataVGI.append(relationshipValueVGI)
-		
-		def Node volumeGroupRelationship = new Node(null, 'relationship')
-		volumeGroupRelationship.append(relatedTo)
-		volumeGroupRelationship.append(relationshipDataCO)
-		volumeGroupRelationship.append(relationshipDataCRI)
-		volumeGroupRelationship.append(relationshipDataVGI)
-		
-		return volumeGroupRelationship;
-	}
-	
-	/**
-	 * Insert the given Volume Group relationship Node into the given VF Module.
-	 * If the VF Module does NOT contain a relationship list:
-	 * 	- Create a relationship list containing the Volume Group relationship and insert it into the VF Module
-	 * If the VF Module contains a relationship list but not a Volume Group relationship:
-	 * 	- Insert the the Volume Group relationship into the relationship lsit
-	 * If the VF Module contains a relationship list and has a Volume Group relationship:
-	 * 	- Replace the existing Volume Group relationship with the new one
-	 * @param vfModuleNode
-	 * @param volumeGroupRelationshipNode
-	 */
-	private void insertVolumeGroupRelationshipNode(Node vfModuleNode, Node volumeGroupRelationshipNode) {
-		def Node relationshipList = utils.getChildNode(vfModuleNode, 'relationship-list')
-		if (relationshipList == null) {
-			relationshipList = new Node(null, 'relationship-list')
-			relationshipList.append(volumeGroupRelationshipNode)
-			vfModuleNode.append(relationshipList)
-		} else {
-			def Node currVolumeGroupRelationshipNode = getCurrVolumeGroupRelationshipNode(relationshipList)
-			if (currVolumeGroupRelationshipNode == null) {
-				relationshipList.append(volumeGroupRelationshipNode)
-			} else {
-				currVolumeGroupRelationshipNode.replaceNode(volumeGroupRelationshipNode)
-			}
 		}
 	}
 		

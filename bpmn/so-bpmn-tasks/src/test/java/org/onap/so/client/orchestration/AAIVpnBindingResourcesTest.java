@@ -23,7 +23,7 @@ package org.onap.so.client.orchestration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -34,30 +34,15 @@ import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.VpnBindings;
-import org.onap.so.bpmn.common.data.TestDataSetup;
-import org.onap.so.bpmn.common.InjectionHelper;
+import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
-import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.mapper.AAIObjectMapper;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AAIVpnBindingResourcesTest extends TestDataSetup{
 
-	@Mock
-	protected AAIResourcesClient MOCK_aaiResourcesClient;
-
-	@Mock
-	protected AAIObjectMapper MOCK_aaiObjectMapper;
-
-	@Mock
-	protected InjectionHelper MOCK_injectionHelper;
+public class AAIVpnBindingResourcesTest extends BaseTaskTest{
 	
 	@InjectMocks
 	private AAIVpnBindingResources aaiVpnBindingResources = new AAIVpnBindingResources();
@@ -67,7 +52,7 @@ public class AAIVpnBindingResourcesTest extends TestDataSetup{
 	@Before
 	public void before() {
 		customer = buildCustomer();
-		 doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
+		doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
 	}
 
 	@Test

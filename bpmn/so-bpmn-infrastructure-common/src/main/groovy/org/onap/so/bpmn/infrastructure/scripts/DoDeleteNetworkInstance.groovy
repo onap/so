@@ -18,11 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.scripts;
+package org.onap.so.bpmn.infrastructure.scripts
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.L3Network
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -34,18 +34,20 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.Relationships
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse;
+import org.onap.so.rest.APIResponse
 import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
 import org.springframework.web.util.UriUtils
 
-import groovy.json.*
+import groovy.json.JsonOutput
 
 public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteNetworkInstance.class);
@@ -71,7 +73,6 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		execution.setVariable(Prefix + "networkInputs", "")
 		execution.setVariable(Prefix + "tenantId", "")
 
-		execution.setVariable(Prefix + "queryAAIRequest","")
 		execution.setVariable(Prefix + "queryAAIResponse", "")
 		execution.setVariable(Prefix + "aaiReturnCode", "")
 		execution.setVariable(Prefix + "isAAIGood", false)
@@ -246,85 +247,52 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		String networkInputs  = execution.getVariable(Prefix + "networkInputs")
 		String networkId   = utils.getNodeText(networkInputs, "network-id")
 		networkId = UriUtils.encode(networkId,"UTF-8")
-
-		// Prepare AA&I url
-		AaiUtil aaiUriUtil = new AaiUtil(this)
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId)
-		uri.depth(Depth.ALL)
-
-		String queryAAIRequest = aaiUriUtil.createAaiUri(uri)
-		msoLogger.debug(queryAAIRequest)
-		execution.setVariable(Prefix + "queryAAIRequest", queryAAIRequest)
-		msoLogger.debug(Prefix + "AAIRequest - " + "\n" + queryAAIRequest)
-
-		RESTConfig config = new RESTConfig(queryAAIRequest);
-
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		Boolean isVfRelationshipExist = false
 		try {
-			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryAAIRequest)
-			String returnCode = response.getStatusCode()
-			execution.setVariable(Prefix + "aaiReturnCode", returnCode)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ALL)
+			Optional<L3Network> l3Network = getAAIClient().get(L3Network.class,uri);
+			AAIResultWrapper wrapper = getAAIClient().get(uri);
+			Optional<Relationships> relationships = wrapper.getRelationships()
 
-			msoLogger.debug(" ***** AAI Response Code  : " + returnCode)
-
-			String aaiResponseAsString = response.getResponseBodyAsString()
-			execution.setVariable(Prefix + "queryAAIResponse", aaiResponseAsString)
-
-			if (returnCode=='200' || returnCode=='204') {
-				msoLogger.debug(aaiResponseAsString)
+			if (l3Network.isPresent()) {
+				execution.setVariable(Prefix + "aaiReturnCode", 200)
+				execution.setVariable(Prefix + "queryAAIResponse", l3Network.get())
 				execution.setVariable(Prefix + "isAAIGood", true)
-				msoLogger.debug(" AAI Query Success REST Response - " + "\n" + aaiResponseAsString)
-				// verify if vf or vnf relationship exist
-				if (utils.nodeExists(aaiResponseAsString, "relationship")) {
-					NetworkUtils networkUtils = new NetworkUtils()
-			        isVfRelationshipExist = networkUtils.isVfRelationshipExist(aaiResponseAsString)
-					execution.setVariable(Prefix + "isVfRelationshipExist", isVfRelationshipExist)
-					if (isVfRelationshipExist == true) {
+				if (relationships.isPresent()){
+					if(relationships.get().getRelatedAAIUris(AAIObjectType.VF_MODULE).isEmpty()){
+						execution.setVariable(Prefix + "isVfRelationshipExist", true)
+						isVfRelationshipExist = true
 						String relationshipMessage = "AAI Query Success Response but 'vf-module' relationship exist, not allowed to delete: network Id: " + networkId
 						exceptionUtil.buildWorkflowException(execution, 2500, relationshipMessage)
-
-					} else {
-					    // verify if lcpCloudRegion was sent as input, if not get value from AAI Response
-					    if (execution.getVariable(Prefix + "lcpCloudRegion") == null ) {
-							String lcpCloudRegion = networkUtils.getCloudRegion(aaiResponseAsString)
-							execution.setVariable(Prefix + "lcpCloudRegion", lcpCloudRegion)
-							msoLogger.debug(" Get AAI getCloudRegion()  : " + lcpCloudRegion)
+					}else{
+						List<AAIResourceUri> tenantURIList = relationships.get().getRelatedAAIUris(AAIObjectType.TENANT)
+						for(AAIResourceUri tenantURI: tenantURIList){
+							if(execution.getVariable(Prefix + "tenantId") == null) {
+								String tenantId = tenantURI.getURIKeys().get("tenant-id")
+								execution.setVariable(Prefix + "tenantId", tenantId)
+								msoLogger.debug(" Get AAI getTenantId()  : " + tenantId)
+							}
 						}
-						if (execution.getVariable(Prefix + "tenantId") == null ) {
-							String tenantId = networkUtils.getTenantId(aaiResponseAsString)
-							execution.setVariable(Prefix + "tenantId", tenantId)
-							msoLogger.debug(" Get AAI getTenantId()  : " + tenantId)
+						List<AAIResourceUri> cloudRegionURIList = relationships.get().getRelatedAAIUris(AAIObjectType.CLOUD_REGION)
+						for(AAIResourceUri tenantURI: cloudRegionURIList){
+							if(execution.getVariable(Prefix + "lcpCloudRegion") == null) {
+								String lcpCloudRegion = tenantURI.getURIKeys().get("cloud-region-id")
+								execution.setVariable(Prefix + "lcpCloudRegion", lcpCloudRegion)
+								msoLogger.debug(" Get AAI getCloudRegion()  : " + lcpCloudRegion)
+							}
 						}
-
 					}
 				}
 				msoLogger.debug(Prefix + "isVfRelationshipExist - " + isVfRelationshipExist)
-
 			} else {
+				// not found // empty aai response
+				execution.setVariable(Prefix + "aaiReturnCode", 404)
 				execution.setVariable(Prefix + "isAAIGood", false)
-			    if (returnCode=='404' || aaiResponseAsString == "" || aaiResponseAsString == null) {
-					// not found // empty aai response
-					execution.setVariable(Prefix + "isSilentSuccess", true)
-					msoLogger.debug(" AAI Query is Silent Success")
-
-				} else {
-				   if (aaiResponseAsString.contains("RESTFault")) {
-					   WorkflowException exceptionObject = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-					   execution.setVariable("WorkflowException", exceptionObject)
-
-				   } else {
- 			       	  // aai all errors
-						 String dataErrorMessage = "Unexpected Error Response from callRESTQueryAAI() - " + returnCode
-						 msoLogger.debug(dataErrorMessage)
-						 exceptionUtil.buildWorkflowException(execution, 2500, dataErrorMessage)
-
-			      }
-				}
+				execution.setVariable(Prefix + "isSilentSuccess", true)
+				msoLogger.debug(" AAI Query is Silent Success")
 			}
-
 			msoLogger.debug(" AAI Query call, isAAIGood? : " + execution.getVariable(Prefix + "isAAIGood"))
-
 		} catch (Exception ex) {
 		   // caught exception
 		   String exceptionMessage = "Exception Encountered in DoDeleteNetworkInstance, callRESTQueryAAI() - " + ex.getMessage()
@@ -392,13 +360,12 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			String cloudSiteId = execution.getVariable(Prefix + "cloudRegionPo")
 			String tenantId = execution.getVariable(Prefix + "tenantId")
 
-			String queryAAIResponse = execution.getVariable(Prefix + "queryAAIResponse")
-			String networkType = utils.getNodeText(queryAAIResponse, "network-type")
-			String networkId = utils.getNodeText(queryAAIResponse, "network-id")
-			String backoutOnFailure = execution.getVariable(Prefix + "rollbackEnabled")
+			L3Network l3Network = execution.getVariable(Prefix + "queryAAIResponse")
+			String networkType = l3Network.getNetworkType()
+			String networkId = l3Network.getNetworkId()
 
 			String networkStackId = ""
-			networkStackId = utils.getNodeText(queryAAIResponse, "heat-stack-id")
+			networkStackId = l3Network.getHeatStackId()
 			if (networkStackId == 'null' || networkStackId == "" || networkStackId == null) {
 				networkStackId = "force_delete"
 			}
@@ -531,8 +498,8 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 			execution.setVariable(Prefix + "requestId", requestId)
 			msoLogger.debug(Prefix + "requestId " + requestId)
-			String queryAAIResponse = execution.getVariable(Prefix + "queryAAIResponse")
-
+			L3Network queryAAIResponse = execution.getVariable(Prefix + "queryAAIResponse")
+			
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 			String cloudRegionId = execution.getVariable(Prefix + "cloudRegionSdnc")
 			// 1. prepare delete topology via SDNC Adapter SUBFLOW call
@@ -1005,9 +972,9 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			    requestId = execution.getVariable("mso-request-id")
 			}
 			execution.setVariable(Prefix + "requestId", requestId)
-
-			String queryAAIResponse = execution.getVariable(Prefix + "queryAAIResponse")
-
+			
+			L3Network queryAAIResponse = execution.getVariable(Prefix + "queryAAIResponse")
+			
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 			String cloudRegionId = execution.getVariable(Prefix + "cloudRegionSdnc")
 			// 1. prepare delete topology via SDNC Adapter SUBFLOW call

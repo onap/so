@@ -18,8 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.vcpe.scripts;
+package org.onap.so.bpmn.vcpe.scripts
 
+import org.onap.aai.domain.yang.AllottedResource;
 import org.onap.so.bpmn.common.scripts.*;
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.core.WorkflowException
@@ -141,12 +142,12 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 		AllottedResourceUtils arUtils = new AllottedResourceUtils(this)
 		String aaiARPath  = execution.getVariable("aaiARPath")
 		msoLogger.debug(" aaiARPath:" + aaiARPath)
-		String ar = null; //need this for getting resourceVersion for delete
+		Optional<AllottedResource> ar = Optional.empty(); //need this for getting resourceVersion for delete
 		if (!isBlank(aaiARPath))
 		{
 			ar = arUtils.getARbyLink(execution, aaiARPath, "")
 		}
-		if (isBlank(ar))
+		if (!ar.isPresent())
 		{
 			msg = "AR not found in AAI at:" + aaiARPath
 			msoLogger.debug(msg)
@@ -202,13 +203,8 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 		try{
 			msoLogger.trace("start deleteAaiAR")
 			AllottedResourceUtils arUtils = new AllottedResourceUtils(this)
-			String ar = null //need to get resource-version 
 			String arLink = execution.getVariable("aaiARPath")
-			if (!isBlank(arLink))
-			{
-				ar = arUtils.getARbyLink(execution, arLink, "")
-			}
-			arUtils.deleteAR(execution, arLink + '?resource-version=' + UriUtils.encode(execution.getVariable("aaiARResourceVersion"),"UTF-8"))
+			arUtils.deleteAR(execution, arLink)
 		} catch (BpmnError e) {
 			throw e;
 		}catch(Exception ex){

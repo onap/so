@@ -57,7 +57,7 @@ public class ExecuteBuildingBlockRainyDay {
 		}
 	}
 	
-	public void queryRainyDayTable(DelegateExecution execution) {
+	public void queryRainyDayTable(DelegateExecution execution, boolean primaryPolicy) {
 		try {
 			ExecuteBuildingBlock ebb = (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
 			String bbName = ebb.getBuildingBlock().getBpmnFlowName();
@@ -102,10 +102,18 @@ public class ExecuteBuildingBlockRainyDay {
 				if(rainyDayHandlerStatus==null){
 					handlingCode = "Abort";
 				}else{
-					handlingCode = rainyDayHandlerStatus.getPolicy();
+					if(primaryPolicy){
+						handlingCode = rainyDayHandlerStatus.getPolicy();
+					}else{
+						handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
+					}
 				}
 			}else{
-				handlingCode = rainyDayHandlerStatus.getPolicy();
+				if(primaryPolicy){
+					handlingCode = rainyDayHandlerStatus.getPolicy();
+				}else{
+					handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
+				}
 			}
 			msoLogger.debug("RainyDayHandler Status Code is: " + handlingCode);
 			execution.setVariable(HANDLING_CODE, handlingCode);

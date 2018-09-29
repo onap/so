@@ -28,7 +28,6 @@ import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -38,6 +37,7 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.infrastructure.workflow.service.ServicePluginFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper

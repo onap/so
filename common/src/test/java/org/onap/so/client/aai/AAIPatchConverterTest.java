@@ -33,7 +33,7 @@ import java.util.HashMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -72,9 +72,10 @@ public class AAIPatchConverterTest {
 		AAIPatchConverter validator = new AAIPatchConverter();
 		HashMap<String, String> map = new HashMap<>();
 		map.put("ipv4-loopback0-address", "");
+		map.put("ipv4-loopback1-address", "192.168.1.1");
 		String result = validator.marshallObjectToPatchFormat(map);
 		
-		assertEquals("expect string", "{\"ipv4-loopback0-address\":\"\"}", result);
+		assertEquals("expect string", "{\"ipv4-loopback1-address\":\"192.168.1.1\"}", result);
 	}
 	
 	@Test

@@ -65,14 +65,14 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,MsoNetworkAdapterAsyncImpl.class);
     private static final MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
     private static final String BPEL_AUTH_PROP = "org.onap.so.adapters.network.bpelauth";
-    private static final String ENCRYPTION_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
+    private static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
     private static final String NETWORK_EXCEPTION_MSG="Got a NetworkException on createNetwork: ";
     private static final String CREATE_NETWORK_ERROR_MSG="Error sending createNetwork notification ";
     private static final String CREATE_NETWORK_EXCEPTON_MSG="Exception sending createNetwork notification";
     private static final String MSO_INTERNAL_ERROR_MSG="MsoInternalError";
     @Autowired
     private Environment environment;
-    
+
     @Autowired
     private MsoNetworkAdapter networkAdapter;
     /**
@@ -619,7 +619,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             Map <String, Object> reqCtx = bp.getRequestContext ();
             Map <String, List <String>> headers = new HashMap <> ();
 
-            String userCredentials = this.getEncryptedProperty (BPEL_AUTH_PROP, "", ENCRYPTION_KEY);
+            String userCredentials = this.getEncryptedProperty (BPEL_AUTH_PROP, "", ENCRYPTION_KEY_PROP);
 
             String basicAuth = "Basic " + DatatypeConverter.printBase64Binary (userCredentials.getBytes ());
             reqCtx.put (MessageContext.HTTP_REQUEST_HEADERS, headers);
@@ -635,7 +635,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     
     public String getEncryptedProperty(String key, String defaultValue, String encryptionKey) {
     	try {
-			return CryptoUtils.decrypt(this.environment.getProperty(key), encryptionKey);
+			return CryptoUtils.decrypt(this.environment.getProperty(key), this.environment.getProperty(encryptionKey));
 		} catch (GeneralSecurityException e) {
 			LOGGER.debug("Exception while decrypting property: " + this.environment.getProperty(key), e);
 		}

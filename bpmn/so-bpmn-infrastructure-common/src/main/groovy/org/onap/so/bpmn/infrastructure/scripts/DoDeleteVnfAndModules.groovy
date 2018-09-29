@@ -20,13 +20,12 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
-
+import org.onap.aai.domain.yang.GenericVnf
+import org.onap.aai.domain.yang.VfModule
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.json.JSONArray;
-import org.json.JSONObject;
-import org.onap.so.bpmn.common.scripts.AaiUtil
+import org.json.JSONObject
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -45,8 +44,6 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils;
 
 /**
  * This class supports the macro VID Flow
@@ -258,61 +255,34 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 		try {
 			def vnfId = execution.getVariable('vnfId')
 			
-			AaiUtil aaiUriUtil = new AaiUtil(this)
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
-			String endPoint = aaiUriUtil.createAaiUri(uri)
-			
-			msoLogger.debug("AAI endPoint: " + endPoint)
 
 			try {
-				msoLogger.debug("createVfModule - invoking httpGet() to AAI")
-				APIResponse response = aaiUriUtil.executeAAIGetCall(execution, endPoint)
-
-				def responseData = response.getResponseBodyAsString()
-				if (responseData != null) {
-					msoLogger.debug("Received generic VNF data: " + responseData)
-
-				}
-
-				msoLogger.debug("createVfModule - queryAAIVfModule Response: " + responseData)
-				msoLogger.debug("createVfModule - queryAAIVfModule ResponseCode: " + response.getStatusCode())
-
-				execution.setVariable('DCVFM_queryAAIVfModuleResponseCode', response.getStatusCode())
-				execution.setVariable('DCVFM_queryAAIVfModuleResponse', responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
+				Optional<GenericVnf> genericVnfOp = getAAIClient().get(GenericVnf.class,uri)
 				//Map<String, String>[] vfModules = new HashMap<String,String>[]
 				List<ModuleResource> vfModulesFromDecomposition = execution.getVariable("DDVAM_vfModulesFromDecomposition")
 				def vfModulesList = new ArrayList<Map<String,String>>()
-				def vfModules = null
 				def vfModuleBaseEntry = null
-				if (response.getStatusCode() == 200) {
+				if (genericVnfOp.isPresent()) {
+					execution.setVariable('DCVFM_queryAAIVfModuleResponseCode', 200)
+					execution.setVariable('DCVFM_queryAAIVfModuleResponse', genericVnfOp.get())
+
 					// Parse the VNF record from A&AI to find base module info
-					msoLogger.debug('Parsing the VNF data to find base module info')
-					if (responseData != null) {
-						def vfModulesText = utils.getNodeXml(responseData, "vf-modules")
-						msoLogger.debug("vModulesText: " + vfModulesText)
-						if (vfModulesText != null && !vfModulesText.trim().isEmpty()) {
-							def xmlVfModules= new XmlSlurper().parseText(vfModulesText)
-							vfModules = xmlVfModules.'**'.findAll {it.name() == "vf-module"}
+						if (genericVnfOp.get().getVfModules()!= null && !genericVnfOp.get().getVfModules().getVfModule().isEmpty() ) {
+							List<VfModule> vfModules = genericVnfOp.get().getVfModules().getVfModule()
 							execution.setVariable("DDVAM_moduleCount", vfModules.size())
-							int vfModulesSize = 0
 							ModelInfo vfModuleModelInfo = null
-							for (i in 0..vfModules.size()-1) {
-								def vfModuleXml = groovy.xml.XmlUtil.serialize(vfModules[i])
-							
+							for (VfModule vfModule : vfModules) {
 								Map<String, String> vfModuleEntry = new HashMap<String, String>()
-								def vfModuleId = utils.getNodeText(vfModuleXml, "vf-module-id")
-								vfModuleEntry.put("vfModuleId", vfModuleId)
-								def vfModuleName = utils.getNodeText(vfModuleXml, "vf-module-name")      
-								vfModuleEntry.put("vfModuleName", vfModuleName)
+								vfModuleEntry.put("vfModuleId", vfModule.getVfModuleId())
+								vfModuleEntry.put("vfModuleName", vfModule.getVfModuleName())
 								
 								// Find the model for this vf module in decomposition if specified
 								if (vfModulesFromDecomposition != null) {
 									msoLogger.debug("vfModulesFromDecomposition is not null")
-									def vfModuleUuid = utils.getNodeText(vfModuleXml, "model-version-id")
+									def vfModuleUuid = vfModule.getModelVersionId()
 									if (vfModuleUuid == null) {
-										vfModuleUuid = utils.getNodeText(vfModuleXml, "persona-model-version")
+										vfModuleUuid = vfModule.getPersonaModelVersion()
 									}
 									msoLogger.debug("vfModule UUID is: " + vfModuleUuid)
 									for (j in 0..vfModulesFromDecomposition.size()-1) {
@@ -335,9 +305,8 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 								}
 								
 								
-								def isBaseVfModule = utils.getNodeText(vfModuleXml, "is-base-vf-module")
 								// Save base vf module for last
-								if (isBaseVfModule == "true") {
+								if (vfModule.isIsBaseVfModule()) {
 									vfModuleBaseEntry = vfModuleEntry
 								}
 								else {						
@@ -348,8 +317,10 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 								vfModulesList.add(vfModuleBaseEntry)
 							}					
 						}
-						
-					}					
+				}else{
+					execution.setVariable('DCVFM_queryAAIVfModuleResponseCode', 404)
+					execution.setVariable('DCVFM_queryAAIVfModuleResponse', "Generic Vnf not found")
+
 				}
 				execution.setVariable("DDVAM_vfModules", vfModulesList)
 			} catch (Exception ex) {

@@ -29,6 +29,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.db.catalog.BaseTest;
 import org.onap.so.db.catalog.beans.VnfcCustomization;
+import org.onap.so.db.catalog.exceptions.NoEntityFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -42,7 +43,8 @@ public class VnfcCustomizationRepositoryTest extends BaseTest {
         List<VnfcCustomization> vnfcCustomizationList = vnfcCustomizationRepository.findAll();
         Assert.assertFalse(CollectionUtils.isEmpty(vnfcCustomizationList));
         
-        VnfcCustomization vnfcCustomization = vnfcCustomizationRepository.findOne("9bcce658-9b37-11e8-98d0-529269fb1459");
+        VnfcCustomization vnfcCustomization = vnfcCustomizationRepository.findById("9bcce658-9b37-11e8-98d0-529269fb1459").
+        		orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
         Assert.assertTrue(vnfcCustomization.getDescription().equalsIgnoreCase("testVnfcCustomizationDescription"));
     }
     
@@ -54,7 +56,8 @@ public class VnfcCustomizationRepositoryTest extends BaseTest {
     	vnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
     	vnfcCustomizationRepository.save(vnfcCustomization);	
     	
-    	VnfcCustomization foundVnfcCustomization = vnfcCustomizationRepository.findOne("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+    	VnfcCustomization foundVnfcCustomization = vnfcCustomizationRepository.findById("cf9f6efc-9f14-11e8-98d0-529269fb1459").
+        		orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
         
         assertThat(vnfcCustomization, sameBeanAs(foundVnfcCustomization)
         		.ignoring("created"));

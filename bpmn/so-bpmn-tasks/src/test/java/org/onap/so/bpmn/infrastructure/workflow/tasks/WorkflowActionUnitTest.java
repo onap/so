@@ -22,9 +22,9 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -43,10 +43,11 @@ import java.util.List;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -86,7 +87,7 @@ public class WorkflowActionUnitTest {
 				"flow y",
 				"ActivateFabricConfigurationBB",
 				"flow z");
-		doReturn(Arrays.asList("yes", "yes")).when(workflowAction).traverseCatalogDbForConfiguration(any(String.class), any(String.class));
+		doReturn(Arrays.asList("yes", "yes")).when(workflowAction).traverseCatalogDbForConfiguration(ArgumentMatchers.isNull(), ArgumentMatchers.isNull());
 		
 		List<OrchestrationFlow> result = workflowAction.filterOrchFlows(flows, WorkflowType.VFMODULE, mock(DelegateExecution.class));
 		
@@ -101,7 +102,6 @@ public class WorkflowActionUnitTest {
 				"flow y",
 				"ActivateFabricConfigurationBB",
 				"flow z");
-		doReturn(Arrays.asList()).when(workflowAction).traverseCatalogDbForConfiguration(any(String.class), any(String.class));
 		
 		List<OrchestrationFlow> result = workflowAction.filterOrchFlows(flows, WorkflowType.VFMODULE, mock(DelegateExecution.class));
 		List<OrchestrationFlow> expected = createFlowList(

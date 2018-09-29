@@ -35,9 +35,11 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
@@ -47,10 +49,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class WorkflowActionBBTasksTest extends BaseTaskTest {
 
-	@Autowired
+	@Mock
 	protected WorkflowAction workflowAction;
 	
-	@Autowired
+	@InjectMocks
 	protected WorkflowActionBBTasks workflowActionBBTasks;
 	
 	private DelegateExecution execution;
@@ -212,6 +214,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"DeleteVfModuleBB");
 		assertEquals(ebbs.get(1).getBuildingBlock().getBpmnFlowName(),"UnassignVfModuleBB");	
 		assertEquals(0,execution.getVariable("gCurrentSequence"));
+		assertEquals(0,execution.getVariable("retryCount"));
 	}
 	
 	@Test

@@ -34,19 +34,33 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import org.mockito.Spy
 import org.mockito.runners.MockitoJUnitRunner
+import org.onap.aai.domain.yang.NetworkPolicies
+import org.onap.aai.domain.yang.NetworkPolicy
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.common.scripts.utils.XmlComparator
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException
+
+import javax.ws.rs.NotFoundException
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)
-class DoCreateVfModuleRollbackTest {
+class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
 
     def prefix = "DCVFMR_"
+
+    @Spy
+    DoCreateVfModuleRollback doCreateVfModuleRollback
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(28090)
@@ -56,7 +70,9 @@ class DoCreateVfModuleRollbackTest {
 
     @Before
     void init() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        super.init("CreateVFCNSResource")
+        MockitoAnnotations.initMocks(this)
+        when(doCreateVfModuleRollback.getAAIClient()).thenReturn(client)
     }
 
     @Test
@@ -149,21 +165,88 @@ class DoCreateVfModuleRollbackTest {
         when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("DCVFM_cloudSiteId")).thenReturn("12345")
-        when(mockExecution.getVariable("mso.workflow.DoCreateVfModuleRollback.aai.network-policy.uri")).thenReturn("/aai/v8/network/network-policies/network-policy")
-        when(mockExecution.getVariable("mso.workflow.custom.DoCreateVfModuleRollback.aai.version")).thenReturn("8")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
-        when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
         when(mockExecution.getVariable("rollbackData")).thenReturn(new RollbackData())
         List fqdnList = new ArrayList()
         fqdnList.add("test")
         when(mockExecution.getVariable(prefix + "createdNetworkPolicyFqdnList")).thenReturn(fqdnList)
-        mockData()
-        DoCreateVfModuleRollback obj = new DoCreateVfModuleRollback()
-        obj.deleteNetworkPoliciesFromAAI(mockExecution)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        uri.queryParam("network-policy-fqdn", "test")
+        NetworkPolicies networkPolicies = new NetworkPolicies();
+        NetworkPolicy networkPolicy = new NetworkPolicy();
+        networkPolicy.setNetworkPolicyId("NP1")
+        networkPolicies.getNetworkPolicy().add(networkPolicy)
+        when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
+
+        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicy.getNetworkPolicyId())
+        doNothing().when(client).delete(delUri)
+
+        doCreateVfModuleRollback.deleteNetworkPoliciesFromAAI(mockExecution)
 
         Mockito.verify(mockExecution).setVariable("prefix", prefix)
         Mockito.verify(mockExecution).setVariable(prefix + "networkPolicyFqdnCount", 1)
         Mockito.verify(mockExecution).setVariable(prefix + "aaiQueryNetworkPolicyByFqdnReturnCode", 200)
+    }
+
+    @Test
+    void testDeleteNetworkPoliciesFromAAINotFound() {
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable("prefix")).thenReturn(prefix)
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("DCVFM_cloudSiteId")).thenReturn("12345")
+        when(mockExecution.getVariable("rollbackData")).thenReturn(new RollbackData())
+        List fqdnList = new ArrayList()
+        fqdnList.add("test")
+        when(mockExecution.getVariable(prefix + "createdNetworkPolicyFqdnList")).thenReturn(fqdnList)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        uri.queryParam("network-policy-fqdn", "test")
+        NetworkPolicies networkPolicies = new NetworkPolicies();
+        NetworkPolicy networkPolicy = new NetworkPolicy();
+        networkPolicy.setNetworkPolicyId("NP1")
+        networkPolicies.getNetworkPolicy().add(networkPolicy)
+        when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
+
+        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicy.getNetworkPolicyId())
+        doThrow(new NotFoundException("Not Found!")).when(client).delete(delUri)
+
+        doCreateVfModuleRollback.deleteNetworkPoliciesFromAAI(mockExecution)
+
+        Mockito.verify(mockExecution).setVariable("prefix", prefix)
+        Mockito.verify(mockExecution).setVariable(prefix + "networkPolicyFqdnCount", 1)
+        Mockito.verify(mockExecution).setVariable(prefix + "aaiDeleteNetworkPolicyReturnCode", 404)
+    }
+
+    @Test
+    void testDeleteNetworkPoliciesFromAAIError() {
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable("prefix")).thenReturn(prefix)
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("DCVFM_cloudSiteId")).thenReturn("12345")
+        when(mockExecution.getVariable("rollbackData")).thenReturn(new RollbackData())
+        List fqdnList = new ArrayList()
+        fqdnList.add("test")
+        when(mockExecution.getVariable(prefix + "createdNetworkPolicyFqdnList")).thenReturn(fqdnList)
+
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        uri.queryParam("network-policy-fqdn", "test")
+        NetworkPolicies networkPolicies = new NetworkPolicies();
+        NetworkPolicy networkPolicy = new NetworkPolicy();
+        networkPolicy.setNetworkPolicyId("NP1")
+        networkPolicies.getNetworkPolicy().add(networkPolicy)
+        when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
+
+        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicy.getNetworkPolicyId())
+        doThrow(new GraphInventoryUriComputationException("Error!")).when(client).delete(delUri)
+        try {
+            doCreateVfModuleRollback.deleteNetworkPoliciesFromAAI(mockExecution)
+        } catch (Exception ex) {
+            println " Test End - Handle catch-throw BpmnError()! "
+        }
+        Mockito.verify(mockExecution, times(4)).setVariable(captor.capture(), captor.capture())
+        WorkflowException workflowException = captor.getValue()
+        Assert.assertEquals(2500, workflowException.getErrorCode())
+        Assert.assertEquals("Unable to delete network-policy to AAI deleteNetworkPoliciesFromAAI - Error!", workflowException.getErrorMessage())
     }
 
 

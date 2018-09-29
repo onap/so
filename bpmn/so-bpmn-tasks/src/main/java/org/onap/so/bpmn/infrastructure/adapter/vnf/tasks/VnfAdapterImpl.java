@@ -62,8 +62,6 @@ public class VnfAdapterImpl {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			
-			execution.setVariable("isDebugLogEnabled", "true");
 			execution.setVariable("mso-request-id", gBBInput.getRequestContext().getMsoRequestId());
 			execution.setVariable("mso-service-instance-id", serviceInstance.getServiceInstanceId());
 			execution.setVariable("heatStackId", null);

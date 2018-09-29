@@ -59,8 +59,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.camunda.connect</groupId>
@@ -70,12 +68,12 @@
 		<dependency>
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine-plugin-connect</artifactId>
-			<version>7.7.0</version>
+			<version>${camunda.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine</artifactId>
-			<version>7.7.0</version>
+			<version>${camunda.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>

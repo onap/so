@@ -18,25 +18,24 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.vcpe.scripts;
+package org.onap.so.bpmn.vcpe.scripts
 
-import org.onap.so.bpmn.common.scripts.*;
-import org.onap.so.bpmn.common.scripts.AaiUtil
-import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.rest.APIResponse
-
-import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.apache.commons.lang3.*
-import org.springframework.web.util.UriUtils;
-import static org.apache.commons.lang3.StringUtils.*
-
+import org.onap.aai.domain.yang.AllottedResource
+import org.onap.so.bpmn.common.scripts.*;
+import org.onap.so.bpmn.core.RollbackData
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+
+import javax.ws.rs.core.UriBuilder
+import static org.apache.commons.lang3.StringUtils.isBlank
 
 /**
  * This groovy class supports the <class>DoCreateAllottedResourceTXC.bpmn</class> process.
@@ -191,7 +190,6 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 
 
 		msoLogger.trace("start createAaiAR")
-		String msg = ""
 
 		String allottedResourceId = execution.getVariable("allottedResourceId")
 		if (isBlank(allottedResourceId))
@@ -199,35 +197,13 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			allottedResourceId = UUID.randomUUID().toString()
 			execution.setVariable("allottedResourceId", allottedResourceId)
 		}
-		String arUrl = ""
 		try {
 
-			//AAI PUT
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aaiEndpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-			String siResourceLink= execution.getVariable("PSI_resourceLink")
+			AAIResourceUri siResourceLink= execution.getVariable("PSI_resourceLink")
 
-			String siUri = ""
-			msoLogger.debug("PSI_resourceLink:" + siResourceLink)
+			AAIResourceUri allottedResourceUri = AAIUriFactory.createResourceFromParentURI(siResourceLink, AAIObjectType.ALLOTTED_RESOURCE, allottedResourceId)
 
-			if(!isBlank(siResourceLink)) {
-				msoLogger.debug("Incoming PSI Resource Link is: " + siResourceLink)
-				String[] split = siResourceLink.split("/aai/")
-				siUri = "/aai/" + split[1]
-			}
-			else
-			{
-				msg = "Parent Service Link in AAI is null"
-				msoLogger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
-
-			arUrl = "${aaiEndpoint}${siUri}"  + "/allotted-resources/allotted-resource/" + UriUtils.encode(allottedResourceId,"UTF-8")
-			execution.setVariable("aaiARPath", arUrl)
-			msoLogger.debug("GET AllottedResource AAI URL is:\n" + arUrl)
-
-			String namespace = aaiUriUtil.getNamespaceFromUri(execution, arUrl)
-
+			execution.setVariable("aaiARPath", allottedResourceUri.build().toString());
 			String arType = execution.getVariable("allottedResourceType")
 			String arRole = execution.getVariable("allottedResourceRole")
 			String CSI_resourceLink = execution.getVariable("CSI_resourceLink")
@@ -235,65 +211,19 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			msoLogger.debug("arModelInfo is:\n" + arModelInfo)
 			String modelInvariantId = jsonUtil.getJsonValue(arModelInfo, "modelInvariantUuid")
 			String modelVersionId = jsonUtil.getJsonValue(arModelInfo, "modelUuid")
-			String modelCustomizationId = jsonUtil.getJsonValue(arModelInfo, "modelCustomizationUuid")
 
-			if (modelInvariantId == null) {
-				modelInvariantId = ""
-			}
-			if (modelVersionId == null) {
-				modelVersionId = ""
-			}
-			if (modelCustomizationId == null) {
-				modelCustomizationId = ""
-			}
+			AllottedResource resource = new AllottedResource()
+			resource.setId(allottedResourceId)
+			resource.setType(arType)
+			resource.setRole(arRole)
+			resource.setModelInvariantId(modelInvariantId)
+			resource.setModelVersionId(modelVersionId)
+			getAAIClient().create(allottedResourceUri, resource)
+			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, UriBuilder.fromPath(CSI_resourceLink).build())
+			getAAIClient().connect(allottedResourceUri,serviceInstanceUri)
 
-			String payload =
-			"""<allotted-resource xmlns="${namespace}">
-				<id>${MsoUtils.xmlEscape(allottedResourceId)}</id>
-				<description></description>
-				<type>${MsoUtils.xmlEscape(arType)}</type>
-				<role>${MsoUtils.xmlEscape(arRole)}</role>
-				<selflink></selflink>
-				<model-invariant-id>${MsoUtils.xmlEscape(modelInvariantId)}</model-invariant-id>
-				<model-version-id>${MsoUtils.xmlEscape(modelVersionId)}</model-version-id>
-				<model-customization-id>${MsoUtils.xmlEscape(modelCustomizationId)}</model-customization-id>
-				<orchestration-status>PendingCreate</orchestration-status>
-				<operation-status></operation-status>
-				<relationship-list>
-					<relationship>
-               			<related-to>service-instance</related-to>
-               			<related-link>${MsoUtils.xmlEscape(CSI_resourceLink)}</related-link>
-					</relationship>
-				</relationship-list>
-			</allotted-resource>""".trim()
-
-			execution.setVariable("AaiARPayload", payload)
-			msoLogger.debug(" payload to create AllottedResource in AAI:" + "\n" + payload)
-
-			APIResponse response = aaiUriUtil.executeAAIPutCall(execution, arUrl, payload)
-			int responseCode = response.getStatusCode()
-			msoLogger.debug("AllottedResource AAI PUT responseCode:" + responseCode)
-
-			String aaiResponse = response.getResponseBodyAsString()
-			msoLogger.debug("AllottedResource AAI PUT responseStr:" + aaiResponse)
-
-			//200 OK 201 CREATED 202 ACCEPTED
-			if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
-			{
-				msoLogger.debug("AAI PUT AllottedResource received a Good Response")
-			}
-			else{
-				msoLogger.debug("AAI Put AllottedResouce received a Bad Response Code: " + responseCode)
-				exceptionUtil.MapAAIExceptionToWorkflowExceptionGeneric(execution, aaiResponse, responseCode)
-				throw new BpmnError("MSOWorkflowException")
-			}
-		}catch(BpmnError b){
-			msoLogger.debug("Rethrowing MSOWorkflowException")
-			throw b
-		} catch (Exception ex) {
-			msg = "Exception in createAaiAR " + ex.getMessage()
-			msoLogger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception in createAaiAR " + ex.getMessage())
 		}
 
 		//start rollback set up
@@ -304,7 +234,6 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		rollbackData.put(Prefix, "allottedResourceId", allottedResourceId)
 		rollbackData.put(Prefix, "serviceInstanceId", execution.getVariable("serviceInstanceId"))
 		rollbackData.put(Prefix, "parentServiceInstanceId", execution.getVariable("parentServiceInstanceId"))
-		rollbackData.put(Prefix, "aaiARPath", arUrl)
 		execution.setVariable("rollbackData", rollbackData)
 		msoLogger.trace("end createAaiAR")
 	}

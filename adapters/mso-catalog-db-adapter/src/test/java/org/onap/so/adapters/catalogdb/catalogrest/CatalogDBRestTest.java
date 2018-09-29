@@ -40,7 +40,7 @@ import org.onap.so.adapters.catalogdb.CatalogDBApplication;
 import org.onap.so.logger.MsoLogger;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;

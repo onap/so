@@ -8,7 +8,7 @@ ssl-enable: false
 # H2
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3306/catalogdb
+    jdbc-url: jdbc:mariadb://localhost:3306/catalogdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
@@ -33,7 +33,7 @@ spring:
       role: ACTUATOR        
 request:
   datasource:
-    url: jdbc:mariadb://localhost:3306/requestdb
+    jdbc-url: jdbc:mariadb://localhost:3306/requestdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
@@ -41,8 +41,19 @@ request:
     initialization-mode: never
 
 #Actuator
-management: 
-  context-path: /manage
+management:
+  endpoints:
+    web:
+      base-path: /manage
+  server:
+    servlet:
+      context-path: /manage
+  metrics:
+    se-global-registry: false
+    export:
+      prometheus:
+        enabled: true # Whether exporting of metrics to Prometheus is enabled.
+        step: 1m # Step size (i.e. reporting frequency) to use.  
 
 
 mso:
@@ -63,7 +74,7 @@ mso:
       consumerId: msoasdc-id-local
       environmentName: Pre-IST
       asdcAddress: localhost:8443
-      password: 658D6E9E0C087547284339181615C358
+      password: CB655C3C236F1F0370A347E3A0E0E133BE10ADCF4D16377E7378D3FE46A4BF60C27DF1FFB4
       pollingInterval: 30
       pollingTimeout: 30
       relevantArtifactTypes: HEAT,HEAT_ENV,HEAT_VOL

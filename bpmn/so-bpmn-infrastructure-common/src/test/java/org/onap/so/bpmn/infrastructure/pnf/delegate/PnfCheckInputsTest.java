@@ -20,8 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,12 +29,17 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class PnfCheckInputsTest {
 
     private static final String DEFAULT_TIMEOUT = "P1D";
 
+    @Rule
+	public ExpectedException expectedException = ExpectedException.none();
+    
     private DelegateExecution mockDelegateExecution() {
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
         when(delegateExecution.getVariable("testProcessKey")).thenReturn("testProcessKeyValue");
@@ -48,7 +52,8 @@ public class PnfCheckInputsTest {
         PnfCheckInputs testedObject = new PnfCheckInputs(DEFAULT_TIMEOUT);
         DelegateExecution delegateExecution = mockDelegateExecution();
         // when, then
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        expectedException.expect(BpmnError.class);
+        testedObject.execute(delegateExecution);
     }
 
     @Test
@@ -58,7 +63,8 @@ public class PnfCheckInputsTest {
         DelegateExecution delegateExecution = mockDelegateExecution();
         when(delegateExecution.getVariable(CORRELATION_ID)).thenReturn("");
         // when, then
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        expectedException.expect(BpmnError.class);
+        testedObject.execute(delegateExecution);
     }
 
     private DelegateExecution mockDelegateExecutionWithCorrelationId() {
@@ -73,7 +79,8 @@ public class PnfCheckInputsTest {
         PnfCheckInputs testedObject = new PnfCheckInputs(null);
         DelegateExecution delegateExecution = mockDelegateExecutionWithCorrelationId();
         // when, then
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        expectedException.expect(BpmnError.class);
+        testedObject.execute(delegateExecution);
     }
 
     @Test
@@ -83,7 +90,8 @@ public class PnfCheckInputsTest {
         DelegateExecution delegateExecution = mockDelegateExecutionWithCorrelationId();
         when(delegateExecution.getVariable(TIMEOUT_FOR_NOTIFICATION)).thenReturn("");
         // when, then
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        expectedException.expect(BpmnError.class);
+        testedObject.execute(delegateExecution);
     }
 
     @Test

@@ -23,6 +23,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.junit.Assert
@@ -35,25 +36,41 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import org.mockito.Spy
 import org.mockito.runners.MockitoJUnitRunner
+import org.onap.aai.domain.yang.VolumeGroup
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.common.scripts.utils.XmlComparator
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException
+
+import javax.ws.rs.NotFoundException
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)
-class DoDeleteVfModuleVolumeV2Test {
+class DoDeleteVfModuleVolumeV2Test extends MsoGroovyTest{
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(28090);
 
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
+    @Spy
+    DoDeleteVfModuleVolumeV2 deleteVfModuleVolumeV2;
+
     @Before
     public void init() throws IOException {
+        super.init("DoDeleteVfModuleVolumeV2")
         MockitoAnnotations.initMocks(this);
+        when(deleteVfModuleVolumeV2.getAAIClient()).thenReturn(client)
+
     }
 
     @Test
@@ -117,6 +134,118 @@ class DoDeleteVfModuleVolumeV2Test {
         String str = FileUtil.readResourceFile("__files/DoCreateVfModuleVolumeV2/vnfAdapterDeleteRequest.xml")
         XmlComparator.assertXMLEquals(str, captor.getValue(),"messageId","notificationUrl")
     }
+
+    @Test
+    void testCallRESTQueryAAIForVolumeGroup(){
+        when(mockExecution.getVariable("tenantId")).thenReturn("Tenant123")
+        when(mockExecution.getVariable("volumeGroupId")).thenReturn("VolumeGroup123")
+        when(mockExecution.getVariable("DDVMV_aicCloudRegion")).thenReturn("Region1")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, "Region1","VolumeGroup123")
+        Optional<VolumeGroup> volumeGroup = getAAIObjectFromJson(VolumeGroup.class,"__files/aai/VolumeGroupWithTenant.json");
+        when(client.get(VolumeGroup.class,resourceUri)).thenReturn(volumeGroup)
+        deleteVfModuleVolumeV2.callRESTQueryAAIForVolumeGroup(mockExecution,"true")
+        Mockito.verify(mockExecution).setVariable("DDVMV_queryAAIVolGrpResponse", volumeGroup.get())
+        Mockito.verify(mockExecution).setVariable("DDVMV_volumeGroupHeatStackId", volumeGroup.get().getHeatStackId())
+    }
+
+    @Test
+    void testCallRESTQueryAAIForVolumeGroupNoTenant(){
+        when(mockExecution.getVariable("tenantId")).thenReturn("Tenant123")
+        when(mockExecution.getVariable("volumeGroupId")).thenReturn("VolumeGroup123")
+        when(mockExecution.getVariable("DDVMV_aicCloudRegion")).thenReturn("Region1")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, "Region1","VolumeGroup123")
+        Optional<VolumeGroup> volumeGroup = getAAIObjectFromJson(VolumeGroup.class,"__files/aai/VolumeGroup.json");
+        when(client.get(VolumeGroup.class,resourceUri)).thenReturn(volumeGroup)
+        try {
+            deleteVfModuleVolumeV2.callRESTQueryAAIForVolumeGroup(mockExecution, "true")
+        }catch(BpmnError error) {
+            println " Test End - Handle catch-throw BpmnError()! "
+        }
+    }
+
+    @Test
+    void testCallRESTQueryAAIForVolumeGroupDifferentTenant(){
+        when(mockExecution.getVariable("tenantId")).thenReturn("Tenant12345")
+        when(mockExecution.getVariable("volumeGroupId")).thenReturn("VolumeGroup123")
+        when(mockExecution.getVariable("DDVMV_aicCloudRegion")).thenReturn("Region1")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, "Region1","VolumeGroup123")
+        Optional<VolumeGroup> volumeGroup = getAAIObjectFromJson(VolumeGroup.class,"__files/aai/VolumeGroupWithTenant.json");
+        when(client.get(VolumeGroup.class,resourceUri)).thenReturn(volumeGroup)
+        try {
+            deleteVfModuleVolumeV2.callRESTQueryAAIForVolumeGroup(mockExecution, "true")
+        }catch(BpmnError error) {
+            println " Test End - Handle catch-throw BpmnError()! "
+        }
+    }
+
+    @Test
+    void testCallRESTQueryAAIForVolumeGroupNotFound(){
+        when(mockExecution.getVariable("tenantId")).thenReturn("Tenant123")
+        when(mockExecution.getVariable("volumeGroupId")).thenReturn("VolumeGroup123")
+        when(mockExecution.getVariable("DDVMV_aicCloudRegion")).thenReturn("Region1")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, "Region1","VolumeGroup123")
+        when(client.get(VolumeGroup.class,resourceUri)).thenReturn(Optional.empty())
+        try {
+            deleteVfModuleVolumeV2.callRESTQueryAAIForVolumeGroup(mockExecution, "true")
+        }catch(BpmnError error) {
+            println " Test End - Handle catch-throw BpmnError()! "
+        }
+    }
+
+    @Test
+    void testCallRESTQueryAAIForVolumeGroupWithVfModule(){
+        when(mockExecution.getVariable("tenantId")).thenReturn("Tenant123")
+        when(mockExecution.getVariable("volumeGroupId")).thenReturn("VolumeGroup123")
+        when(mockExecution.getVariable("DDVMV_aicCloudRegion")).thenReturn("Region1")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, "Region1","VolumeGroup123")
+        Optional<VolumeGroup> volumeGroup = getAAIObjectFromJson(VolumeGroup.class,"__files/aai/VolumeGroupWithVfModule.json");
+        when(client.get(VolumeGroup.class,resourceUri)).thenReturn(volumeGroup)
+        try {
+            deleteVfModuleVolumeV2.callRESTQueryAAIForVolumeGroup(mockExecution, "true")
+        }catch(BpmnError error) {
+            println " Test End - Handle catch-throw BpmnError()! "
+        }
+    }
+
+    @Test
+    void testCallRESTDeleteAAIVolumeGroup(){
+        Optional<VolumeGroup> volumeGroup = getAAIObjectFromJson(VolumeGroup.class,"__files/aai/VolumeGroup.json");
+        when(mockExecution.getVariable("DDVMV_queryAAIVolGrpResponse")).thenReturn(volumeGroup.get())
+        when(mockExecution.getVariable("DDVMV_aicCloudRegion")).thenReturn("Region1")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, "Region1","VolumeGroup123")
+        doNothing().when(client).delete(resourceUri)
+        deleteVfModuleVolumeV2.callRESTDeleteAAIVolumeGroup(mockExecution,"true")
+    }
+
+    @Test
+    void testCallRESTDeleteAAIVolumeGroupAaiError(){
+        Optional<VolumeGroup> volumeGroup = getAAIObjectFromJson(VolumeGroup.class,"__files/aai/VolumeGroupWithVfModule.json");
+        when(mockExecution.getVariable("DDVMV_queryAAIVolGrpResponse")).thenReturn(volumeGroup.get())
+        when(mockExecution.getVariable("DDVMV_aicCloudRegion")).thenReturn("Region1")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, "Region1",volumeGroup.get().getVolumeGroupId())
+        doThrow(new GraphInventoryUriComputationException("Error")).when(client).delete(resourceUri)
+        try {
+            deleteVfModuleVolumeV2.callRESTDeleteAAIVolumeGroup(mockExecution, "true")
+        } catch (BpmnError error) {
+                println " Test End - Handle catch-throw BpmnError()! "
+        }
+    }
+
+    @Test
+    void testCallRESTDeleteAAIVolumeGroupNotFound(){
+        Optional<VolumeGroup> volumeGroup = getAAIObjectFromJson(VolumeGroup.class,"__files/aai/VolumeGroup.json");
+        when(mockExecution.getVariable("DDVMV_queryAAIVolGrpResponse")).thenReturn(volumeGroup.get())
+        when(mockExecution.getVariable("DDVMV_aicCloudRegion")).thenReturn("Region1")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, "Region1","VolumeGroup123")
+        doThrow(new NotFoundException("VolumeGroup Not found")).when(client).delete(resourceUri)
+        try {
+            deleteVfModuleVolumeV2.callRESTDeleteAAIVolumeGroup(mockExecution, "true")
+        } catch (BpmnError error) {
+            println " Test End - Handle catch-throw BpmnError()! "
+        }
+    }
+
+
 
 
     private ExecutionEntity setupMock() {

@@ -21,7 +21,6 @@
 package org.onap.so.db.catalog.data.repository;
 
 import org.onap.so.db.catalog.beans.VnfcCustomization;
-import org.onap.so.db.catalog.data.projections.InlineVnf;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
