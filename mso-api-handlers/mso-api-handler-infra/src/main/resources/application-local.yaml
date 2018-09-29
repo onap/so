@@ -17,6 +17,16 @@ camunda-nodehealthcheck-urn: /mso/nodehealthcheck
 
 
 mso:
+  health:
+    endpoints:
+      catalogdb: http://localhost:8800
+      sdnc: http://localhost:8400
+      openstack: http://localhost:8300
+      requestdb: http://localhost:8700
+      bpmn: http://localhost:8200
+      asdc: http://localhost:8400
+      requestdbattsvc: http://localhost:8600
+      
   adapters:
     requestDb:
       auth: Basic YnBlbDptc28tZGItMTUwNyE=
@@ -45,16 +55,16 @@ mso:
     homing:
       sdna:
         url: http://localhost:8089/
-        password: 4112B789E942B161228F7D5AFC654C0F  
+        password: 4E0BDC08EE8EDC0572ABBE9FD2D59B62DB725A00B8469E39393D6C86D64284C5D34A57D56F7B58C375316F
   camundaURL: http://localhost:8089/
-  camundaAuth: F8E9452B55DDE4CCE77547B0E748105C54CF5EF1351B4E2CBAABF2981EFE776D
+  camundaAuth: E8E19DD16CC90D2E458E8FF9A884CC0452F8F3EB8E321F96038DE38D5C1B0B02DFAE00B88E2CF6E2A4101AB2C011FC161212EE
   async:
     core-pool-size: 50
     max-pool-size: 50
     queue-capacity: 500
   sdc:
     client:
-      auth: F3473596C526938329DF877495B494DC374D1C4198ED3AD305EA3ADCBBDA1862
+      auth: 97FF88AB352DA16E00DDD81E3876431DEF8744465DACA489EB3B3BE1F10F63EDA1715E626D0A4827A3E19CD88421BF
     activate:
       instanceid: test
       userid: cs0008
@@ -66,7 +76,7 @@ mso:
         count: 3
   aai:
     endpoint: http://localhost:28090
-    auth: 26AFB797A6A57960D5D718491925C50F77CDC22AC394B3DBA09950D8FD1C0764
+    auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
   grm:
     endpoint: http://localhost:28090
     username: gmruser
@@ -108,7 +118,7 @@ volume:
 # H2
 spring:
   datasource:
-    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    jdbc-url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password: sa
     driver-class-name: org.h2.Driver
@@ -151,7 +161,7 @@ spring:
       role: ACTUATOR      
 request:
   datasource:
-    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    jdbc-url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password: sa
     driver-class-name: org.h2.Driver
@@ -160,3 +170,10 @@ request:
 #Actuator
 management: 
   context-path: /manage
+
+org:
+  onap:
+    so:
+      adapters:
+        network:
+          encryptionKey: aa3871669d893c7fb8abbcda31b88b4f

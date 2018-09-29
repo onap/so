@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
@@ -41,7 +42,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
-public class SDNCClientTest extends BaseTaskTest {
+public class SDNCClientTest extends BaseIntegrationTest {
 	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/";
 	
 	@Rule

@@ -22,8 +22,8 @@ package org.onap.so.openstack.utils;
 
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -40,7 +40,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.TestDataSetup;
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.db.catalog.beans.CloudSite;
@@ -100,7 +100,6 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
 		
 		doReturn(Optional.of(cloudSite)).when(cloudConfig).getCloudSite(isA(String.class));
 		doReturn(heatClient).when(heatUtils).getHeatClient(isA(CloudSite.class), isA(String.class));
-		doReturn(heatStack).when(heatUtils).queryHeatStack(isA(Heat.class), isA(String.class));
 		doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(isA(OpenStackRequest.class));
 		doReturn("0").when(environment).getProperty(isA(String.class), isA(String.class));
 		doReturn(updateStack).when(heatUtils).queryHeatStack(isA(Heat.class), isA(String.class));
@@ -125,7 +124,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
 		
 		doReturn(Optional.of(cloudSite)).when(cloudConfig).getCloudSite(isA(String.class));
 		doReturn(heatClient).when(heatUtils).getHeatClient(isA(CloudSite.class), isA(String.class));
-		doReturn(heatStack).when(heatUtils).queryHeatStack(isA(Heat.class), isA(String.class));
+		
 		doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(isA(OpenStackRequest.class));
 		doReturn("0").when(environment).getProperty(isA(String.class), isA(String.class));
 		doReturn(updateStack).when(heatUtils).queryHeatStack(isA(Heat.class), isA(String.class));
@@ -151,8 +150,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
 		expectedStackInfo.setCanonicalName("stackName/id");
 		
 		doReturn(Optional.of(cloudSite)).when(cloudConfig).getCloudSite(isA(String.class));
-		doReturn(heatClient).when(heatUtils).getHeatClient(isA(CloudSite.class), isA(String.class));
-		doReturn(heatStack).when(heatUtils).queryHeatStack(isA(Heat.class), isA(String.class));
+		doReturn(heatClient).when(heatUtils).getHeatClient(isA(CloudSite.class), isA(String.class));		
 		doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(isA(OpenStackRequest.class));
 		doReturn("0").when(environment).getProperty(isA(String.class), isA(String.class));
 		doReturn(updateStack).when(heatUtils).queryHeatStack(isA(Heat.class), isA(String.class));

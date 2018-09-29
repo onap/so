@@ -71,8 +71,6 @@ public class CryptoTest {
     	 String encode2String = CryptoUtils.encrypt(testData, testKey);
     	 assertNotNull(encode2String);
     	 
-    	 assertEquals(encodeString,encode2String);
-    	 
     	 assertEquals(CryptoUtils.decrypt(encodeString, testKey),CryptoUtils.decrypt(encode2String, testKey));
     	 
     	 encodeString = CryptoUtils.encryptCloudConfigPassword(testData);

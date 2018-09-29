@@ -1,0 +1,36 @@
+{"service-instance":{
+  "service-instance-id": "serviceInstanceId",
+  "service-instance-name": "serviceInstanceName",
+  "orchestration-status": "CREATED",
+  "owning-entity": null,
+  "project": null,
+  "relationship-list": {
+    "relationship": [
+      {
+        "related-to": "allotted-resource",
+        "related-link": "/aai/v11/business/customers/customer/testCustIdInfra/service-subscriptions/service-subscription/HNPORTAL/service-instances/service-instance/testServiceInstanceIdPortalPri/allotted-resources/allotted-resource/testAllottedResourceIdPortalPri",
+        "relationship-data": [
+          {
+            "relationship-key": "cloud-region.cloud-owner",
+            "relationship-value": "att-aic"
+          },
+          {
+            "relationship-key": "cloud-region.cloud-region-id",
+            "relationship-value": "mdt1"
+          },
+          {
+            "relationship-key": "allotted-resource.id",
+            "relationship-value": "4a9184ac-5fad-44a1-b224-289bb490eaa9"
+          }
+        ]
+      }
+    ]
+  },
+  "service-type": "serviceType",
+  "service-instance-location-id": "serviceInstanceLocId",
+  "selflink": "selfLink",
+  "metadata": null,
+  "configurations": [],
+  "model-info-service-instance": null
+}
+}

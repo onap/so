@@ -27,6 +27,7 @@ import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,16 +35,31 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import org.mockito.Spy
 import org.mockito.runners.MockitoJUnitRunner
+import org.onap.aai.domain.yang.NetworkPolicies
+import org.onap.aai.domain.yang.NetworkPolicy
+import org.onap.aai.domain.yang.VfModule
+import org.onap.aai.domain.yang.VfModules
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.common.scripts.utils.XmlComparator
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+
+import javax.ws.rs.NotFoundException
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)
-class DoDeleteVfModuleTest {
+class DoDeleteVfModuleTest extends MsoGroovyTest{
+
+    @Spy
+    DoDeleteVfModule doDeleteVfModule
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(28090);
@@ -53,7 +69,9 @@ class DoDeleteVfModuleTest {
 
     @Before
     public void init() throws IOException {
+        super.init("DoDeleteVfModule")
         MockitoAnnotations.initMocks(this);
+        when(doDeleteVfModule.getAAIClient()).thenReturn(client)
     }
 
     @Test
@@ -82,38 +100,49 @@ class DoDeleteVfModuleTest {
 
     @Test
     void testDeleteNetworkPoliciesFromAAI() {
-        ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable("mso.workflow.DoDeleteVfModule.aai.network-policy.uri")).thenReturn("/aai/v8/network/network-policies/network-policy")
-        when(mockExecution.getVariable("mso.workflow.custom.DoDeleteVfModule.aai.version")).thenReturn("8")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
-        when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
         List fqdnList = new ArrayList()
         fqdnList.add("test")
         when(mockExecution.getVariable("DoDVfMod_contrailNetworkPolicyFqdnList")).thenReturn(fqdnList)
-        mockData()
-        DoDeleteVfModule obj = new DoDeleteVfModule()
-        obj.deleteNetworkPoliciesFromAAI(mockExecution)
-
+        NetworkPolicies networkPolicies = new NetworkPolicies()
+        NetworkPolicy networkPolicy = new NetworkPolicy()
+        networkPolicy.setNetworkPolicyId("NP1")
+        networkPolicies.getNetworkPolicy().add(networkPolicy)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        uri.queryParam("network-policy-fqdn", "test")
+        when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
+        doDeleteVfModule.deleteNetworkPoliciesFromAAI(mockExecution)
         Mockito.verify(mockExecution).setVariable("DCVFM_aaiQueryNetworkPolicyByFqdnReturnCode", 200)
     }
 
+    @Test
+    void testDeleteNetworkPoliciesFromAAIError() {
+        List fqdnList = new ArrayList()
+        fqdnList.add("test")
+        when(mockExecution.getVariable("DoDVfMod_contrailNetworkPolicyFqdnList")).thenReturn(fqdnList)
+        NetworkPolicies networkPolicies = new NetworkPolicies()
+        NetworkPolicy networkPolicy = new NetworkPolicy()
+        networkPolicy.setNetworkPolicyId("NP1")
+        networkPolicies.getNetworkPolicy().add(networkPolicy)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        uri.queryParam("network-policy-fqdn", "test")
+        when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
+        AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, "NP1")
+        doThrow(new NotFoundException(("Not Found !"))).when(client).delete(delUri)
+        doDeleteVfModule.deleteNetworkPoliciesFromAAI(mockExecution)
+        Mockito.verify(client).delete(delUri)
+    }
 
     @Test
     void testQueryAAIVfModuleForStatus() {
-        ExecutionEntity mockExecution = setupMock()
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable("DCVFM_vnfId")).thenReturn("12345")
-        when(mockExecution.getVariable("DCVFM_vfModuleName")).thenReturn("module-0")
-        when(mockExecution.getVariable("mso.workflow.DoDeleteVfModule.aai.generic-vnf.uri")).thenReturn("/aai/v9/network/generic-vnfs/generic-vnf")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
-        when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
-
-        mockData()
-        DoCreateVfModule obj = new DoCreateVfModule()
-        obj.queryAAIVfModuleForStatus(mockExecution)
-
-        Mockito.verify(mockExecution).setVariable("DCVFM_queryAAIVfModuleForStatusResponseCode", 200)
+        when(mockExecution.getVariable("vnfId")).thenReturn("12345")
+        when(mockExecution.getVariable("vfModuleId")).thenReturn("module-0")
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE,"12345","module-0")
+        VfModule vfModule = new VfModule()
+        vfModule.setOrchestrationStatus("Created")
+        when(client.get(VfModule.class, uri)).thenReturn(Optional.of(vfModule))
+        doDeleteVfModule.queryAAIVfModuleForStatus(mockExecution)
+        Mockito.verify(mockExecution).setVariable("DoDVfMod_queryAAIVfModuleForStatusResponseCode", 200)
     }
 
   

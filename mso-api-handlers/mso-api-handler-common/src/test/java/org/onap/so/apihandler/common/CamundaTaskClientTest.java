@@ -35,15 +35,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.onap.so.apihandler.common.CamundaTaskClient;
-import org.onap.so.apihandler.common.CommonConstants;
-import org.onap.so.apihandler.common.RequestClientParameter;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.env.Environment;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -63,7 +61,8 @@ public class CamundaTaskClientTest {
 
     @Before
     public void init() {
-    	when(env.getProperty(eq(CommonConstants.CAMUNDA_AUTH))).thenReturn("");
+    	when(env.getProperty(eq(CommonConstants.CAMUNDA_AUTH))).thenReturn("E8E19DD16CC90D2E458E8FF9A884CC0452F8F3EB8E321F96038DE38D5C1B0B02DFAE00B88E2CF6E2A4101AB2C011FC161212EE");
+        when(env.getProperty(eq(CommonConstants.ENCRYPTION_KEY_PROP))).thenReturn("aa3871669d893c7fb8abbcda31b88b4f");
         testedObject = new CamundaTaskClient();
         httpClientMock = mock(HttpClient.class);
         testedObject.setClient(httpClientMock);
@@ -88,6 +87,7 @@ public class CamundaTaskClientTest {
         testedObject.post(JSON_REQUEST);
         verify(httpClientMock).execute(httpPostCaptor.capture());
         assertThat(httpPostCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)).isNotEmpty();
+        Assert.assertEquals("Basic YXBpaEJwbW46Y2FtdW5kYS1SMTUxMiE=",httpPostCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)[0].getValue());
     }
 
     @Test
@@ -106,6 +106,7 @@ public class CamundaTaskClientTest {
         testedObject.get();
         verify(httpClientMock).execute(httpGetCaptor.capture());
         assertThat(httpGetCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)).isNotEmpty();
+        Assert.assertEquals("Basic YXBpaEJwbW46Y2FtdW5kYS1SMTUxMiE=",httpGetCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)[0].getValue());
     }
 
     @Test(expected = UnsupportedOperationException.class)

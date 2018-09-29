@@ -20,8 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
-import static org.mockito.Matchers.any;
+import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -39,14 +39,12 @@ public class ActivateNetworkBBTest extends BaseBPMNTest{
         assertThat(pi).isEnded();
     }
 
-	@Test
+	@Test	
 	public void rainyDayActivateNetwork_Test() throws Exception {
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks).updateOrchestrationStatusActiveNetwork(any(BuildingBlockExecution.class));
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateNetworkBB", variables);
-		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
 				.hasPassedInOrder("activateNetwork_startEvent","Activate_Network_SDNC_ServiceTask","Activate_Network_AAI_ServiceTask")
-				.hasNotPassed("activateNetwork_EndEvent");
-		assertThat(pi).isEnded().hasVariables("gBuildingBlockExecution");
+				.hasNotPassed("activateNetwork_EndEvent").isEnded();
 	}
 }

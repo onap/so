@@ -20,10 +20,13 @@
 
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +34,10 @@ import java.util.List;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -40,11 +46,13 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.onap.so.client.exception.BBObjectNotFoundException;
+
 
 public class AAIDeleteTasksTest extends BaseTaskTest {
-	@Autowired
-	private AAIDeleteTasks aaiDeleteTasks;
+	
+	@InjectMocks
+	private AAIDeleteTasks aaiDeleteTasks = new AAIDeleteTasks();
 	
 	private L3Network network;
 	private ServiceInstance serviceInstance;
@@ -55,7 +63,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 	private Configuration configuration;
 	
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		serviceInstance = setServiceInstance();
 		genericVnf = setGenericVnf();
 		vfModule = setVfModule();
@@ -63,11 +71,23 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 		volumeGroup = setVolumeGroup();
 		cloudRegion = setCloudRegion();
 		configuration = setConfiguration();
+		
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(network);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.CONFIGURATION_ID), any())).thenReturn(configuration);
+		
+
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
 	}
 	
 	@Test
 	public void deleteVfModuleTest() throws Exception {
+		
 		doNothing().when(aaiVfModuleResources).deleteVfModule(vfModule, genericVnf);
+		
 		aaiDeleteTasks.deleteVfModule(execution);
 		verify(aaiVfModuleResources, times(1)).deleteVfModule(vfModule, genericVnf);
 	}
@@ -75,7 +95,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 	@Test
 	public void deleteVfModuleExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(aaiVfModuleResources).deleteVfModule(vfModule, genericVnf);
+		doThrow(RuntimeException.class).when(aaiVfModuleResources).deleteVfModule(vfModule, genericVnf);
 		aaiDeleteTasks.deleteVfModule(execution);
 	}
 	
@@ -92,7 +112,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 	public void deleteServiceInstanceExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(aaiServiceInstanceResources).deleteServiceInstance(serviceInstance);
+		doThrow(RuntimeException.class).when(aaiServiceInstanceResources).deleteServiceInstance(serviceInstance);
 		
 		aaiDeleteTasks.deleteServiceInstance(execution);
 	}	
@@ -107,7 +127,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 	@Test
 	public void deleteVnfTestException() throws Exception {
 		expectedException.expect(BpmnError.class);
-		doThrow(Exception.class).when(aaiVnfResources).deleteVnf(genericVnf);
+		doThrow(RuntimeException.class).when(aaiVnfResources).deleteVnf(genericVnf);
 		
 		aaiDeleteTasks.deleteVnf(execution);
 		verify(aaiVnfResources, times(1)).deleteVnf(genericVnf);
@@ -147,7 +167,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 	public void deleteVolumeGroupExceptionTest() {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(aaiVolumeGroupResources).deleteVolumeGroup(volumeGroup, cloudRegion);
+		doThrow(RuntimeException.class).when(aaiVolumeGroupResources).deleteVolumeGroup(volumeGroup, cloudRegion);
 		
 		aaiDeleteTasks.deleteVolumeGroup(execution);
 	}

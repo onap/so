@@ -20,10 +20,16 @@
 
 package org.onap.so.serviceinstancebeans;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
 import org.junit.Test;
 import org.onap.so.openpojo.rules.HasToStringRule;
 import org.onap.so.openpojo.rules.ToStringTester;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
@@ -42,6 +48,17 @@ public class ServiceInstanceBeansTest {
 	@Test
 	public void pojoStructure() {
 		test("org.onap.so.serviceinstancebeans");
+	}
+	
+	@Test
+	public void cloudConfigurationkeepDefaultValues() throws IOException {
+		CloudConfiguration cloudConfiguration = new CloudConfiguration();
+		cloudConfiguration.setLcpCloudRegionId("myRegionId");
+		ObjectMapper mapper = new ObjectMapper();
+		
+		assertEquals("{\"cloudOwner\":\"att-aic\",\"lcpCloudRegionId\":\"myRegionId\"}", mapper.writeValueAsString(cloudConfiguration));
+		
+		
 	}
 
 	private void test(String pojoPackage) {

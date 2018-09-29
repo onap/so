@@ -298,5 +298,8 @@ public class AAIObjectMapper {
 			aaiVpnBinding.setRouteTargets(routeTargets);
 		}
 	}
-
+	
+	public org.onap.aai.domain.yang.Subnet mapSubnet (Subnet subnet){
+		return modelMapper.map(subnet,org.onap.aai.domain.yang.Subnet.class);
+	}
 }

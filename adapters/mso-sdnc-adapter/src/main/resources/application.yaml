@@ -12,11 +12,23 @@ mso:
     queue-capacity: 500
 
 #Actuator
-management: 
-  context-path: /manage
+management:
+  endpoints:
+    web:
+      base-path: /manage
+  server:
+    servlet:
+      context-path: /manage
   metrics:
     se-global-registry: false
     export:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
-        step: 1m # Step size (i.e. reporting frequency) to use.
+        step: 1m # Step size (i.e. reporting frequency) to use.  
+
+org:
+  onap:
+    so:
+      adapters:
+        network:
+          encryptionKey: aa3871669d893c7fb8abbcda31b88b4f

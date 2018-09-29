@@ -114,8 +114,8 @@ public abstract class SDNCConnector {
 			}
 
 		
-			String userCredentials = CryptoUtils.decryptProperty(env.getProperty(Constants.SDNC_AUTH_PROP),
-					Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
+			String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.SDNC_AUTH_PROP),
+					 env.getProperty(Constants.ENCRYPTION_KEY_PROP));
 			String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 			if(null != method) {
 			    method.setHeader("Authorization", authorization);

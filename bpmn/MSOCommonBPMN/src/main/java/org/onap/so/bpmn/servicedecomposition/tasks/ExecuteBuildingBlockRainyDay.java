@@ -39,6 +39,7 @@ import org.springframework.stereotype.Component;
 public class ExecuteBuildingBlockRainyDay {
 	
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExecuteBuildingBlockRainyDay.class);
+	public static final String HANDLING_CODE = "handlingCode";
 	
 	@Autowired
 	private CatalogDbClient catalogDbClient;
@@ -56,7 +57,7 @@ public class ExecuteBuildingBlockRainyDay {
 		}
 	}
 	
-	public void queryRainyDayTable(DelegateExecution execution) {
+	public void queryRainyDayTable(DelegateExecution execution, boolean primaryPolicy) {
 		try {
 			ExecuteBuildingBlock ebb = (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
 			String bbName = ebb.getBuildingBlock().getBpmnFlowName();
@@ -101,16 +102,28 @@ public class ExecuteBuildingBlockRainyDay {
 				if(rainyDayHandlerStatus==null){
 					handlingCode = "Abort";
 				}else{
-					handlingCode = rainyDayHandlerStatus.getPolicy();
+					if(primaryPolicy){
+						handlingCode = rainyDayHandlerStatus.getPolicy();
+					}else{
+						handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
+					}
 				}
 			}else{
-				handlingCode = rainyDayHandlerStatus.getPolicy();
+				if(primaryPolicy){
+					handlingCode = rainyDayHandlerStatus.getPolicy();
+				}else{
+					handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
+				}
 			}
 			msoLogger.debug("RainyDayHandler Status Code is: " + handlingCode);
-			execution.setVariable("handlingCode", handlingCode);
+			execution.setVariable(HANDLING_CODE, handlingCode);
 		} catch (Exception e) {
 			msoLogger.debug("RainyDayHandler Status Code is: Abort");
-			execution.setVariable("handlingCode", "Abort");
+			execution.setVariable(HANDLING_CODE, "Abort");
 		}
+	}
+	
+	public void setHandlingStatusSuccess(DelegateExecution execution){
+		execution.setVariable(HANDLING_CODE, "Success");
 	}
 }

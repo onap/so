@@ -22,10 +22,12 @@ package org.onap.so.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
@@ -33,7 +35,7 @@ import org.onap.so.logger.MsoLogger
 
 
 public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, UpdateAAIGenericVnf.class);
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, UpdateAAIGenericVnf.class)
 
 
 	private XmlParser xmlParser = new XmlParser()
@@ -105,9 +107,9 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 
 			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception e) {
-			msoLogger.error(e);
+			msoLogger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
@@ -127,34 +129,26 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		try {
 			def vnfId = execution.getVariable('UAAIGenVnf_vnfId')
 
-			// Construct endpoint
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
-
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			uri.depth(Depth.ONE)
 			try {
-				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
-				msoLogger.debug("Sending GET to AAI endpoint: " + endPoint)
-
-				APIResponse response = aaiUriUtil.executeAAIGetCall(execution, endPoint)
-				def responseData = response.getResponseBodyAsString()
-				execution.setVariable('UAAIGenVnf_getGenericVnfResponseCode', response.getStatusCode())
-				execution.setVariable('UAAIGenVnf_getGenericVnfResponse', responseData)
-				msoLogger.debug("UpdateAAIGenericVnf Response data: " + responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
-			} catch (Exception ex) {
-				msoLogger.error(e);
+				Optional<GenericVnf> genericVnf = getAAIClient().get(GenericVnf.class,uri)
+				if(genericVnf.isPresent()){
+					execution.setVariable('UAAIGenVnf_getGenericVnfResponseCode', 200)
+					execution.setVariable('UAAIGenVnf_getGenericVnfResponse', genericVnf.get())
+				}else{
+					execution.setVariable('UAAIGenVnf_getGenericVnfResponseCode', 404)
+					execution.setVariable('UAAIGenVnf_getGenericVnfResponse', "Generic VNF not found for VNF ID: "+vnfId)
+				}
+			}catch (Exception ex) {
+				msoLogger.error(ex.getMessage())
 				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				execution.setVariable('UAAIGenVnf_getGenericVnfResponseCode', 500)
 				execution.setVariable('UAAIGenVnf_getGenericVnfResponse', 'AAI GET Failed:' + ex.getMessage())
 			}
 			msoLogger.trace('Exited ' + method)
-		} catch (BpmnError e) {
-			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e);
+			msoLogger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getGenericVnf(): ' + e.getMessage())
 		}
 	}
@@ -172,38 +166,19 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 
 		try {
 			def vnfId = execution.getVariable('UAAIGenVnf_vnfId')
-			def genericVnf = execution.getVariable('UAAIGenVnf_getGenericVnfResponse')
+			GenericVnf genericVnf = execution.getVariable('UAAIGenVnf_getGenericVnfResponse')
 			def origRequest = execution.getVariable('UpdateAAIGenericVnfRequest')
 
 			msoLogger.debug("UpdateGenericVnf Request: " + origRequest)
-			// Confirm resource-version is in retrieved Generic VNF
-			def Node genericVnfNode = xmlParser.parseText(genericVnf)
-			if (utils.getChildNode(genericVnfNode, 'resource-version') == null) {
-				def msg = 'Can\'t update Generic VNF ' + vnfId + ' since \'resource-version\' is missing'
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
-				throw new Exception(msg)
-			}
-
 			// Handle persona-model-id/persona-model-version
 
-			def String newPersonaModelId = execution.getVariable('UAAIGenVnf_personaModelId')
-			def String newPersonaModelVersion = execution.getVariable('UAAIGenVnf_personaModelVersion')
-			def String personaModelVersionEntry = ""
+			String newPersonaModelId = execution.getVariable('UAAIGenVnf_personaModelId')
+			String newPersonaModelVersion = execution.getVariable('UAAIGenVnf_personaModelVersion')
+			String personaModelVersionEntry = ""
 			if (newPersonaModelId != null || newPersonaModelVersion != null) {
-
-				// Confirm "new" persona-model-id is same as "current" persona-model-id
-				def Node currPersonaModelIdNode = utils.getChildNode(genericVnfNode, 'model-invariant-id')
-				if (currPersonaModelIdNode == null) {
-					// check the old attribute name
-					currPersonaModelIdNode = utils.getChildNode(genericVnfNode, 'persona-model-id')
-				}
-				def String currPersonaModelId = ''
-				if (currPersonaModelIdNode != null) {
-					currPersonaModelId = currPersonaModelIdNode.text()
-				}
-				if (!newPersonaModelId.equals(currPersonaModelId)) {
+				if (newPersonaModelId != genericVnf.getModelInvariantId()) {
 					def msg = 'Can\'t update Generic VNF ' + vnfId + ' since there is \'persona-model-id\' mismatch between the current and new values'
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "")
 					throw new Exception(msg)
 				}
 
@@ -212,24 +187,24 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			}
 
 			// Handle ipv4-oam-address
-			def String ipv4OamAddress = execution.getVariable('UAAIGenVnf_ipv4OamAddress')
-			def String ipv4OamAddressEntry = ""
+			String ipv4OamAddress = execution.getVariable('UAAIGenVnf_ipv4OamAddress')
+			String ipv4OamAddressEntry = ""
 			if (ipv4OamAddress != null) {
 				// Construct payload
 				ipv4OamAddressEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'ipv4-oam-address')
 			}
 
 			// Handle management-v6-address
-			def String managementV6Address = execution.getVariable('UAAIGenVnf_managementV6Address')
-			def String managementV6AddressEntry = ""
+			String managementV6Address = execution.getVariable('UAAIGenVnf_managementV6Address')
+			String managementV6AddressEntry = ""
 			if (managementV6Address != null) {
 				// Construct payload
 				managementV6AddressEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'management-v6-address')
 			}
 			
 			// Handle orchestration-status
-			def String orchestrationStatus = execution.getVariable('UAAIGenVnf_orchestrationStatus')
-			def String orchestrationStatusEntry = ""
+			String orchestrationStatus = execution.getVariable('UAAIGenVnf_orchestrationStatus')
+			String orchestrationStatusEntry = ""
 			if (orchestrationStatus != null) {
 				// Construct payload
 				orchestrationStatusEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'orchestration-status')
@@ -244,23 +219,10 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 					}
 			"""
 
-			// Construct endpoint
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8")
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
 
 			try {
-				msoLogger.debug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload)
-				msoLogger.debug("Sending PATCH to AAI endpoint: " + endPoint)
-
-				APIResponse response = aaiUriUtil.executeAAIPatchCall(execution, endPoint, payload)
-				def responseData = response.getResponseBodyAsString()
-				execution.setVariable('UAAIGenVnf_updateGenericVnfResponseCode', response.getStatusCode())
-				execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', responseData)
-				msoLogger.debug("UpdateAAIGenericVnf Response Data: " + responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
+				getAAIClient().update(uri,payload)
 			} catch (Exception ex) {
 				ex.printStackTrace()
 				msoLogger.debug('Exception occurred while executing AAI PATCH:' + ex.getMessage())
@@ -268,10 +230,8 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', 'AAI PATCH Failed:' + ex.getMessage())
 			}
 			msoLogger.trace('Exited ' + method)
-		} catch (BpmnError e) {
-			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e);
+			msoLogger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateGenericVnf(): ' + e.getMessage())
 		}
 	}
@@ -290,7 +250,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		}
 		def elementValue = utils.getNodeText(origRequest, elementName)
 
-		if (elementValue.equals('DELETE')) {
+		if (elementValue == 'DELETE') {
 			// Set the element being deleted to null
 			return """"${elementName}": null,"""
 		}
@@ -311,8 +271,8 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			')'
 		msoLogger.trace('Entered ' + method)
 
-		msoLogger.error( 'Error occurred attempting to query AAI, Response Code ' + execution.getVariable('UAAIGenVnf_getGenericVnfResponseCode'));
-		String processKey = getProcessKey(execution);
+		msoLogger.error( 'Error occurred attempting to query AAI, Response Code ' + execution.getVariable('UAAIGenVnf_getGenericVnfResponseCode'))
+		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIGenVnf_getGenericVnfResponse'))
 		execution.setVariable('WorkflowException', exception)
@@ -332,9 +292,9 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			')'
 		msoLogger.trace('Entered ' + method)
 
-		msoLogger.error('Error occurred attempting to update Generic VNF in AAI, Response Code ' + execution.getVariable('UAAIGenVnf_updateGenericVnfResponseCode'));
+		msoLogger.error('Error occurred attempting to update Generic VNF in AAI, Response Code ' + execution.getVariable('UAAIGenVnf_updateGenericVnfResponseCode'))
 
-		String processKey = getProcessKey(execution);
+		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIGenVnf_updateGenericVnfResponse'))
 		execution.setVariable('WorkflowException', exception)

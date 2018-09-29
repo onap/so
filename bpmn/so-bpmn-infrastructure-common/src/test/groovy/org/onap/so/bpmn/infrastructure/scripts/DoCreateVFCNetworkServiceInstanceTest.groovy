@@ -21,40 +21,37 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
+import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import static com.github.tomakehurst.wiremock.client.WireMock.put
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.times
-import static org.mockito.Mockito.verify
+import org.mockito.Spy
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import javax.ws.rs.NotFoundException
+import static org.junit.Assert.assertEquals
+import static org.mockito.Matchers.isA
+import static org.mockito.Mockito.doNothing
+import static org.mockito.Mockito.doThrow
 import static org.mockito.Mockito.when
 
-/**
- * @author sushilma
- * @since January 10, 2018
- */
-@RunWith(MockitoJUnitRunner.class)
-class DoCreateVFCNetworkServiceInstanceTest {
+class DoCreateVFCNetworkServiceInstanceTest extends MsoGroovyTest {
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
+    @Spy
+    DoCreateVFCNetworkServiceInstance doCreateVFCNetworkServiceInstance
+
     @Before
     public void init() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        super.init("CreateVFCNSResource")
+        MockitoAnnotations.initMocks(this)
+        when(doCreateVFCNetworkServiceInstance.getAAIClient()).thenReturn(client)
     }
 
     @Captor
@@ -62,45 +59,29 @@ class DoCreateVFCNetworkServiceInstanceTest {
 
     @Test
     public void testAddNSRelationship(){
-        ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
         when(mockExecution.getVariable("nsInstanceId")).thenReturn("NS12345")
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("MSO_dev")
         when(mockExecution.getVariable("serviceType")).thenReturn("MSO-dev-service-type")
         when(mockExecution.getVariable("serviceId")).thenReturn("SER12345")
-        when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-        when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
-        MockPutServiceInstance("MSO_dev", "MSO-dev-service-type", "SER12345");
-        DoCreateVFCNetworkServiceInstance DoCreateVFCNetworkServiceInstance = new DoCreateVFCNetworkServiceInstance()
-        DoCreateVFCNetworkServiceInstance.addNSRelationship(mockExecution);
-        verify(mockExecution, times(1)).getVariable("aai.endpoint")
-        verify(mockExecution, times(1)).getVariable("mso.msoKey")
-        verify(mockExecution, times(1)).getVariable("aai.auth")
+        doNothing().when(client).connect(isA(AAIResourceUri.class),isA(AAIResourceUri.class))
+        doCreateVFCNetworkServiceInstance.addNSRelationship(mockExecution);
+        AAIResourceUri nsUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,"MSO_dev","MSO-dev-service-type","NS12345")
+        AAIResourceUri relatedServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,"MSO_dev","MSO-dev-service-type","SER12345")
+        Mockito.verify(client).connect(nsUri,relatedServiceUri)
     }
 
-    private ExecutionEntity setupMock() {
-        ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
-        when(mockProcessDefinition.getKey()).thenReturn("DoCreateVFCNetworkServiceInstance")
-        RepositoryService mockRepositoryService = mock(RepositoryService.class)
-        when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
-        when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("DoCreateVFCNetworkServiceInstance")
-        when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-        ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-        when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
-        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-        when(mockExecution.getId()).thenReturn("100")
-        when(mockExecution.getProcessDefinitionId()).thenReturn("DoCreateVFCNetworkServiceInstance")
-        when(mockExecution.getProcessInstanceId()).thenReturn("DoCreateVFCNetworkServiceInstance")
-        when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-        when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
-        return mockExecution
+    @Test
+    void testaddNSRelationshipError(){
+        when(mockExecution.getVariable("globalSubscriberId")).thenReturn("globalSubscriberId1")
+        when(mockExecution.getVariable("serviceType")).thenReturn("serviceType")
+        when(mockExecution.getVariable("serviceInstanceId")).thenReturn("serviceInstanceId")
+        when(mockExecution.getVariable("nsInstanceId")).thenReturn("nsInstanceId")
+        doThrow(new NotFoundException("Error creating relationship")).when(client).connect(isA(AAIResourceUri.class),isA(AAIResourceUri.class))
+        try {
+            doCreateVFCNetworkServiceInstance.addNSRelationship(mockExecution)
+        } catch (BpmnError ex) {
+            assertEquals(ex.getErrorCode(),"MSOWorkflowException")
+        }
     }
 
-    public static void MockPutServiceInstance(String globalCustId, String subscriptionType, String serviceInstanceId) {
-        stubFor(put(urlMatching("/aai/v[0-9]+/business/customers/customer/" + globalCustId + "/service-subscriptions/service-subscription/" + subscriptionType + "/service-instances/service-instance/" + serviceInstanceId+"/relationship-list/relationship"))
-                .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "text/xml").withBody("")
-               ));
-    }
 }

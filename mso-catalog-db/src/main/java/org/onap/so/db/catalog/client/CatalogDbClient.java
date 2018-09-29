@@ -20,6 +20,14 @@
 
 package org.onap.so.db.catalog.client;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.ws.rs.core.UriBuilder;
+
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -27,6 +35,7 @@ import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
+import org.onap.so.db.catalog.beans.ExternalServiceToInternalService;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkRecipe;
@@ -55,16 +64,10 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+
 import uk.co.blackpepper.bowman.Client;
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
-
-import javax.annotation.PostConstruct;
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 @Component("CatalogDbClient")
 public class CatalogDbClient {
@@ -84,6 +87,7 @@ public class CatalogDbClient {
 	private static final String NETWORK_COLLECTION_RESOURCE_CUSTOMIZATION = "/networkCollectionResourceCustomization";
 	private static final String VNF_RESOURCE_CUSTOMIZATION = "/vnfResourceCustomization";
 	private static final String SERVICE = "/service";
+	private static final String EXTERNAL_SERVICE_TO_INTERNAL_MODEL_MAPPING = "/externalServiceToInternalService";
 	private static final String VNF_RESOURCE = "/vnfResource";
 	private static final String VNF_RECIPE = "/vnfRecipe";
 	private static final String VFMODULE = "/vfModule";
@@ -96,6 +100,8 @@ public class CatalogDbClient {
 	private static final String URI_SEPARATOR = "/";
 
 	private static final String SERVICE_MODEL_UUID = "serviceModelUUID";
+	private static final String SERVICE_NAME = "serviceName";
+	private static final String MODEL_UUID = "modelUUID";
 	private static final String MODEL_CUSTOMIZATION_UUID = "modelCustomizationUUID";
 	private static final String ACTION = "action";
 	private static final String MODEL_NAME = "modelName";
@@ -122,6 +128,10 @@ public class CatalogDbClient {
 	
 	private static final String TARGET_ENTITY = "SO:CatalogDB";
 
+	private String findExternalToInternalServiceByServiceName = "/findByServiceName";
+	private String findServiceByModelName = "/findOneByModelName";
+	private String findServiceRecipeByActionAndServiceModelUUID = "/findByActionAndServiceModelUUID";
+	private String findServiceByModelUUID = "/findOneByModelUUID";
 	private String findFirstByModelNameURI = "/findFirstByModelNameOrderByModelVersionDesc";
 	private String findFirstByServiceModelUUIDAndActionURI = "/findFirstByServiceModelUUIDAndAction";
 	private String findFirstByModelVersionAndModelInvariantUUIDURI = "/findFirstByModelVersionAndModelInvariantUUID";
@@ -196,6 +206,8 @@ public class CatalogDbClient {
 
 	private final Client<ServiceRecipe> serviceRecipeClient;
 
+	private final Client<ExternalServiceToInternalService> externalServiceToInternalServiceClient;
+
 	private final Client<CloudSite> cloudSiteClient;
 
 	private final Client<CloudifyManager> cloudifyManagerClient;
@@ -213,6 +225,10 @@ public class CatalogDbClient {
 
 	@PostConstruct
 	public void init(){
+		findExternalToInternalServiceByServiceName = endpoint + EXTERNAL_SERVICE_TO_INTERNAL_MODEL_MAPPING + SEARCH + findExternalToInternalServiceByServiceName;
+		findServiceByModelName =  endpoint + SERVICE + SEARCH + findServiceByModelName;
+		findServiceRecipeByActionAndServiceModelUUID = endpoint + SERVICE_RECIPE + SEARCH + findServiceRecipeByActionAndServiceModelUUID;
+		findServiceByModelUUID =  endpoint + SERVICE + SEARCH + findServiceByModelUUID;
 		findFirstByModelNameURI = endpoint + SERVICE + SEARCH + findFirstByModelNameURI;
 		findFirstByModelVersionAndModelInvariantUUIDURI = endpoint + SERVICE + SEARCH + findFirstByModelVersionAndModelInvariantUUIDURI;
 		findByModelInvariantUUIDURI = endpoint + SERVICE + SEARCH + findByModelInvariantUUIDURI;
@@ -288,6 +304,7 @@ public class CatalogDbClient {
 		serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
 		cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
 		controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
+		externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
 	}
 
 	public CatalogDbClient(String baseUri, String auth) {
@@ -329,6 +346,7 @@ public class CatalogDbClient {
 		serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
 		cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
 		controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
+		externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
 	}
 
 	public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(String modelCustomizationUUID) {
@@ -495,6 +513,30 @@ public class CatalogDbClient {
 				.queryParam(MODEL_NAME,modelName).build());
 	}
 
+	public ExternalServiceToInternalService findExternalToInternalServiceByServiceName(String serviceName){
+		return this.getSingleResource(externalServiceToInternalServiceClient, getUri(UriBuilder
+				.fromUri(findExternalToInternalServiceByServiceName)
+				.queryParam(SERVICE_NAME,serviceName).build().toString()));
+	}
+
+	public  ServiceRecipe findServiceRecipeByActionAndServiceModelUUID(String action,String modelUUID){
+		return this.getSingleResource(serviceRecipeClient, getUri(UriBuilder
+				.fromUri(findServiceRecipeByActionAndServiceModelUUID)
+				.queryParam(ACTION,action)
+				.queryParam(SERVICE_MODEL_UUID,modelUUID).build().toString()));
+	}
+
+	public Service getServiceByModelName(String modelName){
+		return this.getSingleResource(serviceClient,getUri(UriBuilder
+				.fromUri(findServiceByModelName)
+				.queryParam(MODEL_NAME,modelName).build().toString()));
+	}
+
+	public Service getServiceByModelUUID(String modelModelUUID){
+		return this.getSingleResource(serviceClient,getUri(UriBuilder
+				.fromUri(findServiceByModelUUID)
+				.queryParam(MODEL_UUID,modelModelUUID).build().toString()));
+	}
 
 	public VnfResource getFirstVnfResourceByModelInvariantUUIDAndModelVersion(String modelInvariantUUID, String modelVersion){
 		return this.getSingleResource(vnfResourceClient, getUri(UriBuilder

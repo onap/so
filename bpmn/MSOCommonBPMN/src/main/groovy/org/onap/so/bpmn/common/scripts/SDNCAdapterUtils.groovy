@@ -20,9 +20,9 @@
 
 package org.onap.so.bpmn.common.scripts;
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.L3Network
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils;
 import org.springframework.web.util.UriUtils
@@ -495,7 +495,7 @@ class SDNCAdapterUtils {
 	 * @param additionalData additional XML content to be inserted into the
 	 *   RequestData element (may be null)
 	 */
-	 public String sdncTopologyRequestV2 (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String queryAAIResponse, String additionalData) {
+	 public String sdncTopologyRequestV2 (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, L3Network queryAAIResponse, String additionalData) {
 		 def utils=new MsoUtils()
 
 		 // SNDC is expecting request Id for header as unique each call.
@@ -526,7 +526,7 @@ class SDNCAdapterUtils {
 
 		 // Replace/Use the value of network-type from aai query (vs input) during Delete Network flows.
 		 if (queryAAIResponse != null) {
-		     networkType = utils.getNodeText(queryAAIResponse, "network-type")
+		     networkType = queryAAIResponse.getNetworkType()
 		 }
 
 		 String serviceId = ""
@@ -536,7 +536,7 @@ class SDNCAdapterUtils {
 		 String networkName = ""
 		 // Replace/Use the value of network-name from aai query (vs input) if it was already set in AAI
 		 if (queryAAIResponse != null) {
-			 networkName = utils.getNodeText(queryAAIResponse, "network-name")
+			 networkName = queryAAIResponse.getNetworkName()
 		 }
 		 if (networkName.isEmpty() && utils.nodeExists(requestXML, "network-name")) {
 			 networkName = utils.getNodeText(requestXML, "network-name")

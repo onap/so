@@ -68,7 +68,8 @@ public class WatchdogDistribution {
 		
 		String status = null;
 		try {
-			WatchdogDistributionStatus watchdogDistributionStatus = watchdogDistributionStatusRepository.findOne(distributionId);
+			WatchdogDistributionStatus watchdogDistributionStatus = watchdogDistributionStatusRepository.findById(distributionId)
+			        .orElseGet( () -> null);
 			if(watchdogDistributionStatus == null){
 				watchdogDistributionStatus = new WatchdogDistributionStatus();
 				watchdogDistributionStatus.setDistributionId(distributionId);

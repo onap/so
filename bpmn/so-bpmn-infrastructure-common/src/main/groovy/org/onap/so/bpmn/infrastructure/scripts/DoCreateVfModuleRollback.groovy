@@ -21,6 +21,8 @@
 package org.onap.so.bpmn.infrastructure.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.NetworkPolicies
+import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -28,11 +30,16 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
 import org.springframework.web.util.UriUtils
 
+import javax.ws.rs.NotFoundException
 
 
 public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
@@ -477,9 +484,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			execution.setVariable(Prefix + "networkPolicyFqdnCount", fqdnCount)
 			msoLogger.debug("networkPolicyFqdnCount - " + fqdnCount)
 
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getNetworkPolicyUri(execution)
 
 			if (fqdnCount > 0) {
 				// AII loop call over contrail network policy fqdn list
@@ -488,78 +493,48 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 					int counting = i+1
 					String fqdn = fqdnList[i]
 
-					// Query AAI for this network policy FQDN
+                    try {
+                        // Query AAI for this network policy FQDN
+                        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+                        uri.queryParam("network-policy-fqdn", fqdn)
+                        Optional<NetworkPolicies> networkPolicies = getAAIClient().get(NetworkPolicies.class, uri)
 
-					String queryNetworkPolicyByFqdnAAIRequest = "${aai_endpoint}${aai_uri}?network-policy-fqdn=" + UriUtils.encode(fqdn, "UTF-8")
-					msoLogger.debug("AAI request endpoint: "  + queryNetworkPolicyByFqdnAAIRequest)
+                        if (networkPolicies.isPresent() && !networkPolicies.get().getNetworkPolicy().isEmpty()) {
+                            execution.setVariable(Prefix + "aaiQueryNetworkPolicyByFqdnReturnCode", 200)
+                            NetworkPolicy networkPolicy = networkPolicies.get().getNetworkPolicy().get(0)
 
-					def aaiRequestId = UUID.randomUUID().toString()
-					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryNetworkPolicyByFqdnAAIRequest)
-					int returnCode = response.getStatusCode()
-					execution.setVariable(Prefix + "aaiQueryNetworkPolicyByFqdnReturnCode", returnCode)
-					msoLogger.debug("AAI query network policy Response Code, NetworkPolicy #" + counting + " : " + returnCode)
-
-					String aaiResponseAsString = response.getResponseBodyAsString()
-
-					if (isOneOf(returnCode, 200, 201)) {
-						msoLogger.debug("The return code is: "  + returnCode)
-						// This network policy FQDN exists in AAI - need to delete it now
-						execution.setVariable(Prefix + "queryNetworkPolicyByFqdnAAIResponse", aaiResponseAsString)
-						msoLogger.debug("QueryAAINetworkPolicyByFQDN Success REST Response, , NetworkPolicy #" + counting + " : " + "\n" + aaiResponseAsString)
-						// Retrieve the network policy id for this FQDN
-						def networkPolicyId = utils.getNodeText(aaiResponseAsString, "network-policy-id")
-						msoLogger.debug("Deleting network-policy with network-policy-id " + networkPolicyId)
-
-						// Retrieve the resource version for this network policy
-						def resourceVersion = utils.getNodeText(aaiResponseAsString, "resource-version")
-						msoLogger.debug("Deleting network-policy with resource-version " + resourceVersion)
-
-						String delNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(networkPolicyId, "UTF-8") +
-							"?resource-version=" + UriUtils.encode(resourceVersion, "UTF-8")
-
-						msoLogger.debug("AAI request endpoint: " + delNetworkPolicyAAIRequest)
-
-						def aaiRequestIdDel = UUID.randomUUID().toString()
-						msoLogger.debug("Sending DELETE call to AAI with Endpoint /n" + delNetworkPolicyAAIRequest)
-
-						APIResponse responseDel = aaiUriUtil.executeAAIDeleteCall(execution, delNetworkPolicyAAIRequest)
-
-						int returnCodeDel = responseDel.getStatusCode()
-						execution.setVariable(Prefix + "aaiDeleteNetworkPolicyReturnCode", returnCodeDel)
-						msoLogger.debug("AAI delete network policy Response Code, NetworkPolicy #" + counting + " : " + returnCodeDel)
-
-						if (isOneOf(returnCodeDel, 200, 201, 204)) {
-							msoLogger.debug("The return code from deleting network policy is: "  + returnCodeDel)
-							// This network policy was deleted from AAI successfully
-							msoLogger.debug(" DelAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : ")
-
-						} else {
-								// aai all errors
-								String delErrorMessage = "Unable to delete network-policy to AAI deleteNetworkPoliciesFromAAI - " + returnCodeDel
-							 msoLogger.debug(delErrorMessage)
-							 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, delErrorMessage)
-						}
-					} else if (returnCode == 404) {
-						// This network policy FQDN is not in AAI. No need to delete.
-						msoLogger.debug("The return code is: "  + returnCode)
-						msoLogger.debug("This network policy FQDN is not in AAI: " + fqdn)
-					} else {
-					   if (aaiResponseAsString.contains("RESTFault")) {
-						   WorkflowException exceptionObject = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-						   execution.setVariable("WorkflowException", exceptionObject)
-						   throw new BpmnError("MSOWorkflowException")
-
-						   } else {
-								// aai all errors
-								String dataErrorMessage = "Unexpected Response from deleteNetworkPoliciesFromAAI - " + returnCode
-								msoLogger.debug(dataErrorMessage)
-								exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-						  }
-					}
-
-
-
+                            try{
+                            AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicy.getNetworkPolicyId())
+                            getAAIClient().delete(delUri)
+                            execution.setVariable(Prefix + "aaiDeleteNetworkPolicyReturnCode", 200)
+                            msoLogger.debug("AAI delete network policy Response Code, NetworkPolicy #" + counting + " : " + 200)
+                                msoLogger.debug("The return code from deleting network policy is: " + 200)
+                                // This network policy was deleted from AAI successfully
+                                msoLogger.debug(" DelAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : ")
+                            }catch(NotFoundException ne){
+                                // This network policy FQDN is not in AAI. No need to delete.
+                                execution.setVariable(Prefix + "aaiDeleteNetworkPolicyReturnCode", 404)
+                                msoLogger.debug("The return code is: " + 404)
+                                msoLogger.debug("This network policy FQDN is not in AAI: " + fqdn)
+                            }catch(Exception e){
+                                // aai all errors
+                                String delErrorMessage = "Unable to delete network-policy to AAI deleteNetworkPoliciesFromAAI - " + e.getMessage()
+                                msoLogger.debug(delErrorMessage)
+                                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, delErrorMessage)
+                            }
+                        } else {
+                            // This network policy FQDN is not in AAI. No need to delete.
+                            msoLogger.debug("This network policy FQDN is not in AAI: " + fqdn)
+                        }
+                    }catch (BpmnError e){
+                        throw e
+                    }
+                    catch (Exception e) {
+                        // aai all errors
+                        String dataErrorMessage = "Unexpected Response from deleteNetworkPoliciesFromAAI - " + e.getMessage()
+                        msoLogger.debug(dataErrorMessage)
+                        exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
+                    }
 				} // end loop
 
 

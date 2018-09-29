@@ -1,5 +1,5 @@
 aai:
-  auth: asdf
+  auth: D6F77EC78213EF2AA1685F7F05E4DE7C0D1A70AA8798EC68B691CEF81E9991E4A0A3DA4F70EC61C5EB6525134E
   dme2:
     timeout: '30000'
   endpoint: http://localhost:8443
@@ -27,7 +27,7 @@ mso:
     completemsoprocess:
       endpoint: http://localhost:30253/CompleteMsoProcess
     db:
-      auth: 26AFB797A6A57960D5D718491925C50F77CDC22AC394B3DBA09950D8FD1C0764
+      auth: 5A1272FE739BECA4D4374A86B25C021DFE6745E3BB7BE6836BF64A6059B8220E586C21FD7567AF41DB42571EB7
       password: wLg4sjrAFUS8rfVfdvTXeQ==
       endpoint: http://localhost:30257/services/RequestsDbAdapter      
       spring:
@@ -40,7 +40,7 @@ mso:
       db:
         endpoint: http://localhost:30257/services/RequestsDbAdapter
     po:
-      auth: 757A94191D685FD2092AC1490730A4FC
+      auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
       password: 3141634BF7E070AA289CF2892C986C0B
     sdnc:
       endpoint: http://localhost:30254/adapters/SDNCAdapter

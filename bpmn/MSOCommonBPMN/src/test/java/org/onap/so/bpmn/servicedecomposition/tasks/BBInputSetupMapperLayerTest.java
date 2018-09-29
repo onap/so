@@ -561,7 +561,7 @@ public class BBInputSetupMapperLayerTest {
 	@Test
 	public void testMapLocationContext() {
 		CloudRegion expected = new CloudRegion();
-		expected.setCloudOwner("att-aic");
+		expected.setCloudOwner("test-owner-name");
 		expected.setLcpCloudRegionId("cloudRegionId");
 		expected.setComplex("complexName");
 		expected.setTenantId("tenantId");
@@ -570,11 +570,11 @@ public class BBInputSetupMapperLayerTest {
 		cloudConfig.setLcpCloudRegionId("cloudRegionId");
 		cloudConfig.setAicNodeClli("aicNodeClli");
 		org.onap.aai.domain.yang.CloudRegion cloudRegion = new org.onap.aai.domain.yang.CloudRegion();
-		cloudRegion.setCloudOwner("att-aic");
+		cloudRegion.setCloudOwner("test-owner-name");
 		cloudRegion.setCloudRegionId("cloudRegionId");
 		cloudRegion.setComplexName("complexName");
 
-		CloudRegion actual = bbInputSetupMapperLayer.mapCloudRegion(cloudConfig, cloudRegion, "att-aic");
+		CloudRegion actual = bbInputSetupMapperLayer.mapCloudRegion(cloudConfig, cloudRegion);
 
 		assertThat(actual, sameBeanAs(expected));
 	}
@@ -582,7 +582,7 @@ public class BBInputSetupMapperLayerTest {
 	@Test
 	public void testMapCloudRegion() {
 		CloudRegion expected = new CloudRegion();
-		expected.setCloudOwner("att-aic");
+		expected.setCloudOwner("test-owner-name");
 		expected.setLcpCloudRegionId("cloudRegionId");
 		expected.setTenantId("tenantId");
 		expected.setCloudRegionVersion("cloudRegionVersion");
@@ -593,11 +593,11 @@ public class BBInputSetupMapperLayerTest {
 		cloudConfig.setAicNodeClli("aicNodeClli");
 
 		org.onap.aai.domain.yang.CloudRegion cloudRegion = new org.onap.aai.domain.yang.CloudRegion();
-		cloudRegion.setCloudOwner("att-aic");
+		cloudRegion.setCloudOwner("test-owner-name");
 		cloudRegion.setCloudRegionId("cloudRegionId");
 		cloudRegion.setCloudRegionVersion("cloudRegionVersion");
 
-		CloudRegion actual = bbInputSetupMapperLayer.mapCloudRegion(cloudConfig, cloudRegion, "att-aic");
+		CloudRegion actual = bbInputSetupMapperLayer.mapCloudRegion(cloudConfig, cloudRegion);
 
 		assertThat(actual, sameBeanAs(expected));
 	}
@@ -606,7 +606,7 @@ public class BBInputSetupMapperLayerTest {
 	public void testMapCloudRegionWithNullCheck() {
 		CloudRegion expected = new CloudRegion();
 
-		CloudRegion actual = bbInputSetupMapperLayer.mapCloudRegion(null, null, null);
+		CloudRegion actual = bbInputSetupMapperLayer.mapCloudRegion(null, null);
 
 		assertThat(actual, sameBeanAs(expected));
 	}

@@ -21,7 +21,7 @@
 package org.onap.so.client.orchestration;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -49,7 +49,7 @@ import org.onap.so.client.sdnc.mapper.VfModuleTopologyOperationRequestMapper;
 
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class SDNCVfModuleResourcesTest  extends TestDataSetup{	
 	@InjectMocks
 	private SDNCVfModuleResources sdncVfModuleResources = new SDNCVfModuleResources();

@@ -168,7 +168,11 @@ public class BuildingBlockTestDataSetup{
         dataMap.put("vpnRegion","testVpnRegion");
         dataMap.put("vpnRt","testVpnRt");
         dataMap.put("vpnName","vpnName");
-        dataMap.put("vpnRegion", Arrays.asList(new String[] {"USA", "EMEA", "APAC"}));
+        ArrayList<String> vpnRegions = new ArrayList<String>();
+        vpnRegions.add("USA");
+        vpnRegions.add("EMEA");
+        vpnRegions.add("APAC");
+        dataMap.put("vpnRegion", vpnRegions);
 
         HashMap<String,Object> userParams = new HashMap<>();
         userParams.put("vpnData",dataMap);

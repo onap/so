@@ -26,6 +26,7 @@ import static org.mockito.Mockito.*
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -34,6 +35,9 @@ import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 
 import org.onap.so.bpmn.mock.FileUtil
 
+import org.mockito.junit.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class SDNCAdapterUtilsTest {
 	
 	private def map
@@ -59,14 +63,14 @@ public class SDNCAdapterUtilsTest {
 		// svcex gets its variables from "map"
 		when(svcex.getVariable(any())).thenAnswer(
 			{ invocation ->
-				return map.get(invocation.getArgumentAt(0, String.class)) })
+				return map.get(invocation.getArgument(0)) })
 		
 		// svcex puts its variables into "map"
 		when(svcex.setVariable(any(), any())).thenAnswer(
 			{ invocation ->
 				return map.put(
-							invocation.getArgumentAt(0, String.class),
-							invocation.getArgumentAt(1, String.class)) })
+							invocation.getArgument(0),
+							invocation.getArgument(1)) })
 		
 		map.put("isDebugLogEnabled", "true")
 		map.put("prefix", "mypfx-")

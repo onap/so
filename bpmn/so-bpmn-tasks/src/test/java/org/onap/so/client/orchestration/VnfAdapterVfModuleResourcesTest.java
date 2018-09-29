@@ -22,7 +22,7 @@ package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.bpmn.common.data.TestDataSetup;
@@ -47,7 +47,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.client.adapter.vnf.mapper.VnfAdapterVfModuleObjectMapper;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class VnfAdapterVfModuleResourcesTest  extends TestDataSetup{
 	@InjectMocks
 	private VnfAdapterVfModuleResources vnfAdapterVfModuleResources = new VnfAdapterVfModuleResources();

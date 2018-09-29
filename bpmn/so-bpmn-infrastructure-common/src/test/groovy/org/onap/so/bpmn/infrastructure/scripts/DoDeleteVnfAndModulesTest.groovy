@@ -27,7 +27,6 @@ import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,14 +34,21 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import org.mockito.Spy
 import org.mockito.runners.MockitoJUnitRunner
+import org.onap.aai.domain.yang.GenericVnf
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.core.WorkflowException
-
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.graphinventory.entities.uri.Depth
+import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)
-public class DoDeleteVnfAndModulesTest {
+public class DoDeleteVnfAndModulesTest extends MsoGroovyTest{
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(28090);
@@ -50,13 +56,18 @@ public class DoDeleteVnfAndModulesTest {
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
+    @Spy
+    DoDeleteVnfAndModules doDeleteVnfAndModules
+
     String cloudConfiguration = "{ " +
             "\"lcpCloudRegionId\": \"mdt1\"," +
             "\"tenantId\": \"88a6ca3ee0394ade9403f075db23167e\"" + "}";
 
     @Before
     public void init() throws IOException {
+        super.init("DoDeleteVnfAndModules")
         MockitoAnnotations.initMocks(this);
+        when(doDeleteVnfAndModules.getAAIClient()).thenReturn(client)
     }
 
     @Test
@@ -90,40 +101,26 @@ public class DoDeleteVnfAndModulesTest {
 
     @Test
     public void testQueryAAIVfModuleNullEndPoint() {
-        ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("vnfId")).thenReturn("12345")
-        when(mockExecution.getVariable("mso.workflow.DoDeleteVnfAndModules.aai.generic-vnf.uri")).thenReturn("/aai/v8/network/generic-vnfs/generic-vnf")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn(null)
-        when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
-
-        mockData()
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "12345").depth(Depth.ONE)
+        doThrow(new GraphInventoryUriComputationException("Error in AAI")).when(client).get(GenericVnf.class,uri)
         try {
-            DoDeleteVnfAndModules obj = new DoDeleteVnfAndModules()
-            obj.queryAAIVfModule(mockExecution)
+            doDeleteVnfAndModules.queryAAIVfModule(mockExecution)
         } catch (Exception ex) {
             println " Test End - Handle catch-throw BpmnError()! "
         }
-
         Mockito.verify(mockExecution,atLeastOnce()).setVariable(captor.capture(),captor.capture())
         WorkflowException workflowException = captor.getValue()
-        Assert.assertEquals("AAI GET Failed:null", workflowException.getErrorMessage())
+        Assert.assertEquals("AAI GET Failed:Error in AAI", workflowException.getErrorMessage())
         Assert.assertEquals(1002, workflowException.getErrorCode())
     }
 
     @Test
     public void testQueryAAIVfModule() {
         ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("vnfId")).thenReturn("12345")
-        when(mockExecution.getVariable("mso.workflow.DoDeleteVnfAndModules.aai.generic-vnf.uri")).thenReturn("/aai/v8/network/generic-vnfs/generic-vnf")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
-        when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
-
-        mockData()
-        DoDeleteVnfAndModules obj = new DoDeleteVnfAndModules()
-        obj.queryAAIVfModule(mockExecution)
-
+        mockAAIGenericVnf("12345","__files/AAI/GenericVnfVfModule.json")
+        doDeleteVnfAndModules.queryAAIVfModule(mockExecution)
         Mockito.verify(mockExecution).setVariable("DCVFM_queryAAIVfModuleResponseCode", 200)
     }
 

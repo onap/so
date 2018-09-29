@@ -511,7 +511,7 @@ public class CatalogDbAdapterRest {
         try {
             if (smUuid != null && !"".equals(smUuid)) {
                 logger.debug("Query Csar by service model uuid: {}",smUuid);
-                ToscaCsar toscaCsar = toscaCsarRepo.findOne(smUuid);
+                ToscaCsar toscaCsar = toscaCsarRepo.findById(smUuid).orElseGet(() -> null);
                 if (toscaCsar != null) {
                     QueryServiceCsar serviceCsar = new QueryServiceCsar(toscaCsar);
                     entity = serviceCsar.JSON2(false, false);

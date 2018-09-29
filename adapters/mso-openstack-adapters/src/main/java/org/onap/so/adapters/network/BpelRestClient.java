@@ -69,7 +69,7 @@ public class BpelRestClient {
 	private static final String RETRY_COUNT_PROPERTY     = PROPERTY_DOMAIN+".retrycount";
 	private static final String RETRY_INTERVAL_PROPERTY  = PROPERTY_DOMAIN+".retryinterval";
 	private static final String RETRY_LIST_PROPERTY      = PROPERTY_DOMAIN+".retrylist";
-	private static final String ENCRYPTION_KEY           = "aa3871669d893c7fb8abbcda31b88b4f";
+	private static final String ENCRYPTION_KEY_PROP      = PROPERTY_DOMAIN + ".encryptionKey";
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, BpelRestClient.class);
 
 	@Autowired
@@ -123,7 +123,7 @@ public class BpelRestClient {
 		retryCount     = env.getProperty(RETRY_COUNT_PROPERTY, Integer.class, DEFAULT_RETRY_COUNT);
 		retryInterval  = env.getProperty(RETRY_INTERVAL_PROPERTY, Integer.class, DEFAULT_RETRY_INTERVAL);
 		setRetryList(env.getProperty(RETRY_LIST_PROPERTY, DEFAULT_RETRY_LIST));
-		credentials    = getEncryptedProperty(BPEL_AUTH_PROPERTY, DEFAULT_CREDENTIALS, ENCRYPTION_KEY);
+		credentials    = getEncryptedProperty(BPEL_AUTH_PROPERTY, DEFAULT_CREDENTIALS, env.getProperty(ENCRYPTION_KEY_PROP));
 	}
 
 	public int getSocketTimeout() {

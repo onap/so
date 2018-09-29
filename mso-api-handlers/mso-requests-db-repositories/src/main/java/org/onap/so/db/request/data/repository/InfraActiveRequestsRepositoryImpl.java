@@ -21,6 +21,22 @@
 
 package org.onap.so.db.request.data.repository;
 
+import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,23 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.logger.MsoLogger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @Repository
@@ -229,7 +228,10 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
                 }
             }
         }
-
+        if (predicates.isEmpty()) {
+            msoLogger.debug("No predicate found applicable for provided inputs: InstanceIdMap" + instanceIdMap + ", instanceName:" + instanceName + ", requestScope:" + requestScope);
+            return null;
+        }
         predicates.add(tableRoot.get(REQUEST_STATUS)
                 .in(Arrays.asList("PENDING", "IN_PROGRESS", "TIMEOUT", "PENDING_MANUAL_TASK")));
 

@@ -20,23 +20,29 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*
+import org.onap.aai.domain.yang.GenericVnf
+import org.onap.aai.domain.yang.NetworkPolicies
+import org.onap.aai.domain.yang.NetworkPolicy
+import org.onap.aai.domain.yang.VfModule
 
+import static org.apache.commons.lang3.StringUtils.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.bpmn.common.scripts.VfModule
 import org.onap.so.bpmn.common.scripts.VfModuleBase
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.graphinventory.entities.uri.Depth
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils
 
 public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteVfModuleFromVnf.class);
@@ -128,28 +134,17 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		try {
 			def vnfId = execution.getVariable('vnfId')
 
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
-
-			msoLogger.debug("DoDeleteVfModuleFromVnf: AAI endPoint  : " + endPoint)
-
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
 			try {
-				msoLogger.debug("DoDeleteVfModuleFromVnf: - invoking httpGet to AAI")
-				APIResponse response = aaiUriUtil.executeAAIGetCall(execution, endPoint)
+				Optional<GenericVnf> genericVnf = getAAIClient().get(GenericVnf.class,uri)
 
-				def responseData = response.getResponseBodyAsString()
-				execution.setVariable('DDVMFV_getVnfResponseCode', response.getStatusCode())
-				execution.setVariable('DDVMFV_getVnfResponse', responseData)
-
-				msoLogger.debug("DoDeleteVfModuleFromVnf: AAI Response : " + responseData)
-				msoLogger.debug("DoDeleteVfModuleFromVnf: AAI ResponseCode : " + response.getStatusCode())
-
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)			
-				
+				if(genericVnf.isPresent()){
+					execution.setVariable('DDVMFV_getVnfResponseCode', 200)
+					execution.setVariable('DDVMFV_getVnfResponse', genericVnf.get())
+				}else{
+					execution.setVariable('DDVMFV_getVnfResponseCode', 404)
+					execution.setVariable('DDVMFV_getVnfResponse', "Generic Vnf not found!")
+				}
 			} catch (Exception ex) {
 				ex.printStackTrace()
 				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
@@ -181,31 +176,32 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		msoLogger.trace('Entered ' + method)
 
 		try {
-			def genericVnf = execution.getVariable('DDVMFV_getVnfResponse')
+			GenericVnf genericVnf = execution.getVariable('DDVMFV_getVnfResponse')
 			def vnfId = execution.getVariable('_vnfId')
-			def vfModuleId = execution.getVariable('vfModuleId')			
-			def VfModule vfModule = findVfModule(genericVnf, vfModuleId)
-			if (vfModule == null) {
-				def String msg = 'VF Module \'' + vfModuleId + '\' does not exist in Generic VNF \'' + vnfId + '\''
+			def vfModuleId = execution.getVariable('vfModuleId')
+            Optional<VfModule> vfModule = Optional.empty()
+            if(genericVnf.getVfModules()!=null && ! genericVnf.getVfModules().getVfModule().isEmpty()) {
+                vfModule = genericVnf.getVfModules().getVfModule().stream().filter { v -> v.getVfModuleId().equals(vfModuleId) }.findFirst()
+            }
+			if (!vfModule.isPresent()) {
+				String msg = 'VF Module \'' + vfModuleId + '\' does not exist in Generic VNF \'' + vnfId + '\''
 				msoLogger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, msg)
 			} else {
-				
+                Boolean isOnlyVfModule = (genericVnf.getVfModules().getVfModule().size() == 1)
 				if (isDebugLogEnabled) {
-					msoLogger.debug('VF Module \'' + vfModuleId + '\': isBaseVfModule=' + vfModule.isBaseVfModule() + ', isOnlyVfModule=' + vfModule.isOnlyVfModule())
+					msoLogger.debug('VF Module \'' + vfModuleId + '\': isBaseVfModule=' + vfModule.get().isIsBaseVfModule() + ', isOnlyVfModule=' + isOnlyVfModule)
 				}
-				if (vfModule.isBaseVfModule() && !vfModule.isOnlyVfModule()) {
-					def String msg = 'Cannot delete VF Module \'' + vfModuleId +
-						'\'since it is the base VF Module and it\'s not the only VF Module in Generic VNF \'' + vnfId + '\''
-						msoLogger.debug("Received a BAD Response from VNF Adapter for CREATE_VF_MODULE Call.")
-						exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "VNF Adapter Error")
+				if (vfModule.get().isIsBaseVfModule() && !isOnlyVfModule) {
+                    String msg = 'Cannot delete VF Module \'' + vfModuleId +
+                            '\'since it is the base VF Module and it\'s not the only VF Module in Generic VNF \'' + vnfId + '\''
+                    msoLogger.debug(msg)
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 1002,msg)
 				}
-				
-				def heatStackId = vfModule.getElementText('heat-stack-id')
+				def heatStackId = vfModule.get().getHeatStackId()
 				execution.setVariable('DDVMFV_heatStackId', heatStackId)
 				msoLogger.debug('VF Module heatStackId retrieved from AAI: ' + heatStackId)
 			}
-
 			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
@@ -490,9 +486,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 			execution.setVariable("DDVFMV_networkPolicyFqdnCount", fqdnCount)
 			msoLogger.debug("DDVFMV_networkPolicyFqdnCount - " + fqdnCount)
 
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getNetworkPolicyUri(execution)
 
 			if (fqdnCount > 0) {
 				// AII loop call over contrail network policy fqdn list
@@ -503,78 +497,47 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 
 					// Query AAI for this network policy FQDN
 
-					String queryNetworkPolicyByFqdnAAIRequest = "${aai_endpoint}${aai_uri}?network-policy-fqdn=" + UriUtils.encode(fqdn, "UTF-8")
-					msoLogger.debug("AAI request endpoint: " + queryNetworkPolicyByFqdnAAIRequest)
-					
+					AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+					uri.queryParam("network-policy-fqdn", fqdn)
 
-					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryNetworkPolicyByFqdnAAIRequest)
-					int returnCode = response.getStatusCode()
-					execution.setVariable("DCVFM_aaiQueryNetworkPolicyByFqdnReturnCode", returnCode)
-					msoLogger.debug(" ***** AAI query network policy Response Code, NetworkPolicy #" + counting + " : " + returnCode)
+                    try {
+                        Optional<NetworkPolicies> networkPolicies = getAAIClient().get(NetworkPolicies.class, uri)
 
-					String aaiResponseAsString = response.getResponseBodyAsString()
+                        if (networkPolicies.isPresent() && !networkPolicies.get().getNetworkPolicy().isEmpty()) {
+                            NetworkPolicy networkPolicy = networkPolicies.get().getNetworkPolicy().get(0)
+                            execution.setVariable("DCVFM_aaiQueryNetworkPolicyByFqdnReturnCode", 200)
+                            // This network policy FQDN exists in AAI - need to delete it now
+                            // Retrieve the network policy id for this FQDN
+                            def networkPolicyId = networkPolicy.getNetworkPolicyId()
+                            msoLogger.debug("Deleting network-policy with network-policy-id " + networkPolicyId)
 
-					if (isOneOf(returnCode, 200, 201)) {
-						msoLogger.debug("The return code is: "  + returnCode)
-						// This network policy FQDN exists in AAI - need to delete it now
-						msoLogger.debug(aaiResponseAsString)
-						execution.setVariable("DDVFMV_queryNetworkPolicyByFqdnAAIResponse", aaiResponseAsString)
-						msoLogger.debug("QueryAAINetworkPolicyByFQDN Success REST Response, , NetworkPolicy #" + counting + " : " + "\n" + aaiResponseAsString)
-						// Retrieve the network policy id for this FQDN
-						def networkPolicyId = utils.getNodeText(aaiResponseAsString, "network-policy-id")
-						msoLogger.debug("Deleting network-policy with network-policy-id " + networkPolicyId)
-
-						// Retrieve the resource version for this network policy
-						def resourceVersion = utils.getNodeText(aaiResponseAsString, "resource-version")
-						msoLogger.debug("Deleting network-policy with resource-version " + resourceVersion)
-
-						String delNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(networkPolicyId, "UTF-8") +
-							"?resource-version=" + UriUtils.encode(resourceVersion, "UTF-8")
-						msoLogger.debug("AAI request endpoint: " + delNetworkPolicyAAIRequest)
-
-						msoLogger.debug("invoking DELETE call to AAI")
-						msoLogger.debug("Sending DELETE call to AAI with Endpoint /n" + delNetworkPolicyAAIRequest)
-						APIResponse responseDel = aaiUriUtil.executeAAIDeleteCall(execution, delNetworkPolicyAAIRequest)
-						int returnCodeDel = responseDel.getStatusCode()
-						execution.setVariable("DDVFMV_aaiDeleteNetworkPolicyReturnCode", returnCodeDel)
-						msoLogger.debug(" ***** AAI delete network policy Response Code, NetworkPolicy #" + counting + " : " + returnCodeDel)
-
-						if (isOneOf(returnCodeDel, 200, 201, 204)) {
-							msoLogger.debug("The return code from deleting network policy is: "  + returnCodeDel)
-							// This network policy was deleted from AAI successfully
-							msoLogger.debug(" DelAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : ")
-
-						} else {
-								// aai all errors
-								String delErrorMessage = "Unable to delete network-policy to AAI deleteNetworkPoliciesFromAAI - " + returnCodeDel
-							 msoLogger.debug(delErrorMessage)
-							 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, delErrorMessage)
-						}
-					} else if (returnCode == 404) {
-						// This network policy FQDN is not in AAI. No need to delete.
-						msoLogger.debug("The return code is: "  + returnCode)
-						msoLogger.debug("This network policy FQDN is not in AAI: " + fqdn)
-						msoLogger.debug("Network policy FQDN is not in AAI")
-					} else {
-					   if (aaiResponseAsString.contains("RESTFault")) {
-						   WorkflowException exceptionObject = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-						   execution.setVariable("WorkflowException", exceptionObject)
-						   throw new BpmnError("MSOWorkflowException")
-
-						   } else {
-								// aai all errors
-								String dataErrorMessage = "Unexpected Response from deleteNetworkPoliciesFromAAI - " + returnCode
-								msoLogger.debug(dataErrorMessage)
-								exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-						  }
-					}
-
-
-
-				} // end loop
-
-
+                            // Retrieve the resource version for this network policy
+                            try {
+                                AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId)
+                                getAAIClient().delete(delUri)
+                                execution.setVariable("DDVFMV_aaiDeleteNetworkPolicyReturnCode", 200)
+                                msoLogger.debug(" ***** AAI delete network policy Response Code, NetworkPolicy #" + counting + " : " + 200)
+                                // This network policy was deleted from AAI successfully
+                                msoLogger.debug(" DelAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : ")
+                            } catch (Exception e) {
+                                // aai all errors
+                                String delErrorMessage = "Unable to delete network-policy to AAI deleteNetworkPoliciesFromAAI - " + e.getMessage()
+                                msoLogger.debug(delErrorMessage)
+                                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, delErrorMessage)
+                            }
+                        } else {
+                            execution.setVariable("DCVFM_aaiQueryNetworkPolicyByFqdnReturnCode", 404)
+                            // This network policy FQDN is not in AAI. No need to delete.
+                            msoLogger.debug("This network policy FQDN is not in AAI: " + fqdn)
+                            msoLogger.debug("Network policy FQDN is not in AAI")
+                        }
+                    } catch (Exception e) {
+                        // aai all errors
+                        String dataErrorMessage = "Unexpected Response from deleteNetworkPoliciesFromAAI - " + e.getMessage()
+                        msoLogger.debug(dataErrorMessage)
+                        exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
+                    }
+                } // end loop
 			} else {
 				   msoLogger.debug("No contrail network policies to query/create")
 

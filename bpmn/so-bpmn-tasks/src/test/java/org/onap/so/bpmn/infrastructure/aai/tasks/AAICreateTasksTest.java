@@ -19,22 +19,25 @@
  */
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.mockito.Mockito.when;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -44,12 +47,14 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class AAICreateTasksTest extends BaseTaskTest{
-	@Autowired
-	private AAICreateTasks aaiCreateTasks;
+	
+	@InjectMocks
+	private AAICreateTasks aaiCreateTasks = new AAICreateTasks();
+
 
 	private ServiceInstance serviceInstance;
 	private L3Network network;
@@ -60,11 +65,11 @@ public class AAICreateTasksTest extends BaseTaskTest{
 	private Customer customer;
 	private Configuration configuration;
 	
-	 @Rule
-	 public final ExpectedException exception = ExpectedException.none();
+	@Rule
+	public final ExpectedException exception = ExpectedException.none();
 	
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		customer = setCustomer();
 		serviceInstance = setServiceInstance();
 		network = setL3Network();
@@ -73,6 +78,17 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		cloudRegion = setCloudRegion();
 		vfModule = setVfModule();
 		configuration = setConfiguration();
+		
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(network);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.CONFIGURATION_ID), any())).thenReturn(configuration);
+		
+
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
 
 	}
 	
@@ -88,7 +104,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		expectedException.expect(BpmnError.class);
 		
 		lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "notfound");
-		doThrow(Exception.class).when(aaiServiceInstanceResources).createServiceInstance(serviceInstance, customer);
+		doThrow(RuntimeException.class).when(aaiServiceInstanceResources).createServiceInstance(serviceInstance, customer);
 		aaiCreateTasks.createServiceInstance(execution);
 	}
 	
@@ -112,7 +128,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		
 		volumeGroup.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 		
-		doThrow(Exception.class).when(aaiVolumeGroupResources).createVolumeGroup(volumeGroup, cloudRegion);
+		doThrow(RuntimeException.class).when(aaiVolumeGroupResources).createVolumeGroup(volumeGroup, cloudRegion);
 		
 		aaiCreateTasks.createVolumeGroup(execution);
 	}
@@ -143,7 +159,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		expectedException.expect(BpmnError.class);
 		
 		lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "notfound");
-		doThrow(Exception.class).when(aaiServiceInstanceResources).createProjectandConnectServiceInstance(serviceInstance.getProject(), serviceInstance);
+		doThrow(RuntimeException.class).when(aaiServiceInstanceResources).createProjectandConnectServiceInstance(serviceInstance.getProject(), serviceInstance);
 		aaiCreateTasks.createProject(execution);
 	}
 	
@@ -227,7 +243,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		
 		doReturn(true).when(aaiServiceInstanceResources).existsOwningEntity(serviceInstance.getOwningEntity());
 		
-		doThrow(Exception.class).when(aaiServiceInstanceResources).connectOwningEntityandServiceInstance(serviceInstance.getOwningEntity(), serviceInstance);
+		doThrow(RuntimeException.class).when(aaiServiceInstanceResources).connectOwningEntityandServiceInstance(serviceInstance.getOwningEntity(), serviceInstance);
 		
 		aaiCreateTasks.createOwningEntity(execution);
 	}
@@ -241,9 +257,9 @@ public class AAICreateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void createVnfExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		
+		expectedException.expect(BpmnError.class);		
 		lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, "notfound");
+		doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID),eq("notfound"));	
 		doNothing().when(aaiVnfResources).createVnfandConnectServiceInstance(genericVnf, serviceInstance);
 		aaiCreateTasks.createVnf(execution);
 		verify(aaiVnfResources, times(1)).createVnfandConnectServiceInstance(genericVnf, serviceInstance);
@@ -267,7 +283,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
     @Test
     public void createServiceSubscriptionTestExceptionHandling(){
         expectedException.expect(BpmnError.class);
-        doThrow(Exception.class).when(aaiServiceInstanceResources).createServiceSubscription(customer);
+        doThrow(RuntimeException.class).when(aaiServiceInstanceResources).createServiceSubscription(customer);
         aaiCreateTasks.createServiceSubscription(execution);
     }
 
@@ -282,7 +298,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 	public void createVfModuleExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(aaiVfModuleResources).createVfModule(vfModule, genericVnf);
+		doThrow(RuntimeException.class).when(aaiVfModuleResources).createVfModule(vfModule, genericVnf);
 		aaiCreateTasks.createVfModule(execution);
 	}
 	
@@ -307,7 +323,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		expectedException.expect(BpmnError.class);
 		
 		lookupKeyMap.put(ResourceKey.NETWORK_ID, "notfound");
-		doThrow(Exception.class).when(aaiNetworkResources).createNetworkConnectToServiceInstance(network,serviceInstance);
+		doThrow(RuntimeException.class).when(aaiNetworkResources).createNetworkConnectToServiceInstance(network,serviceInstance);
 		aaiCreateTasks.createNetwork(execution);
 	}
 	
@@ -324,7 +340,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 	public void createCustomerExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(aaiVpnBindingResources).createCustomer(customer);
+		doThrow(RuntimeException.class).when(aaiVpnBindingResources).createCustomer(customer);
 		
 		aaiCreateTasks.createCustomer(execution);
 	}
@@ -369,6 +385,9 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		lookupKeyMap.put(ResourceKey.NETWORK_ID, network.getNetworkId());
 		gBBInput.setServiceInstance(serviceInstance);
 		lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstance.getServiceInstanceId());
+		
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), eq("testServiceInstanceId"))).thenReturn(serviceInstance);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID),eq("testNetworkId"))).thenReturn(serviceInstance);
 		//verify connection call was not executednetwork
 		exception.expect(BpmnError.class);
 		aaiCreateTasks.connectNetworkToNetworkCollectionInstanceGroup(execution);

@@ -21,44 +21,43 @@
 package org.onap.so.client.grm;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
 
-import org.apache.log4j.MDC;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.onap.so.client.grm.beans.OperationalInfo;
-import org.onap.so.client.grm.beans.Property;
 import org.onap.so.client.grm.beans.ServiceEndPoint;
 import org.onap.so.client.grm.beans.ServiceEndPointList;
 import org.onap.so.client.grm.beans.ServiceEndPointLookupRequest;
 import org.onap.so.client.grm.beans.ServiceEndPointRequest;
-import org.onap.so.client.grm.beans.Version;
 import org.onap.so.client.grm.exceptions.GRMClientCallFailed;
+import org.onap.so.utils.TestAppender;
+import org.slf4j.MDC;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
-import org.onap.so.utils.TestAppender;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class GRMClientTest {
 	
@@ -74,8 +73,6 @@ public class GRMClientTest {
 	public static void setUp() throws Exception {
 		System.setProperty("mso.config.path", "src/test/resources");
 	}
-	
-	private ObjectMapper mapper = new ObjectMapper();
 	
 	@Test
 	public void testFind() throws Exception {
