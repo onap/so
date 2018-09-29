@@ -25,6 +25,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -45,7 +46,7 @@ public class RainyDayHandlerStatus implements Serializable {
 
 	@Id
 	@Column(name = "id")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@BusinessKey
@@ -71,12 +72,15 @@ public class RainyDayHandlerStatus implements Serializable {
 	@BusinessKey
 	@Column(name = "POLICY")
 	private String policy;
+	
+	@Column(name = "SECONDARY_POLICY")
+	private String secondaryPolicy;
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).append("id", id).append("flowName", flowName)
 				.append("serviceType", serviceType).append("vnfType", vnfType).append("errorCode", errorCode)
-				.append("workStep", workStep).append("policy", policy).toString();
+				.append("workStep", workStep).append("policy", policy).append("secondaryPolicy",secondaryPolicy).toString();
 	}
 
 	@Override
@@ -150,5 +154,13 @@ public class RainyDayHandlerStatus implements Serializable {
 
 	public void setPolicy(String policy) {
 		this.policy = policy;
+	}
+	
+	public String getSecondaryPolicy() {
+		return secondaryPolicy;
+	}
+	
+	public void setSecondaryPolicy(String secondaryPolicy) {
+		this.secondaryPolicy = secondaryPolicy;
 	}
 }

@@ -18,36 +18,24 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.scripts;
-
-import groovy.xml.XmlUtil
-
-import groovy.json.*
+package org.onap.so.bpmn.infrastructure.scripts
 
 
-import java.util.UUID;
-
-import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.onap.so.bpmn.common.scripts.AaiUtil
+import org.onap.aai.domain.yang.VolumeGroups
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.constants.Defaults
-import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils
 import org.onap.so.logger.MsoLogger
-import org.onap.so.logger.MessageEnum
 
+import javax.ws.rs.NotFoundException
 
 public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateVfModuleVolumeRollback.class);
@@ -129,95 +117,46 @@ public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor
 	/**
 	 * Query AAI volume group by name
 	 * @param execution
-	 * @param isDebugEnabled
+	 * @param cloudRegion
+	 * @return
 	 */
-	public void callRESTQueryAAIVolGrpName(DelegateExecution execution, isDebugEnabled) {
+	private String callRESTQueryAAIVolGrpName(DelegateExecution execution, String cloudRegion) {
 
 		def volumeGroupName = execution.getVariable('DCVFMODVOLRBK_volumeGroupName')
-		def cloudRegion = execution.getVariable('DCVFMODVOLRBK_lcpCloudRegionId')
 
-		// This is for stub testing
 		def testVolumeGroupName = execution.getVariable('test-volume-group-name')
 		if (testVolumeGroupName != null && testVolumeGroupName.length() > 0) {
 			volumeGroupName = testVolumeGroupName
 		}
 
-		AaiUtil aaiUtil = new AaiUtil(this)
-
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion).queryParam("volume-group-name", volumeGroupName)
-		def queryAAIVolumeNameRequest = aaiUtil.createAaiUri(uri)
-
-		msoLogger.debug('Query AAI volume group by name: ' + queryAAIVolumeNameRequest)
-
-		APIResponse response = aaiUtil.executeAAIGetCall(execution, queryAAIVolumeNameRequest)
-
-		String returnCode = response.getStatusCode()
-		String aaiResponseAsString = response.getResponseBodyAsString()
-
-		msoLogger.debug("AAI query volume group by name return code: " + returnCode)
-		msoLogger.debug("AAI query volume group by name response: " + aaiResponseAsString)
-
-		ExceptionUtil exceptionUtil = new ExceptionUtil()
-
-		execution.setVariable(prefix+"queryAAIVolGrpNameResponse", aaiResponseAsString)
-		execution.setVariable(prefix+'AaiReturnCode', returnCode)
-
-		if (returnCode=='200') {
-			// @TODO: verify error code
-			// @TODO: create class of literals representing error codes
-			execution.setVariable(prefix+'queryAAIVolGrpNameResponse', aaiResponseAsString)
-			msoLogger.debug("Volume Group Name $volumeGroupName exists in AAI.")
-		} else {
-			if (returnCode=='404') {
-				msoLogger.debug("Volume Group Name $volumeGroupName does not exist in AAI.")
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume group $volumeGroupName not found in AAI. Response code: 404")
+		try {
+			Optional<VolumeGroups> volumeGroups = getAAIClient().get(VolumeGroups.class, uri)
+			if (volumeGroups.isPresent()) {
+				return volumeGroups.get().getVolumeGroup().get(0).getVolumeGroupId()
 			} else {
-				WorkflowException aWorkflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-				throw new BpmnError("MSOWorkflowException")
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume group $volumeGroupName not found in AAI. Response code: 404")
 			}
+		} catch (Exception e) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, e.getMessage())
 		}
+		return null
 	}
 
 
 
 	public void callRESTDeleteAAIVolumeGroup(DelegateExecution execution, isDebugEnabled) {
 
-		callRESTQueryAAIVolGrpName(execution, isDebugEnabled)
+		String cloudRegion = execution.getVariable("DCVFMODVOLRBK_lcpCloudRegionId")
+		String volumeGroupId = callRESTQueryAAIVolGrpName(execution, cloudRegion)
 
-		def queryAaiVolumeGroupResponse = execution.getVariable(prefix+'queryAAIVolGrpNameResponse')
-
-		def volumeGroupId = utils.getNodeText(queryAaiVolumeGroupResponse, "volume-group-id")
-		def resourceVersion = utils.getNodeText(queryAaiVolumeGroupResponse, "resource-version")
-
-		def cloudRegion = execution.getVariable("DCVFMODVOLRBK_lcpCloudRegionId")
-
-		AaiUtil aaiUtil = new AaiUtil(this)
-
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId).resourceVersion(resourceVersion)
-		def deleteAAIVolumeGrpIdRequest = aaiUtil.createAaiUri(uri)
-
-		msoLogger.debug('Delete AAI volume group : ' + deleteAAIVolumeGrpIdRequest)
-
-		APIResponse response = aaiUtil.executeAAIDeleteCall(execution, deleteAAIVolumeGrpIdRequest)
-
-		String returnCode = response.getStatusCode()
-		String aaiResponseAsString = response.getResponseBodyAsString()
-
-		msoLogger.debug("AAI delete volume group return code: " + returnCode)
-		msoLogger.debug("AAI delete volume group response: " + aaiResponseAsString)
-
-		ExceptionUtil exceptionUtil = new ExceptionUtil()
-
-		def volumeGroupNameFound = prefix+'volumeGroupNameFound'
-		if (returnCode=='200' || returnCode=='204' ) {
-			msoLogger.debug("Volume group $volumeGroupId deleted.")
-		} else {
-			if (returnCode=='404') {
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume group $volumeGroupId not found for delete in AAI Response code: 404")
-			} else {
-				WorkflowException aWorkflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-				throw new BpmnError("MSOWorkflowException")
-			}
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId)
+		try {
+			getAAIClient().delete(uri)
+		}catch(NotFoundException ignored){
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume group $volumeGroupId not found for delete in AAI Response code: 404")
+		}catch(Exception e){
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500,e.getMessage())
 		}
 	}
 

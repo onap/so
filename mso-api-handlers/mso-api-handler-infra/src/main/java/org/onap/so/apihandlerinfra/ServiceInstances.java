@@ -111,7 +111,7 @@ public class ServiceInstances {
 	private static String NAME = "name";
 	private static String VALUE = "value";
 	private static final String SAVE_TO_DB = "save instance to db";
-
+	
 	@Autowired
 	private Environment env;
 	

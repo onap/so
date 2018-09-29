@@ -86,7 +86,7 @@ public class CamundaClient extends RequestClient{
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
 			if(encryptedCredentials != null){
-				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
+				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, props.getProperty(CommonConstants.ENCRYPTION_KEY_PROP));
 				if(userCredentials != null){
 					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
 				}
@@ -108,7 +108,7 @@ public class CamundaClient extends RequestClient{
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
 			if(encryptedCredentials != null){
-				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
+				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, props.getProperty(CommonConstants.ENCRYPTION_KEY_PROP));
 				if(userCredentials != null){
 					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
 				}
@@ -141,7 +141,7 @@ public class CamundaClient extends RequestClient{
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
 			if(encryptedCredentials != null){
-				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, CommonConstants.ENCRYPTION_KEY);
+				String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH, props.getProperty(CommonConstants.ENCRYPTION_KEY_PROP));
 				if(userCredentials != null){
 					post.addHeader("Authorization", "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
 				}

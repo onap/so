@@ -20,9 +20,9 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -33,9 +33,10 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -54,7 +55,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class AAIConfigurationResourcesTest extends TestDataSetup{
 	
 	
@@ -106,7 +107,7 @@ public class AAIConfigurationResourcesTest extends TestDataSetup{
         configuration.setConfigurationType("VNR");
         configuration.setOrchestrationStatus(OrchestrationStatus.ACTIVE);
         aaiConfigurationResources.updateConfiguration(configuration);
-        verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.Configuration.class));
+        verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class),ArgumentMatchers.isNull());
     }
 
     @Test
@@ -200,7 +201,7 @@ public class AAIConfigurationResourcesTest extends TestDataSetup{
 		configuration.setOrchestrationStatus(OrchestrationStatus.ACTIVE);
 		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Configuration.class));
 		aaiConfigurationResources.updateOrchestrationStatusConfiguration(configuration,OrchestrationStatus.ACTIVE);		
-		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.Configuration.class));
+		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
 		assertEquals(OrchestrationStatus.ACTIVE, configuration.getOrchestrationStatus());
 	}
 }

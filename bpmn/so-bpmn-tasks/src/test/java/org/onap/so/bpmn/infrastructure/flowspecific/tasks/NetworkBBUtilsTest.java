@@ -30,6 +30,7 @@ import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.so.bpmn.BaseTaskTest;
@@ -38,8 +39,8 @@ import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class NetworkBBUtilsTest  extends BaseTaskTest{
-	@Autowired
-	private NetworkBBUtils networkBBUtils;
+	@InjectMocks
+	private NetworkBBUtils networkBBUtils = new NetworkBBUtils();
 	
 	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/Network/";
 	

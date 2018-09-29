@@ -1,5 +1,5 @@
 aai:
-  auth: 757A94191D685FD2092AC1490730A4FC
+  auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
   dme2:
     timeout: '30000'
   endpoint: http://localhost:${wiremock.server.port}
@@ -15,7 +15,7 @@ camunda:
       enabled: false
       db-reporter-activate: false
 canopi:
-  auth: 757A94191D685FD2092AC1490730A4FC
+  auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
 csi:
   aots:
     addincidentmanagement:
@@ -36,7 +36,7 @@ mso:
     completemsoprocess:
       endpoint: http://localhost:30253/CompleteMsoProcess
     db:
-      auth: 757A94191D685FD2092AC1490730A4FC
+      auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
       password: wLg4sjrAFUS8rfVfdvTXeQ==
       endpoint: http://localhost:${wiremock.server.port}/services/RequestsDbAdapter
       spring:
@@ -49,7 +49,7 @@ mso:
       db:
         endpoint: http://localhost:${wiremock.server.port}/services/RequestsDbAdapter
     po:
-      auth: 757A94191D685FD2092AC1490730A4FC
+      auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
       password: 3141634BF7E070AA289CF2892C986C0B
     sdnc:
       endpoint: http://localhost:${wiremock.server.port}/adapters/SDNCAdapter
@@ -84,7 +84,7 @@ mso:
       spring:
         endpoint: http://localhost:30258
   csi:
-    pwd: 4EA237303511EFBBC37F17A351562131
+    pwd: E684FA9977AF5DFB50F5ADC5B7425FDFA0CEBFF2E138E0477549879AEC8A9CE2DB7563
     sendmanagednetworkstatusnotification:
       applicationname: NetworkManagementEthernetOverFiber
       version: '212'

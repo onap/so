@@ -21,8 +21,9 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.UUID;
 
@@ -31,15 +32,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.sdno.SDNOValidator;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SDNOHealthCheckResourcesTest  extends TestDataSetup{
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class SDNOHealthCheckResourcesTest extends TestDataSetup{
 	@InjectMocks
 	private SDNOHealthCheckResources sdnoHealthCheckResources = new SDNOHealthCheckResources();
 	
@@ -61,7 +62,7 @@ public class SDNOHealthCheckResourcesTest  extends TestDataSetup{
 	
 	@Test
 	public void healthCheckTest() throws Exception {
-		doReturn(true).when(MOCK_sdnoValidator).healthDiagnostic(isA(String.class), isA(UUID.class), isA(String.class));
+		doReturn(true).when(MOCK_sdnoValidator).healthDiagnostic(any(String.class), any(UUID.class), any(String.class));
 		assertTrue(sdnoHealthCheckResources.healthCheck(genericVnf, requestContext));
 	}	
 }

@@ -29,7 +29,7 @@ import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.junit.Rule
 import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.client.aai.AAIObjectPlurals
@@ -41,9 +41,9 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 abstract class MsoGroovyTest {
-	
+
     @Rule
     public ExpectedException thrown = ExpectedException.none()
 

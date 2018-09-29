@@ -31,7 +31,7 @@ public enum Defaults {
 	
 	private final String propName;
 	private final String defaultValue;
-
+	
 	private Defaults(String propName, String defaultValue) {
 		this.defaultValue = defaultValue;
 		this.propName = propName;

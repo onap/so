@@ -47,7 +47,7 @@ import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -459,6 +459,15 @@ public class CatalogDbClientTest {
     public void testFindServiceRecipeByActionAndServiceModelUUIDNotFound() {
         ServiceRecipe serviceRecipe = client.findServiceRecipeByActionAndServiceModelUUID("not_found","5df8b6de-2083-11e7-93ae-test" );
         Assert.assertNull(serviceRecipe);
+    }
+
+    @Test
+    public void testFindExternalToInternalServiceByServiceName() {
+        ExternalServiceToInternalService externalServiceToInternalService = client.findExternalToInternalServiceByServiceName("MySpecialServiceName");
+        Assert.assertNotNull(externalServiceToInternalService);
+        Assert.assertNotNull(externalServiceToInternalService.getServiceName());
+        Assert.assertNotNull(externalServiceToInternalService.getServiceModelUUID());
+        Assert.assertEquals("MySpecialServiceName", externalServiceToInternalService.getServiceName());
     }
 
     @Test

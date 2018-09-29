@@ -31,17 +31,15 @@ import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.onap.appc.client.lcm.model.Action;
-import org.onap.so.bpmn.BaseTaskTest;
-import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class AppcRunTasksITTest extends BaseTaskTest {
+public class AppcRunTasksITTest extends BaseIntegrationTest {
 	
 	@Autowired
 	private AppcRunTasks appcRunTasks;

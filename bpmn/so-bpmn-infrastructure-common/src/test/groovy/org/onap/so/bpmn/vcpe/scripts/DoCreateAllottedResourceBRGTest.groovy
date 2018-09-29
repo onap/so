@@ -21,11 +21,7 @@
 package org.onap.so.bpmn.vcpe.scripts
 
 
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -36,10 +32,14 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+
+import javax.ws.rs.core.UriBuilder
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.put
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*
@@ -49,7 +49,6 @@ import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource_500
 
 import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.vcpe.scripts.MapSetter
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 
@@ -62,7 +61,7 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		super.setUpBeforeClass()
+		aaiUriPfx = UrnPropertiesReader.getVariable("aai.endpoint")
 	}
 	  
     @Before
@@ -171,27 +170,18 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
 	// ***** createAaiAR *****
 	
 	@Test
-	@Ignore
 	public void createAaiAR() {
-		ExecutionEntity mex = setupMock()
-		def map = setupMap(mex)
-		initCreateAaiAr(mex)
-		
-		MockPutAllottedResource(CUST, SVC, INST, ARID)
-		
-		DoCreateAllottedResourceBRG DoCreateAllottedResourceBRG = new DoCreateAllottedResourceBRG()
-		DoCreateAllottedResourceBRG.createAaiAR(mex)
-		
-		def data = map.get("rollbackData")
-		assertNotNull(data)
-		assertTrue(data instanceof RollbackData)
-		
-		assertEquals("45", data.get(Prefix, "disableRollback"))
-		assertEquals("true", data.get(Prefix, "rollbackAAI"))
-		assertEquals(ARID, data.get(Prefix, "allottedResourceId"))
-		assertEquals("sii", data.get(Prefix, "serviceInstanceId"))
-		assertEquals("psii", data.get(Prefix, "parentServiceInstanceId"))
-		assertEquals(mex.getVariable("PSI_resourceLink")+"/allotted-resources/allotted-resource/"+ARID, data.get(Prefix, "aaiARPath"))
+		ExecutionEntity mockExecution = setupMock()
+		AAIResourcesClient client = mock(AAIResourcesClient.class)
+		when(mockExecution.getVariable("PSI_resourceLink")).thenReturn(AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE,UriBuilder.fromPath( "/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST).build()))
+		when(mockExecution.getVariable("CSI_resourceLink")).thenReturn("/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST)
+		when(mockExecution.getVariable("allottedResourceModelInfo")).thenReturn("{\n" +
+				"  \"modelInvariantUuid\":\"modelInvariantUuid\",\n" +
+				"  \"modelUuid\" : \"modelUuid\"\n" +
+				"}")
+		DoCreateAllottedResourceBRG doCreateAllottedResourceBRG = spy(DoCreateAllottedResourceBRG.class)
+		when(doCreateAllottedResourceBRG.getAAIClient()).thenReturn(client)
+		doCreateAllottedResourceBRG.createAaiAR(mockExecution)
 	}
 	
 	@Test
@@ -225,7 +215,6 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
 	}
 	
 	@Test
-//	@Ignore
 	public void createAaiAR_MissingPsiLink() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -240,7 +229,6 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
 	}
 	
 	@Test
-//	@Ignore
 	public void createAaiAR_HttpFailed() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -253,7 +241,6 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
 	}
 	
 	@Test
-//	@Ignore
 	public void createAaiAR_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -268,7 +255,6 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
 	}
 	
 	@Test
-//	@Ignore
 	public void createAaiAR_Ex() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -921,7 +907,7 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
 		when(mex.getVariable("allottedResourceId")).thenReturn(ARID)
 		when(mex.getVariable("aai.endpoint")).thenReturn(aaiUriPfx)
 		when(mex.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.global.default.aai.namespace"))
-		when(mex.getVariable("PSI_resourceLink")).thenReturn(aaiUriPfx + "/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST)
+		when(mex.getVariable("PSI_resourceLink")).thenReturn(AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, UriBuilder.fromPath( "/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST).build()))
 		when(mex.getVariable("allottedResourceType")).thenReturn("BRGt")
 		when(mex.getVariable("allottedResourceRole")).thenReturn("BRGr")
 		when(mex.getVariable("CSI_resourceLink")).thenReturn(aaiUriPfx+"/aai/v9/mycsi")
@@ -993,7 +979,7 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
 	
 	private initUpdateAaiAROrchStatus(ExecutionEntity mex) {
 		when(mex.getVariable(DBGFLAG)).thenReturn("true")
-		when(mex.getVariable("aaiARPath")).thenReturn(aaiUriPfx + "/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
+		when(mex.getVariable("aaiARPath")).thenReturn("/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
 	}
 		
 }

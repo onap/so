@@ -1,0 +1,10 @@
+{
+	"volume-group-id":"volumeGroupId",
+	"volume-group-name":"volumeGroupName",	
+	"vnf-type":"vnfType",	
+	"orchestration-status":"PRECREATED",	
+	"cloud-params":{},	
+	"cascaded":false,
+	"heat-stack-id":"heatStackId",
+	"resource-version":"12345"
+}

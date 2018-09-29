@@ -29,13 +29,10 @@ import java.util.Map;
 
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.model.bpmn.Bpmn;
-import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.junit.Before;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.onap.so.bpmn.common.InjectionHelper;
-import org.onap.so.bpmn.common.MockLoggerDelegate;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupMapperLayer;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
@@ -44,7 +41,7 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.test.categories.SpringAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -145,22 +142,6 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
 
 	protected String createURLWithPort(String uri) {
 		return "http://localhost:" + port + uri;
-	}
-	/**
-	 * Create and deploy a process model with one logger delegate as service task.
-	 *
-	 * @param origProcessKey
-	 *            key to call
-	 * @param mockProcessName
-	 *            process name
-	 * @param fileName
-	 *            file name without extension
-	 */
-	protected void mockSubprocess(String origProcessKey, String mockProcessName, String fileName) {
-		BpmnModelInstance modelInstance = Bpmn.createExecutableProcess(origProcessKey).name(mockProcessName)
-				.startEvent().name("Start Point").serviceTask().name("Log Something for Test")
-				.camundaClass(MockLoggerDelegate.class.getName()).endEvent().name("End Point").done();
-		repositoryService.createDeployment().addModelInstance(fileName + ".bpmn", modelInstance).deploy();
 	}
 	
 }

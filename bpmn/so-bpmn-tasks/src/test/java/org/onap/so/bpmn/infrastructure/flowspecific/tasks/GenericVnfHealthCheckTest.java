@@ -20,40 +20,52 @@
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class GenericVnfHealthCheckTest extends BaseTaskTest {
 	
-	@Autowired
-	private GenericVnfHealthCheck genericVnfHealthCheck;
+	@InjectMocks
+	private GenericVnfHealthCheck genericVnfHealthCheck = new GenericVnfHealthCheck();
 	
 	private GenericVnf genericVnf;
 	private RequestContext requestContext;
 	private String msoRequestId;
 
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		genericVnf = setGenericVnf();
 		msoRequestId = UUID.randomUUID().toString();
 		requestContext = setRequestContext();
 		requestContext.setMsoRequestId(msoRequestId);
 		gBBInput.setRequestContext(requestContext);
+		
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));	
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
 	}
 	
 	@Test

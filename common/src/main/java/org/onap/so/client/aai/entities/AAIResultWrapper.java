@@ -26,9 +26,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
+
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.jsonpath.JsonPathUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -39,7 +41,7 @@ public class AAIResultWrapper implements Serializable {
 	private static final long serialVersionUID = 5895841925807816737L;
 	private final String jsonBody;
 	private final ObjectMapper mapper;
-	private final transient Logger logger = Logger.getLogger(AAIResultWrapper.class);
+	private final transient Logger logger = LoggerFactory.getLogger(AAIResultWrapper.class);
 	
 	public AAIResultWrapper(String json) {
 		this.jsonBody = json;

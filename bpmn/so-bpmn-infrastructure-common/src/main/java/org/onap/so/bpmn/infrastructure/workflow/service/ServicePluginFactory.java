@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.workflow.service;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -236,12 +235,7 @@ public class ServicePluginFactory {
 	@SuppressWarnings("unchecked")
 	private List<Object> queryAccessTPbyLocationFromInventoryOSS(String locationAddress) {
 		String url = getInventoryOSSEndPoint();
-		try {
-			url += "/oss/inventory?location=" +  UriUtils.encode(locationAddress,"UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		url += "/oss/inventory?location=" +  UriUtils.encode(locationAddress,"UTF-8");
 		String responseContent = sendRequest(url, "GET", "");
 		List<Object> accessTPs = new ArrayList<Object>();
 		if (null != responseContent) {

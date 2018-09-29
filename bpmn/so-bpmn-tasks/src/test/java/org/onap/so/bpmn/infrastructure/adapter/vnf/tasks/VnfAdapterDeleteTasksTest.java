@@ -21,29 +21,35 @@
 package org.onap.so.bpmn.infrastructure.adapter.vnf.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class VnfAdapterDeleteTasksTest extends BaseTaskTest{
-	@Autowired
-	private VnfAdapterDeleteTasks vnfAdapterDeleteTasks;
+	@InjectMocks
+	private VnfAdapterDeleteTasks vnfAdapterDeleteTasks = new VnfAdapterDeleteTasks();
 
 	private VolumeGroup volumeGroup;
 	private VfModule vfModule;
@@ -69,6 +75,13 @@ public class VnfAdapterDeleteTasksTest extends BaseTaskTest{
 
 		orchestrationContext = setOrchestrationContext();
 		orchestrationContext.setIsRollbackEnabled(true);
+		
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
 	}
 
 	@Test
@@ -80,7 +93,7 @@ public class VnfAdapterDeleteTasksTest extends BaseTaskTest{
 		
 		vnfAdapterDeleteTasks.deleteVfModule(execution);
 		
-		verify(vnfAdapterVfModuleResources, times(1)).deleteVfModuleRequest(requestContext, cloudRegion, serviceInstance, genericVnf, vfModule);
+		verify(vnfAdapterVfModuleResources, times(1)).deleteVfModuleRequest(ArgumentMatchers.eq(requestContext), ArgumentMatchers.eq(cloudRegion), ArgumentMatchers.eq(serviceInstance), ArgumentMatchers.eq(genericVnf),ArgumentMatchers.eq(vfModule));
 		assertEquals(execution.getVariable("VNFREST_Request"), deleteVfModuleRequest.toXmlString());
 	}
 
@@ -88,7 +101,7 @@ public class VnfAdapterDeleteTasksTest extends BaseTaskTest{
 	public void deleteVfModuleExceptionTest() throws Exception {		
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(vnfAdapterVfModuleResources).deleteVfModuleRequest(requestContext, cloudRegion, serviceInstance, genericVnf, vfModule);
+		doThrow(RuntimeException.class).when(vnfAdapterVfModuleResources).deleteVfModuleRequest(requestContext, cloudRegion, serviceInstance, genericVnf, vfModule);
 		
 		vnfAdapterDeleteTasks.deleteVfModule(execution);
 	}
@@ -102,7 +115,7 @@ public class VnfAdapterDeleteTasksTest extends BaseTaskTest{
 		
 		vnfAdapterDeleteTasks.deleteVolumeGroup(execution);
 		
-		verify(vnfAdapterVolumeGroupResources, times(1)).deleteVolumeGroupRequest(requestContext, cloudRegion, serviceInstance, volumeGroup);
+		verify(vnfAdapterVolumeGroupResources, times(1)).deleteVolumeGroupRequest(ArgumentMatchers.eq(requestContext), ArgumentMatchers.eq(cloudRegion), ArgumentMatchers.eq(serviceInstance), ArgumentMatchers.eq(volumeGroup));
 		assertEquals(execution.getVariable("VNFREST_Request"), deleteVolumeGroupRequest.toXmlString());
 	}
 	
@@ -110,7 +123,7 @@ public class VnfAdapterDeleteTasksTest extends BaseTaskTest{
 	public void deleteVolumeGroupExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(vnfAdapterVolumeGroupResources).deleteVolumeGroupRequest(requestContext, cloudRegion, serviceInstance, volumeGroup);
+		doThrow(RuntimeException.class).when(vnfAdapterVolumeGroupResources).deleteVolumeGroupRequest(requestContext, cloudRegion, serviceInstance, volumeGroup);
 	
 		vnfAdapterDeleteTasks.deleteVolumeGroup(execution);
 	}

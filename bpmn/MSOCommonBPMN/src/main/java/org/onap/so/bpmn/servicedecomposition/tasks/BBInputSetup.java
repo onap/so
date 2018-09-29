@@ -336,14 +336,16 @@ public class BBInputSetup implements JavaDelegate {
 
 	protected VnfVfmoduleCvnfcConfigurationCustomization findVnfVfmoduleCvnfcConfigurationCustomization(String vfModuleCustomizationUUID, 
 			String vnfResourceCustomizationUUID, String cvnfcCustomizationUUID, ConfigurationResourceCustomization configurationResourceCustomization) {
-		for(VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization : 
-			configurationResourceCustomization.getConfigurationResource().getVnfVfmoduleCvnfcConfigurationCustomization()) {
-			if(vnfVfmoduleCvnfcConfigurationCustomization.getVfModuleCustomization().getModelCustomizationUUID().equalsIgnoreCase(vfModuleCustomizationUUID)
-					&& vnfVfmoduleCvnfcConfigurationCustomization.getVnfResourceCustomization().getModelCustomizationUUID().equalsIgnoreCase(vnfResourceCustomizationUUID)
-					&& vnfVfmoduleCvnfcConfigurationCustomization.getCvnfcCustomization().getModelCustomizationUUID().equalsIgnoreCase(cvnfcCustomizationUUID)) {
-				return vnfVfmoduleCvnfcConfigurationCustomization;
+
+		if(configurationResourceCustomization.getConfigurationResource() != null)
+			for(VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization : 
+				configurationResourceCustomization.getConfigurationResource().getVnfVfmoduleCvnfcConfigurationCustomization()) {
+				if(vnfVfmoduleCvnfcConfigurationCustomization.getVfModuleCustomization().getModelCustomizationUUID().equalsIgnoreCase(vfModuleCustomizationUUID)
+						&& vnfVfmoduleCvnfcConfigurationCustomization.getVnfResourceCustomization().getModelCustomizationUUID().equalsIgnoreCase(vnfResourceCustomizationUUID)
+						&& vnfVfmoduleCvnfcConfigurationCustomization.getCvnfcCustomization().getModelCustomizationUUID().equalsIgnoreCase(cvnfcCustomizationUUID)) {
+					return vnfVfmoduleCvnfcConfigurationCustomization;
+				}
 			}
-		}
 		return null;
 	}
 

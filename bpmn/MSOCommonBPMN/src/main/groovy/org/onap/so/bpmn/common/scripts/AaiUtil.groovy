@@ -26,6 +26,7 @@ import javax.ws.rs.core.UriBuilder
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.client.aai.AAIVersion
 import org.onap.so.client.aai.entities.uri.AAIUri
@@ -516,10 +517,10 @@ class AaiUtil {
 	 * @return moduleIndex
 	 *
 	 */
-	public int getLowestUnusedVfModuleIndexFromAAIVnfResponse(DelegateExecution execution, String aaiVnfResponse, String key, String value) {
+	public int getLowestUnusedVfModuleIndexFromAAIVnfResponse(DelegateExecution execution, GenericVnf aaiVnfResponse, String key, String value) {
 		if (aaiVnfResponse != null) {
 			String vfModulesText = taskProcessor.utils.getNodeXml(aaiVnfResponse, "vf-modules")
-			if (vfModulesText == null || vfModulesText.isEmpty()) {
+			if (aaiVnfResponse.getVfModules() == null || aaiVnfResponse.getVfModules().getVfModule().isEmpty()) {
 				msoLogger.debug("There are no VF modules in this VNF yet")
 				return 0
 			}
@@ -549,4 +550,3 @@ class AaiUtil {
 		}
 	}
 }
-

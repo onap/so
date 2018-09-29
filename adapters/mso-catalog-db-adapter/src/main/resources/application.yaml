@@ -17,15 +17,11 @@ mso:
 # CatalogDB
 spring:
   datasource:
-    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
+    jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
-    dbcp2: 
-      initial-size: 5
-      max-total: 20 
-      validation-query: select 1
-      test-on-borrow: true 
+    initialization-mode: never
   jpa:
       show-sql: true
       hibernate:
@@ -38,18 +34,23 @@ spring:
       fail-on-empty-beans: false
 flyway:
   baseline-on-migrate: false
-  url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
+  jdbc-url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
   user: ${DB_ADMIN_USERNAME}
   password: ${DB_ADMIN_PASSWORD}
   outOfOrder: true
   validateOnMigrate: false
 
-#Actuator
-management: 
-  context-path: /manage
+management:
+  endpoints:
+    web:
+      base-path: /manage
+  server:
+    servlet:
+      context-path: /manage
   metrics:
     se-global-registry: false
     export:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
-        step: 1m # Step size (i.e. reporting frequency) to use.
+        step: 1m # Step size (i.e. reporting frequency) to use.  
+ 

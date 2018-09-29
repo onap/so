@@ -36,6 +36,7 @@ import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfcCustomization;
+import org.onap.so.db.catalog.exceptions.NoEntityFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -51,7 +52,10 @@ public class VnfVfmoduleCvnfcConfigurationCustomizationRepositoryTest extends Ba
         List<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomizationList = vnfVfmoduleCvnfcConfigurationCustomizationRepository.findAll();
         Assert.assertFalse(CollectionUtils.isEmpty(vnfVfmoduleCvnfcConfigurationCustomizationList));
         
-        VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = vnfVfmoduleCvnfcConfigurationCustomizationRepository.findOne(1);
+        VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = 
+        		vnfVfmoduleCvnfcConfigurationCustomizationRepository.findById(1).orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+
+		
         Assert.assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationFunction().equalsIgnoreCase("testConfigurationFunction"));
     }
     
@@ -112,7 +116,8 @@ public class VnfVfmoduleCvnfcConfigurationCustomizationRepositoryTest extends Ba
     	
     	vnfVfmoduleCvnfcConfigurationCustomizationRepository.save(vnfVfmoduleCvnfcConfigurationCustomization);
     	
-    	VnfVfmoduleCvnfcConfigurationCustomization foundVnfVfmoduleCvnfcConfigurationCustomization = vnfVfmoduleCvnfcConfigurationCustomizationRepository.findOne(1);
+    	VnfVfmoduleCvnfcConfigurationCustomization foundVnfVfmoduleCvnfcConfigurationCustomization = 
+    			vnfVfmoduleCvnfcConfigurationCustomizationRepository.findById(1).orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
        
         
     	if(foundVnfVfmoduleCvnfcConfigurationCustomization == null)
