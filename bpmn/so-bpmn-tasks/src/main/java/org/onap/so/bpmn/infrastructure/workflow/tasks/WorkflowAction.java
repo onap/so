@@ -104,7 +104,7 @@ public class WorkflowAction {
 	private static final String USERPARAMSERVICE = "service";
 	private static final String supportedTypes = "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances";
 	private static final String HOMINGSOLUTION = "Homing_Solution";
-	private static final String FABRIC_CONFIGURATION = "FabricConfiguration";	
+	private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
 	private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
 	
 	@Autowired

@@ -351,7 +351,8 @@ public class VfcManager {
     ValidateUtil.assertObjectNotNull(jobId);
     // Step 1: query the current resource operation status
     ResourceOperationStatus status = new ResourceOperationStatus(nsOperationKey.getServiceId(), nsOperationKey.getOperationId(), nsOperationKey.getNodeTemplateUUID());
-    status = resourceOperationStatusRepository.findOne(Example.of(status));
+    status = resourceOperationStatusRepository.findOne(Example.of(status))
+    		.orElseThrow( () -> new ApplicationException(404,"Cannot Find Operation Status"));
     // Step 2: start query
     LOGGER.info("query ns status -> begin");
     String url = getUrl(jobId, CommonConstant.Step.QUERY);
@@ -438,7 +439,8 @@ public class VfcManager {
         RestfulResponse scaleRsp = restfulUtil.send(url, methodType, scaleReq);
         
         ResourceOperationStatus status = new ResourceOperationStatus(segInput.getNsOperationKey().getServiceId(), segInput.getNsOperationKey().getOperationId(), segInput.getNsOperationKey().getNodeTemplateUUID());
-        ResourceOperationStatus nsOperInfo = resourceOperationStatusRepository.findOne(Example.of(status));
+        ResourceOperationStatus nsOperInfo = resourceOperationStatusRepository.findOne(Example.of(status))
+        		.orElseThrow( () -> new ApplicationException(404,"Cannot Find Operation Status"));
         ValidateUtil.assertObjectNotNull(scaleRsp);
         if(!HttpCode.isSucess(scaleRsp.getStatus())) {
             LOGGER.error("update segment operation status : fail to scale ns");

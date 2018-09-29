@@ -22,29 +22,40 @@ package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Optional;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.adapter.network.NetworkAdapterClientException;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class NetworkAdapterUpdateTasksTest extends BaseTaskTest{
-	@Autowired
-	private NetworkAdapterUpdateTasks networkAdapterUpdateTasks;
+	@InjectMocks
+	private NetworkAdapterUpdateTasks networkAdapterUpdateTasks = new NetworkAdapterUpdateTasks();
 	
 	private ServiceInstance serviceInstance;
 	private L3Network network;
@@ -55,7 +66,7 @@ public class NetworkAdapterUpdateTasksTest extends BaseTaskTest{
 	private Customer customer;
 	
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		customer = setCustomer();
 		serviceInstance = setServiceInstance();
 		network = setL3Network();
@@ -64,7 +75,10 @@ public class NetworkAdapterUpdateTasksTest extends BaseTaskTest{
 		orchestrationContext = setOrchestrationContext();
 		userInput = setUserInput();
 		userInput.put("userInputKey1", "userInputValue1");
-
+		
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(network);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
+		
 	}
 	
 	@Test
@@ -93,9 +107,11 @@ public class NetworkAdapterUpdateTasksTest extends BaseTaskTest{
 	}
 	
 	@Test
-	public void updateNetworkExceptionTest() {
+	public void updateNetworkExceptionTest() throws UnsupportedEncodingException, NetworkAdapterClientException {
 		expectedException.expect(BpmnError.class);
-		
+		doThrow(new NetworkAdapterClientException("ERROR")).when(networkAdapterResources).updateNetwork(any(RequestContext.class),any(CloudRegion.class), 
+				any(OrchestrationContext.class),eq(serviceInstance),eq(network),any(Map.class),any(Customer.class));
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
 		networkAdapterUpdateTasks.updateNetwork(execution);
 	}
 }

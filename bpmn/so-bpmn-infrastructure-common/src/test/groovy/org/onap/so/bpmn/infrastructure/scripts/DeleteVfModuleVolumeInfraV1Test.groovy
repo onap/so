@@ -21,19 +21,49 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import org.mockito.Spy
 import org.mockito.runners.MockitoJUnitRunner
+import org.onap.aai.domain.yang.VolumeGroup
+import org.onap.so.bpmn.common.scripts.DeleteAAIVfModule
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException
 
+import javax.ws.rs.NotFoundException
+
+import static org.mockito.Matchers.eq
+import static org.mockito.Mockito.doNothing
+import static org.mockito.Mockito.doThrow
+import static org.mockito.Mockito.times
 import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
 
-@RunWith(MockitoJUnitRunner.class)
 class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
+
+	@Spy
+	DeleteVfModuleVolumeInfraV1 deleteVfModuleVolumeInfraV1 ;
+
+	@Captor
+	static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+
+	@Before
+	void init() throws IOException {
+		super.init("DeleteVfModuleVolumeInfraV1")
+		MockitoAnnotations.initMocks(this);
+		when(deleteVfModuleVolumeInfraV1.getAAIClient()).thenReturn(client)
+	}
 
 	def deleteVnfAdapterRequestXml = """<deleteVolumeGroupRequest>
    <cloudSiteId>RDM2WAGPLCP</cloudSiteId>
@@ -90,13 +120,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
    </aetgt:WorkflowException>
 </aetgt:FalloutHandlerRequest>"""
 	
-	@Before
-	public void init()
-	{
-		MockitoAnnotations.initMocks(this)
-	}
-	
-	
+
 	@Test
 	public void testPrepareVnfAdapterDeleteRequest() {
 		
@@ -164,4 +188,110 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 		verify(mockExecution).setVariable("DELVfModVol_Success", false)
 		verify(mockExecution).setVariable("DELVfModVol_FalloutHandlerRequest", falloutHandlerRequestXml)
 	}
+
+	@Test
+    void testQueryAAIForVolumeGroup(){
+        when(mockExecution.getVariable("DELVfModVol_volumeGroupId")).thenReturn("volumeGroupId1")
+        when(mockExecution.getVariable("DELVfModVol_aicCloudRegion")).thenReturn("region1")
+        AAIResultWrapper wrapper = mockVolumeGroupWrapper("region1", "volumeGroupId1", "__files/AAI/VolumeGroupWithTenant.json")
+        Optional<VolumeGroup> volumeGroupOp = wrapper.asBean(VolumeGroup.class)
+        deleteVfModuleVolumeInfraV1.queryAAIForVolumeGroup(mockExecution, true)
+        verify(mockExecution).setVariable("DELVfModVol_volumeGroupTenantId", "Tenant123")
+    }
+
+    @Test
+    void testQueryAAIForVolumeGroupWithVfModule(){
+        when(mockExecution.getVariable("DELVfModVol_volumeGroupId")).thenReturn("volumeGroupId1")
+        when(mockExecution.getVariable("DELVfModVol_aicCloudRegion")).thenReturn("region1")
+        AAIResultWrapper wrapper = mockVolumeGroupWrapper("region1", "volumeGroupId1", "__files/AAI/VolumeGroupWithVfModule.json")
+        try {
+            deleteVfModuleVolumeInfraV1.queryAAIForVolumeGroup(mockExecution, true)
+        } catch (Exception ex) {
+            println " Test End - Handle catch-throw BpmnError()! "
+        }
+        Mockito.verify(mockExecution, times(3)).setVariable(captor.capture(), captor.capture())
+        WorkflowException workflowException = captor.getValue()
+        Assert.assertEquals(2500, workflowException.getErrorCode())
+        Assert.assertEquals("Volume Group volumeGroupId1 currently in use - found vf-module relationship.", workflowException.getErrorMessage())
+    }
+
+    @Test
+    void testQueryAAIForVolumeGroupNoTenant(){
+        when(mockExecution.getVariable("DELVfModVol_volumeGroupId")).thenReturn("volumeGroupId1")
+        when(mockExecution.getVariable("DELVfModVol_aicCloudRegion")).thenReturn("region1")
+        AAIResultWrapper wrapper = mockVolumeGroupWrapper("region1", "volumeGroupId1", "__files/AAI/VolumeGroup.json")
+        try {
+            deleteVfModuleVolumeInfraV1.queryAAIForVolumeGroup(mockExecution, true)
+        } catch (Exception ex) {
+            println " Test End - Handle catch-throw BpmnError()! "
+        }
+        Mockito.verify(mockExecution, times(3)).setVariable(captor.capture(), captor.capture())
+        WorkflowException workflowException = captor.getValue()
+        Assert.assertEquals(2500, workflowException.getErrorCode())
+        Assert.assertEquals( "Could not find Tenant Id element in Volume Group with Volume Group Id volumeGroupId1", workflowException.getErrorMessage())
+    }
+
+    @Test
+    void testQueryAAIForVolumeGroupNoId(){
+        when(mockExecution.getVariable("DELVfModVol_aicCloudRegion")).thenReturn("region1")
+        try {
+            deleteVfModuleVolumeInfraV1.queryAAIForVolumeGroup(mockExecution, true)
+        } catch (Exception ex) {
+            println " Test End - Handle catch-throw BpmnError()! "
+        }
+        Mockito.verify(mockExecution, times(1)).setVariable(captor.capture(), captor.capture())
+        WorkflowException workflowException = captor.getValue()
+        Assert.assertEquals(2500, workflowException.getErrorCode())
+        Assert.assertEquals("volume-group-id is not provided in the request", workflowException.getErrorMessage())
+    }
+
+    @Test
+    void testDeleteVolGrpId(){
+        VolumeGroup volumeGroup = new VolumeGroup()
+        volumeGroup.setVolumeGroupId("volumeGroupId1")
+        when(mockExecution.getVariable("DELVfModVol_queryAAIVolGrpResponse")).thenReturn(volumeGroup)
+        when(mockExecution.getVariable("DELVfModVol_aicCloudRegion")).thenReturn("region1")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, "region1","volumeGroupId1")
+        doNothing().when(client).delete(resourceUri)
+        deleteVfModuleVolumeInfraV1.deleteVolGrpId(mockExecution, true)
+        verify(client).delete(resourceUri)
+    }
+
+    @Test
+    void testDeleteVolGrpIdNotFound(){
+        VolumeGroup volumeGroup = new VolumeGroup()
+        volumeGroup.setVolumeGroupId("volumeGroupId1")
+        when(mockExecution.getVariable("DELVfModVol_queryAAIVolGrpResponse")).thenReturn(volumeGroup)
+        when(mockExecution.getVariable("DELVfModVol_aicCloudRegion")).thenReturn("region1")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, "region1","volumeGroupId1")
+        doThrow(new NotFoundException("Not Found")).when(client).delete(resourceUri)
+        try {
+            deleteVfModuleVolumeInfraV1.deleteVolGrpId(mockExecution, true)
+        } catch (Exception ex) {
+            println " Test End - Handle catch-throw BpmnError()! "
+        }
+        Mockito.verify(mockExecution, times(1)).setVariable(captor.capture(), captor.capture())
+        WorkflowException workflowException = captor.getValue()
+        Assert.assertEquals(2500, workflowException.getErrorCode())
+        Assert.assertEquals("Volume group volumeGroupId1 not found for delete in AAI Response code: 404", workflowException.getErrorMessage())
+    }
+
+    @Test
+    void testDeleteVolGrpIdError(){
+        VolumeGroup volumeGroup = new VolumeGroup()
+        volumeGroup.setVolumeGroupId("volumeGroupId1")
+        when(mockExecution.getVariable("DELVfModVol_queryAAIVolGrpResponse")).thenReturn(volumeGroup)
+        when(mockExecution.getVariable("DELVfModVol_aicCloudRegion")).thenReturn("region1")
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,CLOUD_OWNER, "region1","volumeGroupId1")
+        doThrow(new GraphInventoryUriComputationException("Error")).when(client).delete(resourceUri)
+        try {
+            deleteVfModuleVolumeInfraV1.deleteVolGrpId(mockExecution, true)
+        } catch (Exception ex) {
+            println " Test End - Handle catch-throw BpmnError()! "
+        }
+        Mockito.verify(mockExecution, times(1)).setVariable(captor.capture(), captor.capture())
+        WorkflowException workflowException = captor.getValue()
+        Assert.assertEquals(5000, workflowException.getErrorCode())
+        Assert.assertEquals("Received error from A&AI ()", workflowException.getErrorMessage())
+    }
 }

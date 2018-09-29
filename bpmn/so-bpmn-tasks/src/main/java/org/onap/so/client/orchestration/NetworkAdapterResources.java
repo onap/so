@@ -47,7 +47,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NetworkAdapterResources {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, NetworkAdapterResources.class);
 	
 	@Autowired
 	private NetworkAdapterClientImpl networkAdapterClient;

@@ -7,7 +7,7 @@ org:
         default_keystone_url_version: /v2.0
         default_keystone_reg_ex: "/[vV][0-9]"
         vnf:
-          bpelauth: d95a1aa9bd4d39f3ec23cb5ed2358f5f75fa14bc8c978664355661c0858d2505
+          bpelauth: 1DDAD7A55A230BB446AA2125053EFB46455F43E48B60155E1C53236E175DFC722A6BE120F6DB390C60034C7564AEB653EA
           checkRequiredParameters: true
           addGetFilesOnVolumeReq: false
           sockettimeout: 30
@@ -16,12 +16,13 @@ org:
           retryinterval: -15
           retrylist: 408,429,500,502,503,504,900
         network:
-          bpelauth: d95a1aa9bd4d39f3ec23cb5ed2358f5f75fa14bc8c978664355661c0858d2505
+          bpelauth: 1DDAD7A55A230BB446AA2125053EFB46455F43E48B60155E1C53236E175DFC722A6BE120F6DB390C60034C7564AEB653EA
           sockettimeout: 5
           connecttimeout: 5
           retrycount: 5
           retryinterval: -15
           retrylist: 408,429,500,502,503,504,900
+          encryptionKey: aa3871669d893c7fb8abbcda31b88b4f
         tenant: 
           default_x_aic_orm_client_string: ECOMP-MSO
           default_keystone_url_version: /v2.0
@@ -66,7 +67,7 @@ mso:
 # H2
 spring:
   datasource:
-    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;
+    jdbc-url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;
     username: sa
     password: sa
     driver-class-name: org.h2.Driver
@@ -110,9 +111,6 @@ spring:
       password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
       role: ACTUATOR
 
-#Actuator
-management: 
-  context-path: /manage
 
 flyway:
   outOfOrder: true

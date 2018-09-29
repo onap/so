@@ -30,9 +30,7 @@ import org.onap.so.logger.MsoLogger;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NetworkBBUtils {
-
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, NetworkBBUtils.class);
+public class NetworkBBUtils {	
 	
 	private static final String CLOUD_REGION_VER25 = "2.5"; 
 	private static final String CLOUD_REGION_AAIAIC25 = "AAIAIC25";

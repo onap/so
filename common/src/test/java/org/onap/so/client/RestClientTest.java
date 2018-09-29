@@ -20,7 +20,8 @@
 
 package org.onap.so.client;
 
-import static org.mockito.Matchers.any;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -39,8 +40,9 @@ import javax.ws.rs.core.UriBuilderException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.ArgumentMatchers;
 import org.onap.so.utils.TargetEntity;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestClientTest {
@@ -55,7 +57,7 @@ public class RestClientTest {
 		RestClient spy = buildSpy();
 		RestRequest mockCallable = mock(RestRequest.class);
 		when(mockCallable.call()).thenThrow(new WebApplicationException(new SocketTimeoutException()));
-		doReturn(mockCallable).when(spy).buildRequest(any(String.class), any(Object.class));
+		doReturn(mockCallable).when(spy).buildRequest(any(String.class), ArgumentMatchers.isNull());
 		try {
 			spy.get();
 		} catch (Exception e) {
@@ -70,7 +72,7 @@ public class RestClientTest {
 		RestClient spy = buildSpy();
 		RestRequest mockCallable = mock(RestRequest.class);
 		when(mockCallable.call()).thenThrow(new WebApplicationException(new NotFoundException()));
-		doReturn(mockCallable).when(spy).buildRequest(any(String.class), any(Object.class));
+		doReturn(mockCallable).when(spy).buildRequest(any(String.class), ArgumentMatchers.isNull());
 		try {
 			spy.get();
 		} catch (Exception e) {

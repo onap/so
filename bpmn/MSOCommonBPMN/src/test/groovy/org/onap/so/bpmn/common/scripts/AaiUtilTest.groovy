@@ -44,8 +44,6 @@ import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
 import org.camunda.bpm.engine.repository.ProcessDefinition
 
-@RunWith(MockitoJUnitRunner.class)
-@Ignore
 class AaiUtilTest extends MsoGroovyTest {
 
 
@@ -53,7 +51,7 @@ class AaiUtilTest extends MsoGroovyTest {
 	public WireMockRule wireMockRule = new WireMockRule(8090);
 
 	@Rule
-	public ExpectedException thrown = ExpectedException.none
+	public ExpectedException thrown = ExpectedException.none()
 
 
 	def aaiPaylod = "<allotted-resource xmlns=\"http://org.openecomp.aai.inventory/v9\">\n" +
@@ -128,6 +126,7 @@ class AaiUtilTest extends MsoGroovyTest {
 	}
 
 	@Test
+	@Ignore
 	public void testExecuteAAIGetCall() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
@@ -140,6 +139,7 @@ class AaiUtilTest extends MsoGroovyTest {
 
 
 	@Test
+	@Ignore
 	public void testExecuteAAIPutCall() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')

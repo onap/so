@@ -24,6 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.db.catalog.BaseTest;
 import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.exceptions.NoEntityFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -43,7 +44,9 @@ public class CloudSiteRepositoryTest extends BaseTest {
 
     @Test
     public void findOneTest() throws Exception {
-        CloudSite cloudSite = cloudSiteRepository.findOne("mtn13");
+        CloudSite cloudSite = cloudSiteRepository.findById("mtn13").
+        		orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+        
         Assert.assertNotNull(cloudSite);
         Assert.assertEquals("mtn13",cloudSite.getId());
     }

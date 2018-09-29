@@ -20,28 +20,33 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 
 public class NetworkAdapterCreateTasksTest extends BaseTaskTest{
-	@Autowired
-	private NetworkAdapterCreateTasks networkAdapterCreateTasks;
+	@InjectMocks
+	private NetworkAdapterCreateTasks networkAdapterCreateTasks = new NetworkAdapterCreateTasks();
 
 	private ServiceInstance serviceInstance;
 	private RequestContext requestContext;
@@ -52,7 +57,7 @@ public class NetworkAdapterCreateTasksTest extends BaseTaskTest{
 	private Customer customer;
 
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		customer = setCustomer();
 		serviceInstance = setServiceInstance();
 		l3Network = setL3Network();
@@ -62,6 +67,11 @@ public class NetworkAdapterCreateTasksTest extends BaseTaskTest{
 		cloudRegion = setCloudRegion();
 		orchestrationContext = setOrchestrationContext();
 		orchestrationContext.setIsRollbackEnabled(true);
+		
+
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(l3Network);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
+		
 	}
 	
 	@Test

@@ -4,17 +4,21 @@ server:
     port: 8080
     tomcat:
         max-threads: 50
-
+ssl-enable: false
 mso:
-  site-name: unknown
-  logPath: ./logs/reqdb/
+  adapters:
+    requestDb:
+      auth: Basic YnBlbDptc28tZGItMTUwNyE=
+      endpoint: http://localhost:8081
+  logPath: .logs/reqdb
+  site-name: unkwon
   infra-requests:
     archived:
       period: 180
 # H2
 spring:
   datasource:
-    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+    jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
@@ -30,15 +34,29 @@ spring:
         ddl-auto: validate
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         enable-lazy-load-no-trans: true
+  security:
+    usercredentials:
+    -
+      username: bpel
+      password: '$2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO'
+      role: BPEL-Client
+    -  
+      username: mso_admin
+      password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
+      role: ACTUATOR
 flyway:
   baseline-on-migrate: false
-  url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+  jdbc-url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
   user: ${DB_ADMIN_USERNAME}
   password: ${DB_ADMIN_PASSWORD}
 
-#Actuator
-management: 
-  context-path: /manage
+management:
+  endpoints:
+    web:
+      base-path: /manage
+  server:
+    servlet:
+      context-path: /manage
   metrics:
     se-global-registry: false
     export:

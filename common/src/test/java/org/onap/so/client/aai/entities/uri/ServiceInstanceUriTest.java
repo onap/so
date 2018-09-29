@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -181,10 +181,6 @@ public class ServiceInstanceUriTest {
 		ServiceInstanceUri spy = spy(instance);
 		AAIResourcesClient client = createClient();
 		doReturn(client).when(spy).getResourcesClient();
-		/*AAIResultWrapper wrapper = mock(AAIResultWrapper.class);
-		when(client.get(Matchers.<AAIResourceUri>any(AAIResourceUri.class), Matchers.<Class<NotFoundException>>any())).thenReturn(wrapper);
-		when(wrapper.getJson()).thenReturn("{\"results\":[]}");
-		doReturn(client).when(spy).getResourcesClient();*/
 		stubFor(get(urlPathMatching("/aai/v[0-9]+/nodes/service-instances/service-instance/key3")) 
 				.willReturn(aResponse() 
 					.withStatus(404) 

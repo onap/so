@@ -20,7 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.aai;
 
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -77,7 +77,7 @@ public class AAIDeleteServiceInstanceTest  {
 		
 		doReturn("testProcessKey").when(execution).getVariable("testProcessKey");
 		doReturn("serviceInstanceId").when(execution).getVariable("serviceInstanceId");
-		doThrow(Exception.class).when(aaiResourcesClient).delete(isA(AAIResourceUri.class));
+		doThrow(RuntimeException.class).when(aaiResourcesClient).delete(isA(AAIResourceUri.class));
 		
 		aaiDeleteServiceInstance.execute(execution);
 	}

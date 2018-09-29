@@ -7,7 +7,7 @@ org:
         default_keystone_url_version: /v2.0
         default_keystone_reg_ex: "/[vV][0-9]"
         vnf:
-          bpelauth: 481E6A95CE97E393A53363750D5E1E75
+          bpelauth: 4771D91C24BB25366730561D630B131818CD9FF8D686AA8807F4CB30E1324C46ED16197C07
           checkRequiredParameters: true
           addGetFilesOnVolumeReq: false
           sockettimeout: 30
@@ -16,7 +16,7 @@ org:
           retryinterval: -15
           retrylist: 408,429,500,502,503,504,900
         network:
-          bpelauth: 481E6A95CE97E393A53363750D5E1E75
+          bpelauth: 4771D91C24BB25366730561D630B131818CD9FF8D686AA8807F4CB30E1324C46ED16197C07
           sockettimeout: 5
           connecttimeout: 5
           retrycount: 5
@@ -81,12 +81,11 @@ mso:
     queue-capacity: 500
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3307/catalogdb
+    jdbc-url: jdbc:mariadb://localhost:3307/catalogdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver    
-    initialize: true
-    initialization-mode: never
+    initialization-mode: always
   jpa:   
     generate-ddl: false
     show-sql: false
@@ -95,6 +94,10 @@ spring:
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  flyway:
+    baseline-on-migrate: true
+    out-of-order: true
+    ignore-missing-migrations: true
   security:
     usercredentials:
     -  
@@ -115,8 +118,3 @@ management:
   endpoint:
     info:
       enabled: true
-
-flyway:
-  baseline-on-migrate: true
-  outOfOrder: true
-  ignoreMissingMigrations: true

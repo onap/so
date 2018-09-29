@@ -617,7 +617,7 @@ class DoCreateAllottedResourceBRGRollbackTest extends GroovyTestBase {
 	
 	private initUpdateAaiAROrchStatus(ExecutionEntity mex) {
 		when(mex.getVariable(DBGFLAG)).thenReturn("true")
-		when(mex.getVariable("aaiARPath")).thenReturn(aaiUriPfx + "/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
+		when(mex.getVariable("aaiARPath")).thenReturn("/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
 		when(mex.getVariable("aai.endpoint")).thenReturn(aaiUriPfx)
 	}
 	
@@ -634,7 +634,7 @@ class DoCreateAllottedResourceBRGRollbackTest extends GroovyTestBase {
 	private initDeleteAaiAR(ExecutionEntity mex) {
 		when(mex.getVariable(DBGFLAG)).thenReturn("true")
 		when(mex.getVariable("aaiARResourceVersion")).thenReturn(VERS)
-		when(mex.getVariable("aaiARPath")).thenReturn(aaiUriPfx + "/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
+		when(mex.getVariable("aaiARPath")).thenReturn("/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
 		when(mex.getVariable("aai.endpoint")).thenReturn(aaiUriPfx)
 	}
 	

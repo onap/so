@@ -21,15 +21,15 @@
 package org.onap.so.utils;
 
 
-
-import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
+import java.util.Arrays;
 
 
 /**
@@ -40,8 +40,12 @@ public final class CryptoUtils {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, CryptoUtils.class);
 
-    public static final String AES = "AES";
+    private static final String AES = "AES";
     private static final String CLOUD_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
+    private static final int GCM_TAG_LENGTH = 16;
+    private static final int GCM_IV_LENGTH = 12;
+    private static final String AES_GCM_NO_PADDING = "AES/GCM/NoPadding";
+
     /**
      * encrypt a value and generate a keyfile
      * if the keyfile is not found then a new one is created
@@ -50,10 +54,16 @@ public final class CryptoUtils {
      */
     public static String encrypt (String value, String keyString) throws GeneralSecurityException {
         SecretKeySpec sks = getSecretKeySpec (keyString);
-        Cipher cipher = Cipher.getInstance (CryptoUtils.AES);
-        cipher.init (Cipher.ENCRYPT_MODE, sks, cipher.getParameters ());
-        byte[] encrypted = cipher.doFinal (value.getBytes ());
-        return byteArrayToHexString (encrypted);
+        Cipher cipher = Cipher.getInstance(AES_GCM_NO_PADDING);
+        byte[] initVector = new byte[GCM_IV_LENGTH];
+        (new SecureRandom()).nextBytes(initVector);
+        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
+        cipher.init(Cipher.ENCRYPT_MODE, sks, spec);
+        byte[] encoded = value.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        byte[] cipherText = new byte[initVector.length + cipher.getOutputSize(encoded.length)];
+        System.arraycopy(initVector, 0, cipherText, 0, initVector.length);
+        cipher.doFinal(encoded, 0, encoded.length, cipherText, initVector.length);
+        return byteArrayToHexString(cipherText);
     }
 
     /**
@@ -63,29 +73,18 @@ public final class CryptoUtils {
      */
     public static String decrypt (String message, String keyString) throws GeneralSecurityException {
         SecretKeySpec sks = getSecretKeySpec (keyString);
-        Cipher cipher = Cipher.getInstance (CryptoUtils.AES);
-        cipher.init (Cipher.DECRYPT_MODE, sks);
-        byte[] decrypted = cipher.doFinal (hexStringToByteArray (message));
-        return new String (decrypted);
+        byte[] cipherText = hexStringToByteArray(message);
+        Cipher cipher = Cipher.getInstance(AES_GCM_NO_PADDING);
+        byte[] initVector = Arrays.copyOfRange(cipherText, 0, GCM_IV_LENGTH);
+        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
+        cipher.init(Cipher.DECRYPT_MODE, sks, spec);
+        byte[] plaintext = cipher.doFinal(cipherText, GCM_IV_LENGTH, cipherText.length - GCM_IV_LENGTH);
+        return new String(plaintext);
     }
-
-    /**
-     * decrypt a value or return defaultValue
-     * 
-     */
-    public static String decryptProperty (String prop, String defaultValue, String encryptionKey) {
-		 try {
-			 return CryptoUtils.decrypt(prop, encryptionKey);			
-		 }	
-		 catch (GeneralSecurityException e) {
-			 LOGGER.debug("Security exception", e);
-		 }
-		 return defaultValue;
-	}
     
     public static String encryptCloudConfigPassword(String message) {
     	try {
-	    	return CryptoUtils.encrypt(message, CryptoUtils.CLOUD_KEY);
+	    	return CryptoUtils.encrypt(message, CLOUD_KEY);
 	    } catch (GeneralSecurityException e) {
 	        LOGGER.error (MessageEnum.RA_GENERAL_EXCEPTION, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in encryptPassword", e);
 	        return null;
@@ -93,16 +92,15 @@ public final class CryptoUtils {
     }
     public static String decryptCloudConfigPassword(String message) {
     	try {
-	    	return CryptoUtils.decrypt(message, CryptoUtils.CLOUD_KEY);
+	    	return CryptoUtils.decrypt(message, CLOUD_KEY);
 	    } catch (GeneralSecurityException e) {
 	        LOGGER.error (MessageEnum.RA_GENERAL_EXCEPTION, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in encryptPassword", e);
 	        return null;
 	    }
     }
-    private static SecretKeySpec getSecretKeySpec (String keyString) throws NoSuchAlgorithmException {
+    private static SecretKeySpec getSecretKeySpec (String keyString) {
         byte[] key = hexStringToByteArray (keyString);
-        SecretKeySpec sks = new SecretKeySpec (key, CryptoUtils.AES);
-        return sks;
+        return new SecretKeySpec (key, AES);
     }
 
     public static String byteArrayToHexString (byte[] b) {

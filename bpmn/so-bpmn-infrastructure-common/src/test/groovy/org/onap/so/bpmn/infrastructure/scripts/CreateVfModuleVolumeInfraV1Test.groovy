@@ -20,22 +20,33 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
+import org.onap.aai.domain.yang.ResultData
+import org.onap.aai.domain.yang.SearchResults
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 
 import static org.junit.Assert.assertEquals
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
 class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+	
 	def jsonRequest = """
 {
 	"requestDetails": {
@@ -154,6 +165,7 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
     @Before
 	public void init()
 	{
+		super.init("CreateVfModuleVolumeInfraV1")
 		MockitoAnnotations.initMocks(this)
 	}
 	
@@ -162,8 +174,6 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 	@Ignore
 	public void testPreProcessRequest() {
 		
-		ExecutionEntity mockExecution = setupMock('CreateVfModuleVolumeInfraV1')
-
 		when(mockExecution.getVariable("prefix")).thenReturn('CVMVINFRAV1_')
 		when(mockExecution.getVariable("bpmnRequest")).thenReturn(jsonRequest)
 		when(mockExecution.getVariable("serviceInstanceId")).thenReturn('')
@@ -191,7 +201,6 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 	@Test
 	public void testPostProcessResponse() {
 		
-		ExecutionEntity mockExecution = setupMock('CreateVfModuleVolumeInfraV1')
 		when(mockExecution.getVariable("dbReturnCode")).thenReturn('000')
 		when(mockExecution.getVariable("CVMVINFRAV1_createDBResponse")).thenReturn('')
 		when(mockExecution.getVariable("mso-request-id")).thenReturn('1234')
@@ -203,6 +212,23 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 		verify(mockExecution).setVariable('CVMVINFRAV1_Success', true)
 		verify(mockExecution).setVariable('CVMVINFRAV1_CompleteMsoProcessRequest', completeMsoRequestXml)
 	}
-	
 
+	@Test
+	public void testcallRESTQueryAAIServiceInstance() {
+		CreateVfModuleVolumeInfraV1 createVfModuleVolumeInfraV1 = spy(CreateVfModuleVolumeInfraV1.class)
+		when(createVfModuleVolumeInfraV1.getAAIClient()).thenReturn(client)
+		AAIResultWrapper resultWrapper = new AAIResultWrapper(SEARCH_RESULT_AAI_WITH_RESULTDATA)
+		when(client.get(isA(AAIResourceUri.class))).thenReturn(resultWrapper)
+		createVfModuleVolumeInfraV1.callRESTQueryAAIServiceInstance(mockExecution,true)
+	}
+
+	@Test
+	public void testcallRESTQueryAAIServiceInstance_NoData() {
+		CreateVfModuleVolumeInfraV1 createVfModuleVolumeInfraV1 = spy(CreateVfModuleVolumeInfraV1.class)
+		when(createVfModuleVolumeInfraV1.getAAIClient()).thenReturn(client)
+		AAIResultWrapper resultWrapper = new AAIResultWrapper("{}")
+		when(client.get(isA(AAIResourceUri.class))).thenReturn(resultWrapper)
+		thrown.expect(BpmnError.class)
+		createVfModuleVolumeInfraV1.callRESTQueryAAIServiceInstance(mockExecution,true)
+	}
 }

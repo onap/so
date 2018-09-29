@@ -18,27 +18,21 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.vcpe.scripts;
+package org.onap.so.bpmn.vcpe.scripts
 
-import org.onap.so.bpmn.common.scripts.*;
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.common.scripts.AaiUtil
-import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.rest.APIResponse
-
-import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.apache.commons.lang3.*
-import org.springframework.web.util.UriUtils;
-import static org.apache.commons.lang3.StringUtils.*
-import org.onap.so.bpmn.core.UrnPropertiesReader;
-
+import org.onap.so.bpmn.common.scripts.AllottedResourceUtils
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.MsoUtils
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+
+import static org.apache.commons.lang3.StringUtils.isBlank
 
 /**
  * This groovy class supports the <class>DoDeleteAllottedResourceBRG.bpmn</class> process.
@@ -116,19 +110,17 @@ public class DoDeleteAllottedResourceBRG extends AbstractServiceTaskProcessor{
 
 		String allottedResourceId = execution.getVariable("allottedResourceId")
 
-		AllottedResourceUtils arUtils = new AllottedResourceUtils(this)
-		String ar = arUtils.getARbyId(execution, allottedResourceId)
+		AllottedResourceUtils arUtils = getAllottedResourceUtils()
+		boolean ifExistsAR = arUtils.ifExistsAR(execution, allottedResourceId)
 
 		String errorMsg = ""
-		if (isBlank(ar)) // AR was !found
-		{
-			errorMsg = "Allotted resource not found in AAI with AllottedResourceId:" + allottedResourceId
-		}
-		else
-		{
+		if (ifExistsAR){
 			String aaiARPath = execution.getVariable("aaiARPath")
 			String parentServiceInstanceId = arUtils.getPSIFmARLink(execution, aaiARPath)
 			execution.setVariable("parentServiceInstanceId", parentServiceInstanceId)
+		}
+		else{
+			errorMsg = "Allotted resource not found in AAI with AllottedResourceId:" + allottedResourceId
 		}
 		if (!isBlank(errorMsg)) {
 			msoLogger.debug(errorMsg)
@@ -349,13 +341,8 @@ public class DoDeleteAllottedResourceBRG extends AbstractServiceTaskProcessor{
 		
 		try{	
 			AllottedResourceUtils arUtils = new AllottedResourceUtils(this)
-			String ar = null //need to get resource-version again 
 			String arLink = execution.getVariable("aaiARPath")
-			if (!isBlank(arLink))
-			{
-				ar = arUtils.getARbyLink(execution, arLink, "")
-			}
-			arUtils.deleteAR(execution, arLink + '?resource-version=' + UriUtils.encode(execution.getVariable("aaiARResourceVersion"),"UTF-8"))
+			arUtils.deleteAR(execution, arLink)
 		} catch (BpmnError e) {
 			throw e;
 		}catch(Exception ex){
@@ -363,6 +350,10 @@ public class DoDeleteAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during SDNC GET Method:\n" + ex.getMessage())
 		}
 		msoLogger.trace("end deleteAaiAR")
+	}
+
+	public AllottedResourceUtils getAllottedResourceUtils(){
+		return new AllottedResourceUtils(this)
 	}
 
 }

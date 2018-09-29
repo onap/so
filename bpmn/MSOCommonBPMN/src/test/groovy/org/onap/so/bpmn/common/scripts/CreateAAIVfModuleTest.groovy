@@ -2,16 +2,17 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Copyright (C) 2018 Nokia.
  * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,43 +23,160 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import joptsimple.internal.Strings
-import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake
-import org.junit.Before
-import org.junit.Test
-import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.springframework.core.env.Environment
-
 import static org.assertj.core.api.Assertions.assertThat
+import static org.mockito.ArgumentMatchers.any
+import static org.mockito.ArgumentMatchers.anyObject
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 
-class CreateAAIVfModuleTest {
+import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake
+import org.junit.Before
+import org.junit.Test
+import org.mockito.Mockito
+import org.mockito.MockitoAnnotations
+import org.mockito.Spy
+import org.onap.aai.domain.yang.GenericVnf
+import org.onap.aai.domain.yang.VfModule
+import org.onap.aai.domain.yang.VfModules
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.springframework.core.env.Environment
 
-    private static final String VNF_ID = "vnfIdTest"
-    private static final String VNF_TYPE = "vnfTypeTest"
-    private static final String VNF_NAME = "testVnf"
-    private static final String SERVICE_ID = "123"
-    private static final String PERSONAL_MODEL_ID = "modelTest"
-    private static final String PERSONAL_MODEL_VERSION = "12"
-    private static final String MODEL_CUST_ID = "modelCustIdTest"
-    private static final String VNF_PERSONAL_MODEL_ID = "perModIdTest"
-    private static final String VNF_PERSONAL_MODEL_VER = "14"
-    private static final String VF_MODULE_NAME = "modTestName"
-    private static final String VF_MODULE_MODEL_NAME = "modModelNameTest"
-    private static final String DEFAULT_AAI_VERSION = "9"
-    private static final String DEFAULT_AAI_NAMESPACE = "defaultTestNamespace"
+class CreateAAIVfModuleTest extends MsoGroovyTest{
 
-    private CreateAAIVfModule testedObject
-    private DelegateExecutionFake executionFake
+	private static final String VNF_ID = "vnfIdTest"
+	private static final String VNF_TYPE = "vnfTypeTest"
+	private static final String VNF_NAME = "testVnf"
+	private static final String SERVICE_ID = "123"
+	private static final String PERSONAL_MODEL_ID = "modelTest"
+	private static final String PERSONAL_MODEL_VERSION = "12"
+	private static final String MODEL_CUST_ID = "modelCustIdTest"
+	private static final String VNF_PERSONAL_MODEL_ID = "perModIdTest"
+	private static final String VNF_PERSONAL_MODEL_VER = "14"
+	private static final String VF_MODULE_NAME = "modTestName"
+	private static final String VF_MODULE_MODEL_NAME = "modModelNameTest"
+	private static final String DEFAULT_AAI_VERSION = "9"
+	private static final String DEFAULT_AAI_NAMESPACE = "defaultTestNamespace"
+	
+    @Spy
+    CreateAAIVfModule createAAIVfModule ;
 
+	private DelegateExecutionFake executionFake;
+	
     @Before
-    void setupTest() {
-        testedObject = new CreateAAIVfModule()
+    public void init() throws IOException {
+        super.init("CreateAAIVfModule")
+        MockitoAnnotations.initMocks(this);
         executionFake = new DelegateExecutionFake()
+        when(createAAIVfModule.getAAIClient()).thenReturn(client)
     }
 
     @Test
+    void testQueryAAIForGenericVnf(){
+        when(mockExecution.getVariable("CAAIVfMod_vnfId")).thenReturn("vnfId1")
+        when(mockExecution.getVariable("CAAIVfMod_vnfName")).thenReturn("vnfName")
+        Optional<GenericVnf> expectedResponse = mockAAIGenericVnf("vnfId1")
+        createAAIVfModule.queryAAIForGenericVnf(mockExecution)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_queryGenericVnfResponseCode", 200)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_queryGenericVnfResponse", expectedResponse.get())
+    }
+
+    @Test
+    void testQueryAAIForGenericVnfNotFound(){
+        when(mockExecution.getVariable("CAAIVfMod_vnfId")).thenReturn("vnfIdNotFound")
+        when(mockExecution.getVariable("CAAIVfMod_vnfName")).thenReturn("vnfName")
+        mockAAIGenericVnfNotFound("vnfIdNotFound")
+        createAAIVfModule.queryAAIForGenericVnf(mockExecution)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_queryGenericVnfResponseCode", 404)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_queryGenericVnfResponse", "Generic Vnf not Found!")
+    }
+
+
+    @Test
+    void testCreateGenericVnf(){
+        when(mockExecution.getVariable("CAAIVfMod_vnfName")).thenReturn("vnfName")
+        Mockito.doNothing().when(client).create(any(AAIResourceUri.class),anyObject())
+        createAAIVfModule.createGenericVnf(mockExecution)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_createGenericVnfResponseCode", 201)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_createGenericVnfResponse","Vnf Created")
+    }
+
+
+
+    @Test
+    void testCreateVfModule(){
+        Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
+        when(mockExecution.getVariable("CAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf.get())
+
+        when(mockExecution.getVariable("CAAIVfMod_personaId")).thenReturn("model1")
+        when(mockExecution.getVariable("CAAIVfMod_moduleName")).thenReturn("vfModuleName")
+        Mockito.doNothing().when(client).create(any(AAIResourceUri.class),anyObject())
+        createAAIVfModule.createVfModule(mockExecution,false)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_createVfModuleResponseCode", 201)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_createVfModuleResponse","Vf Module Created")
+    }
+
+    @Test
+    void testParseForAddOnModule(){
+        Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
+        when(mockExecution.getVariable("CAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf.get())
+        when(mockExecution.getVariable("CAAIVfMod_moduleName")).thenReturn("newVfModule")
+        createAAIVfModule.parseForAddOnModule(mockExecution)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_moduleExists", false)
+    }
+
+    @Test
+    void testParseForAddOnModuleTrue(){
+        Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
+        when(mockExecution.getVariable("CAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf.get())
+        when(mockExecution.getVariable("CAAIVfMod_moduleName")).thenReturn("testVfModuleNameGWPrim")
+        createAAIVfModule.parseForAddOnModule(mockExecution)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_moduleExists", true)
+    }
+
+    @Test
+    void testParseForBaseModule(){
+        Optional<GenericVnf> genericVnfOps = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json")
+        GenericVnf genericVnf = genericVnfOps.get()
+        genericVnf.getVfModules().getVfModule().remove(0)
+        when(mockExecution.getVariable("CAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf)
+        when(mockExecution.getVariable("CAAIVfMod_moduleName")).thenReturn("newVfModule")
+        createAAIVfModule.parseForBaseModule(mockExecution)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_moduleExists", false)
+    }
+
+    @Test
+    void testParseForBaseModuleConflict(){
+        Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
+        when(mockExecution.getVariable("CAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf.get())
+        when(mockExecution.getVariable("CAAIVfMod_moduleName")).thenReturn("testVfModuleNameGWPrim")
+        when(mockExecution.getVariable("CAAIVfMod_baseModuleConflict")).thenReturn(true)
+        createAAIVfModule.parseForBaseModule(mockExecution)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_baseModuleConflict", true)
+    }
+
+    @Test
+    void testParseForBaseModuleExists(){
+        Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
+        when(mockExecution.getVariable("CAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf.get())
+        when(mockExecution.getVariable("CAAIVfMod_moduleName")).thenReturn("newVfModule")
+        when(mockExecution.getVariable("CAAIVfMod_baseModuleConflict")).thenReturn(false)
+        createAAIVfModule.parseForBaseModule(mockExecution)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_moduleExists", false)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_baseModuleConflict", true)
+    }
+
+    @Test
+    void testCreateVfModuleBase(){
+        Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnfVfModule.json");
+        when(mockExecution.getVariable("CAAIVfMod_queryGenericVnfResponse")).thenReturn(genericVnf.get())
+        when(mockExecution.getVariable("CAAIVfMod_moduleName")).thenReturn("vfModuleName")
+        Mockito.doNothing().when(client).create(any(AAIResourceUri.class),anyObject())
+        createAAIVfModule.createVfModule(mockExecution,true)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_createVfModuleResponseCode", 201)
+        Mockito.verify(mockExecution).setVariable("CAAIVfMod_createVfModuleResponse","Vf Module Created")
+    }
+        @Test
     void preProcessRequest_successful() {
         //given
         prepareUrnPropertiesReader()
@@ -75,7 +193,7 @@ class CreateAAIVfModuleTest {
         executionFake.setVariable("vfModuleName", VF_MODULE_NAME)
         executionFake.setVariable("vfModuleModelName", VF_MODULE_MODEL_NAME)
         //when
-        testedObject.preProcessRequest(executionFake)
+        createAAIVfModule.preProcessRequest(executionFake)
         //then
         assertThat(executionFake.getVariable("CAAIVfMod_vnfId")).isEqualTo(VNF_ID)
         assertThat(executionFake.getVariable("CAAIVfMod_vnfName")).isEqualTo(VNF_NAME)
@@ -96,10 +214,10 @@ class CreateAAIVfModuleTest {
     @Test
     void processAAIGenericVnfQuery_setVnfResponse() {
         executionFake.setVariable("CAAIVfMod_queryGenericVnfResponseCode", 200)
-        executionFake.setVariable("CAAIVfMod_vnfId", Strings.EMPTY)
+        executionFake.setVariable("CAAIVfMod_vnfId", "")
         executionFake.setVariable("CAAIVfMod_vnfName", VNF_NAME)
 
-        testedObject.processAAIGenericVnfQuery(executionFake)
+        createAAIVfModule.processAAIGenericVnfQuery(executionFake)
 
         assertThat(executionFake.getVariable("CAAIVfMod_queryGenericVnfResponse"))
                 .isEqualTo("Invalid request for new Generic VNF which already exists, Vnf Name=" + VNF_NAME)
@@ -110,7 +228,7 @@ class CreateAAIVfModuleTest {
         executionFake.setVariable("CAAIVfMod_queryGenericVnfResponseCode", 500)
         executionFake.setVariable("CAAIVfMod_vnfId", VNF_ID)
 
-        testedObject.processAAIGenericVnfQuery(executionFake)
+        createAAIVfModule.processAAIGenericVnfQuery(executionFake)
 
         assertThat(executionFake.getVariable("CAAIVfMod_createVfModuleResponse"))
                 .isEqualTo("Invalid request for Add-on Module requested for non-existant Generic VNF, VNF Id=" + VNF_ID)
@@ -118,12 +236,18 @@ class CreateAAIVfModuleTest {
 
     @Test
     void parseForAddOnModule_moduleNameFound() {
-        String xml = "<CAAIVfMod_queryGenericVnfResponse><vnf-name>" + VNF_NAME + "</vnf-name>" +
-                "<vf-module-name>" + VF_MODULE_NAME + "</vf-module-name></CAAIVfMod_queryGenericVnfResponse>"
-        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", xml)
+       
+		GenericVnf vnf = new GenericVnf();
+		VfModule module = new VfModule();
+		VfModules modules = new VfModules();
+		vnf.setVnfName(VNF_NAME)
+		vnf.setVfModules(modules)
+		modules.getVfModule().add(module)
+		module.setVfModuleName(VF_MODULE_NAME)
+        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", vnf)
         executionFake.setVariable("CAAIVfMod_moduleName", VF_MODULE_NAME)
 
-        testedObject.parseForAddOnModule(executionFake)
+        createAAIVfModule.parseForAddOnModule(executionFake)
 
         assertThat(executionFake.getVariable("CAAIVfMod_vnfNameFromAAI")).isEqualTo(VNF_NAME)
         assertThat(executionFake.getVariable("CAAIVfMod_moduleExists")).isEqualTo(true)
@@ -133,13 +257,13 @@ class CreateAAIVfModuleTest {
 
     @Test
     void parseForAddOnModule_moduleNameNotFound() {
-        String xml = "<CAAIVfMod_queryGenericVnfResponse><vnf-name>" + VNF_NAME + "</vnf-name>" +
-                "</CAAIVfMod_queryGenericVnfResponse>"
-        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", xml)
+        GenericVnf vnf = new GenericVnf();
+		vnf.setVnfName(VNF_NAME)
+        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", vnf)
         executionFake.setVariable("CAAIVfMod_moduleName", VF_MODULE_NAME)
         executionFake.setVariable("CAAIVfMod_moduleExists", false)
 
-        testedObject.parseForAddOnModule(executionFake)
+        createAAIVfModule.parseForAddOnModule(executionFake)
 
         assertThat(executionFake.getVariable("CAAIVfMod_vnfNameFromAAI")).isEqualTo(VNF_NAME)
         assertThat(executionFake.getVariable("CAAIVfMod_moduleExists")).isEqualTo(false)
@@ -149,12 +273,17 @@ class CreateAAIVfModuleTest {
 
     @Test
     void parseForBaseModule_moduleNameFound() {
-        String xml = "<CAAIVfMod_queryGenericVnfResponse><vnf-name>" + VNF_NAME + "</vnf-name>" +
-                "<vf-module-name>" + VF_MODULE_NAME + "</vf-module-name></CAAIVfMod_queryGenericVnfResponse>"
-        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", xml)
+        GenericVnf vnf = new GenericVnf();
+		VfModule module = new VfModule();
+		VfModules modules = new VfModules();
+		vnf.setVnfName(VNF_NAME)
+		vnf.setVfModules(modules)
+		modules.getVfModule().add(module)
+		module.setVfModuleName(VF_MODULE_NAME)
+        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", vnf)
         executionFake.setVariable("CAAIVfMod_moduleName", VF_MODULE_NAME)
 
-        testedObject.parseForBaseModule(executionFake)
+        createAAIVfModule.parseForBaseModule(executionFake)
 
         assertThat(executionFake.getVariable("CAAIVfMod_vnfNameFromAAI")).isEqualTo(VNF_NAME)
         assertThat(executionFake.getVariable("CAAIVfMod_moduleExists")).isEqualTo(false)
@@ -165,12 +294,19 @@ class CreateAAIVfModuleTest {
 
     @Test
     void parseForBaseModule_isBaseVfModule() {
-        String xml = "<CAAIVfMod_queryGenericVnfResponse><vnf-name>" + VNF_NAME + "</vnf-name>" +
-                "<is-base-vf-module>true</is-base-vf-module></CAAIVfMod_queryGenericVnfResponse>"
-        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", xml)
+		GenericVnf vnf = new GenericVnf();
+		VfModule module = new VfModule();
+		VfModules modules = new VfModules();
+		vnf.setVfModules(modules)
+		vnf.setVnfName(VNF_NAME)
+		modules.getVfModule().add(module)
+		module.setVfModuleName(VF_MODULE_NAME)
+		module.setIsBaseVfModule(true)
+		
+        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", vnf)
         executionFake.setVariable("CAAIVfMod_baseModuleConflict", false)
 
-        testedObject.parseForBaseModule(executionFake)
+        createAAIVfModule.parseForBaseModule(executionFake)
 
         assertThat(executionFake.getVariable("CAAIVfMod_vnfNameFromAAI")).isEqualTo(VNF_NAME)
         assertThat(executionFake.getVariable("CAAIVfMod_moduleExists")).isEqualTo(false)
@@ -181,12 +317,13 @@ class CreateAAIVfModuleTest {
 
     @Test
     void parseForBaseModule_baseModuleConflictIsFalse() {
-        String xml = "<CAAIVfMod_queryGenericVnfResponse><vnf-name>" + VNF_NAME + "</vnf-name></CAAIVfMod_queryGenericVnfResponse>"
-        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", xml)
+		GenericVnf vnf = new GenericVnf();
+		vnf.setVnfName(VNF_NAME)
+		executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", vnf)
         executionFake.setVariable("CAAIVfMod_baseModuleConflict", false)
         executionFake.setVariable("CAAIVfMod_moduleName", VF_MODULE_NAME)
 
-        testedObject.parseForBaseModule(executionFake)
+        createAAIVfModule.parseForBaseModule(executionFake)
 
         assertThat(executionFake.getVariable("CAAIVfMod_vnfNameFromAAI")).isEqualTo(VNF_NAME)
         assertThat(executionFake.getVariable("CAAIVfMod_moduleExists")).isEqualTo(false)
@@ -201,5 +338,4 @@ class CreateAAIVfModuleTest {
         UrnPropertiesReader urnPropertiesReader = new UrnPropertiesReader()
         urnPropertiesReader.setEnvironment(mockEnvironment)
     }
-
 }

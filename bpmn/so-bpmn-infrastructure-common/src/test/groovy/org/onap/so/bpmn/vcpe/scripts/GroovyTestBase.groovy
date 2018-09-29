@@ -25,35 +25,17 @@ import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Rule
-import org.junit.Test
-import org.junit.Ignore
-import org.mockito.MockitoAnnotations
+import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.camunda.bpm.engine.delegate.BpmnError
+import org.mockito.runners.MockitoJUnitRunner
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.scripts.AllottedResourceUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.mock.FileUtil
-import org.springframework.beans.factory.config.YamlPropertiesFactoryBean
-import org.springframework.core.io.ClassPathResource
-import org.springframework.core.io.Resource
-
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import static com.github.tomakehurst.wiremock.client.WireMock.get
-import static com.github.tomakehurst.wiremock.client.WireMock.patch
-import static com.github.tomakehurst.wiremock.client.WireMock.put
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching
-import static org.junit.Assert.*;
+import org.onap.so.client.aai.AAIResourcesClient
 import static org.mockito.Mockito.*
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetAllottedResource
-import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.vcpe.scripts.MapSetter
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
-
+@RunWith(MockitoJUnitRunner.class)
 class GroovyTestBase {
 	
 	static final int PORT = 28090
@@ -70,6 +52,11 @@ class GroovyTestBase {
 	static String aaiUriPfx
 	
 	String processName
+
+    AllottedResourceUtils allottedResourceUtils_MOCK
+
+    @Mock
+    AAIResourcesClient client_MOCK
 
 	public static void setUpBeforeClass() {
 		aaiUriPfx = UrnPropertiesReader.getVariable("aai.endpoint")
@@ -120,5 +107,10 @@ class GroovyTestBase {
 		doAnswer(mapset).when(mex).setVariable(any(), any())
 		return mapset.getMap();
 	}
-		
+
+    void init(){
+        allottedResourceUtils_MOCK = spy(new AllottedResourceUtils(mock(AbstractServiceTaskProcessor.class)))
+        when(allottedResourceUtils_MOCK.getAAIClient()).thenReturn(client_MOCK)
+    }
+
 }

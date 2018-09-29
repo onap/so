@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.onap.so.adapters.vnf.BaseRestTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.web.server.LocalServerPort;
 
 public class BpelRestClientTest extends BaseRestTestUtils {
 
