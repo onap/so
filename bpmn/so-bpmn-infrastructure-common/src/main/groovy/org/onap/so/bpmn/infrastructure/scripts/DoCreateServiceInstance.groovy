@@ -40,10 +40,15 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceInstance
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.infrastructure.aai.groovyflows.AAICreateResources
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils
 
 import groovy.json.*
 
@@ -275,10 +280,6 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				oStatus = "Created"
 			}
 
-			String statusLine = isBlank(oStatus) ? "" : "<orchestration-status>${MsoUtils.xmlEscape(oStatus)}</orchestration-status>"
-			String serviceTypeLine = isBlank(serviceType) ? "" : "<service-type>${MsoUtils.xmlEscape(serviceType)}</service-type>"
-			String serviceRoleLine = isBlank(serviceRole) ? "" : "<service-role>${MsoUtils.xmlEscape(serviceRole)}</service-role>"
-
 			//QUERY CATALOG DB AND GET WORKLOAD / ENVIRONMENT CONTEXT
 			String environmentContext = ""
 			String workloadContext =""
@@ -288,8 +289,8 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
 				 msoLogger.debug("JSON IS: "+json)
 
-				 environmentContext = jsonUtil.getJsonValue(json, "serviceResources.environmentContext") ?: ""
-				 workloadContext = jsonUtil.getJsonValue(json, "serviceResources.workloadContext") ?: ""
+				 environmentContext = jsonUtil.getJsonValue(json, "serviceResources.environmentContext")
+				 workloadContext = jsonUtil.getJsonValue(json, "serviceResources.workloadContext")
 				 msoLogger.debug("Env Context is: "+ environmentContext)
 				 msoLogger.debug("Workload Context is: "+ workloadContext)
 			}catch(BpmnError e){
@@ -300,24 +301,18 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 			}
 
-			//Create AAI Payload
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
-			String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
-			String serviceInstanceData =
-					"""<service-instance xmlns=\"${namespace}\">
-					<service-instance-name>${MsoUtils.xmlEscape(serviceInstanceName)}</service-instance-name>
-					${serviceTypeLine}
-					${serviceRoleLine}
-					${statusLine}
-				    <model-invariant-id>${MsoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-id>
-				    <model-version-id>${MsoUtils.xmlEscape(modelUuid)}</model-version-id>
-					<environment-context>${MsoUtils.xmlEscape(environmentContext)}</environment-context>
-					<workload-context>${MsoUtils.xmlEscape(workloadContext)}</workload-context>
-					</service-instance>""".trim()
+			org.onap.aai.domain.yang.ServiceInstance si = new org.onap.aai.domain.yang.ServiceInstance()
+			si.setServiceInstanceName(serviceInstanceName)
+			si.setServiceType(serviceType)
+			si.setServiceRole(serviceRole)
+			si.setOrchestrationStatus(oStatus)
+			si.setModelInvariantId(modelInvariantUuid)
+			si.setModelVersionId(modelUuid)
+			si.setEnvironmentContext(environmentContext)
+			si.setWorkloadContext(workloadContext)
 
-			execution.setVariable("serviceInstanceData", serviceInstanceData)
-			msoLogger.debug(" 'payload' to create Service Instance in AAI - " + "\n" + serviceInstanceData)
+			execution.setVariable("serviceInstanceData", si)
+
 
 		} catch (BpmnError e) {
 			throw e;
@@ -331,110 +326,54 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
 	public void getAAICustomerById (DelegateExecution execution) {
 		// https://{aaiEP}/aai/v8/business/customers/customer/{globalCustomerId}
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		String msg = ""
 		try {
 
 			String globalCustomerId = execution.getVariable("globalSubscriberId") //VID to AAI name map
 			msoLogger.debug(" ***** getAAICustomerById ***** globalCustomerId:" + globalCustomerId)
 
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
-			if (isBlank(aai_endpoint) || isBlank(aai_uri))
-			{
-				msg = "AAI URL is invalid. Endpoint:" + aai_endpoint + aai_uri
-				msoLogger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+			AAIUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalCustomerId)
+			if(!getAAIClient().exists(uri)){
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "GlobalCustomerId:" + globalCustomerId + " not found (404) in AAI")
 			}
-			String getAAICustomerUrl = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(globalCustomerId,"UTF-8")
-
-			msoLogger.debug("getAAICustomerById Url:" + getAAICustomerUrl)
-			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, getAAICustomerUrl)
-			String returnCode = response.getStatusCode()
-			String aaiResponseAsString = response.getResponseBodyAsString()
-
-			msg = "getAAICustomerById ResponseCode:" + returnCode + " ResponseString:" + aaiResponseAsString
-			msoLogger.debug(msg)
-
-			if (returnCode=='200') {
-				// Customer found by ID. FLow to proceed.
-				msoLogger.debug(msg)
-
-				//TODO Deferred
-				//we might verify that service-subscription with matching name exists
-				//and throw error if not. If not checked, we will get exception in subsequent step on Create call
-				//in 1610 we assume both customer & service subscription were pre-created
-
-			} else {
-				if (returnCode=='404') {
-					msg = "GlobalCustomerId:" + globalCustomerId + " not found (404) in AAI"
-					msoLogger.debug(msg)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-
-				} else {
-					if (aaiResponseAsString.contains("RESTFault")) {
-						msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, aaiResponseAsString, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
-						WorkflowException workflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-						execution.setVariable("WorkflowException", workflowException)
-						throw new BpmnError("MSOWorkflowException")
-
-					} else {
-						// aai all errors
-						msg = "Error in getAAICustomerById ResponseCode:" + returnCode
-						msoLogger.debug(msg)
-						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-					}
-				}
-			}
-
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
-			msg = "Exception in getAAICustomerById. " + ex.getMessage()
-			msoLogger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception in getAAICustomerById. " + ex.getMessage())
 		}
 		msoLogger.trace("Exit getAAICustomerById")
 
 	}
 
-	public void postProcessAAIPUT(DelegateExecution execution) {
+	public void putServiceInstance(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		msoLogger.trace("postProcessAAIPUT")
+		msoLogger.trace("putServiceInstance")
 		String msg = ""
+		String serviceInstanceId = UUID.randomUUID().toString()
 		try {
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			boolean succInAAI = execution.getVariable("GENPS_SuccessIndicator")
-			if(!succInAAI){
-				msoLogger.debug("Error putting Service-instance in AAI", + serviceInstanceId)
-				WorkflowException workflowException = execution.getVariable("WorkflowException")
-				msoLogger.debug("workflowException: " + workflowException)
-				if(workflowException != null){
-					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-				}
-			}
-			else
-			{
-				//start rollback set up
-				RollbackData rollbackData = new RollbackData()
-				def disableRollback = execution.getVariable("disableRollback")
-				rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
-				rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
-				rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", serviceInstanceId)
-				rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
-				rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
-				execution.setVariable("rollbackData", rollbackData)
-			}
+			org.onap.aai.domain.yang.ServiceInstance si = execution.getVariable("serviceInstanceData")
+
+			AAIResourcesClient client = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), serviceInstanceId)
+			client.create(uri, si)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
-			msg = "Exception in DoCreateServiceInstance.postProcessAAIDEL. " + ex.getMessage()
+			//start rollback set up
+			RollbackData rollbackData = new RollbackData()
+			def disableRollback = execution.getVariable("disableRollback")
+			rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
+			rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
+			rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", serviceInstanceId)
+			rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
+			rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
+			execution.setVariable("rollbackData", rollbackData)
+
+			msg = "Exception in DoCreateServiceInstance.putServiceInstance. " + ex.getMessage()
 			msoLogger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit postProcessAAIPUT")
+		msoLogger.trace("Exit putServiceInstance")
 	}
 
 	public void preProcessSDNCAssignRequest(DelegateExecution execution) {

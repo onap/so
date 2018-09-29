@@ -368,7 +368,9 @@ public class ASDCNotificationLogging {
         		}  		
         		
     		}
-        }
+    		
+        }  		
+        		
         
 		
 		List<NodeTemplate> nodeTemplatesVLList = toscaResourceStructure.getSdcCsarHelper().getServiceVlList();

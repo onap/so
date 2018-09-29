@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupResponse;
@@ -49,7 +49,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
 import com.shazam.shazamcrest.matcher.Matchers;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class VnfAdapterVolumeGroupResourcesTest  extends TestDataSetup {
 	@InjectMocks
 	private VnfAdapterVolumeGroupResources vnfAdapterVolumeGroupResources; 

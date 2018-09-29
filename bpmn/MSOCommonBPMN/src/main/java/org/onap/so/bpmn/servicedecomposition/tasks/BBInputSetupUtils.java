@@ -163,13 +163,14 @@ public class BBInputSetupUtils {
 		}
 	}
 
-	protected CloudRegion getCloudRegion(CloudConfiguration cloudConfiguration, String cloudOwner) {
+	protected CloudRegion getCloudRegion(CloudConfiguration cloudConfiguration) {
 		if (cloudConfiguration != null) {
 			String cloudRegionId = cloudConfiguration.getLcpCloudRegionId();
-			if (cloudRegionId != null && !cloudRegionId.isEmpty()) {
+			String cloudOwner = cloudConfiguration.getCloudOwner();
+			if (cloudRegionId != null && cloudOwner != null && !cloudRegionId.isEmpty() && !cloudOwner.isEmpty()) {
 				return injectionHelper.getAaiClient().get(CloudRegion.class,
 						AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudOwner,
-								cloudConfiguration.getLcpCloudRegionId())).orElse(null);
+								cloudRegionId)).orElse(null);
 			
 			} else {
 				return null;

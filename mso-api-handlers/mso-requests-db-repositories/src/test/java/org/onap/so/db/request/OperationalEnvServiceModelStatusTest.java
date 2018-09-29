@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.onap.so.TestApplication;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.onap.so.db.request.data.repository.OperationalEnvServiceModelStatusRepository;
+import org.onap.so.db.request.exceptions.NoEntityFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
@@ -71,7 +72,8 @@ public class OperationalEnvServiceModelStatusTest {
 		exampleObj.setOperationalEnvId("oper-env-id-1");
 		exampleObj.setServiceModelVersionId("service-model-ver-id-1");
 		ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("requestId");
-		OperationalEnvServiceModelStatus foundStatus = repository.findOne(Example.of(exampleObj,matcher));
+		OperationalEnvServiceModelStatus foundStatus = repository.findOne(Example.of(exampleObj,matcher))
+				.orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
 		if(foundStatus== null)
 			throw new Exception("No status found");
 

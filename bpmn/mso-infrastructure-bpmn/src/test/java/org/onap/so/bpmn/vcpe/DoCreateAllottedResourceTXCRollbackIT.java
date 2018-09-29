@@ -309,7 +309,7 @@ public class DoCreateAllottedResourceTXCRollbackIT extends AbstractTestBase {
 		rollbackData.put(RbType, "rollbackSDNCassign", "true");
 		rollbackData.put(RbType, "rollbackSDNCactivate", "true");
 		rollbackData.put(RbType, "rollbackSDNCcreate", "true");
-		rollbackData.put(RbType, "aaiARPath", "http://localhost:"+wiremockPort+"/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID);
+		rollbackData.put(RbType, "aaiARPath", "/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID);
 		
 		rollbackData.put(RbType, "sdncActivateRollbackReq", FileUtil.readResourceFile("__files/VCPE/DoCreateAllottedResourceTXCRollback/sdncActivateRollbackReq.xml"));
 		rollbackData.put(RbType, "sdncCreateRollbackReq", FileUtil.readResourceFile("__files/VCPE/DoCreateAllottedResourceTXCRollback/sdncCreateRollbackReq.xml")); 

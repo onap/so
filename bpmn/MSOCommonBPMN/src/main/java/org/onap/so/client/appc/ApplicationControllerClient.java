@@ -182,7 +182,7 @@ public class ApplicationControllerClient {
 		commonHeader.setApiVer(API_VER);
 		commonHeader.setOriginatorId(ORIGINATOR_ID);
 		commonHeader.setRequestId(requestId == null ? UUID.randomUUID().toString() : requestId);
-		commonHeader.setSubRequestId(requestId);
+		commonHeader.setSubRequestId(UUID.randomUUID().toString());
 		Flags flags = new Flags();
 		String flagsMode = "NORMAL";
 		Mode mode = Mode.valueOf(flagsMode);

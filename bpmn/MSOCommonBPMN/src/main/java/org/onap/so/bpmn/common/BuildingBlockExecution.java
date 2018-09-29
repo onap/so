@@ -34,4 +34,5 @@ public interface BuildingBlockExecution {
 	public <T> T getRequiredVariable(String key) throws RequiredExecutionVariableExeception;
 	public void setVariable(String key, Serializable value);
 	public Map<ResourceKey, String> getLookupMap();
+	public String getFlowToBeCalled();
 }

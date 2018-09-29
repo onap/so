@@ -19,9 +19,13 @@
  */
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,23 +33,27 @@ import java.util.List;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 
 public class CreateNetworkCollectionTest extends BaseTaskTest{
-	@Autowired
-	private CreateNetworkCollection createNetworkCollection;
+	@InjectMocks
+	private CreateNetworkCollection createNetworkCollection = new CreateNetworkCollection();
 	
 	private L3Network network;
 	private ServiceInstance serviceInstance;
 	private OrchestrationContext orchestrationContext;
 	
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		serviceInstance = setServiceInstance();
 		network = setL3Network();
 		
@@ -57,6 +65,10 @@ public class CreateNetworkCollectionTest extends BaseTaskTest{
 		
 		orchestrationContext = setOrchestrationContext();
 		orchestrationContext.setIsRollbackEnabled(true);
+		
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(network);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
 	}
 	
 	@Test

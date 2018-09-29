@@ -6,17 +6,17 @@ server:
         max-threads: 50
 ssl-enable: false
 
-apih-healthcheck-urn: /ecomp/mso/healthcheck,/ecomp/mso/homing/healthcheck,/ecomp/mso/infra/healthcheck,/asdc/healthcheck,/dbadapters/healthcheck,/ecomp/mso/catalog/v2/healthcheck
-jra-healthcheck-urn: /networks/rest/healthcheck,/adapters/rest/healthcheck,/vnfs/rest/healthcheck,/tenants/rest/healthcheck,/appc/rest/healthcheck,/workflows/messages/healthcheck
-camunda-healthcheck-urn: /mso/healthcheck
-
-apih-nodehealthcheck-urn: /ecomp/mso/infra/nodehealthcheck
-jra-nodehealthcheck-urn: /adapters/rest/nodehealthcheck
-camunda-nodehealthcheck-urn: /mso/nodehealthcheck
-
-
-
 mso:
+  health:
+    endpoints:
+      catalogdb: http://localhost:${wiremock.server.port}
+      requestdb: http://localhost:${wiremock.server.port}
+      sdnc: http://localhost:${wiremock.server.port}
+      openstack: http://localhost:${wiremock.server.port}
+      bpmn: http://localhost:${wiremock.server.port}
+      asdc: http://localhost:${wiremock.server.port}
+      requestdbattsvc: http://localhost:${wiremock.server.port}
+      
   infra-requests:
     archived:
       period: 180
@@ -48,14 +48,14 @@ mso:
         apiMinorVersion: 0
         apiPatchVersion: 0
   camundaURL: http://localhost:${wiremock.server.port}/
-  camundaAuth: F8E9452B55DDE4CCE77547B0E748105C54CF5EF1351B4E2CBAABF2981EFE776D
+  camundaAuth: E8E19DD16CC90D2E458E8FF9A884CC0452F8F3EB8E321F96038DE38D5C1B0B02DFAE00B88E2CF6E2A4101AB2C011FC161212EE
   async:
     core-pool-size: 50
     max-pool-size: 50
     queue-capacity: 500
   sdc:
     client:
-      auth: F3473596C526938329DF877495B494DC374D1C4198ED3AD305EA3ADCBBDA1862
+      auth: 97FF88AB352DA16E00DDD81E3876431DEF8744465DACA489EB3B3BE1F10F63EDA1715E626D0A4827A3E19CD88421BF
     activate:
       instanceid: test
       userid: cs0008
@@ -67,7 +67,7 @@ mso:
         count: 3
   aai:
     endpoint: http://localhost:${wiremock.server.port}
-    auth: 26AFB797A6A57960D5D718491925C50F77CDC22AC394B3DBA09950D8FD1C0764
+    auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
   grm:
     endpoint: http://localhost:${wiremock.server.port}
     username: gmruser
@@ -84,12 +84,11 @@ mso:
 
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3307/catalogdb
+    jdbc-url: jdbc:mariadb://localhost:3307/catalogdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver    
-    initialize: true
-    initialization-mode: never
+    initialization-mode: always
   jpa:   
     generate-ddl: false
     show-sql: false
@@ -108,24 +107,21 @@ spring:
       role: InfraPortal-Client
 request:
   datasource:
-    url: jdbc:mariadb://localhost:3307/requestdb
+    jdbc-url: jdbc:mariadb://localhost:3307/requestdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
-    intialize: false 
     
 mariaDB4j:
   dataDir: 
   port: 3307
   databaseName: catalogdb
   databaseName2: requestdb
-#Actuator
-management: 
-  context-path: /manage
-  endpoints:
-    enabled-by-default: false
-  endpoint:
-    info:
-      enabled: true
-    health:
-      enabled: true
+
+
+org:
+  onap:
+    so:
+      adapters:
+        network:
+          encryptionKey: aa3871669d893c7fb8abbcda31b88b4f

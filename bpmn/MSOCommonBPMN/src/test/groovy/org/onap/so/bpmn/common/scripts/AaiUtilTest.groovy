@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,16 +44,14 @@ import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
 import org.camunda.bpm.engine.repository.ProcessDefinition
 
-@RunWith(MockitoJUnitRunner.class)
-@Ignore
 class AaiUtilTest extends MsoGroovyTest {
-    
+
 
 	@Rule
 	public WireMockRule wireMockRule = new WireMockRule(8090);
-	
+
 	@Rule
-	public ExpectedException thrown = ExpectedException.none
+	public ExpectedException thrown = ExpectedException.none()
 
 
 	def aaiPaylod = "<allotted-resource xmlns=\"http://org.openecomp.aai.inventory/v9\">\n" +
@@ -128,275 +126,7 @@ class AaiUtilTest extends MsoGroovyTest {
 	}
 
 	@Test
-	public void testGetUriDefaultVersion() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.l3-network.uri")).thenReturn('/aai/v8/network/l3-networks/l3-network')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getUri(mockExecution, 'l3-network')
-		assertEquals('/aai/v8/network/l3-networks/l3-network', uri)
-	}
-
-	@Test
-	public void testGetUriFlowAndResourceSpecific() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.CreateAAIVfModule.aai.l3-network.uri")).thenReturn('/aai/v6/network/l3-networks/l3-network')
-
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.l3-network.uri")).thenReturn('/aai/v8/network/l3-networks/l3-network')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getUri(mockExecution, 'l3-network')
-		assertEquals('/aai/v6/network/l3-networks/l3-network', uri)
-	}
-
-	@Test
-	public void testGetNetworkGenericVnfEndpoint() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.generic-vnf.uri")).thenReturn('/aai/v8/network/generic-vnfs/generic-vnf')
-
-        when(mockExecution.getVariable('aai.endpoint')).thenReturn('http://localhost:28090')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		when(mockExecution.getVariable("mso.workflow.default.aai.generic-vnf.version")).thenReturn('8')
-
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def endpoint = aaiUtil.getNetworkGenericVnfEndpoint(mockExecution)
-		assertEquals('http://localhost:28090/aai/v8/network/generic-vnfs/generic-vnf', endpoint)
-	}
-
-	@Test
-	public void testGetNetworkGenericVnfUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.generic-vnf.uri")).thenReturn('/aai/v8/network/generic-vnfs/generic-vnf')
-
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		when(mockExecution.getVariable("mso.workflow.default.aai.generic-vnf.version")).thenReturn('8')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getNetworkGenericVnfUri(mockExecution)
-		assertEquals('/aai/v8/network/generic-vnfs/generic-vnf', uri)
-	}
-
-	@Test
-	public void testGetNetworkVpnBindingUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.vpn-binding.uri")).thenReturn('/aai/v8/network/vpn-bindings/vpn-binding')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getNetworkVpnBindingUri(mockExecution)
-		assertEquals('/aai/v8/network/vpn-bindings/vpn-binding', uri)
-	}
-
-	@Test
-	public void testGetNetworkPolicyUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.network-policy.uri")).thenReturn('/aai/v8/network/network-policies/network-policy')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getNetworkPolicyUri(mockExecution)
-		assertEquals('/aai/v8/network/network-policies/network-policy', uri)
-	}
-
-	@Test
-	public void testGetNetworkTableReferencesUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.route-table-reference.uri")).thenReturn('/aai/v8/network/route-table-references/route-table-reference')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getNetworkTableReferencesUri(mockExecution)
-		assertEquals('/aai/v8/network/route-table-references/route-table-reference', uri)
-	}
-
-	@Test
-	public void testGetNetworkVceUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.vce.uri")).thenReturn('/aai/v8/network/vces/vce')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getNetworkVceUri(mockExecution)
-		assertEquals('/aai/v8/network/vces/vce', uri)
-	}
-
-	@Test
-	public void testGetNetworkL3NetworkUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.l3-network.uri")).thenReturn('/aai/v8/network/l3-networks/l3-network')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getNetworkL3NetworkUri(mockExecution)
-		assertEquals('/aai/v8/network/l3-networks/l3-network', uri)
-	}
-
-	@Test
-	public void testGetBusinessCustomerUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.customer.uri")).thenReturn('/aai/v8/business/customers/customer')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getBusinessCustomerUri(mockExecution)
-		assertEquals('/aai/v8/business/customers/customer', uri)
-	}
-
-	@Test
-	public void testGetCloudInfrastructureCloudRegionEndpoint() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn('/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic')
-
-        when(mockExecution.getVariable('aai.endpoint')).thenReturn('http://localhost:28090')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(mockExecution)
-		assertEquals('http://localhost:28090/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic', uri)
-	}
-
-	@Test
-	public void testGetCloudInfrastructureCloudRegionUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn('/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic')
-
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getCloudInfrastructureCloudRegionUri(mockExecution)
-		assertEquals('/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic', uri)
-	}
-
-	@Test
-	public void testGetCloudInfrastructureTenantUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.tenant.uri")).thenReturn('/aai/v8/cloud-infrastructure/tenants/tenant')
-
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getCloudInfrastructureTenantUri(mockExecution)
-		assertEquals('/aai/v8/cloud-infrastructure/tenants/tenant', uri)
-	}
-
-	@Test
-	public void testGetSearchNodesQueryUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.nodes-query.uri")).thenReturn('/aai/v8/search/nodes-query')
-
-		when(mockExecution.getVariable('aai.endpoint')).thenReturn('http://localhost:28090')
-
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getSearchNodesQueryUri(mockExecution)
-		assertEquals('/aai/v8/search/nodes-query', uri)
-	}
-
-	@Test
-	public void testGetSearchNodesQueryEndpoint() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.nodes-query.uri")).thenReturn('/aai/v8/search/nodes-query')
-
-        when(mockExecution.getVariable('aai.endpoint')).thenReturn('http://localhost:28090')
-
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getSearchNodesQueryEndpoint(mockExecution)
-		assertEquals('http://localhost:28090/aai/v8/search/nodes-query', uri)
-	}
-
-	@Test
-	public void testGetSearchGenericQueryUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-
-		when(mockExecution.getVariable("mso.workflow.default.aai.v8.generic-query.uri")).thenReturn('/aai/v8/search/generic-query')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-
-
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getSearchGenericQueryUri(mockExecution)
-		assertEquals('/aai/v8/search/generic-query', uri)
-	}
-
-	@Test
-	public void testGetNamespaceFromUri() {
-		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('6')
-		when(mockExecution.getVariable("mso.workflow.default.aai.v6.l3-network.uri")).thenReturn('/aai/v6/network/l3-networks/l3-network')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getNetworkL3NetworkUri(mockExecution)  // Required to populate the namespace in the class
-		def ns = aaiUtil.getNamespaceFromUri('/aai/v6/search/generic-query')
-		assertEquals('http://org.openecomp.aai.inventory/v6', ns)
-	}
-
-	@Test
+	@Ignore
 	public void testExecuteAAIGetCall() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
@@ -409,6 +139,7 @@ class AaiUtilTest extends MsoGroovyTest {
 
 
 	@Test
+	@Ignore
 	public void testExecuteAAIPutCall() {
 		ExecutionEntity mockExecution = setupMock('CreateAAIVfModule')
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
@@ -417,40 +148,6 @@ class AaiUtilTest extends MsoGroovyTest {
 		CreateAAIVfModule myproc = new CreateAAIVfModule()
 		AaiUtil aaiUtil = new AaiUtil(myproc)
 		def uri = aaiUtil.executeAAIPutCall(mockExecution,"http://localhost:8090/aai/v9/business/customers/customer/CUST/service-subscriptions/service-subscription/SVC/service-instances/service-instance/NST/allotted-resources/allotted-resource/allottedResourceId",aaiPaylod)
-	}
-
-	@Test
-	public void testGetNamespaceFromUri2() {
-		ExecutionEntity mockExecution = setupMock('DeleteVfModuleVolumeInfraV1')
-		//
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('10')
-		when(mockExecution.getVariable("mso.workflow.default.aai.v10.l3-network.uri")).thenReturn('/aai/v10/network/l3-networks/l3-network')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-		//
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getNetworkL3NetworkUri(mockExecution)  // Required to populate the namespace in the class
-		def ns = aaiUtil.getNamespaceFromUri('/aai/v10/search/generic-query')
-		assertEquals('http://org.openecomp.aai.inventory/v10', ns)
-	}
-
-	@Test
-	public void testGetNamespaceFromUri3() {
-		ExecutionEntity mockExecution = setupMock('DeleteVfModuleVolumeInfraV1')
-		//
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('100')
-		when(mockExecution.getVariable("mso.workflow.default.aai.v100.l3-network.uri")).thenReturn('/aai/v100/network/l3-networks/l3-network')
-		when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-		//
-		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-		CreateAAIVfModule myproc = new CreateAAIVfModule()
-		AaiUtil aaiUtil = new AaiUtil(myproc)
-		def uri = aaiUtil.getNetworkL3NetworkUri(mockExecution)  // Required to populate the namespace in the class
-		def ns = aaiUtil.getNamespaceFromUri('/aai/v100/search/generic-query')
-		assertEquals('http://org.openecomp.aai.inventory/v100', ns)
 	}
 
 	@Test

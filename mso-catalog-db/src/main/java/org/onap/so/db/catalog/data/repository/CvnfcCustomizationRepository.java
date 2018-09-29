@@ -23,12 +23,11 @@ package org.onap.so.db.catalog.data.repository;
 import java.util.List;
 
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
-import org.onap.so.db.catalog.data.projections.InlineVnf;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "cvnfcCustomization", path = "cvnfcCustomization", excerptProjection = InlineVnf.class)
+@RepositoryRestResource(collectionResourceRel = "cvnfcCustomization", path = "cvnfcCustomization")
 public interface CvnfcCustomizationRepository extends JpaRepository<CvnfcCustomization, String> {
 	CvnfcCustomization findOneByModelCustomizationUUID(String modelCustomizationUuid);
 	List<CvnfcCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);

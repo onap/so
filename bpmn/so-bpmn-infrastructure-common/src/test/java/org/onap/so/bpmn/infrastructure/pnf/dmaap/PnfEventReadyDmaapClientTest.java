@@ -20,8 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -49,7 +50,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.PnfEventReadyDmaapClient.DmaapTopicListenerThread;
 import org.springframework.core.env.Environment;
 @RunWith(MockitoJUnitRunner.class)
@@ -123,10 +124,13 @@ public class PnfEventReadyDmaapClientTest {
                 thenReturn(createResponse(String.format(JSON_EXAMPLE_WITH_CORRELATION_ID, CORRELATION_ID)));
         testedObjectInnerClassThread.run();
         ArgumentCaptor<HttpGet> captor1 = ArgumentCaptor.forClass(HttpGet.class);
-        verify(httpClientMock).execute(captor1.capture());
-        assertThat(captor1.getValue().getURI()).hasHost(HOST).hasPort(PORT).hasScheme(PROTOCOL)
-                .hasPath(
-                        "/" + URI_PATH_PREFIX + "/" + EVENT_TOPIC_TEST + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
+        verify(httpClientMock).execute(captor1.capture());      
+        
+        assertEquals(captor1.getValue().getURI().getHost(),HOST);
+        assertEquals(captor1.getValue().getURI().getPort(),PORT);
+        assertEquals(captor1.getValue().getURI().getScheme(),PROTOCOL);
+        assertEquals(captor1.getValue().getURI().getPath(),"/" + URI_PATH_PREFIX + "/" + EVENT_TOPIC_TEST + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
+  
         verify(threadMockToNotifyCamundaFlow).run();
         verify(executorMock).shutdown();
     }

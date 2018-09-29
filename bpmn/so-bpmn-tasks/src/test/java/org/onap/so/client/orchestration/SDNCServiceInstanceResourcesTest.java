@@ -20,7 +20,7 @@
 
 package org.onap.so.client.orchestration;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -30,9 +30,10 @@ import static org.mockito.Mockito.verify;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -48,7 +49,7 @@ import org.onap.so.client.sdnc.mapper.ServiceTopologyOperationMapper;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class SDNCServiceInstanceResourcesTest  extends TestDataSetup{
 	@InjectMocks
     private SDNCServiceInstanceResources sdncServiceInstanceResources;
@@ -128,7 +129,7 @@ public class SDNCServiceInstanceResourcesTest  extends TestDataSetup{
 		doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE), eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
 		doReturn("test").when(MOCK_sdncClient).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
 		sdncServiceInstanceResources.deactivateServiceInstance(serviceInstance, customer, requestContext);
-		verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
+		verify(MOCK_sdncClient, times(1)).post(ArgumentMatchers.isNull(), eq(SDNCTopology.SERVICE));
 	}
 	
 	@Test

@@ -20,29 +20,37 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.vnf.tasks;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 public class VnfAdapterCreateTasksTest extends BaseTaskTest{
-	@Autowired
-	private VnfAdapterCreateTasks vnfAdapterCreateTasks;
+	@InjectMocks
+	private VnfAdapterCreateTasks vnfAdapterCreateTasks = new VnfAdapterCreateTasks();
+	
 	
 	@Test
 	public void test_createVolumeGroupRequest() throws Exception {
@@ -68,7 +76,10 @@ public class VnfAdapterCreateTasksTest extends BaseTaskTest{
         CreateVolumeGroupRequest request = new CreateVolumeGroupRequest();
         request.setVolumeGroupId("volumeGroupStackId");
 
-        doReturn(request).when(vnfAdapterVolumeGroupResources).createVolumeGroupRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup, sdncVnfQueryResponse);
+    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+		doReturn(request).when(vnfAdapterVolumeGroupResources).createVolumeGroupRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup, sdncVnfQueryResponse);
 
         vnfAdapterCreateTasks.createVolumeGroupRequest(execution);
 		
@@ -84,6 +95,9 @@ public class VnfAdapterCreateTasksTest extends BaseTaskTest{
 		GenericVnf genericVnf = setGenericVnf();
 		VolumeGroup volumeGroup = setVolumeGroup();
 		volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
+		
+		VfModule vfModule = setVfModule();
+		vfModule.setSelflink("vfModuleSelfLink");
 
 		CloudRegion cloudRegion = setCloudRegion();
 
@@ -92,19 +106,24 @@ public class VnfAdapterCreateTasksTest extends BaseTaskTest{
 
         CreateVolumeGroupRequest request = new CreateVolumeGroupRequest();
         request.setVolumeGroupId("volumeGroupStackId");
-
+        
+    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
 		doReturn(request).when(vnfAdapterVolumeGroupResources).createVolumeGroupRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf,  volumeGroup, null);
 
 		vnfAdapterCreateTasks.createVolumeGroupRequest(execution);
 
-		verify(vnfAdapterVolumeGroupResources, times(1)).createVolumeGroupRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf,  volumeGroup, null);
+		verify(vnfAdapterVolumeGroupResources, times(1)).createVolumeGroupRequest(any(RequestContext.class), 
+				any(CloudRegion.class), any(OrchestrationContext.class), eq(serviceInstance), eq(genericVnf),  eq(volumeGroup), ArgumentMatchers.isNull());
 
 		assertEquals(request.toXmlString(),  execution.getVariable("VNFREST_Request"));
 	}
 	
 	@Test
 	public void test_createVolumeGroupRequest_exception() throws Exception {
-		// run with no data setup, and it will throw a BBObjectNotFoundException
+		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any());
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
 		expectedException.expect(BpmnError.class);
 		
 		vnfAdapterCreateTasks.createVolumeGroupRequest(execution);
@@ -136,6 +155,9 @@ public class VnfAdapterCreateTasksTest extends BaseTaskTest{
 		
 		String sdncVnfQueryResponse = "{someJson}";
 		execution.setVariable("SDNCQueryResponse_" + genericVnf.getVnfId(), sdncVnfQueryResponse);
+		
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
 		
 		doReturn(createVfModuleRequest).when(vnfAdapterVfModuleResources).createVfModuleRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
 				genericVnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
@@ -177,6 +199,9 @@ public class VnfAdapterCreateTasksTest extends BaseTaskTest{
 		String sdncVnfQueryResponse = "{someJson}";
 		execution.setVariable("SDNCQueryResponse_" + genericVnf.getVnfId(), sdncVnfQueryResponse);
 		
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
 		doReturn(createVfModuleRequest).when(vnfAdapterVfModuleResources).createVfModuleRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, 
 				genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 		
@@ -191,6 +216,8 @@ public class VnfAdapterCreateTasksTest extends BaseTaskTest{
 	@Test
 	public void createVfModuleExceptionTest() throws Exception {
 		// run with no data setup, and it will throw a BBObjectNotFoundException
+		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any());
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
 		expectedException.expect(BpmnError.class);
 		vnfAdapterCreateTasks.createVolumeGroupRequest(execution);
 	}

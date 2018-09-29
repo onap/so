@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.onap.so.TestApplication;
 import org.onap.so.db.request.beans.SiteStatus;
 import org.onap.so.db.request.data.repository.SiteStatusRepository;
+import org.onap.so.db.request.exceptions.NoEntityFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
@@ -50,8 +51,10 @@ public class SiteStatusTest {
 	
 	@Test	
 	@Transactional
-	public void timeStampCreated() throws InterruptedException {
-		SiteStatus found = repository.findOne("test name4");		
+	public void timeStampCreated() throws InterruptedException, NoEntityFoundException {
+		SiteStatus found = repository.findById("test name4").
+				orElseThrow(() -> new NoEntityFoundException("Cannot Find Site"));	
+		
 		assertNotNull(found.getCreated());
 		assertEquals("test name4", found.getSiteName());		
 	}
@@ -72,14 +75,16 @@ public class SiteStatusTest {
 	}
 	
 	@Test
-	public void updateStatus() {
+	public void updateStatus() throws NoEntityFoundException {
 		
-		SiteStatus status = repository.findOne("test name update");
+		SiteStatus status = repository.findById("test name update").
+				orElseThrow(() -> new NoEntityFoundException("Cannot Find Site"));	
 		status.setStatus(false);
 		
 		repository.saveAndFlush(status);
-
-		assertEquals(false, repository.findOne("test name update").getStatus());
+		status = repository.findById("test name update").
+				orElseThrow(() -> new NoEntityFoundException("Cannot Find Site"));	
+		assertEquals(false, status.getStatus());
 		
 	}
 	

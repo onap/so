@@ -1,0 +1,29 @@
+{
+	"volume-group-id":"volumeGroupId",	
+	"volume-group-name":"volumeGroupName",	
+	"vnf-type":"vnfType",	
+	"orchestration-status":"PRECREATED",	
+	"cloud-params":{},	
+	"cascaded":false,
+	"heat-stack-id":"heatStackId",
+	"relationship-list": {
+		"relationship": [
+			{
+				"related-to": "tenant",
+				"related-link": "/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mdt1/tenants/tenant/Tenant123",
+                "relationship-data": [
+					{
+					"relationship-key": "cloud-region.cloud-owner",
+					"relationship-value": "att-aic"
+				    },
+					{
+						"relationship-key": "cloud-region.cloud-region-id",
+						"relationship-value": "mdt1"
+					},
+					{
+						"relationship-key": "tenant.tenant-id",
+						"relationship-value": "Tenant123"
+					}]
+			}]
+	}
+}

@@ -63,7 +63,7 @@ class CompleteMsoProcessTest {
 
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 		when(mockExecution.getVariable("CompleteMsoProcessRequest")).thenReturn(completeMsoProcessRequest)
-		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
+		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C");
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
 
 		CompleteMsoProcess completeMsoProcess = new CompleteMsoProcess()
@@ -141,28 +141,6 @@ class CompleteMsoProcessTest {
    <sdncadapterworkflow:out>BPEL BPEL-NAME FAILED</sdncadapterworkflow:out>
 </sdncadapterworkflow:MsoCompletionResponse>"""
 
-	@Test
-    void testBuildDataError() {
-		// given
-		def message = "Some-Message"
-
-		def mockExecution = mock ExecutionEntity.class
-		when mockExecution.getVariable("CMSO_mso-bpel-name") thenReturn "BPEL-NAME"
-		when mockExecution.getVariable("testProcessKey") thenReturn "CompleteMsoProcess"
-
-		def completeMsoProcess = new CompleteMsoProcess()
-		// when
-		assertThatThrownBy { completeMsoProcess.buildDataError(mockExecution, message) } isInstanceOf BpmnError
-		// then
-		verify mockExecution setVariable("CompleteMsoProcessResponse", msoCompletionResponse)
-		def argumentCaptor = ArgumentCaptor.forClass WorkflowException.class
-		verify mockExecution setVariable(eq("WorkflowException"), argumentCaptor.capture())
-		def capturedException = argumentCaptor.value
-
-		assertThat capturedException.processKey isEqualTo "CompleteMsoProcess"
-		assertThat capturedException.errorCode isEqualTo 500
-		assertThat capturedException.errorMessage isEqualTo message
-    }
 
 	@Test
 	void postProcessResponse_successful() {

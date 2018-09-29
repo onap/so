@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +28,7 @@ import org.onap.aai.domain.yang.VpnBindings;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -39,10 +40,10 @@ import org.springframework.stereotype.Component;
 public class AAIVpnBindingResources {
 	@Autowired
 	private InjectionHelper injectionHelper;
-	
+
 	@Autowired
 	private AAIObjectMapper aaiObjectMapper;
-	
+
 	/**
 	 * @param customer
 	 */
@@ -56,10 +57,10 @@ public class AAIVpnBindingResources {
 	 * @return
 	 */
 	public Optional<VpnBindings> getVpnBindingByCustomerVpnId (String customerVpnId) {
-		AAIResourceUri aaiVpnBindingsResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDINGS)
+		AAIResourceUri aaiVpnBindingsResourceUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VPN_BINDING)
 				  							.queryParam("customer-vpn-id",customerVpnId);
-		return injectionHelper.getAaiClient().get(VpnBindings.class,aaiVpnBindingsResourceUri); 
-		
+		return injectionHelper.getAaiClient().get(VpnBindings.class,aaiVpnBindingsResourceUri);
+
 	}
 
 	/**

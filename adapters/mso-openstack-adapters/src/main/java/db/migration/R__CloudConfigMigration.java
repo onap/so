@@ -53,6 +53,11 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, R__CloudConfigMigration.class);
     @JsonProperty("cloud_config")
     private CloudConfig cloudConfig;
+    
+    @Override
+    public boolean isUndo(){
+    	return false;
+    }
 
     @Override
     public void migrate(Connection connection) throws Exception {

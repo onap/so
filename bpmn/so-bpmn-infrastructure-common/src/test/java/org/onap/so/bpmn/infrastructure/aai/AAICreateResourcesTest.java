@@ -22,7 +22,7 @@ package org.onap.so.bpmn.infrastructure.aai;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -38,7 +38,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
@@ -86,7 +86,7 @@ public class AAICreateResourcesTest {
 	public void createAAIProjectTest() {
 		doReturn(aaiResourcesClient).when(aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class), isA(Optional.class));
 		doNothing().when(aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
-		doNothing().when(aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
+		
 
 		aaiCreateResources.createAAIProject(projectName, serviceInstanceId);
 		
@@ -185,7 +185,7 @@ public class AAICreateResourcesTest {
 	
 	@Test
 	public void getVnfInstanceExceptionTest() {
-		doThrow(Exception.class).when(aaiResourcesClient).get(isA(AAIResourceUri.class));
+		doThrow(RuntimeException.class).when(aaiResourcesClient).get(isA(AAIResourceUri.class));
 		
 		Optional<GenericVnf> actualVnf = aaiCreateResources.getVnfInstance(vnfId);
 		

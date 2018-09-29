@@ -32,7 +32,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
@@ -42,11 +42,11 @@ import org.onap.so.adapters.vnfrest.RollbackVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.UpdateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.UpdateVolumeGroupResponse;
 import org.onap.so.client.adapter.rest.AdapterRestClient;
-import org.onap.so.BaseTest;
+import org.onap.so.BaseIntegrationTest;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class VnfVolumeAdapterClientIT extends BaseTest{
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class VnfVolumeAdapterClientIT extends BaseIntegrationTest{
 
 	private static final String TESTING_ID = "___TESTING___";
 	private static final String AAI_VOLUME_GROUP_ID = "test";

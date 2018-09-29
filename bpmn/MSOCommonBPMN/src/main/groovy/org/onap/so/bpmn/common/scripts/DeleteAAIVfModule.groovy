@@ -20,11 +20,11 @@
 
 package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient;
-import org.onap.so.rest.RESTConfig;
+import org.onap.aai.domain.yang.GenericVnf
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
@@ -41,8 +41,6 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		execution.setVariable("DAAIVfMod_genVnfRsrcVer",null)
 		execution.setVariable("DAAIVfMod_vfModuleId",null)
 		execution.setVariable("DAAIVfMod_vfModRsrcVer",null)
-		execution.setVariable("DAAIVfMod_genericVnfEndpoint",null)
-		execution.setVariable("DAAIVfMod_vfModuleEndpoint",null)
 		execution.setVariable("DAAIVfMod_moduleExists",false)
 		execution.setVariable("DAAIVfMod_isBaseModule", false)
 		execution.setVariable("DAAIVfMod_isLastModule", false)
@@ -69,79 +67,46 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		def vfModuleId = utils.getNodeText(xml,"vf-module-id")
 		execution.setVariable("DAAIVfMod_vnfId", vnfId)
 		execution.setVariable("DAAIVfMod_vfModuleId", vfModuleId)
-		
-		AaiUtil aaiUriUtil = new AaiUtil(this)
-		def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-		msoLogger.debug('AAI URI is: ' + aai_uri)
-		
-		execution.setVariable("DAAIVfMod_genericVnfEndpoint", "${aai_uri}/" + vnfId)
-		execution.setVariable("DAAIVfMod_vfModuleEndpoint", "${aai_uri}/" + vnfId +
-			 "/vf-modules/vf-module/" + vfModuleId)
 	}
 	
 	// send a GET request to AA&I to retrieve the Generic Vnf/Vf Module information based on a Vnf Id
 	// expect a 200 response with the information in the response body or a 404 if the Generic Vnf does not exist
 	public void queryAAIForGenericVnf(DelegateExecution execution) {
-		def delModuleId = execution.getVariable("DAAIVfMod_vfModuleId")
-		def endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + execution.getVariable("DAAIVfMod_genericVnfEndpoint") + "?depth=1"
-		msoLogger.debug("DeleteAAIVfModule endPoint: " + endPoint)
-		def aaiRequestId = utils.getRequestID()
+		
+		def vnfId = execution.getVariable("DAAIVfMod_vnfId")
 
-		RESTConfig config = new RESTConfig(endPoint);
-		msoLogger.debug("queryAAIForGenericVnf() endpoint-" + endPoint)
-		def responseData = ""
 		try {
-			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
-				addHeader("Accept","application/xml");
-			String basicAuthCred = utils.getBasicAuth(UrnPropertiesReader.getVariable("aai.auth", execution),UrnPropertiesReader.getVariable("mso.msoKey", execution))
-				
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-				client.addAuthorizationHeader(basicAuthCred)
-			}
-			msoLogger.debug("invoking GET call to AAI endpoint :"+System.lineSeparator()+endPoint)
-			APIResponse response = client.httpGet()
-			msoLogger.debug("DeleteAAIVfModule - invoking httpGet to AAI")
+			AaiUtil aaiUriUtil = new AaiUtil(this)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			uri.depth(Depth.ONE)
+            Optional<GenericVnf> genericVnf = getAAIClient().get(GenericVnf.class, uri)
 
-			responseData = response.getResponseBodyAsString()
-			execution.setVariable("DAAIVfMod_queryGenericVnfResponseCode", response.getStatusCode())
-			execution.setVariable("DAAIVfMod_queryGenericVnfResponse", responseData)
-			msoLogger.debug("AAI Response: " + responseData)
-			msoLogger.debug("Response code:" + response.getStatusCode())
-			msoLogger.debug("Response:" + System.lineSeparator()+responseData)
+            if(genericVnf.isPresent()) {
+                execution.setVariable("DAAIVfMod_queryGenericVnfResponseCode", 200)
+                execution.setVariable("DAAIVfMod_queryGenericVnfResponse", genericVnf.get())
+
+            }else{
+                execution.setVariable("DAAIVfMod_queryGenericVnfResponseCode", 404)
+                execution.setVariable("DAAIVfMod_queryGenericVnfResponse", "Vnf Not Found!")
+            }
+
 		} catch (Exception ex) {
 			msoLogger.debug("Exception occurred while executing AAI GET:" + ex.getMessage())
 			execution.setVariable("DAAIVfMod_queryGenericVnfResponse", "AAI GET Failed:" + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured during queryAAIForGenericVnf")
-
 		}
 	}
 	
 	// construct and send a DELETE request to A&AI to delete a Generic Vnf
 	// note: to get here, all the modules associated with the Generic Vnf must already be deleted
 	public void deleteGenericVnf(DelegateExecution execution) {
-		def aaiRequestId = utils.getRequestID()
-		def endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + execution.getVariable("DAAIVfMod_genericVnfEndpoint") +
-			"/?resource-version=" + execution.getVariable("DAAIVfMod_genVnfRsrcVer")
-		msoLogger.debug("AAI endPoint: " + endPoint)
-		RESTConfig config = new RESTConfig(endPoint);
-		msoLogger.debug("deleteGenericVnf() endpoint-" + endPoint)
-		def responseData = ""
+
 		try {
-			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
-				addHeader("Accept","application/xml");
-			
-			String basicAuthCred = utils.getBasicAuth(UrnPropertiesReader.getVariable("aai.auth", execution),UrnPropertiesReader.getVariable("mso.msoKey", execution))
-					
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-				client.addAuthorizationHeader(basicAuthCred)
-			}
-			APIResponse response = client.httpDelete()
-				
-			responseData = response.getResponseBodyAsString()
-			execution.setVariable("DAAIVfMod_deleteGenericVnfResponseCode", response.getStatusCode())
-			execution.setVariable("DAAIVfMod_deleteGenericVnfResponse", responseData)
-			msoLogger.debug("Response code:" + response.getStatusCode())
-			msoLogger.debug("Response:" + System.lineSeparator()+responseData)
+			String vnfId = execution.getVariable("DAAIVfMod_vnfId")
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+            getAAIClient().delete(uri)
+			execution.setVariable("DAAIVfMod_deleteGenericVnfResponseCode", 200)
+			execution.setVariable("DAAIVfMod_deleteGenericVnfResponse", "Vnf Deleted")
 		} catch (Exception ex) {
 			ex.printStackTrace()
 			msoLogger.debug("Exception occurred while executing AAI DELETE:" + ex.getMessage())
@@ -151,33 +116,16 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 
 	// construct and send a DELETE request to A&AI to delete the Base or Add-on Vf Module
 	public void deleteVfModule(DelegateExecution execution) {
-		def endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + execution.getVariable("DAAIVfMod_vfModuleEndpoint") +
-			"/?resource-version=" + execution.getVariable("DAAIVfMod_vfModRsrcVer")
-		def aaiRequestId = utils.getRequestID()
-
-		RESTConfig config = new RESTConfig(endPoint);
-		msoLogger.debug("deleteVfModule() endpoint-" + endPoint)
 		def responseData = ""
 		try {
-			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
-				addHeader("Accept","application/xml");
+			String vnfId = execution.getVariable("DAAIVfMod_vnfId")
+			String vfModuleId = execution.getVariable("DAAIVfMod_vfModuleId")
 			
-			String basicAuthCred = utils.getBasicAuth(UrnPropertiesReader.getVariable("aai.auth", execution),UrnPropertiesReader.getVariable("mso.msoKey", execution))
-					
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-				client.addAuthorizationHeader(basicAuthCred)
-			}
-			APIResponse response = client.httpDelete()
-			
-			msoLogger.debug("DeleteAAIVfModule - invoking httpDelete to AAI")
-			
-			responseData = response.getResponseBodyAsString()
-			execution.setVariable("DAAIVfMod_deleteVfModuleResponseCode", response.getStatusCode())
-			execution.setVariable("DAAIVfMod_deleteVfModuleResponse", responseData)
-			msoLogger.debug("DeleteAAIVfModule - AAI Response" + responseData)
-			msoLogger.debug("Response code:" + response.getStatusCode())
-			msoLogger.debug("Response:" + System.lineSeparator()+responseData)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
 
+            getAAIClient().delete(uri)
+			execution.setVariable("DAAIVfMod_deleteVfModuleResponseCode", 200)
+			execution.setVariable("DAAIVfMod_deleteVfModuleResponse", "Vf Module Deleted")
 		} catch (Exception ex) {
 			ex.printStackTrace()
 			msoLogger.debug("Exception occurred while executing AAI PUT:" + ex.getMessage())
@@ -189,88 +137,66 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	// to be deleted exists for the specified Generic Vnf and if it is the Base Module,
 	// there are no Add-on Modules present
 	public void parseForVfModule(DelegateExecution execution) {
-		def xml = execution.getVariable("DAAIVfMod_queryGenericVnfResponse")
-		msoLogger.debug("DeleteAAIVfModule - queryGenericVnfResponse" + xml)
+        GenericVnf genericVnf = execution.getVariable("DAAIVfMod_queryGenericVnfResponse")
 		
 		def delModuleId = execution.getVariable("DAAIVfMod_vfModuleId")
 		msoLogger.debug("Vf Module to be deleted: " + delModuleId)
-		List <String> qryModuleIdList = utils.getMultNodes(xml, "vf-module-id")
-		List <String> qryBaseModuleList = utils.getMultNodes(xml, "is-base-vf-module")
-		List <String> qryResourceVerList = utils.getMultNodes(xml, "resource-version")
-		execution.setVariable("DAAIVfMod_moduleExists", false)
-		execution.setVariable("DAAIVfMod_isBaseModule", false)
-		execution.setVariable("DAAIVfMod_isLastModule", false)
-		//
-		def isBaseVfModule = "false"
-		// loop through the Vf Module Ids looking for a match
-		if (qryModuleIdList != null && !qryModuleIdList.empty) {
-			msoLogger.debug("Existing Vf Module Id List: " + qryModuleIdList)
-			msoLogger.debug("Existing Vf Module Resource Version List: " + qryResourceVerList)
-			def moduleCntr = 0
-			// the Generic Vnf resource-version in the 1st entry in the query response
-			execution.setVariable("DAAIVfMod_genVnfRsrcVer", qryResourceVerList[moduleCntr])
-			for (String qryModuleId : qryModuleIdList) {
-				if (delModuleId.equals(qryModuleId)) {
-					// a Vf Module with the requested Id exists
-					execution.setVariable("DAAIVfMod_moduleExists", true)
-					// find the corresponding value for the is-base-vf-module field
-					isBaseVfModule = qryBaseModuleList[moduleCntr]
-					// find the corresponding value for the resource-version field
-					// note: the Generic Vnf entry also has a resource-version field, so
-					//       add 1 to the index to get the corresponding Vf Module value
-					execution.setVariable("DAAIVfMod_vfModRsrcVer", qryResourceVerList[moduleCntr+1])
-					msoLogger.debug("Match found for Vf Module Id " + qryModuleId + " for Generic Vnf Id " + execution.getVariable("DAAIVfMod_vnfId") + ", Base Module is " + isBaseVfModule + ", Resource Version is " + execution.getVariable("vfModRsrcVer"))
-					break
-				}
-				moduleCntr++
-			}
-		}
-		
-		// determine if the module to be deleted is a Base Module and/or the Last Module
-		if (execution.getVariable("DAAIVfMod_moduleExists") == true) {
-			if (isBaseVfModule.equals("true") && qryModuleIdList.size() != 1) {
-				execution.setVariable("DAAIVfMod_parseModuleResponse",
-					"Found Vf Module Id " + delModuleId + " for Generic Vnf Id " +
-					execution.getVariable("DAAIVfMod_vnfId") + ": is Base Module, not Last Module")
-				execution.setVariable("DAAIVfMod_isBaseModule", true)
-			} else {
-				if (isBaseVfModule.equals("true") && qryModuleIdList.size() == 1) {
-					execution.setVariable("DAAIVfMod_parseModuleResponse",
-						"Found Vf Module Id " + delModuleId + " for Generic Vnf Id " +
-						execution.getVariable("DAAIVfMod_vnfId") + ": is Base Module and Last Module")
-					execution.setVariable("DAAIVfMod_isBaseModule", true)
-					execution.setVariable("DAAIVfMod_isLastModule", true)
-				} else {
-					if (qryModuleIdList.size() == 1) {
-						execution.setVariable("DAAIVfMod_parseModuleResponse",
-							"Found Vf Module Id " + delModuleId + " for Generic Vnf Id " +
-							execution.getVariable("DAAIVfMod_vnfId") + ": is Not Base Module, is Last Module")
-						execution.setVariable("DAAIVfMod_isLastModule", true)
-					} else {
-					execution.setVariable("DAAIVfMod_parseModuleResponse",
-						"Found Vf Module Id " + delModuleId + " for Generic Vnf Id " +
-						execution.getVariable("DAAIVfMod_vnfId") + ": is Not Base Module and Not Last Module")
-					}
-				}
-			}
-			msoLogger.debug(execution.getVariable("DAAIVfMod_parseModuleResponse"))
-		} else { // (execution.getVariable("DAAIVfMod_moduleExists") == false)
-			msoLogger.debug("Vf Module Id " + delModuleId + " does not exist for Generic Vnf Id " + execution.getVariable("DAAIVfMod_vnfId"))
-			execution.setVariable("DAAIVfMod_parseModuleResponse",
-				"Vf Module Id " + delModuleId + " does not exist for Generic Vnf Id " +
-				execution.getVariable("DAAIVfMod_vnfName"))
-		}
+
+        execution.setVariable("DAAIVfMod_genVnfRsrcVer", genericVnf.getResourceVersion())
+
+        execution.setVariable("DAAIVfMod_moduleExists", false)
+        execution.setVariable("DAAIVfMod_isBaseModule", false)
+        execution.setVariable("DAAIVfMod_isLastModule", false)
+        if(genericVnf.getVfModules()!= null && !genericVnf.getVfModules().getVfModule().isEmpty()){
+            Optional<org.onap.aai.domain.yang.VfModule> vfModule = genericVnf.getVfModules().getVfModule().stream().
+                    filter{ v -> v.getVfModuleId().equals(delModuleId)}.findFirst()
+            if(vfModule.isPresent()){
+                execution.setVariable("DAAIVfMod_moduleExists", true)
+                execution.setVariable("DAAIVfMod_vfModRsrcVer", vfModule.get().getResourceVersion())
+
+                if (vfModule.get().isBaseVfModule  && genericVnf.getVfModules().getVfModule().size() != 1) {
+                    execution.setVariable("DAAIVfMod_parseModuleResponse",
+                            "Found Vf Module Id " + delModuleId + " for Generic Vnf Id " +
+                                    execution.getVariable("DAAIVfMod_vnfId") + ": is Base Module, not Last Module")
+                    execution.setVariable("DAAIVfMod_isBaseModule", true)
+                } else {
+                    if (vfModule.get().isBaseVfModule && genericVnf.getVfModules().getVfModule().size() == 1) {
+                        execution.setVariable("DAAIVfMod_parseModuleResponse",
+                                "Found Vf Module Id " + delModuleId + " for Generic Vnf Id " +
+                                        execution.getVariable("DAAIVfMod_vnfId") + ": is Base Module and Last Module")
+                        execution.setVariable("DAAIVfMod_isBaseModule", true)
+                        execution.setVariable("DAAIVfMod_isLastModule", true)
+                    } else {
+                        if (genericVnf.getVfModules().getVfModule().size() == 1) {
+                            execution.setVariable("DAAIVfMod_parseModuleResponse",
+                                    "Found Vf Module Id " + delModuleId + " for Generic Vnf Id " +
+                                            execution.getVariable("DAAIVfMod_vnfId") + ": is Not Base Module, is Last Module")
+                            execution.setVariable("DAAIVfMod_isLastModule", true)
+                        } else {
+                            execution.setVariable("DAAIVfMod_parseModuleResponse",
+                                    "Found Vf Module Id " + delModuleId + " for Generic Vnf Id " +
+                                            execution.getVariable("DAAIVfMod_vnfId") + ": is Not Base Module and Not Last Module")
+                        }
+                    }
+                }
+                msoLogger.debug(execution.getVariable("DAAIVfMod_parseModuleResponse"))
+            }
+        }
+        if (execution.getVariable("DAAIVfMod_moduleExists") == false) { // (execution.getVariable("DAAIVfMod_moduleExists") == false)
+            msoLogger.debug("Vf Module Id " + delModuleId + " does not exist for Generic Vnf Id " + execution.getVariable("DAAIVfMod_vnfId"))
+            execution.setVariable("DAAIVfMod_parseModuleResponse",
+                    "Vf Module Id " + delModuleId + " does not exist for Generic Vnf Id " +
+                            execution.getVariable("DAAIVfMod_vnfName"))
+        }
 	}
 	
 	// parses the output from the result from queryAAIForGenericVnf() to determine if the Vf Module
 	// to be deleted exists for the specified Generic Vnf and if it is the Base Module,
 	// there are no Add-on Modules present
 	public void parseForResourceVersion(DelegateExecution execution) {
-		def xml = execution.getVariable("DAAIVfMod_queryGenericVnfResponse")
-		msoLogger.debug("DeleteAAIVfModule - queryGenericVnfResponse" + xml)
-		String resourceVer = utils.getNodeText(xml, "resource-version")
-		execution.setVariable("DAAIVfMod_genVnfRsrcVer", resourceVer)
-		msoLogger.debug("Latest Generic VNF Resource Version: " + resourceVer)
+        GenericVnf genericVnf =  execution.getVariable("DAAIVfMod_queryGenericVnfResponse")
+		execution.setVariable("DAAIVfMod_genVnfRsrcVer", genericVnf.getResourceVersion())
+		msoLogger.debug("Latest Generic VNF Resource Version: " + genericVnf.getResourceVersion())
 	}
 	
 	

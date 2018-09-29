@@ -20,8 +20,8 @@
 
 package org.onap.so.bpmn.common;
 
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
-import static org.mockito.Matchers.any;
+import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
 import java.io.IOException;
@@ -30,11 +30,11 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.onap.so.BaseTest;
+import org.onap.so.bpmn.BaseBPMNTest;
 
-public class AAICheckVnfInMaintBBTest extends BaseTest{
+public class AAICheckVnfInMaintBBTest extends BaseBPMNTest{
 	
-	@Ignore
+
 	@Test
 	public void sunnyDayAAICheckVnfInMaintBBTest() throws InterruptedException, IOException {		
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("AAICheckVnfInMaintBB", variables);

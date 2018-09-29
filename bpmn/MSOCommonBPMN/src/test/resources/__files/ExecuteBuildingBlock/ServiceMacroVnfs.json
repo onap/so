@@ -24,6 +24,7 @@
 				},
 				"cloudConfiguration": {
 					"lcpCloudRegionId": "mdt1",
+					"cloudOwner" : "test-owner-name",
 					"tenantId": "88a6ca3ee0394ade9403f075db23167e"
 				},
 				"productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",

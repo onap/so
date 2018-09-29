@@ -27,7 +27,7 @@ mso:
                 
 spring:
   datasource:
-    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
+    jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
@@ -49,7 +49,7 @@ spring:
                        
 request:
   datasource:
-    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+    jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver  
@@ -60,11 +60,24 @@ request:
       test-on-borrow: true
 
 #Actuator
-management: 
-  context-path: /manage
+management:
+  endpoints:
+    web:
+      base-path: /manage
+  server:
+    servlet:
+      context-path: /manage
   metrics:
     se-global-registry: false
     export:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
         step: 1m # Step size (i.e. reporting frequency) to use.  
+ 
+
+org:
+  onap:
+    so:
+      adapters:
+        network:
+          encryptionKey: aa3871669d893c7fb8abbcda31b88b4f

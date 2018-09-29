@@ -20,29 +20,38 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class SDNCActivateTaskTest extends BaseTaskTest{
-	@Autowired
-	private SDNCActivateTasks sdncActivateTasks;
+	
+	@InjectMocks
+	private SDNCActivateTasks sdncActivateTasks = new SDNCActivateTasks();
 	
 	private L3Network network;
 	private ServiceInstance serviceInstance;
@@ -53,7 +62,7 @@ public class SDNCActivateTaskTest extends BaseTaskTest{
 	private Customer customer;
 	
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		serviceInstance = setServiceInstance();
 		network = setL3Network();
 		genericVnf = setGenericVnf();
@@ -63,7 +72,12 @@ public class SDNCActivateTaskTest extends BaseTaskTest{
 		customer = setCustomer();
 
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
-
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(network);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
 
 	}
 
@@ -78,7 +92,7 @@ public class SDNCActivateTaskTest extends BaseTaskTest{
 	public void activateVnfTestException() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(sdncVnfResources).activateVnf(genericVnf,serviceInstance, customer,cloudRegion,requestContext);
+		doThrow(RuntimeException.class).when(sdncVnfResources).activateVnf(genericVnf,serviceInstance, customer,cloudRegion,requestContext);
 		sdncActivateTasks.activateVnf(execution);
 	}
 	
@@ -93,7 +107,7 @@ public class SDNCActivateTaskTest extends BaseTaskTest{
 	public void activateNetworkExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(sdncNetworkResources).activateNetwork(isA(L3Network.class), isA(ServiceInstance.class), isA(Customer.class), isA(RequestContext.class), isA(CloudRegion.class));
+		doThrow(RuntimeException.class).when(sdncNetworkResources).activateNetwork(isA(L3Network.class), isA(ServiceInstance.class), isA(Customer.class), isA(RequestContext.class), isA(CloudRegion.class));
 		sdncActivateTasks.activateNetwork(execution);
 	}
 	
@@ -110,7 +124,7 @@ public class SDNCActivateTaskTest extends BaseTaskTest{
 	public void activateVfModuleTestException() throws Exception {
 		expectedException.expect(BpmnError.class);
 		
-		doThrow(Exception.class).when(sdncVfModuleResources).activateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+		doThrow(RuntimeException.class).when(sdncVfModuleResources).activateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
 		sdncActivateTasks.activateVfModule(execution);
 	}
 }

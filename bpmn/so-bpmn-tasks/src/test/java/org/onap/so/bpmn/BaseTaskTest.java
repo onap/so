@@ -21,13 +21,19 @@ package org.onap.so.bpmn;
 
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.onap.so.TestApplication;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetworkBBUtils;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
 import org.onap.so.client.appc.ApplicationControllerAction;
+import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAICollectionResources;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAIInstanceGroupResources;
@@ -47,73 +53,68 @@ import org.onap.so.client.orchestration.VnfAdapterVolumeGroupResources;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+@RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class BaseTaskTest extends TestDataSetup {
-	@MockBean
+	@Mock
 	protected AAIVolumeGroupResources aaiVolumeGroupResources;
 	
-	@MockBean
+	@Mock
 	protected AAIServiceInstanceResources aaiServiceInstanceResources;
 	
-	@MockBean
+	@Mock
 	protected AAIVnfResources aaiVnfResources;
 	
-	@MockBean
+	@Mock
 	protected AAIVfModuleResources aaiVfModuleResources;
 	
-	@MockBean
+	@Mock
 	protected AAIVpnBindingResources aaiVpnBindingResources;
 	
-	@MockBean
+	@Mock
 	protected AAINetworkResources aaiNetworkResources;
 	
-	@MockBean
+	@Mock
 	protected AAICollectionResources aaiCollectionResources;
 	
-	@MockBean
+	@Mock
 	protected NetworkAdapterResources networkAdapterResources;
 	
-	@MockBean
+	@Mock
 	protected VnfAdapterVolumeGroupResources vnfAdapterVolumeGroupResources;
 	
-	@MockBean
+	@Mock
 	protected VnfAdapterVfModuleResources vnfAdapterVfModuleResources;
 	
-	@MockBean
+	@Mock
 	protected SDNCVnfResources sdncVnfResources;
 	
-	@MockBean
+	@Mock
 	protected SDNCNetworkResources sdncNetworkResources;
 	
-	@MockBean
+	@Mock
 	protected SDNCVfModuleResources sdncVfModuleResources;
 	
-	@MockBean
+	@Mock
 	protected SDNCServiceInstanceResources sdncServiceInstanceResources;
 	
-	@MockBean
+	@Mock
 	protected AssignNetworkBBUtils assignNetworkBBUtils;
 	
-	@MockBean
+	@Mock
 	protected NetworkAdapterObjectMapper networkAdapterObjectMapper;
 	
-	@MockBean
+	@Mock
 	protected AAIInstanceGroupResources aaiInstanceGroupResources;
 	
-	@MockBean
+	@Mock
+	protected ApplicationControllerAction appCClient;
+	
+	@Mock
 	protected CatalogDbClient catalogDbClient;
 	
-	@MockBean
-	@Qualifier("RequestsDbClient")
+	@Mock
 	protected RequestsDbClient requestsDbClient;
 	
 	@Mock
@@ -121,13 +122,23 @@ public abstract class BaseTaskTest extends TestDataSetup {
 	
 	@Mock
 	protected BBInputSetup bbInputSetup;
-	
-	@SpyBean
-	protected SDNCClient SPY_sdncClient;
-	
-	@MockBean
-	protected ApplicationControllerAction appCClient;
 
-	@MockBean
+	@Mock
 	protected AAIConfigurationResources aaiConfigurationResources;
+	
+	@Mock
+	protected AAIObjectMapper MOCK_aaiObjectMapper;
+
+	@Mock
+	protected InjectionHelper MOCK_injectionHelper;
+	
+	@Mock
+	protected AAIResourcesClient MOCK_aaiResourcesClient;	
+
+	@Mock
+	protected ExtractPojosForBB extractPojosForBB;
+
+	@Mock
+	protected ExceptionBuilder exceptionUtil;
+
 }

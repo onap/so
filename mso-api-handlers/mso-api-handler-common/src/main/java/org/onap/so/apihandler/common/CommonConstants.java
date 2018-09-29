@@ -24,7 +24,7 @@ package org.onap.so.apihandler.common;
 public final class CommonConstants {
 
     public static final String DEFAULT_BPEL_AUTH = "admin:admin";
-    public static final String ENCRYPTION_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
+    public static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
 
     public static final String REQUEST_ID_HEADER = "mso-request-id";
     public static final String REQUEST_TIMEOUT_HEADER = "mso-service-request-timeout";

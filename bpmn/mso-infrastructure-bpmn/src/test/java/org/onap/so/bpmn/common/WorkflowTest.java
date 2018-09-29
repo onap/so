@@ -927,6 +927,11 @@ public abstract class WorkflowTest {
 	protected boolean injectSDNCRestCallback(String contentType, String content, long timeout) {
 		String sdncRequestId = (String) getProcessVariable("SDNCAdapterRestV1",
 			"SDNCAResponse_CORRELATOR", timeout);
+		
+		if (sdncRequestId == null) {
+			sdncRequestId = (String) getProcessVariable("SDNCAdapterRestV2",
+				"SDNCAResponse_CORRELATOR", timeout);
+		}
 
 		if (sdncRequestId == null) {
 			return false;
@@ -1688,7 +1693,7 @@ public abstract class WorkflowTest {
 
 	/**
 	 * Checks to see if the specified process is ended.
-<<<<<<< HEAD:bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/common/WorkflowTest.java
+	 * 
 	 * @param processInstanceId the process Instance Id
 	 * @return true if the process is ended
 	 */
@@ -1700,8 +1705,7 @@ public abstract class WorkflowTest {
 
 	/**
 	 * Checks to see if the specified process is ended.
-=======
->>>>>>> origin/release/1806.51:bpmn/MSOCommonBPMN/src/test/java/org/openecomp/mso/bpmn/common/WorkflowTest.java
+	 * 
 	 * @author cb645j
 	 */
 	//TODO combine into 1

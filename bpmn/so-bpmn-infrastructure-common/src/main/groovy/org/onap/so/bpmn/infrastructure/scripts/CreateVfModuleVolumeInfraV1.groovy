@@ -20,20 +20,25 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.apache.commons.lang3.*
+import org.apache.commons.collections.CollectionUtils
 import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.so.bpmn.common.scripts.AaiUtil;
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.SearchResults
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+
 
 class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	
@@ -108,6 +113,10 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		// lcpCloudRegonId
 		def lcpCloudRegionId = requestMap.requestDetails.cloudConfiguration.lcpCloudRegionId
 		execution.setVariable('lcpCloudRegionId', lcpCloudRegionId)
+		
+		// cloudOwner
+		def cloudOwner = requestMap.requestDetails.cloudConfiguration.cloudOwner
+		execution.setVariable('cloudOwner', cloudOwner)
 		
 		// tenant
 		def tenantId = requestMap.requestDetails.cloudConfiguration.tenantId
@@ -310,34 +319,21 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		def request = execution.getVariable(prefix+"Request")
 		def serviceInstanceId = utils.getNodeText(request, "service-instance-id")
-
-		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getSearchNodesQueryEndpoint(execution)
-
-		def String queryAAIRequest = aaiEndpoint + "?search-node-type=service-instance&filter=service-instance-id:EQUALS:" + serviceInstanceId
-		msoLogger.debug("AAI query service instance request: " + queryAAIRequest)
-
-		APIResponse response = aaiUtil.executeAAIGetCall(execution, queryAAIRequest)
-
-		String returnCode = response.getStatusCode()
-		String aaiResponseAsString = response.getResponseBodyAsString()
-
-		msoLogger.debug("AAI query service instance return code: " + returnCode)
-		msoLogger.debug("AAI query service instance response: " + aaiResponseAsString)
-
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
+		try {
 
-		if (returnCode=='200') {
-			msoLogger.debug('Service instance ' + serviceInstanceId + ' found in AAI.')
-		} else {
-			if (returnCode=='404') {
+			AAIResourceUri uri = AAIUriFactory.createNodesUri(AAIObjectType.SERVICE_INSTANCE,serviceInstanceId)
+			if(getAAIClient().exists(uri)){
+				msoLogger.debug('Service instance ' + serviceInstanceId + ' found in AAI.')
+			}else{
 				def message = 'Service instance ' + serviceInstanceId + ' was not found in AAI. Return code: 404.'
 				msoLogger.debug(message)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, message)
-			} else {
-				WorkflowException aWorkflowException = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-				throw new BpmnError("MSOWorkflowException")
 			}
+		}catch(BpmnError bpmnError){
+			throw bpmnError
+		}catch(Exception ex){
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, ex.getMessage())
 		}
 	}
 	

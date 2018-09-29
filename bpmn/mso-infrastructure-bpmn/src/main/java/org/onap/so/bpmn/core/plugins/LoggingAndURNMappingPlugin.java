@@ -196,6 +196,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 
                 @Override
 		public void parseSequenceFlow(Element sequenceFlowElement, ScopeImpl scopeElement, TransitionImpl transition) {
+			//injectLogExecutionListener(activity);
 		}
 
                 @Override
@@ -213,7 +214,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 			injectLogExecutionListener(timerActivity);
 		}
 
-       @Override
+                @Override
 		public void parseRootElement(Element rootElement, List<ProcessDefinitionEntity> processDefinitions) {
 
 		}
@@ -307,7 +308,8 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 						String processName = repositoryService.createProcessDefinitionQuery()
 						  .processDefinitionId(execution.getProcessDefinitionId())
 						  .singleResult()
-						  .getName();
+						  .getName();				
+
 						
 						MsoLogger.setServiceName(processName);						
 						String requestId = (String) execution.getVariable("mso-request-id");

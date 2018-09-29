@@ -17,14 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.bpmn.infrastructure.scripts;
+package org.onap.so.bpmn.infrastructure.scripts
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.common.scripts.AaiUtil
+import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -32,6 +34,11 @@ import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.springframework.web.util.UriUtils;
 
 import groovy.json.*
@@ -269,11 +276,8 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO","Entered " + method, isDebugEnabled)
 		String msg = ""
-		utils.log("INFO"," ***** preProcessAAIPUT *****",  isDebugEnabled)
-
 
 		String serviceInstanceVersion = execution.getVariable("serviceInstanceVersion")
-		//execution.setVariable("GENPS_serviceResourceVersion", serviceInstanceVersion)
 
 		//requestDetails.modelInfo.for AAI PUT servieInstanceData
 		//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData
@@ -285,71 +289,48 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
 		String modelUuid = execution.getVariable("modelUuid")
 
+		org.onap.aai.domain.yang.ServiceInstance si = new org.onap.aai.domain.yang.ServiceInstance()
+		si.setServiceInstanceId(serviceInstanceId)
+		si.setServiceInstanceName(serviceInstanceName)
+		si.setServiceType(aaiServiceType)
+		si.setServiceRole(aaiServiceRole)
+		si.setModelInvariantId(modelInvariantUuid)
+		si.setModelVersionId(modelUuid)
 
-		AaiUtil aaiUriUtil = new AaiUtil(this)
-		utils.log("INFO","start create aai uri: " + aaiUriUtil, isDebugEnabled)
-		String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
-		utils.log("INFO","aai_uri: " + aai_uri, isDebugEnabled)
-		String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
-		utils.log("INFO","namespace: " + namespace, isDebugEnabled)
-
-		//update target model to aai
-		String serviceInstanceData =
-				"""<service-instance xmlns=\"${namespace}\">
-                    <service-instance-id>${MsoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
-                    <service-instance-name>${MsoUtils.xmlEscape(serviceInstanceName)}</service-instance-name>
-                    <service-type>${MsoUtils.xmlEscape(aaiServiceType)}</service-type>
-                    <service-role>${MsoUtils.xmlEscape(aaiServiceRole)}</service-role>
-                    <resource-version>${MsoUtils.xmlEscape(serviceInstanceVersion)}</resource-version>
-                    <model-invariant-id>${MsoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-id>
-                    <model-version-id>${MsoUtils.xmlEscape(modelUuid)}</model-version-id>
-				 </service-instance>""".trim()
-
-		execution.setVariable("serviceInstanceData", serviceInstanceData)
-		utils.log("INFO","serviceInstanceData: " + serviceInstanceData, isDebugEnabled)
-		utils.logAudit(serviceInstanceData)
-		utils.log("INFO", " aai_uri " + aai_uri + " namespace:" + namespace, isDebugEnabled)
-		utils.log("INFO", " 'payload' to update Service Instance in AAI - " + "\n" + serviceInstanceData, isDebugEnabled)
+		execution.setVariable("serviceInstanceData", si)
 
 		utils.log("INFO", "Exited " + method, isDebugEnabled)
 	}
 
-	public void postProcessAAIPUT(DelegateExecution execution) {
+	public void updateServiceInstance(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** postProcessAAIPUT ***** ", isDebugEnabled)
+		utils.log("INFO"," ***** createServiceInstance ***** ", isDebugEnabled)
 		String msg = ""
+		String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		try {
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			boolean succInAAI = execution.getVariable("GENPS_SuccessIndicator")
-			if(!succInAAI){
-				utils.log("INFO","Error putting Service-instance in AAI", + serviceInstanceId, isDebugEnabled)
-				WorkflowException workflowException = execution.getVariable("WorkflowException")
-				utils.logAudit("workflowException: " + workflowException)
-				if(workflowException != null){
-					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-				}
-			}
-			else
-			{
-				//start rollback set up
-				RollbackData rollbackData = new RollbackData()
-				def disableRollback = execution.getVariable("disableRollback")
-				rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
-				rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
-				rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", serviceInstanceId)
-				rollbackData.put("SERVICEINSTANCE", "serviceType", execution.getVariable("serviceType"))
-				rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
-				execution.setVariable("rollbackData", rollbackData)
-			}
+			org.onap.aai.domain.yang.ServiceInstance si = execution.getVariable("serviceInstanceData")
+
+            AAIResourcesClient client = new AAIResourcesClient()
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+			client.update(uri, si)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
-			msg = "Exception in DoCreateServiceInstance.postProcessAAIDEL. " + ex.getMessage()
+			RollbackData rollbackData = new RollbackData()
+			def disableRollback = execution.getVariable("disableRollback")
+			rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
+			rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
+			rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", serviceInstanceId)
+			rollbackData.put("SERVICEINSTANCE", "serviceType", execution.getVariable("serviceType"))
+			rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
+			execution.setVariable("rollbackData", rollbackData)
+
+			msg = "Exception in DoCreateServiceInstance.createServiceInstance. " + ex.getMessage()
 			utils.log("INFO", msg, isDebugEnabled)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("INFO"," *** Exit postProcessAAIPUT *** ", isDebugEnabled)
+		utils.log("INFO"," *** Exit createServiceInstance *** ", isDebugEnabled)
 	}
 
 	public void preProcessRollback (DelegateExecution execution) {

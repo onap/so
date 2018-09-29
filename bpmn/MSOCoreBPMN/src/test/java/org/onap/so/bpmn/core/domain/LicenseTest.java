@@ -20,70 +20,35 @@
 package org.onap.so.bpmn.core.domain;
 
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.BDDMockito.Then;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 
-//@RunWith(PowerMockRunner.class)
-//@PrepareForTest({License.class})
-public class LicenseTest {
-	
-	//@Mock
-	private License license= new License();
-	//@InjectMocks
-	//private LicenseTest licenceTest;
+
+public class LicenseTest {	
+
+	private License license= new License();	
 	List<String> entitlementPoolList = new ArrayList<String>();
 	private List<String> licenseKeyGroupList = new ArrayList<String>();
-	//JSONArray array = new JSONArray(entitlementPoolList);
-	//JSONArray array1 = new JSONArray(licenseKeyGroupList);
-	//@PrepareForTest({License.class})
+
 	Long serialVersionUID = 333L;
 	
 	@Test
 	public void testLicense() {
 		license.setEntitlementPoolList(entitlementPoolList);
-		license.setLicenseKeyGroupList(licenseKeyGroupList);
-		//license.addEntitlementPool("entitlementPoolUuid");
+		license.setLicenseKeyGroupList(licenseKeyGroupList);		
 		license.addLicenseKeyGroup("licenseKeyGroupUuid");
 		assertEquals(license.getEntitlementPoolList(), entitlementPoolList);
 		assertEquals(license.getLicenseKeyGroupList(), licenseKeyGroupList);
 		assert(license.getEntitlementPoolListAsString()!= null);
 		assert(license.getLicenseKeyGroupListAsString()!=null);
 		license.addEntitlementPool("entitlementPoolUuid");
-		//assertEquals(license.getSerialversionuid(), serialVersionUID);
-		//assertArrayEquals(license.getSerialversionuid(), serialVersionUID);
-		//assert
-	
-		/*PowerMockito.mockStatic(License.class);
-		Mockito.when(License.getSerialversionuid()).thenReturn(getserial());
-		assertEquals(License.getSerialversionuid(),"abc");*/
+		
 		
 	}
-	// @Before 
-	// public void mocksetUp() {
-//      Long serialVersionUID = 333L;
-//	      PowerMockito.mockStatic(License.class);
-//	      expect (license.getSerialversionuid()).andReturn(serialVersionUID);
-//	      //PowerMockito.when(license.getSerialversionuid().
-//	      //PowerMockito.when(MathUtil.addInteger(2, 2)).thenReturn(1);
-//	   }
 	
-	/*private Long getserial() {
-		
-		return abc;
-	}*/
-
 }

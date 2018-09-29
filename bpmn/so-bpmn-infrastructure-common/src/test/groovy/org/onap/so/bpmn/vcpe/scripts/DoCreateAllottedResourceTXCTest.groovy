@@ -21,11 +21,7 @@
 package org.onap.so.bpmn.vcpe.scripts
 
 
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -36,15 +32,12 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
-import org.springframework.beans.factory.config.YamlPropertiesFactoryBean
-import org.springframework.core.io.ClassPathResource
-import org.springframework.core.io.FileSystemResource
-import org.springframework.core.io.Resource
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import static com.github.tomakehurst.wiremock.client.WireMock.put
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching
+import javax.ws.rs.core.UriBuilder
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetAllottedResource
@@ -52,10 +45,7 @@ import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchAllottedResource
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource_500
 
-import java.util.Map
-
 import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.vcpe.scripts.MapSetter
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 
@@ -85,7 +75,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessRequest *****
 			
 	@Test
-	// @Ignore  
+	  
 	public void preProcessRequest() {
 		ExecutionEntity mex = setupMock()
 		initPreProcess(mex)
@@ -124,7 +114,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void getAaiAR_Duplicate() {
 		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
 		
@@ -140,7 +130,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void getAaiAR_NotActive() {
 		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
 		
@@ -175,61 +165,23 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** createAaiAR *****
 	
 	@Test
-	@Ignore
 	public void createAaiAR() {
 		ExecutionEntity mex = setupMock()
-		def map = setupMap(mex)
 		initCreateAaiAr(mex)
-		
-		MockPutAllottedResource(CUST, SVC, INST, ARID)
-		
-		DoCreateAllottedResourceTXC DoCreateAllottedResourceTXC = new DoCreateAllottedResourceTXC()
-		DoCreateAllottedResourceTXC.createAaiAR(mex)
-		
-		def data = map.get("rollbackData")
-		assertNotNull(data)
-		assertTrue(data instanceof RollbackData)
-		
-		assertEquals("45", data.get(Prefix, "disableRollback"))
-		assertEquals("true", data.get(Prefix, "rollbackAAI"))
-		assertEquals(ARID, data.get(Prefix, "allottedResourceId"))
-		assertEquals("sii", data.get(Prefix, "serviceInstanceId"))
-		assertEquals("psii", data.get(Prefix, "parentServiceInstanceId"))
-		assertEquals(mex.getVariable("PSI_resourceLink")+"/allotted-resources/allotted-resource/"+ARID, data.get(Prefix, "aaiARPath"))
+		when(mex.getVariable("PSI_resourceLink")).thenReturn(AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, UriBuilder.fromPath( "/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST).build()))		
+		when(mex.getVariable("CSI_resourceLink")).thenReturn("/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST)
+		when(mex.getVariable("allottedResourceModelInfo")).thenReturn("{\n" +
+				"  \"modelInvariantUuid\":\"modelInvariantUuid\",\n" +
+				"  \"modelUuid\" : \"modelUuid\"\n" +
+				"}")
+		AAIResourcesClient client = mock(AAIResourcesClient.class)
+		DoCreateAllottedResourceTXC doCreateAllottedResourceTXC = spy(DoCreateAllottedResourceTXC.class)
+		when(doCreateAllottedResourceTXC.getAAIClient()).thenReturn(client)
+		doCreateAllottedResourceTXC.createAaiAR(mex)
 	}
 	
+
 	@Test
-	 @Ignore
-	public void createAaiAR_NoArid_NoModelUuids() {
-		ExecutionEntity mex = setupMock()
-		def map = setupMap(mex)
-		initCreateAaiAr(mex)
-			
-		// no allottedResourceId - will be generated
-		
-		when(mex.getVariable("allottedResourceId")).thenReturn(null)
-		
-		wireMockRule
-			.stubFor(put(urlMatching("/aai/.*/allotted-resource/.*"))
-					.willReturn(aResponse()
-						.withStatus(200)))
-		
-		DoCreateAllottedResourceTXC DoCreateAllottedResourceTXC = new DoCreateAllottedResourceTXC()
-		DoCreateAllottedResourceTXC.createAaiAR(mex)
-		
-		def arid = map.get("allottedResourceId")
-		assertNotNull(arid)
-		assertFalse(arid.isEmpty())
-		
-		def data = map.get("rollbackData")
-		assertNotNull(data)
-		assertTrue(data instanceof RollbackData)
-		
-		assertEquals(arid, data.get(Prefix, "allottedResourceId"))
-	}
-	
-	@Test
-	// @Ignore
 	public void createAaiAR_MissingPsiLink() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -244,7 +196,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void createAaiAR_HttpFailed() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -257,7 +209,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void createAaiAR_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -272,7 +224,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void createAaiAR_Ex() {
 		ExecutionEntity mex = setupMock()
 		initCreateAaiAr(mex)
@@ -290,7 +242,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** buildSDNCRequest *****
 	
 	@Test
-	// @Ignore
+	
 	public void buildSDNCRequest() {
 		ExecutionEntity mex = setupMock()
 		initBuildSDNCRequest(mex)
@@ -317,7 +269,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void buildSDNCRequest_Ex() {
 		ExecutionEntity mex = setupMock()
 		initBuildSDNCRequest(mex)
@@ -333,7 +285,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessSDNCAssign *****
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCAssign() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -359,7 +311,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCAssign_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -372,7 +324,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCAssign_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -388,7 +340,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessSDNCCreate *****
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCCreate() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -415,7 +367,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCCreate_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -428,7 +380,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCCreate_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -444,7 +396,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessSDNCActivate *****
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCActivate() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -471,7 +423,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCActivate_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -484,7 +436,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCActivate_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNC(mex)
@@ -500,7 +452,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** validateSDNCResp *****
 	
 	@Test
-	// @Ignore
+	
 	public void validateSDNCResp() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -524,7 +476,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void validateSDNCResp_Get() {
 		ExecutionEntity mex = setupMock()
 		def data = initValidateSDNCResp(mex)
@@ -543,7 +495,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void validateSDNCResp_Unsuccessful() {
 		ExecutionEntity mex = setupMock()
 		initValidateSDNCResp(mex)
@@ -558,7 +510,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void validateSDNCResp_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		initValidateSDNCResp(mex)
@@ -572,7 +524,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void validateSDNCResp_Ex() {
 		ExecutionEntity mex = setupMock()
 		initValidateSDNCResp(mex)
@@ -589,7 +541,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessSDNCGet *****
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCGet_FoundAR() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -608,7 +560,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCGet_NotFoundAR() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
@@ -629,7 +581,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessSDNCGet_Ex() {
 		ExecutionEntity mex = setupMock()
 		initPreProcessSDNCGet(mex)
@@ -660,7 +612,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** generateOutputs *****
 	
 	@Test
-	// @Ignore
+	
 	public void generateOutputs() {
 		ExecutionEntity mex = setupMock()
 		def txctop = FileUtil.readResourceFile("__files/VCPE/DoCreateAllottedResourceTXC/SDNCTopologyQueryCallback.xml")
@@ -679,7 +631,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void generateOutputs_BadXml() {
 		ExecutionEntity mex = setupMock()
 		
@@ -694,7 +646,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void generateOutputs_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		
@@ -709,7 +661,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void generateOutputs_Ex() {
 		ExecutionEntity mex = setupMock()
 		
@@ -727,7 +679,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** preProcessRollback *****
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessRollback() {
 		ExecutionEntity mex = setupMock()
 		WorkflowException wfe = mock(WorkflowException.class)
@@ -743,7 +695,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessRollback_NotWFE() {
 		ExecutionEntity mex = setupMock()
 		
@@ -758,7 +710,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessRollback_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		
@@ -772,7 +724,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void preProcessRollback_Ex() {
 		ExecutionEntity mex = setupMock()
 		
@@ -789,7 +741,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	// ***** postProcessRollback *****
 	
 	@Test
-	// @Ignore
+	
 	public void postProcessRollback() {
 		ExecutionEntity mex = setupMock()
 		WorkflowException wfe = mock(WorkflowException.class)
@@ -806,7 +758,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void postProcessRollback_NotWFE() {
 		ExecutionEntity mex = setupMock()
 		
@@ -822,7 +774,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void postProcessRollback_BpmnError() {
 		ExecutionEntity mex = setupMock()
 		
@@ -837,7 +789,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	}
 	
 	@Test
-	// @Ignore
+	
 	public void postProcessRollback_Ex() {
 		ExecutionEntity mex = setupMock()
 		
@@ -891,7 +843,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 		when(mex.getVariable("allottedResourceId")).thenReturn(ARID)
 		when(mex.getVariable("aai.endpoint")).thenReturn(aaiUriPfx)
 		when(mex.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.global.default.aai.namespace"))
-		when(mex.getVariable("PSI_resourceLink")).thenReturn(aaiUriPfx + "/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST)
+		when(mex.getVariable("PSI_resourceLink")).thenReturn(AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, UriBuilder.fromPath( "/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST).build()))
 		when(mex.getVariable("allottedResourceType")).thenReturn("TXCt")
 		when(mex.getVariable("allottedResourceRole")).thenReturn("TXCr")
 		when(mex.getVariable("CSI_resourceLink")).thenReturn(aaiUriPfx+"/aai/v9/mycsi")
@@ -951,7 +903,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 	
 	private initUpdateAaiAROrchStatus(ExecutionEntity mex) {
 		when(mex.getVariable(DBGFLAG)).thenReturn("true")
-		when(mex.getVariable("aaiARPath")).thenReturn(aaiUriPfx + "/aai/v9/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
+		when(mex.getVariable("aaiARPath")).thenReturn("/business/customers/customer/"+CUST+"/service-subscriptions/service-subscription/"+SVC+"/service-instances/service-instance/"+INST+"/allotted-resources/allotted-resource/"+ARID)
 	}
 		
 }

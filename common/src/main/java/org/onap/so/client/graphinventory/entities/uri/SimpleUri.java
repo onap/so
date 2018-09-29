@@ -150,12 +150,8 @@ public class SimpleUri implements GraphInventoryResourceUri {
 	protected URI build(Object... values) {
 		//This is a workaround because resteasy does not encode URIs correctly
 		final String[] encoded = new String[values.length];
-		for (int i = 0; i < values.length; i++) {
-			try {
-				encoded[i] = UriUtils.encode(values[i].toString(), StandardCharsets.UTF_8.toString());
-			} catch (UnsupportedEncodingException e) {
-				encoded[i] = values[i].toString();
-			}
+		for (int i = 0; i < values.length; i++) {			
+				encoded[i] = UriUtils.encode(values[i].toString(), StandardCharsets.UTF_8.toString());			
 		}
 		return internalURI.buildFromEncoded(encoded);
 	}

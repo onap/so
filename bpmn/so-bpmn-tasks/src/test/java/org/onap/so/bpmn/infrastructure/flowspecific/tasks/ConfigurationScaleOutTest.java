@@ -20,10 +20,14 @@
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -34,20 +38,25 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ConfigurationScaleOutTest extends BaseTaskTest {
 	
-	@Autowired
-	private ConfigurationScaleOut configurationScaleOut;	
+	@InjectMocks
+	private ConfigurationScaleOut configurationScaleOut = new ConfigurationScaleOut();
 	
 	private GenericVnf genericVnf;
 	private VfModule vfModule;
@@ -59,7 +68,7 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
 
 
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		genericVnf = setGenericVnf();
 		vfModule = setVfModule();
 		msoRequestId = UUID.randomUUID().toString();
@@ -70,6 +79,11 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
 		configurationParameters.add(configParamsMap);
 		requestContext.setConfigurationParameters(configurationParameters);
 		gBBInput.setRequestContext(requestContext);
+		
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+
 	}
 	
 	@Test

@@ -61,7 +61,7 @@ mso:
     queue-capacity: 500
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3307/catalogdb
+    jdbc-url: jdbc:mariadb://localhost:3307/catalogdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver    

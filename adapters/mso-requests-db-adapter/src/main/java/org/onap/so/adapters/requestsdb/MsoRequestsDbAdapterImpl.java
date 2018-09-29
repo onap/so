@@ -264,7 +264,9 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 			String resourceTemplateUUID) throws MsoRequestsDbException {
 
 		return resourceOperationStatusRepository
-				.findOne(new ResourceOperationStatusId(serviceId, operationId, resourceTemplateUUID));
+				.findById(new ResourceOperationStatusId(serviceId, operationId, resourceTemplateUUID)).
+				orElseThrow( () -> new MsoRequestsDbException("Operation not found:" + operationId));
+				
 	}
 
 	/**

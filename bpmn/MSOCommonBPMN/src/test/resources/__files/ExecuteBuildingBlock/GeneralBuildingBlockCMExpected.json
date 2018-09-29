@@ -13,6 +13,7 @@
     "is-rollback-enabled": true
   },
   "cloudRegion": {
+    "lcp-cloud-region-id" : "myRegionId",
     "cloud-owner": "att-aic"
   },
   "userInput": null,

@@ -20,26 +20,35 @@
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class AssignNetworkTest extends BaseTaskTest {
 	
-	@Autowired
-	private AssignNetwork assignNetwork;
+	@InjectMocks
+	private AssignNetwork assignNetwork = new AssignNetwork();
 	
 	private L3Network network;
 	
 	@Before
-	public void before() {
+	public void before() throws BBObjectNotFoundException {
 		network = setL3Network();
+		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));	
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(network);
 	}
 	
 	@Test

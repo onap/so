@@ -21,9 +21,9 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -34,9 +34,10 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -48,7 +49,7 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class AAIVnfResourcesTest extends TestDataSetup {
 
 	private GenericVnf genericVnf;
@@ -123,7 +124,7 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 
 		aaiVnfResources.updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ACTIVE);
 
-		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.Vnf.class));
+		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
 
 		assertEquals(OrchestrationStatus.ACTIVE, genericVnf.getOrchestrationStatus());
 	}

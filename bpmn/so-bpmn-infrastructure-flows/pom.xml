@@ -7,10 +7,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>so-bpmn-infrastructure-flows</artifactId>
-	<packaging>jar</packaging>
-	<properties>
-		<camunda.version>7.8.0</camunda.version>
-	</properties>
+	<packaging>jar</packaging>	
 	<build>
 		<plugins>
 			<plugin>
@@ -129,9 +126,15 @@
 		<dependency>
 			<groupId>org.camunda.bpm.springboot</groupId>
 			<artifactId>camunda-bpm-spring-boot-starter</artifactId>
-			<version>2.3.0</version>
+			<version>${camunda.springboot.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.camunda.bpm.springboot</groupId>
+			<artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+			<version>${camunda.springboot.version}</version>
+			<scope>test</scope>
+		</dependency>	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

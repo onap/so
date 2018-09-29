@@ -20,6 +20,14 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.aai.domain.yang.L3Network
+import org.onap.aai.domain.yang.Relationship
+import org.onap.aai.domain.yang.RelationshipList
+import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.graphinventory.entities.uri.Depth
 
 import static org.mockito.Mockito.*
 
@@ -47,8 +55,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.apache.commons.lang3.*
 
 
-@RunWith(MockitoJUnitRunner.class)
-class DoDeleteNetworkInstanceTest  {
+class DoDeleteNetworkInstanceTest  extends  MsoGroovyTest{
 
 	@Rule
 	public WireMockRule wireMockRule = new WireMockRule(8090);
@@ -1117,11 +1124,11 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 	    @Before
 		public void init()
 		{
+			super.init("DoDeleteNetworkInstance")
 			MockitoAnnotations.initMocks(this)
 		}
 
 		@Test
-		//@Ignore
 		public void preProcessRequest_Json() {
 			
 			println "************ preProcessRequest_Payload ************* "
@@ -1258,7 +1265,6 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			verify(mockExecution).setVariable(Prefix + "networkInputs", "")
 			verify(mockExecution).setVariable(Prefix + "tenantId", "")
 
-			verify(mockExecution).setVariable(Prefix + "queryAAIRequest","")
 			verify(mockExecution).setVariable(Prefix + "queryAAIResponse", "")
 			verify(mockExecution).setVariable(Prefix + "aaiReturnCode", "")
 			verify(mockExecution).setVariable(Prefix + "isAAIGood", false)
@@ -1583,13 +1589,10 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 
 
 		@Test
-		//@Ignore
-		public void callRESTQueryAAI_200() {
+
+		public void callRESTQueryAAI_VfRelationshipExist() {
 
 			println "************ callRESTQueryAAI ************* "
-
-			WireMock.reset();
-			MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "all");
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(expectedNetworkRequest)
@@ -1602,49 +1605,22 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+            String networkId = "bdc5efe8-404a-409b-85f6-0dcc9eebae30"
+            DoDeleteNetworkInstance doDeleteNetworkInstance = spy(DoDeleteNetworkInstance.class)
+            when(doDeleteNetworkInstance.getAAIClient()).thenReturn(client)
+            L3Network l3Network = getL3Network()
+            Relationship relationship = new Relationship();
+            relationship.setRelatedTo("vf-module")
+            l3Network.getRelationshipList().getRelationship().add(relationship)
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ALL)
+            when(client.get(L3Network.class,uri)).thenReturn(Optional.of(l3Network))
 
-			DoDeleteNetworkInstance DoDeleteNetworkInstance = new DoDeleteNetworkInstance()
-			DoDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
+			doDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
 
 			verify(mockExecution).setVariable("prefix", Prefix)
-			verify(mockExecution).setVariable(Prefix + "queryAAIRequest", "http://localhost:8090/aai/v9/network/l3-networks/l3-network/bdc5efe8-404a-409b-85f6-0dcc9eebae30"+"?depth=all")
 
-			verify(mockExecution).setVariable(Prefix + "aaiReturnCode", "200")
+			verify(mockExecution).setVariable(Prefix + "aaiReturnCode", 200)
 			//verify(mockExecution).setVariable(Prefix + "queryAAIResponse", aaiResponse)
-			verify(mockExecution).setVariable(Prefix + "isAAIGood", true)
-			verify(mockExecution).setVariable(Prefix + "isVfRelationshipExist", false)
-
-		}
-
-		@Test
-		//@Ignore
-		public void callRESTQueryAAI_withRelationship_200() {
-
-			println "************ callRESTQueryAAI ************* "
-
-			WireMock.reset();
-			MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_withRelationship_Success.xml", "all");
-
-			ExecutionEntity mockExecution = setupMock()
-			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(expectedNetworkRequest)
-			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
-			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
-			when(mockExecution.getVariable("mso.workflow.default.aai.network.l3-network.uri")).thenReturn("")
-			// old: when(mockExecution.getVariable("mso.workflow.DoDeleteNetworkInstance.aai.network.l3-network.uri")).thenReturn("/aai/v8/network/l3-networks/l3-network")
-			when(mockExecution.getVariable("mso.workflow.DoDeleteNetworkInstance.aai.l3-network.uri")).thenReturn("/aai/v9/network/l3-networks/l3-network")
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
-
-			DoDeleteNetworkInstance DoDeleteNetworkInstance = new DoDeleteNetworkInstance()
-			DoDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
-
-			verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
-			verify(mockExecution).setVariable(Prefix + "queryAAIRequest", "http://localhost:8090/aai/v9/network/l3-networks/l3-network/bdc5efe8-404a-409b-85f6-0dcc9eebae30"+"?depth=all")
-
-			verify(mockExecution).setVariable(Prefix + "aaiReturnCode", "200")
-			//verify(mockExecution).setVariable(Prefix + "queryAAIResponse", aaiResponseWithRelationship)
 			verify(mockExecution).setVariable(Prefix + "isAAIGood", true)
 			verify(mockExecution).setVariable(Prefix + "isVfRelationshipExist", true)
 
@@ -1652,39 +1628,90 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 
 		@Test
 		//@Ignore
-		public void callRESTQueryAAI_200_DefaultUri() {
+		public void callRESTQueryAAI_200() {
 
 			println "************ callRESTQueryAAI ************* "
-
-			WireMock.reset();
-			MockGetNetworkByIdWithDepth("bdc5efe8-404a-409b-85f6-0dcc9eebae30", "DeleteNetworkV2/deleteNetworkAAIResponse_Success.xml", "all");
-
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(expectedNetworkRequest)
 			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
 			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
-			// old: when(mockExecution.getVariable("mso.workflow.default.aai.network.l3-network.uri")).thenReturn("/aai/v8/network/l3-networks/l3-network")
-			when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn("8")
-			when(mockExecution.getVariable("mso.workflow.default.aai.v8.l3-network.uri")).thenReturn("/aai/v9/network/l3-networks/l3-network")
+			when(mockExecution.getVariable("mso.workflow.default.aai.network.l3-network.uri")).thenReturn("")
+			when(mockExecution.getVariable("mso.workflow.doDeleteNetworkInstance.aai.l3-network.uri")).thenReturn("/aai/v9/network/l3-networks/l3-network")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+            when(mockExecution.getVariable(Prefix + "lcpCloudRegion")).thenReturn(null)
+			String networkId = "bdc5efe8-404a-409b-85f6-0dcc9eebae30"
+			DoDeleteNetworkInstance doDeleteNetworkInstance = spy(DoDeleteNetworkInstance.class)
+			when(doDeleteNetworkInstance.getAAIClient()).thenReturn(client)
+			L3Network l3Network = getL3Network()
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ALL)
+			when(client.get(L3Network.class,uri)).thenReturn(Optional.of(l3Network))
+			doDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
 
-			DoDeleteNetworkInstance DoDeleteNetworkInstance = new DoDeleteNetworkInstance()
-			DoDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
+			verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
 
-			verify(mockExecution).setVariable("prefix", Prefix)
-			verify(mockExecution).setVariable(Prefix + "queryAAIRequest", "http://localhost:8090/aai/v9/network/l3-networks/l3-network/bdc5efe8-404a-409b-85f6-0dcc9eebae30"+ "?depth=all")
-
-			verify(mockExecution).setVariable(Prefix + "aaiReturnCode", "200")
-			//verify(mockExecution).setVariable(Prefix + "queryAAIResponse", aaiResponse)
+			verify(mockExecution).setVariable(Prefix + "aaiReturnCode", 200)
 			verify(mockExecution).setVariable(Prefix + "isAAIGood", true)
-
+            verify(mockExecution).setVariable(Prefix + "queryAAIResponse", l3Network)
 		}
 
+
+    @Test
+    //@Ignore
+    public void callRESTQueryAAI_CloudRegionRelation() {
+
+        println "************ callRESTQueryAAI ************* "
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(expectedNetworkRequest)
+        when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
+        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
+        when(mockExecution.getVariable("mso.workflow.default.aai.network.l3-network.uri")).thenReturn("")
+        when(mockExecution.getVariable("mso.workflow.doDeleteNetworkInstance.aai.l3-network.uri")).thenReturn("/aai/v9/network/l3-networks/l3-network")
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
+        when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
+        when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+        when(mockExecution.getVariable(Prefix + "lcpCloudRegion")).thenReturn(null)
+        String networkId = "bdc5efe8-404a-409b-85f6-0dcc9eebae30"
+        DoDeleteNetworkInstance doDeleteNetworkInstance = spy(DoDeleteNetworkInstance.class)
+        when(doDeleteNetworkInstance.getAAIClient()).thenReturn(client)
+        L3Network l3Network = new L3Network();
+        RelationshipList relationshipList = new RelationshipList()
+        Relationship relationship = new Relationship();
+        relationship.setRelatedTo("cloud-region")
+        relationship.setRelatedLink("http://localhost:18080/cloud-regions/cloud-region/att-aic/lcpCloudRegion/")
+        relationshipList.getRelationship().add(relationship)
+        l3Network.setRelationshipList(relationshipList)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ALL)
+        when(client.get(L3Network.class,uri)).thenReturn(Optional.of(l3Network))
+        doDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
+
+        verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
+
+        verify(mockExecution).setVariable(Prefix + "aaiReturnCode", 200)
+        verify(mockExecution).setVariable(Prefix + "isAAIGood", true)
+        verify(mockExecution).setVariable(Prefix + "queryAAIResponse", l3Network)
+    }
+
+    private L3Network getL3Network() {
+		L3Network l3Network = new L3Network();
+		RelationshipList relationshipList = new RelationshipList()
+		Relationship relationship = new Relationship();
+		relationship.setRelatedTo("cloud-region")
+		relationship.setRelatedLink("http://localhost:18080/cloud-regions/cloud-region/att-aic/lcpCloudRegion/")
+		relationshipList.getRelationship().add(relationship)
+		relationship.setRelatedTo("tenant")
+		relationship.setRelatedLink("http://localhost:18080/cloud-regions/cloud-region/att-aic/lcpCloudRegion/tenants/tenant/tenantId/")
+		relationshipList.getRelationship().add(relationship)
+
+		l3Network.setRelationshipList(relationshipList)
+		l3Network
+	}
+
+
 		@Test
-		//@Ignore
 		public void callRESTQueryAAICloudRegion30_200() {
 
 			println "************ callRESTQueryAAICloudRegion30_200 ************* "

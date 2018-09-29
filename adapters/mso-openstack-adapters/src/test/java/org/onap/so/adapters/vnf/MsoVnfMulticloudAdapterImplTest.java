@@ -32,7 +32,7 @@ import org.onap.so.cloud.CloudConfig;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.entity.MsoRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.web.server.LocalServerPort;
 
 import javax.xml.ws.Holder;
 import java.util.HashMap;

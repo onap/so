@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -33,11 +34,15 @@ import org.onap.so.bpmn.common.scripts.VfModuleBase
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils;
+import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
@@ -111,56 +116,56 @@ public class DoUpdateVfModule extends VfModuleBase {
 			def xml = getVariable(execution, 'DoUpdateVfModuleRequest')
 			msoLogger.debug("DoUpdateVfModule request: " + xml)
 			msoLogger.debug('Received request xml:\n' + xml)
-			
+
 			if (xml == null || xml.isEmpty()) {
 				// Building Block-type request
 
 				String cloudConfiguration = execution.getVariable("cloudConfiguration")
 				String vfModuleModelInfo = execution.getVariable("vfModuleModelInfo")
-				
+
 				def serviceModelInfo = execution.getVariable("serviceModelInfo")
 				msoLogger.debug("serviceModelInfo: " + serviceModelInfo)
 				String modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
 				msoLogger.debug("modelInvariantUuid: " + modelInvariantUuid)
 				def vnfModelInfo = execution.getVariable("vnfModelInfo")
-				
+
 				//tenantId
 				def tenantId = execution.getVariable("tenantId")
 				execution.setVariable("DOUPVfMod_tenantId", tenantId)
-				
+
 				//volumeGroupId
 				def volumeGroupId = execution.getVariable("volumeGroupId")
 				execution.setVariable("DOUPVfMod_volumeGroupId", volumeGroupId)
-				
+
 				//cloudSiteId
 				def cloudSiteId = execution.getVariable("lcpCloudRegionId")
 				execution.setVariable("DOUPVfMod_aicCloudRegion", cloudSiteId)
-				
+
 				msoLogger.debug("cloudSiteId: " + cloudSiteId)
 				//vnfType
 				def vnfType = execution.getVariable("vnfType")
 				execution.setVariable("DOUPVfMod_vnfType", vnfType)
-				
+
 				msoLogger.debug("vnfType: " + vnfType)
 				//vnfName
 				def vnfName = execution.getVariable("vnfName")
 				execution.setVariable("DOUPVfMod_vnfName", vnfName)
-				
+
 				msoLogger.debug("vnfName: " + vnfName)
 				//vnfId
 				def vnfId = execution.getVariable("vnfId")
 				execution.setVariable("DOUPVfMod_vnfId", vnfId)
-				
+
 				msoLogger.debug("vnfId: " + vnfId)
 				//vfModuleName
 				def vfModuleName = execution.getVariable("vfModuleName")
 				execution.setVariable("DOUPVfMod_vfModuleName", vfModuleName)
-				
+
 				msoLogger.debug("vfModuleName: " + vfModuleName)
 				//vfModuleModelName
 				def vfModuleModelName = jsonUtil.getJsonValue(vfModuleModelInfo, "modelName")
 				execution.setVariable("DOUPVfMod_vfModuleModelName", vfModuleModelName)
-				
+
 				msoLogger.debug("vfModuleModelName: " + vfModuleModelName)
 				//modelCustomizationUuid
 				def modelCustomizationUuid = jsonUtil.getJsonValue(vfModuleModelInfo, "modelCustomizationUuid")
@@ -168,7 +173,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 					modelCustomizationUuid = ""
 				}
 				execution.setVariable("DOUPVfMod_modelCustomizationUuid", modelCustomizationUuid)
-				
+
 				msoLogger.debug("modelCustomizationUuid: " + modelCustomizationUuid)
 				//vfModuleId
 				def vfModuleId = execution.getVariable("vfModuleId")
@@ -186,12 +191,12 @@ public class DoUpdateVfModule extends VfModuleBase {
 				//serviceInstanceId
 				def serviceInstanceId = execution.getVariable("serviceInstanceId")
 				execution.setVariable("DOUPVfMod_serviceInstanceId", serviceInstanceId)
-				
+
 				msoLogger.debug("serviceInstanceId: " + serviceInstanceId)
 				//source - HARDCODED
 				def source = "VID"
 				execution.setVariable("DOUPVfMod_source", source)
-				
+
 				msoLogger.debug("source: " + source)
 				//backoutOnFailure
 				def disableRollback = execution.getVariable("disableRollback")
@@ -239,16 +244,16 @@ public class DoUpdateVfModule extends VfModuleBase {
 				String vnfQueryPath = execution.getVariable("vnfQueryPath")
 				execution.setVariable("DOUPVfMod_vnfQueryPath", vnfQueryPath)
 				msoLogger.debug("vnfQueryPath: " + vnfQueryPath)
-				
+
 				Map<String,String> vfModuleInputParams = execution.getVariable("vfModuleInputParams")
 				if (vfModuleInputParams != null) {
-					execution.setVariable("DOUPVfMod_vnfParamsMap", vfModuleInputParams)					
-				}	
+					execution.setVariable("DOUPVfMod_vnfParamsMap", vfModuleInputParams)
+				}
 				//get workload and environment context from parent SI
 				String environmentContext = ""
 				String workloadContext =""
 				String serviceType =""
-				
+
 				try{
 					String json = catalog.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
 					serviceType = jsonUtil.getJsonValue(json, "serviceResources.serviceType")
@@ -259,7 +264,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 					msoLogger.debug(msg)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 				}
-				
+
 				try{
 					AAIUri serviceInstanceURI = AAIUriFactory.create(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId,serviceType,serviceInstanceId)
 					AAIResourcesClient aaiRC = new AAIResourcesClient()
@@ -267,11 +272,11 @@ public class DoUpdateVfModule extends VfModuleBase {
 					Map<String, Object> aaiJson = aaiRW.asMap()
 					environmentContext = aaiJson.getOrDefault("environment-context","")
 					workloadContext = aaiJson.getOrDefault("workload-context","")
-					
+
 				}catch (Exception ex) {
 					msoLogger.debug("Error retreiving parent service instance information")
 				}
-				
+
 				execution.setVariable("DCVFM_environmentContext",environmentContext)
 				execution.setVariable("DCVFM_workloadContext",workloadContext)
 			}
@@ -285,7 +290,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 					serviceInstanceId = ''
 				}
 				execution.setVariable('DOUPVfMod_serviceInstanceId', serviceInstanceId)
-	
+
 				def vnfInputs = getRequiredNodeXml(execution, xml, 'vnf-inputs')
 				execution.setVariable('DOUPVfMod_vnfInputs', vnfInputs)
 				execution.setVariable('DOUPVfMod_vnfId', getRequiredNodeText(execution, vnfInputs, 'vnf-id'))
@@ -306,14 +311,14 @@ public class DoUpdateVfModule extends VfModuleBase {
 					execution.setVariable("DOUPVfMod_isBaseVfModule", isBaseVfModule)
 				}
 				msoLogger.debug("isBaseVfModule: " + isBaseVfModule)
-	
+
 				NetworkUtils networkUtils = new NetworkUtils()
 				def backoutOnFailure = networkUtils.isRollbackEnabled(execution, xml)
 				execution.setVariable("DOUPVfMod_backoutOnFailure", backoutOnFailure)
-	
+
 				def String vgi = getNodeTextForce(vnfInputs, 'volume-group-id')
 				execution.setVariable('DOUPVfMod_volumeGroupId', vgi)
-	
+
 				execution.setVariable('DOUPVfMod_vnfParams', utils.getNodeXml(xml, 'vnf-params', false))
 			}
 
@@ -382,7 +387,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.prepConfirmVolumeGroupTenant(' +
 			'execution=' + execution.getId() +
 			')'
-		
+
 		def prefix = execution.getVariable("prefix")
 
 		msoLogger.trace('Entered ' + method)
@@ -391,14 +396,12 @@ public class DoUpdateVfModule extends VfModuleBase {
 			String cloudRegion = execution.getVariable(prefix + "aicCloudRegion")
 
 			// Prepare AA&I url
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUtil = new AaiUtil(this)
-			String aai_uri = aaiUtil.getCloudInfrastructureCloudRegionUri(execution)
-			String queryCloudRegionRequest = "${aai_endpoint}${aai_uri}/" + cloudRegion
-			msoLogger.debug("CloudRegion Request: " + queryCloudRegionRequest)
+
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+			def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
 
 			execution.setVariable(prefix + "queryCloudRegionRequest", queryCloudRegionRequest)
-			msoLogger.debug(prefix + "queryCloudRegionRequest - " + "\n" + queryCloudRegionRequest)
 
 			cloudRegion = aaiUtil.getAAICloudReqion(execution, queryCloudRegionRequest, "AAI", cloudRegion)
 
@@ -427,9 +430,9 @@ public class DoUpdateVfModule extends VfModuleBase {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Exception occured during prepConfirmVolumeGroupTenant(): " + e.getMessage())
 		}
 		msoLogger.trace('Exited ' + method)
-		
+
 	}
-	
+
 	/**
 	 * Prepare a Request for invoking the SDNC Adapter subflow to perform
 	 * a VNF topology 'changeassign' operation.
@@ -625,19 +628,19 @@ public class DoUpdateVfModule extends VfModuleBase {
 			def asdcServiceModelVersion = execution.getVariable('DOUPVfMod_asdcServiceModelVersion')
 			def modelCustomizationUuid = execution.getVariable('DOUPVfMod_modelCustomizationUuid')
 			def backoutOnFailure = execution.getVariable("DOUPVfMod_backoutOnFailure")
-			
+
 			def messageId = execution.getVariable('mso-request-id') + '-' + System.currentTimeMillis()
 			def notificationUrl = createCallbackURL(execution, "VNFAResponse", messageId)
 			def useQualifiedHostName = UrnPropertiesReader.getVariable("mso.use.qualified.host",execution)
 			if ('true'.equals(useQualifiedHostName)) {
 					notificationUrl = utils.getQualifiedHostNameForCallback(notificationUrl)
 			}
-			
+
 			String environmentContext = execution.getVariable("DOUPVEnvironment_context")
 			String workloadContext = execution.getVariable("DOUPVWorkload_context")
 			msoLogger.debug("workloadContext: " + workloadContext)
 			msoLogger.debug("environmentContext: " + environmentContext)
-			
+
 			Map<String, String> vnfParamsMap = execution.getVariable("DOUPVfMod_vnfParamsMap")
 
 			String sdncGetResponse = execution.getVariable('DOUPVfMod_sdncTopologyResponse')
@@ -791,7 +794,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 					${personaModelCustomizationIdElement}
 				</UpdateAAIVfModuleRequest>
 			"""
-			
+
 			msoLogger.debug('Unformatted updateAAIVfModuleRequest: ' + updateAAIVfModuleRequest)
 			updateAAIVfModuleRequest = utils.formatXml(updateAAIVfModuleRequest)
 			execution.setVariable('DOUPVfMod_updateAAIVfModuleRequest', updateAAIVfModuleRequest)
@@ -846,7 +849,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 			if (!usePreload) {
 				modelCustomizationUuidString = "<modelCustomizationUuid>" + modelCustomizationUuid + "</modelCustomizationUuid>"
 			}
-			
+
 			def vnfParamsXml = execution.getVariable('DOUPVfMod_vnfParams')
 			def vnfNetworks = transformNetworkParamsToVnfNetworks(vnfParamsXml)
 
@@ -971,55 +974,26 @@ public class DoUpdateVfModule extends VfModuleBase {
 
 		try {
 			def vnfId = execution.getVariable('DOUPVfMod_vnfId')
-			def vfModuleId = execution.getVariable('DOUPVfMod_vfModuleId')
-
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String  aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
-			msoLogger.debug("AAI endPoint: " + endPoint)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
 
 			try {
-				def aaiRequestId = UUID.randomUUID().toString()
-				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
-				APIResponse response = aaiUriUtil.executeAAIGetCall(execution, endPoint)
-				msoLogger.debug("createVfModule - invoking httpGet() to AAI")
-
-				def responseData = response.getResponseBodyAsString()
-				if (responseData != null) {
-					msoLogger.debug("Received generic VNF data: " + responseData)
-
-				}
-
-				msoLogger.debug("createVfModule - queryAAIVfModule Response: " + responseData)
-				msoLogger.debug("createVfModule - queryAAIVfModule ResponseCode: " + response.getStatusCode())
-
-				execution.setVariable('DOUPVfMod_queryAAIVfModuleResponseCode', response.getStatusCode())
-				execution.setVariable('DOUPVfMod_queryAAIVfModuleResponse', responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
-				if (response.getStatusCode() == 200) {
-					// Parse the VNF record from A&AI to find base module info
+				Optional<GenericVnf> genericVnf = getAAIClient().get(GenericVnf.class,uri)
+				if (genericVnf.isPresent()) {
+                    execution.setVariable('DOUPVfMod_queryAAIVfModuleResponseCode', 200)
+                    execution.setVariable('DOUPVfMod_queryAAIVfModuleResponse', genericVnf.get())
+                    // Parse the VNF record from A&AI to find base module info
 					msoLogger.debug('Parsing the VNF data to find base module info')
-					if (responseData != null) {
-						def vfModulesText = utils.getNodeXml(responseData, "vf-modules")
-						def xmlVfModules= new XmlSlurper().parseText(vfModulesText)
-						def vfModules = xmlVfModules.'**'.findAll {it.name() == "vf-module"}
-						int vfModulesSize = 0
-						for (i in 0..vfModules.size()-1) {
-							def vfModuleXml = groovy.xml.XmlUtil.serialize(vfModules[i])
-							def isBaseVfModule = utils.getNodeText(vfModuleXml, "is-base-vf-module")
-
-							if (isBaseVfModule == "true") {
-							    String baseModuleId = utils.getNodeText(vfModuleXml, "vf-module-id")
+					if (genericVnf.get().getVfModules()!=null && !genericVnf.get().getVfModules().getVfModule().isEmpty()) {
+                        Optional<org.onap.aai.domain.yang.VfModule> vfmodule =  genericVnf.get().getVfModules().getVfModule().stream().
+                                filter{v-> v.isIsBaseVfModule()}.findFirst()
+							if (vfmodule.isPresent()) {
+							    String baseModuleId = vfmodule.get().getVfModuleId()
 							    execution.setVariable("DOUPVfMod_baseVfModuleId", baseModuleId)
 							    msoLogger.debug('Received baseVfModuleId: ' + baseModuleId)
-							    String baseModuleHeatStackId = utils.getNodeText(vfModuleXml, "heat-stack-id")
+							    String baseModuleHeatStackId = vfmodule.get().getHeatStackId()
 							    execution.setVariable("DOUPVfMod_baseVfModuleHeatStackId", baseModuleHeatStackId)
 							    msoLogger.debug('Received baseVfModuleHeatStackId: ' + baseModuleHeatStackId)
 							}
-						}
 					}
 				}
 			} catch (Exception ex) {

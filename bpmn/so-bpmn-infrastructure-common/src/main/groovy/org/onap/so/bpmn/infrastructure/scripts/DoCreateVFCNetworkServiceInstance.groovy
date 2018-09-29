@@ -18,17 +18,15 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.scripts;
+package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
-
-import org.apache.commons.lang3.*
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.camunda.bpm.engine.delegate.BpmnError 
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor 
-import org.onap.so.bpmn.common.scripts.ExceptionUtil 
-import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils 
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
@@ -209,53 +207,17 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
         String serviceId = execution.getVariable("serviceId")
-        String addRelationPayload = """<relationship xmlns="http://org.openecomp.aai.inventory/v11">
-                                            <related-to>service-instance</related-to>
-                                            <related-link>/aai/v11/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${serviceType}/service-instances/service-instance/${nsInstanceId}</related-link>
-                                            <relationship-data>
-                                                <relationship-key>customer.global-customer-id</relationship-key>
-                                                <relationship-value>${MsoUtils.xmlEscape(globalSubscriberId)}</relationship-value>
-                                            </relationship-data>
-                                            <relationship-data>
-                                                <relationship-key>service-subscription.service-type</relationship-key>
-                                                <relationship-value>${MsoUtils.xmlEscape(serviceType)}</relationship-value>
-                                            </relationship-data>
-                                           <relationship-data>
-                                                <relationship-key>service-instance.service-instance-id</relationship-key>
-                                                <relationship-value>${MsoUtils.xmlEscape(nsInstanceId)}</relationship-value>
-                                            </relationship-data>           
-                                        </relationship>"""
-        String endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-        msoLogger.debug("Add Relationship req:\n" + addRelationPayload)
-        String url = endpoint + "/aai/v11/business/customers/customer/" + globalSubscriberId + "/service-subscriptions/service-subscription/" + serviceType + "/service-instances/service-instance/" + serviceId + "/relationship-list/relationship"
-        APIResponse aaiRsp = executeAAIPutCall(execution, url, addRelationPayload)
-        msoLogger.debug("aai response status code:" + aaiRsp.getStatusCode())
-        msoLogger.debug("aai response content:" + aaiRsp.getResponseBodyAsString())
-        msoLogger.trace("Exit addNSRelationship")
-    }
-    
-    public APIResponse executeAAIPutCall(DelegateExecution execution, String url, String payload){
-        msoLogger.trace("Started Execute AAI Put Process") 
-        APIResponse apiResponse = null
+
+        AAIResourceUri nsUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,globalSubscriberId,serviceType,nsInstanceId)
+        AAIResourceUri relatedServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,globalSubscriberId,serviceType,serviceId)
+
         try{
-            String uuid = utils.getRequestID()
-            msoLogger.debug("Generated uuid is: " + uuid) 
-            msoLogger.debug("URL to be used is: " + url) 
-            String userName = UrnPropertiesReader.getVariable("aai.auth", execution)
-            String password = UrnPropertiesReader.getVariable("mso.msoKey", execution)
-            String basicAuthCred = utils.getBasicAuth(userName,password)
-            RESTConfig config = new RESTConfig(url);
-            RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Content-Type", "application/xml").addHeader("Accept","application/xml");
-            if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-                client.addAuthorizationHeader(basicAuthCred)
-            }
-            apiResponse = client.httpPut(payload)
-            msoLogger.trace("Completed Execute AAI Put Process") 
+            getAAIClient().connect(nsUri,relatedServiceUri)
+            msoLogger.info("NS relationship to Service added successfully")
         }catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing AAI Put Call", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing AAI Put Call", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
             throw new BpmnError("MSOWorkflowException")
         }
-        return apiResponse
     }
 
     /**
