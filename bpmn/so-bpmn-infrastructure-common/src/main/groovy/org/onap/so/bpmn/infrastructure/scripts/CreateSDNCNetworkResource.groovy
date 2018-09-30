@@ -131,6 +131,10 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                     execution.setVariable("isActivateRequired", "true")
                     break
 
+                case ~/[\w\s\W]*wanconnection[\w\s\W]*/ :
+                    execution.setVariable("isActivateRequired", "true")
+                    break
+
                 default:
                     break
             }
