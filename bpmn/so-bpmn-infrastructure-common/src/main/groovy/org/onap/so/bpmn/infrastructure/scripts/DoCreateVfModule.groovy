@@ -502,8 +502,10 @@ public class DoCreateVfModule extends VfModuleBase {
 
 			execution.setVariable("rollbackData", rollbackData)
 		}catch(BpmnError b){
+            msoLogger.error(b);
 			throw b
 		}catch(Exception e){
+            msoLogger.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error encountered in PreProcess method!")
 		}
 
