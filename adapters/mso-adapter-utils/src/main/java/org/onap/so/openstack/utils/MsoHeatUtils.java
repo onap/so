@@ -92,9 +92,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     private static final String DELETE_STACK = "DeleteStack";
 
-    private static final String HEAT_ERROR = "HeatError";
+    protected static final String HEAT_ERROR = "HeatError";
 
-    private static final String CREATE_STACK = "CreateStack";
+    protected static final String CREATE_STACK = "CreateStack";
 
     // Cache Heat Clients statically. Since there is just one MSO user, there is no
     // benefit to re-authentication on every request (or across different flows). The
@@ -1703,7 +1703,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
     	return vduStatus;
     }
 
-    private void sleep(long time) {
+    protected void sleep(long time) {
     	try {
             Thread.sleep(time);
         } catch (InterruptedException e) {

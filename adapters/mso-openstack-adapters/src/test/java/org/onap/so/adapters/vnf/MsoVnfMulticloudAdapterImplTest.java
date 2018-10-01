@@ -80,6 +80,11 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
                 //.withHeader()
                 .withStatus(HttpStatus.SC_NOT_FOUND)));
 
+        stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
+                //.withHeader()
+                .withBodyFile("MulticloudResponse_Stack.json")
+                .withStatus(HttpStatus.SC_OK)));
+
         stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/vfname/outputs")).willReturn(aResponse()
                 .withStatus(HttpStatus.SC_NOT_FOUND)));
 

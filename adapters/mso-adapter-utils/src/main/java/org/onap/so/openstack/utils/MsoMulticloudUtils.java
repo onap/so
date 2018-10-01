@@ -21,7 +21,6 @@
 package org.onap.so.openstack.utils;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -30,10 +29,8 @@ import java.util.Scanner;
 
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
-import javax.ws.rs.core.Response.StatusType;
 import javax.ws.rs.core.Response;
 
-import org.apache.http.HttpStatus;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
@@ -53,11 +50,15 @@ import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
-import org.onap.so.openstack.mappers.StackInfoMapper;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.RestClient;
 import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.logger.MessageEnum;
+import org.onap.so.logger.MsoAlarmLogger;
+import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.TargetEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -65,7 +66,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.heat.model.CreateStackParam;
-import com.woorea.openstack.heat.model.Stack;
 
 @Component
 public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
@@ -78,15 +78,13 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     public static final List<String> MULTICLOUD_INPUTS =
             Arrays.asList(OOF_DIRECTIVES, SDNC_DIRECTIVES, GENERIC_VNF_ID, VF_MODULE_ID, TEMPLATE_TYPE);
 
-    private static final String ONAP_IP = "ONAP_IP";
-
-    private static final String DEFAULT_MSB_IP = "127.0.0.1";
-
-    private static final Integer DEFAULT_MSB_PORT = 80;
-
     private static final Logger logger = LoggerFactory.getLogger(MsoMulticloudUtils.class);
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+
+    @Autowired
+    private Environment environment;
+
 
     /******************************************************************************
      *
@@ -129,7 +127,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
      * @param files a Map<String, Object> that lists the child template IDs (file is the string, object is an int of
      *        Template id)
      * @param heatFiles a Map<String, Object> that lists the get_file entries (fileName, fileBody)
-     * @param backout Donot delete stack on create Failure - defaulted to True
+     * @param backout Do not delete stack on create Failure - defaulted to True
      * @return A StackInfo object
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception.
      */
@@ -215,20 +213,22 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
         Response response = multicloudClient.post(request);
 
-        StackInfo responseStackInfo = new StackInfo();
-        responseStackInfo.setName(stackName);
-        responseStackInfo.setStatus(mapResponseToHeatStatus(response));
+        StackInfo createInfo = new StackInfo();
+        createInfo.setName(stackName);
 
         MulticloudCreateResponse multicloudResponseBody = null;
         if (response.getStatus() == Response.Status.CREATED.getStatusCode() && response.hasEntity()) {
             multicloudResponseBody = getCreateBody((java.io.InputStream)response.getEntity());
-            responseStackInfo.setCanonicalName(multicloudResponseBody.getWorkloadId());
+            createInfo.setCanonicalName(stackName + "/" + multicloudResponseBody.getWorkloadId());
             if (logger.isDebugEnabled()) {
                 logger.debug("Multicloud Create Response Body: " + multicloudResponseBody);
             }
+            return getStackStatus(cloudSiteId, tenantId, multicloudResponseBody.getWorkloadId(), pollForCompletion, timeoutMinutes, backout);
+        } else {
+            createInfo.setStatus(HeatStatus.FAILED);
+            createInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
+            return createInfo;
         }
-
-        return responseStackInfo;
     }
 
     @Override
@@ -243,26 +243,36 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     }
 
     /**
-     * Query for a single stack (by Name) in a tenant. This call will always return a
+     * Query for a single stack (by ID) in a tenant. This call will always return a
      * StackInfo object. If the stack does not exist, an "empty" StackInfo will be
      * returned - containing only the stack name and a status of NOTFOUND.
      *
      * @param tenantId The Openstack ID of the tenant in which to query
      * @param cloudSiteId The cloud identifier (may be a region) in which to query
-     * @param stackName The name of the stack to query (may be simple or canonical)
+     * @param stackId The ID of the stack to query
      * @return A StackInfo object
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception.
      */
     @Override
-    public StackInfo queryStack (String cloudSiteId, String tenantId, String stackName) throws MsoException {
+    public StackInfo queryStack (String cloudSiteId, String tenantId, String instanceId) throws MsoException {
         if (logger.isDebugEnabled()) {
-            logger.debug (String.format("Query multicloud HEAT stack: %s in tenant %s", stackName, tenantId));
+            logger.debug (String.format("Query multicloud HEAT stack: %s in tenant %s", instanceId, tenantId));
+        }
+        String stackName = null;
+        String stackId = null;
+        int offset = instanceId.indexOf('/');
+        if (offset > 0 && offset < (instanceId.length() - 1)) {
+            stackName = instanceId.substring(0, offset);
+            stackId = instanceId.substring(offset + 1);
+        } else {
+            stackName = instanceId;
+            stackId = instanceId;
         }
 
         StackInfo returnInfo = new StackInfo();
         returnInfo.setName(stackName);
 
-        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, stackName);
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, stackId);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
         if (multicloudClient != null) {
@@ -271,31 +281,47 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                 logger.debug (String.format("Mulicloud GET Response: %s", response.toString()));
             }
 
-            returnInfo.setStatus(mapResponseToHeatStatus(response));
-
             MulticloudQueryResponse multicloudQueryBody = null;
-            if (response.getStatus() == Response.Status.OK.getStatusCode() && response.hasEntity()) {
+            if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+                returnInfo.setStatus(HeatStatus.NOTFOUND);
+                returnInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
+            } else if (response.getStatus() == Response.Status.OK.getStatusCode() && response.hasEntity()) {
                 multicloudQueryBody = getQueryBody((java.io.InputStream)response.getEntity());
-                returnInfo.setCanonicalName(multicloudQueryBody.getWorkloadId());
+                returnInfo.setCanonicalName(stackName + "/" + multicloudQueryBody.getWorkloadId());
+                returnInfo.setStatus(getHeatStatus(multicloudQueryBody.getWorkloadStatus()));
+                returnInfo.setStatusMessage(multicloudQueryBody.getWorkloadStatus());
                 if (logger.isDebugEnabled()) {
                     logger.debug("Multicloud Create Response Body: " + multicloudQueryBody.toString());
                 }
+            } else {
+                returnInfo.setStatus(HeatStatus.FAILED);
+                returnInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
             }
         }
 
         return returnInfo;
-
     }
 
-    public StackInfo deleteStack (String cloudSiteId, String tenantId, String stackName) throws MsoException {
+    public StackInfo deleteStack (String cloudSiteId, String tenantId, String instanceId) throws MsoException {
         if (logger.isDebugEnabled()) {
-            logger.debug (String.format("Delete multicloud HEAT stack: %s in tenant %s", stackName, tenantId));
+            logger.debug (String.format("Delete multicloud HEAT stack: %s in tenant %s", instanceId, tenantId));
         }
+        String stackName = null;
+        String stackId = null;
+        int offset = instanceId.indexOf('/');
+        if (offset > 0 && offset < (instanceId.length() - 1)) {
+            stackName = instanceId.substring(0, offset);
+            stackId = instanceId.substring(offset + 1);
+        } else {
+            stackName = instanceId;
+            stackId = instanceId;
+        }
+
         StackInfo returnInfo = new StackInfo();
         returnInfo.setName(stackName);
         Response response = null;
 
-        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, stackName);
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, stackId);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
         if (multicloudClient != null) {
@@ -303,6 +329,17 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             if (logger.isDebugEnabled()) {
                 logger.debug(String.format("Multicloud Delete response is: %s", response.getEntity().toString()));
             }
+
+            if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+                returnInfo.setStatus(HeatStatus.NOTFOUND);
+                returnInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
+            } else if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
+                return getStackStatus(cloudSiteId, tenantId, instanceId);
+            } else {
+                returnInfo.setStatus(HeatStatus.FAILED);
+                returnInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
+            }
+
         }
         returnInfo.setStatus(mapResponseToHeatStatus(response));
         return returnInfo;
@@ -310,6 +347,193 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
     // ---------------------------------------------------------------
     // PRIVATE FUNCTIONS FOR USE WITHIN THIS CLASS
+
+    private HeatStatus getHeatStatus(String workloadStatus) {
+        if (workloadStatus.length() == 0) return HeatStatus.INIT;
+        if ("CREATE_IN_PROGRESS".equals(workloadStatus)) return HeatStatus.BUILDING;
+        if ("CREATE_COMPLETE".equals(workloadStatus)) return HeatStatus.CREATED;
+        if ("CREATE_FAILED".equals(workloadStatus)) return HeatStatus.FAILED;
+        if ("DELETE_IN_PROGRESS".equals(workloadStatus)) return HeatStatus.DELETING;
+        if ("DELETE_COMPLETE".equals(workloadStatus)) return HeatStatus.NOTFOUND;
+        if ("DELETE_FAILED".equals(workloadStatus)) return HeatStatus.FAILED;
+        if ("UPDATE_IN_PROGRESS".equals(workloadStatus)) return HeatStatus.UPDATING;
+        if ("UPDATE_FAILED".equals(workloadStatus)) return HeatStatus.FAILED;
+        if ("UPDATE_COMPLETE".equals(workloadStatus)) return HeatStatus.UPDATED;
+        return HeatStatus.UNKNOWN;
+    }
+
+    private StackInfo getStackStatus(String cloudSiteId, String tenantId, String instanceId) throws MsoException {
+        return getStackStatus(cloudSiteId, tenantId, instanceId, false, 0, false);
+    }
+
+    private StackInfo getStackStatus(String cloudSiteId, String tenantId, String instanceId, boolean pollForCompletion, int timeoutMinutes, boolean backout) throws MsoException {
+        StackInfo stackInfo = new StackInfo();
+
+        // If client has requested a final response, poll for stack completion
+        if (pollForCompletion) {
+            // Set a time limit on overall polling.
+            // Use the resource (template) timeout for Openstack (expressed in minutes)
+            // and add one poll interval to give Openstack a chance to fail on its own.s
+
+            int createPollInterval = Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
+            int pollTimeout = (timeoutMinutes * 60) + createPollInterval;
+            // New 1610 - poll on delete if we rollback - use same values for now
+            int deletePollInterval = createPollInterval;
+            int deletePollTimeout = pollTimeout;
+            boolean createTimedOut = false;
+            StringBuilder stackErrorStatusReason = new StringBuilder("");
+            logger.debug("createPollInterval=" + createPollInterval + ", pollTimeout=" + pollTimeout);
+
+            while (true) {
+                try {
+                    stackInfo = queryStack(cloudSiteId, tenantId, instanceId);
+                    logger.debug (stackInfo.getStatus() + " (" + instanceId + ")");
+
+                    if (HeatStatus.BUILDING.equals(stackInfo.getStatus())) {
+                        // Stack creation is still running.
+                        // Sleep and try again unless timeout has been reached
+                        if (pollTimeout <= 0) {
+                            // Note that this should not occur, since there is a timeout specified
+                            // in the Openstack (multicloud?) call.
+                            logger.error(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, instanceId, stackInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError, "Create stack timeout"));
+                            createTimedOut = true;
+                            break;
+                        }
+
+                        sleep(createPollInterval * 1000L);
+
+                        pollTimeout -= createPollInterval;
+                        logger.debug("pollTimeout remaining: " + pollTimeout);
+                    } else {
+                        //save off the status & reason msg before we attempt delete
+                        stackErrorStatusReason.append("Stack error (" + stackInfo.getStatus() + "): " + stackInfo.getStatusMessage());
+                        break;
+                    }
+                } catch (MsoException me) {
+                    // Cannot query the stack status. Something is wrong.
+                    // Try to roll back the stack
+                    if (!backout) {
+                        logger.warn(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack, stack deletion suppressed"));
+                    } else {
+                        try {
+                            logger.debug("Create Stack error - unable to query for stack status - attempting to delete stack: " + instanceId + " - This will likely fail and/or we won't be able to query to see if delete worked");
+                            StackInfo deleteInfo = deleteStack(cloudSiteId, tenantId, instanceId);
+                            // this may be a waste of time - if we just got an exception trying to query the stack - we'll just
+                            // get another one, n'est-ce pas?
+                            boolean deleted = false;
+                            while (!deleted) {
+                                try {
+                                    StackInfo queryInfo = queryStack(cloudSiteId, tenantId, instanceId);
+                                    logger.debug("Deleting " + instanceId + ", status: " + queryInfo.getStatus());
+                                    if (HeatStatus.DELETING.equals(queryInfo.getStatus())) {
+                                        if (deletePollTimeout <= 0) {
+                                            logger.error(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, instanceId,
+                                                    queryInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError,
+                                                    "Rollback: DELETE stack timeout"));
+                                            break;
+                                        } else {
+                                            sleep(deletePollInterval * 1000L);
+                                            deletePollTimeout -= deletePollInterval;
+                                        }
+                                    } else if (HeatStatus.NOTFOUND.equals(queryInfo.getStatus())){
+                                        logger.debug("DELETE_COMPLETE for " + instanceId);
+                                        deleted = true;
+                                        continue;
+                                    } else {
+                                        //got a status other than DELETE_IN_PROGRESS or DELETE_COMPLETE - so break and evaluate
+                                        break;
+                                    }
+                                } catch (Exception e3) {
+                                    // Just log this one. We will report the original exception.
+                                    logger.error(String.format("%d %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e3, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back stack on error on query"));
+                                }
+                            }
+                        } catch (Exception e2) {
+                            // Just log this one. We will report the original exception.
+                            logger.error(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back stack"));
+                        }
+                    }
+
+                    // Propagate the original exception from Stack Query.
+                    me.addContext (CREATE_STACK);
+                    throw me;
+                }
+            }
+
+            if (!HeatStatus.CREATED.equals(stackInfo.getStatus())) {
+                logger.error(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack error:  Polling complete with non-success status: "
+                              + stackInfo.getStatus () + ", " + stackInfo.getStatusMessage(), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error"));
+
+                // Rollback the stack creation, since it is in an indeterminate state.
+                if (!backout) {
+                    logger.warn(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error, stack deletion suppressed"));
+                }
+                else
+                {
+                    try {
+                        logger.debug("Create Stack errored - attempting to DELETE stack: " + instanceId);
+                        logger.debug("deletePollInterval=" + deletePollInterval + ", deletePollTimeout=" + deletePollTimeout);
+                        StackInfo deleteInfo = deleteStack(cloudSiteId, tenantId, instanceId);
+                        boolean deleted = false;
+                        while (!deleted) {
+                            try {
+                                StackInfo queryInfo = queryStack(cloudSiteId, tenantId, instanceId);
+                                logger.debug("Deleting " + instanceId + ", status: " + queryInfo.getStatus());
+                                if (HeatStatus.DELETING.equals(queryInfo.getStatus())) {
+                                    if (deletePollTimeout <= 0) {
+                                        logger.error(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, instanceId,
+                                                queryInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError,
+                                                "Rollback: DELETE stack timeout"));
+                                        break;
+                                    } else {
+                                        sleep(deletePollInterval * 1000L);
+                                        deletePollTimeout -= deletePollInterval;
+                                    }
+                                } else if (HeatStatus.NOTFOUND.equals(queryInfo.getStatus())){
+                                    logger.debug("DELETE_COMPLETE for " + instanceId);
+                                    deleted = true;
+                                    continue;
+                                } else {
+                                    //got a status other than DELETE_IN_PROGRESS or DELETE_COMPLETE - so break and evaluate
+                                    logger.warn(String.format("%d %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion FAILED", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error, stack deletion FAILED"));
+                                    logger.debug("Stack deletion FAILED on a rollback of a create - " + instanceId + ", status=" + queryInfo.getStatus() + ", reason=" + queryInfo.getStatusMessage());
+                                    break;
+                                }
+                            } catch (MsoException me2) {
+                                // Just log this one. We will report the original exception.
+                                logger.debug("Exception thrown trying to delete " + instanceId + " on a create->rollback: " + me2.getContextMessage(), me2);
+                                logger.warn(String.format("%d %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, then stack deletion FAILED - exception thrown", "", "", MsoLogger.ErrorCode.BusinessProcesssError, me2.getContextMessage()));
+                            }
+                        }
+                        StringBuilder errorContextMessage;
+                        if (createTimedOut) {
+                            errorContextMessage = new StringBuilder("Stack Creation Timeout");
+                        } else {
+                            errorContextMessage  = stackErrorStatusReason;
+                        }
+                        if (deleted) {
+                            errorContextMessage.append(" - stack successfully deleted");
+                        } else {
+                            errorContextMessage.append(" - encountered an error trying to delete the stack");
+                        }
+                    } catch (MsoException e2) {
+                        // shouldn't happen - but handle
+                        logger.error(String.format("%d %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack: rolling back stack"));
+                    }
+                }
+                MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
+                me.addContext(CREATE_STACK);
+                alarmLogger.sendAlarm(HEAT_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage());
+                throw me;
+            }
+        } else {
+            // Get initial status, since it will have been null after the create.
+            stackInfo = queryStack(cloudSiteId, tenantId, instanceId);
+            logger.debug("Multicloud stack query status is: " + stackInfo.getStatus());
+        }
+        return stackInfo;
+    }
+
     private HeatStatus mapResponseToHeatStatus(Response response) {
         if (response.getStatusInfo().getStatusCode() == Response.Status.OK.getStatusCode()) {
             return HeatStatus.CREATED;
