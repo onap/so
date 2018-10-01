@@ -269,6 +269,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
 
                             if (oofDirectives != null && oofDirectives != "") {
                                 resource.getHomingSolution().setOofDirectives(oofDirectives)
+                                execution.setVariable("oofDirectives", oofDirectives)
                                 utils.log("DEBUG", "***** OofDirectives is: " + oofDirectives +
                                         " *****", "true")
                             }
