@@ -173,12 +173,6 @@ public class DoCreateVfModule extends VfModuleBase {
 				execution.setVariable("DCVFM_serviceInstanceId", serviceInstanceId)
 				rollbackData.put("VFMODULE", "serviceInstanceId", serviceInstanceId)
 				msoLogger.debug("serviceInstanceId: " + serviceInstanceId)
-				//OofDirectives
-				String oofDirectives = execution.getVariable(cloudSiteId + "_oofDirectives")
-				if (flavorList != null) {
-					execution.setVariable("DCVFM_flavorList", flavorList)
-					logDebug("flavorList is: " + flavorList, isDebugLogEnabled)
-				}
 				//source - HARDCODED
 				def source = "VID"
 				execution.setVariable("DCVFM_source", source)
@@ -201,7 +195,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				execution.setVariable("DCVFM_asdcServiceModelVersion", asdcServiceModelVersion)
 				msoLogger.debug("asdcServiceModelVersion: " + asdcServiceModelVersion)
 				//personaModelId
-				execution.setVariable("DCVFM_personaModelId", jsonUtil.getJsonValue(vfModuleModelInfo, "modelInvariantUuid"))			
+				execution.setVariable("DCVFM_personaModelId", jsonUtil.getJsonValue(vfModuleModelInfo, "modelInvariantUuid"))
 				//personaModelVersion
 				execution.setVariable("DCVFM_personaModelVersion", jsonUtil.getJsonValue(vfModuleModelInfo, "modelUuid"))
 				//vfModuleLabel
@@ -227,8 +221,14 @@ public class DoCreateVfModule extends VfModuleBase {
 				//globalSubscriberId
 				String globalSubscriberId = execution.getVariable("globalSubscriberId")
 				execution.setVariable("DCVFM_globalSubscriberId", globalSubscriberId)
-				msoLogger.debug("globalSubsrciberId: " + globalSubscriberId)				
+				msoLogger.debug("globalSubsrciberId: " + globalSubscriberId)
+				//OofDirectives
+				String oofDirectives = execution.getVariable("oofDirectives")
 				Map<String,String> vfModuleInputParams = execution.getVariable("vfModuleInputParams")
+				if (oofDirectives != null) {
+					vfModuleInputParams.put("oofDirectives", oofDirectives)
+					logDebug("OofDirectives are: " + oofDirectives, isDebugLogEnabled)
+				}
 				if (vfModuleInputParams != null) {
 					execution.setVariable("DCVFM_vnfParamsMap", vfModuleInputParams)
 					execution.setVariable("DCVFM_vnfParamsExistFlag", true)
@@ -452,7 +452,17 @@ public class DoCreateVfModule extends VfModuleBase {
 								}
 								execution.setVariable("DCVFM_vnfParamsMap", paramsMap)
 							}
+
+				//OofDirectives
+				String oofDirectives = execution.getVariable("oofDirectives")
+				if (oofDirectives != null) {
+					Map<String, String> paramsMap = execution.getVariable("DCVFM_vnfParamsMap")
+					paramsMap.put("oofDirectives", oofDirectives)
+					logDebug("OofDirectives are: " + oofDirectives, isDebugLogEnabled)
+					execution.setVariable("DCVFM_vnfParamsMap", paramsMap)
+				}
 			}
+
 
 			//Get or Generate UUID
 			String uuid = execution.getVariable("DCVFM_uuid")
@@ -922,8 +932,6 @@ public class DoCreateVfModule extends VfModuleBase {
 		def serviceId = execution.getVariable("DCVFM_serviceId")
 		//serviceInstanceId
 		def serviceInstanceId = execution.getVariable("DCVFM_serviceInstanceId")
-		//OofDirectives
-		String oofDirectives = execution.getVariable("DCVFM_oofDirectives")
 		//backoutOnFailure
 		def backoutOnFailure = execution.getVariable("DCVFM_backoutOnFailure")
 		//volumeGroupId
@@ -959,10 +967,6 @@ public class DoCreateVfModule extends VfModuleBase {
 		}
 
 		Map<String, String> vnfParamsMap = execution.getVariable("DCVFM_vnfParamsMap")
-		// Add flavorLabel List to vnfParamsMap
-		flavorList.each { cloudFlavor ->
-			vnfParamsMap.put("label_" + cloudFlavor.getFlavorLabel(), cloudFlavor.getFlavor())
-		}
 		String vfModuleParams = ""
 		//Get SDNC Response Data for VF Module Topology
 		String vfModuleSdncGetResponse = execution.getVariable('DCVFM_getSDNCAdapterResponse')
