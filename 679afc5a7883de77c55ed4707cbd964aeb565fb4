@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_36aa60d5",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 1209
+      },
+      "writtenOn": "2018-10-01T04:40:45Z",
+      "side": 1,
+      "message": "the timeout value is currently been taken from heat template. Can we make this a generic configurable value(from environment). Because, the templates that are going to be used in multicloud plugins takes around 30 min to instantiate.",
+      "range": {
+        "startLine": 379,
+        "startChar": 31,
+        "endLine": 379,
+        "endChar": 45
+      },
+      "revId": "679afc5a7883de77c55ed4707cbd964aeb565fb4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_16a5dc03",
+        "filename": "adapters/mso-openstack-adapters/src/test/resources/__files/MulticloudResponse_Stack.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1209
+      },
+      "writtenOn": "2018-10-01T04:40:45Z",
+      "side": 1,
+      "message": "Are we using this workload ID to query AAI? Or we update the vf-module data with the workload-id and status?",
+      "range": {
+        "startLine": 3,
+        "startChar": 2,
+        "endLine": 3,
+        "endChar": 26
+      },
+      "revId": "679afc5a7883de77c55ed4707cbd964aeb565fb4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
