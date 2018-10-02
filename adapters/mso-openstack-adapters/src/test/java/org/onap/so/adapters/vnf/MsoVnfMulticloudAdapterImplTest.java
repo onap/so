@@ -87,7 +87,7 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
                 .withBodyFile("MulticloudResponse_Stack_Create.json")
                 .withStatus(HttpStatus.SC_CREATED)));
 
-        instance.createVfModule("MTN13", "123", "vf", "v1", "vfname", "create", null, "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", stackInputs, true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+        instance.createVfModule("MTN13", "123", "vf", "v1", "genericVnfId", "vfname", "vfModuleId", "create", null, "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", stackInputs, true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
     }
 
     @Test

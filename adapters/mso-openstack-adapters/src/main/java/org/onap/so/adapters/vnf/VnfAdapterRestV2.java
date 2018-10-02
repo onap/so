@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -74,7 +74,7 @@ import io.swagger.annotations.ApiResponses;
  * Both XML and JSON can be produced/consumed.  Set Accept: and Content-Type: headers appropriately.  XML is the default.
  * For testing, call with cloudSiteId = ___TESTING___
  * To test exceptions, also set tenantId = ___TESTING___
- * 
+ *
  * V2 incorporates run-time selection of sub-orchestrator implementation (Heat or Cloudify)
  * based on the target cloud.
  */
@@ -88,7 +88,7 @@ public class VnfAdapterRestV2 {
 
 	@Autowired
 	private VnfAdapterRestUtils vnfAdapterRestUtils;
-	
+
 	@Autowired
 	@Qualifier("VnfBpel")
 	private Provider<BpelRestClient> bpelRestClientProvider;
@@ -115,13 +115,13 @@ public class VnfAdapterRestV2 {
 	@Path("{aaiVnfId}/vf-modules/{aaiVfModuleId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "DeleteVfModule", 
+	@ApiOperation(value = "DeleteVfModule",
 	response = Response.class,
 	notes = "Delete an existing vnfModule, DeleteVfModuleRequest JSON is required")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfModule has been successfully deleted"),
 		@ApiResponse(code = 202, message = "delete vnfModule request has been accepted (async only)"),
-		@ApiResponse(code = 500, message = "delete vnfModule failed, examine entity object for details") })	
+		@ApiResponse(code = 500, message = "delete vnfModule failed, examine entity object for details") })
 	public Response deleteVfModule (
 		@ApiParam(value = "aaiVnfId", required = true)
    		@PathParam("aaiVnfId") String aaiVnfId,
@@ -149,7 +149,7 @@ public class VnfAdapterRestV2 {
 				.entity("vfModuleId in URL does not match content")
 				.build();
 		}
-	   	
+
 	   	DeleteVfModuleTask task = new DeleteVfModuleTask(req, mode);
 		if (req.isSynchronous()) {
    			// This is a synchronous request
@@ -243,12 +243,12 @@ public class VnfAdapterRestV2 {
 	@GET
 	@Path("{aaiVnfId}/vf-modules/{aaiVfModuleId}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "QueryVfModule", 
+	@ApiOperation(value = "QueryVfModule",
 		response = Response.class,
 		notes = "Query an existing vnfModule")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfModule has been successfully queried"),
-		@ApiResponse(code = 500, message = "query vnfModule failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "query vnfModule failed, examine entity object for details") })
 	public Response queryVfModule(
 		@ApiParam(value = "aaiVnfId", required = true)
 		@PathParam("aaiVnfId") String aaiVnfId,
@@ -280,7 +280,7 @@ public class VnfAdapterRestV2 {
 			Holder<String> vfModuleId = new Holder<String>();
 			Holder<VnfStatus> status  = new Holder<VnfStatus>();
 			Holder<Map<String, String>> outputs = new Holder <Map <String, String>> ();
-			
+
 			// Support different Adapter Implementations
 			MsoVnfAdapter adapter = vnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudSiteId);
 			adapter.queryVnf (cloudSiteId, tenantId, vfModuleName, msoRequest, vnfExists, vfModuleId, status, outputs);
@@ -340,13 +340,13 @@ public class VnfAdapterRestV2 {
 	@Path("{aaiVnfId}/vf-modules")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "CreateVfModule", 
+	@ApiOperation(value = "CreateVfModule",
 		response = Response.class,
 		notes = "Create a vnfModule")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfModule has been successfully created"),
 		@ApiResponse(code = 202, message = "create vnfModule request has been successfully accepted (async only)"),
-		@ApiResponse(code = 500, message = "create vnfModule failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "create vnfModule failed, examine entity object for details") })
 	public Response createVfModule(
 		@ApiParam(value = "aaiVnfId", required = true)
 		@PathParam("aaiVnfId") String aaiVnfId,
@@ -364,7 +364,7 @@ public class VnfAdapterRestV2 {
 				.entity("vnfid in URL does not match content")
 				.build();
 		}
-		
+
 		CreateVfModuleTask task = new CreateVfModuleTask(req, mode);
 		if (req.isSynchronous()) {
    			// This is a synchronous request
@@ -427,7 +427,7 @@ public class VnfAdapterRestV2 {
 				Holder <VnfRollback> vnfRollback = new Holder <VnfRollback> ();
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
 				LOGGER.debug("completeVnfVfModuleType=" + completeVnfVfModuleType);
-				
+
 				String cloudsiteId = req.getCloudSiteId();
 				if (cloudsiteId != null && cloudsiteId.equals(TESTING_KEYWORD)) {
 					String tenant = req.getTenantId();
@@ -446,7 +446,9 @@ public class VnfAdapterRestV2 {
 						req.getTenantId(),
 						completeVnfVfModuleType,
 						req.getVnfVersion(),
+						req.getVnfId(),
 						req.getVfModuleName(),
+						req.getVfModuleId(),
 						req.getRequestType(),
 						req.getVolumeGroupStackId(),
 						req.getBaseVfModuleStackId(),
@@ -484,7 +486,7 @@ public class VnfAdapterRestV2 {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfModule has been successfully updated"),
 		@ApiResponse(code = 202, message = "update vnfModule request has been successfully accepted (async only)"),
-		@ApiResponse(code = 500, message = "update vnfModule failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "update vnfModule failed, examine entity object for details") })
 	public Response updateVfModule(
 			@ApiParam(value = "aaiVnfId", required = true)
 			@PathParam("aaiVnfId") String aaiVnfId,
@@ -613,13 +615,13 @@ public class VnfAdapterRestV2 {
 	@Path("{aaiVnfId}/vf-modules/{aaiVfModuleId}/rollback")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "RollbackVfModule", 
+	@ApiOperation(value = "RollbackVfModule",
 		response = Response.class,
 		notes = "Rollback an existing vnfModule")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfModule has been successfully rolled back"),
 		@ApiResponse(code = 202, message = "rollback vnfModule request has been successfully accepted (async only)"),
-		@ApiResponse(code = 500, message = "rollback vnfModule failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "rollback vnfModule failed, examine entity object for details") })
 	public Response rollbackVfModule (
 			@ApiParam(value = "aaiVnfId", required = true)
 			@PathParam("aaiVnfId") String aaiVnfId,
@@ -686,11 +688,11 @@ public class VnfAdapterRestV2 {
 				VnfRollback vrb = new VnfRollback(
 						vmr.getVfModuleStackId(), vmr.getTenantId(), vmr.getCloudSiteId(), true, vmr.isVfModuleCreated(),
 						vmr.getMsoRequest(), null, null, null, null);
-				
+
 				// Support multiple adapter implementations
 				MsoVnfAdapter adapter = vnfAdapterRestUtils.getVnfAdapterImpl (vmr.getMode(), vmr.getCloudSiteId());
 				adapter.rollbackVnf (vrb);
-				
+
 				response = new RollbackVfModuleResponse(Boolean.TRUE, req.getMessageId());
 			} catch (VnfException e) {
 				LOGGER.error (MessageEnum.RA_ROLLBACK_VNF_ERR, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - rollbackVfModule", e);

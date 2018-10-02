@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,8 +47,8 @@ public interface MsoVnfAdapter
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="vnfType") @XmlElement(required=true) String vnfType,
 							@WebParam(name="vnfVersion") @XmlElement(required=false) String vnfVersion,
-							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
-							@WebParam(name="requestType") @XmlElement(required=false) String requestType,
+                            @WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
+                            @WebParam(name="requestType") @XmlElement(required=false) String requestType,
 							@WebParam(name="volumeGroupHeatStackId") @XmlElement(required=false) String volumeGroupHeatStackId,
 							@WebParam(name="inputs") Map<String,String> inputs,
 							@WebParam(name="failIfExists") Boolean failIfExists,
@@ -102,8 +102,10 @@ public interface MsoVnfAdapter
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="vnfType") @XmlElement(required=true) String vnfType,
 							@WebParam(name="vnfVersion") @XmlElement(required=false) String vnfVersion,
-							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
-							@WebParam(name="requestType") @XmlElement(required=false) String requestType,
+							@WebParam(name="genericVnfId") @XmlElement(required=true) String genericVnfId,
+                            @WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
+							@WebParam(name="vfModuleId") @XmlElement(required=true) String vfModuleId,
+                            @WebParam(name="requestType") @XmlElement(required=false) String requestType,
 							@WebParam(name="volumeGroupHeatStackId") @XmlElement(required=false) String volumeGroupHeatStackId,
 							@WebParam(name="baseVfHeatStackId") @XmlElement(required=false) String baseVfHeatStackId,
 							@WebParam(name = "modelCustomizationUuid") @XmlElement(required = false) String modelCustomizationUuid,

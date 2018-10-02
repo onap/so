@@ -184,7 +184,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.createVfModule("123", "123", "vf", "v1", "module-005", "create", "3245", "234", "123", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+		instance.createVfModule("123", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", "123", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
 	}
 
 	@Test
@@ -194,7 +194,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.createVfModule("123", "123", "vf", "v1", "module-005", "create", "3245", "234", null, new 
+		instance.createVfModule("123", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", null, new 
 				HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
 	}
 
@@ -205,7 +205,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.createVfModule("123", "123", "vf", "v1", "module-005", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+		instance.createVfModule("123", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
 	}
 
 	@Test
@@ -215,7 +215,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.createVfModule("mtn13", "123", "vf", "v1", "module-005", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+		instance.createVfModule("mtn13", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
 	}
 
 	@Test
@@ -241,7 +241,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 				.withBodyFile("OpenstackResponse_Access.json")
 				.withStatus(HttpStatus.SC_OK)));
 
-		instance.createVfModule("mtn13", "123", "vf", "v1", "vfname", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+		instance.createVfModule("mtn13", "123", "vf", "v1", "", "vfname", "", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
 	}
 
 	@Test
