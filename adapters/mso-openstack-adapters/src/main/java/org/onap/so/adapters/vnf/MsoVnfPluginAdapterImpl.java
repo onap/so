@@ -578,7 +578,9 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
      *        Deprecated - should use modelCustomizationUuid
      * @param vnfVersion VNF version key, should match a VNF definition in catalog DB
      *        Deprecated - VF Module versions also captured by modelCustomizationUuid
+     * @param vnfId - VNF ID
      * @param vfModuleName Name to be assigned to the new VF Module
+     * @param vfModuleId Id fo the new VF Module
      * @param requestType Indicates if this is a Volume Group or Module request
      * @param volumeGroupId Identifier (i.e. deployment ID) for a Volume Group
      *        to attach to a VF Module
@@ -599,7 +601,9 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             String tenantId,
             String vfModuleType,
             String vnfVersion,
+            String genericVnfId,
             String vfModuleName,
+            String vfModuleId,
             String requestType,
             String volumeGroupId,
             String baseVfModuleId,
@@ -984,14 +988,20 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
 			if (!extraInputs.isEmpty()) {
 				// Add multicloud inputs
+			    boolean multicloudInputs = false;
 				for (String key : MsoMulticloudUtils.MULTICLOUD_INPUTS) {
 					if (extraInputs.contains(key)) {
 						goldenInputs.put(key, inputs.get(key));
 						extraInputs.remove(key);
+						multicloudInputs = true;
 						if (extraInputs.isEmpty()) {
 							break;
 						}
 					}
+				}
+				if (multicloudInputs) {
+                    goldenInputs.put(MsoMulticloudUtils.GENERIC_VNF_ID, genericVnfId);
+                    goldenInputs.put(MsoMulticloudUtils.VF_MODULE_ID, vfModuleId);
 				}
 				LOGGER.debug("Ignoring extra inputs: " + extraInputs);
 			}

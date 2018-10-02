@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -92,7 +92,7 @@ public class VolumeAdapterRest {
 	@Autowired
 	@Qualifier("VnfBpel")
 	private Provider<BpelRestClient> bpelRestClientProvider;
-	
+
 	@POST
 	@Path("")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -103,7 +103,7 @@ public class VolumeAdapterRest {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfVolume has been successfully created"),
 		@ApiResponse(code = 202, message = "create vnfVolume request has been successfully accepted (async only)"),
-		@ApiResponse(code = 500, message = "create vnfVolume failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "create vnfVolume failed, examine entity object for details") })
 	public Response createVNFVolumes(
 			@ApiParam(value = "CreateVolumeGroupRequest", required = true)
 			final CreateVolumeGroupRequest req
@@ -199,7 +199,9 @@ public class VolumeAdapterRest {
 							//req.getVnfType(), //vnfType,
 							completeVnfVfModuleType,
 							req.getVnfVersion(), //vnfVersion,
+							"", // genericVnfId
 							req.getVolumeGroupName(), //vnfName,
+							"", // vfModuleid
 							"VOLUME", //requestType,
 							null, //volumeGroupHeatStackId,
 							null, //baseVfHeatStackId,
@@ -246,13 +248,13 @@ public class VolumeAdapterRest {
 	@Path("{aaiVolumeGroupId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "DeleteVNFVolumes", 
+	@ApiOperation(value = "DeleteVNFVolumes",
 		response = Response.class,
 		notes = "Delete an existing vnfVolume")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfVolume has been successfully deleted"),
 		@ApiResponse(code = 202, message = "delete vnfVolume request has been successfully accepted (async only)"),
-		@ApiResponse(code = 500, message = "delete vnfVolume failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "delete vnfVolume failed, examine entity object for details") })
 	public Response deleteVNFVolumes(
 		@ApiParam(value = "aaiVolumeGroupId", required = true)
 		@PathParam("aaiVolumeGroupId") String aaiVolumeGroupId,
@@ -348,7 +350,7 @@ public class VolumeAdapterRest {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfVolume has been successfully rolled back"),
 		@ApiResponse(code = 202, message = "rollback vnfVolume request has been successfully accepted (async only)"),
-		@ApiResponse(code = 500, message = "rollback vnfVolume failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "rollback vnfVolume failed, examine entity object for details") })
 	public Response rollbackVNFVolumes(
 		@ApiParam(value = "aaiVolumeGroupId", required = true)
 		@PathParam("aaiVolumeGroupId") String aaiVolumeGroupId,
@@ -447,7 +449,7 @@ public class VolumeAdapterRest {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfVolume has been successfully updated"),
 		@ApiResponse(code = 202, message = "update vnfVolume request has been successfully accepted (async only)"),
-		@ApiResponse(code = 500, message = "update vnfVolume failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "update vnfVolume failed, examine entity object for details") })
 	public Response updateVNFVolumes(
 		@ApiParam(value = "aaiVolumeGroupId", required = true)
 		@PathParam("aaiVolumeGroupId") String aaiVolumeGroupId,
@@ -576,7 +578,7 @@ public class VolumeAdapterRest {
 		notes = "Query an existing vnfVolume")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfVolume has been successfully queried"),
-		@ApiResponse(code = 500, message = "query vnfVolume failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "query vnfVolume failed, examine entity object for details") })
 	public Response queryVNFVolumes(
 		@ApiParam(value = "aaiVolumeGroupId", required = true)
 		@PathParam("aaiVolumeGroupId") String aaiVolumeGroupId,
