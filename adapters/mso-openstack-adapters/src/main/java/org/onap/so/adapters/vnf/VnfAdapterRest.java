@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,7 +85,7 @@ public class VnfAdapterRest {
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, VnfAdapterRest.class);
 	private static final String TESTING_KEYWORD = "___TESTING___";
 	private static final String RESP=", resp=";
-	
+
 	@Autowired
 	private MsoVnfAdapterImpl vnfAdapter;
 	//TODO Logging, SkipAAI, CREATED flags, Integrate with BPEL, Auth,
@@ -93,7 +93,7 @@ public class VnfAdapterRest {
 	@Autowired
 	@Qualifier("VnfBpel")
 	private Provider<BpelRestClient> bpelRestClientProvider;
-	
+
 
    /*
 	* URL:http://localhost:8080/vnfs/rest/v1/vnfs/<aaivnfid>/vf-modules/<aaimodid>
@@ -117,13 +117,13 @@ public class VnfAdapterRest {
 	@Path("{aaiVnfId}/vf-modules/{aaiVfModuleId}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "DeleteVfModule", 
+	@ApiOperation(value = "DeleteVfModule",
 		response = Response.class,
 		notes = "Delete an existing vnfModule, DeleteVfModuleRequest JSON is required")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfModule has been successfully deleted"),
 		@ApiResponse(code = 202, message = "delete vnfModule request has been accepted (async only)"),
-		@ApiResponse(code = 500, message = "delete vnfModule failed, examine entity object for details") })	
+		@ApiResponse(code = 500, message = "delete vnfModule failed, examine entity object for details") })
 	public Response deleteVfModule (
 		@ApiParam(value = "aaiVnfId", required = true)
    		@PathParam("aaiVnfId") String aaiVnfId,
@@ -238,12 +238,12 @@ public class VnfAdapterRest {
 	@GET
 	@Path("{aaiVnfId}/vf-modules/{aaiVfModuleId}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "QueryVfModule", 
+	@ApiOperation(value = "QueryVfModule",
 		response = Response.class,
 		notes = "Query an existing vnfModule")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfModule has been successfully queried"),
-		@ApiResponse(code = 500, message = "query vnfModule failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "query vnfModule failed, examine entity object for details") })
 	public Response queryVfModule(
 		@ApiParam(value = "aaiVnfId", required = true)
 		@PathParam("aaiVnfId") String aaiVnfId,
@@ -329,13 +329,13 @@ public class VnfAdapterRest {
 	@Path("{aaiVnfId}/vf-modules")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "CreateVfModule", 
+	@ApiOperation(value = "CreateVfModule",
 		response = Response.class,
 		notes = "Create a vnfModule")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfModule has been successfully created"),
 		@ApiResponse(code = 202, message = "create vnfModule request has been successfully accepted (async only)"),
-		@ApiResponse(code = 500, message = "create vnfModule failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "create vnfModule failed, examine entity object for details") })
 	public Response createVfModule(
 		@ApiParam(value = "aaiVnfId", required = true)
 		@PathParam("aaiVnfId") String aaiVnfId,
@@ -442,7 +442,9 @@ public class VnfAdapterRest {
 						//req.getVnfType(),
 						completeVnfVfModuleType,
 						req.getVnfVersion(),
+						req.getVnfId(),
 						req.getVfModuleName(),
+						req.getVfModuleId(),
 						req.getRequestType(),
 						req.getVolumeGroupStackId(),
 						req.getBaseVfModuleStackId(),
@@ -481,7 +483,7 @@ public class VnfAdapterRest {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfModule has been successfully updated"),
 		@ApiResponse(code = 202, message = "update vnfModule request has been successfully accepted (async only)"),
-		@ApiResponse(code = 500, message = "update vnfModule failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "update vnfModule failed, examine entity object for details") })
 	public Response updateVfModule(
 			@ApiParam(value = "aaiVnfId", required = true)
 			@PathParam("aaiVnfId") String aaiVnfId,
@@ -604,13 +606,13 @@ public class VnfAdapterRest {
 	@Path("{aaiVnfId}/vf-modules/{aaiVfModuleId}/rollback")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "RollbackVfModule", 
+	@ApiOperation(value = "RollbackVfModule",
 		response = Response.class,
 		notes = "Rollback an existing vnfModule")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "vnfModule has been successfully rolled back"),
 		@ApiResponse(code = 202, message = "rollback vnfModule request has been successfully accepted (async only)"),
-		@ApiResponse(code = 500, message = "rollback vnfModule failed, examine entity object for details") })		
+		@ApiResponse(code = 500, message = "rollback vnfModule failed, examine entity object for details") })
 	public Response rollbackVfModule (
 			@ApiParam(value = "aaiVnfId", required = true)
 			@PathParam("aaiVnfId") String aaiVnfId,
