@@ -154,8 +154,8 @@ public class MsoRequest {
    
 
     // Parse request JSON
-    public void parse (ServiceInstancesRequest sir, HashMap<String,String> instanceIdMap, Actions action, String version,
-    		String originalRequestJSON, int reqVersion, Boolean aLaCarteFlag) throws ValidationException, IOException {
+    public void parse(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action, String version,
+					  int reqVersion, Boolean aLaCarteFlag) throws ValidationException, IOException {
     	
         msoLogger.debug ("Validating the Service Instance request");       
         List<ValidationRule> rules = new ArrayList<>();
@@ -422,7 +422,7 @@ public class MsoRequest {
             request.setStartTime (startTimeStamp);
             request.setRequestStatus(status.toString());
             request.setStatusMessage(errorMessage);
-            request.setProgress((long) 100);
+            request.setProgress(100L);
             request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
             request.setRequestAction(action.toString());
             request.setRequestScope(requestScope);
