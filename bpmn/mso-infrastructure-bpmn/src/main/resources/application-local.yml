@@ -4,6 +4,7 @@ aai:
     timeout: '30000'
   endpoint: http://localhost:8443
   workflowAaiDistributionDelay: PT30S
+  pnfEntryNotificationTimeout: P14D
 camunda:
   bpm:
     admin-user:
@@ -15,7 +16,16 @@ camunda:
       core-pool-size: 3
 entitymanager:
   packagesToScan: com
-
+pnf:
+  dmaap:
+    host: message-router
+    port: 3904
+    protocol: http
+    uriPathPrefix: events
+    topicName: pnfReady
+    consumerGroup: consumerGroup
+    consumerId: consumerId
+    topicListenerDelayInSeconds: 5
 mso:
   correlation:
     timeout: 60
