@@ -25,7 +25,9 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class InformDmaapClient implements JavaDelegate {
 
     private DmaapClient dmaapClient;

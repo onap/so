@@ -21,16 +21,13 @@
 package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.core.UriBuilder;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -38,43 +35,35 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope("prototype")
 public class PnfEventReadyDmaapClient implements DmaapClient {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, PnfEventReadyDmaapClient.class);
+    private static final MsoLogger LOGGER = MsoLogger
+            .getMsoLogger(MsoLogger.Catalog.RA, PnfEventReadyDmaapClient.class);
 
-    private final Environment env;
     private HttpClient httpClient;
-    private String dmaapHost;
-    private int dmaapPort;
-    private String dmaapProtocol;
-    private String dmaapUriPathPrefix;
-    private String dmaapTopicName;
-    private String consumerId;
-    private String consumerGroup;
     private Map<String, Runnable> pnfCorrelationIdToThreadMap;
     private HttpGet getRequest;
-    private int dmaapClientDelayInSeconds;
+    private int topicListenerDelayInSeconds;
     private volatile ScheduledThreadPoolExecutor executor;
     private volatile boolean dmaapThreadListenerIsRunning;
 
     @Autowired
     public PnfEventReadyDmaapClient(Environment env) {
-        this.env = env;
-    }
-
-    public void init() {
         httpClient = HttpClientBuilder.create().build();
         pnfCorrelationIdToThreadMap = new ConcurrentHashMap<>();
-        dmaapHost = env.getProperty("pnf.dmaap.host");
-        dmaapPort = env.getProperty("pnf.dmaap.port", Integer.class);
+        topicListenerDelayInSeconds = env.getProperty("pnf.dmaap.topicListenerDelayInSeconds", Integer.class);
         executor = null;
-        getRequest = new HttpGet(buildURI());
+        getRequest = new HttpGet(UriBuilder.fromUri(env.getProperty("pnf.dmaap.uriPathPrefix"))
+                .scheme(env.getProperty("pnf.dmaap.protocol"))
+                .host(env.getProperty("pnf.dmaap.host"))
+                .port(env.getProperty("pnf.dmaap.port", Integer.class))
+                .path(env.getProperty("pnf.dmaap.topicName"))
+                .path(env.getProperty("pnf.dmaap.consumerGroup"))
+                .path(env.getProperty("pnf.dmaap.consumerId")).build());
     }
 
     @Override
@@ -102,7 +91,7 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             executor.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
             executor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
             executor.scheduleWithFixedDelay(new DmaapTopicListenerThread(), 0,
-                    dmaapClientDelayInSeconds, TimeUnit.SECONDS);
+                    topicListenerDelayInSeconds, TimeUnit.SECONDS);
             dmaapThreadListenerIsRunning = true;
         }
     }
@@ -113,38 +102,6 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             dmaapThreadListenerIsRunning = false;
             executor = null;
         }
-    }
-
-    private URI buildURI() {
-        return UriBuilder.fromUri(dmaapUriPathPrefix)
-                .scheme(dmaapProtocol)
-                .host(dmaapHost)
-                .port(dmaapPort).path(dmaapTopicName)
-                .path(consumerGroup).path(consumerId).build();
-    }
-
-    public void setDmaapProtocol(String dmaapProtocol) {
-        this.dmaapProtocol = dmaapProtocol;
-    }
-
-    public void setDmaapUriPathPrefix(String dmaapUriPathPrefix) {
-        this.dmaapUriPathPrefix = dmaapUriPathPrefix;
-    }
-
-    public void setDmaapTopicName(String dmaapTopicName) {
-        this.dmaapTopicName = dmaapTopicName;
-    }
-
-    public void setConsumerId(String consumerId) {
-        this.consumerId = consumerId;
-    }
-
-    public void setConsumerGroup(String consumerGroup) {
-        this.consumerGroup = consumerGroup;
-    }
-
-    public void setDmaapClientDelayInSeconds(int dmaapClientDelayInSeconds) {
-        this.dmaapClientDelayInSeconds = dmaapClientDelayInSeconds;
     }
 
     class DmaapTopicListenerThread implements Runnable {
