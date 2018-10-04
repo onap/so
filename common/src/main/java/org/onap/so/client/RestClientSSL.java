@@ -42,10 +42,6 @@ public abstract class RestClientSSL extends RestClient {
 		super(props, path);
 	}
 
-	protected RestClientSSL(RestProperties props, Optional<URI> path, String accept, String contentType) {
-		super(props, path, accept, contentType);
-	}
-
 	@Override
 	protected Client getClient() {
 		

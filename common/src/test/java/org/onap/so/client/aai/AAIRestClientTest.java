@@ -40,19 +40,14 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.onap.so.client.RestClientSSL;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPatchDepthExceededException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AAIRestClientTest {
 
 	@Mock
 	private AAIProperties props;
-	
-	private ObjectMapper mapper = new AAICommonObjectMapperProvider().getMapper();
-	
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	
