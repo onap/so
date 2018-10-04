@@ -44,7 +44,7 @@ public class RestRequest implements Callable<Response> {
 		this.entity = entity;
 	}
 	@Override
-	public Response call() throws Exception {
+	public Response call() {
 		final Response response;
 		if ("GET".equals(method)) {
 			response = this.client.getBuilder().accept(this.client.getAccept()).get();
