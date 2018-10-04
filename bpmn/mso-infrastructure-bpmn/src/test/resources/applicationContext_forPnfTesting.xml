@@ -49,22 +49,22 @@
 
   <bean id="aaiConnection" class="org.onap.so.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl"/>
 
-  <bean id="checkAaiForCorrelationIdDelegate" class="org.onap.so.bpmn.infrastructure.pnf.delegate.CheckAaiForCorrelationIdDelegate">
+  <bean id="CheckAaiForCorrelationIdDelegate" class="org.onap.so.bpmn.infrastructure.pnf.delegate.CheckAaiForCorrelationIdDelegate">
     <property name="aaiConnection" ref="aaiConnection"/>
   </bean>
 
-  <bean id="createAaiEntryWithPnfIdDelegate" class="org.onap.so.bpmn.infrastructure.pnf.delegate.CreateAaiEntryWithPnfIdDelegate">
+  <bean id="CreateAaiEntryWithPnfIdDelegate" class="org.onap.so.bpmn.infrastructure.pnf.delegate.CreateAaiEntryWithPnfIdDelegate">
     <property name="aaiConnection" ref="aaiConnection"/>
   </bean>
 
-  <bean id="informDmaapClient" class="org.onap.so.bpmn.infrastructure.pnf.delegate.InformDmaapClient">
-    <property name="dmaapClient" ref="dmaapClient"/>
+  <bean id="InformDmaapClient" class="org.onap.so.bpmn.infrastructure.pnf.delegate.InformDmaapClient">
+    <property name="dmaapClient" ref="DmaapClient"/>
   </bean>
 
-  <bean id="dmaapClient" class="org.onap.so.bpmn.infrastructure.pnf.delegate.DmaapClientTestImpl"/>
+  <bean id="DmaapClient" class="org.onap.so.bpmn.infrastructure.pnf.delegate.DmaapClientTestImpl"/>
 
 
-  <bean id="pnfCheckInputs" class="org.onap.so.bpmn.infrastructure.pnf.delegate.PnfCheckInputs">
+  <bean id="PnfCheckInputs" class="org.onap.so.bpmn.infrastructure.pnf.delegate.PnfCheckInputs">
     <property name="defaultTimeout" value="PT1S"/>
   </bean>
 </beans>
