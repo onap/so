@@ -33,7 +33,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.http.HttpEntity;
@@ -47,7 +46,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.PnfEventReadyDmaapClient.DmaapTopicListenerThread;
@@ -81,6 +79,8 @@ public class PnfEventReadyDmaapClientTest {
     private static final String EVENT_TOPIC_TEST = "eventTopicTest";
     private static final String CONSUMER_ID = "consumerTestId";
     private static final String CONSUMER_GROUP = "consumerGroupTest";
+    private static final int TOPIC_LISTENER_DELAY_IN_SECONDS = 5;
+
     @Mock
     private Environment env;
     private PnfEventReadyDmaapClient testedObject;
@@ -95,12 +95,13 @@ public class PnfEventReadyDmaapClientTest {
         testedObject = new PnfEventReadyDmaapClient(env);
     	when(env.getProperty(eq("pnf.dmaap.port"), eq(Integer.class))).thenReturn(PORT);
     	when(env.getProperty(eq("pnf.dmaap.host"))).thenReturn(HOST);
-        testedObject.setDmaapProtocol(PROTOCOL);
-        testedObject.setDmaapUriPathPrefix(URI_PATH_PREFIX);
-        testedObject.setDmaapTopicName(EVENT_TOPIC_TEST);
-        testedObject.setConsumerId(CONSUMER_ID);
-        testedObject.setConsumerGroup(CONSUMER_GROUP);
-        testedObject.setDmaapClientDelayInSeconds(1);
+        when(env.getProperty(eq("pnf.dmaap.protocol"))).thenReturn(PROTOCOL);
+        when(env.getProperty(eq("pnf.dmaap.uriPathPrefix"))).thenReturn(URI_PATH_PREFIX);
+        when(env.getProperty(eq("pnf.dmaap.topicName"))).thenReturn(EVENT_TOPIC_TEST);
+        when(env.getProperty(eq("pnf.dmaap.consumerId"))).thenReturn(CONSUMER_ID);
+        when(env.getProperty(eq("pnf.dmaap.consumerGroup"))).thenReturn(CONSUMER_GROUP);
+        when(env.getProperty(eq("pnf.dmaap.topicListenerDelayInSeconds"), eq(Integer.class)))
+                .thenReturn(TOPIC_LISTENER_DELAY_IN_SECONDS);
         testedObject.init();
         testedObjectInnerClassThread = testedObject.new DmaapTopicListenerThread();
         httpClientMock = mock(HttpClient.class);

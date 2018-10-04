@@ -24,13 +24,15 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CancelDmaapSubscription implements JavaDelegate {
 
     private DmaapClient dmaapClient;
 
     @Override
-    public void execute(DelegateExecution execution) throws Exception {
+    public void execute(DelegateExecution execution) {
         String correlationId = (String) execution.getVariable(ExecutionVariableNames.CORRELATION_ID);
         dmaapClient.unregister(correlationId);
     }
