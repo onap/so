@@ -30,55 +30,52 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.junit.Before;
 import org.junit.Test;
 
 public class PnfCheckInputsTest {
 
-    private PnfCheckInputs delegate;
-
-    @Before
-    public void setUp() throws Exception {
-        delegate = new PnfCheckInputs();
-    }
+    private static final String DEFAULT_TIMEOUT = "P1D";
 
     private DelegateExecution mockDelegateExecution() {
+        new PnfCheckInputs(DEFAULT_TIMEOUT);
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
         when(delegateExecution.getVariable("testProcessKey")).thenReturn("testProcessKeyValue");
         return delegateExecution;
     }
 
     @Test
-    public void shouldThrowException_whenPnfIdNotSet() throws Exception {
+    public void shouldThrowException_whenPnfIdNotSet() {
         // given
+        PnfCheckInputs testedObject = new PnfCheckInputs(DEFAULT_TIMEOUT);
         DelegateExecution delegateExecution = mockDelegateExecution();
         // when, then
-        assertThatThrownBy(() -> delegate.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
     }
 
     private DelegateExecution mockDelegateExecutionWithCorrelationId() {
+        new PnfCheckInputs(DEFAULT_TIMEOUT);
         DelegateExecution delegateExecution = mockDelegateExecution();
         when(delegateExecution.getVariable(CORRELATION_ID)).thenReturn("testCorrelationId");
         return delegateExecution;
     }
 
     @Test
-    public void shouldThrowException_whenTimeoutIsNotSetAndDefaultIsNotDefined() throws Exception {
+    public void shouldThrowException_whenTimeoutIsNotSetAndDefaultIsNotDefined() {
         // given
+        PnfCheckInputs testedObject = new PnfCheckInputs(null);
         DelegateExecution delegateExecution = mockDelegateExecutionWithCorrelationId();
         // when, then
-        assertThatThrownBy(() -> delegate.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
     }
 
     @Test
-    public void shouldSetDefaultTimeout_whenTimeoutIsNotSet() throws Exception {
+    public void shouldSetDefaultTimeout_whenTimeoutIsNotSet() {
         // given
-        String defaultTimeout = "T1D";
-        delegate.setDefaultTimeout(defaultTimeout);
+        PnfCheckInputs testedObject = new PnfCheckInputs(DEFAULT_TIMEOUT);
         DelegateExecution delegateExecution = mockDelegateExecutionWithCorrelationId();
         // when
-        delegate.execute(delegateExecution);
+        testedObject.execute(delegateExecution);
         // then
-        verify(delegateExecution).setVariable(eq(TIMEOUT_FOR_NOTIFICATION), eq(defaultTimeout));
+        verify(delegateExecution).setVariable(eq(TIMEOUT_FOR_NOTIFICATION), eq(DEFAULT_TIMEOUT));
     }
 }
