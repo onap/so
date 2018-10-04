@@ -27,7 +27,9 @@ import java.util.UUID;
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
 import org.onap.so.client.aai.AAIRestClientImpl;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AaiConnectionImpl implements AaiConnection {
 
     @Override

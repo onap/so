@@ -1,6 +1,7 @@
 aai:
   auth: 26AFB797A6A57960D5D718491925C50F77CDC22AC394B3DBA09950D8FD1C0764
   endpoint: http://localhost:${wiremock.server.port}
+  pnfEntryNotificationTimeout: P14D
 appc:
   client:
     key: iaEMAfjsVsZnraBP
@@ -29,6 +30,16 @@ log:
     sdncAdapter: 'true'
     vnfAdapterCreateV1: 'true'
     vnfAdapterRestV1: 'true'
+pnf:
+  dmaap:
+    host: hostTest
+    port: 1234
+    protocol: http
+    uriPathPrefix: events
+    topicName: pnfReady
+    consumerGroup: consumerGroup
+    consumerId: consumerId
+    topicListenerDelayInSeconds: 5
 mso:
   adapters:
     requestDb:
