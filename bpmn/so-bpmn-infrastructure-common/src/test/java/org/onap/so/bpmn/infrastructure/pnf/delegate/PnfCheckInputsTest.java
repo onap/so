@@ -21,12 +21,9 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -38,7 +35,7 @@ public class PnfCheckInputsTest {
     private PnfCheckInputs delegate;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         delegate = new PnfCheckInputs();
     }
 
@@ -49,7 +46,7 @@ public class PnfCheckInputsTest {
     }
 
     @Test
-    public void shouldThrowException_whenPnfIdNotSet() throws Exception {
+    public void shouldThrowException_whenPnfIdNotSet() {
         // given
         DelegateExecution delegateExecution = mockDelegateExecution();
         // when, then
@@ -63,22 +60,10 @@ public class PnfCheckInputsTest {
     }
 
     @Test
-    public void shouldThrowException_whenTimeoutIsNotSetAndDefaultIsNotDefined() throws Exception {
+    public void shouldThrowException_whenTimeoutIsNotSetAndDefaultIsNotDefined() {
         // given
         DelegateExecution delegateExecution = mockDelegateExecutionWithCorrelationId();
         // when, then
         assertThatThrownBy(() -> delegate.execute(delegateExecution)).isInstanceOf(BpmnError.class);
-    }
-
-    @Test
-    public void shouldSetDefaultTimeout_whenTimeoutIsNotSet() throws Exception {
-        // given
-        String defaultTimeout = "T1D";
-        delegate.setDefaultTimeout(defaultTimeout);
-        DelegateExecution delegateExecution = mockDelegateExecutionWithCorrelationId();
-        // when
-        delegate.execute(delegateExecution);
-        // then
-        verify(delegateExecution).setVariable(eq(TIMEOUT_FOR_NOTIFICATION), eq(defaultTimeout));
     }
 }
