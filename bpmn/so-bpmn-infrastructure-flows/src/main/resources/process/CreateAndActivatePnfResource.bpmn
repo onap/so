@@ -27,15 +27,15 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{aaiContainsInfoAboutPnf}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0967g8p" sourceRef="CheckInputs" targetRef="CheckAiiForCorrelationId" />
-    <bpmn:serviceTask id="CheckInputs" name="Check inputs" camunda:delegateExpression="${pnfCheckInputs}">
+    <bpmn:serviceTask id="CheckInputs" name="Check inputs" camunda:delegateExpression="${PnfCheckInputs}">
       <bpmn:incoming>SequenceFlow_0j5ksz1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0967g8p</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="CancelDmaapClientSubscription" name="Cancel DmaapClient subscription" camunda:delegateExpression="${cancelDmaapSubscription}">
+    <bpmn:serviceTask id="CancelDmaapClientSubscription" name="Cancel DmaapClient subscription" camunda:delegateExpression="${CancelDmaapSubscription}">
       <bpmn:incoming>SequenceFlow_1kc34bc</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1miyzfe</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="InformDmaapClient" name="Inform DmaapClient about business key and corresponding pnf-id" camunda:delegateExpression="${informDmaapClient}">
+    <bpmn:serviceTask id="InformDmaapClient" name="Inform DmaapClient about business key and corresponding pnf-id" camunda:delegateExpression="${InformDmaapClient}">
       <bpmn:incoming>SequenceFlow_17s9025</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1o8od8e</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -44,7 +44,7 @@
       <bpmn:incoming>SequenceFlow_1l1t6ak</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_17s9025</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:serviceTask id="CreateAndActivatePnf_CreateAaiEntry" name="Create AAI entry with pnf-id = correlation_id" camunda:delegateExpression="${createAaiEntryWithPnfIdDelegate}">
+    <bpmn:serviceTask id="CreateAndActivatePnf_CreateAaiEntry" name="Create AAI entry with pnf-id = correlation_id" camunda:delegateExpression="${CreateAaiEntryWithPnfIdDelegate}">
       <bpmn:incoming>SequenceFlow_0v5ffpe</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1qr6cmf</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -53,7 +53,7 @@
       <bpmn:outgoing>SequenceFlow_1l1t6ak</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0v5ffpe</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="CheckAiiForCorrelationId" name="Check AAI for correlation_id" camunda:delegateExpression="${checkAaiForCorrelationIdDelegate}">
+    <bpmn:serviceTask id="CheckAiiForCorrelationId" name="Check AAI for correlation_id" camunda:delegateExpression="${CheckAaiForCorrelationIdDelegate}">
       <bpmn:incoming>SequenceFlow_0967g8p</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1j4r3zt</bpmn:outgoing>
     </bpmn:serviceTask>

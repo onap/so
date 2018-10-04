@@ -27,12 +27,21 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import org.onap.so.logger.MsoLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PnfCheckInputs implements JavaDelegate {
 
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, PnfCheckInputs.class);
 
     private String defaultTimeout;
+
+    @Autowired
+    public PnfCheckInputs(@Value("${aai.pnfEntryNotificationTimeout}") String defaultTimeout) {
+        this.defaultTimeout = defaultTimeout;
+    }
 
     @Override
     public void execute(DelegateExecution execution) {
@@ -51,7 +60,4 @@ public class PnfCheckInputs implements JavaDelegate {
         }
     }
 
-    public void setDefaultTimeout(String defaultTimeout) {
-        this.defaultTimeout = defaultTimeout;
-    }
 }

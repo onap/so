@@ -27,6 +27,7 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Implementation of "Create AAI entry with pnf-id = correlation_id" task in CreateAndActivatePnfResource.bpmn
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Inputs:
  *  - correlationId - String
  */
+@Component
 public class CreateAaiEntryWithPnfIdDelegate implements JavaDelegate {
 
     private AaiConnection aaiConnection;
