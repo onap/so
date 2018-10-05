@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,28 +21,11 @@
 package org.onap.so.apihandlerinfra;
 
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.http.Fault;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,59 +50,73 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.http.Fault;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 
-public class ServiceInstancesTest extends BaseTest{
+public class ServiceInstancesTest extends BaseTest {
 
-	private final ObjectMapper mapper = new ObjectMapper();
-	
+    private final ObjectMapper mapper = new ObjectMapper();
+
     @Autowired
     private ServiceInstances servInstances;
 
-	@Value("${wiremock.server.port}")
-	private String wiremockPort;
+    @Value("${wiremock.server.port}")
+    private String wiremockPort;
 
     private final String servInstanceuri = "/onap/so/infra/serviceInstantiation/";
     private final String servInstanceUriPrev7 = "/onap/so/infra/serviceInstances/";
     private String uri;
 
-	@Before
-	public  void beforeClass() {
-		stubFor(post(urlMatching(".*/infraActiveRequests.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withStatus(HttpStatus.SC_OK)));
-	}
-	
-    public String inputStream(String JsonInput)throws IOException{
+    @Before
+    public void beforeClass() {
+        stubFor(post(urlMatching(".*/infraActiveRequests.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_OK)));
+    }
+
+    public String inputStream(String JsonInput) throws IOException {
         JsonInput = "src/test/resources/ServiceInstanceTest" + JsonInput;
         return new String(Files.readAllBytes(Paths.get(JsonInput)));
     }
 
-	private String getWiremockResponseForCatalogdb(String file) {
-		try {
-			File resource= ResourceUtils.getFile("classpath:__files/catalogdb/"+file);
-			return new String(Files.readAllBytes(resource.toPath())).replaceAll("localhost:8090","localhost:"+wiremockPort);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+    private String getWiremockResponseForCatalogdb(String file) {
+        try {
+            File resource = ResourceUtils.getFile("classpath:__files/catalogdb/" + file);
+            return new String(Files.readAllBytes(resource.toPath())).replaceAll("localhost:8090", "localhost:" + wiremockPort);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
 
-	}
-	
-	public ResponseEntity<String> sendRequest(String requestJson, String uriPath, HttpMethod reqMethod, HttpHeaders headers){
-		
-		if (!headers.containsKey(HttpHeaders.ACCEPT)) {
-			headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
-		}
-		if (!headers.containsKey(HttpHeaders.CONTENT_TYPE)) {
-			headers.set(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON);
-		}
+    }
+
+    public ResponseEntity<String> sendRequest(String requestJson, String uriPath, HttpMethod reqMethod, HttpHeaders headers) {
+
+        if (!headers.containsKey(HttpHeaders.ACCEPT)) {
+            headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
+        }
+        if (!headers.containsKey(HttpHeaders.CONTENT_TYPE)) {
+            headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        }
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(uriPath));
 
@@ -128,27 +125,28 @@ public class ServiceInstancesTest extends BaseTest{
         return restTemplate.exchange(builder.toUriString(),
                 reqMethod, request, String.class);
     }
-	
-    public ResponseEntity<String> sendRequest(String requestJson, String uriPath, HttpMethod reqMethod){
-    	return sendRequest(requestJson, uriPath, reqMethod, new HttpHeaders());
+
+    public ResponseEntity<String> sendRequest(String requestJson, String uriPath, HttpMethod reqMethod) {
+        return sendRequest(requestJson, uriPath, reqMethod, new HttpHeaders());
     }
 
     @Test
-    public void test_mapJSONtoMSOStyle() throws IOException{
+    public void test_mapJSONtoMSOStyle() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
-        String testRequest= inputStream("/ServiceInstanceDefault.json");
+        String testRequest = inputStream("/ServiceInstanceDefault.json");
         String resultString = servInstances.mapJSONtoMSOStyle(testRequest, null, false, null);
         ServiceInstancesRequest sir = mapper.readValue(resultString, ServiceInstancesRequest.class);
         ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
-        assertEquals("f7ce78bb-423b-11e7-93f8-0050569a796",modelInfo.getModelCustomizationUuid());
-        assertEquals("modelInstanceName",modelInfo.getModelInstanceName());
-        assertEquals("f7ce78bb-423b-11e7-93f8-0050569a7965",modelInfo.getModelInvariantUuid());
-        assertEquals("10",modelInfo.getModelUuid());
+        assertEquals("f7ce78bb-423b-11e7-93f8-0050569a796", modelInfo.getModelCustomizationUuid());
+        assertEquals("modelInstanceName", modelInfo.getModelInstanceName());
+        assertEquals("f7ce78bb-423b-11e7-93f8-0050569a7965", modelInfo.getModelInvariantUuid());
+        assertEquals("10", modelInfo.getModelUuid());
 
     }
+
     @Test
-    public void createServiceInstanceVIDDefault() throws IOException{
+    public void createServiceInstanceVIDDefault() throws IOException {
         TestAppender.events.clear();
 
         ServiceRecipe serviceRecipe = new ServiceRecipe();
@@ -159,8 +157,8 @@ public class ServiceInstancesTest extends BaseTest{
         serviceRecipe.setRecipeTimeout(180);
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-        
-        
+
+
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -175,7 +173,7 @@ public class ServiceInstancesTest extends BaseTest{
                         .withBody(mapper.writeValueAsString(serviceRecipe))
                         .withStatus(HttpStatus.SC_OK)));
         HttpHeaders headers = new HttpHeaders();
-		headers.set(MsoLogger.TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
+        headers.set(MsoLogger.TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(MsoLogger.CLIENT_ID, "VID");
         //expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -191,40 +189,40 @@ public class ServiceInstancesTest extends BaseTest{
         //then		
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
-        
-        
-        
-        for(ILoggingEvent logEvent : TestAppender.events)
-            if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
-            		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")
-                    ){
-                Map<String,String> mdc = logEvent.getMDCPropertyMap();
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+
+
+        for (ILoggingEvent logEvent : TestAppender.events)
+            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
+                    logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")
+                    ) {
+                Map<String, String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));               
-                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
-                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",mdc.get(MsoLogger.SERVICE_NAME));
-                assertEquals("INPROGRESS",mdc.get(MsoLogger.STATUSCODE));
-            }else if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
-            		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("EXIT")){
-                Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));
+                assertEquals("UNKNOWN", mdc.get(MsoLogger.PARTNERNAME));
+                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances", mdc.get(MsoLogger.SERVICE_NAME));
+                assertEquals("INPROGRESS", mdc.get(MsoLogger.STATUSCODE));
+            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
+                    logEvent.getMarker() != null && logEvent.getMarker().getName().equals("EXIT")) {
+                Map<String, String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
                 assertNotNull(mdc.get(MsoLogger.ENDTIME));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));
-                assertEquals("202",mdc.get(MsoLogger.RESPONSECODE));
-                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
-                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",mdc.get(MsoLogger.SERVICE_NAME));
-                assertEquals("COMPLETE",mdc.get(MsoLogger.STATUSCODE));
+                assertEquals("202", mdc.get(MsoLogger.RESPONSECODE));
+                assertEquals("UNKNOWN", mdc.get(MsoLogger.PARTNERNAME));
+                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances", mdc.get(MsoLogger.SERVICE_NAME));
+                assertEquals("COMPLETE", mdc.get(MsoLogger.STATUSCODE));
                 assertNotNull(mdc.get(MsoLogger.RESPONSEDESC));
                 assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
                 assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
                 assertEquals("5.0.0", response.getHeaders().get("X-LatestVersion").get(0));
             }
     }
+
     @Test
-    public void createServiceInstanceServiceInstancesUri() throws IOException{
+    public void createServiceInstanceServiceInstancesUri() throws IOException {
         ServiceRecipe serviceRecipe = new ServiceRecipe();
         serviceRecipe.setOrchestrationUri("/mso/async/services/CreateGenericALaCarteServiceInstance");
         serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
@@ -233,11 +231,11 @@ public class ServiceInstancesTest extends BaseTest{
         serviceRecipe.setRecipeTimeout(180);
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-	    
+
         stubFor(post(urlPathEqualTo("/mso/async/services/CreateGenericALaCarteServiceInstance"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
 
         stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -248,7 +246,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(serviceRecipe))
                         .withStatus(HttpStatus.SC_OK)));
-        
+
         //expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -263,10 +261,11 @@ public class ServiceInstancesTest extends BaseTest{
         //then		
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
-    public void createServiceInstanceBpelStatusError() throws IOException{
+    public void createServiceInstanceBpelStatusError() throws IOException {
         ServiceRecipe serviceRecipe = new ServiceRecipe();
         serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
         serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
@@ -280,7 +279,7 @@ public class ServiceInstancesTest extends BaseTest{
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_BAD_GATEWAY)));
-        
+
 
         stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -297,66 +296,69 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
     }
+
     @Test
-    public void createServiceInstanceBadGateway() throws IOException{
-		ServiceRecipe serviceRecipe = new ServiceRecipe();
-		serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
-		serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-		serviceRecipe.setAction(Action.createInstance.toString());
-		serviceRecipe.setId(1);
-		serviceRecipe.setRecipeTimeout(180);
-		Service defaultService = new Service();
-		defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-		
+    public void createServiceInstanceBadGateway() throws IOException {
+        ServiceRecipe serviceRecipe = new ServiceRecipe();
+        serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
+        serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        serviceRecipe.setAction(Action.createInstance.toString());
+        serviceRecipe.setId(1);
+        serviceRecipe.setRecipeTimeout(180);
+        Service defaultService = new Service();
+        defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withStatus(org.apache.http.HttpStatus.SC_BAD_GATEWAY).withBody("{}")));
-        
-		stubFor(get(urlMatching(".*/service/search/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(defaultService))
-						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(serviceRecipe))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/service/search/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
+
+        stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceBadGateway.json"), uri, HttpMethod.POST);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
     }
+
     @Test
-    public void createServiceInstanceEmptyResponse() throws IOException{
-		ServiceRecipe serviceRecipe = new ServiceRecipe();
-		serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
-		serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-		serviceRecipe.setAction(Action.createInstance.toString());
-		serviceRecipe.setId(1);
-		serviceRecipe.setRecipeTimeout(180);
-		Service defaultService = new Service();
-		defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-		
+    public void createServiceInstanceEmptyResponse() throws IOException {
+        ServiceRecipe serviceRecipe = new ServiceRecipe();
+        serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
+        serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        serviceRecipe.setAction(Action.createInstance.toString());
+        serviceRecipe.setId(1);
+        serviceRecipe.setRecipeTimeout(180);
+        Service defaultService = new Service();
+        defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withFault(Fault.EMPTY_RESPONSE)));
-        
-		stubFor(get(urlMatching(".*/service/search/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(defaultService))
-						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(serviceRecipe))
-						.withStatus(HttpStatus.SC_OK)));
-		
+        stubFor(get(urlMatching(".*/service/search/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
+
+        stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
+
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceEmpty.json"), uri, HttpMethod.POST);
 
         assertEquals(Response.Status.BAD_GATEWAY.getStatusCode(), response.getStatusCode().value());
     }
+
     @Test
-    public void activateServiceInstanceNoRecipeALaCarte() throws IOException{
+    public void activateServiceInstanceNoRecipeALaCarte() throws IOException {
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/activate";
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-ECOMP-RequestID", "32807a28-1a14-4b88-b7b3-2950918aa76d");
@@ -364,21 +366,22 @@ public class ServiceInstancesTest extends BaseTest{
 
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-        
+
         stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService))
                         .withStatus(HttpStatus.SC_OK)));
 
-        
+
         stubFor(get(urlMatching(".*/serviceRecipe/search/findFirstByServiceModelUUIDAndAction?serviceModelUUID=d88da85c-d9e8-4f73-b837-3a72a431622a&action=activateInstance"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_NOT_FOUND)));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
     }
+
     @Test
-    public void activateServiceInstanceNoRecipe() throws IOException{
+    public void activateServiceInstanceNoRecipe() throws IOException {
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/activate";
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
@@ -386,40 +389,41 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService))
                         .withStatus(HttpStatus.SC_OK)));
-        
+
         stubFor(get(urlMatching(".*/serviceRecipe/search/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withStatus(HttpStatus.SC_NOT_FOUND)));
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_NOT_FOUND)));
 
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceNoRecipe.json"), uri, HttpMethod.POST);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
     }
+
     @Test
-    public void activateServiceInstance() throws IOException{
-		ServiceRecipe serviceRecipe = new ServiceRecipe();
-		serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
-		serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-		serviceRecipe.setAction(Action.createInstance.toString());
-		serviceRecipe.setId(1);
-		serviceRecipe.setRecipeTimeout(180);
-		Service defaultService = new Service();
-		defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-		
-		stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+    public void activateServiceInstance() throws IOException {
+        ServiceRecipe serviceRecipe = new ServiceRecipe();
+        serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
+        serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        serviceRecipe.setAction(Action.createInstance.toString());
+        serviceRecipe.setId(1);
+        serviceRecipe.setRecipeTimeout(180);
+        Service defaultService = new Service();
+        defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/service/search/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(defaultService))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/service/search/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(serviceRecipe))
-						.withStatus(HttpStatus.SC_OK)));
-		HttpHeaders headers = new HttpHeaders();
+        stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
+        HttpHeaders headers = new HttpHeaders();
         headers.set("X-TransactionID", "32807a28-1a14-4b88-b7b3-2950918aa76d");
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -434,39 +438,40 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
-    public void deactivateServiceInstance() throws IOException{
+    public void deactivateServiceInstance() throws IOException {
 
-		ServiceRecipe serviceRecipe = new ServiceRecipe();
-		serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
-		serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-		serviceRecipe.setAction(Action.createInstance.toString());
-		serviceRecipe.setId(1);
-		serviceRecipe.setRecipeTimeout(180);
-		Service defaultService = new Service();
-		defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        ServiceRecipe serviceRecipe = new ServiceRecipe();
+        serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
+        serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        serviceRecipe.setAction(Action.createInstance.toString());
+        serviceRecipe.setId(1);
+        serviceRecipe.setRecipeTimeout(180);
+        Service defaultService = new Service();
+        defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
 
-		stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/service/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(defaultService))
-						.withStatus(HttpStatus.SC_OK)));
-		
-		stubFor(get(urlMatching(".*/service/search/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(defaultService))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(serviceRecipe))
-						.withStatus(HttpStatus.SC_OK)));
-		
+        stubFor(get(urlMatching(".*/service/search/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
+
+        stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
+
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -480,37 +485,38 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void deleteServiceInstance() throws IOException {
-		ServiceRecipe serviceRecipe = new ServiceRecipe();
-		serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
-		serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-		serviceRecipe.setAction(Action.createInstance.toString());
-		serviceRecipe.setId(1);
-		serviceRecipe.setRecipeTimeout(180);
-		Service defaultService = new Service();
-		defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        ServiceRecipe serviceRecipe = new ServiceRecipe();
+        serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
+        serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        serviceRecipe.setAction(Action.createInstance.toString());
+        serviceRecipe.setId(1);
+        serviceRecipe.setRecipeTimeout(180);
+        Service defaultService = new Service();
+        defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
 
-		stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/service/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(defaultService))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/service/search/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(defaultService))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/service/search/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(serviceRecipe))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -524,37 +530,38 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void assignServiceInstance() throws IOException {
-		ServiceRecipe serviceRecipe = new ServiceRecipe();
-		serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
-		serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-		serviceRecipe.setAction(Action.createInstance.toString());
-		serviceRecipe.setId(1);
-		serviceRecipe.setRecipeTimeout(180);
-		Service defaultService = new Service();
-		defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        ServiceRecipe serviceRecipe = new ServiceRecipe();
+        serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
+        serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        serviceRecipe.setAction(Action.createInstance.toString());
+        serviceRecipe.setId(1);
+        serviceRecipe.setRecipeTimeout(180);
+        Service defaultService = new Service();
+        defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
 
-		stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/service/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(defaultService))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/service/search/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(defaultService))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/service/search/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(serviceRecipe))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -568,38 +575,38 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
 
     @Test
     public void unassignServiceInstance() throws IOException {
-		ServiceRecipe serviceRecipe = new ServiceRecipe();
-		serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
-		serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-		serviceRecipe.setAction(Action.createInstance.toString());
-		serviceRecipe.setId(1);
-		serviceRecipe.setRecipeTimeout(180);
-		Service defaultService = new Service();
-		defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        ServiceRecipe serviceRecipe = new ServiceRecipe();
+        serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
+        serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        serviceRecipe.setAction(Action.createInstance.toString());
+        serviceRecipe.setId(1);
+        serviceRecipe.setRecipeTimeout(180);
+        Service defaultService = new Service();
+        defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
 
-		stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/service/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(defaultService))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/service/search/.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(defaultService))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/service/search/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(serviceRecipe))
-						.withStatus(HttpStatus.SC_OK)));
+        stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -613,8 +620,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void createPortConfiguration() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
@@ -635,16 +643,18 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));		
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
         assertTrue(response.getBody().contains("1882939"));
     }
+
     @Test
     public void createPortConfigurationEmptyProductFamilyId() throws IOException {
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceParseFail.json"), uri, HttpMethod.POST);
 
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());	
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
     }
+
     @Test
     public void deletePortConfiguration() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
@@ -666,8 +676,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));		
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void enablePort() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
@@ -688,6 +699,7 @@ public class ServiceInstancesTest extends BaseTest{
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void disablePort() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
@@ -708,6 +720,7 @@ public class ServiceInstancesTest extends BaseTest{
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void activatePort() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
@@ -728,6 +741,7 @@ public class ServiceInstancesTest extends BaseTest{
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void deactivatePort() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
@@ -748,6 +762,7 @@ public class ServiceInstancesTest extends BaseTest{
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void addRelationships() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
@@ -767,8 +782,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void removeRelationships() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
@@ -788,8 +804,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void createVnfInstanceNoALaCarte() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -811,7 +828,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfRecipeReplaceInstance_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -825,8 +842,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void createVnfInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -841,8 +859,8 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfResourceCustomizationsList_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
-        
+
+
         stubFor(get(urlMatching(".*/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002672/vnfResources"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfResourcesCreateVnf_Response.json"))
@@ -869,9 +887,10 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
         assertTrue(response.getBody().contains("1882939"));
     }
+
     @Test
     public void createVnfWithServiceRelatedInstanceFail() throws IOException {
         uri = servInstanceUriPrev7 + "v6" + "/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs";
@@ -879,8 +898,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
     }
+
     @Test
-    public void createVnfInstanceInvalidVnfResource() throws IOException {		
+    public void createVnfInstanceInvalidVnfResource() throws IOException {
         uri = servInstanceuri + "v7" + "/serviceInstances/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vnfs";
         ResponseEntity<String> response = sendRequest(inputStream("/NoVnfResource.json"), uri, HttpMethod.POST);
 
@@ -892,6 +912,7 @@ public class ServiceInstancesTest extends BaseTest{
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals("No valid vnfResource is specified", realResponse.getServiceException().getText());
     }
+
     @Test
     public void replaceVnfInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -925,8 +946,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void replaceVnfRecreateInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/RecreateInfraVce"))
@@ -942,12 +964,12 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfResources_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-		
+
         stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]nfRole=TEST&action=replaceInstance"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(getWiremockResponseForCatalogdb("vnfRecipe_Response.json"))
-						.withStatus(org.apache.http.HttpStatus.SC_OK)));
-		
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("vnfRecipe_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -961,8 +983,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void recreateVnfInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -978,12 +1001,12 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfResources_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-		
+
         stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]nfRole=GR-API-DEFAULT&action=recreateInstance"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(getWiremockResponseForCatalogdb("vnfRecipe_ResponseWorkflowAction.json"))
-						.withStatus(org.apache.http.HttpStatus.SC_OK)));
-		
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("vnfRecipe_ResponseWorkflowAction.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -997,10 +1020,11 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
-    public void updateVnfInstance() throws IOException {	
+    public void updateVnfInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1014,7 +1038,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfResources_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction" +
                 "[?]nfRole=GR-API-DEFAULT&action=updateInstance"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1034,10 +1058,11 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
-    public void applyUpdatedConfig() throws IOException {			
+    public void applyUpdatedConfig() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/VnfConfigUpdate"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1048,7 +1073,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfRecipeApplyUpdatedConfig_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         String requestId = "b7a6b76f-2ee2-416c-971b-548472a8c5c5";
         HttpHeaders headers = new HttpHeaders();
         headers.set(MsoLogger.ONAP_REQUEST_ID, requestId);
@@ -1065,8 +1090,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void deleteVnfInstanceV5() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1093,6 +1119,7 @@ public class ServiceInstancesTest extends BaseTest{
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void createVfModuleInstance() throws IOException {
 
@@ -1110,8 +1137,8 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vfModule_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-	    
-	    stubFor(post(urlPathEqualTo("/mso/async/services/CreateVfModuleInfra"))
+
+        stubFor(post(urlPathEqualTo("/mso/async/services/CreateVfModuleInfra"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
@@ -1133,9 +1160,10 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
         assertTrue(response.getBody().contains("1882939"));
     }
+
     @Test
     public void createVfModuleInstanceNoModelCustomization() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/CreateVfModuleInfra"))
@@ -1180,7 +1208,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfComponentRecipeVNF_API_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -1191,8 +1219,9 @@ public class ServiceInstancesTest extends BaseTest{
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ObjectMapper mapper = new ObjectMapper();
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void deleteVfModuleInstanceNoMatchingModelUUD() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1234,7 +1263,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfComponentRecipeDeleteVfModule_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -1246,8 +1275,9 @@ public class ServiceInstancesTest extends BaseTest{
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ObjectMapper mapper = new ObjectMapper();
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void createVfModuleInstanceNoRecipe() throws IOException {
 
@@ -1272,22 +1302,23 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vfModuleCustomizationPCM_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-	    
-	    uri = servInstanceuri + "v6" + "/serviceInstances/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vfModules";
+
+        uri = servInstanceuri + "v6" + "/serviceInstances/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vfModules";
         ResponseEntity<String> response = sendRequest(inputStream("/VfModuleInvalid.json"), uri, HttpMethod.POST);
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE,  true);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals("No valid vfModuleCustomization is specified", realResponse.getServiceException().getText());
     }
+
     @Test
     public void replaceVfModuleInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion[?]" +
                 "modelInvariantUUID=78ca26d0-246d-11e7-93ae-92361f002671&modelVersion=2"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1312,8 +1343,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void updateVfModuleInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1355,11 +1387,12 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
-    public void createVfModuleNoModelType() throws IOException{
-    	HttpHeaders headers = new HttpHeaders();
+    public void createVfModuleNoModelType() throws IOException {
+        HttpHeaders headers = new HttpHeaders();
         headers.set(MsoLogger.ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         InfraActiveRequests expectedRecord = new InfraActiveRequests();
         expectedRecord.setRequestStatus("FAILED");
@@ -1383,12 +1416,13 @@ public class ServiceInstancesTest extends BaseTest{
         //ActualRecord
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
     }
+
     @Test
     public void inPlaceSoftwareUpdate() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/VnfInPlaceUpdate"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]" +
                 "nfRole=GR-API-DEFAULT&action=inPlaceSoftwareUpdate"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1408,9 +1442,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
-    
+
     @Test
     public void deleteVfModuleInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1422,7 +1456,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vfModule_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         stubFor(get(urlMatching(".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction" +
                 "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=deleteInstance"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1442,14 +1476,15 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void deleteVfModuleNoModelInvariantId() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         stubFor(get(urlMatching(".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction" +
                 "[?]vfModuleModelUUID=VNF-API-DEFAULT&vnfComponentType=vfModule&action=deleteInstance"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1469,8 +1504,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void deactivateAndCloudDeleteVfModuleInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1502,8 +1538,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void createVolumeGroupInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1539,9 +1576,10 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
         assertTrue(response.getBody().contains("1882939"));
     }
+
     @Test
     public void updateVolumeGroupInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1577,8 +1615,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void deleteVolumeGroupInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1604,7 +1643,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfComponentRecipeVolGrp_GRAPI_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -1618,8 +1657,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void createNetworkInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1641,7 +1681,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         String requestId = "b7a6b76f-2ee2-416c-971b-548472a8c5c4";
         HttpHeaders headers = new HttpHeaders();
         headers.set(MsoLogger.ONAP_REQUEST_ID, requestId);
@@ -1658,8 +1698,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void updateNetworkInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1694,9 +1735,10 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
         assertTrue(response.getBody().contains("1882939"));
     }
+
     @Test
     public void deleteNetworkInstance() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1718,7 +1760,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -1732,8 +1774,9 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void deleteNetworkInstanceNoReqParams() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -1760,11 +1803,12 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
     @Test
     public void convertJsonToServiceInstanceRequestFail() throws IOException {
-    	HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = new HttpHeaders();
         headers.set(MsoLogger.ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         //ExpectedRecord
         InfraActiveRequests expectedRecord = new InfraActiveRequests();
@@ -1784,6 +1828,7 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
     }
+
     @Test
     public void convertJsonToServiceInstanceRequestConfigurationFail() throws IOException {
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/configurations/test/enablePort";
@@ -1806,7 +1851,7 @@ public class ServiceInstancesTest extends BaseTest{
         serviceRecipe.setRecipeTimeout(180);
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-        
+
         stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService))
@@ -1816,7 +1861,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(serviceRecipe))
                         .withStatus(HttpStatus.SC_OK)));
-        
+
         uri = servInstanceuri + "v7" + "/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceMacro.json"), uri, HttpMethod.POST);
 
@@ -1831,7 +1876,7 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
 
     @Test
@@ -1855,7 +1900,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks";
         ResponseEntity<String> response = sendRequest(inputStream("/NetworkCreateAlternateInstanceName.json"), uri, HttpMethod.POST);
 
@@ -1870,7 +1915,7 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
 
     @Test
@@ -1909,13 +1954,13 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
                         .withStatus(HttpStatus.SC_OK)));
-        
+
         stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]" +
                 "modelName=GR-API-DEFAULT&action=createInstance"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks";
         ResponseEntity<String> response = sendRequest(inputStream("/NetworkCreateTestApiGrApi.json"), uri, HttpMethod.POST);
 
@@ -1930,7 +1975,7 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
 
     @Test
@@ -1948,13 +1993,13 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
                         .withStatus(HttpStatus.SC_OK)));
-        
+
         stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]" +
                 "modelName=VNF-API-DEFAULT&action=createInstance"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("networkRecipeVNF_API_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks";
         ResponseEntity<String> response = sendRequest(inputStream("/NetworkCreateTestApiVnfApi.json"), uri, HttpMethod.POST);
 
@@ -1969,11 +2014,11 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
 
     @Test
-    public void activateServiceInstanceRequestStatus() throws IOException{
+    public void activateServiceInstanceRequestStatus() throws IOException {
         ServiceRecipe serviceRecipe = new ServiceRecipe();
         serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
         serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
@@ -1982,11 +2027,11 @@ public class ServiceInstancesTest extends BaseTest{
         serviceRecipe.setRecipeTimeout(180);
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-	    
-	    stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
-	    HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = new HttpHeaders();
         headers.set("X-ECOMP-RequestID", "32807a28-1a14-4b88-b7b3-2950918aa76d");
 
         stubFor(get(urlMatching(".*/service/.*"))
@@ -1998,7 +2043,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(serviceRecipe))
                         .withStatus(HttpStatus.SC_OK)));
-        
+
         //expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -2012,7 +2057,7 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
 
     @Test
@@ -2027,8 +2072,9 @@ public class ServiceInstancesTest extends BaseTest{
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         assertTrue(response.getBody().contains("Request Id " + illegalRequestId + " is not a valid UUID"));
     }
+
     @Test
-    public void invalidBPELResponse() throws IOException{
+    public void invalidBPELResponse() throws IOException {
 
         ServiceRecipe serviceRecipe = new ServiceRecipe();
         serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
@@ -2038,8 +2084,8 @@ public class ServiceInstancesTest extends BaseTest{
         serviceRecipe.setRecipeTimeout(180);
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-	    
-	    stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponseInvalid2.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
@@ -2052,7 +2098,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(serviceRecipe))
                         .withStatus(HttpStatus.SC_OK)));
-        
+
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST);
 
@@ -2064,8 +2110,9 @@ public class ServiceInstancesTest extends BaseTest{
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Request Failed due to BPEL error with HTTP Status = 202{\"instanceId\": \"1882939\"}", realResponse.getServiceException().getText());
     }
+
     @Test
-    public void unauthorizedBPELResponse() throws IOException{
+    public void unauthorizedBPELResponse() throws IOException {
 
         ServiceRecipe serviceRecipe = new ServiceRecipe();
         serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
@@ -2075,8 +2122,8 @@ public class ServiceInstancesTest extends BaseTest{
         serviceRecipe.setRecipeTimeout(180);
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-	    
-	    stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/UnauthorizedResponse.json").withStatus(org.apache.http.HttpStatus.SC_UNAUTHORIZED)));
 
@@ -2089,7 +2136,7 @@ public class ServiceInstancesTest extends BaseTest{
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(serviceRecipe))
                         .withStatus(HttpStatus.SC_OK)));
-        
+
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST);
 
@@ -2103,7 +2150,7 @@ public class ServiceInstancesTest extends BaseTest{
     }
 
     @Test
-    public void invalidBPELResponse2() throws IOException{
+    public void invalidBPELResponse2() throws IOException {
 
         ServiceRecipe serviceRecipe = new ServiceRecipe();
         serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
@@ -2113,8 +2160,8 @@ public class ServiceInstancesTest extends BaseTest{
         serviceRecipe.setRecipeTimeout(180);
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-	    
-	    stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponseInvalid.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
@@ -2140,7 +2187,7 @@ public class ServiceInstancesTest extends BaseTest{
     }
 
     @Test
-    public void createMacroServiceInstance() throws IOException{
+    public void createMacroServiceInstance() throws IOException {
         ServiceRecipe serviceRecipe = new ServiceRecipe();
         serviceRecipe.setOrchestrationUri("/mso/async/services/CreateMacroServiceNetworkVnf");
         serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
@@ -2149,8 +2196,8 @@ public class ServiceInstancesTest extends BaseTest{
         serviceRecipe.setRecipeTimeout(180);
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-	    
-	    stubFor(post(urlPathEqualTo("/mso/async/services/CreateMacroServiceNetworkVnf"))
+
+        stubFor(post(urlPathEqualTo("/mso/async/services/CreateMacroServiceNetworkVnf"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
@@ -2182,7 +2229,7 @@ public class ServiceInstancesTest extends BaseTest{
         //then		
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
 
     @Test
@@ -2219,6 +2266,7 @@ public class ServiceInstancesTest extends BaseTest{
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
         assertThat(request, sameBeanAs(expected));
     }
+
     @Test
     public void scaleOutVfModule() throws IOException {
         stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
@@ -2245,11 +2293,11 @@ public class ServiceInstancesTest extends BaseTest{
                 "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=scaleOut"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfComponentRecipeVfModuleScaleOut_Response.json")).withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         stubFor(get(urlMatching(".*/vfModule/search/findByModelInvariantUUIDOrderByModelVersionDesc[?]modelInvariantUUID=78ca26d0-246d-11e7-93ae-92361f002671"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vfModulesListByInvariantId_Response.json")).withStatus(org.apache.http.HttpStatus.SC_OK)));
-        
+
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -2263,43 +2311,44 @@ public class ServiceInstancesTest extends BaseTest{
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
         assertTrue(response.getBody().contains("1882939"));
     }
+
     @Test
-    public void createServiceInstanceBadResponse() throws IOException{
-    	  ServiceRecipe serviceRecipe = new ServiceRecipe();
-          serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
-          serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-          serviceRecipe.setAction(Action.createInstance.toString());
-          serviceRecipe.setId(1);
-          serviceRecipe.setRecipeTimeout(180);
-          Service defaultService = new Service();
-          defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-  	    
-  	    stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
-                  .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                          .withBodyFile("Camunda/TestBadResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+    public void createServiceInstanceBadResponse() throws IOException {
+        ServiceRecipe serviceRecipe = new ServiceRecipe();
+        serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
+        serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        serviceRecipe.setAction(Action.createInstance.toString());
+        serviceRecipe.setId(1);
+        serviceRecipe.setRecipeTimeout(180);
+        Service defaultService = new Service();
+        defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
 
-          stubFor(get(urlMatching(".*/service/.*"))
-                  .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                          .withBody(mapper.writeValueAsString(defaultService))
-                          .withStatus(HttpStatus.SC_OK)));
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestBadResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-          stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
-                  .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                          .withBody(mapper.writeValueAsString(serviceRecipe))
-                          .withStatus(HttpStatus.SC_OK)));
-          
-          uri = servInstanceuri + "v5/serviceInstances";
-          ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST);
+        stubFor(get(urlMatching(".*/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
-          ObjectMapper mapper = new ObjectMapper();
-          mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-          mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+        stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
-          assertEquals(Response.Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode().value());
-          RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
-          assertEquals("Exception caught mapping Camunda JSON response to object", realResponse.getServiceException().getText());
+        uri = servInstanceuri + "v5/serviceInstances";
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
+        assertEquals(Response.Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        assertEquals("Exception caught mapping Camunda JSON response to object", realResponse.getServiceException().getText());
     }
 }
