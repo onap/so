@@ -140,7 +140,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			msoLogger.debug("User Input Parameters map: " + inputMap.toString())
 			execution.setVariable("serviceInputParams", inputMap)
 			execution.setVariable("uuiRequest", inputMap.get("UUIRequest"))
-			execution.setVariable("mso.adapters.openecomp.db.endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
+
 			//TODO
 			//execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
 			//execution.setVariable("failExists", true)
