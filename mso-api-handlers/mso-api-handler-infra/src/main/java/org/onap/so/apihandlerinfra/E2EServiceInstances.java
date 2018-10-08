@@ -1203,7 +1203,7 @@ public class E2EServiceInstances {
 			String requestJSON, Boolean aLaCarte, String requestId) throws ValidateException {
 		int reqVersion = Integer.parseInt(version.substring(1));
 		try {
-			msoRequest.parse(sir, instanceIdMap, action, version, requestJSON, reqVersion, aLaCarte);
+			msoRequest.parse(sir, instanceIdMap, action, reqVersion, aLaCarte);
 		} catch (Exception e) {
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 			ValidateException validateException = new ValidateException.Builder("Error parsing request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)

@@ -21,25 +21,10 @@
 
 package org.onap.so.apihandlerinfra;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.StringTokenizer;
-
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.xml.XMLConstants;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
 import org.onap.so.apihandlerinfra.validation.ApplyUpdatedConfigValidation;
@@ -63,7 +48,6 @@ import org.onap.so.apihandlerinfra.vnfbeans.VnfInputs;
 import org.onap.so.apihandlerinfra.vnfbeans.VnfRequest;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
@@ -87,10 +71,23 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.xml.XMLConstants;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 
 @Component
@@ -154,21 +151,21 @@ public class MsoRequest {
    
 
     // Parse request JSON
-    public void parse (ServiceInstancesRequest sir, HashMap<String,String> instanceIdMap, Actions action, String version,
-    		String originalRequestJSON, int reqVersion, Boolean aLaCarteFlag) throws ValidationException, IOException {
+    public void parse(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action,
+					  int version, Boolean aLaCarteFlag) throws ValidationException, IOException {
     	
         msoLogger.debug ("Validating the Service Instance request");       
         List<ValidationRule> rules = new ArrayList<>();
-        msoLogger.debug ("Incoming version is: " + version + " coverting to int: " + reqVersion);
+        msoLogger.debug ("Incoming version is: " + version);
 	    RequestParameters requestParameters = sir.getRequestDetails().getRequestParameters();
         ValidationInformation info = new ValidationInformation(sir, instanceIdMap, action,
-        		reqVersion, aLaCarteFlag, requestParameters);
+        		version, aLaCarteFlag, requestParameters);
         
         rules.add(new InstanceIdMapValidation());
         
-        if(reqVersion >= 6 && action == Action.inPlaceSoftwareUpdate){
+        if(version >= 6 && action == Action.inPlaceSoftwareUpdate){
         	rules.add(new InPlaceSoftwareUpdateValidation());
-        }else if(reqVersion >= 6 && action == Action.applyUpdatedConfig){
+        }else if(version >= 6 && action == Action.applyUpdatedConfig){
         	rules.add(new ApplyUpdatedConfigValidation());
         }else{
 	        rules.add(new RequestScopeValidation());
@@ -182,7 +179,7 @@ public class MsoRequest {
 	        rules.add(new RelatedInstancesValidation());
 	        rules.add(new ConfigurationParametersValidation());
         } 
-	    if(reqVersion >= 7 && requestParameters != null && requestParameters.getUserParams() != null){
+	    if(version >= 7 && requestParameters != null && requestParameters.getUserParams() != null){
 	    	for(Map<String, Object> params : requestParameters.getUserParams()){
         		if(params.containsKey("service")){
         			ObjectMapper obj = new ObjectMapper();
@@ -198,6 +195,7 @@ public class MsoRequest {
         	rule.validate(info);
     	}
     }
+
     void parseOrchestration (ServiceInstancesRequest sir) throws ValidationException {
         RequestInfo requestInfo = sir.getRequestDetails().getRequestInfo();
 
@@ -570,9 +568,11 @@ public class MsoRequest {
 
 
 	public String getNetworkType(ServiceInstancesRequest sir, String requestScope) {
-		  if(requestScope.equalsIgnoreCase(ModelType.network.name()))
-		        return sir.getRequestDetails().getModelInfo().getModelName();	
-		  else return null;
+		if (requestScope.equalsIgnoreCase(ModelType.network.name())) {
+			return sir.getRequestDetails().getModelInfo().getModelName();
+		} else {
+			return null;
+		}
 	}
 
 
@@ -596,143 +596,70 @@ public class MsoRequest {
 	}
 
 
-	public String getVfModuleType(ServiceInstancesRequest sir, String requestScope, Actions action, int reqVersion) {	
-	
-      	String serviceInstanceType = null;
-      	String networkType = null;
-      	String vnfType = null;
-      	String vfModuleType = null;
-      	String vfModuleModelName = null;
-		ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
+	public String getVfModuleType(ServiceInstancesRequest sir, String requestScope, Actions action, int reqVersion) {
+
+		String vfModuleType = null;
 		RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
-		String serviceModelName = null;
-        String vnfModelName = null;
-        String asdcServiceModelVersion = null;
-        String volumeGroupId = null;
-        boolean isRelatedServiceInstancePresent = false;
-        boolean isRelatedVnfInstancePresent = false;
-    	boolean isSourceVnfPresent = false;
-      	boolean isDestinationVnfPresent = false;
-      	boolean isConnectionPointPresent = false;	
 
-	    if (instanceList != null) {
-	       	for(RelatedInstanceList relatedInstanceList : instanceList){
+		if (instanceList != null) {
+			String serviceModelName = null;
+			String vnfModelName = null;
+			String volumeGroupId = null;
+			for(RelatedInstanceList relatedInstanceList : instanceList){
 	        	RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-	        	ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo ();	
+	        	ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo ();
 
-	          	if (action != Action.deleteInstance) {
-		          	
-		          	if(ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-		          		if(InstanceDirection.source.equals(relatedInstance.getInstanceDirection()) && relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
-		          			isSourceVnfPresent = true;
-		          		} else if(InstanceDirection.destination.equals(relatedInstance.getInstanceDirection()) && 
-		          				(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) || (relatedInstanceModelInfo.getModelType().equals(ModelType.pnf) && reqVersion == 6))) {
-		          			isDestinationVnfPresent = true;
-		          		}
-		          	}
-		          	
-		          	if(ModelType.connectionPoint.equals(relatedInstanceModelInfo.getModelType()) && ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-		          		isConnectionPointPresent = true;
-		          	}
-		        }
-	          	
-
-	          	if(relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
-	          		isRelatedServiceInstancePresent = true;	          		
-	          		serviceModelName = relatedInstanceModelInfo.getModelName ();
-	          		asdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion ();
-	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
-	          		isRelatedVnfInstancePresent = true;	          		
-	          		vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
+				if(relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
+					serviceModelName = relatedInstanceModelInfo.getModelName ();
+				} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
+					vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
 	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {	          		
 	           		volumeGroupId = relatedInstance.getInstanceId ();
 	          	}
           	}
-	       	
-	        if(requestScope.equalsIgnoreCase (ModelType.volumeGroup.name ())) {	        	
-	          	serviceInstanceType = serviceModelName;
-	          	vnfType = serviceModelName + "/" + vnfModelName;	  
-	        }
-	        else if(requestScope.equalsIgnoreCase(ModelType.vfModule.name ())) {	     
-	        	vfModuleModelName = modelInfo.getModelName ();
-	          	serviceInstanceType = serviceModelName;
-	          	vnfType = serviceModelName + "/" + vnfModelName;
-	          	vfModuleType = vnfType + "::" + vfModuleModelName;
-	          	sir.setVolumeGroupInstanceId (volumeGroupId);	         
-	        }
-	        else if (requestScope.equalsIgnoreCase (ModelType.vnf.name ()))
-	        	vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();	        	
-	       
-        }     
+
+			if (!requestScope.equalsIgnoreCase(ModelType.volumeGroup.name()) && requestScope.equalsIgnoreCase(ModelType.vfModule.name())) {
+				ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
+				String vfModuleModelName = modelInfo.getModelName();
+				String vnfType = serviceModelName + "/" + vnfModelName;
+				vfModuleType = vnfType + "::" + vfModuleModelName;
+				sir.setVolumeGroupInstanceId(volumeGroupId);
+			}
+
+		}
     	
 		return vfModuleType;
 
 	}
 	
-	public String getVnfType(ServiceInstancesRequest sir, String requestScope, Actions action, int reqVersion) {	
-		
-      	String serviceInstanceType = null;
-      	String networkType = null;
-      	String vnfType = null;
-      	String vfModuleType = null;
-      	String vfModuleModelName = null;
-		ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
-	    MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, MsoRequest.class);
+	public String getVnfType(ServiceInstancesRequest sir, String requestScope, Actions action, int reqVersion) {
+
+		String vnfType = null;
 		RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
-		String serviceModelName = null;
-        String vnfModelName = null;
-        String asdcServiceModelVersion = null;
-        String volumeGroupId = null;
-        boolean isRelatedServiceInstancePresent = false;
-        boolean isRelatedVnfInstancePresent = false;
-    	boolean isSourceVnfPresent = false;
-      	boolean isDestinationVnfPresent = false;
-      	boolean isConnectionPointPresent = false;	
 
-	    if (instanceList != null) {
-	       	for(RelatedInstanceList relatedInstanceList : instanceList){
+		if (instanceList != null) {
+			String serviceModelName = null;
+			String vnfModelName = null;
+			String volumeGroupId = null;
+			for(RelatedInstanceList relatedInstanceList : instanceList){
 	        	RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-	        	ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo ();	
+	        	ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo ();
 
-	          	if (action != Action.deleteInstance) {
-		          	
-		          	if(ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-		          		if(InstanceDirection.source.equals(relatedInstance.getInstanceDirection()) && relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
-		          			isSourceVnfPresent = true;
-		          		} else if(InstanceDirection.destination.equals(relatedInstance.getInstanceDirection()) && 
-		          				(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) || (relatedInstanceModelInfo.getModelType().equals(ModelType.pnf) && reqVersion == 6))) {
-		          			isDestinationVnfPresent = true;
-		          		}
-		          	}
-		          	
-		          	if(ModelType.connectionPoint.equals(relatedInstanceModelInfo.getModelType()) && ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-		          		isConnectionPointPresent = true;
-		          	}
-		        }
-	          	
-
-	          	if(relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
-	          		isRelatedServiceInstancePresent = true;	          		
-	          		serviceModelName = relatedInstanceModelInfo.getModelName ();
-	          		asdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion ();
-	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
-	          		isRelatedVnfInstancePresent = true;	          		
-	          		vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
+				if(relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
+					serviceModelName = relatedInstanceModelInfo.getModelName ();
+				} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
+					vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
 	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {	          		
 	           		volumeGroupId = relatedInstance.getInstanceId ();
 	          	}
           	}
 	       	
-	        if(requestScope.equalsIgnoreCase (ModelType.volumeGroup.name ())) {	        	
-	          	serviceInstanceType = serviceModelName;
-	          	vnfType = serviceModelName + "/" + vnfModelName;	  
+	        if(requestScope.equalsIgnoreCase (ModelType.volumeGroup.name ())) {
+				vnfType = serviceModelName + "/" + vnfModelName;
 	        }
-	        else if(requestScope.equalsIgnoreCase(ModelType.vfModule.name ())) {	     
-	        	vfModuleModelName = modelInfo.getModelName ();
-	          	serviceInstanceType = serviceModelName;
-	          	vnfType = serviceModelName + "/" + vnfModelName;
-	          	vfModuleType = vnfType + "::" + vfModuleModelName;
-	          	sir.setVolumeGroupInstanceId (volumeGroupId);	         
+	        else if(requestScope.equalsIgnoreCase(ModelType.vfModule.name ())) {
+				vnfType = serviceModelName + "/" + vnfModelName;
+				sir.setVolumeGroupInstanceId (volumeGroupId);
 	        }
 	        else if (requestScope.equalsIgnoreCase (ModelType.vnf.name ()))
 	        	vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();	        	

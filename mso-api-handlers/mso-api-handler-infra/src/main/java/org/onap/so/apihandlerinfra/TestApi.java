@@ -26,7 +26,7 @@ public enum TestApi {
 	
 	private final String modelName;
 	
-	private TestApi(String modelName) {
+	TestApi(String modelName) {
 		this.modelName = modelName;
 	}
 	

@@ -101,7 +101,7 @@ public class MsoRequestTest extends BaseTest {
 		this.instanceIdMapTest.put("networkInstanceId", "ff305d54-75b4-431b-adb2-eb6b9e5ff000");
 		this.instanceIdMapTest.put("configurationInstanceId", "ff305d54-75b4-431b-adb2-eb6b9e5ff000");
 		this.msoRequest = new MsoRequest();
-		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+		this.msoRequest.parse(sir, instanceIdMapTest, action, reqVersion, false);
 	}
 	@Parameters
 	private Collection<Object[]> successParameters() throws JsonParseException, JsonMappingException, IOException{
@@ -180,7 +180,7 @@ public class MsoRequestTest extends BaseTest {
 		thrown.expect(ValidationException.class);
 		thrown.expectMessage(expectedException);
 		this.msoRequest = new MsoRequest();
-		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+		this.msoRequest.parse(sir, instanceIdMapTest, action, reqVersion, false);
 	}
 	@Parameters
 	private Collection<Object[]> validationParameters() throws IOException{
@@ -337,7 +337,7 @@ public class MsoRequestTest extends BaseTest {
 		this.version = "v" + reqVersion;
 		thrown.expect(NullPointerException.class);
 		this.msoRequest = new MsoRequest();
-		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+		this.msoRequest.parse(sir, instanceIdMapTest, action, reqVersion, false);
 	}
 	
 	@Test
@@ -350,7 +350,7 @@ public class MsoRequestTest extends BaseTest {
 		thrown.expect(ValidationException.class);
 		thrown.expectMessage("No valid serviceInstanceId is specified");
 		this.msoRequest = new MsoRequest();
-		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+		this.msoRequest.parse(sir, instanceIdMapTest, action, reqVersion, false);
 	}
 	@Test
 	public void vnfInstanceIdHashMapFailureTest() throws JsonParseException, JsonMappingException, IOException, ValidationException{
@@ -362,7 +362,7 @@ public class MsoRequestTest extends BaseTest {
 		thrown.expect(ValidationException.class);
 		thrown.expectMessage("No valid vnfInstanceId is specified");
 		this.msoRequest = new MsoRequest();
-		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+		this.msoRequest.parse(sir, instanceIdMapTest, action, reqVersion, false);
 	}
 	@Test
 	public void vfModuleInstanceIdHashMapFailureTest() throws JsonParseException, JsonMappingException, IOException, ValidationException{
@@ -374,7 +374,7 @@ public class MsoRequestTest extends BaseTest {
 		thrown.expect(ValidationException.class);
 		thrown.expectMessage("No valid vfModuleInstanceId is specified");
 		this.msoRequest = new MsoRequest();
-		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+		this.msoRequest.parse(sir, instanceIdMapTest, action, reqVersion, false);
 	}
 	@Test
 	public void volumeGroupInstanceIdHashMapFailureTest() throws JsonParseException, JsonMappingException, IOException, ValidationException{
@@ -386,7 +386,7 @@ public class MsoRequestTest extends BaseTest {
 		thrown.expect(ValidationException.class);
 		thrown.expectMessage("No valid volumeGroupInstanceId is specified");
 		this.msoRequest = new MsoRequest();
-		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+		this.msoRequest.parse(sir, instanceIdMapTest, action, reqVersion, false);
 	}
 	@Test
 	public void networkInstanceIdHashMapFailureTest() throws JsonParseException, JsonMappingException, IOException, ValidationException{
@@ -398,7 +398,7 @@ public class MsoRequestTest extends BaseTest {
 		thrown.expect(ValidationException.class);
 		thrown.expectMessage("No valid networkInstanceId is specified");
 		this.msoRequest = new MsoRequest();
-		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+		this.msoRequest.parse(sir, instanceIdMapTest, action, reqVersion, false);
 	}
 	@Test
 	public void configurationInstanceIdHashMapFailureTest() throws JsonParseException, JsonMappingException, IOException, ValidationException{
@@ -410,7 +410,7 @@ public class MsoRequestTest extends BaseTest {
 		this.version = "v" + reqVersion;
 		thrown.expectMessage("No valid configurationInstanceId is specified");
 		this.msoRequest = new MsoRequest();
-		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+		this.msoRequest.parse(sir, instanceIdMapTest, action, reqVersion, false);
 	}
 	@Test
 	public void testVfModuleV4UsePreLoad() throws JsonParseException, JsonMappingException, IOException, ValidationException {
@@ -421,14 +421,14 @@ public class MsoRequestTest extends BaseTest {
 		this.version = "v" + reqVersion;
 		this.sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 		this.msoRequest = new MsoRequest ();
-		msoRequest.parse(sir, instanceIdMapTest, Action.createInstance, version, originalRequestJSON, reqVersion, false);
+		msoRequest.parse(sir, instanceIdMapTest, Action.createInstance, reqVersion, false);
 		
 		this.requestJSON = inputStream("/ModelInfo/v4CreateVfModuleNoCustomizationId.json");
 		this.instanceIdMapTest.put("serviceInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 		this.instanceIdMapTest.put("vnfInstanceId", "3eecada1-83a4-4f33-9ed2-7937e7b8dbbc");
 		this.sir  = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 		msoRequest = new MsoRequest ();
-		msoRequest.parse(sir, instanceIdMapTest, Action.createInstance, version, originalRequestJSON, reqVersion, false);
+		msoRequest.parse(sir, instanceIdMapTest, Action.createInstance, reqVersion, false);
 	}
 	@Test
 	public void buildServiceErrorResponseTest() throws JsonParseException, JsonMappingException, IOException, ValidationException{
@@ -440,7 +440,7 @@ public class MsoRequestTest extends BaseTest {
 		thrown.expect(ValidationException.class);
 		thrown.expectMessage("No valid serviceInstanceId is specified");
 		this.msoRequest = new MsoRequest();
-		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+		this.msoRequest.parse(sir, instanceIdMapTest, action, reqVersion, false);
 		Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
 				MsoException.ServiceException, "Mapping of request to JSON object failed.  ",
 				ErrorNumbers.SVC_BAD_PARAMETER, null, version);
@@ -461,7 +461,7 @@ public class MsoRequestTest extends BaseTest {
 		this.msoRequest = new MsoRequest();
 
 		
-		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+		this.msoRequest.parse(sir, instanceIdMapTest, action, reqVersion, false);
 		Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
 				MsoException.PolicyException, "Mapping of request to JSON object failed. ",
 				ErrorNumbers.SVC_BAD_PARAMETER, null, version);
