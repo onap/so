@@ -39,6 +39,7 @@ import org.springframework.stereotype.Component;
 public class ExecuteBuildingBlockRainyDay {
 	
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExecuteBuildingBlockRainyDay.class);
+	public static final String HANDLING_CODE = "handlingCode";
 	
 	@Autowired
 	private CatalogDbClient catalogDbClient;
@@ -107,10 +108,14 @@ public class ExecuteBuildingBlockRainyDay {
 				handlingCode = rainyDayHandlerStatus.getPolicy();
 			}
 			msoLogger.debug("RainyDayHandler Status Code is: " + handlingCode);
-			execution.setVariable("handlingCode", handlingCode);
+			execution.setVariable(HANDLING_CODE, handlingCode);
 		} catch (Exception e) {
 			msoLogger.debug("RainyDayHandler Status Code is: Abort");
-			execution.setVariable("handlingCode", "Abort");
+			execution.setVariable(HANDLING_CODE, "Abort");
 		}
+	}
+	
+	public void setHandlingStatusSuccess(DelegateExecution execution){
+		execution.setVariable(HANDLING_CODE, "Success");
 	}
 }
