@@ -120,7 +120,7 @@ public class RequestParameters implements Serializable {
 	public String getUserParamValue(String name){
 		if(userParams!=null){
 			for(Map<String, Object> param:userParams){
-				if(param.get("name").equals(name)){
+				if(param.containsKey("name") && param.get("name").equals(name) && param.containsKey("value")){
 					return param.get("value").toString();
 				}
 			}
