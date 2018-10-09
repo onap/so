@@ -290,6 +290,7 @@ public class WorkflowAction {
 
 			execution.setVariable(G_CURRENT_SEQUENCE, 0);
 			execution.setVariable("retryCount", 0);
+			execution.setVariable("isRollback", false);
 			execution.setVariable("flowsToExecute", flowsToExecute);
 
 		} catch (Exception ex) {
