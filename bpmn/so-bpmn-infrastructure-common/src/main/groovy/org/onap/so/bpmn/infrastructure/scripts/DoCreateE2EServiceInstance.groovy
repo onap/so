@@ -165,6 +165,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 					${statusLine}
 				    <model-invariant-id>${MsoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-id>
 				    <model-version-id>${MsoUtils.xmlEscape(modelUuid)}</model-version-id>
+				    <input-parameters>${MsoUtils.xmlEscape(uuiRequest)}</input-parameters>
 					</service-instance>""".trim()
 			execution.setVariable("serviceInstanceData", serviceInstanceData)
 			msoLogger.debug(serviceInstanceData)
