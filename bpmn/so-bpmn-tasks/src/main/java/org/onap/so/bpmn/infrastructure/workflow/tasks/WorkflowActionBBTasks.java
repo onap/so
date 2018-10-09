@@ -50,6 +50,7 @@ public class WorkflowActionBBTasks {
 	private static final String G_REQUEST_ID = "mso-request-id";
 	private static final String G_ALACARTE = "aLaCarte";
 	private static final String G_ACTION = "requestAction";
+	private static final String RETRY_COUNT = "retryCount";
 	private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBTasks.class);
 
 	@Autowired
@@ -221,13 +222,18 @@ public class WorkflowActionBBTasks {
 	}
 
 	public void checkRetryStatus(DelegateExecution execution) {
-		if (execution.getVariable("handlingCode").equals("Retry")) {
-			int currSequence = (int) execution.getVariable("gCurrentSequence");
-			currSequence--;
-			execution.setVariable("gCurrentSequence", currSequence);
-			int currRetryCount = (int) execution.getVariable("retryCount");
-			currRetryCount++;
-			execution.setVariable("retryCount", currRetryCount);
+		String handlingCode = (String) execution.getVariable("handlingCode");
+		int retryCount = (int) execution.getVariable(RETRY_COUNT);
+		if (handlingCode.equals("Retry")){
+			if(retryCount<5){
+				int currSequence = (int) execution.getVariable("gCurrentSequence");
+				execution.setVariable("gCurrentSequence", currSequence-1);
+				execution.setVariable(RETRY_COUNT, retryCount + 1);
+			}else{
+				workflowAction.buildAndThrowException(execution, "Exceeded maximum retries. Ending flow with status Abort");
+			}
+		}else{
+			execution.setVariable(RETRY_COUNT, 0);
 		}
 	}
 
@@ -236,37 +242,41 @@ public class WorkflowActionBBTasks {
 	 * layer will rollback the flow its currently working on.
 	 */
 	public void rollbackExecutionPath(DelegateExecution execution) {
-		List<ExecuteBuildingBlock> flowsToExecute = (List<ExecuteBuildingBlock>) execution
-				.getVariable("flowsToExecute");
-		List<ExecuteBuildingBlock> rollbackFlows = new ArrayList();
-		int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE) + 1;
-		int listSize = flowsToExecute.size();
-		for (int i = listSize - 1; i >= 0; i--) {
-			if (i >= currentSequence) {
-				flowsToExecute.remove(i);
-			} else {
-				ExecuteBuildingBlock ebb = flowsToExecute.get(i);
-				BuildingBlock bb = flowsToExecute.get(i).getBuildingBlock();
-				String flowName = flowsToExecute.get(i).getBuildingBlock().getBpmnFlowName();
-				if (flowName.contains("Assign")) {
-					flowName = "Unassign" + flowName.substring(6, flowName.length());
-				} else if (flowName.contains("Create")) {
-					flowName = "Delete" + flowName.substring(6, flowName.length());
-				} else if (flowName.contains("Activate")) {
-					flowName = "Deactivate" + flowName.substring(8, flowName.length());
-				}else{
-					continue;
+		if(!(boolean)execution.getVariable("isRollback")){
+			List<ExecuteBuildingBlock> flowsToExecute = (List<ExecuteBuildingBlock>) execution
+					.getVariable("flowsToExecute");
+			List<ExecuteBuildingBlock> rollbackFlows = new ArrayList();
+			int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+			int listSize = flowsToExecute.size();
+			for (int i = listSize - 1; i >= 0; i--) {
+				if (i > currentSequence - 1) {
+					flowsToExecute.remove(i);
+				} else {
+					String flowName = flowsToExecute.get(i).getBuildingBlock().getBpmnFlowName();
+					if (flowName.contains("Assign")) {
+						flowName = "Unassign" + flowName.substring(6, flowName.length());
+					} else if (flowName.contains("Create")) {
+						flowName = "Delete" + flowName.substring(6, flowName.length());
+					} else if (flowName.contains("Activate")) {
+						flowName = "Deactivate" + flowName.substring(8, flowName.length());
+					}else{
+						continue;
+					}
+					flowsToExecute.get(i).getBuildingBlock().setBpmnFlowName(flowName);
+					rollbackFlows.add(flowsToExecute.get(i));
 				}
-				flowsToExecute.get(i).getBuildingBlock().setBpmnFlowName(flowName);
-				rollbackFlows.add(flowsToExecute.get(i));
 			}
+			if (rollbackFlows.isEmpty())
+				execution.setVariable("isRollbackNeeded", false);
+			else
+				execution.setVariable("isRollbackNeeded", true);
+			execution.setVariable("flowsToExecute", rollbackFlows);
+			execution.setVariable("handlingCode", "PreformingRollback");
+			execution.setVariable("isRollback", true);
+			execution.setVariable("gCurrentSequence", 0);
+		}else{
+			workflowAction.buildAndThrowException(execution, "Rollback has already been called. Cannot rollback a request that is currently in the rollback state.");
 		}
-		if (rollbackFlows.isEmpty())
-			execution.setVariable("isRollbackNeeded", false);
-		else
-			execution.setVariable("isRollbackNeeded", true);
-		execution.setVariable("flowsToExecute", rollbackFlows);
-		execution.setVariable("handlingCode", "PreformingRollback");
 	}
 
 	public void abortCallErrorHandling(DelegateExecution execution) {
@@ -280,9 +290,17 @@ public class WorkflowActionBBTasks {
 			String requestId = (String) execution.getVariable(G_REQUEST_ID);
 			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
 			String errorMsg = null;
+			boolean rollback = false;
 			try {
 				WorkflowException exception = (WorkflowException) execution.getVariable("WorkflowException");
-				request.setStatusMessage(exception.getErrorMessage());
+				if(exception.getErrorMessage()!=null || !exception.getErrorMessage().equals("")){
+					errorMsg = exception.getErrorMessage();
+					rollback = (boolean) execution.getVariable("isRollbackComplete");
+					if(rollback){
+						errorMsg = errorMsg + " + Rollback has been completed successfully.";
+					}
+					request.setStatusMessage(errorMsg);
+				}
 			} catch (Exception ex) {
 				//log error and attempt to extact WorkflowExceptionMessage
 				logger.error("Failed to extract workflow exception from execution.",ex);
@@ -302,5 +320,10 @@ public class WorkflowActionBBTasks {
 		} catch (Exception e) {
 			workflowAction.buildAndThrowException(execution, "Error Updating Request Database", e);
 		}
+	}
+	
+	public void updateRequestStatusToFailedWithRollback(DelegateExecution execution) {
+		execution.setVariable("isRollbackComplete", true);
+		updateRequestStatusToFailed(execution);
 	}
 }
