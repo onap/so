@@ -20,17 +20,17 @@
 
 package org.onap.so.openstack.utils;
 
+import java.io.*;
 import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 import javax.ws.rs.core.Response;
 
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
@@ -209,26 +209,43 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("Multicloud Endpoint is: %s", multicloudEndpoint));
         }
-        RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
+        RestClient multicloudClient = getMulticloudClient(multicloudEndpoint,MediaType.MULTIPART_FORM_DATA.toString());
+        StackInfo createInfo = null;
+        File heatTemplateFile = null;
+        List<Attachment> multipartData = new ArrayList<>();
+        try {
+            heatTemplateFile = dumpTemplate(heatTemplate, stackName);
 
-        Response response = multicloudClient.post(request);
+            ContentDisposition cd1 = new ContentDisposition("form-data; name=\"infra-template\"; filename=" + heatTemplateFile.getName());
+            ContentDisposition cd2 = new ContentDisposition("form-data; name=\"infra-payload\" ");
+            multipartData.add(new Attachment("infra-payload", new ByteArrayInputStream(JSON_MAPPER.writeValueAsString(multicloudRequest).getBytes()), cd2));
+            multipartData.add(new Attachment("infra-template", new FileInputStream(heatTemplateFile), cd1));
+            MultipartBody multipart = new MultipartBody(multipartData);
 
-        StackInfo createInfo = new StackInfo();
-        createInfo.setName(stackName);
+            Response response = multicloudClient.post(multipart);
+            createInfo = new StackInfo();
+            createInfo.setName(stackName);
 
-        MulticloudCreateResponse multicloudResponseBody = null;
-        if (response.getStatus() == Response.Status.CREATED.getStatusCode() && response.hasEntity()) {
-            multicloudResponseBody = getCreateBody((java.io.InputStream)response.getEntity());
-            createInfo.setCanonicalName(stackName + "/" + multicloudResponseBody.getWorkloadId());
-            if (logger.isDebugEnabled()) {
-                logger.debug("Multicloud Create Response Body: " + multicloudResponseBody);
+            MulticloudCreateResponse multicloudResponseBody = null;
+            if (response.getStatus() == Response.Status.CREATED.getStatusCode() && response.hasEntity()) {
+                multicloudResponseBody = getCreateBody((java.io.InputStream) response.getEntity());
+                createInfo.setCanonicalName(stackName + "/" + multicloudResponseBody.getWorkloadId());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Multicloud Create Response Body: " + multicloudResponseBody);
+                }
+                return getStackStatus(cloudSiteId, tenantId, multicloudResponseBody.getWorkloadId(), pollForCompletion, timeoutMinutes, backout);
+            } else {
+                createInfo.setStatus(HeatStatus.FAILED);
+                createInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
+                return createInfo;
             }
-            return getStackStatus(cloudSiteId, tenantId, multicloudResponseBody.getWorkloadId(), pollForCompletion, timeoutMinutes, backout);
-        } else {
-            createInfo.setStatus(HeatStatus.FAILED);
-            createInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
-            return createInfo;
+        }catch (Exception e) {
+            logger.debug("ERROR making multicloud JSON body ", e);
+        }finally {
+            cleanupTempFiles(heatTemplateFile);
+            logger.debug("Exiting MsoMulticloudUtils.createStack");
         }
+        return createInfo;
     }
 
     @Override
@@ -607,10 +624,14 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     }
 
     private RestClient getMulticloudClient(String endpoint) {
+        return this. getMulticloudClient(endpoint, MediaType.APPLICATION_JSON.toString());
+    }
+
+    private RestClient getMulticloudClient(String endpoint, String contentType) {
         RestClient client = null;
         try {
             client= new HttpClient(UriBuilder.fromUri(endpoint).build().toURL(),
-                    MediaType.APPLICATION_JSON.toString(), TargetEntity.MULTICLOUD);
+                    contentType, TargetEntity.MULTICLOUD);
         } catch (MalformedURLException e) {
             logger.debug(String.format("Encountered malformed URL error getting multicloud rest client %s", e.getMessage()));
         } catch (IllegalArgumentException e) {
@@ -821,5 +842,24 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         }
 
         return vduStatus;
+    }
+
+    private File dumpTemplate(String heatTemplate, String name) throws IOException {
+        File inputFile = new File(name);
+        if (!inputFile.exists()) {
+            inputFile.createNewFile();
+        }
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(inputFile))) {
+            bufferedWriter.write(heatTemplate);
+            bufferedWriter.flush();
+        }
+
+        return inputFile;
+    }
+    private void cleanupTempFiles(File fileObj) {
+        if (fileObj != null && fileObj.exists()) {
+            fileObj.delete();
+        }
     }
 }

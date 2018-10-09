@@ -25,9 +25,11 @@ import java.util.concurrent.Callable;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.onap.so.logger.MsoLogger;
 
 public class RestRequest implements Callable<Response> {
@@ -49,7 +51,9 @@ public class RestRequest implements Callable<Response> {
 		if ("GET".equals(method)) {
 			response = this.client.getBuilder().accept(this.client.getAccept()).get();
 		} else if ("POST".equals(method)) {
-			response = this.client.getBuilder().accept(this.client.getAccept()).post(Entity.entity(entity, this.client.getContentType()));
+            Invocation.Builder builder = this.client.getBuilder();
+            WebClient.getConfig(builder).getHttpConduit().getClient().setAllowChunking(false);
+			response = builder.accept(this.client.getAccept()).post(Entity.entity(entity, this.client.getContentType()));
 		} else if ("PATCH".equals(method)) {
 			response = this.client.getBuilder().header("X-HTTP-Method-Override", "PATCH").accept(this.client.getAccept())
 					.post(Entity.entity(entity, this.client.getMergeContentType()));
