@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
- 
+
 package org.onap.so.bpmn.infrastructure.scripts
 
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
@@ -69,41 +69,36 @@ import org.onap.so.logger.MsoLogger
  *
  * Outputs:
  * @param - WorkflowException
-
  */
 public class DoCreateResources extends AbstractServiceTaskProcessor{
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateResources.class);
+    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateResources.class);
 
-	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	JsonUtils jsonUtil = new JsonUtils()
-	CatalogDbUtils cutils = new CatalogDbUtils()
+    ExceptionUtil exceptionUtil = new ExceptionUtil()
+    JsonUtils jsonUtil = new JsonUtils()
+    CatalogDbUtils cutils = new CatalogDbUtils()
 
-    public void preProcessRequest(DelegateExecution execution)
-    {
-		msoLogger.trace("preProcessRequest ")
-		String msg = ""
-		
+    public void preProcessRequest(DelegateExecution execution) {
+        msoLogger.trace("preProcessRequest ")
+        String msg = ""
+
         List addResourceList = execution.getVariable("addResourceList")
-        if (addResourceList == null)
-        {
+        if (addResourceList == null) {
             msg = "Input addResourceList is null"
             msoLogger.info(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)  
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
         }
-        else if (addResourceList.size() == 0)
-        {
+        else if (addResourceList.size() == 0) {
             msg = "No resource in addResourceList"
             msoLogger.info(msg)
         }
         msoLogger.trace("Exit preProcessRequest ")
     }
-    
-    public void sequenceResoure(DelegateExecution execution)
-    {
+
+    public void sequenceResoure(DelegateExecution execution) {
         msoLogger.trace("Start sequenceResoure Process ")
-        
-        String serviceModelUUID = execution.getVariable("modelUuid")      
-               
+
+        String serviceModelUUID = execution.getVariable("modelUuid")
+
         List<Resource> addResourceList = execution.getVariable("addResourceList")
 
         List<NetworkResource> networkResourceList = new ArrayList<NetworkResource>()
@@ -112,40 +107,47 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 
         String serviceDecompose = execution.getVariable("serviceDecomposition")
         String serviceModelName = jsonUtil.getJsonValue(serviceDecompose, "serviceResources.modelInfo.modelName")
+
+        // get Sequence from properties        
         def resourceSequence = BPMNProperties.getResourceSequenceProp(serviceModelName)
 
-        if(resourceSequence != null) {
-            // sequence is defined in config file
-        for (resourceType in resourceSequence) {
-            for (resource in addResourceList) {
-                if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
-                    sequencedResourceList.add(resource)
+        // get Sequence from csar(model)  
+        if(resourceSequence == null) {
+            resourceSequence = ResourceRequestBuilder.getResourceSequence(execution, serviceModelUUID)
+            msoLogger.info("Get Sequence from csar : " + resourceSequence)
+        }
 
-                    if (resource instanceof NetworkResource) {
-                        networkResourceList.add(resource)
+        if(resourceSequence != null) {
+            for (resourceType in resourceSequence) {
+                for (resource in addResourceList) {
+                    if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
+                        sequencedResourceList.add(resource)
+
+                        if (resource instanceof NetworkResource) {
+                            networkResourceList.add(resource)
+                        }
                     }
                 }
             }
-        }        
         } else {
-        
-        //define sequenced resource list, we deploy vf first and then network and then ar
-        //this is defaule sequence
-        List<VnfResource> vnfResourceList = new ArrayList<VnfResource>()
-        List<AllottedResource> arResourceList = new ArrayList<AllottedResource>()
 
-        for (Resource rc : addResourceList){
-            if (rc instanceof VnfResource) {
-                vnfResourceList.add(rc)
-            } else if (rc instanceof NetworkResource) {
-                networkResourceList.add(rc)
-            } else if (rc instanceof AllottedResource) {
-                arResourceList.add(rc)
+            //define sequenced resource list, we deploy vf first and then network and then ar
+            //this is defaule sequence
+            List<VnfResource> vnfResourceList = new ArrayList<VnfResource>()
+            List<AllottedResource> arResourceList = new ArrayList<AllottedResource>()
+
+            for (Resource rc : addResourceList){
+                if (rc instanceof VnfResource) {
+                    vnfResourceList.add(rc)
+                } else if (rc instanceof NetworkResource) {
+                    networkResourceList.add(rc)
+                } else if (rc instanceof AllottedResource) {
+                    arResourceList.add(rc)
+                }
             }
-        }
-        sequencedResourceList.addAll(vnfResourceList)
-        sequencedResourceList.addAll(networkResourceList)
-        sequencedResourceList.addAll(arResourceList)
+            sequencedResourceList.addAll(vnfResourceList)
+            sequencedResourceList.addAll(networkResourceList)
+            sequencedResourceList.addAll(arResourceList)
         }
 
         String isContainsWanResource = networkResourceList.isEmpty() ? "false" : "true"
@@ -154,11 +156,11 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
             String serviceNeedSDNC = "mso.workflow.custom." + serviceModelName + ".sdnc.need";
             isContainsWanResource = BPMNProperties.getProperty(serviceNeedSDNC, isContainsWanResource)
         }
-				
+
         execution.setVariable("isContainsWanResource", isContainsWanResource)
         execution.setVariable("currentResourceIndex", 0)
         execution.setVariable("sequencedResourceList", sequencedResourceList)
-        msoLogger.info("sequencedResourceList: " + sequencedResourceList) 
+        msoLogger.info("sequencedResourceList: " + sequencedResourceList)
         msoLogger.trace("COMPLETED sequenceResoure Process ")
     }
 
@@ -181,105 +183,105 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 
         msoLogger.trace("======== End prepareServiceTopologyRequest Process ======== ")
     }
-   
+
     public void getCurrentResoure(DelegateExecution execution){
-	    msoLogger.trace("Start getCurrentResoure Process ")    
-	    def currentIndex = execution.getVariable("currentResourceIndex")
-	    List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")  
-	    Resource currentResource = sequencedResourceList.get(currentIndex)
-	    execution.setVariable("resourceType", currentResource.getModelInfo().getModelName())
-	    msoLogger.info("Now we deal with resouce:" + currentResource.getModelInfo().getModelName())  
-	    msoLogger.trace("COMPLETED getCurrentResoure Process ")  
+        msoLogger.trace("Start getCurrentResoure Process ")
+        def currentIndex = execution.getVariable("currentResourceIndex")
+        List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
+        Resource currentResource = sequencedResourceList.get(currentIndex)
+        execution.setVariable("resourceType", currentResource.getModelInfo().getModelName())
+        msoLogger.info("Now we deal with resouce:" + currentResource.getModelInfo().getModelName())
+        msoLogger.trace("COMPLETED getCurrentResoure Process ")
     }
-    
+
     public void parseNextResource(DelegateExecution execution){
-        msoLogger.trace("Start parseNextResource Process ")    
+        msoLogger.trace("Start parseNextResource Process ")
         def currentIndex = execution.getVariable("currentResourceIndex")
         def nextIndex =  currentIndex + 1
         execution.setVariable("currentResourceIndex", nextIndex)
-        List<String> sequencedResourceList = execution.getVariable("sequencedResourceList")    
+        List<String> sequencedResourceList = execution.getVariable("sequencedResourceList")
         if(nextIndex >= sequencedResourceList.size()){
             execution.setVariable("allResourceFinished", "true")
         }else{
             execution.setVariable("allResourceFinished", "false")
         }
-        msoLogger.trace("COMPLETED parseNextResource Process ")       
-    }    
+        msoLogger.trace("COMPLETED parseNextResource Process ")
+    }
 
-	 public void prepareResourceRecipeRequest(DelegateExecution execution){
-		 msoLogger.trace("Start prepareResourceRecipeRequest Process ")
-		 ResourceInput resourceInput = new ResourceInput()
-		 String serviceInstanceName = execution.getVariable("serviceInstanceName")
-		 String resourceType = execution.getVariable("resourceType")
-		 String resourceInstanceName = resourceType + "_" + serviceInstanceName
-		 resourceInput.setResourceInstanceName(resourceInstanceName)
-		 msoLogger.info("Prepare Resource Request resourceInstanceName:" + resourceInstanceName)
-		 String globalSubscriberId = execution.getVariable("globalSubscriberId")
-		 String serviceType = execution.getVariable("serviceType")
-		 String serviceInstanceId = execution.getVariable("serviceInstanceId")
-		 String operationId = execution.getVariable("operationId")
-		 String operationType = "createInstance"
-		 resourceInput.setGlobalSubscriberId(globalSubscriberId)
-		 resourceInput.setServiceType(serviceType)
-		 resourceInput.setServiceInstanceId(serviceInstanceId)
-		 resourceInput.setOperationId(operationId)
-		 resourceInput.setOperationType(operationType);
-		 def currentIndex = execution.getVariable("currentResourceIndex")
-		 List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
-		 Resource currentResource = sequencedResourceList.get(currentIndex)
-		 resourceInput.setResourceModelInfo(currentResource.getModelInfo());
-		 ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-		 resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
-		 def String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid();
-		 
-		 String incomingRequest = execution.getVariable("uuiRequest")
-		 //set the requestInputs from tempalte  To Be Done
-		 String serviceModelUuid = jsonUtil.getJsonValue(incomingRequest,"service.serviceUuid")
-		 String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
-		 String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters)
-		 resourceInput.setResourceParameters(resourceParameters)
-		 resourceInput.setRequestsInputs(incomingRequest)
-		 execution.setVariable("resourceInput", resourceInput)
-		 msoLogger.trace("COMPLETED prepareResourceRecipeRequest Process ")
-	 }
-	 
-	 public void executeResourceRecipe(DelegateExecution execution){
-		 msoLogger.trace("Start executeResourceRecipe Process ")
-		 
-		 try {
-			 String requestId = execution.getVariable("msoRequestId")
-			 String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			 String serviceType = execution.getVariable("serviceType")
-			 ResourceInput resourceInput = execution.getVariable("resourceInput")
-			 
-			 // requestAction is action, not opertiontype
-			 //String requestAction = resourceInput.getOperationType()
-			 String requestAction = "createInstance"
-			 JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceModelInfo().getModelUuid(), requestAction)
+    public void prepareResourceRecipeRequest(DelegateExecution execution){
+        msoLogger.trace("Start prepareResourceRecipeRequest Process ")
+        ResourceInput resourceInput = new ResourceInput()
+        String serviceInstanceName = execution.getVariable("serviceInstanceName")
+        String resourceType = execution.getVariable("resourceType")
+        String resourceInstanceName = resourceType + "_" + serviceInstanceName
+        resourceInput.setResourceInstanceName(resourceInstanceName)
+        msoLogger.info("Prepare Resource Request resourceInstanceName:" + resourceInstanceName)
+        String globalSubscriberId = execution.getVariable("globalSubscriberId")
+        String serviceType = execution.getVariable("serviceType")
+        String serviceInstanceId = execution.getVariable("serviceInstanceId")
+        String operationId = execution.getVariable("operationId")
+        String operationType = "createInstance"
+        resourceInput.setGlobalSubscriberId(globalSubscriberId)
+        resourceInput.setServiceType(serviceType)
+        resourceInput.setServiceInstanceId(serviceInstanceId)
+        resourceInput.setOperationId(operationId)
+        resourceInput.setOperationType(operationType);
+        def currentIndex = execution.getVariable("currentResourceIndex")
+        List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
+        Resource currentResource = sequencedResourceList.get(currentIndex)
+        resourceInput.setResourceModelInfo(currentResource.getModelInfo());
+        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+        resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
+        def String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid();
 
-			 if (resourceRecipe != null) {
-	                     String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + resourceRecipe.getString("orchestrationUri")
-	                     int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
-	                     String recipeParamXsd = resourceRecipe.get("paramXSD")
-	                     HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
-			 } else {
-	                     String exceptionMessage = "Resource receipe is not found for resource modeluuid: " +
-	                     resourceInput.getResourceModelInfo().getModelUuid()
-	                     msoLogger.trace(exceptionMessage)
-	                     exceptionUtil.buildAndThrowWorkflowException(execution, 500, exceptionMessage)
-			 }
+        String incomingRequest = execution.getVariable("uuiRequest")
+        //set the requestInputs from tempalte  To Be Done
+        String serviceModelUuid = jsonUtil.getJsonValue(incomingRequest,"service.serviceUuid")
+        String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
+        String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters)
+        resourceInput.setResourceParameters(resourceParameters)
+        resourceInput.setRequestsInputs(incomingRequest)
+        execution.setVariable("resourceInput", resourceInput)
+        msoLogger.trace("COMPLETED prepareResourceRecipeRequest Process ")
+    }
 
-			 msoLogger.trace("======== end executeResourceRecipe Process ======== ")
-		 }catch(BpmnError b){
-			 msoLogger.debug("Rethrowing MSOWorkflowException")
-			 throw b
-		 }catch(Exception e){
-			 msoLogger.debug("Error occured within DoCreateResources executeResourceRecipe method: " + e)
-			 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured during DoCreateResources executeResourceRecipe Catalog")
-		 }
-	 }
+    public void executeResourceRecipe(DelegateExecution execution){
+        msoLogger.trace("Start executeResourceRecipe Process ")
 
-     public void postConfigRequest(DelegateExecution execution){
-         //now do noting
-     }
+        try {
+            String requestId = execution.getVariable("msoRequestId")
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
+            String serviceType = execution.getVariable("serviceType")
+            ResourceInput resourceInput = execution.getVariable("resourceInput")
+
+            // requestAction is action, not opertiontype
+            //String requestAction = resourceInput.getOperationType()
+            String requestAction = "createInstance"
+            JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceModelInfo().getModelUuid(), requestAction)
+
+            if (resourceRecipe != null) {
+                String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + resourceRecipe.getString("orchestrationUri")
+                int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
+                String recipeParamXsd = resourceRecipe.get("paramXSD")
+                HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+            } else {
+                String exceptionMessage = "Resource receipe is not found for resource modeluuid: " +
+                        resourceInput.getResourceModelInfo().getModelUuid()
+                msoLogger.trace(exceptionMessage)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, exceptionMessage)
+            }
+
+            msoLogger.trace("======== end executeResourceRecipe Process ======== ")
+        }catch(BpmnError b){
+            msoLogger.debug("Rethrowing MSOWorkflowException")
+            throw b
+        }catch(Exception e){
+            msoLogger.debug("Error occured within DoCreateResources executeResourceRecipe method: " + e)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured during DoCreateResources executeResourceRecipe Catalog")
+        }
+    }
+
+    public void postConfigRequest(DelegateExecution execution){
+        //now do noting
+    }
 }

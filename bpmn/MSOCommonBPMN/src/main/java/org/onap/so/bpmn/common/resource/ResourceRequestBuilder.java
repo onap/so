@@ -38,6 +38,8 @@ import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
+import org.onap.sdc.toscaparser.api.RequirementAssignment;
+import org.onap.sdc.toscaparser.api.RequirementAssignments;
 import org.onap.sdc.toscaparser.api.functions.GetInput;
 import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
@@ -63,15 +65,88 @@ public class ResourceRequestBuilder {
 
     static JsonUtils jsonUtil = new JsonUtils();
 
-        /**
-     * build the resource Parameters detail.
+	public static List<String> getResourceSequence(Execution execution, String serviceUuid) {
+		List<String> resouceSequence = new ArrayList<String>();
+		List<NodeTemplate> resultList = new ArrayList<NodeTemplate>();
+		String csarpath = null;
+		try {
+			csarpath = getCsarFromUuid(serviceUuid);
+
+			SdcToscaParserFactory toscaParser = SdcToscaParserFactory.getInstance();
+			ISdcCsarHelper iSdcCsarHelper = toscaParser.getSdcCsarHelper(csarpath, false);
+			List<NodeTemplate> nodeTemplates = iSdcCsarHelper.getServiceNodeTemplates();
+			List<NodeTemplate> nodes = new ArrayList<NodeTemplate>();
+			nodes.addAll(nodeTemplates);
+
+			for (NodeTemplate nodeTemplate : nodeTemplates) {
+				RequirementAssignments requirement = iSdcCsarHelper.getRequirementsOf(nodeTemplate);
+
+				if (requirement == null || requirement.getAll() == null || requirement.getAll().isEmpty()) {
+					resultList.add(nodeTemplate);
+					nodes.remove(nodeTemplate);
+				}
+			}
+
+			resultList = getRequirementList(resultList, nodes, iSdcCsarHelper);
+			
+			for (NodeTemplate node : resultList) {
+				String templateName = node.getMetaData().getValue("name");
+				if (!resouceSequence.contains(templateName)) {
+					resouceSequence.add(templateName);
+				}
+			}
+
+		} catch (SdcToscaParserException toscarParserE) {
+			LOGGER.debug("sdc tosca parser failed for csar: " + csarpath, toscarParserE);
+			return resouceSequence;
+		} catch (Exception e) {
+			LOGGER.debug("csar file is not available for service uuid:" + serviceUuid, e);
+			return resouceSequence;
+		}
+		
+		return resouceSequence;
+	}
+
+	private static List<NodeTemplate> getRequirementList(List<NodeTemplate> resultList, List<NodeTemplate> nodeTemplates,
+			ISdcCsarHelper iSdcCsarHelper) {
+
+		List<NodeTemplate> nodes = new ArrayList<NodeTemplate>();
+		nodes.addAll(nodeTemplates);
+
+		for (NodeTemplate nodeTemplate : nodeTemplates) {
+			RequirementAssignments requirement = iSdcCsarHelper.getRequirementsOf(nodeTemplate);
+			List<RequirementAssignment> reqAs = requirement.getAll();
+			for (RequirementAssignment ra : reqAs) {
+				String reqNode = ra.getNodeTemplateName();
+				for (NodeTemplate rNode : resultList) {
+					if (rNode.getName().equals(reqNode)) {
+						if(!resultList.contains(nodeTemplate)) {
+							resultList.add(nodeTemplate);							
+						}
+						if(nodes.contains(nodeTemplate)) {
+							nodes.remove(nodeTemplate);
+						}
+						break;
+					}
+				}
+			}
+		}
+
+		if (!nodes.isEmpty()) {
+			getRequirementList(resultList, nodes, iSdcCsarHelper);
+		}
+
+		return resultList;
+	}
+
+     /* build the resource Parameters detail.
      * It's a json string for resource instantiant
      * {
      *     "locationConstraints":[...]
      *     "requestInputs":{K,V}
      * }
      * <br>
-     * 
+     *
      * @param execution Execution context
      * @param serviceUuid The service template uuid
      * @param resourceCustomizationUuid The resource customization uuid
