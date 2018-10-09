@@ -736,10 +736,8 @@ public class ServiceInstances {
 		if(sir.getNetworkInstanceId () != null){
 			networkId = sir.getNetworkInstanceId ();
 		}
-		
-		if (sir.getCorrelationId() != null) {
-			correlationId = sir.getCorrelationId();
-		}
+
+		correlationId = getCorrelationId(sir);
 		infraActiveRequestsClient.save(currentActiveReq);
 		
 		if(!requestScope.equalsIgnoreCase(ModelType.service.name())){
@@ -751,6 +749,14 @@ public class ServiceInstances {
 		return postBPELRequest(currentActiveReq,action, requestId, startTime, requestJSON, recipeLookupResult.getOrchestrationURI(), recipeLookupResult.getRecipeTimeout(), 
 								isBaseVfModule, serviceInstanceId, correlationId, vnfId, vfModuleId, volumeGroupId, networkId, null,
 								serviceInstanceType,vnfType, vfModuleType,networkType, apiVersion, aLaCarte, requestUri, null, requestScope, sir);
+	}
+
+	private String getCorrelationId(ServiceInstancesRequest sir) {
+		return Optional.of(sir)
+				.map(ServiceInstancesRequest::getRequestDetails)
+				.map(RequestDetails::getRequestParameters)
+				.map(parameters -> parameters.getUserParamValue("pnfId"))
+				.orElse("");
 	}
 
 	private String deriveRequestScope(Actions action, ServiceInstancesRequest sir, String requestUri) {
@@ -1630,9 +1636,7 @@ public class ServiceInstances {
 		if(sir.getConfigurationId() != null){
             configurationId = sir.getConfigurationId();
         }
-		if (sir.getCorrelationId() != null) {
-			correlationId = sir.getCorrelationId();
-		}
+        correlationId = getCorrelationId(sir);
 		infraActiveRequestsClient.save(currentActiveReq);
 		
 		if(!requestScope.equalsIgnoreCase(ModelType.service.name())){
