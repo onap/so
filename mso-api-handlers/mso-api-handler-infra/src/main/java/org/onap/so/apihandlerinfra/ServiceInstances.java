@@ -111,7 +111,7 @@ public class ServiceInstances {
 	private static String NAME = "name";
 	private static String VALUE = "value";
 	private static final String SAVE_TO_DB = "save instance to db";
-	
+
 	@Autowired
 	private Environment env;
 	
@@ -738,17 +738,16 @@ public class ServiceInstances {
 		if(sir.getNetworkInstanceId () != null){
 			networkId = sir.getNetworkInstanceId ();
 		}
-		
-		if (sir.getCorrelationId() != null) {
-			correlationId = sir.getCorrelationId();
-		}
-		try{
-			infraActiveRequestsClient.save(currentActiveReq);
-		}catch(Exception e){
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+
+        correlationId = getCorrelationId(sir);
+
+        try{
+            infraActiveRequestsClient.save(currentActiveReq);
+        }catch(Exception e){
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
                     .errorInfo(errorLoggerInfo).build();
-		}
+        }
 		
 		if(!requestScope.equalsIgnoreCase(ModelType.service.name())){
 			aLaCarte = true;
@@ -759,6 +758,14 @@ public class ServiceInstances {
 		return postBPELRequest(currentActiveReq,action, requestId, startTime, requestJSON, recipeLookupResult.getOrchestrationURI(), recipeLookupResult.getRecipeTimeout(), 
 								isBaseVfModule, serviceInstanceId, correlationId, vnfId, vfModuleId, volumeGroupId, networkId, null,
 								serviceInstanceType,vnfType, vfModuleType,networkType, apiVersion, aLaCarte, requestUri, null, requestScope, sir);
+	}
+
+	private String getCorrelationId(ServiceInstancesRequest sir) {
+		return Optional.of(sir)
+				.map(ServiceInstancesRequest::getRequestDetails)
+				.map(RequestDetails::getRequestParameters)
+				.map(parameters -> parameters.getUserParamValue("pnfId"))
+				.orElse("");
 	}
 
 	private String deriveRequestScope(Actions action, ServiceInstancesRequest sir, String requestUri) {
@@ -1641,9 +1648,9 @@ public class ServiceInstances {
 		if(sir.getConfigurationId() != null){
             configurationId = sir.getConfigurationId();
         }
-		if (sir.getCorrelationId() != null) {
-			correlationId = sir.getCorrelationId();
-		}
+
+        correlationId = getCorrelationId(sir);
+
 		try{
 			infraActiveRequestsClient.save(currentActiveReq);
 		}catch(Exception e){
