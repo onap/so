@@ -293,15 +293,37 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
              //InputParams
              def userParams = reqMap.requestDetails?.requestParameters?.userParams
              Map<String, String> inputMap = [:]
-             if (userParams != null) {
+             if (userParams) {
                  userParams.each {
-                     userParam -> inputMap.put(userParam.name, userParam.value)
+                     userParam ->
+                         if ("Customer_Location".equals(userParam?.name)) {
+                             execution.setVariable("customerLocation", userParam.value.toString())
+                             userParam.value.each {
+                                 param ->
+                                     inputMap.put(param.key, param.value)
+                             }
+                             msoLogger.debug("User Input customerLocation: " + userParam.value.toString())
+                         }
+                         if ("Homing_Solution".equals(userParam?.name)) {
+                             execution.setVariable("homingService", userParam.value)
+                             execution.setVariable("callHoming", true)
+                             inputMap.put("Homing_Solution", userParam.value)
+                             msoLogger.debug("User Input Homing_Solution: " + userParam.value.toString())
+                         }
+                         if (!"Homing_Solution".equals(userParam?.name) && !"Customer_Location".equals(userParam?.name))
+                         {
+                             inputMap.put(userParam.name, userParam.value)
+                             msoLogger.debug("User Input Parameter "+ userParam.name +": " + userParam.value.toString())
+
+                         }
                  }
              }
 
              msoLogger.debug("User Input Parameters map: " + userParams.toString())
-             execution.setVariable("serviceInputParams", inputMap)
-
+             msoLogger.debug("User Input Map: " + inputMap.toString())
+             if (inputMap.toString() != "[:]") {
+                 execution.setVariable("serviceInputParams", inputMap)
+             }
              ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 
              String serviceInstanceId = execution.getVariable("serviceInstanceId")
