@@ -31,7 +31,7 @@ import org.onap.so.client.aai.AAIRestClientImpl;
 public class AaiConnectionImpl implements AaiConnection {
 
     @Override
-    public Optional<Pnf> getEntryFor(String correlationId) throws IOException {
+    public Optional<Pnf> getEntryFor(String correlationId) {
         AAIRestClientImpl restClient = new AAIRestClientImpl();
         return restClient.getPnfByName(correlationId, UUID.randomUUID().toString());
     }

@@ -30,7 +30,7 @@ public class CancelDmaapSubscription implements JavaDelegate {
     private DmaapClient dmaapClient;
 
     @Override
-    public void execute(DelegateExecution execution) throws Exception {
+    public void execute(DelegateExecution execution) {
         String correlationId = (String) execution.getVariable(ExecutionVariableNames.CORRELATION_ID);
         dmaapClient.unregister(correlationId);
     }
