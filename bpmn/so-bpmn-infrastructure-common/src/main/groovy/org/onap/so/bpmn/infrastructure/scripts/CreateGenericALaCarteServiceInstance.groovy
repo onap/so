@@ -142,12 +142,37 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
             Map<String, String> inputMap = [:]
             if (userParams) {
                 userParams.each {
-                    userParam -> inputMap.put(userParam.name, userParam.value.toString())
+                    userParam ->
+                        if ("Customer_Location".equals(userParam?.name)) {
+                            msoLogger.debug("User Input customerLocation: " + userParam.value.toString())
+                            Map<String, String> customerMap = [:]
+                            userParam.value.each {
+                                param ->
+
+                                    inputMap.put(param.key, param.value)
+                                    customerMap.put(param.key, param.value)
+                            }
+                            execution.setVariable("customerLocation", customerMap)
+                        }
+                        if ("Homing_Solution".equals(userParam?.name)) {
+                            msoLogger.debug("User Input Homing_Solution: " + userParam.value.toString())
+                            execution.setVariable("homingService", userParam.value)
+                            execution.setVariable("callHoming", true)
+                            inputMap.put("Homing_Solution", userParam.value)
+                        }
+                        if (!"Homing_Solution".equals(userParam?.name) && !"Customer_Location".equals(userParam?.name))
+                        {
+                            msoLogger.debug("User Input Parameter " + userParam.name + ": " + userParam.value.toString())
+                            inputMap.put(userParam.name, userParam.value)
+                        }
                 }
             }
 
             msoLogger.debug("User Input Parameters map: " + userParams.toString())
-            execution.setVariable("serviceInputParams", inputMap)
+            msoLogger.debug("User Input Map: " + inputMap.toString())
+            if (inputMap.toString() != "[:]") {
+                execution.setVariable("serviceInputParams", inputMap)
+            }
 
             //TODO
             //execution.setVariable("failExists", true)
@@ -231,7 +256,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
      }
 
     public void processDecomposition(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable(DebugFlag)
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
         msoLogger.trace("Inside processDecomposition() of CreateGenericALaCarteServiceInstance  ")
 
@@ -241,7 +266,6 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 
             // VNFs
             List<VnfResource> vnfList = serviceDecomposition.getVnfResources()
-            filterVnfs(vnfList)
             serviceDecomposition.setVnfResources(vnfList)
 
             execution.setVariable("vnfList", vnfList)
@@ -290,18 +314,44 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
              def jsonOutput = new JsonOutput()
              def siRequest = execution.getVariable("bpmnRequest")
              Map reqMap = jsonSlurper.parseText(siRequest)
+
              //InputParams
              def userParams = reqMap.requestDetails?.requestParameters?.userParams
+
              Map<String, String> inputMap = [:]
-             if (userParams != null) {
+             if (userParams) {
                  userParams.each {
-                     userParam -> inputMap.put(userParam.name, userParam.value)
+                     userParam ->
+                         if ("Customer_Location".equals(userParam?.name)) {
+                             msoLogger.debug("User Input customerLocation: " + userParam.value.toString())
+                             Map<String, String> customerMap = [:]
+                             userParam.value.each {
+                                 param ->
+
+                                     inputMap.put(param.key, param.value)
+                                     customerMap.put(param.key, param.value)
+                             }
+                             execution.setVariable("customerLocation", customerMap)
+                         }
+                         if ("Homing_Solution".equals(userParam?.name)) {
+                             msoLogger.debug("User Input Homing_Solution: " + userParam.value.toString())
+                             execution.setVariable("homingService", userParam.value)
+                             execution.setVariable("callHoming", true)
+                             inputMap.put("Homing_Solution", userParam.value)
+                         }
+                         if (!"Homing_Solution".equals(userParam?.name) && !"Customer_Location".equals(userParam?.name))
+                         {
+                             msoLogger.debug("User Input Parameter " + userParam.name + ": " + userParam.value.toString())
+                             inputMap.put(userParam.name, userParam.value)
+                         }
                  }
              }
 
              msoLogger.debug("User Input Parameters map: " + userParams.toString())
-             execution.setVariable("serviceInputParams", inputMap)
-
+             msoLogger.debug("User Input Map: " + inputMap.toString())
+             if (inputMap.toString() != "[:]") {
+                 execution.setVariable("serviceInputParams", inputMap)
+             }
              ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 
              String serviceInstanceId = execution.getVariable("serviceInstanceId")
