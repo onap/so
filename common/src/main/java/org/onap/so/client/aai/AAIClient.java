@@ -40,15 +40,13 @@ public abstract class AAIClient extends GraphInventoryClient {
 	public AAIClient() {
 		super(AAIProperties.class);
 	}
-	
-	public AAIClient(AAIVersion version) {
-		super(AAIProperties.class);
-	}
+
 	@Override
 	protected URI constructPath(GraphInventoryUri uri) {
 		
 		return UriBuilder.fromUri(AAI_ROOT + "/" + this.getVersion().toString() + uri.build().toString()).build();
 	}
+
 	@Override
 	protected RestClient createClient(GraphInventoryUri uri) {
 		try {

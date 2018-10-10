@@ -26,7 +26,6 @@ import java.util.List;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Pserver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 
 
@@ -50,7 +49,7 @@ public class AAIValidatorImpl implements AAIValidator {
 	public boolean isPhysicalServerLocked(String vnfId, String transactionLoggingUuid) throws IOException {
 		List<Pserver> pservers;
 		boolean isLocked = false;
-		pservers = client.getPhysicalServerByVnfId(vnfId, transactionLoggingUuid);
+		pservers = client.getPhysicalServerByVnfId(vnfId);
 		for (Pserver pserver : pservers)
 			if (pserver.isInMaint())
 				isLocked = true;

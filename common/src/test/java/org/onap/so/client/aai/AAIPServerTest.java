@@ -25,20 +25,14 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.UUID;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.aai.domain.yang.Pserver;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 public class AAIPServerTest {
 
 	@Test
-	public void pserverTest() throws JsonParseException, JsonMappingException, IOException, NoSuchAlgorithmException {
+	public void pserverTest() throws IOException {
 		AAIRestClientImpl client = new AAIRestClientImpl();
 		String json = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/aai/pserver.json")));
 		List<Pserver> list = client.getListOfPservers(json);
@@ -49,9 +43,9 @@ public class AAIPServerTest {
 	
 	@Test
 	@Ignore // IGNORED FOR 1710 MERGE TO ONAP
-	public void pserverActualTest() throws JsonParseException, JsonMappingException, IOException, NoSuchAlgorithmException {
+	public void pserverActualTest() throws IOException {
 		AAIRestClientImpl client = new AAIRestClientImpl();
-		List<Pserver> list = client.getPhysicalServerByVnfId("d946afed-8ebe-4c5d-9665-54fcc043b8e7", UUID.randomUUID().toString());
+		List<Pserver> list = client.getPhysicalServerByVnfId("d946afed-8ebe-4c5d-9665-54fcc043b8e7");
 		assertEquals("", list.size(), 0);
 	}
 
