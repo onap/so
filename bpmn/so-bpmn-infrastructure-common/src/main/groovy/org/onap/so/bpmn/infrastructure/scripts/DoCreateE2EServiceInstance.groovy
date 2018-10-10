@@ -422,7 +422,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
                     resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
             }
 
-            def dbAdapterEndpoint = "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter"
+            def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.db.endpoint")
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
             msoLogger.info("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
