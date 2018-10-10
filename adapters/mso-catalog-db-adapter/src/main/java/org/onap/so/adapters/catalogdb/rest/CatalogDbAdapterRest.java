@@ -340,14 +340,20 @@ public class CatalogDbAdapterRest {
                 uuid = modelUUID;
                 logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelUuid serviceModelUuid: {}" , uuid);
                 Service serv =serviceRepo.findOneByModelUUID(uuid);
-                ret.setService(serv);				
+
+                ret.setNetworkResourceCustomizations(new ArrayList(serv.getNetworkCustomizations()));
+                ret.setVnfResourceCustomizations(new ArrayList(serv.getVnfCustomizations()));
+                ret.setAllottedResourceCustomizations(new ArrayList(serv.getAllottedCustomizations()));
+
+                ret.setService(serv);
             }
             else if (modelInvariantUUID != null && !"".equals(modelInvariantUUID)) {
                 uuid = modelInvariantUUID;
                 if (modelVersion != null && !"".equals(modelVersion)) {
                     logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: {}  serviceModelVersion: {}",uuid, modelVersion);
                     Service serv = serviceRepo.findFirstByModelVersionAndModelInvariantUUID(modelVersion, uuid);
-                    ret.setService(serv);	
+
+                    ret.setService(serv);
                 }
                 else {
                     logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelUuid: {}" , uuid);
