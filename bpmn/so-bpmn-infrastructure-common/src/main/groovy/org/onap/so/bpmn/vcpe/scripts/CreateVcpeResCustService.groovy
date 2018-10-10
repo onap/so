@@ -202,12 +202,15 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
                 userParams.each {
                                 userParam ->
                         if ("Customer_Location".equals(userParam?.name)) {
-                                    execution.setVariable("customerLocation", userParam.value)
-                                    userParam.value.each {
+                            Map<String, String> customerMap = [:]
+                            userParam.value.each {
                                 param ->
+
                                     inputMap.put(param.key, param.value)
+                                    customerMap.put(param.key, param.value)
                                     }
-                                }
+                            execution.setVariable("customerLocation", customerMap)
+                        }
                         if ("Homing_Model_Ids".equals(userParam?.name)) {
                             utils.log("DEBUG", "Homing_Model_Ids: " + userParam.value.toString() + "  ---- Type is:" +
                                     userParam.value.getClass() , isDebugEnabled)
