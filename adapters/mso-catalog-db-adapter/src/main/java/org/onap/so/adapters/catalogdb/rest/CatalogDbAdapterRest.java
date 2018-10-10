@@ -68,6 +68,7 @@ import org.onap.so.db.catalog.beans.AllottedResource;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.NetworkResourceCustomizationToService;
 import org.onap.so.db.catalog.beans.Recipe;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ToscaCsar;
@@ -80,6 +81,7 @@ import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
 import org.onap.so.db.catalog.data.repository.ArRecipeRepository;
 import org.onap.so.db.catalog.data.repository.NetworkRecipeRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationToServiceRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
@@ -104,7 +106,9 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class services calls to the REST interface for VF Modules (http://host:port/ecomp/mso/catalog/v1)
@@ -340,14 +344,20 @@ public class CatalogDbAdapterRest {
                 uuid = modelUUID;
                 logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelUuid serviceModelUuid: {}" , uuid);
                 Service serv =serviceRepo.findOneByModelUUID(uuid);
-                ret.setService(serv);				
+
+                ret.setNetworkResourceCustomizations(new ArrayList(serv.getNetworkCustomizations()));
+                ret.setVnfResourceCustomizations(new ArrayList(serv.getVnfCustomizations()));
+                ret.setAllottedResourceCustomizations(new ArrayList(serv.getAllottedCustomizations()));
+
+                ret.setService(serv);
             }
             else if (modelInvariantUUID != null && !"".equals(modelInvariantUUID)) {
                 uuid = modelInvariantUUID;
                 if (modelVersion != null && !"".equals(modelVersion)) {
                     logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelInvariantUuid: {}  serviceModelVersion: {}",uuid, modelVersion);
                     Service serv = serviceRepo.findFirstByModelVersionAndModelInvariantUUID(modelVersion, uuid);
-                    ret.setService(serv);	
+
+                    ret.setService(serv);
                 }
                 else {
                     logger.debug ("Query serviceMacroHolder getAllResourcesByServiceModelInvariantUuid serviceModelUuid: {}" , uuid);
