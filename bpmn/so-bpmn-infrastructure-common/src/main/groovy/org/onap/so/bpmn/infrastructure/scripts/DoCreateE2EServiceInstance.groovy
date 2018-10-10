@@ -47,7 +47,8 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.UriUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import groovy.json.*
 
@@ -119,7 +120,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 				execution.setVariable("productFamilyId", "")
 			}
 
-			String sdncCallbackUrl = execution.getVariable('URN_mso_workflow_sdncadapter_callback')
+			String sdncCallbackUrl = UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback", execution)
 			if (isBlank(sdncCallbackUrl)) {
 				msg = "URN_mso_workflow_sdncadapter_callback is null"
 				msoLogger.info(msg)
