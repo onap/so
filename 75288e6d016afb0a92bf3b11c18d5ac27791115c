@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_dbaafbd3",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/ServiceInstances.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 757,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-10-10T11:58:09Z",
+      "side": 1,
+      "message": "The whole if clause can be replaced with RequestParameters.getUserParamValue. It already does most of the logic here. There is no benefit from using streams in this case, if anything using streams makes fetching the value more complicated.",
+      "revId": "75288e6d016afb0a92bf3b11c18d5ac27791115c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
