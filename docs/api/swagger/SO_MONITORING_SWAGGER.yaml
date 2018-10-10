@@ -1,0 +1,288 @@
+swagger: '2.0'
+info:
+  version: 3.1.2
+  title: SO Monitoring APIs
+tags:
+- name: getProcessInstanceId
+- name: getSingleProcessInstance
+- name: getProcessDefinitionXml
+- name: getActivityInstanceDetail
+- name: getProcessInstanceVariables
+- name: getInfraActiveRequests
+schemes:
+- http
+paths:
+  /so/monitoring/process-instance-id/{requestId}:
+    get:
+      tags:
+      - getProcessInstanceId
+      summary: Get process instance ID for given request ID
+      description: ''
+      operationId: getProcessInstanceId
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: requestId
+        in: path
+        required: true
+        type: string
+        pattern: ^(?!\s*$).+
+      responses:
+        200:
+          description: A ProcessInstanceIdDetail object
+          schema:
+            type: object
+            properties:
+              processInstanceId:
+                type: string
+                description: The process instance ID
+        204:
+          description: Unable to find process instance id for given request ID.
+        400:
+          description: Unable to find process instance id for given request ID.
+        500:
+          description: Unable to find process instance id for given request ID.
+  /so/monitoring/process-instance/{processInstanceId}:
+    get:
+      tags:
+      - getSingleProcessInstance
+      summary: Get process instance for given process instance ID
+      description: ''
+      operationId: getSingleProcessInstance
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: processInstanceId
+        in: path
+        required: true
+        type: string
+        pattern: ^(?!\s*$).+
+      responses:
+        200:
+          description: A ProcessInstanceDetail object
+          schema:
+            type: object
+            properties:
+              processInstanceId:
+                type: string
+                description: The process instance ID
+              processDefinitionId:
+                type: string
+                description: The process definition ID
+              processDefinitionName:
+                type: string
+                description: The process definition name
+              superProcessInstanceId:
+                type: string
+                description: The super process instance ID
+        204:
+          description: Unable to find process instance for given process instance ID.
+        400:
+          description: Unable to find process instance for given process instance ID.
+        500:
+          description: Unable to find process instance  for given process instance ID.
+  /so/monitoring/process-definition/{processDefinitionId}:
+    get:
+      tags:
+      - getProcessDefinitionXml
+      summary: Get process definition for given process definition ID
+      description: ''
+      operationId: getProcessDefinitionXml
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: processDefinitionId
+        in: path
+        required: true
+        type: string
+        pattern: ^(?!\s*$).+
+      responses:
+        200:
+          description: A ProcessDefinitionDetail object
+          schema:
+            type: object
+            properties:
+              processDefinitionId:
+                type: string
+                description: The process definition ID
+              processDefinitionXml:
+                type: string
+                description: The process definition XML
+        204:
+          description: Unable to find process definition xml for given process definition ID.
+        400:
+          description: Unable to find process definition xml for given process definition ID.
+        500:
+          description: Unable to find process definition xml for given process definition ID.
+  /so/monitoring/activity-instance/{processInstanceId}:
+    get:
+      tags:
+      - getActivityInstanceDetail
+      summary: Get activity instance details for given process instance ID
+      description: ''
+      operationId: getActivityInstanceDetail
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: processInstanceId
+        in: path
+        required: true
+        type: string
+        pattern: ^(?!\s*$).+
+      responses:
+        200:
+          description: A ActivityInstanceDetail object
+          schema:
+            type: array
+            items:
+              properties:
+                activityId:
+                  type: string
+                  description: The activity ID
+                activityName:
+                  type: string
+                  description: The activity name
+                activityType:
+                  type: string
+                  description: The activity type
+                processInstanceId:
+                  type: string
+                  description: The process instance ID
+                calledProcessInstanceId:
+                  type: string
+                  description: The sub-process instance ID
+                startTime:
+                  type: string
+                  description: The process execution start time
+                endTime:
+                  type: string
+                  description: The process execution end time
+                durationInMilliseconds:
+                  type: string
+                  description: The process execution duration in ms
+        204:
+          description: Unable to find process instance variables for given process instance ID.
+        400:
+          description: Unable to find process instance variables for given process instance ID.
+        500:
+          description: Unable to find process instance variables for given process instance ID.
+  /so/monitoring/variable-instance/{processInstanceId}:
+    get:
+      tags:
+      - getProcessInstanceVariables
+      summary: Get process instance variables for given process instance ID
+      description: ''
+      operationId: getProcessInstanceVariables
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: processInstanceId
+        in: path
+        required: true
+        type: string
+        pattern: ^(?!\s*$).+
+      responses:
+        200:
+          description: A ProcessInstanceVariableDetail object
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The variable name
+              value:
+                type: object
+                description: The variable value
+              type:
+                type: string
+                description: The variable type
+        204:
+          description: Unable to find activity instance for given process instance ID.
+        400:
+          description: Unable to find activity instance for given process instance ID.
+        500:
+          description: Unable to find activity instance for given process instance ID.
+  /so/monitoring/v1/search:
+    post:
+      tags:
+      - getInfraActiveRequests
+      summary: Search infra active request for given parameter map and parameters
+      description: ''
+      operationId: getInfraActiveRequests
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - in: body
+        name: filters
+        required: true
+        schema:
+          type: object
+          additionalProperties:
+            type: string
+      - in: query
+        name: from
+        required: true
+        type: number
+      - in: query
+        name: to
+        required: true
+        type: number
+      - in: query
+        name: maxResult
+        required: false
+        type: number
+      responses:
+        200:
+          description: A SoInfraRequest object
+          schema:
+            type: array
+            items:
+              properties:
+                requestId:
+                  type: string
+                  description: The request ID
+                serviceInstanceId:
+                  type: string
+                  description: The service instance ID
+                serviceIstanceName:
+                  type: string
+                  description: The service instance name
+                networkId:
+                  type: string
+                  description: The network ID
+                requestStatus:
+                  type: string
+                  description: The request status
+                serviceType:
+                  type: string
+                  description: The service type
+                startTime:
+                  type: string
+                  description: The process execution start time
+                endTime:
+                  type: string
+                  description: The process execution send time
+        204:
+          description: Unable to find search request for given filter and parameters.
+        400:
+          description: Unable to find search request for given filter and parameters
+        500:
+          description: Unable to find search request for given filter and parameters
