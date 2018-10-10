@@ -28,6 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -84,6 +85,23 @@ public class HttpClientRedirectStrategyTest {
             .getRedirect(request, response, context);
         // THEN
         assertThat(httpUriRequest).isInstanceOf(expectedHttpMethodClass);
+        assertThat(httpUriRequest.getURI()).isEqualTo(expectedUri);
+    }
+
+    @Test
+    public void getRedirect_shouldReturnHttpGetUri_byDefault() throws URISyntaxException, ProtocolException {
+        // GIVEN
+        HttpRequest request = mock(HttpRequest.class, RETURNS_DEEP_STUBS);
+        given(request.getRequestLine().getMethod()).willReturn(HttpPost.METHOD_NAME);
+        HttpResponse response = mock(HttpResponse.class, RETURNS_DEEP_STUBS);
+        given(response.getStatusLine().getStatusCode()).willReturn(HttpStatus.SC_ACCEPTED);
+        URI expectedUri = new URI("http://localhost/host");
+        HttpContext context = null;
+        // WHEN
+        HttpUriRequest httpUriRequest = new TestableHttpClientRedirectStrategy(expectedUri)
+            .getRedirect(request, response, context);
+        // THEN
+        assertThat(httpUriRequest).isInstanceOf(HttpGet.class);
         assertThat(httpUriRequest.getURI()).isEqualTo(expectedUri);
     }
 
