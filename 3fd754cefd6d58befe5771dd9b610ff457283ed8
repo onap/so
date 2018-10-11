@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_09c4ba3e",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/rest/CatalogDbAdapterRest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-10-11T12:08:49Z",
+      "side": 1,
+      "message": "yes, thanks for the comment, I can use service.getNetworkCustomizations()",
+      "parentUuid": "bada0100_69a0e690",
+      "range": {
+        "startLine": 330,
+        "startChar": 52,
+        "endLine": 330,
+        "endChar": 96
+      },
+      "revId": "3fd754cefd6d58befe5771dd9b610ff457283ed8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_89b0aade",
         "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/rest/CatalogDbAdapterRest.java",
         "patchSetId": 2
