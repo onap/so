@@ -88,6 +88,7 @@ import org.onap.so.serviceinstancebeans.Resources;
 import org.onap.so.serviceinstancebeans.VfModules;
 import org.onap.so.serviceinstancebeans.Vnfs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -101,7 +102,9 @@ public class BBInputSetup implements JavaDelegate {
 	private static final String LOOKUP_KEY_MAP_VAR_NAME = "lookupKeyMap";
 	private static final String GBB_INPUT_VAR_NAME = "gBBInput";
 	private static final String EXECUTE_BB_VAR_NAME = "buildingBlock";
-	private static final String CLOUD_OWNER = "att-aic";
+	
+	
+	
 	private static final String VOLUME_GROUP = "VolumeGroup";
 	private static final String VF_MODULE = "VfModule";
 	private static final String NETWORK = "Network";
@@ -116,8 +119,15 @@ public class BBInputSetup implements JavaDelegate {
 
 	@Autowired
 	private ExceptionBuilder exceptionUtil;
+	
+	@Autowired
+	Environment env;
 
 	private ObjectMapper mapper = new ObjectMapper();
+	
+	private String getCloudOwner(){ 
+	    return env.getProperty("mso.cloud-owner");
+	}
 
 	public BBInputSetupUtils getBbInputSetupUtils() {
 		return bbInputSetupUtils;
@@ -384,7 +394,7 @@ public class BBInputSetup implements JavaDelegate {
 				if (lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID) == null) {
 					for(VolumeGroup volumeGroup : tempVnf.getVolumeGroups()) {
 						String volumeGroupCustId = 
-								this.bbInputSetupUtils.getAAIVolumeGroup(CLOUD_OWNER, 
+								this.bbInputSetupUtils.getAAIVolumeGroup(getCloudOwner(), 
 										cloudConfiguration.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId()).getModelCustomizationId();
 						if(modelInfo.getModelCustomizationId().equalsIgnoreCase(volumeGroupCustId)) {
 							lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, volumeGroup.getVolumeGroupId());
@@ -801,9 +811,9 @@ public class BBInputSetup implements JavaDelegate {
 		requestContext.setAction(requestAction);
 		requestContext.setMsoRequestId(executeBB.getRequestId());
 		org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = bbInputSetupUtils
-				.getCloudRegion(requestDetails.getCloudConfiguration(), CLOUD_OWNER);
+				.getCloudRegion(requestDetails.getCloudConfiguration(), getCloudOwner());
 		CloudRegion cloudRegion = mapperLayer.mapCloudRegion(requestDetails.getCloudConfiguration(), aaiCloudRegion,
-				CLOUD_OWNER);
+				getCloudOwner());
 		outputBB.setOrchContext(orchContext);
 		outputBB.setRequestContext(requestContext);
 		outputBB.setCloudRegion(cloudRegion);
@@ -982,8 +992,8 @@ public class BBInputSetup implements JavaDelegate {
 		ServiceInstance serviceInstance = gBB.getServiceInstance();
 		if (cloudConfiguration != null && requestAction.equalsIgnoreCase("deleteInstance")) {
 			org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfiguration,
-					CLOUD_OWNER);
-			CloudRegion cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion, CLOUD_OWNER);
+					getCloudOwner());
+			CloudRegion cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion, getCloudOwner());
 			gBB.setCloudRegion(cloudRegion);
 		}
 		if (bbName.contains(VNF)) {
@@ -1030,7 +1040,7 @@ public class BBInputSetup implements JavaDelegate {
 						this.mapCatalogVnf(vnf, vnfModelInfo, service);
 						lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, vnf.getVnfId());
 						if (cloudConfiguration != null) {
-							String volumeGroupCustomizationUUID = this.bbInputSetupUtils.getAAIVolumeGroup(CLOUD_OWNER,
+							String volumeGroupCustomizationUUID = this.bbInputSetupUtils.getAAIVolumeGroup(getCloudOwner(),
 									cloudConfiguration.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId())
 									.getModelCustomizationId();
 							ModelInfo volumeGroupModelInfo = new ModelInfo();
@@ -1194,8 +1204,8 @@ public class BBInputSetup implements JavaDelegate {
 		}
 		if(cloudConfiguration != null) {
 			org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfiguration,
-					CLOUD_OWNER);
-			return mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion, CLOUD_OWNER);
+					getCloudOwner());
+			return mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion, getCloudOwner());
 		} else {
 			msoLogger.debug("Could not find any cloud configuration for this request.");
 			return null;
