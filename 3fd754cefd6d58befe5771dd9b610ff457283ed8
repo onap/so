@@ -106,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_c9dd5216",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/NetworkResourceCustomizationToService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-10-11T12:12:21Z",
+      "side": 1,
+      "message": "thanks, I will fix this change",
+      "parentUuid": "bada0100_29aade70",
+      "revId": "3fd754cefd6d58befe5771dd9b610ff457283ed8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_e9bb76c2",
         "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/NetworkResourceCustomizationToServiceRepository.java",
         "patchSetId": 2
