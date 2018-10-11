@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,6 +38,11 @@ import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.constants.Defaults
 import org.onap.so.rest.APIResponse
 import org.springframework.web.util.UriUtils
 import org.onap.so.logger.MsoLogger
@@ -46,14 +51,14 @@ import org.onap.so.logger.MessageEnum
 
 public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateVfModuleVolumeRollback.class);
-	
+
 	String Prefix="DCVFMODVOLRBK_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils(this)
 
 	def className = getClass().getSimpleName()
-	
+
 	/**
 	 * This method is executed during the preProcessRequest task of the <class>DoCreateVfModuleVolumeRollback.bpmn</class> process.
 	 * @param execution
@@ -80,7 +85,7 @@ public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor
 		InitializeProcessVariables(execution)
 //		rollbackData.put("DCVFMODULEVOL", "aiccloudregion", cloudSiteId)
 		RollbackData rollbackData = execution.getVariable("rollbackData")
-		
+
 //		String vnfId = rollbackData.get("DCVFMODULEVOL", "vnfid")
 //		execution.setVariable("DCVFMODVOLRBK_vnfId", vnfId)
 //		String vfModuleId = rollbackData.get("DCVFMODULEVOL", "vfmoduleid")
@@ -107,47 +112,48 @@ public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor
 //		execution.setVariable("DCVFMODVOLRBK_heatStackId", heatStackId)
 //		String requestId = rollbackData.get("DCVFMODULEVOL", "msorequestid")
 //		execution.setVariable("DCVFMODVOLRBK_requestId", requestId)
-		
+
 		String volumeGroupName = rollbackData.get("DCVFMODULEVOL", "volumeGroupName")
 		execution.setVariable("DCVFMODVOLRBK_volumeGroupName", volumeGroupName)
 
 		String lcpCloudRegionId = rollbackData.get("DCVFMODULEVOL", "aiccloudregion")
 		execution.setVariable("DCVFMODVOLRBK_lcpCloudRegionId", lcpCloudRegionId)
-		
+
 		execution.setVariable("DCVFMODVOLRBK_rollbackVnfARequest", rollbackData.get("DCVFMODULEVOL", "rollbackVnfARequest"))
 		execution.setVariable("DCVFMODVOLRBK_backoutOnFailure", rollbackData.get("DCVFMODULEVOL", "backoutOnFailure"))
 		execution.setVariable("DCVFMODVOLRBK_isCreateVnfRollbackNeeded", rollbackData.get("DCVFMODULEVOL", "isCreateVnfRollbackNeeded"))
 		execution.setVariable("DCVFMODVOLRBK_isAAIRollbackNeeded", rollbackData.get("DCVFMODULEVOL", "isAAIRollbackNeeded"))
 
 	}
-	
+
 	/**
 	 * Query AAI volume group by name
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
 	public void callRESTQueryAAIVolGrpName(DelegateExecution execution, isDebugEnabled) {
-		
+
 		def volumeGroupName = execution.getVariable('DCVFMODVOLRBK_volumeGroupName')
 		def cloudRegion = execution.getVariable('DCVFMODVOLRBK_lcpCloudRegionId')
-		
+
 		// This is for stub testing
 		def testVolumeGroupName = execution.getVariable('test-volume-group-name')
 		if (testVolumeGroupName != null && testVolumeGroupName.length() > 0) {
 			volumeGroupName = testVolumeGroupName
 		}
-		
+
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String queryAAIVolumeNameRequest = aaiEndpoint + '/' + cloudRegion + "/volume-groups" + "?volume-group-name=" + UriUtils.encode(volumeGroupName, 'UTF-8')
+
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion).queryParam("volume-group-name", volumeGroupName)
+		def queryAAIVolumeNameRequest = aaiUtil.createAaiUri(uri)
 
 		msoLogger.debug('Query AAI volume group by name: ' + queryAAIVolumeNameRequest)
-		
+
 		APIResponse response = aaiUtil.executeAAIGetCall(execution, queryAAIVolumeNameRequest)
-		
+
 		String returnCode = response.getStatusCode()
 		String aaiResponseAsString = response.getResponseBodyAsString()
-		
+
 		msoLogger.debug("AAI query volume group by name return code: " + returnCode)
 		msoLogger.debug("AAI query volume group by name response: " + aaiResponseAsString)
 
@@ -171,31 +177,32 @@ public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	public void callRESTDeleteAAIVolumeGroup(DelegateExecution execution, isDebugEnabled) {
 
 		callRESTQueryAAIVolGrpName(execution, isDebugEnabled)
-		
+
 		def queryAaiVolumeGroupResponse = execution.getVariable(prefix+'queryAAIVolGrpNameResponse')
-		
+
 		def volumeGroupId = utils.getNodeText(queryAaiVolumeGroupResponse, "volume-group-id")
 		def resourceVersion = utils.getNodeText(queryAaiVolumeGroupResponse, "resource-version")
 
 		def cloudRegion = execution.getVariable("DCVFMODVOLRBK_lcpCloudRegionId")
-		
+
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String deleteAAIVolumeGrpIdRequest = aaiEndpoint + '/' + cloudRegion + "/volume-groups/volume-group" + '/' +  volumeGroupId + "?resource-version=" + UriUtils.encode(resourceVersion, "UTF-8")
+
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId).queryParam("resource-version", resourceVersion)
+		def deleteAAIVolumeGrpIdRequest = aaiUtil.createAaiUri(uri)
 
 		msoLogger.debug('Delete AAI volume group : ' + deleteAAIVolumeGrpIdRequest)
-		
+
 		APIResponse response = aaiUtil.executeAAIDeleteCall(execution, deleteAAIVolumeGrpIdRequest)
-		
+
 		String returnCode = response.getStatusCode()
 		String aaiResponseAsString = response.getResponseBodyAsString()
-		
+
 		msoLogger.debug("AAI delete volume group return code: " + returnCode)
 		msoLogger.debug("AAI delete volume group response: " + aaiResponseAsString)
 
@@ -219,18 +226,18 @@ public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor
 	// *******************************
 
 
-	
+
 	public void processJavaException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		
+
 		try{
 			msoLogger.debug("Caught a Java Exception in " + Prefix)
 			msoLogger.debug("Started processJavaException Method")
 			msoLogger.debug("Variables List: " + execution.getVariables())
 			execution.setVariable("UnexpectedError", "Caught a Java Lang Exception - " + Prefix)  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Caught a Java Lang Exception")
-			
+
 		}catch(Exception e){
 			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
 			execution.setVariable("UnexpectedError", "Exception in processJavaException method - " + Prefix)  // Adding this line temporarily until this flows error handling gets updated

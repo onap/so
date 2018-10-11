@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,10 +30,15 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.VidUtils;
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
 import org.springframework.web.util.UriUtils
+
 
 import groovy.json.JsonSlurper
 
@@ -135,7 +140,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		execution.setVariable('DELVfModVol_cloudRegion', utils.getNodeText(request, 'aic-cloud-region'))
 
 		setBasicDBAuthHeader(execution, isDebugLogEnabled)
-		
+
 		msoLogger.debug('Request: ' + createVolumeIncoming)
 	}
 
@@ -184,12 +189,12 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		String cloudRegion = execution.getVariable('DELVfModVol_cloudRegion')
 
-		String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aai_uri = aaiUtil.getCloudInfrastructureCloudRegionUri(execution)
-		String queryCloudRegionRequest = "${aai_endpoint}${aai_uri}/" + cloudRegion
+
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+		def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
+
 		execution.setVariable("DELVfModVol_queryCloudRegionRequest", queryCloudRegionRequest)
-		msoLogger.debug(" DELVfModVol_queryCloudRegionRequest - " + "\n" + queryCloudRegionRequest)
 
 		cloudRegion = aaiUtil.getAAICloudReqion(execution,  queryCloudRegionRequest, "PO", cloudRegion)
 
@@ -229,8 +234,9 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		String cloudRegion = execution.getVariable('DELVfModVol_aicCloudRegion')
 
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String queryAAIVolumeGroupRequest = aaiEndpoint + '/' + URLEncoder.encode(cloudRegion, "UTF-8") + "/volume-groups/volume-group/" + UriUtils.encode(volumeGroupId, "UTF-8")
+
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId)
+		def queryAAIVolumeGroupRequest = aaiUtil.createAaiUri(uri)
 
 		msoLogger.debug('Query AAI volume group by ID: ' + queryAAIVolumeGroupRequest)
 
@@ -351,7 +357,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		def serviceId = execution.getVariable('DELVfModVol_serviceId')
 
 		def messageId = execution.getVariable('DELVfModVol_messageId')
-		def notificationUrl = createCallbackURL(execution, "VNFAResponse", messageId) 
+		def notificationUrl = createCallbackURL(execution, "VNFAResponse", messageId)
 		def useQualifiedHostName = UrnPropertiesReader.getVariable("mso.use.qualified.host", execution)
 		if ('true'.equals(useQualifiedHostName)) {
 				notificationUrl = utils.getQualifiedHostNameForCallback(notificationUrl)
@@ -388,8 +394,9 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		String cloudRegion = execution.getVariable('DELVfModVol_aicCloudRegion')
 
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String deleteAAIVolumeGrpIdRequest = aaiEndpoint + '/' + URLEncoder.encode(cloudRegion, "UTF-8")  + "/volume-groups/volume-group/" +  UriUtils.encode(groupId, "UTF-8")
+
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, groupId).queryParam("resource-version", resourceVersion)
+		def deleteAAIVolumeGrpIdRequest = aaiUtil.createAaiUri(uri)
 
 		if(resourceVersion !=null){
 			deleteAAIVolumeGrpIdRequest = deleteAAIVolumeGrpIdRequest +'?resource-version=' + UriUtils.encode(resourceVersion, 'UTF-8')
@@ -436,7 +443,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 			requestStatus = "FAILURE"
 			progress = ""
 		}
-		
+
 		String updateInfraRequest = """
 			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 					xmlns:req="http://org.onap.so/requestsdb">

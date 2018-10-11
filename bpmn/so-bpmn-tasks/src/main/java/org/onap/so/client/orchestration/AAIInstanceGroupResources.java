@@ -26,6 +26,7 @@ import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -55,6 +56,12 @@ public class AAIInstanceGroupResources {
 		AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
 		AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
 		injectionHelper.getAaiClient().connect(instanceGroupUri, vnfURI);
+	}
+	
+	public void connectInstanceGroupToVnf(InstanceGroup instanceGroup, GenericVnf vnf, AAIEdgeLabel aaiLabel) {
+		AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
+		AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
+		injectionHelper.getAaiClient().connect(instanceGroupUri, vnfURI, aaiLabel);
 	}
 	
 	public boolean exists(InstanceGroup instanceGroup) {

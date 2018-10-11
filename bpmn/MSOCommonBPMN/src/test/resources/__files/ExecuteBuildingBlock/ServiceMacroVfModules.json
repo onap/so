@@ -49,6 +49,7 @@
 						},
 						"cloudConfiguration": {
 							"lcpCloudRegionId": "mdt1",
+							"cloudOwner" : "test-owner-name",
 							"tenantId": "88a6ca3ee0394ade9403f075db23167e"
 						},
 						"instanceName": "vmxnjr001_AVPN_base_vRE_BV_expansion_001",

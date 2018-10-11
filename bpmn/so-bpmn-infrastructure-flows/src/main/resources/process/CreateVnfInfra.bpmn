@@ -37,6 +37,7 @@ createVnf.sendSyncResponse(execution)]]></bpmn2:script>
         <camunda:out source="vnfOutputParameters" target="CREVI_vnfOutputParameters" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="CREVI_lcpCloudRegionId" target="lcpCloudRegionId" />
+        <camunda:in source="CREVI_cloudOwner" target="cloudOwner" />
         <camunda:in source="CREVI_tenantId" target="tenandId" />
         <camunda:in source="CREVI_vnfResourceDecomposition" target="vnfResourceDecomposition" />
       </bpmn2:extensionElements>

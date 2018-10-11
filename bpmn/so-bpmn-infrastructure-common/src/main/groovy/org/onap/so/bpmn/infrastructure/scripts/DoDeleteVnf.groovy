@@ -27,12 +27,15 @@ import javax.xml.parsers.DocumentBuilderFactory
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.w3c.dom.Document
@@ -80,8 +83,6 @@ class DoDeleteVnf extends AbstractServiceTaskProcessor {
 			execution.setVariable("DoDVNF_vnfId", vnfId)
 			msoLogger.debug("Incoming Vnf(Instance) Id is: " + vnfId)
 
-			// Setting for sub flow calls
-			execution.setVariable("DoDVNF_type", "generic-vnf")
 		}catch(BpmnError b){
 			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
@@ -94,49 +95,42 @@ class DoDeleteVnf extends AbstractServiceTaskProcessor {
 	}
 
 
-	public void processGetVnfResponse(DelegateExecution execution){
+	public void getVnf(DelegateExecution execution){
 
 		execution.setVariable("prefix",Prefix)
-		msoLogger.trace("STARTED DoDeleteVnf processGetVnfResponse Process ")
+		msoLogger.trace("STARTED DoDeleteVnf getVnf Process ")
 		try {
-			String vnf = execution.getVariable("DoDVNF_genericVnf")
-			String resourceVersion = utils.getNodeText(vnf, "resource-version")
-			execution.setVariable("DoDVNF_resourceVersion", resourceVersion)
 
-			if(utils.nodeExists(vnf, "relationship")){
-				InputSource source = new InputSource(new StringReader(vnf));
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-				Document vnfXml = docBuilder.parse(source)
+			AAIResourcesClient resourceClient = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, execution.getVariable('vnfId'))
 
-				NodeList nodeList = vnfXml.getElementsByTagName("relationship")
-				for (int x = 0; x < nodeList.getLength(); x++) {
-					Node node = nodeList.item(x)
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Element eElement = (Element) node
-						def e = eElement.getElementsByTagName("related-to").item(0).getTextContent()
-						if(e.equals("volume-group") || e.equals("l3-network")){
-							msoLogger.debug("Generic Vnf still has relationship to OpenStack.")
-							execution.setVariable("DoDVNF_vnfInUse", true)
-						}else{
-							msoLogger.debug("Relationship NOT related to OpenStack")
-						}
+			if(resourceClient.exists(uri)){
+				execution.setVariable("GENGV_FoundIndicator", true)
+				AAIResultWrapper wrapper = resourceClient.get(uri.depth(Depth.ONE))
+				if(wrapper.getRelationships().isPresent()){
+					List<AAIResourceUri> relationships = wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.CLOUD_REGION)
+					relationships.addAll(wrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.L3_NETWORK))
+					if(!relationships.isEmpty()){
+						execution.setVariable("DoDVNF_vnfInUse", true)
+					}else{
+						msoLogger.debug("Relationship NOT related to OpenStack")
 					}
 				}
-			}
 
-			if(utils.nodeExists(vnf, "vf-module")){
-				execution.setVariable("DoDVNF_vnfInUse", true)
-				msoLogger.debug("Generic Vnf still has vf-modules.")
+				Optional<GenericVnf> vnf = wrapper.asBean(GenericVnf.class)
+				if(!vnf.get().getVfModules().getVfModule().isEmpty()){
+					execution.setVariable("DoDVNF_vnfInUse", true)
+				}
+			}else{
+				execution.setVariable("GENGV_FoundIndicator", false)
 			}
-
 
 		} catch (Exception ex) {
-			msoLogger.debug("Error Occured in DoDeleteVnf processGetVnfResponse Process " + ex.getMessage())
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoDeleteVnf processGetVnfResponse Process")
+			msoLogger.debug("Error Occured in DoDeleteVnf getVnf Process " + ex.getMessage())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoDeleteVnf getVnf Process")
 
 		}
-		msoLogger.trace("COMPLETED DoDeleteVnf processGetVnfResponse Process ")
+		msoLogger.trace("COMPLETED DoDeleteVnf getVnf Process ")
 	}
 
 	/**

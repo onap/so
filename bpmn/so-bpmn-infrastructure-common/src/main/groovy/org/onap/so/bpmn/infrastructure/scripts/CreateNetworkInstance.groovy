@@ -280,6 +280,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 			String requestId = execution.getVariable("mso-request-id")
 			String source = execution.getVariable(Prefix + "source")
+			String networkId = execution.getVariable("networkId") !=null ? execution.getVariable("networkId") : ""
 
 			String msoCompletionRequest =
 				"""<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
@@ -290,6 +291,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 							<source>VID</source>
 			   			</request-info>
 						<aetgt:status-message>Network has been created successfully.</aetgt:status-message>
+                        <aetgt:networkId>${MsoUtils.xmlEscape(networkId)}</aetgt:networkId>
 			   			<aetgt:mso-bpel-name>BPMN Network action: CREATE</aetgt:mso-bpel-name>
 					</aetgt:MsoCompletionRequest>"""
 

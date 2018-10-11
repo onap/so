@@ -30,6 +30,10 @@ import org.springframework.web.util.UriUtils
 
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.rest.APIResponse;
 import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
@@ -73,11 +77,11 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 			def vnfId = execution.getVariable('vnfId')
 			def personaModelId = execution.getVariable('personaModelId')
 			
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String  aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
+			AaiUtil aaiUtil = new AaiUtil(this)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			uri.depth(Depth.ONE)
+			String endPoint = aaiUtil.createAaiUri(uri)
 
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
 			msoLogger.debug("AAI endPoint: " + endPoint)
 
 			try {

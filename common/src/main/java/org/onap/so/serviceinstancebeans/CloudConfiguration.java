@@ -22,13 +22,16 @@ package org.onap.so.serviceinstancebeans;
 
 import java.io.Serializable;
 
+import org.onap.so.constants.Defaults;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonRootName(value = "cloudConfiguration")
-@JsonInclude(Include.NON_DEFAULT)
+@JsonInclude(Include.NON_EMPTY)
 public class CloudConfiguration implements Serializable {
 
 	private static final long serialVersionUID = 6260165690180745471L;
@@ -36,6 +39,8 @@ public class CloudConfiguration implements Serializable {
     protected String aicNodeClli;
 	@JsonProperty("tenantId")
     protected String tenantId;
+	@JsonProperty("cloudOwner")
+	protected String cloudOwner = Defaults.CLOUD_OWNER.toString();
 	@JsonProperty("lcpCloudRegionId")
     protected String lcpCloudRegionId;
 
@@ -96,11 +101,19 @@ public class CloudConfiguration implements Serializable {
 		this.lcpCloudRegionId = lcpCloudRegionId;
 	}
 
-	@Override
-	public String toString() {
-		return "CloudConfiguration [aicNodeClli=" + aicNodeClli + ", tenantId="
-				+ tenantId + ", lcpCloudRegionId=" + lcpCloudRegionId + "]";
+	public String getCloudOwner() {
+		return cloudOwner;
 	}
 
+	public void setCloudOwner(String cloudOwner) {
+		this.cloudOwner = cloudOwner;
+	}
 
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("aicNodeClli", getAicNodeClli()).append("tenantId", getTenantId())
+				.append("cloudOwner", getCloudOwner()).append("lcpCloudRegionId", getLcpCloudRegionId()).toString();
+	}
+	
+	
 }

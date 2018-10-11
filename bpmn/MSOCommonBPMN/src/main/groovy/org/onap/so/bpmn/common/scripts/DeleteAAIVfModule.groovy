@@ -22,6 +22,10 @@ package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.rest.APIResponse
 import org.onap.so.rest.RESTClient;
 import org.onap.so.rest.RESTConfig;
@@ -41,8 +45,6 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		execution.setVariable("DAAIVfMod_genVnfRsrcVer",null)
 		execution.setVariable("DAAIVfMod_vfModuleId",null)
 		execution.setVariable("DAAIVfMod_vfModRsrcVer",null)
-		execution.setVariable("DAAIVfMod_genericVnfEndpoint",null)
-		execution.setVariable("DAAIVfMod_vfModuleEndpoint",null)
 		execution.setVariable("DAAIVfMod_moduleExists",false)
 		execution.setVariable("DAAIVfMod_isBaseModule", false)
 		execution.setVariable("DAAIVfMod_isLastModule", false)
@@ -69,79 +71,55 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		def vfModuleId = utils.getNodeText(xml,"vf-module-id")
 		execution.setVariable("DAAIVfMod_vnfId", vnfId)
 		execution.setVariable("DAAIVfMod_vfModuleId", vfModuleId)
-		
-		AaiUtil aaiUriUtil = new AaiUtil(this)
-		def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-		msoLogger.debug('AAI URI is: ' + aai_uri)
-		
-		execution.setVariable("DAAIVfMod_genericVnfEndpoint", "${aai_uri}/" + vnfId)
-		execution.setVariable("DAAIVfMod_vfModuleEndpoint", "${aai_uri}/" + vnfId +
-			 "/vf-modules/vf-module/" + vfModuleId)
 	}
 	
 	// send a GET request to AA&I to retrieve the Generic Vnf/Vf Module information based on a Vnf Id
 	// expect a 200 response with the information in the response body or a 404 if the Generic Vnf does not exist
 	public void queryAAIForGenericVnf(DelegateExecution execution) {
-		def delModuleId = execution.getVariable("DAAIVfMod_vfModuleId")
-		def endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + execution.getVariable("DAAIVfMod_genericVnfEndpoint") + "?depth=1"
-		msoLogger.debug("DeleteAAIVfModule endPoint: " + endPoint)
-		def aaiRequestId = utils.getRequestID()
+		
+		def vnfId = execution.getVariable("DAAIVfMod_vnfId")
 
-		RESTConfig config = new RESTConfig(endPoint);
-		msoLogger.debug("queryAAIForGenericVnf() endpoint-" + endPoint)
-		def responseData = ""
 		try {
-			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
-				addHeader("Accept","application/xml");
-			String basicAuthCred = utils.getBasicAuth(UrnPropertiesReader.getVariable("aai.auth", execution),UrnPropertiesReader.getVariable("mso.msoKey", execution))
-				
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-				client.addAuthorizationHeader(basicAuthCred)
-			}
-			msoLogger.debug("invoking GET call to AAI endpoint :"+System.lineSeparator()+endPoint)
-			APIResponse response = client.httpGet()
-			msoLogger.debug("DeleteAAIVfModule - invoking httpGet to AAI")
+			AaiUtil aaiUriUtil = new AaiUtil(this)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			uri.depth(Depth.ONE)
+			String endPoint = aaiUriUtil.createAaiUri(uri)
+			
+			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, endPoint)
+			
+			msoLogger.debug('Response code:' + response.getStatusCode())
+			msoLogger.debug('Response:' + response.getResponseBodyAsString())
 
-			responseData = response.getResponseBodyAsString()
 			execution.setVariable("DAAIVfMod_queryGenericVnfResponseCode", response.getStatusCode())
-			execution.setVariable("DAAIVfMod_queryGenericVnfResponse", responseData)
-			msoLogger.debug("AAI Response: " + responseData)
-			msoLogger.debug("Response code:" + response.getStatusCode())
-			msoLogger.debug("Response:" + System.lineSeparator()+responseData)
+			execution.setVariable("DAAIVfMod_queryGenericVnfResponse", response.getResponseBodyAsString())
+
 		} catch (Exception ex) {
 			msoLogger.debug("Exception occurred while executing AAI GET:" + ex.getMessage())
 			execution.setVariable("DAAIVfMod_queryGenericVnfResponse", "AAI GET Failed:" + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured during queryAAIForGenericVnf")
-
 		}
 	}
 	
 	// construct and send a DELETE request to A&AI to delete a Generic Vnf
 	// note: to get here, all the modules associated with the Generic Vnf must already be deleted
 	public void deleteGenericVnf(DelegateExecution execution) {
-		def aaiRequestId = utils.getRequestID()
-		def endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + execution.getVariable("DAAIVfMod_genericVnfEndpoint") +
-			"/?resource-version=" + execution.getVariable("DAAIVfMod_genVnfRsrcVer")
-		msoLogger.debug("AAI endPoint: " + endPoint)
-		RESTConfig config = new RESTConfig(endPoint);
-		msoLogger.debug("deleteGenericVnf() endpoint-" + endPoint)
-		def responseData = ""
+
 		try {
-			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
-				addHeader("Accept","application/xml");
+			String vnfId = execution.getVariable("DAAIVfMod_vnfId")
+			String resourceVersion =  execution.getVariable("DAAIVfMod_genVnfRsrcVer")
 			
-			String basicAuthCred = utils.getBasicAuth(UrnPropertiesReader.getVariable("aai.auth", execution),UrnPropertiesReader.getVariable("mso.msoKey", execution))
-					
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-				client.addAuthorizationHeader(basicAuthCred)
-			}
-			APIResponse response = client.httpDelete()
+			AaiUtil aaiUriUtil = new AaiUtil(this)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			uri.resourceVersion(resourceVersion)
+			String endPoint = aaiUriUtil.createAaiUri(uri)
+			
+			APIResponse response = aaiUriUtil.executeAAIDeleteCall(execution, endPoint)
 				
-			responseData = response.getResponseBodyAsString()
+			def responseData = response.getResponseBodyAsString()
 			execution.setVariable("DAAIVfMod_deleteGenericVnfResponseCode", response.getStatusCode())
 			execution.setVariable("DAAIVfMod_deleteGenericVnfResponse", responseData)
 			msoLogger.debug("Response code:" + response.getStatusCode())
-			msoLogger.debug("Response:" + System.lineSeparator()+responseData)
+			msoLogger.debug("Response:" + System.lineSeparator() + responseData)
 		} catch (Exception ex) {
 			ex.printStackTrace()
 			msoLogger.debug("Exception occurred while executing AAI DELETE:" + ex.getMessage())
@@ -151,32 +129,25 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 
 	// construct and send a DELETE request to A&AI to delete the Base or Add-on Vf Module
 	public void deleteVfModule(DelegateExecution execution) {
-		def endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + execution.getVariable("DAAIVfMod_vfModuleEndpoint") +
-			"/?resource-version=" + execution.getVariable("DAAIVfMod_vfModRsrcVer")
-		def aaiRequestId = utils.getRequestID()
-
-		RESTConfig config = new RESTConfig(endPoint);
-		msoLogger.debug("deleteVfModule() endpoint-" + endPoint)
 		def responseData = ""
 		try {
-			RESTClient client = new RESTClient(config).addHeader("X-TransactionId", aaiRequestId).addHeader("X-FromAppId", "MSO").
-				addHeader("Accept","application/xml");
+			String vnfId = execution.getVariable("DAAIVfMod_vnfId")
+			String vfModuleId = execution.setVariable("DAAIVfMod_vfModuleId")
+			String resourceVersion =  execution.getVariable("DAAIVfMod_vfModRsrcVer")
 			
-			String basicAuthCred = utils.getBasicAuth(UrnPropertiesReader.getVariable("aai.auth", execution),UrnPropertiesReader.getVariable("mso.msoKey", execution))
-					
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-				client.addAuthorizationHeader(basicAuthCred)
-			}
-			APIResponse response = client.httpDelete()
+			AaiUtil aaiUriUtil = new AaiUtil(this)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
+			uri.resourceVersion(resourceVersion)
+			String endPoint = aaiUriUtil.createAaiUri(uri)
 			
-			msoLogger.debug("DeleteAAIVfModule - invoking httpDelete to AAI")
+			APIResponse response = aaiUriUtil.executeAAIDeleteCall(execution, endPoint)
 			
 			responseData = response.getResponseBodyAsString()
 			execution.setVariable("DAAIVfMod_deleteVfModuleResponseCode", response.getStatusCode())
 			execution.setVariable("DAAIVfMod_deleteVfModuleResponse", responseData)
 			msoLogger.debug("DeleteAAIVfModule - AAI Response" + responseData)
 			msoLogger.debug("Response code:" + response.getStatusCode())
-			msoLogger.debug("Response:" + System.lineSeparator()+responseData)
+			msoLogger.debug("Response:" + System.lineSeparator() + responseData)
 
 		} catch (Exception ex) {
 			ex.printStackTrace()

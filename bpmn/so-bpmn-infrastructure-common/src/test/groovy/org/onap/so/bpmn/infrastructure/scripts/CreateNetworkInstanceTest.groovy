@@ -85,6 +85,7 @@ class CreateNetworkInstanceTest  {
       <source>VID</source>
    </request-info>
    <aetgt:status-message>Network has been created successfully.</aetgt:status-message>
+   <aetgt:networkId>fb03f6f0-9012-41c4-87d8-1dbf3c22b889</aetgt:networkId>
    <aetgt:mso-bpel-name>BPMN Network action: CREATE</aetgt:mso-bpel-name>
 </aetgt:MsoCompletionRequest>"""
 
@@ -272,6 +273,7 @@ String jsonIncomingRequest =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable(Prefix + "dbReturnCode")).thenReturn("200")
+			when(mockExecution.getVariable("networkId")).thenReturn("fb03f6f0-9012-41c4-87d8-1dbf3c22b889")
 			
 			// postProcessResponse(DelegateExecution execution)
 			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()

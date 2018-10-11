@@ -576,6 +576,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		
 		verify(mex).setVariable("productFamilyId", "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb")
 		verify(mex).setVariable("lcpCloudRegionId", "mdt1")
+		verify(mex).setVariable("cloudOwner", "my-cloud-owner")
 		verify(mex).setVariable("tenantId", "8b1df54faa3b49078e3416e21370a3ba")
 	}
 			
@@ -594,6 +595,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		
 		verify(mex).setVariable("productFamilyId", "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb")
 		verify(mex).setVariable("lcpCloudRegionId", "mdt1")
+		verify(mex).setVariable("cloudOwner", "my-cloud-owner")
 		verify(mex).setVariable("tenantId", "8b1df54faa3b49078e3416e21370a3ba")
 	}
 			
@@ -612,6 +614,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		
 		verify(mex).setVariable("productFamilyId", "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb")
 		verify(mex).setVariable("lcpCloudRegionId", "mdt1")
+		verify(mex).setVariable("cloudOwner", "my-cloud-owner")
 		verify(mex).setVariable("tenantId", "8b1df54faa3b49078e3416e21370a3ba")
 	}
 			
