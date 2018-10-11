@@ -16,6 +16,144 @@
       "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_697466cf",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-10-11T13:30:19Z",
+      "side": 1,
+      "message": "You can avoid injecting values into private fields with @Value annotation in constructor:\n\n    private final String defaultTimeout;\n\n    @Autowired\n    public PnfCheckInputs(@Value(\"${aai.pnfEntryNotificationTimeout}\") String defaultTimeout) {\n        this.defaultTimeout \u003d defaultTimeout;\n    }",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 48
+      },
+      "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_092fdaa2",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-10-11T13:30:19Z",
+      "side": 1,
+      "message": "Add Nokia copyright (in other files too)",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 70
+      },
+      "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_893bcaea",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-10-11T13:30:19Z",
+      "side": 1,
+      "message": "env is only used in init. You canget rid of this variable after you merge constructor and init (see: my next comment).",
+      "range": {
+        "startLine": 51,
+        "startChar": 4,
+        "endLine": 51,
+        "endChar": 34
+      },
+      "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_e9361603",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-10-11T13:30:19Z",
+      "side": 1,
+      "message": "This can be in constructor now - you\u0027re not using any setters now between calling contructor and init.",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 85,
+        "endChar": 5
+      },
+      "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_09583a55",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-10-11T13:30:19Z",
+      "side": 1,
+      "message": "I don\u0027t think you should remove this test. If you change default value setting to constructor, then you can still test this. That\u0027s one of the reasons why injecting values to private fields is bad - it\u0027s harder to test.",
+      "range": {
+        "startLine": 68,
+        "startChar": 3,
+        "endLine": 68,
+        "endChar": 5
+      },
+      "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_c94a3283",
+        "filename": "bpmn/so-bpmn-tasks/src/test/resources/application-test.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-10-11T13:30:19Z",
+      "side": 1,
+      "message": "Timeout for tests can be shorter than 14 days ;)",
+      "range": {
+        "startLine": 4,
+        "startChar": 2,
+        "endLine": 4,
+        "endChar": 35
+      },
+      "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
