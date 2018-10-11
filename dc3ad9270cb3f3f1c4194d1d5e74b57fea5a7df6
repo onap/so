@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_89abca88",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/resources/applicationContext_forPnfTesting.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-10-11T11:44:59Z",
+      "side": 1,
+      "message": "Do we still need this file? It seems redundant with application-test.yaml",
+      "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
