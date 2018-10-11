@@ -28,6 +28,10 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
@@ -477,9 +481,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			execution.setVariable(Prefix + "networkPolicyFqdnCount", fqdnCount)
 			msoLogger.debug("networkPolicyFqdnCount - " + fqdnCount)
 
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getNetworkPolicyUri(execution)
 
 			if (fqdnCount > 0) {
 				// AII loop call over contrail network policy fqdn list
@@ -489,8 +491,10 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 					String fqdn = fqdnList[i]
 
 					// Query AAI for this network policy FQDN
+					AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+					uri.queryParam("network-policy-fqdn", fqdn)
+					String queryNetworkPolicyByFqdnAAIRequest = aaiUriUtil.createAaiUri(uri)
 
-					String queryNetworkPolicyByFqdnAAIRequest = "${aai_endpoint}${aai_uri}?network-policy-fqdn=" + UriUtils.encode(fqdn, "UTF-8")
 					msoLogger.debug("AAI request endpoint: "  + queryNetworkPolicyByFqdnAAIRequest)
 
 					def aaiRequestId = UUID.randomUUID().toString()
@@ -514,8 +518,9 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 						def resourceVersion = utils.getNodeText(aaiResponseAsString, "resource-version")
 						msoLogger.debug("Deleting network-policy with resource-version " + resourceVersion)
 
-						String delNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(networkPolicyId, "UTF-8") +
-							"?resource-version=" + UriUtils.encode(resourceVersion, "UTF-8")
+						AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId)
+						delUri.resourceVersion(resourceVersion)
+						String delNetworkPolicyAAIRequest = aaiUriUtil.createAaiUri(delUri)
 
 						msoLogger.debug("AAI request endpoint: " + delNetworkPolicyAAIRequest)
 

@@ -86,8 +86,8 @@ public class GeneralTopologyObjectMapper {
 
 		networkInformation.setFromPreload(null);
 		networkInformation.setNetworkId(network.getNetworkId());
-		//TODO fix this after network type filed included in L3Network object type
-		//networkInformation.setNetworkType(network.getNetwork);
+		networkInformation.setNetworkType(network.getNetworkType());
+		networkInformation.setNetworkTechnology(network.getNetworkTechnology());
 		return networkInformation;
 	}
 	/*

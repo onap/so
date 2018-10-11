@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,6 +59,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
+//TODO this class should be in so-bpmn-tasks
 public class SniroHomingV2Test extends BaseTest{
 
 	private ServiceInstance serviceInstance;
@@ -127,7 +128,7 @@ public class SniroHomingV2Test extends BaseTest{
 		sniroHoming.callSniro(execution);
 
 		String request = FileUtil.readResourceFile(RESOURCE_PATH + "SniroManagerRequest1Vpn.json");
-		request = request.replace("28080", wireMockPort);
+		//request = request.replace("28080", wireMockPort);
 
 		ArgumentCaptor<SniroManagerRequest> argument = ArgumentCaptor.forClass(SniroManagerRequest.class);
 		verify(sniroClient, times(1)).postDemands(argument.capture());
@@ -148,7 +149,7 @@ public class SniroHomingV2Test extends BaseTest{
 		sniroHoming.callSniro(execution);
 
 		String request = FileUtil.readResourceFile(RESOURCE_PATH + "SniroManagerRequest3Vpn.json");
-		request = request.replace("28080", wireMockPort);
+		//request = request.replace("28080", wireMockPort);
 
 		ArgumentCaptor<SniroManagerRequest> argument = ArgumentCaptor.forClass(SniroManagerRequest.class);
 		verify(sniroClient, times(1)).postDemands(argument.capture());
@@ -167,7 +168,7 @@ public class SniroHomingV2Test extends BaseTest{
 		sniroHoming.callSniro(execution);
 
 		String request = FileUtil.readResourceFile(RESOURCE_PATH + "SniroManagerRequest3AR.json");
-		request = request.replace("28080", wireMockPort);
+		//request = request.replace("28080", wireMockPort);
 
 		ArgumentCaptor<SniroManagerRequest> argument = ArgumentCaptor.forClass(SniroManagerRequest.class);
 		verify(sniroClient, times(1)).postDemands(argument.capture());

@@ -45,6 +45,7 @@ import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ClientConnectionException;
 import org.onap.so.apihandlerinfra.exceptions.DuplicateRequestException;
 import org.onap.so.apihandlerinfra.exceptions.RecipeNotFoundException;
+import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.exceptions.VfModuleNotFoundException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
@@ -109,6 +110,7 @@ public class ServiceInstances {
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH,MsoRequest.class);
 	private static String NAME = "name";
 	private static String VALUE = "value";
+	private static final String SAVE_TO_DB = "save instance to db";
 	
 	@Autowired
 	private Environment env;
@@ -740,7 +742,13 @@ public class ServiceInstances {
 		if (sir.getCorrelationId() != null) {
 			correlationId = sir.getCorrelationId();
 		}
-		infraActiveRequestsClient.save(currentActiveReq);
+		try{
+			infraActiveRequestsClient.save(currentActiveReq);
+		}catch(Exception e){
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
+                    .errorInfo(errorLoggerInfo).build();
+		}
 		
 		if(!requestScope.equalsIgnoreCase(ModelType.service.name())){
 			aLaCarte = true;
@@ -870,7 +878,13 @@ public class ServiceInstances {
 				currentActiveReq.setRequestStatus(Status.IN_PROGRESS.name());
 				setInstanceId(currentActiveReq, requestScope, jsonResponse.getRequestReferences().getInstanceId(), new HashMap<>());
 				
-				infraActiveRequestsClient.save(currentActiveReq);
+				try{
+					infraActiveRequestsClient.save(currentActiveReq);
+				}catch(Exception e){
+					ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+		            throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
+		                    .errorInfo(errorLoggerInfo).build();
+				}
 				return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestId, jsonResponse, apiVersion);
 			} 
 		}
@@ -983,14 +997,10 @@ public class ServiceInstances {
 			}
 		} catch (Exception e) {
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-
-
-            ValidateException validateException = new ValidateException.Builder("Duplicate Check Request", HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
+            RequestDbFailureException requestDbFailureException = new RequestDbFailureException.Builder("check for duplicate instance", e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
                     .errorInfo(errorLoggerInfo).build();
-
-            updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
-
-            throw validateException;
+            updateStatus(currentActiveReq, Status.FAILED, requestDbFailureException.getMessage());
+            throw requestDbFailureException;
 		}
 		return dup;
 	}
@@ -1016,7 +1026,7 @@ public class ServiceInstances {
 	}
 	
 	private void parseRequest(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action, String version, 
-								String requestJSON, Boolean aLaCarte, String requestId, InfraActiveRequests currentActiveReq) throws ValidateException {
+								String requestJSON, Boolean aLaCarte, String requestId, InfraActiveRequests currentActiveReq) throws ValidateException, RequestDbFailureException {
 		int reqVersion = Integer.parseInt(version.substring(1));
 		try {
 			msoRequest.parse(sir, instanceIdMap, action, version, requestJSON, reqVersion, aLaCarte);
@@ -1218,6 +1228,7 @@ public class ServiceInstances {
 			targetConfiguration.setAicNodeClli(sourceCloudConfiguration.getAicNodeClli());
 			targetConfiguration.setTenantId(sourceCloudConfiguration.getTenantId());
 			targetConfiguration.setLcpCloudRegionId(sourceCloudConfiguration.getLcpCloudRegionId());
+			targetConfiguration.setCloudOwner(sourceCloudConfiguration.getCloudOwner());
 			return Optional.of(targetConfiguration);
 		}
 		return Optional.empty();
@@ -1633,7 +1644,13 @@ public class ServiceInstances {
 		if (sir.getCorrelationId() != null) {
 			correlationId = sir.getCorrelationId();
 		}
-		infraActiveRequestsClient.save(currentActiveReq);
+		try{
+			infraActiveRequestsClient.save(currentActiveReq);
+		}catch(Exception e){
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
+                    .errorInfo(errorLoggerInfo).build();
+		}
 		
 		if(!requestScope.equalsIgnoreCase(ModelType.service.name())){
 			aLaCarte = true;
@@ -1660,14 +1677,20 @@ public class ServiceInstances {
 			throw validateException;
     	}
     }
-	public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage){
+	public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage) throws RequestDbFailureException{
 		if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
 			aq.setStatusMessage (errorMessage);
 			aq.setProgress(new Long(100));
 			aq.setRequestStatus(status.toString());
 			Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
 			aq.setEndTime (endTimeStamp);
-			infraActiveRequestsClient.save(aq);
+			try{
+				infraActiveRequestsClient.save(aq);
+			}catch(Exception e){
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+	            throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
+	                    .errorInfo(errorLoggerInfo).build();
+			}
 		}
 	}
 }

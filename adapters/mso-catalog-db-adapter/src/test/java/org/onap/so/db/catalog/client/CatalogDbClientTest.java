@@ -20,9 +20,11 @@
 
 package org.onap.so.db.catalog.client;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.catalogdb.CatalogDBApplication;
@@ -30,6 +32,7 @@ import org.onap.so.db.catalog.beans.AuthenticationType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
+import org.onap.so.db.catalog.beans.ExternalServiceToInternalService;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.ServerType;
@@ -48,10 +51,6 @@ import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CatalogDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -413,5 +412,58 @@ public class CatalogDbClientTest {
         Assert.assertEquals("TESTCLLI", getCloudSite.getClli());
         Assert.assertEquals("regionId", getCloudSite.getRegionId());
         Assert.assertEquals("RANDOMID", getCloudSite.getIdentityServiceId());
+    }
+   @Test
+    public void testGetServiceByModelName() {
+        Service service = client.getServiceByModelName("MSOTADevInfra_Test_Service");
+        Assert.assertNotNull(service);
+        Assert.assertNotNull(service.getModelVersion());
+        Assert.assertNotNull(service.getModelInvariantUUID());
+        Assert.assertEquals("MSOTADevInfra_Test_Service", service.getModelName());
+        Assert.assertEquals("NA", service.getServiceRole());
+    }
+
+    @Test
+    public void testGetServiceByModelNameNotFound() {
+        Service service = client.getServiceByModelName("Not_Found");
+        Assert.assertNull(service);
+    }
+
+    @Test
+    public void testGetServiceByModelUUID() {
+        Service service = client.getServiceByModelUUID("5df8b6de-2083-11e7-93ae-92361f002679");
+        Assert.assertNotNull(service);
+        Assert.assertNotNull(service.getModelVersion());
+        Assert.assertNotNull(service.getModelInvariantUUID());
+        Assert.assertEquals("5df8b6de-2083-11e7-93ae-92361f002679", service.getModelUUID());
+        Assert.assertEquals("NA", service.getServiceRole());
+    }
+
+    @Test
+    public void testGetServiceByModelUUIDNotFound() {
+        Service service = client.getServiceByModelUUID("Not_Found");
+        Assert.assertNull(service);
+    }
+
+    @Test
+    public void testFindServiceRecipeByActionAndServiceModelUUID() {
+        ServiceRecipe serviceRecipe = client.findServiceRecipeByActionAndServiceModelUUID("createInstance","4694a55f-58b3-4f17-92a5-796d6f5ffd0d" );
+        Assert.assertNotNull(serviceRecipe);
+        Assert.assertNotNull(serviceRecipe.getServiceModelUUID());
+        Assert.assertNotNull(serviceRecipe.getAction());
+        Assert.assertEquals("/mso/async/services/CreateGenericALaCarteServiceInstance", serviceRecipe.getOrchestrationUri());
+        Assert.assertEquals("MSOTADevInfra aLaCarte", serviceRecipe.getDescription());
+    }
+
+    @Test
+    public void testFindServiceRecipeByActionAndServiceModelUUIDNotFound() {
+        ServiceRecipe serviceRecipe = client.findServiceRecipeByActionAndServiceModelUUID("not_found","5df8b6de-2083-11e7-93ae-test" );
+        Assert.assertNull(serviceRecipe);
+    }
+
+    @Test
+    public void testFindExternalToInternalServiceByServiceNameNotFound() {
+        ExternalServiceToInternalService externalServiceToInternalService = client.findExternalToInternalServiceByServiceName("Not_Found");
+        Assert.assertNull(externalServiceToInternalService);
     }
 }

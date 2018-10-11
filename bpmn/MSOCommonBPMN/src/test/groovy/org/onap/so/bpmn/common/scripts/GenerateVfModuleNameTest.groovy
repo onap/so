@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ class GenerateVfModuleNameTest {
         when(mockExecution.getVariable("personaModelId")).thenReturn('personaModelId_test')
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
         when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-        when(mockExecution.getVariable("mso.workflow.default.aai.v8.generic-vnf.uri")).thenReturn('/aai/v8/network/generic-vnfs/generic-vnf')
+
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
         when(mockExecution.getVariable("mso.workflow.default.aai.generic-vnf.version")).thenReturn('8')
 
@@ -78,7 +78,7 @@ class GenerateVfModuleNameTest {
         when(mockExecution.getVariable("personaModelId")).thenReturn('personaModelId_test')
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
         when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-        when(mockExecution.getVariable("mso.workflow.default.aai.v8.generic-vnf.uri")).thenReturn('/aai/v8/network/generic-vnfs/generic-vnf')
+
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
         when(mockExecution.getVariable("mso.workflow.default.aai.generic-vnf.version")).thenReturn('8')
 

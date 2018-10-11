@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,6 +37,10 @@ import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.constants.Defaults
 
 /**
  * Vnf Module Subflow for confirming the volume group belongs
@@ -63,13 +67,10 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 			String incomingGroupName = execution.getVariable("volumeGroupName")
 			String incomingTenantId = execution.getVariable("tenantId")
 			def aicCloudRegion = execution.getVariable("aicCloudRegion")
-			String aai = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getCloudInfrastructureCloudRegionUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-
-			String path = aai + "${aai_uri}/${aicCloudRegion}/volume-groups/volume-group/" + volumeGroupId
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), aicCloudRegion, volumeGroupId)
+			String path = aaiUriUtil.createAaiUri(uri)
 
 			APIResponse queryAAIForVolumeGroupResponse = aaiUriUtil.executeAAIGetCall(execution, path)
 

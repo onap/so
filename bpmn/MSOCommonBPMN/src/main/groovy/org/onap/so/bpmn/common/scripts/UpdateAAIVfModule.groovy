@@ -24,6 +24,9 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.rest.APIResponse
 import org.springframework.web.util.UriUtils
 import org.onap.so.logger.MessageEnum
@@ -104,12 +107,10 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			def vnfId = execution.getVariable('UAAIVfMod_vnfId')
 			def vfModuleId = execution.getVariable('UAAIVfMod_vfModuleId')
 
-			// Construct endpoint
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8") + '/vf-modules/vf-module/' + UriUtils.encode(vfModuleId, "UTF-8")
-
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
+			String endPoint = aaiUriUtil.createAaiUri(uri)
+			
 			try {
 				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
 				msoLogger.debug("UpdateAAIVfModule sending GET to AAI endpoint: " + endPoint)
@@ -202,12 +203,9 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 					}
 			"""
 
-
-			// Construct endpoint
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8") + '/vf-modules/vf-module/' + UriUtils.encode(vfModuleId, "UTF-8")
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
+			String endPoint = aaiUriUtil.createAaiUri(uri)
 
 			try {
 				msoLogger.debug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload)

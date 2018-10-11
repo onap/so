@@ -13,44 +13,8 @@ DoCreateVnf createVnf = new DoCreateVnf()
 createVnf.preProcessRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="initialization" targetRef="callGetService" />
-    <bpmn2:exclusiveGateway id="vnfExist" name="Vnf Already Exist?" default="vnfExistYes">
-      <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
-      <bpmn2:outgoing>vnfExistYes</bpmn2:outgoing>
-      <bpmn2:outgoing>vnfExistNo</bpmn2:outgoing>
-    </bpmn2:exclusiveGateway>
-    <bpmn2:sequenceFlow id="vnfExistYes" name="Yes" sourceRef="vnfExist" targetRef="vnfExistWorkflowException" />
-    <bpmn2:sequenceFlow id="vnfExistNo" name="No" sourceRef="vnfExist" targetRef="prepareCreateGenericVnf">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("GENGV_FoundIndicator" ) == false && execution.getVariable("GENGV_SuccessIndicator" ) == true}]]></bpmn2:conditionExpression>
-    </bpmn2:sequenceFlow>
-    <bpmn2:callActivity id="callGetVnf" name="Get&#10;&#10;Generic Vnf" calledElement="GenericGetVnf">
-      <bpmn2:extensionElements>
-        <camunda:in source="DoCVNF_vnfName" target="GENGV_vnfName" />
-        <camunda:in source="DoCVNF_type" target="GENGV_type" />
-        <camunda:out source="GENGV_vnf" target="CRTVI_genericVnf" />
-        <camunda:out source="GENGV_FoundIndicator" target="GENGV_FoundIndicator" />
-        <camunda:out source="GENGV_SuccessIndicator" target="GENGV_SuccessIndicator" />
-        <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
-      </bpmn2:extensionElements>
-      <bpmn2:incoming>VnfNameSpecified1</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
-    </bpmn2:callActivity>
-    <bpmn2:sequenceFlow id="SequenceFlow_7" name="" sourceRef="callGetVnf" targetRef="vnfExist" />
-    <bpmn2:scriptTask id="vnfExistWorkflowException" name="Create Workflow Exception" scriptFormat="groovy">
-      <bpmn2:incoming>vnfExistYes</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
-ExceptionUtil exceptionUtil = new ExceptionUtil()
-exceptionUtil.buildWorkflowException(execution, 5000, "Generic Vnf Already Exist.")]]></bpmn2:script>
-    </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_10" name="" sourceRef="vnfExistWorkflowException" targetRef="EndEvent_2" />
-    <bpmn2:endEvent id="EndEvent_2">
-      <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
-      <bpmn2:errorEventDefinition id="ErrorEventDefinition_2" errorRef="Error_2" />
-    </bpmn2:endEvent>
     <bpmn2:scriptTask id="prepareCreateGenericVnf" name="&#10;AAI&#10;Create&#10;(generic vnf)&#10;" scriptFormat="groovy">
-      <bpmn2:incoming>vnfExistNo</bpmn2:incoming>
-      <bpmn2:incoming>VnfNameNotSpecified1</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_11b2sf3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 DoCreateVnf createVnf = new DoCreateVnf()
@@ -162,15 +126,6 @@ createVnfInfra.validateSDNCResponse(execution, response, "activate")]]></bpmn2:s
 DoCreateVnf createVnf = new DoCreateVnf()
 createVnf.postProcessCreateGenericVnf(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:exclusiveGateway id="ExclusiveGateway_0j73e7c" name="Vnf-name specified?" default="VnfNameSpecified1">
-      <bpmn2:incoming>SequenceFlow_1mvplyi</bpmn2:incoming>
-      <bpmn2:outgoing>VnfNameNotSpecified1</bpmn2:outgoing>
-      <bpmn2:outgoing>VnfNameSpecified1</bpmn2:outgoing>
-    </bpmn2:exclusiveGateway>
-    <bpmn2:sequenceFlow id="VnfNameNotSpecified1" name="No" sourceRef="ExclusiveGateway_0j73e7c" targetRef="prepareCreateGenericVnf">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DoCVNF_vnfName" ) == null}]]></bpmn2:conditionExpression>
-    </bpmn2:sequenceFlow>
-    <bpmn2:sequenceFlow id="VnfNameSpecified1" name="Yes" sourceRef="ExclusiveGateway_0j73e7c" targetRef="callGetVnf" />
     <bpmn2:sequenceFlow id="SequenceFlow_1h9jdgr" sourceRef="PreProcessSDNCGetRequest" targetRef="CallSDNCAdapterVNFTopologyGet" />
     <bpmn2:sequenceFlow id="SequenceFlow_14xac2y" sourceRef="CallSDNCAdapterVNFTopologyGet" targetRef="PostProcessSDNCGetRequest" />
     <bpmn2:sequenceFlow id="SequenceFlow_1q1poly" sourceRef="PostProcessSDNCGetRequest" targetRef="preProcessSDNCActivateRequest" />
@@ -236,12 +191,12 @@ doCreateVnf.prepUpdateAAIGenericVnf(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="callGetService" name="AAI&#10;Query&#10;(svc instance)" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_1mvplyi</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_11b2sf3</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 DoCreateVnf createVnf = new DoCreateVnf()
 createVnf.getServiceInstance(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_1mvplyi" sourceRef="callGetService" targetRef="ExclusiveGateway_0j73e7c" />
+    <bpmn2:sequenceFlow id="SequenceFlow_11b2sf3" sourceRef="callGetService" targetRef="prepareCreateGenericVnf" />
   </bpmn2:process>
   <bpmn2:error id="Error_1" name="Java Lang Exception" errorCode="java.lang.Exception" />
   <bpmn2:error id="Error_2" name="MSO Workflow Exception" errorCode="MSOWorkflowException" />
@@ -265,62 +220,14 @@ createVnf.getServiceInstance(execution)]]></bpmn2:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="SequenceFlow_2" sourceElement="_BPMNShape_ScriptTask_285">
         <di:waypoint xsi:type="dc:Point" x="338" y="240" />
-        <di:waypoint xsi:type="dc:Point" x="425" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="493" y="240" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="336.5" y="225" width="90" height="0" />
+          <dc:Bounds x="370.5" y="225" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="_BPMNShape_CallActivity_60" bpmnElement="callGetVnf">
-        <dc:Bounds x="720" y="288" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_ExclusiveGateway_232" bpmnElement="vnfExist" isMarkerVisible="true">
-        <dc:Bounds x="854" y="302" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="890" y="332" width="114" height="22" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_9" bpmnElement="SequenceFlow_7" sourceElement="_BPMNShape_CallActivity_60" targetElement="_BPMNShape_ExclusiveGateway_232">
-        <di:waypoint xsi:type="dc:Point" x="820" y="328" />
-        <di:waypoint xsi:type="dc:Point" x="854" y="327" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="804" y="330" width="6" height="6" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_299" bpmnElement="vnfExistWorkflowException">
-        <dc:Bounds x="926" y="367" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_300" bpmnElement="prepareCreateGenericVnf">
-        <dc:Bounds x="959" y="200" width="100" height="80" />
+        <dc:Bounds x="781" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_10" bpmnElement="vnfExistYes" sourceElement="_BPMNShape_ExclusiveGateway_232" targetElement="_BPMNShape_ScriptTask_299">
-        <di:waypoint xsi:type="dc:Point" x="879" y="352" />
-        <di:waypoint xsi:type="dc:Point" x="879" y="407" />
-        <di:waypoint xsi:type="dc:Point" x="926" y="407" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="880" y="367" width="29" height="22" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_11" bpmnElement="vnfExistNo" sourceElement="_BPMNShape_ExclusiveGateway_232" targetElement="_BPMNShape_ScriptTask_300">
-        <di:waypoint xsi:type="dc:Point" x="879" y="302" />
-        <di:waypoint xsi:type="dc:Point" x="879" y="240" />
-        <di:waypoint xsi:type="dc:Point" x="959" y="240" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="884" y="254" width="14" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_227" bpmnElement="EndEvent_2">
-        <dc:Bounds x="1092" y="389" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1110" y="430" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_12" bpmnElement="SequenceFlow_10" sourceElement="_BPMNShape_ScriptTask_299" targetElement="_BPMNShape_EndEvent_227">
-        <di:waypoint xsi:type="dc:Point" x="1026" y="407" />
-        <di:waypoint xsi:type="dc:Point" x="1092" y="407" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1034" y="407" width="6" height="6" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_EndEvent_228" bpmnElement="EndEvent_3">
         <dc:Bounds x="1765" y="537" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -328,10 +235,10 @@ createVnf.getServiceInstance(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_13" bpmnElement="SequenceFlow_11" sourceElement="_BPMNShape_ScriptTask_300" targetElement="ScriptTask_0y55cyz_di">
-        <di:waypoint xsi:type="dc:Point" x="1059" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="881" y="240" />
         <di:waypoint xsi:type="dc:Point" x="1146" y="240" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1057.5" y="225" width="90" height="0" />
+          <dc:Bounds x="968.5" y="225" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_SubProcess_32" bpmnElement="javaErrorHandlingSubProcess" isExpanded="true">
@@ -454,27 +361,6 @@ createVnf.getServiceInstance(execution)]]></bpmn2:script>
       <bpmndi:BPMNShape id="ScriptTask_0y55cyz_di" bpmnElement="postProcessCreateGenericVnf">
         <dc:Bounds x="1146" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0j73e7c_di" bpmnElement="ExclusiveGateway_0j73e7c" isMarkerVisible="true">
-        <dc:Bounds x="646" y="215" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="653" y="184" width="51" height="24" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0k2oavy_di" bpmnElement="VnfNameNotSpecified1">
-        <di:waypoint xsi:type="dc:Point" x="696" y="240" />
-        <di:waypoint xsi:type="dc:Point" x="959" y="240" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="821.0502092050209" y="215" width="14" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1pwgmrg_di" bpmnElement="VnfNameSpecified1">
-        <di:waypoint xsi:type="dc:Point" x="671" y="265" />
-        <di:waypoint xsi:type="dc:Point" x="671" y="328" />
-        <di:waypoint xsi:type="dc:Point" x="720" y="328" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="677" y="286.5" width="18" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1h9jdgr_di" bpmnElement="SequenceFlow_1h9jdgr">
         <di:waypoint xsi:type="dc:Point" x="777" y="693" />
         <di:waypoint xsi:type="dc:Point" x="799" y="693" />
@@ -555,13 +441,13 @@ createVnf.getServiceInstance(execution)]]></bpmn2:script>
         <dc:Bounds x="1445" y="515" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_019g8vu_di" bpmnElement="callGetService">
-        <dc:Bounds x="425" y="200" width="100" height="80" />
+        <dc:Bounds x="493" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1mvplyi_di" bpmnElement="SequenceFlow_1mvplyi">
-        <di:waypoint xsi:type="dc:Point" x="525" y="240" />
-        <di:waypoint xsi:type="dc:Point" x="646" y="240" />
+      <bpmndi:BPMNEdge id="SequenceFlow_11b2sf3_di" bpmnElement="SequenceFlow_11b2sf3">
+        <di:waypoint xsi:type="dc:Point" x="593" y="240" />
+        <di:waypoint xsi:type="dc:Point" x="781" y="240" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="585.5" y="219" width="0" height="12" />
+          <dc:Bounds x="687" y="219" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

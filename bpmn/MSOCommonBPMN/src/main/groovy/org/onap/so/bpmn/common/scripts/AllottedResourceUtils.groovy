@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,11 +22,17 @@ package org.onap.so.bpmn.common.scripts
 
 import static org.apache.commons.lang3.StringUtils.*;
 
+import javax.ws.rs.NotFoundException
+
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse;
@@ -102,7 +108,7 @@ class AllottedResourceUtils {
 	// setsVariable aaiARGetResponse
 	public String getARbyId (DelegateExecution execution, String allottedResourceId) {
 		msoLogger.trace("getARbyId ")
-		String arLink = getARLinkbyId(execution, allottedResourceId)
+		AAIResourceUri arLink = getARLinkbyId(execution, allottedResourceId)
 		String ar = null
 		if (!isBlank(arLink))
 		{
@@ -111,7 +117,7 @@ class AllottedResourceUtils {
 		msoLogger.trace(" Exit GetARbyId - AR:" + ar)
 		return ar;
 	}
-	
+
 	public String getPSIFmARLink(DelegateExecution execution, String arLink)
 	{
 		// Path: /aai/{version}/business/customers/customer/{cust}/service-subscriptions/service-subscription/{subs}/service-instances/service-instance/{psiid}/allotted-resources/allotted-resource/{arid}
@@ -129,39 +135,17 @@ class AllottedResourceUtils {
 		msoLogger.trace("getARLinkbyId ")
 		String arLink = null
 		try {
-			AaiUtil aaiUriUtil = new AaiUtil(taskProcessor)
-			String aaiNQUri = aaiUriUtil.getSearchNodesQueryEndpoint(execution)
-			String aaiEndpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-			String aaiUrl = "${aaiNQUri}?search-node-type=allotted-resource&filter=id:EQUALS:${allottedResourceId}"
-
-			msoLogger.debug("getARLinkbyId url: \n" + aaiUrl)
-
-			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, aaiUrl)
-			int responseCode = response.getStatusCode()
-			msoLogger.debug("  GET AR response code is: " + responseCode)
-
-			String aaiResponse = response.getResponseBodyAsString()
-			msoLogger.debug("GET AR:" + aaiResponse)
-			if(responseCode == 200 || responseCode == 202){
-				msoLogger.debug("GET AR Received a Good Response Code")
-				if(utils.nodeExists(aaiResponse, "result-data")){
-					msoLogger.debug("Query for AllottedResource Url Response Does Contain Data" )
-					arLink = utils.getNodeText(aaiResponse, "resource-link")
-				}else{
-					msoLogger.debug("GET AR Response Does NOT Contain Data" )
-				}
-			}else if(responseCode == 404){
-				msoLogger.debug("GET AR received a Not Found (404) Response")
-			}
-			else{
-				msoLogger.debug("  GET AR received a Bad Response: \n" + aaiResponse)
-				buildAAIErrorResponse(execution, aaiResponse, "Error retrieving AR from AAI")
-			}
-		}catch(Exception e){
+			AAIResourcesClient client = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE, allottedResourceId)
+			AaiUtil aaiUtil = new AaiUtil()
+			arLink = aaiUtil.createAaiUri(uri)
+		} catch (NotFoundException e) {
+			msoLogger.debug("GET AR received a Not Found (404) Response")
+		} catch(Exception e){
 			msoLogger.debug(" Error encountered within GetAaiAR" + e.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error in GetARbyId" + e.getMessage())
 		}
-		msoLogger.trace(" Exit GetARLinkbyId - Link:" + arLink)
+		msoLogger.debug(" ***** Exit GetARLinkbyId ***** Link:" + arLink)
 		return arLink
 	}
 
@@ -185,7 +169,7 @@ class AllottedResourceUtils {
 			}
 
 			arUrl = "${aai_endpoint}" + arEndpoint
-		
+
 			msoLogger.debug("GET AR Aai Path is: \n" + arUrl)
 
 			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, arUrl)
@@ -229,13 +213,13 @@ class AllottedResourceUtils {
 		{
 			execution.setVariable("aaiARGetResponse", ar)
 			execution.setVariable("aaiARPath", arUrl)
-			
+
 			String resourceVersion = null
 			if (utils.nodeExists(ar, "resource-version")) {
 				resourceVersion = utils.getNodeText(ar, "resource-version")
 				execution.setVariable("aaiARResourceVersion", resourceVersion)
 			}
-			
+
 			String orchStatus = null
 			if (utils.nodeExists(ar, "orchestration-status")) {
 				orchStatus= utils.getNodeText(ar, "orchestration-status")
@@ -285,7 +269,7 @@ class AllottedResourceUtils {
 		}
 		msoLogger.trace("Exit updateAROrchStatus ")
 	}
-	
+
 	//Sets Variable "wasDeleted"
 	public void deleteAR(DelegateExecution execution, String aaiARPath){
 		msoLogger.trace(" deleteAR - aaiARPath:" + aaiARPath)
@@ -294,14 +278,14 @@ class AllottedResourceUtils {
 			APIResponse response = aaiUriUtil.executeAAIDeleteCall(execution, aaiARPath)
 			int responseCode = response.getStatusCode()
 			execution.setVariable("deleteARResponseCode", responseCode)
-			
+
 			msoLogger.debug("  Delete AR response code:" + responseCode)
 
 			String aaiResponse = response.getResponseBodyAsString()
 			execution.setVariable("aaiARDeleteResponse", aaiResponse)
 
 			msoLogger.debug("Delete AR Response:" + aaiResponse)
-			
+
 			//Process Response
 			if(responseCode == 204){
 				msoLogger.debug("  Delete AR Received a Good Response")

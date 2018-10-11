@@ -191,6 +191,10 @@ public class UpdateVfModuleInfraV2 {
 			def cloudConfiguration = reqMap.requestDetails?.cloudConfiguration
 			def lcpCloudRegionId	= cloudConfiguration.lcpCloudRegionId
 			execution.setVariable(prefix + 'lcpCloudRegionId', lcpCloudRegionId)
+			
+			def cloudOwner	= cloudConfiguration.cloudOwner
+			execution.setVariable(prefix + 'cloudOwner', cloudOwner)
+			
 			def tenantId = cloudConfiguration.tenantId
 			execution.setVariable(prefix + 'tenantId', tenantId)
 

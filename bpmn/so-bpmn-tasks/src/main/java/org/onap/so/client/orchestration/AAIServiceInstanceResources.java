@@ -107,7 +107,7 @@ public class AAIServiceInstanceResources {
 	}
 	
 	public boolean existsOwningEntityName(String owningEntityName) {
-		AAIResourceUri owningEntityUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.OWNING_ENTITIES).queryParam("owning-entity-name", owningEntityName);
+		AAIResourceUri owningEntityUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.OWNING_ENTITY).queryParam("owning-entity-name", owningEntityName);
 		AAIResourcesClient aaiRC = injectionHelper.getAaiClient();
 		return aaiRC.exists(owningEntityUri);
 	}
