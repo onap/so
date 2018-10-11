@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_0cf128cd",
+        "filename": "common/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-10-11T14:32:30Z",
+      "side": 1,
+      "message": "I think this will fix build issue as there isn\u0027t a 1.3.1-SNAPSHOT in nexus.",
+      "range": {
+        "startLine": 65,
+        "startChar": 3,
+        "endLine": 65,
+        "endChar": 36
+      },
+      "revId": "a7d4e9658a389d4c02a4eccf9da04628e5464be0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
