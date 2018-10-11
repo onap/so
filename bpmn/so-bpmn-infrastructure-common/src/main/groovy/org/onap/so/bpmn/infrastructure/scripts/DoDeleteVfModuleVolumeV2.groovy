@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,31 +30,35 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.constants.Defaults
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
 import org.springframework.web.util.UriUtils
 
 class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteVfModuleVolumeV2.class);
-	
+
 	String prefix="DDVMV_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	XmlParser xmlParser = new XmlParser()
 	JsonUtils jsonUtil = new JsonUtils()
-	
+
 	@Override
 	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		preProcessRequest(execution, isDebugEnabled)	
+		preProcessRequest(execution, isDebugEnabled)
 	}
-	
+
 	/**
 	 * Set default variable values
 	 * @param execution
 	 * @param isDebugLogEnabled
 	 */
 	public void preProcessRequest (DelegateExecution execution, isDebugEnabled) {
-		
+
 		//Input:
 		//  msoRequestId
 		//  isDebugLogEnabled
@@ -71,13 +75,13 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 		//  workflowException					@TODO: actual variable name is WorkflowException
 		//  rolledBack
 		//  wasDeleted
-		
+
 		execution.setVariable('prefix', prefix)
 		execution.setVariable('wasDeleted', 'false')
-		
+
 		def tenantId = execution.getVariable("tenantId")
 		def cloudSiteId = execution.getVariable("lcpCloudRegionId")
-		
+
 		// if tenantId or lcpCloudregionId is not passed, get it from cloudRegionConfiguration variable
 		if(!tenantId || !cloudSiteId) {
 			def cloudConfiguration = execution.getVariable("cloudConfiguration")
@@ -86,10 +90,12 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 			execution.setVariable("tenantId", tenantId)
 			cloudSiteId = jsonUtil.getJsonValue(cloudConfiguration, "lcpCloudRegionId")
 			execution.setVariable("lcpCloudRegionId", cloudSiteId)
+			cloudOwner = jsonUtil.getJsonValue(cloudConfiguration, "cloudOwner")
+			execution.setVariable("cloudOwner", cloudOwner)
 		}
 	}
-	
-	
+
+
 	/**
 	 * Set out 'wasDeleted' variable to 'true'
 	 * @param execution
@@ -98,8 +104,8 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	public void postProcess(DelegateExecution execution, isDebugLogEnabled) {
 		execution.setVariable('wasDeleted', 'true')
 	}
-	
-	
+
+
 	/**
 	 * Query and set cloud region to use for AAI calls
 	 * Output variables: prefix+'aicCloudRegion', prefix+'cloudRegion'
@@ -107,14 +113,12 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	 * @param isDebugEnabled
 	 */
 	public void callRESTQueryAAICloudRegion(DelegateExecution execution, isDebugEnabled) {
-		
-		String cloudRegion = execution.getVariable('lcpCloudRegionId')					
-		String aai_endpoint =  UrnPropertiesReader.getVariable("aai.endpoint",execution)
+
+		String cloudRegion = execution.getVariable('lcpCloudRegionId')
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aai_uri = aaiUtil.getCloudInfrastructureCloudRegionUri(execution)
-		String queryCloudRegionRequest = "${aai_endpoint}${aai_uri}/" + cloudRegion
-		msoLogger.debug(queryCloudRegionRequest)
-		msoLogger.debug("AAI query cloud region URI - " + queryCloudRegionRequest)
+
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+		def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
 
 		cloudRegion = aaiUtil.getAAICloudReqion(execution,  queryCloudRegionRequest, "PO", cloudRegion)
 
@@ -125,14 +129,14 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 			else{
 				execution.setVariable(prefix+"aicCloudRegion", cloudRegion)
 			}
-		} 
+		}
 		else {
 			msoLogger.debug("AAI Query Cloud Region Unsuccessful.")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "AAI Query Cloud Region Unsuccessful. Return Code: " + execution.getVariable(prefix+"queryCloudRegionReturnCode"))
 		}
 	}
-	
-	
+
+
 	/**
 	 * Query AAI Volume Group
 	 * Output variables: prefix+'queryAAIVolGrpResponse'; prefix+'volumeGroupHeatStackId'
@@ -140,9 +144,9 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	 * @param isDebugLogEnabled
 	 */
 	public void callRESTQueryAAIForVolumeGroup(DelegateExecution execution, isDebugLogEnabled) {
-		
-		def tenantId = execution.getVariable('tenantId')								
-		def volumeGroupId = execution.getVariable('volumeGroupId')						
+
+		def tenantId = execution.getVariable('tenantId')
+		def volumeGroupId = execution.getVariable('volumeGroupId')
 		if(volumeGroupId == null) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, 'volumeGroupId is not provided in the request')
 			throw new Exception('volume-group-id is not provided in the request')
@@ -150,8 +154,9 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 		String cloudRegion = execution.getVariable(prefix+'aicCloudRegion')
 
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String queryAAIVolumeGroupRequest = aaiEndpoint + '/' + URLEncoder.encode(cloudRegion, "UTF-8") + "/volume-groups/volume-group/" + UriUtils.encode(volumeGroupId, "UTF-8")
+
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId)
+		def queryAAIVolumeGroupRequest = aaiUtil.createAaiUri(uri)
 
 		msoLogger.debug('Query AAI volume group by ID: ' + queryAAIVolumeGroupRequest)
 		msoLogger.debug('Query AAI volume group by ID: ' + queryAAIVolumeGroupRequest)
@@ -174,7 +179,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 			execution.setVariable(prefix+'volumeGroupHeatStackId', heatStackId)
 
 			msoLogger.debug('Heat stack id from AAI response: ' + heatStackId)
-			
+
 			if(hasVfModuleRelationship(aaiResponseAsString)){
 				msoLogger.debug('Volume Group ' + volumeGroupId + ' currently in use')
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume Group ${volumeGroupId} currently in use - found vf-module relationship.")
@@ -182,12 +187,12 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 
 			def volumeGroupTenantId = getTenantIdFromVolumeGroup(aaiResponseAsString)
 			msoLogger.debug('Tenant ID from AAI response: ' + volumeGroupTenantId)
-			
+
 			if (volumeGroupTenantId == null) {
 				msoLogger.debug("Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
 			}
-			
+
 			if (volumeGroupTenantId != tenantId) {
 				def String errorMessage = 'TenantId ' + tenantId + ' in incoming request does not match Tenant Id ' + volumeGroupTenantId +	' retrieved from AAI for Volume Group Id ' + volumeGroupId
 				msoLogger.debug("Error in DeleteVfModuleVolume: " + errorMessage)
@@ -206,7 +211,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 			}
 		}
 	}
-	
+
 	/**
 	 * Format VNF Adapter subflow request XML
 	 * Variables: prefix+'deleteVnfARequest'
@@ -216,7 +221,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	public void prepareVnfAdapterDeleteRequest(DelegateExecution execution, isDebugLogEnabled) {
 		def cloudRegion = execution.getVariable(prefix+'aicCloudRegion')
 		def tenantId = execution.getVariable('tenantId')										// input parameter (optional) - see preProcessRequest
-		def volumeGroupId = execution.getVariable('volumeGroupId')								// input parameter (required)	
+		def volumeGroupId = execution.getVariable('volumeGroupId')								// input parameter (required)
 		def volumeGroupHeatStackId = execution.getVariable(prefix+'volumeGroupHeatStackId')		// from AAI query volume group
 		def requestId = execution.getVariable('msoRequestId')									// input parameter (required)
 		def serviceId = execution.getVariable('serviceInstanceId')								// imput parameter (optional)
@@ -247,30 +252,27 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 		execution.setVariable(prefix+'deleteVnfARequest', vnfAdapterRestRequest)
 		msoLogger.debug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest)
 	}
-	
-	
+
+
 	/**
 	 * Delete volume group in AAI
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
 	public void callRESTDeleteAAIVolumeGroup(DelegateExecution execution, isDebugEnabled) {
-		
+
 		// get variables
 		String queryAAIVolGrpIdResponse = execution.getVariable(prefix+"queryAAIVolGrpResponse")
 		String groupId = utils.getNodeText(queryAAIVolGrpIdResponse, "volume-group-id")
 		String resourceVersion = utils.getNodeText(queryAAIVolGrpIdResponse, "resource-version")
-		
+
 		String messageId = UUID.randomUUID().toString()
 		String cloudRegion = execution.getVariable(prefix+'aicCloudRegion')
 
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String deleteAAIVolumeGrpIdRequest = aaiEndpoint + '/' + URLEncoder.encode(cloudRegion, "UTF-8")  + "/volume-groups/volume-group/" +  UriUtils.encode(groupId, "UTF-8")
 
-		if(resourceVersion !=null){
-			deleteAAIVolumeGrpIdRequest = deleteAAIVolumeGrpIdRequest +'?resource-version=' + UriUtils.encode(resourceVersion, 'UTF-8')
-		}
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, groupId).queryParam("resource-version", resourceVersion)
+		def deleteAAIVolumeGrpIdRequest = aaiUtil.createAaiUri(uri)
 
 		msoLogger.debug('Delete AAI volume group : ' + deleteAAIVolumeGrpIdRequest)
 		msoLogger.debug("Delete AAI volume group : " + deleteAAIVolumeGrpIdRequest)
@@ -297,8 +299,8 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Check if volume group has a relationship to vf-module
 	 * @param volumeGroupXml
@@ -322,7 +324,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 		return false
 	}
 
-	
+
 	/**
 	 * Extract the Tenant Id from the Volume Group information returned by AAI.
 	 * @param volumeGroupXml Volume Group XML returned by AAI.

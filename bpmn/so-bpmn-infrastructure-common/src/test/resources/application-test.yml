@@ -166,53 +166,6 @@ mso:
           version: '9'
         generic-vnf:
           version: '9'
-        v11:
-          customer:
-            uri: /aai/v11/business/customers/customer
-          generic-query:
-            uri: /aai/v11/search/generic-query
-          generic-vnf:
-            uri: /aai/v11/network/generic-vnfs/generic-vnf
-          l3-network:
-            uri: /aai/v11/network/l3-networks/l3-network
-          network-policy:
-            uri: /aai/v11/network/network-policies/network-policy
-          nodes-query:
-            uri: /aai/v11/search/nodes-query
-          route-table-reference:
-            uri: /aai/v11/network/route-table-references/route-table-reference
-          tenant:
-            uri: /aai/v11/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/tenants/tenant
-          vce:
-            uri: /aai/v11/network/vces/vce
-          vpn-binding:
-            uri: /aai/v11/network/vpn-bindings/vpn-binding
-        v8:
-          configuration:
-            uri: /aai/v11/network/configurations/configuration
-          customer:
-            uri: /aai/v8/business/customers/customer
-          generic-query:
-            uri: /aai/v8/search/generic-query
-          l3-network:
-            uri: /aai/v8/network/l3-networks/l3-network
-          network-policy:
-            uri: /aai/v8/network/network-policies/network-policy
-          nodes-query:
-            uri: /aai/v8/search/nodes-query
-          route-table-reference:
-            uri: /aai/v8/network/route-table-references/route-table-reference
-          tenant:
-            uri: /aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/tenants/tenant
-          vce:
-            uri: /aai/v8/network/vces/vce
-          vpn-binding:
-            uri: /aai/v8/network/vpn-bindings/vpn-binding
-        v9:
-          cloud-region:
-            uri: /aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic
-          generic-vnf:
-            uri: /aai/v9/network/generic-vnfs/generic-vnf
       retry:
         attempts: '1'
     deleteCinderVolumeV1:

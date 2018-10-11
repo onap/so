@@ -45,6 +45,7 @@ public final class ASDCStatusCallBack implements IStatusCallback {
 
 	@Override
 	public void activateCallback (IStatusData iStatus) {
+		
 		long startTime = System.currentTimeMillis ();
 		UUIDChecker.generateUUID (LOGGER);
 		MsoLogger.setServiceName ("ASDCStatusCallBack");

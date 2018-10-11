@@ -19,15 +19,24 @@
  */
 
 package org.onap.so.bpmn.common.scripts
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+import javax.ws.rs.core.UriBuilder
+
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.onap.so.client.aai.AAIVersion
+import org.onap.so.client.aai.entities.uri.AAIUri
+import org.onap.so.logger.MessageEnum
+import org.onap.so.logger.MsoLogger
+import org.onap.so.openpojo.rules.HasToStringRule
 import org.onap.so.rest.APIResponse;
 import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
-import org.springframework.web.util.UriUtils
-import org.onap.so.logger.MsoLogger
 
+@Deprecated
 class AaiUtil {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AaiUtil.class);
 
@@ -43,121 +52,10 @@ class AaiUtil {
 	public AaiUtil(AbstractServiceTaskProcessor taskProcessor) {
 		this.taskProcessor = taskProcessor
 	}
-	public AaiUtil() {
-	}
 
-	public String getNetworkGenericVnfEndpoint(DelegateExecution execution) {
-		String endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-		def uri = getNetworkGenericVnfUri(execution)
-		msoLogger.debug('AaiUtil.getNetworkGenericVnfEndpoint() - AAI endpoint: ' + endpoint + uri)
-		return endpoint + uri
-	}
-
-	public String getNetworkGenericVnfUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'generic-vnf')
-		msoLogger.debug('AaiUtil.getNetworkGenericVnfUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	public String getNetworkVpnBindingUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'vpn-binding')
-		msoLogger.debug('AaiUtil.getNetworkVpnBindingUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	public String getNetworkPolicyUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'network-policy')
-		msoLogger.debug('AaiUtil.getNetworkPolicyUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	public String getNetworkTableReferencesUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'route-table-reference')
-		msoLogger.debug('AaiUtil.getNetworkTableReferencesUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	public String getNetworkVceUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'vce')
-		msoLogger.debug('AaiUtil.getNetworkVceUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	public String getNetworkL3NetworkUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'l3-network')
-		msoLogger.debug('AaiUtil.getNetworkL3NetworkUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	public String getNetworkDeviceUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'device')
-		msoLogger.debug('AaiUtil.getNetworkDeviceUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	public String getBusinessCustomerUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'customer')
-		msoLogger.debug('AaiUtil.getBusinessCustomerUri() - AAI URI: ' + uri)
-		return uri
-	}
-	
 	public String getBusinessSPPartnerUri(DelegateExecution execution) {
 		def uri = getUri(execution, 'sp-partner')
 		msoLogger.debug('AaiUtil.getBusinessSPPartnerUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	public String getAAIServiceInstanceUri(DelegateExecution execution) {
-		String uri = getBusinessCustomerUri(execution)
-
-		uri = uri +"/" + execution.getVariable("globalSubscriberId") + "/service-subscriptions/service-subscription/" + UriUtils.encode(execution.getVariable("serviceType"),"UTF-8") + "/service-instances/service-instance/" + UriUtils.encode(execution.getVariable("serviceInstanceId"),"UTF-8")
-
-		msoLogger.debug('AaiUtil.getAAIRequestInputUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	//public String getBusinessCustomerUriv7(DelegateExecution execution) {
-	//	//def uri = getUri(execution, BUSINESS_CUSTOMERV7)
-	//	def uri = getUri(execution, 'Customer')
-	//	msoLogger.debug('AaiUtil.getBusinessCustomerUriv7() - AAI URI: ' + uri)
-	//	return uri
-	//}
-
-	public String getCloudInfrastructureCloudRegionEndpoint(DelegateExecution execution) {
-		String endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-		def uri = getCloudInfrastructureCloudRegionUri(execution)
-		msoLogger.debug('AaiUtil.getCloudInfrastructureCloudRegionEndpoint() - AAI endpoint: ' + endpoint + uri)
-		return endpoint + uri
-	}
-
-	public String getCloudInfrastructureCloudRegionUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'cloud-region')
-		msoLogger.debug('AaiUtil.getCloudInfrastructureCloudRegionUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	public String getCloudInfrastructureTenantUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'tenant')
-		msoLogger.debug('AaiUtil.getCloudInfrastructureTenantUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	public String getSearchNodesQueryUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'nodes-query')
-		msoLogger.debug('AaiUtil.getSearchNodesQueryUri() - AAI URI: ' + uri)
-		return uri
-	}
-
-	public String getSearchNodesQueryEndpoint(DelegateExecution execution) {
-		String endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-		def uri = getSearchNodesQueryUri(execution)
-		msoLogger.debug('AaiUtil.getSearchNodesQueryEndpoint() - AAI endpoint: ' + endpoint + uri)
-		return endpoint + uri
-	}
-
-	public String getSearchGenericQueryUri(DelegateExecution execution) {
-		def uri = getUri(execution, 'generic-query')
-		msoLogger.debug('AaiUtil.getSearchGenericQueryUri() - AAI URI: ' + uri)
 		return uri
 	}
 
@@ -186,53 +84,13 @@ class AaiUtil {
 		(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, "Internal Error: One of the following should be defined in MSO URN properties file: ${versionWithResourceKey}, ${versionWithProcessKey}, ${DEFAULT_VERSION_KEY}")
 	}
 
-	public String getMainProcessKey(DelegateExecution execution) {
-		DelegateExecution exec = execution
-
-		while (true) {
-			DelegateExecution parent = exec.getSuperExecution()
-
-			if (parent == null) {
-				parent = exec.getParent()
-
-				if (parent == null) {
-					break
-				}
-			}
-
-			exec = parent
-		}
-
-		return execution.getProcessEngineServices().getRepositoryService()
-			.getProcessDefinition(exec.getProcessDefinitionId()).getKey()
+	public String createAaiUri(AAIUri uri) {
+		return createAaiUri(AAIVersion.valueOf('V' + UrnPropertiesReader.getVariable(DEFAULT_VERSION_KEY)), uri)
 	}
-
-	public String getUri(DelegateExecution execution, resourceName) {
-
-		def processKey = getMainProcessKey(execution)
-
-		//set namespace
-		setNamespace(execution)
-
-		// Check for flow+resource specific first
-		def key = "mso.workflow.${processKey}.aai.${resourceName}.uri"
-		def uri = UrnPropertiesReader.getVariable(key, execution)
-		if(uri) {
-			msoLogger.debug("AaiUtil.getUri() - using flow+resource specific key: ${key}=${uri}")
-			return uri
-		}
-
-		// Check for versioned key
-		def version = getVersion(execution, resourceName, processKey)
-		key = "mso.workflow.default.aai.v${version}.${resourceName}.uri"
-		uri = UrnPropertiesReader.getVariable(key, execution)
-
-		if(uri) {
-			msoLogger.debug("AaiUtil.getUri() - using versioned URI key: ${key}=${uri}")
-			return uri
-		}
-
-		(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, 'Internal Error: AAI URI entry for ' + key + ' not defined in the MSO URN properties file')
+	public String createAaiUri(AAIVersion version, AAIUri uri) {
+		String endpoint = UrnPropertiesReader.getVariable("aai.endpoint")
+		String result = UriBuilder.fromUri(endpoint).path('aai').path(version.toString()).build().toString()
+		return UriBuilder.fromUri(result + uri.build().toString()).build().toString()
 	}
 
 	public String setNamespace(DelegateExecution execution) {
@@ -243,6 +101,18 @@ class AaiUtil {
 		}
 	}
 
+	public String getNamespace() {
+		return getNamespace(AAIVersion.valueOf('V' + UrnPropertiesReader.getVariable(DEFAULT_VERSION_KEY)))
+	}
+
+	public String getNamespace(AAIVersion version) {
+		String namespace = UrnPropertiesReader.getVariable(AAI_NAMESPACE_STRING_KEY)
+		if (namespace == null) {
+		   throw new Exception('Internal Error: AAI Namespace has not been set yet. A getUri() method needs to be invoked first.')
+		}
+
+		return namespace + version
+	}
 	/**
 	 * This method can be used for getting the building namespace out of uri.
 	 *  NOTE: A getUri() method needs to be invoked first.
@@ -253,12 +123,11 @@ class AaiUtil {
 	 *
 	 * @return namespace
 	 */
-
 	public String getNamespaceFromUri(String uri) {
-		 if (aaiNamespace == null) {
+		String namespace = UrnPropertiesReader.getVariable(AAI_NAMESPACE_STRING_KEY)
+		 if (namespace == null) {
 			throw new Exception('Internal Error: AAI Namespace has not been set yet. A getUri() method needs to be invoked first.')
 		}
-		String namespace = aaiNamespace
 		if(uri!=null){
 			String version = getVersionFromUri(uri)
 			return namespace + "v"+version
@@ -296,16 +165,13 @@ class AaiUtil {
 	 * @return version
 	 */
 	private String getVersionFromUri(String uri) {
-		def version = ""
-		def savedVersion = ""
-		for (int x=2; x<6; x++) {
-			version = uri.substring(uri.indexOf("v")+1,  uri.indexOf("v")+x)
-			if (!Character.isDigit(version.charAt(version.size()-1))) {
-				break
-			}
-			savedVersion = version
+
+		Matcher versionRegEx = Pattern.compile("/v(\\d+)").matcher(uri)
+		if (versionRegEx.find()) {
+			return versionRegEx.group(1);
 		}
-		return savedVersion
+
+		return "";
 	}
 
 
@@ -336,7 +202,7 @@ class AaiUtil {
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
-			apiResponse = client.get()
+			apiResponse = client.httpGet()
 
 			msoLogger.trace("COMPLETED Execute AAI Get Process ")
 		}catch(Exception e){
@@ -682,129 +548,5 @@ class AaiUtil {
 			return 0
 		}
 	}
-
-	private def getPInterface(DelegateExecution execution, String aai_uri) {
-
-		String namespace = getNamespaceFromUri(execution, aai_uri)
-		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
-		String serviceAaiPath = aai_endpoint + aai_uri
-
-		APIResponse response = executeAAIGetCall(execution, serviceAaiPath)
-		return new XmlParser().parseText(response.getResponseBodyAsString())
-	}
-
-	// This method checks if interface is remote
-	private def isPInterfaceRemote(DelegateExecution execution, String uri) {
-		if(uri.contains("ext-aai-network")) {
-			return true
-		} else {
-			return false
-		}
-	}
-
-	// This method returns Local and remote TPs information from AAI	
-	public Map getTPsfromAAI(DelegateExecution execution) {
-		Map tpInfo = [:]
-
-		String aai_uri = '/aai/v14/network/logical-links'
-
-		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
-		String serviceAaiPath = aai_endpoint + aai_uri
-
-		APIResponse response = executeAAIGetCall(execution, serviceAaiPath)
-
-		def logicalLinks = new XmlParser().parseText(response.getResponseBodyAsString())
-
-		logicalLinks."logical-link".each { link ->
-			def isRemoteLink = false
-			def pInterfaces = []
-			def relationship = link."relationship-list"."relationship"
-			relationship.each { rel ->
-				if ("ext-aai-network".compareToIgnoreCase("${rel."related-to"[0]?.text()}") == 0) {
-					isRemoteLink = true
-				}
-				if ("p-interface".compareToIgnoreCase("${rel."related-to"[0]?.text()}") == 0) {
-					pInterfaces.add(rel)
-				}
-			}
-
-			// if remote link then process
-			if (isRemoteLink) {
-
-				// find remote p interface
-				def localTP = null
-				def remoteTP = null
-
-				def pInterface0 = pInterfaces[0]
-				def pIntfUrl = "${pInterface0."related-link"[0].text()}"
-
-				if (isRemotePInterface(execution, pIntfUrl)) {
-					remoteTP = pInterfaces[0]
-					localTP = pInterfaces[1]
-				} else {
-					localTP = pInterfaces[0]
-					remoteTP = pInterfaces[1]
-				}
-
-				if (localTP != null && remoteTP != null) {
-				
-					// give local tp
-					def tpUrl = "${localTP."related-link"[0]?.text()}"
-					def intfLocal = getPInterface(execution, "${localTP?."related-link"[0]?.text()}")
-					tpInfo.put("local-access-node-id", tpUrl.split("/")[6])
-				
-					def networkRef = "${intfLocal."network-ref"[0]?.text()}".split("/")
-					if (networkRef.size() == 6) {
-						tpInfo.put("local-access-provider-id", networkRef[1])
-						tpInfo.put("local-access-client-id", networkRef[3])
-						tpInfo.put("local-access-topology-id", networkRef[5])
-					}
-					def ltpIdStr = tpUrl?.substring(tpUrl?.lastIndexOf("/") + 1)
-					if (ltpIdStr?.contains("-")) {
-						tpInfo.put("local-access-ltp-id", ltpIdStr?.substring(ltpIdStr?.lastIndexOf("-") + 1))
-					}
-					
-					// give remote tp
-					tpUrl = "${remoteTP."related-link"[0]?.text()}"
-					def intfRemote = getPInterface(execution, "${remoteTP."related-link"[0].text()}")
-					tpInfo.put("remote-access-node-id", tpUrl.split("/")[6])
-
-					def networkRefRemote = "${intfRemote."network-ref"[0]?.text()}".split("/")
-
-					if (networkRefRemote.size() == 6) {
-						tpInfo.put("remote-access-provider-id", networkRefRemote[1])
-						tpInfo.put("remote-access-client-id", networkRefRemote[3])
-						tpInfo.put("remote-access-topology-id", networkRefRemote[5])
-					}
-					def ltpIdStrR = tpUrl?.substring(tpUrl?.lastIndexOf("/") + 1)
-					if (ltpIdStrR?.contains("-")) {
-						tpInfo.put("remote-access-ltp-id", ltpIdStrR?.substring(ltpIdStr?.lastIndexOf("-") + 1))
-					}
-					return tpInfo
-				}
-			}
-
-		}
-		return tpInfo
-	}
-
-	// this method check if pInterface is remote
-	private def isRemotePInterface(DelegateExecution execution, String uri) {
-		def aai_uri = uri.substring(0, uri.indexOf("/p-interfaces"))
-
-		String namespace = getNamespaceFromUri(execution, aai_uri)
-		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
-		String serviceAaiPath = aai_endpoint + aai_uri
-
-		APIResponse response = executeAAIGetCall(execution, serviceAaiPath)
-		def pnf =  new XmlParser().parseText(response.getResponseBodyAsString())
-
-		def relationship = pnf."relationship-list"."relationship"
-		relationship.each {
-			if ("ext-aai-network".compareToIgnoreCase("${it."related-to"[0]?.text()}") == 0) {
-				return true
-			}
-		}
-		return false
-	}
 }
+

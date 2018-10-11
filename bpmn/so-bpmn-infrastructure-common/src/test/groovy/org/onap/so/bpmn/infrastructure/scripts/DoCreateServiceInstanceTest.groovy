@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -83,7 +83,6 @@ class DoCreateServiceInstanceTest {
         when(mockExecution.getVariable("serviceDecomposition")).thenReturn(decomposition)
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
         when(mockExecution.getVariable("mso.workflow.default.aai.customer.version")).thenReturn("8")
-        when(mockExecution.getVariable("mso.workflow.default.aai.v8.customer.uri")).thenReturn('/aai/v8/business/customers/customer')
 
 
         DoCreateServiceInstance obj = new DoCreateServiceInstance()
@@ -93,7 +92,7 @@ class DoCreateServiceInstanceTest {
         verify(mockExecution).setVariable("sdncCallbackUrl", "http://localhost:28080/mso/SDNCAdapterCallbackService")
     }
 
- 
+
 
     @Test
     void testGetAAICustomerById() {
@@ -101,7 +100,6 @@ class DoCreateServiceInstanceTest {
         when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("12345")
-        when(mockExecution.getVariable("mso.workflow.default.aai.v8.customer.uri")).thenReturn("/aai/v9/business/customers/customer")
         when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
         when(mockExecution.getVariable("mso.workflow.custom.DoCreateServiceInstance.aai.version")).thenReturn('8')

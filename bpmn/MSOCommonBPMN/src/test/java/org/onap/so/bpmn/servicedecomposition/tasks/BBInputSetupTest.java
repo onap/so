@@ -84,6 +84,7 @@ import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.constants.Defaults;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
@@ -317,6 +318,9 @@ public class BBInputSetupTest {
 		RequestInfo requestInfo = new RequestInfo();
 		requestInfo.setSuppressRollback(true);
 		requestDetails.setRequestInfo(requestInfo);
+		CloudConfiguration cloudConfiguration = new CloudConfiguration();
+		cloudConfiguration.setLcpCloudRegionId("myRegionId");
+		requestDetails.setCloudConfiguration(cloudConfiguration);
 		doReturn(requestDetails).when(SPY_bbInputSetupUtils).getRequestDetails(executeBB.getRequestId());
 		Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 		String resourceId = "123";
@@ -351,7 +355,7 @@ public class BBInputSetupTest {
 		lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "instanceId");
 		doReturn(service).when(SPY_bbInputSetupUtils).getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
 		doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("instanceId");
-		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration(), "att-aic");
+		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration());
 
 		doNothing().when(SPY_bbInputSetup).populateObjectsOnAssignAndCreateFlows(requestDetails, service, "bbName",
 				serviceInstance, lookupKeyMap, resourceId, vnfType);
@@ -404,7 +408,7 @@ public class BBInputSetupTest {
 		lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "instanceId");
 		doReturn(service).when(SPY_bbInputSetupUtils).getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
 		doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("instanceId");
-		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration(), "att-aic");
+		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration());
 
 		doNothing().when(SPY_bbInputSetup).populateObjectsOnAssignAndCreateFlows(requestDetails, service, "bbName",
 				serviceInstance, lookupKeyMap, resourceId, vnfType);
@@ -448,7 +452,7 @@ public class BBInputSetupTest {
 
 		doReturn(service).when(SPY_bbInputSetupUtils)
 				.getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
-		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration(), "att-aic");
+		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration());
 		doReturn(project).when(bbInputSetupMapperLayer).mapRequestProject(requestDetails.getProject());
 		doReturn(owningEntity).when(bbInputSetupMapperLayer)
 				.mapRequestOwningEntity(requestDetails.getOwningEntity());
@@ -497,7 +501,7 @@ public class BBInputSetupTest {
 				.getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
 		doReturn(service).when(SPY_bbInputSetupUtils).getCatalogServiceByModelVersionAndModelInvariantUUID(
 				requestDetails.getModelInfo().getModelVersion(), requestDetails.getModelInfo().getModelInvariantId());
-		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration(), "att-aic");
+		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration());
 		doReturn(project).when(bbInputSetupMapperLayer).mapRequestProject(requestDetails.getProject());
 		doReturn(owningEntity).when(bbInputSetupMapperLayer)
 				.mapRequestOwningEntity(requestDetails.getOwningEntity());
@@ -543,7 +547,7 @@ public class BBInputSetupTest {
 				.getURIKeysFromServiceInstance(resourceId);
 		doReturn(service).when(SPY_bbInputSetupUtils)
 				.getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
-		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration(), "att-aic");
+		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration());
 
 		doReturn(customer).when(SPY_bbInputSetup).getCustomerAndServiceSubscription(requestDetails, resourceId);
 		doReturn(serviceSubscription).when(SPY_bbInputSetup).getServiceSubscription(requestDetails, customer);
@@ -769,7 +773,7 @@ public class BBInputSetupTest {
 		orchestrationContext.setIsRollbackEnabled(false);
 
 		CloudRegion cloudRegion = new CloudRegion();
-		cloudRegion.setCloudOwner("att-aic");
+		cloudRegion.setCloudOwner("test-owner-name");
 		cloudRegion.setLcpCloudRegionId("lcpCloudRegionId");
 		cloudRegion.setComplex("complexName");
 		cloudRegion.setTenantId("tenantId");
@@ -792,11 +796,10 @@ public class BBInputSetupTest {
 
 		doReturn(uriKeys).when(SPY_bbInputSetupUtils).getURIKeysFromServiceInstance(serviceInstance.getServiceInstanceId());
 		doReturn(customer).when(SPY_bbInputSetup).mapCustomer(uriKeys.get("global-customer-id"),uriKeys.get("service-type"));
-		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration(), "att-aic");
+		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration());
 		doReturn(orchestrationContext).when(bbInputSetupMapperLayer).mapOrchestrationContext(requestDetails);
 		doReturn(requestContext).when(bbInputSetupMapperLayer).mapRequestContext(requestDetails);
-		doReturn(cloudRegion).when(bbInputSetupMapperLayer).mapCloudRegion(requestDetails.getCloudConfiguration(), aaiCloudRegion,
-				"att-aic");
+		doReturn(cloudRegion).when(bbInputSetupMapperLayer).mapCloudRegion(requestDetails.getCloudConfiguration(), aaiCloudRegion);
 
 		GeneralBuildingBlock actual = SPY_bbInputSetup.populateGBBWithSIAndAdditionalInfo(requestDetails,
 				serviceInstance, executeBB, requestAction, null);
@@ -1769,11 +1772,12 @@ public class BBInputSetupTest {
 				new File(RESOURCE_PATH + "ServiceMacroVfModules.json"), org.onap.so.serviceinstancebeans.Service.class);
 		CloudConfiguration cloudConfig = null;
 		org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = new org.onap.aai.domain.yang.CloudRegion();
+		aaiCloudRegion.setCloudOwner("test-owner-name");
 		Resources resources = serviceMacro.getResources();
-		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(any(CloudConfiguration.class), eq("att-aic"));
+		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(any(CloudConfiguration.class));
 		CloudRegion expected = new CloudRegion();
 		expected.setLcpCloudRegionId("mdt1");
-		expected.setCloudOwner("att-aic");
+		expected.setCloudOwner("test-owner-name");
 		expected.setTenantId("88a6ca3ee0394ade9403f075db23167e");
 		
 		CloudRegion actual = SPY_bbInputSetup.getCloudRegionFromMacroRequest(cloudConfig, resources);
@@ -2124,8 +2128,7 @@ public class BBInputSetupTest {
 		cloudConfig.setLcpCloudRegionId("lcpCloudRegionId");
 		requestDetails.setCloudConfiguration(cloudConfig);
 		org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = Mockito.mock(org.onap.aai.domain.yang.CloudRegion.class);
-		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration(),
-				"att-aic");
+		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration());
 		executeBB.getBuildingBlock().setBpmnFlowName("DeleteNetworkBB");
 		executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
 		SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
@@ -2273,14 +2276,13 @@ public class BBInputSetupTest {
 				any(Service.class), any(String.class));
 
 		org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = Mockito.mock(org.onap.aai.domain.yang.CloudRegion.class);
-		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration(),
-				"att-aic");
+		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration());
 		VolumeGroup volumeGroup = new VolumeGroup();
 		volumeGroup.setVolumeGroupId("volumeGroupId");
 		gBB.getServiceInstance().getVnfs().get(0).getVolumeGroups().add(volumeGroup);
 		org.onap.aai.domain.yang.VolumeGroup aaiVolumeGroup = new org.onap.aai.domain.yang.VolumeGroup();
 		aaiVolumeGroup.setModelCustomizationId("modelCustId");
-		doReturn(aaiVolumeGroup).when(SPY_bbInputSetupUtils).getAAIVolumeGroup("att-aic",
+		doReturn(aaiVolumeGroup).when(SPY_bbInputSetupUtils).getAAIVolumeGroup(Defaults.CLOUD_OWNER.toString(),
 				cloudConfiguration.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
 
 		executeBB.getBuildingBlock().setBpmnFlowName("UnassignVolumeGroupBB");

@@ -23,6 +23,9 @@ package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.rest.APIResponse
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
@@ -76,6 +79,9 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			def aicCloudRegion = getRequiredNodeText(execution, xml,'aic-cloud-region')
 			execution.setVariable('CAAIVfModVG_aicCloudRegion', aicCloudRegion)
 			
+			def cloudOwner = getRequiredNodeText(execution, xml,'cloud-owner')
+			execution.setVariable('CAAIVfModVG_cloudOwner', cloudOwner)
+			
 			def volumeGroupId = getRequiredNodeText(execution, xml,'volume-group-id')
 			execution.setVariable('CAAIVfModVG_volumeGroupId', volumeGroupId)
 
@@ -105,12 +111,10 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			def vnfId = execution.getVariable('CAAIVfModVG_vnfId')
 			def vfModuleId = execution.getVariable('CAAIVfModVG_vfModuleId')
 
-			// Construct endpoint
 			AaiUtil aaiUtil = new AaiUtil(this)
-			def aai_uri = aaiUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + URLEncoder.encode(vnfId, "UTF-8") + '/vf-modules/vf-module/' + URLEncoder.encode(vfModuleId, "UTF-8")
-
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
+			String endPoint = aaiUtil.createAaiUri(uri)
+					
 			try {
 				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
 				msoLogger.debug("aaiResponse GET TO AAI Endpoint: " + endPoint)
@@ -166,17 +170,16 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 						
 			// Construct payload by creating a Volume Group relationhip and inserting it into the VF Module
 			def aicCloudRegion = execution.getVariable('CAAIVfModVG_aicCloudRegion')
+			def cloudOwner = execution.getVariable('CAAIVfModVG_cloudOwner')
 			def volumeGroupId = execution.getVariable('CAAIVfModVG_volumeGroupId')
-			def Node vgRelationshipNode = createVolumeGroupRelationshipNode(aicCloudRegion, volumeGroupId)
+			def Node vgRelationshipNode = createVolumeGroupRelationshipNode(cloudOwner, aicCloudRegion, volumeGroupId)
 			insertVolumeGroupRelationshipNode(vfModuleNode, vgRelationshipNode)
 			def payload = utils.nodeToString(vfModuleNode)
 
-			// Construct endpoint
 			AaiUtil aaiUtil = new AaiUtil(this)
-			def aai_uri = aaiUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + URLEncoder.encode(vnfId, "UTF-8") + '/vf-modules/vf-module/' + URLEncoder.encode(vfModuleId, "UTF-8")
-
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
+			String endPoint = aaiUtil.createAaiUri(uri)
+	
 			try {
 				msoLogger.debug("CreateAAIVfModuleVolume Sendind PUT to AAI Endpoint \n " + endPoint + " with payload \n " + payload)
 				msoLogger.debug('sending PUT to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload)
@@ -212,12 +215,12 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 	 * @param volumeGroupId Volume Group ID to use in the Volume Group relationship
 	 * @return a Node representing the new Volume Group relationship
 	 */
-	private Node createVolumeGroupRelationshipNode(String aicCloudRegion, String volumeGroupId) {
+	private Node createVolumeGroupRelationshipNode(String cloudOwner, String aicCloudRegion, String volumeGroupId) {
 		
 		def Node relatedTo = new Node(null, 'related-to', 'volume-group')
 		
 		def Node relationshipKeyCO = new Node(null, 'relationship-key', 'cloud-region.cloud-owner')
-		def Node relationshipValueCO = new Node(null, 'relationship-value', 'att-aic')
+		def Node relationshipValueCO = new Node(null, 'relationship-value', cloudOwner)
 		def Node relationshipDataCO = new Node(null, 'relationship-data')
 		relationshipDataCO.append(relationshipKeyCO)
 		relationshipDataCO.append(relationshipValueCO)

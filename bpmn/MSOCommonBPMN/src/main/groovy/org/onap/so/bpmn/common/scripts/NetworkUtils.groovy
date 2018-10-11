@@ -20,42 +20,28 @@
 
 package org.onap.so.bpmn.common.scripts;
 
-import org.apache.commons.lang3.*
-
-import groovy.xml.XmlUtil
-import org.onap.so.bpmn.core.UrnPropertiesReader
-
+import javax.ws.rs.core.UriBuilder
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
-import javax.xml.transform.TransformerException
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
-import org.camunda.bpm.engine.delegate.BpmnError
+import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-
-import org.w3c.dom.NamedNodeMap
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MsoLogger
-
-import org.onap.so.logger.MessageEnum
-
-
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
 import org.w3c.dom.Document
 import org.w3c.dom.Element
-import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource
+
+import groovy.xml.XmlUtil
 
 
 /**
@@ -332,41 +318,9 @@ class NetworkUtils {
 
 		return requestPayload
 	}
-
-	def String createCloudRegionVolumeRequest(groupId, volumeName, vnfType, tenantId, cloudRegion, namespace, modelCustomizationId) {
-
-				String requestPayload =
-				"""<volume-group xmlns="${namespace}">
-				<volume-group-id>${MsoUtils.xmlEscape(groupId)}</volume-group-id>
-				<volume-group-name>${MsoUtils.xmlEscape(volumeName)}</volume-group-name>
-				<heat-stack-id></heat-stack-id>
-				<vnf-type>${MsoUtils.xmlEscape(vnfType)}</vnf-type>
-				<orchestration-status>Pending</orchestration-status>
-				<vf-module-model-customization-id>${MsoUtils.xmlEscape(modelCustomizationId)}</vf-module-model-customization-id>
-				<relationship-list>
-				   <relationship>
-					   <related-to>tenant</related-to>
-					   <relationship-data>
-						   <relationship-key>tenant.tenant-id</relationship-key>
-						   <relationship-value>${MsoUtils.xmlEscape(tenantId)}</relationship-value>
-					   </relationship-data>
-					   <relationship-data>
-						   <relationship-key>cloud-region.cloud-owner</relationship-key>
-						   <relationship-value>att-aic</relationship-value>
-					   </relationship-data>
-					   <relationship-data>
-						   <relationship-key>cloud-region.cloud-region-id</relationship-key>
-						   <relationship-value>${MsoUtils.xmlEscape(cloudRegion)}</relationship-value>
-					   </relationship-data>
-				   </relationship>
-			   </relationship-list>
-		   </volume-group>"""
-
-				return requestPayload
-			}
-
-	def String createCloudRegionVolumeRequest(groupId, volumeName, vnfType, vnfId, tenantId, cloudRegion, namespace, modelCustomizationId) {
-
+	
+	def String createCloudRegionVolumeRequest(groupId, volumeName, vnfType, vnfId, tenantId, cloudOwner, cloudRegion, namespace, modelCustomizationId) {
+		
 		String requestPayload =
 		"""<volume-group xmlns="${namespace}">
 			<volume-group-id>${MsoUtils.xmlEscape(groupId)}</volume-group-id>
@@ -391,7 +345,7 @@ class NetworkUtils {
 				   </relationship-data>
 				   <relationship-data>
 					   <relationship-key>cloud-region.cloud-owner</relationship-key>
-					   <relationship-value>att-aic</relationship-value>
+					   <relationship-value>${cloudOwner}</relationship-value>
 				   </relationship-data>
 				   <relationship-data>
 					   <relationship-key>cloud-region.cloud-region-id</relationship-key>
@@ -858,10 +812,8 @@ class NetworkUtils {
 				   if (utils.getNodeText(relationshipXml, 'related-to') == "cloud-region") {
 					  def relatedLink = utils.getNodeText(relationshipXml, 'related-link')
 					  if (relatedLink != null || relatedLink != "") {
-						 lcpCloudRegion = relatedLink.substring(relatedLink.indexOf("/att-aic/")+9, relatedLink.length())
-						 if (lcpCloudRegion.contains('/')) {
-							 lcpCloudRegion = relatedLink.substring(relatedLink.indexOf("/att-aic/")+9, relatedLink.length()-1)
-						 }
+					  	AAIResourceUri aaiUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.CLOUD_REGION, UriBuilder.fromUri(relatedLink).build())
+					  	lcpCloudRegion = aaiUri.getURIKeys().getOrDefault("cloud-region", "")
 					  }
 				   }
 				}

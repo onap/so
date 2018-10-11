@@ -152,26 +152,15 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 				oStatus = "Created"
 			}
 
-			String statusLine = isBlank(oStatus) ? "" : "<orchestration-status>${MsoUtils.xmlEscape(oStatus)}</orchestration-status>"
-
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
-			String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
-			String serviceInstanceData =
-					"""<service-instance xmlns=\"${namespace}\">
-			        <service-instance-id>${MsoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
-			        <service-instance-name>${MsoUtils.xmlEscape(serviceInstanceName)}</service-instance-name>
-					<service-type>${MsoUtils.xmlEscape(aaiServiceType)}</service-type>
-					<service-role>${MsoUtils.xmlEscape(aaiServiceRole)}</service-role>
-					${statusLine}
-				    <model-invariant-id>${MsoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-id>
-				    <model-version-id>${MsoUtils.xmlEscape(modelUuid)}</model-version-id>
-				    <input-parameters>${MsoUtils.xmlEscape(uuiRequest)}</input-parameters>
-					</service-instance>""".trim()
-			execution.setVariable("serviceInstanceData", serviceInstanceData)
-			msoLogger.debug(serviceInstanceData)
-			msoLogger.info(" aai_uri " + aai_uri + " namespace:" + namespace)
-			msoLogger.info(" 'payload' to create Service Instance in AAI - " + "\n" + serviceInstanceData)
+			org.onap.aai.domain.yang.ServiceInstance si = new org.onap.aai.domain.yang.ServiceInstance()
+			si.setServiceInstanceName(serviceInstanceName)
+			si.setServiceType(aaiServiceType)
+			si.setServiceRole(aaiServiceRole)
+			si.setOrchestrationStatus(oStatus)
+			si.setModelInvariantId(modelInvariantUuid)
+			si.setModelVersionId(modelUuid)
+			si.setInputParameters(uuiRequest)
+			execution.setVariable("serviceInstanceData", si)
 
 		} catch (BpmnError e) {
 			throw e;
@@ -273,41 +262,35 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	}
 
 	//TODO use create if not exist
-	public void postProcessAAIPUT(DelegateExecution execution) {
-		msoLogger.trace("postProcessAAIPUT ")
+	public void createServiceInstance(DelegateExecution execution) {
+		msoLogger.trace("createServiceInstance ")
 		String msg = ""
+		String serviceInstanceId = UUID.randomUUID().toString()
 		try {
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			boolean succInAAI = execution.getVariable("GENPS_SuccessIndicator")
-			if(!succInAAI){
-				msoLogger.info("Error putting Service-instance in AAI", + serviceInstanceId)
-				WorkflowException workflowException = execution.getVariable("WorkflowException")
-				msoLogger.debug("workflowException: " + workflowException)
-				if(workflowException != null){
-					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-				}
-			}
-			else
-			{
-				//start rollback set up
-				RollbackData rollbackData = new RollbackData()
-				def disableRollback = execution.getVariable("disableRollback")
-				rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
-				rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
-				rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", serviceInstanceId)
-				rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
-				rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
-				execution.setVariable("rollbackData", rollbackData)
-			}
+			org.onap.aai.domain.yang.ServiceInstance si = execution.getVariable("serviceInstanceData")
+
+			AAIResourcesClient client = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), serviceInstanceId)
+			client.create(uri, si)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
-			msg = "Exception in DoCreateServiceInstance.postProcessAAIDEL. " + ex.getMessage()
+			//start rollback set up
+			RollbackData rollbackData = new RollbackData()
+			def disableRollback = execution.getVariable("disableRollback")
+			rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
+			rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
+			rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", serviceInstanceId)
+			rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
+			rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
+			execution.setVariable("rollbackData", rollbackData)
+
+			msg = "Exception in DoCreateServiceInstance.createServiceInstance. " + ex.getMessage()
 			msoLogger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit postProcessAAIPUT ")
+		msoLogger.trace("Exit createServiceInstance ")
 	}
 
 	/**
@@ -469,7 +452,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         msoLogger.trace("COMPLETED preInitResourcesOperStatus Process ")
 	}
 
-	// if site location is in local Operator, create all resources in local ONAP; 
+	// if site location is in local Operator, create all resources in local ONAP;
 	// if site location is in 3rd Operator, only process sp-partner to create all resources in 3rd ONAP
 	public void doProcessSiteLocation(DelegateExecution execution){
 		msoLogger.trace("======== Start doProcessSiteLocation Process ======== ")

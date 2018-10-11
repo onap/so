@@ -104,6 +104,7 @@ public class WorkflowAction {
 	private static final String USERPARAMSERVICE = "service";
 	private static final String supportedTypes = "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances";
 	private static final String HOMINGSOLUTION = "Homing_Solution";
+	private static final String FABRIC_CONFIGURATION = "FabricConfiguration";	
 	private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
 	
 	@Autowired
@@ -177,6 +178,7 @@ public class WorkflowAction {
 				if (orchFlows == null || orchFlows.isEmpty()) {
 					orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte);
 				}
+				orchFlows = filterOrchFlows(orchFlows, resourceType, execution);
 				String key = "";
 				ModelInfo modelInfo = sIRequest.getRequestDetails().getModelInfo();
 				if(modelInfo.getModelType().equals(ModelType.service)) {
@@ -238,7 +240,7 @@ public class WorkflowAction {
 						&& (requestAction.equalsIgnoreCase("activateInstance")
 								|| requestAction.equalsIgnoreCase("unassignInstance")
 								|| requestAction.equalsIgnoreCase("deleteInstance")
-								|| requestAction.equalsIgnoreCase("activateFabricConfiguration"))) {
+								|| requestAction.equalsIgnoreCase("activate" + FABRIC_CONFIGURATION))) {
 					// SERVICE-MACRO-ACTIVATE, SERVICE-MACRO-UNASSIGN, and
 					// SERVICE-MACRO-DELETE
 					// Will never get user params with service, macro will have
@@ -619,13 +621,13 @@ public class WorkflowAction {
 	}
 	
 
-	private List<String> traverseCatalogDbForConfiguration(String vnfCustomizationUUID, String vfModuleCustomizationUUID) {
+	protected List<String> traverseCatalogDbForConfiguration(String vnfCustomizationUUID, String vfModuleCustomizationUUID) {
 		List<String> configurations = new ArrayList<>();
 		try{
 			List<CvnfcCustomization> cvnfcCustomizations = catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(vnfCustomizationUUID, vfModuleCustomizationUUID);
 			for(CvnfcCustomization cvnfc : cvnfcCustomizations){
 				for(VnfVfmoduleCvnfcConfigurationCustomization customization : cvnfc.getVnfVfmoduleCvnfcConfigurationCustomization()){
-					if(customization.getConfigurationResource().getToscaNodeType().contains("FabricConfiguration")){
+					if(customization.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)){
 						configurations.add(customization.getConfigurationResource().getModelUUID());
 					}
 				}
@@ -963,6 +965,17 @@ public class WorkflowAction {
 		}
 		}
 		return listToExecute;
+	}
+	
+	protected List<OrchestrationFlow> filterOrchFlows(List<OrchestrationFlow> orchFlows, WorkflowType resourceType, DelegateExecution execution) {
+		List<OrchestrationFlow> result = new ArrayList<>(orchFlows);
+		if (resourceType.equals(WorkflowType.VFMODULE)) {
+			List<String> fabricCustomizations = traverseCatalogDbForConfiguration((String)execution.getVariable("vnfId"), (String)execution.getVariable("vfModuleId"));
+			if (fabricCustomizations.isEmpty()) {
+				result = orchFlows.stream().filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION)).collect(Collectors.toList());
+			}
+		}
+		return result;
 	}
 
 	protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {

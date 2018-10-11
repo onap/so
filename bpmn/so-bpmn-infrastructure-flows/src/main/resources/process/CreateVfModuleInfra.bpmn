@@ -32,6 +32,7 @@
         <camunda:in source="CVFMI_globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="CVFMI_sdncVersion" target="sdncVersion" />
         <camunda:in source="CVFMI_lcpCloudRegionId" target="lcpCloudRegionId" />
+        <camunda:in source="CVFMI_cloudOwner" target="cloudOwner" />
         <camunda:in source="CVFMI_tenantId" target="tenantId" />
         <camunda:in source="CVFMI_vfModuleId" target="vfModuleId" />
         <camunda:in source="CVFMI_vfModuleModelInfo" target="vfModuleModelInfo" />

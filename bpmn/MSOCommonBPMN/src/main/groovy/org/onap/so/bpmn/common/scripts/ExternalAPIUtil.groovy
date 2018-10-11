@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved. 
+ * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,11 +31,11 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class ExternalAPIUtil {
-	
+
 	String Prefix="EXTAPI_"
 
 	public MsoUtils utils = new MsoUtils()
-	
+
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExternalAPIUtil.class)
@@ -71,16 +71,16 @@ class ExternalAPIUtil {
             "\t\t\t\"serviceCharacteristic\": [ \n" +
             "<_requestInputs_> \n" +
             "\t\t\t]  \n" +
-        "\t\t}\n" +   
+        "\t\t}\n" +
     "\t}]\n" +
 	"}"
-	
+
 	public static final String RequestInputsTemplate =
 	"{ \n" +
     "\t\"name\": <inputName>, \n" +
     "\t\"value\": { \n" +
         "\t\t\"serviceCharacteristicValue\": <inputValue> \n" +
-    "\t} \n" + 
+    "\t} \n" +
     "}"
 
 	public ExternalAPIUtil() {
@@ -93,11 +93,11 @@ class ExternalAPIUtil {
 //			msoLogger.debug("ExternalAPIUtil.getUri: " + uri)
 //			return uri
 //		}
-//		
+//
 //		exceptionUtil.buildAndThrowWorkflowException(execution, 9999, 'ExternalAPI URI not find')
 //	}
-	
-	public String setTemplate(String template, Map<String, String> valueMap) {		
+
+	public String setTemplate(String template, Map<String, String> valueMap) {
 		msoLogger.debug("ExternalAPIUtil setTemplate", true);
 		StringBuffer result = new StringBuffer();
 
@@ -143,7 +143,7 @@ class ExternalAPIUtil {
 			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
 				client.addAuthorizationHeader(basicAuthCred)
 			}
-			apiResponse = client.get()
+			apiResponse = client.httpGet()
 
 			msoLogger.debug( "======== COMPLETED Execute ExternalAPI Get Process ======== ")
 		}catch(Exception e){

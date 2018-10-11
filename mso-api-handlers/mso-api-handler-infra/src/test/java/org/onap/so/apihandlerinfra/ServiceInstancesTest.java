@@ -2302,4 +2302,94 @@ public class ServiceInstancesTest extends BaseTest{
           RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
           assertEquals("Exception caught mapping Camunda JSON response to object", realResponse.getServiceException().getText());
     }
+    @Test
+    public void createServiceInstanceDuplicateError() throws IOException{
+		stubFor(post(urlMatching(".*/infraActiveRequests/checkInstanceNameDuplicate"))
+  				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+  						.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
+          
+        uri = servInstanceuri + "v5/serviceInstances";
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        assertEquals("Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error", realResponse.getServiceException().getText());
+    }
+    @Test
+    public void createServiceInstanceSaveError() throws IOException{
+    	ServiceRecipe serviceRecipe = new ServiceRecipe();
+        serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
+        serviceRecipe.setServiceModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+        serviceRecipe.setAction(Action.createInstance.toString());
+        serviceRecipe.setId(1);
+        serviceRecipe.setRecipeTimeout(180);
+        Service defaultService = new Service();
+        defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
+		stubFor(post(urlMatching(".*/infraActiveRequests/"))
+  				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+  						.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
+		stubFor(get(urlMatching(".*/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
+
+        stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
+          
+        uri = servInstanceuri + "v5/serviceInstances";
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        assertEquals("Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error", realResponse.getServiceException().getText());
+    }
+    @Test
+    public void createPortConfigurationSaveError() throws IOException {
+    	stubFor(post(urlMatching(".*/infraActiveRequests/"))
+  				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+  						.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
+        stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        
+        HttpHeaders headers = new HttpHeaders();
+        
+        uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations";
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstancePortConfiguration.json"), uri, HttpMethod.POST, headers);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        assertEquals("Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error", realResponse.getServiceException().getText());
+    }
+    @Test
+    public void createPortConfigDbUpdateError() throws IOException {
+    	stubFor(post(urlMatching(".*/infraActiveRequests/"))
+  				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+  						.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
+    	
+        uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations";
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceParseFail.json"), uri, HttpMethod.POST);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        assertEquals("Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error", realResponse.getServiceException().getText());
+    }
 }

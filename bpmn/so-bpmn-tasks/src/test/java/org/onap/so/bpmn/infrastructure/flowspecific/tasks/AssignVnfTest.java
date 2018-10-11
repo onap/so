@@ -33,6 +33,7 @@ import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
+import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AssignVnfTest extends BaseTaskTest {
@@ -87,10 +88,10 @@ public class AssignVnfTest extends BaseTaskTest {
 		assignVnf.createInstanceGroups(execution);
 		verify(aaiInstanceGroupResources, times(1)).createInstanceGroup(instanceGroup1);
 		verify(aaiInstanceGroupResources, times(1)).createInstanceGroup(instanceGroup2);
-		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup1, genericVnf);
-		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup2, genericVnf);
-		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup3, genericVnf);
-		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup4, genericVnf);
+		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup1, genericVnf, AAIEdgeLabel.BELONGS_TO);
+		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup2, genericVnf, AAIEdgeLabel.BELONGS_TO);
+		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup3, genericVnf, AAIEdgeLabel.USES);
+		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup4, genericVnf, AAIEdgeLabel.USES);
 	}
 	
 	@Test

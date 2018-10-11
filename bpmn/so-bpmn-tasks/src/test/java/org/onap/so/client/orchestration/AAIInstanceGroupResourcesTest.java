@@ -40,6 +40,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 @RunWith(MockitoJUnitRunner.class)
@@ -84,6 +85,12 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup{
 	public void connectInstanceGroupTest() throws Exception {
 		aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf);
 		verify(MOCK_aaiResourcesClient, times(1)).connect(eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())), eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId())));
+	}
+	
+	@Test
+	public void connectInstanceGroupWithEdgeTest() throws Exception {
+		aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.BELONGS_TO);
+		verify(MOCK_aaiResourcesClient, times(1)).connect(eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())), eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId())), eq(AAIEdgeLabel.BELONGS_TO));
 	}
 	
 	@Test

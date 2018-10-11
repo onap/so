@@ -39,6 +39,10 @@ import org.onap.so.bpmn.core.domain.ModuleResource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.graphinventory.entities.uri.Depth
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
@@ -255,10 +259,9 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			def vnfId = execution.getVariable('vnfId')
 			
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String  aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
+			String endPoint = aaiUriUtil.createAaiUri(uri)
+			
 			msoLogger.debug("AAI endPoint: " + endPoint)
 
 			try {
