@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_69a0e690",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/rest/CatalogDbAdapterRest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-10-11T12:01:39Z",
+      "side": 1,
+      "message": "Why are you querying it this way?  Why can you not just grab the service, then do a .getCustomizations()?",
+      "range": {
+        "startLine": 330,
+        "startChar": 52,
+        "endLine": 330,
+        "endChar": 96
+      },
+      "revId": "3fd754cefd6d58befe5771dd9b610ff457283ed8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
