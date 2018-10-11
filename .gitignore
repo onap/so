@@ -20,3 +20,4 @@ packages/root-pack-extras/config-resources/mariadb/db-sql-scripts/main-schemas/M
 packages/root-pack-extras/config-resources/mariadb/db-sql-scripts/main-schemas/MySQL-Requests-schema.sql
 **/bin/
 /tattletale/
+/.metadata/

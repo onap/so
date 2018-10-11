@@ -52,7 +52,6 @@ export class DataService {
   getProcessInstanceId(requestId): Observable<HttpResponse<ProcessInstanceId>> {
     var url = environment.soMonitoringBackendURL + 'process-instance-id/' + requestId;
     console.log(requestId);
-    console.log(url);
     return this.http.get<ProcessInstanceId>(url, { observe: 'response' })
       .pipe(
         catchError(this.httpErrorHandlerService.handleError("GET", url))
@@ -92,5 +91,4 @@ export class DataService {
       catchError(this.httpErrorHandlerService.handleError("GET", url))
     );
   }
-
 }

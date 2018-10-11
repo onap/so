@@ -24,14 +24,20 @@ import { TestBed, inject } from '@angular/core/testing';
 
 import { ToastrNotificationService } from './toastr-notification-service.service';
 
+class StubbedToastrNotificationService extends ToastrNotificationService {
+  toastrSettings() {
+  }
+}
+
 describe('ToasterNotificationService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ToastrNotificationService]
+      providers: [ToastrNotificationService,
+        { provide: ToastrNotificationService, useClass: StubbedToastrNotificationService }]
     });
   });
 
-  it('should be created', inject([ToastrNotificationService], (service: ToastrNotificationService) => {
+  it('component should be created', inject([ToastrNotificationService], (service: ToastrNotificationService) => {
     expect(service).toBeTruthy();
   }));
 });
