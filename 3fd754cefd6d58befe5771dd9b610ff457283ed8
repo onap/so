@@ -22,6 +22,80 @@
       "revId": "3fd754cefd6d58befe5771dd9b610ff457283ed8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_89b0aade",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/rest/CatalogDbAdapterRest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-10-11T12:04:19Z",
+      "side": 1,
+      "message": "ret.setNetworkResourceCustomization(service.getNetworkCustomizations())",
+      "range": {
+        "startLine": 367,
+        "startChar": 20,
+        "endLine": 367,
+        "endChar": 51
+      },
+      "revId": "3fd754cefd6d58befe5771dd9b610ff457283ed8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_49cac250",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/rest/CatalogDbAdapterRest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-10-11T12:04:19Z",
+      "side": 1,
+      "message": "ret.setAllottedResourceCustomization(service.getAllottedResourceCustomizations())",
+      "revId": "3fd754cefd6d58befe5771dd9b610ff457283ed8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_29aade70",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/NetworkResourceCustomizationToService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-10-11T12:04:19Z",
+      "side": 1,
+      "message": "This class should not be created, we should not have an entity for a join table, we should not query the join table directly you should query the entities on either side",
+      "revId": "3fd754cefd6d58befe5771dd9b610ff457283ed8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_e9bb76c2",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/NetworkResourceCustomizationToServiceRepository.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-10-11T12:04:19Z",
+      "side": 1,
+      "message": "This class is not needed, you would query the service, by uuid then get the NetworkResourceCustomizations.",
+      "revId": "3fd754cefd6d58befe5771dd9b610ff457283ed8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
