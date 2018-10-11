@@ -23,15 +23,18 @@ package org.onap.so.client.adapter.vnf.mapper;
 import static java.util.Arrays.asList;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
-import javax.validation.Valid;
 
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
@@ -303,6 +306,9 @@ public class VnfAdapterVfModuleObjectMapper {
 										buildVfModuleSriovParameters(paramsMap, network, networkKey);									
 										// IPV4 and IPV6 Addresses
 										buildVfModuleNetworkInformation(paramsMap, network, key, networkKey);
+										
+										buildVlanInformation(paramsMap, network, key, networkKey);
+										
 									}
 								}
 							}
@@ -315,6 +321,36 @@ public class VnfAdapterVfModuleObjectMapper {
 		}
 	}
 	
+	protected void buildVlanInformation(Map<String, String> paramsMap,
+			GenericResourceApiVmNetworkData network, String key, String networkKey) {
+		
+		String networkString = convertToString(network);
+		String vlanFilterKey = key + UNDERSCORE + networkKey + UNDERSCORE + "vlan_filter";
+		String privateVlansKey = key + UNDERSCORE + networkKey + UNDERSCORE + "private_vlans";
+		String publicVlansKey = key + UNDERSCORE + networkKey + UNDERSCORE + "public_vlans";
+		String guestVlansKey = key + UNDERSCORE + networkKey + UNDERSCORE + "guest_vlans";
+		
+		if (network.getSegmentationId() != null) {
+			paramsMap.put(vlanFilterKey, network.getSegmentationId());
+		}
+		
+		List<String> privateVlans = jsonPath.locateResultList(networkString, "$.related-networks.related-network[?(@.vlan-tags.is-private == true)].vlan-tags.upper-tag-id");
+		List<String> publicVlans = jsonPath.locateResultList(networkString, "$.related-networks.related-network[?(@.vlan-tags.is-private == false)].vlan-tags.upper-tag-id");
+		List<String> concat = new ArrayList<>(privateVlans);
+		concat.addAll(publicVlans);
+		Collection<String> guestVlans = new HashSet<>(concat);
+		
+		if (!privateVlans.isEmpty()) {
+			paramsMap.put(privateVlansKey, Joiner.on(",").join(privateVlans));
+		}
+		if (!publicVlans.isEmpty()) {
+			paramsMap.put(publicVlansKey, Joiner.on(",").join(publicVlans));
+		}
+		if (!guestVlans.isEmpty()) {
+			paramsMap.put(guestVlansKey, Joiner.on(",").join(guestVlans));
+		}
+	}
+
 	private void buildVfModuleVmNames(Map<String,String> paramsMap, GenericResourceApiVmTopologyData vm, String key) {
 		String values = "";
 		GenericResourceApiVmtopologydataVmNames vmNames = vm.getVmNames();

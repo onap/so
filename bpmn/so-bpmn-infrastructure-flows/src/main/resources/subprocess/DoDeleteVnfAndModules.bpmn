@@ -193,6 +193,7 @@ ddvam.validateSDNCResponse(execution, response, "unassign")]]></bpmn2:script>
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
         <camunda:in source="vnfId" target="vnfId" />
+        <camunda:in source="cloudOwner" target="cloudOwner" />
         <camunda:in source="lcpCloudRegionId" target="lcpCloudRegionId" />
         <camunda:in source="tenantId" target="tenantId" />
         <camunda:in source="DDVAM_sdncVersion" target="sdncVersion" />

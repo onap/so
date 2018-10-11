@@ -20,9 +20,11 @@
 
 package org.onap.so.client.sdnc.mapper;
 
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 import java.util.HashMap;
 
@@ -32,28 +34,31 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
-import org.onap.so.bpmn.common.data.TestDataSetup;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
-import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoConfiguration;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
-import org.onap.so.client.sdnc.beans.SDNCSvcAction;
-
 import org.onap.sdnc.northbound.client.model.GenericResourceApiConfigurationinformationConfigurationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiGcrequestinputGcRequestInput;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkinformationNetworkInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiOnapmodelinformationOnapModelInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiSdncrequestheaderSdncRequestHeader;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceinformationServiceInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiSvcActionEnumeration;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfinformationVnfInformation;
+import org.onap.so.bpmn.common.data.TestDataSetup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoConfiguration;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
+import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 
 
-public class GeneralTopologyObjectMapperTest  extends TestDataSetup{
+public class GeneralTopologyObjectMapperTest  extends TestDataSetup {
 	@InjectMocks
 	private GeneralTopologyObjectMapper genObjMapper = new GeneralTopologyObjectMapper();
 
@@ -221,5 +226,56 @@ public class GeneralTopologyObjectMapperTest  extends TestDataSetup{
 		assertNull(gcRequestInput.getOnapModelInformation());
 		assertEquals(vnf.getVnfId(),gcRequestInput.getVnfId());
 		assertNotNull(gcRequestInput.getVnfId());
+	}
+	
+	@Test
+	public void buildNetworkInformationTest() {
+		
+		L3Network network = new L3Network();
+		ModelInfoNetwork modelInfoNetwork = new ModelInfoNetwork();
+		modelInfoNetwork.setModelInvariantUUID("my-uuid");
+		modelInfoNetwork.setModelName("my-model-name");
+		modelInfoNetwork.setModelVersion("my-model-version");
+		modelInfoNetwork.setModelUUID("my-model-uuid");
+		modelInfoNetwork.setModelCustomizationUUID("my-customization-uuid");
+		network.setModelInfoNetwork(modelInfoNetwork);
+		network.setNetworkId("my-network-id");
+		network.setNetworkType("my-network-type");
+		network.setNetworkTechnology("my-network-technology");
+		
+		GenericResourceApiNetworkinformationNetworkInformation networkInformation = new GenericResourceApiNetworkinformationNetworkInformation();
+		GenericResourceApiOnapmodelinformationOnapModelInformation onapModelInformation = new GenericResourceApiOnapmodelinformationOnapModelInformation();
+		networkInformation.setNetworkId("my-network-id");
+		networkInformation.setNetworkType("my-network-type");
+		networkInformation.networkTechnology("my-network-technology");
+		networkInformation.setFromPreload(null);
+		onapModelInformation.setModelInvariantUuid("my-uuid");
+		onapModelInformation.setModelName("my-model-name");
+		onapModelInformation.setModelVersion("my-model-version");
+		onapModelInformation.setModelUuid("my-model-uuid");
+		onapModelInformation.setModelCustomizationUuid("my-customization-uuid");
+		networkInformation.setOnapModelInformation(onapModelInformation);
+		
+		assertThat(networkInformation, sameBeanAs(genObjMapper.buildNetworkInformation(network)));
+		
+	}
+	
+	@Test
+	public void buildNetworkInformationNoModelTest() {
+		
+		L3Network network = new L3Network();
+		network.setNetworkId("my-network-id");
+		network.setNetworkType("my-network-type");
+		network.setNetworkTechnology("my-network-technology");
+		
+		GenericResourceApiNetworkinformationNetworkInformation networkInformation = new GenericResourceApiNetworkinformationNetworkInformation();
+		networkInformation.setNetworkId("my-network-id");
+		networkInformation.setNetworkType("my-network-type");
+		networkInformation.networkTechnology("my-network-technology");
+		networkInformation.setFromPreload(null);
+		
+		
+		assertThat(networkInformation, sameBeanAs(genObjMapper.buildNetworkInformation(network)));
+		
 	}
 }

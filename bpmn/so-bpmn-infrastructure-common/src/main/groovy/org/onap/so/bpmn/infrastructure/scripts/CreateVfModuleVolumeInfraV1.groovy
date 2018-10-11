@@ -109,6 +109,10 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		def lcpCloudRegionId = requestMap.requestDetails.cloudConfiguration.lcpCloudRegionId
 		execution.setVariable('lcpCloudRegionId', lcpCloudRegionId)
 		
+		// cloudOwner
+		def cloudOwner = requestMap.requestDetails.cloudConfiguration.cloudOwner
+		execution.setVariable('cloudOwner', cloudOwner)
+		
 		// tenant
 		def tenantId = requestMap.requestDetails.cloudConfiguration.tenantId
 		execution.setVariable('tenantId', tenantId)

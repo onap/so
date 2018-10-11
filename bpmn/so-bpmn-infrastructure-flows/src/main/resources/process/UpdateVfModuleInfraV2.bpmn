@@ -164,6 +164,7 @@ uvfm.vfFlagSet(execution)]]></bpmn2:script>
         <camunda:in source="UPDVfModI_vnfModelInfo" target="vnfModelInfo" />
         <camunda:in source="UPDVfModI_globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="UPDVfModI_lcpCloudRegionId" target="lcpCloudRegionId" />
+        <camunda:in source="UPDVfModI_cloudOwner" target="cloudOwner" />
         <camunda:in source="UPDVfModI_tenantId" target="tenantId" />
         <camunda:in source="UPDVfModI_sdncVersion" target="sdncVersion" />
         <camunda:in source="UPDVfModI_vfModuleModelInfo" target="vfModuleModelInfo" />

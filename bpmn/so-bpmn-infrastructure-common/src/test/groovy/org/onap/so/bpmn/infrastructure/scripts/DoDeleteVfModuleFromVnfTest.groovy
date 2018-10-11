@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,7 +85,7 @@ class DoDeleteVfModuleFromVnfTest {
         Mockito.verify(mockExecution).setVariable("sdncCallbackUrl", "http://localhost:8090/SDNCAdapterCallback")
     }
 
- 
+
 
     @Test
     void testDeleteNetworkPoliciesFromAAI() {
@@ -106,7 +106,7 @@ class DoDeleteVfModuleFromVnfTest {
         Mockito.verify(mockExecution).setVariable("DCVFM_aaiQueryNetworkPolicyByFqdnReturnCode", 200)
     }
 
-   
+
     @Test
     void testQueryAAIForVfModule() {
         ExecutionEntity mockExecution = setupMock()
@@ -115,7 +115,6 @@ class DoDeleteVfModuleFromVnfTest {
         when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("mso.workflow.global.default.aai.namespace")
         when(mockExecution.getVariable("mso.workflow.default.aai.generic-vnf.version")).thenReturn("8")
-        when(mockExecution.getVariable("mso.workflow.default.aai.v8.generic-vnf.uri")).thenReturn("/aai/v8/network/generic-vnfs/generic-vnf")
         when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
         when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
@@ -126,7 +125,7 @@ class DoDeleteVfModuleFromVnfTest {
         Mockito.verify(mockExecution, atLeastOnce()).setVariable("DDVMFV_getVnfResponseCode", 200)
     }
 
-   
+
 
     private ExecutionEntity setupMock() {
 

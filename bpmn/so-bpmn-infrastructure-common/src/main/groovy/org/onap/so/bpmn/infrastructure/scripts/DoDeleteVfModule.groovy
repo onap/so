@@ -34,6 +34,10 @@ import org.onap.so.bpmn.common.scripts.VfModule
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
@@ -470,9 +474,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			execution.setVariable("DoDVfMod_networkPolicyFqdnCount", fqdnCount)
 			msoLogger.debug("DoDVfMod_networkPolicyFqdnCount - " + fqdnCount)
 
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aai_uri = aaiUriUtil.getNetworkPolicyUri(execution)
 
 			if (fqdnCount > 0) {
 				// AII loop call over contrail network policy fqdn list
@@ -482,10 +484,10 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 					String fqdn = fqdnList[i]
 
 					// Query AAI for this network policy FQDN
-
-					String queryNetworkPolicyByFqdnAAIRequest = "${aai_endpoint}${aai_uri}?network-policy-fqdn=" + UriUtils.encode(fqdn, "UTF-8")
+					AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+					uri.queryParam("network-policy-fqdn", fqdn)
+					String queryNetworkPolicyByFqdnAAIRequest = aaiUriUtil.createAaiUri(uri)
 					msoLogger.debug("AAI request endpoint: " + queryNetworkPolicyByFqdnAAIRequest)
-					msoLogger.debug("AAI request endpoint: "  + queryNetworkPolicyByFqdnAAIRequest)
 
 					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryNetworkPolicyByFqdnAAIRequest)
 					int returnCode = response.getStatusCode()
@@ -508,9 +510,10 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 						def resourceVersion = utils.getNodeText(aaiResponseAsString, "resource-version")
 						msoLogger.debug("Deleting network-policy with resource-version " + resourceVersion)
 
-						String delNetworkPolicyAAIRequest = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(networkPolicyId, "UTF-8") +
-							"?resource-version=" + UriUtils.encode(resourceVersion, "UTF-8")
-						msoLogger.debug("AAI request endpoint: " + delNetworkPolicyAAIRequest)
+						AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId)
+						delUri.resourceVersion(resourceVersion)
+						String delNetworkPolicyAAIRequest = aaiUriUtil.createAaiUri(delUri)
+
 						msoLogger.debug("AAI request endpoint: " + delNetworkPolicyAAIRequest)
 
 						msoLogger.debug("invoking DELETE call to AAI")
@@ -644,11 +647,9 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			def vfModuleId = execution.getVariable('vfModuleId')
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String  aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
+			String endPoint = aaiUriUtil.createAaiUri(uri)
 
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint",execution) + "${aai_uri}/" + UriUtils.encode(vnfId, "UTF-8") +
-					"/vf-modules/vf-module/" + UriUtils.encode(vfModuleId, "UTF-8")
 			msoLogger.debug("AAI endPoint: " + endPoint)
 
 			try {

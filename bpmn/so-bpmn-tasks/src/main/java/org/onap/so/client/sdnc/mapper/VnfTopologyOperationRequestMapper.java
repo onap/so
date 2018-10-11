@@ -71,7 +71,7 @@ public class VnfTopologyOperationRequestMapper {
 
 		vnfRequestInput.setTenant(cloudRegion.getTenantId());
 		vnfRequestInput.setAicCloudRegion(cloudRegion.getLcpCloudRegionId());
-
+		
 		if (StringUtils.isNotBlank(vnf.getVnfName())) {
 			vnfRequestInput.setVnfName(vnf.getVnfName());
 		}

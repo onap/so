@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,13 +29,16 @@ import org.onap.aai.domain.yang.CloudRegion;
 import org.onap.aai.domain.yang.Collection;
 import org.onap.aai.domain.yang.Complex;
 import org.onap.aai.domain.yang.Configuration;
+import org.onap.aai.domain.yang.Connector;
 import org.onap.aai.domain.yang.Customer;
+import org.onap.aai.domain.yang.ExtAaiNetwork;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.InstanceGroup;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.LineOfBusiness;
 import org.onap.aai.domain.yang.ModelVer;
 import org.onap.aai.domain.yang.NetworkPolicy;
+import org.onap.aai.domain.yang.NetworkTechnology;
 import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.aai.domain.yang.OwningEntity;
 import org.onap.aai.domain.yang.PInterface;
@@ -46,6 +49,7 @@ import org.onap.aai.domain.yang.Pserver;
 import org.onap.aai.domain.yang.RouteTableReferences;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.ServiceSubscription;
+import org.onap.aai.domain.yang.Subnet;
 import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.TunnelXconnect;
 import org.onap.aai.domain.yang.Vce;
@@ -56,12 +60,13 @@ import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
+import org.onap.so.constants.Defaults;
 
 import com.google.common.base.CaseFormat;
 
 public enum AAIObjectType implements GraphInventoryObjectType {
 
-	DEFAULT_CLOUD_REGION(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/cloud-regions/cloud-region/att-aic/{cloud-region-id}"),
+	DEFAULT_CLOUD_REGION(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/cloud-regions/cloud-region/" + Defaults.CLOUD_OWNER + "/{cloud-region-id}"),
 	CUSTOMER(AAINamespaceConstants.BUSINESS, Customer.class),
 	GENERIC_QUERY("/search", "/generic-query"),
 	BULK_PROCESS("/bulkprocess", ""),
@@ -73,10 +78,9 @@ public enum AAIObjectType implements GraphInventoryObjectType {
 	NODES_QUERY("/search", "/nodes-query"),
 	CUSTOM_QUERY("/query", ""),
 	ROUTE_TABLE_REFERENCE(AAINamespaceConstants.NETWORK, RouteTableReferences.class),
-	DEFAULT_TENANT(AAINamespaceConstants.CLOUD_INFRASTRUCTURE + "/cloud-regions/cloud-region/att-aic/AAIAIC25", "/tenants/tenant/{tenant-id}"),
+	DEFAULT_TENANT(AAINamespaceConstants.CLOUD_INFRASTRUCTURE + "/cloud-regions/cloud-region/" + Defaults.CLOUD_OWNER + "/AAIAIC25", "/tenants/tenant/{tenant-id}"),
 	VCE(AAINamespaceConstants.NETWORK, Vce.class),
 	VPN_BINDING(AAINamespaceConstants.NETWORK, VpnBinding.class),
-	VPN_BINDINGS(AAINamespaceConstants.NETWORK, "/vpn-bindings"),
 	CONFIGURATION(AAINamespaceConstants.NETWORK, Configuration.class),
 	PSERVER(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, Pserver.class),
 	SERVICE_SUBSCRIPTION(AAIObjectType.CUSTOMER.uriTemplate(), ServiceSubscription.class),
@@ -101,6 +105,10 @@ public enum AAIObjectType implements GraphInventoryObjectType {
 	VNFC(AAINamespaceConstants.NETWORK, Vnfc.class),
 	VLAN_TAG(AAINamespaceConstants.NETWORK, VlanTag.class),
 	COMPLEX(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, Complex.class),
+	CONNECTOR(AAINamespaceConstants.BUSINESS, Connector.class),
+	NETWORK_TECHNOLOGY(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, NetworkTechnology.class),
+	SUBNET(AAIObjectType.L3_NETWORK.uriTemplate(), Subnet.class),
+	EXT_AAI_NETWORK(AAINamespaceConstants.NETWORK, ExtAaiNetwork.class),
 	UNKNOWN("", "");
 
 	private final String uriTemplate;
@@ -114,7 +122,7 @@ public enum AAIObjectType implements GraphInventoryObjectType {
 		this.uriTemplate = parentUri + partialUri;
 		this.aaiObjectClass = null;
 	}
-	
+
 	private AAIObjectType(String parentUri, Class<?> aaiObjectClass) {
 		this.parentUri = parentUri;
 		this.partialUri = removeParentUri(aaiObjectClass, parentUri);
@@ -126,14 +134,14 @@ public enum AAIObjectType implements GraphInventoryObjectType {
 	public String toString() {
 		return this.uriTemplate();
 	}
-	
+
 	public static AAIObjectType fromTypeName(String name) {
 		if (map.isEmpty()) {
 			for (AAIObjectType type : AAIObjectType.values()) {
 				map.put(type.typeName(), type);
 			}
 		}
-		
+
 		if (map.containsKey(name)) {
 			return map.get(name);
 		} else {
@@ -163,7 +171,7 @@ public enum AAIObjectType implements GraphInventoryObjectType {
 	public String partialUri() {
 		return this.partialUri;
 	}
-	
+
 	protected String removeParentUri(Class<?> aaiObjectClass, String parentUri) {
 		 return aaiObjectClass.getAnnotation(Metadata.class).uriTemplate().replace(parentUri, "");
 	}

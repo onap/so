@@ -37,10 +37,12 @@ import org.onap.so.rest.APIResponse
 import org.springframework.web.util.UriUtils
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.Relationships
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.constants.Defaults
 import org.json.JSONObject
 import javax.ws.rs.NotFoundException
 
@@ -82,7 +84,9 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		if (cloudSiteId == null) {
 			String cloudConfiguration = execution.getVariable("cloudConfiguration")
 			cloudSiteId = jsonUtil.getJsonValue(cloudConfiguration, "cloudConfiguration.lcpCloudRegionId")
+			def cloudOwner = jsonUtil.getJsonValue(cloudConfiguration, "cloudConfiguration.cloudOwner")
 			execution.setVariable("lcpCloudRegionId", cloudSiteId)
+			execution.setVariable("cloudOwner", cloudOwner)
 		}
 
 		// Extract attributes from modelInfo
@@ -171,10 +175,9 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		msoLogger.debug('Request cloud region is: ' + cloudRegion)
 
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String queryCloudRegionRequest = aaiEndpoint + '/' + cloudRegion
 
-		msoLogger.debug(queryCloudRegionRequest)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, Defaults.CLOUD_OWNER.toString(), cloudRegion)
+		def queryCloudRegionRequest = aaiUtil.createAaiUri(uri)
 
 		cloudRegion = aaiUtil.getAAICloudReqion(execution,  queryCloudRegionRequest, "PO", cloudRegion)
 
@@ -220,8 +223,9 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		}
 
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String queryAAIVolumeNameRequest = aaiEndpoint + '/' + cloudRegion + "/volume-groups" + "?volume-group-name=" + UriUtils.encode(volumeGroupName, 'UTF-8')
+
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion).queryParam("volume-group-name", volumeGroupName)
+		def queryAAIVolumeNameRequest = aaiUtil.createAaiUri(uri)
 
 		msoLogger.debug('Query AAI volume group by name: ' + queryAAIVolumeNameRequest)
 
@@ -292,7 +296,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		def vnfType = execution.getVariable("vnfType")
 		def tenantId = execution.getVariable("tenantId")
 		def cloudRegion = execution.getVariable('lcpCloudRegionId')
-
+		def cloudOwner = execution.getVariable('cloudOwner')
 		msoLogger.debug("volumeGroupId: " + volumeGroupId)
 
 		def testGroupId = execution.getVariable('test-volume-group-id')
@@ -305,16 +309,17 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		msoLogger.debug("volumeGroupId to be used: " + volumeGroupId)
 
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String createAAIVolumeGrpNameUrlRequest = aaiEndpoint + '/' + cloudRegion + "/volume-groups/volume-group/" + UriUtils.encode(volumeGroupId, "UTF-8")
 
-		String namespace =  aaiUtil.getNamespaceFromUri(aaiUtil.getCloudInfrastructureCloudRegionUri(execution))
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId)
+		def createAAIVolumeGrpNameUrlRequest = aaiUtil.createAaiUri(uri)
+
+		String namespace =  aaiUtil.getNamespaceFromUri(createAAIVolumeGrpNameUrlRequest)
 		msoLogger.debug("AAI namespace is: " + namespace)
 
 		msoLogger.debug("Request URL for PUT: " + createAAIVolumeGrpNameUrlRequest)
 
 		NetworkUtils networkUtils = new NetworkUtils()
-		String payload = networkUtils.createCloudRegionVolumeRequest(volumeGroupId, volumeName, vnfType, vnfId, tenantId, cloudRegion, namespace, modelCustomizationId)
+		String payload = networkUtils.createCloudRegionVolumeRequest(volumeGroupId, volumeName, vnfType, vnfId, tenantId, cloudOwner, cloudRegion, namespace, modelCustomizationId)
 		String payloadXml = utils.formatXml(payload)
 		msoLogger.debug("Request payload for PUT: " + payloadXml)
 
@@ -541,10 +546,11 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		String cloudRegion = execution.getVariable("lcpCloudRegionId")
 
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getCloudInfrastructureCloudRegionEndpoint(execution)
-		String updateAAIVolumeGroupUrlRequest = aaiEndpoint + '/' + cloudRegion + "/volume-groups/volume-group/" + UriUtils.encode(volumeGroupId, 'UTF-8')
 
-		String namespace =  aaiUtil.getNamespaceFromUri(aaiUtil.getCloudInfrastructureCloudRegionUri(execution))
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId)
+		def updateAAIVolumeGroupUrlRequest = aaiUtil.createAaiUri(uri)
+
+		String namespace =  aaiUtil.getNamespaceFromUri(updateAAIVolumeGroupUrlRequest)
 
 		msoLogger.debug("updateAAIVolumeGroupUrlRequest - " +  updateAAIVolumeGroupUrlRequest)
 
@@ -595,11 +601,11 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		def vnfId = execution.getVariable('vnfId')
 
 		AaiUtil aaiUtil = new AaiUtil(this)
-		String aaiEndpoint = aaiUtil.getNetworkGenericVnfEndpoint(execution)
-		def String queryAAIRequest = aaiEndpoint + "/" + UriUtils.encode(vnfId, "UTF-8")
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+		String queryAAIRequest = aaiUtil.createAaiUri(uri)
 
-		msoLogger.debug("AAI query generic vnf request: " + queryAAIRequest)
-
+		msoLogger.debug("AAI query generic vnf endpoint: " + queryAAIRequest)
+		
 		APIResponse response = aaiUtil.executeAAIGetCall(execution, queryAAIRequest)
 
 		String returnCode = response.getStatusCode()
