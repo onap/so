@@ -28,3 +28,6 @@ management:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
         step: 1m # Step size (i.e. reporting frequency) to use.
+        
+mso:
+  cloud-owner: CloudOwner
