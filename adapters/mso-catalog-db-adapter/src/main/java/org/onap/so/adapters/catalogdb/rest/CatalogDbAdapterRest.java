@@ -76,6 +76,7 @@ import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.beans.VnfResourceCustomizationToService;
 import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
 import org.onap.so.db.catalog.data.repository.ArRecipeRepository;
@@ -88,6 +89,7 @@ import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
 import org.onap.so.db.catalog.data.repository.VFModuleRepository;
 import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfRecipeRepository;
+import org.onap.so.db.catalog.data.repository.VnfResourceCustomizationToServiceRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.rest.beans.ServiceMacroHolder;
 import org.slf4j.Logger;
@@ -128,6 +130,15 @@ public class CatalogDbAdapterRest {
     private ServiceRepository serviceRepo;
 
     @Autowired
+<<<<<<< HEAD
+=======
+    private NetworkResourceCustomizationToServiceRepository networkResourceCustomizationToServiceRepository;
+
+    @Autowired
+    private VnfResourceCustomizationToServiceRepository vnfResourceCustomizationToServiceRepository;
+
+    @Autowired
+>>>>>>> 48f9a4a... Add repository for vnfcustomization to service
     private NetworkResourceCustomizationRepository networkCustomizationRepo;
 
     @Autowired
