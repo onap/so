@@ -174,27 +174,25 @@ public class BBInputSetupUtilsTest {
 
 	@Test
 	public void testGetCloudRegion() {
-		String cloudOwner = "cloudOwnerId";
 		CloudConfiguration cloudConfig = new CloudConfiguration();
 		cloudConfig.setLcpCloudRegionId("lcpCloudRegionId");
 		Optional<org.onap.aai.domain.yang.CloudRegion> expected = Optional.of(new org.onap.aai.domain.yang.CloudRegion());
-		expected.get().setCloudOwner(cloudOwner);
+		expected.get().setCloudOwner("cloudOwner");
 		expected.get().setCloudRegionId("lcpCloudRegionId");
 		doReturn(expected).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.CloudRegion.class,
-				AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudOwner,
+				AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudConfig.getCloudOwner(),
 						cloudConfig.getLcpCloudRegionId()));
 
-		AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudOwner,
+		AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudConfig.getCloudOwner(),
 				cloudConfig.getLcpCloudRegionId());
-		bbInputSetupUtils.getCloudRegion(cloudConfig, cloudOwner);
+		bbInputSetupUtils.getCloudRegion(cloudConfig);
 		
 		verify(MOCK_aaiResourcesClient, times(1)).get(CloudRegion.class, expectedUri);
 	}
 	
 	@Test
 	public void testGetCloudRegionExceptionTest() {
-		String cloudOwner = "cloudOwnerId";
-		
+
 		CloudConfiguration cloudConfig = new CloudConfiguration();
 		cloudConfig.setLcpCloudRegionId("lcpCloudRegionId");
 
@@ -203,33 +201,29 @@ public class BBInputSetupUtilsTest {
 		
 		doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(isA(Class.class), isA(AAIResourceUri.class));
 		
-		CloudRegion cloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfig, cloudOwner);
+		CloudRegion cloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfig);
 		
 		assertNull(cloudRegion);
 	}
 
 	@Test
 	public void testGetCloudRegionEmptyId() {
-		String cloudOwner = "cloudOwnerId";
-		
 		CloudConfiguration cloudConfig = new CloudConfiguration();
 		cloudConfig.setLcpCloudRegionId("");
 		
 		RequestDetails requestDetails = new RequestDetails();
 		requestDetails.setCloudConfiguration(cloudConfig);
 		
-		CloudRegion cloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfig, cloudOwner);
+		CloudRegion cloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfig);
 		
 		assertNull(cloudRegion);
 	}
 
 	@Test
 	public void testGetCloudRegionEmptyConfiguration() {
-		String cloudOwner = "cloudOwnerId";
-
 		RequestDetails requestDetails = new RequestDetails();
 
-		CloudRegion cloudRegion = bbInputSetupUtils.getCloudRegion(requestDetails.getCloudConfiguration(), cloudOwner);
+		CloudRegion cloudRegion = bbInputSetupUtils.getCloudRegion(requestDetails.getCloudConfiguration());
 
 		assertNull(cloudRegion);
 	}

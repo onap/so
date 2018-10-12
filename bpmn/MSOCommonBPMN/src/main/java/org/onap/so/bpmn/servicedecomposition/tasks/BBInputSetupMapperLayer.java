@@ -351,14 +351,12 @@ public class BBInputSetupMapperLayer {
 		return context;
 	}
 
-	protected CloudRegion mapCloudRegion(CloudConfiguration cloudConfiguration, org.onap.aai.domain.yang.CloudRegion aaiCloudRegion, String cloudOwner) {
+	protected CloudRegion mapCloudRegion(CloudConfiguration cloudConfiguration, org.onap.aai.domain.yang.CloudRegion aaiCloudRegion) {
 		CloudRegion cloudRegion = new CloudRegion();
 		if(cloudConfiguration != null)
 			cloudRegion = modelMapper.map(cloudConfiguration, CloudRegion.class);
 		if(aaiCloudRegion != null)
 			modelMapper.map(aaiCloudRegion, cloudRegion);
-		if(cloudOwner != null)
-			cloudRegion.setCloudOwner(cloudOwner);
 		return cloudRegion;
 	}
 

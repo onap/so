@@ -1,0 +1,73 @@
+{
+	"network-role": "vmNetworkRole0",
+	"segmentation-id" : "my-segemntation-id",
+	"floating-ips": {
+		"floating-ip-v4": [
+			"floatingIpV40",
+			"floatingIpV41"
+		],
+		"floating-ip-v6": [
+			"floatingIpV60",
+			"floatingIpV61"
+		]
+	},
+	"interface-route-prefixes": {
+		"interface-route-prefix": [
+			"interfaceRoutePrefix0",
+			"interfaceRoutePrefix1"
+		]
+	},
+	"sriov-parameters": {
+		"heat-vlan-filters": {
+			"heat-vlan-filter": [
+				"heatVlanFilter0",
+				"heatVlanFilter1"
+			]
+		}
+	},
+	"network-information-items": {
+		"network-information-item": [
+			{
+				"network-ips": {
+					"network-ip": [
+						"ip0",
+						"ip1"
+					]
+				},
+				"ip-version": "ipv4"
+			},
+			{
+				"network-ips": {
+					"network-ip": [
+						"ip2",
+						"ip3"
+					]
+				},
+				"ip-version": "ipv6"
+			}
+		]
+	},
+	"related-networks" : {
+		"related-network" : [{
+			"vlan-tags" : {
+				"is-private" : "True",
+				"upper-tag-id" : "1"
+			}
+		},{
+			"vlan-tags" : {
+				"is-private" : "False",
+				"upper-tag-id" : "2"
+			}
+		},{
+			"vlan-tags" : {
+				"is-private" : "True",
+				"upper-tag-id" : "3"
+			}
+		},{
+			"vlan-tags" : {
+				"is-private" : "False",
+				"upper-tag-id" : "3"
+			}
+		}]
+	}
+}

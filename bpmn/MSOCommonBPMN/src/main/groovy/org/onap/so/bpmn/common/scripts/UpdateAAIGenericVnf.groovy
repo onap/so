@@ -24,6 +24,10 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.rest.APIResponse
 import org.springframework.web.util.UriUtils
 import org.onap.so.logger.MessageEnum
@@ -129,10 +133,10 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 
 			// Construct endpoint
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8") + "?depth=1"
-
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			uri.depth(Depth.ONE)
+			String endPoint = aaiUriUtil.createAaiUri(uri)
+			
 			try {
 				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
 				msoLogger.debug("Sending GET to AAI endpoint: " + endPoint)
@@ -246,9 +250,8 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 
 			// Construct endpoint
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			def aai_uri = aaiUriUtil.getNetworkGenericVnfUri(execution)
-			msoLogger.debug('AAI URI is: ' + aai_uri)
-			String endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) + aai_uri + '/' + UriUtils.encode(vnfId, "UTF-8")
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			String endPoint = aaiUriUtil.createAaiUri(uri)
 
 			try {
 				msoLogger.debug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload)

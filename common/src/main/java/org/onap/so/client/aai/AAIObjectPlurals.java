@@ -20,22 +20,31 @@
 
 package org.onap.so.client.aai;
 
+import org.onap.aai.domain.yang.NetworkTechnologies;
 import org.onap.so.client.graphinventory.GraphInventoryObjectPlurals;
+import org.onap.so.constants.Defaults;
 
 import com.google.common.base.CaseFormat;
 
 public enum AAIObjectPlurals implements GraphInventoryObjectPlurals {
 
+	CUSTOMER(AAINamespaceConstants.BUSINESS, "/customers"),
 	GENERIC_VNF(AAINamespaceConstants.NETWORK, "/generic-vnfs"),
 	PSERVER(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/pservers"),
 	P_INTERFACE(AAIObjectType.PSERVER.uriTemplate(), "/p-interfaces"),
 	L3_NETWORK(AAINamespaceConstants.NETWORK, "/l3-networks"),
+	NETWORK_POLICY(AAINamespaceConstants.NETWORK, "/network-policies"),
+	VPN_BINDING(AAINamespaceConstants.NETWORK, "/vpn-bindings"),
 	SERVICE_SUBSCRIPTION(AAIObjectType.CUSTOMER.uriTemplate(), "/service-subscriptions"),
 	SERVICE_INSTANCE(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), "/service-instances"),
-	OWNING_ENTITIES(AAINamespaceConstants.BUSINESS, "/owning-entities"),
-	VOLUME_GROUP(AAIObjectType.CLOUD_REGION.uriTemplate(), "/volume-groups/"),
-	AVAILIBILITY_ZONE(AAIObjectType.CLOUD_REGION.uriTemplate(), "/availability-zones/");
-
+	OWNING_ENTITY(AAINamespaceConstants.BUSINESS, "/owning-entities"),
+	VOLUME_GROUP(AAIObjectType.CLOUD_REGION.uriTemplate(), "/volume-groups"),
+	AVAILIBILITY_ZONE(AAIObjectType.CLOUD_REGION.uriTemplate(), "/availability-zones"),
+	VF_MODULE(AAIObjectType.GENERIC_VNF.uriTemplate(), "/vf-modules"),
+	CONFIGURATION(AAINamespaceConstants.NETWORK, "/configurations"),
+	DEFAULT_TENANT(AAINamespaceConstants.CLOUD_INFRASTRUCTURE + "/cloud-regions/cloud-region/" + Defaults.CLOUD_OWNER + "/AAIAIC25", "/tenants"),
+	NETWORK_TECHNOLOGY(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/network-technologies"),
+	LOGICAL_LINK(AAINamespaceConstants.NETWORK, "/logical-links");
 
 	private final String uriTemplate;
 	private final String partialUri;

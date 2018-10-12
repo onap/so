@@ -25,9 +25,16 @@ import static org.apache.commons.lang3.StringUtils.*;
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MsoLogger
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import groovy.json.*
@@ -210,61 +217,38 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 		String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
 		String modelUuid = execution.getVariable("model-version-id-original")
 
-		//AAI PUT
-		AaiUtil aaiUriUtil = new AaiUtil(this)
-		utils.log("INFO","start create aai uri: " + aaiUriUtil, isDebugEnabled)
-		String aai_uri = aaiUriUtil.getBusinessCustomerUri(execution)
-		utils.log("INFO","aai_uri: " + aai_uri, isDebugEnabled)
-		String namespace = aaiUriUtil.getNamespaceFromUri(aai_uri)
-		utils.log("INFO","namespace: " + namespace, isDebugEnabled)
+		org.onap.aai.domain.yang.ServiceInstance si = new org.onap.aai.domain.yang.ServiceInstance()
+		si.setServiceInstanceId(serviceInstanceId)
+		si.setServiceInstanceName(serviceInstanceName)
+		si.setServiceType(aaiServiceType)
+		si.setServiceRole(aaiServiceRole)
+		si.setModelInvariantId(modelInvariantUuid)
+		si.setModelVersionId(modelUuid)
 
-		String serviceInstanceData =
-				"""<service-instance xmlns=\"${namespace}\">
-                    <service-instance-id>${MsoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
-                    <service-instance-name>${MsoUtils.xmlEscape(serviceInstanceName)}</service-instance-name>
-                    <service-type>${MsoUtils.xmlEscape(aaiServiceType)}</service-type>
-                    <service-role>${MsoUtils.xmlEscape(aaiServiceRole)}</service-role>
-                    <resource-version>${MsoUtils.xmlEscape(serviceInstanceVersion)}</resource-version>
-                    <model-invariant-id>${MsoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-id>
-                    <model-version-id>${MsoUtils.xmlEscape(modelUuid)}</model-version-id>
-				 </service-instance>""".trim()
-
-		execution.setVariable("serviceInstanceData", serviceInstanceData)
-		msoLogger.info("serviceInstanceData: " + serviceInstanceData)
-		msoLogger.debug(serviceInstanceData)
-		msoLogger.info(" aai_uri " + aai_uri + " namespace:" + namespace)
-		msoLogger.info(" 'payload' to update Service Instance in AAI - " + "\n" + serviceInstanceData)
+		execution.setVariable("serviceInstanceData", si)
 
 		msoLogger.info("Exited " + method)
 	}
 
-	public void postProcessAAIPUT(DelegateExecution execution) {
-		msoLogger.trace("postProcessAAIPUT ")
+	public void updateServiceInstance(DelegateExecution execution) {
+		msoLogger.trace("updateServiceInstance ")
 		String msg = ""
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			boolean succInAAI = execution.getVariable("GENPS_SuccessIndicator")
-			if(!succInAAI){
-				msoLogger.info("Error putting Service-instance in AAI", + serviceInstanceId)
-				WorkflowException workflowException = execution.getVariable("WorkflowException")
-				msoLogger.debug("workflowException: " + workflowException)
-				if(workflowException != null){
-					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-				}
-			}
-			else
-			{
+			org.onap.aai.domain.yang.ServiceInstance si = execution.getVariable("serviceInstanceData")
 
-			}
+			AAIResourcesClient client = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+			client.update(uri, si)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
-			msg = "Exception in DoCreateServiceInstance.postProcessAAIDEL. " + ex.getMessage()
+			msg = "Exception in DoCreateServiceInstance.updateServiceInstance. " + ex.getMessage()
 			msoLogger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit postProcessAAIPUT ")
+		msoLogger.trace("Exit updateServiceInstance ")
 	}
 
 	public void processRollbackException(DelegateExecution execution){

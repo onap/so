@@ -22,17 +22,20 @@ package org.onap.so.client.adapter.vnf.mapper;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVmNetworkData;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
@@ -769,5 +772,19 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 				DeleteVfModuleRequest.class);
 
 		assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+	}
+	
+	@Test
+	public void networkCloudParamsTest() throws IOException {
+		
+		String json = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "grApiVmNetworkSubSectionWith5GParams.json")));
+		GenericResourceApiVmNetworkData network = omapper.readValue(json, GenericResourceApiVmNetworkData.class);
+		Map<String, String> paramsMap = new HashMap<>();
+		vfModuleObjectMapper.buildVlanInformation(paramsMap, network, "testKey", "testType");
+		
+		assertEquals("1,3", paramsMap.get("testKey_testType_private_vlans"));
+		assertEquals("2,3", paramsMap.get("testKey_testType_public_vlans"));
+		assertEquals("1,2,3", paramsMap.get("testKey_testType_guest_vlans"));
+		assertEquals("my-segemntation-id", paramsMap.get("testKey_testType_vlan_filter"));
 	}
 }

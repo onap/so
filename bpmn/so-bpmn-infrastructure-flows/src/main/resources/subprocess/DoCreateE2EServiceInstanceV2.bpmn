@@ -14,21 +14,6 @@ dcsi.preProcessRequest(execution)
 ]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="preProcessRequest_ScriptTask" targetRef="IntermediateThrowEvent_0aggdcl_GoToStartService" />
-    <bpmn2:callActivity id="CustomE2EPutService" name="Call Custom E2E Put Service" calledElement="CustomE2EPutService">
-      <bpmn2:extensionElements>
-        <camunda:in source="globalSubscriberId" target="GENPS_globalSubscriberId" />
-        <camunda:in source="serviceInstanceId" target="GENPS_serviceInstanceId" />
-        <camunda:in source="serviceType" target="GENPS_serviceType" />
-        <camunda:in sourceExpression="service-instance" target="GENPS_type" />
-        <camunda:in source="serviceInstanceData" target="GENPS_payload" />
-        <camunda:out source="GENPS_SuccessIndicator" target="GENPS_SuccessIndicator" />
-        <camunda:in source="msoRequestId" target="GENPS_requesId" />
-        <camunda:out source="WorkflowException" target="WorkflowException" />
-      </bpmn2:extensionElements>
-      <bpmn2:incoming>SequenceFlow_0zmz5am</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_129ih1g</bpmn2:outgoing>
-    </bpmn2:callActivity>
-    <bpmn2:sequenceFlow id="SequenceFlow_129ih1g" sourceRef="CustomE2EPutService" targetRef="ScriptTask_0q37vn9_PostProcessAAIPUT" />
     <bpmn2:subProcess id="SubProcess_06d8lk8" name="Sub-process for Application Errors" triggeredByEvent="true">
       <bpmn2:startEvent id="StartEvent_0yljq9y">
         <bpmn2:outgoing>SequenceFlow_0tgrn11</bpmn2:outgoing>
@@ -70,7 +55,7 @@ dcsi.postProcessRollback(execution)
       <bpmn2:sequenceFlow id="SequenceFlow_1xzgv5k" sourceRef="ScriptTask_1p0vyip" targetRef="EndEvent_117lkk3" />
     </bpmn2:subProcess>
     <bpmn2:scriptTask id="ScriptTask_0q37vn9_PostProcessAAIPUT" name="Post Process AAI PUT" scriptFormat="groovy">
-      <bpmn2:incoming>SequenceFlow_129ih1g</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_0zmz5am</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_03fabby</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def ddsi = new DoCreateE2EServiceInstanceV2()
@@ -212,7 +197,7 @@ csi.postOtherControllerType(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_0zmz5am</bpmn2:outgoing>
       <bpmn2:linkEventDefinition name="StartService" />
     </bpmn2:intermediateCatchEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_0zmz5am" sourceRef="StartEvent_0l5bz4h_StartService" targetRef="CustomE2EPutService" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0zmz5am" sourceRef="StartEvent_0l5bz4h_StartService" targetRef="ScriptTask_0q37vn9_PostProcessAAIPUT" />
     <bpmn2:sequenceFlow id="SequenceFlow_1rhn48b" sourceRef="StartEvent_StartResource" targetRef="ExclusiveGateway_1pwgsa8" />
     <bpmn2:intermediateCatchEvent id="StartEvent_StartResource" name="StartResource">
       <bpmn2:outgoing>SequenceFlow_1rhn48b</bpmn2:outgoing>
@@ -471,16 +456,6 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn2:script>
           <dc:Bounds x="718" y="82" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="CallActivity_0khp0qc_di" bpmnElement="CustomE2EPutService">
-        <dc:Bounds x="564" y="244" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_129ih1g_di" bpmnElement="SequenceFlow_129ih1g">
-        <di:waypoint xsi:type="dc:Point" x="664" y="284" />
-        <di:waypoint xsi:type="dc:Point" x="917" y="284" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="745.5" y="269" width="90" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="SubProcess_06d8lk8_di" bpmnElement="SubProcess_06d8lk8" isExpanded="true">
         <dc:Bounds x="-11" y="1751" width="783" height="195" />
       </bpmndi:BPMNShape>
@@ -731,9 +706,9 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn2:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0zmz5am_di" bpmnElement="SequenceFlow_0zmz5am">
         <di:waypoint xsi:type="dc:Point" x="22" y="284" />
-        <di:waypoint xsi:type="dc:Point" x="564" y="284" />
+        <di:waypoint xsi:type="dc:Point" x="917" y="284" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="248" y="263" width="90" height="12" />
+          <dc:Bounds x="424.5" y="263" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1rhn48b_di" bpmnElement="SequenceFlow_1rhn48b">
