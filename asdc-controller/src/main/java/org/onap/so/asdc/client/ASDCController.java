@@ -680,21 +680,56 @@ public class ASDCController {
     	VfResourceStructure resourceStructure = null;
     	ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
     	boolean deploySuccessful = true;
+    	boolean hasVFResource = false;
     	String errorMessage = null;
 
     	try {
     		
    			this.processCsarServiceArtifacts(iNotif, toscaResourceStructure);
-   			
-   			if (toscaResourceStructure.getServiceVersion() == null) {
-   				LOGGER.debug("Deploy the workflow");
-   				IArtifactInfo iArtifact = toscaResourceStructure.getToscaArtifact();
-   				String csarFilePath = System.getProperty("mso.config.path") + "/ASDC" + "/" + iArtifact.getArtifactName();   				
-   				bpmnInstaller.installBpmn(csarFilePath);
-   			} 			
+   			   		 	
+    		for (IResourceInstance resource : iNotif.getResources()){
+    			
+    			resourceStructure = new VfResourceStructure(iNotif,resource);
+    			
+  	           	String resourceType = resourceStructure.getResourceInstance().getResourceType();
+            	String category = resourceStructure.getResourceInstance().getCategory();
+    				       	
+                LOGGER.debug("Processing Resource Type: " + resourceType + " and Model UUID: " + resourceStructure.getResourceInstance().getResourceUUID());
+                	
+				if("VF".equals(resourceType) && !"Allotted Resource".equalsIgnoreCase(category)){
+					
+					hasVFResource = true;
+			
+	    			for (IArtifactInfo artifact : resource.getArtifacts()) {
+	    				IDistributionClientDownloadResult resultArtifact = this.downloadTheArtifact(artifact,
+	    						iNotif.getDistributionID());
+	    				if (resultArtifact != null) {
+	    					    					
+	    					if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifact.getArtifactType())) {
+	    						LOGGER.debug("VF_MODULE_ARTIFACT: "+new String(resultArtifact.getArtifactPayload(),"UTF-8"));
+	    						LOGGER.debug(ASDCNotificationLogging.dumpVfModuleMetaDataList(resourceStructure.decodeVfModuleArtifact(resultArtifact.getArtifactPayload())));
+	    					}
+	    					resourceStructure.addArtifactToStructure(distributionClient,artifact, resultArtifact);
+	    				}
+	    			}
+	    			
+					//Deploy VF resource and artifacts
+					LOGGER.debug("Preparing to deploy Service: " + iNotif.getServiceUUID());
+					try{
+						
+						this.deployResourceStructure(resourceStructure, toscaResourceStructure);
 
-   			// Install a service with no resources, only the service itself
-   			if (iNotif.getResources() == null || iNotif.getResources().size() < 1) {
+				 	} catch(ArtifactInstallerException e){
+				 		deploySuccessful = false;
+				 		errorMessage = e.getMessage();
+				 		LOGGER.error(e);
+				 	}  
+				}
+						
+    		} 	
+    		
+  			// There are cases where the Service has no VF resources, those are handled here
+   			if (!hasVFResource) {
    				
    				LOGGER.debug("No resources found for Service: " + iNotif.getServiceUUID());
 				
@@ -706,47 +741,8 @@ public class ASDCController {
 			 	} catch(ArtifactInstallerException e){
 			 		deploySuccessful = false;
 			 		errorMessage = e.getMessage();
-			 		LOGGER.debug ("Exception in processResourceNotification(): " + e);
-			 	}  
-   			} else { // Services with resources
-   		 	
-    		for (IResourceInstance resource : iNotif.getResources()){
-    			
-    			resourceStructure = new VfResourceStructure(iNotif,resource);
-    			
-  	           	String resourceType = resourceStructure.getResourceInstance().getResourceType();
-            	String category = resourceStructure.getResourceInstance().getCategory();
-    				       	
-                LOGGER.debug("Processing Resource Type: " + resourceType + " and Model UUID: " + resourceStructure.getResourceInstance().getResourceUUID());
-                	
-				if("VF".equals(resourceType) && !"Allotted Resource".equalsIgnoreCase(category)){
-			
-	    			for (IArtifactInfo artifact : resource.getArtifacts()) {
-	    				IDistributionClientDownloadResult resultArtifact = this.downloadTheArtifact(artifact,
-	    						iNotif.getDistributionID());
-	    				if (resultArtifact != null) {
-	    					if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifact.getArtifactType())) {
-	    						LOGGER.debug("VF_MODULE_ARTIFACT: "+new String(resultArtifact.getArtifactPayload(),"UTF-8"));
-	    						LOGGER.debug(ASDCNotificationLogging.dumpVfModuleMetaDataList(resourceStructure.decodeVfModuleArtifact(resultArtifact.getArtifactPayload())));
-	    					}
-	    					resourceStructure.addArtifactToStructure(distributionClient,artifact, resultArtifact);
-	    				}
-	    			}
-				}
-				
-				//Deploy All resources and artifacts
-				LOGGER.debug("Preparing to deploy Service: " + iNotif.getServiceUUID());
-				try{
-					
-					this.deployResourceStructure(resourceStructure, toscaResourceStructure);
-
-			 	} catch(ArtifactInstallerException e){
-			 		deploySuccessful = false;
-			 		errorMessage = e.getMessage();
-			 		LOGGER.debug ("Exception in processResourceNotification(): " + e);
-			 	}  
-				
-    		} 	
+			 		LOGGER.error(e);
+		   }
    		}
 			 this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deploySuccessful, errorMessage);
     		

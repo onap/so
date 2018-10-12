@@ -85,9 +85,9 @@ public class PayloadClient {
 	public static Optional<String> healthCheckFormat(String vnfName, String vnfHostIpAddress) throws JsonProcessingException{
 			HealthCheckAction payloadResult = new HealthCheckAction();
 			RequestParametersHealthCheck requestParams = new RequestParametersHealthCheck();
-			requestParams.setVnfHostIpAddress(vnfHostIpAddress);
+			requestParams.setHostIpAddress(vnfHostIpAddress);
 			payloadResult.setRequestParameters(requestParams);
-			return Optional.of((mapper.writeValueAsString(payloadResult)).replaceAll("\"", "\\\\\""));
+			return Optional.of((mapper.writeValueAsString(payloadResult)));
 	}
 	
 	public static Optional<String> snapshotFormat(String vmId, String identityUrl)throws JsonProcessingException{

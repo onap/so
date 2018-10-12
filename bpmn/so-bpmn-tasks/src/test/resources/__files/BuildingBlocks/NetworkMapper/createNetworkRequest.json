@@ -5,7 +5,7 @@
   "networkName": "APP-C-24595-T-IST-04AShared_data_vDB_net_1",
   "networkType": "CONTRAIL30_BASIC",
   "modelCustomizationUuid": "8edf06ef-fd40-42cf-a054-0fc09108d3f0",
-  "networkTechnology": "NEUTRON",
+  "networkTechnology": "CONTRAIL",
   "subnets": [
     {
       "subnetName": "APP-C-24595-T-IST-04AShared_data_vDB_net_1_subnet_1",
@@ -35,7 +35,7 @@
     "requestId": "6cfde724-76c7-4747-bcb3-67a59a46ca95",
     "serviceInstanceId": "testServiceInstanceId1"
   },
-  "contrailRequest": false,
+  "contrailRequest": true,
   "skipAAI": true,
   "messageId": "175264dc-fb6b-4aae-ba42-8c77a63fec12",
   "synchronous": true
