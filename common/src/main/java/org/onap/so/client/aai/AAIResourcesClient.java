@@ -245,18 +245,22 @@ public class AAIResourcesClient extends AAIClient {
 		String json;
 		try {
 			json = this.createClient(uri).get(String.class)
-					.orElseThrow(() -> createException(c, uri.build() + " not found in A&AI"));
+					.orElseThrow(() -> createException(c, uri.build() + " not found in A&AI", Optional.empty()));
 		} catch (NotFoundException e) {
-			throw createException(c, "could not construct uri for use with A&AI");
+			throw createException(c, "could not construct uri for use with A&AI", Optional.of(e));
 		}
 
 		return new AAIResultWrapper(json);
 	}
 	
-	private RuntimeException createException(Class<? extends RuntimeException> c, String message) {
+	private RuntimeException createException(Class<? extends RuntimeException> c, String message, Optional<Throwable> t) {
 		RuntimeException e;
 		try {
-			e = c.getConstructor(String.class).newInstance(message);
+			if (t.isPresent()) {
+				e = c.getConstructor(String.class, Throwable.class).newInstance(message, t.get());
+			} else {
+				e = c.getConstructor(String.class).newInstance(message);
+			}
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e1) {
 			throw new IllegalArgumentException("could not create instance for " + c.getName());

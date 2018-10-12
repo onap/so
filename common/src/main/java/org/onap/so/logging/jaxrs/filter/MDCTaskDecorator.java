@@ -32,8 +32,10 @@ public class MDCTaskDecorator implements TaskDecorator {
     Map<String, String> contextMap = MDC.getCopyOfContextMap();
     return () -> {
       try {
-        MDC.setContextMap(contextMap);
-        runnable.run();
+    	if(contextMap!=null){
+	        MDC.setContextMap(contextMap);
+	        runnable.run();
+    	}
       } finally {
         MDC.clear();
       }

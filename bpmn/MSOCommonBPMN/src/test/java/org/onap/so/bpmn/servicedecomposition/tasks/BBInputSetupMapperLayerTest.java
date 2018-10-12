@@ -549,7 +549,7 @@ public class BBInputSetupMapperLayerTest {
 	@Test
 	public void testMapOrchestrationContext() throws IOException {
 		OrchestrationContext expected = new OrchestrationContext();
-		expected.setIsRollbackEnabled(false);
+		expected.setIsRollbackEnabled(true);
 
 		RequestDetails requestDetails = mapper.readValue(new File(RESOURCE_PATH + "RequestDetailsInput_mapReqContext.json"), RequestDetails.class);
 

@@ -37,7 +37,8 @@
       <bpmn:extensionElements>
         <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
-        <camunda:out source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+        <camunda:out source="generalBuildingBlock" target="gBBInput" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1uiok7v</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0v8d14a</bpmn:outgoing>

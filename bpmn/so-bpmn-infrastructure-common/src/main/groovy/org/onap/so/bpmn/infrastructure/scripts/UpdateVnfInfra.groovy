@@ -167,12 +167,12 @@ public class UpdateVnfInfra extends VnfCmBase {
 			def usePreload = reqMap.requestDetails?.requestParameters?.usePreload
 			execution.setVariable('usePreload', usePreload)
 			
-			def cloudConfiguration = reqMap.requestDetails?.cloudConfiguration
-			def lcpCloudRegionId	= cloudConfiguration.lcpCloudRegionId
+			def cloudConfiguration = jsonOutput.toJson(reqMap.requestDetails?.cloudConfiguration)			
+			def lcpCloudRegionId	= jsonUtils.getJsonValue(cloudConfiguration, "lcpCloudRegionId")
 			execution.setVariable('lcpCloudRegionId', lcpCloudRegionId)
 			def cloudOwner	= jsonUtils.getJsonValue(cloudConfiguration, "cloudOwner")
 			execution.setVariable('cloudOwner', cloudOwner)
-			def tenantId = cloudConfiguration.tenantId
+			def tenantId = jsonUtils.getJsonValue(cloudConfiguration, "tenantId")
 			execution.setVariable('tenantId', tenantId)
 			
 			def globalSubscriberId = reqMap.requestDetails?.subscriberInfo?.globalSubscriberId ?: ''

@@ -294,6 +294,7 @@ public class WorkflowAction {
 			execution.setVariable("retryCount", 0);
 			execution.setVariable("isRollback", false);
 			execution.setVariable("flowsToExecute", flowsToExecute);
+			execution.setVariable("isRollbackComplete", false);
 
 		} catch (Exception ex) {
 			buildAndThrowException(execution, "Exception in create execution list " + ex.getMessage(), ex);

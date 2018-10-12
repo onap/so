@@ -33,6 +33,7 @@ import org.onap.so.adapters.nwrest.ContrailNetwork;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
+import org.onap.so.adapters.nwrest.NetworkTechnology;
 import org.onap.so.adapters.nwrest.ProviderVlanNetwork;
 import org.onap.so.adapters.nwrest.RollbackNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
@@ -82,6 +83,8 @@ public class NetworkAdapterObjectMapper {
 		ProviderVlanNetwork providerVlanNetwork = buildProviderVlanNetwork(l3Network);
 		createNetworkRequest.setProviderVlanNetwork(providerVlanNetwork);
 		
+		createNetworkRequest.setNetworkTechnology(setNetworkTechnology(l3Network.getModelInfoNetwork().getNetworkTechnology()));
+		
 		//build and set Contrail Network
 		ContrailNetwork contrailNetwork = buildContrailNetwork(l3Network, customer);
 		createNetworkRequest.setContrailNetwork(contrailNetwork);
@@ -99,6 +102,16 @@ public class NetworkAdapterObjectMapper {
 		//createNetworkRequest.setNotificationUrl(createCallbackUrl("NetworkAResponse", messageId));
 
 		return createNetworkRequest;
+	}
+
+	protected NetworkTechnology setNetworkTechnology(String networkTechnology) {
+		if(networkTechnology.equalsIgnoreCase("Contrail")) {
+			return NetworkTechnology.CONTRAIL;
+		} else if(networkTechnology.equalsIgnoreCase("Neutron")){
+			return NetworkTechnology.NEUTRON;
+		} else {
+			return NetworkTechnology.VMWARE;
+		}
 	}
 	
 	public DeleteNetworkRequest deleteNetworkRequestMapper(RequestContext requestContext, CloudRegion cloudRegion, ServiceInstance serviceInstance, L3Network l3Network) throws UnsupportedEncodingException {
@@ -330,9 +343,8 @@ public class NetworkAdapterObjectMapper {
 
 	private CreateNetworkRequest setFlowFlags(CreateNetworkRequest createNetworkRequest, OrchestrationContext orchestrationContext){
 		//TODO confirm flag value
-		createNetworkRequest.setSkipAAI(true);
-		//revert suppressRollabck=TRUE into backout=FALSE and vice versa
-		createNetworkRequest.setBackout(orchestrationContext.getIsRollbackEnabled());
+		createNetworkRequest.setSkipAAI(true);		
+		createNetworkRequest.setBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
 		//TODO confirm value - false by default
 		createNetworkRequest.setFailIfExists(true);
 		//NetworkTechnology(NetworkTechnology.NEUTRON); NOOP - default
@@ -340,9 +352,8 @@ public class NetworkAdapterObjectMapper {
 	}
 	
 	private void setFlowFlags(UpdateNetworkRequest updateNetworkRequest, OrchestrationContext orchestrationContext){
-		updateNetworkRequest.setSkipAAI(true);
-		//revert suppressRollabck=TRUE into backout=FALSE and vice versa
-		updateNetworkRequest.setBackout(!Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
+		updateNetworkRequest.setSkipAAI(true);		
+		updateNetworkRequest.setBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
 		//NetworkTechnology(NetworkTechnology.NEUTRON); NOOP - default
 	}
 }

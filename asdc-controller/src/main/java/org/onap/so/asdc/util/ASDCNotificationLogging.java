@@ -97,6 +97,7 @@ public class ASDCNotificationLogging {
 		buffer.append(System.lineSeparator());
 		buffer.append("Environment Context:");
 		buffer.append(csarHelper.getServiceMetadata().getValue("environmentContext"));
+		buffer.append(System.lineSeparator());
 		
 		
 		List<NodeTemplate> serviceProxyResourceList = toscaResourceStructure.getSdcCsarHelper().getServiceNodeTemplateBySdcType(SdcTypes.SERVICE_PROXY);
@@ -222,6 +223,9 @@ public class ASDCNotificationLogging {
     		buffer.append(System.lineSeparator());
       		buffer.append("Type:");
     		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_TYPE)));
+    		buffer.append(System.lineSeparator());
+     		buffer.append("Category:");
+    		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY)));
     		buffer.append(System.lineSeparator());
       		buffer.append("InvariantUuid:");
     		buffer.append(testNull(vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID)));
@@ -412,14 +416,13 @@ public class ASDCNotificationLogging {
     			
     	}
     	
-  		buffer.append(System.lineSeparator());
-		buffer.append("Network Collection Resource Properties:");
-		buffer.append(System.lineSeparator());
-		
+ 		
 	List<NodeTemplate> networkCollectionList = toscaResourceStructure.getSdcCsarHelper().getServiceNodeTemplateBySdcType(SdcTypes.CR);
 		
 		if (networkCollectionList != null) {
 			for (NodeTemplate crNode : networkCollectionList) {	
+		 		buffer.append(System.lineSeparator());
+				buffer.append("Network Collection Properties:");
 				buffer.append(System.lineSeparator());
 		   		buffer.append("Model Name:");
 	    		buffer.append(crNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
