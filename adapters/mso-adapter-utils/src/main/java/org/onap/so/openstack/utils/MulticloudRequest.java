@@ -24,6 +24,9 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.woorea.openstack.heat.model.CreateStackParam;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -43,13 +46,13 @@ public class MulticloudRequest implements Serializable {
     @JsonProperty("vf-module-id")
     private String vfModuleId;
     @JsonProperty("oof_directives")
-    private String oofDirectives;
+    private JsonNode oofDirectives;
     @JsonProperty("sdnc_directives")
-    private String sdncDirectives;
+    private JsonNode sdncDirectives;
     @JsonProperty("template_type")
     private String templateType;
     @JsonProperty("template_data")
-    private String templateData;
+    private CreateStackParam templateData;
 
 
     @JsonProperty("generic-vnf-id")
@@ -73,22 +76,22 @@ public class MulticloudRequest implements Serializable {
     }
 
     @JsonProperty("oof_directives")
-    public String getOofDirectives() {
+    public JsonNode getOofDirectives() {
         return oofDirectives;
     }
 
     @JsonProperty("oof_directives")
-    public void setOofDirectives(String oofDirectives) {
+    public void setOofDirectives(JsonNode oofDirectives) {
         this.oofDirectives = oofDirectives;
     }
 
     @JsonProperty("sdnc_directives")
-    public String getSdncDirectives() {
+    public JsonNode getSdncDirectives() {
         return sdncDirectives;
     }
 
     @JsonProperty("sdnc_directives")
-    public void setSdncDirectives(String sdncDirectives) {
+    public void setSdncDirectives(JsonNode sdncDirectives) {
         this.sdncDirectives = sdncDirectives;
     }
 
@@ -103,12 +106,12 @@ public class MulticloudRequest implements Serializable {
     }
 
     @JsonProperty("template_data")
-    public String getTemplateData() {
+    public CreateStackParam getTemplateData() {
         return templateData;
     }
 
     @JsonProperty("template_data")
-    public void setTemplateData(String templateData) {
+    public void setTemplateData(CreateStackParam templateData) {
         this.templateData = templateData;
     }
 

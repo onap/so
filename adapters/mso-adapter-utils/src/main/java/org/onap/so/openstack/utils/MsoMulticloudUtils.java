@@ -20,6 +20,7 @@
 
 package org.onap.so.openstack.utils;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,6 +65,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.heat.model.CreateStackParam;
 
@@ -178,30 +181,16 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         try {
             multicloudRequest.setGenericVnfId(genericVnfId);
             multicloudRequest.setVfModuleId(vfModuleId);
-            multicloudRequest.setOofDirectives(oofDirectives);
-            multicloudRequest.setSdncDirectives(sdncDirectives);
+            multicloudRequest.setOofDirectives(JSON_MAPPER.readTree(oofDirectives));
+            multicloudRequest.setSdncDirectives(JSON_MAPPER.readTree(sdncDirectives));
             multicloudRequest.setTemplateType(templateType);
             if (logger.isDebugEnabled()) {
                 logger.debug(String.format("Stack Template Data is: %s", stack.toString().substring(16)));
             }
-            multicloudRequest.setTemplateData(JSON_MAPPER.writeValueAsString(stack));
+            multicloudRequest.setTemplateData(stack);
             if (logger.isDebugEnabled()) {
                 logger.debug(String.format("Multicloud Request is: %s", multicloudRequest.toString()));
             }
-
-            CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() ->
-                    new MsoCloudSiteNotFound(cloudSiteId));
-            CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set ("X-Auth-User", cloudIdentity.getMsoId ());
-            headers.set ("X-Auth-Key", CryptoUtils.decryptCloudConfigPassword(cloudIdentity.getMsoPass ()));
-            headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
-            headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
-
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Multicloud Request Headers: %s", headers.toString()));
-            }
-            request = new HttpEntity<>(multicloudRequest, headers);
         } catch (Exception e) {
             logger.debug("ERROR making multicloud JSON body ", e);
         }
@@ -211,7 +200,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         }
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
-        Response response = multicloudClient.post(request);
+        Response response = multicloudClient.post(multicloudRequest);
 
         StackInfo createInfo = new StackInfo();
         createInfo.setName(stackName);
@@ -609,7 +598,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     private RestClient getMulticloudClient(String endpoint) {
         RestClient client = null;
         try {
-            client= new HttpClient(UriBuilder.fromUri(endpoint).build().toURL(),
+            client = new HttpClient(UriBuilder.fromUri(endpoint).build().toURL(),
                     MediaType.APPLICATION_JSON.toString(), TargetEntity.MULTICLOUD);
         } catch (MalformedURLException e) {
             logger.debug(String.format("Encountered malformed URL error getting multicloud rest client %s", e.getMessage()));
