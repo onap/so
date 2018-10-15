@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_e76ab619",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/ServiceInstancesTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-10-15T04:50:01Z",
+      "side": 1,
+      "message": "tab character",
+      "range": {
+        "startLine": 189,
+        "startChar": 14,
+        "endLine": 189,
+        "endChar": 16
+      },
+      "revId": "5978aab341e98f80e469d3b0df4aa881acd994e0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
