@@ -114,6 +114,7 @@ public class VfModuleTopologyOperationRequestMapper {
 		if (cloudRegion != null) {
 			vfModuleRequestInput.setTenant(cloudRegion.getTenantId());
 			vfModuleRequestInput.setAicCloudRegion(cloudRegion.getLcpCloudRegionId());
+			vfModuleRequestInput.setCloudOwner(cloudRegion.getCloudOwner());
 		}
 		if (vfModule.getVfModuleName() != null && !vfModule.getVfModuleName().equals("")) {
 			vfModuleRequestInput.setVfModuleName(vfModule.getVfModuleName());
