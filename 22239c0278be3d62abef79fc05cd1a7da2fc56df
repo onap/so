@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_18ee3789",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignVnfBB.bpmn",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-10-15T21:32:26Z",
+      "side": 1,
+      "message": "This will break homing from our side. Can we update HomingBB to add whatever is needed for Sniro?",
+      "range": {
+        "startLine": 36,
+        "startChar": 78,
+        "endLine": 36,
+        "endChar": 86
+      },
+      "revId": "22239c0278be3d62abef79fc05cd1a7da2fc56df",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
