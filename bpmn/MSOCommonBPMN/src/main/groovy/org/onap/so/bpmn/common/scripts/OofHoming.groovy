@@ -152,9 +152,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 execution.setVariable("oofRequest", oofRequest)
                 utils.log("DEBUG", "OOF Request is: " + oofRequest, isDebugEnabled)
 
-                String endpoint = UrnPropertiesReader.getVariable("mso.oof.service.agnostic.endpoint", execution)
-                String host = UrnPropertiesReader.getVariable("mso.oof.service.agnostic.host", execution)
-                String url = host + endpoint
+                String url = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
                 utils.log("DEBUG", "Posting to OOF Url: " + url, isDebugEnabled)
 
                 logDebug("URL to be used is: " + url, isDebugEnabled)

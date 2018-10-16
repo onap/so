@@ -694,6 +694,32 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	}
 
 	/**
+	 * Constructs a workflow message callback URL for the specified message type and correlator.
+	 * This type of callback URL is used when a workflow wants an MSO adapter (like the SDNC
+	 * adapter) to call it back.  In other words, this is for callbacks internal to the MSO
+	 * complex.  Use <code>createWorkflowMessageAdapterCallbackURL</code> if the callback
+	 * will come from outside the MSO complex.
+	 * @param endpoint endpoint address to contruct URL from
+	 * @param messageType the message type (e.g. SDNCAResponse or VNFAResponse)
+	 * @param correlator the correlator value (e.g. a request ID)
+	 */
+	public String createCallbackURL(String endpoint, String messageType, String correlator) {
+		if (endpoint == null || endpoint.isEmpty()) {
+			ExceptionUtil exceptionUtil = new ExceptionUtil()
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2000,
+					'mso:workflow:message:endpoint was not passed in')
+		}
+
+		while (endpoint.endsWith('/')) {
+			endpoint = endpoint.substring(0, endpoint.length()-1)
+		}
+
+		return endpoint +
+				'/' + UriUtils.encodePathSegment(messageType, 'UTF-8') +
+				'/' + UriUtils.encodePathSegment(correlator, 'UTF-8')
+	}
+
+	/**
 	 *
 	 * Constructs a workflow message callback URL for the specified message type and correlator.
 	 * This type of callback URL is used when a workflow wants a system outside the MSO complex
