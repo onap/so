@@ -244,18 +244,6 @@
 			<version>1.3</version>
 		</dependency>
 		<dependency>
-			<groupId>org.onap.msb.java-sdk</groupId>
-			<artifactId>msb-java-sdk</artifactId>
-			<version>1.0.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.eclipsesource.jaxrs</groupId>
-					<artifactId>jersey-all</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
