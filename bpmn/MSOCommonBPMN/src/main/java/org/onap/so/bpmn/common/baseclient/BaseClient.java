@@ -20,11 +20,15 @@
 
 package org.onap.so.bpmn.common.baseclient;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -40,6 +44,17 @@ public class BaseClient<I,O> {
 	public HttpHeaders getHttpHeader() {
 		return httpHeader;
 	}
+	
+    public HttpHeaders setDefaultHttpHeaders(String auth) {
+    	httpHeader = new HttpHeaders();
+        httpHeader.set("Authorization", auth);
+        httpHeader.setContentType(MediaType.APPLICATION_JSON);
+        List<MediaType> acceptMediaTypes = new ArrayList<MediaType>();
+        acceptMediaTypes.add(MediaType.APPLICATION_JSON);
+        acceptMediaTypes.add(MediaType.TEXT_PLAIN);
+        httpHeader.setAccept(acceptMediaTypes);
+        return httpHeader;
+    }
 
 	public void setHttpHeader(HttpHeaders httpHeader) {
 		this.httpHeader = httpHeader;

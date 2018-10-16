@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CreateNetworkCollectionBB" name="CreateNetworkCollectionBB" isExecutable="true">
     <bpmn2:startEvent id="createNetworkCollection_startEvent">
       <bpmn2:outgoing>SequenceFlow_1maepy7</bpmn2:outgoing>
@@ -23,41 +23,46 @@
     </bpmn2:serviceTask>
     <bpmn2:serviceTask id="ServiceTask_Connect_Collection_to_InstanceGroup" name="&#10;AAI&#10;Connect&#10;(net collection)&#10;" camunda:expression="${CreateNetworkCollection.connectCollectionToInstanceGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}  ">
       <bpmn2:incoming>SequenceFlow_0z4c30j</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_1hij1px</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_0904jyg</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_05yxpu5" sourceRef="ServiceTask_create_NetworkCollection" targetRef="ServiceTask_create_NetworkCollectionInstanceGroup" />
     <bpmn2:sequenceFlow id="SequenceFlow_0z4c30j" sourceRef="ServiceTask_create_NetworkCollectionInstanceGroup" targetRef="ServiceTask_Connect_Collection_to_InstanceGroup" />
     <bpmn2:serviceTask id="ServiceTask_Connect_Collection_to_ServiceInstance" name="&#10;AAI&#10;Connect&#10;(svc instance)&#10;" camunda:expression="${CreateNetworkCollection.connectCollectionToServiceInstance(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}  ">
-      <bpmn2:incoming>SequenceFlow_1hij1px</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_0gkrvg6</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0hhklb4</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_1hij1px" sourceRef="ServiceTask_Connect_Collection_to_InstanceGroup" targetRef="ServiceTask_Connect_Collection_to_ServiceInstance" />
     <bpmn2:sequenceFlow id="SequenceFlow_0hhklb4" sourceRef="ServiceTask_Connect_Collection_to_ServiceInstance" targetRef="createNetworkCollection_EndEvent" />
+    <bpmn2:serviceTask id="ServiceTask_Connect_InstanceGroup_to_CloudRegion" name="&#10;AAI&#10;Connect&#10;(group to cloud)&#10;" camunda:expression="${CreateNetworkCollection.connectInstanceGroupToCloudRegion(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}  ">
+      <bpmn2:incoming>SequenceFlow_0904jyg</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0gkrvg6</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0904jyg" sourceRef="ServiceTask_Connect_Collection_to_InstanceGroup" targetRef="ServiceTask_Connect_InstanceGroup_to_CloudRegion" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0gkrvg6" sourceRef="ServiceTask_Connect_InstanceGroup_to_CloudRegion" targetRef="ServiceTask_Connect_Collection_to_ServiceInstance" />
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateNetworkCollectionBB">
       <bpmndi:BPMNShape id="StartEvent_0lbwmd1_di" bpmnElement="createNetworkCollection_startEvent">
-        <dc:Bounds x="236" y="-55" width="36" height="36" />
+        <dc:Bounds x="255" y="-55" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="229" y="-14" width="50" height="12" />
+          <dc:Bounds x="228" y="-14" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_10l9a3s_di" bpmnElement="createNetworkCollection_EndEvent">
-        <dc:Bounds x="1132" y="-55" width="36" height="36" />
+        <dc:Bounds x="1280" y="-55" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1128" y="-19" width="46" height="12" />
+          <dc:Bounds x="1254" y="-19" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_08q9eo4_di" bpmnElement="BuildName_ServiceTask">
         <dc:Bounds x="346" y="-77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1maepy7_di" bpmnElement="SequenceFlow_1maepy7">
-        <di:waypoint xsi:type="dc:Point" x="272" y="-37" />
+        <di:waypoint xsi:type="dc:Point" x="291" y="-37" />
         <di:waypoint xsi:type="dc:Point" x="346" y="-37" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="309" y="-52" width="0" height="0" />
+          <dc:Bounds x="273.5" y="-52" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_02qnccl_di" bpmnElement="ServiceTask_create_NetworkCollection">
@@ -91,20 +96,30 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_15u6tzt_di" bpmnElement="ServiceTask_Connect_Collection_to_ServiceInstance">
-        <dc:Bounds x="982" y="-77" width="100" height="80" />
+        <dc:Bounds x="1124" y="-77" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1hij1px_di" bpmnElement="SequenceFlow_1hij1px">
-        <di:waypoint xsi:type="dc:Point" x="917" y="-37" />
-        <di:waypoint xsi:type="dc:Point" x="982" y="-37" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0hhklb4_di" bpmnElement="SequenceFlow_0hhklb4">
+        <di:waypoint xsi:type="dc:Point" x="1224" y="-37" />
+        <di:waypoint xsi:type="dc:Point" x="1280" y="-37" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="950" y="-62" width="0" height="0" />
+          <dc:Bounds x="1207" y="-52" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0hhklb4_di" bpmnElement="SequenceFlow_0hhklb4">
-        <di:waypoint xsi:type="dc:Point" x="1082" y="-37" />
-        <di:waypoint xsi:type="dc:Point" x="1132" y="-37" />
+      <bpmndi:BPMNShape id="ServiceTask_0kpj3lv_di" bpmnElement="ServiceTask_Connect_InstanceGroup_to_CloudRegion">
+        <dc:Bounds x="971" y="-77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0904jyg_di" bpmnElement="SequenceFlow_0904jyg">
+        <di:waypoint xsi:type="dc:Point" x="917" y="-37" />
+        <di:waypoint xsi:type="dc:Point" x="971" y="-37" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1107" y="-62" width="0" height="0" />
+          <dc:Bounds x="944" y="-58" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0gkrvg6_di" bpmnElement="SequenceFlow_0gkrvg6">
+        <di:waypoint xsi:type="dc:Point" x="1071" y="-37" />
+        <di:waypoint xsi:type="dc:Point" x="1124" y="-37" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1097.5" y="-58" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

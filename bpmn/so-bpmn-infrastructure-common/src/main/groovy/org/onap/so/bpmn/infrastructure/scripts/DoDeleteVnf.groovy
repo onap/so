@@ -118,8 +118,12 @@ class DoDeleteVnf extends AbstractServiceTaskProcessor {
 				}
 
 				Optional<GenericVnf> vnf = wrapper.asBean(GenericVnf.class)
-				if(!vnf.get().getVfModules().getVfModule().isEmpty()){
-					execution.setVariable("DoDVNF_vnfInUse", true)
+				if (vnf.get() != null) {
+					if (vnf.get().getVfModules() != null) {
+						if((vnf.get().getVfModules().getVfModule() != null) && !vnf.get().getVfModules().getVfModule().isEmpty()){			
+							execution.setVariable("DoDVNF_vnfInUse", true)
+						}
+					}			
 				}
 			}else{
 				execution.setVariable("GENGV_FoundIndicator", false)

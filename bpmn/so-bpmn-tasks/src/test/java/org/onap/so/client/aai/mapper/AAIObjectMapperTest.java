@@ -280,7 +280,6 @@ public class AAIObjectMapperTest {
 		instanceGroup.setInstanceGroupName("test-instanceGroupName");
 		instanceGroup.setResourceVersion("test-resourceVersion");
 
-
 		ModelInfoInstanceGroup model = new ModelInfoInstanceGroup();
 		model.setFunction("test-function");
 		model.setInstanceGroupRole("SUB-INTERFACE");
@@ -288,6 +287,7 @@ public class AAIObjectMapperTest {
 		model.setModelInvariantUUID("modelInvariantUUID-000");
 		model.setModelUUID("modelUUID-000");
 		model.setDescription("test-description");
+		model.setInstanceGroupRole("SUB-INTERFACE");
 
 		instanceGroup.setModelInfoInstanceGroup(model);
 
@@ -311,6 +311,7 @@ public class AAIObjectMapperTest {
 		assertEquals(aaiInstanceGroup.getModelVersionId(), instanceGroup.getModelInfoInstanceGroup().getModelUUID());
 		assertEquals(aaiInstanceGroup.getResourceVersion(), instanceGroup.getResourceVersion());
 		assertEquals(aaiInstanceGroup.getInstanceGroupType(), instanceGroup.getModelInfoInstanceGroup().getType());
+		assertEquals(aaiInstanceGroup.getInstanceGroupRole(), instanceGroup.getModelInfoInstanceGroup().getInstanceGroupRole());
 	}
 
 	@Test

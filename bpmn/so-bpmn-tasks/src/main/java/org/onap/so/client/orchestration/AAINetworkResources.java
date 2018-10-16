@@ -33,6 +33,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -142,6 +143,13 @@ public class AAINetworkResources {
 		AAIResourceUri networkCollectionUri = AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, networkCollection.getId());
 		AAIResourceUri netwrokCollectionInstanceGroupURI = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
 		injectionHelper.getAaiClient().connect(networkCollectionUri, netwrokCollectionInstanceGroupURI);
+	}
+	
+	public void connectInstanceGroupToCloudRegion(InstanceGroup instanceGroup, CloudRegion cloudRegion) {
+		AAIResourceUri cloudRegionURI = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, 
+				cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId());
+		AAIResourceUri instanceGroupURI = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
+		injectionHelper.getAaiClient().connect(instanceGroupURI, cloudRegionURI, AAIEdgeLabel.USES);
 	}
 	
 	public void connectNetworkCollectionToServiceInstance(Collection networkCollection, ServiceInstance networkCollectionServiceInstance) {

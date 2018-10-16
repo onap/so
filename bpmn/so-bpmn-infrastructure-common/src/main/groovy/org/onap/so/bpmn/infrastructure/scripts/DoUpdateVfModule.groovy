@@ -458,8 +458,11 @@ public class DoUpdateVfModule extends VfModuleBase {
 			def vnfType = execution.getVariable('DOUPVfMod_vnfType')
 			def vfModuleId = execution.getVariable('DOUPVfMod_vfModuleId')
 			def vfModuleModelName = execution.getVariable('DOUPVfMod_vfModuleModelName')
-			def VfModule vfModule = (VfModule) execution.getVariable('DOUPVfMod_vfModule')
-			def vfModuleName = vfModule.getElementText('vf-module-name')
+			def vfModuleName = ""
+			if (execution.getVariable('DOUPVfMod_vfModule') != null) {
+				org.onap.aai.domain.yang.VfModule vfModule = execution.getVariable('DOUPVfMod_vfModule')
+				vfModuleName = vfModule.getVfModuleName()			
+			}			
 			def tenantId = execution.getVariable('DOUPVfMod_tenantId')
 			def aicCloudRegion = execution.getVariable('DOUPVfMod_aicCloudRegion')
 			boolean usePreload = execution.getVariable("DOUPVfMod_usePreload")
@@ -616,8 +619,11 @@ public class DoUpdateVfModule extends VfModuleBase {
 			def tenantId = execution.getVariable('DOUPVfMod_tenantId')
 			def volumeGroupId = execution.getVariable('DOUPVfMod_volumeGroupId')
 			def volumeGroupStackId = execution.getVariable('DOUPVfMod_volumeGroupStackId')
-			def VfModule vfModule = (VfModule) execution.getVariable('DOUPVfMod_vfModule')
-			def heatStackId = vfModule.getElementText('heat-stack-id')
+			def heatStackId = ""
+			if (execution.getVariable('DOUPVfMod_vfModule') != null) {
+				org.onap.aai.domain.yang.VfModule vfModule = execution.getVariable('DOUPVfMod_vfModule')
+				heatStackId = vfModule.getHeatStackId()
+			}			
 			def cloudId = execution.getVariable('DOUPVfMod_aicCloudRegion')
 			def vnfType = execution.getVariable('DOUPVfMod_vnfType')
 			def vnfName = execution.getVariable('DOUPVfMod_vnfName')
@@ -836,8 +842,11 @@ public class DoUpdateVfModule extends VfModuleBase {
 			def vnfType = execution.getVariable('DOUPVfMod_vnfType')
 			def vfModuleId = execution.getVariable('DOUPVfMod_vfModuleId')
 			def vfModuleModelName = execution.getVariable('DOUPVfMod_vfModuleModelName')
-			def VfModule vfModule = (VfModule) execution.getVariable('DOUPVfMod_vfModule')
-			def vfModuleName = vfModule.getElementText('vf-module-name')
+			def vfModuleName = ""
+			if (execution.getVariable('DOUPVfMod_vfModule') != null) {
+				org.onap.aai.domain.yang.VfModule vfModule = execution.getVariable('DOUPVfMod_vfModule')
+				vfModuleName = vfModule.getVfModuleName()
+			}			
 			def tenantId = execution.getVariable('DOUPVfMod_tenantId')
 			def aicCloudRegion = execution.getVariable('DOUPVfMod_aicCloudRegion')
 

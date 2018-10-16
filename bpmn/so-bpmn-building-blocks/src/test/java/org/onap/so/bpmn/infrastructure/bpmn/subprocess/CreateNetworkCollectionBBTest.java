@@ -35,7 +35,7 @@ public class CreateNetworkCollectionBBTest extends BaseBPMNTest{
     public void sunnyDayCreateNetworkCollection_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateNetworkCollectionBB",variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("createNetworkCollection_startEvent", "BuildName_ServiceTask", "ServiceTask_create_NetworkCollection", "ServiceTask_create_NetworkCollectionInstanceGroup", "ServiceTask_Connect_Collection_to_InstanceGroup", "ServiceTask_Connect_Collection_to_ServiceInstance", "createNetworkCollection_EndEvent");     
+        assertThat(pi).isStarted().hasPassedInOrder("createNetworkCollection_startEvent", "BuildName_ServiceTask", "ServiceTask_create_NetworkCollection", "ServiceTask_create_NetworkCollectionInstanceGroup", "ServiceTask_Connect_Collection_to_InstanceGroup", "ServiceTask_Connect_InstanceGroup_to_CloudRegion", "ServiceTask_Connect_Collection_to_ServiceInstance", "createNetworkCollection_EndEvent");     
         assertThat(pi).isEnded();
     }
 

@@ -30,6 +30,7 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
@@ -43,11 +44,13 @@ public class CreateNetworkCollectionTest extends BaseTaskTest{
 	private L3Network network;
 	private ServiceInstance serviceInstance;
 	private OrchestrationContext orchestrationContext;
+	private CloudRegion cloudRegion;
 	
 	@Before
 	public void before() {
 		serviceInstance = setServiceInstance();
 		network = setL3Network();
+		cloudRegion = setCloudRegion();
 		
 		List<L3Network> l3NetworkList = new ArrayList<L3Network>();
 		l3NetworkList.add(network);
@@ -91,5 +94,12 @@ public class CreateNetworkCollectionTest extends BaseTaskTest{
 		doNothing().when(aaiNetworkResources).connectNetworkCollectionToServiceInstance(serviceInstance.getCollection(), serviceInstance);
 		createNetworkCollection.connectCollectionToServiceInstance(execution);
 		verify(aaiNetworkResources, times(1)).connectNetworkCollectionToServiceInstance(serviceInstance.getCollection(), serviceInstance);
+	}
+	
+	@Test
+	public void connectInstanceGroupToCloudRegionTest() throws Exception {
+		doNothing().when(aaiNetworkResources).connectInstanceGroupToCloudRegion(serviceInstance.getCollection().getInstanceGroup(), cloudRegion);
+		createNetworkCollection.connectInstanceGroupToCloudRegion(execution);
+		verify(aaiNetworkResources, times(1)).connectInstanceGroupToCloudRegion(serviceInstance.getCollection().getInstanceGroup(), cloudRegion);
 	}
 }

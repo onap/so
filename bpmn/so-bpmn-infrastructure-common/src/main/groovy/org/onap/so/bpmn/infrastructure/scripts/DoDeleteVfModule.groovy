@@ -217,8 +217,8 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		// Get vfModuleName from AAI response if it was not specified on the request
 		if (vfModuleName == null || vfModuleName.isEmpty()) {
 			if (execution.getVariable("vfModuleFromAAI") != null) {
-				VfModule vfModuleFromAAI = execution.getVariable("vfModuleFromAAI")
-				vfModuleName = vfModuleFromAAI.getElementText("vf-module-name")
+				org.onap.aai.domain.yang.VfModule vfModuleFromAAI = execution.getVariable("vfModuleFromAAI")
+				vfModuleName = vfModuleFromAAI.getVfModuleName()
 			}
 		}
 		String vfModuleModelName = execution.getVariable("vfModuleModelName")
