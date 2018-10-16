@@ -700,7 +700,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
         try {
             // Delete the Multicloud stack
-            StackInfo stackInfo = deleteStack (tenantId, cloudSiteId, instanceId);
+            StackInfo stackInfo = deleteStack (cloudSiteId, tenantId, instanceId);
 
             // Populate a VduInstance based on the deleted Cloudify Deployment object
             VduInstance vduInstance = stackInfoToVduInstance(stackInfo);
