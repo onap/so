@@ -87,6 +87,7 @@ public class NetworkTopologyOperationRequestMapper {
 	private GenericResourceApiNetworkrequestinputNetworkRequestInput buildNetworkRequestInput(L3Network network, ServiceInstance serviceInstance, CloudRegion cloudRegion){
 		GenericResourceApiNetworkrequestinputNetworkRequestInput networkRequestInput = new GenericResourceApiNetworkrequestinputNetworkRequestInput();
 		networkRequestInput.setTenant(cloudRegion.getTenantId());
+		networkRequestInput.setCloudOwner(cloudRegion.getCloudOwner());
 		networkRequestInput.setAicCloudRegion(cloudRegion.getLcpCloudRegionId());
 		if (network.getNetworkName() != null && !network.getNetworkName().equals("")) {
 			networkRequestInput.setNetworkName(network.getNetworkName());
