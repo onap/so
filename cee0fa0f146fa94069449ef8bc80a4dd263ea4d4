@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_2fa72cbf",
+        "filename": "common/src/main/java/org/onap/so/client/aai/AAIRestClientImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-10-17T15:55:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bada0100_f411f7ac",
+      "revId": "cee0fa0f146fa94069449ef8bc80a4dd263ea4d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_94266b15",
         "filename": "common/src/main/java/org/onap/so/client/aai/AAIRestClientImpl.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2018-10-17T12:11:30Z",
       "side": 1,
       "message": "Why is sysout preferred here over logger",
+      "revId": "cee0fa0f146fa94069449ef8bc80a4dd263ea4d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_cfab0088",
+        "filename": "common/src/main/java/org/onap/so/client/aai/AAIRestClientImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-10-17T15:55:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bada0100_94266b15",
       "revId": "cee0fa0f146fa94069449ef8bc80a4dd263ea4d4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
