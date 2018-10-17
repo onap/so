@@ -23,6 +23,23 @@ SPDX-License-Identifier: Apache-2.0
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HomeComponent } from './home.component';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MatTableModule } from '@angular/material';
+import { FormsModule } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { inject } from '@angular/core/testing';
+import { RouterModule } from '@angular/router';
+import { APP_BASE_HREF } from '@angular/common';
+import { ToastrNotificationService } from '../toastr-notification-service.service';
+import { environment } from '../../environments/environment.prod';
+
+class StubbedToastrNotificationService extends ToastrNotificationService {
+  toastrSettings() {
+  }
+}
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -30,18 +47,32 @@ describe('HomeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [HomeComponent]
+      providers: [HomeComponent, HttpClient, HttpTestingController,
+        { provide: APP_BASE_HREF, useValue: '/' },
+        { provide: ToastrNotificationService, useClass: StubbedToastrNotificationService }],
+      imports: [MatTableModule, FormsModule, MatDatepickerModule, HttpClientModule, RouterModule.forRoot([])],
+      declarations: [HomeComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ]
     })
       .compileComponents();
   }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(HomeComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+  // Ensure creation of HomeComponent component
+  it('component should be created', inject([HttpTestingController, HomeComponent],
+    (httpClient: HttpTestingController, service: HomeComponent) => {
+      expect(service).toBeTruthy();
+    }));
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  // Ensure all statistic variables are initialised to zero
+  it('ensure statistic variables are defaulted at zero', async(inject([HttpTestingController, HomeComponent],
+    (httpClient: HttpTestingController, service: HomeComponent) => {
+      expect(service.totalVal === 0 && service.completeVal === 0 &&
+        service.inProgressVal === 0 && service.failedVal === 0 &&
+        service.pendingVal === 0 && service.unlockedVal === 0 &&
+        service.percentageComplete === 0 && service.percentageFailed === 0 &&
+        service.percentageInProg === 0 && service.percentagePending === 0 &&
+        service.percentageUnlocked === 0).toBeTruthy();
+    })));
 });

@@ -23,15 +23,22 @@ SPDX-License-Identifier: Apache-2.0
 import { TestBed, inject } from '@angular/core/testing';
 
 import { HttpErrorHandlerService } from './http-error-handler.service';
+import { ToastrNotificationService } from './toastr-notification-service.service';
+
+class StubbedToastrNotificationService extends ToastrNotificationService {
+  toastrSettings() {
+  }
+}
 
 describe('HttpErrorHandlerService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [HttpErrorHandlerService]
+      providers: [HttpErrorHandlerService,
+        { provide: ToastrNotificationService, useClass: StubbedToastrNotificationService }],
     });
   });
 
-  it('should be created', inject([HttpErrorHandlerService], (service: HttpErrorHandlerService) => {
+  it('ErrorHandler should be created', inject([HttpErrorHandlerService], (service: HttpErrorHandlerService) => {
     expect(service).toBeTruthy();
   }));
 });
