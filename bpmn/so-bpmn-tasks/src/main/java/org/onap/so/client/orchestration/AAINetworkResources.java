@@ -31,6 +31,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
@@ -53,6 +54,12 @@ public class AAINetworkResources {
 		AAIResourceUri networkURI = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, network.getNetworkId());
 		org.onap.aai.domain.yang.L3Network aaiL3Network = aaiObjectMapper.mapNetwork(network);
 		injectionHelper.getAaiClient().update(networkURI, aaiL3Network);
+	}
+	
+	public void updateSubnet(L3Network network, Subnet subnet) {
+		AAIResourceUri subnetURI = AAIUriFactory.createResourceUri(AAIObjectType.SUBNET, network.getNetworkId(), subnet.getSubnetId());
+		org.onap.aai.domain.yang.Subnet aaiSubnet = aaiObjectMapper.mapSubnet(subnet);
+		injectionHelper.getAaiClient().update(subnetURI, aaiSubnet);
 	}
 	
 	public void createNetworkConnectToServiceInstance(L3Network network, ServiceInstance serviceInstance) {

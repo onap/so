@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import javax.ws.rs.NotFoundException
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.model.dmn.instance.OrganizationUnit
@@ -124,10 +125,11 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			try {
 				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
 				AAIResourcesClient resourceClient = new AAIResourcesClient()
-				AAIResultWrapper wrapper = resourceClient.get(uri.depth(Depth.ONE))
+				AAIResultWrapper wrapper = resourceClient.get(uri.depth(Depth.ONE), NotFoundException.class)
 				GenericVnf responseData = wrapper.asBean(GenericVnf.class).get()
 
 				execution.setVariable('PUAAIVfMod_getVnfResponse', responseData)
+				execution.setVariable('PUAAIVfMod_getVnfResponseCode', 200)
 
 			} catch (Exception ex) {
 				msoLogger.error(ex);
@@ -176,8 +178,8 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 				execution.setVariable('PUAAIVfMod_vfModuleValidationError', msg)
 				execution.setVariable('PUAAIVfMod_vfModuleOK', false)
 			} else {
-				AAIResultWrapper wrapper = resourceClient.get(uri)
-				org.onap.aai.domain.yang.VfModule vfModule = wrapper.asBean(org.onap.aai.domain.yang.VfModule.class)
+				AAIResultWrapper wrapper = resourceClient.get(uri, NotFoundException.class)
+				org.onap.aai.domain.yang.VfModule vfModule = wrapper.asBean(org.onap.aai.domain.yang.VfModule.class).get()
 
 				def orchestrationStatus = execution.getVariable('PUAAIVfMod_orchestrationStatus')
 				if (vfModule.isBaseVfModule && genericVnf.getVfModules().getVfModule().size() > 1 && vfModule.getOrchestrationStatus().equals('pending-delete')) {

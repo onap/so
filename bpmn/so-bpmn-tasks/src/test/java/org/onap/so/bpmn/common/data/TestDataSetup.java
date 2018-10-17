@@ -52,6 +52,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
@@ -71,6 +72,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
 public class TestDataSetup{
 	private int collectionCounter;
@@ -685,5 +687,13 @@ public class TestDataSetup{
 		lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "testConfigurationId");
 		serviceInstance.setConfigurations(configurations);
 		return config;
+	}
+	
+	public Subnet buildSubnet() {
+        Subnet subnet = new Subnet();
+        subnet.setSubnetId("testSubnetId");
+        subnet.setOrchestrationStatus(OrchestrationStatus.PENDING);
+        subnet.setNeutronSubnetId("testNeutronSubnetId");
+		return subnet;
 	}
 }

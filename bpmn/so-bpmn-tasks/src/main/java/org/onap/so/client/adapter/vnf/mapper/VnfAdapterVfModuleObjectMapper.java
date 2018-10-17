@@ -140,7 +140,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		createVfModuleRequest.setVfModuleParams(buildVfModuleParamsMap(requestContext, serviceInstance, genericVnf, vfModule, sdncVnfQueryResponse, sdncVfModuleQueryResponse));
 		
 		createVfModuleRequest.setSkipAAI(true);		
-		createVfModuleRequest.setBackout(orchestrationContext.getIsRollbackEnabled());
+		createVfModuleRequest.setBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
 		createVfModuleRequest.setFailIfExists(true);
 		
 		MsoRequest msoRequest = buildMsoRequest(requestContext, serviceInstance);		

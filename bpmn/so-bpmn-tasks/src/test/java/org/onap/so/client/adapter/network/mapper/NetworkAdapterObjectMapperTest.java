@@ -21,6 +21,7 @@ package org.onap.so.client.adapter.network.mapper;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 
 import java.io.UnsupportedEncodingException;
@@ -38,6 +39,7 @@ import org.onap.so.adapters.nwrest.ContrailNetwork;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
+import org.onap.so.adapters.nwrest.NetworkTechnology;
 import org.onap.so.adapters.nwrest.ProviderVlanNetwork;
 import org.onap.so.adapters.nwrest.RollbackNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
@@ -96,6 +98,24 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 	}
 	
 	@Test
+	public void testSetNetworkTechnology() {
+		String networkTechnology = "Contrail";
+		NetworkTechnology expectedNetworkTechnology = NetworkTechnology.CONTRAIL;
+		NetworkTechnology actualNetworkTechnology = SPY_networkAdapterObjectMapper.setNetworkTechnology(networkTechnology);
+		assertEquals("NetworkTechnology matches", expectedNetworkTechnology, actualNetworkTechnology);
+		
+		networkTechnology = "Neutron";
+		expectedNetworkTechnology = NetworkTechnology.NEUTRON;
+		actualNetworkTechnology = SPY_networkAdapterObjectMapper.setNetworkTechnology(networkTechnology);
+		assertEquals("NetworkTechnology matches", expectedNetworkTechnology, actualNetworkTechnology);
+		
+		networkTechnology = "Vmware";
+		expectedNetworkTechnology = NetworkTechnology.VMWARE;
+		actualNetworkTechnology = SPY_networkAdapterObjectMapper.setNetworkTechnology(networkTechnology);
+		assertEquals("NetworkTechnology matches", expectedNetworkTechnology, actualNetworkTechnology);
+		
+	}
+	@Test
 	public void buildCreateNetworkRequestFromBbobjectTest() throws Exception {
 
 		String cloudRegionPo = "cloudRegionPo";
@@ -108,7 +128,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		expectedCreateNetworkRequest.setNetworkType(l3Network.getNetworkType());
 		expectedCreateNetworkRequest.setBackout(false);
 		expectedCreateNetworkRequest.setFailIfExists(true);
-		
+		expectedCreateNetworkRequest.setNetworkTechnology(NetworkTechnology.CONTRAIL);
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId(requestContext.getMsoRequestId());
 		msoRequest.setServiceInstanceId(serviceInstance.getServiceInstanceId());
@@ -124,10 +144,11 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		List<Subnet> subnetList = new ArrayList<Subnet>();
 		subnetList.add(openstackSubnet);
 		l3Network.getSubnets().add(openstackSubnet);
+		l3Network.getModelInfoNetwork().setNetworkTechnology("Contrail");
 
 		CreateNetworkRequest createNetworkRequest  = SPY_networkAdapterObjectMapper.createNetworkRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, customer);
 		
-		assertThat(createNetworkRequest, sameBeanAs(expectedCreateNetworkRequest).ignoring("contrailNetwork").ignoring("providerVlanNetwork").ignoring("subnets").ignoring("networkParams").ignoring("messageId"));
+		assertThat(createNetworkRequest, sameBeanAs(expectedCreateNetworkRequest).ignoring("contrailRequest").ignoring("contrailNetwork").ignoring("providerVlanNetwork").ignoring("subnets").ignoring("networkParams").ignoring("messageId"));
 	}
 	
 	@Test
@@ -232,7 +253,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		expectedUpdateNetworkRequest.setNetworkParams(userInput);
 		expectedUpdateNetworkRequest.setMsoRequest(msoRequest);
 		expectedUpdateNetworkRequest.setSkipAAI(true);
-		expectedUpdateNetworkRequest.setBackout(!Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
+		expectedUpdateNetworkRequest.setBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
 		expectedUpdateNetworkRequest.setMessageId("messageId");
 		expectedUpdateNetworkRequest.setNotificationUrl("http://localhost:28080/mso/WorkflowMesssage/NetworkAResponse/messageId");
 

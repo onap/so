@@ -10,7 +10,7 @@
     "configurationParameters": []
   },
   "orchContext": {
-    "is-rollback-enabled": true
+    "is-rollback-enabled": false
   },
   "cloudRegion": {
     "lcp-cloud-region-id" : "myRegionId",

@@ -72,8 +72,8 @@ public class SDNCAssignTasks {
 	}
 
 	public void assignVnf(BuildingBlockExecution execution) {
-		try {
-			GeneralBuildingBlock gBBInput = execution.getVariable("generalBuildingBlock");
+		try {		
+			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();			
 			RequestContext requestContext = gBBInput.getRequestContext();
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));

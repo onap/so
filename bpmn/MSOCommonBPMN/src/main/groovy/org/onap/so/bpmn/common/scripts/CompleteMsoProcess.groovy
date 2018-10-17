@@ -206,6 +206,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 				idXml = ""
 			}
 			idXml = utils.removeXmlPreamble(idXml)
+			idXml = utils.removeXmlNamespaces(idXml)
 			msoLogger.debug("Incoming Instance Id Xml: " + idXml)
 
 			String payload = """

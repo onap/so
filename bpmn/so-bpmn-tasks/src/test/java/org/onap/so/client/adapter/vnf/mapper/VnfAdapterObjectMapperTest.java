@@ -134,7 +134,7 @@ public class VnfAdapterObjectMapperTest {
 		expectedCreateVolumeGroupRequest.setVolumeGroupParams(volumeGroupParams);
 		
 		expectedCreateVolumeGroupRequest.setSkipAAI(true);
-		expectedCreateVolumeGroupRequest.setSuppressBackout(orchestrationContext.getIsRollbackEnabled());
+		expectedCreateVolumeGroupRequest.setSuppressBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
 		expectedCreateVolumeGroupRequest.setFailIfExists(true);
 		
 		MsoRequest msoRequest = new MsoRequest();
@@ -210,7 +210,7 @@ public class VnfAdapterObjectMapperTest {
 		expectedCreateVolumeGroupRequest.setVolumeGroupParams(volumeGroupParams);
 
 		expectedCreateVolumeGroupRequest.setSkipAAI(true);
-		expectedCreateVolumeGroupRequest.setSuppressBackout(orchestrationContext.getIsRollbackEnabled());
+		expectedCreateVolumeGroupRequest.setSuppressBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
 		expectedCreateVolumeGroupRequest.setFailIfExists(true);
 
 		MsoRequest msoRequest = new MsoRequest();

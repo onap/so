@@ -55,6 +55,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
@@ -74,6 +75,7 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 	private InstanceGroup instanceGroup;
 	private ServiceInstance serviceInstance;
 	private CloudRegion cloudRegion;
+	private Subnet subnet;
 	
 	@Mock
 	protected AAIResourcesClient MOCK_aaiResourcesClient;
@@ -101,6 +103,9 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 		serviceInstance = buildServiceInstance();
 		
 		cloudRegion = buildCloudRegion();
+		
+		subnet = buildSubnet();
+		
 		doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
 	}
 	
@@ -313,5 +318,16 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 		doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
 		aaiNetworkResources.deleteNetworkInstanceGroup(instanceGroup);
 		verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
+	}
+	
+	@Test
+	public void updateSubnetTest() throws Exception {
+
+		doReturn(new org.onap.aai.domain.yang.Subnet()).when(MOCK_aaiObjectMapper).mapSubnet(subnet);
+		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Subnet.class));
+		
+		aaiNetworkResources.updateSubnet(network, subnet);
+
+		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Subnet.class));
 	}
 }

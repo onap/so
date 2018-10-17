@@ -57,6 +57,19 @@ class CompleteMsoProcessTest {
 						<sdncadapterworkflow:mso-bpel-name>UCPELayer3ServiceActivateV1</sdncadapterworkflow:mso-bpel-name>
 				</sdncadapterworkflow:MsoCompletionRequest>
 		"""
+	
+		private String completeMsoNetworkProcessRequest = """
+					<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+								xmlns:ns="http://org.onap/so/request/types/v1">
+						<request-info xmlns="http://org.onap/so/infra/vnf-request/v1">
+							<request-id>bd631913-cfc6-488b-ba22-6b98504f703d</request-id>
+							<action>CREATE</action>
+							<source>VID</source>
+			   			</request-info>
+						<aetgt:status-message>Resource Completed Successfully</aetgt:status-message>
+                        <aetgt:networkId>bd631913-cfc6-488b-ba22-6b98504f703d</aetgt:networkId>
+			   			<aetgt:mso-bpel-name>BPMN Network action: CREATE</aetgt:mso-bpel-name>
+					</aetgt:MsoCompletionRequest>"""
 
 	@Test
 	public void testPreProcessRequest() {
@@ -117,7 +130,7 @@ class CompleteMsoProcessTest {
 						         <statusMessage>Resource Completed Successfully</statusMessage>
 						         <requestStatus>COMPLETE</requestStatus>
 								 <progress>100</progress>
-								 
+								 <networkId>bd631913-cfc6-488b-ba22-6b98504f703d</networkId>
 						      </req:updateInfraRequest>
 						   </soapenv:Body>
 						</soapenv:Envelope>"""
@@ -130,6 +143,7 @@ class CompleteMsoProcessTest {
 		when(mockExecution.getVariable("CMSO_mso-bpel-name")).thenReturn("BPEL")
 		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC");
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
+		when(mockExecution.getVariable("CompleteMsoProcessRequest")).thenReturn(completeMsoNetworkProcessRequest);
 		
 		CompleteMsoProcess completeMsoProcess = new CompleteMsoProcess()
 		completeMsoProcess.setUpdateDBstatustoSuccessPayload(mockExecution)

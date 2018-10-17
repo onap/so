@@ -135,6 +135,80 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 	}
 	
 	@Test
+	public void createVfModuleWithFalseRollbackRequestMapperTest() throws Exception {
+
+		// prepare and set service instance
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setServiceInstanceId("serviceInstanceId");
+		ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
+		modelInfoServiceInstance.setModelInvariantUuid("serviceModelInvariantUuid");
+		modelInfoServiceInstance.setModelName("serviceModelName");
+		modelInfoServiceInstance.setModelUuid("serviceModelUuid");
+		modelInfoServiceInstance.setModelVersion("serviceModelVersion");
+		modelInfoServiceInstance.setEnvironmentContext("environmentContext");
+		modelInfoServiceInstance.setWorkloadContext("workloadContext");
+		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
+
+		RequestContext requestContext = new RequestContext();
+		HashMap<String, String> userParams = new HashMap<String, String>();
+		userParams.put("key1", "value2");
+		requestContext.setMsoRequestId("requestId");
+		requestContext.setUserParams(userParams);
+		requestContext.setProductFamilyId("productFamilyId");
+
+		GenericVnf vnf = new GenericVnf();
+		vnf.setVnfId("vnfId");
+		vnf.setVnfType("vnfType");
+		vnf.setVnfName("vnfName");
+		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
+		modelInfoGenericVnf.setModelInvariantUuid("vnfModelInvariantUuid");
+		modelInfoGenericVnf.setModelName("vnfModelName");
+		modelInfoGenericVnf.setModelVersion("vnfModelVersion");
+		modelInfoGenericVnf.setModelUuid("vnfModelUuid");
+		modelInfoGenericVnf.setModelCustomizationUuid("vnfModelCustomizationUuid");
+		vnf.setModelInfoGenericVnf(modelInfoGenericVnf);
+
+		Integer vfModuleIndex = 1;
+		VfModule vfModule = new VfModule();
+		vfModule.setVfModuleId("vfModuleId");
+		vfModule.setVfModuleName("vfModuleName");
+		vfModule.setModuleIndex(vfModuleIndex);
+		ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
+		modelInfoVfModule.setModelInvariantUUID("vfModuleModelInvariantUuid");
+		modelInfoVfModule.setModelName("vfModuleModelName");
+		modelInfoVfModule.setModelVersion("vfModuleModelVersion");
+		modelInfoVfModule.setModelUUID("vfModuleModelUuid");
+		modelInfoVfModule.setModelCustomizationUUID("vfModuleModelCustomizationUuid");
+		vfModule.setModelInfoVfModule(modelInfoVfModule);
+		HashMap<String, String> cloudParams = new HashMap<String, String>();
+		cloudParams.put("key3", "value3");
+		vfModule.setCloudParams(cloudParams);
+
+		CloudRegion cloudRegion = new CloudRegion();
+		cloudRegion.setLcpCloudRegionId("cloudRegionId");
+		cloudRegion.setTenantId("tenantId");
+
+		OrchestrationContext orchestrationContext = new OrchestrationContext();
+		orchestrationContext.setIsRollbackEnabled(true);
+
+		String sdncVnfQueryResponse = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "genericResourceApiVfModuleSdncVnfTopology.json")));
+		String sdncVfModuleQueryResponse = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "genericResourceApiVfModuleSdncVfModuleTopology.json")));
+
+		CreateVfModuleRequest vfModuleVNFAdapterRequest = vfModuleObjectMapper.createVfModuleRequestMapper(
+				requestContext, cloudRegion, orchestrationContext, serviceInstance,
+				vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+
+
+		String jsonToCompare = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequestTrueBackout.json")));
+
+				CreateVfModuleRequest reqMapper1 = omapper.readValue(
+				jsonToCompare,
+				CreateVfModuleRequest.class);
+
+		assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+	}
+	
+	@Test
 	public void createVfModuleRequestWithNoEnvironmentAndWorkloadContextMapperTest() throws Exception {
 
 		// prepare and set service instance

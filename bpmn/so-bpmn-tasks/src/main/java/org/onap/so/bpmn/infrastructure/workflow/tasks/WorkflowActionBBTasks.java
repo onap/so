@@ -290,16 +290,11 @@ public class WorkflowActionBBTasks {
 			String requestId = (String) execution.getVariable(G_REQUEST_ID);
 			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
 			String errorMsg = null;
-			boolean rollback = false;
+			boolean rollback = (boolean) execution.getVariable("isRollbackComplete");
 			try {
 				WorkflowException exception = (WorkflowException) execution.getVariable("WorkflowException");
-				if(exception.getErrorMessage()!=null || !exception.getErrorMessage().equals("")){
+				if(exception != null && (exception.getErrorMessage()!=null || !exception.getErrorMessage().equals(""))){
 					errorMsg = exception.getErrorMessage();
-					rollback = (boolean) execution.getVariable("isRollbackComplete");
-					if(rollback){
-						errorMsg = errorMsg + " + Rollback has been completed successfully.";
-					}
-					request.setStatusMessage(errorMsg);
 				}
 			} catch (Exception ex) {
 				//log error and attempt to extact WorkflowExceptionMessage
@@ -308,12 +303,16 @@ public class WorkflowActionBBTasks {
 			if (errorMsg == null){
 				try {
 					errorMsg = (String) execution.getVariable("WorkflowExceptionErrorMessage");
-					request.setStatusMessage(errorMsg);
 				} catch (Exception ex) {
 					logger.error("Failed to extract workflow exception message from WorkflowException",ex);
-					request.setStatusMessage("Unexpected Error in BPMN");
+					errorMsg = "Unexpected Error in BPMN.";
 				}
 			}
+			if(rollback){
+				errorMsg = errorMsg + " + Rollback has been completed successfully.";
+			}
+			request.setProgress(Long.valueOf(100));
+			request.setStatusMessage(errorMsg);
 			request.setRequestStatus("FAILED");
 			request.setLastModifiedBy("CamundaBPMN");
 			requestDbclient.updateInfraActiveRequests(request);

@@ -654,4 +654,21 @@ public class AAIObjectMapperTest {
 
         assertThat(actualRouteTarget, sameBeanAs(expectedRouteTarget));
     }
+    
+    @Test
+    public void mapSubnetTest() {
+        Subnet subnet = new Subnet();
+        subnet.setSubnetId("testSubnetId");
+        subnet.setOrchestrationStatus(OrchestrationStatus.PENDING);
+        subnet.setNeutronSubnetId("testNeutronSubnetId");
+
+        org.onap.aai.domain.yang.Subnet expectedSubnet = new org.onap.aai.domain.yang.Subnet();
+        expectedSubnet.setSubnetId("testSubnetId");
+        expectedSubnet.setOrchestrationStatus("Pending");
+        expectedSubnet.setNeutronSubnetId("testNeutronSubnetId");
+        
+        org.onap.aai.domain.yang.Subnet actualSubnet = aaiObjectMapper.mapSubnet(subnet);
+
+        assertThat(actualSubnet, sameBeanAs(expectedSubnet));
+    }
 }

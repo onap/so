@@ -21,14 +21,24 @@
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -36,6 +46,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
@@ -52,6 +63,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	private VolumeGroup volumeGroup;
 	private CloudRegion cloudRegion;
 	private Configuration configuration;
+	private Subnet subnet;
 	
 	@Before
 	public void before() {
@@ -62,6 +74,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 		cloudRegion = setCloudRegion();
 		network = setL3Network();
 		configuration = setConfiguration();
+		subnet = buildSubnet();
 	}
 	
 	@Test
@@ -290,51 +303,14 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 		doThrow(Exception.class).when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
 		aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
 	}
-	
-	@Test
-	public void updateOstatusAssignedNetworkTest() throws Exception {
-		doNothing().when(aaiNetworkResources).updateNetwork(network);
-
-		aaiUpdateTasks.updateOrchestrationStatusAssignedNetwork(execution);
-
-		verify(aaiNetworkResources, times(1)).updateNetwork(network);
-		assertEquals("", network.getHeatStackId());
-	}
 
 	@Test
-	public void updateOstatusAssignedNetworkExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		
-		doThrow(Exception.class).when(aaiNetworkResources).updateNetwork(network);
-		
-		aaiUpdateTasks.updateOrchestrationStatusAssignedNetwork(execution);
-	}
-	
-	@Test
-	public void updateOstatusActivedNetworkTest() throws Exception {
-		doNothing().when(aaiNetworkResources).updateNetwork(network);
-
-		aaiUpdateTasks.updateOrchestrationStatusActiveNetwork(execution);
-
-		verify(aaiNetworkResources, times(1)).updateNetwork(network);
-	}
-	
-	@Test
-	public void updateOstatusCreatedNetworkTest() throws Exception {
-		doNothing().when(aaiNetworkResources).updateNetwork(network);
-
-		aaiUpdateTasks.updateOrchestrationStatusActiveNetwork(execution);
-
-		verify(aaiNetworkResources, times(1)).updateNetwork(network);
-	}
-
-	@Test
-	public void updateOstatusActiveNetworkExceptionTest() throws Exception {
+	public void updateNetworkExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
 
 		doThrow(Exception.class).when(aaiNetworkResources).updateNetwork(network);
 		
-		aaiUpdateTasks.updateOrchestrationStatusActiveNetwork(execution);
+		aaiUpdateTasks.updateNetwork(execution, OrchestrationStatus.ACTIVE);
 	}
 	
 	@Test
@@ -374,19 +350,61 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 		CreateNetworkResponse createNetworkResponse = new CreateNetworkResponse();
 		createNetworkResponse.setNetworkFqdn("testNetworkFqdn");
 		createNetworkResponse.setNetworkStackId("testNetworkStackId");
+		HashMap<String, String> subnetMap = new HashMap<String, String>();
+		subnetMap.put("testSubnetId", "testNeutronSubnetId");
+		createNetworkResponse.setSubnetMap(subnetMap);
+		
+		network.getSubnets().add(subnet);
 		
 		execution.setVariable("createNetworkResponse", createNetworkResponse);
 		
 		doNothing().when(aaiNetworkResources).updateNetwork(network);
+		doNothing().when(aaiNetworkResources).updateSubnet(network, subnet);
+
 		aaiUpdateTasks.updateNetworkCreated(execution);
 		verify(aaiNetworkResources, times(1)).updateNetwork(network);
+		verify(aaiNetworkResources, times(1)).updateSubnet(network, subnet);
 		
 		assertEquals(createNetworkResponse.getNetworkFqdn(), network.getContrailNetworkFqdn());
 		assertEquals(OrchestrationStatus.CREATED, network.getOrchestrationStatus());
 		assertEquals(createNetworkResponse.getNetworkStackId(), network.getHeatStackId());
 		assertEquals(createNetworkResponse.getNeutronNetworkId(), network.getNeutronNetworkId());
+		String neutronSubnetId = createNetworkResponse.getSubnetMap().entrySet().iterator().next().getValue();
+		assertEquals(neutronSubnetId, network.getSubnets().get(0).getNeutronSubnetId());
 	}
 
+	@Test
+	public void updateOrchestrationStatusNetworkTest() {
+		AAIUpdateTasks spy = Mockito.spy(new AAIUpdateTasks());
+		doNothing().when(spy).updateNetwork(eq(execution), any());
+		spy.updateOrchestrationStatusActiveNetwork(execution);
+		verify(spy, times(1)).updateNetwork(execution, OrchestrationStatus.ACTIVE);
+		spy.updateOrchestrationStatusAssignedNetwork(execution);
+		verify(spy, times(1)).updateNetwork(execution, OrchestrationStatus.ASSIGNED);
+		spy.updateOrchestrationStatusCreatedNetwork(execution);
+		verify(spy, times(1)).updateNetwork(execution, OrchestrationStatus.CREATED);
+	}
+	
+	@Test
+	public void updateNetworkAAITest() {
+		
+		L3Network spy = spy(new L3Network());
+		L3Network shallowCopy = mock(L3Network.class);
+		Subnet mockSubnet = mock(Subnet.class);
+		Subnet shallowCopySubnet = mock(Subnet.class);
+		when(mockSubnet.shallowCopyId()).thenReturn(shallowCopySubnet);
+		doReturn(shallowCopy).when(spy).shallowCopyId();
+				
+		doNothing().when(aaiNetworkResources).updateNetwork(network);
+		doNothing().when(aaiNetworkResources).updateSubnet(network, subnet);
+		
+		spy.getSubnets().add(mockSubnet);
+		aaiUpdateTasks.updateNetworkAAI(spy, OrchestrationStatus.CREATED);
+			
+		verify(shallowCopy, times(1)).setOrchestrationStatus(OrchestrationStatus.CREATED);
+		verify(spy, times(1)).setOrchestrationStatus(OrchestrationStatus.CREATED);
+		verify(shallowCopySubnet, times(1)).setOrchestrationStatus(OrchestrationStatus.CREATED);
+	}
 	@Test
 	public void updateNetworkCreatedkExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
