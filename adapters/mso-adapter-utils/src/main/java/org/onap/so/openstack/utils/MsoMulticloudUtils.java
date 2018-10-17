@@ -208,7 +208,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             if (logger.isDebugEnabled()) {
                 logger.debug("Multicloud Create Response Body: " + multicloudResponseBody);
             }
-            return getStackStatus(cloudSiteId, tenantId, multicloudResponseBody.getWorkloadId(), pollForCompletion, timeoutMinutes, backout);
+            return getStackStatus(cloudSiteId, tenantId, createInfo.getCanonicalName(), pollForCompletion, timeoutMinutes, backout);
         } else {
             createInfo.setStatus(HeatStatus.FAILED);
             createInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
