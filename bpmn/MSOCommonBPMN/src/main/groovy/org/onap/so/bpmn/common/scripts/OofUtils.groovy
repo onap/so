@@ -87,7 +87,9 @@ class OofUtils {
                         ArrayList requiredCandidates = null) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         utils.log("DEBUG", "Started Building OOF Request", isDebugEnabled)
-        def callbackUrl = utils.createWorkflowMessageAdapterCallbackURL(execution, "oofResponse", requestId)
+        String callbackEndpoint = UrnPropertiesReader.getVariable("mso.oof.callbackEndpoint", execution)
+        utils.log("DEBUG", "mso.oof.callbackEndpoint is: " + callbackEndpoint, isDebugEnabled)
+        def callbackUrl = utils.createWorkflowMessageAdapterCallbackURL(callbackEndpoint, "oofResponse", requestId)
         def transactionId = requestId
         //ServiceInstance Info
         ServiceInstance serviceInstance = decomposition.getServiceInstance()
