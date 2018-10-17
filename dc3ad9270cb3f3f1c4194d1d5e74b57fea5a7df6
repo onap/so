@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_0c9368fb",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-10-17T14:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bada0100_697466cf",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 48
+      },
+      "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_092fdaa2",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
         "patchSetId": 8
@@ -88,6 +112,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_ccbc806f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-10-17T14:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bada0100_893bcaea",
+      "range": {
+        "startLine": 51,
+        "startChar": 4,
+        "endLine": 51,
+        "endChar": 34
+      },
+      "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_e9361603",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
         "patchSetId": 8
@@ -111,6 +159,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_ecc144e5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-10-17T14:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bada0100_e9361603",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 85,
+        "endChar": 5
+      },
+      "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_09583a55",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
         "patchSetId": 8
@@ -122,6 +194,30 @@
       "writtenOn": "2018-10-11T13:30:19Z",
       "side": 1,
       "message": "I don\u0027t think you should remove this test. If you change default value setting to constructor, then you can still test this. That\u0027s one of the reasons why injecting values to private fields is bad - it\u0027s harder to test.",
+      "range": {
+        "startLine": 68,
+        "startChar": 3,
+        "endLine": 68,
+        "endChar": 5
+      },
+      "revId": "dc3ad9270cb3f3f1c4194d1d5e74b57fea5a7df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_acbb3c71",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-10-17T14:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bada0100_09583a55",
       "range": {
         "startLine": 68,
         "startChar": 3,
