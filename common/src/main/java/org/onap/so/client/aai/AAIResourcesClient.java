@@ -269,18 +269,18 @@ public class AAIResourcesClient extends AAIClient {
 		return e;
 	}
 	
-	private Relationship buildRelationship(AAIResourceUri uri) {
+	protected Relationship buildRelationship(AAIResourceUri uri) {
 		return buildRelationship(uri, Optional.empty());
 	}
 	
-	private Relationship buildRelationship(AAIResourceUri uri, AAIEdgeLabel label) {
+	protected Relationship buildRelationship(AAIResourceUri uri, AAIEdgeLabel label) {
 		return buildRelationship(uri, Optional.of(label));
 	}
-	private Relationship buildRelationship(AAIResourceUri uri, Optional<AAIEdgeLabel> label) {
+	protected Relationship buildRelationship(AAIResourceUri uri, Optional<AAIEdgeLabel> label) {
 		final Relationship result = new Relationship();
 		result.setRelatedLink(uri.build().toString());
 		if (label.isPresent()) {
-			result.setRelationshipLabel(label.toString());
+			result.setRelationshipLabel(label.get().toString());
 		}
 		return result;
 	}

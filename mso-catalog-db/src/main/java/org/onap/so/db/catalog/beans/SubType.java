@@ -21,5 +21,14 @@
 package org.onap.so.db.catalog.beans;
 
 public enum SubType {
-	SUB_INTERFACE
+	SUB_INTERFACE("SUB-INTERFACE");
+	
+	private final String value;
+	SubType(String value){
+		this.value = value;
+	}
+	@Override
+	public String toString() {
+		return this.value;
+	}
 }

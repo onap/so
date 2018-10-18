@@ -91,6 +91,23 @@ public class CreateNetworkCollection {
 	}
 	
 	/**
+	 * BPMN access method to connect Instance Group to Cloud Region
+	 * @param execution
+	 * @throws Exception
+	 */
+	public void connectInstanceGroupToCloudRegion(BuildingBlockExecution execution) throws Exception {
+		execution.setVariable("connectInstanceGroupToCloudRegionRollback", false);
+		try{
+			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			Collection networkCollection =  serviceInstance.getCollection();
+			aaiNetworkResources.connectInstanceGroupToCloudRegion(networkCollection.getInstanceGroup(), execution.getGeneralBuildingBlock().getCloudRegion());
+			execution.setVariable("connectInstanceGroupToCloudRegionRollback", true);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	
+	/**
 	 * BPMN access method to connect Network Collection
 	 * @param execution
 	 * @throws Exception

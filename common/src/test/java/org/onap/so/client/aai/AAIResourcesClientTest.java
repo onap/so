@@ -28,15 +28,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -181,6 +184,21 @@ public class AAIResourcesClientTest {
 		thrown.expect(NotFoundException.class);
 		thrown.expectMessage(containsString(path.build() + " not found in A&AI"));
 		AAIResultWrapper result = client.get(path, NotFoundException.class);
+	}
+	
+	@Test
+	public void buildRelationshipTest() {
+		AAIResourcesClient client = createClient();
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
+		Relationship relationship = new Relationship();
+		relationship.setRelatedLink(uri.build().toString());
+		Relationship actual = client.buildRelationship(uri);
+		assertThat("expect equal no label", actual, sameBeanAs(relationship));
+		
+		relationship.setRelationshipLabel(AAIEdgeLabel.USES.toString());
+		actual = client.buildRelationship(uri, AAIEdgeLabel.USES);
+		assertThat("expect equal has label", actual, sameBeanAs(relationship));
+		
 	}
 	
 	private AAIResourcesClient createClient() {

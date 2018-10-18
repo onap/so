@@ -58,6 +58,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.Relationships;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
@@ -329,5 +330,14 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 		aaiNetworkResources.updateSubnet(network, subnet);
 
 		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Subnet.class));
+	}
+	
+	@Test
+	public void connectInstanceGroupToCloudRegionTest() throws Exception {
+		aaiNetworkResources.connectInstanceGroupToCloudRegion(instanceGroup, cloudRegion);
+		verify(MOCK_aaiResourcesClient, times(1)).connect(
+				eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())),
+				eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())),
+				eq(AAIEdgeLabel.USES));
 	}
 }

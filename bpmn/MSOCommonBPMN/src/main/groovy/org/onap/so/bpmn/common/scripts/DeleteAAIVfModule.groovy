@@ -132,7 +132,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		def responseData = ""
 		try {
 			String vnfId = execution.getVariable("DAAIVfMod_vnfId")
-			String vfModuleId = execution.setVariable("DAAIVfMod_vfModuleId")
+			String vfModuleId = execution.getVariable("DAAIVfMod_vfModuleId")
 			String resourceVersion =  execution.getVariable("DAAIVfMod_vfModRsrcVer")
 			
 			AaiUtil aaiUriUtil = new AaiUtil(this)
