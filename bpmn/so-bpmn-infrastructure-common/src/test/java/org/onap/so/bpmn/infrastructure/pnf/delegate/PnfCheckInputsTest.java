@@ -56,6 +56,15 @@ public class PnfCheckInputsTest {
         assertThatThrownBy(() -> delegate.execute(delegateExecution)).isInstanceOf(BpmnError.class);
     }
 
+    @Test
+    public void shouldThrowException_whenPnfIdIsEmptyString() throws Exception {
+        // given
+        DelegateExecution delegateExecution = mockDelegateExecution();
+        when(delegateExecution.getVariable(CORRELATION_ID)).thenReturn("");
+        // when, then
+        assertThatThrownBy(() -> delegate.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+    }
+
     private DelegateExecution mockDelegateExecutionWithCorrelationId() {
         DelegateExecution delegateExecution = mockDelegateExecution();
         when(delegateExecution.getVariable(CORRELATION_ID)).thenReturn("testCorrelationId");
@@ -66,6 +75,15 @@ public class PnfCheckInputsTest {
     public void shouldThrowException_whenTimeoutIsNotSetAndDefaultIsNotDefined() throws Exception {
         // given
         DelegateExecution delegateExecution = mockDelegateExecutionWithCorrelationId();
+        // when, then
+        assertThatThrownBy(() -> delegate.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+    }
+
+    @Test
+    public void shouldThrowException_whenTimeoutIsEmptyStringAndDefaultIsNotDefined() throws Exception {
+        // given
+        DelegateExecution delegateExecution = mockDelegateExecutionWithCorrelationId();
+        when(delegateExecution.getVariable(TIMEOUT_FOR_NOTIFICATION)).thenReturn("");
         // when, then
         assertThatThrownBy(() -> delegate.execute(delegateExecution)).isInstanceOf(BpmnError.class);
     }
