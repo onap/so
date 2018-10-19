@@ -137,7 +137,7 @@
 		<dependency>
 			<groupId>org.onap.logging-analytics</groupId>
   			<artifactId>logging-slf4j</artifactId>
-  			<version>1.2.2-SNAPSHOT</version>
+  			<version>1.2.2</version>
   			<exclusions>
 				<exclusion>
 					<groupId>com.att.eelf</groupId>

@@ -106,7 +106,7 @@ public class RelatedInstancesValidation implements ValidationRule{
 	          		if(!(	relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup) || 
 	          				relatedInstanceModelInfo.getModelType().equals(ModelType.connectionPoint) ||
 	          				relatedInstanceModelInfo.getModelType().equals(ModelType.pnf) ||
-	          				relatedInstanceModelInfo.getModelType().equals(ModelType.networkCollection))) {
+	          				relatedInstanceModelInfo.getModelType().equals(ModelType.networkInstanceGroup))) {
 
 	          			if(empty (relatedInstanceModelInfo.getModelInvariantId ())) {
 	          				throw new ValidationException ("modelInvariantId in relatedInstance");

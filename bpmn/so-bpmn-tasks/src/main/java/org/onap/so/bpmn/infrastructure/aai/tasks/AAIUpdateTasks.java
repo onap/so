@@ -54,6 +54,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AAIUpdateTasks {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AAIUpdateTasks.class);
+	private static final String MULTI_STAGE_DESIGN_OFF = "false";
+	private static final String MULTI_STAGE_DESIGN_ON = "true";
 	@Autowired
 	private AAIServiceInstanceResources aaiServiceInstanceResources;
 	@Autowired
@@ -181,6 +183,26 @@ public class AAIUpdateTasks {
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 			aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule,vnf,OrchestrationStatus.PENDING_ACTIVATION);
 		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	
+	public void updateOrchestrationStatusAssignedOrPendingActivationVfModule(BuildingBlockExecution execution) {
+		try {
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			vfModule.setHeatStackId("");
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			String multiStageDesign = MULTI_STAGE_DESIGN_OFF;
+			if (vnf.getModelInfoGenericVnf() != null) {
+				multiStageDesign = vnf.getModelInfoGenericVnf().getMultiStageDesign();
+			}
+			if (multiStageDesign != null && multiStageDesign.equalsIgnoreCase(MULTI_STAGE_DESIGN_ON)) {
+				aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule,vnf,OrchestrationStatus.PENDING_ACTIVATION);
+			}
+			else {
+				aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule,vnf,OrchestrationStatus.ASSIGNED);
+			}
+		} catch (Exception ex) {			
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
 	}

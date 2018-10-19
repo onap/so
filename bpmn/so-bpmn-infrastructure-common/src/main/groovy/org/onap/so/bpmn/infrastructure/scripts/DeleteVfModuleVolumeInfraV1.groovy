@@ -395,12 +395,8 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		AaiUtil aaiUtil = new AaiUtil(this)
 
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, groupId).queryParam("resource-version", resourceVersion)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, groupId).resourceVersion(resourceVersion)
 		def deleteAAIVolumeGrpIdRequest = aaiUtil.createAaiUri(uri)
-
-		if(resourceVersion !=null){
-			deleteAAIVolumeGrpIdRequest = deleteAAIVolumeGrpIdRequest +'?resource-version=' + UriUtils.encode(resourceVersion, 'UTF-8')
-		}
 
 		msoLogger.debug("Delete AAI volume group : " + deleteAAIVolumeGrpIdRequest)
 
