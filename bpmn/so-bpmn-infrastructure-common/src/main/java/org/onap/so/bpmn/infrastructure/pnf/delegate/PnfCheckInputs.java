@@ -23,6 +23,7 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION;
 
+import joptsimple.internal.Strings;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
@@ -37,11 +38,11 @@ public class PnfCheckInputs implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         String correlationId = (String) execution.getVariable(CORRELATION_ID);
-        if (correlationId == null) {
+        if (Strings.isNullOrEmpty(correlationId)) {
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "correlationId variable not defined");
         }
         String timeout = (String) execution.getVariable(TIMEOUT_FOR_NOTIFICATION);
-        if (timeout == null) {
+        if (Strings.isNullOrEmpty(timeout)) {
             LOGGER.debug("timeoutForPnfEntryNotification variable not found, setting default");
             if (defaultTimeout == null) {
                 new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,

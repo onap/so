@@ -20,18 +20,16 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.AAI_CONTAINS_INFO_ABOUT_IP;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.AAI_CONTAINS_INFO_ABOUT_PNF;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
 
 import java.io.IOException;
-import org.camunda.bpm.engine.delegate.BpmnError;
+
+import com.google.common.base.Strings;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
-import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiResponse;
-import org.onap.so.bpmn.infrastructure.pnf.implementation.CheckAaiForCorrelationIdImplementation;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,13 +40,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  * - correlationId - String
  *
  * Outputs:
- * - AAI_CONTAINS_INFO_ABOUT_PNF - local Boolean
- * - aaiContainsInfoAboutIp - local Boolean
+ * - aaiContainsInfoAboutPnf - local Boolean
  */
 
 public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, CheckAaiForCorrelationIdDelegate.class);
-    private CheckAaiForCorrelationIdImplementation implementation = new CheckAaiForCorrelationIdImplementation();
     private AaiConnection aaiConnection;
 
     @Autowired
@@ -57,18 +53,15 @@ public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
     }
 
     @Override
-    public void execute(DelegateExecution execution) throws Exception {
+    public void execute(DelegateExecution execution) {
         String correlationId = (String) execution.getVariable(CORRELATION_ID);
-        if (correlationId == null) {
+        if (Strings.isNullOrEmpty(correlationId)) {
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 500, CORRELATION_ID + " is not set");
         }
-
         try {
-            AaiResponse aaiResponse = implementation.check(correlationId, aaiConnection);
-
-            execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, aaiResponse.getContainsInfoAboutPnf());
+            boolean isEntry = aaiConnection.getEntryFor(correlationId).isPresent();
+            execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, isEntry);
         } catch (IOException e) {
-        	LOGGER.error("IOException",e);
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, e.getMessage());
         }
     }
