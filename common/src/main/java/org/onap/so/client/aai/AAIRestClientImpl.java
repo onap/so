@@ -20,7 +20,6 @@
 
 package org.onap.so.client.aai;
 
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -28,72 +27,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import javax.ws.rs.core.Response;
 import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.aai.domain.yang.Pserver;
-import org.onap.aai.domain.yang.Pservers;
 import org.onap.so.client.aai.entities.CustomQuery;
 import org.onap.so.client.aai.entities.Results;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.Format;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-
 
 public class AAIRestClientImpl implements AAIRestClientI {
 
-	private static Logger logger = LoggerFactory.getLogger(AAIClient.class);
     private static final AAIVersion ENDPOINT_VERSION = AAIVersion.V10;
-    private static final String ENDPOINT_GET_ALL = ENDPOINT_VERSION + "/cloud-infrastructure/pservers";
-    private static final String ENDPOINT_GET_ALL_VNFS = ENDPOINT_VERSION + "/network/generic-vnfs";
-    private static final String ENDPOINT_CUSTOM_QUERY = ENDPOINT_VERSION + "/query";
     private static final String PSERVER_VNF_QUERY = "pservers-fromVnf";
-    private static final String GENERIC_VNF_PATH = ENDPOINT_VERSION + "/network/generic-vnfs/generic-vnf";
-    private static final String SERVICE_TOPOLOGY_BY_SERVICE_INSTANCE_ID =
-            "store(‘x’).union(__.in(‘subscribesTo’).has(‘aai-node-type’,’customer’).store(‘x’),__.out(‘uses’).has(‘aai-node-type’,’allotted-resource’).store(‘x’),__.in(‘hasInstance’).has(‘aai-node-type’,’generic-vnf’).store(‘x’).union("
-                    + ".out(‘has’).has(‘aai-node-type’,’vf-module’).store(‘x’),out(‘uses’).has(‘aai-node-type’,’volume-group’).store(‘x’),"
-                    + ".out(‘hasLInterface’).has(‘aai-node-type’,’l-interface’).union("
-                    + ".out(‘hasIpAddress’).has(‘aai-node-type’,’l3-interface-ipv4-address’).store(‘x’).out(‘isMemberOf’).has(‘aai-node-type’,’l3-network’).store(‘x’),"
-                    + ".out(‘hasIpAddress’).has(‘aai-node-type’,’l3-interface-ipv6-address’).store(‘x’).out(‘isMemberOf’).has(‘aai-node-type’,’l3-network’).store(‘x’)"
-                    + ")," + ".out(‘runsOnVserver’).has(‘aai-node-type’,’vserver’).store(‘x’).union("
-                    + ".in(‘owns’).has(‘aai-node-type’,’tenant’).store(‘x’).in(‘has’).has(‘aai-node-type’,’cloud-region’).store(‘x’),"
-                    + ".out(‘runsOnPserver’).has(‘aai-node-type’,’pserver’).store(‘x’),"
-                    + ".out(‘hasLInterface’).has(‘aai-node-type’,’l-interface’).union("
-                    + ".out(‘hasIpAddress’).has(‘aai-node-type’,’l3-interface-ipv4-address’).store(‘x’).out(‘isMemberOf’).has(‘aai-node-type’,’l3-network’).store(‘x’),"
-                    + ".out(‘hasIpAddress’).has(‘aai-node-type’,’l3-interface-ipv6-address’).store(‘x’).out(‘isMemberOf’).has(‘aai-node-type’,’l3-network’).store(‘x’)"
-                    + ")" + ")" + ")" + ").cap(‘x’).unfold().dedup()";
-
-    public AAIRestClientImpl() {
-    }
 
     @Override
-    public Pservers getPhysicalServers(String hostName, String uuid) {
-        UUID requestId;
-        try {
-            requestId = UUID.fromString(uuid);
-        } catch (IllegalArgumentException e) {
-            logger.warn("could not parse uuid: " + uuid + " creating valid uuid automatically");
-            requestId = UUID.randomUUID();
-        }
-        return new AAIResourcesClient(ENDPOINT_VERSION)
-                .get(Pservers.class, AAIUriFactory.createResourceUri(AAIObjectPlurals.PSERVER)).orElse(null);
-    }
-
-    @Override
-    public List<Pserver> getPhysicalServerByVnfId(String vnfId, String transactionLoggingUuid) throws IOException {
-        UUID requestId;
-        try {
-            requestId = UUID.fromString(transactionLoggingUuid);
-        } catch (IllegalArgumentException e) {
-            logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically");
-            requestId = UUID.randomUUID();
-        }
+    public List<Pserver> getPhysicalServerByVnfId(String vnfId) throws IOException {
         List<AAIResourceUri> startNodes = new ArrayList<>();
         startNodes.add(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId));
         String jsonInput = new AAIQueryClient(ENDPOINT_VERSION)
@@ -116,15 +66,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
     }
 
     @Override
-    public void updateMaintenceFlagVnfId(String vnfId, boolean inMaint, String transactionLoggingUuid)
-            throws IOException {
-        UUID requestId;
-        try {
-            requestId = UUID.fromString(transactionLoggingUuid);
-        } catch (IllegalArgumentException e) {
-            logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically");
-            requestId = UUID.randomUUID();
-        }
+    public void updateMaintenceFlagVnfId(String vnfId, boolean inMaint, String transactionLoggingUuid) {
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setInMaint(inMaint);
         new AAIResourcesClient(ENDPOINT_VERSION)
@@ -133,27 +75,13 @@ public class AAIRestClientImpl implements AAIRestClientI {
     }
 
     @Override
-    public GenericVnf getVnfByName(String vnfId, String transactionLoggingUuid) throws IOException {
-        UUID requestId;
-        try {
-            requestId = UUID.fromString(transactionLoggingUuid);
-        } catch (IllegalArgumentException e) {
-            logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically");
-            requestId = UUID.randomUUID();
-        }
+    public GenericVnf getVnfByName(String vnfId, String transactionLoggingUuid) {
         return new AAIResourcesClient(ENDPOINT_VERSION)
                 .get(GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)).orElse(null);
     }
 
     @Override
-    public Optional<Pnf> getPnfByName(String pnfId, String transactionLoggingUuid) throws IOException {
-        UUID requestId;
-        try {
-            requestId = UUID.fromString(transactionLoggingUuid);
-        } catch (IllegalArgumentException e) {
-            logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically", e);
-            requestId = UUID.randomUUID();
-        }
+    public Optional<Pnf> getPnfByName(String pnfId, String transactionLoggingUuid) {
         Response response = new AAIResourcesClient(ENDPOINT_VERSION)
                 .getFullResponse(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId));
         if (response.getStatus() != 200) {
@@ -164,14 +92,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
     }
 
     @Override
-    public void createPnf(String pnfId, String transactionLoggingUuid, Pnf pnf) throws IOException {
-        UUID requestId;
-        try {
-            requestId = UUID.fromString(transactionLoggingUuid);
-        } catch (IllegalArgumentException e) {
-            logger.warn("could not parse uuid: " + transactionLoggingUuid + " creating valid uuid automatically", e);
-            requestId = UUID.randomUUID();
-        }
+    public void createPnf(String pnfId, String transactionLoggingUuid, Pnf pnf) {
         new AAIResourcesClient(ENDPOINT_VERSION)
                 .createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId), Optional.of(pnf));
     }

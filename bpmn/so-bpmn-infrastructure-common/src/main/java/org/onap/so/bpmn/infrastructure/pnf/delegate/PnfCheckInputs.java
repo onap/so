@@ -35,7 +35,7 @@ public class PnfCheckInputs implements JavaDelegate {
     private String defaultTimeout;
 
     @Override
-    public void execute(DelegateExecution execution) throws Exception {
+    public void execute(DelegateExecution execution) {
         String correlationId = (String) execution.getVariable(CORRELATION_ID);
         if (correlationId == null) {
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "correlationId variable not defined");

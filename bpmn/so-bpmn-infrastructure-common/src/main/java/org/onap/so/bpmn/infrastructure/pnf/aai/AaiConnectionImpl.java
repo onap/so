@@ -20,10 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.aai;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
 import org.onap.so.client.aai.AAIRestClientImpl;
@@ -31,13 +29,13 @@ import org.onap.so.client.aai.AAIRestClientImpl;
 public class AaiConnectionImpl implements AaiConnection {
 
     @Override
-    public Optional<Pnf> getEntryFor(String correlationId) throws IOException {
+    public Optional<Pnf> getEntryFor(String correlationId) {
         AAIRestClientImpl restClient = new AAIRestClientImpl();
         return restClient.getPnfByName(correlationId, UUID.randomUUID().toString());
     }
 
     @Override
-    public void createEntry(String correlationId, Pnf entry) throws IOException {
+    public void createEntry(String correlationId, Pnf entry) {
         AAIRestClientImpl restClient = new AAIRestClientImpl();
         restClient.createPnf(correlationId, UUID.randomUUID().toString(), entry);
     }

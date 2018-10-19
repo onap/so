@@ -24,10 +24,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,9 +33,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Pserver;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 @RunWith(MockitoJUnitRunner.class) 
 public class AAIValidatorTest {
@@ -70,14 +65,14 @@ public class AAIValidatorTest {
 
 	@Test
 	public void test_IsPhysicalServerLocked_True() throws IOException{		
-		when(client.getPhysicalServerByVnfId(vnfName,uuid)).thenReturn(getPservers(true));	
+		when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPservers(true));
 		boolean locked = validator.isPhysicalServerLocked(vnfName, uuid);
 		assertEquals(true, locked);
 	}
 	
 	@Test
-	public void test_IsPhysicalServerLocked_False() throws JsonParseException, JsonMappingException, UnsupportedEncodingException, IOException {
-		when(client.getPhysicalServerByVnfId(vnfName,uuid)).thenReturn(getPservers(false));	
+	public void test_IsPhysicalServerLocked_False() throws IOException {
+		when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPservers(false));
 		boolean locked = validator.isPhysicalServerLocked(vnfName, uuid);
 		assertEquals(false, locked);
 	}
