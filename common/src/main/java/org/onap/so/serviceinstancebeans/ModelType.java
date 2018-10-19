@@ -32,5 +32,5 @@ public enum ModelType {
 	configuration,
 	connectionPoint,
 	pnf,
-	networkCollection
+	networkInstanceGroup
 }
