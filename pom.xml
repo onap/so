@@ -10,7 +10,7 @@
 	<groupId>org.onap.so</groupId>
 	<artifactId>so</artifactId>
 	<packaging>pom</packaging>
-	<version>1.3.0-SNAPSHOT</version>
+	<version>1.4.0-SNAPSHOT</version>
 	<name>so</name>
 	<description>This Maven project is responsible to build and package all child projects - contributions in the MSO project.
 	This build can be configured to run Functional tests and to start/stop a jboss server + Mysql DB.
@@ -47,6 +47,7 @@
 		<sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
 		<jacoco.version>0.7.5.201505241946</jacoco.version>
 		<org.apache.maven.user-settings/>
+		<!-- TODO: update to version 1.4.0 for Dublin -->
 		<openstack.version>1.3.0</openstack.version>
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
 		<springboot.version>1.5.13.RELEASE</springboot.version>	
