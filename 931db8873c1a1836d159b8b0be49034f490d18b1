@@ -16,6 +16,24 @@
       "revId": "931db8873c1a1836d159b8b0be49034f490d18b1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_17735681",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CheckAaiForCorrelationIdDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-10-19T12:42:46Z",
+      "side": 1,
+      "message": "Empty string is a value, null is a lack of any value. They are totally different things. All I\u0027m checking here is if someone set correlationId to any value.",
+      "parentUuid": "bada0100_f7b9f215",
+      "revId": "931db8873c1a1836d159b8b0be49034f490d18b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
