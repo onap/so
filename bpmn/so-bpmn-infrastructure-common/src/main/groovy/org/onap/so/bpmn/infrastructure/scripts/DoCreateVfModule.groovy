@@ -720,7 +720,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			def vfModuleName = execution.getVariable('DCVFM_vfModuleName')
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULES, vnfId).queryParam("vf-module-name",vfModuleName)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, vnfId).queryParam("vf-module-name",vfModuleName)
 			String endPoint = aaiUriUtil.createAaiUri(uri)
 
 			try {

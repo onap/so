@@ -2392,4 +2392,43 @@ public class ServiceInstancesTest extends BaseTest{
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error", realResponse.getServiceException().getText());
     }
+    @Test
+    public void vnfUpdateWithNetworkInstanceGroup() throws IOException{
+    	stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        stubFor(get(urlMatching(".*/vnfResourceCustomization/2ccae1b4-7d9e-46fa-a452-9180ce008d17"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("vnfResourceCustomization_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        stubFor(get(urlMatching(".*/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674/vnfResources"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("vnfResources_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        
+        stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction" +
+                "[?]nfRole=GR-API-DEFAULT&action=updateInstance"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("UpdateVnfRecipe_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(MsoLogger.CLIENT_ID, "VID");
+        //expect
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "v7/serviceInstances/e05864f0-ab35-47d0-8be4-56fd9619ba3c/vnfs/f501ce76-a9bc-4601-9837-74fd9f4d5eca";
+        ResponseEntity<String> response = sendRequest(inputStream("/VnfwithNeteworkInstanceGroup.json"), uri, HttpMethod.PUT, headers);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        //then		
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
 }
