@@ -42,7 +42,7 @@
             "relatedInstance": {
                "instanceId": "0fd90c0c-0e3a-46e2-abb5-4c4820d5985b",
                "modelInfo": {   
-                  "modelType": "networkCollection"
+                  "modelType": "networkInstanceGroup"
                }
             }
          }

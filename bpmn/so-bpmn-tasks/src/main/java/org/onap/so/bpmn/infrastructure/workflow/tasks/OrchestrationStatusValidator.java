@@ -23,12 +23,15 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.exception.OrchestrationStatusValidationException;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
+import org.onap.so.db.catalog.beans.OrchestrationAction;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.OrchestrationStatusStateTransitionDirective;
 import org.onap.so.db.catalog.beans.OrchestrationStatusValidationDirective;
+import org.onap.so.db.catalog.beans.ResourceType;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,8 @@ public class OrchestrationStatusValidator {
 	private static final String UNKNOWN_RESOURCE_TYPE = "Building Block (%s) not set up correctly in Orchestration_Status_Validation table in CatalogDB. ResourceType=(%s), TargetAction=(%s)";
 	private static final String ORCHESTRATION_VALIDATION_FAIL = "Orchestration Status Validation failed. ResourceType=(%s), TargetAction=(%s), OrchestrationStatus=(%s)";
 	private static final String ORCHESTRATION_STATUS_VALIDATION_RESULT = "orchestrationStatusValidationResult";
+	private static final String MULTI_STAGE_DESIGN_OFF = "false";
+	private static final String MULTI_STAGE_DESIGN_ON = "true";
 	
 	
 	@Autowired
@@ -53,9 +58,11 @@ public class OrchestrationStatusValidator {
 	
 	public void validateOrchestrationStatus(BuildingBlockExecution execution) {
 		try {
+			OrchestrationStatusValidationDirective previousOrchestrationStatusValidationResult = execution.getVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT);
+			
 			execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, null);
 			
-			String buildingBlockFlowName = (String) execution.getVariable("flowToBeCalled");
+			String buildingBlockFlowName = execution.getFlowToBeCalled();
 			
 			BuildingBlockDetail buildingBlockDetail = catalogDbClient.getBuildingBlockDetail(buildingBlockFlowName);
 			
@@ -105,13 +112,40 @@ public class OrchestrationStatusValidator {
 			}
 			OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective = catalogDbClient.getOrchestrationStatusStateTransitionDirective(buildingBlockDetail.getResourceType(), orchestrationStatus, buildingBlockDetail.getTargetAction());
 			
+			if(ResourceType.VF_MODULE.equals(buildingBlockDetail.getResourceType()) && OrchestrationAction.CREATE.equals(buildingBlockDetail.getTargetAction()) &&
+					OrchestrationStatus.PENDING_ACTIVATION.equals(orchestrationStatus)) {				
+				org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				orchestrationStatusStateTransitionDirective = processPossibleSecondStageofVfModuleCreate(execution, previousOrchestrationStatusValidationResult,
+						genericVnf, orchestrationStatusStateTransitionDirective);	
+			}
+			
 			if (orchestrationStatusStateTransitionDirective.getFlowDirective() == OrchestrationStatusValidationDirective.FAIL) {
 				throw new OrchestrationStatusValidationException(String.format(ORCHESTRATION_VALIDATION_FAIL, buildingBlockDetail.getResourceType(), buildingBlockDetail.getTargetAction(), orchestrationStatus));
 			}
 			
 			execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, orchestrationStatusStateTransitionDirective.getFlowDirective());
-		} catch (Exception e) {
+		}catch(BBObjectNotFoundException ex){
+			if(execution.getFlowToBeCalled().contains("Unassign")){
+				execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, OrchestrationStatusValidationDirective.SILENT_SUCCESS);
+			}else{
+				exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex);
+			}
+		}catch (Exception e) {
 			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e);
 		}
+	}
+	
+	private OrchestrationStatusStateTransitionDirective processPossibleSecondStageofVfModuleCreate(BuildingBlockExecution execution, OrchestrationStatusValidationDirective previousOrchestrationStatusValidationResult,
+			org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf, OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective) {		
+		if (previousOrchestrationStatusValidationResult != null && previousOrchestrationStatusValidationResult.equals(OrchestrationStatusValidationDirective.SILENT_SUCCESS)) {			
+			String multiStageDesign = "false";			
+			if (genericVnf.getModelInfoGenericVnf() != null) {
+				multiStageDesign = genericVnf.getModelInfoGenericVnf().getMultiStageDesign();
+			}
+			if (multiStageDesign != null && multiStageDesign.equalsIgnoreCase("true")) {				
+				orchestrationStatusStateTransitionDirective.setFlowDirective(OrchestrationStatusValidationDirective.CONTINUE);						
+			}					
+		}
+		return orchestrationStatusStateTransitionDirective;
 	}
 }

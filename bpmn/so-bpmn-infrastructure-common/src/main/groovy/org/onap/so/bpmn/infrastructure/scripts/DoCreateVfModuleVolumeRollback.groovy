@@ -193,7 +193,7 @@ public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor
 
 		AaiUtil aaiUtil = new AaiUtil(this)
 
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId).queryParam("resource-version", resourceVersion)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId).resourceVersion(resourceVersion)
 		def deleteAAIVolumeGrpIdRequest = aaiUtil.createAaiUri(uri)
 
 		msoLogger.debug('Delete AAI volume group : ' + deleteAAIVolumeGrpIdRequest)
