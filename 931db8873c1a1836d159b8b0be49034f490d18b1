@@ -52,6 +52,24 @@
       "revId": "931db8873c1a1836d159b8b0be49034f490d18b1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_1721164d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CheckAaiForCorrelationIdDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-10-19T12:57:47Z",
+      "side": 1,
+      "message": "This is only true from a technical standpoint.\nFrom a domain perspective an empty String, even though it\u0027s a value as in takes up memory, it is an empty representation of the data it is assigned to. If the assumption was to only have safety points for potential existing coding errors and not the data validity itself then this is ok with me for now. Nevertheless it\u0027s something that could and should be improved.",
+      "parentUuid": "bada0100_17735681",
+      "revId": "931db8873c1a1836d159b8b0be49034f490d18b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
