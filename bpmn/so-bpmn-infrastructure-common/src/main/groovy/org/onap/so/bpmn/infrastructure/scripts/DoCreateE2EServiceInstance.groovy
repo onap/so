@@ -80,99 +80,99 @@ import groovy.json.*
  *
  */
 public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateE2EServiceInstance.class);
+    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateE2EServiceInstance.class);
 
 
-	String Prefix="DCRESI_"
-	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	JsonUtils jsonUtil = new JsonUtils()
-	CatalogDbUtils cutils = new CatalogDbUtils()
+    String Prefix="DCRESI_"
+    ExceptionUtil exceptionUtil = new ExceptionUtil()
+    JsonUtils jsonUtil = new JsonUtils()
+    CatalogDbUtils cutils = new CatalogDbUtils()
 
-	public void preProcessRequest (DelegateExecution execution) {
-		String msg = ""
-		msoLogger.trace("preProcessRequest ")
+    public void preProcessRequest (DelegateExecution execution) {
+        String msg = ""
+        msoLogger.trace("preProcessRequest ")
 
-		try {
-			execution.setVariable("prefix", Prefix)
-			//Inputs
-			//requestDetails.subscriberInfo. for AAI GET & PUT & SDNC assignToplology
-			String globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
-			msoLogger.info(" ***** globalSubscriberId *****" + globalSubscriberId)
-			//requestDetails.requestParameters. for AAI PUT & SDNC assignTopology
-			String serviceType = execution.getVariable("serviceType")
-			msoLogger.info(" ***** serviceType *****" + serviceType)
-			//requestDetails.requestParameters. for SDNC assignTopology
-			String productFamilyId = execution.getVariable("productFamilyId") //AAI productFamilyId
+        try {
+            execution.setVariable("prefix", Prefix)
+            //Inputs
+            //requestDetails.subscriberInfo. for AAI GET & PUT & SDNC assignToplology
+            String globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
+            msoLogger.info(" ***** globalSubscriberId *****" + globalSubscriberId)
+            //requestDetails.requestParameters. for AAI PUT & SDNC assignTopology
+            String serviceType = execution.getVariable("serviceType")
+            msoLogger.info(" ***** serviceType *****" + serviceType)
+            //requestDetails.requestParameters. for SDNC assignTopology
+            String productFamilyId = execution.getVariable("productFamilyId") //AAI productFamilyId
 
-			if (isBlank(globalSubscriberId)) {
-				msg = "Input globalSubscriberId is null"
-				msoLogger.info(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
+            if (isBlank(globalSubscriberId)) {
+                msg = "Input globalSubscriberId is null"
+                msoLogger.info(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            }
 
-			if (isBlank(serviceType)) {
-				msg = "Input serviceType is null"
-				msoLogger.info(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
+            if (isBlank(serviceType)) {
+                msg = "Input serviceType is null"
+                msoLogger.info(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            }
 
-			if (productFamilyId == null) {
-				execution.setVariable("productFamilyId", "")
-			}
+            if (productFamilyId == null) {
+                execution.setVariable("productFamilyId", "")
+            }
 
-			String sdncCallbackUrl = UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback", execution)
-			if (isBlank(sdncCallbackUrl)) {
-				msg = "URN_mso_workflow_sdncadapter_callback is null"
-				msoLogger.info(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
-			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
-			msoLogger.info("SDNC Callback URL: " + sdncCallbackUrl)
+            String sdncCallbackUrl = UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback", execution)
+            if (isBlank(sdncCallbackUrl)) {
+                msg = "URN_mso_workflow_sdncadapter_callback is null"
+                msoLogger.info(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            }
+            execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
+            msoLogger.info("SDNC Callback URL: " + sdncCallbackUrl)
 
-			//requestDetails.modelInfo.for AAI PUT servieInstanceData
-			//requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData
-			String serviceInstanceName = execution.getVariable("serviceInstanceName")
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			String uuiRequest = execution.getVariable("uuiRequest")
-			String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceInvariantUuid")
-			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceUuid")
-			String serviceModelName = jsonUtil.getJsonValue(uuiRequest, "service.parameters.templateName")
-			execution.setVariable("serviceModelName", serviceModelName)
-			//aai serviceType and Role can be setted as fixed value now.
-			String aaiServiceType = "E2E Service"
-			String aaiServiceRole = "E2E Service"
+            //requestDetails.modelInfo.for AAI PUT servieInstanceData
+            //requestDetails.requestInfo. for AAI GET/PUT serviceInstanceData
+            String serviceInstanceName = execution.getVariable("serviceInstanceName")
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
+            String uuiRequest = execution.getVariable("uuiRequest")
+            String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceInvariantUuid")
+            String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceUuid")
+            String serviceModelName = jsonUtil.getJsonValue(uuiRequest, "service.parameters.templateName")
+            execution.setVariable("serviceModelName", serviceModelName)
+            //aai serviceType and Role can be setted as fixed value now.
+            String aaiServiceType = "E2E Service"
+            String aaiServiceRole = "E2E Service"
 
-			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
-			execution.setVariable("modelUuid", modelUuid)
+            execution.setVariable("modelInvariantUuid", modelInvariantUuid)
+            execution.setVariable("modelUuid", modelUuid)
 
-			//AAI PUT
-			String oStatus = execution.getVariable("initialStatus") ?: ""
-			if ("TRANSPORT".equalsIgnoreCase(serviceType))
-			{
-				oStatus = "Created"
-			}
+            //AAI PUT
+            String oStatus = execution.getVariable("initialStatus") ?: ""
+            if ("TRANSPORT".equalsIgnoreCase(serviceType))
+            {
+                oStatus = "Created"
+            }
 
-			org.onap.aai.domain.yang.ServiceInstance si = new org.onap.aai.domain.yang.ServiceInstance()
-			si.setServiceInstanceName(serviceInstanceName)
-			si.setServiceType(aaiServiceType)
-			si.setServiceRole(aaiServiceRole)
-			si.setOrchestrationStatus(oStatus)
-			si.setModelInvariantId(modelInvariantUuid)
-			si.setModelVersionId(modelUuid)
-			si.setInputParameters(uuiRequest)
-			execution.setVariable("serviceInstanceData", si)
+            org.onap.aai.domain.yang.ServiceInstance si = new org.onap.aai.domain.yang.ServiceInstance()
+            si.setServiceInstanceName(serviceInstanceName)
+            si.setServiceType(aaiServiceType)
+            si.setServiceRole(aaiServiceRole)
+            si.setOrchestrationStatus(oStatus)
+            si.setModelInvariantId(modelInvariantUuid)
+            si.setModelVersionId(modelUuid)
+            si.setInputParameters(uuiRequest)
+            execution.setVariable("serviceInstanceData", si)
 
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception ex){
-			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.info(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		msoLogger.trace("Exit preProcessRequest ")
-	}
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception ex){
+            msg = "Exception in preProcessRequest " + ex.getMessage()
+            msoLogger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        msoLogger.trace("Exit preProcessRequest ")
+    }
 
-   public void prepareDecomposeService(DelegateExecution execution) {
+    public void prepareDecomposeService(DelegateExecution execution) {
         try {
             msoLogger.trace("Inside prepareDecomposeService of create generic e2e service ")
             String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
@@ -191,7 +191,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             String exceptionMessage = "Bpmn error encountered in  create generic e2e service flow. Unexpected Error from method prepareDecomposeService() - " + ex.getMessage()
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
-     }
+    }
 
     public void processDecomposition(DelegateExecution execution) {
         msoLogger.trace("Inside processDecomposition() of  create generic e2e service flow ")
@@ -205,201 +205,201 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
     }
 
     public void doServicePreOperation(DelegateExecution execution){
-       //we need a service plugin platform here.
-    	ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-    	String uuiRequest = execution.getVariable("uuiRequest")
-    	String newUuiRequest = ServicePluginFactory.getInstance().preProcessService(serviceDecomposition, uuiRequest);
-    	execution.setVariable("uuiRequest", newUuiRequest)
+        //we need a service plugin platform here.
+        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+        String uuiRequest = execution.getVariable("uuiRequest")
+        String newUuiRequest = ServicePluginFactory.getInstance().preProcessService(serviceDecomposition, uuiRequest);
+        execution.setVariable("uuiRequest", newUuiRequest)
     }
 
     public void doServiceHoming(DelegateExecution execution) {
-    	//we need a service plugin platform here.
-    	ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-    	String uuiRequest = execution.getVariable("uuiRequest")
-    	String newUuiRequest = ServicePluginFactory.getInstance().doServiceHoming(serviceDecomposition, uuiRequest);
-    	execution.setVariable("uuiRequest", newUuiRequest)
+        //we need a service plugin platform here.
+        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+        String uuiRequest = execution.getVariable("uuiRequest")
+        String newUuiRequest = ServicePluginFactory.getInstance().doServiceHoming(serviceDecomposition, uuiRequest);
+        execution.setVariable("uuiRequest", newUuiRequest)
     }
 
-	public void postProcessAAIGET(DelegateExecution execution) {
-		msoLogger.trace("postProcessAAIGET ")
-		String msg = ""
+    public void postProcessAAIGET(DelegateExecution execution) {
+        msoLogger.trace("postProcessAAIGET ")
+        String msg = ""
 
-		try {
-			String serviceInstanceName = execution.getVariable("serviceInstanceName")
-			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-			if(!succInAAI){
-				msoLogger.info("Error getting Service-instance from AAI", + serviceInstanceName)
-				WorkflowException workflowException = execution.getVariable("WorkflowException")
-				msoLogger.debug("workflowException: " + workflowException)
-				if(workflowException != null){
-					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-				}
-				else
-				{
-					msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
-					msoLogger.info(msg)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-				}
-			}
-			else
-			{
-				boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-				if(foundInAAI){
-					msoLogger.info("Found Service-instance in AAI")
-					msg = "ServiceInstance already exists in AAI:" + serviceInstanceName
-					msoLogger.info(msg)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-				}
-			}
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception ex) {
-			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET. " + ex.getMessage()
-			msoLogger.info(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		msoLogger.trace("Exit postProcessAAIGET ")
-	}
+        try {
+            String serviceInstanceName = execution.getVariable("serviceInstanceName")
+            boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
+            if(!succInAAI){
+                msoLogger.info("Error getting Service-instance from AAI", + serviceInstanceName)
+                WorkflowException workflowException = execution.getVariable("WorkflowException")
+                msoLogger.debug("workflowException: " + workflowException)
+                if(workflowException != null){
+                    exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
+                }
+                else
+                {
+                    msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
+                    msoLogger.info(msg)
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+                }
+            }
+            else
+            {
+                boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
+                if(foundInAAI){
+                    msoLogger.info("Found Service-instance in AAI")
+                    msg = "ServiceInstance already exists in AAI:" + serviceInstanceName
+                    msoLogger.info(msg)
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+                }
+            }
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception ex) {
+            msg = "Exception in DoCreateServiceInstance.postProcessAAIGET. " + ex.getMessage()
+            msoLogger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        msoLogger.trace("Exit postProcessAAIGET ")
+    }
 
-	//TODO use create if not exist
-	public void createServiceInstance(DelegateExecution execution) {
-		msoLogger.trace("createServiceInstance ")
-		String msg = ""
-		String serviceInstanceId = UUID.randomUUID().toString()
-		try {
-			org.onap.aai.domain.yang.ServiceInstance si = execution.getVariable("serviceInstanceData")
+    //TODO use create if not exist
+    public void createServiceInstance(DelegateExecution execution) {
+        msoLogger.trace("createServiceInstance ")
+        String msg = ""
+        String serviceInstanceId = UUID.randomUUID().toString()
+        try {
+            org.onap.aai.domain.yang.ServiceInstance si = execution.getVariable("serviceInstanceData")
 
-			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), serviceInstanceId)
-			client.create(uri, si)
+            AAIResourcesClient client = new AAIResourcesClient()
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), serviceInstanceId)
+            client.create(uri, si)
 
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception ex) {
-			//start rollback set up
-			RollbackData rollbackData = new RollbackData()
-			def disableRollback = execution.getVariable("disableRollback")
-			rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
-			rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
-			rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", serviceInstanceId)
-			rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
-			rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
-			execution.setVariable("rollbackData", rollbackData)
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception ex) {
+            //start rollback set up
+            RollbackData rollbackData = new RollbackData()
+            def disableRollback = execution.getVariable("disableRollback")
+            rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
+            rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
+            rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", serviceInstanceId)
+            rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", execution.getVariable("subscriptionServiceType"))
+            rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
+            execution.setVariable("rollbackData", rollbackData)
 
-			msg = "Exception in DoCreateServiceInstance.createServiceInstance. " + ex.getMessage()
-			msoLogger.info(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		msoLogger.trace("Exit createServiceInstance ")
-	}
+            msg = "Exception in DoCreateServiceInstance.createServiceInstance. " + ex.getMessage()
+            msoLogger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        msoLogger.trace("Exit createServiceInstance ")
+    }
 
-	/**
-	 * Gets the service instance and its relationships from aai
-	 */
-	public void getServiceInstance(DelegateExecution execution) {
-		try {
-			String serviceInstanceId = execution.getVariable('serviceInstanceId')
-			String globalSubscriberId = execution.getVariable('globalSubscriberId')
-			String serviceType = execution.getVariable('subscriptionServiceType')
+    /**
+     * Gets the service instance and its relationships from aai
+     */
+    public void getServiceInstance(DelegateExecution execution) {
+        try {
+            String serviceInstanceId = execution.getVariable('serviceInstanceId')
+            String globalSubscriberId = execution.getVariable('globalSubscriberId')
+            String serviceType = execution.getVariable('subscriptionServiceType')
 
-			AAIResourcesClient resourceClient = new AAIResourcesClient()
-			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
-			AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
+            AAIResourcesClient resourceClient = new AAIResourcesClient()
+            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
+            AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
 
-			Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
-			execution.setVariable("serviceInstanceName", si.get().getServiceInstanceName())
+            Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+            execution.setVariable("serviceInstanceName", si.get().getServiceInstanceName())
 
-		}catch(BpmnError e) {
-			throw e;
-		}catch(Exception ex) {
-			String msg = "Internal Error in getServiceInstance: " + ex.getMessage()
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-	}
+        }catch(BpmnError e) {
+            throw e;
+        }catch(Exception ex) {
+            String msg = "Internal Error in getServiceInstance: " + ex.getMessage()
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+    }
 
-	public void postProcessAAIGET2(DelegateExecution execution) {
-		msoLogger.trace("postProcessAAIGET2 ")
-		String msg = ""
+    public void postProcessAAIGET2(DelegateExecution execution) {
+        msoLogger.trace("postProcessAAIGET2 ")
+        String msg = ""
 
-		try {
-			String serviceInstanceName = execution.getVariable("serviceInstanceName")
-			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-			if(!succInAAI){
-				msoLogger.info("Error getting Service-instance from AAI in postProcessAAIGET2", + serviceInstanceName)
-				WorkflowException workflowException = execution.getVariable("WorkflowException")
-				msoLogger.debug("workflowException: " + workflowException)
-				if(workflowException != null){
-					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-				}
-				else
-				{
-					msg = "Failure in postProcessAAIGET2 GENGS_SuccessIndicator:" + succInAAI
-					msoLogger.info(msg)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-				}
-			}
-			else
-			{
-				boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-				if(foundInAAI){
-					String aaiService = execution.getVariable("GENGS_service")
-					if (!isBlank(aaiService) && (utils.nodeExists(aaiService, "service-instance-name"))) {
-						execution.setVariable("serviceInstanceName",  utils.getNodeText(aaiService, "service-instance-name"))
-						msoLogger.info("Found Service-instance in AAI.serviceInstanceName:" + execution.getVariable("serviceInstanceName"))
-					}
-				}
-			}
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception ex) {
-			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET2 " + ex.getMessage()
-			msoLogger.info(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		msoLogger.trace("Exit postProcessAAIGET2 ")
-	}
+        try {
+            String serviceInstanceName = execution.getVariable("serviceInstanceName")
+            boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
+            if(!succInAAI){
+                msoLogger.info("Error getting Service-instance from AAI in postProcessAAIGET2", + serviceInstanceName)
+                WorkflowException workflowException = execution.getVariable("WorkflowException")
+                msoLogger.debug("workflowException: " + workflowException)
+                if(workflowException != null){
+                    exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
+                }
+                else
+                {
+                    msg = "Failure in postProcessAAIGET2 GENGS_SuccessIndicator:" + succInAAI
+                    msoLogger.info(msg)
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+                }
+            }
+            else
+            {
+                boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
+                if(foundInAAI){
+                    String aaiService = execution.getVariable("GENGS_service")
+                    if (!isBlank(aaiService) && (utils.nodeExists(aaiService, "service-instance-name"))) {
+                        execution.setVariable("serviceInstanceName",  utils.getNodeText(aaiService, "service-instance-name"))
+                        msoLogger.info("Found Service-instance in AAI.serviceInstanceName:" + execution.getVariable("serviceInstanceName"))
+                    }
+                }
+            }
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception ex) {
+            msg = "Exception in DoCreateServiceInstance.postProcessAAIGET2 " + ex.getMessage()
+            msoLogger.info(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        msoLogger.trace("Exit postProcessAAIGET2 ")
+    }
 
-	public void preProcessRollback (DelegateExecution execution) {
-		msoLogger.trace("preProcessRollback ")
-		try {
+    public void preProcessRollback (DelegateExecution execution) {
+        msoLogger.trace("preProcessRollback ")
+        try {
 
-			Object workflowException = execution.getVariable("WorkflowException");
+            Object workflowException = execution.getVariable("WorkflowException");
 
-			if (workflowException instanceof WorkflowException) {
-				msoLogger.info("Prev workflowException: " + workflowException.getErrorMessage())
-				execution.setVariable("prevWorkflowException", workflowException);
-				//execution.setVariable("WorkflowException", null);
-			}
-		} catch (BpmnError e) {
-			msoLogger.info("BPMN Error during preProcessRollback")
-		} catch(Exception ex) {
-			String msg = "Exception in preProcessRollback. " + ex.getMessage()
-			msoLogger.info(msg)
-		}
-		msoLogger.trace("Exit preProcessRollback ")
-	}
+            if (workflowException instanceof WorkflowException) {
+                msoLogger.info("Prev workflowException: " + workflowException.getErrorMessage())
+                execution.setVariable("prevWorkflowException", workflowException);
+                //execution.setVariable("WorkflowException", null);
+            }
+        } catch (BpmnError e) {
+            msoLogger.info("BPMN Error during preProcessRollback")
+        } catch(Exception ex) {
+            String msg = "Exception in preProcessRollback. " + ex.getMessage()
+            msoLogger.info(msg)
+        }
+        msoLogger.trace("Exit preProcessRollback ")
+    }
 
-	public void postProcessRollback (DelegateExecution execution) {
-		msoLogger.trace("postProcessRollback ")
-		String msg = ""
-		try {
-			Object workflowException = execution.getVariable("prevWorkflowException");
-			if (workflowException instanceof WorkflowException) {
-				msoLogger.info("Setting prevException to WorkflowException: ")
-				execution.setVariable("WorkflowException", workflowException);
-			}
-			execution.setVariable("rollbackData", null)
-		} catch (BpmnError b) {
-			msoLogger.info("BPMN Error during postProcessRollback")
-			throw b;
-		} catch(Exception ex) {
-			msg = "Exception in postProcessRollback. " + ex.getMessage()
-			msoLogger.info(msg)
-		}
-		msoLogger.trace("Exit postProcessRollback ")
-	}
+    public void postProcessRollback (DelegateExecution execution) {
+        msoLogger.trace("postProcessRollback ")
+        String msg = ""
+        try {
+            Object workflowException = execution.getVariable("prevWorkflowException");
+            if (workflowException instanceof WorkflowException) {
+                msoLogger.info("Setting prevException to WorkflowException: ")
+                execution.setVariable("WorkflowException", workflowException);
+            }
+            execution.setVariable("rollbackData", null)
+        } catch (BpmnError b) {
+            msoLogger.info("BPMN Error during postProcessRollback")
+            throw b;
+        } catch(Exception ex) {
+            msg = "Exception in postProcessRollback. " + ex.getMessage()
+            msoLogger.info(msg)
+        }
+        msoLogger.trace("Exit postProcessRollback ")
+    }
 
-	public void preInitResourcesOperStatus(DelegateExecution execution){
+    public void preInitResourcesOperStatus(DelegateExecution execution){
         msoLogger.trace("STARTED preInitResourcesOperStatus Process ")
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
@@ -419,7 +419,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             List<Resource>  resourceList = serviceDecomposition.getServiceResources()
 
             for(Resource resource : resourceList){
-                    resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
+                resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
             }
 
             def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.db.endpoint")
@@ -427,7 +427,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             msoLogger.info("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
             String payload =
-                """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                    """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                         xmlns:ns="http://org.onap.so/requestsdb">
                         <soapenv:Header/>
                         <soapenv:Body>
@@ -450,45 +450,45 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }
         msoLogger.trace("COMPLETED preInitResourcesOperStatus Process ")
-	}
+    }
 
-	// if site location is in local Operator, create all resources in local ONAP;
-	// if site location is in 3rd Operator, only process sp-partner to create all resources in 3rd ONAP
-	public void doProcessSiteLocation(DelegateExecution execution){
-		msoLogger.trace("======== Start doProcessSiteLocation Process ======== ")
-		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-		String uuiRequest = execution.getVariable("uuiRequest")
-		uuiRequest = ServicePluginFactory.getInstance().doProcessSiteLocation(serviceDecomposition, uuiRequest);
-		execution.setVariable("uuiRequest", uuiRequest)
-		execution.setVariable("serviceDecomposition", serviceDecomposition)
-		
-		msoLogger.trace("======== COMPLETED doProcessSiteLocation Process ======== ")
-	}
-	
-	// Allocate cross link TPs(terminal points) for sotn network only
-	public void doTPResourcesAllocation(DelegateExecution execution){
-		msoLogger.trace("======== Start doTPResourcesAllocation Process ======== ")
-		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-		String uuiRequest = execution.getVariable("uuiRequest")
-		uuiRequest = ServicePluginFactory.getInstance().doTPResourcesAllocation(execution, uuiRequest);
-		execution.setVariable("uuiRequest", uuiRequest)
-		msoLogger.trace("======== COMPLETED doTPResourcesAllocation Process ======== ")
-	}
+    // if site location is in local Operator, create all resources in local ONAP;
+    // if site location is in 3rd Operator, only process sp-partner to create all resources in 3rd ONAP
+    public void doProcessSiteLocation(DelegateExecution execution){
+        msoLogger.trace("======== Start doProcessSiteLocation Process ======== ")
+        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+        String uuiRequest = execution.getVariable("uuiRequest")
+        uuiRequest = ServicePluginFactory.getInstance().doProcessSiteLocation(serviceDecomposition, uuiRequest);
+        execution.setVariable("uuiRequest", uuiRequest)
+        execution.setVariable("serviceDecomposition", serviceDecomposition)
 
-	// prepare input param for using DoCreateResources.bpmn
-	public void preProcessForAddResource(DelegateExecution execution) {
-		msoLogger.trace("STARTED preProcessForAddResource Process ")
+        msoLogger.trace("======== COMPLETED doProcessSiteLocation Process ======== ")
+    }
 
-		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-		List<Resource> addResourceList = serviceDecomposition.getServiceResources()
-		execution.setVariable("addResourceList", addResourceList)
+    // Allocate cross link TPs(terminal points) for sotn network only
+    public void doTPResourcesAllocation(DelegateExecution execution){
+        msoLogger.trace("======== Start doTPResourcesAllocation Process ======== ")
+        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+        String uuiRequest = execution.getVariable("uuiRequest")
+        uuiRequest = ServicePluginFactory.getInstance().doTPResourcesAllocation(execution, uuiRequest);
+        execution.setVariable("uuiRequest", uuiRequest)
+        msoLogger.trace("======== COMPLETED doTPResourcesAllocation Process ======== ")
+    }
 
-		msoLogger.trace("COMPLETED preProcessForAddResource Process ")
-	}
+    // prepare input param for using DoCreateResources.bpmn
+    public void preProcessForAddResource(DelegateExecution execution) {
+        msoLogger.trace("STARTED preProcessForAddResource Process ")
 
-	public void postProcessForAddResource(DelegateExecution execution) {
-		// do nothing now
+        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+        List<Resource> addResourceList = serviceDecomposition.getServiceResources()
+        execution.setVariable("addResourceList", addResourceList)
 
-	}
+        msoLogger.trace("COMPLETED preProcessForAddResource Process ")
+    }
+
+    public void postProcessForAddResource(DelegateExecution execution) {
+        // do nothing now
+
+    }
 
 }

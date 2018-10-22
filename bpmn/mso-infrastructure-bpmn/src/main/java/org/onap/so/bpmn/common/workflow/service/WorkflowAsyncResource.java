@@ -52,13 +52,14 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * 
- * @version 1.0
- * Asynchronous Workflow processing using JAX RS RESTeasy implementation
- * Both Synchronous and Asynchronous BPMN process can benefit from this implementation since the workflow gets executed in the background
- * and the server thread is freed up, server scales better to process more incoming requests
+ * @version 1.0 Asynchronous Workflow processing using JAX RS RESTeasy implementation Both
+ *          Synchronous and Asynchronous BPMN process can benefit from this implementation since the
+ *          workflow gets executed in the background and the server thread is freed up, server
+ *          scales better to process more incoming requests
  * 
- * Usage: For synchronous process, when you are ready to send the response invoke the callback to write the response
- * For asynchronous process - the activity may send a acknowledgement response and then proceed further on executing the process
+ *          Usage: For synchronous process, when you are ready to send the response invoke the
+ *          callback to write the response For asynchronous process - the activity may send a
+ *          acknowledgement response and then proceed further on executing the process
  */
 @Path("/async")
 @Api(value = "/async", description = "Provides asynchronous starting of a bpmn process")
@@ -66,98 +67,97 @@ import io.swagger.annotations.ApiOperation;
 @Component
 public class WorkflowAsyncResource extends ProcessEngineAwareService {
 
-	private static final WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
-	
-	
-	protected Optional<ProcessEngineServices> pes4junit = Optional.empty();
-	
-	long workflowPollInterval=1000; 
-
-	@Autowired
-	private WorkflowProcessor processor;
-	
-	@Autowired
-	private WorkflowContextHolder workflowContext;
-	
-	public WorkflowProcessor getProcessor() {
-		return processor;
-	}
+    private static final WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
 
 
+    protected Optional<ProcessEngineServices> pes4junit = Optional.empty();
 
-	public void setProcessor(WorkflowProcessor processor) {
-		this.processor = processor;
-	}
+    long workflowPollInterval = 1000;
 
-	protected static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,WorkflowAsyncResource.class);
-	protected static final long DEFAULT_WAIT_TIME = 60000;	//default wait time
-	
-	/**
-	 * Asynchronous JAX-RS method that starts a process instance.
-	 * @param processKey the process key
-	 * @param variableMap input variables to the process
-	 * @return 
-	 */
-	
-	@POST
-	@Path("/services/{processKey}")
-	@ApiOperation(
-		        value = "Starts a new process with the appropriate process Key",
-		        notes = "Aysnc fall outs are only logged"
-		    )
-	@Produces("application/json")
-	@Consumes("application/json")
-	public Response startProcessInstanceByKey (
-			@PathParam("processKey") String processKey, VariableMapImpl variableMap){
-		Map<String, Object> inputVariables = getInputVariables(variableMap);	
-		try {		
-			MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, getRequestId(inputVariables));
-			processor.startProcess(processKey, variableMap);
-			WorkflowResponse response = waitForResponse(getRequestId(inputVariables)); 
-			return Response.status(202).entity(response).build();	
-		} catch (WorkflowProcessorException e) {
-			WorkflowResponse response =  e.getWorkflowResponse();
-			return Response.status(500).entity(response).build();
-		}catch (Exception e) {
-			WorkflowResponse response =  buildUnkownError(getRequestId(inputVariables),e.getMessage());		
-			return Response.status(500).entity(response).build();	
-		}		
-	}
-	
-	private WorkflowResponse waitForResponse(String requestId) throws Exception {		
-		long currentWaitTime = 0;		
-		while (DEFAULT_WAIT_TIME > currentWaitTime ) {			
-			Thread.sleep(workflowPollInterval);
-			currentWaitTime = currentWaitTime + workflowPollInterval;
-			WorkflowContext foundContext = contextHolder.getWorkflowContext(requestId);
-			if(foundContext!=null){
-				contextHolder.remove(foundContext);
-				return buildResponse(foundContext);
-			}
-		}
-		throw new Exception("TimeOutOccured");
-	}
+    @Autowired
+    private WorkflowProcessor processor;
 
-	private WorkflowResponse buildTimeoutResponse(String requestId) {
-		WorkflowResponse response = new WorkflowResponse();
-		response.setMessage("Fail");
-		response.setResponse("Request timedout, request id:" + requestId);		
-		response.setMessageCode(500);
-		return response;
-	}
-	
-	private WorkflowResponse buildUnkownError(String requestId,String error) {
-		WorkflowResponse response = new WorkflowResponse();
-		response.setMessage(error);
-		response.setResponse("UnknownError, request id:" + requestId);		
-		response.setMessageCode(500);
-		return response;
-	}
+    @Autowired
+    private WorkflowContextHolder workflowContext;
 
-	private WorkflowResponse buildResponse(WorkflowContext foundContext) {
-		return foundContext.getWorkflowResponse();
-	}
-	
+    public WorkflowProcessor getProcessor() {
+        return processor;
+    }
+
+
+
+    public void setProcessor(WorkflowProcessor processor) {
+        this.processor = processor;
+    }
+
+    protected static final MsoLogger msoLogger =
+            MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, WorkflowAsyncResource.class);
+    protected static final long DEFAULT_WAIT_TIME = 60000; // default wait time
+
+    /**
+     * Asynchronous JAX-RS method that starts a process instance.
+     * 
+     * @param processKey the process key
+     * @param variableMap input variables to the process
+     * @return
+     */
+
+    @POST
+    @Path("/services/{processKey}")
+    @ApiOperation(value = "Starts a new process with the appropriate process Key",
+            notes = "Aysnc fall outs are only logged")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response startProcessInstanceByKey(@PathParam("processKey") String processKey, VariableMapImpl variableMap) {
+        Map<String, Object> inputVariables = getInputVariables(variableMap);
+        try {
+            MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, getRequestId(inputVariables));
+            processor.startProcess(processKey, variableMap);
+            WorkflowResponse response = waitForResponse(getRequestId(inputVariables));
+            return Response.status(202).entity(response).build();
+        } catch (WorkflowProcessorException e) {
+            WorkflowResponse response = e.getWorkflowResponse();
+            return Response.status(500).entity(response).build();
+        } catch (Exception e) {
+            WorkflowResponse response = buildUnkownError(getRequestId(inputVariables), e.getMessage());
+            return Response.status(500).entity(response).build();
+        }
+    }
+
+    private WorkflowResponse waitForResponse(String requestId) throws Exception {
+        long currentWaitTime = 0;
+        while (DEFAULT_WAIT_TIME > currentWaitTime) {
+            Thread.sleep(workflowPollInterval);
+            currentWaitTime = currentWaitTime + workflowPollInterval;
+            WorkflowContext foundContext = contextHolder.getWorkflowContext(requestId);
+            if (foundContext != null) {
+                contextHolder.remove(foundContext);
+                return buildResponse(foundContext);
+            }
+        }
+        throw new Exception("TimeOutOccured");
+    }
+
+    private WorkflowResponse buildTimeoutResponse(String requestId) {
+        WorkflowResponse response = new WorkflowResponse();
+        response.setMessage("Fail");
+        response.setResponse("Request timedout, request id:" + requestId);
+        response.setMessageCode(500);
+        return response;
+    }
+
+    private WorkflowResponse buildUnkownError(String requestId, String error) {
+        WorkflowResponse response = new WorkflowResponse();
+        response.setMessage(error);
+        response.setResponse("UnknownError, request id:" + requestId);
+        response.setMessageCode(500);
+        return response;
+    }
+
+    private WorkflowResponse buildResponse(WorkflowContext foundContext) {
+        return foundContext.getWorkflowResponse();
+    }
+
     protected static String getOrCreate(Map<String, Object> inputVariables, String key) {
         String value = Objects.toString(inputVariables.get(key), null);
         if (value == null) {
@@ -166,83 +166,81 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
         }
         return value;
     }
-	
-	// Note: the business key is used to identify the process in unit tests
-	protected static String getBusinessKey(Map<String, Object> inputVariables) {
+
+    // Note: the business key is used to identify the process in unit tests
+    protected static String getBusinessKey(Map<String, Object> inputVariables) {
         return getOrCreate(inputVariables, "mso-business-key");
-	}
+    }
 
-	protected static String getRequestId(Map<String, Object> inputVariables) {
+    protected static String getRequestId(Map<String, Object> inputVariables) {
         return getOrCreate(inputVariables, "mso-request-id");
-	}
+    }
 
 
-	
-	protected void recordEvents(String processKey, WorkflowResponse response,
-			long startTime) {
-		
-		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				response.getMessage() + " for processKey: "
-				+ processKey + " with response: " + response.getResponse(), "BPMN", MDC.get(processKey), null);
-		
-		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				 response.getMessage() + "for processKey: " + processKey + " with response: " + response.getResponse());
-		
-	}
 
-	protected static void setLogContext(String processKey,
-			Map<String, Object> inputVariables) {
-		MsoLogger.setServiceName("MSO." + processKey);
-		if (inputVariables != null) {
-			MsoLogger.setLogContext(getKeyValueFromInputVariables(inputVariables,"mso-request-id"), getKeyValueFromInputVariables(inputVariables,"serviceInstanceId"));
-		}
-	}
+    protected void recordEvents(String processKey, WorkflowResponse response, long startTime) {
 
-	protected static String getKeyValueFromInputVariables(Map<String,Object> inputVariables, String key) {
-		if (inputVariables == null) {
-			return "";
-		}
+        msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+                response.getMessage() + " for processKey: " + processKey + " with response: " + response.getResponse(),
+                "BPMN", MDC.get(processKey), null);
 
-		return Objects.toString(inputVariables.get(key), "N/A");
-	}
+        msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
+                response.getMessage() + "for processKey: " + processKey + " with response: " + response.getResponse());
 
-	protected boolean isProcessEnded(String processInstanceId) {
-		ProcessEngineServices pes = getProcessEngineServices();
-		return pes.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult() == null;
-	}
-	
-	protected static Map<String, Object> getInputVariables(VariableMapImpl variableMap) {
-		Map<String, Object> inputVariables = new HashMap<>();
-		@SuppressWarnings("unchecked")
-		Map<String, Object> vMap = (Map<String, Object>) variableMap.get("variables");
-		for (Map.Entry<String, Object> entry : vMap.entrySet()) {
-			String vName = entry.getKey();
-			Object value = entry.getValue();
-			@SuppressWarnings("unchecked")
-			Map<String, Object> valueMap = (Map<String,Object>)value; // value, type
-			inputVariables.put(vName, valueMap.get("value"));
-		}
-		return inputVariables;
-	}
-	
-    
-	protected long getWaitTime(Map<String, Object> inputVariables)
-	{
-	    
-		String timeout = Objects.toString(inputVariables.get("mso-service-request-timeout"), null);
+    }
 
-		if (timeout != null) {
-			try {
-				return Long.parseLong(timeout)*1000;
-			} catch (NumberFormatException nex) {
-				msoLogger.debug("Invalid input for mso-service-request-timeout");
-			}
-		}
+    protected static void setLogContext(String processKey, Map<String, Object> inputVariables) {
+        MsoLogger.setServiceName("MSO." + processKey);
+        if (inputVariables != null) {
+            MsoLogger.setLogContext(getKeyValueFromInputVariables(inputVariables, "mso-request-id"),
+                    getKeyValueFromInputVariables(inputVariables, "serviceInstanceId"));
+        }
+    }
 
-		return DEFAULT_WAIT_TIME;
-	}
-	
-	
-	
+    protected static String getKeyValueFromInputVariables(Map<String, Object> inputVariables, String key) {
+        if (inputVariables == null) {
+            return "";
+        }
+
+        return Objects.toString(inputVariables.get(key), "N/A");
+    }
+
+    protected boolean isProcessEnded(String processInstanceId) {
+        ProcessEngineServices pes = getProcessEngineServices();
+        return pes.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId)
+                .singleResult() == null;
+    }
+
+    protected static Map<String, Object> getInputVariables(VariableMapImpl variableMap) {
+        Map<String, Object> inputVariables = new HashMap<>();
+        @SuppressWarnings("unchecked")
+        Map<String, Object> vMap = (Map<String, Object>) variableMap.get("variables");
+        for (Map.Entry<String, Object> entry : vMap.entrySet()) {
+            String vName = entry.getKey();
+            Object value = entry.getValue();
+            @SuppressWarnings("unchecked")
+            Map<String, Object> valueMap = (Map<String, Object>) value; // value, type
+            inputVariables.put(vName, valueMap.get("value"));
+        }
+        return inputVariables;
+    }
+
+
+    protected long getWaitTime(Map<String, Object> inputVariables) {
+
+        String timeout = Objects.toString(inputVariables.get("mso-service-request-timeout"), null);
+
+        if (timeout != null) {
+            try {
+                return Long.parseLong(timeout) * 1000;
+            } catch (NumberFormatException nex) {
+                msoLogger.debug("Invalid input for mso-service-request-timeout");
+            }
+        }
+
+        return DEFAULT_WAIT_TIME;
+    }
+
+
 
 }

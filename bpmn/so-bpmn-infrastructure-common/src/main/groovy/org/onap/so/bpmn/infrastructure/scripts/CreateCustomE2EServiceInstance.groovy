@@ -44,170 +44,170 @@ import groovy.json.*
  *
  */
 public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor {
-	String Prefix="CRESI_"
-	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	JsonUtils jsonUtil = new JsonUtils()
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateCustomE2EServiceInstance.class);
-	
-
-	public void preProcessRequest (DelegateExecution execution) {
-		msoLogger.trace("start preProcessRequest")
-		execution.setVariable("prefix",Prefix)
-		String msg = ""
-
-		try {
-			String siRequest = execution.getVariable("bpmnRequest")
-			msoLogger.debug(siRequest)
-
-			String requestId = execution.getVariable("mso-request-id")
-			execution.setVariable("msoRequestId", requestId)
-			msoLogger.debug("Input Request:" + siRequest + " reqId:" + requestId)
-
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			if (isBlank(serviceInstanceId)) {
-				serviceInstanceId = UUID.randomUUID().toString()
-			}
-			msoLogger.debug("Generated new Service Instance:" + serviceInstanceId)
-			serviceInstanceId = UriUtils.encode(serviceInstanceId,"UTF-8")
-			execution.setVariable("serviceInstanceId", serviceInstanceId)
-
-			//subscriberInfo
-			String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "requestDetails.subscriberInfo.globalSubscriberId")
-			if (isBlank(globalSubscriberId)) {
-				msg = "Input globalSubscriberId' is null"
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("globalSubscriberId", globalSubscriberId)
-			}
-
-			//requestInfo
-			execution.setVariable("source", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.source"))
-			execution.setVariable("serviceInstanceName", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.instanceName"))
-			execution.setVariable("disableRollback", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.suppressRollback"))
-			String productFamilyId = jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.productFamilyId")
-			if (isBlank(productFamilyId))
-			{
-				msg = "Input productFamilyId is null"
-				msoLogger.debug(msg)
-				//exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("productFamilyId", productFamilyId)
-			}
-
-			//modelInfo
-			String serviceModelInfo = jsonUtil.getJsonValue(siRequest, "requestDetails.modelInfo")
-			if (isBlank(serviceModelInfo)) {
-				msg = "Input serviceModelInfo is null"
-				msoLogger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else
-			{
-				execution.setVariable("serviceModelInfo", serviceModelInfo)
-			}
-
-			msoLogger.debug("modelInfo: " + serviceModelInfo)
-
-			//requestParameters
-			String subscriptionServiceType = jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.subscriptionServiceType")
-			if (isBlank(subscriptionServiceType)) {
-				msg = "Input subscriptionServiceType is null"
-				msoLogger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			} else {
-				execution.setVariable("subscriptionServiceType", subscriptionServiceType)
-			}
-
-			
-			/*
-			 * Extracting User Parameters from incoming Request and converting into a Map
-			 */
-			def jsonSlurper = new JsonSlurper()
-			def jsonOutput = new JsonOutput()
-
-			Map reqMap = jsonSlurper.parseText(siRequest)
-
-			//InputParams
-			def userParamsList = reqMap.requestDetails?.requestParameters?.userParams
-
-			Map<String, String> inputMap = [:]
-			if (userParamsList) {
-				for (def i=0; i<userParamsList.size(); i++) {
-					def userParams1 = userParamsList.get(i)
-					userParams1.each { param -> inputMap.put(param.key, param.value)}
-				}
-			}
-			
-			msoLogger.debug("User Input Parameters map: " + inputMap.toString())
-			execution.setVariable("serviceInputParams", inputMap)
-			execution.setVariable("uuiRequest", inputMap.get("UUIRequest"))
-
-			//TODO
-			//execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
-			//execution.setVariable("failExists", true)
-		} catch (BpmnError e) {
-			throw e;
-		} catch (Exception ex){
-			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		msoLogger.trace("finished preProcessRequest")
-	}
-
-	public void sendSyncResponse (DelegateExecution execution) {
-		msoLogger.trace("start sendSyncResponse")
-		try {
-			String operationId = execution.getVariable("operationId")
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			// RESTResponse for API Handler (APIH) Reply Task
-			String createServiceRestRequest = """{"service":{"serviceId":"${serviceInstanceId}","operationId":"${operationId}"}}""".trim()
-			msoLogger.debug(" sendSyncResponse to APIH:" + "\n" + createServiceRestRequest)
-			sendWorkflowResponse(execution, 202, createServiceRestRequest)
-			execution.setVariable("sentSyncResponse", true)
-		} catch (Exception ex) {
-			String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
-			msoLogger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		msoLogger.trace("finished sendSyncResponse")
-	}
+    String Prefix="CRESI_"
+    ExceptionUtil exceptionUtil = new ExceptionUtil()
+    JsonUtils jsonUtil = new JsonUtils()
+    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateCustomE2EServiceInstance.class);
 
 
-	public void sendSyncError (DelegateExecution execution) {
-		msoLogger.trace("start sendSyncError")
-		try {
-			String errorMessage = ""
-			if (execution.getVariable("WorkflowException") instanceof WorkflowException) {
-				WorkflowException wfe = execution.getVariable("WorkflowException")
-				errorMessage = wfe.getErrorMessage()
-			} else {
-				errorMessage = "Sending Sync Error."
-			}
+    public void preProcessRequest (DelegateExecution execution) {
+        msoLogger.trace("start preProcessRequest")
+        execution.setVariable("prefix",Prefix)
+        String msg = ""
 
-			String buildworkflowException =
-					"""<aetgt:WorkflowException xmlns:aetgt="http://org.onap/so/workflow/schema/v1">
+        try {
+            String siRequest = execution.getVariable("bpmnRequest")
+            msoLogger.debug(siRequest)
+
+            String requestId = execution.getVariable("mso-request-id")
+            execution.setVariable("msoRequestId", requestId)
+            msoLogger.debug("Input Request:" + siRequest + " reqId:" + requestId)
+
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
+            if (isBlank(serviceInstanceId)) {
+                serviceInstanceId = UUID.randomUUID().toString()
+            }
+            msoLogger.debug("Generated new Service Instance:" + serviceInstanceId)
+            serviceInstanceId = UriUtils.encode(serviceInstanceId,"UTF-8")
+            execution.setVariable("serviceInstanceId", serviceInstanceId)
+
+            //subscriberInfo
+            String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "requestDetails.subscriberInfo.globalSubscriberId")
+            if (isBlank(globalSubscriberId)) {
+                msg = "Input globalSubscriberId' is null"
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else {
+                execution.setVariable("globalSubscriberId", globalSubscriberId)
+            }
+
+            //requestInfo
+            execution.setVariable("source", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.source"))
+            execution.setVariable("serviceInstanceName", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.instanceName"))
+            execution.setVariable("disableRollback", jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.suppressRollback"))
+            String productFamilyId = jsonUtil.getJsonValue(siRequest, "requestDetails.requestInfo.productFamilyId")
+            if (isBlank(productFamilyId))
+            {
+                msg = "Input productFamilyId is null"
+                msoLogger.debug(msg)
+                //exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else {
+                execution.setVariable("productFamilyId", productFamilyId)
+            }
+
+            //modelInfo
+            String serviceModelInfo = jsonUtil.getJsonValue(siRequest, "requestDetails.modelInfo")
+            if (isBlank(serviceModelInfo)) {
+                msg = "Input serviceModelInfo is null"
+                msoLogger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else
+            {
+                execution.setVariable("serviceModelInfo", serviceModelInfo)
+            }
+
+            msoLogger.debug("modelInfo: " + serviceModelInfo)
+
+            //requestParameters
+            String subscriptionServiceType = jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.subscriptionServiceType")
+            if (isBlank(subscriptionServiceType)) {
+                msg = "Input subscriptionServiceType is null"
+                msoLogger.debug(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+            } else {
+                execution.setVariable("subscriptionServiceType", subscriptionServiceType)
+            }
+
+
+            /*
+             * Extracting User Parameters from incoming Request and converting into a Map
+             */
+            def jsonSlurper = new JsonSlurper()
+            def jsonOutput = new JsonOutput()
+
+            Map reqMap = jsonSlurper.parseText(siRequest)
+
+            //InputParams
+            def userParamsList = reqMap.requestDetails?.requestParameters?.userParams
+
+            Map<String, String> inputMap = [:]
+            if (userParamsList) {
+                for (def i=0; i<userParamsList.size(); i++) {
+                    def userParams1 = userParamsList.get(i)
+                    userParams1.each { param -> inputMap.put(param.key, param.value)}
+                }
+            }
+
+            msoLogger.debug("User Input Parameters map: " + inputMap.toString())
+            execution.setVariable("serviceInputParams", inputMap)
+            execution.setVariable("uuiRequest", inputMap.get("UUIRequest"))
+
+            //TODO
+            //execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
+            //execution.setVariable("failExists", true)
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception ex){
+            msg = "Exception in preProcessRequest " + ex.getMessage()
+            msoLogger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        msoLogger.trace("finished preProcessRequest")
+    }
+
+    public void sendSyncResponse (DelegateExecution execution) {
+        msoLogger.trace("start sendSyncResponse")
+        try {
+            String operationId = execution.getVariable("operationId")
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
+            // RESTResponse for API Handler (APIH) Reply Task
+            String createServiceRestRequest = """{"service":{"serviceId":"${serviceInstanceId}","operationId":"${operationId}"}}""".trim()
+            msoLogger.debug(" sendSyncResponse to APIH:" + "\n" + createServiceRestRequest)
+            sendWorkflowResponse(execution, 202, createServiceRestRequest)
+            execution.setVariable("sentSyncResponse", true)
+        } catch (Exception ex) {
+            String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
+            msoLogger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        msoLogger.trace("finished sendSyncResponse")
+    }
+
+
+    public void sendSyncError (DelegateExecution execution) {
+        msoLogger.trace("start sendSyncError")
+        try {
+            String errorMessage = ""
+            if (execution.getVariable("WorkflowException") instanceof WorkflowException) {
+                WorkflowException wfe = execution.getVariable("WorkflowException")
+                errorMessage = wfe.getErrorMessage()
+            } else {
+                errorMessage = "Sending Sync Error."
+            }
+
+            String buildworkflowException =
+                    """<aetgt:WorkflowException xmlns:aetgt="http://org.onap/so/workflow/schema/v1">
 					<aetgt:ErrorMessage>${MsoUtils.xmlEscape(errorMessage)}</aetgt:ErrorMessage>
 					<aetgt:ErrorCode>7000</aetgt:ErrorCode>
 				   </aetgt:WorkflowException>"""
 
-			msoLogger.debug(buildworkflowException)
-			sendWorkflowResponse(execution, 500, buildworkflowException)
+            msoLogger.debug(buildworkflowException)
+            sendWorkflowResponse(execution, 500, buildworkflowException)
 
-		} catch (Exception ex) {
-			msoLogger.debug("Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
-		}
-		msoLogger.trace("finished sendSyncError")
-	}
+        } catch (Exception ex) {
+            msoLogger.debug("Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
+        }
+        msoLogger.trace("finished sendSyncError")
+    }
 
-	public void prepareCompletionRequest (DelegateExecution execution) {
-		msoLogger.trace("start prepareCompletionRequest")
-		try {
-			String requestId = execution.getVariable("msoRequestId")
-			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			String source = execution.getVariable("source")
-			
-			String msoCompletionRequest =
-					"""<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+    public void prepareCompletionRequest (DelegateExecution execution) {
+        msoLogger.trace("start prepareCompletionRequest")
+        try {
+            String requestId = execution.getVariable("msoRequestId")
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
+            String source = execution.getVariable("source")
+
+            String msoCompletionRequest =
+                    """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
 								xmlns:ns="http://org.onap/so/request/types/v1">
 						<request-info xmlns="http://org.onap/so/infra/vnf-request/v1">
 							<request-id>${MsoUtils.xmlEscape(requestId)}</request-id>
@@ -219,42 +219,42 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			   			<mso-bpel-name>CreateGenericALaCarteServiceInstance</mso-bpel-name>
 					</aetgt:MsoCompletionRequest>"""
 
-			// Format Response
-			String xmlMsoCompletionRequest = utils.formatXml(msoCompletionRequest)
+            // Format Response
+            String xmlMsoCompletionRequest = utils.formatXml(msoCompletionRequest)
 
-			execution.setVariable("completionRequest", xmlMsoCompletionRequest)
-			msoLogger.debug("Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
+            execution.setVariable("completionRequest", xmlMsoCompletionRequest)
+            msoLogger.debug("Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
 
-		} catch (Exception ex) {
-			String msg = " Exception in prepareCompletion:" + ex.getMessage()
-			msoLogger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-		msoLogger.trace("finished prepareCompletionRequest")
-	}
+        } catch (Exception ex) {
+            String msg = " Exception in prepareCompletion:" + ex.getMessage()
+            msoLogger.debug(msg)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
+        msoLogger.trace("finished prepareCompletionRequest")
+    }
 
-	public void prepareFalloutRequest(DelegateExecution execution){
-		msoLogger.trace("start prepareFalloutRequest")
-		try {
-			WorkflowException wfex = execution.getVariable("WorkflowException")
-			msoLogger.debug("Input Workflow Exception: " + wfex.toString())
-			String requestId = execution.getVariable("msoRequestId")
-			String source = execution.getVariable("source")
-			String requestInfo =
-					"""<request-info xmlns="http://org.onap/so/infra/vnf-request/v1">
+    public void prepareFalloutRequest(DelegateExecution execution){
+        msoLogger.trace("start prepareFalloutRequest")
+        try {
+            WorkflowException wfex = execution.getVariable("WorkflowException")
+            msoLogger.debug("Input Workflow Exception: " + wfex.toString())
+            String requestId = execution.getVariable("msoRequestId")
+            String source = execution.getVariable("source")
+            String requestInfo =
+                    """<request-info xmlns="http://org.onap/so/infra/vnf-request/v1">
 					<request-id>${MsoUtils.xmlEscape(requestId)}</request-id>
 					<action>CREATE</action>
 					<source>${MsoUtils.xmlEscape(source)}</source>
 				   </request-info>"""
 
-			String falloutRequest = exceptionUtil.processMainflowsBPMNException(execution, requestInfo)
-			execution.setVariable("falloutRequest", falloutRequest)
-		} catch (Exception ex) {
-			msoLogger.debug("Exception prepareFalloutRequest:" + ex.getMessage())
-			String errorException = "  Bpmn error encountered in CreateGenericALaCarteServiceInstance flow. FalloutHandlerRequest,  buildErrorResponse() - " + ex.getMessage()
-			String requestId = execution.getVariable("msoRequestId")
-			String falloutRequest =
-					"""<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+            String falloutRequest = exceptionUtil.processMainflowsBPMNException(execution, requestInfo)
+            execution.setVariable("falloutRequest", falloutRequest)
+        } catch (Exception ex) {
+            msoLogger.debug("Exception prepareFalloutRequest:" + ex.getMessage())
+            String errorException = "  Bpmn error encountered in CreateGenericALaCarteServiceInstance flow. FalloutHandlerRequest,  buildErrorResponse() - " + ex.getMessage()
+            String requestId = execution.getVariable("msoRequestId")
+            String falloutRequest =
+                    """<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
 					                             xmlns:ns="http://org.onap/so/request/types/v1"
 					                             xmlns:wfsch="http://org.onap/so/workflow/schema/v1">
 					   <request-info xmlns="http://org.onap/so/infra/vnf-request/v1">
@@ -268,16 +268,16 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 						</aetgt:WorkflowException>
 					</aetgt:FalloutHandlerRequest>"""
 
-			execution.setVariable("falloutRequest", falloutRequest)
-		}
-		msoLogger.trace("finished prepareFalloutRequest")
-	}
-	
-	/**
-	 * Init the service Operation Status
-	 */
-	public void prepareInitServiceOperationStatus(DelegateExecution execution){
-		msoLogger.trace("start prepareInitServiceOperationStatus")
+            execution.setVariable("falloutRequest", falloutRequest)
+        }
+        msoLogger.trace("finished prepareFalloutRequest")
+    }
+
+    /**
+     * Init the service Operation Status
+     */
+    public void prepareInitServiceOperationStatus(DelegateExecution execution){
+        msoLogger.trace("start prepareInitServiceOperationStatus")
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
             String operationId = UUID.randomUUID().toString()
@@ -298,7 +298,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
             msoLogger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
             String payload =
-                """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                    """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                         xmlns:ns="http://org.onap.so/requestsdb">
                         <soapenv:Header/>
                         <soapenv:Body>
@@ -321,11 +321,11 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
             msoLogger.debug("CreateVfModuleInfra Outgoing updateServiceOperStatusRequest Request: " + payload)
 
         }catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN", MsoLogger.getServiceName(),
-				MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN", MsoLogger.getServiceName(),
+                    MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
         }
-		msoLogger.trace("finished prepareInitServiceOperationStatus")
-	}
-	
+        msoLogger.trace("finished prepareInitServiceOperationStatus")
+    }
+
 }

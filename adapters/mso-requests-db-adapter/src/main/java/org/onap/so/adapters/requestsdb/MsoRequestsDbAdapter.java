@@ -64,8 +64,8 @@ public interface MsoRequestsDbAdapter {
 	@WebMethod
 	public void updateServiceOperationStatus(
 			@WebParam(name = "serviceId") @XmlElement(required = true) String serviceId,
-			@WebParam(name = "operationId") @XmlElement(required = false) String operationId,
-			@WebParam(name = "operationType") @XmlElement(required = false) String operationType,
+            @WebParam(name = "operationId") @XmlElement(required = false) String operationId,
+            @WebParam(name = "operationType") @XmlElement(required = false) String operationType,
 			@WebParam(name = "userId") @XmlElement(required = false) String userId,
 			@WebParam(name = "result") @XmlElement(required = false) String result,
 			@WebParam(name = "operationContent") @XmlElement(required = false) String operationContent,

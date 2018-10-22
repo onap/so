@@ -36,33 +36,35 @@ import org.springframework.stereotype.Component;
 @Component
 @Configuration
 public class UrnPropertiesReader {
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,UrnPropertiesReader.class);
+    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, UrnPropertiesReader.class);
     private static Environment environment;
 
     @Autowired
-	public void setEnvironment(Environment environment) {
-	this.environment = environment;
-	}
-	/**
-     * Return the URN property value
-     * if property is present in the execution object, return the same
-     * else search in the environment object. If found, add it to the execution object and return the value
-     * otherwise return null
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    /**
+     * Return the URN property value if property is present in the execution object, return the same
+     * else search in the environment object. If found, add it to the execution object and return
+     * the value otherwise return null
      *
      * @param variableName URN property name
-     * @param execution    The flow's execution instance.
+     * @param execution The flow's execution instance.
      * @return URN property value
      */
     public static String getVariable(String variableName, DelegateExecution execution) {
         Object value = execution.getVariable(variableName);
         if (value != null) {
-            LOGGER.trace("Retrieved value for the URN variable, " + variableName + ", from the execution object: " + String.valueOf(value));
+            LOGGER.trace("Retrieved value for the URN variable, " + variableName + ", from the execution object: "
+                    + String.valueOf(value));
             return String.valueOf(value);
         }
         String variableValue = null;
         if (environment != null && environment.getProperty(variableName) != null) {
             variableValue = environment.getProperty(variableName);
-            LOGGER.trace("Retrieved value for the URN variable, " + variableName + ", from the environment variable: " + variableValue);
+            LOGGER.trace("Retrieved value for the URN variable, " + variableName + ", from the environment variable: "
+                    + variableValue);
             execution.setVariable(variableName, variableValue);
             return variableValue;
         }
@@ -71,19 +73,20 @@ public class UrnPropertiesReader {
 
     /**
      * Return the URN property value from the environment object
+     * 
      * @param variableName URN property name
      * @return URN property value
      */
 
-    public static String getVariable(String variableName){
+    public static String getVariable(String variableName) {
         if (environment != null) {
             return environment.getProperty(variableName);
         } else {
             return null;
         }
     }
-    
+
     public static String getVariable(String variableName, String defaultValue) {
-    	return Optional.ofNullable(getVariable(variableName)).orElse(defaultValue); 
+        return Optional.ofNullable(getVariable(variableName)).orElse(defaultValue);
     }
 }
