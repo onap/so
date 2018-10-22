@@ -170,6 +170,7 @@ public class WorkflowAction {
 						execution.setVariable("homing", true);
 						execution.setVariable("callHoming", true);
 						execution.setVariable("homingSolution", params.get(HOMINGSOLUTION));
+						execution.setVariable("homingService", params.get(HOMINGSOLUTION));
 					}
 				}
 			}
