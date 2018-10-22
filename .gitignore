@@ -1,10 +1,10 @@
 target
-**/.settings
-**/.classpath
-**/.project
-**/.buildpath
-**/.factorypath
-**/.springBeans
+.settings
+.classpath
+.project
+.buildpath
+.factorypath
+.springBeans
 .idea
 .checkstyle
 .DS_Store
@@ -18,6 +18,6 @@ target
 *.tmp
 packages/root-pack-extras/config-resources/mariadb/db-sql-scripts/main-schemas/MySQL-Catalog-schema.sql
 packages/root-pack-extras/config-resources/mariadb/db-sql-scripts/main-schemas/MySQL-Requests-schema.sql
-**/bin/
+bin/
 /tattletale/
 /.metadata/
