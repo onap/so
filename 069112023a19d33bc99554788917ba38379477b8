@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_e8b9102f",
+        "filename": "so-monitoring/so-monitoring-service/src/main/resources/application.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3895
+      },
+      "writtenOn": "2018-10-22T16:33:53Z",
+      "side": 1,
+      "message": "Needs to be changed to 9191 as per: https://wiki.onap.org/display/DW/OOM+NodePort+List",
+      "range": {
+        "startLine": 2,
+        "startChar": 8,
+        "endLine": 2,
+        "endChar": 12
+      },
+      "revId": "069112023a19d33bc99554788917ba38379477b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
