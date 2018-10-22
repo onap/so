@@ -1,17 +1,17 @@
 server:
-  port: 9091
+  port: 9191
   tomcat:
     max-threads: 50
 ssl-enable: false
 camunda:
   rest:
     api:
-      url: http://bpmn-infra:8081/engine-rest/engine/
+      url: http://so-bpmn-infra.onap:8081/sobpmnengine/engine/
       engine: default
-      auth: Basic YWRtaW46S3A4Yko0U1hzek0wV1hsaGFrM2VIbGNzZTJnQXc4NHZhb0dHbUp2VXkyVQ==
+      auth: Basic YXBpaEJwbW46cGFzc3dvcmQxJA==
 mso:
   database:
     rest:
       api:
-        url: http://so-request-db-adapter:8083/infraActiveRequests/
+        url: http://so-request-db-adapter.onap:8083/infraActiveRequests/
         auth: Basic YnBlbDpwYXNzd29yZDEk
