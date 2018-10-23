@@ -11,7 +11,7 @@
    </rest:headers>
    <rest:payload contentType="text/xml">
       <l3-network xmlns="http://org.openecomp.aai.inventory/v8">
-         <cloud-owner>att-aic</cloud-owner>
+         <cloud-owner>CloudOwner</cloud-owner>
          <cloud-region-id>RDM2WAGPLCP</cloud-region-id>
          <cloud-region-version>2.5</cloud-region-version>
          <complex-name>RDM2WAGPLCP</complex-name>

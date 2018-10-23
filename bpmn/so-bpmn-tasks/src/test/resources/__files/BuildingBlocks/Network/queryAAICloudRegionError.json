@@ -1,5 +1,5 @@
 {
-   "cloud-owner": "att-aic",
+   "cloud-owner": "CloudOwner",
    "cloud-region-id": "ERROR",
    "cloud-type": "openstack",
    "owner-defined-type": "LCP",

@@ -110,7 +110,7 @@
                 <generic-vnf-service>
                     <cloud-region-id>FRN1</cloud-region-id>
                     <outer-vlan-tag>4027</outer-vlan-tag>
-                    <cloud-owner>att-aic</cloud-owner>
+                    <cloud-owner>CloudOwner</cloud-owner>
                     <service-ecomp-model-information>
                         <model-uuid>b73c6911-be64-448a-bb4b-7b7a7006507a</model-uuid>
                         <model-version>5.0</model-version>

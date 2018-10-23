@@ -505,7 +505,7 @@ public class StubResponseAAI {
 	}
 
 	public static void MockGetNetworkCloudRegion(String responseFile, String cloudRegion) {
-		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/"+cloudRegion))
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/"+cloudRegion))
 				.willReturn(aResponse()
 						.withStatus(200)
 						.withHeader("Content-Type", "text/xml")
@@ -529,7 +529,7 @@ public class StubResponseAAI {
 	}
 
 	public static void MockGetNetworkCloudRegion_404(String cloudRegion) {
-		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/"+cloudRegion))
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/"+cloudRegion))
 				.willReturn(aResponse()
 						.withStatus(404)));
 	}
@@ -722,12 +722,12 @@ public class StubResponseAAI {
 				.withStatus(200)
 				.withHeader("Content-Type", "text/xml")
 				.withBodyFile("VfModularity/ConfirmVolumeGroupTenantResponse.xml")));
-		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/MDTWNJ21/volume-groups/volume-group/78987"))
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/MDTWNJ21/volume-groups/volume-group/78987"))
 			.willReturn(aResponse()
 				.withStatus(200)
 				.withHeader("Content-Type", "text/xml")
 				.withBodyFile("VfModularity/VolumeGroup.xml")));
-		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/volume-groups/volume-group/78987"))
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/volume-groups/volume-group/78987"))
 				.willReturn(aResponse()
 					.withStatus(200)
 					.withHeader("Content-Type", "text/xml")
@@ -757,7 +757,7 @@ public class StubResponseAAI {
 	 */
 
 	public static void MockGetCloudRegion(String cloudRegionId, int statusCode, String responseFile) {
-		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/" + cloudRegionId))
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/" + cloudRegionId))
 				.willReturn(aResponse()
 						.withStatus(statusCode)
 						.withHeader("Content-Type", "text/xml")
@@ -772,7 +772,7 @@ public class StubResponseAAI {
 	}
 
 	public static void MockGetVolumeGroupById(String cloudRegionId, String volumeGroupId, String responseFile, int responseCode) {
-		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/" + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId))
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/" + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId))
 				.willReturn(aResponse()
 						.withStatus(responseCode)
 						.withHeader("Content-Type", "text/xml")
@@ -780,7 +780,7 @@ public class StubResponseAAI {
 	}
 
 	public static void MockPutVolumeGroupById(String cloudRegionId, String volumeGroupId, String responseFile, int statusCode) {
-		stubFor(put(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/" + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId))
+		stubFor(put(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/" + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId))
 				.willReturn(aResponse()
 						.withStatus(statusCode)
 						.withHeader("Content-Type", "text/xml")
@@ -788,7 +788,7 @@ public class StubResponseAAI {
 	}
 
 	public static void MockGetVolumeGroupByName(String cloudRegionId, String volumeGroupName, String responseFile, int statusCode) {
-		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/" + cloudRegionId + "/volume-groups[?]volume-group-name=" + volumeGroupName))
+		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/" + cloudRegionId + "/volume-groups[?]volume-group-name=" + volumeGroupName))
 				.willReturn(aResponse()
 						.withStatus(statusCode)
 						.withHeader("Content-Type", "text/xml")
@@ -796,19 +796,19 @@ public class StubResponseAAI {
 	}
 
 	public static void MockDeleteVolumeGroupById(String cloudRegionId, String volumeGroupId, String resourceVersion, int statusCode) {
-		stubFor(delete(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/" + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId + "[?]resource-version=" + resourceVersion))
+		stubFor(delete(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/" + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId + "[?]resource-version=" + resourceVersion))
 				  .willReturn(aResponse()
 				  .withStatus(statusCode)));
 	}
 
 	public static void MockGetVolumeGroupByName_404(String cloudRegionId, String volumeGroupName) {
-		stubFor(get(urlMatching("/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/" + cloudRegionId + "/volume-groups[?]volume-group-name=" + volumeGroupName))
+		stubFor(get(urlMatching("/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/" + cloudRegionId + "/volume-groups[?]volume-group-name=" + volumeGroupName))
 				.willReturn(aResponse()
 				.withStatus(404)));
 	}
 
 	public static void MockDeleteVolumeGroup(String cloudRegionId, String volumeGroupId, String resourceVersion) {
-		stubFor(delete(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/" + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId + "[?]resource-version=" + resourceVersion))
+		stubFor(delete(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/" + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId + "[?]resource-version=" + resourceVersion))
 				.willReturn(aResponse()
 				.withStatus(200)));
 	}
@@ -913,7 +913,7 @@ public class StubResponseAAI {
 	}
 
 	public static void MockGetDefaultCloudRegionByCloudRegionId(String cloudRegionId, String responseFile, int statusCode) {
-		stubFor(get(urlMatching("/aai/v1[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic/"+cloudRegionId + ".*"))
+		stubFor(get(urlMatching("/aai/v1[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/"+cloudRegionId + ".*"))
 				.willReturn(aResponse()
 						.withStatus(statusCode)
 						.withHeader("Content-Type", "application/json; charset=utf-8")

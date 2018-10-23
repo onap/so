@@ -72,11 +72,11 @@
             {
          "related-to": "vserver",
          "relationship-label": "tosca.relationships.HostedOn",
-         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/1b3f44e5-d96d-4aac-bd9a-310e8cfb0af5",
+         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/1b3f44e5-d96d-4aac-bd9a-310e8cfb0af5",
          "relationship-data":          [
                         {
                "relationship-key": "cloud-region.cloud-owner",
-               "relationship-value": "att-aic"
+               "relationship-value": "CloudOwner"
             },
                         {
                "relationship-key": "cloud-region.cloud-region-id",
@@ -99,11 +99,11 @@
             {
          "related-to": "vserver",
          "relationship-label": "tosca.relationships.HostedOn",
-         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/14551849-1e70-45cd-bc5d-a256d49548a2",
+         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/14551849-1e70-45cd-bc5d-a256d49548a2",
          "relationship-data":          [
                         {
                "relationship-key": "cloud-region.cloud-owner",
-               "relationship-value": "att-aic"
+               "relationship-value": "CloudOwner"
             },
                         {
                "relationship-key": "cloud-region.cloud-region-id",
@@ -126,11 +126,11 @@
             {
          "related-to": "vserver",
          "relationship-label": "tosca.relationships.HostedOn",
-         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/48bd7f11-408f-417c-b834-b41c1b98f7d7",
+         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/48bd7f11-408f-417c-b834-b41c1b98f7d7",
          "relationship-data":          [
                         {
                "relationship-key": "cloud-region.cloud-owner",
-               "relationship-value": "att-aic"
+               "relationship-value": "CloudOwner"
             },
                         {
                "relationship-key": "cloud-region.cloud-region-id",

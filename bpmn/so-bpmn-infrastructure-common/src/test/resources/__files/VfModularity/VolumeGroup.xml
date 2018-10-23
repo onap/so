@@ -10,7 +10,7 @@
                <related-to>tenant</related-to>
                <relationship-data>
                   <relationship-key>cloud-region.cloud-owner</relationship-key>
-                  <relationship-value>att-aic</relationship-value>
+                  <relationship-value>CloudOwner</relationship-value>
                </relationship-data>
                <relationship-data>
                   <relationship-key>cloud-region.cloud-region-id</relationship-key>

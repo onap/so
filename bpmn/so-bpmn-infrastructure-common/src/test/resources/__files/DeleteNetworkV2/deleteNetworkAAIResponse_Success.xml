@@ -45,10 +45,10 @@
             </relationship>
 			<relationship>
                <related-to>cloud-region</related-to>
-               <related-link>cloud-infrastructure/cloud-regions/cloud-region/att-aic/RDM2WAGPLCP/</related-link>
+               <related-link>cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/RDM2WAGPLCP/</related-link>
                <relationship-data>
                   <relationship-key>cloud-region.cloud-owner</relationship-key>
-                  <relationship-value>att-aic</relationship-value>
+                  <relationship-value>CloudOwner</relationship-value>
                </relationship-data>
                <relationship-data>
                   <relationship-key>cloud-region.cloud-region-id</relationship-key>

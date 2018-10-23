@@ -478,7 +478,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         //logger.debug("resourceVnfHoming.getVnf().getResourceId() is: " + resourceVnfHoming.getVnf().getResourceId());
 
         assertEquals(homingSolutionService("service", "service-instance-01234",
-                "MDTNJ01", "test-resource-id-000","att-aic",
+                "MDTNJ01", "test-resource-id-000","CloudOwner",
                 "mtmnj1a",
                 "\"f1d563e8-e714-4393-8f99-cc480144a05e\"," +
                         " \"j1d563e8-e714-4393-8f99-cc480144a05e\"",

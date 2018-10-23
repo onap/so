@@ -17,11 +17,11 @@
           "relationship": [
             {
               "relatedTo": "vserver",
-              "relatedLink": "/aai/v10/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/tenants/tenant/8862-tenantl-LB1113/vservers/vserver/8862-Lvserver-LB1113",
+              "relatedLink": "/aai/v10/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/tenants/tenant/8862-tenantl-LB1113/vservers/vserver/8862-Lvserver-LB1113",
               "relationshipData": [
                 {
                   "relationshipKey": "cloud-region.cloud-owner",
-                  "relationshipValue": "att-aic"
+                  "relationshipValue": "CloudOwner"
                 },
                 {
                   "relationshipKey": "cloud-region.cloud-region-id",

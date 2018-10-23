@@ -73,11 +73,11 @@
 			{
 				"related-to": "cloud-region",
 				"relationship-label": "org.onap.relationships.inventory.Uses",
-				"related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/att-aic/DYH1A",
+				"related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/DYH1A",
 				"relationship-data": [
 					{
 						"relationship-key": "cloud-region.cloud-owner",
-						"relationship-value": "att-aic"
+						"relationship-value": "CloudOwner"
 					},
 					{
 						"relationship-key": "cloud-region.cloud-region-id",
@@ -94,11 +94,11 @@
 			{
 				"related-to": "tenant",
 				"relationship-label": "org.onap.relationships.inventory.Uses",
-				"related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/att-aic/DYH1A/tenants/tenant/2871503957144f72b3cf481b379828ec",
+				"related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/DYH1A/tenants/tenant/2871503957144f72b3cf481b379828ec",
 				"relationship-data": [
 					{
 						"relationship-key": "cloud-region.cloud-owner",
-						"relationship-value": "att-aic"
+						"relationship-value": "CloudOwner"
 					},
 					{
 						"relationship-key": "cloud-region.cloud-region-id",

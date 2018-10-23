@@ -127,7 +127,7 @@ mso:
           route-table-reference:
             uri: /aai/v11/network/route-table-references/route-table-reference
           tenant:
-            uri: /aai/v11/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/tenants/tenant
+            uri: /aai/v11/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/tenants/tenant
           vce:
             uri: /aai/v11/network/vces/vce
           vpn-binding:
@@ -148,14 +148,14 @@ mso:
           route-table-reference:
             uri: /aai/v8/network/route-table-references/route-table-reference
           tenant:
-            uri: /aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/tenants/tenant
+            uri: /aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/tenants/tenant
           vce:
             uri: /aai/v8/network/vces/vce
           vpn-binding:
             uri: /aai/v8/network/vpn-bindings/vpn-binding
         v9:
           cloud-region:
-            uri: /aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic
+            uri: /aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner
           generic-vnf:
             uri: /aai/v9/network/generic-vnfs/generic-vnf
       retry:
