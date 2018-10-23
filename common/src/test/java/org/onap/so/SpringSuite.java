@@ -18,37 +18,18 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.constants;
+package org.onap.so;
 
-import java.util.Optional;
+import org.junit.runner.RunWith;
+import org.onap.so.test.categories.SpringAware;
 
-import org.onap.so.spring.SpringContextHelper;
-import org.springframework.context.ApplicationContext;
+import com.googlecode.junittoolbox.IncludeCategories;
+import com.googlecode.junittoolbox.SuiteClasses;
+import com.googlecode.junittoolbox.WildcardPatternSuite;
 
-public enum Defaults {
+@RunWith(WildcardPatternSuite.class)
+@IncludeCategories({SpringAware.class})
+@SuiteClasses({"**/*Test.class"})
+public class SpringSuite {
 
-	CLOUD_OWNER("org.onap.so.cloud-owner", "att-aic");
-	
-	private final String propName;
-	private final String defaultValue;
-
-	private Defaults(String propName, String defaultValue) {
-		this.defaultValue = defaultValue;
-		this.propName = propName;
-	}
-
-	@Override
-	public String toString() {
-		Optional<ApplicationContext> context = getAppContext();
-		if (context.isPresent()) {
-			return context.get().getEnvironment().getProperty(this.propName, this.defaultValue);
-		} else {
-			return this.defaultValue;
-		}
-		
-	}
-	
-	protected Optional<ApplicationContext> getAppContext() {
-		return Optional.ofNullable(SpringContextHelper.getAppContext());
-	}
 }
