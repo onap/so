@@ -94,6 +94,12 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		try {
 			String requestId = execution.getVariable("msoRequestId")
 			execution.setVariable("prefix", Prefix)
+			
+			def rollbackData = execution.getVariable("rollbackData")
+			if (rollbackData == null) {
+				rollbackData = new RollbackData()
+			}
+			execution.setVariable("rollbackData", rollbackData)
 
 			setBasicDBAuthHeader(execution, isDebugEnabled)
 			//Inputs
@@ -409,7 +415,10 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception ex) {
 			//start rollback set up
-			RollbackData rollbackData = new RollbackData()
+			def rollbackData = execution.getVariable("rollbackData")
+			if (rollbackData == null) {
+				rollbackData = new RollbackData()
+			}			
 			def disableRollback = execution.getVariable("disableRollback")
 			rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
 			rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
@@ -506,11 +515,13 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			def sdncRequestId3 = UUID.randomUUID().toString()
 			String sdncDeactivate = sdncDelete.replace(">delete<", ">deactivate<").replace(">${sdncRequestId2}<", ">${sdncRequestId3}<")
 			def rollbackData = execution.getVariable("rollbackData")
-			rollbackData.put("SERVICEINSTANCE", "sdncDeactivate", sdncDeactivate)
-			rollbackData.put("SERVICEINSTANCE", "sdncDelete", sdncDelete)
-			execution.setVariable("rollbackData", rollbackData)
+			if (rollbackData != null) {
+				rollbackData.put("SERVICEINSTANCE", "sdncDeactivate", sdncDeactivate)
+				rollbackData.put("SERVICEINSTANCE", "sdncDelete", sdncDelete)
+				execution.setVariable("rollbackData", rollbackData)		
 
-			msoLogger.debug("rollbackData:\n" + rollbackData.toString())
+				msoLogger.debug("rollbackData:\n" + rollbackData.toString())
+			}
 
 		} catch (BpmnError e) {
 			throw e;
@@ -541,8 +552,10 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				msoLogger.debug("Good response from SDNC Adapter for service-instance  topology assign: \n" + response)
 
 				def rollbackData = execution.getVariable("rollbackData")
-				rollbackData.put("SERVICEINSTANCE", "rollbackSDNC", "true")
-				execution.setVariable("rollbackData", rollbackData)
+				if (rollbackData != null) {
+					rollbackData.put("SERVICEINSTANCE", "rollbackSDNC", "true")
+					execution.setVariable("rollbackData", rollbackData)
+				}
 
 			}else{
 				msoLogger.debug("Bad Response from SDNC Adapter for service-instance assign")
