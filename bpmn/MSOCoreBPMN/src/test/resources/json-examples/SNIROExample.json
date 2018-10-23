@@ -23,7 +23,7 @@
 						"variableName": "aicVersion"
 					},
 					{
-						"variableValue": "att-aic",
+						"variableValue": "CloudOwner",
 						"variableName": "cloudOwner"
 					}
 				],
@@ -48,7 +48,7 @@
 						"variableName": "aicVersion"
 					},
 					{
-						"variableValue": "att-aic",
+						"variableValue": "CloudOwner",
 						"variableName": "cloudOwner"
 					},
 					{
@@ -73,7 +73,7 @@
 						"variableName": "aicVersion"
 					},
 					{
-						"variableValue": "att-aic",
+						"variableValue": "CloudOwner",
 						"variableName": "cloudOwner"
 					}
 				],
@@ -94,7 +94,7 @@
 						"variableName": "aicVersion"
 					},
 					{
-						"variableValue": "att-aic",
+						"variableValue": "CloudOwner",
 						"variableName": "cloudOwner"
 					}
 				],
@@ -119,7 +119,7 @@
 						"variableName": "aicVersion"
 					},
 					{
-						"variableValue": "att-aic",
+						"variableValue": "CloudOwner",
 						"variableName": "cloudOwner"
 					},
 					{
@@ -144,7 +144,7 @@
 						"variableName": "aicVersion"
 					},
 					{
-						"variableValue": "att-aic",
+						"variableValue": "CloudOwner",
 						"variableName": "cloudOwner"
 					}
 				],

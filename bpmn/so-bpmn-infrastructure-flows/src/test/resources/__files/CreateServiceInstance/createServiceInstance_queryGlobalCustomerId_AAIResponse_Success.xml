@@ -35,14 +35,14 @@
 					<relationship-list>
 						<relationship>
 							<related-to>tenant</related-to>
-							<related-link>https://aai-conexus-e2e.test.com:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/tenants/tenant/396d61752cf04c3b8ca2afcb4ee049e9/</related-link>
+							<related-link>https://aai-conexus-e2e.test.com:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/tenants/tenant/396d61752cf04c3b8ca2afcb4ee049e9/</related-link>
 							<relationship-data>
 								<relationship-key>tenant.tenant-id</relationship-key>
 								<relationship-value>396d61752cf04c3b8ca2afcb4ee049e9</relationship-value>
 							</relationship-data>
 							<relationship-data>
 								<relationship-key>cloud-region.cloud-owner</relationship-key>
-								<relationship-value>att-aic</relationship-value>
+								<relationship-value>CloudOwner</relationship-value>
 							</relationship-data>
 							<relationship-data>
 								<relationship-key>cloud-region.cloud-region-id</relationship-key>

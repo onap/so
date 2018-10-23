@@ -68,10 +68,10 @@
       </relationship>
       <relationship>
          <related-to>cloud-region</related-to>
-         <related-link>/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn6</related-link>
+         <related-link>/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn6</related-link>
          <relationship-data>
             <relationship-key>cloud-region.cloud-owner</relationship-key>
-            <relationship-value>att-aic</relationship-value>
+            <relationship-value>CloudOwner</relationship-value>
          </relationship-data>
          <relationship-data>
             <relationship-key>cloud-region.cloud-region-id</relationship-key>
@@ -84,10 +84,10 @@
       </relationship>
       <relationship>
          <related-to>tenant</related-to>
-         <related-link>/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn6/tenants/tenant/0422ffb57ba042c0800a29dc85ca70f8</related-link>
+         <related-link>/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn6/tenants/tenant/0422ffb57ba042c0800a29dc85ca70f8</related-link>
          <relationship-data>
             <relationship-key>cloud-region.cloud-owner</relationship-key>
-            <relationship-value>att-aic</relationship-value>
+            <relationship-value>CloudOwner</relationship-value>
          </relationship-data>
          <relationship-data>
             <relationship-key>cloud-region.cloud-region-id</relationship-key>

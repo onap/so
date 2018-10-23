@@ -102,11 +102,11 @@
 			},
 			{
 				"related-to": "cloud-region",
-				"related-link": "/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn6",
+				"related-link": "/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn6",
 				"relationship-data": [
 					{
 						"relationship-key": "cloud-region.cloud-owner",
-						"relationship-value": "att-aic"
+						"relationship-value": "CloudOwner"
 					},
 					{
 						"relationship-key": "cloud-region.cloud-region-id",
@@ -122,11 +122,11 @@
 			},
 			{
 				"related-to": "tenant",
-				"related-link": "/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn6/tenants/tenant/0422ffb57ba042c0800a29dc85ca70f8",
+				"related-link": "/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn6/tenants/tenant/0422ffb57ba042c0800a29dc85ca70f8",
 				"relationship-data": [
 					{
 						"relationship-key": "cloud-region.cloud-owner",
-						"relationship-value": "att-aic"
+						"relationship-value": "CloudOwner"
 					},
 					{
 						"relationship-key": "cloud-region.cloud-region-id",

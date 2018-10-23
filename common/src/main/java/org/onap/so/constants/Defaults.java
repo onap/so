@@ -27,7 +27,7 @@ import org.springframework.context.ApplicationContext;
 
 public enum Defaults {
 
-	CLOUD_OWNER("org.onap.so.cloud-owner", "att-aic");
+	CLOUD_OWNER("org.onap.so.cloud-owner", "CloudOwner");
 	
 	private final String propName;
 	private final String defaultValue;

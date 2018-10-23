@@ -118,7 +118,7 @@ public class BBInputSetupTest {
 	private static final String RESOURCE_PATH = "src/test/resources/__files/ExecuteBuildingBlock/";
 
 	protected ObjectMapper mapper = new ObjectMapper();
-	private static final String CLOUD_OWNER = "att-aic";
+	private static final String CLOUD_OWNER = "CloudOwner";
 
 	@Spy
 	private BBInputSetup SPY_bbInputSetup = new BBInputSetup();

@@ -11,7 +11,7 @@
                <tns:related-to>tenant</tns:related-to>
               	 <tns:relationship-data>
                   <tns:relationship-key>cloud-region.cloud-owner</tns:relationship-key>
-                  <tns:relationship-value>att-aic</tns:relationship-value>
+                  <tns:relationship-value>CloudOwner</tns:relationship-value>
                </tns:relationship-data>
                <tns:relationship-data>
                   <tns:relationship-key>cloud-region.cloud-region-id</tns:relationship-key>
