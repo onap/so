@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
@@ -29,7 +28,6 @@ import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils
 
 public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateAAIVfModule.class);
@@ -163,7 +161,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		String aaiNamespace = aaiUriUtil.getNamespace()
 		msoLogger.debug('AAI namespace is: ' + aaiNamespace)
 	
-		execution.setVariable("CAAIVfMod_aaiNamespace","${aaiNamespace}")		
+		execution.setVariable("CAAIVfMod_aaiNamespace",aaiNamespace)
 
 	}
 	
@@ -212,8 +210,6 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 	// process the result from queryAAIForGenericVnf()
 	// note: this method is primarily for logging as the actual decision logic is embedded in the bpmn flow 
 	public void processAAIGenericVnfQuery(DelegateExecution execution) {
-		def result = execution.getVariable("CAAIVfMod_queryGenericVnfResponse")
-		
 		if (execution.getVariable("CAAIVfMod_queryGenericVnfResponseCode") == 404 &&
 			execution.getVariable("CAAIVfMod_vnfId").isEmpty()) {
 			msoLogger.debug("New Generic VNF requested and it does not already exist")
@@ -310,7 +306,6 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			moduleIndex = aaiUtil.getLowestUnusedVfModuleIndexFromAAIVnfResponse(execution, aaiVnfResponse, 
 				fieldToCheck, personaModelId)
 		}
-		def moduleIndexString = String.valueOf(moduleIndex)
 
 		// if we get to this point, we may be about to create the Vf Module,
 		// add rollback information about the Generic VNF for this base/add-on module
@@ -366,7 +361,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 				String responseOut = ""
 				
 				String isVidRequest = execution.getVariable("isVidRequest")
-				
+				def moduleIndexString = String.valueOf(moduleIndex)
 				if (isBaseModule && (isVidRequest == null || "false".equals(isVidRequest))) {				
 				
 					responseOut = """<CreateAAIVfModuleResponse>
@@ -411,20 +406,18 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			for (String qryModuleName : qryModuleNameList) {
 				if (newModuleName.equals(qryModuleName)) {
 					// a module with the requested name already exists - failure
-					msoLogger.debug("VF Module " + qryModuleName + " already exists for Generic VNF " + execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
+					msoLogger.debug("VF Module " + qryModuleName + " already exists for Generic VNF " + vnfNameFromAAI)
 					execution.setVariable("CAAIVfMod_moduleExists", true)
 					execution.setVariable("CAAIVfMod_parseModuleResponse",
-						"VF Module " + qryModuleName + " already exists for Generic VNF " +
-						execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
+						"VF Module " + qryModuleName + " already exists for Generic VNF " + vnfNameFromAAI)
 					break
 				}
 			}
 		}
 		if (execution.getVariable("CAAIVfMod_moduleExists") == false) {
-			msoLogger.debug("VF Module " + execution.getVariable("CAAIVfMod_moduleName") + " does not exist for Generic VNF " + execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
+			msoLogger.debug("VF Module " + execution.getVariable("CAAIVfMod_moduleName") + " does not exist for Generic VNF " + vnfNameFromAAI)
 			execution.setVariable("CAAIVfMod_parseModuleResponse",
-				"VF Module " + newModuleName + " does not exist for Generic VNF " +
-				execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
+				"VF Module " + newModuleName + " does not exist for Generic VNF " + vnfNameFromAAI)
 		}		
 	}
 	
@@ -445,11 +438,10 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			for (String qryModuleName : qryModuleNameList) {
 				if (newModuleName.equals(qryModuleName)) {
 					// a module with the requested name already exists - failure
-					msoLogger.debug("VF Module " + qryModuleName + " already exists for Generic VNF " + execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
+					msoLogger.debug("VF Module " + qryModuleName + " already exists for Generic VNF " + vnfNameFromAAI)
 					execution.setVariable("CAAIVfMod_baseModuleConflict", true)
 					execution.setVariable("CAAIVfMod_parseModuleResponse",
-						"VF Module " + qryModuleName + " already exists for Generic VNF " +
-						execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
+						"VF Module " + qryModuleName + " already exists for Generic VNF " + vnfNameFromAAI)
 					break
 				}
 			}
@@ -460,21 +452,19 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			for (String baseValue : isBaseVfModuleList) {
 				if (baseValue.equals("true")) {
 					// a base module already exists in this VNF - failure
-					msoLogger.debug("Base VF Module already exists for Generic VNF " + execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
+					msoLogger.debug("Base VF Module already exists for Generic VNF " + vnfNameFromAAI)
 					execution.setVariable("CAAIVfMod_baseModuleConflict", true)
 					execution.setVariable("CAAIVfMod_parseModuleResponse",
-						"Base VF Module already exists for Generic VNF " +
-						execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
+						"Base VF Module already exists for Generic VNF " + vnfNameFromAAI)
 					break
 				}
 			}
 		
 		}
-		if (execution.getVariable("CAAIVfMod_moduleExists") == false && execution.getVariable("CAAIVfMod_baseModuleConflict") == false) {
+		if (execution.getVariable("CAAIVfMod_baseModuleConflict") == false) {
 			msoLogger.debug("VF Module " + execution.getVariable("CAAIVfMod_moduleName") + " does not exist for Generic VNF " + execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
 			execution.setVariable("CAAIVfMod_parseModuleResponse",
-				"VF Module " + newModuleName + " does not exist for Generic VNF " +
-				execution.getVariable("CAAIVfMod_vnfNameFromAAI"))
+				"VF Module " + newModuleName + " does not exist for Generic VNF " + vnfNameFromAAI)
 		}		
 	}
 	
