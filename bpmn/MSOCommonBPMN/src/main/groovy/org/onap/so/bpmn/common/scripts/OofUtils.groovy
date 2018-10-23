@@ -89,138 +89,148 @@ class OofUtils {
         utils.log("DEBUG", "Started Building OOF Request", isDebugEnabled)
         String callbackEndpoint = UrnPropertiesReader.getVariable("mso.oof.callbackEndpoint", execution)
         utils.log("DEBUG", "mso.oof.callbackEndpoint is: " + callbackEndpoint, isDebugEnabled)
-        def callbackUrl = utils.createWorkflowMessageAdapterCallbackURL(callbackEndpoint, "oofResponse", requestId)
-        def transactionId = requestId
-        //ServiceInstance Info
-        ServiceInstance serviceInstance = decomposition.getServiceInstance()
-        def serviceInstanceId = ""
-        def serviceName = ""
+        try {
+            def callbackUrl = utils.createHomingCallbackURL(callbackEndpoint, "oofResponse", requestId)
+            utils.log("DEBUG", "callbackUrl is: " + callbackUrl, isDebugEnabled)
 
-        serviceInstanceId = execution.getVariable("serviceInstanceId")
-        serviceName = execution.getVariable("subscriptionServiceType")
 
-        if (serviceInstanceId == null || serviceInstanceId == "null") {
-            utils.log("DEBUG", "Unable to obtain Service Instance Id", isDebugEnabled)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - Unable to " +
-                    "obtain Service Instance Id, execution.getVariable(\"serviceInstanceId\") is null")
-        }
-        if (serviceName == null || serviceName == "null") {
-            utils.log("DEBUG", "Unable to obtain Service Name", isDebugEnabled)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - Unable to " +
-                    "obtain Service Name, execution.getVariable(\"subscriptionServiceType\") is null")
-        }
-        //Model Info
-        ModelInfo model = decomposition.getModelInfo()
-        String modelType = model.getModelType()
-        String modelInvariantId = model.getModelInvariantUuid()
-        String modelVersionId = model.getModelUuid()
-        String modelName = model.getModelName()
-        String modelVersion = model.getModelVersion()
-        //Subscriber Info
-        String subscriberId = ""
-        String subscriberName = ""
-        String commonSiteId = ""
-        if (subscriber != null){
-            subscriberId = subscriber.getGlobalId()
-            subscriberName = subscriber.getName()
-            commonSiteId = subscriber.getCommonSiteId()
-        }
+            def transactionId = requestId
+            utils.log("DEBUG", "transactionId is: " + transactionId, isDebugEnabled)
+            //ServiceInstance Info
+            ServiceInstance serviceInstance = decomposition.getServiceInstance()
+            def serviceInstanceId = ""
+            def serviceName = ""
 
-        //Determine RequestType
-        //TODO Figure out better way to determine this
-        String requestType = "create"
-        List<Resource> resources = decomposition.getServiceResources()
-        for(Resource r:resources){
-            HomingSolution currentSolution = (HomingSolution) r.getCurrentHomingSolution()
-            if(currentSolution != null){
-                requestType = "speed changed"
+            serviceInstanceId = execution.getVariable("serviceInstanceId")
+            utils.log("DEBUG", "serviceInstanceId is: " + serviceInstanceId, isDebugEnabled)
+            serviceName = execution.getVariable("subscriptionServiceType")
+            utils.log("DEBUG", "serviceName is: " + serviceName, isDebugEnabled)
+
+            if (serviceInstanceId == null || serviceInstanceId == "null") {
+                utils.log("DEBUG", "Unable to obtain Service Instance Id", isDebugEnabled)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - Unable to " +
+                        "obtain Service Instance Id, execution.getVariable(\"serviceInstanceId\") is null")
             }
-        }
+            if (serviceName == null || serviceName == "null") {
+                utils.log("DEBUG", "Unable to obtain Service Name", isDebugEnabled)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - Unable to " +
+                        "obtain Service Name, execution.getVariable(\"subscriptionServiceType\") is null")
+            }
+            //Model Info
+            ModelInfo model = decomposition.getModelInfo()
+            utils.log("DEBUG", "ModelInfo: " + model.toString(), isDebugEnabled)
+            String modelType = model.getModelType()
+            String modelInvariantId = model.getModelInvariantUuid()
+            String modelVersionId = model.getModelUuid()
+            String modelName = model.getModelName()
+            String modelVersion = model.getModelVersion()
+            //Subscriber Info
+            String subscriberId = ""
+            String subscriberName = ""
+            String commonSiteId = ""
+            if (subscriber != null) {
+                subscriberId = subscriber.getGlobalId()
+                subscriberName = subscriber.getName()
+                commonSiteId = subscriber.getCommonSiteId()
+            }
 
-        //Demands
-        String placementDemands = ""
-        StringBuilder sb = new StringBuilder()
-        List<AllottedResource> allottedResourceList = decomposition.getAllottedResources()
-        List<VnfResource> vnfResourceList = decomposition.getVnfResources()
+            //Determine RequestType
+            //TODO Figure out better way to determine this
+            String requestType = "create"
+            List<Resource> resources = decomposition.getServiceResources()
+            for (Resource r : resources) {
+                HomingSolution currentSolution = (HomingSolution) r.getCurrentHomingSolution()
+                if (currentSolution != null) {
+                    requestType = "speed changed"
+                }
+            }
 
-        if (allottedResourceList == null || allottedResourceList.isEmpty() ) {
-            utils.log("DEBUG", "Allotted Resources List is empty - will try to get service VNFs instead.",
-                    isDebugEnabled)
-            allottedResourceList = decomposition.getVnfResources()
-        }
+            //Demands
+            String placementDemands = ""
+            StringBuilder sb = new StringBuilder()
+            List<AllottedResource> allottedResourceList = decomposition.getAllottedResources()
+            List<VnfResource> vnfResourceList = decomposition.getVnfResources()
 
-        if (allottedResourceList == null || allottedResourceList.isEmpty()) {
-            utils.log("DEBUG", "Resources List is Empty", isDebugEnabled)
-        } else {
-            for (AllottedResource resource : allottedResourceList) {
-                utils.log("DEBUG", "Allotted Resource: " + resource.toString(),
+            if (allottedResourceList == null || allottedResourceList.isEmpty()) {
+                utils.log("DEBUG", "Allotted Resources List is empty - will try to get service VNFs instead.",
                         isDebugEnabled)
-                def serviceResourceId = resource.getResourceId()
-                def resourceModelInvariantId = resource.getModelInfo().getModelInvariantUuid()
-                def resourceModelVersionId = resource.getModelInfo().getModelUuid()
-                def resourceModelName = resource.getModelInfo().getModelName()
-                def resourceModelVersion = resource.getModelInfo().getModelVersion()
-                def resourceModelType = resource.getModelInfo().getModelType()
-                def tenantId = execution.getVariable("tenantId")
-                def requiredCandidatesJson = ""
+            } else {
+                for (AllottedResource resource : allottedResourceList) {
+                    utils.log("DEBUG", "Allotted Resource: " + resource.toString(),
+                            isDebugEnabled)
+                    def serviceResourceId = resource.getResourceId()
+                    def resourceModelInvariantId = resource.getModelInfo().getModelInvariantUuid()
+                    def resourceModelVersionId = resource.getModelInfo().getModelUuid()
+                    def resourceModelName = resource.getModelInfo().getModelName()
+                    def resourceModelVersion = resource.getModelInfo().getModelVersion()
+                    def resourceModelType = resource.getModelInfo().getModelType()
+                    def tenantId = execution.getVariable("tenantId")
+                    def requiredCandidatesJson = ""
 
-                requiredCandidatesJson = createCandidateJson(
-                        existingCandidates,
-                        excludedCandidates,
-                        requiredCandidates)
+                    requiredCandidatesJson = createCandidateJson(
+                            existingCandidates,
+                            excludedCandidates,
+                            requiredCandidates)
 
-                String demand =
-                        "      {\n" +
-                        "      \"resourceModuleName\": \"${resourceModelName}\",\n" +
-                        "      \"serviceResourceId\": \"${serviceResourceId}\",\n" +
-                        "      \"tenantId\": \"${tenantId}\",\n" +
-                        "      \"resourceModelInfo\": {\n" +
-                        "        \"modelInvariantId\": \"${resourceModelInvariantId}\",\n" +
-                        "        \"modelVersionId\": \"${resourceModelVersionId}\",\n" +
-                        "        \"modelName\": \"${resourceModelName}\",\n" +
-                        "        \"modelType\": \"${resourceModelType}\",\n" +
-                        "        \"modelVersion\": \"${resourceModelVersion}\",\n" +
-                        "        \"modelCustomizationName\": \"\"\n" +
-                        "        }" + requiredCandidatesJson + "\n" +
-                        "      },"
+                    String demand =
+                            "      {\n" +
+                                    "      \"resourceModuleName\": \"${resourceModelName}\",\n" +
+                                    "      \"serviceResourceId\": \"${serviceResourceId}\",\n" +
+                                    "      \"tenantId\": \"${tenantId}\",\n" +
+                                    "      \"resourceModelInfo\": {\n" +
+                                    "        \"modelInvariantId\": \"${resourceModelInvariantId}\",\n" +
+                                    "        \"modelVersionId\": \"${resourceModelVersionId}\",\n" +
+                                    "        \"modelName\": \"${resourceModelName}\",\n" +
+                                    "        \"modelType\": \"${resourceModelType}\",\n" +
+                                    "        \"modelVersion\": \"${resourceModelVersion}\",\n" +
+                                    "        \"modelCustomizationName\": \"\"\n" +
+                                    "        }" + requiredCandidatesJson + "\n" +
+                                    "      },"
 
-                placementDemands = sb.append(demand)
+                    placementDemands = sb.append(demand)
+                }
             }
-            for (VnfResource vnfResource : vnfResourceList) {
-                utils.log("DEBUG", "VNF Resource: " + vnfResource.toString(),
+
+            if (vnfResourceList == null || vnfResourceList.isEmpty()) {
+                utils.log("DEBUG", "VNF Resources List is empty",
                         isDebugEnabled)
-                ModelInfo vnfResourceModelInfo = vnfResource.getModelInfo()
-                def serviceResourceId = vnfResource.getResourceId()
-                def resourceModelInvariantId = vnfResourceModelInfo.getModelInvariantUuid()
-                def resourceModelName = vnfResourceModelInfo.getModelName()
-                def resourceModelVersion = vnfResourceModelInfo.getModelVersion()
-                def resourceModelVersionId = vnfResourceModelInfo.getModelUuid()
-                def resourceModelType = vnfResourceModelInfo.getModelType()
-                def tenantId = execution.getVariable("tenantId")
-                def requiredCandidatesJson = ""
+            } else {
+
+                for (VnfResource vnfResource : vnfResourceList) {
+                    utils.log("DEBUG", "VNF Resource: " + vnfResource.toString(),
+                            isDebugEnabled)
+                    ModelInfo vnfResourceModelInfo = vnfResource.getModelInfo()
+                    def serviceResourceId = vnfResource.getResourceId()
+                    def resourceModelInvariantId = vnfResourceModelInfo.getModelInvariantUuid()
+                    def resourceModelName = vnfResourceModelInfo.getModelName()
+                    def resourceModelVersion = vnfResourceModelInfo.getModelVersion()
+                    def resourceModelVersionId = vnfResourceModelInfo.getModelUuid()
+                    def resourceModelType = vnfResourceModelInfo.getModelType()
+                    def tenantId = execution.getVariable("tenantId")
+                    def requiredCandidatesJson = ""
 
 
-                String placementDemand =
-                        "      {\n" +
-                        "      \"resourceModuleName\": \"${resourceModelName}\",\n" +
-                        "      \"serviceResourceId\": \"${serviceResourceId}\",\n" +
-                        "      \"tenantId\": \"${tenantId}\",\n" +
-                        "      \"resourceModelInfo\": {\n" +
-                        "        \"modelInvariantId\": \"${resourceModelInvariantId}\",\n" +
-                        "        \"modelVersionId\": \"${resourceModelVersionId}\",\n" +
-                        "        \"modelName\": \"${resourceModelName}\",\n" +
-                        "        \"modelType\": \"${resourceModelType}\",\n" +
-                        "        \"modelVersion\": \"${resourceModelVersion}\",\n" +
-                        "        \"modelCustomizationName\": \"\"\n" +
-                        "        }" + requiredCandidatesJson + "\n" +
-                        "      },"
+                    String placementDemand =
+                            "      {\n" +
+                                    "      \"resourceModuleName\": \"${resourceModelName}\",\n" +
+                                    "      \"serviceResourceId\": \"${serviceResourceId}\",\n" +
+                                    "      \"tenantId\": \"${tenantId}\",\n" +
+                                    "      \"resourceModelInfo\": {\n" +
+                                    "        \"modelInvariantId\": \"${resourceModelInvariantId}\",\n" +
+                                    "        \"modelVersionId\": \"${resourceModelVersionId}\",\n" +
+                                    "        \"modelName\": \"${resourceModelName}\",\n" +
+                                    "        \"modelType\": \"${resourceModelType}\",\n" +
+                                    "        \"modelVersion\": \"${resourceModelVersion}\",\n" +
+                                    "        \"modelCustomizationName\": \"\"\n" +
+                                    "        }" + requiredCandidatesJson + "\n" +
+                                    "      },"
 
-                placementDemands = sb.append(placementDemand)
+                    placementDemands = sb.append(placementDemand)
+                }
+                placementDemands = placementDemands.substring(0, placementDemands.length() - 1)
             }
-            placementDemands = placementDemands.substring(0, placementDemands.length() - 1)
-        }
 
-        /* Commenting Out Licensing as OOF doesn't support for Beijing
+            /* Commenting Out Licensing as OOF doesn't support for Beijing
         String licenseDemands = ""
         sb = new StringBuilder()
         if (vnfResourceList.isEmpty() || vnfResourceList == null) {
@@ -265,50 +275,53 @@ class OofUtils {
             licenseDemands = licenseDemands.substring(0, licenseDemands.length() - 1)
         }*/
 
-        String request =
-                "{\n" +
-                "  \"requestInfo\": {\n" +
-                "    \"transactionId\": \"${transactionId}\",\n" +
-                "    \"requestId\": \"${requestId}\",\n" +
-                "    \"callbackUrl\": \"${callbackUrl}\",\n" +
-                "    \"sourceId\": \"so\",\n" +
-                "    \"requestType\": \"${requestType}\"," +
-                "    \"numSolutions\": 1,\n" +
-                "    \"optimizers\": [\"placement\"],\n" +
-                "    \"timeout\": 600\n" +
-                "    },\n" +
-                "  \"placementInfo\": {\n" +
-                "    \"requestParameters\": {\n" +
-                "      \"customerLatitude\": \"${customerLocation.customerLatitude}\",\n" +
-                "      \"customerLongitude\": \"${customerLocation.customerLongitude}\",\n" +
-                "      \"customerName\": \"${customerLocation.customerName}\"\n" +
-                "    }," +
-                "    \"subscriberInfo\": { \n" +
-                "      \"globalSubscriberId\": \"${subscriberId}\",\n" +
-                "      \"subscriberName\": \"${subscriberName}\",\n" +
-                "      \"subscriberCommonSiteId\": \"${commonSiteId}\"\n" +
-                "    },\n" +
-                "    \"placementDemands\": [\n" +
-                "      ${placementDemands}\n" +
-                "      ]\n" +
-                "    },\n" +
-                "  \"serviceInfo\": {\n" +
-                "    \"serviceInstanceId\": \"${serviceInstanceId}\",\n" +
-                "    \"serviceName\": \"${serviceName}\",\n" +
-                "    \"modelInfo\": {\n" +
-                "      \"modelType\": \"${modelType}\",\n" +
-                "      \"modelInvariantId\": \"${modelInvariantId}\",\n" +
-                "      \"modelVersionId\": \"${modelVersionId}\",\n" +
-                "      \"modelName\": \"${modelName}\",\n" +
-                "      \"modelVersion\": \"${modelVersion}\",\n" +
-                "      \"modelCustomizationName\": \"\"\n" +
-                "    }\n" +
-                "  }\n" +
-                "}"
+            String request =
+                    "{\n" +
+                            "  \"requestInfo\": {\n" +
+                            "    \"transactionId\": \"${transactionId}\",\n" +
+                            "    \"requestId\": \"${requestId}\",\n" +
+                            "    \"callbackUrl\": \"${callbackUrl}\",\n" +
+                            "    \"sourceId\": \"so\",\n" +
+                            "    \"requestType\": \"${requestType}\"," +
+                            "    \"numSolutions\": 1,\n" +
+                            "    \"optimizers\": [\"placement\"],\n" +
+                            "    \"timeout\": 600\n" +
+                            "    },\n" +
+                            "  \"placementInfo\": {\n" +
+                            "    \"requestParameters\": {\n" +
+                            "      \"customerLatitude\": \"${customerLocation.customerLatitude}\",\n" +
+                            "      \"customerLongitude\": \"${customerLocation.customerLongitude}\",\n" +
+                            "      \"customerName\": \"${customerLocation.customerName}\"\n" +
+                            "    }," +
+                            "    \"subscriberInfo\": { \n" +
+                            "      \"globalSubscriberId\": \"${subscriberId}\",\n" +
+                            "      \"subscriberName\": \"${subscriberName}\",\n" +
+                            "      \"subscriberCommonSiteId\": \"${commonSiteId}\"\n" +
+                            "    },\n" +
+                            "    \"placementDemands\": [\n" +
+                            "      ${placementDemands}\n" +
+                            "      ]\n" +
+                            "    },\n" +
+                            "  \"serviceInfo\": {\n" +
+                            "    \"serviceInstanceId\": \"${serviceInstanceId}\",\n" +
+                            "    \"serviceName\": \"${serviceName}\",\n" +
+                            "    \"modelInfo\": {\n" +
+                            "      \"modelType\": \"${modelType}\",\n" +
+                            "      \"modelInvariantId\": \"${modelInvariantId}\",\n" +
+                            "      \"modelVersionId\": \"${modelVersionId}\",\n" +
+                            "      \"modelName\": \"${modelName}\",\n" +
+                            "      \"modelVersion\": \"${modelVersion}\",\n" +
+                            "      \"modelCustomizationName\": \"\"\n" +
+                            "    }\n" +
+                            "  }\n" +
+                            "}"
 
 
-        utils.log("DEBUG", "Completed Building OOF Request", isDebugEnabled)
-        return request
+            utils.log("DEBUG", "Completed Building OOF Request", isDebugEnabled)
+            return request
+        } catch (Exception ex) {
+             utils.log("DEBUG", "buildRequest Exception: " + ex, isDebugEnabled)
+        }
     }
 
     /**
