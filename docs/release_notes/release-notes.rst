@@ -47,7 +47,7 @@ The Beijing release is the second release of the Service Orchestrator (SO) proje
 
 **Known Issues**
 
-	SO docker image is still on ecmop and not onap in the repository. 
+	SO docker image is still on ECOMP and not onap in the repository. 
 	This will be addressed in the next release.
 
 **Security Notes**
