@@ -200,6 +200,7 @@ public class DeleteGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 
 		try {
 			String requestId = execution.getVariable("msoRequestId")
+			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			String source = execution.getVariable("source")
 			String msoCompletionRequest =
 			"""<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
@@ -209,8 +210,9 @@ public class DeleteGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 							<action>DELETE</action>
 							<source>${MsoUtils.xmlEscape(source)}</source>
 			   			</request-info>
-						<aetgt:status-message>Service Instance was deleted successfully.</aetgt:status-message>
-			   			<aetgt:mso-bpel-name>DeleteGenericALaCarteServiceInstance</aetgt:mso-bpel-name>
+						<status-message>Service Instance was deleted successfully.</status-message>
+						<serviceInstanceId>${MsoUtils.xmlEscape(serviceInstanceId)}</serviceInstanceId>
+			   			<mso-bpel-name>DeleteGenericALaCarteServiceInstance</mso-bpel-name>
 					</aetgt:MsoCompletionRequest>"""
 
 			// Format Response
