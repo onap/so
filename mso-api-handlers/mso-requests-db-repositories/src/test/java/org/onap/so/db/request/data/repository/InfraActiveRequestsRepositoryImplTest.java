@@ -22,6 +22,7 @@ package org.onap.so.db.request.data.repository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.ACTION;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.REQUEST_ID;
@@ -180,5 +181,13 @@ public class InfraActiveRequestsRepositoryImplTest {
         final List<InfraActiveRequests> actualRequests =
                 objUnderTest.getInfraActiveRequests(null, START_TIME_IN_MILISEC, END_TIME_IN_MILISEC, MAX_LIMIT);
         assertTrue(actualRequests.isEmpty());
+    }
+    
+    @Test
+    public void checkInstanceNameDuplicateNullInstanceNameTest(){
+    	Map<String, String> instanceIdMap = new HashMap<>();
+        instanceIdMap.put("serviceInstanceId", "e05864f0-ab35-47d0-8be4-56fd9619ba3b");
+    	InfraActiveRequests results = objUnderTest.checkInstanceNameDuplicate((HashMap<String, String>)instanceIdMap, null, "vnf");
+    	assertNull(results);
     }
 }
