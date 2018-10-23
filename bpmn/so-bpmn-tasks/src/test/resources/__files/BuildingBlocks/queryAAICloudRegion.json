@@ -1,5 +1,5 @@
 {
-   "cloud-owner": "att-aic",
+   "cloud-owner": "CloudOwner",
    "cloud-region-id": "mtn6",
    "cloud-type": "openstack",
    "owner-defined-type": "LCP",

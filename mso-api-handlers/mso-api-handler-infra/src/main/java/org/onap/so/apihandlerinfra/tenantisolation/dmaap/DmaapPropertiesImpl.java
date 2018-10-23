@@ -23,8 +23,8 @@ package org.onap.so.apihandlerinfra.tenantisolation.dmaap;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.onap.so.apihandlerinfra.SpringContextHelper;
 import org.onap.so.client.dmaap.DmaapProperties;
+import org.onap.so.spring.SpringContextHelper;
 import org.springframework.context.ApplicationContext;
 
 public class DmaapPropertiesImpl implements DmaapProperties {

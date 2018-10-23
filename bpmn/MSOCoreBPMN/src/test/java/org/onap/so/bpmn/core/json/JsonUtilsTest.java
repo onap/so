@@ -69,7 +69,7 @@ public class JsonUtilsTest {
 		JSONObject homingDataJson = arr.getJSONObject(0);
 		JSONArray assignmentInfo = homingDataJson.getJSONArray("assignmentInfo");
 		Map<String, String> map = utils.entryArrayToMap(execution, assignmentInfo.toString(), "variableName", "variableValue");
-		assertEquals(map.get("cloudOwner"), "att-aic");
+		assertEquals(map.get("cloudOwner"), "CloudOwner");
 	}
 	@Test
 	public void entryArrayToMapStringTest() throws IOException {
@@ -80,7 +80,7 @@ public class JsonUtilsTest {
 		JSONObject homingDataJson = arr.getJSONObject(0);
 		JSONArray assignmentInfo = homingDataJson.getJSONArray("assignmentInfo");
 		Map<String, String> map = utils.entryArrayToMap(assignmentInfo.toString(), "variableName", "variableValue");
-		assertEquals(map.get("cloudOwner"), "att-aic");
+		assertEquals(map.get("cloudOwner"), "CloudOwner");
 	}	
 	@Test
 	public void getJsonRootPropertyTest() throws IOException {

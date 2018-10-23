@@ -97,6 +97,10 @@ public class DelegateExecutionImpl implements BuildingBlockExecution, Serializab
 		return this.get("lookupKeyMap");
 	}
 	
+	@Override
+	public String getFlowToBeCalled() {
+		return this.get("flowToBeCalled");
+	}
 	public DelegateExecution getDelegateExecution() {
 		return this.execution;
 	}

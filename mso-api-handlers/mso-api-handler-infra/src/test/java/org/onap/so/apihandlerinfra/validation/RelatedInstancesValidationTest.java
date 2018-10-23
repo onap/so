@@ -38,8 +38,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RelatedInstancesValidationTest extends BaseTest{
 
 	@Test
-	public void testCreateVnfNetworkCollection() throws IOException, ValidationException {
-		String requestJson = new String(Files.readAllBytes(Paths.get("src/test/resources/MsoRequestTest/RelatedInstances/v7CreateVnfNetworkCollection.json")));
+	public void testCreateVnfNetworkInstanceGroup() throws IOException, ValidationException {
+		String requestJson = new String(Files.readAllBytes(Paths.get("src/test/resources/MsoRequestTest/RelatedInstances/v7CreateVnfNetworkInstanceGroup.json")));
 		ObjectMapper mapper = new ObjectMapper();
 		ServiceInstancesRequest sir  = mapper.readValue(requestJson, ServiceInstancesRequest.class);
 		ValidationInformation info = new ValidationInformation(sir, new HashMap<String, String>(), Action.createInstance, 

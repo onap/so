@@ -172,6 +172,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         final CriteriaQuery<InfraActiveRequests> crit = cb.createQuery(InfraActiveRequests.class);
         final Root<InfraActiveRequests> tableRoot = crit.from(InfraActiveRequests.class);
+        InfraActiveRequests infraActiveRequests = null;
 
         if (instanceName != null && !instanceName.equals("")) {
 
@@ -229,18 +230,17 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
                 }
             }
         }
-
-        predicates.add(tableRoot.get(REQUEST_STATUS)
+        if(!predicates.isEmpty()){
+        	predicates.add(tableRoot.get(REQUEST_STATUS)
                 .in(Arrays.asList("PENDING", "IN_PROGRESS", "TIMEOUT", "PENDING_MANUAL_TASK")));
 
-        final Order order = cb.desc(tableRoot.get(START_TIME));
-
-        final List<InfraActiveRequests> dupList = executeInfraQuery(crit, predicates, order);
-
-        InfraActiveRequests infraActiveRequests = null;
-
-        if (dupList != null && !dupList.isEmpty()) {
-            infraActiveRequests = dupList.get(0);
+	        final Order order = cb.desc(tableRoot.get(START_TIME));
+	
+	        final List<InfraActiveRequests> dupList = executeInfraQuery(crit, predicates, order);
+	
+	        if (dupList != null && !dupList.isEmpty()) {
+	            infraActiveRequests = dupList.get(0);
+	        }
         }
 
         return infraActiveRequests;

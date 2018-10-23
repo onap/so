@@ -41,6 +41,7 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 
 import org.json.JSONArray
 import org.json.JSONObject
+import org.springframework.web.util.UriUtils
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
 
@@ -338,4 +339,37 @@ class OofHoming extends AbstractServiceTaskProcessor {
      */
     public void preProcessRequest(DelegateExecution execution) {}
         // Not Implemented Method
+
+    /**
+     * Constructs a workflow message callback URL for the specified message type and correlator.
+     * This type of callback URL is used when a workflow wants an MSO adapter (like the SDNC
+     * adapter) to call it back.  In other words, this is for callbacks internal to the MSO
+     * complex.  Use <code>createWorkflowMessageAdapterCallbackURL</code> if the callback
+     * will come from outside the MSO complex.
+     * @param endpoint endpoint address to contruct URL from
+     * @param messageType the message type (e.g. SDNCAResponse or VNFAResponse)
+     * @param correlator the correlator value (e.g. a request ID)
+     */
+    public String createHomingCallbackURL(String endpoint, String messageType, String correlator) {
+        try {
+            if (endpoint == null || endpoint.isEmpty()) {
+                ExceptionUtil exceptionUtil = new ExceptionUtil()
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2000,
+                        'mso:workflow:message:endpoint was not passed in')
+            }
+
+            utils.log("DEBUG", "passed in endpoint: " + endpoint + " *****", "true")
+
+            while (endpoint.endsWith('/')) {
+                endpoint = endpoint.substring(0, endpoint.length() - 1)
+            }
+            utils.log("DEBUG", "processed endpoint: " + endpoint + " *****", "true")
+
+            return endpoint +
+                    '/' + UriUtils.encodePathSegment(messageType, 'UTF-8') +
+                    '/' + UriUtils.encodePathSegment(correlator, 'UTF-8')
+        } catch (Exception ex) {
+            utils.log("DEBUG", "createCallbackURL Exception: " + ex + " *****", "true")
+        }
+    }
 }

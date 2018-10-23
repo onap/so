@@ -49,6 +49,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -164,6 +165,37 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 		expectedException.expect(BpmnError.class);
 		
 		aaiUpdateTasks.updateOrchestrationStatusAssignedVfModule(execution);
+	}
+	
+	@Test
+	public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleNoMultiStageTest() throws Exception {
+		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
+		modelInfoGenericVnf.setMultiStageDesign("false");
+		genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
+		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
+		aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
+		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
+		assertEquals("", vfModule.getHeatStackId());
+	}
+	
+	@Test
+	public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleWithMultiStageTest() throws Exception {
+		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
+		modelInfoGenericVnf.setMultiStageDesign("true");
+		genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
+		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
+		aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
+		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
+		assertEquals("", vfModule.getHeatStackId());
+	}
+	
+	@Test
+	public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleExceptionTest() throws Exception {
+		doThrow(Exception.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
+		
+		expectedException.expect(BpmnError.class);
+		
+		aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
 	}
 	
 	@Test

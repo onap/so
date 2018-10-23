@@ -280,7 +280,7 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
 		String sniroRequest = (String) getVariableFromHistory(businessKey, "sniroRequest");
 		assertEquals(FileUtil.readResourceFile("__files/BuildingBlocks/sniroRequest_infravnf").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", ""), sniroRequest.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", ""));
 
-		assertEquals(homingSolutionService("service", "service-instance-01234", "MDTNJ01", "att-aic", "mtmnj1a", "KDTNJ01", "3.0", "\"f1d563e8-e714-4393-8f99-cc480144a05e\", \"j1d563e8-e714-4393-8f99-cc480144a05e\"", "\"s1d563e8-e714-4393-8f99-cc480144a05e\", \"b1d563e8-e714-4393-8f99-cc480144a05e\""), resourceVnfHomingString);
+		assertEquals(homingSolutionService("service", "service-instance-01234", "MDTNJ01", "CloudOwner", "mtmnj1a", "KDTNJ01", "3.0", "\"f1d563e8-e714-4393-8f99-cc480144a05e\", \"j1d563e8-e714-4393-8f99-cc480144a05e\"", "\"s1d563e8-e714-4393-8f99-cc480144a05e\", \"b1d563e8-e714-4393-8f99-cc480144a05e\""), resourceVnfHomingString);
 	}
 
 	@Test

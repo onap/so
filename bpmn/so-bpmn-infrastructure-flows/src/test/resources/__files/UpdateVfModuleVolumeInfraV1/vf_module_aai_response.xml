@@ -10,10 +10,10 @@
    <relationship-list>
       <relationship>
          <related-to>volume-group</related-to>
-         <related-link>https://aai-ext1.test.com:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn6/volume-groups/volume-group/064bd1c6-e377-4009-a744-e958eec6e727/</related-link>
+         <related-link>https://aai-ext1.test.com:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn6/volume-groups/volume-group/064bd1c6-e377-4009-a744-e958eec6e727/</related-link>
          <relationship-data>
             <relationship-key>cloud-region.cloud-owner</relationship-key>
-            <relationship-value>att-aic</relationship-value>
+            <relationship-value>CloudOwner</relationship-value>
          </relationship-data>
          <relationship-data>
             <relationship-key>cloud-region.cloud-region-id</relationship-key>
