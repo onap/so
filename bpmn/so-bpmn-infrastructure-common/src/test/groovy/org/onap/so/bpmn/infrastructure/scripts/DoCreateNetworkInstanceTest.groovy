@@ -1126,10 +1126,10 @@ String queryIdAIIResponse_SRIOV =
 	<relationship-list>
 		<relationship>
 			<related-to>tenant</related-to>
-			<related-link>https://aai-ext1.test.com:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn16/tenants/tenant/6accefef3cb442ff9e644d589fb04107</related-link>
+			<related-link>https://aai-ext1.test.com:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn16/tenants/tenant/6accefef3cb442ff9e644d589fb04107</related-link>
 			<relationship-data>
 				<relationship-key>cloud-region.cloud-owner</relationship-key>
-				<relationship-value>att-aic</relationship-value>
+				<relationship-value>CloudOwner</relationship-value>
 			</relationship-data>
 			<relationship-data>
 				<relationship-key>cloud-region.cloud-region-id</relationship-key>
@@ -1146,10 +1146,10 @@ String queryIdAIIResponse_SRIOV =
 		</relationship>
 		<relationship>
 			<related-to>cloud-region</related-to>
-			<related-link>https://aai-ext1.test.com:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtn16</related-link>
+			<related-link>https://aai-ext1.test.com:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn16</related-link>
 			<relationship-data>
 				<relationship-key>cloud-region.cloud-owner</relationship-key>
-				<relationship-value>att-aic</relationship-value>
+				<relationship-value>CloudOwner</relationship-value>
 			</relationship-data>
 			<relationship-data>
 				<relationship-key>cloud-region.cloud-region-id</relationship-key>
@@ -1238,7 +1238,7 @@ String queryIdAIIResponse_SRIOV =
 	<relationship-list>
 		<relationship>
 			<related-to>cloud-region</related-to>
-			<related-link>https://localhost:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/
+			<related-link>https://localhost:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/
 			</related-link>
 			<relationship-data>
 				<relationship-key>cloud-region.cloud-region-id</relationship-key>
@@ -1246,7 +1246,7 @@ String queryIdAIIResponse_SRIOV =
 			</relationship-data>
 			<relationship-data>
 				<relationship-key>cloud-region.cloud-owner</relationship-key>
-				<relationship-value>att-aic</relationship-value>
+				<relationship-value>CloudOwner</relationship-value>
 			</relationship-data>
 			<related-to-property>
 				<property-key>cloud-region.owner-defined-type</property-key>
@@ -1255,7 +1255,7 @@ String queryIdAIIResponse_SRIOV =
 		</relationship>
 		<relationship>
 			<related-to>tenant</related-to>
-			<related-link>https://localhost:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/tenants/tenant/4ae1d3446a4c48b2bec44b6cfba06d68/</related-link>
+			<related-link>https://localhost:8443/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/tenants/tenant/4ae1d3446a4c48b2bec44b6cfba06d68/</related-link>
 			<relationship-data>
 				<relationship-key>tenant.tenant-id</relationship-key>
 				<relationship-value>4ae1d3446a4c48b2bec44b6cfba06d68
@@ -1263,7 +1263,7 @@ String queryIdAIIResponse_SRIOV =
 			</relationship-data>
 			<relationship-data>
 				<relationship-key>cloud-region.cloud-owner</relationship-key>
-				<relationship-value>att-aic</relationship-value>
+				<relationship-value>CloudOwner</relationship-value>
 			</relationship-data>
 			<relationship-data>
 				<relationship-key>cloud-region.cloud-region-id</relationship-key>
@@ -3623,9 +3623,9 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix)
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(expectedvIPRNetworkRequest)
 			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
-			// old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			// old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn("8")
-			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			//
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
@@ -3659,9 +3659,9 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix)
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(expectedvIPRNetworkRequest)
 			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
-			// old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			// old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn("8")
-			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			//
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
@@ -3695,9 +3695,9 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix)
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(vnfRequestFakeRegion)
 			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
-			//old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			//old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn("8")
-			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			//
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')

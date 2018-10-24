@@ -20,19 +20,35 @@
 
 package org.onap.so.constants;
 
+import java.util.Optional;
+
+import org.onap.so.spring.SpringContextHelper;
+import org.springframework.context.ApplicationContext;
+
 public enum Defaults {
 
-	CLOUD_OWNER("att-aic");
+	CLOUD_OWNER("org.onap.so.cloud-owner", "CloudOwner");
 	
-	
-	private final String value;
-	
-	private Defaults(String value) {
-		this.value = value;
+	private final String propName;
+	private final String defaultValue;
+
+	private Defaults(String propName, String defaultValue) {
+		this.defaultValue = defaultValue;
+		this.propName = propName;
 	}
 
 	@Override
 	public String toString() {
-		return this.value;
+		Optional<ApplicationContext> context = getAppContext();
+		if (context.isPresent()) {
+			return context.get().getEnvironment().getProperty(this.propName, this.defaultValue);
+		} else {
+			return this.defaultValue;
+		}
+		
+	}
+	
+	protected Optional<ApplicationContext> getAppContext() {
+		return Optional.ofNullable(SpringContextHelper.getAppContext());
 	}
 }

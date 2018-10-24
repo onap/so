@@ -571,7 +571,7 @@ public class BBInputSetup implements JavaDelegate {
 		if (relatedInstanceList != null) {
 			for (RelatedInstanceList relatedInstList : relatedInstanceList) {
 				RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
-				if (relatedInstance.getModelInfo().getModelType().equals(ModelType.networkCollection)) {
+				if (relatedInstance.getModelInfo().getModelType().equals(ModelType.networkInstanceGroup)) {
 					instanceGroupModelInfo = relatedInstance.getModelInfo();
 					instanceGroupId = relatedInstance.getInstanceId();
 				}

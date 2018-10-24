@@ -547,11 +547,11 @@
                         },
                         {
                             "related-to": "cloud-region",
-                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/mtcnj2",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtcnj2",
                             "relationship-data": [
                                 {
                                     "relationship-key": "cloud-region.cloud-owner",
-                                    "relationship-value": "att-aic"
+                                    "relationship-value": "CloudOwner"
                                 },
                                 {
                                     "relationship-key": "cloud-region.cloud-region-id",
@@ -567,11 +567,11 @@
                         },
                         {
                             "related-to": "oam-network",
-                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/oam-networks/oam-network/f9263cat-4eaa-43a0-bea4-adcf6e123456",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/oam-networks/oam-network/f9263cat-4eaa-43a0-bea4-adcf6e123456",
                             "relationship-data": [
                                 {
                                     "relationship-key": "cloud-region.cloud-owner",
-                                    "relationship-value": "att-aic"
+                                    "relationship-value": "CloudOwner"
                                 },
                                 {
                                     "relationship-key": "cloud-region.cloud-region-id",
@@ -591,11 +591,11 @@
                         },
                         {
                             "related-to": "oam-network",
-                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/oam-networks/oam-network/b9263fab-4eaa-43a0-bea4-adcf6e999999",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/oam-networks/oam-network/b9263fab-4eaa-43a0-bea4-adcf6e999999",
                             "relationship-data": [
                                 {
                                     "relationship-key": "cloud-region.cloud-owner",
-                                    "relationship-value": "att-aic"
+                                    "relationship-value": "CloudOwner"
                                 },
                                 {
                                     "relationship-key": "cloud-region.cloud-region-id",
@@ -615,11 +615,11 @@
                         },
                         {
                             "related-to": "oam-network",
-                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/oam-networks/oam-network/cf33dc95-c5d2-48fd-8078-fd949363f63b",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/oam-networks/oam-network/cf33dc95-c5d2-48fd-8078-fd949363f63b",
                             "relationship-data": [
                                 {
                                     "relationship-key": "cloud-region.cloud-owner",
-                                    "relationship-value": "att-aic"
+                                    "relationship-value": "CloudOwner"
                                 },
                                 {
                                     "relationship-key": "cloud-region.cloud-region-id",
@@ -639,11 +639,11 @@
                         },
                         {
                             "related-to": "availability-zone",
-                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/att-aic/AAIAIC25/availability-zones/availability-zone/mtcnj-esx-az01",
+                            "related-link": "https://localhost:8443/aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/availability-zones/availability-zone/mtcnj-esx-az01",
                             "relationship-data": [
                                 {
                                     "relationship-key": "cloud-region.cloud-owner",
-                                    "relationship-value": "att-aic"
+                                    "relationship-value": "CloudOwner"
                                 },
                                 {
                                     "relationship-key": "cloud-region.cloud-region-id",

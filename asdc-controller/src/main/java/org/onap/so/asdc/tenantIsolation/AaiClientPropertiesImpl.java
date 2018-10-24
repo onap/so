@@ -25,6 +25,7 @@ import java.net.URL;
 
 import org.onap.so.client.aai.AAIProperties;
 import org.onap.so.client.aai.AAIVersion;
+import org.onap.so.spring.SpringContextHelper;
 import org.springframework.context.ApplicationContext;
 
 public class AaiClientPropertiesImpl implements AAIProperties {

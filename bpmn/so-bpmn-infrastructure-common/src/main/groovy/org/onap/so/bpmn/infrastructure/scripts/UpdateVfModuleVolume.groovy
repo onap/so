@@ -173,7 +173,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			def volumeGroupId = execution.getVariable('UPDVfModVol_volumeGroupId')
 			def aicCloudRegion = execution.getVariable('UPDVfModVol_aicCloudRegion')
 			def endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) +
-				'/aai/v7/cloud-infrastructure/cloud-regions/cloud-region/att-aic/' + UriUtils.encode(aicCloudRegion, "UTF-8") +
+				'/aai/v7/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/' + UriUtils.encode(aicCloudRegion, "UTF-8") +
 				'/volume-groups/volume-group/' + UriUtils.encode(volumeGroupId, "UTF-8")
 
 			msoLogger.debug('Sending GET to AAI endpoint \'' + endPoint + '\'')

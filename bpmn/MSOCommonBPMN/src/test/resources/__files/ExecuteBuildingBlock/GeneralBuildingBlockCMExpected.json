@@ -14,7 +14,7 @@
   },
   "cloudRegion": {
     "lcp-cloud-region-id" : "myRegionId",
-    "cloud-owner": "att-aic"
+    "cloud-owner": "CloudOwner"
   },
   "userInput": null,
   "customer": {

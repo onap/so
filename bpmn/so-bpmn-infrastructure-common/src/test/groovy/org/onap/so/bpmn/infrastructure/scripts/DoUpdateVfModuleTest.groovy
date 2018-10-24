@@ -84,7 +84,7 @@ class DoUpdateVfModuleTest {
         ExecutionEntity mockExecution = setupMock()
         when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable(prefix + "aicCloudRegion")).thenReturn("att-aic")
+        when(mockExecution.getVariable(prefix + "aicCloudRegion")).thenReturn("CloudOwner")
         when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region")
         when(mockExecution.getVariable("mso.workflow.default.aai.cloud-region.version")).thenReturn("8")
         when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
@@ -94,7 +94,7 @@ class DoUpdateVfModuleTest {
         DoUpdateVfModule obj = new DoUpdateVfModule()
         obj.prepConfirmVolumeGroupTenant(mockExecution)
 
-        Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionRequest", "http://localhost:28090/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+        Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionRequest", "http://localhost:28090/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
         Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionReturnCode", "200")
         Mockito.verify(mockExecution).setVariable(prefix + "cloudRegionForVolume", "AAIAIC25")
         Mockito.verify(mockExecution).setVariable(prefix + "isCloudRegionGood", true)
@@ -295,7 +295,7 @@ class DoUpdateVfModuleTest {
     }
 
     private static void mockData() {
-        stubFor(get(urlMatching(".*/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/att-aic"))
+        stubFor(get(urlMatching(".*/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner"))
                 .willReturn(aResponse()
                 .withStatus(200).withHeader("Content-Type", "text/xml")
                 .withBodyFile("DoUpdateVfModule/cloudRegion_AAIResponse_Success.xml")))

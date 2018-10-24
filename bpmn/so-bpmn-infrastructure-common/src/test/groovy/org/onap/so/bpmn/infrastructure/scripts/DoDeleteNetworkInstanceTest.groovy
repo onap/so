@@ -730,10 +730,10 @@ String aaiWorkflowException =
             </relationship>
 			<relationship>
                <related-to>cloud-region</related-to>
-               <related-link>cloud-infrastructure/cloud-regions/cloud-region/att-aic/RDM2WAGPLCP/</related-link>
+               <related-link>cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/RDM2WAGPLCP/</related-link>
                <relationship-data>
                   <relationship-key>cloud-region.cloud-owner</relationship-key>
-                  <relationship-value>att-aic</relationship-value>
+                  <relationship-value>CloudOwner</relationship-value>
                </relationship-data>
                <relationship-data>
                   <relationship-key>cloud-region.cloud-region-id</relationship-key>
@@ -1697,9 +1697,9 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(expectedNetworkRequest)
 			when(mockExecution.getVariable(Prefix + "lcpCloudRegion")).thenReturn("RDM2WAGPLCP")
 			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
-			// old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			// old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn("8")
-			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
@@ -1727,9 +1727,9 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(vnfRequestCloudRegionNotFound)
 			when(mockExecution.getVariable(Prefix + "lcpCloudRegion")).thenReturn("MDTWNJ21")
 			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
-			// old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			// old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn("8")
-			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
@@ -1759,9 +1759,9 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable(Prefix + "networkInputs")).thenReturn(expectedNetworkRequest)
 			when(mockExecution.getVariable(Prefix + "lcpCloudRegion")).thenReturn("RDM2WAGPLCP")
 			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
-			// old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			// old: when(mockExecution.getVariable("mso.workflow.default.aai.cloud-infrastructure.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn("8")
-			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/att-aic")
+			when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
 			//
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')

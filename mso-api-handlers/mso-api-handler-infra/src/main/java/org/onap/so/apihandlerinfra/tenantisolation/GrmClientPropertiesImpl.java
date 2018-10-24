@@ -25,8 +25,8 @@ import java.net.URL;
 
 import javax.ws.rs.core.MediaType;
 
-import org.onap.so.apihandlerinfra.SpringContextHelper;
 import org.onap.so.client.grm.GRMProperties;
+import org.onap.so.spring.SpringContextHelper;
 import org.springframework.context.ApplicationContext;
 
 public class GrmClientPropertiesImpl implements GRMProperties {

@@ -133,7 +133,7 @@
   },
   "cloudRegion" : {
     "lcp-cloud-region-id" : "DYH1A",
-    "cloud-owner" : "att-aic",
+    "cloud-owner" : "CloudOwner",
     "tenant-id" : "7f3db563322146a688601ade1294a749",
     "complex" : "c1",
     "cloud-region-version" : "aic3.0"

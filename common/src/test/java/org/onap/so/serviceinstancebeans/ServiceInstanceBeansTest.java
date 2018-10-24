@@ -56,7 +56,7 @@ public class ServiceInstanceBeansTest {
 		cloudConfiguration.setLcpCloudRegionId("myRegionId");
 		ObjectMapper mapper = new ObjectMapper();
 		
-		assertEquals("{\"cloudOwner\":\"att-aic\",\"lcpCloudRegionId\":\"myRegionId\"}", mapper.writeValueAsString(cloudConfiguration));
+		assertEquals("{\"cloudOwner\":\"CloudOwner\",\"lcpCloudRegionId\":\"myRegionId\"}", mapper.writeValueAsString(cloudConfiguration));
 		
 		
 	}

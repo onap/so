@@ -271,7 +271,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 
 		AaiUtil aaiUtil = new AaiUtil(this)
 
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, groupId).queryParam("resource-version", resourceVersion)
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, groupId).resourceVersion(resourceVersion)
 		def deleteAAIVolumeGrpIdRequest = aaiUtil.createAaiUri(uri)
 
 		msoLogger.debug('Delete AAI volume group : ' + deleteAAIVolumeGrpIdRequest)
@@ -282,8 +282,6 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 		String returnCode = response.getStatusCode()
 		String aaiResponseAsString = response.getResponseBodyAsString()
 
-		msoLogger.debug("AAI delete volume group return code: " + returnCode)
-		msoLogger.debug("AAI delete volume group response: " + aaiResponseAsString)
 		msoLogger.debug("AAI delete volume group return code: " + returnCode)
 		msoLogger.debug("AAI delete volume group response: " + aaiResponseAsString)
 

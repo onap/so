@@ -1,0 +1,57 @@
+{
+   "requestDetails":{
+      "requestInfo":{
+         "productFamilyId":"e433710f-9217-458d-a79d-1c7aff376d87",
+         "source":"VID",
+         "suppressRollback":false,
+         "requestorId":"xxxxxx"
+      },
+      "lineOfBusiness":{
+         "lineOfBusinessName":"line_of_business"
+      },
+      "cloudConfiguration":{
+         "lcpCloudRegionId":"DYH1A",
+         "tenantId":"7f3db563322146a688601ade1294a747"
+      },
+      "platform":{
+
+      },
+      "modelInfo":{
+         "modelCustomizationId":"2ccae1b4-7d9e-46fa-a452-9180ce008d17",
+         "modelCustomizationName":"test_name",
+         "modelVersionId":"0f161f68-9cd8-41f3-872d-41e58d83d318",
+         "modelName":"modelName",
+         "modelInvariantId":"f501ce76-a9bc-4601-9837-74fd9f4d5ecb",
+         "modelType":"vnf",
+         "modelVersion":"7.0"
+      },
+      "requestParameters":{
+         "userParams":[
+
+         ],
+         "testApi":"GR_API"
+      },
+      "relatedInstanceList":[
+         {
+            "relatedInstance":{
+               "instanceId":"e05864f0-ab35-47d0-8be4-56fd9619ba3c",
+               "modelInfo":{
+                  "modelVersionId":"ecd348d8-41f6-447a-93a6-4300db495688",
+                  "modelName":"Subinterface_SVC_ym161d",
+                  "modelInvariantId":"4c1147bd-de97-43d5-b05e-5faa9aba220d",
+                  "modelType":"service",
+                  "modelVersion":"5.0"
+               }
+            }
+         },
+         {
+            "relatedInstance":{
+               "instanceId":"1b53f649-8969-443f-8ca4-d70f2ec6de0b",
+               "modelInfo":{
+                  "modelType":"networkInstanceGroup"
+               }
+            }
+         }
+      ]
+   }
+}
