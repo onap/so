@@ -67,7 +67,7 @@
 		<snapshotNexusPath>content/repositories/snapshots/</snapshotNexusPath>
 		<publicNexusPath>content/repositories/public/</publicNexusPath>
 		<siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
-		<cxf.version>3.2.5</cxf.version>
+		<cxf.version>3.2.6</cxf.version>
 		<jax.ws.rs>2.1</jax.ws.rs>
 	</properties>
 	<distributionManagement>
