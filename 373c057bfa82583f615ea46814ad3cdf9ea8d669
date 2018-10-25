@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_f7f8fd7d",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-10-25T19:22:05Z",
+      "side": 1,
+      "message": "Moved these out of the \u0027for\u0027, didn\u0027t make sense to set them each time we looked for multicloud inputs.",
+      "range": {
+        "startLine": 176,
+        "startChar": 8,
+        "endLine": 181,
+        "endChar": 9
+      },
+      "revId": "373c057bfa82583f615ea46814ad3cdf9ea8d669",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
