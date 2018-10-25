@@ -31,6 +31,7 @@ import org.junit.Test
 import org.junit.Ignore
 import org.mockito.MockitoAnnotations
 import org.camunda.bpm.engine.delegate.BpmnError
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.HomingSolution
 import org.onap.so.bpmn.mock.FileUtil
@@ -195,7 +196,53 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		
 		assertTrue(doBpmnError( { _ -> CreateVcpeResCustService.preProcessRequest(mex) }))
 	}
-			
+
+	@Test
+	@Ignore
+	public void preProcessRequest_vimId() {
+		ExecutionEntity mex = setupMock()
+		def map = setupMap(mex)
+		initPreProcess(mex)
+		UrnPropertiesReader
+
+		def req = request
+				.replace('"mdt1"', '"CloudOwner_CloudRegion1"')
+
+		when(mex.getVariable("bpmnRequest")).thenReturn(req)
+		when(mex.getVariable("URN_mso_workflow_aai_distribution_delay")).thenReturn("PT5S")
+		when(mex.getVariable("aai.workflowAaiDistributionDelay")).thenReturn("PT5S")
+
+		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
+		CreateVcpeResCustService.preProcessRequest(mex)
+
+		verify(mex).setVariable("cloudRegionId", "CloudRegion1")
+		verify(mex).setVariable("cloudOwner", "CloudOwner")
+	}
+
+	@Test
+	@Ignore
+	public void preProcessRequest_noVimId() {
+		ExecutionEntity mex = setupMock()
+		def map = setupMap(mex)
+		initPreProcess(mex)
+
+		def req = request
+				.replace('"mdt1"', '"CloudRegion1_"')
+
+		when(mex.getVariable("bpmnRequest")).thenReturn(req)
+		when(mex.getVariable("URN_mso_workflow_aai_distribution_delay")).thenReturn(60)
+		when(mex.getVariable("URN_mso_workflow_aai_distribution_delay")).thenReturn("PT5S")
+		when(mex.getVariable("aai.workflowAaiDistributionDelay")).thenReturn("PT5S")
+
+		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
+		CreateVcpeResCustService.preProcessRequest(mex)
+
+		verify(mex).setVariable("cloudRegionId", "CloudRegion1_")
+		verify(mex).setVariable("cloudOwner", "my-cloud-owner")
+
+	}
+
+
 	@Test
 	// @Ignore  
 	public void preProcessRequest_BpmnError() {
@@ -577,6 +624,45 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		verify(mex).setVariable("productFamilyId", "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb")
 		verify(mex).setVariable("lcpCloudRegionId", "mdt1")
 		verify(mex).setVariable("cloudOwner", "my-cloud-owner")
+		verify(mex).setVariable("tenantId", "8b1df54faa3b49078e3416e21370a3ba")
+	}
+
+	@Test
+	public void prepareVnfAndModulesCreate_noVimId() {
+		ExecutionEntity mex = setupMock()
+		initPrepareVnfAndModulesCreate(mex)
+
+		def req = request
+				.replace('"mdt1"', '"CloudRegion1_"')
+
+		when(mex.getVariable("createVcpeServiceRequest")).thenReturn(req)
+
+		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
+		CreateVcpeResCustService.prepareVnfAndModulesCreate(mex)
+
+		verify(mex).setVariable("productFamilyId", "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb")
+		verify(mex).setVariable("cloudRegionId", "CloudRegion1_")
+		verify(mex).setVariable("lcpCloudRegionId", "CloudRegion1_")
+		verify(mex).setVariable("tenantId", "8b1df54faa3b49078e3416e21370a3ba")
+	}
+
+	@Test
+	public void prepareVnfAndModulesCreate_vimId() {
+		ExecutionEntity mex = setupMock()
+		initPrepareVnfAndModulesCreate(mex)
+
+		def req = request
+				.replace('"mdt1"', '"CloudOwner_CloudRegion1"')
+
+		when(mex.getVariable("createVcpeServiceRequest")).thenReturn(req)
+
+		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
+		CreateVcpeResCustService.prepareVnfAndModulesCreate(mex)
+
+		verify(mex).setVariable("productFamilyId", "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb")
+		verify(mex).setVariable("cloudOwner", "CloudOwner")
+		verify(mex).setVariable("cloudRegionId", "CloudRegion1")
+		verify(mex).setVariable("lcpCloudRegionId", "CloudRegion1")
 		verify(mex).setVariable("tenantId", "8b1df54faa3b49078e3416e21370a3ba")
 	}
 			
