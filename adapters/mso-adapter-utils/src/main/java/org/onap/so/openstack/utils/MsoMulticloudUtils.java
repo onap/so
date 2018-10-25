@@ -76,7 +76,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     public static final String VF_MODULE_ID = "vf_module_id";
     public static final String TEMPLATE_TYPE = "template_type";
     public static final List<String> MULTICLOUD_INPUTS =
-            Arrays.asList(OOF_DIRECTIVES, SDNC_DIRECTIVES, GENERIC_VNF_ID, VF_MODULE_ID, TEMPLATE_TYPE);
+            Arrays.asList(OOF_DIRECTIVES, SDNC_DIRECTIVES, TEMPLATE_TYPE);
 
     private static final Logger logger = LoggerFactory.getLogger(MsoMulticloudUtils.class);
 
@@ -157,15 +157,25 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
         for (String key: MULTICLOUD_INPUTS) {
             if (!stackInputs.isEmpty() && stackInputs.containsKey(key)) {
-                if ( key == OOF_DIRECTIVES) {oofDirectives = (String) stackInputs.get(key);}
-                if ( key == SDNC_DIRECTIVES) {sdncDirectives = (String) stackInputs.get(key);}
-                if ( key == GENERIC_VNF_ID) {genericVnfId = (String) stackInputs.get(key);}
-                if ( key == VF_MODULE_ID) {vfModuleId = (String) stackInputs.get(key);}
-                if ( key == TEMPLATE_TYPE) {templateType = (String) stackInputs.get(key);}
+                if (key == OOF_DIRECTIVES) {
+                    oofDirectives = (String) stackInputs.get(key);
+                }
+                if (key == SDNC_DIRECTIVES) {
+                    sdncDirectives = (String) stackInputs.get(key);
+                }
+                if (key == TEMPLATE_TYPE) {
+                    templateType = (String) stackInputs.get(key);
+                }
                          if (logger.isDebugEnabled()) {
                     logger.debug(String.format("Found %s: %s", key, stackInputs.get(key)));
                 }
                 stackInputs.remove(key);
+            }
+            if (!stackInputs.isEmpty() && stackInputs.containsKey("VF_MODULE_ID")){
+                vfModuleId = (String) stackInputs.get("VF_MODULE_ID");
+            }
+            if (!stackInputs.isEmpty() && stackInputs.containsKey("GENERIC_VNF_ID")){
+                genericVnfId = (String) stackInputs.get("GENERIC_VNF_ID");
             }
         }
 
