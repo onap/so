@@ -49,8 +49,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService implements VnfAdapterNotify{
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VnfAdapterNotifyServiceImpl.class);
-
 	private final String logMarker = "[VNF-NOTIFY]";
 	
 	@Autowired

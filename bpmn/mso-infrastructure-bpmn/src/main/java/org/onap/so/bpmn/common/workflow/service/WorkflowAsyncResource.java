@@ -23,7 +23,6 @@ package org.onap.so.bpmn.common.workflow.service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.ws.rs.Consumes;
@@ -67,10 +66,7 @@ import io.swagger.annotations.ApiOperation;
 public class WorkflowAsyncResource extends ProcessEngineAwareService {
 
 	private static final WorkflowContextHolder contextHolder = WorkflowContextHolder.getInstance();
-	
-	
-	protected Optional<ProcessEngineServices> pes4junit = Optional.empty();
-	
+
 	long workflowPollInterval=1000; 
 
 	@Autowired
@@ -79,12 +75,6 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 	@Autowired
 	private WorkflowContextHolder workflowContext;
 	
-	public WorkflowProcessor getProcessor() {
-		return processor;
-	}
-
-
-
 	public void setProcessor(WorkflowProcessor processor) {
 		this.processor = processor;
 	}
@@ -138,14 +128,6 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 		throw new Exception("TimeOutOccured");
 	}
 
-	private WorkflowResponse buildTimeoutResponse(String requestId) {
-		WorkflowResponse response = new WorkflowResponse();
-		response.setMessage("Fail");
-		response.setResponse("Request timedout, request id:" + requestId);		
-		response.setMessageCode(500);
-		return response;
-	}
-	
 	private WorkflowResponse buildUnkownError(String requestId,String error) {
 		WorkflowResponse response = new WorkflowResponse();
 		response.setMessage(error);
@@ -166,44 +148,9 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
         }
         return value;
     }
-	
-	// Note: the business key is used to identify the process in unit tests
-	protected static String getBusinessKey(Map<String, Object> inputVariables) {
-        return getOrCreate(inputVariables, "mso-business-key");
-	}
 
 	protected static String getRequestId(Map<String, Object> inputVariables) {
         return getOrCreate(inputVariables, "mso-request-id");
-	}
-
-
-	
-	protected void recordEvents(String processKey, WorkflowResponse response,
-			long startTime) {
-		
-		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				response.getMessage() + " for processKey: "
-				+ processKey + " with response: " + response.getResponse(), "BPMN", MDC.get(processKey), null);
-		
-		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				 response.getMessage() + "for processKey: " + processKey + " with response: " + response.getResponse());
-		
-	}
-
-	protected static void setLogContext(String processKey,
-			Map<String, Object> inputVariables) {
-		MsoLogger.setServiceName("MSO." + processKey);
-		if (inputVariables != null) {
-			MsoLogger.setLogContext(getKeyValueFromInputVariables(inputVariables,"mso-request-id"), getKeyValueFromInputVariables(inputVariables,"serviceInstanceId"));
-		}
-	}
-
-	protected static String getKeyValueFromInputVariables(Map<String,Object> inputVariables, String key) {
-		if (inputVariables == null) {
-			return "";
-		}
-
-		return Objects.toString(inputVariables.get(key), "N/A");
 	}
 
 	protected boolean isProcessEnded(String processInstanceId) {
@@ -224,25 +171,5 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 		}
 		return inputVariables;
 	}
-	
-    
-	protected long getWaitTime(Map<String, Object> inputVariables)
-	{
-	    
-		String timeout = Objects.toString(inputVariables.get("mso-service-request-timeout"), null);
-
-		if (timeout != null) {
-			try {
-				return Long.parseLong(timeout)*1000;
-			} catch (NumberFormatException nex) {
-				msoLogger.debug("Invalid input for mso-service-request-timeout");
-			}
-		}
-
-		return DEFAULT_WAIT_TIME;
-	}
-	
-	
-	
 
 }

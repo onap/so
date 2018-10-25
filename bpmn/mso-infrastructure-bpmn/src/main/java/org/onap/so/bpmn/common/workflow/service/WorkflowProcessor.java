@@ -38,12 +38,10 @@ import org.springframework.stereotype.Service;
 public class WorkflowProcessor extends ProcessEngineAwareService {
 	
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, WorkflowProcessor.class);
-	
 	protected static final String logMarker = "[WRKFLOW-RESOURCE]";
-	protected static final long DEFAULT_WAIT_TIME = 30000;	//default wait time
 	
 	@Async
-	public void startProcess( String processKey, VariableMapImpl variableMap) throws InterruptedException
+	public void startProcess( String processKey, VariableMapImpl variableMap)
 	{
 		
 		long startTime = System.currentTimeMillis();
@@ -80,23 +78,12 @@ public class WorkflowProcessor extends ProcessEngineAwareService {
 			throw new WorkflowProcessorException(workflowResponse);
 		}
 	}
-	
-	protected static String getKeyValueFromInputVariables(Map<String,Object> inputVariables, String key) {
-		if (inputVariables == null) {
-			return "";
-		}
 
-		return Objects.toString(inputVariables.get(key), "N/A");
-	}
-	
 	// Note: the business key is used to identify the process in unit tests
 	protected static String getBusinessKey(Map<String, Object> inputVariables) {
         return getOrCreate(inputVariables, "mso-business-key");
 	}
 
-	protected static String getRequestId(Map<String, Object> inputVariables) {
-        return getOrCreate(inputVariables, "mso-request-id");
-	}
 	
 	protected static Map<String, Object> getInputVariables(VariableMapImpl variableMap) {
 		Map<String, Object> inputVariables = new HashMap<>();
@@ -120,20 +107,5 @@ public class WorkflowProcessor extends ProcessEngineAwareService {
         }
         return value;
     }
-    
-	protected long getWaitTime(Map<String, Object> inputVariables)
-	{
-	    
-		String timeout = Objects.toString(inputVariables.get("mso-service-request-timeout"), null);
 
-		if (timeout != null) {
-			try {
-				return Long.parseLong(timeout)*1000;
-			} catch (NumberFormatException nex) {
-				msoLogger.debug("Invalid input for mso-service-request-timeout");
-			}
-		}
-
-		return DEFAULT_WAIT_TIME;
-	}
 }

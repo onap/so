@@ -23,8 +23,6 @@ package org.onap.so.bpmn.common.workflow.service;
 
 import java.util.Optional;
 
-import javax.ws.rs.ext.Provider;
-
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.ProcessEngines;
 import org.springframework.stereotype.Service;

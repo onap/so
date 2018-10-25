@@ -35,7 +35,6 @@ import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
@@ -130,11 +129,9 @@ public class CallbackHandlerService {
 	 * @param variables variables to inject into the process
 	 * @param logMarker a marker for debug logging
 	 * @return true if a process could be found, false if not
-	 * @throws Exception for correlation errors
 	 */
 	protected boolean correlate(String messageEventName, String correlationVariable,
-			String correlationValue, Map<String, Object> variables, String logMarker)
-			throws Exception {
+			String correlationValue, Map<String, Object> variables, String logMarker) {
 	try{
 		LOGGER.debug(logMarker + " Attempting to find process waiting"
 			+ " for " + messageEventName + " with " + correlationVariable
