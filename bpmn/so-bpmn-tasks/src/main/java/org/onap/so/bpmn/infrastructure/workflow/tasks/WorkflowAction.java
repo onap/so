@@ -162,19 +162,6 @@ public class WorkflowAction {
 			execution.setVariable("resourceId", resourceId);
 			execution.setVariable("resourceType", resourceType);
 
-			if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
-				List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters()
-						.getUserParams();
-				for (Map<String, Object> params : userParams) {
-					if (params.containsKey(HOMINGSOLUTION)) {
-						execution.setVariable("homing", true);
-						execution.setVariable("callHoming", true);
-						execution.setVariable("homingSolution", params.get(HOMINGSOLUTION));
-						execution.setVariable("homingService", params.get(HOMINGSOLUTION));
-					}
-				}
-			}
-
 			if (aLaCarte) {
 				if (orchFlows == null || orchFlows.isEmpty()) {
 					orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte);
@@ -269,9 +256,10 @@ public class WorkflowAction {
 					logger.info("Sorting for Vlan Tagging");
 					flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
 				}
+				// By default, enable homing at VNF level for CREATEINSTANCE and ASSIGNINSTANCE
 				if (resourceType == WorkflowType.SERVICE
-						&& (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
-						&& !resourceCounter.stream().filter(x -> WorkflowType.VNF.equals(x.getResourceType())).collect(Collectors.toList()).isEmpty()) {
+					&& (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
+					&& !resourceCounter.stream().filter(x -> WorkflowType.VNF.equals(x.getResourceType())).collect(Collectors.toList()).isEmpty()) {
 					execution.setVariable("homing", true);
 					execution.setVariable("calledHoming", false);
 				}
@@ -279,6 +267,20 @@ public class WorkflowAction {
 					generateResourceIds(flowsToExecute, resourceCounter);
 				}else{
 					updateResourceIdsFromAAITraversal(flowsToExecute, resourceCounter, aaiResourceIds);
+				}
+			}
+
+			// If the user set "Homing_Solution" to "none", disable homing, else if "Homing_Solution" is specified, enable it.
+			if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
+				List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters().getUserParams();
+				for (Map<String, Object> params : userParams) {
+					if (params.containsKey(HOMINGSOLUTION)) {
+						if (params.get(HOMINGSOLUTION).equals("none")) {
+							execution.setVariable("homing", false);
+						} else {
+							execution.setVariable("homing", true);
+						}
+					}
 				}
 			}
 
