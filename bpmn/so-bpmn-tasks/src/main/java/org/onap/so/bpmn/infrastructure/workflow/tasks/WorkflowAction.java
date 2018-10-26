@@ -103,7 +103,6 @@ public class WorkflowAction {
 	private static final String CREATEINSTANCE = "createInstance";
 	private static final String USERPARAMSERVICE = "service";
 	private static final String supportedTypes = "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances";
-	private static final String HOMINGSOLUTION = "Homing_Solution";
 	private static final String FABRIC_CONFIGURATION = "FabricConfiguration";	
 	private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
 	
@@ -140,8 +139,6 @@ public class WorkflowAction {
 		List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
 		List<Resource> resourceCounter = new ArrayList<>();
 		execution.setVariable("sentSyncResponse", false);
-		execution.setVariable("homing", false);
-		execution.setVariable("calledHoming", false);
 
 		try {
 			ObjectMapper mapper = new ObjectMapper();
@@ -161,19 +158,6 @@ public class WorkflowAction {
 			}
 			execution.setVariable("resourceId", resourceId);
 			execution.setVariable("resourceType", resourceType);
-
-			if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
-				List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters()
-						.getUserParams();
-				for (Map<String, Object> params : userParams) {
-					if (params.containsKey(HOMINGSOLUTION)) {
-						execution.setVariable("homing", true);
-						execution.setVariable("callHoming", true);
-						execution.setVariable("homingSolution", params.get(HOMINGSOLUTION));
-						execution.setVariable("homingService", params.get(HOMINGSOLUTION));
-					}
-				}
-			}
 
 			if (aLaCarte) {
 				if (orchFlows == null || orchFlows.isEmpty()) {
