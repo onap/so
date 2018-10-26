@@ -285,6 +285,20 @@ public class WorkflowAction {
 				}
 			}
 
+			// If the user set "Homing_Solution" to "none", disable homing, else if "Homing_Solution" is specified, enable it.
+			if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
+				List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters().getUserParams();
+				for (Map<String, Object> params : userParams) {
+					if (params.containsKey(HOMINGSOLUTION)) {
+						if (params.get(HOMINGSOLUTION).equals("none")) {
+							execution.setVariable("homing", false);
+						} else {
+							execution.setVariable("homing", true);
+						}
+					}
+				}
+			}
+
 			if (flowsToExecute.isEmpty()) {
 				throw new IllegalStateException("Macro did not come up with a valid execution path.");
 			}
