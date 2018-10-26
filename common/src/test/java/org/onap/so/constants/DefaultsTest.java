@@ -41,6 +41,6 @@ public class DefaultsTest {
 	@Test
 	public void checkValue() {
 		
-		assertEquals("CloudOwner", Defaults.CLOUD_OWNER.toString());
+		assertEquals("my-custom-owner", Defaults.CLOUD_OWNER.toString());
 	}
 }

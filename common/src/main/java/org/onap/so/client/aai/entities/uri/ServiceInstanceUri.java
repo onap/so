@@ -30,6 +30,7 @@ import org.onap.so.client.aai.AAIResourcesClient;
 
 public class ServiceInstanceUri extends HttpLookupUri {
 
+	private static final long serialVersionUID = 2248914170527514548L;
 	protected ServiceInstanceUri(Object... values) {
 		super(AAIObjectType.SERVICE_INSTANCE, values);
 	}
