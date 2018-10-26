@@ -29,21 +29,24 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * Implementation of "Check AAI for correlation_id" task in CreateAndActivatePnfResource.bpmn
  *
- * Inputs:
- * - correlationId - String
+ * Inputs: - correlationId - String
  *
- * Outputs:
- * - aaiContainsInfoAboutPnf - local Boolean
+ * Outputs: - aaiContainsInfoAboutPnf - local Boolean
  */
 
 @Component
 public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
+
+    private static final Logger logger = LoggerFactory.getLogger(CheckAaiForCorrelationIdDelegate.class);
+
     private AaiConnection aaiConnection;
 
     @Autowired
@@ -59,6 +62,7 @@ public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
         }
         try {
             boolean isEntry = aaiConnection.getEntryFor(correlationId).isPresent();
+            logger.debug("AAI entry is found for pnf correlation id {}: {}", CORRELATION_ID, isEntry);
             execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, isEntry);
         } catch (IOException e) {
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, e.getMessage());
