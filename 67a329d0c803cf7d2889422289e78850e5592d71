@@ -19,6 +19,41 @@
     },
     {
       "key": {
+        "uuid": "bada0100_f5f8f57d",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/CreateAAIVfModuleTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2018-10-26T13:19:13Z",
+      "side": 1,
+      "message": "All of these tests have the same flaw, they only test mocks. Please change all tests to use DeletegateExecutionFake",
+      "parentUuid": "bada0100_95088992",
+      "revId": "67a329d0c803cf7d2889422289e78850e5592d71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_55022170",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/CreateAAIVfModuleTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2018-10-26T13:19:13Z",
+      "side": 1,
+      "message": "This test only tests mocks. We should instead use DelegateExecutionFake and assert on that.",
+      "revId": "67a329d0c803cf7d2889422289e78850e5592d71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_7505e578",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/MsoGroovyTest.groovy",
         "patchSetId": 2
