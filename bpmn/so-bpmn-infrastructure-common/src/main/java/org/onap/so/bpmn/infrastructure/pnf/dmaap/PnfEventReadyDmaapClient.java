@@ -129,7 +129,7 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         private void informAboutPnfReadyIfCorrelationIdFound(String correlationId) {
             Runnable runnable = unregister(correlationId);
             if (runnable != null) {
-                LOGGER.debug("pnf ready event got from dmaap for correlationId: " + correlationId);
+                LOGGER.debug("pnf ready event is got from dmaap for correlationId: " + correlationId);
                 runnable.run();
             }
         }
