@@ -18,6 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 package org.onap.so.bpmn.common.scripts
+
+import org.onap.so.bpmn.common.BuildingBlockExecution
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -50,7 +52,9 @@ import static org.onap.so.bpmn.common.scripts.GenericUtils.*
  * by the OOF Homing Subflow building block. The
  * subflow attempts to home the provided
  * resources by calling OOF.
+ * @deprecated Use OofHomingV2 instead
  */
+@Deprecated
 class OofHoming extends AbstractServiceTaskProcessor {
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -64,7 +68,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
      *
      * @param execution
      */
-    public void callOof(DelegateExecution execution) {
+    public void callOof(BuildingBlockExecution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         execution.setVariable("prefix", "HOME_")
         utils.log("DEBUG", "*** Started Homing Call OOF ***", isDebugEnabled)
