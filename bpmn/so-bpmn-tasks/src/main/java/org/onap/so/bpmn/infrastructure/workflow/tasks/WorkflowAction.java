@@ -103,8 +103,8 @@ public class WorkflowAction {
 	private static final String CREATEINSTANCE = "createInstance";
 	private static final String USERPARAMSERVICE = "service";
 	private static final String supportedTypes = "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances";
+	private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
 	private static final String HOMINGSOLUTION = "Homing_Solution";
-	private static final String FABRIC_CONFIGURATION = "FabricConfiguration";	
 	private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
 	
 	@Autowired
@@ -140,8 +140,6 @@ public class WorkflowAction {
 		List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
 		List<Resource> resourceCounter = new ArrayList<>();
 		execution.setVariable("sentSyncResponse", false);
-		execution.setVariable("homing", false);
-		execution.setVariable("calledHoming", false);
 
 		try {
 			ObjectMapper mapper = new ObjectMapper();
@@ -162,15 +160,15 @@ public class WorkflowAction {
 			execution.setVariable("resourceId", resourceId);
 			execution.setVariable("resourceType", resourceType);
 
+			// By default, don't invoke homing, but if a Homing_Solution is specified, then call it.
+			execution.setVariable("homing", false);
+			execution.setVariable("calledHoming", false);
 			if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
 				List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters()
-						.getUserParams();
+					.getUserParams();
 				for (Map<String, Object> params : userParams) {
 					if (params.containsKey(HOMINGSOLUTION)) {
 						execution.setVariable("homing", true);
-						execution.setVariable("callHoming", true);
-						execution.setVariable("homingSolution", params.get(HOMINGSOLUTION));
-						execution.setVariable("homingService", params.get(HOMINGSOLUTION));
 					}
 				}
 			}
@@ -268,12 +266,6 @@ public class WorkflowAction {
 				if (!resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType()).collect(Collectors.toList()).isEmpty()) {
 					logger.info("Sorting for Vlan Tagging");
 					flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
-				}
-				if (resourceType == WorkflowType.SERVICE
-						&& (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
-						&& !resourceCounter.stream().filter(x -> WorkflowType.VNF.equals(x.getResourceType())).collect(Collectors.toList()).isEmpty()) {
-					execution.setVariable("homing", true);
-					execution.setVariable("calledHoming", false);
 				}
 				if (resourceType == WorkflowType.SERVICE && (requestAction.equalsIgnoreCase(ASSIGNINSTANCE) || requestAction.equalsIgnoreCase(CREATEINSTANCE))){
 					generateResourceIds(flowsToExecute, resourceCounter);
