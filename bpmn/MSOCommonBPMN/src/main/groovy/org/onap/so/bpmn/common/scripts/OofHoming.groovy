@@ -18,12 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 package org.onap.so.bpmn.common.scripts
+
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-
-import org.onap.so.bpmn.common.scripts.AaiUtil
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
 
 import org.onap.so.bpmn.core.domain.InventoryType
 import org.onap.so.bpmn.core.domain.Resource
@@ -37,7 +35,6 @@ import org.onap.so.db.catalog.beans.CloudSite
 import org.onap.so.rest.APIResponse
 import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 
 import org.json.JSONArray
 import org.json.JSONObject

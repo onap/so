@@ -28,9 +28,11 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_1jwsja5" sourceRef="Task_CreateVnf" targetRef="Task_createPlatform" />
     <bpmn:sequenceFlow id="SequenceFlow_1nle8kc" sourceRef="Task_createInstanceGroups" targetRef="ExclusiveGateway_02tchpp" />
-    <bpmn:sequenceFlow id="SequenceFlow_11jum90" name="no" sourceRef="ExclusiveGateway_02tchpp" targetRef="ExclusiveGateway_1blf52g" />
+    <bpmn:sequenceFlow id="SequenceFlow_11jum90" name="no" sourceRef="ExclusiveGateway_02tchpp" targetRef="ExclusiveGateway_1blf52g">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("callHoming") == false}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1uiok7v" name="yes" sourceRef="ExclusiveGateway_02tchpp" targetRef="Task_callHoming">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("callHoming")}]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("callHoming") == true}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0v8d14a" sourceRef="Task_callHoming" targetRef="ExclusiveGateway_1blf52g" />
     <bpmn:callActivity id="Task_callHoming" name="Call Homing" calledElement="HomingBB">
@@ -65,7 +67,7 @@
       <bpmn:sequenceFlow id="SequenceFlow_1i52a7x" sourceRef="StartEvent_1c3cyuv" targetRef="EndEvent_1bywujf" />
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_14mpqit" sourceRef="ExclusiveGateway_1blf52g" targetRef="Task_SDNCAdapterVnfTopologyAssign" />
-    <bpmn:inclusiveGateway id="ExclusiveGateway_02tchpp" name="Call Homing?" default="SequenceFlow_11jum90">
+    <bpmn:inclusiveGateway id="ExclusiveGateway_02tchpp" name="Call Homing?">
       <bpmn:incoming>SequenceFlow_1nle8kc</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_11jum90</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1uiok7v</bpmn:outgoing>
@@ -218,7 +220,7 @@
       <bpmndi:BPMNShape id="InclusiveGateway_0x0c3kk_di" bpmnElement="ExclusiveGateway_02tchpp">
         <dc:Bounds x="679" y="109" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="732" y="128" width="64" height="12" />
+          <dc:Bounds x="731" y="128" width="67" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="InclusiveGateway_0ijggth_di" bpmnElement="ExclusiveGateway_1blf52g">
