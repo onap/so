@@ -26,6 +26,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
+import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CreateAaiEntryWithPnfIdDelegate implements JavaDelegate {
 
+    private static final MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, CreateAaiEntryWithPnfIdDelegate.class);
     private AaiConnection aaiConnection;
 
     @Autowired
@@ -53,5 +55,6 @@ public class CreateAaiEntryWithPnfIdDelegate implements JavaDelegate {
         pnf.setPnfId(correlationId);
         pnf.setPnfName(correlationId);
         aaiConnection.createEntry(correlationId, pnf);
+        logger.debug("AAI entry is created for pnf correlation id: " + correlationId);
     }
 }
