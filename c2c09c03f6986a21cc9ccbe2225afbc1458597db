@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "bada0100_64a0d69f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/vcpe/scripts/CreateVcpeResCustService.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-10-29T13:00:54Z",
+      "side": 1,
+      "message": "What about if vimId is \"someId_\"?\nThen ArrayIndexOutOfBoundsException is thrown, you should check if cloudRegion array lenght after splitting is equal 2 before invoking cloudRegion[1]",
+      "range": {
+        "startLine": 185,
+        "startChar": 51,
+        "endLine": 185,
+        "endChar": 59
+      },
+      "revId": "c2c09c03f6986a21cc9ccbe2225afbc1458597db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_f513155a",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/vcpe/scripts/CreateVcpeResCustService.groovy",
         "patchSetId": 2
