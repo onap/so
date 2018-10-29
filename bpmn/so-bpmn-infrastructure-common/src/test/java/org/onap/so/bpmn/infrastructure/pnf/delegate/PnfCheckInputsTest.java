@@ -37,7 +37,6 @@ public class PnfCheckInputsTest {
     private static final String DEFAULT_TIMEOUT = "P1D";
 
     private DelegateExecution mockDelegateExecution() {
-        new PnfCheckInputs(DEFAULT_TIMEOUT);
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
         when(delegateExecution.getVariable("testProcessKey")).thenReturn("testProcessKeyValue");
         return delegateExecution;
@@ -52,8 +51,17 @@ public class PnfCheckInputsTest {
         assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
     }
 
+    @Test
+    public void shouldThrowException_whenPnfIdIsEmptyString() throws Exception {
+        // given
+        PnfCheckInputs testedObject = new PnfCheckInputs(DEFAULT_TIMEOUT);
+        DelegateExecution delegateExecution = mockDelegateExecution();
+        when(delegateExecution.getVariable(CORRELATION_ID)).thenReturn("");
+        // when, then
+        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+    }
+
     private DelegateExecution mockDelegateExecutionWithCorrelationId() {
-        new PnfCheckInputs(DEFAULT_TIMEOUT);
         DelegateExecution delegateExecution = mockDelegateExecution();
         when(delegateExecution.getVariable(CORRELATION_ID)).thenReturn("testCorrelationId");
         return delegateExecution;
@@ -64,6 +72,16 @@ public class PnfCheckInputsTest {
         // given
         PnfCheckInputs testedObject = new PnfCheckInputs(null);
         DelegateExecution delegateExecution = mockDelegateExecutionWithCorrelationId();
+        // when, then
+        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+    }
+
+    @Test
+    public void shouldThrowException_whenTimeoutIsEmptyStringAndDefaultIsNotDefined() throws Exception {
+        // given
+        PnfCheckInputs testedObject = new PnfCheckInputs(null);
+        DelegateExecution delegateExecution = mockDelegateExecutionWithCorrelationId();
+        when(delegateExecution.getVariable(TIMEOUT_FOR_NOTIFICATION)).thenReturn("");
         // when, then
         assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
     }
