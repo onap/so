@@ -37,6 +37,42 @@
     },
     {
       "key": {
+        "uuid": "bada0100_c43d02bd",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/CreateAAIVfModuleTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-10-29T13:03:25Z",
+      "side": 1,
+      "message": "DelegateExecutionFake is better idea, thanks Max.",
+      "parentUuid": "bada0100_f5f8f57d",
+      "revId": "67a329d0c803cf7d2889422289e78850e5592d71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8447fa4a",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/CreateAAIVfModuleTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-10-29T13:03:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bada0100_95088992",
+      "revId": "67a329d0c803cf7d2889422289e78850e5592d71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_55022170",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/CreateAAIVfModuleTest.groovy",
         "patchSetId": 2
@@ -54,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_644c5671",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/CreateAAIVfModuleTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-10-29T13:03:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bada0100_55022170",
+      "revId": "67a329d0c803cf7d2889422289e78850e5592d71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_7505e578",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/MsoGroovyTest.groovy",
         "patchSetId": 2
@@ -65,6 +119,24 @@
       "writtenOn": "2018-10-26T13:16:04Z",
       "side": 1,
       "message": "what happened to all the methods in this file?",
+      "revId": "67a329d0c803cf7d2889422289e78850e5592d71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_065a3150",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/MsoGroovyTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-10-29T13:03:25Z",
+      "side": 1,
+      "message": "All methods that have been deleted are trash, not used code.",
+      "parentUuid": "bada0100_7505e578",
       "revId": "67a329d0c803cf7d2889422289e78850e5592d71",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
