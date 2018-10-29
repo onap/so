@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "bada0100_e40da691",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/vcpe/scripts/CreateVcpeResCustService.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-10-29T13:24:52Z",
+      "side": 1,
+      "message": "Those toString()s are redundant - String::split() returns array od strings.",
+      "range": {
+        "startLine": 184,
+        "startChar": 47,
+        "endLine": 184,
+        "endChar": 58
+      },
+      "revId": "c2c09c03f6986a21cc9ccbe2225afbc1458597db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_64a0d69f",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/vcpe/scripts/CreateVcpeResCustService.groovy",
         "patchSetId": 2
