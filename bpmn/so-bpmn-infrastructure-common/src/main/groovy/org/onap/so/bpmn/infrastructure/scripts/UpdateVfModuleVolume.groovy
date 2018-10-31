@@ -29,10 +29,13 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.VfModuleBase
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.rest.APIResponse
-import org.springframework.web.util.UriUtils
 
 class UpdateVfModuleVolume extends VfModuleBase {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, UpdateVfModuleVolume.class);
@@ -172,14 +175,15 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		try {
 			def volumeGroupId = execution.getVariable('UPDVfModVol_volumeGroupId')
 			def aicCloudRegion = execution.getVariable('UPDVfModVol_aicCloudRegion')
-			def endPoint = UrnPropertiesReader.getVariable("aai.endpoint", execution) +
-				'/aai/v7/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/' + UriUtils.encode(aicCloudRegion, "UTF-8") +
-				'/volume-groups/volume-group/' + UriUtils.encode(volumeGroupId, "UTF-8")
+			
+			AaiUtil aaiUtil = new AaiUtil(this)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), aicCloudRegion, volumeGroupId)
+			String endPoint = aaiUtil.createAaiUri(uri)
+			
 
 			msoLogger.debug('Sending GET to AAI endpoint \'' + endPoint + '\'')
 			msoLogger.debug("UpdateVfModuleVolume sending GET for quering AAI endpoint: " + endPoint)
 
-			AaiUtil aaiUtil = new AaiUtil(this)
 			APIResponse response = aaiUtil.executeAAIGetCall(execution, endPoint)
 			def int statusCode = response.getStatusCode()
 			def responseData = response.getResponseBodyAsString()

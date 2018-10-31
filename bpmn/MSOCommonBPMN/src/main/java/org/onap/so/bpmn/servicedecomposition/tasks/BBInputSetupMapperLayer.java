@@ -22,6 +22,7 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -84,6 +85,8 @@ import org.springframework.stereotype.Component;
 
 @Component("BBInputSetupMapperLayer")
 public class BBInputSetupMapperLayer {
+	private static final String USER_PARAM_NAME_KEY = "name";
+    private static final String USER_PARAM_VALUE_KEY = "value";
 
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,
 			BBInputSetupMapperLayer.class);
@@ -332,6 +335,7 @@ public class BBInputSetupMapperLayer {
 		if (null != requestParameters) {
 			context.setSubscriptionServiceType(requestParameters.getSubscriptionServiceType());
 			context.setRequestParameters(this.mapRequestParameters(requestDetails.getRequestParameters()));
+			context.setUserParams(this.mapNameValueUserParams(requestDetails.getRequestParameters()));
 		}
 		return context;
 	}
@@ -343,6 +347,20 @@ public class BBInputSetupMapperLayer {
 		requestParams.setUserParams(requestParameters.getUserParams());
 		requestParams.setPayload(requestParameters.getPayload());
 		return requestParams;
+	}
+	
+	protected HashMap<String,String> mapNameValueUserParams(org.onap.so.serviceinstancebeans.RequestParameters requestParameters) {		
+		HashMap<String,String> userParamsResult = new HashMap<String,String>();
+		if (requestParameters.getUserParams() != null) {
+			List<Map<String, Object>> userParams = requestParameters.getUserParams();
+			for (Map<String, Object> userParamsMap : userParams) {
+				if ( userParamsMap.containsKey(USER_PARAM_NAME_KEY) && (userParamsMap.get(USER_PARAM_NAME_KEY) instanceof String)
+						&& userParamsMap.containsKey(USER_PARAM_VALUE_KEY) && (userParamsMap.get(USER_PARAM_VALUE_KEY) instanceof String)) {
+					userParamsResult.put((String) userParamsMap.get(USER_PARAM_NAME_KEY), (String) userParamsMap.get(USER_PARAM_VALUE_KEY));
+				}
+			}
+		}
+		return userParamsResult;
 	}
 
 	protected OrchestrationContext mapOrchestrationContext(RequestDetails requestDetails) {

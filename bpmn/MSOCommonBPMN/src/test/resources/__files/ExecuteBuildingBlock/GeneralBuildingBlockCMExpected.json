@@ -1,6 +1,7 @@
 {
   "requestContext": {
     "source": "VID",
+    "user-params": {},
     "mso-request-id": "requestId",
     "action": "createInstance",
     "requestParameters": {

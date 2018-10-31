@@ -21,15 +21,24 @@
 package org.onap.so.client.aai.entities.uri;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Map;
 
 import org.junit.Test;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.graphinventory.entities.uri.Depth;
+import org.onap.so.client.graphinventory.entities.uri.SimpleUri;
 
 public class AAISimpleUriTest {
 
@@ -82,5 +91,32 @@ public class AAISimpleUriTest {
 		Map<String,String> keys = uri.getURIKeys();
 		
 		assertEquals("my value", keys.get("service-type"));
+	}
+	
+	@Test
+	public void serializeTest() throws IOException, ClassNotFoundException {
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1");
+		
+		uri.depth(Depth.ONE);
+		uri.limit(1);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+	    ObjectOutputStream objectOutputStream 
+	      = new ObjectOutputStream(bos);
+	    objectOutputStream.writeObject(uri);
+	    objectOutputStream.flush();
+	    objectOutputStream.close();
+	    
+	    ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+	   
+	    ObjectInputStream objectInputStream 
+	      = new ObjectInputStream(bis);
+	    AAIResourceUri e2 = (AAIResourceUri) objectInputStream.readObject();
+	    objectInputStream.close();
+	    
+	    uri.queryParam("test", "value");
+	    e2.queryParam("test", "value");
+
+	    assertEquals(e2.build().toString(), uri.build().toString());
 	}
 }

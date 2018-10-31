@@ -23,6 +23,8 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -636,4 +637,20 @@ public class BBInputSetupMapperLayerTest {
 
 		assertThat(actual, sameBeanAs(expected));
 	}
+	
+	@Test
+	public void testMapNameValueUserParams() throws IOException {		
+		RequestDetails requestDetails = mapper.readValue(new File(RESOURCE_PATH + "RequestDetailsInput_mapReqContext.json"), RequestDetails.class);
+		HashMap<String,String> actual = bbInputSetupMapperLayer.mapNameValueUserParams(requestDetails.getRequestParameters());
+
+		assertTrue(actual.containsKey("name1"));
+		assertTrue(actual.containsValue("value1"));
+		assertTrue(actual.get("name1").equals("value1"));
+		assertTrue(actual.containsKey("name2"));
+		assertTrue(actual.containsValue("value2"));
+		assertTrue(actual.get("name2").equals("value2"));		
+		assertFalse(actual.containsKey("ignore"));
+		assertFalse(actual.containsValue("ignore"));		
+	}
+	
 }

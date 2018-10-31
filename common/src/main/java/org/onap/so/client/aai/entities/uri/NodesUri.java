@@ -29,6 +29,8 @@ import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 
 public class NodesUri extends AAISimpleUri {
 
+	private static final long serialVersionUID = 8818689895730182042L;
+
 	protected NodesUri(AAIObjectType type, Object... values) {
 		super(type, values);
 	}

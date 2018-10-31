@@ -176,17 +176,30 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             execution.setVariable("subscriberInfo", subscriberInfo)
             msoLogger.debug("Incoming subscriberInfo is: " + subscriberInfo)
 
-            // extract cloud configuration, split vid_ID into cloudOwner and cloudRegionId
+            // extract cloud configuration - if underscore "_" is present treat as vimId else it's a cloudRegion
             String vimId = jsonUtil.getJsonValue(createVcpeServiceRequest,
                     "requestDetails.cloudConfiguration.lcpCloudRegionId")
-            def cloudRegion = vimId.split("_")
-            def cloudOwner = cloudRegion[0].toString()
-            def cloudRegionId = cloudRegion[1].toString()
-            execution.setVariable("cloudOwner", cloudOwner)
-            utils.log("DEBUG","cloudOwner: " + cloudOwner, isDebugEnabled)
-            execution.setVariable("cloudRegionId", cloudRegionId)
-            utils.log("DEBUG","cloudRegionId: " + cloudRegionId, isDebugEnabled)
-
+            if (vimId.contains("_") && vimId.split("_").length == 2 ) {
+                def cloudRegion = vimId.split("_")
+                def cloudOwner = cloudRegion[0]
+                def cloudRegionId = cloudRegion[1]
+                execution.setVariable("cloudOwner", cloudOwner)
+                msoLogger.debug("cloudOwner: " + cloudOwner)
+                execution.setVariable("cloudRegionId", cloudRegionId)
+                msoLogger.debug("cloudRegionId: " + cloudRegionId)
+            } else {
+                msoLogger.debug("vimId is not present - setting  cloudRegion/cloudOwner from request.")
+                String cloudOwner = jsonUtil.getJsonValue(createVcpeServiceRequest,
+                        "requestDetails.cloudConfiguration.cloudOwner")
+                if (!cloudOwner?.empty && cloudOwner != "")
+                {
+                    execution.setVariable("cloudOwner", cloudOwner)
+                    msoLogger.debug("cloudOwner: " + cloudOwner)
+                }
+                def cloudRegionId = vimId
+                execution.setVariable("cloudRegionId", cloudRegionId)
+                msoLogger.debug("cloudRegionId: " + cloudRegionId)
+            }
             /*
             * Extracting User Parameters from incoming Request and converting into a Map
             */
@@ -592,16 +605,32 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
 
             msoLogger.debug(" vnfModelInfoString :" + vnfModelInfoString)
 
-            // extract cloud configuration
+            // extract cloud configuration - if underscore "_" is present treat as vimId else it's a cloudRegion
             String vimId = jsonUtil.getJsonValue(createVcpeServiceRequest,
                     "requestDetails.cloudConfiguration.lcpCloudRegionId")
-            def cloudRegion = vimId.split("_")
-            execution.setVariable("cloudOwner", cloudRegion[0])
-            msoLogger.debug("cloudOwner: "+ cloudRegion[0])
-            execution.setVariable("cloudRegionId", cloudRegion[1])
-            msoLogger.debug("cloudRegionId: "+ cloudRegion[1])
-            execution.setVariable("lcpCloudRegionId", cloudRegion[1])
-            msoLogger.debug("lcpCloudRegionId: "+ cloudRegion[1])
+            if (vimId.contains("_") && vimId.split("_").length == 2 )  {
+                def cloudRegion = vimId.split("_")
+                execution.setVariable("cloudOwner", cloudRegion[0])
+                msoLogger.debug("cloudOwner: " + cloudRegion[0])
+                execution.setVariable("cloudRegionId", cloudRegion[1])
+                msoLogger.debug("cloudRegionId: " + cloudRegion[1])
+                execution.setVariable("lcpCloudRegionId", cloudRegion[1])
+                msoLogger.debug("lcpCloudRegionId: " + cloudRegion[1])
+            } else {
+                msoLogger.debug("vimId is not present - setting cloudRegion/cloudOwner from request.")
+                String cloudOwner = jsonUtil.getJsonValue(createVcpeServiceRequest,
+                        "requestDetails.cloudConfiguration.cloudOwner")
+                if (!cloudOwner?.empty && cloudOwner != "")
+                {
+                    execution.setVariable("cloudOwner", cloudOwner)
+                    msoLogger.debug("cloudOwner: " + cloudOwner)
+                }
+                execution.setVariable("cloudRegionId", vimId)
+                msoLogger.debug("cloudRegionId: " + vimId)
+                execution.setVariable("lcpCloudRegionId", vimId)
+                msoLogger.debug("lcpCloudRegionId: " + vimId)
+            }
+
             String tenantId = jsonUtil.getJsonValue(createVcpeServiceRequest,
                     "requestDetails.cloudConfiguration.tenantId")
             execution.setVariable("tenantId", tenantId)
