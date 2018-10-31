@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_5e879961",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CheckAaiForCorrelationIdDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-10-31T08:24:09Z",
+      "side": 1,
+      "message": "1. Make logger both static and final, we don\u0027t want the reference to be re-assignable :)\n2. rename variable name to lowercase - MsoLogger is not a constant, having the variable reference constant (after adding final) is not enough - the object also needs to be immutable which in this case is not true. For Reference check https://google.github.io/styleguide/javaguide.html#s5.2.4-constant-names",
+      "revId": "19416cc39a3ec17a14bfce02a01debb4a61591b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_fe7d2d6f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CheckAaiForCorrelationIdDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-10-31T08:24:09Z",
+      "side": 1,
+      "message": "I\u0027d recommend adding \"for pnf correlation Id\" just to provide additional context for what the correlation id stands for",
+      "revId": "19416cc39a3ec17a14bfce02a01debb4a61591b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_3e84155d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAaiEntryWithPnfIdDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-10-31T08:24:09Z",
+      "side": 1,
+      "message": "1. Make logger both static and final, we don\u0027t want the reference to be re-assignable :)\n2. rename variable name to lowercase - MsoLogger is not a constant, having the variable reference constant (after adding final) is not enough - the object also needs to be immutable which in this case is not true. For Reference check https://google.github.io/styleguide/javaguide.html#s5.2.4-constant-names",
+      "revId": "19416cc39a3ec17a14bfce02a01debb4a61591b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_1e81114a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAaiEntryWithPnfIdDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-10-31T08:24:09Z",
+      "side": 1,
+      "message": "I\u0027d recommend adding \"for pnf correlation Id\" just to provide additional context for what the correlation id stands for",
+      "revId": "19416cc39a3ec17a14bfce02a01debb4a61591b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
