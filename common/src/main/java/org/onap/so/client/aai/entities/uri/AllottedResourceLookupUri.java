@@ -30,6 +30,7 @@ import org.onap.so.client.aai.AAIResourcesClient;
 
 public class AllottedResourceLookupUri extends HttpLookupUri {
 
+	private static final long serialVersionUID = -9212594383876793188L;
 	protected AllottedResourceLookupUri(Object... values) {
 		super(AAIObjectType.ALLOTTED_RESOURCE, values);
 	}

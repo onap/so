@@ -37,6 +37,7 @@ public class PnfCheckInputsTest {
     private static final String DEFAULT_TIMEOUT = "P1D";
 
     private DelegateExecution mockDelegateExecution() {
+        new PnfCheckInputs(DEFAULT_TIMEOUT);
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
         when(delegateExecution.getVariable("testProcessKey")).thenReturn("testProcessKeyValue");
         return delegateExecution;
@@ -62,6 +63,7 @@ public class PnfCheckInputsTest {
     }
 
     private DelegateExecution mockDelegateExecutionWithCorrelationId() {
+        new PnfCheckInputs(DEFAULT_TIMEOUT);
         DelegateExecution delegateExecution = mockDelegateExecution();
         when(delegateExecution.getVariable(CORRELATION_ID)).thenReturn("testCorrelationId");
         return delegateExecution;

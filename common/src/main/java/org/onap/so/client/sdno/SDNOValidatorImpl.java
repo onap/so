@@ -47,6 +47,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SDNOValidatorImpl implements SDNOValidator {
 
 	private final static String clientName = "MSO";
+	private final static String HEALTH_DIAGNOSTIC_CODE_DEFAULT = "default";
 
 	@Override
 	public boolean healthDiagnostic(String vnfId, UUID uuid, String requestingUserId) throws IOException, Exception {
@@ -99,6 +100,7 @@ public class SDNOValidatorImpl implements SDNOValidator {
 		request.setRequestNodeIp(vnf.getIpv4OamAddress()); //generic-vnf oam ip
 		request.setRequestUserId(requestingUserId); //mech id?
 		request.setRequestId(uuid.toString()); //something to identify this request by for polling
+		request.setHealthDiagnosticCode(HEALTH_DIAGNOSTIC_CODE_DEFAULT);
 		
 		input.setRequestHealthDiagnostic(request);
 		

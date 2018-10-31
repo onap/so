@@ -20,6 +20,10 @@
 
 package org.onap.so.client.graphinventory.entities.uri;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -29,18 +33,19 @@ import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.onap.so.client.graphinventory.Format;
 import org.onap.so.client.aai.entities.uri.AAIUri;
-import org.onap.so.client.graphinventory.entities.uri.Depth;
-import org.onap.so.client.graphinventory.entities.uri.parsers.UriParser;
-import org.onap.so.client.graphinventory.entities.uri.parsers.UriParserSpringImpl;
+import org.onap.so.client.graphinventory.Format;
 import org.onap.so.client.graphinventory.GraphInventoryObjectPlurals;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
+import org.onap.so.client.graphinventory.entities.uri.parsers.UriParser;
+import org.onap.so.client.graphinventory.entities.uri.parsers.UriParserSpringImpl;
 import org.springframework.web.util.UriUtils;
 
-public class SimpleUri implements GraphInventoryResourceUri {
+public class SimpleUri implements GraphInventoryResourceUri, Serializable {
 
-	protected UriBuilder internalURI;
+	private static final long serialVersionUID = -337701171277616439L;
+	
+	protected transient UriBuilder internalURI;
 	protected final static String relationshipAPI = "/relationship-list/relationship";
 	protected final static String relatedTo = "/related-to";
 	protected final Object[] values;
@@ -89,6 +94,9 @@ public class SimpleUri implements GraphInventoryResourceUri {
 		this.values = childValues;
 	}
 	
+	protected void setInternalURI(UriBuilder builder) {
+		this.internalURI = builder;
+	}
 	@Override
 	public SimpleUri relationshipAPI() {
 		this.internalURI = internalURI.path(relationshipAPI);
@@ -236,4 +244,14 @@ public class SimpleUri implements GraphInventoryResourceUri {
 		return type.uriTemplate();
 	}
 	
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+		oos.writeUTF(this.internalURI.toTemplate());
+	}
+	
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+		 ois.defaultReadObject();
+		 String uri = ois.readUTF();
+		 this.setInternalURI(UriBuilder.fromUri(uri));
+	}
 }

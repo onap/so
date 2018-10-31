@@ -27,7 +27,10 @@ import static org.junit.Assert.assertNull;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,6 +43,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
@@ -80,8 +84,8 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		//
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
-		userParams.put("key1", "value1");
+		HashMap<String,String> userParams = new HashMap<String,String>();
+		userParams.put("key1", "value1");		
 		requestContext.setUserParams(userParams);
 		requestContext.setProductFamilyId("productFamilyId");
 
@@ -108,7 +112,7 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		modelInfoVfModule.setModelCustomizationUUID("vfModuleModelCustomizationUuid");
 		vfModule.setModelInfoVfModule(modelInfoVfModule);
 		HashMap<String, String> cloudParams = new HashMap<String, String>();
-		userParams.put("key2", "value2");
+		cloudParams.put("key2", "value2");
 		vfModule.setCloudParams(cloudParams);
 
 		VolumeGroup volumeGroup = new VolumeGroup();
@@ -189,9 +193,14 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		//
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
-		userParams.put("key1", "value1");
-		requestContext.setUserParams(userParams);
+		RequestParameters requestParameters = new RequestParameters();
+		HashMap<String,Object> userParams1 = new HashMap<String,Object>();
+		userParams1.put("key1", "value1");
+		List<Map<String,Object>> userParams = new ArrayList<Map<String,Object>>();
+		userParams.add(userParams1);
+		
+		requestParameters.setUserParams(userParams);
+		requestContext.setRequestParameters(requestParameters);
 		requestContext.setProductFamilyId("productFamilyId");
 
 		GenericVnf vnf = new GenericVnf();
@@ -225,7 +234,7 @@ public class VfModuleTopologyOperationRequestMapperTest {
 
 		assertNull(vfModuleSDNCrequest.getServiceInformation().getOnapModelInformation().getModelCustomizationUuid());
 		assertEquals("vnfModelCustomizationUuid", vfModuleSDNCrequest.getVnfInformation().getOnapModelInformation().getModelCustomizationUuid());
-		assertEquals("vfModuleModelCustomizationUuid", vfModuleSDNCrequest.getVfModuleInformation().getOnapModelInformation().getModelCustomizationUuid());
+		assertEquals("vfModuleModelCustomizationUuid", vfModuleSDNCrequest.getVfModuleInformation().getOnapModelInformation().getModelCustomizationUuid());	
 	}
 	
 	@Test
