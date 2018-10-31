@@ -159,6 +159,8 @@ class OofUtils {
                     utils.log("DEBUG", "Allotted Resource: " + resource.toString(),
                             isDebugEnabled)
                     def serviceResourceId = resource.getResourceId()
+                    def toscaNodeType = resource.getToscaNodeType()
+                    def resourceModuleName = toscaNodeType.substring(toscaNodeType.lastIndexOf(".") + 1)
                     def resourceModelInvariantId = resource.getModelInfo().getModelInvariantUuid()
                     def resourceModelVersionId = resource.getModelInfo().getModelUuid()
                     def resourceModelName = resource.getModelInfo().getModelName()
@@ -174,7 +176,7 @@ class OofUtils {
 
                     String demand =
                             "      {\n" +
-                                    "      \"resourceModuleName\": \"${resourceModelName}\",\n" +
+                                    "      \"resourceModuleName\": \"${resourceModuleName}\",\n" +
                                     "      \"serviceResourceId\": \"${serviceResourceId}\",\n" +
                                     "      \"tenantId\": \"${tenantId}\",\n" +
                                     "      \"resourceModelInfo\": {\n" +
@@ -200,6 +202,8 @@ class OofUtils {
                     utils.log("DEBUG", "VNF Resource: " + vnfResource.toString(),
                             isDebugEnabled)
                     ModelInfo vnfResourceModelInfo = vnfResource.getModelInfo()
+                    def toscaNodeType = vnfResource.getToscaNodeType()
+                    def resourceModuleName = toscaNodeType.substring(toscaNodeType.lastIndexOf(".") + 1)
                     def serviceResourceId = vnfResource.getResourceId()
                     def resourceModelInvariantId = vnfResourceModelInfo.getModelInvariantUuid()
                     def resourceModelName = vnfResourceModelInfo.getModelName()
@@ -212,7 +216,7 @@ class OofUtils {
 
                     String placementDemand =
                             "      {\n" +
-                                    "      \"resourceModuleName\": \"${resourceModelName}\",\n" +
+                                    "      \"resourceModuleName\": \"${resourceModuleName}\",\n" +
                                     "      \"serviceResourceId\": \"${serviceResourceId}\",\n" +
                                     "      \"tenantId\": \"${tenantId}\",\n" +
                                     "      \"resourceModelInfo\": {\n" +
