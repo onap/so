@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Marco Platania <platania@research.att.com>
+Code-Review+2: Rob Daugherty <rd472p@att.com>
+Submitted-by: Rob Daugherty <rd472p@att.com>
+Submitted-at: Thu, 01 Nov 2018 16:52:27 +0000
+Reviewed-on: https://gerrit.onap.org/r/71643
+Project: so
+Branch: refs/heads/casablanca
