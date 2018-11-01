@@ -33,6 +33,24 @@
       "revId": "8918feb407a1a86d4a2601e45e7da2ae278885bd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_55b6fcdd",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2018-11-01T13:15:45Z",
+      "side": 1,
+      "message": "Ok, So I could say Homing_Solution to \"none\" to disable it. And keep default bbehavior invoking SNIRO?",
+      "parentUuid": "9adffdf1_95c78464",
+      "revId": "8918feb407a1a86d4a2601e45e7da2ae278885bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
