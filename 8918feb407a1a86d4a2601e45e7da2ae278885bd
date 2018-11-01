@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_75a6a0c3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/buildingblock/HomingV2.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-11-01T12:51:28Z",
+      "side": 1,
+      "message": "this import seems unnecessary to introduce",
+      "revId": "8918feb407a1a86d4a2601e45e7da2ae278885bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_95c78464",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-11-01T12:51:28Z",
+      "side": 1,
+      "message": "This is not backwards compatible, you should add a flag to turn off homing not change default behavior this deep into a release.",
+      "revId": "8918feb407a1a86d4a2601e45e7da2ae278885bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
