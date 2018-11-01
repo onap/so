@@ -81,6 +81,7 @@ public class WorkflowAction {
 
 	private static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
 	private static final String SERVICE_INSTANCES = "serviceInstances";
+	private static final String VF_MODULES = "vfModules";
 	private static final String WORKFLOW_ACTION_WAS_UNABLE_TO_VERIFY_IF_THE_INSTANCE_NAME_ALREADY_EXIST_IN_AAI = "WorkflowAction was unable to verify if the instance name already exist in AAI.";
 	private static final String G_ORCHESTRATION_FLOW = "gOrchestrationFlow";
 	private static final String G_ACTION = "requestAction";
@@ -664,35 +665,38 @@ public class WorkflowAction {
 	}
 
 	protected Resource extractResourceIdAndTypeFromUri(String uri) {
-		Pattern patt = Pattern.compile(
-				"[vV]\\d+.*?(?:(?:/(?<type>" + supportedTypes + ")(?:/(?<id>[^/]+))?)(?:/(?<action>[^/]+))?)?$");
-		Matcher m = patt.matcher(uri);
-		Boolean generated = false;
+	    Pattern patt = Pattern.compile(
+	            "[vV]\\d+.*?(?:(?:/(?<type>" + supportedTypes + ")(?:/(?<id>[^/]+))?)(?:/(?<action>[^/]+))?)?$");
+	    Matcher m = patt.matcher(uri);
+	    Boolean generated = false;
 
-		if (m.find()) {
-			logger.debug("found match on {} : {} " , uri ,  m);
-			String type = m.group("type");
-			String id = m.group("id");
-			String action = m.group("action");
-			if (type == null) {
-				throw new IllegalArgumentException("Uri could not be parsed. No type found. " + uri);
-			}
-			if (action == null) {
-				if (type.equals(SERVICE_INSTANCES) && (id == null || id.equals("assign"))) {
-					id = UUID.randomUUID().toString();
-					generated = true;
-				}
-			} else {
-				if (action.matches(supportedTypes)) {
-					id = UUID.randomUUID().toString();
-					generated = true;
-					type = action;
-				}
-			}
-			return new Resource(WorkflowType.fromString(convertTypeFromPlural(type)), id, generated);
-		} else {
-			throw new IllegalArgumentException("Uri could not be parsed: " + uri);
-		}
+	    if (m.find()) {
+	        logger.debug("found match on {} : {} " , uri ,  m);
+	        String type = m.group("type");
+	        String id = m.group("id");
+	        String action = m.group("action");
+	        if (type == null) {
+	            throw new IllegalArgumentException("Uri could not be parsed. No type found. " + uri);
+	        }
+	        if (action == null) {
+	            if (type.equals(SERVICE_INSTANCES) && (id == null || id.equals("assign"))) {
+	                id = UUID.randomUUID().toString();
+	                generated = true;
+	            }else if (type.equals(VF_MODULES) && id.equals("scaleOut")) {
+	                id = UUID.randomUUID().toString();
+	                generated = true;
+	            }
+	        } else {
+	            if (action.matches(supportedTypes)) {
+	                id = UUID.randomUUID().toString();
+	                generated = true;
+	                type = action;
+	            }
+	        }
+	        return new Resource(WorkflowType.fromString(convertTypeFromPlural(type)), id, generated);
+	    } else {
+	        throw new IllegalArgumentException("Uri could not be parsed: " + uri);
+	    }
 	}
 
 	protected String validateResourceIdInAAI(String generatedResourceId, WorkflowType type, String instanceName,
