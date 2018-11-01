@@ -51,6 +51,24 @@
       "revId": "8918feb407a1a86d4a2601e45e7da2ae278885bd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b5c0882b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-11-01T13:18:04Z",
+      "side": 1,
+      "message": "Yes that would be preferable.",
+      "parentUuid": "9adffdf1_55b6fcdd",
+      "revId": "8918feb407a1a86d4a2601e45e7da2ae278885bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
