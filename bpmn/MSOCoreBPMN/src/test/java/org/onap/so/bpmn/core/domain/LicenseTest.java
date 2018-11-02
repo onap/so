@@ -32,12 +32,7 @@ import org.junit.runner.RunWith;
 import org.mockito.BDDMockito.Then;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-
-//@RunWith(PowerMockRunner.class)
 //@PrepareForTest({License.class})
 public class LicenseTest {
 	
@@ -66,8 +61,7 @@ public class LicenseTest {
 		//assertEquals(license.getSerialversionuid(), serialVersionUID);
 		//assertArrayEquals(license.getSerialversionuid(), serialVersionUID);
 		//assert
-	
-		/*PowerMockito.mockStatic(License.class);
+	/*
 		Mockito.when(License.getSerialversionuid()).thenReturn(getserial());
 		assertEquals(License.getSerialversionuid(),"abc");*/
 		
@@ -75,10 +69,7 @@ public class LicenseTest {
 	// @Before 
 	// public void mocksetUp() {
 //      Long serialVersionUID = 333L;
-//	      PowerMockito.mockStatic(License.class);
 //	      expect (license.getSerialversionuid()).andReturn(serialVersionUID);
-//	      //PowerMockito.when(license.getSerialversionuid().
-//	      //PowerMockito.when(MathUtil.addInteger(2, 2)).thenReturn(1);
 //	   }
 	
 	/*private Long getserial() {
