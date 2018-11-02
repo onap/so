@@ -337,6 +337,7 @@ public class BBInputSetupMapperLayer {
 			context.setRequestParameters(this.mapRequestParameters(requestDetails.getRequestParameters()));
 			context.setUserParams(this.mapNameValueUserParams(requestDetails.getRequestParameters()));
 		}
+		context.setConfigurationParameters(requestDetails.getConfigurationParameters());
 		return context;
 	}
 
