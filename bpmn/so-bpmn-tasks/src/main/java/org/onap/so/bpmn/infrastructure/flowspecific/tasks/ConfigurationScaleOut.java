@@ -95,10 +95,13 @@ public class ConfigurationScaleOut {
 					for (Map.Entry<String,String> entry : param.entrySet()) {
 						key = entry.getKey();
 						paramValue = entry.getValue();
-						configScaleOutParam = JsonPath.parse(sdncVfModuleQueryResponse).read(paramValue);
-						if(configScaleOutParam != null){
-							paramsMap.put(key, configScaleOutParam);
+						try{
+							configScaleOutParam = JsonPath.parse(sdncVfModuleQueryResponse).read(paramValue);
+						}catch(ClassCastException e){
+							configScaleOutParam = null;
+							msoLogger.warnSimple("Incorrect JSON path. Path points to object rather than value causing: ", e);
 						}
+						paramsMap.put(key, configScaleOutParam);
 					}
 				}
 			}

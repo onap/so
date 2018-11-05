@@ -10,7 +10,9 @@
     "vnf-resource-assignments": {
       "availability-zones": {
         "availability-zone": [
-          	"AZ-MN02"
+          {
+          	"test": "AZ-MN02"
+          }
         ],
         "max-count": 1
       }
