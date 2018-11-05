@@ -160,7 +160,7 @@ policy:
   environment: TEST
 sdnc:
   auth: Basic YWRtaW46YWRtaW4=
-  host: http://localhost:8446
+  host: http://localhost:${wiremock.server.port}
   path: /restconf/operations/GENERIC-RESOURCE-API
 sniro:
   conductor:
@@ -180,8 +180,7 @@ sniro:
 oof:
   timeout: PT30M
   host: http://localhost:${wiremock.server.port}
-  uri.v1: /api/oof/v1/placement
-  uri.v2: /api/oof/v2/placement
+  uri: /api/oof/v1/placement
   headers.auth: Basic dGVzdDp0ZXN0cHdk
 spring:
   datasource:

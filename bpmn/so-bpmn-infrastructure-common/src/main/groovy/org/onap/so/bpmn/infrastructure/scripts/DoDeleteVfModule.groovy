@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,9 +43,6 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
 import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -66,7 +63,7 @@ import org.xml.sax.InputSource
 * @param - vfModuleModelInfo
 * @param - cloudConfiguration*
 * @param - sdncVersion ("1610")
-* @param - retainResources 
+* @param - retainResources
 * @param - aLaCarte
 *
 * Outputs:
@@ -133,11 +130,11 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				def vfModuleModelName = jsonUtil.getJsonValue(vfModuleModelInfo, "modelName")
 				execution.setVariable("vfModuleModelName", vfModuleModelName)
 				// retainResources
-				def retainResources = execution.getVariable("retainResources")			
+				def retainResources = execution.getVariable("retainResources")
 				if (retainResources == null) {
 					retainResources  = false
 				}
-				execution.setVariable("retainResources", retainResources)				
+				execution.setVariable("retainResources", retainResources)
 			}
 			else {
 
@@ -206,7 +203,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		if(uuid==null){
 			uuid = execution.getVariable("requestId") + "-" +  	System.currentTimeMillis()
 		}
-		
+
 		def srvInstId = execution.getVariable("srvInstId")
 		def callbackUrl = UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback",execution)
 		String requestId = execution.getVariable("requestId")
@@ -229,7 +226,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		boolean retainResources = execution.getVariable("retainResources")
 		String requestSubActionString = ""
 		if (retainResources) {
-			requestSubActionString = "<request-sub-action>RetainResource</request-sub-action>"			
+			requestSubActionString = "<request-sub-action>RetainResource</request-sub-action>"
 		}
 		String request = """<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:ns5="http://org.onap/so/request/types/v1"
 													xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1"
@@ -578,7 +575,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Using the vnfId and vfModuleId provided in the inputs,
 	 * query AAI to get the corresponding VF Module info.
@@ -593,7 +590,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			'execution=' + execution.getId() +
 			')'
 		msoLogger.trace('Entered ' + method)
-		
+
 		execution.setVariable(Prefix + 'orchestrationStatus', '')
 
 		try {

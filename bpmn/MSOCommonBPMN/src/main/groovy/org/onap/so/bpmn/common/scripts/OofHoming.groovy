@@ -32,18 +32,21 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.HttpClient
+import org.onap.so.logger.MsoLogger
 import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
+
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.utils.TargetEntity
 
 import org.json.JSONArray
 import org.json.JSONObject
 import org.springframework.web.util.UriUtils
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
+
+import javax.ws.rs.core.Response
 
 /**
  * This class contains the scripts used
@@ -135,7 +138,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
 
                 //Prepare Callback
                 String timeout = execution.getVariable("timeout")
-                if (isBlank(timeout)) {					
+                if (isBlank(timeout)) {
                     timeout = UrnPropertiesReader.getVariable("mso.oof.timeout", execution);
                     if (isBlank(timeout)) {
                         timeout = "PT30M"
@@ -153,25 +156,18 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 execution.setVariable("oofRequest", oofRequest)
                 utils.log("DEBUG", "OOF Request is: " + oofRequest, isDebugEnabled)
 
-                String url = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
-                utils.log("DEBUG", "Posting to OOF Url: " + url, isDebugEnabled)
+                String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
+                utils.log("DEBUG", "Posting to OOF Url: " + urlString, isDebugEnabled)
 
-                logDebug("URL to be used is: " + url, isDebugEnabled)
 
-                RESTConfig config = new RESTConfig(url)
-                RESTClient client = new RESTClient(config).addAuthorizationHeader(authHeader).
-                        addHeader("Content-Type", "application/json")
-                APIResponse response = client.httpPost(oofRequest)
+				URL url = new URL(urlString);
+				HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.SNIRO)
+				httpClient.addAdditionalHeader("Authorization", authHeader)
+				Response httpResponse = httpClient.post(oofRequest)
 
-                int responseCode = response.getStatusCode()
-                logDebug("OOF sync response code is: " + responseCode, isDebugEnabled)
-                String syncResponse = response.getResponseBodyAsString()
-                execution.setVariable("syncResponse", syncResponse)
-                logDebug("OOF sync response is: " + syncResponse, isDebugEnabled)
+				int responseCode = httpResponse.getStatus()
+				logDebug("OOF sync response code is: " + responseCode, isDebugEnabled)
 
-				if(responseCode != 202){
-					exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
-				}
 
                 utils.log("DEBUG", "*** Completed Homing Call OOF ***", isDebugEnabled)
             }

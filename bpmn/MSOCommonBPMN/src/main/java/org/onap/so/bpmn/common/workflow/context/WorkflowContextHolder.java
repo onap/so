@@ -81,13 +81,10 @@ public class WorkflowContextHolder {
 	public WorkflowContext getWorkflowContext(String requestId) {
 		// Note: DelayQueue interator is threadsafe
 		for (WorkflowContext context : responseQueue) {
-			if (requestId.equals(context.getRequestId())) {
-				msoLogger.debug("Found context for request id: " + requestId);
+			if (requestId.equals(context.getRequestId())) {				
 				return context;
 			}
 		}
-
-		msoLogger.debug("Unable to find context for request id: " + requestId);
 		return null;
 	}
 	

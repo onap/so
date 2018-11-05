@@ -27,11 +27,15 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.data.TestDataSetup;
@@ -68,49 +72,34 @@ public class SDNCConfigurationResourcesTest extends TestDataSetup{
 
     @Before
     public void setUp(){
-
     	customer = buildCustomer();
-
         requestContext = buildRequestContext();
-
         serviceInstance = buildServiceInstance();
-        
-        vpnBondingLink = buildVpnBondingLink();
-        
+        vpnBondingLink = buildVpnBondingLink();  
         vnf = vpnBondingLink.getInfrastructureServiceProxy().getServiceInstance().getVnfs().get(0);
     }
 
     @Test
-    public void activateVnrConfigurationTest() throws BadResponseException, MapperException {
-
-        doReturn("success").when(MOCK_sdncClient).post(isA(GenericResourceApiGcTopologyOperationInformation.class), isA(SDNCTopology.class));
-        String response = sdncConfigurationResources.activateVnrConfiguration(serviceInstance,requestContext,customer,vpnBondingLink.getVnrConfiguration(),vnf);
-        verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiGcTopologyOperationInformation.class), any(SDNCTopology.class));
+    public void activateVnrConfigurationTest() throws BadResponseException, MapperException, URISyntaxException {
+        GenericResourceApiGcTopologyOperationInformation response = sdncConfigurationResources.activateVnrConfiguration(serviceInstance,requestContext,customer,vpnBondingLink.getVnrConfiguration(),vnf,"uuid",new URI("http://localhost"));       
         assertNotNull(response);
     }
 
     @Test
-    public void assignVnrConfigurationTest() throws BadResponseException, MapperException {
-
-        doReturn("success").when(MOCK_sdncClient).post(isA(GenericResourceApiGcTopologyOperationInformation.class), isA(SDNCTopology.class));
-        String response = sdncConfigurationResources.assignVnrConfiguration(serviceInstance,requestContext,customer,vpnBondingLink.getVnrConfiguration(),vnf);
-        verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiGcTopologyOperationInformation.class), any(SDNCTopology.class));
+    public void assignVnrConfigurationTest() throws BadResponseException, MapperException, URISyntaxException {
+        GenericResourceApiGcTopologyOperationInformation response = sdncConfigurationResources.assignVnrConfiguration(serviceInstance,requestContext,customer,vpnBondingLink.getVnrConfiguration(),vnf,"uuid",new URI("http://localhost"));    
         assertNotNull(response);
     }
 
     @Test
-    public void unAssignVnrConfigurationTest() throws BadResponseException, MapperException {
-        doReturn("success").when(MOCK_sdncClient).post(isA(GenericResourceApiGcTopologyOperationInformation.class), isA(SDNCTopology.class));
-        String response = sdncConfigurationResources.unAssignVnrConfiguration(serviceInstance,requestContext,vpnBondingLink.getVnrConfiguration());
-        verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiGcTopologyOperationInformation.class), any(SDNCTopology.class));
+    public void unAssignVnrConfigurationTest() throws BadResponseException, MapperException , URISyntaxException{
+        GenericResourceApiGcTopologyOperationInformation response = sdncConfigurationResources.unAssignVnrConfiguration(serviceInstance,requestContext,vpnBondingLink.getVnrConfiguration(),"uuid",new URI("http://localhost"));
         assertNotNull(response);
     }
 
     @Test
-    public void deactivateVnrConfigurationTest() throws BadResponseException, MapperException {
-        doReturn("success").when(MOCK_sdncClient).post(isA(GenericResourceApiGcTopologyOperationInformation.class), isA(SDNCTopology.class));
-        String response = sdncConfigurationResources.deactivateVnrConfiguration(serviceInstance,requestContext,vpnBondingLink.getVnrConfiguration());
-        verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiGcTopologyOperationInformation.class), any(SDNCTopology.class));
+    public void deactivateVnrConfigurationTest() throws BadResponseException, MapperException , URISyntaxException{
+        GenericResourceApiGcTopologyOperationInformation response = sdncConfigurationResources.deactivateVnrConfiguration(serviceInstance,requestContext,vpnBondingLink.getVnrConfiguration(),"uuid",new URI("http://localhost"));      
         assertNotNull(response);
     }
 }

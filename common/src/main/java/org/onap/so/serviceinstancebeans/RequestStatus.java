@@ -29,6 +29,7 @@ public class RequestStatus {
 
     protected String requestState;
     protected String statusMessage;
+    protected String rollbackStatusMessage;
     protected Integer percentProgress;
     protected String finishTime;
 
@@ -45,6 +46,12 @@ public class RequestStatus {
 	public void setStatusMessage(String statusMessage) {
 		this.statusMessage = statusMessage;
 	}
+	public String getRollbackStatusMessage() {
+		return rollbackStatusMessage;
+	}
+	public void setRollbackStatusMessage(String rollbackStatusMessage) {
+		this.rollbackStatusMessage = rollbackStatusMessage;
+	}
 	public Integer getPercentProgress() {
 		return percentProgress;
 	}
@@ -60,6 +67,7 @@ public class RequestStatus {
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).append("requestState", requestState).append("statusMessage", statusMessage)
-				.append("percentProgress", percentProgress).append("finishTime", finishTime).toString();
+				.append("rollbackStatusMessage", rollbackStatusMessage).append("percentProgress", percentProgress)
+				.append("finishTime", finishTime).toString();
 	}
 }

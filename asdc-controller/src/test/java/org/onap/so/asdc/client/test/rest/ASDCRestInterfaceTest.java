@@ -27,73 +27,40 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 
-import org.junit.Ignore;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Spy;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.db.catalog.beans.AllottedResource;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
-import org.onap.so.db.catalog.beans.CollectionResource;
-import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
-import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
-import org.onap.so.db.catalog.beans.ConfigurationResource;
-import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
-import org.onap.so.db.catalog.beans.InstanceGroup;
-import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
-import org.onap.so.db.catalog.beans.NetworkResource;
-import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.ServiceProxyResource;
-import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
-import org.onap.so.db.catalog.beans.ServiceRecipe;
-import org.onap.so.db.catalog.beans.ToscaCsar;
-import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
-import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
-import org.onap.so.db.catalog.data.repository.CollectionResourceInstanceGroupCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.CollectionResourceRepository;
-import org.onap.so.db.catalog.data.repository.ConfigurationResourceRepository;
-import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
-import org.onap.so.db.catalog.data.repository.ServiceProxyResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
-import org.onap.so.db.catalog.data.repository.VnfcInstanceGroupCustomizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ASDCRestInterfaceTest extends BaseTest {
-	//ASDC Controller writes to this path
-	static {
-		System.setProperty("mso.config.path", "src/test/resources/");
-	}
 
-    
 	@Autowired
 	private AllottedResourceRepository allottedRepo;
 
@@ -116,6 +83,16 @@ public class ASDCRestInterfaceTest extends BaseTest {
 	@LocalServerPort
 	private int port;
 	
+	
+	@Rule
+	public TemporaryFolder folder= new TemporaryFolder();
+
+
+	@Before
+	public void setUp() {
+		//ASDC Controller writes to this path
+		System.setProperty("mso.config.path", folder.getRoot().toString());
+	}
 		
 	@Test
 	@Transactional

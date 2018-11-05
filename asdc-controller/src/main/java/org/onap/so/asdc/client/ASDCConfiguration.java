@@ -102,10 +102,9 @@ public class ASDCConfiguration implements IConfiguration {
 		this.asdcControllerName = asdcControllerName;
 	}
 
-
 	@Override
     public java.lang.Boolean isUseHttpsWithDmaap() {
-    	return false;
+		return getBooleanPropertyWithDefault("mso.asdc-connections.asdc-controller1.useHttpsWithDmaap", true);
     }
     
     @Override

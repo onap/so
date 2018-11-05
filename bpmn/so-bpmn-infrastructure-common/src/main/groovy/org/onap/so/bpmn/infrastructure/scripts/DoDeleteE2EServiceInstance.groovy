@@ -21,6 +21,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.apache.commons.lang3.StringUtils.*;
 
+import javax.ws.rs.core.Response
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -36,8 +37,10 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
-import org.onap.so.rest.APIResponse
+
+import org.onap.so.utils.TargetEntity
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.HttpClient
 import org.springframework.web.util.UriUtils;
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -207,7 +210,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                         }
 
                         execution.setVariable("serviceRelationShip", jArray.toString())
-						
+
 //                        //test(siData)
 //                        NodeList nodeList = serviceXml.getElementsByTagName("relationship")
 //                        JSONArray jArray = new JSONArray()
@@ -276,8 +279,8 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 //                                    }
 //                                // for SP-Partner
 //                                }else if (e.equals("sp-partner")){
-//									
-//								}								
+//
+//								}
 //                            }
 //                        }
 //                        execution.setVariable("serviceRelationShip", jArray.toString())
@@ -311,16 +314,16 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         }
         utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
     }
-	
+
 	private JSONObject getRelationShipData(node, isDebugEnabled){
 		JSONObject jObj = new JSONObject()
-		
+
 		def relation  = utils.nodeToString(node)
 		def rt  = utils.getNodeText(relation, "related-to")
-		
+
 		def rl  = utils.getNodeText(relation, "related-link")
 		utils.log("INFO", "ServiceInstance Related NS/Configuration :" + rl, isDebugEnabled)
-		
+
 		def rl_datas = utils.getIdenticalChildren(node, "relationship-data")
 		for(def rl_data : rl_datas) {
 			def eKey =  utils.getChildNodeText(rl_data, "relationship-key")
@@ -398,7 +401,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
     }
 
 	private void generateRelatedResourceInfo(String response, JSONObject jObj){
-		
+
 		def xml = new XmlSlurper().parseText(response)
 		def rtn = xml.childNodes()
 		while (rtn.hasNext()) {
@@ -408,26 +411,29 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 			jObj.put(key, value)
 		}
 	}
-	
+
 	private JSONObject getRelatedResourceInAAI (DelegateExecution execution, JSONObject jObj)
 	{
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** Started getRelatedResourceInAAI *****",  isDebugEnabled)		
-			
+		utils.log("INFO"," ***** Started getRelatedResourceInAAI *****",  isDebugEnabled)
+
 		AaiUtil aaiUriUtil = new AaiUtil()
 		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 		String urlLink = jObj.get("resourceLinkUrl")
 		String serviceAaiPath = "${aai_endpoint}${urlLink}"
-		APIResponse response = aaiUriUtil.executeAAIGetCall(execution, serviceAaiPath)
-		int responseCode = response.getStatusCode()
+
+		URL url = new URL(serviceAaiPath)
+		HttpClient client = new HttpClient(url, "application/xml", TargetEntity.AAI)
+
+
+		Response response = client.get()
+		int responseCode = response.getStatus()
 		execution.setVariable(Prefix + "GeRelatedResourceResponseCode", responseCode)
 		utils.log("DEBUG", "  Get RelatedResource code is: " + responseCode, isDebugEnabled)
 
-		String aaiResponse = response.getResponseBodyAsString()
-		aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
-		aaiResponse = aaiResponse.replaceAll("&", "&amp;")
+		String aaiResponse = response.readEntity(String.class)
 		execution.setVariable(Prefix + "GetRelatedResourceResponse", aaiResponse)
-		
+
 		//Process Response
 		if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
 			//200 OK 201 CREATED 202 ACCEPTED
@@ -435,9 +441,9 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", "GET RelatedResource Received a Good Response", isDebugEnabled)
 			execution.setVariable(Prefix + "SuccessIndicator", true)
 			execution.setVariable(Prefix + "FoundIndicator", true)
-			
+
 			generateRelatedResourceInfo(aaiResponse, jObj)
-			
+
 			//get model-invariant-uuid and model-uuid
 			String modelInvariantId = ""
 			String modelUuid = ""
@@ -447,19 +453,19 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 				modelUuid = jObj.get("model-version-id")
 				modelCustomizationId = jObj.get("model-customization-id")
 			}
-			
-			jObj.put("modelInvariantId", modelInvariantId)			
-			jObj.put("modelVersionId", modelUuid)			
+
+			jObj.put("modelInvariantId", modelInvariantId)
+			jObj.put("modelVersionId", modelUuid)
 			jObj.put("modelCustomizationId", modelCustomizationId)
 		}
 		else
 		{
-			utils.log("ERROR", "Get RelatedResource Received a Bad Response Code. Response Code is: " + responseCode, isDebugEnabled)			
+			utils.log("ERROR", "Get RelatedResource Received a Bad Response Code. Response Code is: " + responseCode, isDebugEnabled)
 		}
-		
+
 		utils.log("INFO", " ***** Exit getRelatedResourceInAAI *****", isDebugEnabled)
-		return jObj;	
-		
+		return jObj;
+
 	}
 
     public void postDecomposeService(DelegateExecution execution) {
@@ -491,7 +497,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                 relationShipList.each {
 
                     JSONObject obj = getRelatedResourceInAAI(execution, (JSONObject)it)
-					
+
                     for (Resource resource : deleteResourceList) {
 
                         String modelName = resource.getModelInfo().getModelName()
@@ -508,7 +514,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                         }
                     }
                 }
-            }          
+            }
 
             // only delete real existing resources
             execution.setVariable("deleteResourceList", deleteRealResourceList)

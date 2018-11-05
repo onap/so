@@ -25,27 +25,23 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
-import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class WorkflowActionBBTasksTest extends BaseTaskTest {
 
@@ -53,6 +49,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	protected WorkflowAction workflowAction;
 	
 	@InjectMocks
+	@Spy
 	protected WorkflowActionBBTasks workflowActionBBTasks;
 	
 	private DelegateExecution execution;
@@ -88,32 +85,6 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	}
 	
 	@Test
-	public void getUpdatedRequestTest() throws Exception{
-		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
-		ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-		BuildingBlock bb1 = new BuildingBlock();
-		bb1.setBpmnFlowName("CreateNetworkBB");
-		flowsToExecute.add(ebb1);
-		ebb1.setBuildingBlock(bb1);
-		ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-		BuildingBlock bb2 = new BuildingBlock();
-		bb2.setBpmnFlowName("ActivateNetworkBB");
-		flowsToExecute.add(ebb2);
-		ebb2.setBuildingBlock(bb2);
-		String requestId = "requestId";
-		execution.setVariable("mso-request-id", requestId);
-		execution.setVariable("flowsToExecute", flowsToExecute);
-		int currentSequence = 2;
-		String expectedStatusMessage = "Execution of CreateNetworkBB has completed successfully, next invoking ActivateNetworkBB (Execution Path progress: BBs completed = 1; BBs remaining = 1).";
-		Long expectedLong = new Long(52);
-		InfraActiveRequests mockedRequest = new InfraActiveRequests();
-		when(requestsDbClient.getInfraActiveRequestbyRequestId(requestId)).thenReturn(mockedRequest);
-		InfraActiveRequests actual = workflowActionBBTasks.getUpdatedRequest(execution, currentSequence);
-		assertEquals(expectedStatusMessage, actual.getStatusMessage());
-		assertEquals(expectedLong, actual.getProgress());
-	}
-	
-	@Test
 	public void select2BBTest() throws Exception{
 		String gAction = "Delete-Network-Collection";
 		execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
@@ -146,17 +117,8 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	}
 	
 	@Test
-	public void setupFalloutHandlerTest(){
-		execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
-		execution.setVariable("serviceInstanceId", "123");
-		execution.setVariable("WorkflowActionErrorMessage", "Error in WorkFlowAction");
-		execution.setVariable("requestAction", "createInstance");
-		workflowActionBBTasks.setupFalloutHandler(execution);
-		assertEquals(execution.getVariable("falloutRequest"),"<aetgt:FalloutHandlerRequest xmlns:aetgt=\"http://org.onap/so/workflow/schema/v1\"xmlns:ns=\"http://org.onap/so/request/types/v1\"xmlns:wfsch=\"http://org.onap/so/workflow/schema/v1\"><request-info xmlns=\"http://org.onap/so/infra/vnf-request/v1\"><request-id>00f704ca-c5e5-4f95-a72c-6889db7b0688</request-id><action>createInstance</action><source>VID</source></request-info><aetgt:WorkflowException xmlns:aetgt=\"http://org.onap/so/workflow/schema/v1\"><aetgt:ErrorMessage>Error in WorkFlowAction</aetgt:ErrorMessage><aetgt:ErrorCode>7000</aetgt:ErrorCode></aetgt:WorkflowException></aetgt:FalloutHandlerRequest>");
-	}
-	
-	@Test
 	public void rollbackExecutionPathTest(){
+		execution.setVariable("handlingCode", "Rollback");
 		execution.setVariable("isRollback", false);
 		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
 		ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
@@ -177,7 +139,8 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		
 		execution.setVariable("flowsToExecute", flowsToExecute);
 		execution.setVariable("gCurrentSequence", 3);
-		
+		doNothing().when(workflowActionBBTasks).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
+
 		workflowActionBBTasks.rollbackExecutionPath(execution);
 		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
 		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"DeactivateVfModuleBB");
@@ -188,6 +151,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	
 	@Test
 	public void rollbackExecutionPathUnfinishedFlowTest(){
+		execution.setVariable("handlingCode", "Rollback");
 		execution.setVariable("isRollback", false);
 		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
 		ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
@@ -208,7 +172,8 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		
 		execution.setVariable("flowsToExecute", flowsToExecute);
 		execution.setVariable("gCurrentSequence", 2);
-		
+		doNothing().when(workflowActionBBTasks).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
+
 		workflowActionBBTasks.rollbackExecutionPath(execution);
 		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
 		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"DeleteVfModuleBB");
@@ -219,6 +184,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	
 	@Test
 	public void rollbackExecutionTest(){
+		execution.setVariable("handlingCode", "Rollback");
 		execution.setVariable("isRollback", false);
 		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
 		ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
@@ -244,7 +210,8 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		
 		execution.setVariable("flowsToExecute", flowsToExecute);
 		execution.setVariable("gCurrentSequence", 3);
-		
+		doNothing().when(workflowActionBBTasks).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
+
 		workflowActionBBTasks.rollbackExecutionPath(execution);
 		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
 		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"UnassignNetworkBB");
@@ -254,7 +221,44 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	}
 	
 	@Test
+	public void rollbackExecutionRollbackToAssignedTest(){
+		execution.setVariable("isRollback", false);
+		execution.setVariable("handlingCode", "RollbackToAssigned");
+		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
+		ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
+		BuildingBlock bb1 = new BuildingBlock();
+		bb1.setBpmnFlowName("AssignServiceInstanceBB");
+		ebb1.setBuildingBlock(bb1);
+		flowsToExecute.add(ebb1);
+		ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
+		BuildingBlock bb2 = new BuildingBlock();
+		bb2.setBpmnFlowName("CreateNetworkCollectionBB");
+		ebb2.setBuildingBlock(bb2);
+		flowsToExecute.add(ebb2);
+		ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
+		BuildingBlock bb3 = new BuildingBlock();
+		bb3.setBpmnFlowName("AssignNetworkBB");
+		ebb3.setBuildingBlock(bb3);
+		flowsToExecute.add(ebb3);
+		ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
+		BuildingBlock bb4 = new BuildingBlock();
+		bb4.setBpmnFlowName("CreateNetworkBB");
+		ebb4.setBuildingBlock(bb4);
+		flowsToExecute.add(ebb4);
+		
+		execution.setVariable("flowsToExecute", flowsToExecute);
+		execution.setVariable("gCurrentSequence", 3);
+		doNothing().when(workflowActionBBTasks).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
+
+		workflowActionBBTasks.rollbackExecutionPath(execution);
+		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"DeleteNetworkCollectionBB");
+		assertEquals(0,execution.getVariable("gCurrentSequence"));
+	}
+	
+	@Test
 	public void checkRetryStatusTest(){
+		doNothing().when(workflowActionBBTasks).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
 		execution.setVariable("handlingCode","Retry");
 		execution.setVariable("retryCount", 1);
 		execution.setVariable("gCurrentSequence",1);

@@ -96,6 +96,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest {
         assertEquals(infraActiveRequests.getOperationalEnvName(), infraActiveRequestsResponse.getOperationalEnvName());
         assertEquals(infraActiveRequests.getRequestStatus(), infraActiveRequestsResponse.getRequestStatus());
         assertEquals(infraActiveRequests.getAction(), infraActiveRequestsResponse.getAction());
+        assertEquals(infraActiveRequests.getRequestUrl(), infraActiveRequestsResponse.getRequestUrl());        
     }
 
     @Before
@@ -132,6 +133,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest {
         infraActiveRequests.setOperationalEnvName(UUID.randomUUID().toString());
         infraActiveRequests.setRequestStatus("IN_PROGRESS");
         infraActiveRequests.setAction("create");
+        infraActiveRequests.setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");        
 
         HttpEntity<String> entity = new HttpEntity(infraActiveRequests, headers);
 

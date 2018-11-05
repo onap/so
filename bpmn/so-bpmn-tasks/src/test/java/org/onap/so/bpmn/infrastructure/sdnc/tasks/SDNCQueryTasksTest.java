@@ -40,6 +40,7 @@ import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.BBObjectNotFoundException;
@@ -51,15 +52,19 @@ public class SDNCQueryTasksTest extends BaseTaskTest{
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 		
+	private ServiceInstance serviceInstance;
 	private GenericVnf genericVnf;
 	private VfModule vfModule;
 	
 	@Before
 	public void before() throws BBObjectNotFoundException {
+		serviceInstance = setServiceInstance();
 		genericVnf = setGenericVnf();
 		vfModule = setVfModule();
 		
 		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
+		
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
 
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);

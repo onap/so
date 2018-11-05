@@ -89,7 +89,9 @@ public class CloudConfigTest {
         builder = UriComponentsBuilder.fromHttpUrl("http://localhost:"+ port + uri +"/" + cloudSite.getId());
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         ResponseEntity<CloudSite> actualCloudSite = restTemplate.exchange(builder.toUriString(),HttpMethod.GET, entity, CloudSite.class);
-
+        builder = UriComponentsBuilder.fromHttpUrl("http://localhost:"+ port + uri);
+        ResponseEntity<String> cloudSiteString = restTemplate.exchange(builder.toUriString(),HttpMethod.GET, entity, String.class);
+        System.out.println(cloudSiteString.getBody());
         assertEquals(Response.Status.OK.getStatusCode(), actualCloudSite.getStatusCode().value());
         assertThat(actualCloudSite.getBody(), sameBeanAs(cloudSite).ignoring("created").ignoring("updated")
                 .ignoring("identityService.created").ignoring("identityService.updated"));

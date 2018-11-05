@@ -20,6 +20,8 @@
 
 package org.onap.so.serviceinstancebeans;
 
+import java.net.URL;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,7 +34,7 @@ public class RequestReferences {
 	
 	String requestId;
 	String instanceId;
-	
+	URL requestSelfLink;
 	
 	public String getRequestId() {
 		return requestId;
@@ -46,9 +48,15 @@ public class RequestReferences {
 	public void setInstanceId(String instanceId) {
 		this.instanceId = instanceId;
 	}
+	public URL getRequestSelfLink() {
+		return requestSelfLink;
+	}
+	public void setRequestSelfLink(URL requestSelfLink) {
+		this.requestSelfLink = requestSelfLink;
+	}	
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append("requestId", requestId).append("instanceId", instanceId).toString();
+		return new ToStringBuilder(this).append("requestId", requestId).append("instanceId", instanceId).append("requestSelfLink", requestSelfLink).toString();
 	}
 
 

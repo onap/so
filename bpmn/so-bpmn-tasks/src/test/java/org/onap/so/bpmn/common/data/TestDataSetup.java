@@ -478,6 +478,8 @@ public class TestDataSetup{
 		modelInfoGenericVnf.setModelInvariantUuid("testModelInvariantUUID" + genericVnfCounter);
 		modelInfoGenericVnf.setModelVersion("testModelVersion" + genericVnfCounter);
 		modelInfoGenericVnf.setModelUuid("testModelUUID" + genericVnfCounter);
+		modelInfoGenericVnf.setModelInstanceName("testInstanceName" + genericVnfCounter);
+
 		genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
 
 		License license = new License();
@@ -652,6 +654,7 @@ public class TestDataSetup{
 		modelInfo.setModelName("testProxyModelName" + uniqueIdentifier);
 		modelInfo.setModelUuid("testProxyModelUuid" + uniqueIdentifier);
 		modelInfo.setModelVersion("testProxyModelVersion" + uniqueIdentifier);
+		modelInfo.setModelInstanceName("testProxyInstanceName" + uniqueIdentifier);
 
 		serviceProxy.setModelInfoServiceProxy(modelInfo);
 
@@ -663,10 +666,11 @@ public class TestDataSetup{
 		ar.setId("testAllottedResourceId" + uniqueIdentifier);
 
 		ModelInfoAllottedResource modelInfo = new ModelInfoAllottedResource();
-		modelInfo.setModelInvariantUuid("testProxyModelInvariantUuid" + uniqueIdentifier);
-		modelInfo.setModelName("testProxyModelName" + uniqueIdentifier);
-		modelInfo.setModelUuid("testProxyModelUuid" + uniqueIdentifier);
-		modelInfo.setModelVersion("testProxyModelVersion" + uniqueIdentifier);
+		modelInfo.setModelInvariantUuid("testAllottedModelInvariantUuid" + uniqueIdentifier);
+		modelInfo.setModelName("testAllottedModelName" + uniqueIdentifier);
+		modelInfo.setModelUuid("testAllottedModelUuid" + uniqueIdentifier);
+		modelInfo.setModelVersion("testAllottedModelVersion" + uniqueIdentifier);
+		modelInfo.setModelInstanceName("testAllottedModelInstanceName" + uniqueIdentifier);
 
 		ar.setModelInfoAllottedResource(modelInfo);
 
@@ -688,7 +692,7 @@ public class TestDataSetup{
 		serviceInstance.setConfigurations(configurations);
 		return config;
 	}
-	
+
 	public Subnet buildSubnet() {
         Subnet subnet = new Subnet();
         subnet.setSubnetId("testSubnetId");

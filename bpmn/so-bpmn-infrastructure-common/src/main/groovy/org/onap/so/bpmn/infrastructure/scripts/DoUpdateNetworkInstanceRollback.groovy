@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,7 @@ import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.rest.APIResponse
+
 
 import java.util.UUID;
 
@@ -51,7 +51,7 @@ import org.onap.so.logger.MsoLogger
  */
 public class DoUpdateNetworkInstanceRollback extends AbstractServiceTaskProcessor {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoUpdateNetworkInstanceRollback.class);
-	
+
 	String Prefix="UPDNETIR_"
    	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
@@ -128,7 +128,7 @@ public class DoUpdateNetworkInstanceRollback extends AbstractServiceTaskProcesso
 
 			// PO Authorization Info / headers Authorization=
 			String basicAuthValuePO = UrnPropertiesReader.getVariable("mso.adapters.po.auth",execution)
-			
+
 			try {
 				def encodedString = utils.getBasicAuth(basicAuthValuePO, UrnPropertiesReader.getVariable("mso.msoKey", execution))
 				execution.setVariable("BasicAuthHeaderValuePO",encodedString)

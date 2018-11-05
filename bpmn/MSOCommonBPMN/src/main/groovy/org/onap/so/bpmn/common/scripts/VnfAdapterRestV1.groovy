@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,15 +20,15 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import javax.ws.rs.core.Response
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
+import org.onap.so.client.HttpClient
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.onap.so.utils.TargetEntity
 
 
 
@@ -67,7 +67,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			if ('rollbackVolumeGroupRequest'.equals(requestType)) {
 				messageId = getMessageIdForVolumeGroupRollback(root)
 			}
-			
+
 			if (messageId == null || messageId.isEmpty()) {
 				String msg = getProcessKey(execution) + ': no messageId in ' + requestType
 				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
@@ -281,7 +281,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
-	
+
 	public String getVolumeGroupIdFromRollbackRequest(Node root) {
 		return root.'volumeGroupRollback'.'volumeGroupId'.text()
 	}
@@ -289,7 +289,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 	public String getMessageIdForVolumeGroupRollback(Node root) {
 		return root.'volumeGroupRollback'.'messageId'.text()
 	}
-	
+
 	/**
 	 * This method is used instead of an HTTP Connector task because the
 	 * connector does not allow DELETE with a body.
@@ -307,29 +307,31 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String vnfAdapterUrl = execution.getVariable(prefix + 'vnfAdapterUrl')
 			String vnfAdapterRequest = execution.getVariable(prefix + 'vnfAdapterRequest')
 
-			RESTConfig config = new RESTConfig(vnfAdapterUrl)
-			RESTClient client = new RESTClient(config).
-				addHeader("Content-Type", "application/xml").
-				addAuthorizationHeader(execution.getVariable(prefix + "basicAuthHeaderValue"));
+			URL url = new URL(vnfAdapterUrl);
 
-			APIResponse response;
+			HttpClient httpClient = new HttpClient(url, "application/xml", TargetEntity.VNF_ADAPTER)
+			httpClient.addAdditionalHeader("Authorization", execution.getVariable(prefix + "basicAuthHeaderValue"))
+
+			Response response;
 
 			if ("GET".equals(vnfAdapterMethod)) {
-				response = client.httpGet()
+				response = httpClient.get()
 			} else if ("PUT".equals(vnfAdapterMethod)) {
-				response = client.httpPut(vnfAdapterRequest)
+				response = httpClient.put(vnfAdapterRequest)
 			} else if ("POST".equals(vnfAdapterMethod)) {
-				response = client.httpPost(vnfAdapterRequest)
+				response = httpClient.post(vnfAdapterRequest)
 			} else if ("DELETE".equals(vnfAdapterMethod)) {
-				response = client.httpDelete(vnfAdapterRequest)
+				response = httpClient.delete(vnfAdapterRequest)
 			} else {
 				String msg = 'Unsupported HTTP method "' + vnfAdapterMethod + '" in ' + method + ": " + e
 				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
-			execution.setVariable(prefix + "vnfAdapterStatusCode", response.getStatusCode())
-			execution.setVariable(prefix + "vnfAdapterResponse", response.getResponseBodyAsString())
+			execution.setVariable(prefix + "vnfAdapterStatusCode", response.getStatus())
+			if(response.hasEntity()){
+				execution.setVariable(prefix + "vnfAdapterResponse", response.readEntity(String.class))
+			}
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {

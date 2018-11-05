@@ -109,6 +109,7 @@ public class MSORequestDBImplTest {
 		testRequest.setVfModuleId("c7d527b1-7a91-49fd-b97d-1c8c0f4a7992");
 		testRequest.setVfModuleModelName("vSAMP10aDEV::base::module-0");
 		testRequest.setVnfId("b92f60c8-8de3-46c1-8dc1-e4390ac2b005");
+		testRequest.setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");
 		
 		return testRequest;
 	}

@@ -22,18 +22,20 @@ package org.onap.so.client.sniro;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
 import org.junit.Test;
+import org.onap.so.BaseIntegrationTest;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.sniro.beans.SniroConductorRequest;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 
-public class SniroClientTestIT{
+public class SniroClientTestIT extends BaseIntegrationTest {
 
     @Autowired
     private SniroClient client;

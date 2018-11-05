@@ -92,13 +92,13 @@ public class SdnCommonTasks {
      * @return
      * @throws BadResponseException
      */
-	public String validateSDNResponse(LinkedHashMap<?, ?> output) throws BadResponseException {
+	public String validateSDNResponse(LinkedHashMap<String, Object> output) throws BadResponseException {
 		if (CollectionUtils.isEmpty(output)) {
 			msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, NO_RESPONSE_FROM_SDNC, "BPMN",
 					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, NO_RESPONSE_FROM_SDNC);
 			throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
 		}
-        LinkedHashMap<?, ?> embeddedResponse =(LinkedHashMap<?, ?>) output.get("output");
+        LinkedHashMap<String, Object> embeddedResponse =(LinkedHashMap<String, Object>) output.get("output");
         String responseCode = "";
         String responseMessage = "";
         if (embeddedResponse != null) {
@@ -125,7 +125,7 @@ public class SdnCommonTasks {
      * @return
      * @throws BadResponseException
      */
-    public String validateSDNGetResponse(LinkedHashMap<?, ?> output) throws BadResponseException {
+    public String validateSDNGetResponse(LinkedHashMap<String, Object> output) throws BadResponseException {
         if (CollectionUtils.isEmpty(output)) {
             msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, NO_RESPONSE_FROM_SDNC, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, NO_RESPONSE_FROM_SDNC);
             throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
@@ -143,6 +143,7 @@ public class SdnCommonTasks {
         msoLogger.debug("Received from GET request: " + stringOutput);
         return stringOutput;
     }
+	
 
     private boolean isHttpCodeSuccess(int code) {
         return code >= HttpStatus.SC_OK && code < HttpStatus.SC_MULTIPLE_CHOICES || code == 0;

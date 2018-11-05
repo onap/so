@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,9 +34,6 @@ import org.json.JSONObject
 
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
@@ -224,7 +221,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			if (responseType.endsWith('Error')) {
 				sdncAdapterBuildWorkflowException(execution, callback)
 			}
-			
+
 			// Check for possible interim notification
 			execution.setVariable(prefix + "interimNotification", null)
 			execution.setVariable(prefix + "doInterimNotification", false)
@@ -235,7 +232,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 					execution.setVariable(prefix + "doInterimNotification", true)
 				}
 			}
-			
+
 		} catch (Exception e) {
 			callback = callback == null || String.valueOf(callback).isEmpty() ? "NONE" : callback
 			String msg = "Received error from SDNCAdapter: " + callback
@@ -243,7 +240,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			exceptionUtil.buildWorkflowException(execution, 5300, msg)
 		}
 	}
-	
+
 	/**
 	 * Prepare to send an interim notification by extracting the variable/value definitions
 	 * in the interimNotification JSON object and placing them in the execution.  These
@@ -254,21 +251,21 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			'execution=' + execution.getId() +
 			')'
 		msoLogger.trace('Entered ' + method)
-		
+
 		String prefix = execution.getVariable('prefix')
 		msoLogger.debug("Preparing Interim Notification")
 
 		try {
 			def interimNotification = execution.getVariable(prefix + "interimNotification")
 			msoLogger.debug("Preparing Interim Notification:\n" + JsonUtils.prettyJson(interimNotification))
-			
+
 			for (int i = 0; ; i++) {
 				def variable = JsonUtils.getJsonParamValue(interimNotification, 'variableList', 'variable', i)
-				
+
 				if (variable == null) {
 					break
 				}
-				
+
 				def String variableName = JsonUtils.getJsonValue(variable, "name")
 				if ((variableName != null) && !variableName.isEmpty()) {
 					def variableValue = JsonUtils.getJsonValue(variable, "value")
@@ -276,7 +273,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 					msoLogger.debug("Setting "+ variableName + "=" + variableValue)
 				}
 			}
-			
+
 		} catch (Exception e) {
 			String msg = "Error preparing interim notification"
 			msoLogger.debug(getProcessKey(execution) + ': ' + msg)

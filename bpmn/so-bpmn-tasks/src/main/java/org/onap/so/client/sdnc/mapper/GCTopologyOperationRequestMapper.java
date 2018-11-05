@@ -20,6 +20,8 @@
 
 package org.onap.so.client.sdnc.mapper;
 
+import java.net.URI;
+
 import org.onap.sdnc.northbound.client.model.*;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
@@ -37,11 +39,10 @@ public class GCTopologyOperationRequestMapper {
                                                                                          RequestContext requestContext,
                                                                                          Customer customer,
                                                                                          Configuration vnrConfiguration,
-                                                                                         GenericVnf voiceVnf) {
+                                                                                         GenericVnf voiceVnf, String sdncReqId,URI callbackUri) {
 
         GenericResourceApiGcTopologyOperationInformation req = new GenericResourceApiGcTopologyOperationInformation();
-        String sdncReqId = requestContext.getMsoRequestId();
-        GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader = generalTopologyObjectMapper.buildSdncRequestHeader(svcAction, sdncReqId);// TODO Set URL
+        GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader = generalTopologyObjectMapper.buildSdncRequestHeader(svcAction, sdncReqId,callbackUri.toString());
         GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper.buildGenericResourceApiRequestinformationRequestInformation(sdncReqId, reqAction);
         GenericResourceApiServiceinformationServiceInformation serviceInformation = generalTopologyObjectMapper.buildServiceInformation(serviceInstance, requestContext, customer, false);
         GenericResourceApiConfigurationinformationConfigurationInformation configurationInformation = generalTopologyObjectMapper.buildConfigurationInformation(vnrConfiguration,true);
@@ -60,12 +61,11 @@ public class GCTopologyOperationRequestMapper {
     public GenericResourceApiGcTopologyOperationInformation deactivateOrUnassignVnrReqMapper(SDNCSvcAction svcAction,
                                                                                              ServiceInstance serviceInstance,
                                                                                              RequestContext requestContext,
-                                                                                             Configuration vnrConfiguration) {
+                                                                                             Configuration vnrConfiguration, String sdncReqId, URI callbackUri) {
 
-        GenericResourceApiGcTopologyOperationInformation req = new GenericResourceApiGcTopologyOperationInformation();
-        String sdncReqId = requestContext.getMsoRequestId();
+        GenericResourceApiGcTopologyOperationInformation req = new GenericResourceApiGcTopologyOperationInformation();     
         GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader =
-                generalTopologyObjectMapper.buildSdncRequestHeader(svcAction, sdncReqId);// TODO Set URL
+                generalTopologyObjectMapper.buildSdncRequestHeader(svcAction, sdncReqId,callbackUri.toString());
         GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper
                 .buildGenericResourceApiRequestinformationRequestInformation(sdncReqId,
                         GenericResourceApiRequestActionEnumeration.DELETEGENERICCONFIGURATIONINSTANCE);

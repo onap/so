@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,23 +29,23 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.recipe.ResourceInput;
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder.AbstractBuilder
+import org.onap.so.client.HttpClient
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 
 import java.util.UUID;
-
+import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
+import javax.ws.rs.core.MediaType
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.util.UriUtils
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
-import org.onap.so.rest.APIResponse;
+import org.onap.so.utils.TargetEntity
 import org.onap.so.bpmn.common.scripts.AaiUtil
 
 /**
@@ -106,20 +106,29 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
 
 	private void getDeviceInAAI(DelegateExecution execution) {
 		msoLogger.info(" ***** Started getDeviceInAAI *****")
-		
+
 		String deviceId = execution.getVariable(Prefix + "DeviceId")
 		AaiUtil aaiUriUtil = new AaiUtil()
 		String aai_uri = aaiUriUtil.getNetworkDeviceUri(execution)
 		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
 		String serviceAaiPath = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(deviceId,"UTF-8")
 		execution.setVariable(Prefix + "ServiceAaiPath", serviceAaiPath)
-		
-		APIResponse response = aaiUriUtil.executeAAIGetCall(execution, serviceAaiPath)
-		int responseCode = response.getStatusCode()
+
+		URL url = new URL(serviceAaiPath)
+		HttpClient client = new HttpClient(url, MediaType.APPLICATION_XML, TargetEntity.AAI)
+		client.addBasicAuthHeader(UrnPropertiesReader.getVariable("aai.auth", execution), UrnPropertiesReader.getVariable("mso.msoKey", execution))
+		client.addAdditionalHeader("X-FromAppId", "MSO")
+		client.addAdditionalHeader("X-TransactionId", utils.getRequestID())
+		client.addAdditionalHeader("Accept", MediaType.APPLICATION_XML)
+		Response response = client.get()
+
+
+
+		int responseCode = response.getStatus()
 		execution.setVariable(Prefix + "GetDeviceResponseCode", responseCode)
 		msoLogger.debug("  Get device response code is: " + responseCode)
 
-		String aaiResponse = response.getResponseBodyAsString()
+		String aaiResponse = response.readEntity(String.class)
 		aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
 		aaiResponse = aaiResponse.replaceAll("&", "&amp;")
 		execution.setVariable(Prefix + "GetDeviceResponse", aaiResponse)
@@ -131,8 +140,8 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
 			msoLogger.debug("GET Device Received a Good Response")
 			execution.setVariable(Prefix + "SuccessIndicator", true)
 			execution.setVariable(Prefix + "FoundIndicator", true)
-			
-			String devClass = utils.getNodeText1(aaiResponse, "device_class")
+
+			String devClass = utils.getNodeText(aaiResponse, "device_class")
 			execution.setVariable(Prefix + "DeviceClass", devClass)
 			msoLogger.debug(" DeviceClass is: " + devClass)
 

@@ -24,11 +24,14 @@ import org.onap.sdnc.northbound.client.model.*;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.onap.so.client.exception.MapperException;
 
 @Component
 public class GeneralTopologyObjectMapper {
+	
 
 	/*
 	 * Build GenericResourceApiRequestinformationRequestInformation
@@ -135,10 +138,17 @@ public class GeneralTopologyObjectMapper {
 		vfModuleInformation.setFromPreload(null);
 		return vfModuleInformation;
 	}
+	
+	
 	public GenericResourceApiSdncrequestheaderSdncRequestHeader buildSdncRequestHeader(SDNCSvcAction svcAction, String sdncReqId){
+		return buildSdncRequestHeader(svcAction, sdncReqId, null);
+	}
+	
+	public GenericResourceApiSdncrequestheaderSdncRequestHeader buildSdncRequestHeader(SDNCSvcAction svcAction, String sdncReqId, String callbackUrl){
 		GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader = new GenericResourceApiSdncrequestheaderSdncRequestHeader();
 		sdncRequestHeader.setSvcAction(svcAction.getSdncApiAction());
 		sdncRequestHeader.setSvcRequestId(sdncReqId);
+		sdncRequestHeader.setSvcNotificationUrl(callbackUrl);
 		return sdncRequestHeader;
 	}
 

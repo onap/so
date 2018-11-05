@@ -28,7 +28,7 @@
 
 	<modules>
 		<module>MSOCoreBPMN</module>
-		<module>MSORESTClient</module>
+		
 		<module>MSOCommonBPMN</module>
 		<module>so-bpmn-infrastructure-common</module>
 		<module>so-bpmn-tasks</module>

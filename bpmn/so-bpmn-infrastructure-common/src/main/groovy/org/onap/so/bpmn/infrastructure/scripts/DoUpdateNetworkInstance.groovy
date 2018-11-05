@@ -21,7 +21,8 @@
 package org.onap.so.bpmn.infrastructure.scripts;
 
 import javax.ws.rs.core.UriBuilder
-
+import javax.xml.parsers.DocumentBuilder
+import javax.xml.parsers.DocumentBuilderFactory
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -43,10 +44,20 @@ import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
+
 import org.springframework.web.util.UriUtils
+import org.w3c.dom.Document
+import org.w3c.dom.Element
+import org.w3c.dom.NamedNodeMap
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource
 import org.onap.aai.domain.yang.VpnBinding
+import org.onap.aai.domain.yang.L3Network
+import org.onap.aai.domain.yang.NetworkPolicy
+import org.onap.aai.domain.yang.RouteTableReference
 import org.onap.aai.domain.yang.RouteTarget
+import org.onap.aai.domain.yang.Subnet
 import javax.ws.rs.NotFoundException
 
 import groovy.json.*
@@ -405,56 +416,21 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			// get variables
 			String networkRequest = execution.getVariable(Prefix + "networkRequest")
 			String networkId   = utils.getNodeText(networkRequest, "network-id")
-			networkId = UriUtils.encode(networkId,"UTF-8")
 			execution.setVariable(Prefix + "networkId", networkId)
 
-			// Prepare AA&I url
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId)
-			uri.depth(Depth.ALL)
-			String queryIdAAIRequest = aaiUriUtil.createAaiUri(uri)
+			AAIResourcesClient client = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ONE)
+			AAIResultWrapper network = client.get(uri, NotFoundException.class)
 
-			msoLogger.debug(queryIdAAIRequest)
-			execution.setVariable(Prefix + "queryIdAAIRequest", queryIdAAIRequest)
-			msoLogger.debug(Prefix + "queryIdAAIRequest - " + "\n" + queryIdAAIRequest)
+			execution.setVariable(Prefix + "aaiIdReturnCode", "200")
 
-			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryIdAAIRequest)
-			String returnCode = response.getStatusCode()
-			execution.setVariable(Prefix + "aaiIdReturnCode", returnCode)
-			msoLogger.debug(" ***** AAI Response Code  : " + returnCode)
+			execution.setVariable(Prefix + "queryIdAAIResponse", network)
 
-			String aaiResponseAsString = response.getResponseBodyAsString()
 
-			if (returnCode=='200') {
-				msoLogger.debug(aaiResponseAsString)
-				execution.setVariable(Prefix + "queryIdAAIResponse", aaiResponseAsString)
-				msoLogger.debug(" QueryAAINetworkId Success REST Response - " + "\n" + aaiResponseAsString)
-
-			} else {
-				if (returnCode=='404') {
-					String dataErrorMessage = "Response Error from QueryAAINetworkId is 404 (Not Found)."
-					msoLogger.debug(" AAI Query Failed. " + dataErrorMessage)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-				} else {
-				   if (aaiResponseAsString.contains("RESTFault")) {
-					   WorkflowException exceptionObject = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-					   execution.setVariable("WorkflowException", exceptionObject)
-					   throw new BpmnError("MSOWorkflowException")
-
-				   } else {
-							// aai all errors
-							String dataErrorMessage = "Unexpected Response from QueryAAINetworkId - " + returnCode
-							msoLogger.debug("Unexpected Response from QueryAAINetworkId - " + dataErrorMessage)
-							exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-				  }
-				}
-			}
-
-		} catch (BpmnError e) {
-			throw e;
-
+		} catch (NotFoundException e) {
+			String dataErrorMessage = "Response Error from QueryAAINetworkId is 404 (Not Found)."
+			msoLogger.debug(" AAI Query Failed. " + dataErrorMessage)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. callRESTQueryAAINetworkId() - " + ex.getMessage()
 			msoLogger.debug(exceptionMessage)
@@ -474,65 +450,29 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			// get variables
 			String networkRequest = execution.getVariable(Prefix + "networkRequest")
 			String networkId   = utils.getNodeText(networkRequest, "network-id")
-			networkId = UriUtils.encode(networkId,"UTF-8")
 
-			// Prepare AA&I url
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId)
-			uri.depth(Depth.ALL)
-			String requeryIdAAIRequest = aaiUriUtil.createAaiUri(uri)
+			AAIResourcesClient client = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ONE)
+			AAIResultWrapper network = client.get(uri, NotFoundException.class)
 
-			msoLogger.debug(requeryIdAAIRequest)
-			execution.setVariable(Prefix + "requeryIdAAIRequest", requeryIdAAIRequest)
-			msoLogger.debug(" UPDNETI_requeryIdAAIRequest - " + "\n" + requeryIdAAIRequest)
+			execution.setVariable(Prefix + "aaiRequeryIdReturnCode", "200")
+			execution.setVariable(Prefix + "requeryIdAAIResponse", network)
 
-			APIResponse response = aaiUriUtil.executeAAIGetCall(execution, requeryIdAAIRequest)
-			String returnCode = response.getStatusCode()
-			execution.setVariable(Prefix + "aaiRequeryIdReturnCode", returnCode)
-			msoLogger.debug(" ***** AAI ReQuery Response Code  : " + returnCode)
-
-			String aaiResponseAsString = response.getResponseBodyAsString()
-
-			if (returnCode=='200') {
-				msoLogger.debug(aaiResponseAsString)
-				execution.setVariable(Prefix + "requeryIdAAIResponse", aaiResponseAsString)
-				msoLogger.debug(" ReQueryAAINetworkId Success REST Response - " + "\n" + aaiResponseAsString)
-
-				String netId = utils.getNodeText(aaiResponseAsString, "network-id")
-				String netName = utils.getNodeText(aaiResponseAsString, "network-name")
-				String networkOutputs =
-				   """<network-outputs>
+			L3Network net = network.asBean(L3Network.class).get()
+			String netId = net.getNetworkId()
+			String netName = net.getNetworkName()
+			String networkOutputs =
+					"""<network-outputs>
                    <network-id>${MsoUtils.xmlEscape(netId)}</network-id>
                    <network-name>${MsoUtils.xmlEscape(netName)}</network-name>
                  </network-outputs>"""
-				execution.setVariable(Prefix + "networkOutputs", networkOutputs)
-				msoLogger.debug(" networkOutputs - " + '\n' + networkOutputs)
+			execution.setVariable(Prefix + "networkOutputs", networkOutputs)
+			msoLogger.debug(" networkOutputs - " + '\n' + networkOutputs)
 
-			} else {
-				if (returnCode=='404') {
-					String dataErrorMessage = "Response Error from ReQueryAAINetworkId is 404 (Not Found)."
-					msoLogger.debug(" AAI ReQuery Failed. - " + dataErrorMessage)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-				} else {
-				   if (aaiResponseAsString.contains("RESTFault")) {
-					   WorkflowException exceptionObject = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-					   execution.setVariable("WorkflowException", exceptionObject)
-					   throw new BpmnError("MSOWorkflowException")
-
-					   } else {
-							// aai all errors
-							String dataErrorMessage = "Unexpected Response from ReQueryAAINetworkId - " + returnCode
-							msoLogger.debug(dataErrorMessage)
-							exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-					}
-				}
-			}
-
-		} catch (BpmnError e) {
-			throw e;
-
+		} catch (NotFoundException e) {
+			String dataErrorMessage = "Response Error from ReQueryAAINetworkId is 404 (Not Found)."
+			msoLogger.debug(" AAI ReQuery Failed. - " + dataErrorMessage)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. callRESTReQueryAAINetworkId() - " + ex.getMessage()
 			msoLogger.debug(exceptionMessage)
@@ -551,71 +491,56 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 		try {
 
 			// get variables
-			String queryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse").replace('<?xml version="1.0" encoding="UTF-8"?>', "")
-			String relationship = networkUtils.getFirstNodeXml(queryIdAAIResponse, "relationship-list").trim().replace("tag0:","").replace(":tag0","")
-			msoLogger.debug(" relationship - " + relationship)
+			AAIResultWrapper queryIdAAIResponse = execution.getVariable(Prefix + "requeryIdAAIResponse")
+			if(queryIdAAIResponse.getRelationships().isPresent()){
+				List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedAAIUris(AAIObjectType.VPN_BINDING)
 
-			// Check if Vnf Binding is present, then build a List of vnfBinding
-			List vpnBindingUri = networkUtils.getVnfBindingObject(relationship)
-			int vpnCount = vpnBindingUri.size()
-			execution.setVariable(Prefix + "vpnCount", vpnCount)
-			msoLogger.debug(" UPDNETI_vpnCount - " + vpnCount)
+				msoLogger.debug(Prefix + "vpnCount - " + uris.size())
 
-			if (vpnCount > 0) {
-				execution.setVariable(Prefix + "vpnBindings", vpnBindingUri)
-				msoLogger.debug(" vpnBindingUri List - " + vpnBindingUri)
+				if (uris.size() > 0) {
+					String routeTargets = ""
+					for(AAIResourceUri u : uris) {
 
-				String routeTargets = ""
-				// AII loop call using list vpnBindings
-				for(i in 0..vpnBindingUri.size()-1) {
-					int counting = i+1
+						AAIResourcesClient client = new AAIResourcesClient()
+						AAIResultWrapper wrapper = client.get(u.depth(Depth.TWO), NotFoundException.class)
+						Optional<VpnBinding> binding = wrapper.asBean(VpnBinding.class)
 
-					String vpnBindingId = vpnBindingUri[i].substring(vpnBindingUri[i].indexOf("/vpn-binding/")+13, vpnBindingUri[i].length())
-					if (vpnBindingId.charAt(vpnBindingId.length()-1) == '/') {
-						vpnBindingId = vpnBindingId.substring(0, vpnBindingId.length()-1)
-					}
-
-					AAIResourcesClient resourceClient = new AAIResourcesClient()
-					AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnBindingId)
-					AAIResultWrapper wrapper = resourceClient.get(uri.depth(Depth.TWO), NotFoundException.class)
-
-					Optional<VpnBinding> binding = wrapper.asBean(VpnBinding.class)
-
-					String routeTarget = ""
-					String routeRole = ""
-					if(binding.get().getRouteTargets() != null) {
-						List<RouteTarget> targets = binding.get().getRouteTargets().getRouteTarget()
-						for(RouteTarget target : targets) {
-							routeTarget  = target.getGlobalRouteTarget()
-							routeRole  = target.getRouteTargetRole()
-							routeTargets += "<routeTargets>" + '\n' +
-									" <routeTarget>" + routeTarget + "</routeTarget>" + '\n' +
-									" <routeTargetRole>" + routeRole + "</routeTargetRole>" + '\n' +
-									"</routeTargets>" + '\n'
+						String routeTarget = ""
+						String routeRole = ""
+						if(binding.get().getRouteTargets() != null) {
+							List<RouteTarget> targets = binding.get().getRouteTargets().getRouteTarget()
+							for(RouteTarget target : targets) {
+								routeTarget  = target.getGlobalRouteTarget()
+								routeRole  = target.getRouteTargetRole()
+								routeTargets += "<routeTargets>" + '\n' +
+										" <routeTarget>" + routeTarget + "</routeTarget>" + '\n' +
+										" <routeTargetRole>" + routeRole + "</routeTargetRole>" + '\n' +
+										"</routeTargets>" + '\n'
+							}
 						}
-					}
 
-				} // end loop
+					} // end loop
 
-				execution.setVariable(Prefix + "routeCollection", routeTargets)
-				msoLogger.debug(" UPDNETI_routeCollection - " + '\n' + routeTargets)
+					execution.setVariable(Prefix + "routeCollection", routeTargets)
+					msoLogger.debug(" UPDNETI_routeCollection - " + '\n' + routeTargets)
 
-			} else {
-				// reset return code to success
-				execution.setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
-				AaiUtil aaiUriUtil = new AaiUtil(this)
-				String schemaVersion = aaiUriUtil.getNamespace()
-			    String aaiStubResponse =
-					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
+				} else {
+					// reset return code to success
+					execution.setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
+					AaiUtil aaiUriUtil = new AaiUtil(this)
+					String schemaVersion = aaiUriUtil.getNamespace()
+					String aaiStubResponse =
+							"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<vpn-binding xmlns="${schemaVersion}">
 						      <global-route-target/>
 							</vpn-binding>
 						</rest:payload>"""
-				String aaiStubResponseAsXml = utils.formatXml(aaiStubResponse)
-				execution.setVariable(Prefix + "queryVpnBindingAAIResponse", aaiStubResponseAsXml)
-				execution.setVariable(Prefix + "routeCollection", "<routeTargets/>")
-				msoLogger.debug(" No vpnBinding, using this stub as response - " + '\n' + aaiStubResponseAsXml)
+					String aaiStubResponseAsXml = utils.formatXml(aaiStubResponse)
+					execution.setVariable(Prefix + "queryVpnBindingAAIResponse", aaiStubResponseAsXml)
+					execution.setVariable(Prefix + "routeCollection", "<routeTargets/>")
+					msoLogger.debug(" No vpnBinding, using this stub as response - " + '\n' + aaiStubResponseAsXml)
 
+				}
 			}
 
 		} catch (NotFoundException e) {
@@ -638,103 +563,55 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		try {
 			// get variables
-			String queryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse").replace('<?xml version="1.0" encoding="UTF-8"?>', "")
-			String relationship = networkUtils.getFirstNodeXml(queryIdAAIResponse, "relationship-list").trim().replace("tag0:","").replace(":tag0","")
-			msoLogger.debug(" relationship - " + relationship)
+			AAIResultWrapper queryIdAAIResponse = execution.getVariable(Prefix + "requeryIdAAIResponse")
+			if(queryIdAAIResponse.getRelationships().isPresent()){
+				List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedAAIUris(AAIObjectType.NETWORK_POLICY)
 
-			// Check if Network Policy is present, then build a List of network policy
-			List networkPolicyUriList = networkUtils.getNetworkPolicyObject(relationship)
-			int networkPolicyCount = networkPolicyUriList.size()
-			execution.setVariable(Prefix + "networkPolicyCount", networkPolicyCount)
-			msoLogger.debug(" UPDNETI_networkPolicyCount - " + networkPolicyCount)
+				execution.setVariable(Prefix + "networkPolicyCount", uris.size())
+				msoLogger.debug(Prefix + "networkPolicyCount - " + uris.size())
 
-			AaiUtil aaiUriUtil = new AaiUtil(this)
+				if (uris.size() > 0) {
 
-			if (networkPolicyCount > 0) {
-				execution.setVariable(Prefix + "networkPolicyUriList", networkPolicyUriList)
-				msoLogger.debug(" networkPolicyUri List - " + networkPolicyUriList)
+					String networkPolicies = ""
+					// AII loop call using list vpnBindings
+					for(AAIResourceUri u : uris) {
 
-				String networkPolicies = ""
-				// AII loop call using list vpnBindings
-				for (i in 0..networkPolicyUriList.size()-1) {
+						AAIResourcesClient client = new AAIResourcesClient()
+						NetworkPolicy p = client.get(u, NotFoundException.class).asBean(NetworkPolicy.class).get()
 
-					int counting = i+1
+						execution.setVariable(Prefix + "aaiQqueryNetworkPolicyReturnCode", "200")
 
-					URI uri = UriBuilder.fromUri(networkPolicyUriList[i]).build()
+						String networkPolicy  = p.getNetworkPolicyFqdn()
+						networkPolicies += "<policyFqdns>" + networkPolicy + "</policyFqdns>" + '\n'
 
-					AAIResourceUri aaiUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.NETWORK_POLICY, uri)
-					aaiUri.depth(Depth.ALL)
-					String queryNetworkPolicyAAIRequest = aaiUriUtil.createAaiUri(aaiUri)
+					} // end loop
 
-					msoLogger.debug(queryNetworkPolicyAAIRequest)
-					execution.setVariable(Prefix + "queryNetworkPolicyAAIRequest", queryNetworkPolicyAAIRequest)
-					msoLogger.debug(" UPDNETI_queryNetworkPolicyAAIRequest, , NetworkPolicy #" + counting + " : " + "\n" + queryNetworkPolicyAAIRequest)
+					execution.setVariable(Prefix + "networkCollection", networkPolicies)
+					msoLogger.debug(" UPDNETI_networkCollection - " + '\n' + networkPolicies)
 
-					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryNetworkPolicyAAIRequest)
-					String returnCode = response.getStatusCode()
-					execution.setVariable(Prefix + "aaiQqueryNetworkPolicyReturnCode", returnCode)
-					msoLogger.debug(" ***** AAI query network policy Response Code, NetworkPolicy #" + counting + " : " + returnCode)
-
-					String aaiResponseAsString = response.getResponseBodyAsString()
-
-					if (returnCode=='200') {
-						msoLogger.debug(aaiResponseAsString)
-						execution.setVariable(Prefix + "queryNetworkPolicyAAIResponse", aaiResponseAsString)
-						msoLogger.debug(" QueryAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : " + "\n" + aaiResponseAsString)
-
-						String networkPolicy = ""
-						if (utils.nodeExists(aaiResponseAsString, "network-policy-fqdn")) {
-							networkPolicy  = utils.getNodeText(aaiResponseAsString, "network-policy-fqdn")
-							networkPolicies += "<policyFqdns>" + networkPolicy + "</policyFqdns>" + '\n'
-						}
-
-					} else {
-						if (returnCode=='404') {
-							String dataErrorMessage = "Response Error from QueryAAINetworkPolicy is 404 (Not Found)."
-							msoLogger.debug(dataErrorMessage)
-							exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-						} else {
-						   if (aaiResponseAsString.contains("RESTFault")) {
-							   WorkflowException exceptionObject = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-							   execution.setVariable("WorkflowException", exceptionObject)
-							   throw new BpmnError("MSOWorkflowException")
-
-							   } else {
-									// aai all errors
-									String dataErrorMessage = "Unexpected Response from QueryAAINetworkPolicy - " + returnCode
-									msoLogger.debug(dataErrorMessage)
-									exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-							  }
-						}
-					}
-
-				} // end loop
-
-				execution.setVariable(Prefix + "networkCollection", networkPolicies)
-				msoLogger.debug(" UPDNETI_networkCollection - " + '\n' + networkPolicies)
-
-			} else {
-				// reset return code to success
-				execution.setVariable(Prefix + "aaiQqueryNetworkPolicyReturnCode", "200")
-				String schemaVersion = aaiUriUtil.getNamespace()
-				String aaiStubResponse =
-					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
+				} else {
+					// reset return code to success
+					execution.setVariable(Prefix + "aaiQqueryNetworkPolicyReturnCode", "200")
+					AaiUtil aaiUriUtil = new AaiUtil(this)
+					String schemaVersion = aaiUriUtil.getNamespace()
+					String aaiStubResponse =
+							"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<network-policy xmlns="${schemaVersion}">
 							  <network-policy-fqdn/>
                             </network-policy>
 						</rest:payload>"""
-				String aaiStubResponseAsXml = utils.formatXml(aaiStubResponse)
-				execution.setVariable(Prefix + "queryNetworkPolicyAAIResponse", aaiStubResponseAsXml)
-				execution.setVariable(Prefix + "networkCollection", "<policyFqdns/>")
-				msoLogger.debug(" No net policies, using this stub as response - " + '\n' + aaiStubResponseAsXml)
+					String aaiStubResponseAsXml = utils.formatXml(aaiStubResponse)
+					execution.setVariable(Prefix + "queryNetworkPolicyAAIResponse", aaiStubResponseAsXml)
+					execution.setVariable(Prefix + "networkCollection", "<policyFqdns/>")
+					msoLogger.debug(" No net policies, using this stub as response - " + '\n' + aaiStubResponseAsXml)
 
+				}
 			}
 
-		} catch (BpmnError e) {
-			throw e;
-
+		} catch (NotFoundException e) {
+			String dataErrorMessage = "Response Error from QueryAAINetworkPolicy is 404 (Not Found)."
+			msoLogger.debug(dataErrorMessage)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. callRESTQueryAAINetworkPolicy() - " + ex.getMessage()
 			msoLogger.debug(exceptionMessage)
@@ -751,105 +628,56 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 		msoLogger.debug(" ***** Inside callRESTQueryAAINetworkTableRef of DoUpdateNetworkInstance ***** " )
 
 		try {
-			// get variables
-			String queryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse").replace('<?xml version="1.0" encoding="UTF-8"?>', "")
-			String relationship = networkUtils.getFirstNodeXml(queryIdAAIResponse, "relationship-list").trim().replace("tag0:","").replace(":tag0","")
-			msoLogger.debug(" relationship - " + relationship)
+			AAIResultWrapper queryIdAAIResponse = execution.getVariable(Prefix + "requeryIdAAIResponse")
+			if(queryIdAAIResponse.getRelationships().isPresent()){
+				List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedAAIUris(AAIObjectType.ROUTE_TABLE_REFERENCE)
 
-			// Check if Network TableREf is present, then build a List of network policy
-			List networkTableRefUriList = networkUtils.getNetworkTableRefObject(relationship)
-			int networkTableRefCount = networkTableRefUriList.size()
-			execution.setVariable(Prefix + "networkTableRefCount", networkTableRefCount)
-			msoLogger.debug(" UPDNETI_networkTableRefCount - " + networkTableRefCount)
+				execution.setVariable(Prefix + "networkTableRefCount", uris.size())
+				msoLogger.debug(Prefix + "networkTableRefCount - " + uris.size())
 
-			String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-			AaiUtil aaiUriUtil = new AaiUtil(this)
+				msoLogger.debug(" UPDNETI_networkTableRefCount - " + uris.size())
+				if (uris.size() > 0) {
 
-			if (networkTableRefCount > 0) {
-				execution.setVariable(Prefix + "networkTableRefUriList", networkTableRefUriList)
-				msoLogger.debug(" networkTableRefUri List - " + networkTableRefUriList)
+					execution.setVariable(Prefix + "aaiQqueryNetworkTableRefReturnCode", "200")
 
-				// AII loop call using list vpnBindings
-				String networkTableRefs = ""
-				for (i in 0..networkTableRefUriList.size()-1) {
+					// AII loop call using list vpnBindings
+					String networkTableRefs = ""
+					for(AAIResourceUri u : uris) {
 
-					int counting = i+1
+						AAIResourcesClient client = new AAIResourcesClient()
+						RouteTableReference rt = client.get(u, NotFoundException.class).asBean(RouteTableReference.class).get()
 
-					// prepare url using tableRef
-					URI uri = UriBuilder.fromUri(networkTableRefUriList[i]).build()
+						String networkTableRef  = rt.getRouteTableReferenceFqdn()
+						networkTableRefs += "<routeTableFqdns>" + networkTableRef + "</routeTableFqdns>" + '\n'
 
-					AAIResourceUri aaiUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ROUTE_TABLE_REFERENCE, uri)
-					aaiUri.depth(Depth.ALL)
-					String queryNetworkTableRefAAIRequest = aaiUriUtil.createAaiUri(aaiUri)
+					} // end loop
 
-					msoLogger.debug(queryNetworkTableRefAAIRequest)
-					execution.setVariable(Prefix + "queryNetworkTableRefAAIRequest", queryNetworkTableRefAAIRequest)
-					msoLogger.debug(" UPDNETI_queryNetworkTableRefAAIRequest, , NetworkTableRef #" + counting + " : " + "\n" + queryNetworkTableRefAAIRequest)
+					execution.setVariable(Prefix + "tableRefCollection", networkTableRefs)
+					msoLogger.debug(" UPDNETI_tableRefCollection - " + '\n' + networkTableRefs)
 
-					APIResponse response = aaiUriUtil.executeAAIGetCall(execution, queryNetworkTableRefAAIRequest)
-					String returnCode = response.getStatusCode()
-					execution.setVariable(Prefix + "aaiQqueryNetworkTableRefReturnCode", returnCode)
-					msoLogger.debug(" ***** AAI query network Table Reference Response Code, NetworkTableRef #" + counting + " : " + returnCode)
-
-					String aaiResponseAsString = response.getResponseBodyAsString()
-
-					if (returnCode=='200') {
-						msoLogger.debug(aaiResponseAsString)
-						execution.setVariable(Prefix + "queryNetworkTableRefAAIResponse", aaiResponseAsString)
-						msoLogger.debug(" QueryAAINetworkTableRef Success REST Response, , NetworkTableRef #" + counting + " : " + "\n" + aaiResponseAsString)
-
-						String networkTableRef = ""
-						if (utils.nodeExists(aaiResponseAsString, "route-table-reference-fqdn")) {
-							networkTableRef  = utils.getNodeText(aaiResponseAsString, "route-table-reference-fqdn")
-							networkTableRefs += "<routeTableFqdns>" + networkTableRef + "</routeTableFqdns>" + '\n'
-						}
-
-					} else {
-						if (returnCode=='404') {
-							String dataErrorMessage = "Response Error from QueryAAINetworkTableRef is 404 (Not Found)."
-							msoLogger.debug(dataErrorMessage)
-							exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-						} else {
-						   if (aaiResponseAsString.contains("RESTFault")) {
-							   WorkflowException exceptionObject = exceptionUtil.MapAAIExceptionToWorkflowException(aaiResponseAsString, execution)
-							   execution.setVariable("WorkflowException", exceptionObject)
-							   throw new BpmnError("MSOWorkflowException")
-
-							   } else {
-									// aai all errors
-									String dataErrorMessage = "Unexpected Response from QueryAAINetworkTableRef - " + returnCode
-									msoLogger.debug(dataErrorMessage)
-									exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-							  }
-						}
-					}
-
-				} // end loop
-
-				execution.setVariable(Prefix + "tableRefCollection", networkTableRefs)
-				msoLogger.debug(" UPDNETI_tableRefCollection - " + '\n' + networkTableRefs)
-
-			} else {
-				// reset return code to success
-				execution.setVariable(Prefix + "aaiQqueryNetworkTableRefReturnCode", "200")
-				String schemaVersion = aaiUriUtil.getNamespace()
-				String aaiStubResponse =
-					"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
+				} else {
+					// reset return code to success
+					execution.setVariable(Prefix + "aaiQqueryNetworkTableRefReturnCode", "200")
+					AaiUtil aaiUriUtil = new AaiUtil(this)
+					String schemaVersion = aaiUriUtil.getNamespace()
+					String aaiStubResponse =
+							"""	<rest:payload contentType="text/xml" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd">
 							<route-table-references xmlns="${schemaVersion}">
 							  <route-table-reference-fqdn/>
                             </route-table-references>
 						</rest:payload>"""
-				String aaiStubResponseAsXml = utils.formatXml(aaiStubResponse)
-				execution.setVariable(Prefix + "queryNetworkTableRefAAIResponse", aaiStubResponseAsXml)
-				execution.setVariable(Prefix + "tableRefCollection", "<routeTableFqdns/>")
-				msoLogger.debug(" No net table references, using this stub as response - " + '\n' + aaiStubResponseAsXml)
+					String aaiStubResponseAsXml = utils.formatXml(aaiStubResponse)
+					execution.setVariable(Prefix + "queryNetworkTableRefAAIResponse", aaiStubResponseAsXml)
+					execution.setVariable(Prefix + "tableRefCollection", "<routeTableFqdns/>")
+					msoLogger.debug(" No net table references, using this stub as response - " + '\n' + aaiStubResponseAsXml)
 
+				}
 			}
 
-		} catch (BpmnError e) {
-			throw e;
+		} catch (NotFoundException e) {
+			String dataErrorMessage = "Response Error from QueryAAINetworkTableRef is 404 (Not Found)."
+			msoLogger.debug(dataErrorMessage)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. callRESTQueryAAINetworkTableRef() - " + ex.getMessage()
@@ -861,76 +689,73 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 	}
 
 	public void callRESTUpdateContrailAAINetwork(DelegateExecution execution) {
-
 		execution.setVariable("prefix", Prefix)
-
 		msoLogger.debug(" ***** Inside callRESTUpdateContrailAAINetwork of DoUpdateNetworkInstance ***** " )
-
 		try {
 			// get variables
 			String networkRequest = execution.getVariable(Prefix + "networkRequest")
 			String networkId   = utils.getNodeText(networkRequest, "network-id")
-			networkId = UriUtils.encode(networkId,"UTF-8")
-			String requeryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse")
+			AAIResultWrapper requeryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse")
 			String updateNetworkResponse   = execution.getVariable(Prefix + "updateNetworkResponse")
 
-			// Prepare url
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId)
-			uri.depth(Depth.ALL)
-			String updateContrailAAIUrlRequest = aaiUriUtil.createAaiUri(uri)
-
-			msoLogger.debug(updateContrailAAIUrlRequest)
-			execution.setVariable(Prefix + "updateContrailAAIUrlRequest", updateContrailAAIUrlRequest)
-			msoLogger.debug(" UPDNETI_updateContrailAAIUrlRequest - " + "\n" + updateContrailAAIUrlRequest)
-
-			//Prepare payload (PUT)
-			String schemaVersion = aaiUriUtil.getNamespaceFromUri(updateContrailAAIUrlRequest)
-			String payload = networkUtils.ContrailNetworkCreatedUpdate(requeryIdAAIResponse, updateNetworkResponse, schemaVersion)
-			String payloadXml = utils.formatXml(payload)
-			msoLogger.debug(payloadXml)
-			execution.setVariable(Prefix + "updateContrailAAIPayloadRequest", payloadXml)
-			msoLogger.debug(" 'payload' to Update Contrail - " + "\n" + payloadXml)
-
-			APIResponse response = aaiUriUtil.executeAAIPutCall(execution, updateContrailAAIUrlRequest, payload)
-			String returnCode = response.getStatusCode()
-			String aaiUpdateContrailResponseAsString = response.getResponseBodyAsString()
-
-			execution.setVariable(Prefix + "aaiUpdateContrailReturnCode", returnCode)
-			msoLogger.debug(" ***** AAI Update Contrail Response Code  : " + returnCode)
-
-
-			if (returnCode=='200') {
-				msoLogger.debug(aaiUpdateContrailResponseAsString)
-				execution.setVariable(Prefix + "updateContrailAAIResponse", aaiUpdateContrailResponseAsString)
-				msoLogger.debug(" AAI Update Contrail Success REST Response - " + "\n" + aaiUpdateContrailResponseAsString)
-				// Point-of-no-return is set to false, rollback not needed.
-				execution.setVariable(Prefix + "isPONR", true)
-
+			L3Network oldL3Network = requeryIdAAIResponse.asBean(L3Network.class).get()
+			L3Network l3Network = new L3Network()
+			if (oldL3Network.getHeatStackId() != null) {
 			} else {
-				if (returnCode=='404') {
-					String dataErrorMessage = " Response Error from UpdateContrailAAINetwork is 404 (Not Found)."
-					msoLogger.debug(dataErrorMessage)
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-
-				} else {
-				   if (aaiUpdateContrailResponseAsString.contains("RESTFault")) {
-					   WorkflowException exceptionObject = exceptionUtil.MapAAIExceptionToWorkflowException(aaiUpdateContrailResponseAsString, execution)
-					   execution.setVariable("WorkflowException", exceptionObject)
-					   throw new BpmnError("MSOWorkflowException")
-
-					   } else {
-							// aai all errors
-							String errorMessage = "Unexpected Response from UpdateContrailAAINetwork - " + returnCode
-							msoLogger.debug(errorMessage)
-							exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMessage)
-					  }
+				if (utils.nodeExists(updateNetworkResponse, 'networkStackId')) {
+					l3Network.setHeatStackId(utils.getNodeText(updateNetworkResponse, 'networkStackId'))
+				}
+			}
+			if (oldL3Network.getNeutronNetworkId() != null) {
+			} else {
+				if (utils.nodeExists(updateNetworkResponse, 'neutronNetworkId')) {
+					l3Network.setNeutronNetworkId(utils.getNodeText(updateNetworkResponse, 'neutronNetworkId'))
+				}
+			}
+			if (oldL3Network.getContrailNetworkFqdn() != null) {
+			} else {
+				if (utils.nodeExists(updateNetworkResponse, 'networkFqdn')) {
+					l3Network.setContrailNetworkFqdn(utils.getNodeText(updateNetworkResponse, 'networkFqdn'))
 				}
 			}
 
+			String status = utils.getNodeText(updateNetworkResponse, 'orchestration-status')
+			if(status.equals("pending-create") || status.equals("PendingCreate")){
+				l3Network.setOperationalStatus("Created")
+			}else{
+				l3Network.setOperationalStatus("Active")
+			}
+
+			AAIResourcesClient client = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId)
+			client.update(uri, l3Network)
+
+			List<Subnet> subnets = oldL3Network.getSubnets().getSubnet()
+			for(Subnet s:subnets){
+				String subnetOrchStatus = s.getOrchestrationStatus()
+				String subnetId = s.getSubnetId()
+
+				Subnet subnet = new Subnet()
+				String neutronSubnetId = networkUtils.extractNeutSubId(updateNetworkResponse, subnetId)
+				subnet.setNeutronSubnetId(neutronSubnetId)
+				if(subnetOrchStatus.equals("pending-create") || subnetOrchStatus.equals("PendingCreate") ){
+					subnet.setOrchestrationStatus("Created")
+				}else{
+					subnet.setOrchestrationStatus("Active")
+				}
+
+				AAIResourceUri subUri = AAIUriFactory.createResourceUri(AAIObjectType.SUBNET, networkId, subnetId)
+				client.update(subUri, subnet)
+			}
+
+			execution.setVariable(Prefix + "isPONR", true)
+
 		} catch (BpmnError e) {
 			throw e;
-
+		} catch (NotFoundException e) {
+			String dataErrorMessage = " Response Error from UpdateContrailAAINetwork is 404 (Not Found)."
+			msoLogger.debug(dataErrorMessage)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. callRESTUpdateContrailAAINetwork() - " + ex.getMessage()
 			msoLogger.debug(exceptionMessage)
@@ -1000,7 +825,8 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 			String serviceInstanceId = utils.getNodeText(updateNetworkInput, "service-instance-id")
 
-			String queryAAIResponse = execution.getVariable(Prefix + "queryIdAAIResponse")
+			AAIResultWrapper wrapper = execution.getVariable(Prefix + "queryIdAAIResponse")
+			L3Network queryAAIResponse = wrapper.asBean(L3Network.class).get()
 
 			// 1. prepare assign topology via SDNC Adapter SUBFLOW call
  		   	String sndcTopologyCreateRequest = sdncAdapterUtils.sdncTopologyRequestV2(execution, updateNetworkInput, serviceInstanceId, sdncCallback, "changeassign", "NetworkActivateRequest", cloudRegionId, networkId, queryAAIResponse, null)

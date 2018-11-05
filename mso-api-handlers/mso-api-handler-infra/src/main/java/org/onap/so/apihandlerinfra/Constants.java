@@ -49,4 +49,6 @@ public class Constants {
 	public final static String VNF_REQUEST_SCOPE = "vnf";
 	public final static String SERVICE_INSTANCE_PATH = "/serviceInstances";
 	public final static String SERVICE_INSTANTIATION_PATH = "/serviceInstantiation";
+	public final static String ORCHESTRATION_REQUESTS_PATH = "/orchestrationRequests";
+	
 }

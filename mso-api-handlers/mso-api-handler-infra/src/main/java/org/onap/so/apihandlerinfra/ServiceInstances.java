@@ -95,6 +95,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,7 +112,7 @@ public class ServiceInstances {
 	private static String NAME = "name";
 	private static String VALUE = "value";
 	private static final String SAVE_TO_DB = "save instance to db";
-	
+
 	@Autowired
 	private Environment env;
 	
@@ -873,6 +874,13 @@ public class ServiceInstances {
 				try {
 					ObjectMapper mapper = new ObjectMapper();
 					jsonResponse = mapper.readValue(camundaResp.getResponse(), ServiceInstancesResponse.class);
+					jsonResponse.getRequestReferences().setRequestId(requestId);
+					Optional<URL> selfLinkUrl = msoRequest.buildSelfLinkUrl(currentActiveReq.getRequestUrl(), requestId);
+					if(selfLinkUrl.isPresent()){
+						jsonResponse.getRequestReferences().setRequestSelfLink(selfLinkUrl.get());
+					} else {
+					    jsonResponse.getRequestReferences().setRequestSelfLink(null);
+					}    
 				} catch (IOException e) {
 					msoLogger.error(e);
 					ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();

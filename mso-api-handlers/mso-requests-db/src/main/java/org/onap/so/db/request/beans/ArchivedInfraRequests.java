@@ -85,7 +85,8 @@ public class ArchivedInfraRequests extends InfraRequests {
 				.append("networkName", getNetworkName()).append("networkType", getNetworkType())
 				.append("requestorId", getRequestorId()).append("configurationId", getConfigurationId())
 				.append("configurationName", getConfigurationName()).append("operationalEnvId", getOperationalEnvId())
-				.append("operationalEnvName", getOperationalEnvName()).toString();
+				.append("operationalEnvName", getOperationalEnvName())
+                .append("requestUrl", getRequestUrl()).toString();
 	}
 
 }

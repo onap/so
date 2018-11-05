@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,6 +34,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onap.so.TestApplication;
+import org.onap.so.bpmn.buildingblock.SniroHomingV2;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.common.validation.BuildingBlockValidatorRunner;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAICommonTasks;
@@ -72,6 +73,7 @@ import org.onap.so.bpmn.sdno.tasks.SDNOHealthCheckTasks;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExecuteBuildingBlockRainyDay;
+import org.onap.so.client.sdnc.SDNCClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -91,9 +93,9 @@ public abstract class BaseBPMNTest {
 
 	@Autowired
 	private RepositoryService repositoryService;
-	
+
 	protected Map<String, Object> variables = new HashMap<>();
-	
+
 	protected List<String> mockedSubprocessList = new ArrayList<>();
 
 	protected TestRestTemplate restTemplate = new TestRestTemplate();
@@ -111,11 +113,11 @@ public abstract class BaseBPMNTest {
 
 	@MockBean
 	protected AAIDeleteTasks aaiDeleteTasks;
-	
+
 	@MockBean
 	protected AAIFlagTasks aaiFlagTasks;
-	
-	
+
+
 	@MockBean
 	protected AppcRunTasks appcRunTasks;
 
@@ -154,7 +156,7 @@ public abstract class BaseBPMNTest {
 
 	@MockBean
 	protected AssignNetworkBBUtils assignNetworkBBUtils;
-	
+
 	@MockBean
 	protected AssignNetwork assignNetwork;
 
@@ -181,37 +183,43 @@ public abstract class BaseBPMNTest {
 
 	@MockBean
 	protected OrchestrationStatusValidator orchestrationStatusValidator;
-	
+
 	@MockBean
 	protected BBInputSetup bbInputSetup;
-	
+
 	@MockBean
 	protected BBInputSetupUtils bbInputSetupUtils;
-	
+
 	@MockBean
 	protected ExecuteBuildingBlockRainyDay executeBuildingBlockRainyDay;
-	
+
 	@MockBean
 	protected WorkflowAction workflowAction;
 
 	@MockBean
 	protected WorkflowActionBBTasks workflowActionBBTasks;
-	
+
 	@MockBean
 	protected GenericVnfHealthCheck genericVnfHealthCheck;
-	
+
 	@MockBean
 	protected ConfigurationScaleOut configurationScaleOut;
-	
+
 	@MockBean
 	protected FlowCompletionTasks flowCompletionTasks;
-	
+
 	@MockBean
 	protected BuildingBlockValidatorRunner buildingBlockValidatorRunner;
-	
+
 	@MockBean
 	protected SDNOHealthCheckTasks sdnoHealthCheckTasks;
-	
+
+	@MockBean
+	protected SDNCClient sdncClient;
+
+	@MockBean
+	protected SniroHomingV2 sniroHoming;
+
 	@LocalServerPort
 	protected int port;
 
@@ -223,7 +231,7 @@ public abstract class BaseBPMNTest {
 	public void baseBefore() {
 		variables.put("gBuildingBlockExecution", new DelegateExecutionImpl(new HashMap<>()));
 	}
-	
+
 	@After
 	public void baseAfter() {
 		for (String deploymentId : mockedSubprocessList) {
@@ -231,7 +239,7 @@ public abstract class BaseBPMNTest {
 		}
 		mockedSubprocessList.clear();
 	}
-	
+
 	/**
 	 * Create and deploy a process model with one logger delegate as service task.
 	 *
@@ -268,7 +276,7 @@ public abstract class BaseBPMNTest {
 		for (String key : outParam.keySet()) {
 			builder.camundaOutputParameter(key, outParam.get(key));
 		}
-		
+
 		BpmnModelInstance modelInstance = builder.endEvent().name("End_Event").done();
 		mockedSubprocessList.add(repositoryService.createDeployment().addModelInstance(fileName + ".bpmn", modelInstance).deploy().getId());
 	}

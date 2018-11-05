@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved. 
+ * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,9 +40,6 @@ import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils;
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.rest.APIResponse;
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
 
 import java.util.List;
 import java.util.UUID;
@@ -88,48 +85,48 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 
 		try {
 			execution.setVariable("prefix", Prefix)
-			
+
 			//Inputs
 			String modelInvariantUuid_target = execution.getVariable("model-invariant-id-target")
 			if (isBlank(modelInvariantUuid_target)) {
 				msg = "Input model-invariant-id-target is null"
 				utils.log("INFO", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}			
-			
+			}
+
             String modelUuid_target = execution.getVariable("model-version-id-target")
             if (isBlank(modelUuid_target)) {
 				msg = "Input model-version-id-target is null"
 				utils.log("INFO", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
-            
+
             String modelInvariantUuid_original = execution.getVariable("model-invariant-id-original")
             if (isBlank(modelInvariantUuid_original)) {
 				msg = "Input model-invariant-id-original is null"
 				utils.log("INFO", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
-            
+
             String modelUuid_original = execution.getVariable("model-version-id-original")
             if (isBlank(modelUuid_original)) {
 				msg = "Input model-version-id-original is null"
 				utils.log("INFO", msg, isDebugEnabled)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}  
-			
+			}
+
 			// Target and original modelInvariantUuid must to be the same
 			if(modelInvariantUuid_target != modelInvariantUuid_original){
 				msg = "Input model-invariant-id-target and model-invariant-id-original must to be the same"
 				utils.log("INFO", msg, isDebugEnabled)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)      
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
-			
+
 			// Target and original modelUuid must not to be the same
 			if(modelUuid_target == modelUuid_original){
 				msg = "Input model-version-id-target and model-version-id-original must not to be the same"
 				utils.log("INFO", msg, isDebugEnabled)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)      
+				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
 		} catch (Exception ex){
@@ -139,7 +136,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 		}
 		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
 	}
-	
+
    public void prepareDecomposeService_Target(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
@@ -153,7 +150,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
             "modelUuid":"${modelUuid}",
             "modelVersion":""
              }"""
-            
+
             execution.setVariable("serviceModelInfo_Target", serviceModelInfo)
 
             utils.log("DEBUG", " ***** Completed prepareDecomposeService_Target of update generic e2e service ***** ", isDebugEnabled)
@@ -166,8 +163,8 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 
     public void processDecomposition_Target(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-    
-        utils.log("DEBUG", " ***** Inside processDecomposition_Target() of update generic e2e service flow ***** ", isDebugEnabled)    
+
+        utils.log("DEBUG", " ***** Inside processDecomposition_Target() of update generic e2e service flow ***** ", isDebugEnabled)
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             execution.setVariable("serviceDecomposition_Target", serviceDecomposition)
@@ -177,7 +174,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
     }
- 
+
    public void prepareDecomposeService_Original(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
@@ -191,7 +188,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
             "modelUuid":"${modelUuid}",
             "modelVersion":""
              }"""
-            
+
             execution.setVariable("serviceModelInfo_Original", serviceModelInfo)
 
             utils.log("DEBUG", " ***** Completed prepareDecomposeService_Original of update generic e2e service ***** ", isDebugEnabled)
@@ -204,8 +201,8 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 
     public void processDecomposition_Original(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-    
-        utils.log("DEBUG", " ***** Inside processDecomposition_Original() of update generic e2e service flow ***** ", isDebugEnabled)    
+
+        utils.log("DEBUG", " ***** Inside processDecomposition_Original() of update generic e2e service flow ***** ", isDebugEnabled)
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             execution.setVariable("serviceDecomposition_Original", serviceDecomposition)
@@ -214,45 +211,45 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
             utils.log("DEBUG", exceptionMessage, isDebugEnabled)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
-    } 	
+    }
 
 	public void doCompareModelVersions(DelegateExecution execution){
 	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO", "======== Start doCompareModelVersions Process ======== ", isDebugEnabled)          
+        utils.log("INFO", "======== Start doCompareModelVersions Process ======== ", isDebugEnabled)
 
         ServiceDecomposition serviceDecomposition_Target = execution.getVariable("serviceDecomposition_Target")
         ServiceDecomposition serviceDecomposition_Original = execution.getVariable("serviceDecomposition_Original")
-        
+
         List<Resource> allSR_target = serviceDecomposition_Target.getServiceResources();
         List<Resource> allSR_original = serviceDecomposition_Original.getServiceResources();
-        
+
         List<Resource> addResourceList = new ArrayList<String>()
         List<Resource> delResourceList = new ArrayList<String>()
-        
+
         addResourceList.addAll(allSR_target)
         delResourceList.addAll(allSR_original)
-        
+
         //Compare
         for (Resource rc_t : allSR_target){
             String muuid = rc_t.getModelInfo().getModelUuid()
             String mIuuid = rc_t.getModelInfo().getModelInvariantUuid()
             String mCuuid = rc_t.getModelInfo().getModelCustomizationUuid()
             for (Resource rc_o : allSR_original){
-                if(rc_o.getModelInfo().getModelUuid() == muuid 
-                && rc_o.getModelInfo().getModelInvariantUuid() == mIuuid 
+                if(rc_o.getModelInfo().getModelUuid() == muuid
+                && rc_o.getModelInfo().getModelInvariantUuid() == mIuuid
                 && rc_o.getModelInfo().getModelCustomizationUuid() == mCuuid) {
                     addResourceList.remove(rc_t);
                     delResourceList.remove(rc_o);
                 }
-            }         
+            }
         }
 
         execution.setVariable("addResourceList", addResourceList)
         execution.setVariable("delResourceList", delResourceList)
-        utils.log("INFO", "addResourceList: " + addResourceList, isDebugEnabled)  
+        utils.log("INFO", "addResourceList: " + addResourceList, isDebugEnabled)
         utils.log("INFO", "delResourceList: " + delResourceList, isDebugEnabled)
-        
-        utils.log("INFO", "======== COMPLETED doCompareModelVersions Process ======== ", isDebugEnabled)  
+
+        utils.log("INFO", "======== COMPLETED doCompareModelVersions Process ======== ", isDebugEnabled)
 	}
 
 }

@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.common.scripts
 
 import java.text.SimpleDateFormat
+import javax.ws.rs.core.Response
 import java.net.URLEncoder
 
 import org.apache.commons.codec.binary.Base64
@@ -36,11 +37,10 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.RollbackData
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
+import org.onap.so.client.HttpClient
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.onap.so.utils.TargetEntity
 
 
 
@@ -205,23 +205,23 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String sdncAdapterRequest = execution.getVariable(prefix + 'sdncAdapterRequest')
 			msoLogger.debug("SDNC Rest Request is: " + sdncAdapterRequest)
 
-			RESTConfig config = new RESTConfig(sdncAdapterUrl)
-			RESTClient client = new RESTClient(config).
-				addHeader("Content-Type", "application/json")
-					.addHeader("mso-request-id",execution.getVariable("mso-request-id"))
-					.addHeader("mso-service-instance-id",execution.getVariable("mso-service-instance-id"))
-					.addAuthorizationHeader(execution.getVariable(prefix + "basicAuthHeaderValue"))
+			URL url = new URL(sdncAdapterUrl);
 
-			APIResponse response
+			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.SDNC_ADAPTER)
+			httpClient.addAdditionalHeader("mso-request-id", execution.getVariable("mso-request-id"))
+			httpClient.addAdditionalHeader("mso-service-instance-id", execution.getVariable("mso-service-instance-id"))
+			httpClient.addAdditionalHeader("Authorization", execution.getVariable(prefix + "basicAuthHeaderValue"))
+
+			Response response
 
 			if ("GET".equals(sdncAdapterMethod)) {
-				response = client.httpGet()
+				response = httpClient.get()
 			} else if ("PUT".equals(sdncAdapterMethod)) {
-				response = client.httpPut(sdncAdapterRequest)
+				response = httpClient.put(sdncAdapterRequest)
 			} else if ("POST".equals(sdncAdapterMethod)) {
-				response = client.httpPost(sdncAdapterRequest)
+				response = httpClient.post(sdncAdapterRequest)
 			} else if ("DELETE".equals(sdncAdapterMethod)) {
-				response = client.httpDelete(sdncAdapterRequest)
+				response = httpClient.delete(sdncAdapterRequest)
 			} else {
 				String msg = 'Unsupported HTTP method "' + sdncAdapterMethod + '" in ' + method + ": " + e
 				msoLogger.debug(msg)
@@ -229,13 +229,15 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
-			execution.setVariable(prefix + "sdncAdapterStatusCode", response.getStatusCode())
-			execution.setVariable(prefix + "sdncAdapterResponse", response.getResponseBodyAsString())
+			execution.setVariable(prefix + "sdncAdapterStatusCode", response.getStatus())
+			if(response.hasEntity()){
+				execution.setVariable(prefix + "sdncAdapterResponse", response.readEntity(String.class))
+			}
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
-			msoLogger.debug(msg)
+			msoLogger.debug(msg, e)
 			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}

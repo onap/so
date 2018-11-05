@@ -1,0 +1,4 @@
+use requestdb;
+
+ALTER TABLE infra_active_requests ADD ROLLBACK_STATUS_MESSAGE LONGTEXT; 
+ALTER TABLE archived_infra_requests ADD ROLLBACK_STATUS_MESSAGE LONGTEXT; 

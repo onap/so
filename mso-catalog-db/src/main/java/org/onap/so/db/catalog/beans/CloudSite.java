@@ -22,18 +22,7 @@ package org.onap.so.db.catalog.beans;
 
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.openpojo.business.annotation.BusinessKey;
-import com.openpojo.reflection.java.packageloader.impl.URLToFileSystemAdapter;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
-import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -45,8 +34,21 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.openpojo.business.annotation.BusinessKey;
+
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
+import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 /**
  * EntityBean class for a CloudSite.  This bean represents a cloud location
@@ -57,6 +59,7 @@ import javax.persistence.TemporalType;
 @RemoteResource("/cloudSite")
 @Entity
 @Table(name = "cloud_sites")
+@JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class CloudSite {
 
     @JsonProperty

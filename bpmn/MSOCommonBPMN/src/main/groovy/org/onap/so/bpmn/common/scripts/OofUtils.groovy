@@ -33,10 +33,9 @@ import org.onap.so.bpmn.core.domain.ServiceInstance
 import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.HttpClient
 import org.onap.so.db.catalog.beans.CloudSite
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
+import org.onap.so.utils.TargetEntity
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -504,22 +503,16 @@ class OofUtils {
         String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution)
         String uri = "/cloudSite"
 
-        HttpHeaders headers = new HttpHeaders()
+	URL url = new URL(endpoint + uri)
+	HttpClient client = new HttpClient(url, MediaType.APPLICATION_JSON, TargetEntity.EXTERNAL)
+	client.addAdditionalHeader(HttpHeaders.AUTHORIZATION, auth)
+	client.addAdditionalHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
 
-        headers.set(HttpHeaders.AUTHORIZATION, auth)
-        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        Response response = client.post(request.getBody().toString())
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(endpoint + uri)
-        HttpEntity<CloudSite> request = new HttpEntity<CloudSite>(cloudSite, headers)
-        RESTConfig config = new RESTConfig(endpoint + uri)
-        RESTClient client = new RESTClient(config).addAuthorizationHeader(auth).
-                addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON).addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-        APIResponse response = client.httpPost(request.getBody().toString())
-
-        int responseCode = response.getStatusCode()
+        int responseCode = response.getStatus()
         logDebug("CatalogDB response code is: " + responseCode, isDebugEnabled)
-        String syncResponse = response.getResponseBodyAsString()
+        String syncResponse = response.readEntity(String.class)
         logDebug("CatalogDB response is: " + syncResponse, isDebugEnabled)
 
         if(responseCode != 202){

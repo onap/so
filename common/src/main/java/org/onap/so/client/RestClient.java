@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,7 +61,7 @@ public abstract class RestClient {
 	private static final String APPLICATION_MERGE_PATCH_JSON = "application/merge-patch+json";
 
     public static final String ECOMP_COMPONENT_NAME = "MSO";
-	
+
 	private static final int MAX_PAYLOAD_SIZE = 1024 * 1024;
 	private WebTarget webTarget;
 
@@ -76,12 +76,12 @@ public abstract class RestClient {
     protected RestProperties props;
 
     protected RestClient(RestProperties props, Optional<URI> path) {
-		
+
 		headerMap = new HashMap<>();
 		try {
 			host = props.getEndpoint();
 		} catch (MalformedURLException e) {
-			
+
 			throw new RuntimeException(e);
 		}
 		this.props = props;
@@ -105,23 +105,23 @@ public abstract class RestClient {
 
 	/**
 	 * Override method to return false to disable logging.
-	 * 
+	 *
 	 * @return true - to enable logging, false otherwise
 	 */
 	protected boolean enableLogging() {
 		return true;
 	}
-	
+
 	/**
 	 * Override method to return custom value for max payload size.
-	 * 
+	 *
 	 * @return Default value for MAX_PAYLOAD_SIZE = 1024 * 1024
 	 */
 	protected int getMaxPayloadSize()
 	{
 		return MAX_PAYLOAD_SIZE;
 	}
-	
+
 	protected Builder getBuilder() {
 
 	    if (webTarget == null) {
@@ -134,7 +134,7 @@ public abstract class RestClient {
 	    }
 	    return builder;
 	}
-	
+
 	protected WebTarget getWebTarget() {
 		return this.webTarget;
 	}
@@ -148,7 +148,7 @@ public abstract class RestClient {
 	protected CommonObjectMapperProvider getCommonObjectMapperProvider() {
 		return new CommonObjectMapperProvider();
 	}
-	
+
 	/**
 	 * Adds a basic authentication header to the request.
 	 * @param auth the encrypted credentials
@@ -188,7 +188,7 @@ public abstract class RestClient {
 		}
 		CommonObjectMapperProvider provider = this.getCommonObjectMapperProvider();
 		client.register(new JacksonJsonProvider(provider.getMapper()));
-		
+
         jaxRsClientLogging = new JaxRsClientLogging();
         jaxRsClientLogging.setTargetService(getTargetEntity());
         client.register(jaxRsClientLogging);
@@ -205,11 +205,11 @@ public abstract class RestClient {
 			this.contentType = MediaType.APPLICATION_JSON;
 		}
 	}
-	
+
 	protected List<Predicate<Throwable>> retryOn() {
-		
+
 		List<Predicate<Throwable>> result = new ArrayList<>();
-		
+
 		result.add(e -> {
 					return e.getCause() instanceof SocketTimeoutException;
 				});
@@ -266,26 +266,26 @@ public abstract class RestClient {
 	public <T> T delete(Class<T> resultClass) {
 		return format(method("DELETE", null), resultClass).orElse(null);
 	}
-	
+
 	public <T> T delete(Object obj, Class<T> resultClass) {
 		return format(method("DELETE", obj), resultClass).orElse(null);
 	}
-	
+
 	public Response method(String method, Object entity) {
 		RetryPolicy policy = new RetryPolicy();
-		
+
 		List<Predicate<Throwable>> items = retryOn();
-		
+
 		Predicate<Throwable> pred = items.stream().reduce(Predicate::or).orElse(x -> false);
 
 		policy.retryOn(error -> pred.test(error));
-			
+
 		policy.withDelay(this.props.getDelayBetweenRetries(), TimeUnit.MILLISECONDS)
 				.withMaxRetries(this.props.getRetries());
-		
+
 		return Failsafe.with(policy).get(buildRequest(method, entity));
 	}
-	
+
 	protected RestRequest buildRequest(String method, Object entity) {
 		return new RestRequest(this, method, entity);
 	}
@@ -295,7 +295,7 @@ public abstract class RestClient {
 		}
 		return Optional.of(response.readEntity(resultClass));
 	}
-	
+
 	private <T> Optional<T> format(Response response, GenericType<T> resultClass) {
 		if (this.props.mapNotFoundToEmpty() && response.getStatus() == Status.NOT_FOUND.getStatusCode()) {
 			return Optional.empty();

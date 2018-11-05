@@ -38,7 +38,7 @@ public class PnfCheckInputsTest {
     private static final String DEFAULT_TIMEOUT = "P1D";
 
     @Rule
-	public ExpectedException expectedException = ExpectedException.none();
+    public ExpectedException expectedException = ExpectedException.none();
     
     private DelegateExecution mockDelegateExecution() {
         new PnfCheckInputs(DEFAULT_TIMEOUT);

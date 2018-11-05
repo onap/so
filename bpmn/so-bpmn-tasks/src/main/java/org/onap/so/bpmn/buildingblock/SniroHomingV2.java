@@ -29,7 +29,6 @@ import java.util.UUID;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.camunda.bpm.engine.delegate.BpmnError;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -107,7 +106,7 @@ public class SniroHomingV2 {
 	 * @param execution
 	 */
 	public void callSniro(BuildingBlockExecution execution){
-		log.trace("Started Sniro Homing Call Sniro");
+		log.debug("Started Sniro Homing Call Sniro");
 		try{
 			GeneralBuildingBlock bb = execution.getGeneralBuildingBlock();
 

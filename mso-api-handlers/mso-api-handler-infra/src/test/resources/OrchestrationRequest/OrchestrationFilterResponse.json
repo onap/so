@@ -62,6 +62,7 @@
         "requestStatus": {
           "requestState": "COMPLETE",
           "statusMessage": "Vf Module has been deleted successfully.",
+          "rollbackStatusMessage": "Rollback has been completed successfully.",
           "percentProgress": 100,
           "finishTime": "Thu, 22 Dec 2016 08:30:28 GMT"
         }

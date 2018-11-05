@@ -33,15 +33,18 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
+import org.onap.so.client.HttpClient
+import org.onap.so.utils.TargetEntity
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 
 import org.json.JSONArray
 import org.json.JSONObject
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*;
+
+import java.net.URL
+
+import javax.ws.rs.core.Response
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
@@ -126,20 +129,25 @@ class SniroHomingV1 extends AbstractServiceTaskProcessor{
 
 				String endpoint = UrnPropertiesReader.getVariable("sniro.manager.uri.v1", execution)
 				String host = UrnPropertiesReader.getVariable("sniro.manager.host", execution)
-				String url = host + endpoint
-				msoLogger.debug("Sniro Url is: " + url)
+				String urlString = host + endpoint
+				msoLogger.debug("Sniro Url is: " + urlString)
 
-				RESTConfig config = new RESTConfig(url);
-				RESTClient client = new RESTClient(config).addAuthorizationHeader(authHeader).addHeader("Content-Type", "application/json")
-				APIResponse response = client.httpPost(sniroRequest)
+				URL url = new URL(urlString);
+				HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.SNIRO)
+				httpClient.addAdditionalHeader("Authorization", authHeader)
+				Response httpResponse = httpClient.post(sniroRequest)
 
-				int responseCode = response.getStatusCode()
+				int responseCode = httpResponse.getStatus()
+
 				msoLogger.debug("Sniro sync response code is: " + responseCode)
-				msoLogger.debug("Sniro sync response is: " + response.getResponseBodyAsString())
+				if(httpResponse.hasEntity()){
+					msoLogger.debug("Sniro sync response is: " + httpResponse.readEntity(String.class))
+				}
 
 				if(responseCode != 202){
 					exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from Sniro.")
 				}
+
 				msoLogger.trace("Completed Sniro Homing Call Sniro")
 			}
 		}catch(BpmnError b){

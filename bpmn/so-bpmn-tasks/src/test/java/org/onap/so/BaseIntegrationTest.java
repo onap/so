@@ -22,13 +22,16 @@ package org.onap.so;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onap.so.bpmn.buildingblock.SniroHomingV2;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.orchestration.SDNOHealthCheckResources;
 import org.onap.so.client.sdnc.SDNCClient;
+import org.onap.so.client.sniro.SniroClient;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -37,29 +40,40 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @ContextConfiguration
 @AutoConfigureWireMock(port = 0)
 public abstract class BaseIntegrationTest extends TestDataSetup {
-	
+
+	@Value("${wiremock.server.port}")
+	protected String wireMockPort;
+
 	@SpyBean
 	protected SDNCClient SPY_sdncClient;
-	
+
 	@SpyBean
 	protected SDNOHealthCheckResources MOCK_sdnoHealthCheckResources;
 
-	@MockBean
+	@SpyBean
 	protected SniroHomingV2 sniroHoming;
-	
+
+	@SpyBean
+	protected SniroClient sniroClient;
+
 	@MockBean
 	protected ApplicationControllerAction appCClient;
-	
-	
+
 	@MockBean
 	protected CatalogDbClient catalogDbClient;
-	
+
+	@Before
+	public void baseTestBefore() {
+		WireMock.reset();
+	}
 	public String readResourceFile(String fileName) {
 		InputStream stream;
 		try {
@@ -73,7 +87,7 @@ public abstract class BaseIntegrationTest extends TestDataSetup {
 				stream.close();
 				return "";
 			}
-		} catch (IOException e) {		   
+		} catch (IOException e) {
 			return "";
 		}
 	}
@@ -85,7 +99,7 @@ public abstract class BaseIntegrationTest extends TestDataSetup {
 			throw new IOException("Can't access resource '" + resourceName + "'");
 		}
 		return stream;
-	}	
+	}
 }
 
 

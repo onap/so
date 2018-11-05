@@ -31,6 +31,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.onap.so.BaseIntegrationTest;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.CreateVfModuleResponse;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
@@ -42,7 +43,8 @@ import org.onap.so.adapters.vnfrest.UpdateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.UpdateVfModuleResponse;
 import org.onap.so.adapters.vnfrest.VfModuleExceptionResponse;
 import org.onap.so.adapters.vnfrest.VfModuleRollback;
-import org.onap.so.BaseIntegrationTest;
+import org.onap.so.client.policy.JettisonStyleMapperProvider;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -54,7 +56,7 @@ public class VnfAdapterClientIT extends BaseIntegrationTest{
 	private static final String REST_ENDPOINT = "/services/rest/v1/vnfs";
 
 	private VnfAdapterClientImpl client = new VnfAdapterClientImpl();
-	private ObjectMapper mapper = new ObjectMapper();
+	private ObjectMapper mapper = new JettisonStyleMapperProvider().getMapper();
 
 	@BeforeClass
 	public static void setUp() {

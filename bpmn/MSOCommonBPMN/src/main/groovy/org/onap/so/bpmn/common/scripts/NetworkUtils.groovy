@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,9 @@ package org.onap.so.bpmn.common.scripts
 
 import groovy.xml.XmlUtil
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.L3Network
+import org.onap.aai.domain.yang.Subnet
+import org.onap.aai.domain.yang.Subnets
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.MsoLogger
 import org.w3c.dom.Document
@@ -64,7 +67,7 @@ class NetworkUtils {
 	 * @param cloudRegionId the cloud-region-region
 	 * @return String request
 	 */
-	def CreateNetworkRequestV2(execution, requestId, messageId, requestInput, queryIdResponse, routeCollection, policyFqdns, tableCollection, cloudRegionId, backoutOnFailure, source) {
+	def CreateNetworkRequestV2(execution, requestId, messageId, requestInput,L3Network queryIdResponse, routeCollection, policyFqdns, tableCollection, cloudRegionId, backoutOnFailure, source) {
 		String createNetworkRequest = null
 		if(requestInput!=null && queryIdResponse!=null) {
 				String serviceInstanceId = ""
@@ -72,8 +75,8 @@ class NetworkUtils {
 				String externalValue = ""
 
 				if (source == "VID") {
-					sharedValue = utils.getNodeText(queryIdResponse, "is-shared-network") != null ? utils.getNodeText(queryIdResponse, "is-shared-network") : "false"
-					externalValue = utils.getNodeText(queryIdResponse, "is-external-network") != null ? utils.getNodeText(queryIdResponse, "is-external-network") : "false"
+					sharedValue = queryIdResponse.isIsSharedNetwork() != null ? queryIdResponse.isIsSharedNetwork() : "false"
+					externalValue = queryIdResponse.isIsExternalNetwork() != null ? queryIdResponse.isIsExternalNetwork() : "false"
 					serviceInstanceId = utils.getNodeText(requestInput, "service-instance-id")
 
 				} else { // source = 'PORTAL'
@@ -100,14 +103,14 @@ class NetworkUtils {
 					networkType = utils.getNodeText(networkModelInfo, "modelName")
 					modelCustomizationUuid = utils.getNodeText(networkModelInfo, "modelCustomizationUuid")
 				} else {
-					networkType = utils.getNodeText(queryIdResponse, "network-type")
+					networkType = queryIdResponse.getNetworkType()
 					modelCustomizationUuid = utils.getNodeText(requestInput, "modelCustomizationId")
 				}
 
 				// queryIdResponse
-				String networkName = utils.getNodeText(queryIdResponse, "network-name")
-				String networkId = utils.getNodeText(queryIdResponse, "network-id")
-				String networkTechnology = utils.getNodeText(queryIdResponse, "network-technology")
+				String networkName = queryIdResponse.getNetworkName()
+				String networkId = queryIdResponse.getNetworkId()
+				String networkTechnology = queryIdResponse.getNetworkTechnology()
 
 				// contrailNetwork - networkTechnology = 'Contrail' vs. 'AIC_SR_IOV')
 				String contrailNetwork = ""
@@ -124,13 +127,12 @@ class NetworkUtils {
 
 				// rebuild subnets
 				String subnets = ""
-				if (utils.nodeExists(queryIdResponse, "subnets")) {
-					def subnetsGroup = utils.getNodeXml(queryIdResponse, "subnets", false)
-					subnets = buildSubnets(subnetsGroup)
+				if (queryIdResponse.getSubnets() != null) {
+					subnets = buildSubnets(queryIdResponse)
 				}
 
 				String physicalNetworkName = ""
-				physicalNetworkName = utils.getNodeText(queryIdResponse, "physical-network-name")
+				physicalNetworkName = queryIdResponse.getPhysicalNetworkName()
 
 				String vlansCollection = buildVlans(queryIdResponse)
 
@@ -181,7 +183,7 @@ class NetworkUtils {
 	 * @param cloudRegionId the cloud-region-region
 	 * @return String request
 	 */
-	def UpdateNetworkRequestV2(execution, requestId, messageId, requestInput, queryIdResponse, routeCollection, policyFqdns, tableCollection, cloudRegionId, backoutOnFailure, source) {
+	def UpdateNetworkRequestV2(execution, requestId, messageId, requestInput, L3Network queryIdResponse, routeCollection, policyFqdns, tableCollection, cloudRegionId, backoutOnFailure, source) {
 		String updateNetworkRequest = null
 		if(requestInput!=null && queryIdResponse!=null) {
 				String serviceInstanceId = ""
@@ -189,8 +191,8 @@ class NetworkUtils {
 				String externalValue = ""
 
 				if (source == "VID") {
-					sharedValue = utils.getNodeText(queryIdResponse, "is-shared-network") != null ? utils.getNodeText(queryIdResponse, "is-shared-network") : "false"
-					externalValue = utils.getNodeText(queryIdResponse, "is-external-network") != null ? utils.getNodeText(queryIdResponse, "is-external-network") : "false"
+					sharedValue = queryIdResponse.isIsSharedNetwork() != null ? queryIdResponse.isIsSharedNetwork() : "false"
+					externalValue = queryIdResponse.isIsExternalNetwork() != null ? queryIdResponse.isIsExternalNetwork() : "false"
 					serviceInstanceId = utils.getNodeText(requestInput, "service-instance-id")
 
 				} else { // source = 'PORTAL'
@@ -205,9 +207,9 @@ class NetworkUtils {
 				String tenantId = utils.getNodeText(requestInput, "tenant-id")
 
 				// queryIdResponse
-				String networkName = utils.getNodeText(queryIdResponse, "network-name")
-				String networkId = utils.getNodeText(queryIdResponse, "network-id")
-				
+				String networkName = queryIdResponse.getNetworkName()
+				String networkId = queryIdResponse.getNetworkId()
+
 				String networkType = ""
 				String modelCustomizationUuid = ""
 				if (utils.nodeExists(requestInput, "networkModelInfo")) {
@@ -215,15 +217,14 @@ class NetworkUtils {
 					networkType = utils.getNodeText(networkModelInfo, "modelName")
 					modelCustomizationUuid = utils.getNodeText(networkModelInfo, "modelCustomizationUuid")
 				} else {
-					networkType = utils.getNodeText(queryIdResponse, "network-type")
+					networkType = queryIdResponse.getNetworkType()
 					modelCustomizationUuid = utils.getNodeText(requestInput, "modelCustomizationId")
 				}
 
 				// rebuild subnets
 				String subnets = ""
-				if (utils.nodeExists(queryIdResponse, "subnets")) {
-					def subnetsGroup = utils.getNodeXml(queryIdResponse, "subnets", false)
-					subnets = buildSubnets(subnetsGroup)
+				if (queryIdResponse.getSubnets() != null) {
+					subnets = buildSubnets(queryIdResponse)
 				}
 
 				String networkParams = ""
@@ -232,12 +233,12 @@ class NetworkUtils {
 					networkParams = buildParams(netParams)
 				}
 
-				String networkStackId = utils.getNodeText(queryIdResponse, "heat-stack-id")
+				String networkStackId = queryIdResponse.getHeatStackId()
 				if (networkStackId == 'null' || networkStackId == "" || networkStackId == null) {
 					networkStackId = "force_update"
 				}
 
-				String physicalNetworkName = utils.getNodeText(queryIdResponse, "physical-network-name")
+				String physicalNetworkName = queryIdResponse.getPhysicalNetworkName()
 				String vlansCollection = buildVlans(queryIdResponse)
 
 				updateNetworkRequest =
@@ -418,7 +419,7 @@ class NetworkUtils {
 				    rebuildSegmentationAssignments =  buildXMLElements(requeryIdAAIResponse, "segmentation-assignments", "segmentation-assignment", elementList)
 				} else {
 				   rebuildSegmentationAssignments =  buildXMLElements(requeryIdAAIResponse, "", "segmentation-assignments", elementList)
-				}   
+				}
 			}
 
 			// rebuild 'ctag-assignments' / rebuildCtagAssignments
@@ -736,7 +737,7 @@ class NetworkUtils {
 		return rtn
 	}
 
-	
+
 	def isInstanceValueMatch(linkResource, globalSubscriberId, serviceType) {
 		Boolean rtn = false
 		try {
@@ -809,7 +810,7 @@ class NetworkUtils {
 					    } else { //pending-update or PendingUpdate
 							xmlNetwork += "<"+element+">"+"Active"+"</"+element+">"
 					    }
-					}	
+					}
 					if (element=="heat-stack-id") {
 						if (replaceNetworkId != "") {
 							xmlNetwork += "<"+element+">"+replaceNetworkId+"</"+element+">"
@@ -834,11 +835,11 @@ class NetworkUtils {
 						  } else { //pending-update or PendingUpdate
 							  xmlNetwork += "<"+element+">"+"Active"+"</"+element+">"
 						  }
-					   }   
+					   }
 				    } else {
 			    	    xmlNetwork += "<"+element+">"+var.toString()+"</"+element+">"
 					}
-				}	
+				}
 			 }
 		}
 		return xmlNetwork
@@ -863,7 +864,7 @@ class NetworkUtils {
 				   } else {
 				      def subnetList = ["subnet-id", "neutron-subnet-id", "gateway-address", "network-start-address", "cidr-mask", "ip-version", "orchestration-status", "dhcp-enabled", "dhcp-start", "dhcp-end", "subnet-role", "resource-version", "subnet-name", "ip-assignment-direction", "host-routes"]
 				      rebuildingSubnets += buildSubNetworkElements(subnetXml, createNetworkResponse, subnetList, "subnet")
-				   }	  
+				   }
 				}
 				if (utils.nodeExists(subnetsData, 'relationship')) {
 					rebuildingSubnets = rebuildRelationship(requeryIdAAIResponse)
@@ -878,29 +879,24 @@ class NetworkUtils {
 		return rebuildingSubnets
 	}
 
-	def buildSubnets(queryIdResponse) {
+	def buildSubnets(L3Network network) {
 		def rebuildingSubnets = ""
-		def subnetsData = new XmlSlurper().parseText(queryIdResponse)
-		//rebuildingSubnets += "<subnets>"
-		try {
-			def subnets = subnetsData.'**'.findAll {it.name() == "subnet"}
-			def subnetsSize = subnets.size()
-			for (i in 0..subnetsSize-1) {
-			   def subnet = subnets[i]
-			   def subnetXml = XmlUtil.serialize(subnet)
-			   def orchestrationStatus = utils.getNodeText(subnetXml, "orchestration-status")
-			   if (orchestrationStatus == "pending-delete" || orchestrationStatus == "PendingDelete") {
-				   // skip, do not include in processing, remove!!!
-			   } else {
-			   	  	def subnetList = ["dhcp-start", "dhcp-end", "network-start-address", "cidr-mask", "dhcp-enabled", "gateway-address", "ip-version", "subnet-id", "subnet-name", "ip-assignment-direction", "host-routes"]
-					rebuildingSubnets += buildSubNetworkElements(subnetXml, subnetList, "subnets")
-			   		//rebuildingSubnets += buildSubNetworkElements(subnetXml, subnetList, "")
-			   }	
+		Subnets subnets = network.getSubnets()
+		try{
+			for(Subnet s : subnets.getSubnet()){
+				def orchestrationStatus = s.getOrchestrationStatus()
+				if (orchestrationStatus == "pending-delete" || orchestrationStatus == "PendingDelete") {
+					// skip, do not include in processing, remove!!!
+				} else {
+					def subnetList = ["dhcp-start", "dhcp-end", "network-start-address", "cidr-mask", "dhcp-enabled", "gateway-address", "ip-version", "subnet-id", "subnet-name", "ip-assignment-direction", "host-routes"]
+					rebuildingSubnets += buildSubNetworkElements(s, subnetList, "subnets")
+					//rebuildingSubnets += buildSubNetworkElements(subnetXml, subnetList, "")
+				}
 			}
 		} catch (Exception ex) {
-		   //
+			//
 		} finally {
-		  //rebuildingSubnets += "</subnets>"
+			//rebuildingSubnets += "</subnets>"
 		}
 		return rebuildingSubnets
 	}
@@ -919,7 +915,7 @@ class NetworkUtils {
 			  var = xml.'**'.find {it.name() == element}
 			  if (var != null) {
 			  	 if (element=="orchestration-status") {
-					if(var.toString() == 'pending-create' || var.toString() == 'PendingCreate') {   
+					if(var.toString() == 'pending-create' || var.toString() == 'PendingCreate') {
 						xmlBuild += "<"+element+">"+"Created"+"</"+element+">"
 					} else { // pending-update or PendingUpdate'
 					   xmlBuild += "<"+element+">"+"Active"+"</"+element+">"
@@ -940,9 +936,9 @@ class NetworkUtils {
 									 List elementRoute = ["host-route-id", "route-prefix", "next-hop", "next-hop-type", "resource-version"]
 									 xmlBuild += buildXMLElements(subnetXml, "host-routes", "host-route", elementRoute)
 								 }
-						 	 } else { 	  
+						 	 } else {
 							  	xmlBuild += "<"+element+">"+var.toString()+"</"+element+">"
-						 	 }	  
+						 	 }
 						 }
 					 }
 				 }
@@ -957,68 +953,69 @@ class NetworkUtils {
 	}
 
 	// build subnet sub-network single elements
-	def buildSubNetworkElements(subnetXml, elementList, parentName) {
+	def buildSubNetworkElements(Subnet subnet, elementList, parentName) {
+
 		def var = ""
 		def xmlBuild = ""
 		if (parentName != "") {
 			xmlBuild += "<"+parentName+">"
 		 }
-		if (subnetXml != null) {
+		if (subnet != null) {
 		    def networkStartAddress = ""
 			for (element in elementList) {
-				def xml= new XmlSlurper().parseText(subnetXml)
-				var = xml.'**'.find {it.name() == element}
 				if (element == "dhcp-start") {
+					var = subnet.getDhcpStart()
 					xmlBuild += "<allocationPools>"
-					if (var.toString() == 'null') {
+					if (var == null) {
 						xmlBuild += "<start>"+""+"</start>"
 					} else {
-						xmlBuild += "<start>"+var.toString()+"</start>"
+						xmlBuild += "<start>"+var+"</start>"
 					}
 				}
 				if (element == "dhcp-end") {
-					if (var.toString() == 'null') {
+					var = subnet.getDhcpEnd()
+					if (var == null) {
 						xmlBuild += "<end>"+""+"</end>"
 					} else {
-						xmlBuild += "<end>"+var.toString()+"</end>"
+						xmlBuild += "<end>"+var+"</end>"
 					}
 					xmlBuild += "</allocationPools>"
 				}
 				if (element == "network-start-address" || element == "cidr-mask") {
 					if (element == "network-start-address") {
-						networkStartAddress = var.toString()
+						networkStartAddress = subnet.getNetworkStartAddress()
 					}
 					if (element == "cidr-mask") {
-						xmlBuild += "<cidr>"+networkStartAddress+"/"+var.toString()+"</cidr>"
+						xmlBuild += "<cidr>"+networkStartAddress+"/"+var+"</cidr>"
 					}
 				}
 				if (element == "dhcp-enabled") {
-					xmlBuild += "<enableDHCP>"+var.toString()+"</enableDHCP>"
+					xmlBuild += "<enableDHCP>"+subnet.isDhcpEnabled()+"</enableDHCP>"
 				}
 				if (element == "gateway-address") {
-					xmlBuild += "<gatewayIp>"+var.toString()+"</gatewayIp>"
+					xmlBuild += "<gatewayIp>"+subnet.getGatewayAddress()+"</gatewayIp>"
 				}
 				if (element == "ip-version") {
-					String ipVersion = getIpvVersion(var.toString())
+					String ipVersion = getIpvVersion(subnet.getIpVersion())
 					xmlBuild += "<ipVersion>"+ipVersion+"</ipVersion>"
 				}
 				if (element == "subnet-id") {
-					xmlBuild += "<subnetId>"+var.toString()+"</subnetId>"
+					xmlBuild += "<subnetId>"+subnet.getSubnetId()+"</subnetId>"
 				}
-				if ((element == "subnet-name") && (var != null)) {
-					xmlBuild += "<subnetName>"+var.toString()+"</subnetName>"
+				if ((element == "subnet-name") && (subnet.getSubnetName() != null)) {
+					xmlBuild += "<subnetName>"+subnet.getSubnetName()+"</subnetName>"
 				}
-				if ((element == "ip-assignment-direction") && (var != null)) {
-					xmlBuild += "<addrFromStart>"+var.toString()+"</addrFromStart>"
+				if ((element == "ip-assignment-direction") && (subnet.getIpAssignmentDirection() != null)) {
+					xmlBuild += "<addrFromStart>"+subnet.getIpAssignmentDirection()+"</addrFromStart>"
 				}
 				if (element == "host-routes") {
 					def routes = ""
-					if (subnetXml.contains("host-routes")) {
-						routes = buildHostRoutes(subnetXml)
+					if (subnet.getHostRoutes() != null) {
+						routes = buildHostRoutes(subnet)
 					}
-					xmlBuild += routes 
-				}	
-				
+					xmlBuild += routes
+				}
+
 			}
 		}
 		if (parentName != "") {
@@ -1053,12 +1050,12 @@ class NetworkUtils {
 				   }
 			   }
 			   buildHostRoutes += "</hostRoutes>"
-			}   
-		}		
-		return buildHostRoutes		
-		
+			}
+		}
+		return buildHostRoutes
+
 	}
-	
+
 	// rebuild ctag-assignments
 	def rebuildCtagAssignments(xmlInput) {
 		def rebuildingCtagAssignments = ""
@@ -1396,17 +1393,17 @@ class NetworkUtils {
 		}
 		return rollbackEnabled
 	}
-	
-	
+
+
 	/**
 	 * This method extracts the version for the the given ip-version.
 	 *
 	 * @param String ipvVersion - IP protocols version (ex: ipv4 or ipv6 or 4 or 6)
 	 * @return String version - digit version (ex: 4 or 6)
 	 */
-	
+
 	public String getIpvVersion (String ipvVersion) {
-		
+
 		String version = ""
 		try {
 			if (ipvVersion.isNumber()) {
@@ -1418,7 +1415,7 @@ class NetworkUtils {
 				}
 			}
 		} catch (Exception ex) {
-			version = ipvVersion  
+			version = ipvVersion
 		}
 		return version
 	}

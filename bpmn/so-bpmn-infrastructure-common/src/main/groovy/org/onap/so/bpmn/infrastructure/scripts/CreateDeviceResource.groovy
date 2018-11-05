@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,27 +26,23 @@ import org.json.XML;
 import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
 import groovy.json.*
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor 
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.recipe.ResourceInput;
-import org.onap.so.bpmn.common.resource.ResourceRequestBuilder 
-import org.onap.so.bpmn.core.WorkflowException 
+import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
+import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder.AbstractBuilder
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 
 import java.util.UUID;
 
-import org.camunda.bpm.engine.delegate.BpmnError 
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils 
-import org.onap.so.rest.RESTClient 
-import org.onap.so.rest.RESTConfig
-import org.onap.so.rest.APIResponse;
+import org.springframework.web.util.UriUtils
 import org.onap.so.bpmn.common.scripts.AaiUtil
 
 /**
@@ -56,18 +52,18 @@ import org.onap.so.bpmn.common.scripts.AaiUtil
 public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 
     String Prefix="CREDEVRES_"
-            
+
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
-    
+
     private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateDeviceResource.class)
 
     public void preProcessRequest(DelegateExecution execution){
         msoLogger.info(" ***** Started preProcessRequest *****")
         String msg = ""
-        try {           
-            
+        try {
+
             //get bpmn inputs from resource request.
             String requestId = execution.getVariable("mso-request-id")
             String requestAction = execution.getVariable("requestAction")
@@ -90,10 +86,10 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 //            String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
 //            JSONObject serviceInputParameters = new JSONObject(requestInputs)
 //            execution.setVariable(Prefix + "ServiceParameters", serviceInputParameters)
-            
+
             //Deal with recipeParams
             String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
-            String resourceName = resourceInputObj.getResourceInstanceName() 
+            String resourceName = resourceInputObj.getResourceInstanceName()
             if (isBlank(resourceName)) {
                 msg = "Input resourceName is null"
                 msoLogger.error(msg)
@@ -108,7 +104,7 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
             }
             execution.setVariable(Prefix + "ResourceModelInvariantUuid", resourceModelInvariantUuid)
             msoLogger.info("resourceModelInvariantUuid:" + resourceModelInvariantUuid)
-				
+
             String resourceModelUuid = resourceInputObj.getResourceModelInfo().getModelUuid()
             if (isBlank(resourceModelUuid)) {
                 msg = "Input resourceModelUuid is null"
@@ -116,7 +112,7 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
             }
             execution.setVariable(Prefix + "ResourceModelUuid", resourceModelUuid)
             msoLogger.info("resourceModelUuid:" + resourceModelUuid)
-			
+
             String resourceModelCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
             if (isBlank(resourceModelCustomizationUuid)) {
                 msg = "Input resourceModelCustomizationUuid is null"
@@ -127,7 +123,7 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 
             execution.setVariable(Prefix + "serviceInstanceId", resourceInputObj.getServiceInstanceId())
             execution.setVariable("mso-request-id", requestId)
-            
+
         } catch (BpmnError e) {
             throw e;
         } catch (Exception ex){
@@ -136,22 +132,22 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
-	
+
 	public void checkDevType(DelegateExecution execution){
 		msoLogger.info(" ***** Started checkDevType *****")
 		try {
 
 			JSONObject resourceInputParameters = execution.getVariable(Prefix + "ResourceRequestInputs")
 			String devType = resourceInputParameters.get("device_class")
-			
+
 			if(StringUtils.isBlank(devType)) {
 				devType = "OTHER"
 			}
-			// support VNF as PNF, to modify 
+			// support VNF as PNF, to modify
 			else if(StringUtils.equalsIgnoreCase(devType, "VNF")) {
 				devType = "PNF"
-			}			
-			
+			}
+
 			execution.setVariable("device_class", devType)
 
 		} catch (Exception ex){
@@ -160,13 +156,13 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
-	
+
 	private void setProgressUpdateVariables(DelegateExecution execution, String body) {
 		def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
 		execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
 		execution.setVariable("CVFMI_updateResOperStatusRequest", body)
 	}
-	
+
 	public void prepareUpdateProgress(DelegateExecution execution) {
 		msoLogger.info(" ***** Started prepareUpdateProgress *****")
 		ResourceInput resourceInputObj = execution.getVariable(Prefix + "ResourceInput")
@@ -199,7 +195,7 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 		setProgressUpdateVariables(execution, body)
 		msoLogger.info(" ***** Exit prepareUpdateProgress *****")
 	}
-	
+
 	public void getVNFTemplatefromSDC(DelegateExecution execution){
 		msoLogger.info(" ***** Started getVNFTemplatefromSDC *****")
 		try {
@@ -212,7 +208,7 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
-	
+
 	public void postVNFInfoProcess(DelegateExecution execution){
 		msoLogger.info(" ***** Started postVNFInfoProcess *****")
 		try {
@@ -225,7 +221,7 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
-    
+
 	public void sendSyncResponse (DelegateExecution execution) {
 		msoLogger.debug(" *** sendSyncResponse *** ")
 

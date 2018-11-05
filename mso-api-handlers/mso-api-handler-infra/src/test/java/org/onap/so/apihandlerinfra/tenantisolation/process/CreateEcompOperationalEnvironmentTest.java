@@ -89,7 +89,7 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest{
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
 		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
-				.withRequestBody(containing("{\"requestId\":\"123\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL, operationalEnvironmentId - operationalEnvId; Success Message: SUCCESSFULLY Created ECOMP OperationalEnvironment.\",\"progress\":100"))
+				.withRequestBody(containing("{\"requestId\":\"123\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL, operationalEnvironmentId - operationalEnvId; Success Message: SUCCESSFULLY Created ECOMP OperationalEnvironment.\",\"rollbackStatusMessage\":null,\"progress\":100"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 		

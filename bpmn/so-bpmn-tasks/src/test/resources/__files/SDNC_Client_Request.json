@@ -1,0 +1,28 @@
+: {
+	"input": {
+		"request-information": {
+			"request-action": "CreateServiceInstance",
+			"source": "MSO",
+			"request-id": "5a09ab96-032b-41cd-ad81-4fb9ec5fade7"
+		},
+		"sdnc-request-header": {
+			"svc-request-id": "5a09ab96-032b-41cd-ad81-4fb9ec5fade7",
+			"svc-action": "assign"
+		},
+		"service-information": {
+			"onap-model-information": {
+				"model-name": "Vf zrdm5bpxmc02092017-Service",
+				"model-version": "1.0",
+				"model-uuid": "bad955c3-29b2-4a27-932e-28e942cc6480",
+				"model-invariant-uuid": "b16a9398-ffa3-4041-b78c-2956b8ad9c7b"
+			},
+			"subscription-service-type": "Robot_Test_Service_Type",
+			"service-id": "48121c5e-dde0-42a6-a78a-89556ff355d0",
+			"global-customer-id": "Robot_Test_Subscriber_ID",
+			"service-instance-id": "48121c5e-dde0-42a6-a78a-89556ff355d0"
+		},
+		"service-request-input": {
+			"service-instance-name": "Robot_SI_For_VolumeGroup"
+		}
+	}
+}

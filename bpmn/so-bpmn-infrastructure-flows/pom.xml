@@ -7,7 +7,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>so-bpmn-infrastructure-flows</artifactId>
-	<packaging>jar</packaging>	
+	<packaging>jar</packaging>
 	<build>
 		<plugins>
 			<plugin>
@@ -34,7 +34,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -134,7 +134,7 @@
 			<artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
 			<version>${camunda.springboot.version}</version>
 			<scope>test</scope>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -210,11 +210,6 @@
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>${jax.ws.rs}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.so</groupId>
-			<artifactId>MSORESTClient</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.camunda.spin</groupId>

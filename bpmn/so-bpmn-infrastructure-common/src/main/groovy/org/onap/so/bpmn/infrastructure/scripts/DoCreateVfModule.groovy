@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -42,6 +44,8 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.DecomposeJsonUtil
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.graphinventory.entities.uri.Depth
+import org.onap.so.client.HttpClient
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient
@@ -53,9 +57,9 @@ import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
+
+import org.onap.so.utils.TargetEntity
+import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.NamedNodeMap
@@ -638,28 +642,26 @@ public class DoCreateVfModule extends VfModuleBase {
 			String endPoint = aaiUriUtil.createAaiUri(uri)
 
 			try {
-				RESTConfig config = new RESTConfig(endPoint);
-				def responseData = ''
-				def aaiRequestId = UUID.randomUUID().toString()
-				RESTClient client = new RESTClient(config).
-					addHeader('X-TransactionId', aaiRequestId).
-					addHeader('X-FromAppId', 'MSO').
-					addHeader('Content-Type', 'application/xml').
-					addHeader('Accept','application/xml');
-				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
-				APIResponse response = client.httpGet()
+				HttpClient client = new HttpClient(new URL(endPoint), MediaType.APPLICATION_XML, TargetEntity.AAI)
+				client.addAdditionalHeader('X-TransactionId', UUID.randomUUID().toString())
+				client.addAdditionalHeader('X-FromAppId', 'MSO')
+				client.addAdditionalHeader('Content-Type', MediaType.APPLICATION_XML)
+				client.addAdditionalHeader('Accept', MediaType.APPLICATION_XML)
 
-				responseData = response.getResponseBodyAsString()
+				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
+				Response response = client.get()
+
+				String responseData = response.readEntity(String.class)
 				if (responseData != null) {
 					msoLogger.debug("Received generic VNF data: " + responseData)
 
 				}
 
-				execution.setVariable('DCVFM_queryAAIVfModuleResponseCode', response.getStatusCode())
+				execution.setVariable('DCVFM_queryAAIVfModuleResponseCode', response.getStatus())
 				execution.setVariable('DCVFM_queryAAIVfModuleResponse', responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
+				msoLogger.debug('Response code:' + response.getStatus())
 				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
-				if (response.getStatusCode() == 200) {
+				if (response.getStatus() == 200) {
 					// Parse the VNF record from A&AI to find base module info
 					msoLogger.debug('Parsing the VNF data to find base module info')
 					if (responseData != null) {
@@ -722,31 +724,31 @@ public class DoCreateVfModule extends VfModuleBase {
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, vnfId).queryParam("vf-module-name",vfModuleName)
 			String endPoint = aaiUriUtil.createAaiUri(uri)
 
+			HttpClient client = new HttpClient(new URL(endPoint), MediaType.APPLICATION_XML, TargetEntity.AAI)
+			client.addAdditionalHeader('X-TransactionId', UUID.randomUUID().toString())
+			client.addAdditionalHeader('X-FromAppId', 'MSO')
+			client.addAdditionalHeader('Content-Type', MediaType.APPLICATION_XML)
+			client.addAdditionalHeader('Accept', MediaType.APPLICATION_XML)
+
 			try {
-				RESTConfig config = new RESTConfig(endPoint);
 				def responseData = ''
-				def aaiRequestId = UUID.randomUUID().toString()
-				RESTClient client = new RESTClient(config).
-					addHeader('X-TransactionId', aaiRequestId).
-					addHeader('X-FromAppId', 'MSO').
-					addHeader('Content-Type', 'application/xml').
-					addHeader('Accept','application/xml');
+
 				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
-				APIResponse response = client.httpGet()
+				Response response = client.get()
 				msoLogger.debug("createVfModule - invoking httpGet() to AAI")
 
-				responseData = response.getResponseBodyAsString()
+				responseData = response.readEntity(String.class)
 				if (responseData != null) {
 					msoLogger.debug("Received generic VNF data: " + responseData)
 
 				}
 
-				execution.setVariable('DCVFM_queryAAIVfModuleForStatusResponseCode', response.getStatusCode())
+				execution.setVariable('DCVFM_queryAAIVfModuleForStatusResponseCode', response.getStatus())
 				execution.setVariable('DCVFM_queryAAIVfModuleForStatusResponse', responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
+				msoLogger.debug('Response code:' + response.getStatus())
 				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
 				// Retrieve VF Module info and its orchestration status; if not found, do nothing
-				if (response.getStatusCode() == 200) {
+				if (response.getStatus() == 200) {
 					// Parse the VNF record from A&AI to find base module info
 					msoLogger.debug('Parsing the VNF data to find orchestration status')
 					if (responseData != null) {
@@ -1883,7 +1885,6 @@ public class DoCreateVfModule extends VfModuleBase {
 
 	   } catch (BpmnError e) {
 		   throw e;
-
 	   } catch (Exception ex) {
 		   String exceptionMessage = "Bpmn error encountered in DoCreateVfModule flow. createNetworkPoliciesInAAI() - " + ex.getMessage()
 		   msoLogger.debug(exceptionMessage)

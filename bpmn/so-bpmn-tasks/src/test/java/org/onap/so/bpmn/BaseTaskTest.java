@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.so.bpmn.buildingblock.SniroHomingV2;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetworkBBUtils;
@@ -51,94 +52,98 @@ import org.onap.so.client.orchestration.SDNCVnfResources;
 import org.onap.so.client.orchestration.VnfAdapterVfModuleResources;
 import org.onap.so.client.orchestration.VnfAdapterVolumeGroupResources;
 import org.onap.so.client.sdnc.SDNCClient;
+import org.onap.so.client.sniro.SniroClient;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.client.RequestsDbClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class BaseTaskTest extends TestDataSetup {
 	@Mock
 	protected AAIVolumeGroupResources aaiVolumeGroupResources;
-	
+
 	@Mock
 	protected AAIServiceInstanceResources aaiServiceInstanceResources;
-	
+
 	@Mock
 	protected AAIVnfResources aaiVnfResources;
-	
+
 	@Mock
 	protected AAIVfModuleResources aaiVfModuleResources;
-	
+
 	@Mock
 	protected AAIVpnBindingResources aaiVpnBindingResources;
-	
+
 	@Mock
 	protected AAINetworkResources aaiNetworkResources;
-	
+
 	@Mock
 	protected AAICollectionResources aaiCollectionResources;
-	
+
 	@Mock
 	protected NetworkAdapterResources networkAdapterResources;
-	
+
 	@Mock
 	protected VnfAdapterVolumeGroupResources vnfAdapterVolumeGroupResources;
-	
+
 	@Mock
 	protected VnfAdapterVfModuleResources vnfAdapterVfModuleResources;
-	
+
 	@Mock
 	protected SDNCVnfResources sdncVnfResources;
-	
+
 	@Mock
 	protected SDNCNetworkResources sdncNetworkResources;
-	
+
 	@Mock
 	protected SDNCVfModuleResources sdncVfModuleResources;
-	
+
 	@Mock
 	protected SDNCServiceInstanceResources sdncServiceInstanceResources;
-	
+
 	@Mock
 	protected AssignNetworkBBUtils assignNetworkBBUtils;
-	
+
 	@Mock
 	protected NetworkAdapterObjectMapper networkAdapterObjectMapper;
-	
+
 	@Mock
 	protected AAIInstanceGroupResources aaiInstanceGroupResources;
-	
+
 	@Mock
 	protected ApplicationControllerAction appCClient;
-	
+
 	@Mock
 	protected CatalogDbClient catalogDbClient;
-	
+
 	@Mock
 	protected RequestsDbClient requestsDbClient;
-	
+
 	@Mock
 	protected BBInputSetupUtils bbSetupUtils;
-	
+
 	@Mock
 	protected BBInputSetup bbInputSetup;
 
 	@Mock
 	protected AAIConfigurationResources aaiConfigurationResources;
-	
+
 	@Mock
 	protected AAIObjectMapper MOCK_aaiObjectMapper;
 
 	@Mock
 	protected InjectionHelper MOCK_injectionHelper;
-	
+
 	@Mock
-	protected AAIResourcesClient MOCK_aaiResourcesClient;	
+	protected AAIResourcesClient MOCK_aaiResourcesClient;
 
 	@Mock
 	protected ExtractPojosForBB extractPojosForBB;
 
 	@Mock
 	protected ExceptionBuilder exceptionUtil;
+
 
 }

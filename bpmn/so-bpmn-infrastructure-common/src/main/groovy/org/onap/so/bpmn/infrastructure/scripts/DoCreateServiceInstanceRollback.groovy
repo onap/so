@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,9 +30,6 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.rest.APIResponse;
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
 import org.onap.so.logger.MsoLogger
 import org.onap.so.logger.MessageEnum
 
@@ -57,7 +54,7 @@ import org.springframework.web.util.UriUtils;
  * 			rollbackAAI
  * 			rollbackSDNC
  * 			sdncRollbackRequest
- * 
+ *
  *
  * Outputs:
  * @param - rollbackError
@@ -66,7 +63,7 @@ import org.springframework.web.util.UriUtils;
  */
 public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcessor{
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateServiceInstanceRollback.class);
-	
+
 
 	String Prefix="DCRESIRB_"
 
@@ -141,7 +138,7 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 	}
 
 	public void validateSDNCResponse(DelegateExecution execution, String response, String method) {
-		
+
 		msoLogger.trace("validateSDNCResponse")
 		String msg = ""
 		try {
@@ -149,7 +146,7 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 			msoLogger.debug("SDNCResponse: " + response)
 			msoLogger.debug("workflowException: " + workflowException)
-			
+
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
@@ -174,7 +171,7 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 	}
 
 	public void postProcessRequest(DelegateExecution execution) {
-		
+
 		msoLogger.trace("postProcessRequest")
 		String msg = ""
 		try {
@@ -208,7 +205,7 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 	}
 
 	public void processRollbackException(DelegateExecution execution){
-		
+
 		msoLogger.trace("processRollbackException")
 		try{
 			msoLogger.debug("Caught an Exception in DoCreateServiceInstanceRollback")
@@ -226,7 +223,7 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 	}
 
 	public void processRollbackJavaException(DelegateExecution execution){
-		
+
 		msoLogger.trace("processRollbackJavaException")
 		try{
 			execution.setVariable("rollbackData", null)

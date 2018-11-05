@@ -41,7 +41,6 @@ import org.springframework.stereotype.Component;
  * Outputs:
  * - aaiContainsInfoAboutPnf - local Boolean
  */
-
 @Component
 public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
     private AaiConnection aaiConnection;

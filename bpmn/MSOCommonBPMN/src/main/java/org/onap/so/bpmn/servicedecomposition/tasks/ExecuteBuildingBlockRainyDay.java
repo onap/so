@@ -33,6 +33,7 @@ import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -44,12 +45,17 @@ public class ExecuteBuildingBlockRainyDay {
 	@Autowired
 	private CatalogDbClient catalogDbClient;
 	private static final String ASTERISK = "*";
+	
+	@Autowired
+    private Environment environment;
+	protected String retryDurationPath = "mso.rainyDay.retryDurationMultiplier";
 
 	public void setRetryTimer(DelegateExecution execution) {
 		try {
+			int retryDurationMult = Integer.parseInt(this.environment.getProperty(retryDurationPath));
 			int retryCount = (int) execution.getVariable("retryCount");
-			int retryTimeToWait = (int) Math.pow(5, retryCount);
-			String RetryDuration = "PT" + retryTimeToWait + "M";
+			int retryTimeToWait = (int) Math.pow(retryDurationMult, retryCount) * 10;
+			String RetryDuration = "PT" + retryTimeToWait + "S";
 			execution.setVariable("RetryDuration", RetryDuration);
 		} catch (Exception e) {
 			msoLogger.error(e);
@@ -64,6 +70,7 @@ public class ExecuteBuildingBlockRainyDay {
 			GeneralBuildingBlock gBBInput = (GeneralBuildingBlock) execution.getVariable("gBBInput");
 			Map<ResourceKey, String> lookupKeyMap = (Map<ResourceKey, String>) execution.getVariable("lookupKeyMap");
 			String serviceType = ASTERISK;
+			boolean aLaCarte = (boolean) execution.getVariable("aLaCarte");
 			try {
 				serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0).getModelInfoServiceInstance().getServiceType();
 			} catch (Exception ex) {
@@ -115,10 +122,13 @@ public class ExecuteBuildingBlockRainyDay {
 					handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
 				}
 			}
+			if(handlingCode.equals("RollbackToAssigned")&&!aLaCarte){
+				handlingCode = "Rollback";
+			}
 			msoLogger.debug("RainyDayHandler Status Code is: " + handlingCode);
 			execution.setVariable(HANDLING_CODE, handlingCode);
 		} catch (Exception e) {
-			msoLogger.debug("RainyDayHandler Status Code is: Abort");
+			msoLogger.error("Failed to determine RainyDayHandler Status. Seting handlingCode = Abort");
 			execution.setVariable(HANDLING_CODE, "Abort");
 		}
 	}

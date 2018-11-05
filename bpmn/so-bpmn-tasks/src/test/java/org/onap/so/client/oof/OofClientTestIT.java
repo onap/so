@@ -20,20 +20,21 @@
 
 package org.onap.so.client.oof;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.junit.Test;
-import org.onap.so.client.exception.BadResponseException;
-import org.onap.so.client.oof.OofClient;
-import org.onap.so.client.oof.beans.OofRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
+import org.junit.Test;
+import org.onap.so.BaseIntegrationTest;
+import org.onap.so.client.exception.BadResponseException;
+import org.onap.so.client.oof.beans.OofRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class OofClientTestIT {
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+
+public class OofClientTestIT extends BaseIntegrationTest {
 
     @Autowired
     private OofClient client;

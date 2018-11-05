@@ -88,6 +88,7 @@ public class RequestsDbClientTest {
         infraActiveRequests.setRequestStatus("IN_PROGRESS");
         infraActiveRequests.setAction("create");
         infraActiveRequests.setRequestAction("someaction");
+        infraActiveRequests.setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");        
         requestsDbClient.save(infraActiveRequests);
     }
 
@@ -174,7 +175,17 @@ public class RequestsDbClientTest {
         assertNull(requestsDbClient.getInfraActiveRequestbyRequestId(UUID.randomUUID().toString()));
     }
     
+    @Test
+    public void getInfraActiveRequestbyRequestIdWhereRequestUrlNullTest(){
+        // requestUrl setup to null and save
+    	infraActiveRequests.setRequestUrl(null);        
+        requestsDbClient.save(infraActiveRequests);
+        InfraActiveRequests infraActiveRequestsResponse = requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
+        verifyInfraActiveRequests(infraActiveRequestsResponse);
 
+        assertNull(infraActiveRequestsResponse.getRequestUrl());
+    }
+    
     @Test
     public void getOneByServiceIdAndOperationIdTest(){
         OperationStatus operationStatus = new OperationStatus();

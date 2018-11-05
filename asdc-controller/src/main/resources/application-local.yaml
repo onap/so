@@ -78,6 +78,7 @@ mso:
       pollingInterval: 30
       pollingTimeout: 30
       relevantArtifactTypes: HEAT,HEAT_ENV,HEAT_VOL
+      useHttpsWithDmaap: true
       activateServerTLSAuth: false
       keyStorePassword:  
       keyStorePath:

@@ -25,11 +25,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.onap.so.BaseIntegrationTest;
 import org.onap.so.adapters.nwrest.CreateNetworkError;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
@@ -44,12 +46,11 @@ import org.onap.so.adapters.nwrest.RollbackNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkError;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
-import org.onap.so.BaseIntegrationTest;
+import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.onap.so.openstack.beans.NetworkRollback;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class NetworkAdapterClientIT extends BaseIntegrationTest{
 
@@ -58,7 +59,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 	private static final String REST_ENDPOINT = "/networks/rest/v1/networks";
 
 	private NetworkAdapterClientImpl client = new NetworkAdapterClientImpl();
-	private ObjectMapper mapper = new ObjectMapper();
+	private ObjectMapper mapper = new JettisonStyleMapperProvider().getMapper();
 
 	@BeforeClass
 	public static void setUp() {

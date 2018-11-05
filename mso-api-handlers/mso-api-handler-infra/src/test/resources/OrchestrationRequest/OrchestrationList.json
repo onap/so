@@ -58,6 +58,7 @@
             "requestStatus":{
                "requestState":"PENDING",
                "statusMessage":"Vf Module deletion pending.",
+               "rollbackStatusMessage": "Rollback has been completed successfully.",
                "percentProgress":0
             }
          }

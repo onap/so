@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
@@ -46,10 +47,17 @@ public class SDNCQueryTasks {
 	@Autowired
 	private ExtractPojosForBB extractPojosForBB;
 	
-	public void queryVnf(BuildingBlockExecution execution) throws Exception {		
+	public void queryVnf(BuildingBlockExecution execution) throws Exception {	
+		ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 		GenericVnf genericVnf =  extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 				
+		String selfLink = "restconf/config/GENERIC-RESOURCE-API:services/service/"
+							+ serviceInstance.getServiceInstanceId() + "/service-data/vnfs/vnf/"
+							+ genericVnf.getVnfId() + "/vnf-data/vnf-topology/";
 		try {
+			if(genericVnf.getSelflink() == null) {
+				genericVnf.setSelflink(selfLink);
+			}
 			String response = sdncVnfResources.queryVnf(genericVnf);		
 			execution.setVariable("SDNCQueryResponse_" + genericVnf.getVnfId(), response);			
 		} catch (Exception ex) {			
@@ -59,12 +67,18 @@ public class SDNCQueryTasks {
 
 	
 	public void queryVfModule(BuildingBlockExecution execution) throws Exception {		
+		ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+		GenericVnf genericVnf =  extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 		VfModule vfModule =  extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));		
-		
+		String selfLink = "restconf/config/GENERIC-RESOURCE-API:services/service/"
+				+ serviceInstance.getServiceInstanceId() + "/service-data/vnfs/vnf/"
+				+ genericVnf.getVnfId() + "/vnf-data/vf-modules/vf-module/"
+				+ vfModule.getVfModuleId() + "/vf-module-data/vf-module-topology/";
 		try {
+			vfModule.setSelflink(selfLink);
 			if(vfModule.getSelflink() != null && !vfModule.getSelflink().isEmpty()) {	
 				String response = sdncVfModuleResources.queryVfModule(vfModule);		
-			execution.setVariable("SDNCQueryResponse_" + vfModule.getVfModuleId(), response);			
+				execution.setVariable("SDNCQueryResponse_" + vfModule.getVfModuleId(), response);			
 			}
 			else {
 				throw new Exception("Vf Module " + vfModule.getVfModuleId() + " exists in gBuildingBlock but does not have a selflink value");

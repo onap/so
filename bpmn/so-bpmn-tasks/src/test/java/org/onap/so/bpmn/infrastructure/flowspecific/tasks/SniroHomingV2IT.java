@@ -58,8 +58,7 @@ import org.onap.so.BaseIntegrationTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Ignore
-public class SniroHomingV2Test extends BaseIntegrationTest{
+public class SniroHomingV2IT extends BaseIntegrationTest{
 
 	private ServiceInstance serviceInstance;
 
@@ -72,7 +71,7 @@ public class SniroHomingV2Test extends BaseIntegrationTest{
 
 
     String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"corys cool\", \"requestStatus\": \"accepted\"}";
-/**
+
 	@Before
 	public void before() {
 		serviceInstance = setServiceInstance();
@@ -493,5 +492,5 @@ public class SniroHomingV2Test extends BaseIntegrationTest{
 
 		verify(sniroClient, times(1)).postDemands(isA(SniroManagerRequest.class));
 	}
-**/
+
 }

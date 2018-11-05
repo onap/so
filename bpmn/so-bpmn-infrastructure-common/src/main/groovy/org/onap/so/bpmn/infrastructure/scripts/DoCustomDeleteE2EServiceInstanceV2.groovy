@@ -37,7 +37,7 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse;
+
 import org.springframework.web.util.UriUtils;
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.AAIObjectType

@@ -43,7 +43,7 @@ public class SniroValidator {
 	 *
 	 * @throws BadResponseException
 	 */
-	public void validateDemandsResponse(LinkedHashMap<?, ?> response) throws BadResponseException {
+	public void validateDemandsResponse(LinkedHashMap<String, Object> response) throws BadResponseException {
 		log.debug("Validating Sniro Managers synchronous response");
 		if(!response.isEmpty()){
 			JSONObject jsonResponse = new JSONObject(response);
@@ -105,7 +105,7 @@ public class SniroValidator {
 	 *
 	 * @throws BadResponseException
 	 */
-	public void validateReleaseResponse(LinkedHashMap<?, ?> response) throws BadResponseException {
+	public void validateReleaseResponse(LinkedHashMap<String, Object> response) throws BadResponseException {
 		log.debug("Validating Sniro Conductors response");
 		if(!response.isEmpty()){
 			String status = (String) response.get("status");

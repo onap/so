@@ -149,6 +149,8 @@ public class BpmnInstaller {
 						.setField("Content-Disposition", String.format("form-data; name=\"%s\"; filename=\"%s\"; size=%d", bpmnFileName, bpmnFileName, bytesToSend.length))
 						.build())
 				.build();
+		
+		IOUtils.closeQuietly(bpmnFileStream);
 		 return requestEntity;
 	}
 	

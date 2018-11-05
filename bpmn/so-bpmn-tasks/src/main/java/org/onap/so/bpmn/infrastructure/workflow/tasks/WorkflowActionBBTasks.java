@@ -201,30 +201,11 @@ public class WorkflowActionBBTasks {
 		execution.setVariable("mso-service-instance-id", resourceId);
 	}
 
-	public void setupFalloutHandler(DelegateExecution execution) {
-		final String requestId = (String) execution.getVariable(G_REQUEST_ID);
-		final String action = (String) execution.getVariable(G_ACTION);
-		final String resourceId = (String) execution.getVariable("resourceId");
-		String exceptionMsg = "";
-		if (execution.getVariable("WorkflowActionErrorMessage") != null) {
-			exceptionMsg = (String) execution.getVariable("WorkflowActionErrorMessage");
-		} else {
-			exceptionMsg = "Error in WorkflowAction";
-		}
-		execution.setVariable("mso-service-instance-id", resourceId);
-		execution.setVariable("mso-request-id", requestId);
-		String falloutRequest = "<aetgt:FalloutHandlerRequest xmlns:aetgt=\"http://org.onap/so/workflow/schema/v1\"xmlns:ns=\"http://org.onap/so/request/types/v1\"xmlns:wfsch=\"http://org.onap/so/workflow/schema/v1\"><request-info xmlns=\"http://org.onap/so/infra/vnf-request/v1\"><request-id>"
-				+ requestId + "</request-id><action>" + action
-				+ "</action><source>VID</source></request-info><aetgt:WorkflowException xmlns:aetgt=\"http://org.onap/so/workflow/schema/v1\"><aetgt:ErrorMessage>"
-				+ exceptionMsg
-				+ "</aetgt:ErrorMessage><aetgt:ErrorCode>7000</aetgt:ErrorCode></aetgt:WorkflowException></aetgt:FalloutHandlerRequest>";
-		execution.setVariable("falloutRequest", falloutRequest);
-	}
-
 	public void checkRetryStatus(DelegateExecution execution) {
 		String handlingCode = (String) execution.getVariable("handlingCode");
 		int retryCount = (int) execution.getVariable(RETRY_COUNT);
 		if (handlingCode.equals("Retry")){
+			updateRequestErrorStatusMessage(execution);
 			if(retryCount<5){
 				int currSequence = (int) execution.getVariable("gCurrentSequence");
 				execution.setVariable("gCurrentSequence", currSequence-1);
@@ -266,6 +247,19 @@ public class WorkflowActionBBTasks {
 					rollbackFlows.add(flowsToExecute.get(i));
 				}
 			}
+			
+			int flowSize = rollbackFlows.size();
+			String handlingCode = (String) execution.getVariable("handlingCode");
+			if(handlingCode.equals("RollbackToAssigned")){
+				for(int i = 0; i<flowSize -1; i++){
+					if(rollbackFlows.get(i).getBuildingBlock().getBpmnFlowName().contains("Unassign")){
+						rollbackFlows.remove(i);
+					}
+				}
+			}
+			
+			updateRequestErrorStatusMessage(execution);
+			
 			if (rollbackFlows.isEmpty())
 				execution.setVariable("isRollbackNeeded", false);
 			else
@@ -280,46 +274,88 @@ public class WorkflowActionBBTasks {
 		}
 	}
 
+	protected void updateRequestErrorStatusMessage(DelegateExecution execution) {
+		try {
+			String requestId = (String) execution.getVariable(G_REQUEST_ID);
+			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
+			String errorMsg = retrieveErrorMessage(execution);
+			if(errorMsg == null || errorMsg.equals("")){
+				errorMsg = "Failed to determine error message";
+			}
+			request.setStatusMessage(errorMsg);
+			logger.debug("Updating RequestDB to failed: errorMsg = " + errorMsg);
+			requestDbclient.updateInfraActiveRequests(request);
+		} catch (Exception e) {
+			logger.error("Failed to update Request db with the status message after retry or rollback has been initialized.",e);
+		}
+	}
+
 	public void abortCallErrorHandling(DelegateExecution execution) {
 		String msg = "Flow has failed. Rainy day handler has decided to abort the process.";
 		logger.error(msg);
 		throw new BpmnError(msg);
 	}
-
+	
 	public void updateRequestStatusToFailed(DelegateExecution execution) {
 		try {
 			String requestId = (String) execution.getVariable(G_REQUEST_ID);
 			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
 			String errorMsg = null;
-			boolean rollback = (boolean) execution.getVariable("isRollbackComplete");
-			try {
-				WorkflowException exception = (WorkflowException) execution.getVariable("WorkflowException");
-				if(exception != null && (exception.getErrorMessage()!=null || !exception.getErrorMessage().equals(""))){
-					errorMsg = exception.getErrorMessage();
+			String rollbackErrorMsg = null;
+			boolean rollbackCompleted = (boolean) execution.getVariable("isRollbackComplete");
+			boolean isRollbackFailure = (boolean) execution.getVariable("isRollback");
+			
+			if(rollbackCompleted){
+				rollbackErrorMsg = "Rollback has been completed successfully.";
+				request.setRollbackStatusMessage(rollbackErrorMsg);
+				logger.debug("Updating RequestDB to failed: Rollback has been completed successfully");
+			}else{
+				if(isRollbackFailure){
+					rollbackErrorMsg = retrieveErrorMessage(execution);
+					if(rollbackErrorMsg == null || rollbackErrorMsg.equals("")){
+						rollbackErrorMsg = "Failed to determine rollback error message.";
+					}
+					request.setRollbackStatusMessage(rollbackErrorMsg);
+					logger.debug("Updating RequestDB to failed: rollbackErrorMsg = " + rollbackErrorMsg);
+				}else{
+					errorMsg = retrieveErrorMessage(execution);
+					if(errorMsg == null || errorMsg.equals("")){
+						errorMsg = "Failed to determine error message";
+					}
+					request.setStatusMessage(errorMsg);
+					logger.debug("Updating RequestDB to failed: errorMsg = " + errorMsg);
 				}
-			} catch (Exception ex) {
-				//log error and attempt to extact WorkflowExceptionMessage
-				logger.error("Failed to extract workflow exception from execution.",ex);
-			}
-			if (errorMsg == null){
-				try {
-					errorMsg = (String) execution.getVariable("WorkflowExceptionErrorMessage");
-				} catch (Exception ex) {
-					logger.error("Failed to extract workflow exception message from WorkflowException",ex);
-					errorMsg = "Unexpected Error in BPMN.";
-				}
-			}
-			if(rollback){
-				errorMsg = errorMsg + " + Rollback has been completed successfully.";
 			}
 			request.setProgress(Long.valueOf(100));
-			request.setStatusMessage(errorMsg);
 			request.setRequestStatus("FAILED");
 			request.setLastModifiedBy("CamundaBPMN");
 			requestDbclient.updateInfraActiveRequests(request);
 		} catch (Exception e) {
 			workflowAction.buildAndThrowException(execution, "Error Updating Request Database", e);
 		}
+	}
+	
+	private String retrieveErrorMessage (DelegateExecution execution){
+		String errorMsg = "";
+		try {
+			WorkflowException exception = (WorkflowException) execution.getVariable("WorkflowException");
+			if(exception != null && (exception.getErrorMessage()!=null || !exception.getErrorMessage().equals(""))){
+				errorMsg = exception.getErrorMessage();
+			}
+		} catch (Exception ex) {
+			//log error and attempt to extact WorkflowExceptionMessage
+			logger.error("Failed to extract workflow exception from execution.",ex);
+		}
+		
+		if (errorMsg == null){
+			try {
+				errorMsg = (String) execution.getVariable("WorkflowExceptionErrorMessage");
+			} catch (Exception ex) {
+				logger.error("Failed to extract workflow exception message from WorkflowException",ex);
+				errorMsg = "Unexpected Error in BPMN.";
+			}
+		}
+		return errorMsg;
 	}
 	
 	public void updateRequestStatusToFailedWithRollback(DelegateExecution execution) {

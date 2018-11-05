@@ -20,6 +20,8 @@
 
 package org.onap.so.client.sdnc.mapper;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class GCTopologyOperationRequestMapperTest extends TestDataSetup{
     private GCTopologyOperationRequestMapper genObjMapper = new GCTopologyOperationRequestMapper();
 
     @Test
-    public void deactivateOrUnassignVnrReqMapperTest() {
+    public void deactivateOrUnassignVnrReqMapperTest() throws URISyntaxException {
         RequestContext requestContext = new RequestContext();
         requestContext.setMsoRequestId("MsoRequestId");
         ServiceInstance serviceInstance = new ServiceInstance();
@@ -52,10 +54,15 @@ public class GCTopologyOperationRequestMapperTest extends TestDataSetup{
         Configuration Configuration = new Configuration();
         Configuration.setConfigurationId("ConfigurationId");
         GenericResourceApiGcTopologyOperationInformation genericInfo = genObjMapper.deactivateOrUnassignVnrReqMapper
-                (SDNCSvcAction.UNASSIGN, serviceInstance, requestContext, Configuration);
+                (SDNCSvcAction.UNASSIGN, serviceInstance, requestContext, Configuration,"uuid",new URI("http://localhost"));
 
         Assert.assertNotNull(genericInfo);
-        Assert.assertNotNull(genericInfo.getSdncRequestHeader().getSvcRequestId());
+        Assert.assertNotNull(genericInfo.getRequestInformation());
+        Assert.assertNotNull(genericInfo.getSdncRequestHeader());
+        Assert.assertNotNull(genericInfo.getClass());
+        Assert.assertNotNull(genericInfo.getServiceInformation());
+        Assert.assertEquals("uuid",genericInfo.getSdncRequestHeader().getSvcRequestId()); 
+        Assert.assertEquals("http://localhost",genericInfo.getSdncRequestHeader().getSvcNotificationUrl());
     }
 
 

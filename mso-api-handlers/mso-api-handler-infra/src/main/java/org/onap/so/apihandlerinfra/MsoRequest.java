@@ -23,12 +23,14 @@ package org.onap.so.apihandlerinfra;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -65,6 +67,7 @@ import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.exceptions.ValidationException;
+import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
@@ -80,6 +83,7 @@ import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.ServiceException;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
@@ -266,6 +270,7 @@ public class MsoRequest {
             aq.setRequestId (requestId);
             aq.setRequestAction(action.toString());
             aq.setAction(action.toString());
+            aq.setRequestUrl(MDC.get(LogConstants.HTTP_URL));
 
             Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
 
@@ -386,6 +391,7 @@ public class MsoRequest {
            aq.setRequestId (requestId);
            aq.setRequestAction(action.name());
            aq.setAction(action.name());
+           aq.setRequestUrl(MDC.get(LogConstants.HTTP_URL));
 
            Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
 
@@ -429,6 +435,7 @@ public class MsoRequest {
             request.setRequestBody(requestJSON);
             Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
             request.setEndTime(endTimeStamp);
+            request.setRequestUrl(MDC.get(LogConstants.HTTP_URL));            
 			requestsDbClient.save(request);
         } catch (Exception e) {
         	msoLogger.error(MessageEnum.APIH_DB_UPDATE_EXC, e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "Exception when updating record in DB");
@@ -742,4 +749,23 @@ public class MsoRequest {
 		return vnfType;
 
 	}
+	
+	public Optional<URL> buildSelfLinkUrl(String url, String requestId) {
+		Optional<URL> selfLinkUrl = Optional.empty();
+		String version = "";		
+		try {
+			URL aUrl = new URL(url);
+			String aPath = aUrl.getPath();
+			if (aPath.indexOf("/v") == -1) {
+				version = aPath.substring(aPath.indexOf("/V"), aPath.indexOf("/V")+4);
+			} else {
+				version = aPath.substring(aPath.indexOf("/v"), aPath.indexOf("/v")+4);
+			}
+			String selfLinkPath = Constants.ORCHESTRATION_REQUESTS_PATH.concat(version).concat(requestId);
+			selfLinkUrl = Optional.of(new URL(aUrl.getProtocol(), aUrl.getHost(), aUrl.getPort(), selfLinkPath));
+		} catch (Exception e) {
+			selfLinkUrl = Optional.empty();  // ignore
+		}
+		return selfLinkUrl;
+	}	
 }

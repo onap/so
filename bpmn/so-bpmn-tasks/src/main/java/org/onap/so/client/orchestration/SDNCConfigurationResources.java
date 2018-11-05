@@ -35,96 +35,89 @@ import org.onap.so.client.sdnc.mapper.GCTopologyOperationRequestMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+
 import org.onap.sdnc.northbound.client.model.GenericResourceApiGcTopologyOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 
 @Component
 public class SDNCConfigurationResources {
-    @Autowired
-    private GCTopologyOperationRequestMapper sdncRM;
-    
-    @Autowired
-    private SDNCClient sdncClient;
+	@Autowired
+	private GCTopologyOperationRequestMapper sdncRM;
 
-    /**
-     * SDN-C call to assign configuration after it was created in A&AI
-     *
-     * @param serviceInstance
-     * @param requestContext
-     * @param vnrConfiguration
-     * @param voiceVnf
-     * @return
-     * @throws MapperException
-     * @throws BadResponseException
-     */
-    public String assignVnrConfiguration(ServiceInstance serviceInstance,
-                                         RequestContext requestContext,
-                                         Customer customer,
-                                         Configuration vnrConfiguration,
-                                         GenericVnf voiceVnf)
-            throws MapperException, BadResponseException {
-        GenericResourceApiGcTopologyOperationInformation sdncReq = sdncRM.assignOrActivateVnrReqMapper(
-                SDNCSvcAction.ASSIGN,
-                GenericResourceApiRequestActionEnumeration.CREATEGENERICCONFIGURATIONINSTANCE ,
-      serviceInstance , requestContext, customer, vnrConfiguration,voiceVnf);
-        return sdncClient.post(sdncReq, SDNCTopology.CONFIGURATION);
-    }
+	/**
+	 * SDN-C call to assign configuration after it was created in A&AI
+	 *
+	 * @param serviceInstance
+	 * @param requestContext
+	 * @param vnrConfiguration
+	 * @param voiceVnf
+	 * @return
+	 * @throws MapperException
+	 * @throws BadResponseException
+	 */
+	public GenericResourceApiGcTopologyOperationInformation assignVnrConfiguration(ServiceInstance serviceInstance,
+			RequestContext requestContext,
+			Customer customer,
+			Configuration vnrConfiguration,
+			GenericVnf voiceVnf, String sdncRequestId, URI callbackUri)
+					throws MapperException, BadResponseException {
+		return sdncRM.assignOrActivateVnrReqMapper(
+				SDNCSvcAction.ASSIGN,
+				GenericResourceApiRequestActionEnumeration.CREATEGENERICCONFIGURATIONINSTANCE ,
+				serviceInstance , requestContext, customer, vnrConfiguration,voiceVnf,sdncRequestId,callbackUri);      
+	}
 
-    /**
-     * SDNC Call to Activate VNR Configuration
-     *
-     * @param serviceInstance
-     * @param requestContext
-     * @param vnrConfiguration
-     * @param voiceVnf
-     * @return
-     * @throws MapperException
-     * @throws BadResponseException
-     */
-    public String activateVnrConfiguration(ServiceInstance serviceInstance,
-                                           RequestContext requestContext,
-                                           Customer customer,
-                                           Configuration vnrConfiguration,
-                                           GenericVnf voiceVnf)
-            throws MapperException, BadResponseException {
+	/**
+	 * SDNC Call to Activate VNR Configuration
+	 *
+	 * @param serviceInstance
+	 * @param requestContext
+	 * @param vnrConfiguration
+	 * @param voiceVnf
+	 * @return
+	 * @throws MapperException
+	 * @throws BadResponseException
+	 */
+	public GenericResourceApiGcTopologyOperationInformation activateVnrConfiguration(ServiceInstance serviceInstance,
+			RequestContext requestContext,
+			Customer customer,
+			Configuration vnrConfiguration,
+			GenericVnf voiceVnf, String sdncRequestId, URI callbackUri)
+					throws MapperException, BadResponseException {
+		return sdncRM.assignOrActivateVnrReqMapper(
+				SDNCSvcAction.ACTIVATE,
+				GenericResourceApiRequestActionEnumeration.CREATEGENERICCONFIGURATIONINSTANCE,
+				serviceInstance , requestContext, customer, vnrConfiguration, voiceVnf,sdncRequestId,callbackUri);      
+	}
 
-        GenericResourceApiGcTopologyOperationInformation sdncReq = sdncRM.assignOrActivateVnrReqMapper(
-                SDNCSvcAction.ACTIVATE,
-                GenericResourceApiRequestActionEnumeration.CREATEGENERICCONFIGURATIONINSTANCE ,
-                serviceInstance , requestContext, customer, vnrConfiguration, voiceVnf);
-        return sdncClient.post(sdncReq, SDNCTopology.CONFIGURATION);
-    }
+	/**
+	 * method to unAssign Vnr Configuration in SDNC
+	 *
+	 * @param serviceInstance
+	 * @param requestContext
+	 * @param vnrConfiguration
+	 * @return
+	 * @throws BadResponseException
+	 * @throws MapperException
+	 */
+	public GenericResourceApiGcTopologyOperationInformation unAssignVnrConfiguration(ServiceInstance serviceInstance, RequestContext requestContext,
+			Configuration vnrConfiguration, String sdncRequestId, URI callbackUri) throws BadResponseException, MapperException {
+		return sdncRM.deactivateOrUnassignVnrReqMapper
+				(SDNCSvcAction.UNASSIGN,serviceInstance, requestContext, vnrConfiguration,sdncRequestId,callbackUri);        
+	}
 
-    /**
-     * method to unAssign Vnr Configuration in SDNC
-     *
-     * @param serviceInstance
-     * @param requestContext
-     * @param vnrConfiguration
-     * @return
-     * @throws BadResponseException
-     * @throws MapperException
-     */
-    public String unAssignVnrConfiguration(ServiceInstance serviceInstance, RequestContext requestContext,
-                                           Configuration vnrConfiguration) throws BadResponseException, MapperException {
-
-        GenericResourceApiGcTopologyOperationInformation sdncReq = sdncRM.deactivateOrUnassignVnrReqMapper
-                (SDNCSvcAction.UNASSIGN,serviceInstance, requestContext, vnrConfiguration);
-        return sdncClient.post(sdncReq,  SDNCTopology.CONFIGURATION);
-    }
-
-    /***
-     *  Deactivate VNR SDNC Call
-     * @param serviceInstance
-     * @param requestContext
-     * @param vnrConfiguration
-     * @throws BadResponseException
-     * @throws MapperException
-     */
-    public String deactivateVnrConfiguration(ServiceInstance serviceInstance, RequestContext requestContext, Configuration vnrConfiguration) throws BadResponseException, MapperException {
-        GenericResourceApiGcTopologyOperationInformation sdncReq = sdncRM.deactivateOrUnassignVnrReqMapper(
-                SDNCSvcAction.DEACTIVATE,
-                serviceInstance , requestContext, vnrConfiguration);
-        return sdncClient.post(sdncReq, SDNCTopology.CONFIGURATION);
-    }
+	/***
+	 *  Deactivate VNR SDNC Call
+	 * @param serviceInstance
+	 * @param requestContext
+	 * @param vnrConfiguration
+	 * @throws BadResponseException
+	 * @throws MapperException
+	 */
+	public GenericResourceApiGcTopologyOperationInformation deactivateVnrConfiguration(ServiceInstance serviceInstance, RequestContext requestContext, Configuration vnrConfiguration, String sdncRequestId, URI callbackUri) throws BadResponseException, MapperException {
+		return sdncRM.deactivateOrUnassignVnrReqMapper(
+				SDNCSvcAction.DEACTIVATE,
+				serviceInstance , requestContext, vnrConfiguration,sdncRequestId,callbackUri);     
+	}
 }

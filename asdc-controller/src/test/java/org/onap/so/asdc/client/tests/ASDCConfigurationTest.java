@@ -55,7 +55,7 @@ public class ASDCConfigurationTest extends BaseTest {
     
     @Test
     public void isUseHttpsWithDmaapTest() {
-    	assertFalse(config.isUseHttpsWithDmaap());
+    	assertTrue(config.isUseHttpsWithDmaap());
     }
     
     @Test

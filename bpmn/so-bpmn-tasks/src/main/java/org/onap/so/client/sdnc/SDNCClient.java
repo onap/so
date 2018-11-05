@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SDNCClient {
 
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SDNCClient.class);
-	private BaseClient<String, LinkedHashMap<?, ?>> STOClient = new BaseClient<>();
+	private BaseClient<String, LinkedHashMap<String, Object>> STOClient = new BaseClient<>();
 
 	@Autowired
 	private SDNCProperties properties;
@@ -64,9 +64,20 @@ public class SDNCClient {
 			STOClient.setTargetUrl(targetUrl);
 			HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
 			STOClient.setHttpHeader(httpHeader);
-			LinkedHashMap<?, ?> output = STOClient.post(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
+			LinkedHashMap<String, Object> output = STOClient.post(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
 			return sdnCommonTasks.validateSDNResponse(output);
 	}
+	
+	
+	public String post(Object request, String url) throws MapperException, BadResponseException {
+		String jsonRequest = sdnCommonTasks.buildJsonRequest(request);	
+		STOClient.setTargetUrl(url);
+		HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
+		STOClient.setHttpHeader(httpHeader);
+		LinkedHashMap<String, Object> output = STOClient.post(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
+		return sdnCommonTasks.validateSDNResponse(output);
+}
+	
 
 	/**
 	 * 
@@ -86,7 +97,7 @@ public class SDNCClient {
 			STOClient.setTargetUrl(targetUrl);
 			HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
 			STOClient.setHttpHeader(httpHeader);
-			LinkedHashMap<?, ?> output = STOClient.get(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
+			LinkedHashMap<String, Object> output = STOClient.get(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
 			return sdnCommonTasks.validateSDNGetResponse(output);
 	}
 

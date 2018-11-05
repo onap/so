@@ -45,7 +45,7 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
+
 import org.springframework.web.util.UriUtils
 
 public class DoUpdateVfModule extends VfModuleBase {

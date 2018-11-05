@@ -39,7 +39,7 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class AppcRunTasksITTest extends BaseIntegrationTest {
+public class AppcRunTasksIT extends BaseIntegrationTest {
 	
 	@Autowired
 	private AppcRunTasks appcRunTasks;

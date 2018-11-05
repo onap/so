@@ -57,6 +57,8 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String requestStatus;
     @Column(name = "STATUS_MESSAGE", length = 2000)
     private String statusMessage;
+    @Column(name = "ROLLBACK_STATUS_MESSAGE", length = 2000)
+    private String rollbackStatusMessage;
     @Column(name = "PROGRESS", precision = 11)
     private Long progress;
 
@@ -137,7 +139,9 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String operationalEnvId;
     @Column(name = "OPERATIONAL_ENV_NAME", length = 200)
     private String operationalEnvName;
-
+    @Column(name = "REQUEST_URL", length = 500)
+    private String requestUrl;    
+    
     @ResourceId
     public URI getRequestURI() {
         return URI.create(this.requestId);
@@ -181,6 +185,14 @@ public abstract class InfraRequests implements java.io.Serializable {
 
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
+    }
+    
+    public String getRollbackStatusMessage() {
+        return this.rollbackStatusMessage;
+    }
+
+    public void setRollbackStatusMessage(String rollbackStatusMessage) {
+        this.rollbackStatusMessage = rollbackStatusMessage;
     }
 
     public Long getProgress() {
@@ -493,6 +505,14 @@ public abstract class InfraRequests implements java.io.Serializable {
         this.operationalEnvName = operationalEnvName;
     }
 
+    public String getRequestUrl() {
+        return this.requestUrl;
+    }
+    
+    public void setRequestUrl(String requestUrl) {
+         this.requestUrl = requestUrl;
+    }    
+    
     @PrePersist
     protected void onCreate() {
         if (requestScope == null)
@@ -532,7 +552,7 @@ public abstract class InfraRequests implements java.io.Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("requestId", getRequestId())
                 .append("clientRequestId", getClientRequestId()).append("action", getAction())
-                .append("requestStatus", getRequestStatus()).append("statusMessage", getStatusMessage())
+                .append("requestStatus", getRequestStatus()).append("statusMessage", getStatusMessage()).append("rollbackStatusMessage", getRollbackStatusMessage())
                 .append("progress", getProgress()).append("startTime", getStartTime()).append("endTime", getEndTime())
                 .append("source", getSource()).append("vnfId", getVnfId()).append("vnfName", getVnfName())
                 .append("vnfType", getVnfType()).append("serviceType", getServiceType())
@@ -551,6 +571,7 @@ public abstract class InfraRequests implements java.io.Serializable {
                 .append("networkName", getNetworkName()).append("networkType", getNetworkType())
                 .append("requestorId", getRequestorId()).append("configurationId", getConfigurationId())
                 .append("configurationName", getConfigurationName()).append("operationalEnvId", getOperationalEnvId())
-                .append("operationalEnvName", getOperationalEnvName()).toString();
+                .append("operationalEnvName", getOperationalEnvName())
+                .append("requestUrl", getRequestUrl()).toString();
     }
 }

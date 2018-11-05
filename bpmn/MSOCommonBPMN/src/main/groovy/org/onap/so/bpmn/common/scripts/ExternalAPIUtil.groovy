@@ -22,13 +22,15 @@ package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
+import org.onap.so.client.HttpClient
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
 import org.apache.commons.lang3.StringEscapeUtils
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
+import org.onap.so.utils.TargetEntity
 
 class ExternalAPIUtil {
 
@@ -127,23 +129,22 @@ class ExternalAPIUtil {
 	 * @return APIResponse
 	 *
 	 */
-	public APIResponse executeExternalAPIGetCall(DelegateExecution execution, String url){
+	public Response executeExternalAPIGetCall(DelegateExecution execution, String url){
 		msoLogger.debug(" ======== STARTED Execute ExternalAPI Get Process ======== ")
-		APIResponse apiResponse = null
+		Response apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
 			msoLogger.debug( "Generated uuid is: " + uuid)
 			msoLogger.debug( "URL to be used is: " + url)
 
-			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_externalapi_auth"),execution.getVariable("URN_mso_msoKey"))
+			URL Url = new URL(url)
+			HttpClient client = new HttpClient(Url, MediaType.APPLICATION_JSON, TargetEntity.EXTERNAL)
+			client.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
+			client.addAdditionalHeader("X-FromAppId", "MSO")
+			client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, uuid)
+			client.addAdditionalHeader("Accept", MediaType.APPLICATION_JSON)
 
-			RESTConfig config = new RESTConfig(url);
-			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Accept","application/json");
-
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-				client.addAuthorizationHeader(basicAuthCred)
-			}
-			apiResponse = client.httpGet()
+			apiResponse = client.get()
 
 			msoLogger.debug( "======== COMPLETED Execute ExternalAPI Get Process ======== ")
 		}catch(Exception e){
@@ -162,63 +163,25 @@ class ExternalAPIUtil {
 	 * @param url
 	 * @param payload
 	 *
-	 * @return APIResponse
+	 * @return Response
 	 *
 	 */
-	public APIResponse executeExternalAPIPostCall(DelegateExecution execution, String url, String payload){
+	public Response executeExternalAPIPostCall(DelegateExecution execution, String urlString, String payload){
 		msoLogger.debug( " ======== Started Execute ExternalAPI Post Process ======== ")
-		APIResponse apiResponse = null
+		Response apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
 			msoLogger.debug( "Generated uuid is: " + uuid)
-			msoLogger.debug( "URL to be used is: " + url)
+			msoLogger.debug( "URL to be used is: " + urlString)
 
-			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_externalapi_auth"),execution.getVariable("URN_mso_msoKey"))
-			RESTConfig config = new RESTConfig(url);
-			RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Content-Type", "application/json").addHeader("Accept","application/json");
+			URL url = new URL(urlString);
 
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-				client.addAuthorizationHeader(basicAuthCred)
-			}
-			apiResponse = client.httpPost(payload)
+			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.AAI)
+			httpClient.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
+			httpClient.addAdditionalHeader("X-FromAppId", "MSO")
+			httpClient.addAdditionalHeader("X-TransactionId", uuid)
 
-			msoLogger.debug( "======== Completed Execute ExternalAPI Post Process ======== ")
-		}catch(Exception e){
-			msoLogger.error("Exception occured while executing ExternalAPI Post Call. Exception is: \n" + e)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 9999, e.getMessage())
-		}
-		return apiResponse
-	}
-
-	/**
-	 * This reusable method can be used for making ExternalAPI Post Calls. The url
-	 * and payload should be passed as a parameters along with the execution.
-	 * The method will return an APIResponse.
-	 *
-	 * @param execution
-	 * @param url
-	 * @param payload
-	 * @param authenticationHeader - addAuthenticationHeader value
-	 * @param headerName - name of header you want to add, i.e. addHeader(headerName, headerValue)
-	 * @param headerValue - the header's value, i.e. addHeader(headerName, headerValue)
-	 *
-	 * @return APIResponse
-	 *
-	 */
-	public APIResponse executeExternalAPIPostCall(DelegateExecution execution, String url, String payload, String authenticationHeaderValue, String headerName, String headerValue){
-		msoLogger.debug( " ======== Started Execute ExternalAPI Post Process ======== ")
-		APIResponse apiResponse = null
-		try{
-			msoLogger.debug( "URL to be used is: " + url)
-
-			String basicAuthCred = utils.getBasicAuth(execution.getVariable("URN_externalapi_auth"),execution.getVariable("URN_mso_msoKey"))
-
-			RESTConfig config = new RESTConfig(url);
-			RESTClient client = new RESTClient(config).addAuthorizationHeader(authenticationHeaderValue).addHeader(headerName, headerValue)
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-				client.addAuthorizationHeader(basicAuthCred)
-			}
-			apiResponse = client.httpPost(payload)
+			apiResponse = httpClient.post(payload)
 
 			msoLogger.debug( "======== Completed Execute ExternalAPI Post Process ======== ")
 		}catch(Exception e){
@@ -227,5 +190,7 @@ class ExternalAPIUtil {
 		}
 		return apiResponse
 	}
+
+
 
 }

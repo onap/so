@@ -48,7 +48,7 @@ import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
+
 
 import groovy.json.*
 
@@ -278,7 +278,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			if (siParamsXml == null)
 				siParamsXml = ""
 			execution.setVariable("siParamsXml", siParamsXml)
-			
+
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
@@ -323,7 +323,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			{
 				oStatus = "Created"
 			}
-			
+
 			//QUERY CATALOG DB AND GET WORKLOAD / ENVIRONMENT CONTEXT
 			String environmentContext = ""
 			String workloadContext =""
@@ -345,7 +345,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				msoLogger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 			}
-			
+
 			org.onap.aai.domain.yang.ServiceInstance si = new org.onap.aai.domain.yang.ServiceInstance()
 			si.setServiceInstanceName(execution.getVariable("serviceInstanceName"))
 			si.setServiceType(serviceType)
@@ -354,7 +354,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			si.setModelInvariantId(modelInvariantUuid)
 			si.setModelVersionId(execution.getVariable("modelUuid"))
 			si.setEnvironmentContext(environmentContext)
-			si.setWorkloadContext(workloadContext)			
+			si.setWorkloadContext(workloadContext)
 
 			AAIResourcesClient client = new AAIResourcesClient()
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("subscriptionServiceType"), serviceInstanceId)

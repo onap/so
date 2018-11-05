@@ -33,6 +33,7 @@ import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.HttpClient
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.Relationships
@@ -42,12 +43,12 @@ import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
+
 import org.springframework.web.util.UriUtils
+import org.onap.so.utils.TargetEntity
 
 import groovy.json.JsonOutput
+import javax.ws.rs.core.Response
 
 public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteNetworkInstance.class);
@@ -447,17 +448,13 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			String vnfAdapterUrl = UrnPropertiesReader.getVariable("mso.adapters.network.rest.endpoint",execution)
 			String vnfAdapterRequest = execution.getVariable(Prefix + "deleteNetworkRequest")
 
-			RESTConfig config = new RESTConfig(vnfAdapterUrl)
-			RESTClient client = new RESTClient(config).
-				addHeader("Content-Type", "application/xml").
-				addAuthorizationHeader(execution.getVariable("BasicAuthHeaderValuePO"));
+			URL url = new URL(vnfAdapterUrl)
+			HttpClient httpClient = new HttpClient(url, "application/xml", TargetEntity.OPENSTACK_ADAPTER)
+			httpClient.addAdditionalHeader("Authorization", execution.getVariable("BasicAuthHeaderValuePO"))
+			Response response = httpClient.delete(vnfAdapterRequest)
 
-			APIResponse response;
 
-			response = client.httpDelete(vnfAdapterRequest)
-
-			execution.setVariable(Prefix + "networkReturnCode", response.getStatusCode())
-			execution.setVariable(Prefix + "deleteNetworkResponse", response.getResponseBodyAsString())
+			execution.setVariable(Prefix + "networkReturnCode", response.getStatus())
 
 		} catch (Exception ex) {
 			// caught exception
@@ -499,7 +496,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "requestId", requestId)
 			msoLogger.debug(Prefix + "requestId " + requestId)
 			L3Network queryAAIResponse = execution.getVariable(Prefix + "queryAAIResponse")
-			
+
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 			String cloudRegionId = execution.getVariable(Prefix + "cloudRegionSdnc")
 			// 1. prepare delete topology via SDNC Adapter SUBFLOW call
@@ -972,9 +969,9 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			    requestId = execution.getVariable("mso-request-id")
 			}
 			execution.setVariable(Prefix + "requestId", requestId)
-			
+
 			L3Network queryAAIResponse = execution.getVariable(Prefix + "queryAAIResponse")
-			
+
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 			String cloudRegionId = execution.getVariable(Prefix + "cloudRegionSdnc")
 			// 1. prepare delete topology via SDNC Adapter SUBFLOW call

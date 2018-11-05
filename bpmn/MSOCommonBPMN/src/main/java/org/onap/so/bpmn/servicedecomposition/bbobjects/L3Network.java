@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 public class L3Network implements Serializable, ShallowCopy<L3Network> {
 
 	private static final long serialVersionUID = 4434492567957111317L;
-	
+
 	@Id
 	@JsonProperty("network-id")
 	private String networkId;
@@ -99,6 +99,8 @@ public class L3Network implements Serializable, ShallowCopy<L3Network> {
     private List<SegmentationAssignment> segmentationAssignments = new ArrayList<>();
 	@JsonProperty("model-info-network")
 	private ModelInfoNetwork modelInfoNetwork;
+	@JsonProperty("aggregate-routes")
+    private List<AggregateRoute> aggregateRoutes = new ArrayList<>();
 
 	public ModelInfoNetwork getModelInfoNetwork() {
 		return modelInfoNetwork;
@@ -254,6 +256,11 @@ public class L3Network implements Serializable, ShallowCopy<L3Network> {
 	public void setCloudParams(Map<String, String> cloudParams) {
 		this.cloudParams = cloudParams;
 	}
+
+	public List<AggregateRoute> getAggregateRoutes(){
+		return aggregateRoutes;
+	}
+
 	@Override
 	public boolean equals(final Object other) {
 		if (!(other instanceof L3Network)) {

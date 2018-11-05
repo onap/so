@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,19 +24,20 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import java.io.Serializable;
 
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.springframework.web.util.UriUtils
 
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.HttpClient
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.entities.uri.Depth
-import org.onap.so.rest.APIResponse;
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
+import org.onap.so.utils.TargetEntity
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
@@ -46,8 +47,8 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 	def Prefix="GVFMN_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
-	
-	
+
+
 	public void preProcessRequest(DelegateExecution execution) {
 		try {
 			def vnfId = execution.getVariable("vnfId")
@@ -76,7 +77,7 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 		try {
 			def vnfId = execution.getVariable('vnfId')
 			def personaModelId = execution.getVariable('personaModelId')
-			
+
 			AaiUtil aaiUtil = new AaiUtil(this)
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
 			uri.depth(Depth.ONE)
@@ -85,34 +86,34 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 			msoLogger.debug("AAI endPoint: " + endPoint)
 
 			try {
-				RESTConfig config = new RESTConfig(endPoint);
+				HttpClient client = new HttpClient(new URL(endPoint), MediaType.APPLICATION_XML, TargetEntity.AAI)
+				client.addAdditionalHeader('X-TransactionId', UUID.randomUUID().toString())
+				client.addAdditionalHeader('X-FromAppId', 'MSO')
+				client.addAdditionalHeader('Content-Type', 'application/xml')
+				client.addAdditionalHeader('Accept','application/xml')
+
 				def responseData = ''
-				def aaiRequestId = UUID.randomUUID().toString()
-				RESTClient client = new RESTClient(config).
-					addHeader('X-TransactionId', aaiRequestId).
-					addHeader('X-FromAppId', 'MSO').
-					addHeader('Content-Type', 'application/xml').
-					addHeader('Accept','application/xml');
+
 				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
-				APIResponse response = client.httpGet()
+				Response response = client.get()
 				msoLogger.debug("GenerateVfModuleName - invoking httpGet() to AAI")
 
-				responseData = response.getResponseBodyAsString()
+				responseData = response.readEntity(String.class)
 				if (responseData != null) {
 					msoLogger.debug("Received generic VNF data: " + responseData)
 
 				}
 
 				msoLogger.debug("GenerateVfModuleName - queryAAIVfModule Response: " + responseData)
-				msoLogger.debug("GenerateVfModuleName - queryAAIVfModule ResponseCode: " + response.getStatusCode())
+				msoLogger.debug("GenerateVfModuleName - queryAAIVfModule ResponseCode: " + response.getStatus())
 
-				execution.setVariable('GVFMN_queryAAIVfModuleResponseCode', response.getStatusCode())
+				execution.setVariable('GVFMN_queryAAIVfModuleResponseCode', response.getStatus())
 				execution.setVariable('GVFMN_queryAAIVfModuleResponse', responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
+				msoLogger.debug('Response code:' + response.getStatus())
 				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
-				if (response.getStatusCode() == 200) {
-					// Set the VfModuleXML					
-					if (responseData != null) {						
+				if (response.getStatus() == 200) {
+					// Set the VfModuleXML
+					if (responseData != null) {
 						String vfModulesText = utils.getNodeXml(responseData, "vf-modules")
 						if (vfModulesText == null || vfModulesText.isEmpty()) {
 							msoLogger.debug("There are no VF modules in this VNF yet")
@@ -131,18 +132,18 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 								def personaModelIdFromAAI = utils.getNodeText(vfModuleXml, "model-invariant-id")
 								if (!personaModelIdFromAAI) {
 									// check old attribute name
-								   personaModelIdFromAAI = utils.getNodeText(vfModuleXml, "persona-model-id")								  
+								   personaModelIdFromAAI = utils.getNodeText(vfModuleXml, "persona-model-id")
 								}
 								if (personaModelIdFromAAI != null && personaModelIdFromAAI.equals(personaModelId)) {
 									matchingVfModules = matchingVfModules + utils.removeXmlPreamble(vfModuleXml)
-								}							
+								}
 							}
 							matchingVfModules = matchingVfModules + "</vfModules>"
-							msoLogger.debug("Matching VF Modules: " + matchingVfModules)					
+							msoLogger.debug("Matching VF Modules: " + matchingVfModules)
 							execution.setVariable("GVFMN_vfModuleXml", matchingVfModules)
 						}
 					}
-				}	
+				}
 			} catch (Exception ex) {
 				ex.printStackTrace()
 				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
@@ -155,18 +156,18 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAI(): ' + e.getMessage())
 		}
-		
+
 	}
-					
+
 	public void generateName (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.generateName() ' +
 			'execution=' + execution.getId() +
 			')'
 		msoLogger.trace('Entered ' + method)
-	
-		String vfModuleXml = execution.getVariable("GVFMN_vfModuleXml")		
-		
-		String moduleIndex = utils.getLowestUnusedIndex(vfModuleXml)			
+
+		String vfModuleXml = execution.getVariable("GVFMN_vfModuleXml")
+
+		String moduleIndex = utils.getLowestUnusedIndex(vfModuleXml)
 		msoLogger.debug("moduleIndex is: " + moduleIndex)
 		def vnfName = execution.getVariable("vnfName")
 		def vfModuleLabel = execution.getVariable("vfModuleLabel")

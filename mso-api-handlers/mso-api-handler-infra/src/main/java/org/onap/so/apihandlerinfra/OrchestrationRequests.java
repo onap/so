@@ -270,6 +270,7 @@ public class OrchestrationRequests {
        request.setRequestId(iar.getRequestId());
        request.setRequestScope(iar.getRequestScope());
        request.setRequestType(iar.getRequestAction());
+       String rollbackStatusMessage = iar.getRollbackStatusMessage();
 
        InstanceReferences ir = new InstanceReferences();
        if(iar.getNetworkId() != null)
@@ -341,6 +342,10 @@ public class OrchestrationRequests {
 
        if(iar.getProgress() != null){
     	   status.setPercentProgress(iar.getProgress().intValue());
+       }
+       
+       if(rollbackStatusMessage != null){
+    	   status.setRollbackStatusMessage(rollbackStatusMessage);
        }
 
        request.setRequestStatus(status);

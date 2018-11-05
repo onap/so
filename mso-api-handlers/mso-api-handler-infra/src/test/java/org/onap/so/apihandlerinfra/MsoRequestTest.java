@@ -25,11 +25,13 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -480,4 +482,20 @@ public class MsoRequestTest extends BaseTest {
         String result = MsoRequest.domToStr(document);
         assertNotNull(result);
     }
+
+    @Test
+    public void buildSelfLinkUrlTest() throws Exception {
+    	// v - version
+		String incomingUrl = "http://localhost:8080/onap/infra/so/serviceInstantiation/v7/serviceInstances";
+    	String expectedSelfLink = "http://localhost:8080/orchestrationRequests/v7/efce3167-5e45-4666-9d4d-22e23648e5d1";
+    	String requestId = "efce3167-5e45-4666-9d4d-22e23648e5d1";
+    	this.msoRequest = new MsoRequest();
+    	Optional<URL> actualSelfLinkUrl = msoRequest.buildSelfLinkUrl(incomingUrl, requestId);
+    	assertEquals(expectedSelfLink, actualSelfLinkUrl.get().toString());
+		// V - Version
+    	String incomingUrlV = "http://localhost:8080/onap/infra/so/serviceInstantiation/V7/serviceInstances";
+    	String expectedSelfLinkV = "http://localhost:8080/orchestrationRequests/V7/efce3167-5e45-4666-9d4d-22e23648e5d1";
+    	Optional<URL> actualSelfLinkUrlV = msoRequest.buildSelfLinkUrl(incomingUrlV, requestId);
+    	assertEquals(expectedSelfLinkV, actualSelfLinkUrlV.get().toString());		
+    }    
 }

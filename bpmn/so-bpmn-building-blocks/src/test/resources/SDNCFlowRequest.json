@@ -1,0 +1,11 @@
+{
+	"timeOut":"PT1H",
+	"URI": "http:llasdfasdf",
+	"CorrelationValue": "randomUUID",
+	"CorrelationName": "MyCallbackVariableName",
+	"SDNCPayLoad": {
+		"test":"test",
+		"test2":"test",
+		"test3":"test"
+	}
+}

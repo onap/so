@@ -113,6 +113,7 @@ public class ArchiveInfraRequestsScheduler {
 				archivedInfra.setNetworkType(iar.getNetworkType());
 				archivedInfra.setOperationalEnvId(iar.getOperationalEnvId());
 				archivedInfra.setOperationalEnvName(iar.getOperationalEnvName());
+				archivedInfra.setRequestUrl(iar.getRequestUrl());				
 				archivedInfra.setProgress(iar.getProgress());
 				archivedInfra.setProvStatus(iar.getProvStatus());
 				archivedInfra.setRequestAction(iar.getRequestAction());

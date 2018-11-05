@@ -17,6 +17,7 @@
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="retryCount" target="retryCount" />
         <camunda:out source="WorkflowExceptionErrorMessage" target="WorkflowExceptionErrorMessage" />
+        <camunda:in source="aLaCarte" target="aLaCarte" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0mew9im</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_07h9d4y</bpmn:outgoing>
@@ -98,7 +99,7 @@
       </bpmn:serviceTask>
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_0v588sm" name="Rollback = true" sourceRef="ExclusiveGateway_Finished" targetRef="Task_RollbackExecutionPath">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("handlingCode")=="Rollback"}]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("handlingCode")=="Rollback"||execution.getVariable("handlingCode")=="RollbackToAssigned"}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1atzsgn" sourceRef="Task_RollbackExecutionPath" targetRef="Task_SelectBB">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("isRollbackNeeded")==true}]]></bpmn:conditionExpression>

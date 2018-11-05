@@ -72,12 +72,12 @@ public class SniroClient {
 		header.set("X-patchVersion", managerProperties.getHeaders().get("patchVersion"));
 		header.set("X-minorVersion", managerProperties.getHeaders().get("minorVersion"));
 		header.set("X-latestVersion", managerProperties.getHeaders().get("latestVersion"));
-		BaseClient<String, LinkedHashMap<?, ?>> baseClient = new BaseClient<>();
+		BaseClient<String, LinkedHashMap<String, Object>> baseClient = new BaseClient<>();
 
 		baseClient.setTargetUrl(url);
 		baseClient.setHttpHeader(header);
 
-		LinkedHashMap<?, ?> response = baseClient.post(homingRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
+		LinkedHashMap<String, Object> response = baseClient.post(homingRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
 		validator.validateDemandsResponse(response);
 		log.trace("Completed Sniro Client Post Demands");
 	}
@@ -102,12 +102,12 @@ public class SniroClient {
 		HttpHeaders header = new HttpHeaders();
 		header.setContentType(MediaType.APPLICATION_JSON);
 		header.set("Authorization", UrnPropertiesReader.getVariable("sniro.conductor.headers.auth"));
-		BaseClient<String, LinkedHashMap<?, ?>> baseClient = new BaseClient<>();
+		BaseClient<String, LinkedHashMap<String, Object>> baseClient = new BaseClient<>();
 
 		baseClient.setTargetUrl(url);
 		baseClient.setHttpHeader(header);
 
-		LinkedHashMap<?, ?> response = baseClient.post(releaseRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
+		LinkedHashMap<String, Object> response = baseClient.post(releaseRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
 		SniroValidator v = new SniroValidator();
 		v.validateReleaseResponse(response);
 		log.trace("Completed Sniro Client Post Release");

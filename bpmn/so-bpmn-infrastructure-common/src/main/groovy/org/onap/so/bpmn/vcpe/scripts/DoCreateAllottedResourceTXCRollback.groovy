@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.rest.APIResponse
+
 
 import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -44,15 +44,15 @@ import org.onap.so.logger.MsoLogger
  * This groovy class supports the <class>CreateAllottedResourceTXCRollback.bpmn</class> process.
  *
  * @author
- * 
+ *
  * Inputs:
  * @param - msoRequestId
  * @param - isDebugLogEnabled
- * @param - disableRollback - O 
+ * @param - disableRollback - O
  * @param - rollbackData
  *
  * Outputs:
- * @param - rollbackError 
+ * @param - rollbackError
  * @param - rolledBack (no localRB->null, localRB F->false, localRB S->true)
  *
  */
@@ -63,31 +63,31 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
 	public void preProcessRequest (DelegateExecution execution) {
-		
+
 
 		String msg = ""
 		msoLogger.trace("start preProcessRequest")
 		execution.setVariable("prefix", Prefix)
 		String rbType = "DCARTXC_"
 		try {
-			
+
 			def rollbackData = execution.getVariable("rollbackData")
 			msoLogger.debug("RollbackData:" + rollbackData)
 
 			if (rollbackData != null) {
 				if (rollbackData.hasType(rbType)) {
-					
+
 					execution.setVariable("serviceInstanceId", rollbackData.get(rbType, "serviceInstanceId"))
 					execution.setVariable("parentServiceInstanceId", rollbackData.get(rbType, "parentServiceInstanceId"))
 					execution.setVariable("allottedResourceId", rollbackData.get("SERVICEINSTANCE", "allottedResourceId"))
-					
-					
+
+
 					def rollbackAAI = rollbackData.get(rbType, "rollbackAAI")
 					if ("true".equals(rollbackAAI))
 					{
 						execution.setVariable("rollbackAAI",true)
 						execution.setVariable("aaiARPath", rollbackData.get(rbType, "aaiARPath"))
-						
+
 					}
 					def rollbackSDNC = rollbackData.get(rbType, "rollbackSDNCassign")
 					if ("true".equals(rollbackSDNC))
@@ -96,11 +96,11 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 						execution.setVariable("deactivateSdnc", rollbackData.get(rbType, "rollbackSDNCactivate"))
 						execution.setVariable("deleteSdnc",  rollbackData.get(rbType, "rollbackSDNCcreate"))
 						execution.setVariable("unassignSdnc", rollbackData.get(rbType, "rollbackSDNCassign"))
-						
+
 						msoLogger.debug("sdncDeactivate:\n" + execution.getVariable("deactivateSdnc") )
 						msoLogger.debug("sdncDelete:\n" + execution.getVariable("deleteSdnc"))
 						msoLogger.debug("sdncUnassign:\n" + execution.getVariable("unassignSdnc"))
-						
+
 						execution.setVariable("sdncDeactivateRequest", rollbackData.get(rbType, "sdncActivateRollbackReq"))
 						execution.setVariable("sdncDeleteRequest",  rollbackData.get(rbType, "sdncCreateRollbackReq"))
 						execution.setVariable("sdncUnassignRequest", rollbackData.get(rbType, "sdncAssignRollbackReq"))
@@ -122,7 +122,7 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 			{
 				execution.setVariable("skipRollback", true)
 			}
-			
+
 		}catch(BpmnError b){
 			msoLogger.debug("Rethrowing MSOWorkflowException")
 			throw b
@@ -213,7 +213,7 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 		}
 		msoLogger.trace("end deleteAaiAR")
 	}
-	
+
 	public void postProcessRequest(DelegateExecution execution) {
 
 		msoLogger.trace("start postProcessRequest")
@@ -236,7 +236,7 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 		}
 
 	}
-	
+
 	public void processRollbackException(DelegateExecution execution){
 
 		msoLogger.trace("start processRollbackException")

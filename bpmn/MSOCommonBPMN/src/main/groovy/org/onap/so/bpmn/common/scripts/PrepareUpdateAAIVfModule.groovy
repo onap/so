@@ -34,9 +34,6 @@ import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.entities.uri.Depth
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
 import org.springframework.web.util.UriUtils
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
@@ -214,74 +211,31 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		msoLogger.trace('Entered ' + method)
 
 		try {
-			// Construct payload
-			org.onap.aai.domain.yang.VfModule vfModule = execution.getVariable('PUAAIVfMod_vfModule')
-
-			def orchestrationStatus = execution.getVariable('PUAAIVfMod_orchestrationStatus')
-
-			vfModule.setOrchestrationStatus(orchestrationStatus)
-
-			//def payload = utils.nodeToString(newVfModuleNode)
-
-			// Construct endpoint
 			def vnfId = execution.getVariable('PUAAIVfMod_vnfId')
 			def vfModuleId = execution.getVariable('PUAAIVfMod_vfModuleId')
+			def orchestrationStatus = execution.getVariable('PUAAIVfMod_orchestrationStatus')
 
-			def payload = """{
-					"vf-module-id": "${vfModuleId}",
-					"orchestration-status": "${orchestrationStatus}"
-				}"""
+			org.onap.aai.domain.yang.VfModule vfModule = execution.getVariable('PUAAIVfMod_vfModule')
 
-			msoLogger.debug("VfModule payload : " + payload)
+			vfModule.setVfModuleId(vfModuleId)
+			vfModule.setOrchestrationStatus(orchestrationStatus)
 
-			AaiUtil aaiUtil = new AaiUtil(this)
+			AAIResourcesClient client = new AAIResourcesClient()
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
-			uri.depth(Depth.ONE)
-			String endPoint = aaiUtil.createAaiUri(uri)
+			client.update(uri, vfModule)
 
-			msoLogger.debug("PrepareUpdateAAIVfModule: AAI endPoint  : " + endPoint)
-			String basicAuthCred = utils.getBasicAuth(UrnPropertiesReader.getVariable("aai.auth", execution),UrnPropertiesReader.getVariable("mso.msoKey", execution))
-			try {
-				RESTConfig config = new RESTConfig(endPoint);
-				def responseData = ''
-                def aaiRequestId = utils.getRequestID()
-				RESTClient client = new RESTClient(config).
-					addHeader('X-TransactionId', aaiRequestId).
-					addHeader('X-FromAppId', 'MSO').
-					addHeader('Content-Type', 'application/merge-patch+json').
-					addHeader('Accept','application/json');
-				if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-					client.addAuthorizationHeader(basicAuthCred)
-				}
-				msoLogger.debug('sending PATCH to AAI endpoint \'' + endPoint + '\'' + 'with payload \n' + payload)
-				APIResponse response = client.httpPatch(payload)
-				msoLogger.debug("PrepareUpdateAAIVfModule: - invoking httpPatch to AAI")
+			// Set the output for this flow.  The updated VfModule is an output, the generic VNF name, and for
+			// backward compatibilty, the heat-stack-id is an output
+			execution.setVariable('PUAAIVfMod_outVfModule', vfModule)
+			def vnfName = execution.getVariable('PUAAIVfMod_vnfName')
+			msoLogger.debug('Output PUAAIVfMod_vnfName set to ' + vnfName)
+			// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead
+			execution.setVariable('WorkflowResponse', vfModule)
 
-				responseData = response.getResponseBodyAsString()
-				execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', response.getStatusCode())
-				execution.setVariable('PUAAIVfMod_updateVfModuleResponse', responseData)
-				msoLogger.debug('Response code:' + response.getStatusCode())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
-				msoLogger.debug("PrepareUpdateAAIVfModule: AAI Response : " + responseData)
-				msoLogger.debug("PrepareUpdateAAIVfModule: AAI ResponseCode : " + response.getStatusCode())
+			def heatStackId = vfModule.getHeatStackId()
+			execution.setVariable('PUAAIVfMod_heatStackId', heatStackId)
+			msoLogger.debug('Output PUAAIVfMod_heatStackId set to \'' + heatStackId + '\'')
 
-				// Set the output for this flow.  The updated VfModule is an output, the generic VNF name, and for
-				// backward compatibilty, the heat-stack-id is an output
-				execution.setVariable('PUAAIVfMod_outVfModule', vfModule)
-				def vnfName = execution.getVariable('PUAAIVfMod_vnfName')
-				msoLogger.debug('Output PUAAIVfMod_vnfName set to ' + vnfName)
-				// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead
-				execution.setVariable('WorkflowResponse', vfModule)
-
-				def heatStackId = vfModule.getHeatStackId()
-				execution.setVariable('PUAAIVfMod_heatStackId', heatStackId)
-				msoLogger.debug('Output PUAAIVfMod_heatStackId set to \'' + heatStackId + '\'')
-			} catch (Exception ex) {
-				ex.printStackTrace()
-				msoLogger.debug('Exception occurred while executing AAI PUT:' + ex.getMessage())
-				execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', 500)
-				execution.setVariable('PUAAIVfMod_updateVfModuleResponse', 'AAI PATCH Failed:' + ex.getMessage())
-			}
 			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;

@@ -23,4 +23,5 @@ package org.onap.so.logger;
 public class LogConstants {
 	public static final String TARGET_ENTITY_HEADER="X-Target-Entity";
 	public static final String UNKNOWN_TARGET_ENTITY="Unknown-Target-Entity";
+	public static final String HTTP_URL="Http-Url";
 }

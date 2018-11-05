@@ -40,11 +40,11 @@ DELETE FROM orchestration_flow_reference
 WHERE FLOW_NAME = 'DeactivateNetworkCollectionBB';
 
 UPDATE orchestration_flow_reference
-SET SEQ_NO = SEQ_NO - 1 
+SET SEQ_NO = SEQ_NO - 1
 WHERE COMPOSITE_ACTION = 'Service-Macro-Delete' AND SEQ_NO > 8;
 
 UPDATE orchestration_flow_reference
-SET SEQ_NO = SEQ_NO - 1 
+SET SEQ_NO = SEQ_NO - 1
 WHERE COMPOSITE_ACTION = 'NetworkCollection-Macro-Delete' AND SEQ_NO > 4;
 
 UPDATE building_block_detail

@@ -65,13 +65,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>			
-		</dependency>		
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>javax.activation</groupId>
 			<artifactId>activation</artifactId>
@@ -96,7 +96,7 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>javax.interceptor</groupId>
 			<artifactId>javax.interceptor-api</artifactId>
@@ -116,11 +116,6 @@
 		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>mso-catalog-db</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.so</groupId>
-			<artifactId>MSORESTClient</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -148,11 +143,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.onap.so</groupId>
-			<artifactId>MSORESTClient</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.github.java-json-tools</groupId>
 			<artifactId>json-schema-core</artifactId>
 			<version>1.2.8</version>
@@ -161,7 +151,7 @@
 			<groupId>com.github.java-json-tools</groupId>
 			<artifactId>json-schema-validator</artifactId>
 			<version>2.2.8</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -213,7 +203,7 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>				
+				<artifactId>maven-surefire-plugin</artifactId>
 				<executions>
 					<execution>
 						<id>default-test</id>
@@ -241,7 +231,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>

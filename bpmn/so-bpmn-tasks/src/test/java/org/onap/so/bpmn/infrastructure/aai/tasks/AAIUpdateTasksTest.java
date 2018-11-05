@@ -35,6 +35,7 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;

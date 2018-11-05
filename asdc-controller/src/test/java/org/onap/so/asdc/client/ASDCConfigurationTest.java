@@ -52,7 +52,8 @@ public class ASDCConfigurationTest extends BaseTest {
 		assertTrue(config.getPollingInterval() == 30);
 		assertTrue(config.getPollingTimeout() == 30);
 		assertTrue(config.getRelevantArtifactTypes().size() == config.SUPPORTED_ARTIFACT_TYPES_LIST.size());
-		assertTrue(config.getWatchDogTimeout() == 1);    	
+		assertTrue(config.getWatchDogTimeout() == 1); 
+		assertTrue(config.isUseHttpsWithDmaap() == true);   
     }
     
 }

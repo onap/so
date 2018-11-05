@@ -21,7 +21,7 @@
 package org.onap.so.asdc.installer.bpmn;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -41,15 +41,11 @@ import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.so.asdc.BaseTest;
-import org.onap.so.asdc.installer.bpmn.BpmnInstaller;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Transactional
-public class BpmnInstallerTest extends BaseTest {
+public class BpmnInstallerTest {
 	
-    @Autowired
-    private BpmnInstaller bpmnInstaller;
+    private BpmnInstaller bpmnInstaller = new BpmnInstaller();
     
     @Before
     public void init() throws Exception {
@@ -65,7 +61,9 @@ public class BpmnInstallerTest extends BaseTest {
     	File mimeMultipartBody = new File(mimeMultipartBodyFilePath);
     	InputStream expectedContent = new FileInputStream(mimeMultipartBody);
     	
-    	assertThat(IOUtils.contentEquals(expectedContent, entity.getContent()));    
+    	assertThat(IOUtils.contentEquals(expectedContent, entity.getContent()));
+    	
+    	IOUtils.closeQuietly(expectedContent);
     }
 
     @Test

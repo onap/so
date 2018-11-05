@@ -32,7 +32,7 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
+
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.AAIResultWrapper
