@@ -37,6 +37,7 @@ import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -124,6 +125,9 @@ public class ConfigurationScaleOut {
 	}
 	
 	public void callAppcClient(BuildingBlockExecution execution) {
+		msoLogger.trace("Start runAppcCommand ");
+		String appcCode = "1002";
+		String appcMessage = "";
 		try{
 			Action commandAction = Action.valueOf(execution.getVariable(ACTION));
 			String msoRequestId = execution.getVariable(MSO_REQUEST_ID);
@@ -137,10 +141,22 @@ public class ConfigurationScaleOut {
 			HashMap<String, String> payloadInfo = new HashMap<>();
 			payloadInfo.put(VNF_NAME, execution.getVariable(VNF_NAME));
 			payloadInfo.put(VFMODULE_ID,execution.getVariable(VFMODULE_ID));
+			msoLogger.debug("Running APP-C action: " + commandAction.toString());
+			msoLogger.debug("VNFID: " + vnfId);	
 			//PayloadInfo contains extra information that adds on to payload before making request to appc
 			appCClient.runAppCCommand(commandAction, msoRequestId, vnfId, payloadString, payloadInfo, controllerType);
-		}catch(Exception ex){
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+			appcCode = appCClient.getErrorCode();
+			appcMessage = appCClient.getErrorMessage();
+		
+		} catch (Exception e) {
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "Caught exception in runAppcCommand in ConfigurationScaleOut", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "APPC Error", e);
+			appcMessage = e.getMessage();
+		}
+		msoLogger.error("Error Message: " + appcMessage);
+		msoLogger.error("ERROR CODE: " + appcCode);
+		msoLogger.trace("End of runAppCommand ");
+		if (appcCode != null && !appcCode.equals("0")) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
 		}
 	}
 }
