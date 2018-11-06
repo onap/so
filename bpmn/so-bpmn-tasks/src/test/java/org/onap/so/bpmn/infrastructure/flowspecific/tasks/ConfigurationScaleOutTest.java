@@ -154,9 +154,9 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
 		Action action = Action.ConfigScaleOut;
 		String vnfId = genericVnf.getVnfId();
 		String controllerType = "testType";
-		String payload = "{\\\"request-parameters\\\":{\\\"vnf-host-ip-address\\\":\\\"10.222.22.2\\\","
-				+ "\\\"vf-module-id\\\":\\\"testVfModuleId1\\\"},\\\"configuration-parameters\\\""
-				+ ":{\\\"vnf-id\\\":\\\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\\\",\\\"availability-zone\\\":\\\"AZ-MN02\\\"}}";
+		String payload = "{\"request-parameters\":{\"vnf-host-ip-address\":\"10.222.22.2\","
+				+ "\"vf-module-id\":\"testVfModuleId1\"},\"configuration-parameters\""
+				+ ":{\"vnf-id\":\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\",\"availability-zone\":\"AZ-MN02\"}}";
 		HashMap<String, String> payloadInfo = new HashMap<String, String>();
 		payloadInfo.put("vnfName", "testVnfName");
 		payloadInfo.put("vfModuleId", "testVfModuleId");
