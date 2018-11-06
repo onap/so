@@ -530,4 +530,12 @@ class OofUtils {
             exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from CatalogDB.")
         }
     }
+
+     String getMsbHost(DelegateExecution execution) {
+         msbHost = UrnPropertiesReader.getVariable("mso.msb.host", execution, "msb-iag.onap")
+
+         Integer msbPort = UrnPropertiesReader.getVariable("mso.msb.port", execution, "80").toInteger()
+
+         return UriBuilder.fromPath("").host(msbHost).port(msbPort).scheme("http").build().toString()
+    }
 }
