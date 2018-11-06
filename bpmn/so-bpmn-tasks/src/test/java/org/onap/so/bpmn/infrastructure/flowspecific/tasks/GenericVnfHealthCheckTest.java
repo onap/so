@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.appc.client.lcm.model.Action;
@@ -96,6 +98,35 @@ public class GenericVnfHealthCheckTest extends BaseTaskTest {
 		execution.setVariable("payload", payload);
 		
 		doNothing().when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
+		
+		genericVnfHealthCheck.callAppcClient(execution);
+		verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
+	}
+	
+	@Test
+	public void callAppcClientExceptionTest() throws Exception {
+		expectedException.expect(BpmnError.class);
+		Action action = Action.HealthCheck;
+		String vnfId = genericVnf.getVnfId();
+		String payload = "{\"testName\":\"testValue\",}";
+		String controllerType = "testType";
+		HashMap<String, String> payloadInfo = new HashMap<String, String>();
+		payloadInfo.put("vnfName", "testVnfName");
+		payloadInfo.put("vfModuleId", "testVfModuleId");
+		payloadInfo.put("oamIpAddress", "testOamIpAddress");
+		payloadInfo.put("vnfHostIpAddress", "testOamIpAddress");
+		execution.setVariable("action", Action.HealthCheck.toString());
+		execution.setVariable("msoRequestId", msoRequestId);
+		execution.setVariable("controllerType", controllerType);
+		execution.setVariable("vnfId", "testVnfId1");
+		execution.setVariable("vnfName", "testVnfName");
+		execution.setVariable("vfModuleId", "testVfModuleId");
+		execution.setVariable("oamIpAddress", "testOamIpAddress");
+		execution.setVariable("vnfHostIpAddress", "testOamIpAddress");
+		execution.setVariable("payload", payload);
+		
+		doThrow(Exception.class).when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
+		
 		
 		genericVnfHealthCheck.callAppcClient(execution);
 		verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
