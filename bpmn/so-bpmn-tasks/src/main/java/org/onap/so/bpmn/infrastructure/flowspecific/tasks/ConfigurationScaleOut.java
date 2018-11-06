@@ -110,7 +110,6 @@ public class ConfigurationScaleOut {
 			configPayload.setConfigurationParameters(paramsMap);
 			configPayload.setRequestParameters(requestParameters);
 			configScaleOutPayloadString = mapper.writeValueAsString(configPayload);
-			configScaleOutPayloadString = configScaleOutPayloadString.replaceAll("\"", "\\\\\"");
 			
 			execution.setVariable(ACTION, actionCategory);
 			execution.setVariable(MSO_REQUEST_ID, gBBInput.getRequestContext().getMsoRequestId());

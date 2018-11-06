@@ -79,9 +79,9 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
 		controllerSelectionReference.setActionCategory("testAction");
 		controllerSelectionReference.setVnfType("testVnfType");
 		String sdncResponse =  new String(Files.readAllBytes(Paths.get("src/test/resources/__files/SDNCClientGetResponse.json")));
-		String expectedPayload = "{\\\"request-parameters\\\":{\\\"vnf-host-ip-address\\\":\\\"10.222.22.2\\\","
-				+ "\\\"vf-module-id\\\":\\\"testVfModuleId1\\\"},\\\"configuration-parameters\\\""
-				+ ":{\\\"vnf-id\\\":\\\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\\\",\\\"availability-zone\\\":\\\"AZ-MN02\\\"}}";
+		String expectedPayload = "{\"request-parameters\":{\"vnf-host-ip-address\":\"10.222.22.2\","
+				+ "\"vf-module-id\":\"testVfModuleId1\"},\"configuration-parameters\""
+				+ ":{\"vnf-id\":\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\",\"availability-zone\":\"AZ-MN02\"}}";
 		execution.setVariable("SDNCQueryResponse_" + vfModule.getVfModuleId(), sdncResponse);
 		
 		doReturn(controllerSelectionReference).when(catalogDbClient).getControllerSelectionReferenceByVnfTypeAndActionCategory(genericVnf.getVnfType(), Action.ConfigScaleOut.toString());
@@ -128,9 +128,9 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
 		controllerSelectionReference.setActionCategory("testAction");
 		controllerSelectionReference.setVnfType("testVnfType");
 		String sdncResponse =  new String(Files.readAllBytes(Paths.get("src/test/resources/__files/SDNCClientResponseIncorrectPath.json")));
-		String expectedPayload = "{\\\"request-parameters\\\":{\\\"vnf-host-ip-address\\\":\\\"10.222.22.2\\\","
-				+ "\\\"vf-module-id\\\":\\\"testVfModuleId1\\\"},\\\"configuration-parameters\\\""
-				+ ":{\\\"vnf-id\\\":\\\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\\\",\\\"availability-zone\\\":null}}";
+		String expectedPayload = "{\"request-parameters\":{\"vnf-host-ip-address\":\"10.222.22.2\","
+				+ "\"vf-module-id\":\"testVfModuleId1\"},\"configuration-parameters\""
+				+ ":{\"vnf-id\":\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\",\"availability-zone\":null}}";
 		execution.setVariable("SDNCQueryResponse_" + vfModule.getVfModuleId(), sdncResponse);
 		
 		doReturn(controllerSelectionReference).when(catalogDbClient).getControllerSelectionReferenceByVnfTypeAndActionCategory(genericVnf.getVnfType(), Action.ConfigScaleOut.toString());
