@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright 2018 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +21,7 @@
  */
 
 package org.onap.so.bpmn.common.scripts
+
 import javax.ws.rs.core.UriBuilder
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -80,7 +83,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
                 execution.setVariable("CVGN_queryVolumeGroupResponseCode", 404)
                 execution.setVariable("CVGN_queryVolumeGroupResponse", "Volume Group not Found!")
             }
-		} catch (Exception ex) {
+		} catch (RuntimeException ex) {
 			msoLogger.debug("Exception occurred while executing AAI GET:" + ex.getMessage())
 			execution.setVariable("CVGN_queryVolumeGroupResponseCode", 500)
 			execution.setVariable("CVGN_queryVolumeGroupResponse", "AAI GET Failed:" + ex.getMessage())
@@ -91,23 +94,21 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 	// process the result from queryAAIVolumeGroupId()
 
 	public void checkAAIQueryResult(DelegateExecution execution) {
-		def result = execution.getVariable("CVGN_queryVolumeGroupResponse")
-
         def actualVolumeGroupName = ""
         if (execution.getVariable("CVGN_queryVolumeGroupResponseCode") == 404) {
 			msoLogger.debug('volumeGroupId does not exist in AAI')
 		}
 		else if (execution.getVariable("CVGN_queryVolumeGroupResponseCode") == 200) {
             VolumeGroup volumeGroup = execution.getVariable("CVGN_queryVolumeGroupResponse")
-            if(volumeGroup.getVolumeGroupName()!=null){
+            if (volumeGroup.getVolumeGroupName() != null && !volumeGroup.getVolumeGroupName().isEmpty()) {
                 actualVolumeGroupName =  volumeGroup.getVolumeGroupName()
-            }
-			msoLogger.debug("volumeGroupId exists in AAI")
+				msoLogger.debug("volumeGroupId exists in AAI")
+			}
 		}
 		execution.setVariable("CVGN_volumeGroupNameMatches", false)
 		def volumeGroupName = execution.getVariable("CVGN_volumeGroupName")
 
-		if (volumeGroupName.equals(actualVolumeGroupName)) {
+		if (!actualVolumeGroupName.isEmpty() && volumeGroupName.equals(actualVolumeGroupName)) {
 			msoLogger.debug('Volume Group Name Matches AAI records')
 			execution.setVariable("CVGN_volumeGroupNameMatches", true)
 		}
@@ -121,8 +122,8 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 
 	// generates a WorkflowException if the volume group name does not match AAI record for this volume group
 	public void handleVolumeGroupNameNoMatch(DelegateExecution execution) {
-		def errorNotAssociated = "Error occurred - volume group id " + execution.getVariable("CVGN_volumeGroupId") +
-			" is not associated with  " + execution.getVariable("CVGN_volumeGroupName")
+		def errorNotAssociated = String.format("Error occurred - volume group id %s is not associated with %s",
+				execution.getVariable("CVGN_volumeGroupId"), execution.getVariable("CVGN_volumeGroupName"))
 		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, errorNotAssociated, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
 		exceptionUtil.buildAndThrowWorkflowException(execution, 1002, errorNotAssociated)
 	}
