@@ -170,6 +170,7 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
 		execution.setVariable("payload", payload);
 		
 		doThrow(Exception.class).when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
+		
 		configurationScaleOut.callAppcClient(execution);
 		verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
 	}
