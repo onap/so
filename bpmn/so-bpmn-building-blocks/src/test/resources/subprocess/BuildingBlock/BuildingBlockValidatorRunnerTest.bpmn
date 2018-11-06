@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+  <bpmn:process id="BuildingBlockValidatorRunnerTest" name="BuildingBlockValidatorRunnerTest" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_0vof4nz</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="ServiceTask_1" name="PreValidate" camunda:expression="${BuildingBlockValidatorRunner.preValidate(flowToBeCalled, InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0vof4nz</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_14nr57b</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ServiceTask_2" name="PreValidate" camunda:expression="${BuildingBlockValidatorRunner.preValidate(flowToBeCalled, InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1vsqhv8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_04xg7yh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0vof4nz" sourceRef="StartEvent_1" targetRef="ServiceTask_1" />
+    <bpmn:endEvent id="EndEvent_1wyjfsw">
+      <bpmn:incoming>SequenceFlow_06wt67a</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_1" name="RetryTimer">
+      <bpmn:incoming>SequenceFlow_14nr57b</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vsqhv8</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_14nr57b" sourceRef="ServiceTask_1" targetRef="IntermediateCatchEvent_1" />
+    <bpmn:sequenceFlow id="SequenceFlow_1vsqhv8" sourceRef="IntermediateCatchEvent_1" targetRef="ServiceTask_2" />
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_2" name="RetryTimer">
+      <bpmn:incoming>SequenceFlow_04xg7yh</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0w8ajcb</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:serviceTask id="ServiceTask_3" name="PreValidate" camunda:expression="${BuildingBlockValidatorRunner.preValidate(flowToBeCalled, InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0w8ajcb</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_06wt67a</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_04xg7yh" sourceRef="ServiceTask_2" targetRef="IntermediateCatchEvent_2" />
+    <bpmn:sequenceFlow id="SequenceFlow_0w8ajcb" sourceRef="IntermediateCatchEvent_2" targetRef="ServiceTask_3" />
+    <bpmn:sequenceFlow id="SequenceFlow_06wt67a" sourceRef="ServiceTask_3" targetRef="EndEvent_1wyjfsw" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="BuildingBlockValidatorRunnerTest">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="320" y="131" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="293" y="167" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0k9j83h_di" bpmnElement="ServiceTask_1">
+        <dc:Bounds x="435" y="109" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_06izmow_di" bpmnElement="ServiceTask_2">
+        <dc:Bounds x="685" y="109" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0vof4nz_di" bpmnElement="SequenceFlow_0vof4nz">
+        <di:waypoint xsi:type="dc:Point" x="356" y="149" />
+        <di:waypoint xsi:type="dc:Point" x="435" y="149" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="395.5" y="128" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1wyjfsw_di" bpmnElement="EndEvent_1wyjfsw">
+        <dc:Bounds x="1106" y="131" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1079" y="171" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1xxf97p_di" bpmnElement="IntermediateCatchEvent_1">
+        <dc:Bounds x="596" y="131" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="587" y="106" width="55" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_14nr57b_di" bpmnElement="SequenceFlow_14nr57b">
+        <di:waypoint xsi:type="dc:Point" x="535" y="149" />
+        <di:waypoint xsi:type="dc:Point" x="596" y="149" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="565.5" y="128" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vsqhv8_di" bpmnElement="SequenceFlow_1vsqhv8">
+        <di:waypoint xsi:type="dc:Point" x="632" y="149" />
+        <di:waypoint xsi:type="dc:Point" x="685" y="149" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="658.5" y="128" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1hx48zh_di" bpmnElement="IntermediateCatchEvent_2">
+        <dc:Bounds x="853" y="131" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="844" y="106" width="55" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_059dhj6_di" bpmnElement="ServiceTask_3">
+        <dc:Bounds x="943" y="109" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_04xg7yh_di" bpmnElement="SequenceFlow_04xg7yh">
+        <di:waypoint xsi:type="dc:Point" x="785" y="149" />
+        <di:waypoint xsi:type="dc:Point" x="853" y="149" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="819" y="128" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0w8ajcb_di" bpmnElement="SequenceFlow_0w8ajcb">
+        <di:waypoint xsi:type="dc:Point" x="889" y="149" />
+        <di:waypoint xsi:type="dc:Point" x="943" y="149" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="916" y="128" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06wt67a_di" bpmnElement="SequenceFlow_06wt67a">
+        <di:waypoint xsi:type="dc:Point" x="1043" y="149" />
+        <di:waypoint xsi:type="dc:Point" x="1106" y="149" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1074.5" y="128" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

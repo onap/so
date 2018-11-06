@@ -51,7 +51,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 	public void test_validateOrchestrationStatus() throws Exception {
 		String flowToBeCalled = "AssignServiceInstanceBB";
 		setServiceInstance().setOrchestrationStatus(OrchestrationStatus.PRECREATED);
-		
+		execution.setVariable("aLaCarte", true);
 		execution.setVariable("flowToBeCalled", flowToBeCalled);
 		
 		BuildingBlockDetail buildingBlockDetail = new BuildingBlockDetail();
@@ -91,6 +91,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 		si.setConfigurations(configurations);
 		
 		execution.setVariable("flowToBeCalled", flowToBeCalled);
+		execution.setVariable("aLaCarte", true);
 		
 		BuildingBlockDetail buildingBlockDetail = new BuildingBlockDetail();
 		buildingBlockDetail.setBuildingBlockName("UnassignFabricConfigurationBB");
@@ -188,6 +189,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 		String flowToBeCalled = "UnassignServiceInstanceBB";
 		
 		execution.setVariable("flowToBeCalled", flowToBeCalled);
+		execution.setVariable("aLaCarte", true);
 		
 		BuildingBlockDetail buildingBlockDetail = new BuildingBlockDetail();
 		buildingBlockDetail.setBuildingBlockName("UnassignServiceInstanceBB");
@@ -209,7 +211,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 		String flowToBeCalled = "CreateVfModuleBB";
 				
 		execution.setVariable("orchestrationStatusValidationResult", OrchestrationStatusValidationDirective.SILENT_SUCCESS);
-		
+		execution.setVariable("aLaCarte", true);
 		execution.setVariable("flowToBeCalled", flowToBeCalled);
 		
 		GenericVnf genericVnf = buildGenericVnf();
@@ -246,7 +248,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 		String flowToBeCalled = "CreateVfModuleBB";
 		
 		execution.setVariable("orchestrationStatusValidationResult", OrchestrationStatusValidationDirective.CONTINUE);
-		
+		execution.setVariable("aLaCarte", true);
 		execution.setVariable("flowToBeCalled", flowToBeCalled);
 		
 		GenericVnf genericVnf = buildGenericVnf();
@@ -282,7 +284,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 		String flowToBeCalled = "CreateVfModuleBB";		
 		
 		execution.setVariable("orchestrationStatusValidationResult", OrchestrationStatusValidationDirective.SILENT_SUCCESS);
-		
+		execution.setVariable("aLaCarte", true);
 		execution.setVariable("flowToBeCalled", flowToBeCalled);
 		
 		GenericVnf genericVnf = buildGenericVnf();
@@ -318,7 +320,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 		String flowToBeCalled = "CreateVfModuleBB";
 				
 		execution.setVariable("orchestrationStatusValidationResult", OrchestrationStatusValidationDirective.SILENT_SUCCESS);
-		
+		execution.setVariable("aLaCarte", true);
 		execution.setVariable("flowToBeCalled", flowToBeCalled);
 		
 		GenericVnf genericVnf = buildGenericVnf();
@@ -354,7 +356,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 		String flowToBeCalled = "CreateVfModuleBB";
 				
 		execution.setVariable("orchestrationStatusValidationResult", OrchestrationStatusValidationDirective.SILENT_SUCCESS);
-		
+		execution.setVariable("aLaCarte", true);
 		execution.setVariable("flowToBeCalled", flowToBeCalled);
 		
 		GenericVnf genericVnf = buildGenericVnf();
@@ -379,6 +381,42 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 		orchestrationStatusStateTransitionDirective.setTargetAction(OrchestrationAction.ACTIVATE);
 		
 		doReturn(orchestrationStatusStateTransitionDirective).when(catalogDbClient).getOrchestrationStatusStateTransitionDirective(ResourceType.VF_MODULE, OrchestrationStatus.PENDING_ACTIVATION, OrchestrationAction.ACTIVATE);
+		
+		orchestrationStatusValidator.validateOrchestrationStatus(execution);
+		
+		assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS, execution.getVariable("orchestrationStatusValidationResult"));
+	}
+	
+	@Test
+	public void test_validateOrchestrationStatusSecondStageOfMultiStageWrongAlacarteValueVfModule() throws Exception {
+		String flowToBeCalled = "CreateVfModuleBB";
+				
+		execution.setVariable("orchestrationStatusValidationResult", OrchestrationStatusValidationDirective.SILENT_SUCCESS);
+		execution.setVariable("aLaCarte", false);
+		execution.setVariable("flowToBeCalled", flowToBeCalled);
+		
+		GenericVnf genericVnf = buildGenericVnf();
+		ModelInfoGenericVnf modelInfoGenericVnf = genericVnf.getModelInfoGenericVnf();
+		modelInfoGenericVnf.setMultiStageDesign("true");
+		setGenericVnf().setModelInfoGenericVnf(modelInfoGenericVnf);
+		setVfModule().setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
+		
+		BuildingBlockDetail buildingBlockDetail = new BuildingBlockDetail();
+		buildingBlockDetail.setBuildingBlockName("CreateVfModuleBB");
+		buildingBlockDetail.setId(1);
+		buildingBlockDetail.setResourceType(ResourceType.VF_MODULE);
+		buildingBlockDetail.setTargetAction(OrchestrationAction.CREATE);
+		
+		doReturn(buildingBlockDetail).when(catalogDbClient).getBuildingBlockDetail(flowToBeCalled);
+		
+		OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective = new OrchestrationStatusStateTransitionDirective();
+		orchestrationStatusStateTransitionDirective.setFlowDirective(OrchestrationStatusValidationDirective.SILENT_SUCCESS);
+		orchestrationStatusStateTransitionDirective.setId(1);
+		orchestrationStatusStateTransitionDirective.setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
+		orchestrationStatusStateTransitionDirective.setResourceType(ResourceType.VF_MODULE);
+		orchestrationStatusStateTransitionDirective.setTargetAction(OrchestrationAction.ACTIVATE);
+		
+		doReturn(orchestrationStatusStateTransitionDirective).when(catalogDbClient).getOrchestrationStatusStateTransitionDirective(ResourceType.VF_MODULE, OrchestrationStatus.PENDING_ACTIVATION, OrchestrationAction.CREATE);
 		
 		orchestrationStatusValidator.validateOrchestrationStatus(execution);
 		

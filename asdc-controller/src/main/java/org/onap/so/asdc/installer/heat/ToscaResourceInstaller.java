@@ -1170,27 +1170,7 @@ public class ToscaResourceInstaller {
 		return vfcInstanceGroupCustom;
 
 	}
-	
-	protected VFCInstanceGroup findExistingVnfcInstanceGroup(VnfResourceCustomization vnfResourceCustomization,
-			String modelUUID) {
-		VFCInstanceGroup vfcInstanceGroup = null;
-		List<VnfcInstanceGroupCustomization> vnfInstanceGroupCustomizations = vnfResourceCustomization
-				.getVnfcInstanceGroupCustomizations();
-		if(vnfInstanceGroupCustomizations != null){
-			for (VnfcInstanceGroupCustomization vnfcInstanceGroupCustom : vnfResourceCustomization
-					.getVnfcInstanceGroupCustomizations()) {
-				if (vnfcInstanceGroupCustom.getInstanceGroup() != null
-						&& vnfcInstanceGroupCustom.getInstanceGroup().getModelUUID().equals(modelUUID)) {
-					vfcInstanceGroup = (VFCInstanceGroup)vnfcInstanceGroupCustom.getInstanceGroup();
-				}
-			}
-		}
-		if (vfcInstanceGroup == null)
-			vfcInstanceGroup = (VFCInstanceGroup) instanceGroupRepo.findByModelUUID(modelUUID);
-
-		return vfcInstanceGroup;
-	}
-	
+		
 	protected VfModuleCustomization createVFModuleResource(Group group, NodeTemplate nodeTemplate,
 			ToscaResourceStructure toscaResourceStructure, VfResourceStructure vfResourceStructure,
 			IVfModuleData vfModuleData, VnfResourceCustomization vnfResource, Service service, Set<CvnfcCustomization> existingCvnfcSet, Set<VnfcCustomization> existingVnfcSet) {
@@ -1606,16 +1586,10 @@ public class ToscaResourceInstaller {
 				
 			for (Group group : groupList) { 
 				
-				VFCInstanceGroup vfcInstanceGroup = findExistingVnfcInstanceGroup(vnfResourceCustomization,
-						group.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
-				if(vfcInstanceGroup == null){
-					VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization = createVNFCInstanceGroup(
-							vfNodeTemplate, group, vnfResourceCustomization);
-				
-					vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);
-				}
-			}
-			
+					VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization = createVNFCInstanceGroup(vfNodeTemplate, group, vnfResourceCustomization);
+					
+					vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);				
+			}			
 		}
 		return vnfResourceCustomization;
 	}
