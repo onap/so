@@ -25,6 +25,7 @@ import java.net.URI;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 
+
 public class AAIUriFactory {
 	
 	/**
@@ -53,7 +54,12 @@ public class AAIUriFactory {
 		return new NodesUri(type, values);
 		
 	}
-
+	
+	public static AAIResourceUri createNodesUri(AAIObjectPlurals type) {
+		return new NodesUri(type);
+		
+	}
+	
 	/**
 	 * This method should only be used to wrap a URI retrieved from A&AI contained within an object response
 	 * 
@@ -64,7 +70,21 @@ public class AAIUriFactory {
 	public static AAIResourceUri createResourceFromExistingURI(AAIObjectType type, URI uri) {
 		return new AAISimpleUri(type, uri);
 	}
-
+	
+	
+	/**
+	 * creates an AAIResourceUri from a parentUri
+	 * 
+	 * @param parentUri
+	 * @param childType
+	 * @param childValues
+	 * @return
+	 */
+	public static AAIResourceUri createResourceFromParentURI(AAIResourceUri parentUri, AAIObjectType childType, Object... childValues) {
+		
+		return new AAISimpleUri(parentUri, childType, childValues);
+	}
+	
 	/**
 	 * Creates a uri for a plural type e.g. /cloud-infrastructure/pservers
 	 * 

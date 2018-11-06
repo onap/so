@@ -33,6 +33,7 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.onap.so.rest.APIResponse
 
 import javax.ws.rs.core.UriBuilder
 import static org.apache.commons.lang3.StringUtils.isBlank

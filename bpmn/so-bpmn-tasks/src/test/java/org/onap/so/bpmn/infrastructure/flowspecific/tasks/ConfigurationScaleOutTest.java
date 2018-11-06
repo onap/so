@@ -93,9 +93,9 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
 		controllerSelectionReference.setActionCategory("testAction");
 		controllerSelectionReference.setVnfType("testVnfType");
 		String sdncResponse =  new String(Files.readAllBytes(Paths.get("src/test/resources/__files/SDNCClientGetResponse.json")));
-		String expectedPayload = "{\\\"request-parameters\\\":{\\\"vnf-host-ip-address\\\":\\\"10.222.22.2\\\","
-				+ "\\\"vf-module-id\\\":\\\"testVfModuleId1\\\"},\\\"configuration-parameters\\\""
-				+ ":{\\\"vnf-id\\\":\\\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\\\",\\\"availability-zone\\\":\\\"AZ-MN02\\\"}}";
+		String expectedPayload = "{\"request-parameters\":{\"vnf-host-ip-address\":\"10.222.22.2\","
+				+ "\"vf-module-id\":\"testVfModuleId1\"},\"configuration-parameters\""
+				+ ":{\"vnf-id\":\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\",\"availability-zone\":\"AZ-MN02\"}}";
 		execution.setVariable("SDNCQueryResponse_" + vfModule.getVfModuleId(), sdncResponse);
 		
 		doReturn(controllerSelectionReference).when(catalogDbClient).getControllerSelectionReferenceByVnfTypeAndActionCategory(genericVnf.getVnfType(), Action.ConfigScaleOut.toString());
@@ -115,9 +115,9 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
 		Action action = Action.ConfigScaleOut;
 		String vnfId = genericVnf.getVnfId();
 		String controllerType = "testType";
-		String payload = "{\\\"request-parameters\\\":{\\\"vnf-host-ip-address\\\":\\\"10.222.22.2\\\","
-				+ "\\\"vf-module-id\\\":\\\"testVfModuleId1\\\"},\\\"configuration-parameters\\\""
-				+ ":{\\\"vnf-id\\\":\\\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\\\",\\\"availability-zone\\\":\\\"AZ-MN02\\\"}}";
+		String payload = "{\"request-parameters\":{\"vnf-host-ip-address\":\"10.222.22.2\","
+				+ "\"vf-module-id\":\"testVfModuleId1\"},\"configuration-parameters\""
+				+ ":{\"vnf-id\":\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\",\"availability-zone\":\"AZ-MN02\"}}";
 		HashMap<String, String> payloadInfo = new HashMap<String, String>();
 		payloadInfo.put("vnfName", "testVnfName");
 		payloadInfo.put("vfModuleId", "testVfModuleId");
@@ -134,6 +134,30 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
 		
 		configurationScaleOut.callAppcClient(execution);
 		verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
+	}
+	@Test
+	public void setParamsForConfigurationScaleOutBadPathTest() throws Exception {
+		ControllerSelectionReference controllerSelectionReference = new ControllerSelectionReference();
+		controllerSelectionReference.setControllerName("testName");
+		controllerSelectionReference.setActionCategory("testAction");
+		controllerSelectionReference.setVnfType("testVnfType");
+		String sdncResponse =  new String(Files.readAllBytes(Paths.get("src/test/resources/__files/SDNCClientResponseIncorrectPath.json")));
+		String expectedPayload = "{\"request-parameters\":{\"vnf-host-ip-address\":\"10.222.22.2\","
+				+ "\"vf-module-id\":\"testVfModuleId1\"},\"configuration-parameters\""
+				+ ":{\"vnf-id\":\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\",\"availability-zone\":null}}";
+		execution.setVariable("SDNCQueryResponse_" + vfModule.getVfModuleId(), sdncResponse);
+		
+		doReturn(controllerSelectionReference).when(catalogDbClient).getControllerSelectionReferenceByVnfTypeAndActionCategory(genericVnf.getVnfType(), Action.ConfigScaleOut.toString());
+		
+		configurationScaleOut.setParamsForConfigurationScaleOut(execution);
+		
+		assertEquals(genericVnf.getVnfId(), execution.getVariable("vnfId"));
+		assertEquals(genericVnf.getVnfName(), execution.getVariable("vnfName"));
+		assertEquals("ConfigScaleOut", execution.getVariable("action"));
+		assertEquals(requestContext.getMsoRequestId(), execution.getVariable("msoRequestId"));
+		assertEquals(controllerSelectionReference.getControllerName(), execution.getVariable("controllerType"));
+		assertEquals(vfModule.getVfModuleId(), execution.getVariable("vfModuleId"));
+		assertEquals(expectedPayload, execution.getVariable("payload"));
 	}
 
 }
