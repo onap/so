@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -34,6 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.appc.client.lcm.model.Action;
@@ -146,4 +148,29 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
 		assertEquals(expectedPayload, execution.getVariable("payload"));
 	}
 
+	@Test
+	public void callAppcClientExceptionTest() throws Exception {
+		expectedException.expect(BpmnError.class);
+		Action action = Action.ConfigScaleOut;
+		String vnfId = genericVnf.getVnfId();
+		String controllerType = "testType";
+		String payload = "{\"request-parameters\":{\"vnf-host-ip-address\":\"10.222.22.2\","
+				+ "\"vf-module-id\":\"testVfModuleId1\"},\"configuration-parameters\""
+				+ ":{\"vnf-id\":\"66dac89b-2a5b-4cb9-b22e-a7e4488fb3db\",\"availability-zone\":\"AZ-MN02\"}}";
+		HashMap<String, String> payloadInfo = new HashMap<String, String>();
+		payloadInfo.put("vnfName", "testVnfName");
+		payloadInfo.put("vfModuleId", "testVfModuleId");
+	
+		execution.setVariable("action", Action.ConfigScaleOut.toString());
+		execution.setVariable("msoRequestId", msoRequestId);
+		execution.setVariable("controllerType", controllerType);
+		execution.setVariable("vnfId", "testVnfId1");
+		execution.setVariable("vnfName", "testVnfName");
+		execution.setVariable("vfModuleId", "testVfModuleId");
+		execution.setVariable("payload", payload);
+		
+		doThrow(Exception.class).when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
+		configurationScaleOut.callAppcClient(execution);
+		verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
+	}
 }
