@@ -293,7 +293,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 		execution.setVariable("WorkflowException", exception);
 		msoLogger.debug("Outgoing WorkflowException is " + exception)
 		msoLogger.debug("Throwing MSOWorkflowException")
-		throw new BpmnError("MSOWorkflowException")
+		throw new BpmnError(errorCode.toString(), String.format("MSOWorkflowException: %s", errorMessage))
 	}
 
 	/**

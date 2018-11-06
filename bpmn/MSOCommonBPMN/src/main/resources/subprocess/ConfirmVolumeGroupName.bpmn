@@ -13,7 +13,7 @@
       <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_18</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
-def cvgn= new ConfirmVolumeGroupName()
+def cvgn= new ConfirmVolumeGroupNameFactory().create()
 cvgn.handleAAIQueryFailure(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_18" name="" sourceRef="AAIQueryFailure" targetRef="EndEvent_7"/>
@@ -25,7 +25,7 @@ cvgn.handleAAIQueryFailure(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_38</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_39</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
-def cvgn= new ConfirmVolumeGroupName()
+def cvgn= new ConfirmVolumeGroupNameFactory().create()
 cvgn.queryAAIForVolumeGroupId(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_39" name="" sourceRef="QueryAAIForVolumeGroupId" targetRef="ExclusiveGateway_3"/>
@@ -33,7 +33,7 @@ cvgn.queryAAIForVolumeGroupId(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_38</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
-def cvgn= new ConfirmVolumeGroupName()
+def cvgn= new ConfirmVolumeGroupNameFactory().create()
 cvgn.preProcessRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_38" name="" sourceRef="InitializeVariables" targetRef="QueryAAIForVolumeGroupId"/>
@@ -42,7 +42,7 @@ cvgn.preProcessRequest(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
-def cvgn= new ConfirmVolumeGroupName()
+def cvgn= new ConfirmVolumeGroupNameFactory().create()
 cvgn.checkAAIQueryResult(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="CheckAAIQueryResult" targetRef="ExclusiveGateway_1"/>
@@ -50,7 +50,7 @@ cvgn.checkAAIQueryResult(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
-def cvgn= new ConfirmVolumeGroupName()
+def cvgn= new ConfirmVolumeGroupNameFactory().create()
 cvgn.handleVolumeGroupNameNoMatch(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:exclusiveGateway id="ExclusiveGateway_1" default="SequenceFlow_7">
