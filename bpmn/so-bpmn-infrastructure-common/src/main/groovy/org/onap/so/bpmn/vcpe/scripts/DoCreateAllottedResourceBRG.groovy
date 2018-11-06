@@ -240,11 +240,9 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			if(obj.has("result-data")){
 				JSONObject ob = obj.getJSONArray("result-data").getJSONObject(0)
 				String resourceLink = ob.getString("resource-link")
+				AAIResourceUri siUri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, new URI(resourceLink))
 
-				String[] split = resourceLink.split("/aai/")
-				String siRelatedLink = "/aai/" + split[1]
-
-				execution.setVariable("PSI_resourceLink", resourceLink)
+				execution.setVariable("PSI_resourceLink", siUri)
 			}else{
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai")
 			}
@@ -277,26 +275,9 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 
 			//AAI PUT
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aaiEndpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-			String siResourceLink= execution.getVariable("PSI_resourceLink")
-
-			String siUri = ""
-			msoLogger.debug("PSI_resourceLink:" + siResourceLink)
-
-			if(!isBlank(siResourceLink)) {
-				msoLogger.debug("Incoming PSI Resource Link is: " + siResourceLink)
-				String[] split = siResourceLink.split("/aai/")
-				siUri = "/aai/" + split[1]
-			}
-			else
-			{
-				msg = "Parent Service Link in AAI is null"
-				msoLogger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
-
-			arUrl = "${aaiEndpoint}${siUri}"  + "/allotted-resources/allotted-resource/" + UriUtils.encode(allottedResourceId,"UTF-8")
-			execution.setVariable("aaiARPath", arUrl)
+			AAIResourceUri siResourceLink= execution.getVariable("PSI_resourceLink")
+			AllottedResourceUtils arUtils = new AllottedResourceUtils(this)
+			execution.setVariable("aaiARPath", arUtils.createARUrl(execution, siResourceLink, allottedResourceId))
 			msoLogger.debug("GET AllottedResource AAI URL is:\n" + arUrl)
 
 			String namespace = aaiUriUtil.getNamespaceFromUri(execution, arUrl)

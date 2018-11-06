@@ -20,23 +20,22 @@
 
 package org.onap.so.bpmn.vcpe.scripts;
 
-import org.onap.so.bpmn.common.scripts.*;
-import org.onap.so.bpmn.common.scripts.AaiUtil
-import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.rest.APIResponse
-
-import java.util.UUID;
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.apache.commons.lang3.*
-import org.springframework.web.util.UriUtils;
 import static org.apache.commons.lang3.StringUtils.*
 
+import org.apache.commons.lang3.*
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.so.bpmn.common.scripts.*;
+import org.onap.so.bpmn.core.RollbackData
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.onap.so.rest.APIResponse
 
 /**
  * This groovy class supports the <class>DoCreateAllottedResourceTXC.bpmn</class> process.
@@ -204,26 +203,9 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 
 			//AAI PUT
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			String aaiEndpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
-			String siResourceLink= execution.getVariable("PSI_resourceLink")
-
-			String siUri = ""
-			msoLogger.debug("PSI_resourceLink:" + siResourceLink)
-
-			if(!isBlank(siResourceLink)) {
-				msoLogger.debug("Incoming PSI Resource Link is: " + siResourceLink)
-				String[] split = siResourceLink.split("/aai/")
-				siUri = "/aai/" + split[1]
-			}
-			else
-			{
-				msg = "Parent Service Link in AAI is null"
-				msoLogger.debug(msg)
-				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-			}
-
-			arUrl = "${aaiEndpoint}${siUri}"  + "/allotted-resources/allotted-resource/" + UriUtils.encode(allottedResourceId,"UTF-8")
-			execution.setVariable("aaiARPath", arUrl)
+			AAIResourceUri siResourceLink= execution.getVariable("PSI_resourceLink")
+			AllottedResourceUtils arUtils = new AllottedResourceUtils(this)
+			execution.setVariable("aaiARPath", arUtils.createARUrl(execution, siResourceLink, allottedResourceId))
 			msoLogger.debug("GET AllottedResource AAI URL is:\n" + arUrl)
 
 			String namespace = aaiUriUtil.getNamespaceFromUri(execution, arUrl)

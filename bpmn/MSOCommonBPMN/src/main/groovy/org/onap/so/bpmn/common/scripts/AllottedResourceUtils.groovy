@@ -137,7 +137,7 @@ class AllottedResourceUtils {
 		try {
 			AAIResourcesClient client = new AAIResourcesClient()
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE, allottedResourceId)
-			AaiUtil aaiUtil = new AaiUtil()
+			AaiUtil aaiUtil = new AaiUtil(taskProcessor)
 			arLink = aaiUtil.createAaiUri(uri)
 		} catch (NotFoundException e) {
 			msoLogger.debug("GET AR received a Not Found (404) Response")
@@ -322,6 +322,26 @@ class AllottedResourceUtils {
 
 		msoLogger.trace("Exit BuildAAIErrorResponse Process")
 		throw new BpmnError("MSOWorkflowException")
+	}
+	
+	public String createARUrl(DelegateExecution execution, AAIResourceUri uri, String allottedResourceId) {
+		AaiUtil aaiUriUtil = new AaiUtil(taskProcessor)
+		AAIResourceUri siResourceLink= uri
+
+		String siUri = ""
+
+		if(siResourceLink != null) {
+			msoLogger.debug("Incoming PSI Resource Link is: " + siResourceLink.build().toString())
+		}
+		else
+		{
+			String msg = "Parent Service Link in AAI is null"
+			msoLogger.debug(msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+		}
+		AAIResourceUri arUri = AAIUriFactory.createResourceFromParentURI(siResourceLink, AAIObjectType.ALLOTTED_RESOURCE, allottedResourceId)
+
+		return aaiUriUtil.createAaiUri(arUri)
 	}
 
 }
