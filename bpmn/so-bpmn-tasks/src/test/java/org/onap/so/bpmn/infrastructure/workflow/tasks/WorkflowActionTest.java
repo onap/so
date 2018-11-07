@@ -821,7 +821,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		String uri5 = "'/v6/serviceInstances/123/vnfs";
 		String uri6 = "/v6/serviceInstances/123/vnfs/1234/someAction";
 		String uri7 = "/v6/serviceInstances/123/vnfs/1234/vfModules/5678/replace";
-		
+		String uri8 = "/v6/serviceInstances/123/vnfs/1234/vfModules/scaleOut";
 		Resource expected1 = new Resource(WorkflowType.SERVICE, "123", true);
 		Resource expected2 = new Resource(WorkflowType.VNF, "1234", false);
 		Resource expected3 = new Resource(WorkflowType.VNF, "1234", false);
@@ -847,6 +847,10 @@ public class WorkflowActionTest extends BaseTaskTest {
 		result = workflowAction.extractResourceIdAndTypeFromUri(uri7);
 		assertEquals(expected4.getResourceId(),result.getResourceId());
 		assertEquals(expected4.getResourceType(),result.getResourceType());
+		result = workflowAction.extractResourceIdAndTypeFromUri(uri8);
+        assertEquals(UUID.randomUUID().toString().length(),result.getResourceId().length());    
+        assertEquals("VfModule", result.getResourceType().toString());
+		
 	}
 	
 	@Test

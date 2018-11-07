@@ -45,6 +45,7 @@ public class OrchestrationStatusValidator {
 	private static final String UNKNOWN_RESOURCE_TYPE = "Building Block (%s) not set up correctly in Orchestration_Status_Validation table in CatalogDB. ResourceType=(%s), TargetAction=(%s)";
 	private static final String ORCHESTRATION_VALIDATION_FAIL = "Orchestration Status Validation failed. ResourceType=(%s), TargetAction=(%s), OrchestrationStatus=(%s)";
 	private static final String ORCHESTRATION_STATUS_VALIDATION_RESULT = "orchestrationStatusValidationResult";
+	private static final String ALACARTE = "aLaCarte";
 	private static final String MULTI_STAGE_DESIGN_OFF = "false";
 	private static final String MULTI_STAGE_DESIGN_ON = "true";
 	
@@ -62,8 +63,10 @@ public class OrchestrationStatusValidator {
 			
 			execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, null);
 			
-			String buildingBlockFlowName = execution.getFlowToBeCalled();
+			boolean aLaCarte = (boolean) execution.getVariable(ALACARTE);
 			
+			String buildingBlockFlowName = execution.getFlowToBeCalled();			
+					
 			BuildingBlockDetail buildingBlockDetail = catalogDbClient.getBuildingBlockDetail(buildingBlockFlowName);
 			
 			if (buildingBlockDetail == null) {
@@ -112,7 +115,7 @@ public class OrchestrationStatusValidator {
 			}
 			OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective = catalogDbClient.getOrchestrationStatusStateTransitionDirective(buildingBlockDetail.getResourceType(), orchestrationStatus, buildingBlockDetail.getTargetAction());
 			
-			if(ResourceType.VF_MODULE.equals(buildingBlockDetail.getResourceType()) && OrchestrationAction.CREATE.equals(buildingBlockDetail.getTargetAction()) &&
+			if(aLaCarte && ResourceType.VF_MODULE.equals(buildingBlockDetail.getResourceType()) && OrchestrationAction.CREATE.equals(buildingBlockDetail.getTargetAction()) &&
 					OrchestrationStatus.PENDING_ACTIVATION.equals(orchestrationStatus)) {				
 				org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 				orchestrationStatusStateTransitionDirective = processPossibleSecondStageofVfModuleCreate(execution, previousOrchestrationStatusValidationResult,
@@ -138,11 +141,11 @@ public class OrchestrationStatusValidator {
 	private OrchestrationStatusStateTransitionDirective processPossibleSecondStageofVfModuleCreate(BuildingBlockExecution execution, OrchestrationStatusValidationDirective previousOrchestrationStatusValidationResult,
 			org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf, OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective) {		
 		if (previousOrchestrationStatusValidationResult != null && previousOrchestrationStatusValidationResult.equals(OrchestrationStatusValidationDirective.SILENT_SUCCESS)) {			
-			String multiStageDesign = "false";			
+			String multiStageDesign = MULTI_STAGE_DESIGN_OFF;			
 			if (genericVnf.getModelInfoGenericVnf() != null) {
 				multiStageDesign = genericVnf.getModelInfoGenericVnf().getMultiStageDesign();
 			}
-			if (multiStageDesign != null && multiStageDesign.equalsIgnoreCase("true")) {				
+			if (multiStageDesign != null && multiStageDesign.equalsIgnoreCase(MULTI_STAGE_DESIGN_ON)) {				
 				orchestrationStatusStateTransitionDirective.setFlowDirective(OrchestrationStatusValidationDirective.CONTINUE);						
 			}					
 		}

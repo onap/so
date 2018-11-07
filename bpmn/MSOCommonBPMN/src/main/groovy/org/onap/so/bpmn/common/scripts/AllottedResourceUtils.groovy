@@ -131,7 +131,7 @@ class AllottedResourceUtils {
 		String[] split = arLink.split("/service-instance/")
 		String[] splitB =  split[1].split("/allotted-resources/")
 		String siId = splitB[0]
-		msoLogger.trace(" Exit getARLinkbyId - parentServiceInstanceId:" + siId )
+		msoLogger.trace(" Exit getPSIFmARLink - parentServiceInstanceId:" + siId )
 		return siId
 	}
 	

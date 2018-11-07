@@ -32,6 +32,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class DeleteVolumeGroupBBTest extends BaseBPMNTest {
 	@Test
 	public void sunnyDayDeleteVolumeGroup_Test() throws InterruptedException {
+		mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVolumeGroupBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted().hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter", "VnfAdapter", "UpdateVolumeGroupAAI", "DeleteVolumeGroupBB_End");
@@ -40,6 +41,7 @@ public class DeleteVolumeGroupBBTest extends BaseBPMNTest {
 
 	@Test
 	public void rainyDayDeleteVolumeGroup_Test() throws Exception {
+		mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks).updateOrchestrationStatusAssignedVolumeGroup(any(BuildingBlockExecution.class));
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVolumeGroupBB", variables);
 		assertThat(pi).isNotNull();

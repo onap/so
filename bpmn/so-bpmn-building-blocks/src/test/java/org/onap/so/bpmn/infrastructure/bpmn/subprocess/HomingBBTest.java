@@ -51,7 +51,7 @@ public class HomingBBTest extends BaseBPMNTest{
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
-				.hasPassedInOrder("start", "sniroOofCheck", "startBpmnError", "bpmnErrorSubprocess", "processMsoWorkflowException", "endBpmnError")
+				.hasPassedInOrder("start", "sniroOofCheck", "startBpmnError", "processMsoWorkflowException", "endBpmnError")
 				.hasNotPassed("callReceiveAsync");
 		assertThat(pi).isEnded();
 	}
