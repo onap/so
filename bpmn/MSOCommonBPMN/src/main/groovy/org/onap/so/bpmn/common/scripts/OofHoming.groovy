@@ -18,12 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 package org.onap.so.bpmn.common.scripts
+
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-
-import org.onap.so.bpmn.common.scripts.AaiUtil
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
 
 import org.onap.so.bpmn.core.domain.InventoryType
 import org.onap.so.bpmn.core.domain.Resource
@@ -246,7 +244,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             resource.getHomingSolution().setCloudOwner(cloudOwner)
                             resource.getHomingSolution().setCloudRegionId(cloudRegionId)
 
-                            CloudSite cloudSite = new CloudSite();
+                            CloudSite cloudSite = new CloudSite()
                             cloudSite.setId(cloudRegionId)
                             cloudSite.setRegionId(cloudRegionId)
                             String orchestrator = execution.getVariable("orchestrator")
@@ -254,10 +252,18 @@ class OofHoming extends AbstractServiceTaskProcessor {
                                 cloudSite.setOrchestrator(orchestrator)
                             }
 
-                            CloudIdentity cloudIdentity = new CloudIdentity();
-                            cloudIdentity.setId(cloudRegionId);
-                            cloudIdentity.setIdentityUrl("/api/multicloud /v1/" + cloudOwner + "/" + cloudRegionId + "/infra_workload")
-                            cloudSite.setIdentityService(cloudIdentity);
+                            CloudIdentity cloudIdentity = new CloudIdentity()
+                            cloudIdentity.setId(cloudRegionId)
+                            // Get MSB Url
+                            String msbHost = oofUtils.getMsbHost(execution)
+                            String multicloudApiEndpoint = UrnPropertiesReader
+                                    .getVariable("mso.multicloud.api.endpoint", execution,
+                                    "/api/multicloud-titaniumcloud/v1")
+                            cloudIdentity.setIdentityUrl(msbHost + multicloudApiEndpoint
+                                    + "/" + cloudOwner + "/" +
+                                    cloudRegionId + "/infra_workload")
+
+                            cloudSite.setIdentityService(cloudIdentity)
 
                             // Set cloudsite in catalog DB here
                             oofUtils.createCloudSiteCatalogDb(cloudSite)
