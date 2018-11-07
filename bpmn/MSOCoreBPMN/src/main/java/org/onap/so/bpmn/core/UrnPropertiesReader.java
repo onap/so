@@ -69,6 +69,10 @@ public class UrnPropertiesReader {
         return variableValue;
     }
 
+    public static String getVariable(String variableName, DelegateExecution execution, String defaultValue) {
+        return Optional.ofNullable(getVariable(variableName, execution)).orElse(defaultValue);
+    }
+
     /**
      * Return the URN property value from the environment object
      * @param variableName URN property name

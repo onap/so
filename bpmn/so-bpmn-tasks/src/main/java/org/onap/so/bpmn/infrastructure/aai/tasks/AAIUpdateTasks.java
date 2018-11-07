@@ -54,6 +54,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AAIUpdateTasks {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AAIUpdateTasks.class);
+	private static final String ALACARTE = "aLaCarte";
 	private static final String MULTI_STAGE_DESIGN_OFF = "false";
 	private static final String MULTI_STAGE_DESIGN_ON = "true";
 	@Autowired
@@ -196,7 +197,8 @@ public class AAIUpdateTasks {
 			if (vnf.getModelInfoGenericVnf() != null) {
 				multiStageDesign = vnf.getModelInfoGenericVnf().getMultiStageDesign();
 			}
-			if (multiStageDesign != null && multiStageDesign.equalsIgnoreCase(MULTI_STAGE_DESIGN_ON)) {
+			boolean aLaCarte = (boolean) execution.getVariable(ALACARTE);
+			if (aLaCarte && multiStageDesign != null && multiStageDesign.equalsIgnoreCase(MULTI_STAGE_DESIGN_ON)) {
 				aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule,vnf,OrchestrationStatus.PENDING_ACTIVATION);
 			}
 			else {

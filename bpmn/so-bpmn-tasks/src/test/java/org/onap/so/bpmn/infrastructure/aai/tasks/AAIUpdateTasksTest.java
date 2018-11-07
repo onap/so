@@ -183,6 +183,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleNoMultiStageTest() throws Exception {
+		execution.setVariable("aLaCarte", true);
 		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
 		modelInfoGenericVnf.setMultiStageDesign("false");
 		genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
@@ -193,7 +194,20 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	}
 	
 	@Test
+	public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleMultiStageButNotAlacarteTest() throws Exception {
+		execution.setVariable("aLaCarte", false);
+		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
+		modelInfoGenericVnf.setMultiStageDesign("true");
+		genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
+		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
+		aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
+		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
+		assertEquals("", vfModule.getHeatStackId());
+	}
+	
+	@Test
 	public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleWithMultiStageTest() throws Exception {
+		execution.setVariable("aLaCarte", true);
 		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
 		modelInfoGenericVnf.setMultiStageDesign("true");
 		genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
@@ -205,6 +219,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleExceptionTest() throws Exception {
+		execution.setVariable("aLaCarte", true);
 		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
 		
 		expectedException.expect(BpmnError.class);
