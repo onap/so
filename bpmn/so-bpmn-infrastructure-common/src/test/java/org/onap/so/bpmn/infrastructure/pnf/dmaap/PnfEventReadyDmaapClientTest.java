@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Copyright (C) 2018 Nokia.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -56,22 +58,10 @@ public class PnfEventReadyDmaapClientTest {
 
     private static final String CORRELATION_ID = "corrTestId";
     private static final String CORRELATION_ID_NOT_FOUND_IN_MAP = "otherCorrId";
-    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID = "[\n"
-            + "    {\n"
-            + "        \"pnfRegistrationFields\" : {\n"
-            + "        \"correlationId\" : \"%s\",\n"
-            + "        \"value\" : \"value1\"\n"
-            + "        }\n"
-            + "    },\n"
-            + "    {\n"
-            + "        \"pnfRegistrationFields\" : {\n"
-            + "        \"correlationId\" : \"corr\",\n"
-            + "        \"value\" : \"value2\"\n"
-            + "        }\n"
-            + "    }\n"
-            + "]";
-    private static final String JSON_EXAMPLE_WITH_NO_CORRELATION_ID =
-            "{\"pnfRegistrationFields\":{\"field\":\"value\"}}";
+    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID = "[{\"correlationId\": \"%s\","
+            + "\"value\":\"value1\"},{\"correlationId\": \"corr\",\"value\":\"value2\"}]";
+
+    private static final String JSON_EXAMPLE_WITH_NO_CORRELATION_ID = "[{\"key1\":\"value1\"}]";
 
     private static final String HOST = "hostTest";
     private static final int PORT = 1234;

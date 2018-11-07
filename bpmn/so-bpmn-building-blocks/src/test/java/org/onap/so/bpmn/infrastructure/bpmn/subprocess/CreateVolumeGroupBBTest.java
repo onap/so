@@ -53,6 +53,7 @@ public class CreateVolumeGroupBBTest extends BaseBPMNTest{
 	
 	@Test
 	public void rainyDayCreateVolumeGroupUpdateHeatStackIdError_Test() throws Exception {
+		mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks).updateHeatStackIdVolumeGroup(any(BuildingBlockExecution.class));
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVolumeGroupBB", variables);
 		assertThat(pi).isNotNull();

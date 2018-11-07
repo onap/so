@@ -81,6 +81,7 @@ public class WorkflowAction {
 
 	private static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
 	private static final String SERVICE_INSTANCES = "serviceInstances";
+	private static final String VF_MODULES = "vfModules";
 	private static final String WORKFLOW_ACTION_WAS_UNABLE_TO_VERIFY_IF_THE_INSTANCE_NAME_ALREADY_EXIST_IN_AAI = "WorkflowAction was unable to verify if the instance name already exist in AAI.";
 	private static final String G_ORCHESTRATION_FLOW = "gOrchestrationFlow";
 	private static final String G_ACTION = "requestAction";
@@ -104,7 +105,7 @@ public class WorkflowAction {
 	private static final String USERPARAMSERVICE = "service";
 	private static final String supportedTypes = "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances";
 	private static final String HOMINGSOLUTION = "Homing_Solution";
-	private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
+	private static final String FABRIC_CONFIGURATION = "FabricConfiguration";	
 	private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
 	
 	@Autowired
@@ -161,19 +162,6 @@ public class WorkflowAction {
 			}
 			execution.setVariable("resourceId", resourceId);
 			execution.setVariable("resourceType", resourceType);
-
-			if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
-				List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters()
-						.getUserParams();
-				for (Map<String, Object> params : userParams) {
-					if (params.containsKey(HOMINGSOLUTION)) {
-						execution.setVariable("homing", true);
-						execution.setVariable("callHoming", true);
-						execution.setVariable("homingSolution", params.get(HOMINGSOLUTION));
-						execution.setVariable("homingService", params.get(HOMINGSOLUTION));
-					}
-				}
-			}
 
 			if (aLaCarte) {
 				if (orchFlows == null || orchFlows.isEmpty()) {
@@ -269,9 +257,10 @@ public class WorkflowAction {
 					logger.info("Sorting for Vlan Tagging");
 					flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
 				}
+				// By default, enable homing at VNF level for CREATEINSTANCE and ASSIGNINSTANCE
 				if (resourceType == WorkflowType.SERVICE
-						&& (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
-						&& !resourceCounter.stream().filter(x -> WorkflowType.VNF.equals(x.getResourceType())).collect(Collectors.toList()).isEmpty()) {
+					&& (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
+					&& !resourceCounter.stream().filter(x -> WorkflowType.VNF.equals(x.getResourceType())).collect(Collectors.toList()).isEmpty()) {
 					execution.setVariable("homing", true);
 					execution.setVariable("calledHoming", false);
 				}
@@ -279,6 +268,20 @@ public class WorkflowAction {
 					generateResourceIds(flowsToExecute, resourceCounter);
 				}else{
 					updateResourceIdsFromAAITraversal(flowsToExecute, resourceCounter, aaiResourceIds);
+				}
+			}
+
+			// If the user set "Homing_Solution" to "none", disable homing, else if "Homing_Solution" is specified, enable it.
+			if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
+				List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters().getUserParams();
+				for (Map<String, Object> params : userParams) {
+					if (params.containsKey(HOMINGSOLUTION)) {
+						if (params.get(HOMINGSOLUTION).equals("none")) {
+							execution.setVariable("homing", false);
+						} else {
+							execution.setVariable("homing", true);
+						}
+					}
 				}
 			}
 
@@ -665,35 +668,38 @@ public class WorkflowAction {
 	}
 
 	protected Resource extractResourceIdAndTypeFromUri(String uri) {
-		Pattern patt = Pattern.compile(
-				"[vV]\\d+.*?(?:(?:/(?<type>" + supportedTypes + ")(?:/(?<id>[^/]+))?)(?:/(?<action>[^/]+))?)?$");
-		Matcher m = patt.matcher(uri);
-		Boolean generated = false;
+	    Pattern patt = Pattern.compile(
+	            "[vV]\\d+.*?(?:(?:/(?<type>" + supportedTypes + ")(?:/(?<id>[^/]+))?)(?:/(?<action>[^/]+))?)?$");
+	    Matcher m = patt.matcher(uri);
+	    Boolean generated = false;
 
-		if (m.find()) {
-			logger.debug("found match on {} : {} " , uri ,  m);
-			String type = m.group("type");
-			String id = m.group("id");
-			String action = m.group("action");
-			if (type == null) {
-				throw new IllegalArgumentException("Uri could not be parsed. No type found. " + uri);
-			}
-			if (action == null) {
-				if (type.equals(SERVICE_INSTANCES) && (id == null || id.equals("assign"))) {
-					id = UUID.randomUUID().toString();
-					generated = true;
-				}
-			} else {
-				if (action.matches(supportedTypes)) {
-					id = UUID.randomUUID().toString();
-					generated = true;
-					type = action;
-				}
-			}
-			return new Resource(WorkflowType.fromString(convertTypeFromPlural(type)), id, generated);
-		} else {
-			throw new IllegalArgumentException("Uri could not be parsed: " + uri);
-		}
+	    if (m.find()) {
+	        logger.debug("found match on {} : {} " , uri ,  m);
+	        String type = m.group("type");
+	        String id = m.group("id");
+	        String action = m.group("action");
+	        if (type == null) {
+	            throw new IllegalArgumentException("Uri could not be parsed. No type found. " + uri);
+	        }
+	        if (action == null) {
+	            if (type.equals(SERVICE_INSTANCES) && (id == null || id.equals("assign"))) {
+	                id = UUID.randomUUID().toString();
+	                generated = true;
+	            }else if (type.equals(VF_MODULES) && id.equals("scaleOut")) {
+	                id = UUID.randomUUID().toString();
+	                generated = true;
+	            }
+	        } else {
+	            if (action.matches(supportedTypes)) {
+	                id = UUID.randomUUID().toString();
+	                generated = true;
+	                type = action;
+	            }
+	        }
+	        return new Resource(WorkflowType.fromString(convertTypeFromPlural(type)), id, generated);
+	    } else {
+	        throw new IllegalArgumentException("Uri could not be parsed: " + uri);
+	    }
 	}
 
 	protected String validateResourceIdInAAI(String generatedResourceId, WorkflowType type, String instanceName,
