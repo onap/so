@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Copyright (C) 2018 Nokia.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,30 +26,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import org.junit.Test;
-import org.onap.so.bpmn.infrastructure.pnf.dmaap.JsonUtilForCorrelationId;
 
 public class JsonUtilForCorrelationIdTest {
 
-    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID = "[\n"
-            + "    {\n"
-            + "        \"pnfRegistrationFields\" : {\n"
-            + "        \"correlationId\" : \"corrTest1\",\n"
-            + "        \"value\" : \"value1\"\n"
-            + "        }\n"
-            + "    },\n"
-            + "    {\n"
-            + "        \"pnfRegistrationFields\" : {\n"
-            + "        \"correlationId\" : \"corrTest2\",\n"
-            + "        \"value\" : \"value2\"\n"
-            + "        }\n"
-            + "    }\n"
-            + "]";
+    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID = "[{\"correlationId\": \"corrTest1\","
+            + "\"key1\":\"value1\"},{\"correlationId\": \"corrTest2\",\"key2\":\"value2\"}]";
 
-    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID2 = "{\"pnfRegistrationFields\":{\"correlationId\":\"corrTest3\"}}";
-    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID3 = "[\"{\\\"pnfRegistrationFields\\\":"
-            + "{\\\"correlationId\\\":\\\"corrTest4\\\"}}\", \"{\\\"pnfRegistrationFields\\\":"
-            + "{\\\"correlationId\\\":\\\"corrTest5\\\"}}\"]";
-    private static final String JSON_EXAMPLE_WITH_CORRELATION_ID4 = "{\"header\":{\"key\":\"value\"}}";
+    private static final String JSON_WITH_ONE_CORRELATION_ID = "[{\"correlationId\":\"corrTest3\"}]";
+
+    private static final String JSON_WITH_TWO_CORRELATION_ID_AND_ESCAPED_CHARACTERS =
+            "[\"{\\\"correlationId\\\":\\\"corrTest4\\\"}\", \"{\\\"correlationId\\\":\\\"corrTest5\\\"}\"]";
+
+    private static final String JSON_WITH_NO_CORRELATION_ID = "[{\"key1\":\"value1\"}]";
 
     @Test
     public void parseJsonSuccessful() {
@@ -56,21 +46,21 @@ public class JsonUtilForCorrelationIdTest {
         assertThat(expectedResult).containsExactly("corrTest1", "corrTest2");
 
         List<String> expectedResult2 = JsonUtilForCorrelationId
-                .parseJsonToGelAllCorrelationId(JSON_EXAMPLE_WITH_CORRELATION_ID2);
+                .parseJsonToGelAllCorrelationId(JSON_WITH_ONE_CORRELATION_ID);
         assertThat(expectedResult2).containsExactly("corrTest3");
     }
 
     @Test
     public void parseJsonWithEscapeCharacters_Successful() {
         List<String> expectedResult = JsonUtilForCorrelationId
-                .parseJsonToGelAllCorrelationId(JSON_EXAMPLE_WITH_CORRELATION_ID3);
+                .parseJsonToGelAllCorrelationId(JSON_WITH_TWO_CORRELATION_ID_AND_ESCAPED_CHARACTERS);
         assertThat(expectedResult).containsExactly("corrTest4", "corrTest5");
     }
 
     @Test
     public void parseJson_emptyListReturnedWhenNothingFound() {
         List<String> expectedResult = JsonUtilForCorrelationId
-                .parseJsonToGelAllCorrelationId(JSON_EXAMPLE_WITH_CORRELATION_ID4);
+                .parseJsonToGelAllCorrelationId(JSON_WITH_NO_CORRELATION_ID);
         assertThat(expectedResult).isEmpty();
     }
 

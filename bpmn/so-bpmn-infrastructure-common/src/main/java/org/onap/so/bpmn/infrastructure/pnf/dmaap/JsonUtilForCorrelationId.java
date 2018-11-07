@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Copyright (C) 2018 Nokia.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,41 +33,32 @@ import java.util.Spliterator;
 
 public final class JsonUtilForCorrelationId {
 
-    private static final String JSON_HEADER = "pnfRegistrationFields";
     private static final String JSON_CORRELATION_ID_FIELD_NAME = "correlationId";
 
     static List<String> parseJsonToGelAllCorrelationId(String json) {
-        List<String> list = new ArrayList<>();
         JsonElement je = new JsonParser().parse(json);
-        if (je.isJsonObject()) {
-            getCorrelationIdFromJsonObject(je.getAsJsonObject()).ifPresent(corr -> list.add(corr));
-        } else {
-            JsonArray array = je.getAsJsonArray();
-            Spliterator<JsonElement> spliterator = array.spliterator();
-            spliterator.forEachRemaining(jsonElement -> {
-                parseJsonElementToJsonObject(jsonElement)
-                        .ifPresent(jsonObject -> getCorrelationIdFromJsonObject(jsonObject)
-                                .ifPresent(correlationId -> list.add(correlationId)));
-            });
-        }
+        JsonArray array = je.getAsJsonArray();
+        List<String> list = new ArrayList<>();
+        Spliterator<JsonElement> spliterator = array.spliterator();
+        spliterator.forEachRemaining(jsonElement -> {
+            handleEscapedCharacters(jsonElement)
+                    .ifPresent(jsonObject -> getCorrelationId(jsonObject)
+                            .ifPresent(correlationId -> list.add(correlationId)));
+        });
         return list;
     }
 
-    private static Optional<JsonObject> parseJsonElementToJsonObject(JsonElement jsonElement) {
+    private static Optional<JsonObject> handleEscapedCharacters(JsonElement jsonElement) {
         if (jsonElement.isJsonObject()) {
             return Optional.ofNullable(jsonElement.getAsJsonObject());
         }
         return Optional.ofNullable(new JsonParser().parse(jsonElement.getAsString()).getAsJsonObject());
     }
 
-    private static Optional<String> getCorrelationIdFromJsonObject(JsonObject jsonObject) {
-        if (jsonObject.has(JSON_HEADER)) {
-            JsonObject jo = jsonObject.getAsJsonObject(JSON_HEADER);
-            if (jo.has(JSON_CORRELATION_ID_FIELD_NAME)) {
-                return Optional.ofNullable(jo.get(JSON_CORRELATION_ID_FIELD_NAME).getAsString());
-            }
+    private static Optional<String> getCorrelationId(JsonObject jsonObject) {
+        if (jsonObject.has(JSON_CORRELATION_ID_FIELD_NAME)) {
+            return Optional.ofNullable(jsonObject.get(JSON_CORRELATION_ID_FIELD_NAME).getAsString());
         }
         return Optional.empty();
     }
-
 }
