@@ -19,6 +19,8 @@
  */
 
 package org.onap.so.bpmn.common.scripts
+
+import org.apache.commons.lang.StringUtils
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.core.RollbackData
@@ -94,55 +96,25 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		execution.setVariable("CAAIVfMod_vnfName", vnfName)
 
 		String vnfType = execution.getVariable("vnfType")
-		if (vnfType != null && !vnfType.isEmpty()) {
-			execution.setVariable("CAAIVfMod_vnfType", vnfType)
-		} else {
-			execution.setVariable("CAAIVfMod_vnfType","")
-		}
+        execution.setVariable("CAAIVfMod_vnfType", setStringWithValueOrEmpty(vnfType))
 
 		execution.setVariable("CAAIVfMod_serviceId", execution.getVariable("serviceId"))
 		
 		String personaModelId = execution.getVariable("personaModelId")
+        execution.setVariable("CAAIVfMod_personaId",setStringWithValueOrEmpty(personaModelId))
 
-		if (personaModelId != null && !personaModelId.isEmpty()) {
-			execution.setVariable("CAAIVfMod_personaId",personaModelId)
-		} else {
-			execution.setVariable("CAAIVfMod_personaId","")
-		}
-		
 		String personaModelVersion = execution.getVariable("personaModelVersion")
+        execution.setVariable("CAAIVfMod_personaVer", setStringWithValueOrEmpty(personaModelVersion))
 
-		if (personaModelVersion != null && !personaModelVersion.isEmpty()) {
-			execution.setVariable("CAAIVfMod_personaVer", personaModelVersion)
-		} else {
-			execution.setVariable("CAAIVfMod_personaVer","")
-		}
-		
-		
 		String modelCustomizationId = execution.getVariable("modelCustomizationId")
+        execution.setVariable("CAAIVfMod_modelCustomizationId",setStringWithValueOrEmpty(modelCustomizationId))
 
-		if (modelCustomizationId != null && !modelCustomizationId.isEmpty()) {
-			execution.setVariable("CAAIVfMod_modelCustomizationId",modelCustomizationId)
-		} else {
-			execution.setVariable("CAAIVfMod_modelCustomizationId","")
-		}
-		
 		String vnfPersonaModelId = execution.getVariable("vnfPersonaModelId")
-		
-		if (vnfPersonaModelId != null && !vnfPersonaModelId.isEmpty()) {
-			execution.setVariable("CAAIVfMod_vnfPersonaId",vnfPersonaModelId)
-		} else {
-			execution.setVariable("CAAIVfMod_vnfPersonaId","")
-		}
-		
-		String vnfPersonaModelVersion = execution.getVariable("vnfPersonaModelVersion")
+        execution.setVariable("CAAIVfMod_vnfPersonaId", setStringWithValueOrEmpty(vnfPersonaModelId))
 
-		if (vnfPersonaModelVersion != null && !vnfPersonaModelVersion.isEmpty()) {
-			execution.setVariable("CAAIVfMod_vnfPersonaVer",vnfPersonaModelVersion)
-		} else {
-			execution.setVariable("CAAIVfMod_vnfPersonaVer","")
-		}
-		
+		String vnfPersonaModelVersion = execution.getVariable("vnfPersonaModelVersion")
+		execution.setVariable("CAAIVfMod_vnfPersonaVer", setStringWithValueOrEmpty(vnfPersonaModelVersion))
+
 		//isBaseVfModule
 		Boolean isBaseVfModule = false
 		String isBaseVfModuleString = execution.getVariable("isBaseVfModule")
@@ -150,7 +122,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 				isBaseVfModule = true			
 		}
 		execution.setVariable("CAAIVfMod_isBaseVfModule", isBaseVfModule)
-		
+
 		String isVidRequest = execution.getVariable("isVidRequest")
 		if (isVidRequest != null && "true".equals(isVidRequest)) {
 			msoLogger.debug("VID Request received")		
@@ -166,10 +138,17 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		execution.setVariable("CAAIVfMod_aaiNamespace",aaiNamespace)
 
 	}
-	
-	// send a GET request to AA&I to retrieve the Generic VNF/VF Module information based on a Vnf Name
+
+	private String setStringWithValueOrEmpty(String value) {
+		if (StringUtils.isEmpty(value)) {
+			return StringUtils.EMPTY
+		}
+		return value
+	}
+
 	// expect a 200 response with the information in the response body or a 404 if the Generic VNF does not exist
 	public void queryAAIForGenericVnf(DelegateExecution execution) {
+		
 
 		AAIResourceUri uri
 		def vnfId = execution.getVariable("CAAIVfMod_vnfId")
@@ -424,8 +403,9 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 				}
 			}
 		}
+
 		if (qryModuleList != null && !qryModuleList.getVfModule().isEmpty() && !execution.getVariable("CAAIVfMod_baseModuleConflict")) {
-            def qryModules = qryModuleList.getVfModule()
+			def qryModules = qryModuleList.getVfModule()
 			for (org.onap.aai.domain.yang.VfModule qryModule : qryModules) {
 				if (qryModule.isBaseVfModule) {
 					// a base module already exists in this VNF - failure
@@ -500,74 +480,5 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Error occurred during CreateAAIVfModule flow", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, errorResponse);
 		exceptionUtil.buildAndThrowWorkflowException(execution, errorCode, errorResponse)
 		msoLogger.debug("Workflow exception occurred in CreateAAIVfModule: " + errorResponse)
-	}
-
-	/**
-	 * Performs a rollback.
-	 * TBD: This method requires additional testing once integrated with the
-	 *      main CreateVfModule flow.
-	 * @param execution the execution
-	 */
-	public void rollback(DelegateExecution execution) {
-		def method = getClass().getSimpleName() + ".rollback(" +
-			"execution=" + execution.getId() +
-			")"
-		msoLogger.debug("Entered " + method)
-
-		try {
-			RollbackData rollbackData = (RollbackData) execution.getVariable("RollbackData")
-			msoLogger.debug("RollbackData:" + rollbackData)
-
-			AaiUtil aaiUriUtil = new AaiUtil(this)
-			
-			if (rollbackData != null) {
-				if (rollbackData.hasType("VFMODULE")) {
-					// use the DeleteAAIVfModule groovy methods for the rollback
-					def vnfId = rollbackData.get("VFMODULE", "vnfId")
-					def vfModuleId = rollbackData.get("VFMODULE", "vfModuleId")
-					def isBaseModule = rollbackData.get("VFMODULE", "isBaseModule")
-					execution.setVariable("DAAIVfMod_vnfId", vnfId)		
-					execution.setVariable("DAAIVfMod_vfModuleId", vfModuleId)
-
-					DeleteAAIVfModule dvm = new DeleteAAIVfModule()
-					// query A&AI to get the needed information for the delete(s)
-					dvm.queryAAIForGenericVnf(execution)
-					dvm.parseForVfModule(execution)
-					
-					// roll back the base or add-on module
-					dvm.deleteVfModule(execution)
-					def responseCode = execution.getVariable("DAAIVfMod_deleteVfModuleResponseCode")
-					def response = execution.getVariable("DAAIVfMod_deleteVfModuleResponseCode")
-
-					if (isOneOf(responseCode, 200, 204)) {
-						msoLogger.debug("Received " + responseCode + " to VF Module rollback request")
-					} else {
-						msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Received " + responseCode + " to VF Module rollback request", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, rollbackData + System.lineSeparator() + "Response: " + response);
-					}
-					
-					// a new Generic VNF was created that needs to be rolled back
-					if (isBaseModule.equals("true")) {
-						dvm.queryAAIForGenericVnf(execution)
-						dvm.parseForResourceVersion(execution)
-						dvm.deleteGenericVnf(execution)
-						responseCode = execution.getVariable("DAAIVfMod_deleteGenericVnfResponseCode")
-						response = execution.getVariable("DAAIVfMod_deleteGenericVnfResponse")
-	
-						if (isOneOf(responseCode, 200, 204)) {
-							msoLogger.debug("Received " + responseCode + " to Generic VNF rollback request")
-							execution.setVariable("RollbackResult", "SUCCESS")
-						} else {
-							msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Received " + responseCode + " to Generic VNF rollback request", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, rollbackData + System.lineSeparator() + "Response: " + response);
-						}
-					} else {
-						execution.setVariable("RollbackResult", "SUCCESS")
-					}
-				}
-			}
-
-			msoLogger.debug("Exited " + method)
-		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Caught exception in " + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
-		}
 	}
 }
