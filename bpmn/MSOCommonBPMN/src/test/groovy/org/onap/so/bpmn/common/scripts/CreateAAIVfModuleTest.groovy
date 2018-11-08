@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,8 @@
  */
 
 package org.onap.so.bpmn.common.scripts
+
+import org.camunda.bpm.engine.delegate.DelegateExecution
 
 import static org.assertj.core.api.Assertions.assertThat
 import static org.mockito.ArgumentMatchers.any
@@ -57,12 +59,12 @@ class CreateAAIVfModuleTest extends MsoGroovyTest{
 	private static final String VF_MODULE_MODEL_NAME = "modModelNameTest"
 	private static final String DEFAULT_AAI_VERSION = "9"
 	private static final String DEFAULT_AAI_NAMESPACE = "defaultTestNamespace"
-	
+
     @Spy
     CreateAAIVfModule createAAIVfModule ;
 
 	private DelegateExecutionFake executionFake;
-	
+
     @Before
     public void init() throws IOException {
         super.init("CreateAAIVfModule")
@@ -236,7 +238,7 @@ class CreateAAIVfModuleTest extends MsoGroovyTest{
 
     @Test
     void parseForAddOnModule_moduleNameFound() {
-       
+
 		GenericVnf vnf = new GenericVnf();
 		VfModule module = new VfModule();
 		VfModules modules = new VfModules();
@@ -302,7 +304,7 @@ class CreateAAIVfModuleTest extends MsoGroovyTest{
 		modules.getVfModule().add(module)
 		module.setVfModuleName(VF_MODULE_NAME)
 		module.setIsBaseVfModule(true)
-		
+
         executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", vnf)
         executionFake.setVariable("CAAIVfMod_baseModuleConflict", false)
 
@@ -331,6 +333,103 @@ class CreateAAIVfModuleTest extends MsoGroovyTest{
                 .isEqualTo("VF Module " + VF_MODULE_NAME + " does not exist for Generic VNF " + VNF_NAME)
     }
 
+    @Test
+    void handleFailure_errorCode5000() {
+        executionFake.setVariable("CAAIVfMod_createGenericVnfResponseCode", "123")
+        executionFake.setVariable("CAAIVfMod_createGenericVnfResponse", "responseTest")
+
+        ExceptionUtilForTesting exceptionUtilForTesting = new ExceptionUtilForTesting()
+        createAAIVfModule.setExceptionUtil(exceptionUtilForTesting)
+
+        createAAIVfModule.handleCreateVfModuleFailure(executionFake)
+
+        assertThat(exceptionUtilForTesting.getErrorCode()).isEqualTo(5000)
+        assertThat(exceptionUtilForTesting.getErrorMessage()).isEqualTo("responseTest")
+    }
+
+    @Test
+    void handleFailure_errorCode1002() {
+        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", "responseTest")
+        executionFake.setVariable("CAAIVfMod_newGenericVnf", true)
+
+        ExceptionUtilForTesting exceptionUtilForTesting = new ExceptionUtilForTesting()
+        createAAIVfModule.setExceptionUtil(exceptionUtilForTesting)
+
+        createAAIVfModule.handleCreateVfModuleFailure(executionFake)
+
+        assertThat(exceptionUtilForTesting.getErrorCode()).isEqualTo(1002)
+        assertThat(exceptionUtilForTesting.getErrorMessage()).isEqualTo("responseTest")
+    }
+
+    @Test
+    void handleFailure_errorCode1002_queryGenericVnfResponse() {
+        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponse", "responseTest")
+        executionFake.setVariable("CAAIVfMod_queryGenericVnfResponseCode", 404)
+        executionFake.setVariable("CAAIVfMod_newGenericVnf", false)
+
+        ExceptionUtilForTesting exceptionUtilForTesting = new ExceptionUtilForTesting()
+        createAAIVfModule.setExceptionUtil(exceptionUtilForTesting)
+
+        createAAIVfModule.handleCreateVfModuleFailure(executionFake)
+
+        assertThat(exceptionUtilForTesting.getErrorCode()).isEqualTo(1002)
+        assertThat(exceptionUtilForTesting.getErrorMessage()).isEqualTo("responseTest")
+    }
+
+    @Test
+    void handleFailure_errorCode5000_createVfModuleResponseCode() {
+        executionFake.setVariable("CAAIVfMod_createVfModuleResponseCode", "123")
+        executionFake.setVariable("CAAIVfMod_createVfModuleResponse", "responseTest")
+
+        ExceptionUtilForTesting exceptionUtilForTesting = new ExceptionUtilForTesting()
+        createAAIVfModule.setExceptionUtil(exceptionUtilForTesting)
+
+        createAAIVfModule.handleCreateVfModuleFailure(executionFake)
+
+        assertThat(exceptionUtilForTesting.getErrorCode()).isEqualTo(5000)
+        assertThat(exceptionUtilForTesting.getErrorMessage()).isEqualTo("responseTest")
+    }
+
+    @Test
+    void handleFailure_errorCode1002_moduleExists() {
+        executionFake.setVariable("CAAIVfMod_moduleExists", true)
+        executionFake.setVariable("CAAIVfMod_parseModuleResponse", "responseTest")
+
+        ExceptionUtilForTesting exceptionUtilForTesting = new ExceptionUtilForTesting()
+        createAAIVfModule.setExceptionUtil(exceptionUtilForTesting)
+
+        createAAIVfModule.handleCreateVfModuleFailure(executionFake)
+
+        assertThat(exceptionUtilForTesting.getErrorCode()).isEqualTo(1002)
+        assertThat(exceptionUtilForTesting.getErrorMessage()).isEqualTo("responseTest")
+    }
+
+    @Test
+    void handleFailure_errorCode1002_baseModuleConflict() {
+        executionFake.setVariable("CAAIVfMod_baseModuleConflict", true)
+        executionFake.setVariable("CAAIVfMod_parseModuleResponse", "responseTest")
+
+        ExceptionUtilForTesting exceptionUtilForTesting = new ExceptionUtilForTesting()
+        createAAIVfModule.setExceptionUtil(exceptionUtilForTesting)
+
+        createAAIVfModule.handleCreateVfModuleFailure(executionFake)
+
+        assertThat(exceptionUtilForTesting.getErrorCode()).isEqualTo(1002)
+        assertThat(exceptionUtilForTesting.getErrorMessage()).isEqualTo("responseTest")
+    }
+
+    @Test
+    void handleFailure_errorCode2000() {
+        ExceptionUtilForTesting exceptionUtilForTesting = new ExceptionUtilForTesting()
+        createAAIVfModule.setExceptionUtil(exceptionUtilForTesting)
+
+        createAAIVfModule.handleCreateVfModuleFailure(executionFake)
+
+        assertThat(exceptionUtilForTesting.getErrorCode()).isEqualTo(2000)
+        assertThat(exceptionUtilForTesting.getErrorMessage()).
+                isEqualTo("Unknown error occurred during CreateAAIVfModule flow")
+    }
+
     private void prepareUrnPropertiesReader() {
         Environment mockEnvironment = mock(Environment.class)
         when(mockEnvironment.getProperty("mso.workflow.global.default.aai.version")).thenReturn(DEFAULT_AAI_VERSION)
@@ -338,4 +437,25 @@ class CreateAAIVfModuleTest extends MsoGroovyTest{
         UrnPropertiesReader urnPropertiesReader = new UrnPropertiesReader()
         urnPropertiesReader.setEnvironment(mockEnvironment)
     }
+
+    class ExceptionUtilForTesting extends ExceptionUtil {
+        private int errorCode
+        private String errorMessage
+
+        int getErrorCode() {
+            return errorCode
+        }
+
+        String getErrorMessage() {
+            return errorMessage
+        }
+
+        @Override
+        void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode,
+                                            String errorMessage) {
+            this.errorCode = errorCode
+            this.errorMessage = errorMessage
+        }
+    }
+
 }
