@@ -105,6 +105,33 @@ public class HttpClientRedirectStrategyTest {
         assertThat(httpUriRequest.getURI()).isEqualTo(expectedUri);
     }
 
+    @Test
+    public void getRedirect_shouldCopyHttpRequestAndSetNewUri_forMovedTemporarilyStatus() throws URISyntaxException, ProtocolException {
+        assertHttpRequestIsCopied(HttpStatus.SC_MOVED_TEMPORARILY);
+    }
+
+    @Test
+    public void getRedirect_shouldCopyHttpRequestAndSetNewUri_forTemporaryRedirectStatus() throws URISyntaxException, ProtocolException {
+        assertHttpRequestIsCopied(HttpStatus.SC_TEMPORARY_REDIRECT);
+    }
+
+    private void assertHttpRequestIsCopied(int expectedHttpStatus) throws URISyntaxException, ProtocolException {
+        // GIVEN
+        HttpRequest request = mock(HttpRequest.class, RETURNS_DEEP_STUBS);
+        given(request.getRequestLine().getMethod()).willReturn(HttpGet.METHOD_NAME);
+        given(request.getRequestLine().getUri()).willReturn("http://hostname");
+        HttpResponse response = mock(HttpResponse.class, RETURNS_DEEP_STUBS);
+        given(response.getStatusLine().getStatusCode()).willReturn(expectedHttpStatus);
+        URI expectedUri = new URI("http://localhost/host");
+        HttpContext context = null;
+        // WHEN
+        HttpUriRequest httpUriRequest = new TestableHttpClientRedirectStrategy(expectedUri)
+            .getRedirect(request, response, context);
+        // THEN
+        assertThat(httpUriRequest).isInstanceOf(HttpGet.class);
+        assertThat(httpUriRequest.getURI()).isEqualTo(expectedUri);
+    }
+
     private static class TestableHttpClientRedirectStrategy extends HttpClientRedirectStrategy {
 
         private final URI expectedUri;
@@ -112,7 +139,6 @@ public class HttpClientRedirectStrategyTest {
         public TestableHttpClientRedirectStrategy(URI expectedUri) {
             this.expectedUri = expectedUri;
         }
-
         @Override
         public URI getLocationURI(HttpRequest request, HttpResponse response, HttpContext context) {
             return expectedUri;
