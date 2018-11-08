@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_2373eb4e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-08T10:36:29Z",
+      "side": 1,
+      "message": "rephrase: received pnf ready event from dmaap for correlationId",
+      "revId": "d532a206b7d0ef58397b4f1ee326b4a12e305024",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
