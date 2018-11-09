@@ -205,8 +205,9 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			AAIResourceUri siResourceLink= execution.getVariable("PSI_resourceLink")
 			AllottedResourceUtils arUtils = new AllottedResourceUtils(this)
-			execution.setVariable("aaiARPath", arUtils.createARUrl(execution, siResourceLink, allottedResourceId))
-			msoLogger.debug("GET AllottedResource AAI URL is:\n" + arUrl)
+			arUrl = arUtils.createARUrl(execution, siResourceLink, allottedResourceId)
+			execution.setVariable("aaiARPath", arUrl)
+			msoLogger.debug("PUT AllottedResource AAI URL is:\n" + arUrl)
 
 			String namespace = aaiUriUtil.getNamespaceFromUri(execution, arUrl)
 
