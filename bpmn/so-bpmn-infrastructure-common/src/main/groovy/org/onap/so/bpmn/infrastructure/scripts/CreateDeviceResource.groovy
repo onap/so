@@ -31,7 +31,10 @@ import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.recipe.ResourceInput;
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.bpmn.core.domain.ModelInfo
+import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder.AbstractBuilder
 import org.onap.so.logger.MsoLogger
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
@@ -41,9 +44,8 @@ import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils
-import org.onap.so.bpmn.common.scripts.AaiUtil
+import org.apache.commons.codec.binary.Base64
+
 
 /**
  * This groovy class supports the <class>CreateDeviceResource.bpmn</class> process.
@@ -124,12 +126,10 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
             execution.setVariable(Prefix + "serviceInstanceId", resourceInputObj.getServiceInstanceId())
             execution.setVariable("mso-request-id", requestId)
 
-        } catch (BpmnError e) {
-            throw e;
         } catch (Exception ex){
             msg = "Exception in preProcessRequest " + ex.getMessage()
             msoLogger.debug(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+//            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
@@ -143,22 +143,18 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 			if(StringUtils.isBlank(devType)) {
 				devType = "OTHER"
 			}
-			// support VNF as PNF, to modify
-			else if(StringUtils.equalsIgnoreCase(devType, "VNF")) {
-				devType = "PNF"
-			}
 
 			execution.setVariable("device_class", devType)
 
 		} catch (Exception ex){
 			String msg = "Exception in checkDevType " + ex.getMessage()
 			msoLogger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+//			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
 
 	private void setProgressUpdateVariables(DelegateExecution execution, String body) {
-		def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+		def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
 		execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
 		execution.setVariable("CVFMI_updateResOperStatusRequest", body)
 	}
@@ -196,7 +192,7 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 		msoLogger.info(" ***** Exit prepareUpdateProgress *****")
 	}
 
-	public void getVNFTemplatefromSDC(DelegateExecution execution){
+	private void getVNFTemplatefromSDC(DelegateExecution execution){
 		msoLogger.info(" ***** Started getVNFTemplatefromSDC *****")
 		try {
 			// To do
@@ -205,22 +201,109 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 		} catch (Exception ex){
 			String msg = "Exception in getVNFTemplatefromSDC " + ex.getMessage()
 			msoLogger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+//			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
 
-	public void postVNFInfoProcess(DelegateExecution execution){
-		msoLogger.info(" ***** Started postVNFInfoProcess *****")
-		try {
-			// To do
+    public void prepareVnfAndModulesCreate(DelegateExecution execution) {
+        try {
+            msoLogger.trace("Inside prepareVnfAndModulesCreate of CreateDeviceResource ")
+            
+            JSONObject resourceInputParameters = execution.getVariable(Prefix + "ResourceRequestInputs")
+            String devType = resourceInputParameters.get("device_type")
+            String devVersion = resourceInputParameters.get("device_version")
+            
+            //get vnf model from SDC
+            getVNFTemplatefromSDC(execution)
+	    
+            VnfResource vnf = execution.getVariable("vnfResource")
+            Integer vnfsCreatedCount = execution.getVariable(Prefix + "VnfsCreatedCount")
+            String vnfModelInfoString = null;
+
+            if (vnf != null) {
+                msoLogger.debug("getting model info for vnf # " + vnfsCreatedCount)
+                ModelInfo vnfModelInfo = vnf.getModelInfo()
+                vnfModelInfoString = vnfModelInfo.toString()
+            } else {
+                msoLogger.debug("vnf is null")
+                vnfModelInfoString = execution.getVariable("vnfModelInfo")
+            }
+
+            msoLogger.debug(" vnfModelInfoString :" + vnfModelInfoString)
+
+            // extract cloud configuration
+//            String vimId = jsonUtil.getJsonValue(createVcpeServiceRequest,
+//                    "requestDetails.cloudConfiguration.lcpCloudRegionId")
+//            def cloudRegion = vimId.split("_")
+//            execution.setVariable("cloudOwner", cloudRegion[0])
+//            msoLogger.debug("cloudOwner: "+ cloudRegion[0])
+//            execution.setVariable("cloudRegionId", cloudRegion[1])
+//            msoLogger.debug("cloudRegionId: "+ cloudRegion[1])
+//            execution.setVariable("lcpCloudRegionId", cloudRegion[1])
+//            msoLogger.debug("lcpCloudRegionId: "+ cloudRegion[1])
+//            String tenantId = jsonUtil.getJsonValue(createVcpeServiceRequest,
+//                    "requestDetails.cloudConfiguration.tenantId")
+//            execution.setVariable("tenantId", tenantId)
+//            msoLogger.debug("tenantId: " + tenantId)
+            
+
+           execution.setVariable("cloudOwner", "")
+
+           execution.setVariable("cloudRegionId", "")
+       
+           execution.setVariable("lcpCloudRegionId", "")
+       
+           execution.setVariable("tenantId", "")       
+
+            String sdncVersion = execution.getVariable("sdncVersion")
+            msoLogger.debug("sdncVersion: " + sdncVersion)
+
+            msoLogger.trace("Completed prepareVnfAndModulesCreate of CreateVcpeResCustService ")
+        } catch (Exception ex) {
+            // try error in method block
+            String exceptionMessage = "Bpmn error encountered in CreateDeviceResource flow. Unexpected Error from method prepareVnfAndModulesCreate() - " + ex.getMessage()
+            msoLogger.debug(exceptionMessage)
+        }
+    }
+
+    // *******************************
+    //     Validate Vnf request Section -> increment count
+    // *******************************
+    public void validateVnfCreate(DelegateExecution execution) {
+
+        try {
+            msoLogger.trace("Inside validateVnfCreate of CreateDeviceResource ")
+
+            //Update Relationship between VNF to Device
+            addVNFAAIRelationShip(execution)
+
+            Integer vnfsCreatedCount = execution.getVariable(Prefix + "VnfsCreatedCount")
+            vnfsCreatedCount++
+
+            execution.setVariable(Prefix + "VnfsCreatedCount", vnfsCreatedCount)
+
+            msoLogger.debug(" ***** Completed validateVnfCreate of CreateDeviceResource ***** " + " vnf # " + vnfsCreatedCount)
+        } catch (Exception ex) {
+            // try error in method block
+            String exceptionMessage = "Bpmn error encountered in CreateDeviceResource flow. Unexpected Error from method validateVnfCreate() - " + ex.getMessage()
+            msoLogger.debug(exceptionMessage)
+        }
+    }
+
+    public void addVNFAAIRelationShip(DelegateExecution execution) {
+
+        try {
+            msoLogger.trace("Inside addVNFAAIRelationShip of CreateDeviceResource ")
 
 
-		} catch (Exception ex){
-			String msg = "Exception in postVNFInfoProcess " + ex.getMessage()
-			msoLogger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
-		}
-	}
+
+            msoLogger.debug(" ***** Completed addVNFAAIRelationShip of CreateDeviceResource ***** ")
+        } catch (Exception ex) {
+            // try error in method block
+            String exceptionMessage = "Bpmn error encountered in CreateDeviceResource flow. Unexpected Error from method addVNFAAIRelationShip() - " + ex.getMessage()
+            msoLogger.debug(exceptionMessage)
+        }
+    }
 
 	public void sendSyncResponse (DelegateExecution execution) {
 		msoLogger.debug(" *** sendSyncResponse *** ")
@@ -236,7 +319,7 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
 			msoLogger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+//			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 		utils.log("DEBUG"," ***** Exit sendSyncResopnse *****")
 	}

@@ -50,6 +50,7 @@ import org.onap.aai.domain.yang.RouteTableReferences;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.ServiceSubscription;
 import org.onap.aai.domain.yang.SpPartner;
+import org.onap.aai.domain.yang.Device;
 import org.onap.aai.domain.yang.Subnet;
 import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.TunnelXconnect;
@@ -110,6 +111,7 @@ public enum AAIObjectType implements GraphInventoryObjectType {
 	NETWORK_TECHNOLOGY(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, NetworkTechnology.class),
 	SUBNET(AAIObjectType.L3_NETWORK.uriTemplate(), Subnet.class),
 	SP_PARTNER(AAINamespaceConstants.BUSINESS, SpPartner.class),
+	DEVICE(AAINamespaceConstants.NETWORK, Device.class),
 	EXT_AAI_NETWORK(AAINamespaceConstants.NETWORK, ExtAaiNetwork.class),
 	UNKNOWN("", "");
 

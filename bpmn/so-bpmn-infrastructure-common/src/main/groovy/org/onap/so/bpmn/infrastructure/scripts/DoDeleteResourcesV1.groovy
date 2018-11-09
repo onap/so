@@ -39,6 +39,7 @@ import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
 import org.onap.so.logger.MsoLogger
 
@@ -320,7 +321,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
                 </soapenv:Body>
                 </soapenv:Envelope>""";
 
-        def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+        def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
         execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
         execution.setVariable("CVFMI_updateResOperStatusRequest", body)
     }
