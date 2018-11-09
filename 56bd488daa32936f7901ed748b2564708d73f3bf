@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_4e8def7a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/CreateAAIVfModule.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-09T14:56:33Z",
+      "side": 1,
+      "message": "If you\u0027re already using StringUtils, you just can use StringUtils.defaultString(String) instead of your method:\n\nhttps://commons.apache.org/proper/commons-lang/javadocs/api-2.6/org/apache/commons/lang/StringUtils.html#defaultString(java.lang.String)",
+      "range": {
+        "startLine": 142,
+        "startChar": 0,
+        "endLine": 147,
+        "endChar": 2
+      },
+      "revId": "56bd488daa32936f7901ed748b2564708d73f3bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
