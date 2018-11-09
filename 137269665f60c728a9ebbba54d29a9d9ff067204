@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_cb49d18c",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupName.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-09T14:36:51Z",
+      "side": 1,
+      "message": "In groovy you can just write\n\n    \"Error occurred - volume group id ${execution.getVariable(\u0027CVGN_volumeGroupId\u0027)} is not associated with ${execution.getVariable(\u0027CVGN_volumeGroupName\u0027)}\"",
+      "range": {
+        "startLine": 125,
+        "startChar": 27,
+        "endLine": 126,
+        "endChar": 95
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_b95e28e8",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
         "patchSetId": 1
@@ -117,6 +140,53 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_6b2545c1",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-09T14:36:51Z",
+      "side": 1,
+      "message": "Also it\u0027s not clear on which line error should be thrown. That\u0027s why I prefer assertThatThrownBy from assertJ over expected in @Test.",
+      "parentUuid": "9adffdf1_3920f848",
+      "range": {
+        "startLine": 121,
+        "startChar": 9,
+        "endLine": 121,
+        "endChar": 37
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_4b03a10f",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-09T14:36:51Z",
+      "side": 1,
+      "message": "Again, expected exception and verify after that.",
+      "range": {
+        "startLine": 155,
+        "startChar": 4,
+        "endLine": 155,
+        "endChar": 37
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_7926806a",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
         "patchSetId": 1
@@ -151,6 +221,30 @@
       "writtenOn": "2018-11-09T06:43:56Z",
       "side": 1,
       "message": "I don\u0027t think this is way to go here. Do you really need test if this particular util is called? I think you should care only about actual exception having proper data.",
+      "range": {
+        "startLine": 165,
+        "startChar": 8,
+        "endLine": 165,
+        "endChar": 64
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_ceaa3fd4",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-09T14:36:51Z",
+      "side": 1,
+      "message": "I think that ExceptionUtil is not actually util. It\u0027s logic can actaully change, when system changes (for example when execution variables names changes). So I think the best solustion whould be to treat ExeptionUtil as class, not util. So we can (and should) mock it, and test if correct methods were called.",
+      "parentUuid": "9adffdf1_f9c7d062",
       "range": {
         "startLine": 165,
         "startChar": 8,
