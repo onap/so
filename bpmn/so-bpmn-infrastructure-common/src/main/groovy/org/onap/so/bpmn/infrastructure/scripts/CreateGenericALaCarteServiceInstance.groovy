@@ -165,6 +165,10 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
                             msoLogger.debug("User Input Parameter " + userParam.name + ": " + userParam.value.toString())
                             inputMap.put(userParam.name, userParam.value)
                         }
+                        if ("Orchestrator".equalsIgnoreCase(userParam?.name)) {
+                            execution.setVariable("orchestrator", userParam.value)
+                            inputMap.put("orchestrator", userParam.value)
+                        }
                 }
             }
 
@@ -343,6 +347,10 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
                          {
                              msoLogger.debug("User Input Parameter " + userParam.name + ": " + userParam.value.toString())
                              inputMap.put(userParam.name, userParam.value)
+                         }
+                         if ("Orchestrator".equalsIgnoreCase(userParam?.name)) {
+                             execution.setVariable("orchestrator", userParam.value)
+                             inputMap.put("orchestrator", userParam.value)
                          }
                  }
              }

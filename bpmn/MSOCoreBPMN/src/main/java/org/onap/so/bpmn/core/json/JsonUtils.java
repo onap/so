@@ -927,7 +927,7 @@ public class JsonUtils {
 		for (int i = 0; i < arr.length(); i++){
 			JSONObject jo = arr.getJSONObject(i);
 			String key = jo.getString(keyNode);
-			String value = jo.getString(valueNode);
+			String value = jo.get(valueNode).toString();
 			map.put(key, value);
 		}
 		msoLogger.debug("Completed Entry Array To Map Util Method");
@@ -954,7 +954,7 @@ public class JsonUtils {
 		for(int i = 0; i < arr.length(); i++){
 			JSONObject jo = arr.getJSONObject(i);
 			String key = jo.getString(keyNode);
-			String value = jo.getString(valueNode);
+			String value = jo.get(valueNode).toString();
 			map.put(key, value);
 		}
 		msoLogger.debug("Completed Entry Array To Map Util Method");

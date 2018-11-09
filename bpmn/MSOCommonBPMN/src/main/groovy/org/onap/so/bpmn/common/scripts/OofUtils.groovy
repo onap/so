@@ -39,16 +39,10 @@ import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.ResponseEntity
-import org.springframework.http.client.BufferingClientHttpRequestFactory
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
-import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
-import javax.xml.ws.http.HTTPException
+import javax.ws.rs.core.UriBuilder
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
 
@@ -503,7 +497,7 @@ class OofUtils {
      * @return void
      */
     Void createCloudSiteCatalogDb(CloudSite cloudSite, DelegateExecution execution) {
-
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         String endpoint = UrnPropertiesReader.getVariable("mso.catalog.db.spring.endpoint", execution)
         String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution)
         String uri = "/cloudSite"
@@ -532,7 +526,7 @@ class OofUtils {
     }
 
      String getMsbHost(DelegateExecution execution) {
-         msbHost = UrnPropertiesReader.getVariable("mso.msb.host", execution, "msb-iag.onap")
+         String msbHost = UrnPropertiesReader.getVariable("mso.msb.host", execution, "msb-iag.onap")
 
          Integer msbPort = UrnPropertiesReader.getVariable("mso.msb.port", execution, "80").toInteger()
 
