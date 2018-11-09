@@ -347,38 +347,47 @@ public class ToscaResourceInstaller {
 		}
 	}
 
-	protected void processNetworks(ToscaResourceStructure toscaResourceStruct, Service service)
-			throws ArtifactInstallerException {
-		List<NodeTemplate> nodeTemplatesVLList = toscaResourceStruct.getSdcCsarHelper().getServiceVlList();
+    protected void processNetworks (ToscaResourceStructure toscaResourceStruct,
+                                    Service service) throws ArtifactInstallerException {
+        List <NodeTemplate> nodeTemplatesVLList = toscaResourceStruct.getSdcCsarHelper ().getServiceVlList ();
 
-		if (nodeTemplatesVLList != null) {
-			for (NodeTemplate vlNode : nodeTemplatesVLList) {
-				String networkResourceModelName = vlNode.getMetaData()
-						.getValue(SdcPropertyNames.PROPERTY_NAME_NAME);
-				
-				TempNetworkHeatTemplateLookup tempNetworkLookUp = tempNetworkLookupRepo.findFirstBynetworkResourceModelName(networkResourceModelName);
-				
-				if (tempNetworkLookUp != null ) {					
-						HeatTemplate heatTemplate =  heatRepo.findByArtifactUuid(tempNetworkLookUp.getHeatTemplateArtifactUuid());
-						if (heatTemplate != null ) {
-						NetworkResourceCustomization networkCustomization = createNetwork(vlNode, toscaResourceStruct, heatTemplate,tempNetworkLookUp.getAicVersionMax(),
-							tempNetworkLookUp.getAicVersionMin(),service);
-						service.getNetworkCustomizations()
-						.add(networkCustomization);
-					}
-					else{
-						throw new ArtifactInstallerException(					
-							"No HeatTemplate found for artifactUUID: "
-									+ tempNetworkLookUp.getHeatTemplateArtifactUuid());
-					}
-				} else {
-					throw new ArtifactInstallerException(
-							"No NetworkResourceName found in TempNetworkHeatTemplateLookup for "
-									+ networkResourceModelName);
-				}					
-				
-			}
-		}
+        if (nodeTemplatesVLList != null) {
+            for (NodeTemplate vlNode : nodeTemplatesVLList) {
+                String networkResourceModelName = vlNode.getMetaData ().getValue (SdcPropertyNames.PROPERTY_NAME_NAME);
+
+                TempNetworkHeatTemplateLookup tempNetworkLookUp =
+                                                                tempNetworkLookupRepo.findFirstBynetworkResourceModelName (networkResourceModelName);
+
+                if (tempNetworkLookUp != null) {
+                    HeatTemplate heatTemplate =
+                                              heatRepo.findByArtifactUuid (tempNetworkLookUp.getHeatTemplateArtifactUuid ());
+                    if (heatTemplate != null) {
+                        NetworkResourceCustomization networkCustomization =
+                                                                          createNetwork (vlNode,
+                                                                                         toscaResourceStruct,
+                                                                                         heatTemplate,
+                                                                                         tempNetworkLookUp.getAicVersionMax (),
+                                                                                         tempNetworkLookUp.getAicVersionMin (),
+                                                                                         service);
+                        service.getNetworkCustomizations ().add (networkCustomization);
+                    } else {
+                        throw new ArtifactInstallerException ("No HeatTemplate found for artifactUUID: "
+                                                              + tempNetworkLookUp.getHeatTemplateArtifactUuid ());
+                    }
+                } else {
+                    NetworkResourceCustomization networkCustomization = createNetwork (vlNode,
+                                                                                       toscaResourceStruct,
+                                                                                       null,
+                                                                                       null,
+                                                                                       null,
+                                                                                       service);
+                    service.getNetworkCustomizations().add (networkCustomization);
+                    logger.debug ("No NetworkResourceName found in TempNetworkHeatTemplateLookup for "
+                                  + networkResourceModelName);
+                }
+
+            }
+        }
 	}
 
 	protected void processAllottedResources(ToscaResourceStructure toscaResourceStruct, Service service,
