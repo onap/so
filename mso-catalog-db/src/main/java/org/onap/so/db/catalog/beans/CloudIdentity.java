@@ -23,11 +23,15 @@ package org.onap.so.db.catalog.beans;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.net.URI;
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
+import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,6 +42,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  * EntityBean class for a CloudIdentity. This bean represents a cloud identity
@@ -45,6 +50,7 @@ import javax.persistence.TemporalType;
  * CloudConfig object, of which it is a component.
  *
  */
+@RemoteResource("/cloudIdentity")
 @Entity
 @Table(name = "identity_services")
 public class CloudIdentity {
@@ -113,6 +119,9 @@ public class CloudIdentity {
     @Column(name = "UPDATE_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
+
+    @Transient
+    private URI uri;
     
     public CloudIdentity() {}
 
@@ -128,6 +137,13 @@ public class CloudIdentity {
 
     public void setId (String id) {
         this.id = id;
+    }
+
+    @ResourceId
+    public URI getUri() {return this.uri;}
+
+    public void setUri(URI uri) {
+        this.uri = uri;
     }
 
     public String getIdentityUrl() {

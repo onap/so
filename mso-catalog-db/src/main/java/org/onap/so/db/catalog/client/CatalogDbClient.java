@@ -29,6 +29,7 @@ import javax.annotation.PostConstruct;
 import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
+import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
@@ -72,6 +73,7 @@ import uk.co.blackpepper.bowman.Configuration;
 @Component("CatalogDbClient")
 public class CatalogDbClient {
 
+	private static final String CLOUD_IDENTITY = "/cloudIdentity";
 	private static final String CLOUD_SITE = "/cloudSite";
 	private static final String CLOUDIFY_MANAGER = "/cloudifyManager";
 	private static final String RAINY_DAY_HANDLER_MACRO = "/rainy_day_handler_macro";
@@ -163,6 +165,7 @@ public class CatalogDbClient {
 	private String vnfResourceCustomizationURI;
 	private String collectionNetworkResourceCustomizationURI;
 	private String instanceGroupURI;
+	private String cloudIdentityURI;
 	private String cloudifyManagerURI;
 	private String cloudSiteURI;
 
@@ -209,6 +212,8 @@ public class CatalogDbClient {
 	private final Client<ExternalServiceToInternalService> externalServiceToInternalServiceClient;
 
 	private final Client<CloudSite> cloudSiteClient;
+
+	private final Client<CloudIdentity> cloudIdentityClient;
 
 	private final Client<CloudifyManager> cloudifyManagerClient;
 	
@@ -260,6 +265,7 @@ public class CatalogDbClient {
 		vnfResourceCustomizationURI = endpoint + VNF_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
 		collectionNetworkResourceCustomizationURI = endpoint + COLLECTION_NETWORK_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
 		instanceGroupURI = endpoint + INSTANCE_GROUP + URI_SEPARATOR;
+		cloudIdentityURI = endpoint + CLOUD_IDENTITY + URI_SEPARATOR;
 		cloudifyManagerURI = endpoint + CLOUDIFY_MANAGER + URI_SEPARATOR;
 		cloudSiteURI = endpoint + CLOUD_SITE + URI_SEPARATOR;
 
@@ -300,6 +306,7 @@ public class CatalogDbClient {
 		networkCollectionResourceCustomizationClient = clientFactory.create(NetworkCollectionResourceCustomization.class);
 		collectionNetworkResourceCustomizationClient = clientFactory.create(CollectionNetworkResourceCustomization.class);
 		cloudSiteClient = clientFactory.create(CloudSite.class);
+		cloudIdentityClient = clientFactory.create(CloudIdentity.class);
 		cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
 		serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
 		cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
@@ -342,6 +349,7 @@ public class CatalogDbClient {
 		networkCollectionResourceCustomizationClient = clientFactory.create(NetworkCollectionResourceCustomization.class);
 		collectionNetworkResourceCustomizationClient = clientFactory.create(CollectionNetworkResourceCustomization.class);
 		cloudSiteClient = clientFactory.create(CloudSite.class);
+		cloudIdentityClient = clientFactory.create(CloudIdentity.class);
 		cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
 		serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
 		cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
@@ -580,6 +588,14 @@ public class CatalogDbClient {
 
 	public CloudifyManager getCloudifyManager(String id) {
 		return this.getSingleResource(cloudifyManagerClient,getUri(cloudifyManagerURI + id));
+	}
+
+	public CloudIdentity getCloudIdentity(String id){
+		return this.getSingleResource(cloudIdentityClient, getUri(cloudIdentityURI + id));
+	}
+
+	public void postCloudIdentity(CloudIdentity cloudIdentity){
+		this.postSingleResource(cloudIdentityClient, cloudIdentity);
 	}
 
 	public CloudSite getCloudSite(String id){

@@ -58,19 +58,51 @@ public class CloudConfigTest {
 
     @Test
     @Transactional
+    public void createCloudIdentityRest_TEST() {
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        headers.set("Content-Type",MediaType.APPLICATION_JSON);
+
+        CloudIdentity cloudIdentity = new CloudIdentity();
+        cloudIdentity.setId("RANDOMID_2");
+        cloudIdentity.setIdentityUrl("URL");
+        cloudIdentity.setMsoId("MSO_ID");
+        cloudIdentity.setMsoPass("MSO_PASS");
+        cloudIdentity.setAdminTenant("ADMIN_TENANT");
+        cloudIdentity.setMemberRole("ROLE");
+        cloudIdentity.setIdentityServerType(ServerType.KEYSTONE);
+        cloudIdentity.setIdentityAuthenticationType(AuthenticationType.RACKSPACE_APIKEY);
+        String uri = "/cloudIdentity";
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:"+ port + uri);
+        HttpEntity<CloudIdentity> request = new HttpEntity<CloudIdentity>(cloudIdentity, headers);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(),
+                HttpMethod.POST, request, String.class);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatusCode().value());
+
+        builder = UriComponentsBuilder.fromHttpUrl("http://localhost:"+ port + uri +"/" + cloudIdentity.getId());
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        ResponseEntity<CloudIdentity> actualCloudIdentity = restTemplate.exchange(builder.toUriString(),HttpMethod.GET, entity, CloudIdentity.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), actualCloudIdentity.getStatusCode().value());
+        assertThat(actualCloudIdentity.getBody(), sameBeanAs(cloudIdentity).ignoring("created").ignoring("updated")
+                .ignoring("identityService.created").ignoring("identityService.updated"));
+
+    }
+
+    @Test
+    @Transactional
     public void createCloudSiteRest_TEST() {
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type",MediaType.APPLICATION_JSON);
 
         CloudSite cloudSite = new CloudSite();
-        cloudSite.setId("MTN6");
+        cloudSite.setId("MTN7");
         cloudSite.setClli("TESTCLLI");
         cloudSite.setRegionId("regionId");
         cloudSite.setCloudVersion("VERSION");
         cloudSite.setPlatform("PLATFORM");
 
         CloudIdentity cloudIdentity = new CloudIdentity();
-        cloudIdentity.setId("RANDOMID");
+        cloudIdentity.setId("RANDOMID-test");
         cloudIdentity.setIdentityUrl("URL");
         cloudIdentity.setMsoId("MSO_ID");
         cloudIdentity.setMsoPass("MSO_PASS");
@@ -81,7 +113,7 @@ public class CloudConfigTest {
         cloudSite.setIdentityService(cloudIdentity);
         String uri = "/cloudSite";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:"+ port + uri);
-        HttpEntity<CloudSite> request = new HttpEntity<CloudSite>(cloudSite, headers);  
+        HttpEntity<CloudSite> request = new HttpEntity<CloudSite>(cloudSite, headers);
         ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(),
                 HttpMethod.POST, request, String.class);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatusCode().value());
@@ -95,5 +127,7 @@ public class CloudConfigTest {
                 .ignoring("identityService.created").ignoring("identityService.updated"));
 
     }
+
+
 
 }

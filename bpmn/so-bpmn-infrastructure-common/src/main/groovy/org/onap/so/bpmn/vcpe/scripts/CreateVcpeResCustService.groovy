@@ -250,6 +250,10 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
                                     execution.setVariable("callHoming", true)
                                     inputMap.put("Homing_Solution", userParam.value)
                                 }
+                        if ("Orchestrator".equalsIgnoreCase(userParam?.name)) {
+                            execution.setVariable("orchestrator", userParam.value)
+                            inputMap.put("orchestrator", userParam.value)
+                        }
                 }
             }
 

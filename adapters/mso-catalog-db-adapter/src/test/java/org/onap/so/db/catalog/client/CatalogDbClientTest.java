@@ -413,6 +413,26 @@ public class CatalogDbClientTest {
         Assert.assertEquals("regionId", getCloudSite.getRegionId());
         Assert.assertEquals("RANDOMID", getCloudSite.getIdentityServiceId());
     }
+
+    @Test
+    public void testPostCloudIdentity() {
+        CatalogDbClientPortChanger localClient = new CatalogDbClientPortChanger("http://localhost:" + client.wiremockPort, msoAdaptersAuth, client.wiremockPort);
+
+        CloudIdentity cloudIdentity = new CloudIdentity();
+        cloudIdentity.setId("RANDOMID_2");
+        cloudIdentity.setIdentityUrl("URL");
+        cloudIdentity.setMsoId("MSO_ID");
+        cloudIdentity.setMsoPass("MSO_PASS");
+        cloudIdentity.setAdminTenant("ADMIN_TENANT");
+        cloudIdentity.setMemberRole("ROLE");
+        cloudIdentity.setIdentityServerType(ServerType.KEYSTONE);
+        cloudIdentity.setIdentityAuthenticationType(AuthenticationType.RACKSPACE_APIKEY);
+        localClient.postCloudIdentity(cloudIdentity);
+        CloudIdentity getCloudIdentity = this.client.getCloudIdentity("RANDOMID_2");
+        Assert.assertNotNull(getCloudIdentity);
+        Assert.assertEquals("RANDOMID_2", getCloudIdentity.getId());
+    }
+
    @Test
     public void testGetServiceByModelName() {
         Service service = client.getServiceByModelName("MSOTADevInfra_Test_Service");

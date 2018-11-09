@@ -81,7 +81,19 @@ public class JsonUtilsTest {
 		JSONArray assignmentInfo = homingDataJson.getJSONArray("assignmentInfo");
 		Map<String, String> map = utils.entryArrayToMap(assignmentInfo.toString(), "variableName", "variableValue");
 		assertEquals(map.get("cloudOwner"), "CloudOwner");
-	}	
+	}
+	@Test
+	public void entryArrayToMapStringTestOof() throws IOException {
+		JsonUtils utils = new JsonUtils();
+		String response = this.getJson("OofExample.json");
+		String entry = JsonUtils.getJsonValue(response, "solutions.placementSolutions");
+		JSONArray arr = new JSONArray(entry);
+		JSONArray arr2 = arr.getJSONArray(0);
+		JSONObject homingDataJson = arr2.getJSONObject(0);
+		JSONArray assignmentInfo = homingDataJson.getJSONArray("assignmentInfo");
+		Map<String, String> map = utils.entryArrayToMap(assignmentInfo.toString(), "key", "value");
+		assertEquals(map.get("cloudOwner"), "HPA-cloud");
+	}
 	@Test
 	public void getJsonRootPropertyTest() throws IOException {
 		String response = this.getJson("SDNCServiceResponseExample.json");
