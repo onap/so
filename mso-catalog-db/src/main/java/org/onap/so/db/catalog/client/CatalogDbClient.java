@@ -590,7 +590,6 @@ public class CatalogDbClient {
 		this.postSingleResource(cloudSiteClient, cloudSite);
 	}
 
-
 	public CloudSite getCloudSiteByClliAndAicVersion (String clli, String cloudVersion){
 		return this.getSingleResource(cloudSiteClient, getUri(UriBuilder
 				.fromUri(findByClliAndCloudVersion)

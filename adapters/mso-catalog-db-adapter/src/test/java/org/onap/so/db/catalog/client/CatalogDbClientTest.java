@@ -413,6 +413,7 @@ public class CatalogDbClientTest {
         Assert.assertEquals("regionId", getCloudSite.getRegionId());
         Assert.assertEquals("RANDOMID", getCloudSite.getIdentityServiceId());
     }
+
    @Test
     public void testGetServiceByModelName() {
         Service service = client.getServiceByModelName("MSOTADevInfra_Test_Service");

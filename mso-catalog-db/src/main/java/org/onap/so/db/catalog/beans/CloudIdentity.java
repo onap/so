@@ -23,6 +23,7 @@ package org.onap.so.db.catalog.beans;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;

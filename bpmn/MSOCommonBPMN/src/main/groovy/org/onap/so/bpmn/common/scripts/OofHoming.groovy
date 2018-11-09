@@ -30,8 +30,10 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.db.catalog.beans.AuthenticationType
 import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
+import org.onap.so.db.catalog.beans.ServerType
 import org.onap.so.rest.APIResponse
 import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
@@ -211,17 +213,12 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 for (int j = 0; j < arrSol.length(); j++) {
                     JSONObject placement = arrSol.getJSONObject(j)
                     utils.log("DEBUG", "****** Placement Solution is: " + placement + " *****", "true")
-                    String jsonServiceResourceId = placement.getString("serviceResourceId")
-                    String jsonResourceModuleName = placement.getString("resourceModuleName")
+                    String jsonServiceResourceId = jsonUtil.getJsonValue( placement.toString(), "serviceResourceId")
+                    utils.log("DEBUG", "****** homing serviceResourceId is: " + jsonServiceResourceId + " *****", "true")
                     for (Resource resource : resourceList) {
                         String serviceResourceId = resource.getResourceId()
-                        String resourceModuleName = ""
-                        if (resource.getResourceType() == ResourceType.ALLOTTED_RESOURCE ||
-                            resource.getResourceType() == ResourceType.VNF) {
-                            resourceModuleName = resource.getNfFunction()
-                            }
-                        if (serviceResourceId.equalsIgnoreCase(jsonServiceResourceId) ||
-                            resourceModuleName.equalsIgnoreCase(jsonResourceModuleName)) {
+                        utils.log("DEBUG", "****** decomp serviceResourceId is: " + serviceResourceId + " *****", "true")
+                        if (serviceResourceId.equalsIgnoreCase(jsonServiceResourceId)) {
                             JSONObject solution = placement.getJSONObject("solution")
                             String solutionType = solution.getString("identifierType")
                             String inventoryType = ""
@@ -230,20 +227,26 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             } else {
                                 inventoryType = "cloud"
                             }
+                            utils.log("DEBUG", "****** homing inventoryType is: " + inventoryType + " *****", "true")
                             resource.getHomingSolution().setInventoryType(InventoryType.valueOf(inventoryType))
 
                             JSONArray assignmentArr = placement.getJSONArray("assignmentInfo")
-                            String oofDirectives = null
-                            assignmentArr.each { element ->
-                                JSONObject jsonObject = new JSONObject(element.toString())
-                                if (jsonUtil.getJsonRawValue(jsonObject.toString(), "key") == "oof_directives") {
-                                    oofDirectives = jsonUtil.getJsonRawValue(jsonObject.toString(), "value")
-                                }
-                            }
+                            utils.log("DEBUG", "****** assignmentInfo is: " + assignmentArr.toString() + " *****", "true")
+
                             Map<String, String> assignmentMap = jsonUtil.entryArrayToMap(execution,
                                     assignmentArr.toString(), "key", "value")
+                            String oofDirectives = null
+                            assignmentMap.each { key, value ->
+                                utils.log("DEBUG", "****** element: " + key + " *****", "true")
+                                if (key == "oof_directives") {
+                                    oofDirectives = value
+                                    utils.log("DEBUG", "****** homing oofDirectives: " + oofDirectives + " *****", "true")
+                                }
+                            }
                             String cloudOwner = assignmentMap.get("cloudOwner")
+                            utils.log("DEBUG", "****** homing cloudOwner: " + cloudOwner + " *****", "true")
                             String cloudRegionId = assignmentMap.get("locationId")
+                            utils.log("DEBUG", "****** homing cloudRegionId: " + cloudRegionId + " *****", "true")
                             resource.getHomingSolution().setCloudOwner(cloudOwner)
                             resource.getHomingSolution().setCloudRegionId(cloudRegionId)
 
@@ -251,12 +254,26 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             cloudSite.setId(cloudRegionId)
                             cloudSite.setRegionId(cloudRegionId)
                             String orchestrator = execution.getVariable("orchestrator")
-                            if ((orchestrator != null) || (orchestrator != "")) {
+                            if ((orchestrator != null) && (orchestrator != "")) {
                                 cloudSite.setOrchestrator(orchestrator)
+                                utils.log("DEBUG", "****** orchestrator: " + orchestrator + " *****", "true")
+                            } else {
+                                cloudSite.setOrchestrator("multicloud")
                             }
 
                             CloudIdentity cloudIdentity = new CloudIdentity()
                             cloudIdentity.setId(cloudRegionId)
+                            cloudIdentity.setIdentityServerType(ServerType."KEYSTONE")
+                            cloudIdentity.setAdminTenant("service")
+                            cloudIdentity.setIdentityAuthenticationType(AuthenticationType.USERNAME_PASSWORD)
+                            String msoMulticloudUserName = UrnPropertiesReader
+                                    .getVariable("mso.multicloud.api.password", execution,
+                                    "apih")
+                            String msoMulticloudPassword = UrnPropertiesReader
+                                    .getVariable("mso.multicloud.api.password", execution,
+                                    "abc123")
+                            cloudIdentity.setMsoId(msoMulticloudUserName)
+                            cloudIdentity.setMsoPass(msoMulticloudPassword)
                             // Get MSB Url
                             String msbHost = oofUtils.getMsbHost(execution)
                             String multicloudApiEndpoint = UrnPropertiesReader
@@ -265,16 +282,24 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             cloudIdentity.setIdentityUrl(msbHost + multicloudApiEndpoint
                                     + "/" + cloudOwner + "/" +
                                     cloudRegionId + "/infra_workload")
-
+                            utils.log("DEBUG", "****** Cloud IdentityUrl: " + msbHost + multicloudApiEndpoint
+                                    + "/" + cloudOwner + "/" +
+                                    cloudRegionId + "/infra_workload"
+                                    + " *****", "true")
+                            utils.log("DEBUG", "****** CloudIdentity: " + cloudIdentity.toString()
+                                    + " *****", "true")
                             cloudSite.setIdentityService(cloudIdentity)
+                            utils.log("DEBUG", "****** CloudSite: " + cloudSite.toString()
+                                    + " *****", "true")
 
                             // Set cloudsite in catalog DB here
-                            oofUtils.createCloudSiteCatalogDb(cloudSite)
+                            // TODO Get cloudsite and compare, set if not present
+                            oofUtils.createCloudSiteCatalogDb(cloudSite, execution)
 
                             if (oofDirectives != null && oofDirectives != "") {
                                 resource.getHomingSolution().setOofDirectives(oofDirectives)
                                 execution.setVariable("oofDirectives", oofDirectives)
-                                utils.log("DEBUG", "***** OofDirectives is: " + oofDirectives +
+                                utils.log("DEBUG", "***** OofDirectives set to: " + oofDirectives +
                                         " *****", "true")
                             }
 
@@ -285,6 +310,12 @@ class OofHoming extends AbstractServiceTaskProcessor {
                                 resource.getHomingSolution().setVnf(vnf)
                                 resource.getHomingSolution().setServiceInstanceId(solution.getJSONArray("identifiers")[0].toString())
                             }
+                        } else {
+                            utils.log("DEBUG", "ProcessHomingSolution Exception: no matching serviceResourceIds returned in " +
+                                    "homing solution", isDebugEnabled)
+                            exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - " +
+                                    "Occurred in Homing ProcessHomingSolution: no matching serviceResourceIds returned")
+
                         }
                     }
                 }
@@ -314,8 +345,10 @@ class OofHoming extends AbstractServiceTaskProcessor {
 
             utils.log("DEBUG", "*** Completed Homing Process Homing Solution ***", isDebugEnabled)
         } catch (BpmnError b) {
+            utils.log("DEBUG", "ProcessHomingSolution Error: " + b, isDebugEnabled)
             throw b
         } catch (Exception e) {
+            utils.log("DEBUG", "ProcessHomingSolution Exception: " + e, isDebugEnabled)
 			msoLogger.error(e);
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occurred in Homing ProcessHomingSolution")
         }

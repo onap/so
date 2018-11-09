@@ -33,22 +33,18 @@ import org.onap.so.bpmn.core.domain.ServiceInstance
 import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
+import org.onap.so.db.catalog.client.CatalogDbClient
 import org.onap.so.rest.APIResponse
 import org.onap.so.rest.RESTClient
 import org.onap.so.rest.RESTConfig
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.ResponseEntity
-import org.springframework.http.client.BufferingClientHttpRequestFactory
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
-import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
-import javax.xml.ws.http.HTTPException
+import javax.ws.rs.core.UriBuilder
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
 
@@ -503,36 +499,26 @@ class OofUtils {
      * @return void
      */
     Void createCloudSiteCatalogDb(CloudSite cloudSite, DelegateExecution execution) {
-
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         String endpoint = UrnPropertiesReader.getVariable("mso.catalog.db.spring.endpoint", execution)
         String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution)
-        String uri = "/cloudSite"
+        CloudSite getCloudsite = null
 
-        HttpHeaders headers = new HttpHeaders()
-
-        headers.set(HttpHeaders.AUTHORIZATION, auth)
-        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(endpoint + uri)
-        HttpEntity<CloudSite> request = new HttpEntity<CloudSite>(cloudSite, headers)
-        RESTConfig config = new RESTConfig(endpoint + uri)
-        RESTClient client = new RESTClient(config).addAuthorizationHeader(auth).
-                addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON).addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-        APIResponse response = client.httpPost(request.getBody().toString())
-
-        int responseCode = response.getStatusCode()
-        logDebug("CatalogDB response code is: " + responseCode, isDebugEnabled)
-        String syncResponse = response.getResponseBodyAsString()
-        logDebug("CatalogDB response is: " + syncResponse, isDebugEnabled)
-
-        if(responseCode != 202){
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from CatalogDB.")
+        CatalogDbClient catalogDbClient = new CatalogDbClient(endpoint, auth)
+        try {
+            getCloudsite = catalogDbClient.getCloudSite(cloudSite.getId().toString())
+        } catch (Exception e) {
+            e = null
+            utils.log("DEBUG", "Could not find cloudsite : " + cloudSite.getId(), isDebugEnabled)
+            utils.log("DEBUG", "Creating cloudSite: " + cloudSite.toString(), isDebugEnabled)
+        }
+        if (getCloudsite?.getId() != cloudSite.getId()) {
+            catalogDbClient.postCloudSite(cloudSite)
         }
     }
 
      String getMsbHost(DelegateExecution execution) {
-         msbHost = UrnPropertiesReader.getVariable("mso.msb.host", execution, "msb-iag.onap")
+         String msbHost = UrnPropertiesReader.getVariable("mso.msb.host", execution, "msb-iag.onap")
 
          Integer msbPort = UrnPropertiesReader.getVariable("mso.msb.port", execution, "80").toInteger()
 
