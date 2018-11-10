@@ -143,6 +143,10 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String operationalEnvId;
     @Column(name = "OPERATIONAL_ENV_NAME", length = 200)
     private String operationalEnvName;
+    @Column(name = "INSTANCE_GROUP_ID", length = 45)
+    private String instanceGroupId;
+    @Column(name = "INSTANCE_GROUP_NAME", length = 200)
+    private String instanceGroupName;
     @Column(name = "REQUEST_URL", length = 500)
     private String requestUrl;    
     
@@ -525,7 +529,23 @@ public abstract class InfraRequests implements java.io.Serializable {
         this.operationalEnvName = operationalEnvName;
     }
 
-    public String getRequestUrl() {
+    public String getInstanceGroupId() {
+		return instanceGroupId;
+	}
+
+	public void setInstanceGroupId(String instanceGroupId) {
+		this.instanceGroupId = instanceGroupId;
+	}
+
+	public String getInstanceGroupName() {
+		return instanceGroupName;
+	}
+
+	public void setInstanceGroupName(String instanceGroupName) {
+		this.instanceGroupName = instanceGroupName;
+	}
+
+	public String getRequestUrl() {
         return this.requestUrl;
     }
     
@@ -593,6 +613,7 @@ public abstract class InfraRequests implements java.io.Serializable {
                 .append("requestorId", getRequestorId()).append("configurationId", getConfigurationId())
                 .append("configurationName", getConfigurationName()).append("operationalEnvId", getOperationalEnvId())
                 .append("operationalEnvName", getOperationalEnvName())
+                .append("instanceGroupId", getInstanceGroupId()).append("instanceGroupName", getInstanceGroupName())
                 .append("requestUrl", getRequestUrl()).toString();
     }
 }
