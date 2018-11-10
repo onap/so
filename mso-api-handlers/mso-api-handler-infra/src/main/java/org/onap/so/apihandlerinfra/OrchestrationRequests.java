@@ -271,6 +271,9 @@ public class OrchestrationRequests {
        request.setRequestScope(iar.getRequestScope());
        request.setRequestType(iar.getRequestAction());
        String rollbackStatusMessage = iar.getRollbackStatusMessage();
+       String flowStatusMessage = iar.getFlowStatus();
+       String retryStatusMessage = iar.getRetryStatusMessage();
+       
 
        InstanceReferences ir = new InstanceReferences();
        if(iar.getNetworkId() != null)
@@ -324,12 +327,32 @@ public class OrchestrationRequests {
 	       String startTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getStartTime()) + " GMT";
 	       request.setStartTime(startTimeStamp);
        }
-
+       String statusMessages = null;
        RequestStatus status = new RequestStatus();
        if(iar.getStatusMessage() != null){
-    	   status.setStatusMessage(iar.getStatusMessage());
+    	  statusMessages = "STATUS: " + iar.getStatusMessage();
        }
-
+       if(flowStatusMessage != null){
+    	   if(statusMessages != null){
+    		   statusMessages = statusMessages + "/";
+    	   }
+    	   statusMessages = statusMessages + "FLOW STATUS: " + flowStatusMessage;
+       }
+       if(retryStatusMessage != null){
+    	   if(statusMessages != null){
+    		   statusMessages = statusMessages + "/";
+    	   }
+    	   statusMessages = statusMessages + "RETRY STATUS: " + retryStatusMessage;
+       }
+       if(rollbackStatusMessage != null){
+    	   if(statusMessages != null){
+    		   statusMessages = statusMessages + "/";
+    	   }
+    	   statusMessages = statusMessages + "ROLLBACK STATUS: " + rollbackStatusMessage;
+       }
+       if(statusMessages != null){
+    	   status.setStatusMessage(statusMessages);
+       }
        if(iar.getEndTime() != null){
     	   String endTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getEndTime()) + " GMT";
     	   status.setFinishTime(endTimeStamp);
@@ -342,10 +365,6 @@ public class OrchestrationRequests {
 
        if(iar.getProgress() != null){
     	   status.setPercentProgress(iar.getProgress().intValue());
-       }
-       
-       if(rollbackStatusMessage != null){
-    	   status.setRollbackStatusMessage(rollbackStatusMessage);
        }
 
        request.setRequestStatus(status);
