@@ -43,6 +43,8 @@
   "operationalEnvId": null,
   "operationalEnvName": null,
   "rollbackStatusMessage": "Rollback has been completed successfully.",
+  "flowStatus": "Building blocks 1 of 3 completed.",
+  "retryStatusMessage": "Retry 2/5 will be started in 8 min.",
   "requestURI": "00032ab7-na18-42e5-965d-8ea592502018",
   "_links": {
     "self": {

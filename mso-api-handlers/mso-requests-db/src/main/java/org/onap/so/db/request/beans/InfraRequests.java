@@ -59,6 +59,10 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String statusMessage;
     @Column(name = "ROLLBACK_STATUS_MESSAGE", length = 2000)
     private String rollbackStatusMessage;
+    @Column(name = "FLOW_STATUS", length = 2000)
+    private String flowStatus;
+    @Column(name = "RETRY_STATUS_MESSAGE", length = 2000)
+    private String retryStatusMessage;
     @Column(name = "PROGRESS", precision = 11)
     private Long progress;
 
@@ -193,6 +197,22 @@ public abstract class InfraRequests implements java.io.Serializable {
 
     public void setRollbackStatusMessage(String rollbackStatusMessage) {
         this.rollbackStatusMessage = rollbackStatusMessage;
+    }
+    
+    public String getFlowStatus() {
+        return this.flowStatus;
+    }
+
+    public void setFlowStatus(String flowStatus) {
+        this.flowStatus = flowStatus;
+    }
+    
+    public String getRetryStatusMessage() {
+        return this.retryStatusMessage;
+    }
+
+    public void setRetryStatusMessage(String retryStatusMessage) {
+        this.retryStatusMessage = retryStatusMessage;
     }
 
     public Long getProgress() {
@@ -553,6 +573,7 @@ public abstract class InfraRequests implements java.io.Serializable {
         return new ToStringBuilder(this).append("requestId", getRequestId())
                 .append("clientRequestId", getClientRequestId()).append("action", getAction())
                 .append("requestStatus", getRequestStatus()).append("statusMessage", getStatusMessage()).append("rollbackStatusMessage", getRollbackStatusMessage())
+                .append("flowStatus", getFlowStatus()).append("retryStatusMessage", getRetryStatusMessage())
                 .append("progress", getProgress()).append("startTime", getStartTime()).append("endTime", getEndTime())
                 .append("source", getSource()).append("vnfId", getVnfId()).append("vnfName", getVnfName())
                 .append("vnfType", getVnfType()).append("serviceType", getServiceType())

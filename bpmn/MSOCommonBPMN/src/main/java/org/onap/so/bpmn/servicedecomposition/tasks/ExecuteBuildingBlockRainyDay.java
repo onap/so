@@ -31,6 +31,8 @@ import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -44,6 +46,8 @@ public class ExecuteBuildingBlockRainyDay {
 	
 	@Autowired
 	private CatalogDbClient catalogDbClient;
+	@Autowired
+	private RequestsDbClient requestDbclient;
 	private static final String ASTERISK = "*";
 	
 	@Autowired
@@ -68,6 +72,7 @@ public class ExecuteBuildingBlockRainyDay {
 			ExecuteBuildingBlock ebb = (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
 			String bbName = ebb.getBuildingBlock().getBpmnFlowName();
 			GeneralBuildingBlock gBBInput = (GeneralBuildingBlock) execution.getVariable("gBBInput");
+			String requestId = (String) execution.getVariable("mso-request-id");
 			Map<ResourceKey, String> lookupKeyMap = (Map<ResourceKey, String>) execution.getVariable("lookupKeyMap");
 			String serviceType = ASTERISK;
 			boolean aLaCarte = (boolean) execution.getVariable("aLaCarte");
@@ -120,6 +125,16 @@ public class ExecuteBuildingBlockRainyDay {
 					handlingCode = rainyDayHandlerStatus.getPolicy();
 				}else{
 					handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
+				}
+			}
+			if(!primaryPolicy){
+				try{
+					InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
+					request.setRetryStatusMessage("Retries have been exhausted.");
+					requestDbclient.updateInfraActiveRequests(request);
+				} catch(Exception ex){
+					msoLogger.debug(ex.toString());
+					msoLogger.error("Failed to update Request Db Infra Active Requests with Retry Status");
 				}
 			}
 			if(handlingCode.equals("RollbackToAssigned")&&!aLaCarte){

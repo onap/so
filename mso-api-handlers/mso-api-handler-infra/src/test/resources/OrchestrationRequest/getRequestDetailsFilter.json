@@ -92,7 +92,8 @@
     "operationalEnvId": null,
     "operationalEnvName": null,
     "requestURI": "00032ab7-3fb3-42e5-965d-8ea592502017",
-    "rollbackStatusMessage": "Rollback has been completed successfully."
+    "rollbackStatusMessage": "Rollback has been completed successfully.",
+    "flowStatus":"Building blocks 1 of 3 completed."
   },
   {
     "requestId": "00032ab7-na18-42e5-965d-8ea592502018",

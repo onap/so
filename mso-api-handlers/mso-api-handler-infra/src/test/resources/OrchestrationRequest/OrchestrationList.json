@@ -26,7 +26,7 @@
             },
             "requestStatus":{
                "requestState":"COMPLETE",
-               "statusMessage":"Vf Module has been deleted successfully.",
+               "statusMessage":"STATUS: Vf Module has been deleted successfully.",
                "percentProgress":100
             }
          }
@@ -57,8 +57,7 @@
             },
             "requestStatus":{
                "requestState":"PENDING",
-               "statusMessage":"Vf Module deletion pending.",
-               "rollbackStatusMessage": "Rollback has been completed successfully.",
+               "statusMessage":"STATUS: Vf Module deletion pending./FLOW STATUS: Building blocks 1 of 3 completed./RETRY STATUS: Retry 2/5 will be started in 8 min./ROLLBACK STATUS: Rollback has been completed successfully.",
                "percentProgress":0
             }
          }
