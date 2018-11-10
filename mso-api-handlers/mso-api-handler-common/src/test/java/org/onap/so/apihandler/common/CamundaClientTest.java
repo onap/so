@@ -162,10 +162,11 @@ public class CamundaClientTest{
     	String apiVersion = "6";
     	boolean aLaCarte = true;
     	String requestUri = "v7/serviceInstances/assign";
+    	String instanceGroupId = "ff305d54-75b4-431b-adb2-eb6b9e5ff000";
     	
     	String testResult = testClient.wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction, serviceInstanceId, correlationId,
     						vnfId, vfModuleId, volumeGroupId, networkId, configurationId, serviceType, 
-    						vnfType, vfModuleType, networkType, requestDetails, apiVersion, aLaCarte, requestUri, "");
+    						vnfType, vfModuleType, networkType, requestDetails, apiVersion, aLaCarte, requestUri, "", instanceGroupId);
     	String expected = inputStream("/WrappedVIDRequest.json");
     	
     	assertEquals(expected, testResult);

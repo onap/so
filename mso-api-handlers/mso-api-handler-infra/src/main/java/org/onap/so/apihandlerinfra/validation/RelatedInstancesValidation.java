@@ -100,9 +100,14 @@ public class RelatedInstancesValidation implements ValidationRule{
 	          	if (!empty(relatedInstance.getInstanceId ()) && !UUIDChecker.isValidUUID (relatedInstance.getInstanceId ())) {
 	          		throw new ValidationException ("instanceId format in relatedInstance");
 	          	}
-
-
-	          	if (action != Action.deleteInstance) {
+	          	if(empty(relatedInstanceModelInfo.getModelVersionId()) && requestScope.equals(ModelType.instanceGroup.toString()) && relatedInstanceModelInfo.getModelType().equals(ModelType.service)){
+	          		throw new ValidationException("modelVersionId in relatedInstance", true);
+	          	}
+	          	if(requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString()) && relatedInstanceModelInfo.getModelType().equals(ModelType.service)){
+	          		isRelatedServiceInstancePresent = true;
+	          	}
+	          
+	          	if (action != Action.deleteInstance && !requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString())) {
 	          		if(!(	relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup) || 
 	          				relatedInstanceModelInfo.getModelType().equals(ModelType.connectionPoint) ||
 	          				relatedInstanceModelInfo.getModelType().equals(ModelType.pnf) ||
@@ -144,7 +149,7 @@ public class RelatedInstancesValidation implements ValidationRule{
 	          		}
 	          	}
 
-	          	if(relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
+	          	if(relatedInstanceModelInfo.getModelType().equals(ModelType.service) && !(requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString()) && action == Action.createInstance)) {
 	          		isRelatedServiceInstancePresent = true;
 	          		if (!relatedInstance.getInstanceId ().equals (sir.getServiceInstanceId ())) {
 	          			throw new ValidationException ("serviceInstanceId matching the serviceInstanceId in request URI");
@@ -177,7 +182,11 @@ public class RelatedInstancesValidation implements ValidationRule{
 	       			throw new ValidationException ("connectionPoint relatedInstance for Port Configuration");
 	       		}
 	       	}
-	       	
+	       	if(requestScope.equals(ModelType.instanceGroup.toString())){
+	       		if(!isRelatedServiceInstancePresent){
+	       			throw new ValidationException("related service instance for instanceGroup request", true);
+	       		}
+	       	}
 	        if(requestScope.equalsIgnoreCase (ModelType.volumeGroup.name ())) {
 	        	if (!isRelatedServiceInstancePresent) {
 	        		throw new ValidationException ("related service instance for volumeGroup request");
@@ -223,6 +232,9 @@ public class RelatedInstancesValidation implements ValidationRule{
         	 msoLogger.debug ("related instance exception");
         	throw new ValidationException ("related instances");
         }
+	    if(instanceList == null && requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString()) && action == Action.createInstance){
+	    	throw new ValidationException("relatedInstanceList", true);
+	    }
     	info.setVfModuleModelName(vfModuleModelName);
       	info.setServiceInstanceType(serviceInstanceType);
       	info.setVnfType(vnfType);

@@ -79,6 +79,7 @@ public final class CommonConstants {
 	public static final String X_MINOR_VERSION = "X-MinorVersion";
 	public static final String X_PATCH_VERSION = "X-PatchVersion";
 	public static final String X_LATEST_VERSION = "X-LatestVersion";
+	public static final String INSTANCE_GROUP_ID = "instanceGroupId";
 	
 	private CommonConstants () {
 	    // prevent creating an instance of this class

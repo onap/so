@@ -316,6 +316,7 @@ public class BBInputSetupTest {
 		requestDetails.setRequestParameters(requestParams);
 		RequestInfo requestInfo = new RequestInfo();
 		requestInfo.setSuppressRollback(true);
+		requestInfo.setSource("VID");
 		requestDetails.setRequestInfo(requestInfo);
 		CloudConfiguration cloudConfiguration = new CloudConfiguration();
 		cloudConfiguration.setLcpCloudRegionId("myRegionId");

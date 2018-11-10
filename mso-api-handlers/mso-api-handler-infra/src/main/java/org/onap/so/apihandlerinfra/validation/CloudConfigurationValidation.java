@@ -39,25 +39,26 @@ public class CloudConfigurationValidation implements ValidationRule{
 		Actions action = info.getAction();
 		Boolean aLaCarteFlag = info.getALaCarteFlag();
 	
-	
-		if(cloudConfiguration == null && reqVersion >= 5 && (aLaCarteFlag != null && aLaCarteFlag)){
-			if((!requestScope.equalsIgnoreCase(ModelType.service.name()) && !requestScope.equalsIgnoreCase(ModelType.configuration.name())) &&
-					(action == Action.createInstance || action == Action.deleteInstance || action == Action.updateInstance)){
-				throw new ValidationException ("cloudConfiguration");
-			}
-			if((requestScope.equalsIgnoreCase(ModelType.vnf.name()) || requestScope.equalsIgnoreCase(ModelType.vfModule.name())) &&
-					action == Action.replaceInstance){
-				throw new ValidationException ("cloudConfiguration");
-			}
-			if(requestScope.equalsIgnoreCase(ModelType.configuration.name()) &&
-					(action == Action.enablePort || action == Action.disablePort || action == Action.activateInstance || action == Action.deactivateInstance)){
-				throw new ValidationException ("cloudConfiguration");
-			}
-			if(requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && (action == Action.deactivateAndCloudDelete || action == Action.scaleOut)){
-				throw new ValidationException("cloudConfiguration");
-			}
-			if(requestScope.equals(ModelType.vnf.name()) && action == Action.recreateInstance){
-				throw new ValidationException("cloudConfiguration", true);
+		if(!requestScope.equals(ModelType.instanceGroup.toString())){
+			if(cloudConfiguration == null && reqVersion >= 5 && (aLaCarteFlag != null && aLaCarteFlag)){
+				if((!requestScope.equalsIgnoreCase(ModelType.service.name()) && !requestScope.equalsIgnoreCase(ModelType.configuration.name())) &&
+						(action == Action.createInstance || action == Action.deleteInstance || action == Action.updateInstance)){
+					throw new ValidationException ("cloudConfiguration");
+				}
+				if((requestScope.equalsIgnoreCase(ModelType.vnf.name()) || requestScope.equalsIgnoreCase(ModelType.vfModule.name())) &&
+						action == Action.replaceInstance){
+					throw new ValidationException ("cloudConfiguration");
+				}
+				if(requestScope.equalsIgnoreCase(ModelType.configuration.name()) &&
+						(action == Action.enablePort || action == Action.disablePort || action == Action.activateInstance || action == Action.deactivateInstance)){
+					throw new ValidationException ("cloudConfiguration");
+				}
+				if(requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && (action == Action.deactivateAndCloudDelete || action == Action.scaleOut)){
+					throw new ValidationException("cloudConfiguration");
+				}
+				if(requestScope.equals(ModelType.vnf.name()) && action == Action.recreateInstance){
+					throw new ValidationException("cloudConfiguration", true);
+				}
 			}
 		}
 		

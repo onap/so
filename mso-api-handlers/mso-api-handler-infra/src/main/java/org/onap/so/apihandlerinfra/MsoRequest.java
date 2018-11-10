@@ -44,6 +44,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
+import org.onap.so.apihandlerinfra.validation.MembersValidation;
 import org.onap.so.apihandlerinfra.validation.ApplyUpdatedConfigValidation;
 import org.onap.so.apihandlerinfra.validation.CloudConfigurationValidation;
 import org.onap.so.apihandlerinfra.validation.ConfigurationParametersValidation;
@@ -174,6 +175,8 @@ public class MsoRequest {
         	rules.add(new InPlaceSoftwareUpdateValidation());
         }else if(reqVersion >= 6 && action == Action.applyUpdatedConfig){
         	rules.add(new ApplyUpdatedConfigValidation());
+        }else if(action == Action.addMembers || action == Action.removeMembers){
+        	rules.add(new MembersValidation());
         }else{
 	        rules.add(new RequestScopeValidation());
 	        rules.add(new RequestParametersValidation());
@@ -264,7 +267,6 @@ public class MsoRequest {
             if (null == servInsReq) {
             	servInsReq = new ServiceInstancesRequest ();
             }
-           
             String networkType = "";
             String vnfType = "";
             aq.setRequestId (requestId);
@@ -275,97 +277,104 @@ public class MsoRequest {
             Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
 
             aq.setStartTime (startTimeStamp);
-            RequestInfo requestInfo =servInsReq.getRequestDetails().getRequestInfo();
-            if (requestInfo != null) {
-            	
-            	if(requestInfo.getSource() != null){
-            		aq.setSource(requestInfo.getSource());
-            	}
-            	if(requestInfo.getCallbackUrl() != null){
-            		aq.setCallBackUrl(requestInfo.getCallbackUrl());
-            	}
-            	if(requestInfo.getCorrelator() != null){
-            		aq.setCorrelator(requestInfo.getCorrelator());
-            	}
-
-            	if(requestInfo.getRequestorId() != null) {
-            		aq.setRequestorId(requestInfo.getRequestorId());
-            	}
-            }
-
-            if (servInsReq.getRequestDetails().getModelInfo() != null  ||  (action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig)) {
+            if(requestScope.equals(ModelType.instanceGroup.name()) && action == Action.deleteInstance){
             	aq.setRequestScope(requestScope);
-            }
-
-            if (servInsReq.getRequestDetails().getCloudConfiguration() != null) {
-            	CloudConfiguration cloudConfiguration = servInsReq.getRequestDetails().getCloudConfiguration();
-            	if(cloudConfiguration.getLcpCloudRegionId() != null) {
-            		aq.setAicCloudRegion(cloudConfiguration.getLcpCloudRegionId());
-            	}
-
-               	if(cloudConfiguration.getTenantId() != null) {
-            		aq.setTenantId(cloudConfiguration.getTenantId());
-            	}
-
-            }
-
-            if(servInsReq.getServiceInstanceId() != null){
-            	aq.setServiceInstanceId(servInsReq.getServiceInstanceId());
-            }
-
-            if(servInsReq.getVnfInstanceId() != null){
-            	aq.setVnfId(servInsReq.getVnfInstanceId());
-            }
-
-            if(ModelType.service.name().equalsIgnoreCase(requestScope)){
-              	if(servInsReq.getRequestDetails().getRequestInfo().getInstanceName() != null){
-            		aq.setServiceInstanceName(requestInfo.getInstanceName());
-            	}
-            }
-
-            if(ModelType.network.name().equalsIgnoreCase(requestScope)){
-            	aq.setNetworkName(servInsReq.getRequestDetails().getRequestInfo().getInstanceName());
-            	aq.setNetworkType(networkType);
-            	aq.setNetworkId(servInsReq.getNetworkInstanceId());
-            }
-
-            if(ModelType.volumeGroup.name().equalsIgnoreCase(requestScope)){
-            	aq.setVolumeGroupId(servInsReq.getVolumeGroupInstanceId());
-            	aq.setVolumeGroupName(servInsReq.getRequestDetails().getRequestInfo().getInstanceName());
-              	aq.setVnfType(vnfType);
-
-            }
-
-            if(ModelType.vfModule.name().equalsIgnoreCase(requestScope)){
-             	aq.setVfModuleName(requestInfo.getInstanceName());
-             	aq.setVfModuleModelName(servInsReq.getRequestDetails().getModelInfo().getModelName());
-             	aq.setVfModuleId(servInsReq.getVfModuleInstanceId());
-             	aq.setVolumeGroupId(servInsReq.getVolumeGroupInstanceId());
-              	aq.setVnfType(vnfType);
-
-            }
-            
-            if(ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-            	aq.setConfigurationId(servInsReq.getConfigurationId());
-            	aq.setConfigurationName(requestInfo.getInstanceName());
-            }
-
-            if(ModelType.vnf.name().equalsIgnoreCase(requestScope)){
-              	aq.setVnfName(requestInfo.getInstanceName());
-				if (null != servInsReq.getRequestDetails()) {
-					RelatedInstanceList[] instanceList = servInsReq.getRequestDetails().getRelatedInstanceList();
-
-					if (instanceList != null) {
-
-						for(RelatedInstanceList relatedInstanceList : instanceList){
-
-							RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-							if(relatedInstance.getModelInfo().getModelType().equals(ModelType.service)){
-								aq.setVnfType(vnfType);
+            }else{
+	            RequestInfo requestInfo =servInsReq.getRequestDetails().getRequestInfo();
+	            if (requestInfo != null) {
+	            	
+	            	if(requestInfo.getSource() != null){
+	            		aq.setSource(requestInfo.getSource());
+	            	}
+	            	if(requestInfo.getCallbackUrl() != null){
+	            		aq.setCallBackUrl(requestInfo.getCallbackUrl());
+	            	}
+	            	if(requestInfo.getCorrelator() != null){
+	            		aq.setCorrelator(requestInfo.getCorrelator());
+	            	}
+	
+	            	if(requestInfo.getRequestorId() != null) {
+	            		aq.setRequestorId(requestInfo.getRequestorId());
+	            	}
+	            }
+	
+	            if (servInsReq.getRequestDetails().getModelInfo() != null  ||  (action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig)) {
+	            	aq.setRequestScope(requestScope);
+	            }
+	
+	            if (servInsReq.getRequestDetails().getCloudConfiguration() != null) {
+	            	CloudConfiguration cloudConfiguration = servInsReq.getRequestDetails().getCloudConfiguration();
+	            	if(cloudConfiguration.getLcpCloudRegionId() != null) {
+	            		aq.setAicCloudRegion(cloudConfiguration.getLcpCloudRegionId());
+	            	}
+	
+	               	if(cloudConfiguration.getTenantId() != null) {
+	            		aq.setTenantId(cloudConfiguration.getTenantId());
+	            	}
+	
+	            }
+	
+	            if(servInsReq.getServiceInstanceId() != null){
+	            	aq.setServiceInstanceId(servInsReq.getServiceInstanceId());
+	            }
+	
+	            if(servInsReq.getVnfInstanceId() != null){
+	            	aq.setVnfId(servInsReq.getVnfInstanceId());
+	            }
+	
+	            if(ModelType.service.name().equalsIgnoreCase(requestScope)){
+	              	if(servInsReq.getRequestDetails().getRequestInfo().getInstanceName() != null){
+	            		aq.setServiceInstanceName(requestInfo.getInstanceName());
+	            	}
+	            }
+	
+	            if(ModelType.network.name().equalsIgnoreCase(requestScope)){
+	            	aq.setNetworkName(servInsReq.getRequestDetails().getRequestInfo().getInstanceName());
+	            	aq.setNetworkType(networkType);
+	            	aq.setNetworkId(servInsReq.getNetworkInstanceId());
+	            }
+	
+	            if(ModelType.volumeGroup.name().equalsIgnoreCase(requestScope)){
+	            	aq.setVolumeGroupId(servInsReq.getVolumeGroupInstanceId());
+	            	aq.setVolumeGroupName(servInsReq.getRequestDetails().getRequestInfo().getInstanceName());
+	              	aq.setVnfType(vnfType);
+	
+	            }
+	
+	            if(ModelType.vfModule.name().equalsIgnoreCase(requestScope)){
+	             	aq.setVfModuleName(requestInfo.getInstanceName());
+	             	aq.setVfModuleModelName(servInsReq.getRequestDetails().getModelInfo().getModelName());
+	             	aq.setVfModuleId(servInsReq.getVfModuleInstanceId());
+	             	aq.setVolumeGroupId(servInsReq.getVolumeGroupInstanceId());
+	              	aq.setVnfType(vnfType);
+	
+	            }
+	            
+	            if(ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+	            	aq.setConfigurationId(servInsReq.getConfigurationId());
+	            	aq.setConfigurationName(requestInfo.getInstanceName());
+	            }
+	            if(requestScope.equalsIgnoreCase(ModelType.instanceGroup.name())){
+	            	aq.setInstanceGroupId(servInsReq.getInstanceGroupId());
+	            	aq.setInstanceGroupName(requestInfo.getInstanceName());
+	            }
+	            if(ModelType.vnf.name().equalsIgnoreCase(requestScope)){
+	              	aq.setVnfName(requestInfo.getInstanceName());
+					if (null != servInsReq.getRequestDetails()) {
+						RelatedInstanceList[] instanceList = servInsReq.getRequestDetails().getRelatedInstanceList();
+	
+						if (instanceList != null) {
+	
+							for(RelatedInstanceList relatedInstanceList : instanceList){
+	
+								RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+								if(relatedInstance.getModelInfo().getModelType().equals(ModelType.service)){
+									aq.setVnfType(vnfType);
+								}
 							}
 						}
 					}
-				}
+	            }
             }
 
             aq.setRequestBody (originalRequestJSON);

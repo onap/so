@@ -23,6 +23,7 @@ package org.onap.so.apihandlerinfra.validation;
 
 import java.util.HashMap;
 
+import org.onap.so.apihandler.common.CommonConstants;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.utils.UUIDChecker;
@@ -74,6 +75,13 @@ public class InstanceIdMapValidation implements ValidationRule{
         			throw new ValidationException ("configurationInstanceId");
         		}
         		sir.setConfigurationId(instanceIdMap.get("configurationInstanceId"));
+        	}
+        	
+        	if(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_ID) != null){
+        		if (!UUIDChecker.isValidUUID (instanceIdMap.get (CommonConstants.INSTANCE_GROUP_ID))) {
+        			throw new ValidationException (CommonConstants.INSTANCE_GROUP_ID, true);
+        		}
+        		sir.setInstanceGroupId(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_ID));
         	}
         }
         return info;

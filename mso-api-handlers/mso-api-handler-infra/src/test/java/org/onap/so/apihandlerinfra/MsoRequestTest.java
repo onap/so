@@ -179,6 +179,7 @@ public class MsoRequestTest extends BaseTest {
 		this.version = "v" + reqVersion;
 		this.instanceIdMapTest.put("serviceInstanceId", "ff305d54-75b4-431b-adb2-eb6b9e5ff000");
 		this.instanceIdMapTest.put("vnfInstanceId", "ff305d54-75b4-431b-adb2-eb6b9e5ff000");
+		this.instanceIdMapTest.put("instanceGroupId", "ff305d54-75b4-431b-adb2-eb6b9e5ff000");
 		thrown.expect(ValidationException.class);
 		thrown.expectMessage(expectedException);
 		this.msoRequest = new MsoRequest();
@@ -243,6 +244,7 @@ public class MsoRequestTest extends BaseTest {
 			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelInfo/v5ActivateModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.activateInstance, 5},
 			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelInfo/ScaleOutNoModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7},
 			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelInfo/VnfRecreateModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.recreateInstance, 7},
+			{"No valid modelVersionId is specified", mapper.readValue(inputStream("/ModelInfo/CreateInstanceGroupNoModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 7},
 			//ValidationException for Platform and LineOfBusiness
 			{"No valid lineOfBusinessName is specified", mapper.readValue(inputStream("/PlatformAndLineOfBusiness/EmptyLineOfBusiness.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
 			{"No valid platform is specified", mapper.readValue(inputStream("/PlatformAndLineOfBusiness/Platform.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 6},
@@ -286,6 +288,9 @@ public class MsoRequestTest extends BaseTest {
 			{"No valid source vnf relatedInstance for Port Configuration is specified", mapper.readValue(inputStream("/RelatedInstances/v5CreateNoSourceRelatedInstance.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
 			{"No valid vnfInstanceId matching the vnfInstanceId in request URI is specified", mapper.readValue(inputStream("/RelatedInstances/RelatedInstancesVnfInstanceId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.activateInstance, 5},
 			{"No valid instanceName format is specified", mapper.readValue(inputStream("/RelatedInstances/InvalidInstanceName.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 2},
+			{"No valid relatedInstanceList is specified", mapper.readValue(inputStream("/RelatedInstances/CreateInstanceGroupNoRelatedInstances.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 7},
+			{"No valid related service instance for instanceGroup request is specified", mapper.readValue(inputStream("/RelatedInstances/CreateInstanceGroupService.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 7},
+			{"No valid modelVersionId in relatedInstance is specified", mapper.readValue(inputStream("/RelatedInstances/CreateInstanceGroupRelatedInstanceModelVersionId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 7},
 			//ValidationException for RequestInfo
 			{"No valid requestInfo is specified", mapper.readValue(inputStream("/RequestInfo/RequestInfoNull.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, 5},
 			{"No valid requestInfo is specified", mapper.readValue(inputStream("/RequestInfo/RequestInfo.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.applyUpdatedConfig, 6},
@@ -328,7 +333,15 @@ public class MsoRequestTest extends BaseTest {
 			{"No valid modelCustomizationId in userParams vnf resources is specified", mapper.readValue(inputStream("/RequestParameters/VnfModelCustomizationId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.assignInstance, 7},
 			{"No valid modelCustomizationId in userParams network resources is specified", mapper.readValue(inputStream("/RequestParameters/NetworkModelCustomizationId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.assignInstance, 7},
 			//Validation for ConfigurationParameters
-			{"No valid configuration parameters is specified", mapper.readValue(inputStream("/ConfigurationParameters/NoConfigurationParameters.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7}
+			{"No valid configuration parameters is specified", mapper.readValue(inputStream("/ConfigurationParameters/NoConfigurationParameters.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.scaleOut, 7},
+			//Validation for Add and Remove Members
+			{"No valid vnf relatedInstance is specified", mapper.readValue(inputStream("/MembersValidation/RelatedInstancesVnf.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.addMembers, 7},
+			{"No valid related instances is specified", mapper.readValue(inputStream("/MembersValidation/RelatedInstances.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.addMembers, 7},
+			{"No valid requestInfo is specified", mapper.readValue(inputStream("/MembersValidation/MembersRequestInfo.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.addMembers, 7},
+			{"No valid requestorId is specified", mapper.readValue(inputStream("/MembersValidation/MembersRequestorId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.addMembers, 7},
+			{"No valid source is specified", mapper.readValue(inputStream("/MembersValidation/AddMembersSource.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.addMembers, 7},
+			{"No valid instanceId in relatedInstances is specified", mapper.readValue(inputStream("/MembersValidation/AddMembersInstanceId.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.addMembers, 7},
+			{"No valid modelType in relatedInstance is specified", mapper.readValue(inputStream("/MembersValidation/DeleteMembersModelType.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.removeMembers, 7}
 		});
 	}
 	@Test
@@ -411,6 +424,18 @@ public class MsoRequestTest extends BaseTest {
 		this.reqVersion = 5;
 		this.version = "v" + reqVersion;
 		thrown.expectMessage("No valid configurationInstanceId is specified");
+		this.msoRequest = new MsoRequest();
+		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+	}
+	@Test
+	public void instanceGroupIdHashMapFailureTest() throws JsonParseException, JsonMappingException, IOException, ValidationException{
+		this.sir = mapper.readValue(inputStream("/SuccessfulValidation/InstanceIdHashMap.json"), ServiceInstancesRequest.class);
+		this.instanceIdMapTest.put("instanceGroupId", "test");
+		this.action = Action.createInstance;
+		thrown.expect(ValidationException.class);
+		this.reqVersion = 7;
+		this.version = "v" + reqVersion;
+		thrown.expectMessage("No valid instanceGroupId is specified");
 		this.msoRequest = new MsoRequest();
 		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
 	}

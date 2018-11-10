@@ -162,9 +162,6 @@ public class RequestInfo implements Serializable {
      *
      */
     public String getSource() {
-    	if(null == source || source.isEmpty()){
-    		source = "VID";
-    	}
         return source;
     }
 
