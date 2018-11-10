@@ -44,5 +44,7 @@ public enum Action {
 	scaleInstance,
 	deactivateAndCloudDelete,
 	scaleOut,
-	recreateInstance
+	recreateInstance,
+	addMembers,
+	removeMembers
 }

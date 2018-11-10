@@ -52,7 +52,6 @@ import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
@@ -61,7 +60,6 @@ import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.RequestReferences;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -2426,6 +2424,155 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7/serviceInstances/e05864f0-ab35-47d0-8be4-56fd9619ba3c/vnfs/f501ce76-a9bc-4601-9837-74fd9f4d5eca";
         ResponseEntity<String> response = sendRequest(inputStream("/VnfwithNeteworkInstanceGroup.json"), uri, HttpMethod.PUT, headers);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        //then		
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
+    @Test
+    public void createInstanceGroup() throws IOException{
+    	stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+    	
+        HttpHeaders headers = new HttpHeaders();
+        //expect
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "/v7/instanceGroups";
+        ResponseEntity<String> response = sendRequest(inputStream("/CreateInstanceGroup.json"), uri, HttpMethod.POST, headers);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        //then		
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
+    @Test
+    public void deleteInstanceGroup() throws IOException{
+    	stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+    	
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(ONAPLogConstants.Headers.REQUEST_ID, "eca3a1b1-43ab-457e-ab1c-367263d148b4");
+        headers.set(ONAPLogConstants.Headers.PARTNER_NAME, "test_name");
+        headers.set(MsoLogger.REQUESTOR_ID, "xxxxxx");
+        //expect
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c";
+        ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE, headers);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        //then		
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
+    @Test
+    public void deleteInstanceGroupNoRequestIdHeader() throws IOException{
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(ONAPLogConstants.Headers.PARTNER_NAME, "test_name");
+        headers.set(MsoLogger.REQUESTOR_ID, "xxxxxx");
+        uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c";
+        ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE, headers);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
+        //then		
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        assertEquals(realResponse.getServiceException().getText(), "No valid X-ONAP-RequestID header is specified");	
+    }
+    @Test
+    public void deleteInstanceGroupNoPartnerNameHeader() throws IOException{
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(ONAPLogConstants.Headers.REQUEST_ID, "eca3a1b1-43ab-457e-ab1c-367263d148b4");
+        headers.set(MsoLogger.REQUESTOR_ID, "xxxxxx");
+        uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c";
+        ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE, headers);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
+        //then		
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        assertEquals(realResponse.getServiceException().getText(), "No valid X-ONAP-PartnerName header is specified");	
+    }
+    @Test
+    public void deleteInstanceGroupNoRquestorIdHeader() throws IOException{
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(ONAPLogConstants.Headers.REQUEST_ID, "eca3a1b1-43ab-457e-ab1c-367263d148b4");
+        headers.set(ONAPLogConstants.Headers.PARTNER_NAME, "eca3a1b1-43ab-457e-ab1c-367263d148b4");
+        //expect
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c";
+        ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE, headers);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
+        //then		
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        assertEquals(realResponse.getServiceException().getText(), "No valid X-RequestorID header is specified");	
+    }
+    @Test
+    public void addMembers() throws IOException{
+    	stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+    	HttpHeaders headers = new HttpHeaders();
+        //expect 
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c/addMembers";
+        ResponseEntity<String> response = sendRequest(inputStream("/AddMembers.json"), uri, HttpMethod.POST, headers);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        //then		
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
+    @Test
+    public void removeMembers() throws IOException{
+    	stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+    	HttpHeaders headers = new HttpHeaders();
+        //expect
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c/removeMembers";
+        ResponseEntity<String> response = sendRequest(inputStream("/RemoveMembers.json"), uri, HttpMethod.POST, headers);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

@@ -43,6 +43,8 @@ public class ServiceInstancesRequest implements Serializable {
 	private String configurationId;
 	@JsonProperty("correlationId")
 	private String correlationId;
+	@JsonProperty("instanceGroupId")
+	private String instanceGroupId;
 
 	public RequestDetails getRequestDetails() {
 		return requestDetails;
@@ -106,6 +108,14 @@ public class ServiceInstancesRequest implements Serializable {
 
 	public void setCorrelationId(String correlationId) {
 		this.correlationId = correlationId;
+	}
+	
+	public String getInstanceGroupId() {
+		return instanceGroupId;
+	}
+	
+	public void setInstanceGroupId(String instanceGroupId) {
+		this.instanceGroupId = instanceGroupId;
 	}
 
 	@Override

@@ -44,5 +44,7 @@ public enum Action implements Actions{
 	scaleInstance,
 	deactivateAndCloudDelete,
 	scaleOut,
-	recreateInstance
+	recreateInstance, 
+	addMembers,
+	removeMembers
 }

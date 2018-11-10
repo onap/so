@@ -109,6 +109,9 @@ public class CamundaVIDRequest {
 	
 	@JsonProperty(CommonConstants.REQUEST_URI)
 	private CamundaInput requestUri;
+	
+	@JsonProperty(CommonConstants.INSTANCE_GROUP_ID)
+	private CamundaInput instanceGroupId;
 
 	@JsonProperty(CommonConstants.CAMUNDA_SERVICE_INPUT)
 	public CamundaInput getServiceInput() {
@@ -326,6 +329,14 @@ public class CamundaVIDRequest {
 	public void setRecipeParams(CamundaInput recipeParams) {
 		this.recipeParams = recipeParams;
 	}
+	@JsonProperty(CommonConstants.INSTANCE_GROUP_ID)
+	public void setInstanceGroupId(CamundaInput instanceGroupIdInput) {
+		this.instanceGroupId = instanceGroupIdInput;
+	}
+	@JsonProperty(CommonConstants.INSTANCE_GROUP_ID)
+	public CamundaInput getInstanceGroupId() {
+		return instanceGroupId;
+	}
 
 	@Override
 	public String toString() {
@@ -334,5 +345,7 @@ public class CamundaVIDRequest {
 			//	+ svcid + ", timeout=" + timeout + "]";
 		return "CamundaRequest";
 	}
+
+	
 
 }

@@ -74,6 +74,7 @@ public class MsoLogger {
     public static final String ONAP_REQUEST_ID            = "X-ONAP-RequestID";
     public static final String CLIENT_ID                   = "X-ClientID";
     public static final String INVOCATION_ID_HEADER        = "X-InvocationID";
+    public static final String REQUESTOR_ID                = "X-RequestorID";
     
     //Default values for not found
     public static final String UNKNOWN_PARTNER                 = "UnknownPartner";

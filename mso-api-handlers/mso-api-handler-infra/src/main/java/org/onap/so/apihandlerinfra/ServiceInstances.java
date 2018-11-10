@@ -32,6 +32,7 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.camundabeans.CamundaResponse;
 import org.onap.so.apihandler.common.CommonConstants;
 import org.onap.so.apihandler.common.ErrorNumbers;
@@ -93,6 +94,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URL;
@@ -611,11 +613,74 @@ public class ServiceInstances {
 		instanceIdMap.put("networkInstanceId", networkInstanceId);
 		return serviceInstances(request, Action.deleteInstance, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
+	
+	@POST
+    @Path("/{version:[vV][7]}/instanceGroups")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Create instanceGroups",response=Response.class)
+	@Transactional
+    public Response createInstanceGroups(String request, @PathParam("version") String version, @Context ContainerRequestContext requestContext) throws ApiException {
+		String requestId = getRequestId(requestContext);
+		return serviceInstances(request, Action.createInstance, null, version, requestId, getRequestUri(requestContext));
+	}
+	
+	@DELETE
+	@Path("/{version:[vV][7]}/instanceGroups/{instanceGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Delete instanceGroup",response=Response.class)
+	@Transactional
+	public Response deleteInstanceGroups(@PathParam("version") String version, @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext) throws ApiException {
+		String requestId = getRequestId(requestContext);
+		HashMap<String, String> instanceIdMap = new HashMap<>();
+		instanceIdMap.put(CommonConstants.INSTANCE_GROUP_ID, instanceGroupId);
+		return deleteInstanceGroups(Action.deleteInstance, instanceIdMap, version, requestId, getRequestUri(requestContext), requestContext);
+	}
+	
+	@POST
+    @Path("/{version:[vV][7]}/instanceGroups/{instanceGroupId}/addMembers")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Add instanceGroup members",response=Response.class)
+	@Transactional
+    public Response addInstanceGroupMembers(String request, @PathParam("version") String version, @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext) throws ApiException {
+		String requestId = getRequestId(requestContext);
+		HashMap<String, String> instanceIdMap = new HashMap<>();
+		instanceIdMap.put(CommonConstants.INSTANCE_GROUP_ID, instanceGroupId);
+		return serviceInstances(request, Action.addMembers, instanceIdMap, version, requestId, getRequestUri(requestContext));
+	}
+	
+	@POST
+    @Path("/{version:[vV][7]}/instanceGroups/{instanceGroupId}/removeMembers")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Remove instanceGroup members",response=Response.class)
+	@Transactional
+    public Response removeInstanceGroupMembers(String request, @PathParam("version") String version, @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext) throws ApiException {
+		String requestId = getRequestId(requestContext);
+		HashMap<String, String> instanceIdMap = new HashMap<>();
+		instanceIdMap.put(CommonConstants.INSTANCE_GROUP_ID, instanceGroupId);
+		return serviceInstances(request, Action.removeMembers, instanceIdMap, version, requestId, getRequestUri(requestContext));
+	}
 
 	public String getRequestUri(ContainerRequestContext context){
 		String requestUri = context.getUriInfo().getPath();
 		requestUri = requestUri.substring(requestUri.indexOf("/serviceInstantiation/") + 22);
 		return requestUri;
+	}
+	
+	public void validateHeaders(ContainerRequestContext context) throws ValidationException{
+		MultivaluedMap<String, String> headers = context.getHeaders();
+		if(!headers.containsKey(ONAPLogConstants.Headers.REQUEST_ID)){
+			 throw new ValidationException(ONAPLogConstants.Headers.REQUEST_ID + " header", true);
+		}
+		if(!headers.containsKey(ONAPLogConstants.Headers.PARTNER_NAME)){
+			throw new ValidationException(ONAPLogConstants.Headers.PARTNER_NAME + " header", true);
+		}
+		if(!headers.containsKey(MsoLogger.REQUESTOR_ID)){
+			throw new ValidationException(MsoLogger.REQUESTOR_ID + " header", true);
+		}
 	}
     
 	public Response serviceInstances(String requestJSON, Actions action, HashMap<String, String> instanceIdMap, String version, String requestId, String requestUri) throws ApiException {
@@ -624,7 +689,7 @@ public class ServiceInstances {
 		long startTime = System.currentTimeMillis ();
 		ServiceInstancesRequest sir = null;
 		String apiVersion = version.substring(1);
-
+		
 		sir = convertJsonToServiceInstanceRequest(requestJSON, action, startTime, sir, msoRequest, requestId, requestUri);
 		String requestScope = deriveRequestScope(action, sir, requestUri);
 		InfraActiveRequests currentActiveReq =  msoRequest.createRequestObject (sir,  action, requestId, Status.PENDING, requestJSON, requestScope);
@@ -672,6 +737,8 @@ public class ServiceInstances {
 			ModelInfo modelInfo =  sir.getRequestDetails().getModelInfo();
 			if (action == Action.applyUpdatedConfig || action == Action.inPlaceSoftwareUpdate) {
 				modelType = ModelType.vnf;
+			}else if(action == Action.addMembers || action == Action.removeMembers){
+				modelType = ModelType.instanceGroup;
 			}else {
 				modelType =modelInfo.getModelType();
 			}
@@ -719,7 +786,7 @@ public class ServiceInstances {
 		String volumeGroupId = "";
 		String networkId = "";
 		String correlationId = "";
-
+		String instanceGroupId = null;
 		if(sir.getServiceInstanceId () != null){
 			serviceInstanceId = sir.getServiceInstanceId ();
 		}
@@ -739,6 +806,9 @@ public class ServiceInstances {
 		if(sir.getNetworkInstanceId () != null){
 			networkId = sir.getNetworkInstanceId ();
 		}
+		if(sir.getInstanceGroupId() != null){
+			instanceGroupId = sir.getInstanceGroupId();
+		}
 
         correlationId = getCorrelationId(sir);
 
@@ -756,9 +826,93 @@ public class ServiceInstances {
 			aLaCarte = false;
 		}
 		
-		return postBPELRequest(currentActiveReq,action, requestId, startTime, requestJSON, recipeLookupResult.getOrchestrationURI(), recipeLookupResult.getRecipeTimeout(), 
-								isBaseVfModule, serviceInstanceId, correlationId, vnfId, vfModuleId, volumeGroupId, networkId, null,
-								serviceInstanceType,vnfType, vfModuleType,networkType, apiVersion, aLaCarte, requestUri, null, requestScope, sir);
+		RequestClientParameter requestClientParameter = null;
+		try {
+			requestClientParameter = new RequestClientParameter.Builder()
+						.setRequestId(requestId)
+						.setBaseVfModule(isBaseVfModule)
+						.setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+						.setRequestAction(action.toString())
+						.setServiceInstanceId(serviceInstanceId)
+						.setCorrelationId(correlationId)
+						.setVnfId(vnfId)
+						.setVfModuleId(vfModuleId)
+						.setVolumeGroupId(volumeGroupId)
+						.setNetworkId(networkId)
+						.setServiceType(serviceInstanceType)
+						.setVnfType(vnfType)
+						.setVfModuleType(vfModuleType)
+						.setNetworkType(networkType)
+						.setRequestDetails(mapJSONtoMSOStyle(requestJSON, sir, aLaCarte, action))
+						.setApiVersion(apiVersion)
+						.setALaCarte(aLaCarte)
+						.setRequestUri(requestUri)
+						.setInstanceGroupId(instanceGroupId).build();
+		} catch (IOException e) {
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			throw new ValidateException.Builder("Unable to generate RequestClientParamter object" + e.getMessage(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
+	                  .errorInfo(errorLoggerInfo).build();
+		}
+		return postBPELRequest(currentActiveReq, requestClientParameter, recipeLookupResult.getOrchestrationURI(), requestScope);
+	}
+	public Response deleteInstanceGroups(Actions action, HashMap<String, String> instanceIdMap, String version, String requestId, String requestUri, ContainerRequestContext requestContext) throws ApiException {
+		String instanceGroupId = instanceIdMap.get(CommonConstants.INSTANCE_GROUP_ID);
+		Boolean aLaCarte = true;
+		long startTime = System.currentTimeMillis ();
+		String apiVersion = version.substring(1);
+		ServiceInstancesRequest sir = new ServiceInstancesRequest();
+		sir.setInstanceGroupId(instanceGroupId);
+	
+		String requestScope = ModelType.instanceGroup.toString();
+		InfraActiveRequests currentActiveReq =  msoRequest.createRequestObject (sir,  action, requestId, Status.PENDING, null, requestScope);
+		setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
+		try {
+			validateHeaders(requestContext);
+		} catch (ValidationException e) {
+			msoLogger.error(e);
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+                        .errorInfo(errorLoggerInfo).build();
+            updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+            throw validateException;
+		}
+		
+		InfraActiveRequests dup = duplicateCheck(action, instanceIdMap, startTime, msoRequest, null, requestScope, currentActiveReq);
+
+		if (dup != null) {
+            buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, startTime, msoRequest, null, requestScope, dup);
+		}
+		
+		ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();
+
+		RequestReferences referencesResponse = new RequestReferences();
+
+		referencesResponse.setRequestId(requestId);
+
+		serviceResponse.setRequestReferences(referencesResponse);
+		Boolean isBaseVfModule = false;
+
+        RecipeLookupResult recipeLookupResult = new RecipeLookupResult("/mso/async/services/WorkflowActionBB", 180);
+								
+        try{
+            infraActiveRequestsClient.save(currentActiveReq);
+        }catch(Exception e){
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
+                    .errorInfo(errorLoggerInfo).build();
+        }
+        
+		RequestClientParameter requestClientParameter = new RequestClientParameter.Builder()
+					.setRequestId(requestId)
+					.setBaseVfModule(isBaseVfModule)
+					.setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+					.setRequestAction(action.toString())
+					.setApiVersion(apiVersion)
+					.setALaCarte(aLaCarte)
+					.setRequestUri(requestUri)
+					.setInstanceGroupId(instanceGroupId).build();
+		
+		return postBPELRequest(currentActiveReq, requestClientParameter, recipeLookupResult.getOrchestrationURI(), requestScope);
 	}
 
 	private String getCorrelationId(ServiceInstancesRequest sir) {
@@ -772,6 +926,8 @@ public class ServiceInstances {
 	private String deriveRequestScope(Actions action, ServiceInstancesRequest sir, String requestUri) {
 		if(action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig){
 			return (ModelType.vnf.name());
+		}else if(action == Action.addMembers || action == Action.removeMembers){
+			return(ModelType.instanceGroup.toString());
 		}else{
 			String requestScope;
 			if(sir.getRequestDetails().getModelInfo().getModelType() == null){
@@ -799,38 +955,12 @@ public class ServiceInstances {
 		}
 		return requestScope;
 	}
-	private Response postBPELRequest(InfraActiveRequests currentActiveReq, Actions action, String requestId, long startTime, String msoRawRequest,
-									String orchestrationUri, int timeOut, Boolean isBaseVfModule,
-									String serviceInstanceId, String correlationId, String vnfId, String vfModuleId, String volumeGroupId, String networkId,
-                                     String configurationId, String serviceInstanceType, String vnfType, String vfModuleType, String networkType, 
-                                     String apiVersion, boolean aLaCarte, String requestUri, String paramXsd, String requestScope, ServiceInstancesRequest sir) throws ApiException {
+	private Response postBPELRequest(InfraActiveRequests currentActiveReq, RequestClientParameter requestClientParameter, String orchestrationUri, String requestScope)throws ApiException {
 		RequestClient requestClient = null;
 		HttpResponse response = null;
 		try {
 			requestClient = reqClientFactory.getRequestClient (orchestrationUri);
-			response = requestClient.post(new RequestClientParameter.Builder()
-					.setRequestId(requestId)
-					.setBaseVfModule(isBaseVfModule)
-					.setRecipeTimeout(timeOut)
-					.setRequestAction(action.toString())
-					.setServiceInstanceId(serviceInstanceId)
-					.setCorrelationId(correlationId)
-					.setVnfId(vnfId)
-					.setVfModuleId(vfModuleId)
-					.setVolumeGroupId(volumeGroupId)
-					.setNetworkId(networkId)
-					.setConfigurationId(configurationId)
-					.setServiceType(serviceInstanceType)
-					.setVnfType(vnfType)
-					.setVfModuleType(vfModuleType)
-					.setNetworkType(networkType)
-					.setRequestDetails(mapJSONtoMSOStyle(msoRawRequest, sir, aLaCarte, action))
-					.setApiVersion(apiVersion)
-					.setALaCarte(aLaCarte)
-					.setRecipeParamXsd(paramXsd)
-					.setRequestUri(requestUri).build());
-			
-			
+			response = requestClient.post(requestClientParameter);
 		} catch (Exception e) {
 			
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
@@ -874,8 +1004,8 @@ public class ServiceInstances {
 				try {
 					ObjectMapper mapper = new ObjectMapper();
 					jsonResponse = mapper.readValue(camundaResp.getResponse(), ServiceInstancesResponse.class);
-					jsonResponse.getRequestReferences().setRequestId(requestId);
-					Optional<URL> selfLinkUrl = msoRequest.buildSelfLinkUrl(currentActiveReq.getRequestUrl(), requestId);
+					jsonResponse.getRequestReferences().setRequestId(requestClientParameter.getRequestId());
+					Optional<URL> selfLinkUrl = msoRequest.buildSelfLinkUrl(currentActiveReq.getRequestUrl(), requestClientParameter.getRequestId());
 					if(selfLinkUrl.isPresent()){
 						jsonResponse.getRequestReferences().setRequestSelfLink(selfLinkUrl.get());
 					} else {
@@ -900,7 +1030,8 @@ public class ServiceInstances {
 		            throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
 		                    .errorInfo(errorLoggerInfo).build();
 				}
-				return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestId, jsonResponse, apiVersion);
+				
+				return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestClientParameter.getRequestId(), jsonResponse, requestClientParameter.getApiVersion());
 			} 
 		}
 			
@@ -943,6 +1074,8 @@ public class ServiceInstances {
 				currentActiveReq.setNetworkId(instanceId);
 			} else if(ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
 				currentActiveReq.setConfigurationId(instanceId);
+			}else if(ModelType.instanceGroup.toString().equalsIgnoreCase(requestScope)){
+				currentActiveReq.setInstanceGroupId(instanceId);
 			}
 		} else if(instanceIdMap != null && !instanceIdMap.isEmpty()) {
 			if(instanceIdMap.get("serviceInstanceId") != null){
@@ -963,21 +1096,27 @@ public class ServiceInstances {
         	if(instanceIdMap.get("configurationInstanceId") != null){
         		currentActiveReq.setConfigurationId(instanceIdMap.get("configurationInstanceId"));
         	}
+        	if(instanceIdMap.get("InstanceGroupInstanceId") != null){
+        		currentActiveReq.setInstanceGroupId(instanceIdMap.get("InstanceGroupInstanceId"));
+        	}
 		}
 	}
 
     protected String mapJSONtoMSOStyle(String msoRawRequest, ServiceInstancesRequest serviceInstRequest, boolean isAlaCarte, Actions action) throws IOException {
     	ObjectMapper mapper = new ObjectMapper();    	
     	mapper.setSerializationInclusion(Include.NON_NULL);    	
-    	ServiceInstancesRequest sir = mapper.readValue(msoRawRequest, ServiceInstancesRequest.class);    	
-    	if(	!isAlaCarte && Action.createInstance.equals(action) && serviceInstRequest != null && 
-    		serviceInstRequest.getRequestDetails() != null && 
-    		serviceInstRequest.getRequestDetails().getRequestParameters() != null) {
-	    	sir.getRequestDetails().setCloudConfiguration(serviceInstRequest.getRequestDetails().getCloudConfiguration());
-	    	sir.getRequestDetails().getRequestParameters().setUserParams(serviceInstRequest.getRequestDetails().getRequestParameters().getUserParams());
+    	if(msoRawRequest != null){
+	    	ServiceInstancesRequest sir = mapper.readValue(msoRawRequest, ServiceInstancesRequest.class);    	
+	    	if(	!isAlaCarte && Action.createInstance.equals(action) && serviceInstRequest != null && 
+	    		serviceInstRequest.getRequestDetails() != null && 
+	    		serviceInstRequest.getRequestDetails().getRequestParameters() != null) {
+		    	sir.getRequestDetails().setCloudConfiguration(serviceInstRequest.getRequestDetails().getCloudConfiguration());
+		    	sir.getRequestDetails().getRequestParameters().setUserParams(serviceInstRequest.getRequestDetails().getRequestParameters().getUserParams());
+	    	}
+	    	msoLogger.debug("Value as string: " + mapper.writeValueAsString(sir));
+	    	return mapper.writeValueAsString(sir);
     	}
-    	msoLogger.debug("Value as string: " + mapper.writeValueAsString(sir));
-    	return mapper.writeValueAsString(sir);
+    	return null;
 	}
 
     private void buildErrorOnDuplicateRecord(InfraActiveRequests currentActiveReq, Actions action, HashMap<String, String> instanceIdMap, long startTime, MsoRequest msoRequest,
@@ -1065,7 +1204,9 @@ public class ServiceInstances {
 		
 		if (action == Action.applyUpdatedConfig || action == Action.inPlaceSoftwareUpdate) {
 			recipeLookupResult = getDefaultVnfUri(sir, action);
-        } else if (modelInfo.getModelType().equals(ModelType.service)) {
+        }else if(action == Action.addMembers || action == Action.removeMembers){
+        	recipeLookupResult = new RecipeLookupResult("/mso/async/services/WorkflowActionBB", 180);
+        }else if (modelInfo.getModelType().equals(ModelType.service)) {
 			try {
 			recipeLookupResult = getServiceURI(sir, action,alaCarteFlag);
 			} catch (IOException e) {
@@ -1107,7 +1248,9 @@ public class ServiceInstances {
                 updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
 
                 throw validateException;
-		}
+            }
+        }else if(modelInfo.getModelType().equals(ModelType.instanceGroup)){
+        	recipeLookupResult = new RecipeLookupResult("/mso/async/services/WorkflowActionBB", 180);
         }
 
         if (recipeLookupResult == null) {
@@ -1672,9 +1815,27 @@ public class ServiceInstances {
 		}else if(aLaCarte == null){
 			aLaCarte = false;
 		}
-	
-		return postBPELRequest(currentActiveReq,action, requestId, startTime, requestJSON, orchestrationUri, Integer.parseInt(timeOut), false, 
-								serviceInstanceId, correlationId, null, null, null, null, configurationId, null, null, null, null, apiVersion, aLaCarte, requestUri, null, requestScope, null);
+		RequestClientParameter requestClientParameter = null;
+		try {
+			requestClientParameter = new RequestClientParameter.Builder()
+				.setRequestId(requestId)
+				.setBaseVfModule(false)
+				.setRecipeTimeout(Integer.parseInt(timeOut))
+				.setRequestAction(action.toString())
+				.setServiceInstanceId(serviceInstanceId)
+				.setCorrelationId(correlationId)
+				.setConfigurationId(configurationId)
+				.setRequestDetails(mapJSONtoMSOStyle(requestJSON, sir, aLaCarte, action))
+				.setApiVersion(apiVersion)
+				.setALaCarte(aLaCarte)
+				.setRequestUri(requestUri).build();
+		} catch (IOException e) {
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			throw new ValidateException.Builder("Unable to generate RequestClientParamter object" + e.getMessage(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
+	                    .errorInfo(errorLoggerInfo).build();
+		}
+				
+			return postBPELRequest(currentActiveReq, requestClientParameter, orchestrationUri, requestScope);
 	}
 
     public String getRequestId(ContainerRequestContext requestContext) throws ValidateException {

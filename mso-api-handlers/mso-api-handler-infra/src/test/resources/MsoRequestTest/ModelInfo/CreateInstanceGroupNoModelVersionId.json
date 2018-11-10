@@ -1,0 +1,25 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelType": "instanceGroup"
+    },
+    "requestInfo": {
+      "source": "VID",
+      "requestorId": "xxxxxx"
+    },
+    "relatedInstanceList": [
+      {
+        "relatedInstance": {
+          "instanceId": "96f40d14-705d-40d9-b829-3dab90811321",
+          "modelInfo": {
+            "modelType": "service"
+          }
+        }
+      }
+    ],
+    "requestParameters": {
+      "userParams": []
+    }
+  }
+}
+

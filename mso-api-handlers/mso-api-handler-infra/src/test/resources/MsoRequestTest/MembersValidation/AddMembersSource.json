@@ -1,0 +1,17 @@
+{
+  "requestDetails": {
+    "requestInfo": {
+      "requestorId": "xxxxxx"
+    },
+    "relatedInstanceList": [
+      {
+        "relatedInstance": {
+          "instanceId": "{the to be related vnf-id}",
+          "modelInfo": {
+            "modelType": "vnf"
+          }
+        }
+      }
+    ]
+  }
+}
