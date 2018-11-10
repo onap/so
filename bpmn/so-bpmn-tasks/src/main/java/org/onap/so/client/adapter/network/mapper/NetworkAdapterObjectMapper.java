@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.onap.so.adapters.nwrest.ContrailNetwork;
@@ -129,7 +130,12 @@ public class NetworkAdapterObjectMapper {
 		
 		deleteNetworkRequest.setMsoRequest(createMsoRequest(requestContext, serviceInstance));
 		deleteNetworkRequest.setNetworkId(l3Network.getNetworkId());
-		deleteNetworkRequest.setNetworkStackId(l3Network.getHeatStackId());
+		if (!StringUtils.isEmpty(l3Network.getHeatStackId())){
+			deleteNetworkRequest.setNetworkStackId(l3Network.getHeatStackId());
+		}
+		else {
+			deleteNetworkRequest.setNetworkStackId(l3Network.getNetworkName());
+		}
 		deleteNetworkRequest.setNetworkType(l3Network.getNetworkType());
 		deleteNetworkRequest.setSkipAAI(true);
 		deleteNetworkRequest.setTenantId(cloudRegion.getTenantId());

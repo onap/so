@@ -301,6 +301,42 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 	}
 	
 	@Test
+	public void deleteNetworkRequestNoHeatIdMapperTest() throws Exception {
+		DeleteNetworkRequest expectedDeleteNetworkRequest = new DeleteNetworkRequest();
+		
+		String messageId = "messageId";
+		expectedDeleteNetworkRequest.setMessageId(messageId);
+		doReturn(messageId).when(SPY_networkAdapterObjectMapper).getRandomUuid();
+		
+		ModelInfoNetwork modelInfoNetwork = new ModelInfoNetwork();
+		l3Network.setModelInfoNetwork(modelInfoNetwork);
+		modelInfoNetwork.setModelCustomizationUUID("modelCustomizationUuid");
+		expectedDeleteNetworkRequest.setModelCustomizationUuid(modelInfoNetwork.getModelCustomizationUUID());
+		
+		MsoRequest msoRequest = new MsoRequest();
+		msoRequest.setRequestId(requestContext.getMsoRequestId());
+		msoRequest.setServiceInstanceId(serviceInstance.getServiceInstanceId());
+		expectedDeleteNetworkRequest.setMsoRequest(msoRequest);
+		
+		expectedDeleteNetworkRequest.setNetworkId(l3Network.getNetworkId());
+		
+		l3Network.setNetworkName("heatStackId");
+		expectedDeleteNetworkRequest.setNetworkStackId("heatStackId");
+		
+		expectedDeleteNetworkRequest.setNetworkType(l3Network.getNetworkType());
+				
+		expectedDeleteNetworkRequest.setSkipAAI(true);
+		
+		expectedDeleteNetworkRequest.setTenantId(cloudRegion.getTenantId());
+		
+		expectedDeleteNetworkRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
+		
+		DeleteNetworkRequest deleteNetworkRequest = SPY_networkAdapterObjectMapper.deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
+		
+		assertThat(expectedDeleteNetworkRequest, sameBeanAs(deleteNetworkRequest));
+	}
+	
+	@Test
 	public void buildOpenstackSubnetListTest() throws Exception {
 
 		ObjectMapper omapper = new ObjectMapper();
