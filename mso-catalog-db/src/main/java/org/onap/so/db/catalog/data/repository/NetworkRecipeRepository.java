@@ -27,4 +27,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "networkRecipe", path = "networkRecipe")
 public interface NetworkRecipeRepository extends JpaRepository<NetworkRecipe, String> {
 	NetworkRecipe findFirstByModelNameAndAction(String modelName, String action);
+	NetworkRecipe findFirstByModelNameAndActionAndVersionStr(String modelName, String action, String versionStr);
 }

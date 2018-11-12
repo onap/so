@@ -73,6 +73,7 @@ import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ToscaCsar;
 import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.beans.VnfRecipe;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
@@ -116,6 +117,7 @@ import java.util.List;
 public class CatalogDbAdapterRest {
     protected static Logger logger = LoggerFactory.getLogger(CatalogDbAdapterRest.class);
     private static final boolean IS_ARRAY = true;
+    private static final String NETWORK_SERVICE = "network service";
 
     @Autowired
     private VnfCustomizationRepository vnfCustomizationRepo;
@@ -563,15 +565,32 @@ public class CatalogDbAdapterRest {
             if (rmUuid != null && !"".equals(rmUuid)) {
                 logger.debug("Query recipe by resource model uuid: {}", rmUuid);
                 //check vnf and network and ar, the resource could be any resource.
+                Recipe recipe = null;
+
                 VnfResource vnf = vnfResourceRepo.findResourceByModelUUID(rmUuid);
-                Recipe recipe = vnfRecipeRepo.findFirstVnfRecipeByNfRoleAndAction(vnf.getModelName(), action);
+                if (vnf != null) {
+                    recipe = vnfRecipeRepo.findFirstVnfRecipeByNfRoleAndActionAndVersionStr(vnf.getModelName(), action, vnf.getModelVersion());
+
+                    // for network service fetch the default recipe
+                    if (recipe == null && vnf.getSubCategory().equalsIgnoreCase(NETWORK_SERVICE)) {
+                        recipe = vnfRecipeRepo.findFirstVnfRecipeByNfRoleAndAction("NS_DEFAULT", action);
+                    }
+                }
+
+
                 if (null == recipe) {
                     NetworkResource nResource = networkResourceRepo.findResourceByModelUUID(rmUuid);
-                    recipe = networkRecipeRepo.findFirstByModelNameAndAction(nResource.getModelName(), action);
+                    recipe = networkRecipeRepo.findFirstByModelNameAndActionAndVersionStr(nResource.getModelName(), action, vnf.getModelVersion());
+
+                    // for network fetch the default recipe
+                    if (recipe == null) {
+                        recipe = networkRecipeRepo.findFirstByModelNameAndAction("SDNC_DEFAULT", action);
+                    }
                 }
+
                 if (null == recipe) {
                     AllottedResource arResource = arResourceRepo.findResourceByModelUUID(rmUuid);
-                    recipe = arRecipeRepo.findByModelNameAndAction(arResource.getModelName(), action);
+                    recipe = arRecipeRepo.findByModelNameAndActionAndVersion(arResource.getModelName(), action, arResource.getModelVersion());
                 }
                 if (recipe != null) {
                     QueryResourceRecipe resourceRecipe = new QueryResourceRecipe(recipe);

@@ -71,6 +71,9 @@ public class VnfRecipe implements Serializable, Recipe {
 	@Column(name = "RECIPE_TIMEOUT")
 	private Integer recipeTimeout;
 
+	@Column(name = "VERSION_STR")
+	private String versionStr;
+
 	@BusinessKey
 	@Column(name = "SERVICE_TYPE")
 	private String serviceType;
@@ -183,5 +186,13 @@ public class VnfRecipe implements Serializable, Recipe {
 
 	public Date getCreated() {
 		return created;
+	}
+
+	public String getVersionStr() {
+		return versionStr;
+	}
+
+	public void setVersionStr(String versionStr) {
+		this.versionStr = versionStr;
 	}
 }
