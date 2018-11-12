@@ -916,8 +916,6 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
             msoLogger.info("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
-            execution.setVariable("URN_mso_openecomp_adapters_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
-
 			String payload =
                 """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                         xmlns:ns="http://org.onap.so/requestsdb">
@@ -984,7 +982,8 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
                     }
                 }
             }
-            def dbAdapterEndpoint = "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter"
+
+            def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
             msoLogger.info("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 

@@ -503,7 +503,9 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
                     resourceTemplateUUIDs  = resourceTemplateUUIDs + it.resourceInstanceId + ":"
                 }
             }
-            execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
+            
+            def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
+            execution.setVariable("URN_mso_adapters_openecomp_db_endpoint", dbAdapterEndpoint)
 
             String payload =
                 """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"

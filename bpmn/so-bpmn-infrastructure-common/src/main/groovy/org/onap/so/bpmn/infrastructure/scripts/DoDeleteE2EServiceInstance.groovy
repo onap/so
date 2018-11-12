@@ -30,18 +30,19 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
 import org.json.JSONObject
-import org.onap.so.bpmn.common.scripts.AaiUtil
+
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
+import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import org.onap.so.utils.TargetEntity
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
-import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -417,8 +418,9 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		utils.log("INFO"," ***** Started getRelatedResourceInAAI *****",  isDebugEnabled)
 
-		AaiUtil aaiUriUtil = new AaiUtil()
-		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+//		AaiUtil aaiUriUtil = new AaiUtil()
+//		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+        String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 		String urlLink = jObj.get("resourceLinkUrl")
 		String serviceAaiPath = "${aai_endpoint}${urlLink}"
 
@@ -518,6 +520,12 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 
             // only delete real existing resources
             execution.setVariable("deleteResourceList", deleteRealResourceList)
+            
+            boolean isDeleteResourceListValid = false
+            if(deleteRealResourceList.size() > 0) {
+                isDeleteResourceListValid = true
+            }
+            execution.setVariable("isDeleteResourceListValid", isDeleteResourceListValid)
 
             utils.log("DEBUG", "delete resource list : " + deleteRealResourceList, isDebugEnabled)
         } catch (Exception ex) {
@@ -553,8 +561,8 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                     resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
             }
 
-
-            execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
+            def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
+            execution.setVariable("URN_mso_adapters_openecomp_db_endpoint", dbAdapterEndpoint)
 
             String payload =
                     """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -580,6 +588,53 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }
         utils.log("INFO", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
+    }
+    
+    public void prepareUpdateServiceOperationStatus(DelegateExecution execution){
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        utils.log("DEBUG", " ======== STARTED prepareUpdateServiceOperationStatus Process ======== ", isDebugEnabled)
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            String operationId = execution.getVariable("operationId")
+            String userId = ""
+            String result = execution.getVariable("result")
+            String progress = execution.getVariable("progress")
+            String reason = ""
+            String operationContent = execution.getVariable("operationContent")
+            
+            serviceId = UriUtils.encode(serviceId,"UTF-8")
+
+            def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
+            execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+            utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+
+            String payload =
+                    """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.onap.so/requestsdb">
+                        <soapenv:Header/>
+                        <soapenv:Body>
+                            <ns:updateServiceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
+                            <serviceId>${MsoUtils.xmlEscape(serviceId)}</serviceId>
+                            <operationId>${MsoUtils.xmlEscape(operationId)}</operationId>
+                            <operationType>DELETE</operationType>
+                            <userId>${MsoUtils.xmlEscape(userId)}</userId>
+                            <result>${MsoUtils.xmlEscape(result)}</result>
+                            <operationContent>${MsoUtils.xmlEscape(operationContent)}</operationContent>
+                            <progress>${MsoUtils.xmlEscape(progress)}</progress>
+                            <reason>${MsoUtils.xmlEscape(reason)}</reason>
+                        </ns:updateServiceOperationStatus>
+                    </soapenv:Body>
+                </soapenv:Envelope>"""
+
+            payload = utils.formatXml(payload)
+            execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
+            utils.log("DEBUG", "Outgoing updateServiceOperStatusRequest: \n" + payload, isDebugEnabled)
+
+        }catch(Exception e){
+            utils.log("ERROR", "Exception Occured Processing prepareUpdateServiceOperationStatus. Exception is:\n" + e, isDebugEnabled)
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareUpdateServiceOperationStatus Method:\n" + e.getMessage())
+        }
+        utils.log("DEBUG", "======== COMPLETED prepareUpdateServiceOperationStatus Process ======== ", isDebugEnabled)
     }
 
      /**
