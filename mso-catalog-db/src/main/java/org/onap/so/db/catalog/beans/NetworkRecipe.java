@@ -59,6 +59,9 @@ public class NetworkRecipe implements Serializable, Recipe {
 	@Column(name = "RECIPE_TIMEOUT")
 	private Integer recipeTimeout;
 
+	@Column(name = "VERSION_STR")
+	private String versionStr;
+
 	@BusinessKey
 	@Column(name = "SERVICE_TYPE")
 	private String serviceType;
@@ -170,5 +173,13 @@ public class NetworkRecipe implements Serializable, Recipe {
 		sb.append(",modelName=" + modelName);
 		sb.append(",networkParamXSD=" + paramXsd);
 		return sb.toString();
+	}
+
+	public String getVersionStr() {
+		return versionStr;
+	}
+
+	public void setVersionStr(String versionStr) {
+		this.versionStr = versionStr;
 	}
 }
