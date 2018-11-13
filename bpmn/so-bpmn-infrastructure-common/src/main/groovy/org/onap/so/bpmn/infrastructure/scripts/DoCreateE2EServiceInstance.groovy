@@ -37,7 +37,6 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.bpmn.infrastructure.workflow.service.ServicePluginFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper

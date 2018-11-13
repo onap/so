@@ -118,6 +118,21 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+ 				<version>3.3</version>
+ 				<configuration>
+				<compilerId>groovy-eclipse-compiler</compilerId>
+				<verbose>true</verbose>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-eclipse-compiler</artifactId>
+						<version>2.7.0-01</version>
+					</dependency>
+				</dependencies>
+			</plugin>                  
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<executions>
@@ -396,6 +411,17 @@
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
 			<version>1.2.4.RELEASE</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.codehaus.groovy</groupId>
+		    <artifactId>groovy-eclipse-compiler</artifactId>
+		    <version>2.9.2-01</version>
+		    <type>maven-plugin</type>
+		</dependency>
+		<dependency>
+		    <groupId>org.codehaus.groovy</groupId>
+		    <artifactId>groovy-eclipse-batch</artifactId>
+		    <version>2.4.3-01</version>
 		</dependency>
 	</dependencies>
 </project>
