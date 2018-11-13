@@ -515,26 +515,36 @@ public class CatalogDbAdapterRest {
     @Path("serviceToscaCsar")
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response serviceToscaCsar(@QueryParam("serviceModelUuid") String smUuid) {
-        int respStatus = HttpStatus.SC_OK;
+        int respStatus = HttpStatus.SC_NOT_FOUND;
         String entity = "";
         try {
-            if (smUuid != null && !"".equals(smUuid)) {
-                logger.debug("Query Csar by service model uuid: {}",smUuid);
-                ToscaCsar toscaCsar = toscaCsarRepo.findById(smUuid).orElseGet(() -> null);
-                if (toscaCsar != null) {
-                    QueryServiceCsar serviceCsar = new QueryServiceCsar(toscaCsar);
-                    entity = serviceCsar.JSON2(false, false);
-                } else {
-                    respStatus = HttpStatus.SC_NOT_FOUND;
-                }
-            } else {
-                throw (new Exception("Incoming parameter is null or blank"));
+            if (smUuid == null || "".equals (smUuid)) {
+
+                throw (new Exception ("Incoming parameter is null or blank"));
             }
-            return Response
-                    .status(respStatus)
-                    .entity(entity)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                    .build();
+
+            logger.debug ("Query Csar by service model uuid: {}", smUuid);
+
+            Service service = serviceRepo.findFirstOneByModelUUIDOrderByModelVersionDesc (smUuid);
+            if (service != null) {
+                ToscaCsar sCsar = service.getCsar();
+                if (sCsar != null) {
+                    String tascarId = sCsar.getArtifactUUID();
+                    if (tascarId != null && !"".equals (tascarId)) {
+                        ToscaCsar toscaCsar = toscaCsarRepo.findById (smUuid).orElseGet ( () -> null);
+                        if (toscaCsar != null) {
+                            QueryServiceCsar serviceCsar = new QueryServiceCsar (toscaCsar);
+                            entity = serviceCsar.JSON2 (false, false);
+                            respStatus = HttpStatus.SC_OK;
+                        } 
+                    }
+                }
+            } 
+
+            return Response.status (respStatus)
+                           .entity (entity)
+                           .header (HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                           .build ();
         } catch (Exception e) {
             logger.error("Exception during query csar by service model uuid: ", e);
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
