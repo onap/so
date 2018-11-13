@@ -39,6 +39,7 @@ import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
 import org.onap.so.logger.MsoLogger
 
@@ -213,14 +214,19 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
 
         int currentIndex = execution.getVariable("currentResourceIndex")
-        Resource curResource = sequencedResourceList.get(currentIndex);
+        if(sequencedResourceList != null && sequencedResourceList.size() > currentIndex){
+            Resource curResource = sequencedResourceList.get(currentIndex);
 
-        String resourceInstanceUUID = curResource.getResourceId()
-        String resourceTemplateUUID = curResource.getModelInfo().getModelUuid()
-        execution.setVariable("resourceInstanceId", resourceInstanceUUID)
-        execution.setVariable("currentResource", curResource)
-        utils.log("INFO", "Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: "
-                + resourceInstanceUUID + " resourceModelName: " + curResource.getModelInfo().getModelName(), isDebugEnabled)
+            String resourceInstanceUUID = curResource.getResourceId()
+            String resourceTemplateUUID = curResource.getModelInfo().getModelUuid()
+            execution.setVariable("resourceInstanceId", resourceInstanceUUID)
+            execution.setVariable("currentResource", curResource)
+            utils.log("INFO", "Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: "
+                    + resourceInstanceUUID + " resourceModelName: " + curResource.getModelInfo().getModelName(), isDebugEnabled)
+        }
+        else {
+            execution.setVariable("resourceInstanceId", "")
+        }
 
         utils.log("INFO", " ======== END preResourceDelete Process ======== ", isDebugEnabled)
     }
@@ -320,7 +326,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
                 </soapenv:Body>
                 </soapenv:Envelope>""";
 
-        def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+        def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
         execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
         execution.setVariable("CVFMI_updateResOperStatusRequest", body)
     }

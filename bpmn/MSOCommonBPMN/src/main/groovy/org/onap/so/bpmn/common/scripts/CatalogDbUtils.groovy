@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,23 +23,23 @@ package org.onap.so.bpmn.common.scripts
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.XML
+import org.onap.logging.ref.slf4j.ONAPLogConstants
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.springframework.web.util.UriUtils;
 
 import org.onap.so.bpmn.core.json.JsonUtils
-
-
+import org.onap.so.client.HttpClient
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.util.slurpersupport.GPathResult
 import groovy.xml.QName;
 
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.DelegateExecution
 
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.rest.APIResponse;
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
+import org.onap.so.utils.TargetEntity
 import org.onap.so.logger.MessageEnum
 
 
@@ -731,12 +731,12 @@ class CatalogDbUtils {
 		String endPoint = "/serviceResources?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
 		try {
 		    String catalogDbResponse = getResponseFromCatalogDb(execution, endPoint)
-	
+
 		    if (catalogDbResponse != null) {
-	
+
 			resources = parseServiceResourcesJson(catalogDbResponse, "v1")
 		    }
-	
+
 		}
 		catch (Exception e) {
 		    utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
@@ -1226,49 +1226,52 @@ class CatalogDbUtils {
 	}
 
 	private String getResponseFromCatalogDb (DelegateExecution execution, String endPoint) {
-		try {
-
-			String catalogDbEndpoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint",execution)
-			String queryEndpoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + endPoint
-			RESTConfig config = new RESTConfig(queryEndpoint);
-			def responseData = ''
-			def bpmnRequestId = UUID.randomUUID().toString()
-			RESTClient client = new RESTClient(config).
-					addHeader('X-TransactionId', bpmnRequestId).
-					addHeader('X-FromAppId', 'BPMN').
-					addHeader('Content-Type', 'application/json').
-					addHeader('Accept','application/json');
-
-			String basicAuthCred = execution.getVariable("BasicAuthHeaderValueDB")
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-					client.addAuthorizationHeader(basicAuthCred)
-			}else {
-				client.addAuthorizationHeader(getBasicDBAuthHeader(execution))
-			}
-			msoLogger.debug('sending GET to Catalog DB endpoint: ' + endPoint)
-			APIResponse response = client.httpGet()
-
-			responseData = response.getResponseBodyAsString()
-			if (responseData != null) {
-				msoLogger.debug("Received data from Catalog DB: " + responseData)
-			}
-
-			msoLogger.debug('Response code:' + response.getStatusCode())
-			msoLogger.debug('Response:' + System.lineSeparator() + responseData)
-			if (response.getStatusCode() == 200) {
-				// parse response as needed
-				return responseData
-			}
-			else {
-				return null
-			}
-		}
-		catch (Exception e) {
-			msoLogger.debug("ERROR WHILE QUERYING CATALOG DB: " + e.message)
-			throw e
-		}
-
+        return getResponseFromCatalogDb(execution, endPoint, defaultDbAdapterVersion)
 	}
+    
+    private String getResponseFromVersionCatalogDb (DelegateExecution execution, String endPoint, String dbAdapterVersion) {
+        try {
+
+            String catalogDbEndpoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint",execution)
+            String queryEndpoint = catalogDbEndpoint + "/" + dbAdapterVersion + endPoint
+            def responseData = ''
+            def bpmnRequestId = UUID.randomUUID().toString()
+
+            URL url = new URL(queryEndpoint)
+            HttpClient client = new HttpClient(url, MediaType.APPLICATION_JSON, TargetEntity.CATALOG_DB)
+            client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, bpmnRequestId)
+            client.addAdditionalHeader('X-FromAppId', "BPMN")
+            client.addAdditionalHeader('Accept', MediaType.APPLICATION_JSON)
+            String basicAuthCred = execution.getVariable("BasicAuthHeaderValueDB")
+            if (basicAuthCred != null && !"".equals(basicAuthCred)) {
+                client.addAdditionalHeader("Authorization", basicAuthCred)
+            }else {
+                client.addAdditionalHeader("Authorization", getBasicDBAuthHeader(execution))
+            }
+
+            msoLogger.debug('sending GET to Catalog DB endpoint: ' + endPoint)
+            Response response = client.get()
+
+            responseData = response.readEntity(String.class)
+            if (responseData != null) {
+                msoLogger.debug("Received data from Catalog DB: " + responseData)
+            }
+
+            msoLogger.debug('Response code:' + response.getStatus())
+            msoLogger.debug('Response:' + System.lineSeparator() + responseData)
+            if (response.getStatus() == 200) {
+                // parse response as needed
+                return responseData
+            }
+            else {
+                return null
+            }
+        }
+        catch (Exception e) {
+            msoLogger.debug("ERROR WHILE QUERYING CATALOG DB: " + e.message)
+            throw e
+        }
+    }
 
 	/**
 	 * get resource recipe by resource model uuid and action
@@ -1291,14 +1294,36 @@ class CatalogDbUtils {
 
 		return responseJson
 	}
-	
+    
+    /**
+     * get csar by serviceModelUuid
+     */
+    public JSONObject getCsarByServiceModelUuid(DelegateExecution execution, String serviceModelUuid) {
+        String endPoint = "/serviceToscaCsar?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
+        JSONObject responseJson = null
+        try {
+            msoLogger.debug("ENDPOINT: " + endPoint)
+            String catalogDbResponse = getResponseFromVersionCatalogDb(execution, endPoint, "v3")
+
+            if (catalogDbResponse != null) {
+                responseJson = new JSONObject(catalogDbResponse)
+            }
+        }
+        catch (Exception e) {
+            utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+            throw e
+        }
+
+        return responseJson
+    }
+
 	private String getBasicDBAuthHeader(DelegateExecution execution) {
-		
+
 		String encodedString = null
 		try {
 			String basicAuthValueDB = UrnPropertiesReader.getVariable("mso.adapters.db.auth", execution)
 			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB)
-			
+
 			encodedString = utils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
 			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
 		} catch (IOException ex) {
@@ -1307,5 +1332,5 @@ class CatalogDbUtils {
 		}
 		return encodedString
 	}
-	
+
 }

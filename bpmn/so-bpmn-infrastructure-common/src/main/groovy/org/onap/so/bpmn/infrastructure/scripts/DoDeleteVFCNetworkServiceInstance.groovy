@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,25 +18,22 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.scripts;
+package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*
-
-import org.apache.commons.lang3.*
-import org.camunda.bpm.engine.delegate.BpmnError 
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor 
-import org.onap.so.bpmn.common.scripts.ExceptionUtil 
-import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.core.json.JsonUtils 
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.HttpClient
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient 
-import org.onap.so.rest.RESTConfig
+import org.onap.so.utils.TargetEntity
 
-import groovy.json.*
-
+import javax.ws.rs.core.Response
 /**
  * This groovy class supports the <class>DoDeleteVFCNetworkServiceInstance.bpmn</class> process.
  * flow for E2E ServiceInstance Delete
@@ -44,11 +41,11 @@ import groovy.json.*
 public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteVFCNetworkServiceInstance.class);
 
-            
+
     String vfcUrl = "/vfc/rest/v1/vfcadapter"
-    
+
     String host = "http://mso.mso.testlab.openecomp.org:8080"
-    
+
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     JsonUtils jsonUtil = new JsonUtils()
@@ -110,55 +107,14 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
         String serviceId = execution.getVariable("serviceId")
-        String deleteRelationPayload = """<relationship xmlns="http://org.openecomp.aai.inventory/v11">
-                                            <related-to>service-instance</related-to>
-                                            <related-link>/aai/v11/business/customers/customer/${globalSubscriberId}/service-subscriptions/service-subscription/${serviceType}/service-instances/service-instance/${nsInstanceId}</related-link>
-                                            <relationship-data>
-                                                <relationship-key>customer.global-customer-id</relationship-key>
-                                                <relationship-value>${MsoUtils.xmlEscape(globalSubscriberId)}</relationship-value>
-                                            </relationship-data>
-                                            <relationship-data>
-                                                <relationship-key>service-subscription.service-type</relationship-key>
-                                                <relationship-value>${MsoUtils.xmlEscape(serviceType)}</relationship-value>
-                                            </relationship-data>
-                                           <relationship-data>
-                                                <relationship-key>service-instance.service-instance-id</relationship-key>
-                                                <relationship-value>${MsoUtils.xmlEscape(nsInstanceId)}</relationship-value>
-                                            </relationship-data>           
-                                        </relationship>"""
-        String endpoint = execution.getVariable("URN_aai_endpoint")
-        utils.log("INFO","Delete Relationship req:\n" + deleteRelationPayload,  isDebugEnabled)
-        String url = endpoint + "/aai/v11/business/customers/customer/" + globalSubscriberId + "/service-subscriptions/service-subscription/" + serviceType + "/service-instances/service-instance/" + serviceId + "/relationship-list/relationship"
-
-        APIResponse aaiRsp = executeAAIDeleteCall(execution, url, deleteRelationPayload)
-        utils.log("INFO","aai response status code:" + aaiRsp.getStatusCode(),  isDebugEnabled)
-        utils.log("INFO","aai response content:" + aaiRsp.getResponseBodyAsString(),  isDebugEnabled)
-        utils.log("INFO"," *****Exit deleteNSRelationship *****",  isDebugEnabled)
-    }
-
-    public APIResponse executeAAIDeleteCall(DelegateExecution execution, String url, String payload){
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO", " ======== Started Execute AAI Delete Process ======== ",  isDebugEnabled)
-        APIResponse apiResponse = null
-        try{
-            String uuid = utils.getRequestID()
-            utils.log("INFO","Generated uuid is: " + uuid,  isDebugEnabled)
-            utils.log("INFO","URL to be used is: " + url,  isDebugEnabled)
-            String userName = execution.getVariable("URN_aai_auth")
-            String password = execution.getVariable("URN_mso_msoKey")
-            String basicAuthCred = utils.getBasicAuth(userName,password)
-            RESTConfig config = new RESTConfig(url);
-            RESTClient client = new RESTClient(config).addHeader("X-FromAppId", "MSO").addHeader("X-TransactionId", uuid).addHeader("Content-Type", "application/xml").addHeader("Accept","application/xml");
-            if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-                client.addAuthorizationHeader(basicAuthCred)
-            }
-            apiResponse = client.httpDelete(payload)
-            utils.log("INFO","======== Completed Execute AAI Delete Process ======== ",  isDebugEnabled)
+        AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceId)
+        AAIResourceUri nsServiceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, nsInstanceId)
+        try {
+            getAAIClient().disconnect(serviceInstanceUri, nsServiceInstanceUri)
         }catch(Exception e){
-            utils.log("ERROR","Exception occured while executing AAI Put Call. Exception is: \n" + e,  isDebugEnabled)
-            throw new BpmnError("MSOWorkflowException")
+            exceptionUtil.buildAndThrowWorkflowException(execution,25000,"Exception occured while NS disconnect call: " + e.getMessage())
         }
-        return apiResponse
+        utils.log("INFO"," *****Exit deleteNSRelationship *****",  isDebugEnabled)
     }
 
     /**
@@ -168,16 +124,15 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
 
         msoLogger.trace("deleteNetworkService  start ")
         String nsOperationKey = execution.getVariable("nsOperationKey");
-        String url = host + vfcUrl + "/ns/" + execution.getVariable("nsInstanceId") 
-        APIResponse apiResponse = deleteRequest(execution, url, nsOperationKey)
-        String returnCode = apiResponse.getStatusCode()
-        String apiResponseAsString = apiResponse.getResponseBodyAsString()
+        String url = host + vfcUrl + "/ns/" + execution.getVariable("nsInstanceId")
+        Response apiResponse = deleteRequest(execution, url, nsOperationKey)
+        String returnCode = apiResponse.getStatus()
         String operationStatus = "error";
         if(returnCode== "200" || returnCode== "202"){
             operationStatus = "finished"
         }
         execution.setVariable("operationStatus", operationStatus)
-        
+
         msoLogger.trace("deleteNetworkService  end ")
     }
 
@@ -187,16 +142,16 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void terminateNetworkService(DelegateExecution execution) {
 
         msoLogger.trace("terminateNetworkService  start ")
-        String nsOperationKey = execution.getVariable("nsOperationKey") 
+        String nsOperationKey = execution.getVariable("nsOperationKey")
         String url =  host + vfcUrl + "/ns/" + execution.getVariable("nsInstanceId") + "/terminate"
-        APIResponse apiResponse = postRequest(execution, url, nsOperationKey)
-        String returnCode = apiResponse.getStatusCode()
-        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
+        Response apiResponse = postRequest(execution, url, nsOperationKey)
+        String returnCode = apiResponse.getStatus()
+        String aaiResponseAsString = apiResponse.readEntity(String.class)
         String jobId = "";
         if(returnCode== "200" || returnCode== "202"){
             jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
         }
-        execution.setVariable("jobId", jobId)   
+        execution.setVariable("jobId", jobId)
         msoLogger.trace("terminateNetworkService  end ")
     }
 
@@ -208,10 +163,10 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         msoLogger.trace("queryNSProgress  start ")
         String jobId = execution.getVariable("jobId")
         String nsOperationKey = execution.getVariable("nsOperationKey");
-        String url =  host + vfcUrl + "/jobs/" +  execution.getVariable("jobId") 
-        APIResponse apiResponse = postRequest(execution, url, nsOperationKey)
-        String returnCode = apiResponse.getStatusCode()
-        String apiResponseAsString = apiResponse.getResponseBodyAsString()
+        String url =  host + vfcUrl + "/jobs/" +  execution.getVariable("jobId")
+        Response apiResponse = postRequest(execution, url, nsOperationKey)
+        String returnCode = apiResponse.getStatus()
+        String apiResponseAsString = apiResponse.readEntity(String.class)
         String operationProgress = "100"
         if(returnCode== "200"){
             operationProgress = jsonUtil.getJsonValue(apiResponseAsString, "responseDescriptor.progress")
@@ -221,12 +176,12 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     }
 
     /**
-     * delay 5 sec 
+     * delay 5 sec
      */
     public void timeDelay(DelegateExecution execution) {
         try {
             Thread.sleep(5000);
-        } catch(InterruptedException e) {           
+        } catch(InterruptedException e) {
             msoLogger.info("Time Delay exception" + e)
         }
     }
@@ -243,21 +198,27 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private APIResponse postRequest(DelegateExecution execution, String url, String requestBody){
+    private Response postRequest(DelegateExecution execution, String urlString, String requestBody){
 
-        msoLogger.trace("Started Execute VFC adapter Post Process ")
-        msoLogger.info("url:"+url +"\nrequestBody:"+ requestBody)
-        APIResponse apiResponse = null
-        try{
-            RESTConfig config = new RESTConfig(url);
-            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Accept","application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk");;
-            apiResponse = client.httpPost(requestBody)
-            msoLogger.info("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
-            msoLogger.trace("Completed Execute VF-C adapter Post Process ")
-        }catch(Exception e){
+		msoLogger.trace("Started Execute VFC adapter Post Process ")
+		msoLogger.info("url:"+urlString +"\nrequestBody:"+ requestBody)
+		Response apiResponse = null
+		try{
+			URL url = new URL(urlString);
+
+			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
+			httpClient.addAdditionalHeader("Accept", "application/json")
+			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
+
+			apiResponse = httpClient.post(requestBody)
+
+			msoLogger.debug("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
+
+			msoLogger.trace("Completed Execute VF-C adapter Post Process ")
+		}catch(Exception e){
             msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing VF-C Post Call. Exception is: \n" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
             throw new BpmnError("MSOWorkflowException")
-        }        
+        }
         return apiResponse
     }
     /**
@@ -265,21 +226,24 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private APIResponse deleteRequest(DelegateExecution execution, String url, String requestBody){
+    private Response deleteRequest(DelegateExecution execution, String url, String requestBody){
 
-        msoLogger.trace("Started Execute VFC adapter Delete Process ")       
+        msoLogger.trace("Started Execute VFC adapter Delete Process ")
         msoLogger.info("url:"+url +"\nrequestBody:"+ requestBody)
-        APIResponse apiResponse = null
+		Response r
         try{
-            RESTConfig config = new RESTConfig(url);
-            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Accept","application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
-            apiResponse = client.httpDelete(requestBody)
-            msoLogger.info("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString()) 
-            msoLogger.trace("Completed Execute VF-C adapter Delete Process ") 
+
+			URL Url = new URL(url)
+			HttpClient httpClient = new HttpClient(Url, "application/json", TargetEntity.VNF_ADAPTER)
+			httpClient.addAdditionalHeader("Accept", "application/json")
+			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
+			r = httpClient.delete(requestBody)
+
+            msoLogger.trace("Completed Execute VF-C adapter Delete Process ")
         }catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing VF-C Post Call. Exception is: \n" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e); 
+            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing VF-C Post Call. Exception is: \n" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
             throw new BpmnError("MSOWorkflowException")
-        }        
-        return apiResponse
+        }
+        return r
     }
 }
