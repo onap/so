@@ -1226,49 +1226,52 @@ class CatalogDbUtils {
 	}
 
 	private String getResponseFromCatalogDb (DelegateExecution execution, String endPoint) {
-		try {
-
-			String catalogDbEndpoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint",execution)
-			String queryEndpoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + endPoint
-			def responseData = ''
-			def bpmnRequestId = UUID.randomUUID().toString()
-
-			URL url = new URL(queryEndpoint)
-			HttpClient client = new HttpClient(url, MediaType.APPLICATION_JSON, TargetEntity.CATALOG_DB)
-			client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, bpmnRequestId)
-			client.addAdditionalHeader('X-FromAppId', "BPMN")
-			client.addAdditionalHeader('Accept', MediaType.APPLICATION_JSON)
-			String basicAuthCred = execution.getVariable("BasicAuthHeaderValueDB")
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-				client.addAdditionalHeader("Authorization", basicAuthCred)
-			}else {
-				client.addAdditionalHeader("Authorization", getBasicDBAuthHeader(execution))
-			}
-
-			msoLogger.debug('sending GET to Catalog DB endpoint: ' + endPoint)
-			Response response = client.get()
-
-			responseData = response.readEntity(String.class)
-			if (responseData != null) {
-				msoLogger.debug("Received data from Catalog DB: " + responseData)
-			}
-
-			msoLogger.debug('Response code:' + response.getStatus())
-			msoLogger.debug('Response:' + System.lineSeparator() + responseData)
-			if (response.getStatus() == 200) {
-				// parse response as needed
-				return responseData
-			}
-			else {
-				return null
-			}
-		}
-		catch (Exception e) {
-			msoLogger.debug("ERROR WHILE QUERYING CATALOG DB: " + e.message)
-			throw e
-		}
-
+        return getResponseFromCatalogDb(execution, endPoint, defaultDbAdapterVersion)
 	}
+    
+    private String getResponseFromVersionCatalogDb (DelegateExecution execution, String endPoint, String dbAdapterVersion) {
+        try {
+
+            String catalogDbEndpoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint",execution)
+            String queryEndpoint = catalogDbEndpoint + "/" + dbAdapterVersion + endPoint
+            def responseData = ''
+            def bpmnRequestId = UUID.randomUUID().toString()
+
+            URL url = new URL(queryEndpoint)
+            HttpClient client = new HttpClient(url, MediaType.APPLICATION_JSON, TargetEntity.CATALOG_DB)
+            client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, bpmnRequestId)
+            client.addAdditionalHeader('X-FromAppId', "BPMN")
+            client.addAdditionalHeader('Accept', MediaType.APPLICATION_JSON)
+            String basicAuthCred = execution.getVariable("BasicAuthHeaderValueDB")
+            if (basicAuthCred != null && !"".equals(basicAuthCred)) {
+                client.addAdditionalHeader("Authorization", basicAuthCred)
+            }else {
+                client.addAdditionalHeader("Authorization", getBasicDBAuthHeader(execution))
+            }
+
+            msoLogger.debug('sending GET to Catalog DB endpoint: ' + endPoint)
+            Response response = client.get()
+
+            responseData = response.readEntity(String.class)
+            if (responseData != null) {
+                msoLogger.debug("Received data from Catalog DB: " + responseData)
+            }
+
+            msoLogger.debug('Response code:' + response.getStatus())
+            msoLogger.debug('Response:' + System.lineSeparator() + responseData)
+            if (response.getStatus() == 200) {
+                // parse response as needed
+                return responseData
+            }
+            else {
+                return null
+            }
+        }
+        catch (Exception e) {
+            msoLogger.debug("ERROR WHILE QUERYING CATALOG DB: " + e.message)
+            throw e
+        }
+    }
 
 	/**
 	 * get resource recipe by resource model uuid and action
@@ -1291,6 +1294,28 @@ class CatalogDbUtils {
 
 		return responseJson
 	}
+    
+    /**
+     * get csar by serviceModelUuid
+     */
+    public JSONObject getCsarByServiceModelUuid(DelegateExecution execution, String serviceModelUuid) {
+        String endPoint = "/serviceToscaCsar?serviceModelUuid=" + UriUtils.encode(serviceModelUuid, "UTF-8")
+        JSONObject responseJson = null
+        try {
+            msoLogger.debug("ENDPOINT: " + endPoint)
+            String catalogDbResponse = getResponseFromVersionCatalogDb(execution, endPoint, "v3")
+
+            if (catalogDbResponse != null) {
+                responseJson = new JSONObject(catalogDbResponse)
+            }
+        }
+        catch (Exception e) {
+            utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+            throw e
+        }
+
+        return responseJson
+    }
 
 	private String getBasicDBAuthHeader(DelegateExecution execution) {
 
