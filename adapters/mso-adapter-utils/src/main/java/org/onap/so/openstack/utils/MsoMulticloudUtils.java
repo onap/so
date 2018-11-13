@@ -173,11 +173,13 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             }
         }
 
-        if (!stackInputs.isEmpty() && stackInputs.containsKey("VF_MODULE_ID")){
-            vfModuleId = (String) stackInputs.get("VF_MODULE_ID");
+        if (!stackInputs.isEmpty() && stackInputs.containsKey(VF_MODULE_ID)){
+            vfModuleId = (String) stackInputs.get(VF_MODULE_ID);
+            stackInputs.remove(VF_MODULE_ID);
         }
-        if (!stackInputs.isEmpty() && stackInputs.containsKey("GENERIC_VNF_ID")){
-            genericVnfId = (String) stackInputs.get("GENERIC_VNF_ID");
+        if (!stackInputs.isEmpty() && stackInputs.containsKey(GENERIC_VNF_ID)){
+            genericVnfId = (String) stackInputs.get(GENERIC_VNF_ID);
+            stackInputs.remove(GENERIC_VNF_ID);
         }
 
         // create the multicloud payload
