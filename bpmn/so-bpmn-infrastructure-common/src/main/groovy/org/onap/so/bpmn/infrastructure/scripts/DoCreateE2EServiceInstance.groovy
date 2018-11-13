@@ -28,7 +28,6 @@ import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
-import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -46,7 +45,7 @@ import org.onap.so.bpmn.infrastructure.workflow.service.ServicePluginFactory
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
+
 import org.springframework.web.util.UriUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
@@ -461,10 +460,10 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		uuiRequest = ServicePluginFactory.getInstance().doProcessSiteLocation(serviceDecomposition, uuiRequest);
 		execution.setVariable("uuiRequest", uuiRequest)
 		execution.setVariable("serviceDecomposition", serviceDecomposition)
-		
+
 		msoLogger.trace("======== COMPLETED doProcessSiteLocation Process ======== ")
 	}
-	
+
 	// Allocate cross link TPs(terminal points) for sotn network only
 	public void doTPResourcesAllocation(DelegateExecution execution){
 		msoLogger.trace("======== Start doTPResourcesAllocation Process ======== ")

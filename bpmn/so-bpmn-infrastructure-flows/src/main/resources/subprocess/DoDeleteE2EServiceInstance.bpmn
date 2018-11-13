@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">
   <bpmn:process id="DoDeleteE2EServiceInstance" name="All Resources Deleted" isExecutable="true">
     <bpmn:startEvent id="StartEvent_0212h2r" name="Start Flow">
       <bpmn:outgoing>SequenceFlow_0vz7cd9</bpmn:outgoing>
@@ -24,6 +24,7 @@ ddsi.postProcessAAIGET(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_01erufg" name="&#10;AAI&#10;Delete&#10;(svc instance)&#10;" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1cevtpy</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_12rr1yy</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0e7inkl</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def ddsi = new DoCustomDeleteE2EServiceInstance()
@@ -99,11 +100,6 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_1j08ko3" sourceRef="ServiceTask_00tg69u" targetRef="Task_1f5dlsv" />
     <bpmn:sequenceFlow id="SequenceFlow_0fo5vw5" sourceRef="Task_1ldvug1" targetRef="Task_0mhdfuu" />
     <bpmn:sequenceFlow id="SequenceFlow_0orw2f8" sourceRef="Task_0mhdfuu" targetRef="Task_1yx1n05" />
-    <bpmn:sequenceFlow id="SequenceFlow_0ha8ix9" sourceRef="Task_1yx1n05" targetRef="IntermediateThrowEvent_0ve5ukt" />
-    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0ve5ukt" name="Go to Delete Resources">
-      <bpmn:incoming>SequenceFlow_0ha8ix9</bpmn:incoming>
-      <bpmn:linkEventDefinition name="StartDeleteResource" />
-    </bpmn:intermediateThrowEvent>
     <bpmn:intermediateCatchEvent id="startDeleteResources" name="Start Delete Resources">
       <bpmn:outgoing>SequenceFlow_1961633</bpmn:outgoing>
       <bpmn:linkEventDefinition name="StartDeleteResource" />
@@ -133,7 +129,7 @@ dcsi.prepareDecomposeService(execution)]]></bpmn:script>
     </bpmn:callActivity>
     <bpmn:scriptTask id="Task_1yx1n05" name="Post Decompose Service" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0orw2f8</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0ha8ix9</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_013rime</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi= new DoDeleteE2EServiceInstance()
 dcsi.postDecomposeService(execution)]]></bpmn:script>
@@ -167,6 +163,63 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
       <bpmn:linkEventDefinition name="DecomposeService" />
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0vi0sv6" sourceRef="ScriptTask_1rtnsh8" targetRef="StartEvent_1qh5a34" />
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_00pyc0n" name="Start Delete Resources">
+      <bpmn:incoming>SequenceFlow_1fozgqz</bpmn:incoming>
+      <bpmn:linkEventDefinition name="StartDeleteResource" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_156mc3h" name="Valid Resource List?" default="SequenceFlow_1ncja2b">
+      <bpmn:incoming>SequenceFlow_013rime</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1fozgqz</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1ncja2b</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1g4uc66" name="End Delete Process">
+      <bpmn:incoming>SequenceFlow_1ncja2b</bpmn:incoming>
+      <bpmn:linkEventDefinition name="EndDeleteProcess" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1fozgqz" name="Yes" sourceRef="ExclusiveGateway_156mc3h" targetRef="IntermediateThrowEvent_00pyc0n">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("isDeleteResourceListValid" )  == true)}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1ncja2b" sourceRef="ExclusiveGateway_156mc3h" targetRef="IntermediateThrowEvent_1g4uc66" />
+    <bpmn:sequenceFlow id="SequenceFlow_013rime" sourceRef="Task_1yx1n05" targetRef="ExclusiveGateway_156mc3h" />
+    <bpmn:serviceTask id="ServiceTask_1lsic7i" name="Update Service Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic QlBFTENsaWVudDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${CVFMI_updateServiceOperStatusRequest}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1ab3vex</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12rr1yy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="ScriptTask_0f3tjbn" name="prepare update service operation status" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0h5c1bd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ab3vex</bpmn:outgoing>
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+execution.setVariable("progress", "100")
+execution.setVariable("result", "finished")
+execution.setVariable("operationContent", "No actual resoure in service instance")
+def csi= new DoDeleteE2EServiceInstance()
+csi.prepareUpdateServiceOperationStatus(execution)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_0hrkmxb" name="End Delete Process">
+      <bpmn:outgoing>SequenceFlow_0h5c1bd</bpmn:outgoing>
+      <bpmn:linkEventDefinition name="EndDeleteProcess" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1ab3vex" sourceRef="ScriptTask_0f3tjbn" targetRef="ServiceTask_1lsic7i" />
+    <bpmn:sequenceFlow id="SequenceFlow_0h5c1bd" sourceRef="IntermediateCatchEvent_0hrkmxb" targetRef="ScriptTask_0f3tjbn" />
+    <bpmn:sequenceFlow id="SequenceFlow_12rr1yy" sourceRef="ServiceTask_1lsic7i" targetRef="ScriptTask_01erufg" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DoDeleteE2EServiceInstance">
@@ -192,7 +245,7 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
         <dc:Bounds x="254" y="450" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_1u8zt9i_di" bpmnElement="SubProcess_1u8zt9i" isExpanded="true">
-        <dc:Bounds x="-166" y="672" width="467" height="193" />
+        <dc:Bounds x="-161" y="980" width="467" height="193" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0vz7cd9_di" bpmnElement="SequenceFlow_0vz7cd9">
         <di:waypoint xsi:type="dc:Point" x="-501" y="-33" />
@@ -220,32 +273,32 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_0sf5lpt_di" bpmnElement="StartEvent_0sf5lpt">
-        <dc:Bounds x="-98" y="739" width="36" height="36" />
+        <dc:Bounds x="-93" y="1047" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-170" y="780" width="90" height="12" />
+          <dc:Bounds x="-165" y="1088" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_06utmg4_di" bpmnElement="EndEvent_06utmg4">
-        <dc:Bounds x="195" y="739" width="36" height="36" />
+        <dc:Bounds x="200" y="1047" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="123" y="780" width="90" height="12" />
+          <dc:Bounds x="128" y="1088" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_0nha3pr_di" bpmnElement="ScriptTask_0nha3pr">
-        <dc:Bounds x="6" y="717" width="100" height="80" />
+        <dc:Bounds x="11" y="1025" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1921mo3_di" bpmnElement="SequenceFlow_1921mo3">
-        <di:waypoint xsi:type="dc:Point" x="-62" y="757" />
-        <di:waypoint xsi:type="dc:Point" x="6" y="757" />
+        <di:waypoint xsi:type="dc:Point" x="-57" y="1065" />
+        <di:waypoint xsi:type="dc:Point" x="11" y="1065" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-118" y="742" width="90" height="12" />
+          <dc:Bounds x="-113" y="1050" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_18vlzfo_di" bpmnElement="SequenceFlow_18vlzfo">
-        <di:waypoint xsi:type="dc:Point" x="106" y="757" />
-        <di:waypoint xsi:type="dc:Point" x="195" y="757" />
+        <di:waypoint xsi:type="dc:Point" x="111" y="1065" />
+        <di:waypoint xsi:type="dc:Point" x="200" y="1065" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="62" y="742" width="90" height="12" />
+          <dc:Bounds x="67" y="1050" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_146jt8v_di" bpmnElement="ScriptTask_146jt8v">
@@ -298,21 +351,6 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
           <dc:Bounds x="-79" y="192" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0ha8ix9_di" bpmnElement="SequenceFlow_0ha8ix9">
-        <di:waypoint xsi:type="dc:Point" x="147" y="198" />
-        <di:waypoint xsi:type="dc:Point" x="181" y="198" />
-        <di:waypoint xsi:type="dc:Point" x="181" y="198" />
-        <di:waypoint xsi:type="dc:Point" x="246" y="198" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="151" y="192" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="IntermediateThrowEvent_15myvzx_di" bpmnElement="IntermediateThrowEvent_0ve5ukt">
-        <dc:Bounds x="246" y="180" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="233" y="220" width="64" height="24" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_1jcfnjr_di" bpmnElement="startDeleteResources">
         <dc:Bounds x="-537" y="472" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -371,6 +409,80 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
         <di:waypoint xsi:type="dc:Point" x="71" y="-33" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="-16" y="-39" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_00pyc0n_di" bpmnElement="IntermediateThrowEvent_00pyc0n">
+        <dc:Bounds x="398" y="180" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="389" y="220" width="57" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_156mc3h_di" bpmnElement="ExclusiveGateway_156mc3h" isMarkerVisible="true">
+        <dc:Bounds x="279" y="173" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="266" y="145" width="75" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_1g4uc66_di" bpmnElement="IntermediateThrowEvent_1g4uc66">
+        <dc:Bounds x="286" y="270" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="279" y="308" width="53" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fozgqz_di" bpmnElement="SequenceFlow_1fozgqz">
+        <di:waypoint xsi:type="dc:Point" x="329" y="198" />
+        <di:waypoint xsi:type="dc:Point" x="398" y="198" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="356.5" y="176" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ncja2b_di" bpmnElement="SequenceFlow_1ncja2b">
+        <di:waypoint xsi:type="dc:Point" x="304" y="223" />
+        <di:waypoint xsi:type="dc:Point" x="304" y="270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="274" y="240.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_013rime_di" bpmnElement="SequenceFlow_013rime">
+        <di:waypoint xsi:type="dc:Point" x="147" y="198" />
+        <di:waypoint xsi:type="dc:Point" x="279" y="198" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="213" y="177" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1lsic7i_di" bpmnElement="ServiceTask_1lsic7i">
+        <dc:Bounds x="-121" y="697" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0f3tjbn_di" bpmnElement="ScriptTask_0f3tjbn">
+        <dc:Bounds x="-399" y="697" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0hrkmxb_di" bpmnElement="IntermediateCatchEvent_0hrkmxb">
+        <dc:Bounds x="-531" y="719" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-539" y="759" width="53" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ab3vex_di" bpmnElement="SequenceFlow_1ab3vex">
+        <di:waypoint xsi:type="dc:Point" x="-299" y="737" />
+        <di:waypoint xsi:type="dc:Point" x="-121" y="737" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-255" y="715" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0h5c1bd_di" bpmnElement="SequenceFlow_0h5c1bd">
+        <di:waypoint xsi:type="dc:Point" x="-495" y="737" />
+        <di:waypoint xsi:type="dc:Point" x="-399" y="737" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-492" y="715" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_12rr1yy_di" bpmnElement="SequenceFlow_12rr1yy">
+        <di:waypoint xsi:type="dc:Point" x="-21" y="737" />
+        <di:waypoint xsi:type="dc:Point" x="117" y="737" />
+        <di:waypoint xsi:type="dc:Point" x="117" y="490" />
+        <di:waypoint xsi:type="dc:Point" x="254" y="490" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="132" y="607.5" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
