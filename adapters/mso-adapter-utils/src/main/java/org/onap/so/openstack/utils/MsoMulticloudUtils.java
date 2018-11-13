@@ -72,7 +72,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
     public static final String OOF_DIRECTIVES = "oof_directives";
     public static final String SDNC_DIRECTIVES = "sdnc_directives";
-    public static final String GENERIC_VNF_ID = "generic_vnf_id";
+    public static final String VNF_ID = "vnf_id";
     public static final String VF_MODULE_ID = "vf_module_id";
     public static final String TEMPLATE_TYPE = "template_type";
     public static final List<String> MULTICLOUD_INPUTS =
@@ -173,11 +173,11 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             }
         }
 
-        if (!stackInputs.isEmpty() && stackInputs.containsKey("VF_MODULE_ID")){
-            vfModuleId = (String) stackInputs.get("VF_MODULE_ID");
+        if (!stackInputs.isEmpty() && stackInputs.containsKey(VF_MODULE_ID)){
+            vfModuleId = (String) stackInputs.get(VF_MODULE_ID);
         }
-        if (!stackInputs.isEmpty() && stackInputs.containsKey("GENERIC_VNF_ID")){
-            genericVnfId = (String) stackInputs.get("GENERIC_VNF_ID");
+        if (!stackInputs.isEmpty() && stackInputs.containsKey(VNF_ID)){
+            genericVnfId = (String) stackInputs.get(VNF_ID);
         }
 
         // create the multicloud payload
