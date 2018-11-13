@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_6b96a596",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupName.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-11-13T14:25:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_d93c4c96",
+      "range": {
+        "startLine": 103,
+        "startChar": 16,
+        "endLine": 103,
+        "endChar": 103
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_cb49d18c",
         "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupName.groovy",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-11-09T14:36:51Z",
       "side": 1,
       "message": "In groovy you can just write\n\n    \"Error occurred - volume group id ${execution.getVariable(\u0027CVGN_volumeGroupId\u0027)} is not associated with ${execution.getVariable(\u0027CVGN_volumeGroupName\u0027)}\"",
+      "range": {
+        "startLine": 125,
+        "startChar": 27,
+        "endLine": 126,
+        "endChar": 95
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_776aff1b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupName.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-11-13T14:25:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_cb49d18c",
       "range": {
         "startLine": 125,
         "startChar": 27,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_eb9b75c7",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-11-13T14:25:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_b95e28e8",
+      "range": {
+        "startLine": 84,
+        "startChar": 8,
+        "endLine": 84,
+        "endChar": 14
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_596ffc92",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
         "patchSetId": 1
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_8b93c9a2",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-11-13T14:25:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_596ffc92",
+      "range": {
+        "startLine": 87,
+        "startChar": 28,
+        "endLine": 87,
+        "endChar": 32
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_59f61cd9",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
         "patchSetId": 1
@@ -105,6 +201,30 @@
       "writtenOn": "2018-11-09T06:43:56Z",
       "side": 1,
       "message": "Also strange, I saw that empty String is handled like a null value. \nIf somewhere empty String is handled other way this is candidate for bug for me. How I can guess if this one variable can be null or not?",
+      "range": {
+        "startLine": 88,
+        "startChar": 28,
+        "endLine": 88,
+        "endChar": 30
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_2b909d94",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-11-13T14:25:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_59f61cd9",
       "range": {
         "startLine": 88,
         "startChar": 28,
@@ -164,6 +284,54 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_edbf00cf",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-11-13T14:25:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_6b2545c1",
+      "range": {
+        "startLine": 121,
+        "startChar": 9,
+        "endLine": 121,
+        "endChar": 37
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_8db434f3",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-11-13T14:25:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_3920f848",
+      "range": {
+        "startLine": 121,
+        "startChar": 9,
+        "endLine": 121,
+        "endChar": 37
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_4b03a10f",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
         "patchSetId": 1
@@ -187,6 +355,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_cdba3ce1",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-11-13T14:25:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_4b03a10f",
+      "range": {
+        "startLine": 155,
+        "startChar": 4,
+        "endLine": 155,
+        "endChar": 37
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_7926806a",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
         "patchSetId": 1
@@ -198,6 +390,30 @@
       "writtenOn": "2018-11-09T06:43:56Z",
       "side": 1,
       "message": "Should what?",
+      "range": {
+        "startLine": 156,
+        "startChar": 45,
+        "endLine": 156,
+        "endChar": 51
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_2dee68ed",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-11-13T14:25:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_7926806a",
       "range": {
         "startLine": 156,
         "startChar": 45,
@@ -268,6 +484,30 @@
       "writtenOn": "2018-11-09T06:43:56Z",
       "side": 1,
       "message": "Is this needed?",
+      "range": {
+        "startLine": 191,
+        "startChar": 4,
+        "endLine": 196,
+        "endChar": 5
+      },
+      "revId": "137269665f60c728a9ebbba54d29a9d9ff067204",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_0df124cd",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-11-13T14:25:16Z",
+      "side": 1,
+      "message": "Yes, it is. I cannot use a regular mock for a groovy class.",
+      "parentUuid": "9adffdf1_0b535918",
       "range": {
         "startLine": 191,
         "startChar": 4,
