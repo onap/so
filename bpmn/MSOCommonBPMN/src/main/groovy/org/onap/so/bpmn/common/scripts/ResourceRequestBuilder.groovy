@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.resource;
+package org.onap.so.bpmn.common.scripts;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,10 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-
-import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.json.JSONObject;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
@@ -42,18 +40,15 @@ import org.onap.sdc.toscaparser.api.RequirementAssignment;
 import org.onap.sdc.toscaparser.api.RequirementAssignments;
 import org.onap.sdc.toscaparser.api.functions.GetInput;
 import org.onap.sdc.toscaparser.api.parameters.Input;
+import org.onap.so.bpmn.common.scripts.CatalogDbUtils;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.json.JsonUtils;
-import org.onap.so.client.HttpClient;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.utils.TargetEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public class ResourceRequestBuilder {
 
@@ -65,12 +60,12 @@ public class ResourceRequestBuilder {
 
     static JsonUtils jsonUtil = new JsonUtils();
 
-	public static List<String> getResourceSequence(Execution execution, String serviceUuid) {
+	public static List<String> getResourceSequence(DelegateExecution execution, String serviceUuid) {
 		List<String> resouceSequence = new ArrayList<String>();
 		List<NodeTemplate> resultList = new ArrayList<NodeTemplate>();
 		String csarpath = null;
 		try {
-			csarpath = getCsarFromUuid(serviceUuid);
+			csarpath = getCsarFromUuid(execution, serviceUuid);
 
 			SdcToscaParserFactory toscaParser = SdcToscaParserFactory.getInstance();
 			ISdcCsarHelper iSdcCsarHelper = toscaParser.getSdcCsarHelper(csarpath, false);
@@ -155,8 +150,9 @@ public class ResourceRequestBuilder {
      * @since ONAP Beijing Release
      */
     @SuppressWarnings("unchecked")
-    public static String buildResourceRequestParameters(Execution execution, String serviceUuid, String resourceCustomizationUuid, String serviceParameters) {
-        List<String> resourceList = jsonUtil.StringArrayToList(execution, (String)JsonUtils.getJsonValue(serviceParameters, "resources"));
+    public static String buildResourceRequestParameters(DelegateExecution execution, String serviceUuid, String resourceCustomizationUuid, String serviceParameters) {
+
+        List<String> resourceList = jsonUtil.StringArrayToList(null, (String)JsonUtils.getJsonValue(serviceParameters, "resources"));
         //Get the right location str for resource. default is an empty array.
         String locationConstraints ="[]";
         String resourceInputsFromUui = "";
@@ -184,7 +180,7 @@ public class ResourceRequestBuilder {
         }
 
         try {
-            Map<String, Object> resourceInputsFromServiceDeclaredLevel = buildResouceRequest(serviceUuid, resourceCustomizationUuid, serviceInput);
+            Map<String, Object> resourceInputsFromServiceDeclaredLevel = buildResouceRequest(execution, serviceUuid, resourceCustomizationUuid, serviceInput);
             resourceInputsFromUuiMap.putAll(resourceInputsFromServiceDeclaredLevel);
         } catch(SdcToscaParserException e) {
         	LOGGER.error("SdcToscaParserException", e);
@@ -197,14 +193,14 @@ public class ResourceRequestBuilder {
         return result;
     }
 
-    public static Map<String, Object> buildResouceRequest(String serviceUuid, String resourceCustomizationUuid, Map<String, Object> serviceInputs)
+    public static Map<String, Object> buildResouceRequest(DelegateExecution execution, String serviceUuid, String resourceCustomizationUuid, Map<String, Object> serviceInputs)
             throws SdcToscaParserException {
 
         Map<String, Object> resouceRequest = new HashMap<>();
 
         String csarpath = null;
         try {
-            csarpath = getCsarFromUuid(serviceUuid);
+            csarpath = getCsarFromUuid(execution, serviceUuid);
         } catch(Exception e) {
             LOGGER.debug("csar file is not available for service uuid:" + serviceUuid, e);
             return resouceRequest;
@@ -214,20 +210,27 @@ public class ResourceRequestBuilder {
         ISdcCsarHelper iSdcCsarHelper = toscaParser.getSdcCsarHelper(csarpath, false);
 
         List<Input> serInput = iSdcCsarHelper.getServiceInputs();
-        Optional<NodeTemplate> nodeTemplateOpt = iSdcCsarHelper.getServiceNodeTemplates().stream()
-                .filter(e -> e.getMetaData().getValue(CUSTOMIZATION_UUID).equals(resourceCustomizationUuid)).findFirst();
+//        Optional<NodeTemplate> nodeTemplateOpt = iSdcCsarHelper.getServiceNodeTemplates().stream()
+//                .filter(e -> e.getMetaData().getValue(CUSTOMIZATION_UUID).equals(resourceCustomizationUuid)).findFirst();
+        
+        List<NodeTemplate> nodeTemplates = iSdcCsarHelper.getServiceNodeTemplates();
 
-        if(nodeTemplateOpt.isPresent()) {
-            NodeTemplate nodeTemplate = nodeTemplateOpt.get();
-            LinkedHashMap<String, Property> resourceProperties = nodeTemplate.getProperties();
+        for(NodeTemplate nodeTemplate : nodeTemplates){
+            if(nodeTemplate.getMetaData ().getValue(CUSTOMIZATION_UUID).equals(resourceCustomizationUuid)) {
 
-            for(String key : resourceProperties.keySet()) {
-                Property property = resourceProperties.get(key);
+                LinkedHashMap<String, Property> resourceProperties = nodeTemplate.getProperties();
 
-                Object value = getValue(property.getValue(), serviceInputs, serInput);
-                resouceRequest.put(key, value);
+                for(String key : resourceProperties.keySet()) {
+                    Property property = resourceProperties.get(key);
+
+                    Object value = getValue(property.getValue(), serviceInputs, serInput);
+                    resouceRequest.put(key, value);
+                }
+                
+                break;
             }
         }
+                
         return resouceRequest;
     }
 
@@ -257,16 +260,21 @@ public class ResourceRequestBuilder {
         return value; // return property value
     }
 
-    private static String getCsarFromUuid(String uuid) throws Exception {
-		String catalogEndPoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint");
-    	HttpClient client = new HttpClient(UriBuilder.fromUri(catalogEndPoint).path(SERVICE_URL_TOSCA_CSAR).queryParam("serviceModelUuid", uuid).build().toURL(), "application/json", TargetEntity.CATALOG_DB);
-    	
-        Response response = client.get();
-        String value = response.readEntity(String.class);
+    private static String getCsarFromUuid(DelegateExecution execution, String uuid) throws Exception {
+//		String catalogEndPoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint");
+//    	HttpClient client = new HttpClient(UriBuilder.fromUri(catalogEndPoint).path(SERVICE_URL_TOSCA_CSAR).queryParam("serviceModelUuid", uuid).build().toURL(), "application/json", TargetEntity.CATALOG_DB);
+//    	
+//        Response response = client.get();
+//        String value = response.readEntity(String.class);
 
-        HashMap<String, String> map = new Gson().fromJson(value, new TypeToken<HashMap<String, String>>() {}.getType());
+//        HashMap<String, String> map = new Gson().fromJson(value, new TypeToken<HashMap<String, String>>() {}.getType());
+//        String filePath = System.getProperty("mso.config.path") + "ASDC/" +  map.get("version") + "/" + map.get("name");
+        CatalogDbUtils cutils = new CatalogDbUtils();
+        JSONObject responseJson = cutils.getCsarByServiceModelUuid (execution, uuid);
+        String version = responseJson.getString ("version");
+        String name = responseJson.getString ("name");
 
-        String filePath = System.getProperty("mso.config.path") + "ASDC/" +  map.get("version") + "/" + map.get("name");
+        String filePath =  UrnPropertiesReader.getVariable("mso.config.path") + "ASDC/" + version + "/" + name;
 
         File csarFile = new File(filePath);
 

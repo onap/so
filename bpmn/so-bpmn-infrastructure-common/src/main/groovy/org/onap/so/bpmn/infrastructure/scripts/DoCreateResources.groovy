@@ -47,7 +47,7 @@ import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
+import org.onap.so.bpmn.common.scripts.ResourceRequestBuilder
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
