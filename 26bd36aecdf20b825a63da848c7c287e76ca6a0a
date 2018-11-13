@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_57b01b8b",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1889
+      },
+      "writtenOn": "2018-11-13T07:55:04Z",
+      "side": 1,
+      "message": "I don\u0027t think multicloud should take care of specific parameter for heat template. If the parameter is required by heat template, the parameter/value should be populated/kept in stackInputs, otherwise the default value will be used . So these changes will not fix the issue, the root cause must be some other code which put the mismatched parameter/value into stackInput",
+      "range": {
+        "startLine": 176,
+        "startChar": 0,
+        "endLine": 183,
+        "endChar": 9
+      },
+      "revId": "26bd36aecdf20b825a63da848c7c287e76ca6a0a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
