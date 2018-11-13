@@ -27,6 +27,7 @@ import org.onap.so.bpmn.common.recipe.ResourceInput
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MsoLogger
@@ -44,6 +45,8 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
     JsonUtils jsonUtil = new JsonUtils()
 
     SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
+    
+    MsoUtils msoUtils = new MsoUtils()
 
     public void preProcessRequest(DelegateExecution execution) {
 
@@ -165,44 +168,44 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
                                  <sdncadapter:RequestHeader>
-                                    <sdncadapter:RequestId>${msoUtils.xmlEncode(hdrRequestId)}</sdncadapter:RequestId>
-                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEncode(serviceInstanceId)}</sdncadapter:SvcInstanceId>
-                                    <sdncadapter:SvcAction>${msoUtils.xmlEncode(sdnc_svcAction)}</sdncadapter:SvcAction>
+                                    <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
                                     <sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
                                     <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
                                     <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
                                  </sdncadapter:RequestHeader>
                                  <sdncadapterworkflow:SDNCRequestData>
                                      <request-information>
-                                        <request-id>${msoUtils.xmlEncode(hdrRequestId)}</request-id>
-                                        <request-action>${msoUtils.xmlEncode(sdnc_requestAction)}</request-action>
-                                        <source>${msoUtils.xmlEncode(source)}</source>
+                                        <request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
+                                        <request-action>${msoUtils.xmlEscape(sdnc_requestAction)}</request-action>
+                                        <source>${msoUtils.xmlEscape(source)}</source>
                                         <notification-url></notification-url>
                                         <order-number></order-number>
                                         <order-version></order-version>
                                      </request-information>
                                      <service-information>
-                                        <service-id>${msoUtils.xmlEncode(serviceInstanceId)}</service-id>
-                                        <subscription-service-type>${msoUtils.xmlEncode(serviceType)}</subscription-service-type>
+                                        <service-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-id>
+                                        <subscription-service-type>${msoUtils.xmlEscape(serviceType)}</subscription-service-type>
                                         <onap-model-information>
-                                             <model-invariant-uuid>${msoUtils.xmlEncode(serviceModelInvariantUuid)}</model-invariant-uuid>
-                                             <model-uuid>${msoUtils.xmlEncode(serviceModelUuid)}</model-uuid>
-                                             <model-version>${msoUtils.xmlEncode(serviceModelVersion)}</model-version>
-                                             <model-name>${msoUtils.xmlEncode(serviceModelName)}</model-name>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(serviceModelInvariantUuid)}</model-invariant-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(serviceModelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(serviceModelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(serviceModelName)}</model-name>
                                         </onap-model-information>
-                                        <service-instance-id>${msoUtils.xmlEncode(serviceInstanceId)}</service-instance-id>
-                                        <global-customer-id>${msoUtils.xmlEncode(globalCustomerId)}</global-customer-id>
-                                        <subscriber-name>${msoUtils.xmlEncode(globalCustomerId)}</subscriber-name>
+                                        <service-instance-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
+                                        <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
+                                        <subscriber-name>${msoUtils.xmlEscape(globalCustomerId)}</subscriber-name>
                                      </service-information>
                                      <vnf-information>
                                         <vnf-id>$resourceInstnaceId</vnf-id>
                                         <vnf-type></vnf-type>
                                         <onap-model-information>
-                                             <model-invariant-uuid>${msoUtils.xmlEncode(modelInvariantUuid)}</model-invariant-uuid>
-                                             <model-customization-uuid>${msoUtils.xmlEncode(modelCustomizationUuid)}</model-customization-uuid>
-                                             <model-uuid>${msoUtils.xmlEncode(modelUuid)}</model-uuid>
-                                             <model-version>${msoUtils.xmlEncode(modelVersion)}</model-version>
-                                             <model-name>${msoUtils.xmlEncode(modelName)}</model-name>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
+                                             <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
                                         </onap-model-information>
                                      </vnf-information>
                                      <vnf-request-input>
@@ -223,33 +226,33 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
                                  <sdncadapter:RequestHeader>
-                                    <sdncadapter:RequestId>${msoUtils.xmlEncode(hdrRequestId)}</sdncadapter:RequestId>
-                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEncode(serviceInstanceId)}</sdncadapter:SvcInstanceId>
-                                    <sdncadapter:SvcAction>${msoUtils.xmlEncode(sdnc_svcAction)}</sdncadapter:SvcAction>
+                                    <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
                                     <sdncadapter:SvcOperation>connection-attachment-topology-operation</sdncadapter:SvcOperation>
                                     <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
                                     <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
                                  </sdncadapter:RequestHeader>
                                  <sdncadapterworkflow:SDNCRequestData>
                                      <request-information>
-                                        <request-id>${msoUtils.xmlEncode(hdrRequestId)}</request-id>
-                                        <request-action>${msoUtils.xmlEncode(sdnc_requestAction)}</request-action>
-                                        <source>${msoUtils.xmlEncode(source)}</source>
+                                        <request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
+                                        <request-action>${msoUtils.xmlEscape(sdnc_requestAction)}</request-action>
+                                        <source>${msoUtils.xmlEscape(source)}</source>
                                         <notification-url></notification-url>
                                         <order-number></order-number>
                                         <order-version></order-version>
                                      </request-information>
                                      <service-information>
-                                        <service-id>${msoUtils.xmlEncode(serviceInstanceId)}</service-id>
-                                        <subscription-service-type>${msoUtils.xmlEncode(serviceType)}</subscription-service-type>
+                                        <service-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-id>
+                                        <subscription-service-type>${msoUtils.xmlEscape(serviceType)}</subscription-service-type>
                                         <onap-model-information>
-                                             <model-invariant-uuid>${msoUtils.xmlEncode(serviceModelInvariantUuid)}</model-invariant-uuid>
-                                             <model-uuid>${msoUtils.xmlEncode(serviceModelUuid)}</model-uuid>
-                                             <model-version>${msoUtils.xmlEncode(serviceModelVersion)}</model-version>
-                                             <model-name>${msoUtils.xmlEncode(serviceModelName)}</model-name>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(serviceModelInvariantUuid)}</model-invariant-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(serviceModelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(serviceModelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(serviceModelName)}</model-name>
                                         </onap-model-information>
-                                        <service-instance-id>${msoUtils.xmlEncode(serviceInstanceId)}</service-instance-id>
-                                        <global-customer-id>${msoUtils.xmlEncode(globalCustomerId)}</global-customer-id>
+                                        <service-instance-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
+                                        <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
                                         <subscriber-name></subscriber-name>
                                      </service-information>
                                      <allotted-resource-information>
@@ -257,11 +260,11 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
                                         <allotted-resource-type></allotted-resource-type>
                                         <parent-service-instance-id></parent-service-instance-id>
                                         <onap-model-information>
-                                             <model-invariant-uuid>${msoUtils.xmlEncode(modelInvariantUuid)}</model-invariant-uuid>
-                                             <model-customization-uuid>${msoUtils.xmlEncode(modelCustomizationUuid)}</model-customization-uuid>
-                                             <model-uuid>${msoUtils.xmlEncode(modelUuid)}</model-uuid>
-                                             <model-version>${msoUtils.xmlEncode(modelVersion)}</model-version>
-                                             <model-name>${msoUtils.xmlEncode(modelName)}</model-name>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
+                                             <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
                                         </onap-model-information>
                                      </allotted-resource-information>
                                      <connection-attachment-request-input>
@@ -275,42 +278,42 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
                                  <sdncadapter:RequestHeader>
-                                    <sdncadapter:RequestId>${msoUtils.xmlEncode(hdrRequestId)}</sdncadapter:RequestId>
-                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEncode(serviceInstanceId)}</sdncadapter:SvcInstanceId>
-                                    <sdncadapter:SvcAction>${msoUtils.xmlEncode(sdnc_svcAction)}</sdncadapter:SvcAction>
+                                    <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
                                     <sdncadapter:SvcOperation>network-topology-operation</sdncadapter:SvcOperation>
                                     <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
                                     <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
                                  </sdncadapter:RequestHeader>
                                  <sdncadapterworkflow:SDNCRequestData>
                                      <request-information>
-                                        <request-id>${msoUtils.xmlEncode(hdrRequestId)}</request-id>
-                                        <request-action>${msoUtils.xmlEncode(sdnc_requestAction)}</request-action>
-                                        <source>${msoUtils.xmlEncode(source)}</source>
+                                        <request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
+                                        <request-action>${msoUtils.xmlEscape(sdnc_requestAction)}</request-action>
+                                        <source>${msoUtils.xmlEscape(source)}</source>
                                         <notification-url></notification-url>
                                         <order-number></order-number>
                                         <order-version></order-version>
                                      </request-information>
                                      <service-information>
-                                        <service-id>${msoUtils.xmlEncode(serviceInstanceId)}</service-id>
-                                        <subscription-service-type>${msoUtils.xmlEncode(serviceType)}</subscription-service-type>
+                                        <service-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-id>
+                                        <subscription-service-type>${msoUtils.xmlEscape(serviceType)}</subscription-service-type>
                                         <onap-model-information>
-                                             <model-invariant-uuid>${msoUtils.xmlEncode(serviceModelInvariantUuid)}</model-invariant-uuid>
-                                             <model-uuid>${msoUtils.xmlEncode(serviceModelUuid)}</model-uuid>
-                                             <model-version>${msoUtils.xmlEncode(serviceModelVersion)}</model-version>
-                                             <model-name>${msoUtils.xmlEncode(serviceModelName)}</model-name>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(serviceModelInvariantUuid)}</model-invariant-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(serviceModelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(serviceModelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(serviceModelName)}</model-name>
                                         </onap-model-information>
-                                        <service-instance-id>${msoUtils.xmlEncode(serviceInstanceId)}</service-instance-id>
-                                        <global-customer-id>${msoUtils.xmlEncode(globalCustomerId)}</global-customer-id>
+                                        <service-instance-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
+                                        <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
                                      </service-information>
                                      <network-information>
                                         <network-id>$resourceInstnaceId</network-id>
                                         <onap-model-information>
-                                             <model-invariant-uuid>${msoUtils.xmlEncode(modelInvariantUuid)}</model-invariant-uuid>
-                                             <model-customization-uuid>${msoUtils.xmlEncode(modelCustomizationUuid)}</model-customization-uuid>
-                                             <model-uuid>${msoUtils.xmlEncode(modelUuid)}</model-uuid>
-                                             <model-version>${msoUtils.xmlEncode(modelVersion)}</model-version>
-                                             <model-name>${msoUtils.xmlEncode(modelName)}</model-name>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
+                                             <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
                                         </onap-model-information>
                                      </network-information>
                                      <network-request-input>
@@ -352,13 +355,13 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
                         <soapenv:Header/>
                 <soapenv:Body>
                     <ns:updateResourceOperationStatus>
-                               <operType>${msoUtils.xmlEncode(operType)}</operType>
-                               <operationId>${msoUtils.xmlEncode(operationId)}</operationId>
-                               <progress>${msoUtils.xmlEncode(progress)}</progress>
-                               <resourceTemplateUUID>${msoUtils.xmlEncode(resourceCustomizationUuid)}</resourceTemplateUUID>
-                               <serviceId>${msoUtils.xmlEncode(serviceInstanceId)}</serviceId>
-                               <status>${msoUtils.xmlEncode(status)}</status>
-                               <statusDescription>${msoUtils.xmlEncode(statusDescription)}</statusDescription>
+                               <operType>${msoUtils.xmlEscape(operType)}</operType>
+                               <operationId>${msoUtils.xmlEscape(operationId)}</operationId>
+                               <progress>${msoUtils.xmlEscape(progress)}</progress>
+                               <resourceTemplateUUID>${msoUtils.xmlEscape(resourceCustomizationUuid)}</resourceTemplateUUID>
+                               <serviceId>${msoUtils.xmlEscape(serviceInstanceId)}</serviceId>
+                               <status>${msoUtils.xmlEscape(status)}</status>
+                               <statusDescription>${msoUtils.xmlEscape(statusDescription)}</statusDescription>
                     </ns:updateResourceOperationStatus>
                 </soapenv:Body>
                 </soapenv:Envelope>""";
