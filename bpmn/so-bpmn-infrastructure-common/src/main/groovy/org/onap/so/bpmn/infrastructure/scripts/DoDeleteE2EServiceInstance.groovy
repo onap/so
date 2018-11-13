@@ -21,6 +21,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.apache.commons.lang3.StringUtils.*;
 
+import javax.ws.rs.core.Response
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -29,16 +30,19 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
 import org.json.JSONObject
-import org.onap.so.bpmn.common.scripts.AaiUtil
+
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
-import org.onap.so.rest.APIResponse
+import org.onap.so.bpmn.core.UrnPropertiesReader
+
+import org.onap.so.utils.TargetEntity
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.springframework.web.util.UriUtils;
+import org.onap.so.client.HttpClient
+import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -207,7 +211,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                         }
 
                         execution.setVariable("serviceRelationShip", jArray.toString())
-						
+
 //                        //test(siData)
 //                        NodeList nodeList = serviceXml.getElementsByTagName("relationship")
 //                        JSONArray jArray = new JSONArray()
@@ -276,8 +280,8 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 //                                    }
 //                                // for SP-Partner
 //                                }else if (e.equals("sp-partner")){
-//									
-//								}								
+//
+//								}
 //                            }
 //                        }
 //                        execution.setVariable("serviceRelationShip", jArray.toString())
@@ -311,16 +315,16 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         }
         utils.log("INFO"," *** Exit postProcessAAIGET *** ", isDebugEnabled)
     }
-	
+
 	private JSONObject getRelationShipData(node, isDebugEnabled){
 		JSONObject jObj = new JSONObject()
-		
+
 		def relation  = utils.nodeToString(node)
 		def rt  = utils.getNodeText(relation, "related-to")
-		
+
 		def rl  = utils.getNodeText(relation, "related-link")
 		utils.log("INFO", "ServiceInstance Related NS/Configuration :" + rl, isDebugEnabled)
-		
+
 		def rl_datas = utils.getIdenticalChildren(node, "relationship-data")
 		for(def rl_data : rl_datas) {
 			def eKey =  utils.getChildNodeText(rl_data, "relationship-key")
@@ -398,7 +402,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
     }
 
 	private void generateRelatedResourceInfo(String response, JSONObject jObj){
-		
+
 		def xml = new XmlSlurper().parseText(response)
 		def rtn = xml.childNodes()
 		while (rtn.hasNext()) {
@@ -408,26 +412,30 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 			jObj.put(key, value)
 		}
 	}
-	
+
 	private JSONObject getRelatedResourceInAAI (DelegateExecution execution, JSONObject jObj)
 	{
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** Started getRelatedResourceInAAI *****",  isDebugEnabled)		
-			
-		AaiUtil aaiUriUtil = new AaiUtil()
-		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+		utils.log("INFO"," ***** Started getRelatedResourceInAAI *****",  isDebugEnabled)
+
+//		AaiUtil aaiUriUtil = new AaiUtil()
+//		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
+        String aai_endpoint = UrnPropertiesReader.getVariable("aai.endpoint", execution)
 		String urlLink = jObj.get("resourceLinkUrl")
 		String serviceAaiPath = "${aai_endpoint}${urlLink}"
-		APIResponse response = aaiUriUtil.executeAAIGetCall(execution, serviceAaiPath)
-		int responseCode = response.getStatusCode()
+
+		URL url = new URL(serviceAaiPath)
+		HttpClient client = new HttpClient(url, "application/xml", TargetEntity.AAI)
+
+
+		Response response = client.get()
+		int responseCode = response.getStatus()
 		execution.setVariable(Prefix + "GeRelatedResourceResponseCode", responseCode)
 		utils.log("DEBUG", "  Get RelatedResource code is: " + responseCode, isDebugEnabled)
 
-		String aaiResponse = response.getResponseBodyAsString()
-		aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
-		aaiResponse = aaiResponse.replaceAll("&", "&amp;")
+		String aaiResponse = response.readEntity(String.class)
 		execution.setVariable(Prefix + "GetRelatedResourceResponse", aaiResponse)
-		
+
 		//Process Response
 		if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
 			//200 OK 201 CREATED 202 ACCEPTED
@@ -435,9 +443,9 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 			utils.log("DEBUG", "GET RelatedResource Received a Good Response", isDebugEnabled)
 			execution.setVariable(Prefix + "SuccessIndicator", true)
 			execution.setVariable(Prefix + "FoundIndicator", true)
-			
+
 			generateRelatedResourceInfo(aaiResponse, jObj)
-			
+
 			//get model-invariant-uuid and model-uuid
 			String modelInvariantId = ""
 			String modelUuid = ""
@@ -447,19 +455,19 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 				modelUuid = jObj.get("model-version-id")
 				modelCustomizationId = jObj.get("model-customization-id")
 			}
-			
-			jObj.put("modelInvariantId", modelInvariantId)			
-			jObj.put("modelVersionId", modelUuid)			
+
+			jObj.put("modelInvariantId", modelInvariantId)
+			jObj.put("modelVersionId", modelUuid)
 			jObj.put("modelCustomizationId", modelCustomizationId)
 		}
 		else
 		{
-			utils.log("ERROR", "Get RelatedResource Received a Bad Response Code. Response Code is: " + responseCode, isDebugEnabled)			
+			utils.log("ERROR", "Get RelatedResource Received a Bad Response Code. Response Code is: " + responseCode, isDebugEnabled)
 		}
-		
+
 		utils.log("INFO", " ***** Exit getRelatedResourceInAAI *****", isDebugEnabled)
-		return jObj;	
-		
+		return jObj;
+
 	}
 
     public void postDecomposeService(DelegateExecution execution) {
@@ -491,7 +499,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                 relationShipList.each {
 
                     JSONObject obj = getRelatedResourceInAAI(execution, (JSONObject)it)
-					
+
                     for (Resource resource : deleteResourceList) {
 
                         String modelName = resource.getModelInfo().getModelName()
@@ -508,10 +516,16 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                         }
                     }
                 }
-            }          
+            }
 
             // only delete real existing resources
             execution.setVariable("deleteResourceList", deleteRealResourceList)
+            
+            boolean isDeleteResourceListValid = false
+            if(deleteRealResourceList.size() > 0) {
+                isDeleteResourceListValid = true
+            }
+            execution.setVariable("isDeleteResourceListValid", isDeleteResourceListValid)
 
             utils.log("DEBUG", "delete resource list : " + deleteRealResourceList, isDebugEnabled)
         } catch (Exception ex) {
@@ -547,8 +561,8 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                     resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
             }
 
-
-            execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
+            def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
+            execution.setVariable("URN_mso_adapters_openecomp_db_endpoint", dbAdapterEndpoint)
 
             String payload =
                     """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -574,6 +588,53 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }
         utils.log("INFO", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
+    }
+    
+    public void prepareUpdateServiceOperationStatus(DelegateExecution execution){
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        utils.log("DEBUG", " ======== STARTED prepareUpdateServiceOperationStatus Process ======== ", isDebugEnabled)
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            String operationId = execution.getVariable("operationId")
+            String userId = ""
+            String result = execution.getVariable("result")
+            String progress = execution.getVariable("progress")
+            String reason = ""
+            String operationContent = execution.getVariable("operationContent")
+            
+            serviceId = UriUtils.encode(serviceId,"UTF-8")
+
+            def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
+            execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+            utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+
+            String payload =
+                    """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.onap.so/requestsdb">
+                        <soapenv:Header/>
+                        <soapenv:Body>
+                            <ns:updateServiceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
+                            <serviceId>${MsoUtils.xmlEscape(serviceId)}</serviceId>
+                            <operationId>${MsoUtils.xmlEscape(operationId)}</operationId>
+                            <operationType>DELETE</operationType>
+                            <userId>${MsoUtils.xmlEscape(userId)}</userId>
+                            <result>${MsoUtils.xmlEscape(result)}</result>
+                            <operationContent>${MsoUtils.xmlEscape(operationContent)}</operationContent>
+                            <progress>${MsoUtils.xmlEscape(progress)}</progress>
+                            <reason>${MsoUtils.xmlEscape(reason)}</reason>
+                        </ns:updateServiceOperationStatus>
+                    </soapenv:Body>
+                </soapenv:Envelope>"""
+
+            payload = utils.formatXml(payload)
+            execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
+            utils.log("DEBUG", "Outgoing updateServiceOperStatusRequest: \n" + payload, isDebugEnabled)
+
+        }catch(Exception e){
+            utils.log("ERROR", "Exception Occured Processing prepareUpdateServiceOperationStatus. Exception is:\n" + e, isDebugEnabled)
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareUpdateServiceOperationStatus Method:\n" + e.getMessage())
+        }
+        utils.log("DEBUG", "======== COMPLETED prepareUpdateServiceOperationStatus Process ======== ", isDebugEnabled)
     }
 
      /**

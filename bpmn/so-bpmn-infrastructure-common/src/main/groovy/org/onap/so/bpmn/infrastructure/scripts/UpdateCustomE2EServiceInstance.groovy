@@ -36,6 +36,7 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper
@@ -152,8 +153,6 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			execution.setVariable("operationType", "update")
 			execution.setVariable("hasResourcetoUpdate", false)
 
-			execution.setVariable("URN_mso_adapters_openecomp_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
-
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
@@ -247,7 +246,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			execution.setVariable("operationId", operationId)
 			execution.setVariable("operationType", operationType)
 
-			def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+			def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
 			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
 			utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
 
@@ -308,11 +307,10 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			execution.setVariable("operationId", operationId)
 			execution.setVariable("operationType", operationType)
 
-			def dbAdapterEndpoint = "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter"
-			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+            def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
+            execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
 			utils.log("INFO", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
 
-			execution.setVariable("URN_mso_openecomp_adapters_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
 			String payload =
 				"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                         xmlns:ns="http://org.onap.so/requestsdb">

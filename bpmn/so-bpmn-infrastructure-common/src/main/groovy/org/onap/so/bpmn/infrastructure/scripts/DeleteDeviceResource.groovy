@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,26 +27,30 @@ import static org.apache.commons.lang3.StringUtils.*;
 import groovy.xml.XmlUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.aai.domain.yang.Device
 import org.onap.so.bpmn.common.recipe.ResourceInput;
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder.AbstractBuilder
+import org.onap.so.client.HttpClient
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 
 import java.util.UUID;
-
+import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
-import org.onap.so.rest.APIResponse;
-import org.onap.so.bpmn.common.scripts.AaiUtil
+import javax.ws.rs.core.MediaType
+import org.apache.commons.codec.binary.Base64
+import org.onap.so.utils.TargetEntity
+
 
 /**
  * This groovy class supports the <class>DeleteDeviceResource.bpmn</class> process.
@@ -95,53 +99,31 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
             execution.setVariable(Prefix + "serviceInstanceId", resourceInputObj.getServiceInstanceId())
             execution.setVariable("mso-request-id", requestId)
 
-        } catch (BpmnError e) {
-            throw e;
         } catch (Exception ex){
             String msg = "Exception in preProcessRequest " + ex.getMessage()
             msoLogger.debug(msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+//            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
 	private void getDeviceInAAI(DelegateExecution execution) {
 		msoLogger.info(" ***** Started getDeviceInAAI *****")
-		
+        try {
 		String deviceId = execution.getVariable(Prefix + "DeviceId")
-		AaiUtil aaiUriUtil = new AaiUtil()
-		String aai_uri = aaiUriUtil.getNetworkDeviceUri(execution)
-		String aai_endpoint = execution.getVariable("URN_aai_endpoint")
-		String serviceAaiPath = "${aai_endpoint}${aai_uri}/" + UriUtils.encode(deviceId,"UTF-8")
-		execution.setVariable(Prefix + "ServiceAaiPath", serviceAaiPath)
-		
-		APIResponse response = aaiUriUtil.executeAAIGetCall(execution, serviceAaiPath)
-		int responseCode = response.getStatusCode()
-		execution.setVariable(Prefix + "GetDeviceResponseCode", responseCode)
-		msoLogger.debug("  Get device response code is: " + responseCode)
+        
+        AAIResourcesClient client = new AAIResourcesClient()
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.DEVICE, deviceId)
+        Device dev = client.get(uri).asBean(Device.class).get()
+        
+        String devClass = dev.getClass ()
+        execution.setVariable(Prefix + "DeviceClass", devClass)
+        msoLogger.debug(" DeviceClass is: " + devClass)
 
-		String aaiResponse = response.getResponseBodyAsString()
-		aaiResponse = StringEscapeUtils.unescapeXml(aaiResponse)
-		aaiResponse = aaiResponse.replaceAll("&", "&amp;")
-		execution.setVariable(Prefix + "GetDeviceResponse", aaiResponse)
-
-		//Process Response
-		if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
-			//200 OK 201 CREATED 202 ACCEPTED
-		{
-			msoLogger.debug("GET Device Received a Good Response")
-			execution.setVariable(Prefix + "SuccessIndicator", true)
-			execution.setVariable(Prefix + "FoundIndicator", true)
-			
-			String devClass = utils.getNodeText1(aaiResponse, "device_class")
-			execution.setVariable(Prefix + "DeviceClass", devClass)
-			msoLogger.debug(" DeviceClass is: " + devClass)
-
-		}
-		else
-		{
-			msoLogger.debug("Get DeviceInAAI Received a Bad Response Code. Response Code is: " + responseCode)
-
-		}
+        } catch (Exception ex){
+            String msg = "Exception in getDeviceInAAI " + ex.getMessage()
+            msoLogger.debug(msg)
+//            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+        }
 
 		msoLogger.info(" ***** Exit getDeviceInAAI *****")
 	}
@@ -161,12 +143,12 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
         } catch (Exception ex){
             String msg = "Exception in checkDevType " + ex.getMessage()
             msoLogger.debug( msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+//            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
 	private void setProgressUpdateVariables(DelegateExecution execution, String body) {
-		def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+		def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
 		execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
 		execution.setVariable("CVFMI_updateResOperStatusRequest", body)
 	}
@@ -213,7 +195,7 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
         } catch (Exception ex){
             String msg = "Exception in getVNFTemplatefromSDC " + ex.getMessage()
             msoLogger.debug( msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+//            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
@@ -226,7 +208,7 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
         } catch (Exception ex){
             String msg = "Exception in postVNFInfoProcess " + ex.getMessage()
             msoLogger.debug( msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+//            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
@@ -244,7 +226,7 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
         } catch (Exception ex) {
             String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
             msoLogger.debug( msg)
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+//            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
         msoLogger.debug(" ***** Exit sendSyncResopnse *****")
     }
