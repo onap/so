@@ -32,9 +32,6 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.rest.APIResponse;
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
 import org.onap.so.logger.MsoLogger
 import org.onap.so.logger.MessageEnum
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;

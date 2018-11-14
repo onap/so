@@ -30,6 +30,7 @@ import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.MsoLogger
 
 /**
@@ -370,13 +371,14 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
     }
 
     private void setProgressUpdateVariables(DelegateExecution execution, String body) {
-        def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+        def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
         execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
         execution.setVariable("CVFMI_updateResOperStatusRequest", body)
     }
 
     public void postDeactivateSDNCCall(DelegateExecution execution) {
-        msoLogger.info(" ***** Started prepareSDNCRequest *****")        String responseCode = execution.getVariable(Prefix + "sdncDeleteReturnCode")
+        msoLogger.info(" ***** Started prepareSDNCRequest *****")        
+        String responseCode = execution.getVariable(Prefix + "sdncDeleteReturnCode")
         String responseObj = execution.getVariable(Prefix + "SuccessIndicator")
 
         msoLogger.info("response from sdnc, response code :" + responseCode + "  response object :" + responseObj)

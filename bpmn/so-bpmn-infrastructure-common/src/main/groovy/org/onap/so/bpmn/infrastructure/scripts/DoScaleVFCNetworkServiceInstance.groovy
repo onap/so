@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,12 +31,10 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import com.fasterxml.jackson.databind.ObjectMapper
-
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
-import org.onap.so.rest.APIResponse;
+import javax.ws.rs.core.Response
 
 import org.onap.so.bpmn.infrastructure.vfcmodel.ScaleResource
+import org.onap.so.client.HttpClient
 import org.onap.so.bpmn.infrastructure.vfcmodel.ScaleNsByStepsData
 import org.onap.so.bpmn.infrastructure.vfcmodel.ScaleNsData
 
@@ -47,6 +45,7 @@ import org.onap.so.bpmn.infrastructure.vfcmodel.NsParameters
 import org.onap.so.bpmn.infrastructure.vfcmodel.LocationConstraint
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.onap.so.utils.TargetEntity
 
 
 
@@ -114,10 +113,10 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
 
             String url = host + scaleUrl.replaceAll("\\{nsInstanceId\\}", nsInstanceId)
 
-            APIResponse apiResponse = postRequest(execution, url, reqBody)
+            Response apiResponse = postRequest(execution, url, reqBody)
 
-            String returnCode = apiResponse.getStatusCode()
-            String aaiResponseAsString = apiResponse.getResponseBodyAsString()
+            String returnCode = apiResponse.getStatus()
+            String aaiResponseAsString = apiResponse.readEntity(String.class)
             String jobId = ""
             if (returnCode == "200" || returnCode == "202") {
                 jobId = jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
@@ -156,10 +155,10 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         nsOperationKey.setOperationId(execution.getVariable("operationId"))
         String queryReqBody = objectToJsonStr(nsOperationKey)
 
-        APIResponse apiResponse = postRequest(execution,url, queryReqBody)
+        Response apiResponse = postRequest(execution,url, queryReqBody)
 
-        String returnCode = apiResponse.getStatusCode()
-        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
+        String returnCode = apiResponse.getStatus()
+        String aaiResponseAsString = apiResponse.readEntity(String.class)
 
         String operationStatus = "error"
 
@@ -195,16 +194,19 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private APIResponse postRequest(DelegateExecution execution, String url, String requestBody){
+    private Response postRequest(DelegateExecution execution, String urlString, String requestBody){
         msoLogger.trace("Started Execute VFC adapter Post Process ")
-        msoLogger.info("url:"+url +"\nrequestBody:"+ requestBody)
-        APIResponse apiResponse = null
+        msoLogger.info("url:"+urlString +"\nrequestBody:"+ requestBody)
+        Response apiResponse = null
         try{
-            RESTConfig config = new RESTConfig(url)
-            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
-//            RESTClient client = new RESTClient(config).addHeader("Content-Type", "application/json").addHeader("Accept","application/json").addHeader("Authorization","Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
-            apiResponse = client.httpPost(requestBody)
-            msoLogger.info("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
+			URL url = new URL(urlString);
+
+			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
+			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
+
+			apiResponse = httpClient.post(requestBody)
+
+            msoLogger.info("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
             msoLogger.trace("Completed Execute VF-C adapter Post Process ")
         }catch(Exception e){
             msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing VFC Post Call.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e);

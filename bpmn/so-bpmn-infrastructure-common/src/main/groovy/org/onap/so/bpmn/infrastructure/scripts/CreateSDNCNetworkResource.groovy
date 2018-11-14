@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,8 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONObject
 import org.json.XML
+import org.onap.aai.domain.yang.ServiceInstance
+import org.onap.aai.domain.yang.ServiceInstances
 import org.onap.so.bpmn.common.recipe.ResourceInput
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.onap.so.bpmn.common.scripts.AaiUtil
@@ -32,8 +34,12 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MsoLogger
-import org.onap.so.rest.APIResponse
 
 import static org.apache.commons.lang3.StringUtils.*
 
@@ -53,7 +59,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     MsoUtils msoUtils = new MsoUtils()
 
     public void preProcessRequest(DelegateExecution execution){
-        
+
         msoLogger.info(" ***** Started preProcessRequest *****")
         try {
 
@@ -211,25 +217,18 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 def vpnName = StringUtils.containsIgnoreCase(modelName, "sotnvpnattachment") ? "sotnvpnattachmentvf_sotncondition_sotnVpnName" : "sdwanvpnattachmentvf_sdwancondition_sdwanVpnName"
                 String parentServiceName = jsonUtil.getJsonValueForKey(resourceInputObj.getRequestsInputs(), vpnName)
 
-                AaiUtil aaiUtil = new AaiUtil(this)
-                String aai_endpoint = execution.getVariable("URN_aai_endpoint")
-                String customerUri = aaiUtil.getBusinessCustomerUri(execution) + "/" + customer
-                String aai_service_query_url = aai_endpoint + customerUri + "/service-subscriptions/service-subscription/" + serviceType + "/service-instances?service-instance-name=" + parentServiceName
+				AAIResourcesClient client = new AAIResourcesClient()
+				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer, serviceType).queryParam("service-instance-name", parentServiceName)
+				ServiceInstances sis = client.get(uri).asBean(ServiceInstances.class).get()
+				ServiceInstance si = sis.getServiceInstance().get(0)
 
-                APIResponse aaiResponse = aaiUtil.executeAAIGetCall(execution, aai_service_query_url)
-                def parentServiceInstanceId = getParentServiceInstnaceId(aaiResponse)
-                execution.setVariable("parentServiceInstanceId", parentServiceInstanceId)
+				def parentServiceInstanceId = si.getServiceInstanceId()
+				execution.setVariable("parentServiceInstanceId", parentServiceInstanceId)
+
                 break
-
             default:
                 break
         }
-    }
-
-    private String getParentServiceInstnaceId(APIResponse aaiResponse) {
-        String response = aaiResponse.getResponseBodyAsString()
-        def xmlResp = new XmlParser().parseText(response)
-        return "${xmlResp?."service-instance"[0]?."service-instance-id"[0]?.text()}"
     }
 
     /**
@@ -391,7 +390,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             // for SDWANConnectivity and SOTNConnectivity:
                 default:
                     sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
-                                                              xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
+                                                              xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
                                  <sdncadapter:RequestHeader>
                                     <sdncadapter:RequestId>${hdrRequestId}</sdncadapter:RequestId>
@@ -453,7 +452,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     private void setProgressUpdateVariables(DelegateExecution execution, String body) {
-        def dbAdapterEndpoint = execution.getVariable("URN_mso_adapters_openecomp_db_endpoint")
+        def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
         execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
         execution.setVariable("CVFMI_updateResOperStatusRequest", body)
     }
