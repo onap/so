@@ -16,6 +16,24 @@
       "revId": "5f49f45e912aa3eac865e2ee490631906f37ae85",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_60f4725b",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V4.13.2__Add_Default_NeutronNetwork.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-11-14T21:44:31Z",
+      "side": 1,
+      "message": "Yea, I noticed that eclipse had sorted the version scripts oddly, so I renamed the file to avoid conflicts in flyway",
+      "parentUuid": "9adffdf1_e0d862f1",
+      "revId": "5f49f45e912aa3eac865e2ee490631906f37ae85",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
