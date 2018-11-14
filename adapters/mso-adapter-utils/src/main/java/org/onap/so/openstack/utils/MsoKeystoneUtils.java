@@ -658,7 +658,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
 
         public boolean isExpired () {
             // adding arbitrary guard timer of 5 minutes
-            return expires == null || System.currentTimeMillis() > (expires.getTimeInMillis() - 300000);
+            return expires == null || System.currentTimeMillis() > (expires.getTimeInMillis() - 1800000);
         }
     }
 
