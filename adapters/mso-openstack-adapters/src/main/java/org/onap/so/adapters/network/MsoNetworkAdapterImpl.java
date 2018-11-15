@@ -1365,19 +1365,20 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             Map <String, String> sMap = new HashMap <> ();
             if (outputs != null) {
-            	for (String key : outputs.keySet ()) {
-            		if (key != null && key.startsWith ("subnet_id_")) //multiples subnet_%aaid% outputs
-            		{
-            			String subnetUUId = (String) outputs.get(key);
-            			sMap.put (key.substring("subnet_id_".length()), subnetUUId);
-            		}
-            		else if (key != null && key.startsWith ("subnet")) //one subnet output expected
-            		{
-            			Map <String, String> map = getSubnetUUId(key, outputs, null);
-            			sMap.putAll(map);
-            		}
+                for (Map.Entry <String, Object> entry : outputs.entrySet()) {
+                    String key= entry.getKey();
+                    if (key != null && key.startsWith ("subnet_id_")) //multiples subnet_%aaid% outputs
+                    {
+                        String subnetUUId = (String) outputs.get(key);
+                        sMap.put (key.substring("subnet_id_".length()), subnetUUId);
+                    }
+                    else if (key != null && key.startsWith ("subnet")) //one subnet output expected
+                    {
+                        Map <String, String> map = getSubnetUUId(key, outputs, null);
+                        sMap.putAll(map);
+                    }
 
-            	}
+                }
             }
             subnetIdMap.value = sMap;
         } else {
@@ -1404,7 +1405,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 neutronNetworkId.value = netInfo.getId ();
                 status.value = netInfo.getStatus ();
                 if (vlans != null)
-                	vlans.value = netInfo.getVlans ();
+                    vlans.value = netInfo.getVlans ();
 
                 LOGGER.debug ("Network " + networkNameOrId
                               + " found ("
@@ -1418,7 +1419,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 status.value = NetworkStatus.NOTFOUND;
                 neutronNetworkId.value = null;
                 if (vlans != null)
-                	vlans.value = new ArrayList<>();
+                    vlans.value = new ArrayList<>();
 
                 LOGGER.debug ("Network " + networkNameOrId + " not found");
             }
@@ -1490,17 +1491,17 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             // Retrieve the Network Resource definition
             NetworkResource networkResource = null;
             
-        	if (commonUtils.isNullOrEmpty(modelCustomizationUuid)) {
-        		if (!commonUtils.isNullOrEmpty(networkType)) {
-        			networkResource = networkResourceRepo.findFirstByModelNameOrderByModelVersionDesc(networkType);
-        		}
-			} else {
-				NetworkResourceCustomization nrc = networkCustomRepo.findOneByModelCustomizationUUID(modelCustomizationUuid);
-				if (nrc != null) {
-					networkResource = nrc.getNetworkResource();
-				}
-			}
-        	
+            if (commonUtils.isNullOrEmpty(modelCustomizationUuid)) {
+                if (!commonUtils.isNullOrEmpty(networkType)) {
+                    networkResource = networkResourceRepo.findFirstByModelNameOrderByModelVersionDesc(networkType);
+                }
+            } else {
+                NetworkResourceCustomization nrc = networkCustomRepo.findOneByModelCustomizationUUID(modelCustomizationUuid);
+                if (nrc != null) {
+                    networkResource = nrc.getNetworkResource();
+                }
+            }
+            
             String mode = "";
             if (networkResource != null) {
                 LOGGER.debug ("Got Network definition from Catalog: " + networkResource.toString ());
@@ -1520,7 +1521,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     networkDeleted.value = deleted;
                 } catch (MsoException me) {
                     me.addContext ("DeleteNetwork");
-                	String error = "Delete Network (neutron): " + networkId
+                    String error = "Delete Network (neutron): " + networkId
                                    + " in "
                                    + cloudSiteId
                                    + "/"
@@ -1538,21 +1539,21 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 try {
                     // The deleteStack function in MsoHeatUtils returns NOTFOUND if the stack was not found or if the stack was deleted.
                     //  So query first to report back if stack WAS deleted or just NOTOFUND
-                	StackInfo heatStack = null;
-                	heatStack = heat.queryStack(cloudSiteId, tenantId, networkId);
-                	if (heatStack != null && heatStack.getStatus() != HeatStatus.NOTFOUND)
-                	{
-                		heat.deleteStack (tenantId, cloudSiteId, networkId, true);
-                		LOGGER.recordMetricEvent (deleteStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "DeleteStack", null);
-                		networkDeleted.value = true;
-                	}
-                	else
-                	{
-                		networkDeleted.value = false;
-                	}
+                    StackInfo heatStack = null;
+                    heatStack = heat.queryStack(cloudSiteId, tenantId, networkId);
+                    if (heatStack != null && heatStack.getStatus() != HeatStatus.NOTFOUND)
+                    {
+                        heat.deleteStack (tenantId, cloudSiteId, networkId, true);
+                        LOGGER.recordMetricEvent (deleteStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully received response from Open Stack", "OpenStack", "DeleteStack", null);
+                        networkDeleted.value = true;
+                    }
+                    else
+                    {
+                        networkDeleted.value = false;
+                    }
                 } catch (MsoException me) {
                     me.addContext ("DeleteNetwork");
-                	String error = "Delete Network (heat): " + networkId
+                    String error = "Delete Network (heat): " + networkId
                                    + " in "
                                    + cloudSiteId
                                    + "/"
@@ -1588,7 +1589,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         long startTime = System.currentTimeMillis ();
 
         if (rollback == null) {
-        	LOGGER.error (MessageEnum.RA_ROLLBACK_NULL, "Openstack", "", MsoLogger.ErrorCode.DataError, "rollback is null");
+            LOGGER.error (MessageEnum.RA_ROLLBACK_NULL, "Openstack", "", MsoLogger.ErrorCode.DataError, "rollback is null");
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, "No action to perform");
             return;
         }
@@ -1608,11 +1609,11 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             // Retrieve the Network Resource definition
             NetworkResource networkResource = null;
-        	if (commonUtils.isNullOrEmpty(modelCustomizationUuid)) {
-				networkResource = networkCustomRepo.findOneByNetworkType(networkType).getNetworkResource(); 
-			} else {
-				networkResource = networkCustomRepo.findOneByModelCustomizationUUID(modelCustomizationUuid).getNetworkResource();
-			}
+            if (commonUtils.isNullOrEmpty(modelCustomizationUuid)) {
+                networkResource = networkCustomRepo.findOneByNetworkType(networkType).getNetworkResource(); 
+            } else {
+                networkResource = networkCustomRepo.findOneByModelCustomizationUUID(modelCustomizationUuid).getNetworkResource();
+            }
             String mode = "";
             if (networkResource != null) {
 
@@ -1733,60 +1734,60 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             stackParams.put (VLANS, csl);
         }
         if (routeTargets != null) {
-			
+            
             String rtGlobal = "";
             String rtImport = "";
             String rtExport = "";
             String sep = "";
             for (RouteTarget rt : routeTargets) {
-            	boolean rtIsNull = false;
-            	if (rt != null)
-            	{
-            		String routeTarget = rt.getRouteTarget();
-            		String routeTargetRole = rt.getRouteTargetRole();
-            		LOGGER.debug("Checking for an actually null route target: " + rt.toString());
-            		if (routeTarget == null || routeTarget.equals("") || routeTarget.equalsIgnoreCase("null"))
-            			rtIsNull = true;
-            		if (routeTargetRole == null || routeTargetRole.equals("") || routeTargetRole.equalsIgnoreCase("null"))
-            			rtIsNull = true;
-            	} else {
-            		rtIsNull = true;
-            	}
-            	if (!rtIsNull) {
-            		LOGGER.debug("Input RT:" + rt.toString());
-            		String role = rt.getRouteTargetRole();
-            		String rtValue = rt.getRouteTarget();
-            		
-            		if ("IMPORT".equalsIgnoreCase(role))
-            		{
-            			sep = rtImport.isEmpty() ? "" : ",";
-            			rtImport = aic3template ? rtImport + sep + "target:" + rtValue  : rtImport + sep + rtValue ;
-            		}
-            		else if ("EXPORT".equalsIgnoreCase(role))
-            		{
-            			sep = rtExport.isEmpty() ? "" : ",";
-            			rtExport = aic3template ? rtExport + sep + "target:" + rtValue  : rtExport + sep + rtValue ;
-            		}
-            		else // covers BOTH, empty etc
-            		{
-            			sep = rtGlobal.isEmpty() ? "" : ",";
-            			rtGlobal = aic3template ? rtGlobal + sep + "target:" + rtValue  : rtGlobal + sep + rtValue ;
-            		}
+                boolean rtIsNull = false;
+                if (rt != null)
+                {
+                    String routeTarget = rt.getRouteTarget();
+                    String routeTargetRole = rt.getRouteTargetRole();
+                    LOGGER.debug("Checking for an actually null route target: " + rt.toString());
+                    if (routeTarget == null || routeTarget.equals("") || routeTarget.equalsIgnoreCase("null"))
+                        rtIsNull = true;
+                    if (routeTargetRole == null || routeTargetRole.equals("") || routeTargetRole.equalsIgnoreCase("null"))
+                        rtIsNull = true;
+                } else {
+                    rtIsNull = true;
+                }
+                if (!rtIsNull) {
+                    LOGGER.debug("Input RT:" + rt.toString());
+                    String role = rt.getRouteTargetRole();
+                    String rtValue = rt.getRouteTarget();
+                    
+                    if ("IMPORT".equalsIgnoreCase(role))
+                    {
+                        sep = rtImport.isEmpty() ? "" : ",";
+                        rtImport = aic3template ? rtImport + sep + "target:" + rtValue  : rtImport + sep + rtValue ;
+                    }
+                    else if ("EXPORT".equalsIgnoreCase(role))
+                    {
+                        sep = rtExport.isEmpty() ? "" : ",";
+                        rtExport = aic3template ? rtExport + sep + "target:" + rtValue  : rtExport + sep + rtValue ;
+                    }
+                    else // covers BOTH, empty etc
+                    {
+                        sep = rtGlobal.isEmpty() ? "" : ",";
+                        rtGlobal = aic3template ? rtGlobal + sep + "target:" + rtValue  : rtGlobal + sep + rtValue ;
+                    }
 
-            	}
+                }
             }
             
             if (!rtImport.isEmpty())
             {
-            	stackParams.put ("route_targets_import", rtImport);
+                stackParams.put ("route_targets_import", rtImport);
             }
             if (!rtExport.isEmpty())
             {
-            	stackParams.put ("route_targets_export", rtExport);
+                stackParams.put ("route_targets_export", rtExport);
             }
             if (!rtGlobal.isEmpty())
             {
-            	stackParams.put ("route_targets", rtGlobal);
+                stackParams.put ("route_targets", rtGlobal);
             }
         }
         if (commonUtils.isNullOrEmpty(shared)) {
@@ -1818,79 +1819,79 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
              "network_policy_refs_data_sequence_minor": "0"
          }
      }
- 	]
+     ]
     **/
     private void mergePolicyRefs(List <String> pFqdns, Map <String, Object> stackParams) throws MsoException {
-		//Resource Property
-		List<ContrailPolicyRef> prlist =  new ArrayList <> ();
-		int index = 1;
-		for (String pf : pFqdns) {
-			if (!commonUtils.isNullOrEmpty(pf))
-			{
-				ContrailPolicyRef pr = new ContrailPolicyRef();
-				ContrailPolicyRefSeq refSeq = new ContrailPolicyRefSeq(String.valueOf(index), "0");
-				pr.setSeq(refSeq);
-				index++;
-				LOGGER.debug("Contrail PolicyRefs Data:" + pr.toString());
-				prlist.add(pr);
-			}
-		}
+        //Resource Property
+        List<ContrailPolicyRef> prlist =  new ArrayList <> ();
+        int index = 1;
+        for (String pf : pFqdns) {
+            if (!commonUtils.isNullOrEmpty(pf))
+            {
+                ContrailPolicyRef pr = new ContrailPolicyRef();
+                ContrailPolicyRefSeq refSeq = new ContrailPolicyRefSeq(String.valueOf(index), "0");
+                pr.setSeq(refSeq);
+                index++;
+                LOGGER.debug("Contrail PolicyRefs Data:" + pr.toString());
+                prlist.add(pr);
+            }
+        }
 
-		JsonNode node = null;
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			node = mapper.convertValue(prlist, JsonNode.class);
-			String jsonString = mapper.writeValueAsString(prlist);
-			LOGGER.debug("Json PolicyRefs Data:" + jsonString);
-		}
-		catch (Exception e)
-		{
-			String error = "Error creating JsonNode for policyRefs Data";
-			LOGGER.error (MessageEnum.RA_MARSHING_ERROR, error, "Openstack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception creating JsonNode for policyRefs Data", e);
-			throw new MsoAdapterException (error);
-		}
-		//update parameters
-		if (pFqdns != null && node != null)
-		{
-			StringBuilder buf = new StringBuilder ();
-			String sep = "";
-			for (String pf : pFqdns) {
-				if (!commonUtils.isNullOrEmpty(pf))
-				{
-					buf.append (sep).append (pf);
-					sep = ",";
-				}
-			}
-			String csl = buf.toString ();
-			stackParams.put ("policy_refs", csl);
-			stackParams.put ("policy_refsdata", node);
-		}
+        JsonNode node = null;
+        try
+        {
+            ObjectMapper mapper = new ObjectMapper();
+            node = mapper.convertValue(prlist, JsonNode.class);
+            String jsonString = mapper.writeValueAsString(prlist);
+            LOGGER.debug("Json PolicyRefs Data:" + jsonString);
+        }
+        catch (Exception e)
+        {
+            String error = "Error creating JsonNode for policyRefs Data";
+            LOGGER.error (MessageEnum.RA_MARSHING_ERROR, error, "Openstack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception creating JsonNode for policyRefs Data", e);
+            throw new MsoAdapterException (error);
+        }
+        //update parameters
+        if (pFqdns != null && node != null)
+        {
+            StringBuilder buf = new StringBuilder ();
+            String sep = "";
+            for (String pf : pFqdns) {
+                if (!commonUtils.isNullOrEmpty(pf))
+                {
+                    buf.append (sep).append (pf);
+                    sep = ",";
+                }
+            }
+            String csl = buf.toString ();
+            stackParams.put ("policy_refs", csl);
+            stackParams.put ("policy_refsdata", node);
+        }
 
-		LOGGER.debug ("StackParams updated with policy refs");
-		return;
+        LOGGER.debug ("StackParams updated with policy refs");
+        return;
     }
 
     private void mergeRouteTableRefs(List <String> rtFqdns, Map <String, Object> stackParams) throws MsoException {
 
-		//update parameters
-		if (rtFqdns != null)
-		{
-			StringBuilder buf = new StringBuilder ();
-			String sep = "";
-			for (String rtf : rtFqdns) {
-				if (!commonUtils.isNullOrEmpty(rtf))
-				{
-					buf.append (sep).append (rtf);
-					sep = ",";
-				}
-			}
-			String csl = buf.toString ();
-			stackParams.put ("route_table_refs", csl);
-		}
+        //update parameters
+        if (rtFqdns != null)
+        {
+            StringBuilder buf = new StringBuilder ();
+            String sep = "";
+            for (String rtf : rtFqdns) {
+                if (!commonUtils.isNullOrEmpty(rtf))
+                {
+                    buf.append (sep).append (rtf);
+                    sep = ",";
+                }
+            }
+            String csl = buf.toString ();
+            stackParams.put ("route_table_refs", csl);
+        }
 
-		LOGGER.debug ("StackParams updated with route_table refs");
-		return;
+        LOGGER.debug ("StackParams updated with route_table refs");
+        return;
     }
 
 
@@ -1945,59 +1946,59 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         }
     ],
     "host_routes": null
-	}
+    }
     ***/
     private String mergeSubnetsAIC3 (String heatTemplate, List <Subnet> subnets, Map <String, Object> stackParams) throws MsoException {
 
-		//Resource Property
-		List<ContrailSubnet> cslist =  new ArrayList <> ();
-		for (Subnet subnet : subnets) {
-			LOGGER.debug("Input Subnet:" + subnet.toString());
-			ContrailSubnet cs = new ContrailSubnetMapper(subnet).map();
-			LOGGER.debug("Contrail Subnet:" + cs.toString());
-			cslist.add(cs);
-		}
+        //Resource Property
+        List<ContrailSubnet> cslist =  new ArrayList <> ();
+        for (Subnet subnet : subnets) {
+            LOGGER.debug("Input Subnet:" + subnet.toString());
+            ContrailSubnet cs = new ContrailSubnetMapper(subnet).map();
+            LOGGER.debug("Contrail Subnet:" + cs.toString());
+            cslist.add(cs);
+        }
 
-		JsonNode node = null;
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			node = mapper.convertValue(cslist, JsonNode.class);
-			String jsonString = mapper.writeValueAsString(cslist);
-			LOGGER.debug("Json Subnet List:" + jsonString);
-		}
-		catch (Exception e)
-		{
-			String error = "Error creating JsonNode from input subnets";
-			LOGGER.error (MessageEnum.RA_MARSHING_ERROR, error, "", "", MsoLogger.ErrorCode.DataError, "Exception creating JsonNode from input subnets", e);
-			throw new MsoAdapterException (error);
-		}
-		//update parameters
-		if (node != null)
-		{
-			stackParams.put ("subnet_list", node);
-		}
-		//Outputs - All subnets are in one ipam_subnets structure
-		String outputTempl = "  subnet:\n" + "    description: Openstack subnet identifier\n"
-				+ "    value: { get_attr: [network, network_ipam_refs, 0, attr]}\n";
+        JsonNode node = null;
+        try
+        {
+            ObjectMapper mapper = new ObjectMapper();
+            node = mapper.convertValue(cslist, JsonNode.class);
+            String jsonString = mapper.writeValueAsString(cslist);
+            LOGGER.debug("Json Subnet List:" + jsonString);
+        }
+        catch (Exception e)
+        {
+            String error = "Error creating JsonNode from input subnets";
+            LOGGER.error (MessageEnum.RA_MARSHING_ERROR, error, "", "", MsoLogger.ErrorCode.DataError, "Exception creating JsonNode from input subnets", e);
+            throw new MsoAdapterException (error);
+        }
+        //update parameters
+        if (node != null)
+        {
+            stackParams.put ("subnet_list", node);
+        }
+        //Outputs - All subnets are in one ipam_subnets structure
+        String outputTempl = "  subnet:\n" + "    description: Openstack subnet identifier\n"
+                + "    value: { get_attr: [network, network_ipam_refs, 0, attr]}\n";
 
-		// append outputs in heatTemplate
-		int outputsIdx = heatTemplate.indexOf ("outputs:");
-		heatTemplate = insertStr (heatTemplate, outputTempl, outputsIdx + 8);
-		LOGGER.debug ("Template updated with all AIC3.0 subnets:" + heatTemplate);
-		return heatTemplate;
+        // append outputs in heatTemplate
+        int outputsIdx = heatTemplate.indexOf ("outputs:");
+        heatTemplate = insertStr (heatTemplate, outputTempl, outputsIdx + 8);
+        LOGGER.debug ("Template updated with all AIC3.0 subnets:" + heatTemplate);
+        return heatTemplate;
     }
 
 
     private String mergeSubnets (String heatTemplate, List <Subnet> subnets) throws MsoException {
 
-    		String resourceTempl = "  subnet_%subnetId%:\n" + "    type: OS::Neutron::Subnet\n"
-    				+ "    properties:\n"
-    				+ "      name: %name%\n"
-    				+ "      network_id: { get_resource: network }\n"
-    				+ "      cidr: %cidr%\n";
+            String resourceTempl = "  subnet_%subnetId%:\n" + "    type: OS::Neutron::Subnet\n"
+                    + "    properties:\n"
+                    + "      name: %name%\n"
+                    + "      network_id: { get_resource: network }\n"
+                    + "      cidr: %cidr%\n";
 
-    		/* make these optional
+            /* make these optional
                                + "      ip_version: %ipversion%\n"
                                + "      enable_dhcp: %enabledhcp%\n"
                                + "      gateway_ip: %gatewayip%\n"
@@ -2005,124 +2006,124 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                + "       - start: %poolstart%\n"
                                + "         end: %poolend%\n";
 
-    		 */
+             */
 
-    		String outputTempl = "  subnet_id_%subnetId%:\n" + "    description: Openstack subnet identifier\n"
-    				+ "    value: {get_resource: subnet_%subnetId%}\n";
+            String outputTempl = "  subnet_id_%subnetId%:\n" + "    description: Openstack subnet identifier\n"
+                    + "    value: {get_resource: subnet_%subnetId%}\n";
 
-    		String curR;
-    		String curO;
-    		StringBuilder resourcesBuf = new StringBuilder ();
-    		StringBuilder outputsBuf = new StringBuilder ();
-    		for (Subnet subnet : subnets) {
+            String curR;
+            String curO;
+            StringBuilder resourcesBuf = new StringBuilder ();
+            StringBuilder outputsBuf = new StringBuilder ();
+            for (Subnet subnet : subnets) {
 
-    			// build template for each subnet
-    			curR = resourceTempl;
-    			if (subnet.getSubnetId () != null) {
-    				curR = curR.replace ("%subnetId%", subnet.getSubnetId ());
-    			} else {
-    				String error = "Missing Required AAI SubnetId for subnet in HEAT Template";
-    				LOGGER.error (MessageEnum.RA_MISSING_PARAM, error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Missing Required AAI ID  for subnet in HEAT Template");
-    				throw new MsoAdapterException (error);
-    			}
+                // build template for each subnet
+                curR = resourceTempl;
+                if (subnet.getSubnetId () != null) {
+                    curR = curR.replace ("%subnetId%", subnet.getSubnetId ());
+                } else {
+                    String error = "Missing Required AAI SubnetId for subnet in HEAT Template";
+                    LOGGER.error (MessageEnum.RA_MISSING_PARAM, error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Missing Required AAI ID  for subnet in HEAT Template");
+                    throw new MsoAdapterException (error);
+                }
 
-    			if (subnet.getSubnetName () != null) {
-    				curR = curR.replace ("%name%", subnet.getSubnetName ());
-    			} else {
-    				curR = curR.replace ("%name%", subnet.getSubnetId ());
-    			}
+                if (subnet.getSubnetName () != null) {
+                    curR = curR.replace ("%name%", subnet.getSubnetName ());
+                } else {
+                    curR = curR.replace ("%name%", subnet.getSubnetId ());
+                }
 
-    			if (subnet.getCidr () != null) {
-    				curR = curR.replace ("%cidr%", subnet.getCidr ());
-    			} else {
-    				String error = "Missing Required cidr for subnet in HEAT Template";
-    				LOGGER.error (MessageEnum.RA_MISSING_PARAM, error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Missing Required cidr for subnet in HEAT Template");
-    				throw new MsoAdapterException (error);
-    			}
+                if (subnet.getCidr () != null) {
+                    curR = curR.replace ("%cidr%", subnet.getCidr ());
+                } else {
+                    String error = "Missing Required cidr for subnet in HEAT Template";
+                    LOGGER.error (MessageEnum.RA_MISSING_PARAM, error, "Openstack", "", MsoLogger.ErrorCode.DataError, "Missing Required cidr for subnet in HEAT Template");
+                    throw new MsoAdapterException (error);
+                }
 
-    			if (subnet.getIpVersion () != null) {
-    				curR = curR + "      ip_version: " + subnet.getIpVersion () + "\n";
-    			}
-    			if (subnet.getEnableDHCP () != null) {
-    				curR = curR + "      enable_dhcp: " +  Boolean.toString (subnet.getEnableDHCP ()) + "\n";
-    			}
-    			if (subnet.getGatewayIp () != null && !subnet.getGatewayIp ().isEmpty() ) {
-    				curR = curR + "      gateway_ip: " + subnet.getGatewayIp () + "\n";
-    			}
+                if (subnet.getIpVersion () != null) {
+                    curR = curR + "      ip_version: " + subnet.getIpVersion () + "\n";
+                }
+                if (subnet.getEnableDHCP () != null) {
+                    curR = curR + "      enable_dhcp: " +  Boolean.toString (subnet.getEnableDHCP ()) + "\n";
+                }
+                if (subnet.getGatewayIp () != null && !subnet.getGatewayIp ().isEmpty() ) {
+                    curR = curR + "      gateway_ip: " + subnet.getGatewayIp () + "\n";
+                }
 
-    			if (subnet.getAllocationPools() != null) {
-    				curR = curR + "      allocation_pools:\n";
-    				for (Pool pool : subnet.getAllocationPools())
-    				{
-    					if (!commonUtils.isNullOrEmpty(pool.getStart()) && !commonUtils.isNullOrEmpty(pool.getEnd()))
-    					{
-    						curR = curR + "       - start: " + pool.getStart () + "\n";
-    						curR = curR + "         end: " + pool.getEnd () + "\n";
-    					}
-    				}
-    			}
+                if (subnet.getAllocationPools() != null) {
+                    curR = curR + "      allocation_pools:\n";
+                    for (Pool pool : subnet.getAllocationPools())
+                    {
+                        if (!commonUtils.isNullOrEmpty(pool.getStart()) && !commonUtils.isNullOrEmpty(pool.getEnd()))
+                        {
+                            curR = curR + "       - start: " + pool.getStart () + "\n";
+                            curR = curR + "         end: " + pool.getEnd () + "\n";
+                        }
+                    }
+                }
 
-    			resourcesBuf.append (curR);
+                resourcesBuf.append (curR);
 
-    			curO = outputTempl;
-    			curO = curO.replace ("%subnetId%", subnet.getSubnetId ());
+                curO = outputTempl;
+                curO = curO.replace ("%subnetId%", subnet.getSubnetId ());
 
-    			outputsBuf.append (curO);
+                outputsBuf.append (curO);
 
-    		}
-    		// append resources and outputs in heatTemplate
-    		LOGGER.debug ("Tempate initial:" + heatTemplate);
-    		int outputsIdx = heatTemplate.indexOf ("outputs:");
-    		heatTemplate = insertStr (heatTemplate, outputsBuf.toString (), outputsIdx + 8);
-    		int resourcesIdx = heatTemplate.indexOf ("resources:");
-    		heatTemplate = insertStr (heatTemplate, resourcesBuf.toString (), resourcesIdx + 10);
+            }
+            // append resources and outputs in heatTemplate
+            LOGGER.debug ("Tempate initial:" + heatTemplate);
+            int outputsIdx = heatTemplate.indexOf ("outputs:");
+            heatTemplate = insertStr (heatTemplate, outputsBuf.toString (), outputsIdx + 8);
+            int resourcesIdx = heatTemplate.indexOf ("resources:");
+            heatTemplate = insertStr (heatTemplate, resourcesBuf.toString (), resourcesIdx + 10);
 
-    		LOGGER.debug ("Template updated with all subnets:" + heatTemplate);
-    		return heatTemplate;
+            LOGGER.debug ("Template updated with all subnets:" + heatTemplate);
+            return heatTemplate;
     }
 
     private Map <String, String> getSubnetUUId(String key,  Map <String, Object> outputs, List <Subnet> subnets) {
 
-    	Map <String, String> sMap = new HashMap <> ();
+        Map <String, String> sMap = new HashMap <> ();
 
-    	try{
-    		Object obj = outputs.get(key);
-    		ObjectMapper mapper = new ObjectMapper();
-    		String jStr = mapper.writeValueAsString(obj);
-    		LOGGER.debug ("Subnet_Ipam Output JSON String:" + obj.getClass() + " " + jStr);
+        try{
+            Object obj = outputs.get(key);
+            ObjectMapper mapper = new ObjectMapper();
+            String jStr = mapper.writeValueAsString(obj);
+            LOGGER.debug ("Subnet_Ipam Output JSON String:" + obj.getClass() + " " + jStr);
 
-    		JsonNode rootNode = mapper.readTree(jStr);
-    		for (JsonNode sNode : rootNode.path("ipam_subnets"))
-    		{
-    			LOGGER.debug("Output Subnet Node" + sNode.toString());
-    			String name = sNode.path("subnet_name").textValue();
-    			String uuid = sNode.path("subnet_uuid").textValue();
-    			String aaiId = name; // default
-    			// try to find aaiId for name in input subnetList
-    			if (subnets != null)
-    			{
-    				for (Subnet subnet : subnets)
-    				{
-    					if ( subnet !=  null && !commonUtils.isNullOrEmpty(subnet.getSubnetName()))
-    					{
-    						if (subnet.getSubnetName().equals(name))
-    						{
-    							aaiId = subnet.getSubnetId();
-    							break;
-    						}
-    					}
-    				}
-    			}
-    			sMap.put(aaiId, uuid); //bpmn needs aaid to uuid map
-    		}
-    	}
-    	catch (Exception e)
-    	{
-    		LOGGER.error (MessageEnum.RA_MARSHING_ERROR, "error getting subnet-uuids", "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception getting subnet-uuids", e);
-    	}
+            JsonNode rootNode = mapper.readTree(jStr);
+            for (JsonNode sNode : rootNode.path("ipam_subnets"))
+            {
+                LOGGER.debug("Output Subnet Node" + sNode.toString());
+                String name = sNode.path("subnet_name").textValue();
+                String uuid = sNode.path("subnet_uuid").textValue();
+                String aaiId = name; // default
+                // try to find aaiId for name in input subnetList
+                if (subnets != null)
+                {
+                    for (Subnet subnet : subnets)
+                    {
+                        if ( subnet !=  null && !commonUtils.isNullOrEmpty(subnet.getSubnetName()))
+                        {
+                            if (subnet.getSubnetName().equals(name))
+                            {
+                                aaiId = subnet.getSubnetId();
+                                break;
+                            }
+                        }
+                    }
+                }
+                sMap.put(aaiId, uuid); //bpmn needs aaid to uuid map
+            }
+        }
+        catch (Exception e)
+        {
+            LOGGER.error (MessageEnum.RA_MARSHING_ERROR, "error getting subnet-uuids", "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception getting subnet-uuids", e);
+        }
 
-    	LOGGER.debug ("Return sMap" + sMap.toString());
-    	return sMap;
+        LOGGER.debug ("Return sMap" + sMap.toString());
+        return sMap;
     }
 
     private static String insertStr (String template, String snippet, int index) {
