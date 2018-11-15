@@ -259,7 +259,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
 
 			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
 			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
+			httpClient.addAdditionalHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk")
 
 			apiResponse = httpClient.post(requestBody)
 
