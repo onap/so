@@ -25,6 +25,7 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import org.mockito.Spy;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.db.request.beans.InfraActiveRequests;
 
 public class WorkflowActionBBTasksTest extends BaseTaskTest {
 
@@ -258,19 +260,27 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	
 	@Test
 	public void checkRetryStatusTest(){
+		String reqId = "reqId123";
+		execution.setVariable("mso-request-id", reqId);
 		doNothing().when(workflowActionBBTasks).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
 		execution.setVariable("handlingCode","Retry");
 		execution.setVariable("retryCount", 1);
 		execution.setVariable("gCurrentSequence",1);
+		InfraActiveRequests req = new InfraActiveRequests();
+		doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
 		workflowActionBBTasks.checkRetryStatus(execution);
 		assertEquals(0,execution.getVariable("gCurrentSequence"));
 	}
 	
 	@Test
 	public void checkRetryStatusNoRetryTest(){
+		String reqId = "reqId123";
+		execution.setVariable("mso-request-id", reqId);
 		execution.setVariable("retryCount", 3);
 		execution.setVariable("handlingCode","Success");
 		execution.setVariable("gCurrentSequence",1);
+		InfraActiveRequests req = new InfraActiveRequests();
+		doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
 		workflowActionBBTasks.checkRetryStatus(execution);
 		assertEquals(0,execution.getVariable("retryCount"));
 	}

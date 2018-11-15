@@ -109,7 +109,7 @@ public class WorkflowActionBBTasks {
 		String statusMessage = this.getStatusMessage(completedBB.getBuildingBlock().getBpmnFlowName(), 
 				nextBB.getBuildingBlock().getBpmnFlowName(), completedBBs, remainingBBs);
 		Long percentProgress = this.getPercentProgress(completedBBs, totalBBs);
-		request.setStatusMessage(statusMessage);
+		request.setFlowStatus(statusMessage);
 		request.setProgress(percentProgress);
 		request.setLastModifiedBy("CamundaBPMN");
 		return request;
@@ -203,9 +203,18 @@ public class WorkflowActionBBTasks {
 
 	public void checkRetryStatus(DelegateExecution execution) {
 		String handlingCode = (String) execution.getVariable("handlingCode");
+		String requestId = (String) execution.getVariable(G_REQUEST_ID);
+		String retryDuration = (String) execution.getVariable("RetryDuration");
 		int retryCount = (int) execution.getVariable(RETRY_COUNT);
 		if (handlingCode.equals("Retry")){
 			updateRequestErrorStatusMessage(execution);
+			try{
+				InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
+				request.setRetryStatusMessage("Retry " + retryCount+1 + "/5 will be started in " + retryDuration);
+				requestDbclient.updateInfraActiveRequests(request); 
+			} catch(Exception ex){
+				logger.warn("Failed to update Request Db Infra Active Requests with Retry Status",ex);
+			}
 			if(retryCount<5){
 				int currSequence = (int) execution.getVariable("gCurrentSequence");
 				execution.setVariable("gCurrentSequence", currSequence-1);
