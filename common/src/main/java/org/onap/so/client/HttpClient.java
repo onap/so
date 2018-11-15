@@ -47,7 +47,8 @@ public class HttpClient extends RestClient {
 
 	@Override
 	protected void initializeHeaderMap(Map<String, String> headerMap) {
-
+		headerMap.put("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
+		headerMap.put("content-type", "application/json");
 	}
 
 	@Override

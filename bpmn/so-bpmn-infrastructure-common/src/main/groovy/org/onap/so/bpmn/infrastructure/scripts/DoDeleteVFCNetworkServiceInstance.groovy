@@ -208,7 +208,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
 
 			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
 			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
+			httpClient.addAdditionalHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk")
 
 			apiResponse = httpClient.post(requestBody)
 
@@ -236,7 +236,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
 			URL Url = new URL(url)
 			HttpClient httpClient = new HttpClient(Url, "application/json", TargetEntity.VNF_ADAPTER)
 			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
+			httpClient.addAdditionalHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk")
 			r = httpClient.delete(requestBody)
 
             msoLogger.trace("Completed Execute VF-C adapter Delete Process ")
