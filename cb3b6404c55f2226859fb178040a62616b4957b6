@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_91b6863c",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilFactory.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T14:20:58Z",
+      "side": 1,
+      "message": "Actually that would defeat the purpose of separating construction from logic and improving the classes testability. The factory is just a helper class to have:\n1. A Single point of creating the ExternalAPIUtil class with its dependencies, so that clients are not burdened with having to pass all of its dependencies\n2. still have DI through constructor to have the class testable by providing configurable mocks.",
+      "parentUuid": "9adffdf1_e61dda10",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 1
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_5de355d9",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2018-11-15T07:27:31Z",
       "side": 1,
       "message": "Remove asterisks from imports",
+      "range": {
+        "startLine": 35,
+        "startChar": 37,
+        "endLine": 35,
+        "endChar": 38
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_31831a58",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T14:20:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_5de355d9",
       "range": {
         "startLine": 35,
         "startChar": 37,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_71768240",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T14:20:58Z",
+      "side": 1,
+      "message": "I think this can be left as is - I know that this is not the most expressive solution syntax-wise and the best way would to do it would be to write a fluent builder for configuring the mock. On the other hand I wanted to avoid that since this is still simple enough to understand without adding too much additional code. If you have an idea for a cleaner solution, let me know.",
+      "parentUuid": "9adffdf1_639b1c19",
+      "range": {
+        "startLine": 49,
+        "startChar": 52,
+        "endLine": 49,
+        "endChar": 97
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_5d9b5518",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
         "patchSetId": 2
@@ -82,6 +154,30 @@
       "writtenOn": "2018-11-15T07:27:31Z",
       "side": 1,
       "message": "Where the `handle` part is in test? This is misleading.",
+      "range": {
+        "startLine": 69,
+        "startChar": 35,
+        "endLine": 69,
+        "endChar": 72
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3190fa42",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T14:20:58Z",
+      "side": 1,
+      "message": "the name of the test refers to the logic that the unit test verifies, not what is going on in the unit test. So the implementation of the tested method should handle the exceptions. I have made some small changes to hopefully improve how the exception is verified so it may be clearer now - especially the method output is now obvious",
+      "parentUuid": "9adffdf1_5d9b5518",
       "range": {
         "startLine": 69,
         "startChar": 35,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_b1a38a9d",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T14:20:58Z",
+      "side": 1,
+      "message": "Done. Changed this to have a cleaner BDD approach with an appropriate THEN section",
+      "parentUuid": "9adffdf1_c3dbe8eb",
+      "range": {
+        "startLine": 78,
+        "startChar": 16,
+        "endLine": 78,
+        "endChar": 23
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_e3ff0c33",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
         "patchSetId": 2
@@ -128,6 +248,30 @@
       "writtenOn": "2018-11-15T07:27:31Z",
       "side": 1,
       "message": "I wouldn\u0027t expect this is an assertion.",
+      "range": {
+        "startLine": 91,
+        "startChar": 66,
+        "endLine": 91,
+        "endChar": 99
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d1a08e92",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T14:20:58Z",
+      "side": 1,
+      "message": "Done, This indeed was hard to understand - as mentioned above I changed this to have a definite and clear THEN section for assertions",
+      "parentUuid": "9adffdf1_e3ff0c33",
       "range": {
         "startLine": 91,
         "startChar": 66,
@@ -174,6 +318,54 @@
       "writtenOn": "2018-11-15T09:49:45Z",
       "side": 1,
       "message": "Also it\u0027s super unintuitive to put asserts here. I would never expect that when reading the test. You can, for example, create additional method assertReceived, where you can compare received and expected later.\n\nAlso, because this code is executed by tested class there can be a situation, where exceptions thorwn by those asserts will be caught.",
+      "range": {
+        "startLine": 181,
+        "startChar": 0,
+        "endLine": 186,
+        "endChar": 9
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f1b032df",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T14:20:58Z",
+      "side": 1,
+      "message": "Done. I do agree, to an extent :) Basically it is true that the outcome of the tested method is a BpmnError if something fails, but this is not clear unless you actually read the method implementation - the method\u0027s signature does not indicate that a RuntimeException is thrown. And it should. So since there is no static protection, the test was not entirely broken. But when we expect that in case any error occurs a BpmnError should be unconditionally thrown - then your statement is valid. You can review my changes.",
+      "parentUuid": "9adffdf1_866c0e9e",
+      "range": {
+        "startLine": 181,
+        "startChar": 0,
+        "endLine": 186,
+        "endChar": 9
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_71c44240",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T14:20:58Z",
+      "side": 1,
+      "message": "Done, mostly. You are right. I wanted to mimick a mockito verification. I have changed this to mimick a thrown BpmnError with the expected values, except for the execution. This object is used inside the ExceptionUtil class and I wanted to avoid writing similar logic that would use the valuies in the same manner - that is why I\u0027ve decided to leave the assertions for the execution to at least check if the same reference is passed.\n\nAs for the second remark I do not quite understand the case.",
+      "parentUuid": "9adffdf1_660b2ad7",
       "range": {
         "startLine": 181,
         "startChar": 0,
