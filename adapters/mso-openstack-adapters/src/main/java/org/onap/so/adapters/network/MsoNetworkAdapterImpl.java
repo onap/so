@@ -1365,7 +1365,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             Map <String, String> sMap = new HashMap <> ();
             if (outputs != null) {
-            	for (String key : outputs.keySet ()) {
+            	for (Map <String, Object> entry : outputs.entrySet()) {
+            		String key= entry.getKey();
             		if (key != null && key.startsWith ("subnet_id_")) //multiples subnet_%aaid% outputs
             		{
             			String subnetUUId = (String) outputs.get(key);
