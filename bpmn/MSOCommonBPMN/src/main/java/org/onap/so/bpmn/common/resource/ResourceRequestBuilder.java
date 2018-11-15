@@ -266,7 +266,7 @@ public class ResourceRequestBuilder {
 
         HashMap<String, String> map = new Gson().fromJson(value, new TypeToken<HashMap<String, String>>() {}.getType());
 
-        String filePath = System.getProperty("mso.config.path") + "ASDC/" +  map.get("version") + "/" + map.get("name");
+        String filePath = System.getProperty("mso.config.path") + "/ASDC/" +  map.get("version") + "/" + map.get("name");
 
         File csarFile = new File(filePath);
 
