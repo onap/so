@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Modifications Copyright (C) 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -544,7 +545,8 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             sMap = hMap.value;
             CreateVnfNotification.Outputs.Entry entry = new CreateVnfNotification.Outputs.Entry ();
 
-            for (String key : sMap.keySet ()) {
+            for (Map.Entry <String, String> entry : sMap.entrySet ()) {
+                String key= entry.getKey();
                 entry.setKey (key);
                 entry.setValue (sMap.get (key));
                 outputs.getEntry ().add (entry);
@@ -563,8 +565,8 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             UpdateVnfNotification.Outputs.Entry entry = new UpdateVnfNotification.Outputs.Entry ();
 
             for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
-		String key = mapEntry.getKey();
-		String value = mapEntry.getValue();
+        String key = mapEntry.getKey();
+        String value = mapEntry.getValue();
                 entry.setKey (key);
                 entry.setValue (value);
                 outputs.getEntry ().add (entry);
@@ -584,8 +586,8 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             QueryVnfNotification.Outputs.Entry entry = new QueryVnfNotification.Outputs.Entry ();
 
             for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
-		String key = mapEntry.getKey();
-		String value = mapEntry.getValue();
+        String key = mapEntry.getKey();
+        String value = mapEntry.getValue();
                 entry.setKey (key);
                 entry.setValue (value);
                 outputs.getEntry ().add (entry);
@@ -603,7 +605,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             LOGGER.error (MessageEnum.RA_WSDL_NOT_FOUND, "VnfAdapterNotify.wsdl", "", "getNotifyEP", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - WSDL not found", e);
         }
         if (warWsdlLoc == null) {
-        	LOGGER.error (MessageEnum.RA_WSDL_NOT_FOUND, "VnfAdapterNotify.wsdl", "", "getNotifyEP", MsoLogger.ErrorCode.BusinessProcesssError, "WSDL not found");
+            LOGGER.error (MessageEnum.RA_WSDL_NOT_FOUND, "VnfAdapterNotify.wsdl", "", "getNotifyEP", MsoLogger.ErrorCode.BusinessProcesssError, "WSDL not found");
         } else {
             try {
                 LOGGER.debug ("VnfAdpaterNotify.wsdl location:" + warWsdlLoc.toURI ().toString ());
@@ -654,13 +656,13 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
     }
     
     public String getEncryptedProperty(String key, String defaultValue, String encryptionKey) {
-    	try {
-			return CryptoUtils.decrypt(this.environment.getProperty(key), this.environment.getProperty(encryptionKey));
-		} catch (GeneralSecurityException e) {
-			LOGGER.debug("Exception while decrypting property: " + this.environment.getProperty(key), e);
-		}
-		return defaultValue;
+        try {
+            return CryptoUtils.decrypt(this.environment.getProperty(key), this.environment.getProperty(encryptionKey));
+        } catch (GeneralSecurityException e) {
+            LOGGER.debug("Exception while decrypting property: " + this.environment.getProperty(key), e);
+        }
+        return defaultValue;
 
-	}
+    }
 
 }
