@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "9adffdf1_e61dda10",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilFactory.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-15T09:49:45Z",
+      "side": 1,
+      "message": "I think this can be just static method in ExternalAPIUtil",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 1
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_5de355d9",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
         "patchSetId": 2
@@ -110,6 +133,52 @@
         "startChar": 66,
         "endLine": 91,
         "endChar": 99
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_866c0e9e",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-15T09:49:45Z",
+      "side": 1,
+      "message": "I don\u0027t think that\u0027s the best way of implementing this method. Original buildAndThrowWorkflowException always thorws exception. This can lead to some unexpected behaviour in code that calls this method and exception isn\u0027t thrown.",
+      "range": {
+        "startLine": 181,
+        "startChar": 0,
+        "endLine": 186,
+        "endChar": 9
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_660b2ad7",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-15T09:49:45Z",
+      "side": 1,
+      "message": "Also it\u0027s super unintuitive to put asserts here. I would never expect that when reading the test. You can, for example, create additional method assertReceived, where you can compare received and expected later.\n\nAlso, because this code is executed by tested class there can be a situation, where exceptions thorwn by those asserts will be caught.",
+      "range": {
+        "startLine": 181,
+        "startChar": 0,
+        "endLine": 186,
+        "endChar": 9
       },
       "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
