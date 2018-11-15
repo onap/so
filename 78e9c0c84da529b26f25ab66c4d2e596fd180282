@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_c3af68e2",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/CreateAAIVfModule.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 503,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2018-11-15T00:32:50Z",
+      "side": 0,
+      "message": "I don\u0027t see that this method is used, so I guess it\u0027s ok.",
+      "range": {
+        "startLine": 503,
+        "startChar": 0,
+        "endLine": 503,
+        "endChar": 1
+      },
+      "revId": "78e9c0c84da529b26f25ab66c4d2e596fd180282",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
