@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Modifications Copyright (C) 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -544,7 +545,8 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             sMap = hMap.value;
             CreateVnfNotification.Outputs.Entry entry = new CreateVnfNotification.Outputs.Entry ();
 
-            for (String key : sMap.keySet ()) {
+            for (Map <String, String> entry : sMap.entrySet ()) {
+            	String key= entry.getKey();
                 entry.setKey (key);
                 entry.setValue (sMap.get (key));
                 outputs.getEntry ().add (entry);
