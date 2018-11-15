@@ -24,6 +24,7 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.aai.AAIObjectType
@@ -208,7 +209,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
 
 			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
 			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
+			httpClient.addAdditionalHeader("Authorization", UrnPropertiesReader.getVariable("mso.adapters.requestDb.auth", execution))
 
 			apiResponse = httpClient.post(requestBody)
 
@@ -236,7 +237,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
 			URL Url = new URL(url)
 			HttpClient httpClient = new HttpClient(Url, "application/json", TargetEntity.VNF_ADAPTER)
 			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
+			httpClient.addAdditionalHeader("Authorization", UrnPropertiesReader.getVariable("mso.adapters.requestDb.auth", execution))
 			r = httpClient.delete(requestBody)
 
             msoLogger.trace("Completed Execute VF-C adapter Delete Process ")

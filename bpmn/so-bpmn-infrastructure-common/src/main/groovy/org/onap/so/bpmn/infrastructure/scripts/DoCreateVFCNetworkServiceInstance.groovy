@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -236,7 +237,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
 
 			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
 			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
+			httpClient.addAdditionalHeader("Authorization", UrnPropertiesReader.getVariable("mso.adapters.requestDb.auth", execution))
 
 			apiResponse = httpClient.post(requestBody)
 
