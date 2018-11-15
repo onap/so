@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Modifications Copyright (C) 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -523,7 +524,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             return null;
         }
         Map<String, String> stringMap = new HashMap<>();
-        for (String key : objectMap.keySet()) {
+        for (Map.Entry<String, Object> entry: objectMap.entrySet()) {
+        	String key= entry.getKey();
             if (!stringMap.containsKey(key)) {
                 Object obj = objectMap.get(key);
                 if (obj instanceof String) {
@@ -2064,7 +2066,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     private Map<String, Object> combineGetFilesAndNestedTemplates(Map<String, Object> getFiles, Map<String, Object> nestedTemplates) {
 		boolean haveGetFiles = true;
 		boolean haveNestedTemplates = true;
-		Map<String, Object> files = new HashMap<String, Object>();
+		Map<String, Object> files = new HashMap<>();
 		if (getFiles == null || getFiles.isEmpty()) {
 			haveGetFiles = false;
 		}
@@ -2072,7 +2074,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 			haveNestedTemplates = false;
 		}
         if (haveGetFiles && haveNestedTemplates) {
-            for (String keyString : getFiles.keySet ()) {
+            for ( Map.Entry<String, Object> entry: getFiles.entrySet ()) {
+            	String keyString= entry.getKey();
                 files.put (keyString, getFiles.get (keyString));
             }
             for (String keyString : nestedTemplates.keySet ()) {
