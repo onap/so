@@ -1,0 +1,259 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_ac3a51cb",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "Does extending the MsoGroovyTest provide any benefits in case of this test class? If not I\u0027d recommend removing it and avoid using inheritance in the future in such cases since unmaintained the implementation often stiffens the design and can cause a ripple effect during changes.",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_cc10f550",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "This assignment is a clear indication of broken encapsulation in the ConfirmVolumeGroupName class. Instead of having DI via constructor, values are explicitly assigned to the field (also overriding a call to \"new\" in the process which shouldn\u0027t be that classes responsibility)\nConsider providing a constructor and injecting dependencies through it. Please not that this will also affect the clients of this class and hot it is used.",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d15bae52",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "Use HttpStatus class from Spring to have a more descriptive representation of the http status codes, instead of magic numbers",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7158c256",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "Use HttpStatus class from Spring to have a more descriptive representation of the http status codes, instead of magic numbers",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9155261f",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "Use HttpStatus class from Spring to have a more descriptive representation of the http status codes, instead of magic numbers",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d1096e32",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "As I have already mentioned below:\nAlso try not to mix assertEquals with assertThat. In my opinion it is cleaner and consistent when only one approach is used\n1. You can substitute catchThrowable with catchThrowableOfType to avoid doing the class type check. This way you already have a Throwable of the expected type\n\n2. Assigning the MSOWorkflowException to an errorCode named parameter is misleading. Shouldn\u0027t this be the errorMessage instead ? \n\n3. This test is incomplete, partially because of the Fake ExceptionUtil not being fully utilized. All values should be checked, especially errorCode and errorMessage at this level.Please refer to my remarks on ExceptionUtilFake",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_71068222",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "Use HttpStatus class from Spring to have a more descriptive representation of the http status codes, instead of magic numbers",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_51501e32",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "Use HttpStatus class from Spring to have a more descriptive representation of the http status codes, instead of magic numbers",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_114a9680",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "use assertFalse()",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_314b1a89",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "Use HttpStatus class from Spring to have a more descriptive representation of the http status codes, instead of magic numbers",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d1740ed1",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "Use assertTrue() :)",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_71aa021b",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "1. You can substitute catchThrowable with catchThrowableOfType to avoid doing the class type check. This way you already have a Throwable of the expected type\n\n2. Assigning the MSOWorkflowException to an errorCode named parameter is misleading. Shouldn\u0027t this be the errorMessage instead ? \n\n3. This test is incomplete, partially because of the Fake ExceptionUtil not being fully utilized. All values should be checked, especially errorCode and errorMessage at this level.Please refer to my remarks on ExceptionUtilFake",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_519b3e18",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "Suggestion: instead of comparing values to empty String, why not use a more fluent approach with assertJ and isEmpty method: assertThat(str).isEmpty()",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b1770ad4",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "I\u0027d make this a nested static class just to break the connection with surrounding class.",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_5169fef7",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-15T15:27:25Z",
+      "side": 1,
+      "message": "You do not test the parameters at all. The implementation could be changed by substituting the values to something else, and the test would still pass. This Fake object should be more intelligent and actually reuse the passed values so they can be verified. Especially the errorCode and errorMessage. The Execution, for me at least, can be checked if it\u0027s the same reference as the one passed to the tested method.",
+      "revId": "f45514c53ef44f77638b4bb393952f22bb499c7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
