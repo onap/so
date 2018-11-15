@@ -11,11 +11,12 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Version: 1.3.1
 --------------
 
-:Release Date: 2018-09-23
+:Release Date: 2018-10-24
 
-Temp release for Casablanca at M4.
+Branch cut for Casablanca post M4 for integration test.
 **New Features**
 
+Below  features are under test:
 * Support PNF resource type.
 * Extend the support of homing to vFW, VDNS usecases.
 * Workflow Designer Integration.
@@ -23,6 +24,12 @@ Temp release for Casablanca at M4.
 * Support to the CCVPN Usecase.
 * SO internal architecture improvements 
 
+Version: 1.3.0
+--------------
+
+:Release Date: 2018-08-22
+
+New  release over  master branch for Casablanca development
 
 Version: 1.2.2
 --------------
