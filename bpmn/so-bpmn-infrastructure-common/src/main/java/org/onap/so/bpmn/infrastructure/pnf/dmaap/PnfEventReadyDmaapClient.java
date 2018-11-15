@@ -35,7 +35,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -43,8 +44,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PnfEventReadyDmaapClient implements DmaapClient {
 
-    private static final MsoLogger LOGGER = MsoLogger
-            .getMsoLogger(MsoLogger.Catalog.RA, PnfEventReadyDmaapClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(PnfEventReadyDmaapClient.class);
 
     private HttpClient httpClient;
     private Map<String, Runnable> pnfCorrelationIdToThreadMap;
@@ -70,7 +70,7 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
 
     @Override
     public synchronized void registerForUpdate(String correlationId, Runnable informConsumer) {
-        LOGGER.debug("registering for pnf ready dmaap event for correlation id: " + correlationId);
+        logger.debug("registering for pnf ready dmaap event for correlation id: {}", correlationId);
         pnfCorrelationIdToThreadMap.put(correlationId, informConsumer);
         if (!dmaapThreadListenerIsRunning) {
             startDmaapThreadListener();
@@ -79,7 +79,7 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
 
     @Override
     public synchronized Runnable unregister(String correlationId) {
-        LOGGER.debug("unregistering from pnf ready dmaap event for correlation id: " + correlationId);
+        logger.debug("unregistering from pnf ready dmaap event for correlation id: {}", correlationId);
         Runnable runnable = pnfCorrelationIdToThreadMap.remove(correlationId);
         if (pnfCorrelationIdToThreadMap.isEmpty()) {
             stopDmaapThreadListener();
@@ -111,10 +111,11 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         @Override
         public void run() {
             try {
+                logger.debug("dmaap listener starts listening pnf ready dmaap topic");
                 HttpResponse response = httpClient.execute(getRequest);
                 getCorrelationIdListFromResponse(response).forEach(this::informAboutPnfReadyIfCorrelationIdFound);
             } catch (IOException e) {
-                LOGGER.error("Exception caught during sending rest request to dmaap for listening event topic", e);
+                logger.error("Exception caught during sending rest request to dmaap for listening event topic", e);
             }
         }
 
@@ -131,7 +132,7 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         private void informAboutPnfReadyIfCorrelationIdFound(String correlationId) {
             Runnable runnable = unregister(correlationId);
             if (runnable != null) {
-                LOGGER.debug("pnf ready event got from dmaap for correlationId: " + correlationId);
+                logger.debug("dmaap listener gets pnf ready event for correlationId: {}", correlationId);
                 runnable.run();
             }
         }
