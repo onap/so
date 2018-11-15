@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.bpmn.common.scripts.ExternalAPIUtilFactory
+
 import javax.ws.rs.NotFoundException
 import javax.ws.rs.core.Response
 
@@ -249,7 +251,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		valueMap.put("serviceName", "null")
 		valueMap.put("serviceUuId", '"' + serviceSpecificationId + '"')
 
-		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil()
+		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtilFactory().create()
 
 		valueMap.put("_requestInputs_",  "")
 
@@ -271,7 +273,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		String extAPIPath = sppartnerUrl + "/service?relatedParty.id=" + globalSubscriberId
 		msoLogger.debug("queryServicefrom3rdONAP externalAPIURL is: " + extAPIPath)
 
-		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil()
+		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtilFactory().create()
 
 		Response response = externalAPIUtil.executeExternalAPIGetCall(execution, extAPIPath)
 
@@ -317,7 +319,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		msoLogger.debug("doDeleteE2ESIin3rdONAP externalAPIURL is: " + extAPIPath)
 		msoLogger.debug("doDeleteE2ESIin3rdONAP payload is: " + payload)
 
-		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil()
+		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtilFactory().create()
 		execution.setVariable("ServiceOrderId", "")
 
 		Response response = externalAPIUtil.executeExternalAPIPostCall(execution, extAPIPath, payload)
@@ -361,7 +363,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		extAPIPath += "/" + execution.getVariable("ServiceOrderId")
 		msoLogger.debug("getE2ESIProgressin3rdONAP delete externalAPIURL is: " + extAPIPath)
 
-		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil()
+		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtilFactory().create()
 
 		Response response = externalAPIUtil.executeExternalAPIGetCall(execution, extAPIPath)
 
