@@ -93,7 +93,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         logger.info("AbstractSdncOperationTask.updateResOperStatus begin!");
 		String requestsdbEndPoint = env.getProperty("mso.adapters.openecomp.db.endpoint");
         HttpPost httpPost = new HttpPost(requestsdbEndPoint);
-        httpPost.addHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
+        httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
         httpPost.addHeader("Content-type", "application/soap+xml");
         String postBody = getPostStringBody(resourceOperationStatus);
         httpPost.setEntity(new StringEntity(postBody, ContentType.APPLICATION_XML));
@@ -174,7 +174,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         logger.info("AbstractSdncOperationTask.getResourceOperationStatus begin!");
 		String requestsdbEndPoint = env.getProperty("mso.adapters.openecomp.db.endpoint");
         HttpPost httpPost = new HttpPost(requestsdbEndPoint);
-        httpPost.addHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
+        httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
         httpPost.addHeader("Content-type", "application/soap+xml");
         String getBody = getGetStringBody(serviceId, operationId, resourceTemplateUUID);
         httpPost.setEntity(new StringEntity(getBody, ContentType.APPLICATION_XML));

@@ -73,6 +73,17 @@ public interface MsoRequestsDbAdapter {
 			@WebParam(name = "reason") @XmlElement(required = false) String reason) throws MsoRequestsDbException;
 
 	@WebMethod
+	public void initServiceOperationStatus(
+			@WebParam(name = "serviceId") @XmlElement(required = true) String serviceId,
+			@WebParam(name = "operationId") @XmlElement(required = false) String operationId,
+			@WebParam(name = "operationType") @XmlElement(required = false) String operationType,
+			@WebParam(name = "userId") @XmlElement(required = false) String userId,
+			@WebParam(name = "result") @XmlElement(required = false) String result,
+			@WebParam(name = "operationContent") @XmlElement(required = false) String operationContent,
+			@WebParam(name = "progress") @XmlElement(required = false) String progress,
+			@WebParam(name = "reason") @XmlElement(required = false) String reason) throws MsoRequestsDbException;
+
+	@WebMethod
 	public void initResourceOperationStatus(@WebParam(name = "serviceId") @XmlElement(required = true) String serviceId,
 			@WebParam(name = "operationId") @XmlElement(required = true) String operationId,
 			@WebParam(name = "operationType") @XmlElement(required = true) String operationType,
