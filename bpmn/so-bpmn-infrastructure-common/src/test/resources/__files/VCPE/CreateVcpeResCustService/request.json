@@ -23,6 +23,7 @@
 				},
 			"cloudConfiguration":
 				{
+					"cloudOwner":"CloudOwner",
 					"lcpCloudRegionId":"mdt1",
 					"tenantId":"8b1df54faa3b49078e3416e21370a3ba"
 				},
@@ -30,11 +31,37 @@
 				{
 					"subscriptionServiceType":"123456789",
 					"aLaCarte":"false",
-					"userParams":
+					"userParams":[
 						{
-							"BRG_WAN_MAC_Address" : "brgmac"
+							"name":"BRG_WAN_MAC_Address",
+							"value":"brgmac"
+						},
+						{
+							"name":"Customer_Location",
+							"value":{
+								"customerLatitude":"32.897480",
+								"customerLongitude":"-97.040443",
+								"customerName":"some_company"
+							}
+						},
+						{
+							"name":"Homing_Solution",
+							"value":"sniro"
+						},
+						{
+							"name":"VfModuleNames",
+							"value":[
+								{
+									"VfModuleModelInvariantUuid":"c0e70c86-9813-4441-93c7-ad356a9a8d3b",
+									"VfModuleName":"VGWA:f4:56:56:56:%"
+								},
+								{
+									"VfModuleModelInvariantUuid":"5366deab-be06-44c7-b4f7-77e657b78b25",
+									"VfModuleName":"VGWB:a9:18:18:18:%"
+								}
+							]
 						}
+					]
 				}
-				
 		}
 }

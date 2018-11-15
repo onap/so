@@ -85,10 +85,10 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	// ***** preProcessRequest *****
 			
 	@Test
-	@Ignore // 1802 merge
 	public void preProcessRequest() {
 		ExecutionEntity mex = setupMock()
 		def map = setupMap(mex)
+
 		initPreProcess(mex)
 		
 		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
@@ -96,7 +96,6 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 
 		verify(mex).getVariable(DBGFLAG)
 		verify(mex).setVariable("prefix", Prefix)
-		verify(mex).setVariable("aaiDistDelay", "aaidelay")
 		verify(mex).setVariable("createVcpeServiceRequest", request)
 		verify(mex).setVariable("msoRequestId", "mri")
 		assertEquals("sii", map.get("serviceInstanceId"))
@@ -118,6 +117,8 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		def reqinfo = map.get(Prefix+"requestInfo")
 		assertTrue(reqinfo.indexOf("<request-id>mri</") >= 0)
 		assertTrue(reqinfo.indexOf("<source>VID</") >= 0)
+
+		assertTrue(map.containsKey("vfModuleNames"))
 	}
 			
 	@Test
@@ -127,7 +128,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 		def map = setupMap(mex)
 		initPreProcess(mex)
 		
-		when(mex.getVariable("URN_mso_workflow_aai_distribution_delay")).thenReturn(null)
+		when(mex.getVariable("aai.workflowAaiDistributionDelay")).thenReturn(null)
 		
 		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
 		
@@ -209,7 +210,6 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 				.replace('"mdt1"', '"CloudOwner_CloudRegion1"')
 
 		when(mex.getVariable("bpmnRequest")).thenReturn(req)
-		when(mex.getVariable("URN_mso_workflow_aai_distribution_delay")).thenReturn("PT5S")
 		when(mex.getVariable("aai.workflowAaiDistributionDelay")).thenReturn("PT5S")
 
 		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
@@ -230,8 +230,6 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 				.replace('"mdt1"', '"CloudRegion1_"')
 
 		when(mex.getVariable("bpmnRequest")).thenReturn(req)
-		when(mex.getVariable("URN_mso_workflow_aai_distribution_delay")).thenReturn(60)
-		when(mex.getVariable("URN_mso_workflow_aai_distribution_delay")).thenReturn("PT5S")
 		when(mex.getVariable("aai.workflowAaiDistributionDelay")).thenReturn("PT5S")
 
 		CreateVcpeResCustService CreateVcpeResCustService = new CreateVcpeResCustService()
@@ -1122,7 +1120,7 @@ class CreateVcpeResCustServiceTest extends GroovyTestBase {
 	private void initPreProcess(ExecutionEntity mex) {
 		when(mex.getVariable(DBGFLAG)).thenReturn("true")
 		when(mex.getVariable("bpmnRequest")).thenReturn(request)
-		when(mex.getVariable("URN_mso_workflow_aai_distribution_delay")).thenReturn("aaidelay")
+		when(mex.getVariable("aai.workflowAaiDistributionDelay")).thenReturn("PT5S")
 		when(mex.getVariable("mso-request-id")).thenReturn("mri")
 		when(mex.getVariable("serviceInstanceId")).thenReturn("sii")
 		when(mex.getVariable("requestAction")).thenReturn("ra")
