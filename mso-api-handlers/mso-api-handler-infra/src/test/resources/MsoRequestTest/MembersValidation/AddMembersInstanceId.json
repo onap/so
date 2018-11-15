@@ -1,0 +1,17 @@
+{
+  "requestDetails": {
+    "requestInfo": {
+      "source": "VID",
+      "requestorId": "xxxxxx"
+    },
+    "relatedInstanceList": [
+      {
+        "relatedInstance": {
+          "modelInfo": {
+            "modelType": "vnf"
+          }
+        }
+      }
+    ]
+  }
+}

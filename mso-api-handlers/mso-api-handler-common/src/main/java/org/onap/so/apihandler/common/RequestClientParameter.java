@@ -43,6 +43,7 @@ public class RequestClientParameter {
 	private boolean aLaCarte;
     private String recipeParamXsd;
 	private String requestUri;
+	private String instanceGroupId;
 
     private RequestClientParameter(Builder builder) {
         requestId = builder.requestId;
@@ -65,6 +66,7 @@ public class RequestClientParameter {
         apiVersion = builder.apiVersion;
         aLaCarte = builder.aLaCarte;
         requestUri = builder.requestUri;
+        instanceGroupId = builder.instanceGroupId;
         
     }
 
@@ -147,6 +149,10 @@ public class RequestClientParameter {
 	public String getRequestUri() {
 		return requestUri;
 	}
+	
+	public String getInstanceGroupId() {
+		return instanceGroupId;
+	}
 
 	public static class Builder {
         private String requestId;
@@ -169,6 +175,7 @@ public class RequestClientParameter {
     	private boolean aLaCarte = false;
         private String recipeParamXsd;
     	private String requestUri;
+    	private String instanceGroupId;
 
         public Builder setRequestId(String requestId) {
             this.requestId = requestId;
@@ -269,10 +276,16 @@ public class RequestClientParameter {
         	this.requestUri = requestUri;
         	return this;
         }
+        
+        public Builder setInstanceGroupId(String instanceGroupId) {
+			this.instanceGroupId = instanceGroupId;
+			return this;
+		}
 
         public RequestClientParameter build(){
             return new RequestClientParameter(this);
         }
+
     }
 
 

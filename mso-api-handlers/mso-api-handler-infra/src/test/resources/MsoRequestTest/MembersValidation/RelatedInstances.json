@@ -1,0 +1,15 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelType": "instanceGroup",
+      "modelVersionId": "ddcbbf3d-f2c1-4ca0-8852-76a807285efc"
+    },
+    "requestInfo": {
+      "source": "VID",
+      "requestorId": "xxxxxx"
+    },
+    "requestParameters": {
+      "userParams": []
+    }
+  }
+}

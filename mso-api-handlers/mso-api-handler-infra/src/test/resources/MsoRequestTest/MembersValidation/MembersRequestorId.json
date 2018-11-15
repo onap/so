@@ -1,0 +1,17 @@
+{
+	"requestDetails": {
+	    "requestInfo": {
+	      "source": "VID"
+	    },
+	    "relatedInstanceList": [
+	      {
+	        "relatedInstance": {
+	          "instanceId": "{the to be removed as member vnf-id}",
+	          "modelInfo": {
+	            "modelType": "vnf"
+	          }
+	        }
+	      }
+	    ]
+	  }
+}
