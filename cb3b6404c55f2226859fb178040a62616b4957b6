@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_5de355d9",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-11-15T07:27:31Z",
+      "side": 1,
+      "message": "Remove asterisks from imports",
+      "range": {
+        "startLine": 35,
+        "startChar": 37,
+        "endLine": 35,
+        "endChar": 38
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_639b1c19",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-11-15T07:27:31Z",
+      "side": 1,
+      "message": "I understand your intention here but in case in case of GET method this looks very strange.",
+      "range": {
+        "startLine": 49,
+        "startChar": 52,
+        "endLine": 49,
+        "endChar": 97
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_5d9b5518",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-11-15T07:27:31Z",
+      "side": 1,
+      "message": "Where the `handle` part is in test? This is misleading.",
+      "range": {
+        "startLine": 69,
+        "startChar": 35,
+        "endLine": 69,
+        "endChar": 72
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c3dbe8eb",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-11-15T07:27:31Z",
+      "side": 1,
+      "message": "What `Then` section is supposed to do?",
+      "range": {
+        "startLine": 78,
+        "startChar": 16,
+        "endLine": 78,
+        "endChar": 23
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e3ff0c33",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-11-15T07:27:31Z",
+      "side": 1,
+      "message": "I wouldn\u0027t expect this is an assertion.",
+      "range": {
+        "startLine": 91,
+        "startChar": 66,
+        "endLine": 91,
+        "endChar": 99
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
