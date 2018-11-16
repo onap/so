@@ -4,9 +4,9 @@
     <bpmn:startEvent id="Start_AssignVnfBB">
       <bpmn:outgoing>SequenceFlow_0zaz9o2</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="Task_SDNCAdapterVnfTopologyAssign" name="&#10;SDNC &#10;Assign&#10;(vnf)&#10;" camunda:expression="${SDNCAssignTasks.assignVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_14mpqit</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1ks8kmt</bpmn:outgoing>
+    <bpmn:serviceTask id="Task_SDNCAdapterVnfTopologyAssign" name="&#10;SDNC &#10;Create Request&#10;(vnf)&#10;" camunda:expression="${SDNCAssignTasks.assignVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1samncw</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qkhm79</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="End_AssignVnfBB">
       <bpmn:incoming>SequenceFlow_0csh9dc</bpmn:incoming>
@@ -16,10 +16,9 @@
       <bpmn:outgoing>SequenceFlow_1jwsja5</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0zaz9o2" sourceRef="Start_AssignVnfBB" targetRef="Task_CreateVnf" />
-    <bpmn:sequenceFlow id="SequenceFlow_1ks8kmt" sourceRef="Task_SDNCAdapterVnfTopologyAssign" targetRef="Task_UpdateVnfOrchestrationStatusAssigned" />
     <bpmn:sequenceFlow id="SequenceFlow_0csh9dc" sourceRef="Task_UpdateVnfOrchestrationStatusAssigned" targetRef="End_AssignVnfBB" />
     <bpmn:serviceTask id="Task_UpdateVnfOrchestrationStatusAssigned" name="&#10;AAI&#10;Update&#10;(vnf)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusAssignedVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_1ks8kmt</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1vw20wu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0csh9dc</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_createInstanceGroups" name="&#10;AAI&#10;Create&#10;(instance grp)&#10;" camunda:expression="${AssignVnf.createInstanceGroups(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
@@ -28,11 +27,9 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_1jwsja5" sourceRef="Task_CreateVnf" targetRef="Task_createPlatform" />
     <bpmn:sequenceFlow id="SequenceFlow_1nle8kc" sourceRef="Task_createInstanceGroups" targetRef="ExclusiveGateway_02tchpp" />
-    <bpmn:sequenceFlow id="SequenceFlow_11jum90" name="no" sourceRef="ExclusiveGateway_02tchpp" targetRef="ExclusiveGateway_1blf52g">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("callHoming") == false}]]></bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_11jum90" name="no" sourceRef="ExclusiveGateway_02tchpp" targetRef="ExclusiveGateway_1blf52g" />
     <bpmn:sequenceFlow id="SequenceFlow_1uiok7v" name="yes" sourceRef="ExclusiveGateway_02tchpp" targetRef="Task_callHoming">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("callHoming") == true}]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("callHoming")}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0v8d14a" sourceRef="Task_callHoming" targetRef="ExclusiveGateway_1blf52g" />
     <bpmn:callActivity id="Task_callHoming" name="Call Homing" calledElement="HomingBB">
@@ -40,6 +37,7 @@
         <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:out source="generalBuildingBlock" target="gBBInput" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1uiok7v</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0v8d14a</bpmn:outgoing>
@@ -65,8 +63,7 @@
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="SequenceFlow_1i52a7x" sourceRef="StartEvent_1c3cyuv" targetRef="EndEvent_1bywujf" />
     </bpmn:subProcess>
-    <bpmn:sequenceFlow id="SequenceFlow_14mpqit" sourceRef="ExclusiveGateway_1blf52g" targetRef="Task_SDNCAdapterVnfTopologyAssign" />
-    <bpmn:inclusiveGateway id="ExclusiveGateway_02tchpp" name="Call Homing?">
+    <bpmn:inclusiveGateway id="ExclusiveGateway_02tchpp" name="Call Homing?" default="SequenceFlow_11jum90">
       <bpmn:incoming>SequenceFlow_1nle8kc</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_11jum90</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1uiok7v</bpmn:outgoing>
@@ -74,8 +71,19 @@
     <bpmn:inclusiveGateway id="ExclusiveGateway_1blf52g">
       <bpmn:incoming>SequenceFlow_11jum90</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0v8d14a</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_14mpqit</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1samncw</bpmn:outgoing>
     </bpmn:inclusiveGateway>
+    <bpmn:callActivity id="CallActivity_sdncAssign" name="SDNC Assign (vnf)" calledElement="SDNCHandler">
+      <bpmn:extensionElements>
+        <camunda:in source="SDNCRequest" target="SDNCRequest" />
+        <camunda:out source="SDNCResponse" target="SDNCResponse" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1qkhm79</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vw20wu</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_1samncw" sourceRef="ExclusiveGateway_1blf52g" targetRef="Task_SDNCAdapterVnfTopologyAssign" />
+    <bpmn:sequenceFlow id="SequenceFlow_1qkhm79" sourceRef="Task_SDNCAdapterVnfTopologyAssign" targetRef="CallActivity_sdncAssign" />
+    <bpmn:sequenceFlow id="SequenceFlow_1vw20wu" sourceRef="CallActivity_sdncAssign" targetRef="Task_UpdateVnfOrchestrationStatusAssigned" />
   </bpmn:process>
   <bpmn:error id="Error_0rgauy1" name="gDelegateError" errorCode="7000" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -90,9 +98,9 @@
         <dc:Bounds x="930" y="94" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1h93h9d_di" bpmnElement="End_AssignVnfBB">
-        <dc:Bounds x="1229" y="116" width="36" height="36" />
+        <dc:Bounds x="1323" y="116" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1238" y="156" width="18" height="12" />
+          <dc:Bounds x="1296" y="156" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1r380lg_di" bpmnElement="Task_CreateVnf">
@@ -105,22 +113,15 @@
           <dc:Bounds x="83" y="113" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1ks8kmt_di" bpmnElement="SequenceFlow_1ks8kmt">
-        <di:waypoint xsi:type="dc:Point" x="1030" y="134" />
-        <di:waypoint xsi:type="dc:Point" x="1056" y="134" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="998" y="113" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0csh9dc_di" bpmnElement="SequenceFlow_0csh9dc">
-        <di:waypoint xsi:type="dc:Point" x="1156" y="134" />
-        <di:waypoint xsi:type="dc:Point" x="1229" y="134" />
+        <di:waypoint xsi:type="dc:Point" x="1303" y="134" />
+        <di:waypoint xsi:type="dc:Point" x="1323" y="134" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1147.5" y="113" width="90" height="12" />
+          <dc:Bounds x="1268" y="113" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0s6d1be_di" bpmnElement="Task_UpdateVnfOrchestrationStatusAssigned">
-        <dc:Bounds x="1056" y="94" width="100" height="80" />
+        <dc:Bounds x="1203" y="94" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0wjy7za_di" bpmnElement="Task_createInstanceGroups">
         <dc:Bounds x="534" y="94" width="100" height="80" />
@@ -188,38 +189,31 @@
         <dc:Bounds x="404" y="94" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_19596dp_di" bpmnElement="SubProcess_19596dp" isExpanded="true">
-        <dc:Bounds x="249" y="267" width="231" height="135" />
+        <dc:Bounds x="673" y="239" width="231" height="135" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_1c3cyuv_di" bpmnElement="StartEvent_1c3cyuv">
-        <dc:Bounds x="286" y="323" width="36" height="36" />
+        <dc:Bounds x="710" y="295" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="259" y="359" width="0" height="12" />
+          <dc:Bounds x="638" y="331" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1bywujf_di" bpmnElement="EndEvent_1bywujf">
-        <dc:Bounds x="422" y="323" width="36" height="36" />
+        <dc:Bounds x="846" y="295" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="395" y="359" width="0" height="12" />
+          <dc:Bounds x="774" y="331" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1i52a7x_di" bpmnElement="SequenceFlow_1i52a7x">
-        <di:waypoint xsi:type="dc:Point" x="322" y="341" />
-        <di:waypoint xsi:type="dc:Point" x="422" y="341" />
+        <di:waypoint xsi:type="dc:Point" x="746" y="313" />
+        <di:waypoint xsi:type="dc:Point" x="846" y="313" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="372" y="320" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_14mpqit_di" bpmnElement="SequenceFlow_14mpqit">
-        <di:waypoint xsi:type="dc:Point" x="899" y="134" />
-        <di:waypoint xsi:type="dc:Point" x="930" y="134" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="914.5" y="113" width="0" height="12" />
+          <dc:Bounds x="751" y="292" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="InclusiveGateway_0x0c3kk_di" bpmnElement="ExclusiveGateway_02tchpp">
         <dc:Bounds x="679" y="109" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="731" y="128" width="67" height="13" />
+          <dc:Bounds x="732" y="128" width="64" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="InclusiveGateway_0ijggth_di" bpmnElement="ExclusiveGateway_1blf52g">
@@ -228,6 +222,30 @@
           <dc:Bounds x="896" y="163" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_12uxg1m_di" bpmnElement="CallActivity_sdncAssign">
+        <dc:Bounds x="1060" y="94" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1samncw_di" bpmnElement="SequenceFlow_1samncw">
+        <di:waypoint xsi:type="dc:Point" x="899" y="134" />
+        <di:waypoint xsi:type="dc:Point" x="930" y="134" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="914.5" y="113" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qkhm79_di" bpmnElement="SequenceFlow_1qkhm79">
+        <di:waypoint xsi:type="dc:Point" x="1030" y="134" />
+        <di:waypoint xsi:type="dc:Point" x="1060" y="134" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1045" y="113" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vw20wu_di" bpmnElement="SequenceFlow_1vw20wu">
+        <di:waypoint xsi:type="dc:Point" x="1160" y="134" />
+        <di:waypoint xsi:type="dc:Point" x="1203" y="134" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1181.5" y="113" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
