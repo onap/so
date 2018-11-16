@@ -35,7 +35,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,7 +48,7 @@ import org.springframework.core.env.Environment;
 @Component
 public class BPRestCallback {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,BPRestCallback.class);
-	private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
+
 	private static final String CAMUNDA="Camunda";
 	private static final String MSO_INTERNAL_ERROR="MsoInternalError";
 	@Autowired
@@ -125,9 +125,7 @@ public class BPRestCallback {
 				method.setHeader("Authorization", authorization);
 			} catch (Exception e) {
 				LOGGER.error(MessageEnum.RA_SET_CALLBACK_AUTH_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError,
-					"Unable to set authorization in callback request", e);
-				ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL,
-					"Unable to set authorization in callback request: " + e.getMessage());
+					"Unable to set authorization in callback request", e);			
 				error = true;
 			}
 
@@ -144,15 +142,13 @@ public class BPRestCallback {
 				if (httpResponse.getStatusLine().getStatusCode() >= 300) {
 					String msg = "Received error response to callback request: " + httpResponse.getStatusLine();
 					LOGGER.error(MessageEnum.RA_CALLBACK_BPEL_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError, msg);
-					ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, msg);
+
 				}
 			}
 			return true;
 		} catch (Exception e) {
 			LOGGER.error(MessageEnum.RA_CALLBACK_BPEL_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError,
-				"Error sending callback request", e);
-			ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL,
-				"Error sending callback request: " + e.getMessage());
+				"Error sending callback request", e);			
 			return false;
 		} finally {
 			if (httpResponse != null) {

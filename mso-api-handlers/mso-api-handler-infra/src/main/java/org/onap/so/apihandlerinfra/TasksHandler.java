@@ -46,14 +46,14 @@ import org.onap.so.apihandler.common.ResponseHandler;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
-import org.onap.so.apihandlerinfra.logging.AlarmLoggerInfo;
+
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskList;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskVariableValue;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskVariables;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksGetResponse;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.UUIDChecker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ import io.swagger.annotations.ApiOperation;
 @Component
 public class TasksHandler {
 
-    private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
+
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH,TasksHandler.class);
        
     @Value("${mso.camunda.rest.task.uri}")
@@ -174,15 +174,7 @@ public class TasksHandler {
 			throw validateException;
 		} catch(IOException e) {
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).build();
-			AlarmLoggerInfo alarmLoggerInfo = new AlarmLoggerInfo.Builder("MsoConfigurationError",
-					MsoAlarmLogger.CRITICAL,
-					Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_BPEL)).build();
-
-
-
-			BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),HttpStatus.SC_BAD_GATEWAY,ErrorNumbers.SVC_NO_SERVER_RESOURCES)
-					.errorInfo(errorLoggerInfo).alarmInfo(alarmLoggerInfo).build();
-
+			BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),HttpStatus.SC_BAD_GATEWAY,ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
 			throw bpmnFailureException;
 		}
 		TasksGetResponse trr = new TasksGetResponse();
@@ -256,13 +248,7 @@ public class TasksHandler {
 			getResponse = requestClient.get();
 		}catch(IOException e){
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).build();
-			AlarmLoggerInfo alarmLoggerInfo = new AlarmLoggerInfo.Builder("MsoConfigurationError",
-					MsoAlarmLogger.CRITICAL, Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_BPEL)).build();
-
-
-
-			BPMNFailureException validateException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY), HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES)
-					.errorInfo(errorLoggerInfo).alarmInfo(alarmLoggerInfo).build();
+			BPMNFailureException validateException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY), HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
 			throw validateException;
 		}
 		ResponseHandler respHandler = new ResponseHandler (getResponse, requestClient.getType ());
@@ -274,24 +260,24 @@ public class TasksHandler {
 			}
 			else {
 				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).build();
-				AlarmLoggerInfo alarmLoggerInfo = new AlarmLoggerInfo.Builder("MsoConfigurationError", MsoAlarmLogger.CRITICAL, Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_BPEL)).build();
 
 
 
-				BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY), HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES)
-						.errorInfo(errorLoggerInfo).alarmInfo(alarmLoggerInfo).build();
+
+				BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY), HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
+
 				throw bpmnFailureException;
 			}
 			
 		}
 		else {
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).build();
-			AlarmLoggerInfo alarmLoggerInfo = new AlarmLoggerInfo.Builder("MsoConfigurationError", MsoAlarmLogger.CRITICAL, Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_BPEL)).build();
 
 
 
-			BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(bpelStatus), bpelStatus, ErrorNumbers.SVC_NO_SERVER_RESOURCES)
-					.errorInfo(errorLoggerInfo).alarmInfo(alarmLoggerInfo).build();
+
+			BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(bpelStatus), bpelStatus, ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
+
 
 			throw bpmnFailureException;
 		}

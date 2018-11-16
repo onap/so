@@ -52,7 +52,7 @@ import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.HeatCacheEntry;
 import org.onap.so.openstack.beans.HeatStatus;
@@ -532,7 +532,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                 		}
 //                		MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
  //               		me.addContext(CREATE_STACK);
-  //              		alarmLogger.sendAlarm(HEAT_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage());
+
    //             		throw me;
                 	} catch (Exception e2) {
                 		// shouldn't happen - but handle
@@ -541,7 +541,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                 }
                 MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
                 me.addContext(CREATE_STACK);
-                alarmLogger.sendAlarm(HEAT_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage());
+
                 throw me;
             }
 
@@ -716,7 +716,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                     me.addContext (DELETE_STACK);
 
                     // Alarm this condition, stack deletion failed
-                    alarmLogger.sendAlarm (HEAT_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
 
                     throw me;
                 }
@@ -729,7 +729,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                     me.addContext (DELETE_STACK);
 
                     // Alarm this condition, stack deletion failed
-                    alarmLogger.sendAlarm (HEAT_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
 
                     throw me;
                 }
@@ -938,7 +938,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		        } catch (RuntimeException e) {
 		            // This comes back for not found (probably an incorrect region ID)
 		            String error = "AIC did not match an orchestration service for: region=" + region + ",cloud=" + cloudIdentity.getIdentityUrl();
-		            alarmLogger.sendAlarm ("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
 		            throw new MsoAdapterException (error, e);
 		        }
 		        tokenId = access.getToken ().getId ();
@@ -952,7 +951,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		        } catch (ServiceEndpointNotFoundException e) {
 		        	// This comes back for not found (probably an incorrect region ID)
 		            String error = "cloud did not match an orchestration service for: region=" + region + ",cloud=" + cloudIdentity.getIdentityUrl();
-		            alarmLogger.sendAlarm ("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
 		            throw new MsoAdapterException (error, e);
 	        	}
 	        }
@@ -960,7 +958,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
             if (e.getStatus () == 401) {
                 // Authentication error.
                 String error = "Authentication Failure: tenant=" + tenantId + ",cloud=" + cloudIdentity.getId ();
-                alarmLogger.sendAlarm ("MsoAuthenticationError", MsoAlarmLogger.CRITICAL, error);
+
                 throw new MsoAdapterException (error);
             } else {
                 throw keystoneErrorToMsoException (e, TOKEN_AUTH);
@@ -974,6 +972,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
             // Catch-all
             throw runtimeExceptionToMsoException (e, TOKEN_AUTH);
         }
+
         Heat heatClient = new Heat (heatUrl);
         heatClient.token (tokenId);
 

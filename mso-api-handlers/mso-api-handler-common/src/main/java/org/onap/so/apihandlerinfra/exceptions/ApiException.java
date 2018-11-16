@@ -23,7 +23,7 @@ package org.onap.so.apihandlerinfra.exceptions;
 
 import java.util.List;
 
-import org.onap.so.apihandlerinfra.logging.AlarmLoggerInfo;
+
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 
 public abstract class ApiException extends Exception{
@@ -34,7 +34,7 @@ public abstract class ApiException extends Exception{
 	private int httpResponseCode;
     private String messageID;
     private ErrorLoggerInfo errorLoggerInfo;
-    private AlarmLoggerInfo alarmLoggerInfo;
+
     private List<String> variables;    
 
     public ApiException(Builder builder){
@@ -44,7 +44,6 @@ public abstract class ApiException extends Exception{
         this.messageID = builder.messageID;
         this.variables = builder.variables;
         this.errorLoggerInfo = builder.errorLoggerInfo;
-        this.alarmLoggerInfo = builder.alarmLoggerInfo;
         this.variables = builder.variables;        
     }
 
@@ -64,9 +63,6 @@ public abstract class ApiException extends Exception{
         return errorLoggerInfo;
     }
 
-    public AlarmLoggerInfo getAlarmLoggerInfo() {
-        return alarmLoggerInfo;
-    }
 
     public List<String> getVariables() {
         return variables;
@@ -78,7 +74,7 @@ public abstract class ApiException extends Exception{
         private int httpResponseCode;
         private String messageID;
         private ErrorLoggerInfo errorLoggerInfo = null;
-        private AlarmLoggerInfo alarmLoggerInfo = null;
+
         private List<String> variables = null;
         
         public Builder(String message, int httpResponseCode, String messageID) {
@@ -109,11 +105,6 @@ public abstract class ApiException extends Exception{
 
         public T errorInfo(ErrorLoggerInfo errorLoggerInfo){
             this.errorLoggerInfo = errorLoggerInfo;
-            return (T) this;
-        }
-
-        public T alarmInfo(AlarmLoggerInfo alarmLoggerInfo){
-            this.alarmLoggerInfo = alarmLoggerInfo;
             return (T) this;
         }
 

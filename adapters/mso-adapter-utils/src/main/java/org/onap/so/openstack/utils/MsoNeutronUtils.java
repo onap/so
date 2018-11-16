@@ -36,7 +36,7 @@ import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.NetworkInfo;
 import org.onap.so.openstack.beans.NeutronCacheEntry;
@@ -408,7 +408,6 @@ public class MsoNeutronUtils extends MsoCommonUtils
 				} catch (RuntimeException e) {
 					// This comes back for not found (probably an incorrect region ID)
 					String error = "Network service not found: region=" + region + ",cloud=" + cloudIdentity.getId();
-					alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
 					throw new MsoAdapterException (error, e);
 				}
 				tokenId = access.getToken().getId();
@@ -425,7 +424,6 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	        	} catch (ServiceEndpointNotFoundException e) {
 	        		// This comes back for not found (probably an incorrect region ID)
 					String error = "Network service not found: region=" + region + ",cloud=" + cloudIdentity.getId();
-					alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
 					throw new MsoAdapterException (error, e);
 	        	}
 	        }
@@ -434,7 +432,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 			if (e.getStatus() == 401) {
 				// Authentication error.
 				String error = "Authentication Failure: tenant=" + tenantId + ",cloud=" + cloudIdentity.getId();
-				alarmLogger .sendAlarm("MsoAuthenticationError", MsoAlarmLogger.CRITICAL, error);
+
 				throw new MsoAdapterException(error);
 			}
 			else {
@@ -453,6 +451,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 			MsoException me = runtimeExceptionToMsoException(e, "TokenAuth");
 			throw me;
 		}
+
 		Quantum neutronClient = new Quantum(neutronUrl);
 		neutronClient.token(tokenId);
 
