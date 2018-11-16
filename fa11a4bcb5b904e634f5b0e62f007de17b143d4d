@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_292c0e02",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-16T11:28:14Z",
+      "side": 1,
+      "message": "\"UUID666\" is not a correct uuid. I think it would be better to use real uuid here. Here you\u0027re testing class with incorrect data. I think behaviour is unexpected for incorrect data.\n\nAlso tests are examples of usage of class. I would show that you\u0027re expected to pass correct uuid here.\n\nI addition name of constant is misleading - it\u0027s not an UUID.",
+      "range": {
+        "startLine": 46,
+        "startChar": 39,
+        "endLine": 46,
+        "endChar": 48
+      },
+      "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6cb9c92d",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-16T11:28:14Z",
+      "side": 1,
+      "message": "I can\u0027t see a reason for this constant - you can just use (static imported) ACCEPTED. That would increase readability of tests as well.",
+      "range": {
+        "startLine": 47,
+        "startChar": 4,
+        "endLine": 47,
+        "endChar": 69
+      },
+      "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c9cea25a",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-16T11:28:14Z",
+      "side": 1,
+      "message": "I think creating tested object should be in GIVEN part, unless you\u0027re testing it.",
+      "range": {
+        "startLine": 59,
+        "startChar": 8,
+        "endLine": 59,
+        "endChar": 126
+      },
+      "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a9f8fe7c",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-11-16T11:28:14Z",
+      "side": 1,
+      "message": "I don\u0027t like this assert - you cannot assure that tested object will actually run this method and run this assert. Also when you use this class you cannot assute that tested object will use other method to throw exception, for example buildWorkflowException.\n\nMy suggestion would be using spy or mock here and asserting all interactions with this class.\n\nAlso this is assert in WHEN part of test.",
+      "range": {
+        "startLine": 194,
+        "startChar": 12,
+        "endLine": 194,
+        "endChar": 58
+      },
+      "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
