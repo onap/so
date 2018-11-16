@@ -143,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_cc48f52f",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-11-16T06:13:27Z",
+      "side": 1,
+      "message": "I would opt for something like:\nwhen(httpClient.get()).thenReturn(response)\nwhen(httpClient.post()).thenReturn(response)",
+      "parentUuid": "9adffdf1_71768240",
+      "range": {
+        "startLine": 49,
+        "startChar": 52,
+        "endLine": 49,
+        "endChar": 97
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_5d9b5518",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
         "patchSetId": 2
@@ -178,6 +202,30 @@
       "side": 1,
       "message": "the name of the test refers to the logic that the unit test verifies, not what is going on in the unit test. So the implementation of the tested method should handle the exceptions. I have made some small changes to hopefully improve how the exception is verified so it may be clearer now - especially the method output is now obvious",
       "parentUuid": "9adffdf1_5d9b5518",
+      "range": {
+        "startLine": 69,
+        "startChar": 35,
+        "endLine": 69,
+        "endChar": 72
+      },
+      "revId": "cb3b6404c55f2226859fb178040a62616b4957b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_2c0661cf",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-11-16T06:13:27Z",
+      "side": 1,
+      "message": "My point was that test name suggest some action which should be verified. What I saw on the other hand was only function call (with hidden assert). That gave impression that mocked exception was virtually swallowed.\n\nNow is much better.",
+      "parentUuid": "9adffdf1_3190fa42",
       "range": {
         "startLine": 69,
         "startChar": 35,
