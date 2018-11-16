@@ -26,10 +26,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.exceptions.*;
-import org.onap.so.apihandlerinfra.logging.AlarmLoggerInfo;
+
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 
 import java.io.IOException;
@@ -102,14 +102,13 @@ public class ApiExceptionTest extends BaseTest {
 
     @Test
     public void testValidateException() throws ApiException {
-        AlarmLoggerInfo testLog = new AlarmLoggerInfo.Builder("MsoConfigurationError", MsoAlarmLogger.CRITICAL,
-                Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_SDNC_ADAPTER)).build();
+      
         thrown.expect(ValidateException.class);
         thrown.expectMessage("Test Message");
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_NOT_FOUND)));
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)));
-        thrown.expect(hasProperty("alarmLoggerInfo", sameBeanAs(testLog)));
-        ValidateException testException = new ValidateException.Builder("Test Message", HttpStatus.SC_NOT_FOUND,ErrorNumbers.SVC_BAD_PARAMETER).messageID(ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).alarmInfo(testLog).build();
+
+        ValidateException testException = new ValidateException.Builder("Test Message", HttpStatus.SC_NOT_FOUND,ErrorNumbers.SVC_BAD_PARAMETER).messageID(ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).build();
         throw testException;
     }
 

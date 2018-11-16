@@ -25,7 +25,7 @@ package org.onap.so.adapters.sdnc.sdncrest;
 import org.onap.so.adapters.sdnc.exception.SDNCAdapterException;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -36,7 +36,7 @@ public class MapTypedRequestTunablesData {
 	
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,MapTypedRequestTunablesData.class);
 	
-	private static final MsoAlarmLogger alarmLogger = new MsoAlarmLogger();	
+	
 	
 	private static final String MISSING_CONFIGURATION_ERROR_MSG= "Missing configuration for: ";
 	private static final String MISSING_CONFIG_PARAM_ERROR_MSG="Missing config param";
@@ -55,7 +55,7 @@ public class MapTypedRequestTunablesData {
 		if ("".equals(value)) {
 			error= MISSING_CONFIGURATION_ERROR_MSG + reqTunable.getKey();
 			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, reqTunable.getKey(), "SDNC", "", MsoLogger.ErrorCode.DataError, MISSING_CONFIG_PARAM_ERROR_MSG);
-			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, reqTunable.getError());		
+		
 			throw new SDNCAdapterException(error);
 		}
 
@@ -64,7 +64,7 @@ public class MapTypedRequestTunablesData {
 		if (parts.length != 5) {
 			error="Invalid configuration for: " + reqTunable.getKey();
 			msoLogger.error(MessageEnum.RA_SDNC_INVALID_CONFIG, reqTunable.getKey(), value, "SDNC", "", MsoLogger.ErrorCode.DataError, "Invalid config");
-			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, reqTunable.getError());	
+	
 			throw new SDNCAdapterException(error);
 		}
 
@@ -80,7 +80,7 @@ public class MapTypedRequestTunablesData {
 		if ("".equals(reqTunable.getSdncUrl())) {
 			error=MISSING_CONFIGURATION_ERROR_MSG + urlPropKey;
 			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, urlPropKey, "SDNC", "", MsoLogger.ErrorCode.DataError, MISSING_CONFIG_PARAM_ERROR_MSG);
-			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, reqTunable.getError());
+
 			throw new SDNCAdapterException(error);
 		}
 
@@ -98,7 +98,7 @@ public class MapTypedRequestTunablesData {
 			error=MISSING_CONFIGURATION_ERROR_MSG + Constants.MY_URL_PROP;
 			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, Constants.MY_URL_PROP, "SDNC", "",
 				MsoLogger.ErrorCode.DataError, MISSING_CONFIG_PARAM_ERROR_MSG);
-			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, reqTunable.getError());		
+		
 			throw new SDNCAdapterException(error);
 		}
 

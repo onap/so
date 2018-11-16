@@ -28,7 +28,7 @@ import org.onap.so.adapters.sdnc.SDNCAdapterPortType;
 import org.onap.so.adapters.sdnc.SDNCAdapterRequest;
 import org.onap.so.adapters.sdnc.SDNCAdapterResponse;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,7 +41,7 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 
 
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SDNCAdapterPortTypeImpl.class);
-	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
+
 	
 	@Autowired
 	private SDNCRestClient sdncClient;
@@ -71,7 +71,7 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 		catch (Exception e){
 			String respMsg = "Error sending request to SDNC. Failed to start SDNC Client thread " + e.getMessage();
 			msoLogger.error(MessageEnum.RA_SEND_REQUEST_SDNC_ERR, "SDNC", "", MsoLogger.ErrorCode.DataError, respMsg, e);
-			alarmLogger.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, respMsg);
+
 			SDNCResponse sdncResp = new SDNCResponse(bpelReqId);
 			sdncResp.setRespCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			sdncResp.setRespMsg(respMsg);

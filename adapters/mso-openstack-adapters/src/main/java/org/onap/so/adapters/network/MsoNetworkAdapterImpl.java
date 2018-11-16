@@ -49,7 +49,7 @@ import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.NetworkInfo;
@@ -92,7 +92,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private static final String NEUTRON_MODE = "NEUTRON";
     
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,MsoNetworkAdapterImpl.class);
-    private static final MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
+
     @Autowired
     private CloudConfig cloudConfig;
     @Autowired
@@ -404,10 +404,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 if (heatTemplate == null) {
                     String error = "Network error - undefined Heat Template. Network Type = " + networkType;
                     LOGGER.error (MessageEnum.RA_PARAM_NOT_FOUND, "Heat Template", "Network Type", networkType, "Openstack", "", MsoLogger.ErrorCode.DataError, "Network error - undefined Heat Template. Network Type = " + networkType);
-                    alarmLogger.sendAlarm (MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error); // Alarm on this
-                                                                                                     // error,
-                                                                                                     // configuration
-                                                                                                     // must be fixed
                     LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
                     throw new NetworkException (error, MsoExceptionCategory.INTERNAL);
                 }
@@ -514,10 +510,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 } catch (IllegalArgumentException e) {
                     String error = "Create Network: Configuration Error: " + e.getMessage ();
                     LOGGER.error (MessageEnum.RA_CONFIG_EXC, e.getMessage(), "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception - Create Network, Configuration Error", e);
-                    alarmLogger.sendAlarm (MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error); // Alarm on this
-                                                                                                     // error,
-                                                                                                     // configuration
-                                                                                                     // must be fixed
                     LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, error);
                     // Input parameters were not valid
                     throw new NetworkException (error, MsoExceptionCategory.INTERNAL);
@@ -953,7 +945,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 if (heatTemplate == null) {
                     String error = "Network error - undefined Heat Template. Network Type=" + networkType;
                     LOGGER.error(MessageEnum.RA_PARAM_NOT_FOUND, "Heat Template", "Network Type", networkType, "OpenStack", "getHeatTemplate", MsoLogger.ErrorCode.DataError, "Network error - undefined Heat Template. Network Type=" + networkType);
-                    alarmLogger.sendAlarm(MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error);
+
                     LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
                     throw new NetworkException(error, MsoExceptionCategory.INTERNAL);
                 }
@@ -989,7 +981,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 } catch (IllegalArgumentException e) {
                     String error = "UpdateNetwork: Configuration Error: Network Type=" + networkType;
                     LOGGER.error(MessageEnum.RA_CONFIG_EXC, "Network Type=" + networkType, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - UpdateNetwork: Configuration Error");
-                    alarmLogger.sendAlarm(MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error);
+
                     LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError, error);
                     throw new NetworkException(error, MsoExceptionCategory.INTERNAL, e);
                 }
@@ -1177,10 +1169,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 				LOGGER.error(MessageEnum.RA_NETWORK_ORCHE_MODE_NOT_SUPPORT,
 						mode, "OpenStack", "", MsoLogger.ErrorCode.DataError,
 						"CreateNetwork: Configuration Error");
-				// Alarm on this error, configuration must be fixed
-				alarmLogger.sendAlarm(MSO_CONFIGURATION_ERROR,
-						MsoAlarmLogger.CRITICAL, error);
-
 				throw new NetworkException(error, MsoExceptionCategory.INTERNAL);
 			}
 

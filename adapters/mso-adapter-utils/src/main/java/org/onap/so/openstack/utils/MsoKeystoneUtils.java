@@ -31,7 +31,7 @@ import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.MsoTenant;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
@@ -435,7 +435,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
             if (e.getStatus () == 401) {
                 // Authentication error. Can't access admin tenant - something is mis-configured
                 String error = "MSO Authentication Failed for " + cloudIdentity.getId ();
-                alarmLogger.sendAlarm ("MsoAuthenticationError", MsoAlarmLogger.CRITICAL, error);
+
                 throw new MsoAdapterException (error);
             } else {
                 throw keystoneErrorToMsoException (e, "TokenAuth");
@@ -453,7 +453,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         	adminUrl = adminUrl.replaceFirst("5000", "35357");
         } catch (RuntimeException e) {
             String error = "Identity service not found: region=" + region + ",cloud=" + cloudIdentity.getId ();
-            alarmLogger.sendAlarm ("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
+
             LOGGER.error(MessageEnum.IDENTITY_SERVICE_NOT_FOUND, region, cloudIdentity.getId(), "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception in findEndpointURL");
             throw new MsoAdapterException (error, e);
         }

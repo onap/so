@@ -84,7 +84,7 @@ import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
@@ -298,7 +298,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	            
     	        MsoCloudifyException me = new MsoCloudifyException (0, "Workflow Execution Failed", installWorkflow.getError());
                 me.addContext (CREATE_DEPLOYMENT);
-                alarmLogger.sendAlarm(CLOUDIFY_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage());
+
                 throw me;
         	}
         }
@@ -333,7 +333,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 
             // Propagate the original exception from Stack Query.
             me.addContext (CREATE_DEPLOYMENT);
-            alarmLogger.sendAlarm(CLOUDIFY_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage());
+
             throw me;
         }
     }
@@ -711,7 +711,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         		// leave the deployment in an indeterminate state, as cloud resources may still exist.
     	        MsoCloudifyException me = new MsoCloudifyException (0, "Uninstall Workflow Failed", uninstallWorkflow.getError());
                 me.addContext (DELETE_DEPLOYMENT);
-                alarmLogger.sendAlarm(CLOUDIFY_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage());
+
                 throw me;
         	}
         }
@@ -719,7 +719,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         	// Uninstall workflow has failed.
         	// Must fail the deletion... may leave the deployment in an inconclusive state 
             me.addContext (DELETE_DEPLOYMENT);
-            alarmLogger.sendAlarm(CLOUDIFY_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage());
+
             throw me;
         }
         
@@ -738,7 +738,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     		// deployment in Cloudify DB.
 	        MsoCloudifyException me = new MsoCloudifyException (0, "Deployment Delete Failed", ce.getMessage(), ce);
             me.addContext (DELETE_DEPLOYMENT);
-            alarmLogger.sendAlarm(CLOUDIFY_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage());
+
             throw me;
         }
         catch (CloudifyResponseException re) {
@@ -746,14 +746,14 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     		// deployment in the Cloudify DB.
 	        MsoCloudifyException me = new MsoCloudifyException (re.getStatus(), re.getMessage(), re.getMessage(), re);
             me.addContext (DELETE_DEPLOYMENT);
-            alarmLogger.sendAlarm(CLOUDIFY_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage());
+
             throw me;
         }
         catch (Exception e) {
         	// Catch-all
         	MsoAdapterException ae = new MsoAdapterException (e.getMessage(), e);
             ae.addContext (DELETE_DEPLOYMENT);
-            alarmLogger.sendAlarm(CLOUDIFY_ERROR, MsoAlarmLogger.CRITICAL, ae.getContextMessage());
+
             throw ae;
         }
 
@@ -1154,7 +1154,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 
             // Generate an alarm for 5XX and higher errors.
             if (re.getStatus () >= 500) {
-                alarmLogger.sendAlarm (CLOUDIFY_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
             }
         } else if (e instanceof CloudifyConnectException) {
         	CloudifyConnectException ce = (CloudifyConnectException) e;
@@ -1163,7 +1163,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
             me.addContext (context);
 
             // Generate an alarm for all connection errors.
-            alarmLogger.sendAlarm ("CloudifyIOError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
             LOGGER.error(MessageEnum.RA_CONNECTION_EXCEPTION, CLOUDIFY, "Cloudify connection error on " + context + ": " + e, CLOUDIFY, "", MsoLogger.ErrorCode.DataError, "Cloudify connection error on " + context);
     	}
 

@@ -33,7 +33,7 @@ import javax.ws.rs.core.Response;
 
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -48,7 +48,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SNIROResponse {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SNIROResponse.class);
-	private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
+
 	
 	@Autowired
 	private Environment env;
@@ -71,7 +71,7 @@ public class SNIROResponse {
 			String error = "Missing configuration for: " + Constants.BPEL_REST_URL_PROP;
 			LOGGER.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, Constants.BPEL_REST_URL_PROP, "SDNC", "",
 				MsoLogger.ErrorCode.DataError, "Missing config param");
-			ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, error);
+
 			return Response.status(HttpServletResponse.SC_BAD_REQUEST).entity(error).build();
 		}
 

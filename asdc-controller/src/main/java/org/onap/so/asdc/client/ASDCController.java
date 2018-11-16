@@ -54,7 +54,7 @@ import org.onap.so.asdc.util.ASDCNotificationLogging;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -64,7 +64,7 @@ public class ASDCController {
 
     protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC,ASDCController.class);
 
-    protected static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
+
 
     protected boolean isAsdcClientAutoManaged = false;
 
