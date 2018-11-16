@@ -119,7 +119,8 @@ public final class XmlTool {
 		// End of code to remove whitespace outside of tags
 
 		// the factory pattern supports different XSLT processors
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();		
+		transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 		Transformer transformer = transformerFactory.newTransformer(xsltSource);
 
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
