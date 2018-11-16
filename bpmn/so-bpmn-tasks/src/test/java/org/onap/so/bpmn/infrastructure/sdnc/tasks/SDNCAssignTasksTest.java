@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -46,6 +48,8 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.sdnc.beans.SDNCRequest;
+import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 
 
 public class SDNCAssignTasksTest extends BaseTaskTest{
@@ -102,13 +106,14 @@ public class SDNCAssignTasksTest extends BaseTaskTest{
 
 	@Test
 	public void assignVnfTest() throws Exception {
-		doReturn("response").when(sdncVnfResources).assignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext, false);
+		doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).assignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext, false);
 
 		execution.setVariable("generalBuildingBlock", gBBInput);
 		sdncAssignTasks.assignVnf(execution);
 
 		verify(sdncVnfResources, times(1)).assignVnf(genericVnf, serviceInstance,customer, cloudRegion, requestContext, false);
-		assertTrue(execution.getVariable("SDNCResponse").equals("response"));
+		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+		assertEquals(SDNCTopology.VNF,sdncRequest.getTopology());
 	}
 
 	@Test
