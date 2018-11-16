@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_bc6a7a18",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilFactory.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-16T20:08:43Z",
+      "side": 1,
+      "message": "I do agree the name is misleading and the \u0027util\u0027 suffix does not indicate the classes responsibilities. At this point I would prefer no to do any major refactors and renames.",
+      "parentUuid": "9adffdf1_fc81e24a",
+      "range": {
+        "startLine": 26,
+        "startChar": 20,
+        "endLine": 26,
+        "endChar": 26
+      },
+      "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_292c0e02",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2018-11-16T11:28:14Z",
       "side": 1,
       "message": "\"UUID666\" is not a correct uuid. I think it would be better to use real uuid here. Here you\u0027re testing class with incorrect data. I think behaviour is unexpected for incorrect data.\n\nAlso tests are examples of usage of class. I would show that you\u0027re expected to pass correct uuid here.\n\nI addition name of constant is misleading - it\u0027s not an UUID.",
+      "range": {
+        "startLine": 46,
+        "startChar": 39,
+        "endLine": 46,
+        "endChar": 48
+      },
+      "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_bc235a04",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-16T20:08:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_292c0e02",
       "range": {
         "startLine": 46,
         "startChar": 39,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_5c202ef7",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-16T20:08:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_6cb9c92d",
+      "range": {
+        "startLine": 47,
+        "startChar": 4,
+        "endLine": 47,
+        "endChar": 69
+      },
+      "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_c9cea25a",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
         "patchSetId": 4
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_1c7aa6f1",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-16T20:08:43Z",
+      "side": 1,
+      "message": "in my opinion this approach is more readable by keeping both the instance creation and invocation of tested method together. This way test data and mocks are not mixed together with the instance.",
+      "parentUuid": "9adffdf1_c9cea25a",
+      "range": {
+        "startLine": 59,
+        "startChar": 8,
+        "endLine": 59,
+        "endChar": 126
+      },
+      "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_a9f8fe7c",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
         "patchSetId": 4
@@ -105,6 +201,30 @@
       "writtenOn": "2018-11-16T11:28:14Z",
       "side": 1,
       "message": "I don\u0027t like this assert - you cannot assure that tested object will actually run this method and run this assert. Also when you use this class you cannot assute that tested object will use other method to throw exception, for example buildWorkflowException.\n\nMy suggestion would be using spy or mock here and asserting all interactions with this class.\n\nAlso this is assert in WHEN part of test.",
+      "range": {
+        "startLine": 194,
+        "startChar": 12,
+        "endLine": 194,
+        "endChar": 58
+      },
+      "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9c545655",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-16T20:08:43Z",
+      "side": 1,
+      "message": "I do agree that this solution may seem controversial, but in the end this is a simplified version of mock verification. Using mockito would solve this on a more readable level. Without it I wanted to make sure that the passed execution is at least the same reference without reinventing the wheel and writing an overblown mock.",
+      "parentUuid": "9adffdf1_a9f8fe7c",
       "range": {
         "startLine": 194,
         "startChar": 12,
