@@ -1,0 +1,24 @@
+{
+	"identity": {
+		"methods": [
+			"password"
+		],
+		"password": {
+			"user": {
+				"domain": {
+					"name": "user-domain"
+				},
+				"name": "my-username",
+				"password": "my-password"
+			}
+		}
+	},
+	"scope": {
+		"project": {
+			"domain": {
+				"name": "test-domain"
+			},
+			"id": "project-x"
+		}
+	}
+}

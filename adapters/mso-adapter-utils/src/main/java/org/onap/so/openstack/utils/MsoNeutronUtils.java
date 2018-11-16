@@ -22,14 +22,19 @@ package org.onap.so.openstack.utils;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.onap.so.cloud.CloudConfig;
+import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
+import org.onap.so.cloud.authentication.KeystoneAuthHolder;
+import org.onap.so.cloud.authentication.KeystoneV3Authentication;
+import org.onap.so.cloud.authentication.ServiceEndpointNotFoundException;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
+import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoAlarmLogger;
 import org.onap.so.logger.MsoLogger;
@@ -78,6 +83,9 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	
 	@Autowired
 	private MsoTenantUtilsFactory tenantUtilsFactory;
+
+	@Autowired
+	private KeystoneV3Authentication keystoneV3Authentication;
 	
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoNeutronUtils.class);
 	
@@ -356,7 +364,8 @@ public class MsoNeutronUtils extends MsoCommonUtils
     private Quantum getNeutronClient(CloudSite cloudSite, String tenantId) throws MsoException
 	{
 		String cloudId = cloudSite.getId();
-
+		String region = cloudSite.getRegionId();
+		
 		// Check first in the cache of previously authorized clients
 		String cacheKey = cloudId + ":" + tenantId;
 		if (neutronClientCache.containsKey(cacheKey)) {
@@ -378,12 +387,48 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		CloudIdentity cloudIdentity = cloudSite.getIdentityService();
 		MsoTenantUtils tenantUtils = tenantUtilsFactory.getTenantUtilsByServerType(cloudIdentity.getIdentityServerType());
         final String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
-		Keystone keystoneTenantClient = new Keystone(keystoneUrl);
-		Access access = null;
+		String neutronUrl = null;
+		String tokenId = null;
+		Calendar expiration = null;
 		try {
-			Authentication credentials = authenticationMethodFactory.getAuthenticationFor(cloudIdentity);
-			OpenStackRequest<Access> request = keystoneTenantClient.tokens().authenticate(credentials).withTenantId(tenantId);
-			access = executeAndRecordOpenstackRequest(request);
+	        if (ServerType.KEYSTONE.equals(cloudIdentity.getIdentityServerType())) {
+				Keystone keystoneTenantClient = new Keystone(keystoneUrl);
+				Access access = null;
+				
+				Authentication credentials = authenticationMethodFactory.getAuthenticationFor(cloudIdentity);
+				OpenStackRequest<Access> request = keystoneTenantClient.tokens().authenticate(credentials).withTenantId(tenantId);
+				access = executeAndRecordOpenstackRequest(request);
+				
+				
+				try {
+					neutronUrl = KeystoneUtils.findEndpointURL(access.getServiceCatalog(), "network", region, "public");
+					if (! neutronUrl.endsWith("/")) {
+		                neutronUrl += "/v2.0/";
+		            }
+				} catch (RuntimeException e) {
+					// This comes back for not found (probably an incorrect region ID)
+					String error = "Network service not found: region=" + region + ",cloud=" + cloudIdentity.getId();
+					alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
+					throw new MsoAdapterException (error, e);
+				}
+				tokenId = access.getToken().getId();
+				expiration = access.getToken().getExpires();
+	        } else if (ServerType.KEYSTONE_V3.equals(cloudIdentity.getIdentityServerType())) {
+	        	try {
+		        	KeystoneAuthHolder holder = keystoneV3Authentication.getToken(cloudSite, tenantId, "network");
+		        	tokenId = holder.getId();
+		        	expiration = holder.getexpiration();
+		        	neutronUrl = holder.getServiceUrl();
+		        	if (! neutronUrl.endsWith("/")) {
+		                neutronUrl += "/v2.0/";
+		            }
+	        	} catch (ServiceEndpointNotFoundException e) {
+	        		// This comes back for not found (probably an incorrect region ID)
+					String error = "Network service not found: region=" + region + ",cloud=" + cloudIdentity.getId();
+					alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
+					throw new MsoAdapterException (error, e);
+	        	}
+	        }
 		}
 		catch (OpenStackResponseException e) {
 			if (e.getStatus() == 401) {
@@ -408,25 +453,10 @@ public class MsoNeutronUtils extends MsoCommonUtils
 			MsoException me = runtimeExceptionToMsoException(e, "TokenAuth");
 			throw me;
 		}
-
-		String region = cloudSite.getRegionId();
-		String neutronUrl = null;
-		try {
-			neutronUrl = KeystoneUtils.findEndpointURL(access.getServiceCatalog(), "network", region, "public");
-			if (! neutronUrl.endsWith("/")) {
-                neutronUrl += "/v2.0/";
-            }
-		} catch (RuntimeException e) {
-			// This comes back for not found (probably an incorrect region ID)
-			String error = "Network service not found: region=" + region + ",cloud=" + cloudIdentity.getId();
-			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
-			throw new MsoAdapterException (error, e);
-		}
-
 		Quantum neutronClient = new Quantum(neutronUrl);
-		neutronClient.token(access.getToken().getId());
+		neutronClient.token(tokenId);
 
-		neutronClientCache.put(cacheKey, new NeutronCacheEntry(neutronUrl, access.getToken().getId(), access.getToken().getExpires()));
+		neutronClientCache.put(cacheKey, new NeutronCacheEntry(neutronUrl, tokenId, expiration));
 		LOGGER.debug ("Caching Neutron Client for " + cacheKey);
 
 		return neutronClient;

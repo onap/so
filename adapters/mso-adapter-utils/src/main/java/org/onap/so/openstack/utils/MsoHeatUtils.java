@@ -24,6 +24,7 @@ package org.onap.so.openstack.utils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,11 +42,15 @@ import org.onap.so.adapters.vdu.VduPlugin;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.cloud.CloudConfig;
+import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
+import org.onap.so.cloud.authentication.KeystoneAuthHolder;
+import org.onap.so.cloud.authentication.KeystoneV3Authentication;
+import org.onap.so.cloud.authentication.ServiceEndpointNotFoundException;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
 import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
+import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoAlarmLogger;
 import org.onap.so.logger.MsoLogger;
@@ -115,7 +120,10 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     @Autowired
     private MsoTenantUtilsFactory tenantUtilsFactory;
-
+    
+    @Autowired
+    private KeystoneV3Authentication keystoneV3Authentication;
+    
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoHeatUtils.class);
 
     // Properties names and variables (with default values)
@@ -875,7 +883,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      */
     public Heat getHeatClient (CloudSite cloudSite, String tenantId) throws MsoException {
         String cloudId = cloudSite.getId();
-
+        // For DCP/LCP, the region should be the cloudId.
+        String region = cloudSite.getRegionId ();
+        
         // Check first in the cache of previously authorized clients
         String cacheKey = cloudId + ":" + tenantId;
         if (heatClientCache.containsKey (cacheKey)) {
@@ -895,16 +905,58 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         MsoTenantUtils tenantUtils = tenantUtilsFactory.getTenantUtilsByServerType(cloudIdentity.getIdentityServerType());
         String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
         LOGGER.debug("keystoneUrl=" + keystoneUrl);
-        Keystone keystoneTenantClient = new Keystone (keystoneUrl);
-        Access access = null;
-        try {
-        	Authentication credentials = authenticationMethodFactory.getAuthenticationFor(cloudIdentity);
-
-        	OpenStackRequest <Access> request = keystoneTenantClient.tokens ()
-                       .authenticate (credentials).withTenantId (tenantId);
-
-            access = executeAndRecordOpenstackRequest (request);
-        } catch (OpenStackResponseException e) {
+        String heatUrl = null;
+        String tokenId = null;
+        Calendar expiration = null;
+	    try {
+	        if (ServerType.KEYSTONE.equals(cloudIdentity.getIdentityServerType())) {
+		        Keystone keystoneTenantClient = new Keystone (keystoneUrl);
+		        Access access = null;
+	        
+	        	Authentication credentials = authenticationMethodFactory.getAuthenticationFor(cloudIdentity);
+	
+	        	OpenStackRequest <Access> request = keystoneTenantClient.tokens ()
+	                       .authenticate (credentials).withTenantId (tenantId);
+	
+	            access = executeAndRecordOpenstackRequest (request);
+	        
+		        try {
+		        	// Isolate trying to printout the region IDs
+		        	try {
+		        		LOGGER.debug("access=" + access.toString());
+		        		for (Access.Service service : access.getServiceCatalog()) {
+		        			List<Access.Service.Endpoint> endpoints = service.getEndpoints();
+		        			for (Access.Service.Endpoint endpoint : endpoints) {
+		        				LOGGER.debug("AIC returned region=" + endpoint.getRegion());
+		        			}
+		        		}
+		        	} catch (Exception e) {
+		        		LOGGER.debug("Encountered an error trying to printout Access object returned from AIC. " + e.getMessage());
+		        	}
+		            heatUrl = KeystoneUtils.findEndpointURL (access.getServiceCatalog (), "orchestration", region, "public");
+		            LOGGER.debug("heatUrl=" + heatUrl + ", region=" + region);
+		        } catch (RuntimeException e) {
+		            // This comes back for not found (probably an incorrect region ID)
+		            String error = "AIC did not match an orchestration service for: region=" + region + ",cloud=" + cloudIdentity.getIdentityUrl();
+		            alarmLogger.sendAlarm ("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
+		            throw new MsoAdapterException (error, e);
+		        }
+		        tokenId = access.getToken ().getId ();
+		        expiration = access.getToken ().getExpires ();
+	        } else if (ServerType.KEYSTONE_V3.equals(cloudIdentity.getIdentityServerType())) {
+	        	try {
+		        	KeystoneAuthHolder holder = keystoneV3Authentication.getToken(cloudSite, tenantId, "orchestration");
+		        	tokenId = holder.getId();
+		        	expiration = holder.getexpiration();
+		        	heatUrl = holder.getServiceUrl();
+		        } catch (ServiceEndpointNotFoundException e) {
+		        	// This comes back for not found (probably an incorrect region ID)
+		            String error = "cloud did not match an orchestration service for: region=" + region + ",cloud=" + cloudIdentity.getIdentityUrl();
+		            alarmLogger.sendAlarm ("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
+		            throw new MsoAdapterException (error, e);
+	        	}
+	        }
+	    } catch (OpenStackResponseException e) {
             if (e.getStatus () == 401) {
                 // Authentication error.
                 String error = "Authentication Failure: tenant=" + tenantId + ",cloud=" + cloudIdentity.getId ();
@@ -922,39 +974,13 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
             // Catch-all
             throw runtimeExceptionToMsoException (e, TOKEN_AUTH);
         }
-
-        // For DCP/LCP, the region should be the cloudId.
-        String region = cloudSite.getRegionId ();
-        String heatUrl = null;
-        try {
-        	// Isolate trying to printout the region IDs
-        	try {
-        		LOGGER.debug("access=" + access.toString());
-        		for (Access.Service service : access.getServiceCatalog()) {
-        			List<Access.Service.Endpoint> endpoints = service.getEndpoints();
-        			for (Access.Service.Endpoint endpoint : endpoints) {
-        				LOGGER.debug("AIC returned region=" + endpoint.getRegion());
-        			}
-        		}
-        	} catch (Exception e) {
-        		LOGGER.debug("Encountered an error trying to printout Access object returned from AIC. " + e.getMessage());
-        	}
-            heatUrl = KeystoneUtils.findEndpointURL (access.getServiceCatalog (), "orchestration", region, "public");
-            LOGGER.debug("heatUrl=" + heatUrl + ", region=" + region);
-        } catch (RuntimeException e) {
-            // This comes back for not found (probably an incorrect region ID)
-            String error = "AIC did not match an orchestration service for: region=" + region + ",cloud=" + cloudIdentity.getIdentityUrl();
-            alarmLogger.sendAlarm ("MsoConfigurationError", MsoAlarmLogger.CRITICAL, error);
-            throw new MsoAdapterException (error, e);
-        }
-
         Heat heatClient = new Heat (heatUrl);
-        heatClient.token (access.getToken ().getId ());
+        heatClient.token (tokenId);
 
         heatClientCache.put (cacheKey,
                              new HeatCacheEntry (heatUrl,
-                                                 access.getToken ().getId (),
-                                                 access.getToken ().getExpires ()));
+                                                 tokenId,
+                                                 expiration));
         LOGGER.debug ("Caching HEAT Client for " + cacheKey);
 
         return heatClient;

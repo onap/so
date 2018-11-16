@@ -20,19 +20,23 @@
 
 package org.onap.so.cloud.authentication;
 
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.onap.so.BaseTest;
+import org.onap.so.cloud.authentication.models.RackspaceAuthentication;
 import org.onap.so.db.catalog.beans.AuthenticationType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
-import org.onap.so.cloud.authentication.models.RackspaceAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.onap.so.utils.CryptoUtils;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.keystone.model.Authentication;
 import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
 
@@ -42,10 +46,9 @@ import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
  * only are tested.
  *
  */
-public class AuthenticationMethodTest extends BaseTest {
+public class AuthenticationMethodTest {
 
-	@Autowired
-	private AuthenticationMethodFactory authenticationMethodFactory;
+	private AuthenticationMethodFactory authenticationMethodFactory = new AuthenticationMethodFactory();
 	/**
 	 * 
 	 */
@@ -98,5 +101,21 @@ public class AuthenticationMethodTest extends BaseTest {
 		Authentication auth = authenticationMethodFactory.getAuthenticationFor(ci);
 		assertTrue(UsernamePassword.class.equals(auth.getClass()));
 	
+	}
+	
+	@Test
+	public void getAuthenticationForV3Test() throws JsonParseException, JsonMappingException, IOException {
+		
+		CloudIdentity identity = new CloudIdentity();
+		identity.setMsoId("my-username");
+		identity.setMsoPass(CryptoUtils.encryptCloudConfigPassword("my-password"));
+		identity.setProjectDomainName("test-domain");
+		identity.setUserDomainName("user-domain");
+		ObjectMapper mapper = new ObjectMapper();
+		com.woorea.openstack.keystone.v3.model.Authentication expected = 
+				mapper.readValue(new String(Files.readAllBytes(Paths.get("src/test/resources/__files/KeystoneV3Payload.json"))), com.woorea.openstack.keystone.v3.model.Authentication.class);
+		com.woorea.openstack.keystone.v3.model.Authentication actual = authenticationMethodFactory.getAuthenticationForV3(identity, "project-x");
+		
+		assertThat(actual, sameBeanAs(expected));
 	}
 }
