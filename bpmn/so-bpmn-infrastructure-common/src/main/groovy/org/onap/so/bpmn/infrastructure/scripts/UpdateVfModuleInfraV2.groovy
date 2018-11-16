@@ -285,9 +285,8 @@ public class UpdateVfModuleInfraV2 {
 
 		System.out.println("*****************************CheckingPserverFlag*************************")
 		String vnfId = (String)execution.getVariable('vnfId')
-		String uuid = (String)execution.getVariable('moduleUuid')
 		AAIValidatorImpl aaiVI = new AAIValidatorImpl()
-		boolean flag = aaiVI.isPhysicalServerLocked(vnfId, uuid)
+		boolean flag = aaiVI.isPhysicalServerLocked(vnfId)
 	}
 
 	//check to see if the VFFlag is locked
@@ -295,9 +294,8 @@ public class UpdateVfModuleInfraV2 {
 
 		System.out.print("*****************************VfFlagCheck*************************")
 		String vnfId = (String)execution.getVariable('vnfId')
-		String uuid = (String)execution.getVariable('moduleUuid')
 		AAIValidatorImpl aaiVI = new AAIValidatorImpl()
-		boolean flag = aaiVI.isVNFLocked(vnfId, uuid)
+		boolean flag = aaiVI.isVNFLocked(vnfId)
 
 	}
 	//lock the VF Flag

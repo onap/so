@@ -66,28 +66,28 @@ public class AAIValidatorTest {
 	@Test
 	public void test_IsPhysicalServerLocked_True() throws IOException{		
 		when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPservers(true));
-		boolean locked = validator.isPhysicalServerLocked(vnfName, uuid);
+		boolean locked = validator.isPhysicalServerLocked(vnfName);
 		assertEquals(true, locked);
 	}
 	
 	@Test
 	public void test_IsPhysicalServerLocked_False() throws IOException {
 		when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPservers(false));
-		boolean locked = validator.isPhysicalServerLocked(vnfName, uuid);
+		boolean locked = validator.isPhysicalServerLocked(vnfName);
 		assertEquals(false, locked);
 	}
 	
 	@Test
-	public void test_IsVNFLocked_False() throws Exception{
-		when(client.getVnfByName(vnfName,uuid)).thenReturn(createGenericVnfs(false));	
-		boolean locked = validator.isVNFLocked(vnfName, uuid);
+	public void test_IsVNFLocked_False() {
+		when(client.getVnfByName(vnfName)).thenReturn(createGenericVnfs(false));
+		boolean locked = validator.isVNFLocked(vnfName);
 		assertEquals(false, locked);
 	}
 
 	@Test
-	public void test_IsVNFLocked_True() throws Exception{
-		when(client.getVnfByName(vnfName,uuid)).thenReturn(createGenericVnfs(true));	
-		boolean locked = validator.isVNFLocked(vnfName, uuid);
+	public void test_IsVNFLocked_True() {
+		when(client.getVnfByName(vnfName)).thenReturn(createGenericVnfs(true));
+		boolean locked = validator.isVNFLocked(vnfName);
 		assertEquals(true,locked );
 	}
 }

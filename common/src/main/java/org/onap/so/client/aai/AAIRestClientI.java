@@ -33,7 +33,7 @@ public interface AAIRestClientI {
 	
 	void updateMaintenceFlagVnfId(String vnfId, boolean inMaint, String transactionLoggingUuid) throws Exception;
 	
-	GenericVnf getVnfByName(String vnfId,  String transactionLoggingUuid) throws Exception;
+	GenericVnf getVnfByName(String vnfId);
 
 	Optional<Pnf> getPnfByName(String pnfId,  String transactionLoggingUuid) throws Exception;
 
