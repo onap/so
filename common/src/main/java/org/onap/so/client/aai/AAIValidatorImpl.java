@@ -46,7 +46,7 @@ public class AAIValidatorImpl implements AAIValidator {
 	}
 
 	@Override
-	public boolean isPhysicalServerLocked(String vnfId, String transactionLoggingUuid) throws IOException {
+	public boolean isPhysicalServerLocked(String vnfId) throws IOException {
 		List<Pserver> pservers;
 		boolean isLocked = false;
 		pservers = client.getPhysicalServerByVnfId(vnfId);
@@ -58,9 +58,9 @@ public class AAIValidatorImpl implements AAIValidator {
 	}
 
 	@Override
-	public boolean isVNFLocked(String vnfId, String transactionLoggingUuid) throws Exception {
+	public boolean isVNFLocked(String vnfId) {
 		boolean isLocked = false;
-		GenericVnf genericVnf = client.getVnfByName(vnfId, transactionLoggingUuid);
+		GenericVnf genericVnf = client.getVnfByName(vnfId);
 			if (genericVnf.isInMaint())
 				isLocked = true;
 

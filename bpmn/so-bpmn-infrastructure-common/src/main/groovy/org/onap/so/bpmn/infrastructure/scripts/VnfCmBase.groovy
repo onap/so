@@ -167,12 +167,11 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		msoLogger.trace('Entered ' + method)
 
 		try {
-			def transactionLoggingUuid = UUID.randomUUID().toString()
 			AAIRestClientImpl client = new AAIRestClientImpl()
 			AAIValidatorImpl aaiValidator = new AAIValidatorImpl()
 			aaiValidator.setClient(client)
 			def vnfId = execution.getVariable("vnfId")
-			boolean isInMaint = aaiValidator.isVNFLocked(vnfId, transactionLoggingUuid)
+			boolean isInMaint = aaiValidator.isVNFLocked(vnfId)
 			msoLogger.debug("isInMaint result: " + isInMaint)
 			execution.setVariable('isVnfInMaintenance', isInMaint)
 			
@@ -355,12 +354,11 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		execution.setVariable("failedActivity", "AAI")
 
 		try {
-			def transactionLoggingUuid = UUID.randomUUID().toString()
 			AAIRestClientImpl client = new AAIRestClientImpl()
 			AAIValidatorImpl aaiValidator = new AAIValidatorImpl()
 			aaiValidator.setClient(client)
 			def vnfId = execution.getVariable("vnfId")			
-			boolean areLocked = aaiValidator.isPhysicalServerLocked(vnfId, transactionLoggingUuid)
+			boolean areLocked = aaiValidator.isPhysicalServerLocked(vnfId)
 			msoLogger.debug("areLocked result: " + areLocked)
 			execution.setVariable('arePserversLocked', areLocked)
 			
