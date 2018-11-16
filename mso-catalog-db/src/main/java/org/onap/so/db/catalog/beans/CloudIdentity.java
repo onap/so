@@ -70,6 +70,16 @@ public class CloudIdentity {
     @Column(name = "MSO_PASS")
     private String msoPass;
     
+    @JsonProperty("project_domain_name")
+    @BusinessKey
+    @Column(name = "PROJECT_DOMAIN_NAME")
+    private String projectDomainName;
+    
+    @JsonProperty("user_domain_name")
+    @BusinessKey
+    @Column(name = "USER_DOMAIN_NAME")
+    private String userDomainName;
+    
     @JsonProperty("admin_tenant")
     @BusinessKey
     @Column(name = "ADMIN_TENANT")
@@ -224,6 +234,21 @@ public class CloudIdentity {
 		this.identityAuthenticationType = identityAuthenticationType;
 	}
 
+	public String getProjectDomainName() {
+		return projectDomainName;
+	}
+	
+	public void setProjectDomainName(String projectDomainName) {
+		this.projectDomainName = projectDomainName;
+	}
+	
+	public String getUserDomainName() {
+		return userDomainName;
+	}
+	
+	public void setUserDomainName(String userDomainName) {
+		this.userDomainName = userDomainName;
+	}
 	@Override
 	public CloudIdentity clone() {
 		CloudIdentity cloudIdentityCopy = new CloudIdentity();
@@ -237,6 +262,8 @@ public class CloudIdentity {
 		cloudIdentityCopy.tenantMetadata = this.tenantMetadata;
 		cloudIdentityCopy.identityServerType = this.identityServerType;
 		cloudIdentityCopy.identityAuthenticationType = this.identityAuthenticationType;
+		cloudIdentityCopy.projectDomainName = this.projectDomainName;
+		cloudIdentityCopy.userDomainName = this.userDomainName;
 
 		return cloudIdentityCopy;
 	}
@@ -245,6 +272,7 @@ public class CloudIdentity {
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
 				.append("identityUrl", getIdentityUrl()).append("msoId", getMsoId())
+				.append("projectDomain", getProjectDomainName()).append("userDomain", getUserDomainName())
 				.append("adminTenant", getAdminTenant()).append("memberRole", getMemberRole())
 				.append("tenantMetadata", getTenantMetadata()).append("identityServerType", getIdentityServerType())
 				.append("identityAuthenticationType", getIdentityAuthenticationType()).toString();
@@ -262,6 +290,7 @@ public class CloudIdentity {
 		return new EqualsBuilder().append(getId(), castOther.getId())
 				.append(getIdentityUrl(), castOther.getIdentityUrl()).append(getMsoId(), castOther.getMsoId())
 				.append(getMsoPass(), castOther.getMsoPass()).append(getAdminTenant(), castOther.getAdminTenant())
+				.append(getProjectDomainName(), castOther.getProjectDomainName()).append(getUserDomainName(), castOther.getUserDomainName())
 				.append(getMemberRole(), castOther.getMemberRole())
 				.append(getTenantMetadata(), castOther.getTenantMetadata())
 				.append(getIdentityServerType(), castOther.getIdentityServerType())
@@ -271,7 +300,7 @@ public class CloudIdentity {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(1, 31).append(getId()).append(getIdentityUrl()).append(getMsoId())
-				.append(getMsoPass()).append(getAdminTenant()).append(getMemberRole()).append(getTenantMetadata())
+				.append(getMsoPass()).append(getProjectDomainName()).append(getUserDomainName()).append(getAdminTenant()).append(getMemberRole()).append(getTenantMetadata())
 				.append(getIdentityServerType()).append(getIdentityAuthenticationType()).toHashCode();
 	}
 }
