@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "9adffdf1_fc81e24a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilFactory.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-11-16T15:26:53Z",
+      "side": 1,
+      "message": "Is this ExternalAPIUtil really util class? You create an util object that has a dependency of another util? Maybe the class should be renamed?",
+      "range": {
+        "startLine": 26,
+        "startChar": 20,
+        "endLine": 26,
+        "endChar": 26
+      },
+      "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_292c0e02",
         "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
         "patchSetId": 4
