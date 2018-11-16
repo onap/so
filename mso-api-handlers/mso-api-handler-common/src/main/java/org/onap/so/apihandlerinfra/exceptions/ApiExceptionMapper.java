@@ -36,10 +36,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.onap.so.apihandlerinfra.logging.AlarmLoggerInfo;
+
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.RequestError;
 import org.onap.so.serviceinstancebeans.ServiceException;
@@ -53,7 +53,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
 
     private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, ApiExceptionMapper.class);
-    private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
+
     
     private final JAXBContext context;
     private final Marshaller marshaller;
@@ -81,14 +81,14 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
         String messageId = exception.getMessageID();
         List<String> variables = exception.getVariables();
         ErrorLoggerInfo errorLoggerInfo = exception.getErrorLoggerInfo();
-        AlarmLoggerInfo alarmLoggerInfo = exception.getAlarmLoggerInfo();
+
 
 
         if (errorText.length() > 1999) {
             errorText = errorText.substring(0, 1999);
         }
 
-        writeErrorLog(exception, errorText, errorLoggerInfo, alarmLoggerInfo);
+
         
         List<MediaType> typeList = Optional.ofNullable(headers.getAcceptableMediaTypes()).orElse(new ArrayList<>());
         List<String> typeListString = typeList.stream().map(item -> item.toString()).collect(Collectors.toList());
@@ -139,14 +139,12 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
         return requestErrorStr;
     }
 
-    protected void writeErrorLog(Exception e, String errorText, ErrorLoggerInfo errorLogInfo, AlarmLoggerInfo alarmLogInfo) {
+    protected void writeErrorLog(Exception e, String errorText, ErrorLoggerInfo errorLogInfo) {
         if( e!= null)
             logger.error(e);
         if(errorLogInfo != null)
             logger.error(errorLogInfo.getLoggerMessageType().toString(), errorLogInfo.getErrorSource(), errorLogInfo.getTargetEntity(), errorLogInfo.getTargetServiceName(), errorLogInfo.getErrorCode(), errorText);
-        if(alarmLogInfo != null){
-            alarmLogger.sendAlarm(alarmLogInfo.getAlarm(),alarmLogInfo.getState(),alarmLogInfo.getDetail());
-        }
+  
     }
 
     public ObjectMapper createObjectMapper(){

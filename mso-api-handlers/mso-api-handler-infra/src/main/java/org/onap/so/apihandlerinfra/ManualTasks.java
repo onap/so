@@ -44,7 +44,7 @@ import org.onap.so.apihandler.common.ResponseHandler;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
-import org.onap.so.apihandlerinfra.logging.AlarmLoggerInfo;
+
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskRequestReference;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
@@ -53,7 +53,7 @@ import org.onap.so.apihandlerinfra.tasksbeans.Variables;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -69,7 +69,7 @@ import io.swagger.annotations.ApiOperation;
 @Component
 public class ManualTasks {
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, ManualTasks.class);
-	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
+
 	
 	@org.springframework.beans.factory.annotation.Value("${mso.camunda.rest.task.uri}")
 	private String taskUri;
@@ -178,12 +178,11 @@ public class ManualTasks {
 		} catch (Exception e) {
 
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            AlarmLoggerInfo alarmLoggerInfo = new AlarmLoggerInfo.Builder("MsoConfigurationError", MsoAlarmLogger.CRITICAL, Messages.errors.get (ErrorNumbers.NO_COMMUNICATION_TO_BPEL)).build();
 
 
 
             BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
-                    HttpStatus.SC_BAD_GATEWAY,ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).alarmInfo(alarmLoggerInfo).build();
+                    HttpStatus.SC_BAD_GATEWAY,ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).build();
 
 		    throw bpmnFailureException;
 		}

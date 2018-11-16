@@ -60,7 +60,7 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
@@ -87,7 +87,7 @@ public class E2EServiceInstances {
 	private HashMap<String, String> instanceIdMap = new HashMap<>();
 	private static final MsoLogger msoLogger = MsoLogger
 			.getMsoLogger(MsoLogger.Catalog.APIH, E2EServiceInstances.class);
-	private static final MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
+
 	private static final String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
 	private static final String END_OF_THE_TRANSACTION = "End of the transaction, the final response is: ";
@@ -286,9 +286,7 @@ public class E2EServiceInstances {
 					workflowUrl, null);
 			Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
 					MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
-					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL,
-					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
+					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);		
 			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine",e);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
@@ -341,9 +339,7 @@ public class E2EServiceInstances {
 					HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
 					e.getMessage(),
 					ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB, null, version);
-			alarmLogger.sendAlarm("MsoDatabaseAccessError",
-					MsoAlarmLogger.CRITICAL, Messages.errors
-							.get(ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB));
+		
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
 					MsoLogger.ResponseCode.DBAccessError,
 					"Exception while communciate with Request DB");
@@ -423,9 +419,7 @@ public class E2EServiceInstances {
 					HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
 					"No communication to catalog DB " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			alarmLogger.sendAlarm("MsoDatabaseAccessError",
-					MsoAlarmLogger.CRITICAL, Messages.errors
-							.get(ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));			
+	
 			msoRequest.createErrorRequestRecord(Status.FAILED, requestId, "Exception while communciate with Catalog DB", action, ModelType.service.name(), requestJSON);
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
 					MsoLogger.ResponseCode.DBAccessError,
@@ -498,10 +492,7 @@ public class E2EServiceInstances {
 					HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
 					"Failed calling bpmn " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			alarmLogger.sendAlarm("MsoConfigurationError",
-					MsoAlarmLogger.CRITICAL,
-					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
-			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
+						msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
 					MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.AvailabilityError,
 					"Exception while communicate with BPMN engine");
@@ -593,8 +584,7 @@ public class E2EServiceInstances {
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
 					MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			alarmLogger.sendAlarm("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL,
-					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));
+		
 			
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
 					"Exception while communciate with DB");
@@ -654,8 +644,7 @@ public class E2EServiceInstances {
 			Response getBPMNResp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
 					MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL,
-					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
+		
 			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
@@ -739,9 +728,7 @@ public class E2EServiceInstances {
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
 					MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			alarmLogger.sendAlarm("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL,
-					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));
-			
+	
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
 					"Exception while communciate with DB");
 			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
@@ -798,8 +785,7 @@ public class E2EServiceInstances {
 			Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
 					MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			alarmLogger.sendAlarm("MsoConfigurationError", MsoAlarmLogger.CRITICAL,
-					Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
+			
 			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
 			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
@@ -873,9 +859,7 @@ public class E2EServiceInstances {
                     HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
                     "No communication to catalog DB " + e.getMessage(),
                     ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-            alarmLogger.sendAlarm("MsoDatabaseAccessError",
-                    MsoAlarmLogger.CRITICAL, Messages.errors
-                            .get(ErrorNumbers.NO_COMMUNICATION_TO_CATALOG_DB));        
+     
         	msoRequest.createErrorRequestRecord(Status.FAILED, requestId,  "No communication to catalog DB " + e.getMessage(), action, ModelType.service.name(), requestJSON);
             msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
                     MsoLogger.ResponseCode.DBAccessError,
@@ -947,9 +931,7 @@ public class E2EServiceInstances {
                     HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                     "Failed calling bpmn " + e.getMessage(),
                     ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-            alarmLogger.sendAlarm("MsoConfigurationError",
-                    MsoAlarmLogger.CRITICAL,
-                    Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_BPEL));
+        
             msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
                     MSO_PROP_APIHANDLER_INFRA, "", "",
                     MsoLogger.ErrorCode.AvailabilityError,

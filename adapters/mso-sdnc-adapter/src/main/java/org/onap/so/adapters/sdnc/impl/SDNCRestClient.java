@@ -52,7 +52,7 @@ import org.onap.so.adapters.sdnc.client.SDNCAdapterCallbackRequest;
 import org.onap.so.adapters.sdnc.client.SDNCCallbackAdapterPortType;
 import org.onap.so.adapters.sdnc.client.SDNCCallbackAdapterService;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -74,7 +74,7 @@ public class SDNCRestClient{
 	private MapRequestTunables tunablesMapper;
 
 	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SDNCRestClient.class);
-	private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
+
     private static final String EXCEPTION_MSG="Exception while evaluate xpath";
     private static final String MSO_INTERNAL_ERROR="MsoInternalError";
     private static final String CAMUNDA="Camunda";
@@ -257,7 +257,7 @@ public class SDNCRestClient{
 			sdncResp.setRespMsg(respMsg);
 
 			msoLogger.error(MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC, "SDNC", "", MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with SDNC", e);
-			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, respMsg);
+
 			return sdncResp;
 		}
 		finally
@@ -287,7 +287,7 @@ public class SDNCRestClient{
 			} catch (MalformedURLException e1) {
 				error = "Caught exception initializing Callback wsdl " + e1.getMessage();
 				msoLogger.error(MessageEnum.RA_INIT_CALLBACK_WSDL_ERR, CAMUNDA, "", MsoLogger.ErrorCode.DataError, "Exception initializing Callback wsdl", e1);
-				alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, error);
+
 			}
 
 			SDNCCallbackAdapterService cbSvc = new SDNCCallbackAdapterService();
@@ -317,7 +317,7 @@ public class SDNCRestClient{
 			catch (Exception e2) {
 				error = "Unable to set authorization in callback request " + e2.getMessage();
 				msoLogger.error(MessageEnum.RA_SET_CALLBACK_AUTH_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - Unable to set authorization in callback request", e2);
-				alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, error);
+
 			}
 
 			msoLogger.debug("Invoking Bpel Callback. BpelCallbackUrl:" + bpelUrl);
@@ -328,7 +328,7 @@ public class SDNCRestClient{
 		{
 			error = "Error sending BpelCallback request" + e.getMessage();
 			msoLogger.error("Error " + MsoLogger.ErrorCode.BusinessProcesssError + " - " + MessageEnum.RA_CALLBACK_BPEL_EXC + " - " + error, e);
-			alarmLogger.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, error);
+
 		}
 		msoLogger.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE.name(), CAMUNDA, "");
 		return;

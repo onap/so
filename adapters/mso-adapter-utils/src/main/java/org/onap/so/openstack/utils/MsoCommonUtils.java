@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 
 import org.onap.so.config.beans.PoConfig;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoException;
@@ -54,7 +54,7 @@ import com.woorea.openstack.quantum.model.NeutronError;
 public class MsoCommonUtils {
 
 	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, MsoCommonUtils.class);
-	protected static MsoAlarmLogger alarmLogger = new MsoAlarmLogger();
+
 
 	@Autowired
 	private PoConfig poConfig;
@@ -166,7 +166,7 @@ public class MsoCommonUtils {
 
             // Generate an alarm for 5XX and higher errors.
             if (re.getStatus () >= 500) {
-                alarmLogger.sendAlarm ("KeystoneError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
             }
         } else if (e instanceof OpenStackConnectException) {
             OpenStackConnectException ce = (OpenStackConnectException) e;
@@ -176,7 +176,7 @@ public class MsoCommonUtils {
 
             // Generate an alarm for all connection errors.
             logger.error(MessageEnum.RA_GENERAL_EXCEPTION_ARG, "Openstack Keystone connection error on " + context + ": " + e, "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack Keystone connection error on " + context);
-			alarmLogger.sendAlarm ("KeystoneIOError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
         }
 
         return me;
@@ -213,7 +213,7 @@ public class MsoCommonUtils {
 
             // Generate an alarm for 5XX and higher errors.
             if (re.getStatus () >= 500) {
-                alarmLogger.sendAlarm ("HeatError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
             }
         } else if (e instanceof OpenStackConnectException) {
             OpenStackConnectException ce = (OpenStackConnectException) e;
@@ -222,7 +222,7 @@ public class MsoCommonUtils {
             me.addContext (context);
 
             // Generate an alarm for all connection errors.
-            alarmLogger.sendAlarm ("HeatIOError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
             logger.error(MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Heat connection error on " + context + ": " + e, "Openstack", "", MsoLogger.ErrorCode.DataError, "Openstack Heat connection error on " + context);
     	}
 
@@ -255,7 +255,7 @@ public class MsoCommonUtils {
 
             // Generate an alarm for 5XX and higher errors.
             if (re.getStatus () >= 500) {
-                alarmLogger.sendAlarm ("NeutronError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
             }
         } else if (e instanceof OpenStackConnectException) {
             OpenStackConnectException ce = (OpenStackConnectException) e;
@@ -264,7 +264,7 @@ public class MsoCommonUtils {
             me.addContext (context);
 
             // Generate an alarm for all connection errors.
-            alarmLogger.sendAlarm ("NeutronIOError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
             logger.error(MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Neutron Connection error on "+ context + ": " + e, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Openstack Neutron Connection error on "+ context);
     	}
 
@@ -284,7 +284,7 @@ public class MsoCommonUtils {
 
         // Always generate an alarm for internal exceptions
         logger.error(MessageEnum.RA_GENERAL_EXCEPTION_ARG, "An exception occured on  "+ context + ": " + e, "OpenStack", "", MsoLogger.ErrorCode.DataError, "An exception occured on  "+ context);
-		alarmLogger.sendAlarm ("AdapterInternalError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
 
         return me;
     }
@@ -296,7 +296,7 @@ public class MsoCommonUtils {
 
         // Always generate an alarm for internal exceptions
         logger.error(MessageEnum.RA_GENERAL_EXCEPTION_ARG, "An exception occured on  "+ context + ": " + e, "OpenStack", "", MsoLogger.ErrorCode.DataError, "An exception occured on  "+ context);
-		alarmLogger.sendAlarm ("AdapterInternalError", MsoAlarmLogger.CRITICAL, me.getContextMessage ());
+
 
         return me;
     }

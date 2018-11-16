@@ -52,7 +52,7 @@ import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
 import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.MsoTenant;
 import org.onap.so.openstack.beans.VnfRollback;
@@ -81,7 +81,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     private static final String VNF_ADAPTER_SERVICE_NAME = "MSO-BPMN:MSO-VnfAdapter.";
     private static final String LOG_REPLY_NAME = "MSO-VnfAdapter:MSO-BPMN.";
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoVnfCloudifyAdapterImpl.class);
-    private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
+
     private static final String CHECK_REQD_PARAMS = "org.onap.so.adapters.vnf.checkRequiredParameters";
     private static final String ADD_GET_FILES_ON_VOLUME_REQ = "org.onap.so.adapters.vnf.addGetFilesOnVolumeReq";
     private static final String CLOUDIFY_RESPONSE_SUCCESS="Successfully received response from Cloudify";
@@ -873,9 +873,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 		if (heatTemplate == null) {
 			String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType + ", reqType=" + requestType;
 			LOGGER.error(MessageEnum.RA_VNF_UNKNOWN_PARAM, "Heat Template ID", vfModuleType, "OpenStack", "", MsoLogger.ErrorCode.DataError, error);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
-			alarmLogger.sendAlarm(MSO_CONFIGURATION_ERROR,
-					MsoAlarmLogger.CRITICAL, error);
+            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);			
 			throw new VnfException(error, MsoExceptionCategory.INTERNAL);
 		} else {
 			LOGGER.debug ("Got HEAT Template from DB: " + heatTemplate.getHeatTemplate());
@@ -886,7 +884,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 LOGGER.error (MessageEnum.RA_VNF_UNKNOWN_PARAM, "Heat Environment ID", "OpenStack", "", MsoLogger.ErrorCode.DataError, error);
                 LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
                 // Alarm on this error, configuration must be fixed
-                alarmLogger.sendAlarm (MSO_CONFIGURATION_ERROR, MsoAlarmLogger.CRITICAL, error);
+
 
                 throw new VnfException (error, MsoExceptionCategory.INTERNAL);
         } else {

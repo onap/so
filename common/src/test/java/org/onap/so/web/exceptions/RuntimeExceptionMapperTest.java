@@ -33,16 +33,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.junit.AfterClass;
 import org.junit.Test;
-import org.onap.so.logger.MsoAlarmLogger;
+
 
 public class RuntimeExceptionMapperTest {
 
-	
-	@AfterClass
-	public static void tearDown() {
-		MsoAlarmLogger logger = new MsoAlarmLogger();
-		logger.resetAppender();
-	}
+
 	
 	@Test
 	public void testResponse() {
