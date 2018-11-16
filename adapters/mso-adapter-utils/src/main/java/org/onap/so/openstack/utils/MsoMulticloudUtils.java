@@ -52,7 +52,6 @@ import org.onap.so.client.HttpClient;
 import org.onap.so.client.RestClient;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.TargetEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -519,7 +518,6 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                 }
                 MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
                 me.addContext(CREATE_STACK);
-                alarmLogger.sendAlarm(HEAT_ERROR, MsoAlarmLogger.CRITICAL, me.getContextMessage());
                 throw me;
             }
         } else {

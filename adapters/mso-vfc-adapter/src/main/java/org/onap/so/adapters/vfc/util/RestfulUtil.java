@@ -43,7 +43,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.vfc.model.RestfulResponse;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -66,7 +66,7 @@ public class RestfulUtil {
      */
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, RestfulUtil.class);
 
-    private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
+
 
     private static final int DEFAULT_TIME_OUT = 60000;
 
@@ -201,12 +201,12 @@ public class RestfulUtil {
 
     private static void logError(String errMsg, Throwable t) {
         LOGGER.error(MessageEnum.RA_NS_EXC, VFC_ADAPTER, "", MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
-        ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
+
     }
 
     private static void logError(String errMsg) {
         LOGGER.error(MessageEnum.RA_NS_EXC, VFC_ADAPTER, "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
-        ALARMLOGGER.sendAlarm("MsoInternalError", MsoAlarmLogger.CRITICAL, errMsg);
+
     }
 
     private static RestfulResponse createResponse(int statusCode, String content) {

@@ -33,7 +33,7 @@ import javax.xml.validation.Validator;
 
 import org.apache.commons.io.IOUtils;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.xml.sax.SAXException;
 
@@ -55,7 +55,7 @@ public class XMLValidator {
     private Schema schema;
 
     private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, XMLValidator.class);
-    private static MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
+
 
     public XMLValidator (String xsdFile){
 
@@ -94,7 +94,7 @@ public class XMLValidator {
 
         } catch (Exception e) {
             msoLogger.error (MessageEnum.APIH_CANNOT_READ_SCHEMA, "", "", MsoLogger.ErrorCode.SchemaError, "APIH cannot read schema file", e);
-            alarmLogger.sendAlarm ("MsoConfigurationError", MsoAlarmLogger.CRITICAL, "Unable to read the schema file");
+
             return "ErrorDetails: " + "Unable to read the schema file";
         }
 

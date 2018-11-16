@@ -48,7 +48,7 @@ import org.onap.so.adapters.network.async.client.UpdateNetworkNotification;
 import org.onap.so.adapters.network.exceptions.NetworkException;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.NetworkRollback;
 import org.onap.so.openstack.beans.NetworkStatus;
@@ -63,7 +63,7 @@ import org.springframework.stereotype.Component;
 public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,MsoNetworkAdapterAsyncImpl.class);
-    private static final MsoAlarmLogger alarmLogger = new MsoAlarmLogger ();
+
     private static final String BPEL_AUTH_PROP = "org.onap.so.adapters.network.bpelauth";
     private static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
     private static final String NETWORK_EXCEPTION_MSG="Got a NetworkException on createNetwork: ";
@@ -179,7 +179,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             } catch (Exception e1) {
                 error = CREATE_NETWORK_ERROR_MSG + e1.getMessage ();
                 LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError,CREATE_NETWORK_EXCEPTON_MSG, e1);
-                alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
+
             }
             return;
         }
@@ -198,7 +198,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         } catch (Exception e) {
             error = CREATE_NETWORK_ERROR_MSG + e.getMessage ();
             LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, CREATE_NETWORK_EXCEPTON_MSG, e);
-            alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
+
         }
         return;
     }
@@ -294,7 +294,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             } catch (Exception e1) {
                 error = "Error sending updateNetwork notification " + e1.getMessage ();
                 LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception sending updateNetwork notification", e1);
-                alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
+
             }
             return;
         }
@@ -311,7 +311,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         } catch (Exception e) {
             error = "Error sending updateNotification request" + e.getMessage ();
             LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception sending updateNotification request", e);
-            alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
+
         }
         return;
     }
@@ -376,9 +376,9 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 NetworkAdapterNotify notifyPort = getNotifyEP (notificationUrl);
                 notifyPort.queryNetworkNotification (messageId, false, exCat, eMsg, null, null, null, null, null, null);
             } catch (Exception e1) {
-                error = CREATE_NETWORK_ERROR_MSG + e1.getMessage ();
-                LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, CREATE_NETWORK_EXCEPTON_MSG, e1);
-                alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
+                error = "Error sending createNetwork notification " + e1.getMessage ();
+                LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception sending createNetwork notification", e1);
+
             }
             return;
         }
@@ -398,9 +398,9 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                                  vlans.value,
                                                  copyQuerySubnetIdMap (subnetIdMap));
         } catch (Exception e) {
-            error = CREATE_NETWORK_ERROR_MSG + e.getMessage ();
-            LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, CREATE_NETWORK_EXCEPTON_MSG, e);
-            alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
+            error = "Error sending createNetwork notification " + e.getMessage ();
+            LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception sending createNetwork notification", e);
+
         }
         return;
     }
@@ -463,9 +463,9 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 NetworkAdapterNotify notifyPort = getNotifyEP (notificationUrl);
                 notifyPort.deleteNetworkNotification (messageId, false, exCat, eMsg, null);
             } catch (Exception e1) {
-                error = CREATE_NETWORK_ERROR_MSG + e1.getMessage ();
-                LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, CREATE_NETWORK_EXCEPTON_MSG, e1);
-                alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
+                error = "Error sending createNetwork notification " + e1.getMessage ();
+                LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception sending createNetwork notification", e1);
+
             }
             return;
         }
@@ -477,7 +477,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         } catch (Exception e) {
             error = "Error sending deleteNetwork notification " + e.getMessage ();
             LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception sending deleteNetwork notification", e);
-            alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
+
         }
         return;
     }
@@ -529,7 +529,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             } catch (Exception e1) {
                 error = CREATE_NETWORK_ERROR_MSG + e1.getMessage ();
                 LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception in sending createNetwork notification ", e1);
-                alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
+
             }
             return;
         }
@@ -541,7 +541,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         } catch (Exception e) {
             error = "Error sending rollbackNetwork notification " + e.getMessage ();
             LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception in sending rollbackNetwork notification", e);
-            alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error);
+
         }
         return;
     }
@@ -627,7 +627,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         } catch (Exception e) {
             String error1 = "Unable to set authorization in callback request" + e.getMessage ();
             LOGGER.error (MessageEnum.RA_SET_CALLBACK_AUTH_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception - Unable to set authorization in callback request", e);
-            alarmLogger.sendAlarm (MSO_INTERNAL_ERROR_MSG, MsoAlarmLogger.CRITICAL, error1);
+
         }
 
         return notifyPort;

@@ -52,7 +52,7 @@ import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.adapters.sdncrest.SDNCErrorCommon;
 import org.onap.so.adapters.sdncrest.SDNCResponseCommon;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -69,7 +69,7 @@ import org.springframework.core.env.Environment;
 @Component
 public abstract class SDNCConnector {
 	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SDNCConnector.class);
-	private static final MsoAlarmLogger ALARMLOGGER = new MsoAlarmLogger();
+
 	private static final String MSO_INTERNAL_ERROR="MsoInternalError";
 	private static final String XPATH_EXCEPTION="XPath Exception";
 	@Autowired
@@ -149,7 +149,7 @@ public abstract class SDNCConnector {
 				}
 
 				logError(errMsg);
-				ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, errMsg);
+
 				return createErrorResponse(statusCode, errMsg, rt);
 			}
 
@@ -199,13 +199,13 @@ public abstract class SDNCConnector {
 	protected void logError(String errMsg) {
 		LOGGER.error(MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC, "SDNC", "",
 			MsoLogger.ErrorCode.AvailabilityError, errMsg);
-		ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, errMsg);
+
 	}
 
 	protected void logError(String errMsg, Throwable t) {
 		LOGGER.error(MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC, "SDNC", "",
 			MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
-		ALARMLOGGER.sendAlarm(MSO_INTERNAL_ERROR, MsoAlarmLogger.CRITICAL, errMsg);
+
 	}
 
 	/**
