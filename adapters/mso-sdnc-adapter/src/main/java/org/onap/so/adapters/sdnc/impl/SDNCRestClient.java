@@ -84,6 +84,12 @@ public class SDNCRestClient{
 		
 		msoLogger.debug("BPEL Request:" + bpelRequest.toString());
 
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		String action = bpelRequest.getRequestHeader().getSvcAction();
 		String operation = bpelRequest.getRequestHeader().getSvcOperation();
 		String bpelReqId = bpelRequest.getRequestHeader().getRequestId();

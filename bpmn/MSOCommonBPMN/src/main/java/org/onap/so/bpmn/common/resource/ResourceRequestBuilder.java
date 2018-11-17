@@ -233,14 +233,16 @@ public class ResourceRequestBuilder {
 
     private static Object getValue(Object value, Map<String, Object> serviceInputs, List<Input> servInputs) {
         if(value instanceof Map) {
-            Map<String, Object> valueMap = new HashMap<>();
-
-            Map<String, Object> propertyMap = (Map<String, Object>)value;
-
-            for(String key : propertyMap.keySet()) {
-                valueMap.put(key, getValue(propertyMap.get(key), serviceInputs, servInputs));
-            }
-            return valueMap; // return if the value is nested hashmap
+            // currently this logic handles only one level of nesting.
+//            Map<String, Object> valueMap = new HashMap<>();
+//
+//            Map<String, Object> propertyMap = (Map<String, Object>)value;
+//
+//            for(String key : propertyMap.keySet()) {
+//                valueMap.put(key, getValue(propertyMap.get(key), serviceInputs, servInputs));
+//            }
+//            return valueMap; // return if the value is nested hashmap
+            return ((LinkedHashMap) value).values().toArray()[0];
         } else if(value instanceof GetInput) {
             String inputName = ((GetInput)value).getInputName();
 
