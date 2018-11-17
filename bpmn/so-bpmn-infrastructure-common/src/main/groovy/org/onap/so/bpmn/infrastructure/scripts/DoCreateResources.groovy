@@ -242,7 +242,8 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters)
         resourceInput.setResourceParameters(resourceParameters)
         resourceInput.setRequestsInputs(incomingRequest)
-        execution.setVariable("resourceInput", resourceInput)
+        execution.setVariable("resourceInput", resourceInput.toString())
+        execution.setVariable("resourceModelUUID", resourceInput.getResourceModelInfo().getModelUuid())
         msoLogger.trace("COMPLETED prepareResourceRecipeRequest Process ")
     }
 
@@ -253,18 +254,21 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
             String requestId = execution.getVariable("msoRequestId")
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
             String serviceType = execution.getVariable("serviceType")
-            ResourceInput resourceInput = execution.getVariable("resourceInput")
+            String resourceInput = execution.getVariable("resourceInput")
+            String resourceModelUUID = execution.getVariable("resourceModelUUID")
 
             // requestAction is action, not opertiontype
             //String requestAction = resourceInput.getOperationType()
             String requestAction = "createInstance"
-            JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceInput.getResourceModelInfo().getModelUuid(), requestAction)
+            JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceModelUUID, requestAction)
 
             if (resourceRecipe != null) {
                 String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + resourceRecipe.getString("orchestrationUri")
                 int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
                 String recipeParamXsd = resourceRecipe.get("paramXSD")
-                HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+
+                BpmnRestClient bpmnRestClient = new BpmnRestClient()
+                HttpResponse resp = bpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput, recipeParamXsd)
             } else {
                 String exceptionMessage = "Resource receipe is not found for resource modeluuid: " +
                         resourceInput.getResourceModelInfo().getModelUuid()
