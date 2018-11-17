@@ -1,7 +1,8 @@
 {
    "requestDetails":{
       "modelInfo":{
-         "modelType":"network"
+         "modelType":"network",
+         "modelCustomizationId": "3bdbb104-476c-483e-9f8b-c095b3d308ac"
       },
       "requestInfo":{
          "source":"VID",

@@ -51,6 +51,7 @@ import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.exceptions.VfModuleNotFoundException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.db.catalog.beans.NetworkResource;
+import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.Recipe;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.catalog.beans.VfModule;
@@ -1681,14 +1682,19 @@ public class ServiceInstances {
 		Recipe recipe = null;
 
 		if(modelInfo.getModelCustomizationId()!=null){
-            NetworkResource networkResource = catalogDbClient.getNetworkResourceCustomizationByModelCustomizationUUID(modelInfo.getModelCustomizationId()).getNetworkResource();
-			if(networkResource!=null){
-				if(modelInfo.getModelVersionId() == null) {
-					modelInfo.setModelVersionId(networkResource.getModelUUID());
+            NetworkResourceCustomization networkResourceCustomization = catalogDbClient.getNetworkResourceCustomizationByModelCustomizationUUID(modelInfo.getModelCustomizationId());
+			if(networkResourceCustomization != null){
+				NetworkResource networkResource = networkResourceCustomization.getNetworkResource();
+	            if(networkResource!=null){
+					if(modelInfo.getModelVersionId() == null) {
+						modelInfo.setModelVersionId(networkResource.getModelUUID());
+					}
+					recipe = catalogDbClient.getFirstNetworkRecipeByModelNameAndAction(networkResource.getModelName(), action.toString());
+				}else{
+					throw new ValidationException("no catalog entry found");
 				}
-				recipe = catalogDbClient.getFirstNetworkRecipeByModelNameAndAction(networkResource.getModelName(), action.toString());
-			}else{
-				throw new ValidationException("no catalog entry found");
+			}else if(action != Action.deleteInstance){
+				throw new ValidationException("modelCustomizationId for networkResourceCustomization lookup", true);
 			}
 		}else{
 			//ok for version < 3 and action delete
