@@ -265,7 +265,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	public void createServiceInstance(DelegateExecution execution) {
 		msoLogger.trace("createServiceInstance ")
 		String msg = ""
-		String serviceInstanceId = UUID.randomUUID().toString()
+		String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		try {
 			org.onap.aai.domain.yang.ServiceInstance si = execution.getVariable("serviceInstanceData")
 
