@@ -73,7 +73,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             msoLogger.info("The resourceInput is: " + resourceInput)
             //Get ResourceInput Object
             ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
-            execution.setVariable(Prefix + "resourceInput", resourceInputObj)
+            execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
 
             //Deal with recipeParams
             String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
@@ -185,7 +185,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
      * @param execution
      */
     public void updateResourceInput(DelegateExecution execution) {
-        ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String modelName = resourceInputObj.getResourceModelInfo().getModelName()
 
         switch (modelName) {
@@ -252,7 +252,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String serviceInstanceId = execution.getVariable(Prefix + "serviceInstanceId")
             String source = execution.getVariable("source")
             String sdnc_service_id = execution.getVariable(Prefix + "sdncServiceId")
-            ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+            ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
             String serviceType = resourceInputObj.getServiceType()
             String serviceModelInvariantUuid = resourceInputObj.getServiceModelInfo().getModelInvariantUuid()
             String serviceModelUuid = resourceInputObj.getServiceModelInfo().getModelUuid()
@@ -458,7 +458,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void prepareUpdateBeforeCreateSDNCResource(DelegateExecution execution) {
-        ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String operType = resourceInputObj.getOperationType()
         String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
         String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
@@ -491,7 +491,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void prepareUpdateAfterCreateSDNCResource(execution) {
-        ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String operType = resourceInputObj.getOperationType()
         String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
         String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
@@ -543,7 +543,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         data = data.substring(data.indexOf("<"))
 
         def resp = new XmlSlurper().parseText(data)
-        ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String modelName = resourceInputObj.getResourceModelInfo().getModelName()
         def val = ""
 
