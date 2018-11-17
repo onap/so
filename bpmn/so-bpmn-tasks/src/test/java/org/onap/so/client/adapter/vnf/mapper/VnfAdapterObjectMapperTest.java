@@ -230,7 +230,16 @@ public class VnfAdapterObjectMapperTest {
 	}
 	
 	@Test
-	public void test_deleteVolumeGroupRequestMapper() throws Exception {
+	public void test_deleteVolumeGroupHeatIdRequestMapper() throws Exception{
+		this.test_deleteVolumeGroupRequestMapper("heatStackId");
+	}
+
+	@Test
+	public void test_deleteVolumeGroupNoHeatIdRequestMapper() throws Exception{
+		this.test_deleteVolumeGroupRequestMapper(null);
+	}
+	
+	private void test_deleteVolumeGroupRequestMapper(String heatStackId) throws Exception {
 		DeleteVolumeGroupRequest expectedDeleteVolumeGroupRequest = new DeleteVolumeGroupRequest();
 		
 		CloudRegion cloudRegion = new CloudRegion();
@@ -244,8 +253,13 @@ public class VnfAdapterObjectMapperTest {
 		volumeGroup.setVolumeGroupId("volumeGroupId");
 		expectedDeleteVolumeGroupRequest.setVolumeGroupId(volumeGroup.getVolumeGroupId());
 		
-		volumeGroup.setHeatStackId("heatStackId");
-		expectedDeleteVolumeGroupRequest.setVolumeGroupStackId(volumeGroup.getHeatStackId());
+		if (heatStackId != null){
+			volumeGroup.setHeatStackId("heatStackId");
+			expectedDeleteVolumeGroupRequest.setVolumeGroupStackId(volumeGroup.getHeatStackId());
+		} else {
+			volumeGroup.setVolumeGroupName("volumeGroupName");
+			expectedDeleteVolumeGroupRequest.setVolumeGroupStackId(volumeGroup.getVolumeGroupName());
+		}
 		
 		expectedDeleteVolumeGroupRequest.setSkipAAI(true);
 		
@@ -269,7 +283,7 @@ public class VnfAdapterObjectMapperTest {
 		
 		assertThat(actualDeleteVolumeGroupRequest, sameBeanAs(expectedDeleteVolumeGroupRequest));
 	}
-
+	
 	@Test
 	@Ignore
 	public void test_createVolumeGroupParams() throws Exception {

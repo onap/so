@@ -845,7 +845,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 				jsonToCompare,
 				DeleteVfModuleRequest.class);
 
-		assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+		assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl").ignoring("vfModuleStackId"));
 	}
 	
 	@Test

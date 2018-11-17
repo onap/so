@@ -1712,7 +1712,7 @@ public class ServiceInstancesTest extends BaseTest{
 
         stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac/networkResource"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
+                		.withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
                         .withStatus(HttpStatus.SC_OK)));
 
         stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]" +
@@ -2581,5 +2581,53 @@ public class ServiceInstancesTest extends BaseTest{
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
+    @Test
+    public void deleteNetworkInstanceNoCustomizationEntry() throws IOException {
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_NOT_FOUND)));
+
+        stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]" +
+                "modelName=VNF-API-DEFAULT&action=deleteInstance"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        
+        //expected response
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks/1710966e-097c-4d63-afda-e0d3bb7015fb";
+        ResponseEntity<String> response = sendRequest(inputStream("/NetworkInstance.json"), uri, HttpMethod.DELETE);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
+    @Test
+    public void updateNetworkInstanceNoCustomizationEntry() throws IOException {
+    	stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_NOT_FOUND)));
+    	
+        uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks/1710966e-097c-4d63-afda-e0d3bb7015fb";
+        ResponseEntity<String> response = sendRequest(inputStream("/UpdateNetwork.json"), uri, HttpMethod.PUT);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        assertEquals(realResponse.getServiceException().getText(), "No valid modelCustomizationId for networkResourceCustomization lookup is specified");
     }
 }
