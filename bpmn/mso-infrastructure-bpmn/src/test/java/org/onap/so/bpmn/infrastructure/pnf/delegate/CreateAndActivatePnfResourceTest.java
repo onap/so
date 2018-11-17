@@ -27,28 +27,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.assertj.core.api.Assertions;
-import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.test.Deployment;
-import org.camunda.bpm.engine.test.ProcessEngineRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.onap.so.BaseIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(locations = "/applicationContext_forPnfTesting.xml")
-public class CreateAndActivatePnfResourceTest {
+public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
 
     private static final String TIMEOUT_10_S = "PT10S";
-    @Autowired
-    private RuntimeService runtimeService;
-
-    @Autowired
-    @Rule
-    public ProcessEngineRule processEngineRule;
 
     @Autowired
     private AaiConnectionTestImpl aaiConnection;
@@ -57,7 +43,6 @@ public class CreateAndActivatePnfResourceTest {
     private DmaapClientTestImpl dmaapClientTestImpl;
 
     @Test
-    @Deployment(resources = {"process/CreateAndActivatePnfResource.bpmn"})
     public void shouldWaitForMessageFromDmaapAndUpdateAaiEntryWhenAaiEntryExists() {
         // given
         aaiConnection.reset();       
@@ -84,7 +69,6 @@ public class CreateAndActivatePnfResourceTest {
     }
 
     @Test
-    @Deployment(resources = {"process/CreateAndActivatePnfResource.bpmn"})
     public void shouldCreateAaiEntryWaitForMessageFromDmaapAndUpdateAaiEntryWhenNoAaiEntryExists() {
         // given
         aaiConnection.reset();

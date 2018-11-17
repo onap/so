@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="ExecuteBuildingBlock" name="ExecuteBuildingBlock" isExecutable="true">
     <bpmn:startEvent id="Start_ExecuteBuildingBlock" name="start">
       <bpmn:outgoing>SequenceFlow_0rq4c5r</bpmn:outgoing>
@@ -103,11 +103,11 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_19wuics" sourceRef="Task_PreValidate" targetRef="Call_BBToExecute" />
     <bpmn:sequenceFlow id="SequenceFlow_12a4hhf" sourceRef="Task_PostValidate" targetRef="Task_setHandlingCodeSuccess" />
-    <bpmn:serviceTask id="Task_PreValidate" name="PreValidate" camunda:expression="${BuildingBlockValidatorRunner.preValidate(flowToBeCalled, InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_PreValidate" name="PreValidate" camunda:expression="${BuildingBlockValidatorRunner.preValidate(execution.getVariable(&#34;flowToBeCalled&#34;), InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>Continue</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_19wuics</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_PostValidate" name="PostValidate" camunda:expression="${BuildingBlockValidatorRunner.postValidate(flowToBeCalled, InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Task_PostValidate" name="PostValidate" camunda:expression="${BuildingBlockValidatorRunner.postValidate(execution.getVariable(&#34;flowToBeCalled&#34;), InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_01h9qmz</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_12a4hhf</bpmn:outgoing>
     </bpmn:serviceTask>

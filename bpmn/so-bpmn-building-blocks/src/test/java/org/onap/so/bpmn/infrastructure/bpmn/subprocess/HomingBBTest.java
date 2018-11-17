@@ -51,7 +51,18 @@ public class HomingBBTest extends BaseBPMNTest{
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
-				.hasPassedInOrder("start", "sniroOofCheck", "startBpmnError", "processMsoWorkflowException", "endBpmnError")
+				.hasPassed("start", "sniroOofCheck", "startBpmnError", "bpmnErrorSubprocess", "processMsoWorkflowException", "endBpmnError")
+				.hasNotPassed("callReceiveAsync");
+		assertThat(pi).isEnded();
+	}
+	
+	@Test
+	public void testHomingV2_error_javaException(){
+		doThrow(new RuntimeException("Test")).when(sniroHoming).callSniro(any(BuildingBlockExecution.class));
+		ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
+		assertThat(pi).isNotNull();
+		assertThat(pi).isStarted()
+				.hasPassed("start", "sniroOofCheck", "callSniro", "startJavaError", "processJavaException", "javaExceptionSubProcess", "endJavaError")
 				.hasNotPassed("callReceiveAsync");
 		assertThat(pi).isEnded();
 	}
