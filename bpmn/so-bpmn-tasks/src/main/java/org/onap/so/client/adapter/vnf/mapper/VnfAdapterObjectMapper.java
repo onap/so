@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleTopology;
@@ -92,7 +93,12 @@ public class VnfAdapterObjectMapper {
 		deleteVolumeGroupRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
 		deleteVolumeGroupRequest.setTenantId(cloudRegion.getTenantId());
 		deleteVolumeGroupRequest.setVolumeGroupId(volumeGroup.getVolumeGroupId());
-		deleteVolumeGroupRequest.setVolumeGroupStackId(volumeGroup.getHeatStackId());
+		if (!StringUtils.isEmpty(volumeGroup.getHeatStackId())){
+			deleteVolumeGroupRequest.setVolumeGroupStackId(volumeGroup.getHeatStackId());
+		} else
+		{
+			deleteVolumeGroupRequest.setVolumeGroupStackId(volumeGroup.getVolumeGroupName());
+		}
 		
 		deleteVolumeGroupRequest.setSkipAAI(true);
 		deleteVolumeGroupRequest.setMsoRequest(createMsoRequest(requestContext, serviceInstance));
