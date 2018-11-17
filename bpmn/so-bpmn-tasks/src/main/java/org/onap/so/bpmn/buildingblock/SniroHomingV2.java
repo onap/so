@@ -247,6 +247,9 @@ public class SniroHomingV2 {
 			if(modelInfo.getServiceType() != null && modelInfo.getServiceType().length() > 0){ //temp solution
 				info.put("serviceName", modelInfo.getServiceType());
 			}
+			if(modelInfo.getServiceRole() != null){
+				info.put("serviceRole", modelInfo.getServiceRole());
+			}
 			info.put("modelInfo", buildModelInfo(serviceInstance.getModelInfoServiceInstance()));
 		}else{
 			throw new BpmnError(UNPROCESSABLE, SERVICE_MISSING_DATA + MODEL_VERSION_ID + ", " + MODEL_INVARIANT_ID);
