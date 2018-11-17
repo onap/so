@@ -20,6 +20,7 @@
 							<goal>unpack</goal>
 						</goals>
 						<configuration>
+							<skip>true</skip>
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.onap.so</groupId>
@@ -49,6 +50,24 @@
 									<includes>**/*.bpmn</includes>
 								</artifactItem>
 							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<skip>true</skip>
+							<includes>
+								<include>**/IntegrationTestSuite.java</include>
+							</includes>
 						</configuration>
 					</execution>
 				</executions>

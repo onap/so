@@ -27,8 +27,6 @@ import org.camunda.bpm.application.PostDeploy;
 import org.camunda.bpm.application.PreUndeploy;
 import org.camunda.bpm.application.ProcessApplicationInfo;
 import org.camunda.bpm.engine.ProcessEngine;
-import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
-import org.onap.so.bpmn.common.DefaultToShortClassNameBeanNameGenerator;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -46,7 +44,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  */
 
 @SpringBootApplication
-@EnableProcessApplication("MSO Common Application")
 @EnableAsync
 @ComponentScan(basePackages = { "org.onap" }, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class, excludeFilters = {
 				@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
