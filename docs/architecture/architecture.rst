@@ -5,7 +5,15 @@
 SO - Architecture
 ===============
 
+SO Functional View
+--------------------
+
 .. image:: ../images/SO_Architecture_1.png
+
+SO Deployment View
+--------------------
+
+.. image:: ../images/SO_Architecture_Internal.png
 
 SO Sub-Components
 ------------------
@@ -47,7 +55,7 @@ SO Sub-Components
 **Resource Adapters**
 
   Interfaces to lower level controllers and other ONAP components
-   * Platform Orchestrator, SDN-Controller, APP-Controller, VFC-Controllers
+   * Platform Orchestrator, SDN-Controller, APP-Controller, VFC-Controllers, Multi-Cloud
    * Hides the details of complex interfaces (e.g. OpenStack APIs)
    * Expose interfaces to BPMN flows as SOAP or REST APIs
    * Support synchronous and asynchronous operations
