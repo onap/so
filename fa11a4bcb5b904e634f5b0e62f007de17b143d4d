@@ -234,6 +234,30 @@
       "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_907c3722",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ExternalAPIUtilTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-19T14:21:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_9c545655",
+      "range": {
+        "startLine": 194,
+        "startChar": 12,
+        "endLine": 194,
+        "endChar": 58
+      },
+      "revId": "fa11a4bcb5b904e634f5b0e62f007de17b143d4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
