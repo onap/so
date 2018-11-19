@@ -184,7 +184,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 		String body = """
                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                        xmlns:ns="http://org.openecomp.mso/requestsdb">
+                        xmlns:ns="http://org.onap.so/requestsdb">
                         <soapenv:Header/>
                 <soapenv:Body>
                     <ns:updateResourceOperationStatus>
