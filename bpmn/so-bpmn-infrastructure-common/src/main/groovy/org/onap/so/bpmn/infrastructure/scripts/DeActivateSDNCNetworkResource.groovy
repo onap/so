@@ -145,7 +145,7 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
             String serviceInstanceId = execution.getVariable(Prefix + "serviceInstanceId")
             String source = execution.getVariable("source")
             String sdnc_service_id = execution.getVariable(Prefix + "sdncServiceId")
-            ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+            ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
             String serviceType = resourceInputObj.getServiceType()
             String serviceModelInvariantUuid = resourceInputObj.getServiceModelInfo().getModelInvariantUuid()
             String serviceModelUuid = resourceInputObj.getServiceModelInfo().getModelUuid()
@@ -339,7 +339,7 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
     }
 
     public void prepareUpdateAfterDeActivateSDNCResource(DelegateExecution execution) {
-        ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
         String operType = resourceInputObj.getOperationType()
         String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
         String serviceInstanceId = resourceInputObj.getServiceInstanceId()
