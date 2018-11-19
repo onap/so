@@ -134,7 +134,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     public void prepareUpdateAfterActivateSDNCResource(DelegateExecution execution) {
         msoLogger.info("started prepareUpdateAfterActivateSDNCResource ")
 
-        ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String operType = resourceInputObj.getOperationType()
         String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
         String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
@@ -203,7 +203,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String serviceInstanceId = execution.getVariable(Prefix + "serviceInstanceId")
             String source = execution.getVariable("source")
             String sdnc_service_id = execution.getVariable(Prefix + "sdncServiceId")
-            ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+            ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
             String networkInstanceId = execution.getVariable("networkInstanceId")
             String serviceType = resourceInputObj.getServiceType()
             String serviceModelInvariantUuid = resourceInputObj.getServiceModelInfo().getModelInvariantUuid()
