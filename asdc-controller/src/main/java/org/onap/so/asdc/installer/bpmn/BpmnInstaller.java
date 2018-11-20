@@ -23,6 +23,7 @@ package org.onap.so.asdc.installer.bpmn;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Enumeration;
 import java.util.zip.*;
 
 import org.apache.commons.io.IOUtils;
@@ -105,6 +106,30 @@ public class BpmnInstaller {
 		}
 		return;
 	}	
+
+	public boolean containsWorkflows(String csarFilePath) {
+		boolean workflowsInCsar = false;
+		try {
+			ZipFile zipFile = new ZipFile(csarFilePath);
+			Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+			while (zipEntries.hasMoreElements()) {
+				String fileName = ((ZipEntry) zipEntries.nextElement()).getName();
+				if (fileName.endsWith(BPMN_SUFFIX)) {
+					workflowsInCsar = true;
+					break;
+				}				
+			}
+		}
+		catch (Exception e) {
+			LOGGER.debug("Exception :",e);
+            LOGGER.error(MessageEnum.ASDC_ARTIFACT_CHECK_EXC,
+    				csarFilePath,
+    				"",
+    				"",
+    				e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "ASDC Unable to check CSAR entries"); 
+		}
+		return workflowsInCsar;
+	}
 	
 	protected HttpResponse sendDeploymentRequest(String bpmnFileName) throws Exception {					
 		HttpClient client = HttpClientBuilder.create().build();	
@@ -149,6 +174,8 @@ public class BpmnInstaller {
 						.setField("Content-Disposition", String.format("form-data; name=\"%s\"; filename=\"%s\"; size=%d", bpmnFileName, bpmnFileName, bytesToSend.length))
 						.build())
 				.build();
+		
+		IOUtils.closeQuietly(bpmnFileStream);
 		 return requestEntity;
 	}
 	
