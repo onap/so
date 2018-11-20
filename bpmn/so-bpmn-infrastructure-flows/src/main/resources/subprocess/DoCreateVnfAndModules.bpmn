@@ -134,6 +134,7 @@ doCreateVnfAndModules.validateAddOnModule(execution)]]></bpmn:script>
         <camunda:in source="vnfResourceDecomposition" target="vnfResourceDecomposition" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_19ohb1a</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0oxfrrr</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:scriptTask id="PreProcessAddOnModule" name="PreProcess Add-On Module" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0jz6bqn</bpmn:incoming>
@@ -251,7 +252,7 @@ doCreateVnfAndModules.postProcessAddOnModule(execution)]]></bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_1t407j7" sourceRef="Task_1mrb29r" targetRef="Task_0qrf3e8" />
     <bpmn:sequenceFlow id="SequenceFlow_0baw1tl" sourceRef="Task_0qrf3e8" targetRef="ExclusiveGateway_06ccv8x" />
     <bpmn:scriptTask id="Task_1mrb29r" name="Create Platform" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_07u8e3l</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0oxfrrr</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1t407j7</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def doCreateVnfAndModules = new DoCreateVnfAndModules()
@@ -283,6 +284,7 @@ doCreateVnfAndModules.createLineOfBusiness(execution)]]></bpmn:script>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("addOnVfModuleName") == null}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_12ffqm1" name="no" sourceRef="ExclusiveGateway_03anzqd" targetRef="CreateAddOnVfModule" />
+    <bpmn:sequenceFlow id="SequenceFlow_0oxfrrr" sourceRef="CreateVNF" targetRef="Task_1mrb29r" />
   </bpmn:process>
   <bpmn:error id="Error_1" name="Java Lang Exception" errorCode="java.lang.Exception" />
   <bpmn:error id="Error_2" name="MSO Workflow Exception" errorCode="MSOWorkflowException" />
@@ -574,6 +576,13 @@ doCreateVnfAndModules.createLineOfBusiness(execution)]]></bpmn:script>
         <di:waypoint xsi:type="dc:Point" x="2100" y="97" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2055" y="76" width="15" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0oxfrrr_di" bpmnElement="SequenceFlow_0oxfrrr">
+        <di:waypoint xsi:type="dc:Point" x="674" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="742" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="708" y="144" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
