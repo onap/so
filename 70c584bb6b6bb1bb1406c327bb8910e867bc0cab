@@ -22,6 +22,30 @@
       "revId": "70c584bb6b6bb1bb1406c327bb8910e867bc0cab",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_36ca1e6f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateVFCNSResource.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-11-20T16:36:19Z",
+      "side": 1,
+      "message": "I tis already in the yaml",
+      "parentUuid": "9adffdf1_96bbcae4",
+      "range": {
+        "startLine": 262,
+        "startChar": 51,
+        "endLine": 262,
+        "endChar": 79
+      },
+      "revId": "70c584bb6b6bb1bb1406c327bb8910e867bc0cab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
