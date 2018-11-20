@@ -25,11 +25,11 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
+import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.NetworkUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.bpmn.common.scripts.VfModule
 import org.onap.so.bpmn.common.scripts.VfModuleBase
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
@@ -38,7 +38,6 @@ import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
@@ -46,14 +45,12 @@ import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
-import org.springframework.web.util.UriUtils
-
 public class DoUpdateVfModule extends VfModuleBase {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoUpdateVfModule.class);
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	CatalogDbUtils catalog = new CatalogDbUtils()
+	CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
 	/**
 	 * Initialize the flow's variables.
@@ -255,7 +252,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 				String serviceType =""
 
 				try{
-					String json = catalog.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
+					String json = catalogDbUtils.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
 					serviceType = jsonUtil.getJsonValue(json, "serviceResources.serviceType")
 				}catch(BpmnError e){
 					throw e

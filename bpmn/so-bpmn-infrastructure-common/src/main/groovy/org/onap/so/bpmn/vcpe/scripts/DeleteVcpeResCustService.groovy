@@ -21,13 +21,10 @@ package org.onap.so.bpmn.vcpe.scripts
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.CatalogDbUtils
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.NetworkUtils
 import org.onap.so.bpmn.common.scripts.VidUtils
-import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MessageEnum
@@ -40,10 +37,6 @@ import org.onap.so.client.aai.entities.Relationships
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import javax.ws.rs.NotFoundException
-import org.json.JSONObject
-
-import static org.apache.commons.lang3.StringUtils.isBlank
-
 
 /**
  * This groovy class supports the <class>DeleteVcpeResCustService.bpmn</class> process.
@@ -60,7 +53,6 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils()
-	CatalogDbUtils catalogDbUtils = new CatalogDbUtils()
 	NetworkUtils networkUtils = new NetworkUtils()
 
 	/**

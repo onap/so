@@ -22,13 +22,12 @@ package org.onap.so.bpmn.infrastructure.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.OwningEntity
-import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
+import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
@@ -42,15 +41,10 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.infrastructure.aai.groovyflows.AAICreateResources
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.AAIResourcesClient
-import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-
-
-import groovy.json.*
 
 /**
  * This groovy class supports the <class>DoCreateServiceInstance.bpmn</class> process.
@@ -84,7 +78,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 	String Prefix="DCRESI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	CatalogDbUtils cutils = new CatalogDbUtils()
+	CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
 	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -330,7 +324,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			String modelInvariantUuid = execution.getVariable("modelInvariantUuid")
 
 			try{
-				 String json = cutils.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
+				 String json = catalogDbUtils.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
 
 				 msoLogger.debug("JSON IS: "+json)
 

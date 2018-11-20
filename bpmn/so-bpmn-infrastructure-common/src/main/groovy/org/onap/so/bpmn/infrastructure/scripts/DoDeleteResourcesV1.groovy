@@ -20,6 +20,8 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
+
 import static org.apache.commons.lang3.StringUtils.isBlank
 
 import org.apache.commons.lang3.StringUtils
@@ -65,7 +67,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
     String Prefix="DDR_"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
-    CatalogDbUtils cutils = new CatalogDbUtils()
+    CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
     public void preProcessRequest (DelegateExecution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -247,7 +249,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 	
 	        Resource currentResource = execution.getVariable("currentResource")
 	        String action = "deleteInstance"
-	        JSONObject resourceRecipe = cutils.getResourceRecipe(execution, currentResource.getModelInfo().getModelUuid(), action)
+	        JSONObject resourceRecipe = catalogDbUtils.getResourceRecipe(execution, currentResource.getModelInfo().getModelUuid(), action)
 	        String recipeUri = resourceRecipe.getString("orchestrationUri")
 	        int recipeTimeout = resourceRecipe.getInt("recipeTimeout")
 	        String recipeParamXsd = resourceRecipe.get("paramXSD")

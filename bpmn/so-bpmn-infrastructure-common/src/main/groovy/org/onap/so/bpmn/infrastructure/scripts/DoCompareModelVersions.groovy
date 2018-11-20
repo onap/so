@@ -20,42 +20,14 @@
 package org.onap.so.bpmn.infrastructure.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*;
-import groovy.xml.XmlUtil
-import groovy.json.*
 
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
-import org.onap.so.bpmn.core.domain.ServiceInstance
-import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.Resource
-import org.onap.so.bpmn.core.domain.AllottedResource
-import org.onap.so.bpmn.core.domain.NetworkResource
-import org.onap.so.bpmn.core.domain.VnfResource
-import org.onap.so.bpmn.common.recipe.ResourceInput
-import org.onap.so.bpmn.common.recipe.BpmnRestClient
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.bpmn.common.scripts.CatalogDbUtils;
-import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.core.WorkflowException
 
-import java.util.List;
-import java.util.UUID;
-
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.runtime.Execution
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.json.JSONObject;
-import org.json.JSONArray;
-import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils;
-import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
-
-
 
 /**
  * This groovy class supports the <class>DoCompareModelVersions.bpmn</class> process.
@@ -76,7 +48,6 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 	String Prefix="DCMPMDV_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	CatalogDbUtils cutils = new CatalogDbUtils()
 
 	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")

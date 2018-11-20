@@ -20,21 +20,12 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
-
-import java.util.ArrayList
-import java.util.Iterator
-import java.util.List
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.HttpResponse
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.codehaus.groovy.runtime.ArrayUtil
-import org.codehaus.groovy.runtime.ScriptBytecodeAdapter
-import org.codehaus.groovy.runtime.callsite.CallSite
-import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation
-import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling
-import org.json.JSONArray
 import org.json.JSONObject
 import org.onap.so.bpmn.common.recipe.BpmnRestClient
 import org.onap.so.bpmn.common.recipe.ResourceInput
@@ -48,7 +39,6 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
-import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
 
@@ -75,7 +65,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
-    CatalogDbUtils cutils = new CatalogDbUtils()
+    CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
     public void preProcessRequest(DelegateExecution execution) {
         msoLogger.trace("preProcessRequest ")
@@ -260,7 +250,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
             // requestAction is action, not opertiontype
             //String requestAction = resourceInput.getOperationType()
             String requestAction = "createInstance"
-            JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceModelUUID, requestAction)
+            JSONObject resourceRecipe = catalogDbUtils.getResourceRecipe(execution, resourceModelUUID, requestAction)
 
             if (resourceRecipe != null) {
                 String recipeURL = BPMNProperties.getProperty("bpelURL", "http://so-bpmn-infra.onap:8081") + resourceRecipe.getString("orchestrationUri")
