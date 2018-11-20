@@ -384,7 +384,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
         String body = """
                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                        xmlns:ns="http://org.openecomp.mso/requestsdb">
+                        xmlns:ns="http://org.onap.so/requestsdb">
                         <soapenv:Header/>
                 <soapenv:Body>
                     <ns:updateResourceOperationStatus>
@@ -417,7 +417,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
         String body = """
                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                        xmlns:ns="http://org.openecomp.mso/requestsdb">
+                        xmlns:ns="http://org.onap.so/requestsdb">
                         <soapenv:Header/>
                 <soapenv:Body>
                     <ns:updateResourceOperationStatus>
