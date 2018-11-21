@@ -25,24 +25,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
- * An object that stores data for rollbacks.  Data is organized by type.  A
- * type is simply a string identifier.  Multiple types of data may be stored
- * in the same object for separate rollback operations.
+ * An object that stores data for rollbacks. Data is organized by type. A type is simply a string
+ * identifier. Multiple types of data may be stored in the same object for separate rollback
+ * operations.
  */
 public class RollbackData implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Map<String, Map<String, Serializable>> dictionary =
-        new HashMap<>();
+    @JsonProperty
+    private final Map<String, Map<String, Serializable>> dictionary = new HashMap<>();
 
     /**
      * Returns true if the specified type is stored in this object.
      *
      * @param type the data type
      */
-    public boolean hasType(String type) {
+    public boolean hasType(final String type) {
         return dictionary.containsKey(type);
     }
 
@@ -53,9 +55,8 @@ public class RollbackData implements Serializable {
      * @param key the key
      * @param value the value
      */
-    public void put(String type, String key, String value) {
-        Map<String, Serializable> mapForType = dictionary
-            .computeIfAbsent(type, k -> new HashMap<>());
+    public void put(final String type, final String key, final String value) {
+        final Map<String, Serializable> mapForType = dictionary.computeIfAbsent(type, k -> new HashMap<>());
 
         mapForType.put(key, value);
     }
@@ -67,8 +68,8 @@ public class RollbackData implements Serializable {
      * @param key the key
      * @return the item or null if there is no item for the specified type and key
      */
-    public Serializable get(String type, String key) {
-        Map<String, Serializable> mapForType = dictionary.get(type);
+    public Serializable get(final String type, final String key) {
+        final Map<String, Serializable> mapForType = dictionary.get(type);
 
         if (mapForType == null) {
             return null;
@@ -83,7 +84,7 @@ public class RollbackData implements Serializable {
      * @param type the data type
      * @return a map, or null if there are no items associated with the specified data type
      */
-    public Map<String, Serializable> get(String type) {
+    public Map<String, Serializable> get(final String type) {
         return dictionary.get(type);
     }
 
