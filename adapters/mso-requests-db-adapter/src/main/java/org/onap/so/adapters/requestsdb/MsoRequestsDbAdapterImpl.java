@@ -201,9 +201,21 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 			String error = "Entity not found. Unable to retrieve OperationStatus Object ServiceId: " + serviceId + " operationId: "
 					+ operationId;
 			logger.error(error);
-			throw new MsoRequestsDbException(error,MsoLogger.ErrorCode.BusinessProcesssError);
+//			throw new MsoRequestsDbException(error,MsoLogger.ErrorCode.BusinessProcesssError);
+			operStatus = new OperationStatus();
+			operStatus.setOperationId(operationId);
+			operStatus.setServiceId(serviceId);
 		}
 
+		operStatus.setUserId(userId);
+		operStatus.setOperation(operationType);
+		operStatus.setReason(reason);
+		operStatus.setProgress(progress);
+		operStatus.setResult(result);
+		operStatus.setOperationContent(operationContent);
+		operStatus.setResult(result);
+		operationStatusRepository.save(operStatus);
+	}
 		operStatus.setUserId(userId);
 		operStatus.setOperation(operationType);
 		operStatus.setReason(reason);
