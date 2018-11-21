@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@
  */
 
 package org.onap.so.adapters.network;
- 
+
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -70,6 +70,10 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     private static final String CREATE_NETWORK_ERROR_MSG="Error sending createNetwork notification ";
     private static final String CREATE_NETWORK_EXCEPTON_MSG="Exception sending createNetwork notification";
     private static final String MSO_INTERNAL_ERROR_MSG="MsoInternalError";
+    private static final String EXCEPTION_FAULT_INFO="Exception - fault info";
+    private static final String TENANT_ID=" tenantId:";
+    private static final string NETWORK_ADAPTER_NOTIFY="NetworkAdpaterNotify.wsdl";
+
     @Autowired
     private Environment environment;
 
@@ -130,15 +134,15 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         MsoLogger.setLogContext (msoRequest);
         MsoLogger.setServiceName ("CreateNetworkA");
         LOGGER.debug ("Async Create Network: " + networkName
-                                      + " of type "
-                                      + networkType
-                                      + " in "
-                                      + cloudSiteId
-                                      + "/"
-                                      + tenantId);
+                + " of type "
+                + networkType
+                + " in "
+                + cloudSiteId
+                + "/"
+                + tenantId);
 
         // Use the synchronous method to perform the actual Create
-        
+
 
         // Synchronous Web Service Outputs
         Holder <String> networkId = new Holder <> ();
@@ -148,20 +152,20 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 
         try {
             networkAdapter.createNetwork (cloudSiteId,
-                                          tenantId,
-                                          networkType,
-                                          modelCustomizationUuid,
-                                          networkName,
-                                          physicalNetworkName,
-                                          vlans,
-                                          failIfExists,
-                                          backout,
-                                          subnets,
-                                          msoRequest,
-                                          networkId,
-                                          neutronNetworkId,
-                                          subnetIdMap,
-                                          networkRollback);
+                    tenantId,
+                    networkType,
+                    modelCustomizationUuid,
+                    networkName,
+                    physicalNetworkName,
+                    vlans,
+                    failIfExists,
+                    backout,
+                    subnets,
+                    msoRequest,
+                    networkId,
+                    neutronNetworkId,
+                    subnetIdMap,
+                    networkRollback);
         } catch (NetworkException e) {
             LOGGER.debug (NETWORK_EXCEPTION_MSG, e);
             MsoExceptionCategory exCat = null;
@@ -170,7 +174,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 eMsg = e.getFaultInfo ().getMessage ();
                 exCat = MsoExceptionCategory.fromValue (e.getFaultInfo ().getCategory ().name ());
             } catch (Exception e1) {
-                LOGGER.error (MessageEnum.RA_FAULT_INFO_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception - fault info", e1);
+                LOGGER.error (MessageEnum.RA_FAULT_INFO_EXC, "", "", MsoLogger.ErrorCode.DataError, EXCEPTION_FAULT_INFO, e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -188,13 +192,13 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         try {
             NetworkAdapterNotify notifyPort = getNotifyEP (notificationUrl);
             notifyPort.createNetworkNotification (messageId,
-                                                  true,
-                                                  null,
-                                                  null,
-                                                  networkId.value,
-                                                  neutronNetworkId.value,
-                                                  copyCreateSubnetIdMap (subnetIdMap),
-                                                  copyNrb (networkRollback));
+                    true,
+                    null,
+                    null,
+                    networkId.value,
+                    neutronNetworkId.value,
+                    copyCreateSubnetIdMap (subnetIdMap),
+                    copyNrb (networkRollback));
         } catch (Exception e) {
             error = CREATE_NETWORK_ERROR_MSG + e.getMessage ();
             LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, CREATE_NETWORK_EXCEPTON_MSG, e);
@@ -248,15 +252,15 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         MsoLogger.setServiceName (serviceName);
         MsoLogger.setLogContext (msoRequest);
         LOGGER.debug ("Async Update Network: " + networkId
-                      + " of type "
-                      + networkType
-                      + "in "
-                      + cloudSiteId
-                      + "/"
-                      + tenantId);
+                + " of type "
+                + networkType
+                + "in "
+                + cloudSiteId
+                + "/"
+                + tenantId);
 
         // Use the synchronous method to perform the actual Create
-        
+
 
         // Synchronous Web Service Outputs
         Holder <NetworkRollback> networkRollback = new Holder <> ();
@@ -264,20 +268,20 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 
         try {
             networkAdapter.updateNetwork (cloudSiteId,
-                                          tenantId,
-                                          networkType,
-                                          modelCustomizationUuid,
-                                          networkId,
-                                          networkName,
-                                          physicalNetworkName,
-                                          vlans,
-                                          subnets,
-                                          msoRequest,
-                                          subnetIdMap,
-                                          networkRollback);
+                    tenantId,
+                    networkType,
+                    modelCustomizationUuid,
+                    networkId,
+                    networkName,
+                    physicalNetworkName,
+                    vlans,
+                    subnets,
+                    msoRequest,
+                    subnetIdMap,
+                    networkRollback);
             MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
-        	MsoLogger.setServiceName (serviceName);
+            MsoLogger.setServiceName (serviceName);
             LOGGER.debug ("Got a NetworkException on updateNetwork: ", e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
@@ -285,7 +289,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 eMsg = e.getFaultInfo ().getMessage ();
                 exCat = MsoExceptionCategory.fromValue (e.getFaultInfo ().getCategory ().name ());
             } catch (Exception e1) {
-                LOGGER.error (MessageEnum.RA_FAULT_INFO_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception - fault info", e1);
+                LOGGER.error (MessageEnum.RA_FAULT_INFO_EXC, "", "", MsoLogger.ErrorCode.DataError, EXCEPTION_FAULT_INFO, e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -303,11 +307,11 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         try {
             NetworkAdapterNotify notifyPort = getNotifyEP (notificationUrl);
             notifyPort.updateNetworkNotification (messageId,
-                                                  true,
-                                                  null,
-                                                  null,
-                                                  copyUpdateSubnetIdMap (subnetIdMap),
-                                                  copyNrb (networkRollback));
+                    true,
+                    null,
+                    null,
+                    copyUpdateSubnetIdMap (subnetIdMap),
+                    copyNrb (networkRollback));
         } catch (Exception e) {
             error = "Error sending updateNotification request" + e.getMessage ();
             LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception sending updateNotification request", e);
@@ -338,7 +342,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         LOGGER.debug ("Async Query Network " + networkNameOrId + " in " + cloudSiteId + "/" + tenantId);
 
         // Use the synchronous method to perform the actual Create
-        
+
 
         // Synchronous Web Service Outputs
         Holder <Boolean> networkExists = new Holder <> ();
@@ -350,18 +354,18 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 
         try {
             networkAdapter.queryNetwork (cloudSiteId,
-                                         tenantId,
-                                         networkNameOrId,
-                                         msoRequest,
-                                         networkExists,
-                                         networkId,
-                                         neutronNetworkId,
-                                         status,
-                                         vlans,
-                                         subnetIdMap);
+                    tenantId,
+                    networkNameOrId,
+                    msoRequest,
+                    networkExists,
+                    networkId,
+                    neutronNetworkId,
+                    status,
+                    vlans,
+                    subnetIdMap);
             MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
-        	MsoLogger.setServiceName (serviceName);
+            MsoLogger.setServiceName (serviceName);
             LOGGER.debug (NETWORK_EXCEPTION_MSG, e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
@@ -369,7 +373,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 eMsg = e.getFaultInfo ().getMessage ();
                 exCat = MsoExceptionCategory.fromValue (e.getFaultInfo ().getCategory ().name ());
             } catch (Exception e1) {
-                LOGGER.error (MessageEnum.RA_FAULT_INFO_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception - fault info", e1);
+                LOGGER.error (MessageEnum.RA_FAULT_INFO_EXC, "", "", MsoLogger.ErrorCode.DataError, EXCEPTION_FAULT_INFO, e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -382,21 +386,21 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             }
             return;
         }
-        LOGGER.debug ("Async Query Network:NameOrId " + networkNameOrId + " tenantId:" + tenantId);
+        LOGGER.debug ("Async Query Network:NameOrId " + networkNameOrId + TENANT_ID + tenantId);
         // Build and send Asynchronous response
         try {
             NetworkAdapterNotify notifyPort = getNotifyEP (notificationUrl);
             org.onap.so.adapters.network.async.client.NetworkStatus networkS = org.onap.so.adapters.network.async.client.NetworkStatus.fromValue (status.value.name ());
             notifyPort.queryNetworkNotification (messageId,
-                                                 true,
-                                                 null,
-                                                 null,
-                                                 networkExists.value,
-                                                 networkId.value,
-                                                 neutronNetworkId.value,
-                                                 networkS,
-                                                 vlans.value,
-                                                 copyQuerySubnetIdMap (subnetIdMap));
+                    true,
+                    null,
+                    null,
+                    networkExists.value,
+                    networkId.value,
+                    neutronNetworkId.value,
+                    networkS,
+                    vlans.value,
+                    copyQuerySubnetIdMap (subnetIdMap));
         } catch (Exception e) {
             error = CREATE_NETWORK_ERROR_MSG + e.getMessage ();
             LOGGER.error (MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, "", "", MsoLogger.ErrorCode.DataError, CREATE_NETWORK_EXCEPTON_MSG, e);
@@ -439,7 +443,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         LOGGER.debug ("Async Delete Network " + networkId + " in " + cloudSiteId + "/" + tenantId);
 
         // Use the synchronous method to perform the actual Create
-        
+
 
         // Synchronous Web Service Outputs
         Holder <Boolean> networkDeleted = new Holder <> ();
@@ -448,7 +452,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             networkAdapter.deleteNetwork (cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkId, msoRequest, networkDeleted);
             MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
-        	MsoLogger.setServiceName (serviceName);
+            MsoLogger.setServiceName (serviceName);
             LOGGER.debug (NETWORK_EXCEPTION_MSG, e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
@@ -456,7 +460,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 eMsg = e.getFaultInfo ().getMessage ();
                 exCat = MsoExceptionCategory.fromValue (e.getFaultInfo ().getCategory ().name ());
             } catch (Exception e1) {
-                LOGGER.error (MessageEnum.RA_FAULT_INFO_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception - fault info", e1);
+                LOGGER.error (MessageEnum.RA_FAULT_INFO_EXC, "", "", MsoLogger.ErrorCode.DataError, EXCEPTION_FAULT_INFO, e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -469,7 +473,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             }
             return;
         }
-        LOGGER.debug ("Async Delete NetworkId: " + networkId + " tenantId:" + tenantId);
+        LOGGER.debug ("Async Delete NetworkId: " + networkId + TENANT_ID + tenantId);
         // Build and send Asynchronous response
         try {
             NetworkAdapterNotify notifyPort = getNotifyEP (notificationUrl);
@@ -505,13 +509,13 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         MsoLogger.setLogContext (rollback.getMsoRequest ());
         LOGGER.info (MessageEnum.RA_ASYNC_ROLLBACK, rollback.getNetworkStackId (), "", "");
         // Use the synchronous method to perform the actual Create
-        
+
 
         try {
             networkAdapter.rollbackNetwork (rollback);
             MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
-        	MsoLogger.setServiceName (serviceName);
+            MsoLogger.setServiceName (serviceName);
             LOGGER.debug ("Got a NetworkException on rollbackNetwork: ", e);
             // Build and send Asynchronous error response
             MsoExceptionCategory exCat = null;
@@ -533,7 +537,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             }
             return;
         }
-        LOGGER.debug ("Async Rollback NetworkId: " + rollback.getNetworkStackId () + " tenantId:" + rollback.getTenantId ());
+        LOGGER.debug ("Async Rollback NetworkId: " + rollback.getNetworkStackId () + TENANT_ID + rollback.getTenantId ());
         // Build and send Asynchronous response
         try {
             NetworkAdapterNotify notifyPort = getNotifyEP (notificationUrl);
@@ -579,21 +583,21 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         try {
             warWsdlLoc = Thread.currentThread ().getContextClassLoader ().getResource ("NetworkAdapterNotify.wsdl");
         } catch (Exception e) {
-            LOGGER.error (MessageEnum.RA_WSDL_NOT_FOUND, "NetworkAdpaterNotify.wsdl", "", "", MsoLogger.ErrorCode.DataError, "Exception - WSDL not found", e);
+            LOGGER.error (MessageEnum.RA_WSDL_NOT_FOUND, NETWORK_ADAPTER_NOTIFY, "", "", MsoLogger.ErrorCode.DataError, "Exception - WSDL not found", e);
         }
         if (warWsdlLoc == null) {
-            LOGGER.error (MessageEnum.RA_WSDL_NOT_FOUND, "NetworkAdpaterNotify.wsdl", "", "", MsoLogger.ErrorCode.DataError, "WSDL not found");
+            LOGGER.error (MessageEnum.RA_WSDL_NOT_FOUND, NETWORK_ADAPTER_NOTIFY, "", "", MsoLogger.ErrorCode.DataError, "WSDL not found");
         } else {
             try {
                 LOGGER.debug ("NetworkAdpaterNotify.wsdl location:" + warWsdlLoc.toURI ().toString ());
             } catch (Exception e) {
-                LOGGER.error (MessageEnum.RA_WSDL_URL_CONVENTION_EXC, "NetworkAdpaterNotify.wsdl", "", "", MsoLogger.ErrorCode.SchemaError, "Exception - WSDL URL convention", e);
+                LOGGER.error (MessageEnum.RA_WSDL_URL_CONVENTION_EXC, NETWORK_ADAPTER_NOTIFY, "", "", MsoLogger.ErrorCode.SchemaError, "Exception - WSDL URL convention", e);
             }
         }
 
         NetworkAdapterNotify_Service notifySvc = new NetworkAdapterNotify_Service (warWsdlLoc,
-                                                                                   new QName ("http://org.onap.so/networkNotify",
-                                                                                              "networkAdapterNotify"));
+                new QName ("http://org.onap.so/networkNotify",
+                        "networkAdapterNotify"));
 
         NetworkAdapterNotify notifyPort = notifySvc.getMsoNetworkAdapterAsyncImplPort ();
 
@@ -611,7 +615,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             bp.getRequestContext ().put (BindingProvider.ENDPOINT_ADDRESS_PROPERTY, epUrl.toExternalForm ());
         }
         else {
-        	LOGGER.debug ("Notification Endpoint URL is NULL: ");
+            LOGGER.debug ("Notification Endpoint URL is NULL: ");
         }
 
         // authentication
@@ -632,16 +636,16 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 
         return notifyPort;
     }
-    
-    public String getEncryptedProperty(String key, String defaultValue, String encryptionKey) {
-    	try {
-			return CryptoUtils.decrypt(this.environment.getProperty(key), this.environment.getProperty(encryptionKey));
-		} catch (GeneralSecurityException e) {
-			LOGGER.debug("Exception while decrypting property: " + this.environment.getProperty(key), e);
-		}
-		return defaultValue;
 
-	}
+    public String getEncryptedProperty(String key, String defaultValue, String encryptionKey) {
+        try {
+            return CryptoUtils.decrypt(this.environment.getProperty(key), this.environment.getProperty(encryptionKey));
+        } catch (GeneralSecurityException e) {
+            LOGGER.debug("Exception while decrypting property: " + this.environment.getProperty(key), e);
+        }
+        return defaultValue;
+
+    }
 
     private CreateNetworkNotification.SubnetIdMap copyCreateSubnetIdMap (Holder <Map <String, String>> hMap) {
 
@@ -652,8 +656,8 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             CreateNetworkNotification.SubnetIdMap.Entry entry = new CreateNetworkNotification.SubnetIdMap.Entry ();
 
             for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
-            	String key = mapEntry.getKey();
-        		String value = mapEntry.getValue();
+                String key = mapEntry.getKey();
+                String value = mapEntry.getValue();
                 entry.setKey (key);
                 entry.setValue (value);
                 subnetIdMap.getEntry ().add (entry);
@@ -671,8 +675,8 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             UpdateNetworkNotification.SubnetIdMap.Entry entry = new UpdateNetworkNotification.SubnetIdMap.Entry ();
 
             for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
-		String key = mapEntry.getKey();
-		String value = mapEntry.getValue();
+                String key = mapEntry.getKey();
+                String value = mapEntry.getValue();
                 entry.setKey (key);
                 entry.setValue (value);
                 subnetIdMap.getEntry ().add (entry);
@@ -690,8 +694,8 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             QueryNetworkNotification.SubnetIdMap.Entry entry = new QueryNetworkNotification.SubnetIdMap.Entry ();
 
             for (Map.Entry<String,String> mapEntry : sMap.entrySet ()) {
-		String key = mapEntry.getKey();
-		String value = mapEntry.getValue();
+                String key = mapEntry.getKey();
+                String value = mapEntry.getValue();
                 entry.setKey (key);
                 entry.setValue (value);
                 subnetIdMap.getEntry ().add (entry);
