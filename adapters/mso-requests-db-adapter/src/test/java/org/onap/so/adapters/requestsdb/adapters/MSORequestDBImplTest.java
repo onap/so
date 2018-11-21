@@ -364,35 +364,10 @@ public class MSORequestDBImplTest {
 		updatedOperationStatus.setReason(reason);
 		updatedOperationStatus.setOperationContent(operationContent);
 
-		try {
-            dbAdapter.updateServiceOperationStatus(serviceId, operationId, operation,  userId,
-                     result, operationContent,  progress, reason);
-            fail("Expected MsoRequestsDbException to be thrown");   
-        } catch (Exception e) {
-            assertEquals("Entity not found. Unable to retrieve OperationStatus Object ServiceId: " + serviceId + " operationId: " + operationId,e.getMessage());
-            for(ILoggingEvent logEvent : TestAppender.events)
-                if(logEvent.getLoggerName().equals("org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor") &&
-                        logEvent.getMarker().getName().equals("ENTRY")
-                        ){
-                    Map<String,String> mdc = logEvent.getMDCPropertyMap();
-                    assertNotNull(mdc.get(ONAPLogConstants.MDCs.INSTANCE_UUID));
-                    assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                    assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
-                    assertEquals("",mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
-                    assertEquals("/services/RequestsDbAdapter",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
-                    assertEquals("INPROGRESS",mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
-                }else if(logEvent.getLoggerName().equals("org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor") &&
-                        logEvent.getMarker()!= null && logEvent.getMarker().getName().equals("EXIT")){
-                    Map<String,String> mdc = logEvent.getMDCPropertyMap();
-                    assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                    assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
-                    assertEquals("500",mdc.get(ONAPLogConstants.MDCs.RESPONSE_CODE));
-                    assertEquals("",mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
-                    assertEquals("/services/RequestsDbAdapter",mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
-                    assertEquals("ERROR",mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
-                }
-        }       	
-		
+		dbAdapter.updateServiceOperationStatus(serviceId, operationId, operation,  userId,
+	             result, operationContent,  progress, reason);		
+		OperationStatus dbOpStatus = operationStatusRepository.findOneByServiceIdAndOperationId(serviceId,operationId);		
+		assertThat(dbOpStatus, sameBeanAs(updatedOperationStatus).ignoring("operateAt").ignoring("finishedAt"));		
 	}
 	
 	@Test 
