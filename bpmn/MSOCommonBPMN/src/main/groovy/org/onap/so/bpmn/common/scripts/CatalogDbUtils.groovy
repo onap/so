@@ -982,22 +982,7 @@ class CatalogDbUtils {
 						vfModuleModelJson.put("modelInfo", vfModuleModelInfo)
 						String vfModuleType = jsonUtils.getJsonValueForKey(vfModule, "type")
 						vfModuleModelJson.put("vfModuleType", vfModuleType)
-						switch(catalogUtilsVersion) {
-							case "v1":
-							//TODO this does not work, isBase is not a integer.
-								Integer isBase = jsonUtils.getJsonIntValueForKey(vfModule, "isBase")
-								if (isBase.intValue() == 1) {
-									vfModuleModelJson.put("isBase", "true")
-								}
-								else {
-									vfModuleModelJson.put("isBase", "false")
-								}
-								break
-							default:
-								boolean isBase = jsonUtils.getJsonBooleanValueForKey(vfModule, "isBase")
-								vfModuleModelJson.put("isBase", isBase)
-								break
-						}
+						vfModuleModelJson.put("isBase", jsonUtils.getJsonBooleanValueForKey(vfModule, "isBase"))
 						String vfModuleLabel = jsonUtils.getJsonValueForKey(vfModule, "label")
 						vfModuleModelJson.put("vfModuleLabel", vfModuleLabel)
 						Integer initialCount = jsonUtils.getJsonIntValueForKey(vfModule, "initialCount")
