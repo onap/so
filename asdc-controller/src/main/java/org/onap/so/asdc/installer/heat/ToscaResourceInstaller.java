@@ -59,12 +59,10 @@ import org.onap.so.db.catalog.beans.AllottedResource;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
-import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.ConfigurationResource;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
-import org.onap.so.db.catalog.beans.ExternalServiceToInternalService;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatFiles;
 import org.onap.so.db.catalog.beans.HeatTemplate;
@@ -140,7 +138,6 @@ public class ToscaResourceInstaller {
 	protected static final String MANUAL_RECORD = "MANUAL_RECORD";
 
 	protected static final String MSO = "SO";
-
 
 	@Autowired
 	protected ServiceRepository serviceRepo;
@@ -275,9 +272,9 @@ public class ToscaResourceInstaller {
 
 	@Transactional(rollbackFor = { ArtifactInstallerException.class })
 	public void installTheResource(ToscaResourceStructure toscaResourceStruct, VfResourceStructure vfResourceStruct)
-			throws ArtifactInstallerException {		
+			throws ArtifactInstallerException {
 		VfResourceStructure vfResourceStructure = vfResourceStruct;
-		extractHeatInformation(toscaResourceStruct, vfResourceStructure);	
+		extractHeatInformation(toscaResourceStruct, vfResourceStructure);
 
 		// PCLO: in case of deployment failure, use a string that will represent
 		// the type of artifact that failed...
@@ -286,21 +283,9 @@ public class ToscaResourceInstaller {
 			createToscaCsar(toscaResourceStruct);			
 			createService(toscaResourceStruct, vfResourceStruct);			
 			Service service = toscaResourceStruct.getCatalogService();				
-			List<NodeTemplate> vfNodeTemplatesList = toscaResourceStruct.getSdcCsarHelper().getServiceVfList();
-			
-		
-			for (NodeTemplate nodeTemplate : vfNodeTemplatesList) {	
-				
-				Metadata metadata = nodeTemplate.getMetaData();		
-				String serviceType = toscaResourceStruct.getCatalogService().getServiceType();			
-				String vfCustomizationCategory = toscaResourceStruct.getSdcCsarHelper()
-						.getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_CATEGORY);
-				processVfModules(toscaResourceStruct, vfResourceStructure, service, nodeTemplate, metadata,
-						vfCustomizationCategory);
-			}
 
-			List<NodeTemplate> allottedResourceList = toscaResourceStruct.getSdcCsarHelper().getAllottedResources();
-			processAllottedResources(toscaResourceStruct, service, allottedResourceList);
+			processVFResources(toscaResourceStruct, service, vfResourceStructure);
+			processAllottedResources(toscaResourceStruct, service);
 			processNetworks(toscaResourceStruct, service);	
 			// process Network Collections
 			processNetworkCollections(toscaResourceStruct, service);
@@ -390,8 +375,9 @@ public class ToscaResourceInstaller {
         }
 	}
 
-	protected void processAllottedResources(ToscaResourceStructure toscaResourceStruct, Service service,
-			List<NodeTemplate> allottedResourceList) {
+	protected void processAllottedResources(ToscaResourceStructure toscaResourceStruct, Service service) {
+		List<NodeTemplate> allottedResourceList = toscaResourceStruct.getSdcCsarHelper().getAllottedResources();
+		
 		if (allottedResourceList != null) {
 			for (NodeTemplate allottedNode : allottedResourceList) {									
 				service.getAllottedCustomizations()
@@ -463,60 +449,86 @@ public class ToscaResourceInstaller {
 		service.getCollectionResourceCustomizations().add(toscaResourceStruct.getCatalogCollectionResourceCustomization());
 	}
 
-	protected void processVfModules(ToscaResourceStructure toscaResourceStruct, VfResourceStructure vfResourceStructure,
-			Service service, NodeTemplate nodeTemplate, Metadata metadata, String vfCustomizationCategory) throws Exception {
-		
-		logger.debug("VF Category is : " + vfCustomizationCategory);
-		
-		if(vfResourceStructure.getVfModuleStructure() != null && !vfResourceStructure.getVfModuleStructure().isEmpty())
-		{
 
-			String vfCustomizationUUID = toscaResourceStruct.getSdcCsarHelper()
-					.getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
-			logger.debug("VFCustomizationUUID=" + vfCustomizationUUID);	
+	protected void processVFResources (ToscaResourceStructure toscaResourceStruct, Service service, VfResourceStructure vfResourceStructure)
+			throws Exception{
+		logger.debug("processVFResources");
+		
+		List<NodeTemplate> vfNodeTemplatesList = toscaResourceStruct.getSdcCsarHelper().getServiceVfList();
+//		String servicecategory = toscaResourceStruct.getCatalogService().getCategory();
+//		String serviceType = toscaResourceStruct.getCatalogService().getServiceType();
+		
+		for (NodeTemplate nodeTemplate : vfNodeTemplatesList) {
+			Metadata metadata = nodeTemplate.getMetaData();
+			String vfCustomizationCategory = metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY);
+			logger.debug("VF Category is : " + vfCustomizationCategory);
 			
-			IResourceInstance vfNotificationResource = vfResourceStructure.getResourceInstance();		
-			
-			// Make sure the VF ResourceCustomizationUUID from the notification and tosca customizations match before comparing their VF Modules UUID's
-			logger.debug("Checking if Notification VF ResourceCustomizationUUID: " + vfNotificationResource.getResourceCustomizationUUID() + 
-					           " matches Tosca VF Customization UUID: " +  vfCustomizationUUID);
-			
-			if(vfCustomizationUUID.equals(vfNotificationResource.getResourceCustomizationUUID())){
+			// Do not treat Allotted Resources as VNF resources
+			if(ALLOTTED_RESOURCE.equalsIgnoreCase(vfCustomizationCategory)){
+				continue;
+			}
+
+			String vfCustomizationUUID = metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+			logger.debug("VFCustomizationUUID=" + vfCustomizationUUID);
+
+			IResourceInstance vfNotificationResource = vfResourceStructure.getResourceInstance();
+
+			// Make sure the VF ResourceCustomizationUUID from the notification and tosca
+			// customizations match before comparing their VF Modules UUID's
+			logger.debug("Checking if Notification VF ResourceCustomizationUUID: "
+					+ vfNotificationResource.getResourceCustomizationUUID() + " matches Tosca VF Customization UUID: "
+					+ vfCustomizationUUID);
+
+			if (vfCustomizationUUID.equals(vfNotificationResource.getResourceCustomizationUUID())) {
+				logger.debug("vfCustomizationUUID: " + vfCustomizationUUID
+						+ " matches vfNotificationResource CustomizationUUID");				
 				
-				logger.debug("vfCustomizationUUID: " + vfCustomizationUUID + " matches vfNotificationResource CustomizationUUID");
-			
-				VnfResourceCustomization vnfResource = createVnfResource(nodeTemplate, toscaResourceStruct, service);
-				
-				Set<CvnfcCustomization> existingCvnfcSet = new HashSet<CvnfcCustomization>(); 
-				Set<VnfcCustomization> existingVnfcSet = new HashSet<VnfcCustomization>();
-								
-				for (VfModuleStructure vfModuleStructure : vfResourceStructure.getVfModuleStructure()) {
-					
-					logger.debug("vfModuleStructure:" + vfModuleStructure.toString());
-					List<org.onap.sdc.toscaparser.api.Group> vfGroups = toscaResourceStruct
-							.getSdcCsarHelper().getVfModulesByVf(vfCustomizationUUID);
-					IVfModuleData vfMetadata = vfModuleStructure.getVfModuleMetadata();	
-					
-					logger.debug("Comparing Vf_Modules_Metadata CustomizationUUID : " + vfMetadata.getVfModuleModelCustomizationUUID());
-					
-					Optional<org.onap.sdc.toscaparser.api.Group> matchingObject = vfGroups.stream()
-							.peek(group -> logger.debug("To Csar Group VFModuleModelCustomizationUUID " + group.getMetadata().getValue("vfModuleModelCustomizationUUID")))
-						    .filter(group -> group.getMetadata().getValue("vfModuleModelCustomizationUUID").equals(vfMetadata.getVfModuleModelCustomizationUUID()))
-						    .findFirst();
-					if(matchingObject.isPresent()){
-						VfModuleCustomization vfModuleCustomization = createVFModuleResource(matchingObject.get(), nodeTemplate, toscaResourceStruct, 
-																							 vfResourceStructure,vfMetadata, vnfResource, service, existingCvnfcSet, existingVnfcSet);
-						vfModuleCustomization.getVfModule().setVnfResources(vnfResource.getVnfResources());
-					}else
-						throw new Exception("Cannot find matching VFModule Customization in Csar for Vf_Modules_Metadata: " + vfMetadata.getVfModuleModelCustomizationUUID());
-					
-				}
-				service.getVnfCustomizations().add(vnfResource);
-			} else{
-				logger.debug("Notification VF ResourceCustomizationUUID: " + vfNotificationResource.getResourceCustomizationUUID() + " doesn't match " +
-						     "Tosca VF Customization UUID: " +  vfCustomizationUUID);
+				processVfModules(toscaResourceStruct, vfResourceStructure, service, nodeTemplate, vfCustomizationUUID);
+			}
+			else {
+				logger.debug("Notification VF ResourceCustomizationUUID: "
+						+ vfNotificationResource.getResourceCustomizationUUID() + " doesn't match "
+						+ "Tosca VF Customization UUID: " + vfCustomizationUUID);
 			}
 		}
+	}
+	
+	
+	protected void processVfModules(ToscaResourceStructure toscaResourceStruct, VfResourceStructure vfResourceStructure,
+			Service service, NodeTemplate nodeTemplate, String vfCustomizationUUID)
+			throws Exception {
+		logger.debug("processVfModules for vfCustomizationUUID: " + vfCustomizationUUID);
+		
+		VnfResourceCustomization vnfResource = createVnfResource(nodeTemplate, toscaResourceStruct, service);
+		
+		if (vfResourceStructure.getVfModuleStructure() != null && !vfResourceStructure.getVfModuleStructure().isEmpty()) {
+			Set<CvnfcCustomization> existingCvnfcSet = new HashSet<CvnfcCustomization>();
+			Set<VnfcCustomization> existingVnfcSet = new HashSet<VnfcCustomization>();
+
+			for (VfModuleStructure vfModuleStructure : vfResourceStructure.getVfModuleStructure()) {
+
+				logger.debug("vfModuleStructure:" + vfModuleStructure.toString());
+				List<org.onap.sdc.toscaparser.api.Group> vfGroups = toscaResourceStruct.getSdcCsarHelper()
+						.getVfModulesByVf(vfCustomizationUUID);
+				IVfModuleData vfMetadata = vfModuleStructure.getVfModuleMetadata();
+
+				logger.debug("Comparing Vf_Modules_Metadata CustomizationUUID : " + vfMetadata.getVfModuleModelCustomizationUUID());
+
+				Optional<org.onap.sdc.toscaparser.api.Group> matchingObject = vfGroups.stream()
+						.peek(group -> logger.debug("To Csar Group VFModuleModelCustomizationUUID "	+ group.getMetadata().getValue("vfModuleModelCustomizationUUID")))
+						.filter(group -> group.getMetadata().getValue("vfModuleModelCustomizationUUID").equals(vfMetadata.getVfModuleModelCustomizationUUID()))
+						.findFirst();
+				if (matchingObject.isPresent()) {
+					VfModuleCustomization vfModuleCustomization = createVFModuleResource(matchingObject.get(), nodeTemplate, toscaResourceStruct, 
+							                             vfResourceStructure, vfMetadata, vnfResource,service, existingCvnfcSet, existingVnfcSet);
+					vfModuleCustomization.getVfModule().setVnfResources(vnfResource.getVnfResources());
+				} else {
+					throw new Exception("Cannot find matching VFModule Customization in Csar for Vf_Modules_Metadata: " + vfMetadata.getVfModuleModelCustomizationUUID());
+				}
+			}
+		}
+
+		service.getVnfCustomizations().add(vnfResource);
 	}
 
 	public void processWatchdog(String distributionId, String servideUUID) {
