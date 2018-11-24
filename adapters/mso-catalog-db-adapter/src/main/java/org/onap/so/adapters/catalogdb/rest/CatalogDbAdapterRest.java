@@ -588,7 +588,7 @@ public class CatalogDbAdapterRest {
 
                 if (null == recipe) {
                     NetworkResource nResource = networkResourceRepo.findResourceByModelUUID(rmUuid);
-                    recipe = networkRecipeRepo.findFirstByModelNameAndActionAndVersionStr(nResource.getModelName(), action, vnf.getModelVersion());
+                    recipe = networkRecipeRepo.findFirstByModelNameAndActionAndVersionStr(nResource.getModelName(), action, nResource.getModelVersion());
 
                     // for network fetch the default recipe
                     if (recipe == null) {
