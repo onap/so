@@ -263,15 +263,14 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
             JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceModelUUID, requestAction)
 
             if (resourceRecipe != null) {
-                String recipeURL = BPMNProperties.getProperty("bpelURL", "http://bpmn-infra:8081") + resourceRecipe.getString("orchestrationUri")
+                String recipeURL = BPMNProperties.getProperty("bpelURL", "http://so-bpmn-infra.onap:8081") + resourceRecipe.getString("orchestrationUri")
                 int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
                 String recipeParamXsd = resourceRecipe.get("paramXSD")
 
                 BpmnRestClient bpmnRestClient = new BpmnRestClient()
                 HttpResponse resp = bpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput, recipeParamXsd)
             } else {
-                String exceptionMessage = "Resource receipe is not found for resource modeluuid: " +
-                        resourceInput.getResourceModelInfo().getModelUuid()
+                String exceptionMessage = "Resource receipe is not found for resource modeluuid: " + resourceModelUUID
                 msoLogger.trace(exceptionMessage)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, exceptionMessage)
             }
