@@ -263,7 +263,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
             JSONObject resourceRecipe = cutils.getResourceRecipe(execution, resourceModelUUID, requestAction)
 
             if (resourceRecipe != null) {
-                String recipeURL = BPMNProperties.getProperty("bpelURL", "http://bpmn-infra:8081") + resourceRecipe.getString("orchestrationUri")
+                String recipeURL = BPMNProperties.getProperty("bpelURL", "http://so-bpmn-infra.onap:8081") + resourceRecipe.getString("orchestrationUri")
                 int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
                 String recipeParamXsd = resourceRecipe.get("paramXSD")
 
