@@ -87,7 +87,7 @@ public class SDNCRestClient{
 		// Added delay to allow completion of create request to SDNC
 		// before executing activate of create request.
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
