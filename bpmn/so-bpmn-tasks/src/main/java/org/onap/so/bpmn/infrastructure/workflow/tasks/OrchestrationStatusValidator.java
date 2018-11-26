@@ -105,6 +105,10 @@ public class OrchestrationStatusValidator {
 				org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
 				orchestrationStatus = configuration.getOrchestrationStatus();
 				break;
+			case NO_VALIDATE:
+				//short circuit and exit method
+				execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, OrchestrationStatusValidationDirective.VALIDATION_SKIPPED);
+				return;
 			default:
 				// can't currently get here, so not tested. Added in case enum is expanded without a change to this code
 				throw new OrchestrationStatusValidationException(String.format(UNKNOWN_RESOURCE_TYPE, buildingBlockFlowName, buildingBlockDetail.getResourceType(), buildingBlockDetail.getTargetAction()));

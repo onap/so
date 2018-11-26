@@ -28,7 +28,7 @@ public enum ResourceType {
 	NETWORK("Network"),
 	NETWORK_COLLECTION("NetworkCollection"),
 	CONFIGURATION("Configuration"),
-	CUSTOM("Custom");
+	NO_VALIDATE("NoValidate");
 	
 	private final String name;
 	
