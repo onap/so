@@ -35,11 +35,11 @@ public class AssignVnfBBTest extends BaseBPMNTest {
 	@Test
 	public void sunnyDayAssignVnfBBTest() throws InterruptedException, IOException {
 		variables.put("callHoming", true);
-		mockSubprocess("ReceiveWorkflowMessage", "Mocked ReceiveWorkflowMessage", "GenericStub");
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVnfBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted().hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf", "Task_createPlatform", "Task_createLineOfBusiness", "Task_createInstanceGroups",
-				"Task_callHoming", "Task_SDNCAdapterVnfTopologyAssign", "Task_UpdateVnfOrchestrationStatusAssigned",
+				"Task_callHoming", "Task_SDNCAdapterVnfTopologyAssign","CallActivity_sdncAssign", "Task_UpdateVnfOrchestrationStatusAssigned",
 				"End_AssignVnfBB");
 		assertThat(pi).isEnded();
 	}

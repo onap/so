@@ -48,12 +48,11 @@ public class SDNCVnfResources {
 	@Autowired
 	private SDNCClient sdncClient;
 	
-	public String assignVnf(GenericVnf vnf, ServiceInstance serviceInstance, Customer customer,
+	public GenericResourceApiVnfOperationInformation assignVnf(GenericVnf vnf, ServiceInstance serviceInstance, Customer customer,
 			CloudRegion cloudRegion, RequestContext requestContext, boolean homing)
 			throws MapperException, BadResponseException {
-		GenericResourceApiVnfOperationInformation sdncReq = sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION,
+		return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION,
 				SDNCSvcAction.ASSIGN,GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer, cloudRegion, requestContext, homing);
-		return sdncClient.post(sdncReq, SDNCTopology.VNF);
 	}
 
 	public String activateVnf(GenericVnf vnf, ServiceInstance serviceInstance, Customer customer,

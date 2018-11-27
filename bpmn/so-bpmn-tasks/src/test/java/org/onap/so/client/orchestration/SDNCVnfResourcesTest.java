@@ -88,11 +88,10 @@ public class SDNCVnfResourcesTest  extends TestDataSetup{
 	@Test
 	public void assignVnfTest() throws MapperException, BadResponseException {
 		doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper).reqMapper(isA(SDNCSvcOperation.class), isA(SDNCSvcAction.class),isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class), isA(ServiceInstance.class), isA(Customer.class), isA(CloudRegion.class), isA(RequestContext.class), anyBoolean());
-		doReturn("test").when(MOCK_sdncClient).post(isA(GenericResourceApiVnfOperationInformation.class), eq(SDNCTopology.VNF));
 		
 		sdncVnfResources.assignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext, false);
 		
-		verify(MOCK_sdncClient, times(1)).post(isA(GenericResourceApiVnfOperationInformation.class), eq(SDNCTopology.VNF));
+		verify(MOCK_vnfTopologyOperationRequestMapper, times(1)).reqMapper(isA(SDNCSvcOperation.class), isA(SDNCSvcAction.class),isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class), isA(ServiceInstance.class), isA(Customer.class), isA(CloudRegion.class), isA(RequestContext.class), anyBoolean());
 	}
 	
 	@Test
