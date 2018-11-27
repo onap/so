@@ -28,13 +28,17 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.HttpClient
+//import org.onap.so.client.HttpClient
+//import org.onap.so.client.RestRequest
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.onap.so.rest.APIResponse
+import org.onap.so.rest.RESTClient
+import org.onap.so.rest.RESTConfig
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import groovy.json.*
-import javax.ws.rs.core.Response
+//import javax.ws.rs.core.Response
 import org.onap.so.utils.TargetEntity
 
 /**
@@ -144,7 +148,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
      */
     public void createNetworkService(DelegateExecution execution) {
         msoLogger.trace("createNetworkService ")
-        String vfcAdapterUrl = execution.setVariable("vfcAdapterUrl")
+        String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String nsServiceModelUUID = execution.getVariable("nsServiceModelUUID");
         String nsParameters = execution.getVariable("nsParameters");
@@ -162,9 +166,9 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
                      "additionalParamForNs":${requestInputs}
                 }
                }"""
-        Response apiResponse = postRequest(execution, vfcAdapterUrl + "/ns", reqBody)
-        String returnCode = apiResponse.getStatus()
-        String aaiResponseAsString = apiResponse.readEntity(String.class)
+        APIResponse apiResponse = postRequest(execution, vfcAdapterUrl + "/ns", reqBody)
+        String returnCode = apiResponse.getStatusCode()
+        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String nsInstanceId = "";
         if(returnCode== "200" || returnCode == "201"){
             nsInstanceId =  jsonUtil.getJsonValue(aaiResponseAsString, "nsInstanceId")
@@ -178,7 +182,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
      */
     public void instantiateNetworkService(DelegateExecution execution) {
         msoLogger.trace("instantiateNetworkService ")
-        String vfcAdapterUrl = execution.setVariable("vfcAdapterUrl")
+        String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String nsParameters = execution.getVariable("nsParameters");
         String nsServiceName = execution.getVariable("nsServiceName")
@@ -191,9 +195,9 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
        }"""
         String nsInstanceId = execution.getVariable("nsInstanceId")
         String url = vfcAdapterUrl + "/ns/" +nsInstanceId + "/instantiate"
-        Response apiResponse = postRequest(execution, url, reqBody)
-        String returnCode = apiResponse.getStatus()
-        String aaiResponseAsString = apiResponse.readEntity(String.class)
+        APIResponse apiResponse = postRequest(execution, url, reqBody)
+        String returnCode = apiResponse.getStatusCode()
+        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String jobId = "";
         if(returnCode== "200"|| returnCode == "201"){
             jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
@@ -207,13 +211,13 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
      */
     public void queryNSProgress(DelegateExecution execution) {
         msoLogger.trace("queryNSProgress ")
-        String vfcAdapterUrl = execution.setVariable("vfcAdapterUrl")
+        String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String jobId = execution.getVariable("jobId")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String url = vfcAdapterUrl + "/jobs/" + jobId
-        Response apiResponse = postRequest(execution, url, nsOperationKey)
-        String returnCode = apiResponse.getStatus()
-        String aaiResponseAsString = apiResponse.readEntity(String.class)
+        APIResponse apiResponse = postRequest(execution, url, nsOperationKey)
+        String returnCode = apiResponse.getStatusCode()
+        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String operationStatus = "error"
         if(returnCode== "200"|| returnCode == "201"){
             operationStatus = jsonUtil.getJsonValue(aaiResponseAsString, "responseDescriptor.status")
@@ -229,7 +233,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
         try {
             Thread.sleep(5000);
         } catch(InterruptedException e) {
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Time Delay exception" + e , "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+            msoLogger.error( "Time Delay exception" + e.getMessage());
         }
     }
 
@@ -254,7 +258,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
             getAAIClient().connect(nsUri,relatedServiceUri)
             msoLogger.info("NS relationship to Service added successfully")
         }catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while Creating NS relationship.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.getMessage(),e);
+            msoLogger.error("Exception occured while Creating NS relationship."+ e.getMessage());
             throw new BpmnError("MSOWorkflowException")
         }
     }
@@ -264,26 +268,103 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private Response postRequest(DelegateExecution execution, String urlString, String requestBody){
+    private APIResponse postRequest(DelegateExecution execution, String urlString, String requestBody){
         msoLogger.trace("Started Execute VFC adapter Post Process ")
         msoLogger.info("url:" + urlString +"\nrequestBody:"+ requestBody)
-        Response apiResponse = null
-        try{
+        APIResponse apiResponse = null
+//        try{
 
-			URL url = new URL(urlString);
+//			URL url = new URL(urlString);
 
-			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
-			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk")
+//			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
+//			httpClient.addAdditionalHeader("Accept", "application/json")
+//			httpClient.addAdditionalHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk")
 
-			apiResponse = httpClient.post(requestBody)
+//			apiResponse = httpClient.post(requestBody)
+//			msoLogger.info("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
 
-            msoLogger.info("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
-            msoLogger.trace("Completed Execute VF-C adapter Post Process ")
-        }catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing AAI Post Call.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e);
-            throw new BpmnError("MSOWorkflowException")
-        }
+		// Get the Basic Auth credentials for the VFCAdapter (yes... we ARE using the PO adapters credentials)
+		String basicAuthValuePO = UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
+		
+		msoLogger.debug("basicAuthValuePO: " + basicAuthValuePO)
+		if (basicAuthValuePO == null || basicAuthValuePO.isEmpty()) {
+			msoLogger.debug("mso:adapters:po:auth URN mapping is not defined")
+		}			
+
+		RESTConfig config = new RESTConfig(urlString)
+		RESTClient client = null;
+		int statusCode = 0;
+		try {
+			client = new RESTClient(config).addHeader("Accept", "application/json").addAuthorizationHeader(basicAuthValuePO)
+
+			apiResponse = client.httpPost(requestBody)
+			
+			statusCode = apiResponse.getStatusCode()
+			
+			if(statusCode == 200 || statusCode == 201) {
+				return apiResponse
+			}
+		}catch(Exception e){
+			msoLogger.error("VFC Aatpter Post Call Exception using mso.adapters.po.auth:" + e.getMessage());
+		}
+		
+		msoLogger.debug("response code:"+ statusCode +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
+		
+		msoLogger.debug("VFC Aatpter Post Call using mso.msoKey")
+		String basicAuthValue =  UrnPropertiesReader.getVariable("mso.msoKey", execution)
+		msoLogger.debug("basicAuthValue: " + basicAuthValue)
+		if (basicAuthValue == null || basicAuthValue.isEmpty()) {
+			msoLogger.debug("mso:msoKey URN mapping is not defined")
+		}
+		try {
+			client = new RESTClient(config).addHeader("Accept", "application/json").addAuthorizationHeader(basicAuthValue)
+
+			apiResponse = client.httpPost(requestBody)
+			
+			statusCode = apiResponse.getStatusCode()
+			
+			if(statusCode == 200 || statusCode == 201) {
+				return apiResponse
+			}
+		}catch(Exception e){
+			msoLogger.error("VFC Aatpter Post Call Exception using mso.msoKey:" + e.getMessage());
+			
+		}
+					
+		msoLogger.debug("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
+		
+		msoLogger.debug("VFC Aatpter Post Call using mso.db.auth")
+		String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
+		msoLogger.debug("basicAuthValuedb: " + basicAuthValuedb)
+		if (basicAuthValuedb == null || basicAuthValuedb.isEmpty()) {
+			msoLogger.debug("mso:db.auth URN mapping is not defined")
+		}
+		try {
+			client = new RESTClient(config).addHeader("Accept", "application/json").addAuthorizationHeader(basicAuthValuedb)
+
+			apiResponse = client.httpPost(requestBody)
+			statusCode = apiResponse.getStatusCode()
+			
+			if(statusCode == 200 || statusCode == 201) {
+				return apiResponse
+			}
+		}catch(Exception e){
+			msoLogger.error("VFC Aatpter Post Call Exception using mso.msoKey:" + e.getMessage());
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "VFC Aatpter Post Call Exception by using mso.msoKey or mso.adapters.po.auth")
+		}
+	
+			
+		msoLogger.debug("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
+		String auth = "Basic QlBFTENsaWVudDpwYXNzd29yZDEk"
+		msoLogger.debug("auth: " + basicAuthValuedb)
+		client = new RESTClient(config).addHeader("Accept", "application/json").addAuthorizationHeader(auth)
+		
+		apiResponse = client.httpPost(requestBody)
+		
+		msoLogger.debug("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
+		
+		msoLogger.trace("Completed Execute VF-C adapter Post Process ")
+        
         return apiResponse
     }
 
