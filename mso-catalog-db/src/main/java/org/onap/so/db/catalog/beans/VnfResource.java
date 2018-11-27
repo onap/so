@@ -43,6 +43,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.openpojo.business.annotation.BusinessKey;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
@@ -91,6 +93,7 @@ public class VnfResource implements Serializable {
 	private Date created;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "HEAT_TEMPLATE_ARTIFACT_UUID")
 	private HeatTemplate heatTemplates;
 
