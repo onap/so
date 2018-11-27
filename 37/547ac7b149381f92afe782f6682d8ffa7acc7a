@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review-1: Andrew Fenner <andrew.fenner@ericsson.com>
+Code-Review+1: Steve Smokowski <ss835w@att.com>
+Code-Review+2: Rob Daugherty <rd472p@att.com>
+Submitted-by: Rob Daugherty <rd472p@att.com>
+Submitted-at: Tue, 27 Nov 2018 13:33:58 +0000
+Reviewed-on: https://gerrit.onap.org/r/72922
+Project: so
+Branch: refs/heads/master
