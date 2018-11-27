@@ -171,7 +171,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String serviceInstanceId = execution.getVariable(Prefix + "serviceInstanceId")
             String source = execution.getVariable("source")
             String sdnc_service_id = execution.getVariable(Prefix + "sdncServiceId")
-            ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+            ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
             String serviceType = resourceInputObj.getServiceType()
             String serviceModelInvariantUuid = resourceInputObj.getServiceModelInfo().getModelInvariantUuid()
             String serviceModelUuid = resourceInputObj.getServiceModelInfo().getModelUuid()
@@ -371,7 +371,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void prepareUpdateBeforeDeleteSDNCResource(DelegateExecution execution) {
-        ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
         String operType = resourceInputObj.getOperationType()
         String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
         String serviceInstanceId = resourceInputObj.getServiceInstanceId()
@@ -404,7 +404,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void prepareUpdateAfterDeleteSDNCResource(DelegateExecution execution) {
-        ResourceInput resourceInputObj = execution.getVariable(Prefix + "resourceInput")
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
         String operType = resourceInputObj.getOperationType()
         String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
         String serviceInstanceId = resourceInputObj.getServiceInstanceId()
