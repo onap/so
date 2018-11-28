@@ -20,15 +20,19 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import org.onap.aai.domain.yang.Pnf;
-import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.onap.aai.domain.yang.Pnf;
+import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+
+@Component
+@Primary
 public class AaiConnectionTestImpl implements AaiConnection {
 
     public static final String ID_WITHOUT_ENTRY = "IdWithoutEntry";

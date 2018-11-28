@@ -20,10 +20,14 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
-
 import java.util.Objects;
 
+import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+
+@Component
+@Primary
 public class DmaapClientTestImpl implements DmaapClient {
 
     private String correlationId;
