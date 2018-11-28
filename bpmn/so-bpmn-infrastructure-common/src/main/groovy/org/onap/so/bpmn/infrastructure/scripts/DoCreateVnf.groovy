@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.db.catalog.beans.HomingInstance
+
 import static org.apache.commons.lang3.StringUtils.*
 
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -29,6 +31,7 @@ import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
+import org.onap.so.bpmn.common.scripts.OofUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.RollbackData
@@ -237,6 +240,19 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			String nfFunction = vnfResource.getNfFunction()
 			execution.setVariable("DoCVNF_nfFunction", nfFunction)
 			msoLogger.debug("NF Function is: " + nfFunction)
+
+			// Set Homing Info
+			try {
+				HomingInstance homingInstance = oofutils.getHomingInstance(serviceInstanceId)
+				if (homingInstance != null) {
+					execution.setVariable("DoCVNF_cloudSiteId", homingInstance.getCloudRegionId())
+					rollbackData.put("VNF", "cloudSiteId", homingInstance.getCloudRegionId())
+					msoLogger.debug("Overwriting cloudSiteId with homing cloudSiteId: " +
+							homingInstance.getCloudRegionId())
+				}
+			} catch (Exception exception) {
+				msoLogger.debug("Could not find homing information for service instance... continuing")
+			}
 
 			rollbackData.put("VNF", "rollbackSDNCAssign", "false")
 			rollbackData.put("VNF", "rollbackSDNCActivate", "false")

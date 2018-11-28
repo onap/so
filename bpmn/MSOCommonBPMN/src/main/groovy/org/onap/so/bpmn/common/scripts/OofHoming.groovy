@@ -33,6 +33,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.db.catalog.beans.AuthenticationType
 import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
+import org.onap.so.db.catalog.beans.HomingInstance
 import org.onap.so.db.catalog.beans.ServerType
 import org.onap.so.rest.APIResponse
 import org.onap.so.rest.RESTClient
@@ -308,7 +309,20 @@ class OofHoming extends AbstractServiceTaskProcessor {
                                 VnfResource vnf = new VnfResource()
                                 vnf.setVnfHostname(assignmentMap.get("vnfHostName"))
                                 resource.getHomingSolution().setVnf(vnf)
-                                resource.getHomingSolution().setServiceInstanceId(solution.getJSONArray("identifiers")[0].toString())
+                                String serviceInstanceId = solution.getJSONArray("identifiers")[0].toString()
+                                resource.getHomingSolution().setServiceInstanceId(serviceInstanceId)
+
+                                // Set Homing Instance
+                                HomingInstance homingInstance = new HomingInstance()
+                                homingInstance.setServiceInstanceId(serviceInstanceId)
+                                homingInstance.setCloudOwner(cloudOwner)
+                                homingInstance.setCloudRegionId(cloudRegionId)
+                                if (oofDirectives != null && oofDirectives != "") {
+                                    homingInstance.setOofDirectives(oofDirectives)}
+                                else {
+                                    homingInstance.setOofDirectives("{}")
+                                }
+                                oofUtils.createHomingInstance(homingInstance, execution)
                             }
                         } else {
                             utils.log("DEBUG", "ProcessHomingSolution Exception: no matching serviceResourceIds returned in " +
