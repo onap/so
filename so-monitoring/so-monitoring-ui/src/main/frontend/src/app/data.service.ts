@@ -30,6 +30,7 @@ import { environment } from '../environments/environment';
 import { HttpResponse } from '@angular/common/http';
 import { PII } from './model/processInstance.model';
 import { HttpErrorHandlerService } from './http-error-handler.service';
+import { ACTINST } from './model/activityInstance.model';
 
 
 @Injectable({
@@ -59,12 +60,12 @@ export class DataService {
   }
 
   // HTTP GET to return Activity instancs using ProcessInstanceID
-  getActivityInstance(processInstanceId) {
+  getActivityInstance(processInstanceId): Promise<ACTINST[]> {
     var url = environment.soMonitoringBackendURL + 'activity-instance/' + processInstanceId;
-    return this.http.get(url)
+    return this.http.get<ACTINST[]>(url)
       .pipe(
         catchError(this.httpErrorHandlerService.handleError("GET", url))
-      );
+      ).toPromise();
   }
 
   // HTTP GET to return Activity Instance using ProcessInstanceID

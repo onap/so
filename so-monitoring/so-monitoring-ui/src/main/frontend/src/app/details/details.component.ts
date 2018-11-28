@@ -43,7 +43,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 })
 
 export class DetailsComponent implements OnInit {
-
   bpmnViewer: any;
 
   processInstanceID: string;
@@ -67,8 +66,8 @@ export class DetailsComponent implements OnInit {
   constructor(private route: ActivatedRoute, private data: DataService, private popup: ToastrNotificationService,
     private router: Router, private spinner: NgxSpinnerService) { }
 
-  getActInst(procInstId: string) {
-    this.data.getActivityInstance(procInstId).subscribe(
+  async getActInst(procInstId: string) {
+    await this.data.getActivityInstance(procInstId).then(
       (data: ACTINST[]) => {
         this.activityInstance = data;
         console.log(data);
@@ -90,7 +89,7 @@ export class DetailsComponent implements OnInit {
       });
   }
 
-  async  getProcInstance(procInstId) {
+  async getProcInstance(procInstId) {
     await this.data.getProcessInstance(procInstId).then(
       async (data: PII) => {
         this.processInstance = data;
@@ -160,4 +159,5 @@ export class DetailsComponent implements OnInit {
         this.getVarInst(this.processInstanceID);
       });
   }
+
 }
