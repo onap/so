@@ -8,6 +8,44 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
+Version: 1.3.3
+--------------
+
+:Release Date: 2018-11-30
+
+This is the official release package that was tested against the 72 hour stability test in integration environment.
+
+Casablanca Release branch
+*New Features**
+
+Below  features are delivered in this release:
+* Support PNF resource type.
+* Extend the support of homing to vFW, vCPE usecases.
+* Workflow Designer Integration.
+* Monitoring BPMN worflow capabilities through UI.
+* Support to the CCVPN Usecase.
+* SO internal architecture improvements.
+
+**Bug Fixes**
+
+	The defects fixed in this release could be found `here <https://jira.onap.org/issues/?jql=project%20%3D%20SO%20AND%20affectedVersion%20%3D%20%22Beijing%20Release%22%20AND%20status%20%3D%20Closed%20>`_.
+
+**Known Issues**
+
+	There are some issues around the HPA and CCVPN that have been resolved in the patch release of 1.3.4.
+	SO-1249
+	
+	The other open issues are
+	SO-1257
+	SO-1248
+	SO-1219
+	These will be addressed in the next release.
+
+**Security Notes**
+
+	SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28377799>`_.
+
+
 Version: 1.3.1
 --------------
 
