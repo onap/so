@@ -31,6 +31,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import org.onap.so.utils.TargetEntity
 
@@ -44,9 +45,6 @@ import javax.ws.rs.core.Response
 public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateVFCNetworkServiceInstance.class);
 
-    String vfcUrl = "/vfc/rest/v1/vfcadapter"
-
-    String host = "http://mso.mso.testlab.openecomp.org:8080"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -100,6 +98,19 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
            execution.setVariable("nsOperationKey", nsOperationKey);
            execution.setVariable("nsParameters", nsParameters)
 
+           String vfcAdapterUrl = UrnPropertiesReader.getVariable("mso.adapters.vfc.rest.endpoint", execution)
+		   
+           if (vfcAdapterUrl == null || vfcAdapterUrl.isEmpty()) {
+               msg = getProcessKey(execution) + ': mso:adapters:vfcc:rest:endpoint URN mapping is not defined'
+               msoLogger.debug(msg)
+           }
+
+           while (vfcAdapterUrl.endsWith('/')) {
+               vfcAdapterUrl = vfcAdapterUrl.substring(0, vfcAdapterUrl.length()-1)
+           }
+		   
+           execution.setVariable("vfcAdapterUrl", vfcAdapterUrl)
+
 
        } catch (BpmnError e) {
            throw e;
@@ -116,6 +127,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void createNetworkService(DelegateExecution execution) {
         msoLogger.trace("createNetworkService")
+        String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String nsParameters = execution.getVariable("nsParameters");
         String nsServiceName = execution.getVariable("nsServiceName")
@@ -126,7 +138,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
                 "nsOperationKey":${nsOperationKey},
                 "nsParameters":${nsParameters}
                }"""
-        Response apiResponse = postRequest(execution, host + vfcUrl + "/ns", reqBody)
+        Response apiResponse = postRequest(execution, vfcAdapterUrl + "/ns", reqBody)
         String returnCode = apiResponse.getStatus()
         String aaiResponseAsString = apiResponse.readEntity(String.class)
         String nsInstanceId = "";
@@ -142,6 +154,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void instantiateNetworkService(DelegateExecution execution) {
         msoLogger.trace("instantiateNetworkService")
+        String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String nsParameters = execution.getVariable("nsParameters");
         String nsServiceName = execution.getVariable("nsServiceName")
@@ -153,7 +166,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         "nsParameters":${nsParameters}
        }"""
         String nsInstanceId = execution.getVariable("nsInstanceId")
-        String url = host + vfcUrl + "/ns/" +nsInstanceId + "/instantiate"
+        String url = vfcAdapterUrl + "/ns/" +nsInstanceId + "/instantiate"
         Response apiResponse = postRequest(execution, url, reqBody)
         String returnCode = apiResponse.getStatus()
         String aaiResponseAsString = apiResponse.readEntity(String.class)
@@ -170,9 +183,10 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void queryNSProgress(DelegateExecution execution) {
         msoLogger.trace("queryNSProgress")
+        String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String jobId = execution.getVariable("jobId")
         String nsOperationKey = execution.getVariable("nsOperationKey");
-        String url = host + vfcUrl + "/jobs/" + jobId
+        String url = vfcAdapterUrl + "/jobs/" + jobId
         Response apiResponse = postRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatus()
         String aaiResponseAsString = apiResponse.readEntity(String.class)
