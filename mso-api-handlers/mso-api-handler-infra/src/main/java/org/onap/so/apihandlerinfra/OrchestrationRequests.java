@@ -46,14 +46,14 @@ import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
-import org.onap.so.apihandlerinfra.logging.AlarmLoggerInfo;
+
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoAlarmLogger;
+
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.GetOrchestrationListResponse;
 import org.onap.so.serviceinstancebeans.GetOrchestrationResponse;
@@ -108,12 +108,13 @@ public class OrchestrationRequests {
 		} catch (Exception e) {
 		    msoLogger.error(e);
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.AvailabilityError).build();
-			AlarmLoggerInfo alarmLoggerInfo = new AlarmLoggerInfo.Builder("MsoDatabaseAccessError", MsoAlarmLogger.CRITICAL, Messages.errors.get(ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB)).build();
+
 
 
 
 			ValidateException validateException = new ValidateException.Builder("Exception while communciate with Request DB - Infra Request Lookup",
-					HttpStatus.SC_NOT_FOUND,ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e).errorInfo(errorLoggerInfo).alarmInfo(alarmLoggerInfo).build();
+					HttpStatus.SC_NOT_FOUND,ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e).errorInfo(errorLoggerInfo).build();
+
 
 			throw validateException;
 
