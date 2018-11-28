@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_e3f4bef3",
+        "filename": "common/src/main/java/org/onap/so/client/HttpClientFactory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2018-11-28T15:04:10Z",
+      "side": 1,
+      "message": "In other places in our code, we call the HttpClient constructor directly.  Here we have a new factory.  At present, the factory doesn\u0027t add any value... it just calls the constructor. Do you foresee a case where the factory would do something additional?  If so, shouldn\u0027t we use the factory everywhere?  If not, then I think we should remove this factory.",
+      "revId": "7d6e1ae492d91b74c6db995f42ef665d9e375245",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
