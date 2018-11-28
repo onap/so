@@ -47,6 +47,9 @@ import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.client.HttpClient;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.onap.so.rest.APIResponse;
+import org.onap.so.rest.RESTClient;
+import org.onap.so.rest.RESTConfig;
 import org.onap.so.utils.TargetEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -261,10 +264,20 @@ public class ResourceRequestBuilder {
 
     private static String getCsarFromUuid(String uuid) throws Exception {
 		String catalogEndPoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint");
-    	HttpClient client = new HttpClient(UriBuilder.fromUri(catalogEndPoint).path(SERVICE_URL_TOSCA_CSAR).queryParam("serviceModelUuid", uuid).build().toURL(), "application/json", TargetEntity.CATALOG_DB);
-    	
-        Response response = client.get();
-        String value = response.readEntity(String.class);
+
+        RESTClient restClient = new RESTClient(new RESTConfig(
+                UriBuilder.fromUri(catalogEndPoint)
+                        .path(SERVICE_URL_TOSCA_CSAR)
+                        .queryParam("serviceModelUuid", uuid)
+                        .build().toURL().toString()
+        ));
+
+        restClient.addHeader("Accept", "application/json");
+        restClient.addAuthorizationHeader(UrnPropertiesReader.getVariable("mso.db.auth"));
+
+        APIResponse apiResponse = restClient.httpGet();
+
+        String value = apiResponse.getResponseBodyAsString();
 
         HashMap<String, String> map = new Gson().fromJson(value, new TypeToken<HashMap<String, String>>() {}.getType());
 
