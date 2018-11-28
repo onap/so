@@ -49,6 +49,14 @@ CREATE TABLE IF NOT EXISTS `cloud_sites` (
   CONSTRAINT `FK_cloud_sites_identity_services` FOREIGN KEY (`IDENTITY_SERVICE_ID`) REFERENCES `identity_services` (`ID`)
 ) ;
 
+CREATE TABLE IF NOT EXISTS `homing_instances` (
+`SERVICE_INSTANCE_ID` varchar(50) NOT NULL,
+`CLOUD_OWNER` VARCHAR(200) NOT NULL,
+`CLOUD_REGION_ID` VARCHAR(200) NOT NULL,
+`OOF_DIRECTIVES` longtext NULL DEFAULT NULL,
+PRIMARY KEY (`SERVICE_INSTANCE_ID`)
+) ;
+
 insert into heat_files(artifact_uuid, name, version, description, body, artifact_checksum, creation_timestamp) values
 ('00535bdd-0878-4478-b95a-c575c742bfb0', 'nimbus-ethernet-gw', '1', 'created from csar', 'DEVICE=$dev\nBOOTPROTO=none\nNM_CONTROLLED=no\nIPADDR=$ip\nNETMASK=$netmask\nGATEWAY=$gateway\n', 'MANUAL RECORD', '2017-01-21 23:56:43');
 
@@ -204,3 +212,7 @@ VALUES
 INSERT INTO vnf_components_recipe (VNF_COMPONENT_TYPE, ACTION, VERSION, DESCRIPTION, ORCHESTRATION_URI, RECIPE_TIMEOUT, VF_MODULE_MODEL_UUID)
 VALUES
 ('volumeGroup', 'createInstance', '1', 'Gr api recipe to create volume-group', '/mso/async/services/WorkflowActionBB', 180, '20c4431c-246d-11e7-93ae-92361f002671');
+
+insert into homing_instances (service_instance_id, cloud_owner, cloud_region_id, oof_directives) values
+('5df8b6de-2083-11e7-93ae-92361f232671', 'CloudOwner', 'CloudRegionId', '{"directives": [{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "firewall_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vfw"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor33","attribute_name": "packetgen_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vgenerator"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "sink_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vsink"}]}'),
+('5df8b6de-2083-11e7-93ae-92361f562672', 'CloudOwner', 'CloudRegionId', '{"directives": [{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "firewall_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vfw"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor33","attribute_name": "packetgen_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vgenerator"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "sink_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vsink"}]}');
