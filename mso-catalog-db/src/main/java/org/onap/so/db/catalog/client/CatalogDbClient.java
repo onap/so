@@ -36,6 +36,7 @@ import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.ExternalServiceToInternalService;
+import org.onap.so.db.catalog.beans.HomingInstance;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkRecipe;
@@ -125,6 +126,7 @@ public class CatalogDbClient {
 	private static final String WORK_STEP = "workStep";
 	private static final String CLLI = "clli";
 	private static final String CLOUD_VERSION = "cloudVersion";
+	private static final String HOMING_INSTANCE = "/homingInstance";
 	
 	private static final String TARGET_ENTITY = "SO:CatalogDB";
 
@@ -153,6 +155,8 @@ public class CatalogDbClient {
 	private String findOneByActionAndRequestScopeAndIsAlacarte = "/findOneByActionAndRequestScopeAndIsAlacarte";
 	private String findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = "/findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep";
 	private String findByClliAndCloudVersion = "/findByClliAndCloudVersion";
+	private String findServiceByServiceInstanceId = "/findServiceByServiceInstanceId";
+
 
 	private String serviceURI;
 	private String vfModuleURI;
@@ -165,6 +169,7 @@ public class CatalogDbClient {
 	private String instanceGroupURI;
 	private String cloudifyManagerURI;
 	private String cloudSiteURI;
+	private String homingInstanceURI;
 
 	private final Client<Service> serviceClient;
 
@@ -209,6 +214,8 @@ public class CatalogDbClient {
 	private final Client<ExternalServiceToInternalService> externalServiceToInternalServiceClient;
 
 	private final Client<CloudSite> cloudSiteClient;
+
+	private final Client<HomingInstance> homingInstanceClient;
 
 	private final Client<CloudifyManager> cloudifyManagerClient;
 	
@@ -262,6 +269,7 @@ public class CatalogDbClient {
 		instanceGroupURI = endpoint + INSTANCE_GROUP + URI_SEPARATOR;
 		cloudifyManagerURI = endpoint + CLOUDIFY_MANAGER + URI_SEPARATOR;
 		cloudSiteURI = endpoint + CLOUD_SITE + URI_SEPARATOR;
+		homingInstanceURI = endpoint + HOMING_INSTANCE + URI_SEPARATOR;
 
 	}
 
@@ -300,6 +308,7 @@ public class CatalogDbClient {
 		networkCollectionResourceCustomizationClient = clientFactory.create(NetworkCollectionResourceCustomization.class);
 		collectionNetworkResourceCustomizationClient = clientFactory.create(CollectionNetworkResourceCustomization.class);
 		cloudSiteClient = clientFactory.create(CloudSite.class);
+		homingInstanceClient = clientFactory.create(HomingInstance.class);
 		cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
 		serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
 		cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
@@ -342,6 +351,7 @@ public class CatalogDbClient {
 		networkCollectionResourceCustomizationClient = clientFactory.create(NetworkCollectionResourceCustomization.class);
 		collectionNetworkResourceCustomizationClient = clientFactory.create(CollectionNetworkResourceCustomization.class);
 		cloudSiteClient = clientFactory.create(CloudSite.class);
+		homingInstanceClient = clientFactory.create(HomingInstance.class);
 		cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
 		serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
 		cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
@@ -588,6 +598,14 @@ public class CatalogDbClient {
 
 	public void postCloudSite(CloudSite cloudSite){
 		this.postSingleResource(cloudSiteClient, cloudSite);
+	}
+
+	public HomingInstance getHomingInstance (String serviceInstanceId){
+		return this.getSingleResource(homingInstanceClient, getUri(homingInstanceURI + serviceInstanceId));
+	}
+
+	public void postHomingInstance(HomingInstance homingInstance){
+		this.postSingleResource(homingInstanceClient, homingInstance);
 	}
 
 	public CloudSite getCloudSiteByClliAndAicVersion (String clli, String cloudVersion){

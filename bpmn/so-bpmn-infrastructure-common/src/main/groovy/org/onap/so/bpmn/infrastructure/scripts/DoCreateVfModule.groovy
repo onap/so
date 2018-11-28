@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.db.catalog.beans.HomingInstance
+
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -232,12 +234,36 @@ public class DoCreateVfModule extends VfModuleBase {
 				String globalSubscriberId = execution.getVariable("globalSubscriberId")
 				execution.setVariable("DCVFM_globalSubscriberId", globalSubscriberId)
 				msoLogger.debug("globalSubsrciberId: " + globalSubscriberId)
-				//OofDirectives
-				String oofDirectives = execution.getVariable("oofDirectives")
+
+				// Set Homing Info
+				String oofDirectives = null
+				try {
+					HomingInstance homingInstance = oofutils.getHomingInstance(serviceInstanceId)
+					if (homingInstance != null) {
+						execution.setVariable("DCVFM_cloudSiteId", homingInstance.getCloudRegionId())
+						rollbackData.put("VFMODULE", "aiccloudregion", homingInstance.getCloudRegionId())
+						msoLogger.debug("Overwriting cloudSiteId with homing cloudSiteId: " +
+								homingInstance.getCloudRegionId())
+						execution.setVariable("DCVFM_cloudOwner", homingInstance.getCloudOwner())
+						rollbackData.put("VFMODULE", "cloudOwner", homingInstance.getCloudOwner())
+						msoLogger.debug("Overwriting cloudOwner with homing cloudOwner: " +
+								homingInstance.getCloudOwner())
+						oofDirectives = homingInstance.getOofDirectives()
+						execution.setVariable("DCVFM_oofDirectives", oofDirectives)
+
+					}
+				} catch (Exception exception) {
+					msoLogger.debug("Could not find homing information for service instance... continuing")
+				}
+				//OofDirectives to Input Params
 				Map<String,String> vfModuleInputParams = execution.getVariable("vfModuleInputParams")
-				if (oofDirectives != null) {
+				if (oofDirectives != null && vfModuleInputParams != null) {
 					vfModuleInputParams.put("oofDirectives", oofDirectives)
+					vfModuleInputParams.put("sdncDirectives", "{}")
 					logDebug("OofDirectives are: " + oofDirectives, isDebugLogEnabled)
+				} else if (vfModuleInputParams != null) {
+					vfModuleInputParams.put("oofDirectives", "{}")
+					vfModuleInputParams.put("sdncDirectives", "{}")
 				}
 				if (vfModuleInputParams != null) {
 					execution.setVariable("DCVFM_vnfParamsMap", vfModuleInputParams)

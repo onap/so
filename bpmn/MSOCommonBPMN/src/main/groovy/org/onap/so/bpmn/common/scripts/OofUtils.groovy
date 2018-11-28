@@ -35,6 +35,7 @@ import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
+import org.onap.so.db.catalog.beans.HomingInstance
 import org.onap.so.db.catalog.client.CatalogDbClient
 import org.onap.so.rest.APIResponse
 import org.onap.so.rest.RESTClient
@@ -491,6 +492,7 @@ class OofUtils {
         if (candidatesJson != "") {candidatesJson = candidatesJson.substring(0, candidatesJson.length() - 1)}
         return candidatesJson
     }
+
     /**
      * This method creates a cloudsite in catalog database.
      *
@@ -515,6 +517,50 @@ class OofUtils {
         if (getCloudsite?.getId() != cloudSite.getId()) {
             catalogDbClient.postCloudSite(cloudSite)
         }
+    }
+
+    /**
+     * This method creates a HomingInstance in catalog database.
+     *
+     * @param HomingInstance homingInstance
+     *
+     * @return void
+     */
+    Void createHomingInstance(HomingInstance homingInstance, DelegateExecution execution) {
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        String endpoint = UrnPropertiesReader.getVariable("mso.catalog.db.spring.endpoint", execution)
+        String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution)
+
+        CatalogDbClient catalogDbClient = new CatalogDbClient(endpoint, auth)
+        try {
+            catalogDbClient.postHomingInstance(homingInstance)
+        } catch (Exception exception) {
+            utils.log("DEBUG", "Could not create HomingInstance : " + homingInstance.getServiceInstanceId(), isDebugEnabled)
+            utils.log("DEBUG", "HomingInstance Creation Error: " + exception, isDebugEnabled)
+        }
+
+    }
+
+    /**
+     * This method gets a HomingInstance in catalog database.
+     *
+     * @param String serviceInstanceId
+     *
+     * @return HomingInstance
+     */
+    HomingInstance getHomingInstance(String serviceInstanceId, DelegateExecution execution) {
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+        String endpoint = UrnPropertiesReader.getVariable("mso.catalog.db.spring.endpoint", execution)
+        String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution)
+
+        CatalogDbClient catalogDbClient = new CatalogDbClient(endpoint, auth)
+        try {
+            return catalogDbClient.getHomingInstance(serviceInstanceId)
+        } catch (Exception exception) {
+            utils.log("DEBUG", "Could not get HomingInstance for serviceInstanceId : " + serviceInstanceId, isDebugEnabled)
+            utils.log("DEBUG", "HomingInstance Get Error: " + exception, isDebugEnabled)
+        }
+
     }
 
      String getMsbHost(DelegateExecution execution) {
