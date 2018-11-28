@@ -44,6 +44,7 @@ import org.onap.so.client.orchestration.AAIVfModuleResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.client.orchestration.AAIVolumeGroupResources;
 import org.onap.so.client.orchestration.AAIVpnBindingResources;
+import org.onap.so.client.orchestration.NamingServiceResources;
 import org.onap.so.client.orchestration.NetworkAdapterResources;
 import org.onap.so.client.orchestration.SDNCNetworkResources;
 import org.onap.so.client.orchestration.SDNCServiceInstanceResources;
@@ -111,6 +112,9 @@ public abstract class BaseTaskTest extends TestDataSetup {
 
 	@Mock
 	protected AAIInstanceGroupResources aaiInstanceGroupResources;
+	
+	@Mock
+	protected NamingServiceResources namingServiceResources;
 
 	@Mock
 	protected ApplicationControllerAction appCClient;
