@@ -33,6 +33,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.db.catalog.beans.AuthenticationType
 import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
+import org.onap.so.db.catalog.beans.HomingInstance
 import org.onap.so.db.catalog.beans.ServerType
 import org.onap.so.rest.APIResponse
 import org.onap.so.rest.RESTClient
@@ -302,6 +303,19 @@ class OofHoming extends AbstractServiceTaskProcessor {
                                 utils.log("DEBUG", "***** OofDirectives set to: " + oofDirectives +
                                         " *****", "true")
                             }
+
+                            // Set Homing Instance
+                            String serviceInstanceId = decomposition.getServiceInstance().getInstanceId()
+                            HomingInstance homingInstance = new HomingInstance()
+                            homingInstance.setServiceInstanceId(serviceInstanceId)
+                            homingInstance.setCloudOwner(cloudOwner)
+                            homingInstance.setCloudRegionId(cloudRegionId)
+                            if (oofDirectives != null && oofDirectives != "") {
+                                homingInstance.setOofDirectives(oofDirectives)}
+                            else {
+                                homingInstance.setOofDirectives("{}")
+                            }
+                            oofUtils.createHomingInstance(homingInstance, execution)
 
                             if (inventoryType.equalsIgnoreCase("service")) {
                                 resource.getHomingSolution().setRehome(assignmentMap.get("isRehome").toBoolean())
