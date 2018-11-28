@@ -33,24 +33,14 @@ import org.onap.so.bpmn.core.domain.ServiceInstance
 import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
-import org.onap.so.db.catalog.client.CatalogDbClient
-import org.onap.so.rest.APIResponse
-import org.onap.so.rest.RESTClient
-import org.onap.so.rest.RESTConfig
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.web.util.UriComponentsBuilder
-
-import javax.ws.rs.core.MediaType
+import org.onap.so.db.catalog.beans.HomingInstance
 import javax.ws.rs.core.UriBuilder
-
-import static org.onap.so.bpmn.common.scripts.GenericUtils.*
-
+import org.onap.so.bpmn.common.util.OofInfraUtils
 class OofUtils {
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
+    OofInfraUtils oofInfraUtils = new OofInfraUtils()
 
     private AbstractServiceTaskProcessor utils
 
@@ -491,6 +481,7 @@ class OofUtils {
         if (candidatesJson != "") {candidatesJson = candidatesJson.substring(0, candidatesJson.length() - 1)}
         return candidatesJson
     }
+
     /**
      * This method creates a cloudsite in catalog database.
      *
@@ -498,23 +489,19 @@ class OofUtils {
      *
      * @return void
      */
-    Void createCloudSiteCatalogDb(CloudSite cloudSite, DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        String endpoint = UrnPropertiesReader.getVariable("mso.catalog.db.spring.endpoint", execution)
-        String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution)
-        CloudSite getCloudsite = null
+    Void createCloudSite(CloudSite cloudSite, DelegateExecution execution) {
+        oofInfraUtils.createCloudSite(cloudSite, execution)
+    }
 
-        CatalogDbClient catalogDbClient = new CatalogDbClient(endpoint, auth)
-        try {
-            getCloudsite = catalogDbClient.getCloudSite(cloudSite.getId().toString())
-        } catch (Exception e) {
-            e = null
-            utils.log("DEBUG", "Could not find cloudsite : " + cloudSite.getId(), isDebugEnabled)
-            utils.log("DEBUG", "Creating cloudSite: " + cloudSite.toString(), isDebugEnabled)
-        }
-        if (getCloudsite?.getId() != cloudSite.getId()) {
-            catalogDbClient.postCloudSite(cloudSite)
-        }
+    /**
+     * This method creates a HomingInstance in catalog database.
+     *
+     * @param HomingInstance homingInstance
+     *
+     * @return void
+     */
+    Void createHomingInstance(HomingInstance homingInstance, DelegateExecution execution) {
+        oofInfraUtils.createHomingInstance(homingInstance, execution)
     }
 
      String getMsbHost(DelegateExecution execution) {
