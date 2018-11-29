@@ -29,7 +29,19 @@ Features are delivered in this release:
 - Support to the CCVPN Usecase.
 - Workflow Designer Integration.
 
+**Docker Images**
 
+Dockers released for SO:
+
+- onap/so/api-handler-infra,1.3.3
+- onap/so/bpmn-infra,1.3.3
+- onap/so/catalog-db-adapter,1.3.3
+- onap/so/openstack-adapter,1.3.3
+- onap/so/request-db-adapter,1.3.3
+- onap/so/sdc-controller,1.3.3
+- onap/so/sdnc-adapter,1.3.3
+- onap/so/so-monitoring,1.3.3
+- onap/so/vfc-adapter,1.3.3
 
 **Known Issues**
 
