@@ -25,16 +25,19 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.HttpClient
+//import org.onap.so.client.HttpClient
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import org.onap.so.utils.TargetEntity
+import org.onap.so.rest.APIResponse
+import org.onap.so.rest.RESTClient
+import org.onap.so.rest.RESTConfig
+//import org.onap.so.utils.TargetEntity
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
-import javax.ws.rs.core.Response
+//import javax.ws.rs.core.Response
 /**
  * This groovy class supports the <class>DoDeleteVFCNetworkServiceInstance.bpmn</class> process.
  * flow for E2E ServiceInstance Delete
@@ -136,8 +139,9 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String url = vfcAdapterUrl + "/ns/" + execution.getVariable("nsInstanceId")
-        Response apiResponse = deleteRequest(execution, url, nsOperationKey)
-        String returnCode = apiResponse.getStatus()
+        APIResponse apiResponse = deleteRequest(execution, url, nsOperationKey)
+        String returnCode = apiResponse.getStatusCode()
+		String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String operationStatus = "error";
         if(returnCode== "200" || returnCode== "202"){
             operationStatus = "finished"
@@ -148,7 +152,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     }
 
     /**
-     * instantiate NS task
+     *  terminate NS task
      */
     public void terminateNetworkService(DelegateExecution execution) {
 
@@ -156,9 +160,9 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey")
         String url =  vfcAdapterUrl + "/ns/" + execution.getVariable("nsInstanceId") + "/terminate"
-        Response apiResponse = postRequest(execution, url, nsOperationKey)
-        String returnCode = apiResponse.getStatus()
-        String aaiResponseAsString = apiResponse.readEntity(String.class)
+        APIResponse apiResponse = postRequest(execution, url, nsOperationKey)
+        String returnCode = apiResponse.getStatusCode()		
+        String aaiResponseAsString = apiResponse.getResponseBodyAsString()
         String jobId = "";
         if(returnCode== "200" || returnCode== "202"){
             jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
@@ -177,9 +181,9 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String jobId = execution.getVariable("jobId")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String url =  vfcAdapterUrl + "/jobs/" +  execution.getVariable("jobId")
-        Response apiResponse = postRequest(execution, url, nsOperationKey)
-        String returnCode = apiResponse.getStatus()
-        String apiResponseAsString = apiResponse.readEntity(String.class)
+        APIResponse apiResponse = postRequest(execution, url, nsOperationKey)
+        String returnCode = apiResponse.getStatusCode()
+        String apiResponseAsString = apiResponse.getResponseBodyAsString()
         String operationProgress = "100"
         if(returnCode== "200"){
             operationProgress = jsonUtil.getJsonValue(apiResponseAsString, "responseDescriptor.progress")
@@ -211,25 +215,34 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private Response postRequest(DelegateExecution execution, String urlString, String requestBody){
+    private APIResponse postRequest(DelegateExecution execution, String urlString, String requestBody){
 
 		msoLogger.trace("Started Execute VFC adapter Post Process ")
 		msoLogger.info("url:"+urlString +"\nrequestBody:"+ requestBody)
-		Response apiResponse = null
+		APIResponse apiResponse = null
 		try{
-			URL url = new URL(urlString);
-
-			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
-			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk")
-
-			apiResponse = httpClient.post(requestBody)
-
-			msoLogger.debug("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
-
-			msoLogger.trace("Completed Execute VF-C adapter Post Process ")
+			// Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
+			def basicAuthHeaderValue = ""
+			RESTConfig config = new RESTConfig(urlString)
+			RESTClient client = null;
+			int statusCode = 0;
+			
+			// user 'bepl' authHeader is the same with mso.db.auth
+			String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
+			msoLogger.debug("basicAuthValuedb: " + basicAuthValuedb)
+			
+			client = new RESTClient(config)
+			client.addHeader("Accept", "application/json")
+			client.addAuthorizationHeader(basicAuthValuedb)
+			client.addHeader("Content-Type", "application/json")
+			
+			apiResponse = client.httpPost(requestBody)
+			statusCode = apiResponse.getStatusCode()
+				
+			msoLogger.debug("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
+		
 		}catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing VF-C Post Call. Exception is: \n" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+            msoLogger.error("Exception occured while executing VF-C Post Call. Exception is: \n" + e.getMessage());
             throw new BpmnError("MSOWorkflowException")
         }
         return apiResponse
@@ -239,24 +252,37 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private Response deleteRequest(DelegateExecution execution, String url, String requestBody){
+    private APIResponse deleteRequest(DelegateExecution execution, String url, String requestBody){
 
         msoLogger.trace("Started Execute VFC adapter Delete Process ")
         msoLogger.info("url:"+url +"\nrequestBody:"+ requestBody)
-		Response r
-        try{
-
-			URL Url = new URL(url)
-			HttpClient httpClient = new HttpClient(Url, "application/json", TargetEntity.VNF_ADAPTER)
-			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk")
-			r = httpClient.delete(requestBody)
-
-            msoLogger.trace("Completed Execute VF-C adapter Delete Process ")
-        }catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing VF-C Post Call. Exception is: \n" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
-            throw new BpmnError("MSOWorkflowException")
-        }
-        return r
+	
+		APIResponse apiResponse = null
+		try{
+			// Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
+			def basicAuthHeaderValue = ""
+			RESTConfig config = new RESTConfig(url)
+			RESTClient client = null;
+			int statusCode = 0;
+			
+			// user 'bepl' authHeader is the same with mso.db.auth
+			String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
+			msoLogger.debug("basicAuthValuedb: " + basicAuthValuedb)
+	
+			client = new RESTClient(config)
+			client.addHeader("Accept", "application/json")
+			client.addAuthorizationHeader(basicAuthValuedb)
+			client.addHeader("Content-Type", "application/json")
+			
+			apiResponse = client.httpDelete(requestBody)
+			statusCode = apiResponse.getStatusCode()
+				
+			msoLogger.debug("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
+		
+		}catch(Exception e){
+			msoLogger.error("Exception occured while executing VF-C Delete Call. Exception is: \n" + e.getMessage());
+			throw new BpmnError("MSOWorkflowException")
+		}
+        return apiResponse
     }
 }

@@ -28,15 +28,18 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.HttpClient
+//import org.onap.so.client.HttpClient
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.onap.so.rest.APIResponse
+import org.onap.so.rest.RESTClient
+import org.onap.so.rest.RESTConfig
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
-import org.onap.so.utils.TargetEntity
+//import org.onap.so.utils.TargetEntity
 
 import groovy.json.*
-import javax.ws.rs.core.Response
+//import javax.ws.rs.core.Response
 
 /**
  * This groovy class supports the <class>DoCreateVFCNetworkServiceInstance.bpmn</class> process.
@@ -138,7 +141,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
                 "nsOperationKey":${nsOperationKey},
                 "nsParameters":${nsParameters}
                }"""
-        Response apiResponse = postRequest(execution, vfcAdapterUrl + "/ns", reqBody)
+        APIResponse apiResponse = postRequest(execution, vfcAdapterUrl + "/ns", reqBody)
         String returnCode = apiResponse.getStatus()
         String aaiResponseAsString = apiResponse.readEntity(String.class)
         String nsInstanceId = "";
@@ -167,7 +170,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
        }"""
         String nsInstanceId = execution.getVariable("nsInstanceId")
         String url = vfcAdapterUrl + "/ns/" +nsInstanceId + "/instantiate"
-        Response apiResponse = postRequest(execution, url, reqBody)
+        APIResponse apiResponse = postRequest(execution, url, reqBody)
         String returnCode = apiResponse.getStatus()
         String aaiResponseAsString = apiResponse.readEntity(String.class)
         String jobId = "";
@@ -187,7 +190,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         String jobId = execution.getVariable("jobId")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String url = vfcAdapterUrl + "/jobs/" + jobId
-        Response apiResponse = postRequest(execution, url, nsOperationKey)
+        APIResponse apiResponse = postRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatus()
         String aaiResponseAsString = apiResponse.readEntity(String.class)
         String operationStatus = "error"
@@ -240,26 +243,38 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * url: the url of the request
      * requestBody: the body of the request
      */
-    private Response postRequest(DelegateExecution execution, String urlString, String requestBody){
+    private APIResponse postRequest(DelegateExecution execution, String urlString, String requestBody){
         msoLogger.trace("Started Execute VFC adapter Post Process")
         msoLogger.debug("url:"+urlString +"\nrequestBody:"+ requestBody)
-        Response apiResponse = null
-        try{
-
-			URL url = new URL(urlString);
-
-			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
-			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk")
-
-			apiResponse = httpClient.post(requestBody)
-
-            msoLogger.debug("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
-            msoLogger.trace("Completed Execute VF-C adapter Post Process")
-        }catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing AAI Post Call", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
-            throw new BpmnError("MSOWorkflowException")
-        }
+        APIResponse apiResponse = null
+		try{
+			// Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
+			def basicAuthHeaderValue = ""
+			RESTConfig config = new RESTConfig(urlString)
+			RESTClient client = null;
+			int statusCode = 0;
+			
+			// user 'bepl' authHeader is the same with mso.db.auth
+			String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
+			msoLogger.debug("basicAuthValuedb: " + basicAuthValuedb)
+	
+			client = new RESTClient(config)
+			client.addHeader("Accept", "application/json")
+			client.addAuthorizationHeader(basicAuthValuedb)
+			client.addHeader("Content-Type", "application/json")
+			
+			apiResponse = client.httpPost(requestBody)
+			statusCode = apiResponse.getStatusCode()
+				
+			msoLogger.debug("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
+		
+		}catch(Exception e){
+			msoLogger.error("Exception occured while executing VF-C Post Call. Exception is: \n" + e.getMessage());
+			throw new BpmnError("MSOWorkflowException")
+		}
+		
+		msoLogger.trace("Completed Execute VF-C adapter Post Process ")
+		
         return apiResponse
     }
 }
