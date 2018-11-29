@@ -22,9 +22,10 @@ Below  features are delivered in this release:
 * Support PNF resource type.
 * Extend the support of homing to vFW, vCPE usecases.
 * Workflow Designer Integration.
-* Monitoring BPMN worflow capabilities through UI.
+* Monitoring BPMN workflow capabilities through UI.
 * Support to the CCVPN Usecase.
 * SO internal architecture improvements.
+* Auto scale out of VNFs.
 
 **Bug Fixes**
 
