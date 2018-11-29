@@ -19,29 +19,29 @@ Casablanca Release branch
 
 **New Features**
 
-Features are delivered in this release:
+Features delivered in this release:
 
-- Automatic scale out of VNFs.
-- Extend the support of homing to vFW, vCPE usecases through HPA.
-- Monitoring BPMN workflow capabilities through UI.
-- SO internal architecture improvements.
-- Support PNF resource type.
-- Support to the CCVPN Usecase.
-- Workflow Designer Integration.
+ - Automatic scale out of VNFs.
+ - Extend the support of homing to vFW, vCPE usecases through HPA.
+ - Monitoring BPMN workflow capabilities through UI.
+ - SO internal architecture improvements.
+ - Support PNF resource type.
+ - Support to the CCVPN Usecase.
+ - Workflow Designer Integration.
 
 **Docker Images**
 
 Dockers released for SO:
 
-- onap/so/api-handler-infra,1.3.3
-- onap/so/bpmn-infra,1.3.3
-- onap/so/catalog-db-adapter,1.3.3
-- onap/so/openstack-adapter,1.3.3
-- onap/so/request-db-adapter,1.3.3
-- onap/so/sdc-controller,1.3.3
-- onap/so/sdnc-adapter,1.3.3
-- onap/so/so-monitoring,1.3.3
-- onap/so/vfc-adapter,1.3.3
+ - onap/so/api-handler-infra,1.3.3
+ - onap/so/bpmn-infra,1.3.3
+ - onap/so/catalog-db-adapter,1.3.3
+ - onap/so/openstack-adapter,1.3.3
+ - onap/so/request-db-adapter,1.3.3
+ - onap/so/sdc-controller,1.3.3
+ - onap/so/sdnc-adapter,1.3.3
+ - onap/so/so-monitoring,1.3.3
+ - onap/so/vfc-adapter,1.3.3
 
 **Known Issues**
 
@@ -62,9 +62,9 @@ Below issues will be resolved in the next release:
 
 	Quick Links:
 
-- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
-- `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
-- `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_
+ - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
+ - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+ - `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_
 
 Version: 1.3.1
 --------------
