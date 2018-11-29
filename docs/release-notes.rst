@@ -16,29 +16,45 @@ Version: 1.3.3
 This is the official release package that was tested against the 72 hour stability test in integration environment.
 
 Casablanca Release branch
-*New Features**
 
-Below  features are delivered in this release:
-* Automatic scale out of VNFs.
-* Extend the support of homing to vFW, vCPE usecases through HPA.
-* Monitoring BPMN workflow capabilities through UI.
-* SO internal architecture improvements.
-* Support PNF resource type.
-* Support to the CCVPN Usecase.
-* Workflow Designer Integration.
+**New Features**
 
+Features delivered in this release:
 
+ - Automatic scale out of VNFs.
+ - Extend the support of homing to vFW, vCPE usecases through HPA.
+ - Monitoring BPMN workflow capabilities through UI.
+ - SO internal architecture improvements.
+ - Support PNF resource type.
+ - Support to the CCVPN Usecase.
+ - Workflow Designer Integration.
+
+**Docker Images**
+
+Dockers released for SO:
+
+ - onap/so/api-handler-infra,1.3.3
+ - onap/so/bpmn-infra,1.3.3
+ - onap/so/catalog-db-adapter,1.3.3
+ - onap/so/openstack-adapter,1.3.3
+ - onap/so/request-db-adapter,1.3.3
+ - onap/so/sdc-controller,1.3.3
+ - onap/so/sdnc-adapter,1.3.3
+ - onap/so/so-monitoring,1.3.3
+ - onap/so/vfc-adapter,1.3.3
 
 **Known Issues**
 
-	There are some issues around the HPA and CCVPN that have been resolved in the patch release of 1.3.4.
-	- `SO-1249 https://jira.onap.org/browse/SO-1249>`_
+There are some issues around the HPA and CCVPN that have been resolved in the patch release of 1.3.4
+- `SO-1249 <https://jira.onap.org/browse/SO-1249>`_
 	
-	The other open issues are
-	- `SO-1259 <https://jira.onap.org/browse/SO-1259>`_
-	- `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
-	- `SO-1219 <https://jira.onap.org/browse/SO-1219>`_
-	These will be addressed in the next release.
+Below issues will be resolved in the next release:
+
+- `SO-1258 <https://jira.onap.org/browse/SO-1258>`_
+- `SO-1257 <https://jira.onap.org/browse/SO-1257>`_
+- `SO-1256 <https://jira.onap.org/browse/SO-1256>`_
+- `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
+
 
 **Security Notes**
 
