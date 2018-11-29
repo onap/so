@@ -16,6 +16,24 @@
       "revId": "7d6e1ae492d91b74c6db995f42ef665d9e375245",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_97d728ed",
+        "filename": "common/src/main/java/org/onap/so/client/HttpClientFactory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-11-29T08:02:58Z",
+      "side": 1,
+      "message": "Hi Rob,\nOne of the main reasons I introduced the HttpClientFactory, is to provide a way to actually break up the tight coupling between the classes that require the HttpClient and make them testable (in this case ExternalApiUtil). As you have mentioned all places that require HttpClient call the constructor directly. This breaks SRP of those classes since they are also responsible for constructing the HttpClient.\nBy introducing DI the class can be tested on a unit level in isolation without using the implementation that should not be part of its function.\nOf course this could be done by injecting the HttpClient itself via the constructor. Unfortunately that would require constructing the HttpClient object eagerly, more than once and with different arguments. This is where the HttpClientFactory provides another benefit -\u003e it can construct the HttpClient lazily/on demand since you only inject the lightweight factory.\n\nIt is true that the factory should be used in all places. By introducing it, the rules for constructing the object have changed and need to be applied everywhere for a consistent approach. I have planned to do this as part of a separate commit, to avoid too many changes at once.\nI would also like to extend the factory with additional methods for constructing the HttpClient for each Media type (json/xml) This would reduce the number of passed arguments to just two and remove usage duplication.\n\nThanks :)",
+      "parentUuid": "9adffdf1_e3f4bef3",
+      "revId": "7d6e1ae492d91b74c6db995f42ef665d9e375245",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
