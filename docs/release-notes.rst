@@ -75,12 +75,14 @@ Branch cut for Casablanca post M4 for integration test.
 **New Features**
 
 Below  features are under test:
-* Support PNF resource type.
-* Extend the support of homing to vFW, VDNS usecases.
-* Workflow Designer Integration.
-* Monitoring BPMN worflow capabilities through UI.
-* Support to the CCVPN Usecase.
-* SO internal architecture improvements 
+ - Automatic scale out of VNFs.
+ - Extend the support of homing to vFW, vCPE usecases through HPA.
+ - Monitoring BPMN workflow capabilities through UI.
+ - SO internal architecture improvements.
+ - Support PNF resource type.
+ - Support to the CCVPN Usecase.
+ - Workflow Designer Integration.
+
 
 Version: 1.3.0
 --------------
