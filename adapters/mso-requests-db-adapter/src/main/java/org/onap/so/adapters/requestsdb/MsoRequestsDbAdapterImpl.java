@@ -23,6 +23,8 @@
 package org.onap.so.adapters.requestsdb;
 
 import java.sql.Timestamp;
+import java.util.List;
+
 import javax.jws.WebService;
 import javax.transaction.Transactional;
 import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
@@ -304,5 +306,65 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 		resStatus.setErrorCode(errorCode);
 		resStatus.setStatusDescription(statusDescription);
 		resourceOperationStatusRepository.save(resStatus);
+
+		updateOperationStatusBasedOnResourceStatus(resStatus);
 	}
+	
+    /**
+     * update service operation status when a operation resource status updated
+     * <br>
+     * 
+     * @param operStatus the resource operation status
+     * @since ONAP Amsterdam Release
+     */
+    private void updateOperationStatusBasedOnResourceStatus(ResourceOperationStatus operStatus) {
+    	String serviceId = operStatus.getServiceId();
+        String operationId = operStatus.getOperationId();
+
+        logger.debug("Request database - update Operation Status Based On Resource Operation Status with service Id:"
+                + serviceId + ", operationId:" + operationId);
+        
+        List<ResourceOperationStatus> lstResourceStatus = resourceOperationStatusRepository.findByServiceIdAndOperationId(serviceId, operationId);
+		if (lstResourceStatus == null) {
+			logger.error("Unable to retrieve resourceOperStatus Object by ServiceId: " + serviceId + " operationId: " + operationId);
+			return;
+		}
+		
+		// count the total progress
+        int resourceCount = lstResourceStatus.size();
+        int progress = 0;
+        boolean isFinished = true;
+        for (ResourceOperationStatus lstResourceStatu : lstResourceStatus) {
+            progress = progress + Integer.valueOf(lstResourceStatu.getProgress()) / resourceCount;
+            if (RequestsDbConstant.Status.PROCESSING.equals(lstResourceStatu.getStatus())) {
+                isFinished = false;
+            }
+        }
+        
+        OperationStatus serviceOperStatus = operationStatusRepository.findOneByServiceIdAndOperationId(serviceId, operationId);
+		if (serviceOperStatus == null) {
+			String error = "Entity not found. Unable to retrieve OperationStatus Object ServiceId: " + serviceId + " operationId: "
+					+ operationId;
+			logger.error(error);
+			
+			serviceOperStatus = new OperationStatus();
+			serviceOperStatus.setOperationId(operationId);
+			serviceOperStatus.setServiceId(serviceId);
+		}
+        
+        progress = progress > 100 ? 100 : progress;
+        serviceOperStatus.setProgress(String.valueOf(progress));
+        serviceOperStatus.setOperationContent(operStatus.getStatusDescription());
+        // if current resource failed. service failed.
+        if(RequestsDbConstant.Status.ERROR.equals(operStatus.getStatus())) {
+            serviceOperStatus.setResult(RequestsDbConstant.Status.ERROR);
+            serviceOperStatus.setReason(operStatus.getStatusDescription());
+        } else if(isFinished) {
+            // if finished
+            serviceOperStatus.setResult(RequestsDbConstant.Status.FINISHED);
+            serviceOperStatus.setProgress(RequestsDbConstant.Progress.ONE_HUNDRED);
+        }
+
+        operationStatusRepository.save(serviceOperStatus);
+    }
 }

@@ -32,6 +32,7 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.utils.TargetEntity
+import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import javax.ws.rs.core.Response
 /**
@@ -40,11 +41,6 @@ import javax.ws.rs.core.Response
  */
 public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteVFCNetworkServiceInstance.class);
-
-
-    String vfcUrl = "/vfc/rest/v1/vfcadapter"
-
-    String host = "http://mso.mso.testlab.openecomp.org:8080"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -83,6 +79,20 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
              }"""
             execution.setVariable("nsOperationKey", nsOperationKey);
             msoLogger.info("nsOperationKey:" + nsOperationKey)
+
+            String vfcAdapterUrl = UrnPropertiesReader.getVariable("mso.adapters.vfc.rest.endpoint", execution)
+			
+            if (vfcAdapterUrl == null || vfcAdapterUrl.isEmpty()) {
+                msg = getProcessKey(execution) + ': mso:adapters:vfcc:rest:endpoint URN mapping is not defined'
+                msoLogger.debug(msg)
+            }
+ 
+            while (vfcAdapterUrl.endsWith('/')) {
+                vfcAdapterUrl = vfcAdapterUrl.substring(0, vfcAdapterUrl.length()-1)
+            }
+			
+            execution.setVariable("vfcAdapterUrl", vfcAdapterUrl)
+
         } catch (BpmnError e) {
             throw e;
         } catch (Exception ex){
@@ -123,8 +133,9 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void deleteNetworkService(DelegateExecution execution) {
 
         msoLogger.trace("deleteNetworkService  start ")
+        String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey");
-        String url = host + vfcUrl + "/ns/" + execution.getVariable("nsInstanceId")
+        String url = vfcAdapterUrl + "/ns/" + execution.getVariable("nsInstanceId")
         Response apiResponse = deleteRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatus()
         String operationStatus = "error";
@@ -142,8 +153,9 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void terminateNetworkService(DelegateExecution execution) {
 
         msoLogger.trace("terminateNetworkService  start ")
+        String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey")
-        String url =  host + vfcUrl + "/ns/" + execution.getVariable("nsInstanceId") + "/terminate"
+        String url =  vfcAdapterUrl + "/ns/" + execution.getVariable("nsInstanceId") + "/terminate"
         Response apiResponse = postRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatus()
         String aaiResponseAsString = apiResponse.readEntity(String.class)
@@ -161,9 +173,10 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void queryNSProgress(DelegateExecution execution) {
 
         msoLogger.trace("queryNSProgress  start ")
+        String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String jobId = execution.getVariable("jobId")
         String nsOperationKey = execution.getVariable("nsOperationKey");
-        String url =  host + vfcUrl + "/jobs/" +  execution.getVariable("jobId")
+        String url =  vfcAdapterUrl + "/jobs/" +  execution.getVariable("jobId")
         Response apiResponse = postRequest(execution, url, nsOperationKey)
         String returnCode = apiResponse.getStatus()
         String apiResponseAsString = apiResponse.readEntity(String.class)
@@ -206,9 +219,12 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
 		try{
 			URL url = new URL(urlString);
 
-			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
-			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
+			// Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
+            // user 'bepl' authHeader is the same with mso.db.auth
+            String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
+            HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
+            httpClient.addAdditionalHeader("Accept", "application/json")
+            httpClient.addAdditionalHeader("Authorization", basicAuthValuedb)
 
 			apiResponse = httpClient.post(requestBody)
 
@@ -216,7 +232,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
 
 			msoLogger.trace("Completed Execute VF-C adapter Post Process ")
 		}catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing VF-C Post Call. Exception is: \n" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+            msoLogger.error("Exception occured while executing VF-C Post Call. Exception is: \n" + e.getMessage());
             throw new BpmnError("MSOWorkflowException")
         }
         return apiResponse
@@ -234,14 +250,18 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         try{
 
 			URL Url = new URL(url)
-			HttpClient httpClient = new HttpClient(Url, "application/json", TargetEntity.VNF_ADAPTER)
-			httpClient.addAdditionalHeader("Accept", "application/json")
-			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
+            // Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
+            // user 'bepl' authHeader is the same with mso.db.auth
+            String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
+            HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
+            httpClient.addAdditionalHeader("Accept", "application/json")
+            httpClient.addAdditionalHeader("Authorization", basicAuthValuedb)
+
 			r = httpClient.delete(requestBody)
 
             msoLogger.trace("Completed Execute VF-C adapter Delete Process ")
         }catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing VF-C Post Call. Exception is: \n" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+            msoLogger.error("Exception occured while executing VF-C Post Call. Exception is: \n" + e.getMessage());
             throw new BpmnError("MSOWorkflowException")
         }
         return r
