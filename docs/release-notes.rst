@@ -45,8 +45,9 @@ Dockers released for SO:
 
 **Known Issues**
 
-There are some issues around the HPA and CCVPN that have been resolved in the patch release of 1.3.4
+There are some issues around the HPA and CCVPN that have been resolved in the patch release of 1.3.5
 - `SO-1249 <https://jira.onap.org/browse/SO-1249>`_
+- `SO-1257 <https://jira.onap.org/browse/SO-1257>`_
 	
 Below issues will be resolved in the next release:
 
