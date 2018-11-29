@@ -50,9 +50,11 @@ There are some issues around the HPA and CCVPN that have been resolved in the pa
 	
 Below issues will be resolved in the next release:
 
-- `SO-1259 <https://jira.onap.org/browse/SO-1259>`_
+- `SO-1258 <https://jira.onap.org/browse/SO-1259>`_
+- `SO-1257 <https://jira.onap.org/browse/SO-1258>`_
+- `SO-1258 <https://jira.onap.org/browse/SO-1258>`_
 - `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
-- `SO-1219 <https://jira.onap.org/browse/SO-1219>`_
+
 
 
 **Security Notes**
