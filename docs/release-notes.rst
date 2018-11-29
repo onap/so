@@ -60,11 +60,11 @@ Below issues will be resolved in the next release:
 
 	SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_.
 
-Quick Links:
+	Quick Links:
 
-- `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
-- `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
-- `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_
+ - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
+ - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+ - `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_
 
 Version: 1.3.1
 --------------
@@ -75,12 +75,14 @@ Branch cut for Casablanca post M4 for integration test.
 **New Features**
 
 Below  features are under test:
-* Support PNF resource type.
-* Extend the support of homing to vFW, VDNS usecases.
-* Workflow Designer Integration.
-* Monitoring BPMN worflow capabilities through UI.
-* Support to the CCVPN Usecase.
-* SO internal architecture improvements 
+ - Automatic scale out of VNFs.
+ - Extend the support of homing to vFW, vCPE usecases through HPA.
+ - Monitoring BPMN workflow capabilities through UI.
+ - SO internal architecture improvements.
+ - Support PNF resource type.
+ - Support to the CCVPN Usecase.
+ - Workflow Designer Integration.
+
 
 Version: 1.3.0
 --------------
