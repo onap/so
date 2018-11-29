@@ -39,7 +39,7 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import groovy.json.*
 //import javax.ws.rs.core.Response
-import org.onap.so.utils.TargetEntity
+//import org.onap.so.utils.TargetEntity
 
 /**
  * This groovy class supports the <class>DoCreateVFCNetworkServiceInstance.bpmn</class> process.
@@ -272,96 +272,30 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
         msoLogger.trace("Started Execute VFC adapter Post Process ")
         msoLogger.info("url:" + urlString +"\nrequestBody:"+ requestBody)
         APIResponse apiResponse = null
-//        try{
-
-//			URL url = new URL(urlString);
-
-//			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
-//			httpClient.addAdditionalHeader("Accept", "application/json")
-//			httpClient.addAdditionalHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk")
-
-//			apiResponse = httpClient.post(requestBody)
-//			msoLogger.info("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
-
-		// Get the Basic Auth credentials for the VFCAdapter (yes... we ARE using the PO adapters credentials)
-		String basicAuthValuePO = UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
-		
-		msoLogger.debug("basicAuthValuePO: " + basicAuthValuePO)
-		if (basicAuthValuePO == null || basicAuthValuePO.isEmpty()) {
-			msoLogger.debug("mso:adapters:po:auth URN mapping is not defined")
-		}			
-
-		RESTConfig config = new RESTConfig(urlString)
-		RESTClient client = null;
-		int statusCode = 0;
-		try {
-			client = new RESTClient(config).addHeader("Accept", "application/json").addAuthorizationHeader(basicAuthValuePO)
-
-			apiResponse = client.httpPost(requestBody)
+		try{
+			// Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
+			def basicAuthHeaderValue = ""
+			RESTConfig config = new RESTConfig(urlString)
+			RESTClient client = null;
+			int statusCode = 0;
 			
-			statusCode = apiResponse.getStatusCode()
-			
-			if(statusCode == 200 || statusCode == 201) {
-				return apiResponse
-			}
-		}catch(Exception e){
-			msoLogger.error("VFC Aatpter Post Call Exception using mso.adapters.po.auth:" + e.getMessage());
-		}
-		
-		msoLogger.debug("response code:"+ statusCode +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
-		
-		msoLogger.debug("VFC Aatpter Post Call using mso.msoKey")
-		String basicAuthValue =  UrnPropertiesReader.getVariable("mso.msoKey", execution)
-		msoLogger.debug("basicAuthValue: " + basicAuthValue)
-		if (basicAuthValue == null || basicAuthValue.isEmpty()) {
-			msoLogger.debug("mso:msoKey URN mapping is not defined")
-		}
-		try {
-			client = new RESTClient(config).addHeader("Accept", "application/json").addAuthorizationHeader(basicAuthValue)
-
-			apiResponse = client.httpPost(requestBody)
-			
-			statusCode = apiResponse.getStatusCode()
-			
-			if(statusCode == 200 || statusCode == 201) {
-				return apiResponse
-			}
-		}catch(Exception e){
-			msoLogger.error("VFC Aatpter Post Call Exception using mso.msoKey:" + e.getMessage());
-			
-		}
-					
-		msoLogger.debug("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
-		
-		msoLogger.debug("VFC Aatpter Post Call using mso.db.auth")
-		String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
-		msoLogger.debug("basicAuthValuedb: " + basicAuthValuedb)
-		if (basicAuthValuedb == null || basicAuthValuedb.isEmpty()) {
-			msoLogger.debug("mso:db.auth URN mapping is not defined")
-		}
-		try {
-			client = new RESTClient(config).addHeader("Accept", "application/json").addAuthorizationHeader(basicAuthValuedb)
-
-			apiResponse = client.httpPost(requestBody)
-			statusCode = apiResponse.getStatusCode()
-			
-			if(statusCode == 200 || statusCode == 201) {
-				return apiResponse
-			}
-		}catch(Exception e){
-			msoLogger.error("VFC Aatpter Post Call Exception using mso.msoKey:" + e.getMessage());
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "VFC Aatpter Post Call Exception by using mso.msoKey or mso.adapters.po.auth")
-		}
+			// user 'bepl' authHeader is the same with mso.db.auth
+			String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
 	
+			client = new RESTClient(config)
+			client.addHeader("Accept", "application/json")
+			client.addAuthorizationHeader(basicAuthValuedb)
+			client.addHeader("Content-Type", "application/json")
 			
-		msoLogger.debug("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
-		String auth = "Basic QlBFTENsaWVudDpwYXNzd29yZDEk"
-		msoLogger.debug("auth: " + basicAuthValuedb)
-		client = new RESTClient(config).addHeader("Accept", "application/json").addAuthorizationHeader(auth)
+			apiResponse = client.httpPost(requestBody)
+			statusCode = apiResponse.getStatusCode()
+			
+			msoLogger.debug("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())		
 		
-		apiResponse = client.httpPost(requestBody)
-		
-		msoLogger.debug("response code:"+ apiResponse.getStatusCode() +"\nresponse body:"+ apiResponse.getResponseBodyAsString())
+		}catch(Exception e){
+			msoLogger.error("Exception occured while executing VF-C Post Call. Exception is: \n" + e.getMessage());
+			throw new BpmnError("MSOWorkflowException")
+		}
 		
 		msoLogger.trace("Completed Execute VF-C adapter Post Process ")
         
