@@ -32,12 +32,12 @@ Below  features are delivered in this release:
 **Known Issues**
 
 	There are some issues around the HPA and CCVPN that have been resolved in the patch release of 1.3.4.
-	https://jira.onap.org/browse/SO-1249
+	- `SO-1249 https://jira.onap.org/browse/SO-1249>`_
 	
 	The other open issues are
-	https://jira.onap.org/browse/SO-1257
-	https://jira.onap.org/browse/SO-1248
-	https://jira.onap.org/browse/SO-1219
+	- `SO-1259 <https://jira.onap.org/browse/SO-1259>`_
+	- `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
+	- `SO-1219 <https://jira.onap.org/browse/SO-1219>`_
 	These will be addressed in the next release.
 
 **Security Notes**
