@@ -5,7 +5,7 @@
 SO Offered and Consumed APIs
 =====================================
 
-The list of APIs that SO offerers could be found in the following table:
+The list of APIs that SO offers can be found in following table:
 
 .. |yml-icon| image:: swagger/images/yaml.png
               :width: 40px
