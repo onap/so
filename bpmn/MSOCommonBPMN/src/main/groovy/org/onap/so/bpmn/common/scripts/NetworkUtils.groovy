@@ -26,7 +26,6 @@ import org.onap.aai.domain.yang.L3Network
 import org.onap.aai.domain.yang.Subnet
 import org.onap.aai.domain.yang.Subnets
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.logger.MsoLogger
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -44,8 +43,6 @@ import javax.xml.transform.stream.StreamResult
  * This groovy class supports the any Network processes that need the methods defined here.
  */
 class NetworkUtils {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, NetworkUtils.class);
-
 
 	public MsoUtils utils = new MsoUtils()
 	private AbstractServiceTaskProcessor taskProcessor
@@ -283,187 +280,6 @@ class NetworkUtils {
 	}
 
 	/**
-	 * This method returns the string for Create Volume Request payload
-	 * @param groupId the volume-group-id
-	 * @param volumeName the volume-group-name
-	 * @param vnfType the vnf-type
-	 * @param tenantId the value of relationship-key 'tenant.tenant-id'
-	 * @return String request payload
-	 */
-	def String CreateNetworkVolumeRequest(groupId, volumeName, vnfType, tenantId) {
-
-		String requestPayload =
-		"""<volume-group xmlns="http://org.onap.so/v6">
-				<volume-group-id>${MsoUtils.xmlEscape(groupId)}</volume-group-id>
-				<volume-group-name>${MsoUtils.xmlEscape(volumeName)}</volume-group-name>
-				<heat-stack-id></heat-stack-id>
-				<vnf-type>${MsoUtils.xmlEscape(vnfType)}</vnf-type>
-				<orchestration-status>Pending</orchestration-status>
-				<relationship-list>
-				   <relationship>
-					   <related-to>tenant</related-to>
-					   <relationship-data>
-						   <relationship-key>tenant.tenant-id</relationship-key>
-						   <relationship-value>${MsoUtils.xmlEscape(tenantId)}</relationship-value>
-					   </relationship-data>
-				   </relationship>
-			   </relationship-list>
-		   </volume-group>"""
-
-		return requestPayload
-	}
-
-	/**
-	 * This method returns the string for Update Volume Request payload
-	 * @param requeryAAIVolGrpNameResponse the response of query volume group name (in AAI)
-	  * @param heatStackId the value of heat stack id
-	 * @return String request payload
-	 */
-	def String updateCloudRegionVolumeRequest(requeryAAIVolGrpNameResponse, heatStackId, namespace, modelCustomizationId) {
-		String requestPayload = ""
-		if (requeryAAIVolGrpNameResponse != null) {
-			def groupId = utils.getNodeText(requeryAAIVolGrpNameResponse, "volume-group-id")
-			def volumeName = utils.getNodeText(requeryAAIVolGrpNameResponse, "volume-group-name")
-			def vnfType = utils.getNodeText(requeryAAIVolGrpNameResponse, "vnf-type")
-			def resourceVersion = utils.getNodeText(requeryAAIVolGrpNameResponse, "resource-version")
-			def relationshipList = ""
-			if (utils.nodeExists(requeryAAIVolGrpNameResponse, "relationship")) {
-				relationshipList = rebuildRelationship(requeryAAIVolGrpNameResponse)
-			}
-
-			requestPayload =
-				"""<volume-group xmlns="${namespace}">
-					<volume-group-id>${MsoUtils.xmlEscape(groupId)}</volume-group-id>
-					<volume-group-name>${MsoUtils.xmlEscape(volumeName)}</volume-group-name>
-					<heat-stack-id>${MsoUtils.xmlEscape(heatStackId)}</heat-stack-id>
-					<vnf-type>${MsoUtils.xmlEscape(vnfType)}</vnf-type>
-					<orchestration-status>Active</orchestration-status>
-					<resource-version>${MsoUtils.xmlEscape(resourceVersion)}</resource-version>
-					<vf-module-model-customization-id>${MsoUtils.xmlEscape(modelCustomizationId)}</vf-module-model-customization-id>
-					${relationshipList}
-				 </volume-group>"""
-		}
-
-		return requestPayload
-	}
-
-
-	/**
-	 * This method returns the string for Update Volume Request payload
-	 * @param requeryAAIVolGrpNameResponse the response of query volume group name (in AAI)
- 	 * @param heatStackId the value of heat stack id
-	 * @return String request payload
-	 */
-	def String UpdateNetworkVolumeRequest(requeryAAIVolGrpNameResponse, heatStackId) {
-		String requestPayload = ""
-		if (requeryAAIVolGrpNameResponse != null) {
-			def groupId = utils.getNodeText(requeryAAIVolGrpNameResponse, "volume-group-id")
-			def volumeName = utils.getNodeText(requeryAAIVolGrpNameResponse, "volume-group-name")
-			def vnfType = utils.getNodeText(requeryAAIVolGrpNameResponse, "vnf-type")
-			def resourceVersion = utils.getNodeText(requeryAAIVolGrpNameResponse, "resource-version")
-			def relationshipList = ""
-			if (utils.nodeExists(requeryAAIVolGrpNameResponse, "relationship")) {
-				relationshipList = rebuildRelationship(requeryAAIVolGrpNameResponse)
-			}
-
-			requestPayload =
-				"""<volume-group xmlns="http://org.onap.so/v6">
-					<volume-group-id>${MsoUtils.xmlEscape(groupId)}</volume-group-id>
-					<volume-group-name>${MsoUtils.xmlEscape(volumeName)}</volume-group-name>
-					<heat-stack-id>${MsoUtils.xmlEscape(heatStackId)}</heat-stack-id>
-					<vnf-type>${MsoUtils.xmlEscape(vnfType)}</vnf-type>
-					<orchestration-status>Active</orchestration-status>
-					<resource-version>${MsoUtils.xmlEscape(resourceVersion)}</resource-version>
-					${relationshipList}
-				 </volume-group>"""
-		}
-
-		return requestPayload
-	}
-
-	/**
-	 * This method returns the string for Create Contrail Network payload
-	 * @param requeryIdAAIResponse the response from AAI query by id
-	 * @param createNetworkResponse the response of create network
-	 * @return String contrailNetworkCreatedUpdate
-	 */
-	def ContrailNetworkCreatedUpdate(requeryIdAAIResponse, createNetworkResponse, schemaVersion) {
-
-		String contrailNetworkCreatedUpdate = ""
-		if(requeryIdAAIResponse!=null && createNetworkResponse!=null) {
-
-			def l3Network = utils.getNodeXml(requeryIdAAIResponse, "l3-network", false).replace("tag0:","").replace(":tag0","")
-			def createNetworkContrailResponse = ""
-			if (utils.nodeExists(createNetworkResponse, 'createNetworkResponse')) {
-			   createNetworkContrailResponse = utils.getNodeXml(createNetworkResponse, "createNetworkResponse", false).replace("tag0:","").replace(":tag0","")
-			} else {
-			   createNetworkContrailResponse = utils.getNodeXml(createNetworkResponse, "updateNetworkContrailResponse", false).replace("tag0:","").replace(":tag0","")
-			}
-
-			// rebuild network
-			def networkList = ["network-id", "network-name", "network-type", "network-role", "network-technology", "neutron-network-id", "is-bound-to-vpn", "service-id", "network-role-instance", "resource-version", "resource-model-uuid", "orchestration-status", "heat-stack-id", "mso-catalog-key", "contrail-network-fqdn",
-				                             "physical-network-name", "is-provider-network", "is-shared-network", "is-external-network"]
-			String rebuildNetworkElements = buildNetworkElements(l3Network, createNetworkContrailResponse, networkList)
-
-			// rebuild 'subnets'
-			def rebuildSubnetList = ""
-			if (utils.nodeExists(requeryIdAAIResponse, 'subnet')) {
-			     rebuildSubnetList = buildSubnets(requeryIdAAIResponse, createNetworkResponse)
-			}
-
-			// rebuild 'segmentation-assignments'
-			def rebuildSegmentationAssignments = ""
-			if (utils.nodeExists(requeryIdAAIResponse, 'segmentation-assignments')) {
-				List elementList = ["segmentation-id", "resource-version"]
-				if (utils.nodeExists(requeryIdAAIResponse, 'segmentation-assignment')) {  // new tag
-				    rebuildSegmentationAssignments =  buildXMLElements(requeryIdAAIResponse, "segmentation-assignments", "segmentation-assignment", elementList)
-				} else {
-				   rebuildSegmentationAssignments =  buildXMLElements(requeryIdAAIResponse, "", "segmentation-assignments", elementList)
-				}
-			}
-
-			// rebuild 'ctag-assignments' / rebuildCtagAssignments
-			def rebuildCtagAssignmentsList = ""
-			if (utils.nodeExists(requeryIdAAIResponse, 'ctag-assignment')) {
-				rebuildCtagAssignmentsList = rebuildCtagAssignments(requeryIdAAIResponse)
-			}
-
-			// rebuild 'relationship'
-			def relationshipList = ""
-			if (utils.nodeExists(requeryIdAAIResponse, 'relationship-list')) {
-				String rootRelationshipData = getFirstNodeXml(requeryIdAAIResponse, "relationship-list").drop(38).trim().replace("tag0:","").replace(":tag0","")
-				if (utils.nodeExists(rootRelationshipData, 'relationship')) {
-					relationshipList = rebuildRelationship(rootRelationshipData)
-				}
-			}
-
-			//Check for optional contrail network fqdn within CreateNetworkResponse
-			String contrailNetworkFQDN
-			if(utils.nodeExists(createNetworkResponse, "contrail-network-fqdn")){
-				contrailNetworkFQDN = utils.getNodeXml(createNetworkResponse, "contrail-network-fqdn")
-				contrailNetworkFQDN = utils.removeXmlNamespaces(contrailNetworkFQDN)
-				contrailNetworkFQDN = utils.removeXmlPreamble(contrailNetworkFQDN)
-			}else{
-				contrailNetworkFQDN = ""
-			}
-
-			contrailNetworkCreatedUpdate =
-				 """<l3-network xmlns="${schemaVersion}">
-					 	${rebuildNetworkElements}
-						${rebuildSubnetList}
-						${rebuildSegmentationAssignments}
-						${rebuildCtagAssignmentsList}
-						${relationshipList}
-						${contrailNetworkFQDN}
-				      </l3-network>""".trim()
-
-		}
-			return contrailNetworkCreatedUpdate
-	}
-
-
-
-	/**
 	 * This method returns the value for the name paramName.
 	 *   Ex:   <network-params>
 	 *            <param name="shared">1</param>
@@ -569,56 +385,6 @@ class NetworkUtils {
 
 	}
 
-	/**
-	 * This method returns the uri value for the vpn bindings.
-	 * Return the a list of value of vpn binding in the <related-link> string.
-	 * Ex.
-	 *   <relationship-list>
-	 *      <relationship>
-	 *          <related-to>vpn-binding</related-to>
-	 *          <related-link>https://aai-app-e2e.test.openecomp.com:8443/aai/v6/network/vpn-bindings/vpn-binding/85f015d0-2e32-4c30-96d2-87a1a27f8017/</related-link>
-	 *          <relationship-data>
-	 *             <relationship-key>vpn-binding.vpn-id</relationship-key>
-	 *             <relationship-value>85f015d0-2e32-4c30-96d2-87a1a27f8017</relationship-value>
-	 *          </relationship-data>
-	 *       </relationship>
-	 *		<relationship>
-	 *	        <related-to>vpn-binding</related-to>
-	 *			<related-link>https://aai-ext1.test.openecomp.com:8443/aai/v6/network/vpn-bindings/vpn-binding/24a4b507-853a-4a38-99aa-05fcc54be24d/</related-link>
-	 *			<relationship-data>
-	 *			   <relationship-key>vpn-binding.vpn-id</relationship-key>
-	 *			   <relationship-value>24a4b507-853a-4a38-99aa-05fcc54be24d</relationship-value>
-	 *		    </relationship-data>
-	 *			<related-to-property>
-	 *			  <property-key>vpn-binding.vpn-name</property-key>
-	 *			  <property-value>oam_protected_net_6_MTN5_msotest1</property-value>
-	 *			</related-to-property>
-	 *		</relationship>
-	 * @param xmlInput the XML document
-	 * @return a list of vpn binding values
-	 *            ex: ['aai/v6/network/vpn-bindings/vpn-binding/85f015d0-2e32-4c30-96d2-87a1a27f8017/', 'aai/v6/network/vpn-bindings/vpn-binding/c980a6ef-3b88-49f0-9751-dbad8608d0a6/']
-	 *
-	 **/
-	def getVnfBindingObject(xmlInput) {
-		//def rtn = null
-		List rtn = []
-		if (xmlInput!=null) {
-			def relationshipList = getListWithElements(xmlInput, 'relationship')
-			def relationshipListSize = relationshipList.size()
-			if (relationshipListSize > 0) {
-				for (i in 0..relationshipListSize-1) {
-				   def relationshipXml = XmlUtil.serialize(relationshipList[i])
-				   if (utils.getNodeText(relationshipXml, 'related-to') == "vpn-binding") {
-				   	  def relatedLink = utils.getNodeText(relationshipXml, 'related-link')
-					  if (relatedLink != null || relatedLink != "") {
-						 rtn.add(relatedLink.substring(relatedLink.indexOf("/aai/"), relatedLink.length()))
-					  }
-				   }
-				}
-			}
-		}
-		return rtn
-	}
 	/**
 	 * similar to VNF bindings method
 	* @param xmlInput the XML document
@@ -845,40 +611,6 @@ class NetworkUtils {
 		return xmlNetwork
 	}
 
-	def buildSubnets(requeryIdAAIResponse, createNetworkResponse) {
-		def rebuildingSubnets = ""
-		if (requeryIdAAIResponse != null && utils.nodeExists(requeryIdAAIResponse, 'subnets')) {
-			def subnetIdMapValue = ""
-			def subnetsGroup = utils.getNodeXml(requeryIdAAIResponse, "subnets", false)
-			def subnetsData = new XmlSlurper().parseText(subnetsGroup)
-			rebuildingSubnets += "<subnets>"
-			try {
-				def subnets = subnetsData.'**'.findAll {it.name() == "subnet"}
-				def subnetsSize = subnets.size()
-				for (i in 0..subnetsSize-1) {
-				   def subnet = subnets[i]
-				   def subnetXml = XmlUtil.serialize(subnet)
-				   def orchestrationStatus = utils.getNodeText(subnetXml, "orchestration-status")
-				   if (orchestrationStatus == "PendingDelete" || orchestrationStatus == "pending-delete") {
-					   // skip, do not include in processing, remove!!!
-				   } else {
-				      def subnetList = ["subnet-id", "neutron-subnet-id", "gateway-address", "network-start-address", "cidr-mask", "ip-version", "orchestration-status", "dhcp-enabled", "dhcp-start", "dhcp-end", "subnet-role", "resource-version", "subnet-name", "ip-assignment-direction", "host-routes"]
-				      rebuildingSubnets += buildSubNetworkElements(subnetXml, createNetworkResponse, subnetList, "subnet")
-				   }
-				}
-				if (utils.nodeExists(subnetsData, 'relationship')) {
-					rebuildingSubnets = rebuildRelationship(requeryIdAAIResponse)
-				}
-
-			} catch (Exception ex) {
-				// error
-			} finally {
-				rebuildingSubnets += "</subnets>"
-			}
-		}
-		return rebuildingSubnets
-	}
-
 	def buildSubnets(L3Network network) {
 		def rebuildingSubnets = ""
 		Subnets subnets = network.getSubnets()
@@ -1054,74 +786,6 @@ class NetworkUtils {
 		}
 		return buildHostRoutes
 
-	}
-
-	// rebuild ctag-assignments
-	def rebuildCtagAssignments(xmlInput) {
-		def rebuildingCtagAssignments = ""
-		if (xmlInput!=null) {
-			def ctagAssignmentsData = new XmlSlurper().parseText(xmlInput)
-			rebuildingCtagAssignments += "<ctag-assignments>"
-			def ctagAssignments = ctagAssignmentsData.'**'.findAll {it.name() == "ctag-assignment"}
-			def ctagAssignmentsSize = ctagAssignments.size()
-			for (i in 0..ctagAssignmentsSize-1) {
-				def ctagAssignment = ctagAssignments[i]
-				def ctagAssignmentXml = XmlUtil.serialize(ctagAssignment)
-				rebuildingCtagAssignments += "<ctag-assignment>"
-				List elementList = ["vlan-id-inner", "resource-version"]
-				rebuildingCtagAssignments +=  buildXMLElements(ctagAssignmentXml, ""      , "", elementList)
-				if (utils.nodeExists(ctagAssignmentXml, 'relationship')) {
-					rebuildingCtagAssignments += rebuildRelationship(ctagAssignmentXml)
-				}
-				rebuildingCtagAssignments += "</ctag-assignment>"
-			}
-			rebuildingCtagAssignments += "</ctag-assignments>"
-		}
-		return rebuildingCtagAssignments
-	}
-
-	// rebuild 'relationship-list'
-	def rebuildRelationship(xmlInput) {
-		def rebuildingSubnets = ""
-		if (xmlInput!=null) {
-			def subnetsData = new XmlSlurper().parseText(xmlInput)
-			rebuildingSubnets += "<relationship-list>"
-			def relationships = subnetsData.'**'.findAll {it.name() == "relationship"}
-			def relationshipsSize = relationships.size()
-			for (i in 0..relationshipsSize-1) {
-				def relationship = relationships[i]
-				def relationshipXml = XmlUtil.serialize(relationship)
-				rebuildingSubnets += "<relationship>"
-				def relationshipList = ["related-to", "related-link"]
-				rebuildingSubnets += buildSubNetworkElements(relationshipXml, "", relationshipList, "")
-				if (utils.nodeExists(relationshipXml, 'relationship-data')) {
-					def relationshipDataXmlData = new XmlSlurper().parseText(relationshipXml)
-					def relationshipsData = relationshipDataXmlData.'**'.findAll {it.name() == "relationship-data"}
-					def relationshipsDataSize = relationshipsData.size()
-					for (j in 0..relationshipsDataSize-1) {
-						def relationshipData = relationshipsData[j]
-						def relationshipDataXml = XmlUtil.serialize(relationshipData)
-						def relationshipDataList =  ["relationship-key", "relationship-value"]
-						rebuildingSubnets += buildXMLElements(relationshipDataXml, "", "relationship-data", relationshipDataList)
-					}
-				}
-				if (utils.nodeExists(relationshipXml, 'related-to-property')) {
-					def relationshipDataXmlData = new XmlSlurper().parseText(relationshipXml)
-					def relationshipsData = relationshipDataXmlData.'**'.findAll {it.name() == "related-to-property"}
-					def relationshipsDataSize = relationshipsData.size()
-					for (j in 0..relationshipsDataSize-1) {
-						def relationshipData = relationshipsData[j]
-						def relationshipDataXml = XmlUtil.serialize(relationshipData)
-						def relationshipDataList =  ["property-key", "property-value"]
-						rebuildingSubnets += buildXMLElements(relationshipDataXml, "", "related-to-property", relationshipDataList)
-					}
-				}
-
-				rebuildingSubnets += "</relationship>"
-			}
-			rebuildingSubnets += "</relationship-list>"
-		}
-		return rebuildingSubnets
 	}
 
 	def buildVlans(queryIdResponse) {

@@ -20,16 +20,9 @@
 
 package org.onap.so.bpmn.common.scripts;
 
-import java.io.ObjectInputStream.BlockDataInputStream
-
-import java.io.ObjectInputStream.BlockDataInputStream
-
-//import groovy.util.Node;
-
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
-import org.apache.commons.lang3.*
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -37,9 +30,6 @@ import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-
-
-
 
 public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VfModuleBase.class);
@@ -195,39 +185,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 		}
 		return entries
 	}
-	
-	/**
-	 * Extract the Tenant Id from the Volume Group information returned by AAI.
-	 * 
-	 * @param volumeGroupXml Volume Group XML returned by AAI.
-	 * @return the Tenant Id extracted from the Volume Group information. 'null' is returned if
-	 * the Tenant Id is missing or could not otherwise be extracted.
-	 */
-	protected String getTenantIdFromVolumeGroup(String volumeGroupXml) {
-		def groovy.util.Node volumeGroupNode = xmlParser.parseText(volumeGroupXml)
-		def groovy.util.Node relationshipList = utils.getChildNode(volumeGroupNode, 'relationship-list')
-		if (relationshipList != null) {
-			def groovy.util.NodeList relationships = utils.getIdenticalChildren(relationshipList, 'relationship')
-			for (groovy.util.Node relationship in relationships) {
-				def groovy.util.Node relatedTo = utils.getChildNode(relationship, 'related-to')
-				if ((relatedTo != null) && (relatedTo.text().equals('tenant'))) {
-					def groovy.util.NodeList relationshipDataList = utils.getIdenticalChildren(relationship, 'relationship-data')
-					for (groovy.util.Node relationshipData in relationshipDataList) {
-						def groovy.util.Node relationshipKey = utils.getChildNode(relationshipData, 'relationship-key')
-						if ((relationshipKey != null) && (relationshipKey.text().equals('tenant.tenant-id'))) {
-							def groovy.util.Node relationshipValue = utils.getChildNode(relationshipData, 'relationship-value')
-							if (relationshipValue != null) {
-								return relationshipValue.text()
-							}
-						}
-					}
-				}
-			}
-		}
-		return null
-	}
-	
-	
+
 	/*
 	 * Parses VNF parameters passed in on the incoming requests and SDNC parameters returned from SDNC get response
 	 * and puts them into the format expected by VNF adapter.

@@ -287,14 +287,6 @@ class MsoUtils {
 			return null
 		}
 	}
-	def getRelationshipVal(node, name){
-		try{
-			return node.'**'.find {it.'relationship-key'.text() == name}.'relationship-value'.text()
-		}catch(Exception e){
-			return null
-		}
-	}
-
 	
 	def log(logmode,logtxt,isDebugLogEnabled="false"){
 		if ("INFO"==logmode) {
