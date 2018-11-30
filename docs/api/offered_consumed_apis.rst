@@ -5,7 +5,7 @@
 SO Offered and Consumed APIs
 =====================================
 
-The list of APIs that SO offerers could be find in the following table:
+The list of APIs that SO offers can be found in following table:
 
 .. |yml-icon| image:: swagger/images/yaml.png
               :width: 40px
@@ -22,3 +22,13 @@ The list of APIs that SO offerers could be find in the following table:
 
    "swagger json file", "html doc", "yaml doc"
    ":download:`link <swagger/swagger.json>`", ":download:`link <swagger/swagger.html>`", ":download:`link <swagger/swagger.yaml>`"
+   
+The list of APIs that SO offerers for monitroing the BPMN flows could be found in the following table:   
+
+.. csv-table::
+   :header: "|Swagger-icon|", "|yml-icon|"
+   :widths: 60,60
+
+   "swagger json file", "yaml doc"
+   ":download:`link <swagger/SO_MONITORING_SWAGGER.json>`", ":download:`link <swagger/SO_MONITORING_SWAGGER.yaml>`"
+   
