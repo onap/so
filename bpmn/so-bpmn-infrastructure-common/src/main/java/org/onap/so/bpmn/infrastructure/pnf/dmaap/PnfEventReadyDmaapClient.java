@@ -117,6 +117,9 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             } catch (IOException e) {
                 logger.error("Exception caught during sending rest request to dmaap for listening event topic", e);
             }
+            finally {
+                getRequest.reset();
+            }
         }
 
         private List<String> getCorrelationIdListFromResponse(HttpResponse response) throws IOException {
