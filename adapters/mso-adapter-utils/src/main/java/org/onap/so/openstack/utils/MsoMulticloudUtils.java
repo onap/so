@@ -45,6 +45,7 @@ import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
+import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
@@ -149,8 +150,8 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         logger.trace("Started MsoMulticloudUtils.createStack");
 
         // Get the directives, if present.
-        String oofDirectives = "";
-        String sdncDirectives = "";
+        String oofDirectives = "{}";
+        String sdncDirectives = "{}";
         String genericVnfId = "";
         String vfModuleId = "";
         String templateType = "";
@@ -185,26 +186,17 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
         MulticloudRequest multicloudRequest= new MulticloudRequest();
 
-        try {
-            multicloudRequest.setGenericVnfId(genericVnfId);
-            multicloudRequest.setVfModuleId(vfModuleId);
-            multicloudRequest.setOofDirectives(JSON_MAPPER.readTree(oofDirectives));
-            multicloudRequest.setSdncDirectives(JSON_MAPPER.readTree(sdncDirectives));
-            multicloudRequest.setTemplateType(templateType);
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Stack Template Data is: %s", stack.toString().substring(16)));
-            }
-            multicloudRequest.setTemplateData(stack);
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Multicloud Request is: %s", multicloudRequest.toString()));
-            }
-        } catch (Exception e) {
-            logger.debug("ERROR making multicloud JSON body ", e);
-        }
-        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, null);
+        multicloudRequest.setGenericVnfId(genericVnfId);
+        multicloudRequest.setVfModuleId(vfModuleId);
+        multicloudRequest.setTemplateType(templateType);
+        multicloudRequest.setTemplateData(stack);
+        multicloudRequest.setOofDirectives(getDirectiveNode(oofDirectives));
+        multicloudRequest.setSdncDirectives(getDirectiveNode(sdncDirectives));
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Multicloud Endpoint is: %s", multicloudEndpoint));
+            logger.debug(String.format("Multicloud Request is: %s", multicloudRequest.toString()));
         }
+
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, null);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
         Response response = multicloudClient.post(multicloudRequest);
@@ -615,6 +607,21 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             logger.debug(String.format("Encountered URI builder error getting multicloud rest client %s", e.getMessage()));
         }
         return client;
+    }
+
+    private JsonNode getDirectiveNode(String directives) throws MsoException {
+        try {
+            return JSON_MAPPER.readTree(directives);
+        } catch (Exception e) {
+            logger.error(String.format("%d %s %s %s %d %s",
+                    MessageEnum.RA_CREATE_STACK_ERR,
+                    "Create Stack: " + e, "", "",
+                    MsoLogger.ErrorCode.BusinessProcesssError,
+                    "Exception in Create Stack: Invalid JSON format of directives" + directives));
+            MsoException me = new MsoAdapterException("Invalid JSON format of directives parameter: " + directives);
+            me.addContext(CREATE_STACK);
+            throw me;
+        }
     }
 
     /**
