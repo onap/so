@@ -45,18 +45,27 @@ public class OofInfraUtils {
     public void createCloudSite(CloudSite cloudSite, DelegateExecution execution) {
         String endpoint = UrnPropertiesReader.getVariable("mso.catalog.db.spring.endpoint", execution);
         String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution);
-        Optional <CloudSite> optCloudsite = Optional.empty();
-
-        CatalogDbClient client = new CatalogDbClient(endpoint, auth);
         try {
-            optCloudsite = Optional.ofNullable(client.getCloudSite(cloudSite.getId(), endpoint + "/cloudSite/"));
+            CloudSite getCloudsite;
+
+            CatalogDbClient client = new CatalogDbClient(endpoint, auth);
+
+            getCloudsite = Optional.ofNullable(client.getCloudSite(cloudSite.getId(), endpoint + "/cloudSite/")).orElse(new CloudSite());
+            if (!cloudSite.getId().equals(getCloudsite.getId())) {
+                client.postCloudSite(cloudSite);
+                LOGGER.debug("Did not findd cloudsite : " + cloudSite.getId());
+                LOGGER.debug("Will create cloudSite: " + cloudSite.toString());
+            }
+            else {
+                LOGGER.debug("Found cloudsite : " + cloudSite.getId());
+                LOGGER.debug("Will not create cloudSite: " + cloudSite.toString());
+            }
         } catch (Exception e) {
-            LOGGER.debug("Could not find cloudsite : " + cloudSite.getId());
-            LOGGER.debug("Creating cloudSite: " + cloudSite.toString());
+            LOGGER.debug("Error looking up or creating cloudsite : " + cloudSite.getId());
+            LOGGER.debug("CloudSite Lookup/Creation Error: " + e);
         }
-        if (optCloudsite.isPresent() && (cloudSite.getId()) != optCloudsite.get().getId()) {
-            client.postCloudSite(cloudSite);
-        }
+
+
     }
 
     /**

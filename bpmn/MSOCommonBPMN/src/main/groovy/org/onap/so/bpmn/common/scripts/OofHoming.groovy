@@ -268,7 +268,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             cloudIdentity.setAdminTenant("service")
                             cloudIdentity.setIdentityAuthenticationType(AuthenticationType.USERNAME_PASSWORD)
                             String msoMulticloudUserName = UrnPropertiesReader
-                                    .getVariable("mso.multicloud.api.password", execution,
+                                    .getVariable("mso.multicloud.api.username", execution,
                                     "apih")
                             String msoMulticloudPassword = UrnPropertiesReader
                                     .getVariable("mso.multicloud.api.password", execution,
