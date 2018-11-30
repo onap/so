@@ -8,6 +8,13 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
+Version: 1.4.0
+--------------
+
+:Release Date: 2018-11-30
+
+New  release over  master branch for Dublin development
+
 Version: 1.3.3
 --------------
 
@@ -45,16 +52,16 @@ Dockers released for SO:
 
 **Known Issues**
 
-There are some issues around the HPA and CCVPN that have been resolved in the patch release of 1.3.4
+There are some issues around the HPA and CCVPN that have been resolved in the patch release of 1.3.5
 - `SO-1249 <https://jira.onap.org/browse/SO-1249>`_
+- `SO-1257 <https://jira.onap.org/browse/SO-1257>`_
+- `SO-1258 <https://jira.onap.org/browse/SO-1258>`_
+- `SO-1256 <https://jira.onap.org/browse/SO-1256>`_
+- `SO-1194 <https://jira.onap.org/browse/SO-1256>`_
 	
 Below issues will be resolved in the next release:
-
-- `SO-1258 <https://jira.onap.org/browse/SO-1258>`_
-- `SO-1257 <https://jira.onap.org/browse/SO-1257>`_
-- `SO-1256 <https://jira.onap.org/browse/SO-1256>`_
 - `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
-
+- `SO-1184 <https://jira.onap.org/browse/SO-1184>`_
 
 **Security Notes**
 
