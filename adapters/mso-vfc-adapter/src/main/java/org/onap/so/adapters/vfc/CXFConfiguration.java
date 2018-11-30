@@ -79,11 +79,11 @@ public class CXFConfiguration {
 	public Swagger2Feature createSwaggerFeature() {
 		Swagger2Feature swagger2Feature = new Swagger2Feature();
 		swagger2Feature.setPrettyPrint(true);
-		swagger2Feature.setTitle("SO Request Adapter");
+		swagger2Feature.setTitle("SO VFC Adapter");
 		swagger2Feature.setContact("The ONAP SO team");
 		swagger2Feature.setDescription("This project is the SO Orchestration Engine");
 		swagger2Feature.setVersion("1.0.0");
-		swagger2Feature.setResourcePackage("org.onap.so.adapters.requestdb");
+		swagger2Feature.setResourcePackage("org.onap.so.adapters.vfc.rest");
 		swagger2Feature.setScan(true);
 		return swagger2Feature;
 	}
