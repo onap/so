@@ -16,35 +16,38 @@ Version: 1.3.3
 This is the official release package that was tested against the 72 hour stability test in integration environment.
 
 Casablanca Release branch
-*New Features**
 
-Below  features are delivered in this release:
-* Automatic scale out of VNFs.
-* Extend the support of homing to vFW, vCPE usecases through HPA.
-* Monitoring BPMN workflow capabilities through UI.
-* SO internal architecture improvements.
-* Support PNF resource type.
-* Support to the CCVPN Usecase.
-* Workflow Designer Integration.
+**New Features**
+
+Features are delivered in this release:
+
+- Automatic scale out of VNFs.
+- Extend the support of homing to vFW, vCPE usecases through HPA.
+- Monitoring BPMN workflow capabilities through UI.
+- SO internal architecture improvements.
+- Support PNF resource type.
+- Support to the CCVPN Usecase.
+- Workflow Designer Integration.
 
 
 
 **Known Issues**
 
-	There are some issues around the HPA and CCVPN that have been resolved in the patch release of 1.3.4.
-	- `SO-1249 https://jira.onap.org/browse/SO-1249>`_
+There are some issues around the HPA and CCVPN that have been resolved in the patch release of 1.3.4
+- `SO-1249 <https://jira.onap.org/browse/SO-1249>`_
 	
-	The other open issues are
-	- `SO-1259 <https://jira.onap.org/browse/SO-1259>`_
-	- `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
-	- `SO-1219 <https://jira.onap.org/browse/SO-1219>`_
-	These will be addressed in the next release.
+Below issues will be resolved in the next release:
+
+- `SO-1259 <https://jira.onap.org/browse/SO-1259>`_
+- `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
+- `SO-1219 <https://jira.onap.org/browse/SO-1219>`_
+
 
 **Security Notes**
 
 	SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_.
 
-Quick Links:
+	Quick Links:
 
 - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
 - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
