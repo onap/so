@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_e2026f6e",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/OofUtils.groovy",
+        "patchSetId": 9
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2018-11-30T02:12:12Z",
+      "side": 1,
+      "message": "This was removed accidentally in an earlier patch. On test of second use case with SRIOV nic we found the problem.",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 60
+      },
+      "revId": "17078f031da59e4a3b7a4e18cf5b23daf9ddac56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
