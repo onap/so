@@ -206,8 +206,10 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         }
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
-        Response response = multicloudClient.post(multicloudRequest);
-
+        if(null!=multicloudClient) {
+        	Response response = multicloudClient.post(multicloudRequest);
+        }
+        
         StackInfo createInfo = new StackInfo();
         createInfo.setName(stackName);
 
