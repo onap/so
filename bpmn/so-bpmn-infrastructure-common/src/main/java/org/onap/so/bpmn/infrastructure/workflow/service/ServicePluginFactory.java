@@ -622,7 +622,9 @@ public class ServicePluginFactory {
 		// in demo we have only one VPN. no cross VPNs, so get first item.
 		Map<String, Object> returnRoute = getReturnRoute(returnList);
 		Map<String, Object> vpnRequestInputs = getVPNResourceRequestInputs(resources);
-		vpnRequestInputs.putAll(returnRoute);
+		if(null!=vpnRequestInputs) {
+			vpnRequestInputs.putAll(returnRoute);
+		}
 		String newRequest = getJsonString(uuiObject);
 		return newRequest;
 	}
