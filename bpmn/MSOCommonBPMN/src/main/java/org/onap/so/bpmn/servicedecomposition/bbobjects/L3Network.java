@@ -101,6 +101,8 @@ public class L3Network implements Serializable, ShallowCopy<L3Network> {
 	private ModelInfoNetwork modelInfoNetwork;
 	@JsonProperty("aggregate-routes")
     private List<AggregateRoute> aggregateRoutes = new ArrayList<>();
+	@JsonProperty("vpn-binding")
+    private List<VpnBinding> vpnBindings = new ArrayList<>();
 
 	public ModelInfoNetwork getModelInfoNetwork() {
 		return modelInfoNetwork;
@@ -259,6 +261,10 @@ public class L3Network implements Serializable, ShallowCopy<L3Network> {
 
 	public List<AggregateRoute> getAggregateRoutes(){
 		return aggregateRoutes;
+	}
+
+	public List<VpnBinding> getVpnBindings(){
+		return vpnBindings;
 	}
 
 	@Override

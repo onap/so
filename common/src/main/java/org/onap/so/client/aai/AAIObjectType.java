@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.onap.aai.annotations.Metadata;
 import org.onap.aai.domain.yang.AllottedResource;
+import org.onap.aai.domain.yang.AggregateRoute;
 import org.onap.aai.domain.yang.CloudRegion;
 import org.onap.aai.domain.yang.Collection;
 import org.onap.aai.domain.yang.Complex;
@@ -113,6 +114,7 @@ public enum AAIObjectType implements GraphInventoryObjectType {
 	SP_PARTNER(AAINamespaceConstants.BUSINESS, SpPartner.class),
 	DEVICE(AAINamespaceConstants.NETWORK, Device.class),
 	EXT_AAI_NETWORK(AAINamespaceConstants.NETWORK, ExtAaiNetwork.class),
+	AGGREGATE_ROUTE(AAINamespaceConstants.NETWORK, AggregateRoute.class),
 	UNKNOWN("", "");
 
 	private final String uriTemplate;

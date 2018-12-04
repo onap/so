@@ -290,7 +290,7 @@ public class BuildingBlockTestDataSetup{
 		customer.setSubscriberType("testSubscriberType" + customerCounter);
 
 		customer.setServiceSubscription(buildServiceSubscription());
-		
+
 		return customer;
 	}
 
@@ -341,50 +341,50 @@ public class BuildingBlockTestDataSetup{
 		customer.setServiceSubscription(buildServiceSubscription());
 
 		gBBInput.setCustomer(customer);
-		
+
 		return customer;
 	}
-	
+
 	public Collection setCollection() {
 		Collection collection = new Collection();
 		collection.setId("testId");
-		
+
 		ServiceInstance serviceInstance = null;
-		
+
 		try {
 			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 		} catch(BBObjectNotFoundException e) {
 			serviceInstance = setServiceInstance();
 		}
-		
+
 		serviceInstance.setCollection(collection);
-		
+
 		return collection;
 	}
-	
+
 	public InstanceGroup setInstanceGroup() {
 		InstanceGroup instanceGroup = new InstanceGroup();
 		instanceGroup.setId("testId");
 		instanceGroup.setInstanceGroupFunction("testInstanceGroupFunction");
-		
+
 		Collection collection = null;
-		
+
 		try {
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 			collection = serviceInstance.getCollection();
-			
+
 			if (collection == null) {
 				collection = setCollection();
 			}
 		} catch(BBObjectNotFoundException e) {
 			collection = setCollection();
 		}
-		
+
 		collection.setInstanceGroup(instanceGroup);
-		
+
 		return instanceGroup;
 	}
-	
+
 	public VpnBinding buildVpnBinding() {
 		vpnBindingCounter++;
 
@@ -664,12 +664,12 @@ public class BuildingBlockTestDataSetup{
 		modelInfo.setModelUuid("testAllottedModelUuid" + uniqueIdentifier);
 		modelInfo.setModelVersion("testAllottedModelVersion" + uniqueIdentifier);
 		modelInfo.setModelInstanceName("testAllottedInstanceName" + uniqueIdentifier);
-		
+
 		ar.setModelInfoAllottedResource(modelInfo);
-		
+
 		return ar;
 	}
-	
+
 	public Configuration setConfiguration () {
 		Configuration config = new Configuration();
 		config.setConfigurationId("testConfigurationId");
@@ -679,7 +679,7 @@ public class BuildingBlockTestDataSetup{
 		modelInfoConfig.setModelInvariantId("modelInvariantId");
 		modelInfoConfig.setPolicyName("policyName");
 		config.setModelInfoConfiguration(modelInfoConfig);
-		
+
 		List<Configuration> configurations = new ArrayList<>();
 		configurations.add(config);
 		ServiceInstance serviceInstance = new ServiceInstance();

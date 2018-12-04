@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,10 +38,10 @@ import org.springframework.stereotype.Component;
 public class AAIConfigurationResources {
 	@Autowired
 	private InjectionHelper injectionHelper;
-	
+
 	@Autowired
 	private AAIObjectMapper aaiObjectMapper;
-	
+
     /**
      * A&AI call to create configuration
      *
@@ -142,24 +142,32 @@ public class AAIConfigurationResources {
      *
      * @param configurationId
      * @param vpnId
+     *
      */
     public void connectConfigurationToVpnBinding(String configurationId, String vpnId) {
         AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
         AAIResourceUri vpnBindingURI = AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnId);
         injectionHelper.getAaiClient().connect(configurationURI, vpnBindingURI);
     }
-    
+
     public void connectConfigurationToVfModule(String configurationId, String vfModuleId, String vnfId){
     	 AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
     	 AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
     	 injectionHelper.getAaiClient().connect(configurationURI, vfModuleURI);
     }
-    
+
     public void connectConfigurationToVnfc(String configurationId, String vnfcName){
     	 AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
     	 AAIResourceUri vnfcURI = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, vnfcName);
     	 injectionHelper.getAaiClient().connect(configurationURI, vnfcURI);
     }
+
+    public void connectConfigurationToL3Network(String configurationId, String networkId){
+    	AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
+    	AAIResourceUri networkURI = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId);
+    	injectionHelper.getAaiClient().connect(configurationURI, networkURI);
+    }
+
     /**
      * method to delete Configuration details in A&AI
      *
@@ -188,7 +196,7 @@ public class AAIConfigurationResources {
         return injectionHelper.getAaiClient()
         		.get(org.onap.aai.domain.yang.Configuration.class, AAIUriFactory.createResourceFromExistingURI(AAIObjectType.CONFIGURATION, UriBuilder.fromPath(relatedLink).build()));
     }
-    
+
     public void updateOrchestrationStatusConfiguration(Configuration configuration, OrchestrationStatus orchestrationStatus) {
 		AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
 		configuration.setOrchestrationStatus(orchestrationStatus);
