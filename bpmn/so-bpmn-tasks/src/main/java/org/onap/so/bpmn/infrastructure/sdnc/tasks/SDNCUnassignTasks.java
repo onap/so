@@ -24,6 +24,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -31,16 +32,13 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.SDNCNetworkResources;
 import org.onap.so.client.orchestration.SDNCServiceInstanceResources;
 import org.onap.so.client.orchestration.SDNCVfModuleResources;
 import org.onap.so.client.orchestration.SDNCVnfResources;
-import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
-import org.onap.so.client.orchestration.SDNCNetworkResources;
 
 @Component
 public class SDNCUnassignTasks {
@@ -61,12 +59,7 @@ public class SDNCUnassignTasks {
 	public void unassignServiceInstance(BuildingBlockExecution execution) {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID)); 
-			
-			if (serviceInstance.getOrchestrationStatus() == OrchestrationStatus.INVENTORIED) {
-				return;  // If INVENTORIED then SDNC unassign is not necessary
-			}
-			
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID)); 			
 			RequestContext requestContext = gBBInput.getRequestContext();
 			Customer customer = gBBInput.getCustomer();
 			String sdncUnassignResponse = sdncSIResources.unassignServiceInstance(serviceInstance, customer, requestContext);
@@ -81,13 +74,7 @@ public class SDNCUnassignTasks {
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID)); 
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID)); 
 			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-			
-			if (OrchestrationStatus.INVENTORIED == vfModule.getOrchestrationStatus() || OrchestrationStatus.PENDING_CREATE == vfModule.getOrchestrationStatus()) {
-				return;  // If INVENTORIED or PENDING_CREATE then SDNC unassign is not necessary
-			}
-			
 			execution.setVariable("sdncVfModuleRollback", false);
-		
 			String response = sdncVfModuleResources.unassignVfModule(vfModule, vnf, serviceInstance);		
 			execution.setVariable("SDNCResponse", response);
 			execution.setVariable("sdncVfModuleRollback", true);
@@ -101,11 +88,6 @@ public class SDNCUnassignTasks {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-			
-			if (OrchestrationStatus.INVENTORIED == vnf.getOrchestrationStatus() || OrchestrationStatus.CREATED == vnf.getOrchestrationStatus()) {
-				return; // If INVENTORIED or CREATED then SDNC unassign is not necessary
-			}
-			
 			RequestContext requestContext = gBBInput.getRequestContext();
 			Customer customer = gBBInput.getCustomer();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
@@ -121,11 +103,6 @@ public class SDNCUnassignTasks {
 	public void unassignNetwork(BuildingBlockExecution execution) throws Exception {
 		GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 		L3Network network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
-		
-		if (OrchestrationStatus.INVENTORIED == network.getOrchestrationStatus()) {
-			return; // If INVENTORIED then SDNC unassign is not necessary
-		}
-		
 		ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 		Customer customer = gBBInput.getCustomer();
 		RequestContext requestContext = gBBInput.getRequestContext();		

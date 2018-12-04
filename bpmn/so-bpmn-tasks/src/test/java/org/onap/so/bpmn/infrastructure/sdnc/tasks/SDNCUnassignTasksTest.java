@@ -201,14 +201,4 @@ public class SDNCUnassignTasksTest extends BaseTaskTest{
 		assertEquals("response", execution.getVariable("SDNCUnAssignNetworkResponse"));
 		assertEquals(cloudRegionSdnc, cloudRegion.getLcpCloudRegionId());
 	}
-	
-	@Test
-	public void unassignNetworkTest_inventoried() throws Exception {
-		network.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-		
-		sdncUnassignTasks.unassignNetwork(execution);
-
-		verify(sdncNetworkResources, times(0)).unassignNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
-		assertNull(execution.getVariable("SDNCUnAssignNetworkResponse"));
-	}
 }
