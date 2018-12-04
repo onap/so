@@ -27,5 +27,5 @@ resources:
 
 
 INSERT INTO `temp_network_heat_template_lookup` (`NETWORK_RESOURCE_MODEL_NAME`, `HEAT_TEMPLATE_ARTIFACT_UUID`,`AIC_VERSION_MIN` , `AIC_VERSION_MAX` ) 
-VALUES ('Generic NeutronNet','efee1d84-b8ec-11e7-abc4-cec278b6b50a','2.0','NULL');
+VALUES ('Generic NeutronNet','efee1d84-b8ec-11e7-abc4-cec278b6b50a','2.0','3.0');
 
