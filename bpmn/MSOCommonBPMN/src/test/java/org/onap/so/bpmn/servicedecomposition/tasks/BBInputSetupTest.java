@@ -99,6 +99,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
@@ -1202,6 +1203,31 @@ public class BBInputSetupTest {
 		verify(SPY_bbInputSetup, times(2)).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
 	}
 	
+	@Test
+	public void testMapVnfcCollectionInstanceGroup() {
+		VnfResourceCustomization vnfResourceCust = Mockito.mock(VnfResourceCustomization.class);
+		GenericVnf genericVnf = new GenericVnf();
+		ModelInfo modelInfo = Mockito.mock(ModelInfo.class);
+		Service service = Mockito.mock(Service.class);
+		List<VnfcInstanceGroupCustomization> vnfcInstanceGroups = new ArrayList<>();
+		VnfcInstanceGroupCustomization vnfcInstanceGroupCust = new VnfcInstanceGroupCustomization();
+		vnfcInstanceGroupCust.setModelUUID("modelUUID");
+		vnfcInstanceGroupCust.setFunction("function");
+		vnfcInstanceGroupCust.setDescription("description");
+		vnfcInstanceGroups.add(vnfcInstanceGroupCust);
+		org.onap.so.db.catalog.beans.InstanceGroup instanceGroup = new org.onap.so.db.catalog.beans.InstanceGroup();
+		instanceGroup.setModelUUID("modelUUID");
+		ModelInfoInstanceGroup modelInfoInstanceGroup = new ModelInfoInstanceGroup();
+		modelInfoInstanceGroup.setModelUUID("modelUUID");
+		doReturn(vnfResourceCust).when(SPY_bbInputSetup).getVnfResourceCustomizationFromService(modelInfo, service);
+		doReturn(vnfcInstanceGroups).when(vnfResourceCust).getVnfcInstanceGroupCustomizations();
+		doReturn(instanceGroup).when(SPY_bbInputSetupUtils).getCatalogInstanceGroup("modelUUID");
+		doReturn(modelInfoInstanceGroup).when(bbInputSetupMapperLayer).mapCatalogInstanceGroupToInstanceGroup(null, instanceGroup);
+		
+		SPY_bbInputSetup.mapVnfcCollectionInstanceGroup(genericVnf, modelInfo, service);
+		
+		assertEquals("Instance Group was created", true, genericVnf.getInstanceGroups().size() == 1);
+	}
 	@Test
 	public void testPopulateGenericVnfWhereVnfTypeIsNull()
 			throws JsonParseException, JsonMappingException, IOException {

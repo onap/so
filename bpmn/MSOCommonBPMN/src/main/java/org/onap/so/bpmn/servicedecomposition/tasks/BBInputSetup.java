@@ -609,8 +609,9 @@ public class BBInputSetup implements JavaDelegate {
 				.getVnfcInstanceGroupCustomizations();
 		for (VnfcInstanceGroupCustomization vnfcInstanceGroupCust : vnfcInstanceGroups) {
 			InstanceGroup instanceGroup = this.createInstanceGroup();
-				instanceGroup.setModelInfoInstanceGroup(this.mapperLayer
-						.mapCatalogInstanceGroupToInstanceGroup(null, vnfcInstanceGroupCust.getInstanceGroup()));
+			org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup = bbInputSetupUtils.getCatalogInstanceGroup(vnfcInstanceGroupCust.getModelUUID());
+			instanceGroup.setModelInfoInstanceGroup(this.mapperLayer
+					.mapCatalogInstanceGroupToInstanceGroup(null, catalogInstanceGroup));
 			instanceGroup.getModelInfoInstanceGroup().setFunction(vnfcInstanceGroupCust.getFunction());
 			instanceGroup.setDescription(vnfcInstanceGroupCust.getDescription());
 			genericVnf.getInstanceGroups().add(instanceGroup);
