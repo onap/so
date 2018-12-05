@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright 2018 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,8 +23,10 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION;
 
+import com.google.common.base.Strings;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
@@ -34,6 +38,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PnfCheckInputs implements JavaDelegate {
 
+    public static final String UUID_REGEX = "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5]{1}[0-9a-f]{3}-[89ab]{1}[0-9a-f]{3}-[0-9a-f]{12}$";
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, PnfCheckInputs.class);
 
     private String defaultTimeout;
@@ -45,19 +50,37 @@ public class PnfCheckInputs implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) {
+        validateCorrelationId(execution);
+        validatePnfUuid(execution);
+        validateTimeout(execution);
+    }
+
+    private void validateCorrelationId(DelegateExecution execution) {
         String correlationId = (String) execution.getVariable(CORRELATION_ID);
-        if (correlationId == null) {
+        if (Strings.isNullOrEmpty(correlationId)) {
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "correlationId variable not defined");
         }
+    }
+
+    private void validatePnfUuid(DelegateExecution execution) {
+        String pnfUuid = (String) execution.getVariable(PNF_UUID);
+        if (Strings.isNullOrEmpty(pnfUuid)) {
+            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid variable not defined");
+        }
+        if (!pnfUuid.matches(UUID_REGEX)) {
+            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid is not a valid UUID");
+        }
+    }
+
+    private void validateTimeout(DelegateExecution execution) {
         String timeout = (String) execution.getVariable(TIMEOUT_FOR_NOTIFICATION);
-        if (timeout == null) {
+        if (Strings.isNullOrEmpty(timeout)) {
             LOGGER.debug("timeoutForPnfEntryNotification variable not found, setting default");
             if (defaultTimeout == null) {
                 new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,
-                        "default timeoutForPnfEntryNotification value not defined");
+                    "default timeoutForPnfEntryNotification value not defined");
             }
             execution.setVariable(TIMEOUT_FOR_NOTIFICATION, defaultTimeout);
         }
     }
-
 }

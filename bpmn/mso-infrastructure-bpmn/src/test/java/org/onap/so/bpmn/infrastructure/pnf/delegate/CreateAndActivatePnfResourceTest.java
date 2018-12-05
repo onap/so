@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright 2018 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +22,12 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.assertj.core.api.Assertions;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -34,11 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
-
 @RunWith(SpringRunner.class)
 @ContextConfiguration(locations = "/applicationContext_forPnfTesting.xml")
 public class CreateAndActivatePnfResourceTest {
@@ -50,6 +53,7 @@ public class CreateAndActivatePnfResourceTest {
     @Autowired
     @Rule
     public ProcessEngineRule processEngineRule;
+    private static final String VALID_UUID = UUID.nameUUIDFromBytes("testUuid".getBytes()).toString();
 
     @Autowired
     private AaiConnectionTestImpl aaiConnection;
@@ -66,6 +70,7 @@ public class CreateAndActivatePnfResourceTest {
         Map<String, Object> variables = new HashMap<>();
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITH_ENTRY);
+        variables.put(PNF_UUID, VALID_UUID);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -94,6 +99,7 @@ public class CreateAndActivatePnfResourceTest {
         Map<String, Object> variables = new HashMap<>();
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
+        variables.put(PNF_UUID, VALID_UUID);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -106,7 +112,7 @@ public class CreateAndActivatePnfResourceTest {
                 "CheckInputs",
                 "CheckAiiForCorrelationId",
                 "DoesAaiContainInfoAboutPnf",
-                "CreateAndActivatePnf_CreateAaiEntry",
+                "CreatePnfEntryInAai",
                 "AaiEntryExists",
                 "InformDmaapClient",
                 "WaitForDmaapPnfReadyNotification",
