@@ -37,15 +37,12 @@ org:
           default_orm_url_replace_with_this: 7080
           default_quota_value: 10
           set_default_quota: false
-ecomp:
-  mso:
-    adapters:
-      po:
-        retryCodes: 504
-        retryDelay: 5
-        retryCount: 3
-        pollTimeout: 7500
-        pollInterval: 15
+        po:
+          retryCodes: 504
+          retryDelay: 5
+          retryCount: 3
+          pollTimeout: 7500
+          pollInterval: 15
       
 server-port: 8080
 ssl-enable: false

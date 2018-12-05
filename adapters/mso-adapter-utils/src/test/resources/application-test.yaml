@@ -22,11 +22,14 @@ cloud_config:
       clli: "MTN6"
       aic_version: "3.0"
       identity_service_id: "ORDM3"
-adapters:
-  po:
-    retryCodes: "504"
-    retryDelay: "5"
-    retryCount: "3"
+org:
+  onap:
+    so:
+      adapters:
+        po:
+          retryCodes: "504"
+          retryDelay: "5"
+          retryCount: "3"
   tenant:
     tenant_description: "ECOMP Tenant"
     region_type: "single"

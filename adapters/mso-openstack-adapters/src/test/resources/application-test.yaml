@@ -15,6 +15,12 @@ org:
           retrycount: 5
           retryinterval: -15
           retrylist: 408,429,500,502,503,504,900
+          heat:
+            create:
+              pollInterval: 15
+            delete:
+              pollTimeout: 7500
+              pollInterval: 15
         network:
           bpelauth: 4771D91C24BB25366730561D630B131818CD9FF8D686AA8807F4CB30E1324C46ED16197C07
           sockettimeout: 5
@@ -23,6 +29,12 @@ org:
           retryinterval: -15
           retrylist: 408,429,500,502,503,504,900
           encryptionKey: aa3871669d893c7fb8abbcda31b88b4f
+          heat:
+            create:
+              pollInterval: 15
+            delete:
+              pollTimeout: 300
+              pollInterval: 15
         tenant:
           default_x_aic_orm_client_string: ONAP-SO
           default_keystone_url_version: /v2.0
@@ -41,27 +53,10 @@ org:
           base_url: http://localhost:${wiremock.server.port}
           base_path: /api/valet/placement/v1/
           valet_auth: 
-ecomp:
-  mso:
-    adapters:
-      po:
-        retryCodes: 504
-        retryDelay: 5
-        retryCount: 3
-      vnf:
-        heat:
-          create:
-            pollInterval: 15
-          delete:
-            pollTimeout: 7500
-            pollInterval: 15
-      network:
-        heat:
-          create:
-            pollInterval: 15
-          delete:
-            pollTimeout: 300
-            pollInterval: 15
+        po:
+          retryCodes: 504
+          retryDelay: 5
+          retryCount: 3
       
 server-port: 8080
 ssl-enable: false

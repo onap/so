@@ -24,12 +24,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix="adapters.po")
+@ConfigurationProperties(prefix="org.onap.so.adapters.po")
 public class PoConfig {
 
 	private String retryCodes;
 	private int retryDelay;
 	private int retryCount;
+	private int pollTimeout;
+	private int pollInterval;
 	
 	public String getRetryCodes() {
 		return retryCodes;
@@ -48,6 +50,18 @@ public class PoConfig {
 	}
 	public void setRetryCount(int retryCount) {
 		this.retryCount = retryCount;
+	}
+	public int getPollTimeout() {
+		return pollTimeout;
+	}
+	public void setPollTimeout(int pollTimeout) {
+		this.pollTimeout = pollTimeout;
+	}
+	public int getPollInterval() {
+		return pollInterval;
+	}
+	public void setPollInterval(int pollInterval) {
+		this.pollInterval = pollInterval;
 	}
 	
 }

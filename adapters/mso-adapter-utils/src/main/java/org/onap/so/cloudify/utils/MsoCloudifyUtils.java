@@ -121,8 +121,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoCloudifyUtils.class);
 
     // Properties names and variables (with default values)
-    protected String createPollIntervalProp = "ecomp.mso.adapters.po.pollInterval";
-    private String deletePollIntervalProp = "ecomp.mso.adapters.po.pollInterval";
+    protected String createPollIntervalProp = "org.onap.so.adapters.po.pollInterval";
+    private String deletePollIntervalProp = "org.onap.so.adapters.po.pollInterval";
 
     protected String createPollIntervalDefault = "15";
     private String deletePollIntervalDefault = "15";
