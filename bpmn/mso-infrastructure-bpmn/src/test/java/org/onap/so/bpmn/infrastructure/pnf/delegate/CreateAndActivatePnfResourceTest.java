@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright 2018 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +24,7 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +52,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         Map<String, Object> variables = new HashMap<>();
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITH_ENTRY);
+        variables.put(PNF_UUID, AaiConnectionTestImpl.UUID_V4);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -76,6 +80,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         Map<String, Object> variables = new HashMap<>();
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
+        variables.put(PNF_UUID, AaiConnectionTestImpl.UUID_V4);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -88,7 +93,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
                 "CheckInputs",
                 "CheckAiiForCorrelationId",
                 "DoesAaiContainInfoAboutPnf",
-                "CreateAndActivatePnf_CreateAaiEntry",
+                "CreatePnfEntryInAai",
                 "AaiEntryExists",
                 "InformDmaapClient",
                 "WaitForDmaapPnfReadyNotification",
