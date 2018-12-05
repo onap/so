@@ -61,11 +61,11 @@ SPDX-License-Identifier: Apache-2.0
           </ng-container>
           <ng-container matColumnDef="startTime">
             <mat-header-cell *matHeaderCellDef> Start Time </mat-header-cell>
-            <mat-cell *matCellDef="let activity"> {{ activity.startTime }} </mat-cell>
+            <mat-cell *matCellDef="let activity"> {{ (activity.startTime | date:'yyyy-MM-dd HH:mm:sss Z') }} </mat-cell>
           </ng-container>
           <ng-container matColumnDef="endTime">
             <mat-header-cell *matHeaderCellDef> End Time </mat-header-cell>
-            <mat-cell *matCellDef="let activity"> {{ activity.endTime }} </mat-cell>
+            <mat-cell *matCellDef="let activity"> {{ (activity.endTime | date:'yyyy-MM-dd HH:mm:sss Z') }} </mat-cell>
           </ng-container>
           <ng-container matColumnDef="durationInMillis">
             <mat-header-cell *matHeaderCellDef> Duration (ms) </mat-header-cell>
