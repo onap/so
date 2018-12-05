@@ -24,26 +24,28 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Test;
 import org.onap.aai.domain.yang.Pnf;
 
-public class CreateAaiEntryWithPnfIdDelegateTest {
+public class CreatePnfEntryInAaiDelegateTest {
 
     @Test
     public void shouldSetPnfIdAndPnfName() throws Exception {
         // given
-        CreateAaiEntryWithPnfIdDelegate delegate = new CreateAaiEntryWithPnfIdDelegate();
+        CreatePnfEntryInAaiDelegate delegate = new CreatePnfEntryInAaiDelegate();
         AaiConnectionTestImpl aaiConnection = new AaiConnectionTestImpl();
         delegate.setAaiConnection(aaiConnection);
         DelegateExecution execution = mock(DelegateExecution.class);
         when(execution.getVariable(eq(CORRELATION_ID))).thenReturn("testCorrelationId");
+        when(execution.getVariable(eq(PNF_UUID))).thenReturn("0269085f-bf9f-48d7-9e00-4f1a8b20f0a6");
         // when
         delegate.execute(execution);
         // then
         Pnf createdEntry = aaiConnection.getCreated().get("testCorrelationId");
-        assertThat(createdEntry.getPnfId()).isEqualTo("testCorrelationId");
+        assertThat(createdEntry.getPnfId()).isEqualTo("0269085f-bf9f-48d7-9e00-4f1a8b20f0a6");
         assertThat(createdEntry.getPnfName()).isEqualTo("testCorrelationId");
         assertThat(createdEntry.isInMaint()).isTrue();
     }

@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         Map<String, Object> variables = new HashMap<>();
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITH_ENTRY);
+        variables.put(PNF_UUID, "0269085f-bf9f-48d7-9e00-4f1a8b20f0a6");
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -76,6 +78,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         Map<String, Object> variables = new HashMap<>();
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
+        variables.put(PNF_UUID, "0269085f-bf9f-48d7-9e00-4f1a8b20f0a6");
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -88,7 +91,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
                 "CheckInputs",
                 "CheckAiiForCorrelationId",
                 "DoesAaiContainInfoAboutPnf",
-                "CreateAndActivatePnf_CreateAaiEntry",
+                "CreatePnfEntryInAai",
                 "AaiEntryExists",
                 "InformDmaapClient",
                 "WaitForDmaapPnfReadyNotification",

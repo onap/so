@@ -30,4 +30,5 @@ public class ExecutionVariableNames {
     public final static String AAI_CONTAINS_INFO_ABOUT_IP = "aaiContainsInfoAboutIp";
     public final static String DMAAP_MESSAGE = "dmaapMessage";
     public final static String TIMEOUT_FOR_NOTIFICATION = "timeoutForPnfEntryNotification";
+    public final static String PNF_UUID = "pnfUuid";
 }

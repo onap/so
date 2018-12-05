@@ -21,9 +21,11 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION;
 
 import com.google.common.base.Strings;
+import java.util.UUID;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
@@ -35,6 +37,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PnfCheckInputs implements JavaDelegate {
 
+    private static final String UUID_REGEX = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB]{1}[0-9a-fA-F]{3}-[0-9a-fA-F]{12}$";
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, PnfCheckInputs.class);
 
     private String defaultTimeout;
@@ -49,6 +52,13 @@ public class PnfCheckInputs implements JavaDelegate {
         String correlationId = (String) execution.getVariable(CORRELATION_ID);
         if (Strings.isNullOrEmpty(correlationId)) {
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "correlationId variable not defined");
+        }
+        String pnfUuid = (String) execution.getVariable(PNF_UUID);
+        if (Strings.isNullOrEmpty(pnfUuid)) {
+            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid variable not defined");
+        }
+        if (!pnfUuid.matches(UUID_REGEX)) {
+            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid is not a valid UUID");
         }
         String timeout = (String) execution.getVariable(TIMEOUT_FOR_NOTIFICATION);
         if (Strings.isNullOrEmpty(timeout)) {
