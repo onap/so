@@ -88,16 +88,7 @@ public class SDNCUnassignTasksTest extends BaseTaskTest{
 		verify(sdncServiceInstanceResources, times(1)).unassignServiceInstance(serviceInstance, customer, requestContext);
 	}
 
-	@Test
-	public void unassignServiceInstanceTest_inventoried() throws Exception {
-		doReturn("test").when(sdncServiceInstanceResources).unassignServiceInstance(serviceInstance, customer, requestContext);
-		
-		serviceInstance.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-		
-		sdncUnassignTasks.unassignServiceInstance(execution);
-		
-		verify(sdncServiceInstanceResources, times(0)).unassignServiceInstance(serviceInstance, customer, requestContext);
-	}
+
 
 	@Test
 	public void unassignServiceInstanceExceptionTest() throws Exception {
@@ -118,26 +109,9 @@ public class SDNCUnassignTasksTest extends BaseTaskTest{
 		assertEquals("response", execution.getVariable("SDNCResponse"));
 	}
 	
-	@Test
-	public void unassignVfModuleTest_inventoried() throws Exception {
-		vfModule.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-		
-		sdncUnassignTasks.unassignVfModule(execution);
 
-		verify(sdncVfModuleResources, times(0)).unassignVfModule(vfModule, genericVnf, serviceInstance);
-		assertNull(execution.getVariable("SDNCResponse"));
-	}
 	
-	@Test
-	public void unassignVfModuleTest_pendingCreate() throws Exception {
-		vfModule.setOrchestrationStatus(OrchestrationStatus.PENDING_CREATE);
-		
-		sdncUnassignTasks.unassignVfModule(execution);
 
-		verify(sdncVfModuleResources, times(0)).unassignVfModule(vfModule, genericVnf, serviceInstance);
-		assertNull(execution.getVariable("SDNCResponse"));
-	}
-	
 	@Test
 	public void unassignVfModuleExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
@@ -157,25 +131,6 @@ public class SDNCUnassignTasksTest extends BaseTaskTest{
 		assertTrue(execution.getVariable("sdncUnassignVnfResponse").equals("response"));
 	}
 	
-	@Test
-	public void unassignVnfTest_inventoried() throws Exception {
-		genericVnf.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-		
-		sdncUnassignTasks.unassignVnf(execution);
-
-		verify(sdncVnfResources, times(0)).unassignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		assertNull(execution.getVariable("sdncUnassignVnfResponse"));
-	}
-	
-	@Test
-	public void unassignVnfTest_created() throws Exception {
-		genericVnf.setOrchestrationStatus(OrchestrationStatus.CREATED);
-		
-		sdncUnassignTasks.unassignVnf(execution);
-
-		verify(sdncVnfResources, times(0)).unassignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		assertNull(execution.getVariable("sdncUnassignVnfResponse"));
-	}
 	
 	@Test
 	public void unassignVnfExceptionTest() throws Exception {
@@ -200,15 +155,5 @@ public class SDNCUnassignTasksTest extends BaseTaskTest{
 		verify(sdncNetworkResources, times(1)).unassignNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
 		assertEquals("response", execution.getVariable("SDNCUnAssignNetworkResponse"));
 		assertEquals(cloudRegionSdnc, cloudRegion.getLcpCloudRegionId());
-	}
-	
-	@Test
-	public void unassignNetworkTest_inventoried() throws Exception {
-		network.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-		
-		sdncUnassignTasks.unassignNetwork(execution);
-
-		verify(sdncNetworkResources, times(0)).unassignNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
-		assertNull(execution.getVariable("SDNCUnAssignNetworkResponse"));
 	}
 }
