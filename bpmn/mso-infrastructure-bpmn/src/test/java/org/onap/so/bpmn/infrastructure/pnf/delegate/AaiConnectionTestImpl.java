@@ -37,6 +37,7 @@ public class AaiConnectionTestImpl implements AaiConnection {
 
     public static final String ID_WITHOUT_ENTRY = "IdWithoutEntry";
     public static final String ID_WITH_ENTRY = "idWithEntryNoIp";
+    public static final String UUID_V4 = "0269085f-bf9f-48d7-9e00-4f1a8b20f0a6";
 
     private Map<String, Pnf> created = new HashMap<>();
 
