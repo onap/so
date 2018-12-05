@@ -36,6 +36,7 @@ import org.onap.so.logger.MsoLogger;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -68,9 +69,11 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         // Try the override file
         String configLocation = System.getProperty("spring.config.location");
         if (configLocation != null) {
-            try (InputStream stream = new FileInputStream(configLocation)) {
+            try (InputStream stream = new FileInputStream(Paths.get(configLocation).normalize().toString())) {
                 cloudConfig = loadCloudConfig(stream);
-            }
+            }catch(Exception e){
+            	LOGGER.warnSimple("Error Loading override.yaml",e);
+            } 
         }
         
         if (cloudConfig == null) {

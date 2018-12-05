@@ -22,6 +22,7 @@ package org.onap.so.bpmn.common.resource;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -266,7 +267,7 @@ public class ResourceRequestBuilder {
 
         HashMap<String, String> map = new Gson().fromJson(value, new TypeToken<HashMap<String, String>>() {}.getType());
 
-        String filePath = System.getProperty("mso.config.path") + "/ASDC/" +  map.get("version") + "/" + map.get("name");
+        String filePath = Paths.get(System.getProperty("mso.config.path"), "ASDC",  map.get("version"), map.get("name")).normalize().toString();
 
         File csarFile = new File(filePath);
 

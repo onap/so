@@ -20,10 +20,15 @@
 
 package org.onap.so.asdc.installer.bpmn;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.zip.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -32,14 +37,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.HttpClientBuilder;
-
-import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
+import org.apache.http.entity.mime.FormBodyPartBuilder;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.entity.mime.FormBodyPartBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.onap.so.logger.MessageEnum;
+import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -57,7 +61,7 @@ public class BpmnInstaller {
 	public void installBpmn(String csarFilePath) {
 		LOGGER.info("Deploying BPMN files from " + csarFilePath);		
 		try {			
-			ZipInputStream csarFile = new ZipInputStream(new FileInputStream(csarFilePath));
+			ZipInputStream csarFile = new ZipInputStream(new FileInputStream(Paths.get(csarFilePath).normalize().toString()));
 			ZipEntry entry = csarFile.getNextEntry();		
 	 
 			while (entry != null) {				
@@ -101,28 +105,28 @@ public class BpmnInstaller {
     				csarFilePath,
     				"",
     				"",
-    				ex.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "ASDC reading CSAR with workflows failed"); 		
+    				ex.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "ASDC reading CSAR with workflows failed");
 		}
 		return;
 	}	
 	
-	protected HttpResponse sendDeploymentRequest(String bpmnFileName) throws Exception {					
+	protected HttpResponse sendDeploymentRequest(String bpmnFileName) throws Exception {
 		HttpClient client = HttpClientBuilder.create().build();	
-		String deploymentUri = this.env.getProperty(CAMUNDA_URL) + CREATE_DEPLOYMENT_PATH;
+		URI deploymentUri = new URI(this.env.getProperty(CAMUNDA_URL) + CREATE_DEPLOYMENT_PATH);
 		HttpPost post = new HttpPost(deploymentUri);
 		RequestConfig requestConfig =
 				RequestConfig.custom().setSocketTimeout(1000000).setConnectTimeout(1000).setConnectionRequestTimeout(1000).build();
 		post.setConfig(requestConfig);        
-		HttpEntity requestEntity = buildMimeMultipart(bpmnFileName);        
+		HttpEntity requestEntity = buildMimeMultipart(bpmnFileName);
 		post.setEntity(requestEntity);
 		return client.execute(post);
 	}
 	
 	protected HttpEntity buildMimeMultipart(String bpmnFileName) throws Exception {
-		FileInputStream bpmnFileStream = new FileInputStream (System.getProperty("mso.config.path") + "/ASDC" + "/" + bpmnFileName);
+		FileInputStream bpmnFileStream = new FileInputStream (Paths.get(System.getProperty("mso.config.path"),"ASDC", bpmnFileName).normalize().toString());
 
 		byte[] bytesToSend = IOUtils.toByteArray(bpmnFileStream);
-		HttpEntity requestEntity = MultipartEntityBuilder.create()                
+		HttpEntity requestEntity = MultipartEntityBuilder.create()
 				.addPart(FormBodyPartBuilder.create()
 						.setName("deployment-name")
 						.setBody(new StringBody("MSO Sample 1", ContentType.TEXT_PLAIN))
@@ -155,7 +159,7 @@ public class BpmnInstaller {
 	}
 	
 	protected void extractBpmnFileFromCsar(ZipInputStream zipIn, String fileName) throws IOException {
-		String filePath = System.getProperty("mso.config.path") + "/ASDC" + "/" + fileName;
+		String filePath = Paths.get(System.getProperty("mso.config.path"), "ASDC", fileName).normalize().toString();
 		BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath));
 		byte[] bytesIn = new byte[4096];
 		int read = 0;

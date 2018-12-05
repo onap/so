@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.onap.sdc.api.IDistributionClient;
@@ -355,7 +356,7 @@ public class ASDCController {
     			+ artifact.getArtifactUUID ()
     			+ ")");
     	
-    	String filePath = System.getProperty("mso.config.path") + "/ASDC" + "/" + artifact.getArtifactVersion() + "/" + artifact.getArtifactName();
+        String filePath = Paths.get(System.getProperty("mso.config.path"), "ASDC",  artifact.getArtifactVersion(), artifact.getArtifactName()).normalize().toString();
     	// make parent directory
     	File file = new File(filePath);    	
     	File fileParent = file.getParentFile();

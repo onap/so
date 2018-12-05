@@ -21,6 +21,7 @@
 package org.onap.so.asdc.installer;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.onap.sdc.api.notification.IArtifactInfo;
@@ -126,7 +127,7 @@ public class ToscaResourceStructure {
 			
 			LOGGER.debug("MSO config path is: " + System.getProperty("mso.config.path"));
 			
-			String filePath = System.getProperty("mso.config.path") + "/ASDC/" + artifact.getArtifactVersion() + "/" + artifact.getArtifactName();
+			String filePath = Paths.get(System.getProperty("mso.config.path"), "ASDC",  artifact.getArtifactVersion(), artifact.getArtifactName()).normalize().toString();
 
 			File spoolFile = new File(filePath);
  
