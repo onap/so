@@ -52,7 +52,7 @@
     <property name="aaiConnection" ref="aaiConnection"/>
   </bean>
 
-  <bean id="CreateAaiEntryWithPnfIdDelegate" class="org.onap.so.bpmn.infrastructure.pnf.delegate.CreateAaiEntryWithPnfIdDelegate">
+  <bean id="CreatePnfEntryInAaiDelegate" class="org.onap.so.bpmn.infrastructure.pnf.delegate.CreatePnfEntryInAaiDelegate">
     <property name="aaiConnection" ref="aaiConnection"/>
   </bean>
 

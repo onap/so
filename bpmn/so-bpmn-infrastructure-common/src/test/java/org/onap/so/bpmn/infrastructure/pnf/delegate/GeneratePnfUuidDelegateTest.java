@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2018 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,34 +17,31 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.mockito.Mockito.verify;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Test;
-import org.onap.aai.domain.yang.Pnf;
+import org.mockito.ArgumentCaptor;
 
-public class CreateAaiEntryWithPnfIdDelegateTest {
+public class GeneratePnfUuidDelegateTest {
 
     @Test
-    public void shouldSetPnfIdAndPnfName() throws Exception {
+    public void execute_shouldSetValidUuidAsPnfUuid() {
         // given
-        CreateAaiEntryWithPnfIdDelegate delegate = new CreateAaiEntryWithPnfIdDelegate();
-        AaiConnectionTestImpl aaiConnection = new AaiConnectionTestImpl();
-        delegate.setAaiConnection(aaiConnection);
+        GeneratePnfUuidDelegate delegate = new GeneratePnfUuidDelegate();
         DelegateExecution execution = mock(DelegateExecution.class);
-        when(execution.getVariable(eq(CORRELATION_ID))).thenReturn("testCorrelationId");
         // when
         delegate.execute(execution);
         // then
-        Pnf createdEntry = aaiConnection.getCreated().get("testCorrelationId");
-        assertThat(createdEntry.getPnfId()).isEqualTo("testCorrelationId");
-        assertThat(createdEntry.getPnfName()).isEqualTo("testCorrelationId");
-        assertThat(createdEntry.isInMaint()).isTrue();
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(execution).setVariable(eq(PNF_UUID), captor.capture());
+        assertTrue(captor.getValue().matches(PnfCheckInputs.UUID_REGEX));
     }
 }
