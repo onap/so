@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_be8792d6",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3987
+      },
+      "writtenOn": "2018-12-05T14:52:18Z",
+      "side": 1,
+      "message": "What about UUID value, that is used in the test?",
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_de7a96f0",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3987
+      },
+      "writtenOn": "2018-12-05T14:52:18Z",
+      "side": 1,
+      "message": "Shouldn`t we define it externally, similar as in correlationID case?",
+      "range": {
+        "startLine": 53,
+        "startChar": 32,
+        "endLine": 53,
+        "endChar": 70
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_fe7d1ae8",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3987
+      },
+      "writtenOn": "2018-12-05T14:52:18Z",
+      "side": 1,
+      "message": "Same as in line 53. External definition of UUID?",
+      "range": {
+        "startLine": 81,
+        "startChar": 32,
+        "endLine": 81,
+        "endChar": 70
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
