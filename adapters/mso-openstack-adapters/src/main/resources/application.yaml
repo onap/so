@@ -13,8 +13,7 @@ mso:
     core-pool-size: 50
     max-pool-size: 50
     queue-capacity: 500
-    
-# CatalogDB
+
 spring:
   datasource:
     jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
