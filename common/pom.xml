@@ -16,11 +16,11 @@
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>		
+			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>			
+			<artifactId>spring-aspects</artifactId>
 		</dependency>
 		<dependency>
             <groupId>org.springframework.boot</groupId>
@@ -29,10 +29,10 @@
 		<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>        		
+        </dependency>
 		<dependency>
 			<groupId>com.jayway.jsonpath</groupId>
-			<artifactId>json-path</artifactId>			
+			<artifactId>json-path</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>org.onap.aai.aai-common</groupId>
 			<artifactId>aai-schema</artifactId>
-			<version>1.3.1</version>
+			<version>1.4.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.modelmapper</groupId>
@@ -85,7 +85,7 @@
 					<artifactId>commons-lang3</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-ext</artifactId>
@@ -106,7 +106,7 @@
 		</dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>          
+            <artifactId>spring-security-web</artifactId>
         </dependency>
 		<dependency>
 			<groupId>org.onap.logging-analytics</groupId>
