@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright 2018 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +23,7 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -32,15 +35,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Implementation of "Create AAI entry with pnf-id = correlation_id" task in CreateAndActivatePnfResource.bpmn
+ * Implementation of "Create Pnf entry in AAI" task in CreateAndActivatePnfResource.bpmn
  *
  * Inputs:
  *  - correlationId - String
+ *  - pnfUuid - String
  */
 @Component
-public class CreateAaiEntryWithPnfIdDelegate implements JavaDelegate {
+public class CreatePnfEntryInAaiDelegate implements JavaDelegate {
 
-    private static final Logger logger = LoggerFactory.getLogger(CreateAaiEntryWithPnfIdDelegate.class);
+    private static final Logger logger = LoggerFactory.getLogger(CreatePnfEntryInAaiDelegate.class);
     private AaiConnection aaiConnection;
 
     @Autowired
@@ -51,11 +55,12 @@ public class CreateAaiEntryWithPnfIdDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         String correlationId = (String) execution.getVariable(CORRELATION_ID);
+        String pnfUuid = (String) execution.getVariable(PNF_UUID);
         Pnf pnf = new Pnf();
         pnf.setInMaint(true);
-        pnf.setPnfId(correlationId);
+        pnf.setPnfId(pnfUuid);
         pnf.setPnfName(correlationId);
         aaiConnection.createEntry(correlationId, pnf);
-        logger.debug("AAI entry is created for pnf correlation id: {}", correlationId);
+        logger.debug("AAI entry is created for pnf correlation id: {}, pnf uuid: {}", correlationId, pnfUuid);
     }
 }
