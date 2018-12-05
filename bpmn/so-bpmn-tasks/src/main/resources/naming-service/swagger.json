@@ -1,0 +1,325 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "2018.08.01",
+		"title": "networkelementnamegenprodtest Service"
+	},
+	"basePath": "/web",
+	"paths": {
+		"/service/v1/addPolicy": {
+			"post": {
+				"summary": "Respond Hello <name>!",
+				"description": "Returns a JSON object with a string to say hello. Uses 'world' if a name is not specified",
+				"operationId": "addPolicyToDB",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object",
+							"additionalProperties": {
+								"type": "object"
+							}
+						}
+					},
+					"404": {
+						"description": "Service not available"
+					},
+					"500": {
+						"description": "Unexpected Runtime error"
+					}
+				}
+			}
+		},
+		"/service/v1/genNetworkElementName": {
+			"post": {
+				"summary": "Generates name",
+				"description": "Generates network element name based on a naming policy1 ",
+				"operationId": "generateNetworkElementName",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/NameGenRequest"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/NameGenResponse"
+						}
+					},
+					"404": {
+						"description": "Service not available"
+					},
+					"500": {
+						"description": "Unexpected Runtime error"
+					}
+				}
+			},
+			"delete": {
+				"summary": "Release an existing name by external key",
+				"description": "Release network element name ",
+				"operationId": "releaseNetworkElementName",
+				"produces": [
+					"application/json"
+				],"parameters": [ 
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/NameGenDeleteRequest"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/NameGenDeleteResponse"
+						}
+					},
+					"404": {
+						"description": "Service not available"
+					},
+					"500": {
+						"description": "Unexpected Runtime error"
+					}
+				}
+			}
+		}, 
+		"/service/v1/getpolicyresponse/{policyName}": {
+			"get": {
+				"summary": "Respond Hello <name>!",
+				"description": "Returns a JSON object with a string to say hello. Uses 'world' if a name is not specified",
+				"operationId": "getPolicyResponse",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object",
+							"additionalProperties": {
+								"type": "object"
+							}
+						}
+					},
+					"404": {
+						"description": "Service not available"
+					},
+					"500": {
+						"description": "Unexpected Runtime error"
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"HelloWorld": {
+			"type": "object",
+			"properties": {
+				"message": {
+					"type": "string"
+				}
+			}
+		},
+		"NameGenRequest": {
+			"title": "NameGenRequest",
+			"$schema": "http://json-schema.org/draft-07/schema#",
+			"type": "object",
+			"required": [
+				"elements"
+			],
+			"properties": {
+				"elements": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/element"
+					}
+				}
+			},
+			"additionalProperties": false,
+			"definitions": {
+				"element": {
+					"type": "object",
+					"required": [
+						"resource-name",
+						"external-key",
+						"policy-instance-name",
+						"naming-type"
+					],
+					"properties": {
+						"resource-name": {
+							"type": "string",
+							"description": "Name of the resource"
+						},
+						"resource-value": {
+							"type": "string",
+							"description": "Optional. If given, request will be considered as update request"
+						},
+						"external-key": {
+							"type": "string",
+							"description": "Key identifier for generated name. This will be used in release/update request"
+						},
+						"policy-instance-name": {
+							"type": "string",
+							"description": "Name of the policy to be used for name generation"
+						},
+						"naming-type": {
+							"type": "string",
+							"description": "Naming type of the resource"
+						}
+					},
+					"additionalProperties": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"NameGenResponse": {
+			"type": "object",
+			  "description":"Response with generated names for each naming type. Either elements(one or more) or an error block will be present",
+			  "properties": {
+				"elements" : {
+					"type":"array",
+					"items": { "$ref": "#/definitions/respelement" }
+				},
+				"error" : {
+					"type":"object",
+			        "required": ["errorId", "message"],
+					"properties":{
+						"errorId":{"type":"string" , "description":"error code"},
+						"message": {"type":"string", "description":"error message"}
+						}
+				}
+			  }
+		},
+		"element": {
+			"type": "object",
+			"required": [
+				"resource-name",
+				"external-key",
+				"policy-instance-name",
+				"naming-type"
+			],
+			"properties": {
+				"resource-name": {
+					"type": "string",
+					"description": "Name of the resource"
+				},
+				"resource-value": {
+					"type": "string",
+					"description": "Optional. If given, request will be considered as update request"
+				},
+				"external-key": {
+					"type": "string",
+					"description": "Key identifier for generated name. This will be used in release/update request"
+				},
+				"policy-instance-name": {
+					"type": "string",
+					"description": "Name of the policy to be used for name generation"
+				},
+				"naming-type": {
+					"type": "string",
+					"description": "Naming type of the resource"
+				},
+				"${naming-ingredients(zero or more)}": {
+					"type": "string",
+					"description": "values to subsitute in the naming recipe"
+				}
+			},
+			"additionalProperties": {
+				"type": "string"
+			}
+		},
+		"respelement": {
+		"type":"object",
+		"required": [ "resource-name","resource-value","external-key"],
+		 "properties": {
+           "resource-value": {
+				"type": "string",
+				"description": "Optional. If given, request will be considered as update request"
+			},
+			"resource-name": {
+				"type": "string",
+				 "description": "Name of the resource"
+			},
+			"external-key": { 
+				"type": "string",
+				"description": "Key identifier for generated name. This will be used in release/update request"
+			}
+		 }
+		},
+		"NameGenDeleteRequest": {
+			"title": "NameGenRequest",
+			"$schema": "http://json-schema.org/draft-07/schema#",
+			"type": "object",
+			"required": [
+				"elements"
+			],
+			"properties": {
+				"elements": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/deleteelement"
+					}
+				}
+			}
+		},
+		"deleteelement": {
+			"type": "object",
+			"required": [ "external-key" ],
+			"properties": {
+				"external-key": {
+					"type": "string",
+					"description": "External key of the name that is being released"
+				}
+			}
+		},"NameGenDeleteResponse": {
+			"title": "NameGenRequest",
+			"$schema": "http://json-schema.org/draft-07/schema#",
+			"type": "object",
+			"required": [
+				"elements"
+			],
+			"properties": {
+				"elements": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/deleteresponseelement"
+					}
+				}
+			}
+		},
+		"deleteresponseelement": {
+			"type": "object",
+			"required": [ "resource-value","resource_name","external-key" ],
+			"properties": {
+				"resource-value": {
+					"type": "string",
+					"description": "Name that is being release"
+				},
+				"resource-name": {
+					"type": "string",
+					"description": "Resource Name"
+				},
+				"external-key": {
+					"type": "string",
+					"description": "External key of the name that is being released"
+				}
+			}
+		}
+	}
+}

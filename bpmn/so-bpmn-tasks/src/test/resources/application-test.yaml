@@ -41,6 +41,9 @@ pnf:
     consumerId: consumerId
     topicListenerDelayInSeconds: 5
 mso:
+  naming:
+    endpoint: http://localhost:${wiremock.server.port}/web/service/v1/genNetworkElementName
+    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   adapters:
     requestDb:
       auth: Basic YnBlbDptc28tZGItMTUwNyE=

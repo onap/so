@@ -44,6 +44,36 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>io.swagger</groupId>
+				<artifactId>swagger-codegen-maven-plugin</artifactId>
+				<version>2.3.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/naming-service/swagger.json</inputSpec>
+							<apiPackage>org.onap.namingservice.api</apiPackage>
+							<modelPackage>org.onap.namingservice.model</modelPackage>
+							<invokerPackage>org.onap.namingservice.invoker</invokerPackage>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<inputSpec>${project.basedir}/src/main/resources/swagger.json</inputSpec>
+					<language>java</language>
+					<configOptions>
+						<sourceFolder>src/gen/java/main</sourceFolder>
+						<serializableModel>true</serializableModel>
+					</configOptions>
+					<output>${project.build.directory}/generated-sources</output>
+					<generateApis>false</generateApis>
+					<library>jersey2</library>
+					<generateSupportingFiles>false</generateSupportingFiles>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencyManagement>
