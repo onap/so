@@ -520,13 +520,20 @@ public class CatalogDbAdapterRest {
         try {
             if (smUuid != null && !"".equals(smUuid)) {
                 logger.debug("Query Csar by service model uuid: {}",smUuid);
-                ToscaCsar toscaCsar = toscaCsarRepo.findById(smUuid).orElseGet(() -> null);
-                if (toscaCsar != null) {
-                    QueryServiceCsar serviceCsar = new QueryServiceCsar(toscaCsar);
-                    entity = serviceCsar.JSON2(false, false);
+                Service service = serviceRepo.findFirstOneByModelUUIDOrderByModelVersionDesc(smUuid);
+
+                if (service != null) {
+                    ToscaCsar toscaCsar = service.getCsar();
+                    if (toscaCsar != null) {
+                        QueryServiceCsar serviceCsar = new QueryServiceCsar(toscaCsar);
+                        entity = serviceCsar.JSON2(false, false);
+                    } else {
+                        respStatus = HttpStatus.SC_NOT_FOUND;
+                    }
                 } else {
                     respStatus = HttpStatus.SC_NOT_FOUND;
                 }
+
             } else {
                 throw (new Exception("Incoming parameter is null or blank"));
             }

@@ -47,7 +47,6 @@ public class HttpClient extends RestClient {
 
 	@Override
 	protected void initializeHeaderMap(Map<String, String> headerMap) {
-
 	}
 
 	@Override
