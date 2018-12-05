@@ -67,6 +67,12 @@
 				<version>3.11.1</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.camunda.bpm.extension.mockito</groupId>
+				<artifactId>camunda-bpm-mockito</artifactId>
+				<version>4.0.0</version>
+				<scope>test</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

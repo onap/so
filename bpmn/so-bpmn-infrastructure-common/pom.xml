@@ -308,5 +308,14 @@
             <version>${camunda.springboot.version}</version>
             <scope>test</scope>
         </dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.camunda.bpm.extension.mockito</groupId>
+			<artifactId>camunda-bpm-mockito</artifactId>
+		</dependency>
 	</dependencies>
 </project>

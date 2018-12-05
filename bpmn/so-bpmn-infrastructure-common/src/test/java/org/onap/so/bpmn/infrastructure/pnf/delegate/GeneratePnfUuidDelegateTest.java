@@ -2,9 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Modifications Copyright 2018 Nokia
+ * Copyright (C) 2018 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +20,24 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-@SuppressWarnings("ALL")
-public class ExecutionVariableNames {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 
-    private ExecutionVariableNames() {}
+import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
+import org.junit.Test;
 
-    public final static String CORRELATION_ID = "correlationId";
-    public final static String AAI_CONTAINS_INFO_ABOUT_PNF = "aaiContainsInfoAboutPnf";
-    public final static String AAI_CONTAINS_INFO_ABOUT_IP = "aaiContainsInfoAboutIp";
-    public final static String DMAAP_MESSAGE = "dmaapMessage";
-    public final static String TIMEOUT_FOR_NOTIFICATION = "timeoutForPnfEntryNotification";
-    public final static String PNF_UUID = "pnfUuid";
+public class GeneratePnfUuidDelegateTest {
+    private static final String UUID_REGEX = "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5]{1}[0-9a-f]{3}-[89ab]{1}[0-9a-f]{3}-[0-9a-f]{12}$";
+
+    @Test
+    public void execute_shouldSetValidUuidAsPnfUuid() {
+        // given
+        GeneratePnfUuidDelegate delegate = new GeneratePnfUuidDelegate();
+        DelegateExecution execution = new DelegateExecutionFake();
+        // when
+        delegate.execute(execution);
+        // then
+        assertThat((String) execution.getVariable(PNF_UUID)).matches(UUID_REGEX);
+    }
 }
