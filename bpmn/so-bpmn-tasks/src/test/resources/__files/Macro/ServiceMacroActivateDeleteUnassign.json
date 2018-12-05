@@ -7,6 +7,9 @@
 			"modelName": "MOW AVPN vMX BV vPE 1 Service",
 			"modelVersion": "10.0"
 		},
+		"cloudConfiguration": {
+			"cloudOwner" : "my-custom-cloud-owner"
+		},
 		"owningEntity": {
 			"owningEntityId": "038d99af-0427-42c2-9d15-971b99b9b489",
 			"owningEntityName": "PACKET CORE"

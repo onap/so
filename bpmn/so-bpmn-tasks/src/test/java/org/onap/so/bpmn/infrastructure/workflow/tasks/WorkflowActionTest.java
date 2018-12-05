@@ -49,6 +49,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.ServiceInstance;
@@ -77,13 +78,16 @@ import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.SubscriberInfo;
+import org.springframework.core.env.Environment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WorkflowActionTest extends BaseTaskTest {
+	
+	@Mock
+	protected Environment environment;
 	@InjectMocks
 	protected WorkflowAction workflowAction;
-	
 	private DelegateExecution execution;
 	
 	@Rule
@@ -112,7 +116,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", true);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/networks/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("AssignNetwork1802BB","CreateNetworkBB","ActivateNetworkBB");
 		northBoundRequest.setOrchestrationFlowList(orchFlows);
@@ -134,7 +138,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", true);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/networks/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("DeactivateNetworkBB","DeleteNetworkBB","UnassignNetwork1802BB");
 		northBoundRequest.setOrchestrationFlowList(orchFlows);
@@ -156,7 +160,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", true);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB","ActivateServiceInstanceBB");
@@ -182,7 +186,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB","AssignNetworkBB","AssignVnfBB","AssignVolumeGroupBB","AssignVfModuleBB");
@@ -219,6 +223,54 @@ public class WorkflowActionTest extends BaseTaskTest {
 	}
 	
 	@Test
+	public void selectExecutionListServiceMacroAssignNoCloudTest() throws Exception{
+		String gAction = "assignInstance";
+		String resource = "Service";
+		execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+		execution.setVariable("requestAction", gAction);
+		String bpmnRequest = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssignNoCloud.json")));
+		execution.setVariable("bpmnRequest", bpmnRequest);
+		execution.setVariable("aLaCarte", false);
+		execution.setVariable("apiVersion", "7");
+		execution.setVariable("requestUri", "v6/serviceInstances/123");
+		
+		
+		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+		List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB","AssignNetworkBB","AssignVnfBB","AssignVolumeGroupBB","AssignVfModuleBB");
+		northBoundRequest.setOrchestrationFlowList(orchFlows);
+		
+		VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+		vfModuleCustomization.setModelCustomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
+		HeatEnvironment volumeHeatEnv = new HeatEnvironment();
+		vfModuleCustomization.setVolumeHeatEnv(volumeHeatEnv);
+		org.onap.so.db.catalog.beans.VfModule vfModule = new org.onap.so.db.catalog.beans.VfModule();
+		HeatTemplate volumeHeatTemplate = new HeatTemplate();
+		vfModule.setVolumeHeatTemplate(volumeHeatTemplate);
+		vfModuleCustomization.setVfModule(vfModule);
+		
+		VfModuleCustomization vfModuleCustomization2 = new VfModuleCustomization();
+		vfModuleCustomization2.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
+		HeatEnvironment heatEnvironment = new HeatEnvironment();
+		vfModuleCustomization2.setHeatEnvironment(heatEnvironment);
+		org.onap.so.db.catalog.beans.VfModule vfModule2 = new org.onap.so.db.catalog.beans.VfModule();
+		HeatTemplate moduleHeatTemplate = new HeatTemplate();
+		vfModule2.setModuleHeatTemplate(moduleHeatTemplate);
+		vfModuleCustomization2.setVfModule(vfModule2);
+		
+		VfModuleCustomization vfModuleCustomization3 = vfModuleCustomization2;
+		vfModuleCustomization3.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
+		
+		when(environment.getProperty("org.onap.so.cloud-owner")).thenReturn("att-aic");
+		when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction,resource,false,"att-aic")).thenReturn(northBoundRequest);
+		when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f")).thenReturn(vfModuleCustomization);
+		when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa8")).thenReturn(vfModuleCustomization2);
+		when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("da4d4327-fb7d-4311-ac7a-be7ba60cf969")).thenReturn(vfModuleCustomization3);
+		workflowAction.selectExecutionList(execution);
+		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+		assertEqualsBulkFlowName(ebbs,"AssignServiceInstanceBB","AssignVnfBB","AssignVolumeGroupBB","AssignVfModuleBB","AssignVfModuleBB","AssignVfModuleBB");
+	}
+	
+	@Test
 	public void selectExecutionListServiceMacroActivateTest() throws Exception{
 		String gAction = "activateInstance";
 		String resource = "Service";
@@ -229,7 +281,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/si0");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("CreateNetworkBB","ActivateNetworkBB","CreateVolumeGroupBB","ActivateVolumeGroupBB","CreateVfModuleBB","ActivateVfModuleBB"
@@ -283,7 +335,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("DeactivateServiceInstanceBB");
@@ -306,7 +358,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		northBoundRequest.setIsToplevelflow(true);
@@ -334,7 +386,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		northBoundRequest.setIsToplevelflow(true);
@@ -365,7 +417,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		northBoundRequest.setIsToplevelflow(true);
@@ -441,7 +493,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB","CreateNetworkCollectionBB","AssignNetworkBB","AssignVnfBB","AssignVolumeGroupBB","AssignVfModuleBB"
@@ -513,7 +565,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB","DeleteVfModuleBB","DeactivateVolumeGroupBB","DeleteVolumeGroupBB","DeactivateVnfBB","DeactivateNetworkBB"
@@ -559,7 +611,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("UnassignVfModuleBB","UnassignVolumeGroupBB","UnassignVnfBB","UnassignNetworkBB","UnassignServiceInstanceBB");
@@ -603,7 +655,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB","DeleteVfModuleBB","DeactivateVolumeGroupBB","DeleteVolumeGroupBB","DeactivateVnfBB","DeactivateNetworkBB"
@@ -645,7 +697,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123/networkCollections/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
+		
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("CreateNetworkCollectionBB","AssignNetworkBB","CreateNetworkBB","ActivateNetworkBB","ActivateNetworkCollectionBB");
@@ -677,7 +729,6 @@ public class WorkflowActionTest extends BaseTaskTest {
 		execution.setVariable("aLaCarte", false);
 		execution.setVariable("apiVersion", "7");
 		execution.setVariable("requestUri", "v6/serviceInstances/123/networkCollections/123");
-		execution.setVariable("cloudOwner", "my-custom-cloud-owner");
 		
 		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
 		List<OrchestrationFlow> orchFlows = createFlowList("DeactivateNetworkBB","DeleteNetworkBB","UnassignNetworkBB","DeactivateNetworkCollectionBB","DeleteNetworkCollectionBB");
