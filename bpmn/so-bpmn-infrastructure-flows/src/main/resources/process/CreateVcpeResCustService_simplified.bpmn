@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CreateVcpeResCustService_simplified" name="CreateVcpeResCustService_simplified" isExecutable="true">
     <bpmn2:scriptTask id="sendSyncAckResponse_ScriptTask" name="Send Sync Ack Response" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
-CreateVcpeResCustService.sendSyncResponse(execution)]]></bpmn2:script>
+CreateVcpeResCustService.sendSyncResponse(execution)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_3" name="" sourceRef="sendSyncAckResponse_ScriptTask" targetRef="IntermediateThrowEvent_2" />
     <bpmn2:startEvent id="createVCPE_startEvent" name="Start Flow">
@@ -16,10 +16,9 @@ CreateVcpeResCustService.sendSyncResponse(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="preProcessRequest_ScriptTask" name="PreProcess Incoming Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
-CreateVcpeResCustService.preProcessRequest(execution)
-]]></bpmn2:script>
+CreateVcpeResCustService.preProcessRequest(execution)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_7" name="" sourceRef="preProcessRequest_ScriptTask" targetRef="sendSyncAckResponse_ScriptTask" />
     <bpmn2:intermediateCatchEvent id="IntermediateCatchEvent_3" name="vCPE-RESCUST">
@@ -29,9 +28,9 @@ CreateVcpeResCustService.preProcessRequest(execution)
     <bpmn2:scriptTask id="postProcessAndCompletionRequest_ScriptTask" name="Post Process &#38; Completion Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0afe2pg</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_29</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
-CreateVcpeResCustService.postProcessResponse(execution)]]></bpmn2:script>
+CreateVcpeResCustService.postProcessResponse(execution)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_29" name="" sourceRef="postProcessAndCompletionRequest_ScriptTask" targetRef="callCompleteMsoProcess_CallActivity" />
     <bpmn2:callActivity id="callCompleteMsoProcess_CallActivity" name="Call CompleteMsoProcess" calledElement="CompleteMsoProcess">
@@ -52,8 +51,8 @@ CreateVcpeResCustService.postProcessResponse(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_2" name="Set Success Indicator" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[// The following variable is checked by the unit test
-execution.setVariable("CreateVcpeResCustServiceSuccessIndicator", true)]]></bpmn2:script>
+      <bpmn2:script>// The following variable is checked by the unit test
+execution.setVariable("CreateVcpeResCustServiceSuccessIndicator", true)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_6" name="" sourceRef="ScriptTask_2" targetRef="CreateVCPE_EndEvent" />
     <bpmn2:endEvent id="CreateVCPE_EndEvent" name="End">
@@ -72,9 +71,9 @@ execution.setVariable("CreateVcpeResCustServiceSuccessIndicator", true)]]></bpmn
       <bpmn2:scriptTask id="ScriptTask_1" name="Log / Print Unexpected Error" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
+        <bpmn2:script>import org.onap.so.bpmn.common.scripts.*
 ExceptionUtil ex = new ExceptionUtil()
-ex.processJavaException(execution)]]></bpmn2:script>
+ex.processJavaException(execution)</bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_5" name="" sourceRef="ScriptTask_1" targetRef="EndEvent_1" />
     </bpmn2:subProcess>
@@ -124,16 +123,16 @@ ex.processJavaException(execution)]]></bpmn2:script>
       <bpmn2:scriptTask id="ScriptTask_0yk02h3" name="Prepare FalloutHandler" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_0jg47xm</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_0807ukc</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
+        <bpmn2:script>import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
-CreateVcpeResCustService.prepareFalloutRequest(execution)]]></bpmn2:script>
+CreateVcpeResCustService.prepareFalloutRequest(execution)</bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_0zpbskl" name="Yes" sourceRef="ExclusiveGateway_1vwgs6p" targetRef="ExclusiveGateway_0ydrtdx">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("disableRollback") != true}]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">#{execution.getVariable("disableRollback") != true}</bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:sequenceFlow id="SequenceFlow_0dhf2js" name="No" sourceRef="ExclusiveGateway_1vwgs6p" targetRef="InclusiveGateway_0foywso" />
       <bpmn2:sequenceFlow id="SequenceFlow_1sx5llu" name="Yes" sourceRef="ExclusiveGateway_0ydrtdx" targetRef="InclusiveGateway_0foywso">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("PONR") == true}]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">#{execution.getVariable("PONR") == true}</bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:sequenceFlow id="SequenceFlow_02o4yqx" name="No" sourceRef="ExclusiveGateway_0ydrtdx" targetRef="ScriptTask_17doerz" />
       <bpmn2:sequenceFlow id="SequenceFlow_19mxskt" name="No" sourceRef="ExclusiveGateway_1kvn1pz" targetRef="ExclusiveGateway_05indeh" />
@@ -176,16 +175,16 @@ CreateVcpeResCustService.prepareFalloutRequest(execution)]]></bpmn2:script>
       <bpmn2:scriptTask id="ScriptTask_17doerz" name="Pre Process Rollback" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_02o4yqx</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_0ftzjjm</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
+        <bpmn2:script>import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService= new CreateVcpeResCustService()
-CreateVcpeResCustService.preProcessRollback(execution)]]></bpmn2:script>
+CreateVcpeResCustService.preProcessRollback(execution)</bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:scriptTask id="ScriptTask_0wyub4x" name="Post Process Rollback" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_0dvsqpp</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1rabks0</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
+        <bpmn2:script>import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService= new CreateVcpeResCustService()
-CreateVcpeResCustService.postProcessRollback(execution)]]></bpmn2:script>
+CreateVcpeResCustService.postProcessRollback(execution)</bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_1rabks0" sourceRef="ScriptTask_0wyub4x" targetRef="InclusiveGateway_0foywso" />
       <bpmn2:exclusiveGateway id="ExclusiveGateway_06gq6em" name="is AR_BRG Ok?" default="SequenceFlow_0ya1cr3">
@@ -210,7 +209,7 @@ CreateVcpeResCustService.postProcessRollback(execution)]]></bpmn2:script>
         <bpmn2:outgoing>SequenceFlow_027lz43</bpmn2:outgoing>
       </bpmn2:inclusiveGateway>
       <bpmn2:sequenceFlow id="SequenceFlow_0orpdrl" name="Yes" sourceRef="ExclusiveGateway_06gq6em" targetRef="CallActivity_1bpuf2p">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DCARBRG_rollbackData") != null }]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">#{execution.getVariable("DCARBRG_rollbackData") != null }</bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:sequenceFlow id="SequenceFlow_1t3cnnx" sourceRef="CallActivity_1bpuf2p" targetRef="ExclusiveGateway_1mjdcct" />
       <bpmn2:sequenceFlow id="SequenceFlow_0ya1cr3" name="No" sourceRef="ExclusiveGateway_06gq6em" targetRef="InclusiveGateway_131ozdf" />
@@ -231,7 +230,7 @@ CreateVcpeResCustService.postProcessRollback(execution)]]></bpmn2:script>
         <bpmn2:outgoing>SequenceFlow_0dr2fem</bpmn2:outgoing>
       </bpmn2:exclusiveGateway>
       <bpmn2:sequenceFlow id="SequenceFlow_1sim44y" name="Yes" sourceRef="ExclusiveGateway_1mjdcct" targetRef="InclusiveGateway_131ozdf">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{ execution.getVariable("DCARBRG_rolledBack") == true }]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">#{ execution.getVariable("DCARBRG_rolledBack") == true }</bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:sequenceFlow id="SequenceFlow_0dr2fem" name="No" sourceRef="ExclusiveGateway_1mjdcct" targetRef="InclusiveGateway_1xenadu" />
       <bpmn2:exclusiveGateway id="ExclusiveGateway_05dg1m1" name="Rollback success?" default="SequenceFlow_1mbymcu">
@@ -240,7 +239,7 @@ CreateVcpeResCustService.postProcessRollback(execution)]]></bpmn2:script>
         <bpmn2:outgoing>SequenceFlow_1mbymcu</bpmn2:outgoing>
       </bpmn2:exclusiveGateway>
       <bpmn2:sequenceFlow id="SequenceFlow_1quvahv" name="Yes" sourceRef="ExclusiveGateway_05dg1m1" targetRef="InclusiveGateway_142br6v">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{ execution.getVariable("DCVAM_rolledBack") ==true }]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">#{ execution.getVariable("DCVAM_rolledBack") ==true }</bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:sequenceFlow id="SequenceFlow_1mbymcu" name="No" sourceRef="ExclusiveGateway_05dg1m1" targetRef="InclusiveGateway_0m9f5ka" />
       <bpmn2:exclusiveGateway id="ExclusiveGateway_0y7gtd9" name="rollback failed?" default="SequenceFlow_12dakwh">
@@ -259,7 +258,7 @@ CreateVcpeResCustService.postProcessRollback(execution)]]></bpmn2:script>
       <bpmn2:sequenceFlow id="SequenceFlow_1lv5ld6" sourceRef="InclusiveGateway_0m9f5ka" targetRef="InclusiveGateway_1xenadu" />
       <bpmn2:sequenceFlow id="SequenceFlow_0dvsqpp" sourceRef="InclusiveGateway_1xenadu" targetRef="ScriptTask_0wyub4x" />
       <bpmn2:sequenceFlow id="SequenceFlow_09nn9a9" name="Yes" sourceRef="ExclusiveGateway_0y7gtd9" targetRef="InclusiveGateway_1xenadu">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("rolledBack") != null && execution.getVariable("rolledBack") == false}]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">#{execution.getVariable("rolledBack") != null &amp;&amp; execution.getVariable("rolledBack") == false}</bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:sequenceFlow id="SequenceFlow_027lz43" sourceRef="InclusiveGateway_131ozdf" targetRef="ExclusiveGateway_14tl857" />
       <bpmn2:sequenceFlow id="SequenceFlow_0t3mtod" sourceRef="InclusiveGateway_142br6v" targetRef="ExclusiveGateway_1kvn1pz" />
@@ -275,7 +274,7 @@ CreateVcpeResCustService.postProcessRollback(execution)]]></bpmn2:script>
         <bpmn2:outgoing>SequenceFlow_0ne9n0g</bpmn2:outgoing>
       </bpmn2:callActivity>
       <bpmn2:sequenceFlow id="SequenceFlow_1sl79hn" name="Yes" sourceRef="ExclusiveGateway_1kvn1pz" targetRef="CallActivity_071yaf8">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DCARTXC_rollbackData") != null }]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">#{execution.getVariable("DCARTXC_rollbackData") != null }</bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:exclusiveGateway id="ExclusiveGateway_0y158bb" name="Rollback success?" default="SequenceFlow_00by7l7">
         <bpmn2:incoming>SequenceFlow_0ne9n0g</bpmn2:incoming>
@@ -284,11 +283,11 @@ CreateVcpeResCustService.postProcessRollback(execution)]]></bpmn2:script>
       </bpmn2:exclusiveGateway>
       <bpmn2:sequenceFlow id="SequenceFlow_0ne9n0g" sourceRef="CallActivity_071yaf8" targetRef="ExclusiveGateway_0y158bb" />
       <bpmn2:sequenceFlow id="SequenceFlow_1a7e8l1" name="Yes" sourceRef="ExclusiveGateway_05indeh" targetRef="DoRollbackService_CallActivity">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{ execution.getVariable("DCRESI_rollbackData") != null }]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">#{ execution.getVariable("DCRESI_rollbackData") != null }</bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:sequenceFlow id="SequenceFlow_00by7l7" name="No" sourceRef="ExclusiveGateway_0y158bb" targetRef="InclusiveGateway_0m9f5ka" />
       <bpmn2:sequenceFlow id="SequenceFlow_17cz98f" name="Yes" sourceRef="ExclusiveGateway_0y158bb" targetRef="ExclusiveGateway_05indeh">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{ execution.getVariable("DCARTXC_rolledBack") == true }]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">#{ execution.getVariable("DCARTXC_rolledBack") == true }</bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
       <bpmn2:callActivity id="CallActivity_1cl4iu4" name="DoRollback&#10;VNF and Modules&#10;" calledElement="DoCreateVnfAndModulesRollback">
         <bpmn2:extensionElements>
@@ -303,13 +302,13 @@ CreateVcpeResCustService.postProcessRollback(execution)]]></bpmn2:script>
       </bpmn2:callActivity>
       <bpmn2:sequenceFlow id="SequenceFlow_1mpsdaj" sourceRef="CallActivity_1cl4iu4" targetRef="ExclusiveGateway_05dg1m1" />
       <bpmn2:sequenceFlow id="SequenceFlow_007p8k3" name="Yes" sourceRef="ExclusiveGateway_14tl857" targetRef="CallActivity_1cl4iu4">
-        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DCVAM_rollbackData") != null }]]></bpmn2:conditionExpression>
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">#{execution.getVariable("DCVAM_rollbackData") != null }</bpmn2:conditionExpression>
       </bpmn2:sequenceFlow>
     </bpmn2:subProcess>
     <bpmn2:scriptTask id="setPONR_ScriptTask" name="set PONR">
       <bpmn2:incoming>SequenceFlow_12ilko1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0afe2pg</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[#{execution.setVariable("PONR", true)}]]></bpmn2:script>
+      <bpmn2:script>#{execution.setVariable("PONR", true)}</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_12ilko1" sourceRef="IntermediateCatchEvent_4" targetRef="setPONR_ScriptTask" />
     <bpmn2:sequenceFlow id="SequenceFlow_0afe2pg" sourceRef="setPONR_ScriptTask" targetRef="postProcessAndCompletionRequest_ScriptTask" />
@@ -332,9 +331,9 @@ CreateVcpeResCustService.postProcessRollback(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_0cdtchu" name="Prepare&#10;Decompose&#10;Service&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1eu60rt</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_00h6hmd</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
-CreateVcpeResCustService.prepareDecomposeService(execution)]]></bpmn2:script>
+CreateVcpeResCustService.prepareDecomposeService(execution)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1eu60rt" sourceRef="IntermediateCatchEvent_3" targetRef="ScriptTask_0cdtchu" />
     <bpmn2:sequenceFlow id="SequenceFlow_00h6hmd" sourceRef="ScriptTask_0cdtchu" targetRef="DecomposeService" />
@@ -350,20 +349,21 @@ CreateVcpeResCustService.prepareDecomposeService(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_0lpv2da" name="PostProcess&#10;Decompose&#10;Service&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_17g05fd</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11efpvh</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
-CreateVcpeResCustService.processDecomposition(execution)]]></bpmn2:script>
+CreateVcpeResCustService.processDecomposition(execution)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_11efpvh" sourceRef="ScriptTask_0lpv2da" targetRef="IntermediateThrowEvent_0prlju0" />
-    <bpmn2:sequenceFlow id="SequenceFlow_0gj4vud" sourceRef="IntermediateCatchEvent_17pzn7m" targetRef="Task_14l19kv" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0gj4vud" sourceRef="IntermediateCatchEvent_17pzn7m" targetRef="GeneratePnfUuid" />
     <bpmn2:sequenceFlow id="SequenceFlow_0clhseq" sourceRef="Task_14l19kv" targetRef="IntermediateThrowEvent_0lt5ltv" />
     <bpmn2:callActivity id="Task_14l19kv" name="Create And Activate Pnf Resource" calledElement="CreateAndActivatePnfResource">
       <bpmn2:extensionElements>
         <camunda:in source="timeoutForPnfEntryNotification" target="timeoutForPnfEntryNotification" />
         <camunda:in source="correlationId" target="correlationId" />
         <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="uuid" target="uuid" />
       </bpmn2:extensionElements>
-      <bpmn2:incoming>SequenceFlow_0gj4vud</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_1yojilk</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0clhseq</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:callActivity id="CallActivity_1vc4jeh" name="Call Create &#10;ServiceInstance&#10;" calledElement="DoCreateServiceInstance">
@@ -393,16 +393,16 @@ CreateVcpeResCustService.processDecomposition(execution)]]></bpmn2:script>
     <bpmn2:scriptTask id="ScriptTask_1y241p8" name="Prepare&#10;Create&#10;Service&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1429lyc</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0bt420h</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
-CreateVcpeResCustService.prepareCreateServiceInstance(execution)]]></bpmn2:script>
+CreateVcpeResCustService.prepareCreateServiceInstance(execution)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="ScriptTask_1y5lvl7" name="Post Process&#10;Create&#10;Service&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0ocy2qp</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11gw54u</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
-CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:script>
+CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:intermediateCatchEvent id="IntermediateCatchEvent_0m5yuay" name="StartService">
       <bpmn2:outgoing>SequenceFlow_1429lyc</bpmn2:outgoing>
@@ -416,6 +416,11 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
     <bpmn2:sequenceFlow id="SequenceFlow_0ocy2qp" sourceRef="CallActivity_1vc4jeh" targetRef="ScriptTask_1y5lvl7" />
     <bpmn2:sequenceFlow id="SequenceFlow_1429lyc" sourceRef="IntermediateCatchEvent_0m5yuay" targetRef="ScriptTask_1y241p8" />
     <bpmn2:sequenceFlow id="SequenceFlow_11gw54u" sourceRef="ScriptTask_1y5lvl7" targetRef="IntermediateThrowEvent_13xv36r" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1yojilk" sourceRef="GeneratePnfUuid" targetRef="Task_14l19kv" />
+    <bpmn2:serviceTask id="GeneratePnfUuid" name="Generate Pnf UUID" camunda:delegateExpression="${GeneratePnfUuidDelegate}">
+      <bpmn2:incoming>SequenceFlow_0gj4vud</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1yojilk</bpmn2:outgoing>
+    </bpmn2:serviceTask>
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -431,8 +436,8 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         <dc:Bounds x="256" y="789" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="_BPMNShape_StartEvent_47" targetElement="_BPMNShape_ScriptTask_61">
-        <di:waypoint xsi:type="dc:Point" x="103" y="829" />
-        <di:waypoint xsi:type="dc:Point" x="256" y="829" />
+        <di:waypoint x="103" y="829" />
+        <di:waypoint x="256" y="829" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="100" y="829" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -444,8 +449,8 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         <dc:Bounds x="490" y="1432" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_12" bpmnElement="SequenceFlow_7" sourceElement="_BPMNShape_ScriptTask_61" targetElement="_BPMNShape_ScriptTask_127">
-        <di:waypoint xsi:type="dc:Point" x="356" y="829" />
-        <di:waypoint xsi:type="dc:Point" x="447" y="829" />
+        <di:waypoint x="356" y="829" />
+        <di:waypoint x="447" y="829" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="200" y="790" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -454,8 +459,8 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         <dc:Bounds x="447" y="789" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_42" bpmnElement="SequenceFlow_29" sourceElement="_BPMNShape_ScriptTask_80" targetElement="_BPMNShape_CallActivity_4">
-        <di:waypoint xsi:type="dc:Point" x="590" y="1472" />
-        <di:waypoint xsi:type="dc:Point" x="763" y="1472" />
+        <di:waypoint x="590" y="1472" />
+        <di:waypoint x="763" y="1472" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="632" y="1457" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -467,8 +472,8 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_8" bpmnElement="SequenceFlow_8" sourceElement="_BPMNShape_CallActivity_4" targetElement="_BPMNShape_ScriptTask_337">
-        <di:waypoint xsi:type="dc:Point" x="863" y="1472" />
-        <di:waypoint xsi:type="dc:Point" x="1071" y="1471" />
+        <di:waypoint x="863" y="1472" />
+        <di:waypoint x="1071" y="1471" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="922" y="1457" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -492,24 +497,24 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="SequenceFlow_2" sourceElement="_BPMNShape_StartEvent_70" targetElement="_BPMNShape_ScriptTask_269">
-        <di:waypoint xsi:type="dc:Point" x="1361" y="1825" />
-        <di:waypoint xsi:type="dc:Point" x="1400" y="1825" />
+        <di:waypoint x="1361" y="1825" />
+        <di:waypoint x="1400" y="1825" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1344" y="1825" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="SequenceFlow_5" sourceElement="_BPMNShape_ScriptTask_269" targetElement="_BPMNShape_EndEvent_219">
-        <di:waypoint xsi:type="dc:Point" x="1500" y="1825" />
-        <di:waypoint xsi:type="dc:Point" x="1533" y="1825" />
-        <di:waypoint xsi:type="dc:Point" x="1533" y="1825" />
-        <di:waypoint xsi:type="dc:Point" x="1553" y="1825" />
+        <di:waypoint x="1500" y="1825" />
+        <di:waypoint x="1533" y="1825" />
+        <di:waypoint x="1533" y="1825" />
+        <di:waypoint x="1553" y="1825" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1503" y="1825" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="SequenceFlow_3" sourceElement="_BPMNShape_ScriptTask_127">
-        <di:waypoint xsi:type="dc:Point" x="547" y="829" />
-        <di:waypoint xsi:type="dc:Point" x="699" y="829" />
+        <di:waypoint x="547" y="829" />
+        <di:waypoint x="699" y="829" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="578" y="814" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -518,8 +523,8 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         <dc:Bounds x="1071" y="1431" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_6" sourceElement="_BPMNShape_ScriptTask_337" targetElement="_BPMNShape_EndEvent_177">
-        <di:waypoint xsi:type="dc:Point" x="1171" y="1470" />
-        <di:waypoint xsi:type="dc:Point" x="1262" y="1470" />
+        <di:waypoint x="1171" y="1470" />
+        <di:waypoint x="1262" y="1470" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1172" y="1455" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -582,41 +587,41 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         <dc:Bounds x="891" y="2945" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0zpbskl_di" bpmnElement="SequenceFlow_0zpbskl">
-        <di:waypoint xsi:type="dc:Point" x="75" y="2971" />
-        <di:waypoint xsi:type="dc:Point" x="75" y="2938" />
+        <di:waypoint x="75" y="2971" />
+        <di:waypoint x="75" y="2938" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="81" y="2958" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0dhf2js_di" bpmnElement="SequenceFlow_0dhf2js">
-        <di:waypoint xsi:type="dc:Point" x="100" y="2996" />
-        <di:waypoint xsi:type="dc:Point" x="734" y="2996" />
-        <di:waypoint xsi:type="dc:Point" x="734" y="2938" />
+        <di:waypoint x="100" y="2996" />
+        <di:waypoint x="734" y="2996" />
+        <di:waypoint x="734" y="2938" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="140" y="3001" width="15" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1sx5llu_di" bpmnElement="SequenceFlow_1sx5llu">
-        <di:waypoint xsi:type="dc:Point" x="100" y="2913" />
-        <di:waypoint xsi:type="dc:Point" x="405" y="2913" />
-        <di:waypoint xsi:type="dc:Point" x="405" y="2913" />
-        <di:waypoint xsi:type="dc:Point" x="709" y="2913" />
+        <di:waypoint x="100" y="2913" />
+        <di:waypoint x="405" y="2913" />
+        <di:waypoint x="405" y="2913" />
+        <di:waypoint x="709" y="2913" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="419" y="2917" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_02o4yqx_di" bpmnElement="SequenceFlow_02o4yqx">
-        <di:waypoint xsi:type="dc:Point" x="75" y="2888" />
-        <di:waypoint xsi:type="dc:Point" x="75" y="2866" />
+        <di:waypoint x="75" y="2888" />
+        <di:waypoint x="75" y="2866" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="86" y="2871" width="15" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_19mxskt_di" bpmnElement="SequenceFlow_19mxskt">
-        <di:waypoint xsi:type="dc:Point" x="202" y="1821" />
-        <di:waypoint xsi:type="dc:Point" x="202" y="1725" />
-        <di:waypoint xsi:type="dc:Point" x="681" y="1725" />
-        <di:waypoint xsi:type="dc:Point" x="681" y="1941" />
+        <di:waypoint x="202" y="1821" />
+        <di:waypoint x="202" y="1725" />
+        <di:waypoint x="681" y="1725" />
+        <di:waypoint x="681" y="1941" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="392" y="1704" width="15" height="12" />
         </bpmndi:BPMNLabel>
@@ -625,16 +630,16 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         <dc:Bounds x="204" y="1432" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_12ilko1_di" bpmnElement="SequenceFlow_12ilko1">
-        <di:waypoint xsi:type="dc:Point" x="96" y="1472" />
-        <di:waypoint xsi:type="dc:Point" x="204" y="1472" />
+        <di:waypoint x="96" y="1472" />
+        <di:waypoint x="204" y="1472" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="105" y="1447" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0afe2pg_di" bpmnElement="SequenceFlow_0afe2pg">
-        <di:waypoint xsi:type="dc:Point" x="304" y="1472" />
-        <di:waypoint xsi:type="dc:Point" x="447" y="1472" />
-        <di:waypoint xsi:type="dc:Point" x="490" y="1472" />
+        <di:waypoint x="304" y="1472" />
+        <di:waypoint x="447" y="1472" />
+        <di:waypoint x="490" y="1472" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="331" y="1457" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -649,30 +654,30 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1f1hd3l_di" bpmnElement="SequenceFlow_1f1hd3l">
-        <di:waypoint xsi:type="dc:Point" x="1026" y="2006" />
-        <di:waypoint xsi:type="dc:Point" x="1026" y="2103" />
+        <di:waypoint x="1026" y="2006" />
+        <di:waypoint x="1026" y="2103" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="996" y="2055" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0jg47xm_di" bpmnElement="SequenceFlow_0jg47xm">
-        <di:waypoint xsi:type="dc:Point" x="759" y="2913" />
-        <di:waypoint xsi:type="dc:Point" x="941" y="2913" />
-        <di:waypoint xsi:type="dc:Point" x="941" y="2945" />
+        <di:waypoint x="759" y="2913" />
+        <di:waypoint x="941" y="2913" />
+        <di:waypoint x="941" y="2945" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="805" y="2898" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0807ukc_di" bpmnElement="SequenceFlow_0807ukc">
-        <di:waypoint xsi:type="dc:Point" x="991" y="2985" />
-        <di:waypoint xsi:type="dc:Point" x="1023" y="2985" />
+        <di:waypoint x="991" y="2985" />
+        <di:waypoint x="1023" y="2985" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="962" y="2970" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_19yywk8_di" bpmnElement="SequenceFlow_19yywk8">
-        <di:waypoint xsi:type="dc:Point" x="1123" y="2985" />
-        <di:waypoint xsi:type="dc:Point" x="1160" y="2985" />
+        <di:waypoint x="1123" y="2985" />
+        <di:waypoint x="1160" y="2985" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1097" y="2970" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -690,9 +695,9 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0sezboq_di" bpmnElement="SequenceFlow_0sezboq">
-        <di:waypoint xsi:type="dc:Point" x="681" y="1991" />
-        <di:waypoint xsi:type="dc:Point" x="681" y="2128" />
-        <di:waypoint xsi:type="dc:Point" x="1001" y="2128" />
+        <di:waypoint x="681" y="1991" />
+        <di:waypoint x="681" y="2128" />
+        <di:waypoint x="1001" y="2128" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="689" y="2045" width="15" height="12" />
         </bpmndi:BPMNLabel>
@@ -701,10 +706,10 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         <dc:Bounds x="25" y="2786" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0zq7i3q_di" bpmnElement="SequenceFlow_0zq7i3q">
-        <di:waypoint xsi:type="dc:Point" x="-27" y="2997" />
-        <di:waypoint xsi:type="dc:Point" x="20" y="2997" />
-        <di:waypoint xsi:type="dc:Point" x="20" y="2996" />
-        <di:waypoint xsi:type="dc:Point" x="50" y="2996" />
+        <di:waypoint x="-27" y="2997" />
+        <di:waypoint x="20" y="2997" />
+        <di:waypoint x="20" y="2996" />
+        <di:waypoint x="50" y="2996" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="-56" y="2998" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -719,8 +724,8 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         <dc:Bounds x="684" y="2786" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1rabks0_di" bpmnElement="SequenceFlow_1rabks0">
-        <di:waypoint xsi:type="dc:Point" x="734" y="2866" />
-        <di:waypoint xsi:type="dc:Point" x="734" y="2888" />
+        <di:waypoint x="734" y="2866" />
+        <di:waypoint x="734" y="2888" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="704" y="2877" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -732,15 +737,15 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         <dc:Bounds x="256" y="944" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1eu60rt_di" bpmnElement="SequenceFlow_1eu60rt">
-        <di:waypoint xsi:type="dc:Point" x="103" y="984" />
-        <di:waypoint xsi:type="dc:Point" x="256" y="984" />
+        <di:waypoint x="103" y="984" />
+        <di:waypoint x="256" y="984" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="135" y="969" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_00h6hmd_di" bpmnElement="SequenceFlow_00h6hmd">
-        <di:waypoint xsi:type="dc:Point" x="356" y="984" />
-        <di:waypoint xsi:type="dc:Point" x="447" y="984" />
+        <di:waypoint x="356" y="984" />
+        <di:waypoint x="447" y="984" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="357" y="969" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -761,25 +766,25 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0orpdrl_di" bpmnElement="SequenceFlow_0orpdrl">
-        <di:waypoint xsi:type="dc:Point" x="100" y="2628" />
-        <di:waypoint xsi:type="dc:Point" x="202" y="2628" />
-        <di:waypoint xsi:type="dc:Point" x="202" y="2598" />
+        <di:waypoint x="100" y="2628" />
+        <di:waypoint x="202" y="2628" />
+        <di:waypoint x="202" y="2598" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="141" y="2613" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1t3cnnx_di" bpmnElement="SequenceFlow_1t3cnnx">
-        <di:waypoint xsi:type="dc:Point" x="202" y="2518" />
-        <di:waypoint xsi:type="dc:Point" x="202" y="2481" />
+        <di:waypoint x="202" y="2518" />
+        <di:waypoint x="202" y="2481" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="172" y="2500" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0ya1cr3_di" bpmnElement="SequenceFlow_0ya1cr3">
-        <di:waypoint xsi:type="dc:Point" x="75" y="2603" />
-        <di:waypoint xsi:type="dc:Point" x="75" y="2542" />
-        <di:waypoint xsi:type="dc:Point" x="75" y="2542" />
-        <di:waypoint xsi:type="dc:Point" x="75" y="2481" />
+        <di:waypoint x="75" y="2603" />
+        <di:waypoint x="75" y="2542" />
+        <di:waypoint x="75" y="2542" />
+        <di:waypoint x="75" y="2481" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="88" y="2508" width="15" height="12" />
         </bpmndi:BPMNLabel>
@@ -797,8 +802,8 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1kpdu1j_di" bpmnElement="SequenceFlow_1kpdu1j">
-        <di:waypoint xsi:type="dc:Point" x="75" y="2282" />
-        <di:waypoint xsi:type="dc:Point" x="75" y="2153" />
+        <di:waypoint x="75" y="2282" />
+        <di:waypoint x="75" y="2153" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="83" y="2218" width="15" height="12" />
         </bpmndi:BPMNLabel>
@@ -810,16 +815,16 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1sim44y_di" bpmnElement="SequenceFlow_1sim44y">
-        <di:waypoint xsi:type="dc:Point" x="177" y="2456" />
-        <di:waypoint xsi:type="dc:Point" x="100" y="2456" />
+        <di:waypoint x="177" y="2456" />
+        <di:waypoint x="100" y="2456" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="107" y="2431" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0dr2fem_di" bpmnElement="SequenceFlow_0dr2fem">
-        <di:waypoint xsi:type="dc:Point" x="226" y="2457" />
-        <di:waypoint xsi:type="dc:Point" x="734" y="2457" />
-        <di:waypoint xsi:type="dc:Point" x="734" y="2695" />
+        <di:waypoint x="226" y="2457" />
+        <di:waypoint x="734" y="2457" />
+        <di:waypoint x="734" y="2695" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="316" y="2436" width="15" height="12" />
         </bpmndi:BPMNLabel>
@@ -831,22 +836,22 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1quvahv_di" bpmnElement="SequenceFlow_1quvahv">
-        <di:waypoint xsi:type="dc:Point" x="177" y="2128" />
-        <di:waypoint xsi:type="dc:Point" x="100" y="2128" />
+        <di:waypoint x="177" y="2128" />
+        <di:waypoint x="100" y="2128" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="129" y="2103" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1mbymcu_di" bpmnElement="SequenceFlow_1mbymcu">
-        <di:waypoint xsi:type="dc:Point" x="227" y="2128" />
-        <di:waypoint xsi:type="dc:Point" x="1001" y="2128" />
+        <di:waypoint x="227" y="2128" />
+        <di:waypoint x="1001" y="2128" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="290" y="2097" width="15" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_17g05fd_di" bpmnElement="SequenceFlow_17g05fd">
-        <di:waypoint xsi:type="dc:Point" x="547" y="984" />
-        <di:waypoint xsi:type="dc:Point" x="638" y="984" />
+        <di:waypoint x="547" y="984" />
+        <di:waypoint x="638" y="984" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="548" y="969" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -858,15 +863,15 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ftzjjm_di" bpmnElement="SequenceFlow_0ftzjjm">
-        <di:waypoint xsi:type="dc:Point" x="75" y="2786" />
-        <di:waypoint xsi:type="dc:Point" x="75" y="2745" />
+        <di:waypoint x="75" y="2786" />
+        <di:waypoint x="75" y="2745" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="45" y="2766" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_12dakwh_di" bpmnElement="SequenceFlow_12dakwh">
-        <di:waypoint xsi:type="dc:Point" x="75" y="2695" />
-        <di:waypoint xsi:type="dc:Point" x="75" y="2653" />
+        <di:waypoint x="75" y="2695" />
+        <di:waypoint x="75" y="2653" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="83" y="2666" width="15" height="12" />
         </bpmndi:BPMNLabel>
@@ -878,40 +883,40 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1lv5ld6_di" bpmnElement="SequenceFlow_1lv5ld6">
-        <di:waypoint xsi:type="dc:Point" x="1026" y="2153" />
-        <di:waypoint xsi:type="dc:Point" x="1026" y="2720" />
-        <di:waypoint xsi:type="dc:Point" x="759" y="2720" />
+        <di:waypoint x="1026" y="2153" />
+        <di:waypoint x="1026" y="2720" />
+        <di:waypoint x="759" y="2720" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="996" y="2437" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0dvsqpp_di" bpmnElement="SequenceFlow_0dvsqpp">
-        <di:waypoint xsi:type="dc:Point" x="734" y="2745" />
-        <di:waypoint xsi:type="dc:Point" x="734" y="2786" />
+        <di:waypoint x="734" y="2745" />
+        <di:waypoint x="734" y="2786" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="704" y="2766" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_09nn9a9_di" bpmnElement="SequenceFlow_09nn9a9">
-        <di:waypoint xsi:type="dc:Point" x="100" y="2720" />
-        <di:waypoint xsi:type="dc:Point" x="423" y="2720" />
-        <di:waypoint xsi:type="dc:Point" x="423" y="2720" />
-        <di:waypoint xsi:type="dc:Point" x="709" y="2720" />
+        <di:waypoint x="100" y="2720" />
+        <di:waypoint x="423" y="2720" />
+        <di:waypoint x="423" y="2720" />
+        <di:waypoint x="709" y="2720" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="144" y="2693" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_027lz43_di" bpmnElement="SequenceFlow_027lz43">
-        <di:waypoint xsi:type="dc:Point" x="75" y="2431" />
-        <di:waypoint xsi:type="dc:Point" x="75" y="2332" />
+        <di:waypoint x="75" y="2431" />
+        <di:waypoint x="75" y="2332" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="45" y="2372" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0t3mtod_di" bpmnElement="SequenceFlow_0t3mtod">
-        <di:waypoint xsi:type="dc:Point" x="75" y="2103" />
-        <di:waypoint xsi:type="dc:Point" x="75" y="1846" />
-        <di:waypoint xsi:type="dc:Point" x="177" y="1846" />
+        <di:waypoint x="75" y="2103" />
+        <di:waypoint x="75" y="1846" />
+        <di:waypoint x="177" y="1846" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="45" y="1965" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -923,19 +928,19 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_0lt5ltv_di" bpmnElement="IntermediateThrowEvent_0lt5ltv">
-        <dc:Bounds x="466" y="1259" width="36" height="36" />
+        <dc:Bounds x="725" y="1259" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="441" y="1306" width="85" height="24" />
+          <dc:Bounds x="700" y="1306" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_071yaf8_di" bpmnElement="CallActivity_071yaf8">
         <dc:Bounds x="321" y="1806" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1sl79hn_di" bpmnElement="SequenceFlow_1sl79hn">
-        <di:waypoint xsi:type="dc:Point" x="227" y="1846" />
-        <di:waypoint xsi:type="dc:Point" x="256" y="1846" />
-        <di:waypoint xsi:type="dc:Point" x="256" y="1846" />
-        <di:waypoint xsi:type="dc:Point" x="321" y="1846" />
+        <di:waypoint x="227" y="1846" />
+        <di:waypoint x="256" y="1846" />
+        <di:waypoint x="256" y="1846" />
+        <di:waypoint x="321" y="1846" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="271" y="1826" width="19" height="12" />
         </bpmndi:BPMNLabel>
@@ -947,30 +952,30 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ne9n0g_di" bpmnElement="SequenceFlow_0ne9n0g">
-        <di:waypoint xsi:type="dc:Point" x="421" y="1846" />
-        <di:waypoint xsi:type="dc:Point" x="521" y="1846" />
+        <di:waypoint x="421" y="1846" />
+        <di:waypoint x="521" y="1846" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="426" y="1825" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1a7e8l1_di" bpmnElement="SequenceFlow_1a7e8l1">
-        <di:waypoint xsi:type="dc:Point" x="706" y="1966" />
-        <di:waypoint xsi:type="dc:Point" x="976" y="1966" />
+        <di:waypoint x="706" y="1966" />
+        <di:waypoint x="976" y="1966" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="832" y="1945" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_00by7l7_di" bpmnElement="SequenceFlow_00by7l7">
-        <di:waypoint xsi:type="dc:Point" x="546" y="1871" />
-        <di:waypoint xsi:type="dc:Point" x="546" y="2128" />
-        <di:waypoint xsi:type="dc:Point" x="1001" y="2128" />
+        <di:waypoint x="546" y="1871" />
+        <di:waypoint x="546" y="2128" />
+        <di:waypoint x="1001" y="2128" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="554" y="1994" width="15" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_17cz98f_di" bpmnElement="SequenceFlow_17cz98f">
-        <di:waypoint xsi:type="dc:Point" x="559" y="1858" />
-        <di:waypoint xsi:type="dc:Point" x="668" y="1954" />
+        <di:waypoint x="559" y="1858" />
+        <di:waypoint x="668" y="1954" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="615" y="1889" width="19" height="12" />
         </bpmndi:BPMNLabel>
@@ -979,16 +984,16 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         <dc:Bounds x="152" y="2193" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1mpsdaj_di" bpmnElement="SequenceFlow_1mpsdaj">
-        <di:waypoint xsi:type="dc:Point" x="202" y="2193" />
-        <di:waypoint xsi:type="dc:Point" x="202" y="2153" />
+        <di:waypoint x="202" y="2193" />
+        <di:waypoint x="202" y="2153" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="172" y="2167" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_007p8k3_di" bpmnElement="SequenceFlow_007p8k3">
-        <di:waypoint xsi:type="dc:Point" x="100" y="2307" />
-        <di:waypoint xsi:type="dc:Point" x="202" y="2307" />
-        <di:waypoint xsi:type="dc:Point" x="202" y="2273" />
+        <di:waypoint x="100" y="2307" />
+        <di:waypoint x="202" y="2307" />
+        <di:waypoint x="202" y="2273" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="142" y="2286" width="19" height="12" />
         </bpmndi:BPMNLabel>
@@ -997,28 +1002,28 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         <dc:Bounds x="638" y="944" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_11efpvh_di" bpmnElement="SequenceFlow_11efpvh">
-        <di:waypoint xsi:type="dc:Point" x="738" y="984" />
-        <di:waypoint xsi:type="dc:Point" x="902" y="984" />
+        <di:waypoint x="738" y="984" />
+        <di:waypoint x="902" y="984" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="775" y="963" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0gj4vud_di" bpmnElement="SequenceFlow_0gj4vud">
-        <di:waypoint xsi:type="dc:Point" x="103" y="1277" />
-        <di:waypoint xsi:type="dc:Point" x="256" y="1277" />
+        <di:waypoint x="103" y="1277" />
+        <di:waypoint x="256" y="1277" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="134.5" y="1257" width="90" height="10" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0clhseq_di" bpmnElement="SequenceFlow_0clhseq">
-        <di:waypoint xsi:type="dc:Point" x="356" y="1277" />
-        <di:waypoint xsi:type="dc:Point" x="466" y="1277" />
+        <di:waypoint x="547" y="1277" />
+        <di:waypoint x="725" y="1277" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="366" y="1257" width="90" height="10" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1totpg4_di" bpmnElement="Task_14l19kv">
-        <dc:Bounds x="256" y="1237" width="100" height="80" />
+        <dc:Bounds x="447" y="1237" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_1vc4jeh_di" bpmnElement="CallActivity_1vc4jeh">
         <dc:Bounds x="447" y="1072" width="100" height="80" />
@@ -1042,33 +1047,40 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:s
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0bt420h_di" bpmnElement="SequenceFlow_0bt420h">
-        <di:waypoint xsi:type="dc:Point" x="356" y="1112" />
-        <di:waypoint xsi:type="dc:Point" x="447" y="1112" />
+        <di:waypoint x="356" y="1112" />
+        <di:waypoint x="447" y="1112" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="356.5" y="1091" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0ocy2qp_di" bpmnElement="SequenceFlow_0ocy2qp">
-        <di:waypoint xsi:type="dc:Point" x="547" y="1112" />
-        <di:waypoint xsi:type="dc:Point" x="638" y="1112" />
+        <di:waypoint x="547" y="1112" />
+        <di:waypoint x="638" y="1112" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="547.5" y="1091" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1429lyc_di" bpmnElement="SequenceFlow_1429lyc">
-        <di:waypoint xsi:type="dc:Point" x="101" y="1112" />
-        <di:waypoint xsi:type="dc:Point" x="256" y="1112" />
+        <di:waypoint x="101" y="1112" />
+        <di:waypoint x="256" y="1112" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="133.5" y="1091" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_11gw54u_di" bpmnElement="SequenceFlow_11gw54u">
-        <di:waypoint xsi:type="dc:Point" x="738" y="1112" />
-        <di:waypoint xsi:type="dc:Point" x="902" y="1112" />
+        <di:waypoint x="738" y="1112" />
+        <di:waypoint x="902" y="1112" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="775" y="1091" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yojilk_di" bpmnElement="SequenceFlow_1yojilk">
+        <di:waypoint x="356" y="1277" />
+        <di:waypoint x="447" y="1277" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1j71wic_di" bpmnElement="GeneratePnfUuid">
+        <dc:Bounds x="256" y="1237" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn2:definitions>
