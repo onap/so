@@ -118,6 +118,7 @@ public class CatalogDbClient {
 	private static final String TARGET_ACTION = "targetAction";
 	private static final String REQUEST_SCOPE = "requestScope";
 	private static final String IS_ALACARTE = "isALaCarte";
+	private static final String CLOUD_OWNER = "cloudOwner";
 	private static final String FLOW_NAME = "flowName";
 	private static final String SERVICE_TYPE = "serviceType";
 	private static final String VNF_TYPE = "vnfType";
@@ -151,6 +152,7 @@ public class CatalogDbClient {
 	private String findVnfcInstanceGroupCustomizationByModelCustomizationUUID = "/findByModelCustomizationUUID";
 	private String findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID = "/findByModelCustomizationUUID";
 	private String findOneByActionAndRequestScopeAndIsAlacarte = "/findOneByActionAndRequestScopeAndIsAlacarte";
+	private String findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner = "/findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner";
 	private String findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = "/findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep";
 	private String findByClliAndCloudVersion = "/findByClliAndCloudVersion";
 
@@ -248,6 +250,7 @@ public class CatalogDbClient {
 		findVnfcInstanceGroupCustomizationByModelCustomizationUUID = endpoint + VNFC_INSTANCE_GROUP_CUSTOMIZATION + SEARCH + findVnfcInstanceGroupCustomizationByModelCustomizationUUID;
 		findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID = endpoint + COLLECTION_RESOURCE_INSTANCE_GROUP_CUSTOMIZATION + SEARCH + findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID;
 		findOneByActionAndRequestScopeAndIsAlacarte = endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH + findOneByActionAndRequestScopeAndIsAlacarte;
+		findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner = endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH + findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner;
 		findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH + findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep;
 		findByClliAndCloudVersion = endpoint + CLOUD_SITE + SEARCH + findByClliAndCloudVersion;
 
@@ -476,6 +479,15 @@ public class CatalogDbClient {
 				.fromUri(findOneByActionAndRequestScopeAndIsAlacarte)
 				.queryParam(ACTION, requestAction).queryParam(REQUEST_SCOPE, resourceName)
 				.queryParam(IS_ALACARTE, aLaCarte).build());
+	}
+	
+	public NorthBoundRequest getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(String requestAction,
+			String resourceName, boolean aLaCarte, String cloudOwner) {
+		return this.getSingleResource(northBoundRequestClient, getUri(UriBuilder
+				.fromUri(findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner)
+				.queryParam(ACTION, requestAction).queryParam(REQUEST_SCOPE, resourceName)
+				.queryParam(IS_ALACARTE, aLaCarte)
+				.queryParam(CLOUD_OWNER, cloudOwner).build().toString()));
 	}
 
 	public RainyDayHandlerStatus getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(

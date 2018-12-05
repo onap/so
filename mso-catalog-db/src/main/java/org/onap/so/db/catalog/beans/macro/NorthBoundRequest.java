@@ -83,6 +83,10 @@ public class NorthBoundRequest implements Serializable {
 	@Column(name = "MAX_API_VERSION")
 	private Double maxApiVersion;
 
+	@BusinessKey
+	@Column(name = "CLOUD_OWNER")
+	private String cloudOwner;
+	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "northBoundRequest")
 	private List<OrchestrationFlow> orchestrationFlowList;
 
@@ -90,7 +94,8 @@ public class NorthBoundRequest implements Serializable {
 	public String toString() {
 		return new ToStringBuilder(this).append("id", id).append("action", action).append("requestScope", requestScope)
 				.append("isAlacarte", isAlacarte).append("isToplevelflow", isToplevelflow)
-				.append("minApiVersion", minApiVersion).append("maxApiVersion", maxApiVersion).toString();
+				.append("minApiVersion", minApiVersion).append("maxApiVersion", maxApiVersion)
+				.append("cloudOwner",cloudOwner).toString();
 	}
 
 	@Override
@@ -102,13 +107,14 @@ public class NorthBoundRequest implements Serializable {
 		return new EqualsBuilder().append(action, castOther.action).append(requestScope, castOther.requestScope)
 				.append(isAlacarte, castOther.isAlacarte).append(isToplevelflow, castOther.isToplevelflow)
 				.append(minApiVersion, castOther.minApiVersion).append(maxApiVersion, castOther.maxApiVersion)
+				.append(cloudOwner, castOther.cloudOwner)
 				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().append(action).append(requestScope).append(isAlacarte).append(isToplevelflow)
-				.append(minApiVersion).append(maxApiVersion).toHashCode();
+				.append(minApiVersion).append(maxApiVersion).append(cloudOwner).toHashCode();
 	}
 
 	public Integer getId() {
@@ -173,6 +179,14 @@ public class NorthBoundRequest implements Serializable {
 
 	public void setMaxApiVersion(Double maxApiVersion) {
 		this.maxApiVersion = maxApiVersion;
+	}
+	
+	public String getCloudOwner() {
+		return cloudOwner;
+	}
+
+	public void setCloudOwner(String cloudOwner) {
+		this.cloudOwner = cloudOwner;
 	}
 
 	@LinkedResource
