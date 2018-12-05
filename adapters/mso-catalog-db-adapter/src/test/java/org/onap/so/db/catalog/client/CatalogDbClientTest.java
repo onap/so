@@ -20,8 +20,14 @@
 
 package org.onap.so.db.catalog.client;
 
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
 import java.util.List;
 import java.util.UUID;
+
+import javax.ws.rs.core.UriBuilder;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,25 +50,31 @@ import org.onap.so.db.catalog.beans.VnfComponentsRecipe;
 import org.onap.so.db.catalog.beans.VnfRecipe;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.beans.ExternalServiceToInternalService;
+import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CatalogDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class CatalogDbClientTest {
     public static final String MTN13 = "mtn13";
+    
     @LocalServerPort
     private int port;
 
     @Value("${mso.db.auth}")
     private String msoAdaptersAuth;
-
+	
     @Autowired
     CatalogDbClientPortChanger client;
 
@@ -445,6 +457,21 @@ public class CatalogDbClientTest {
         Assert.assertNull(service);
     }
 
+    @Test
+    public void testGetNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(){
+    	NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+    	northBoundRequest.setAction("createService");
+    	northBoundRequest.setRequestScope("service");
+    	northBoundRequest.setIsAlacarte(true);
+    	northBoundRequest.setCloudOwner("my-custom-cloud-owner");
+    	client.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner("createService", "service", true, "my-custom-cloud-owner");
+    	Assert.assertNotNull(northBoundRequest);
+    	Assert.assertEquals("createService",northBoundRequest.getAction());
+    	Assert.assertEquals("service",northBoundRequest.getRequestScope());
+    	Assert.assertEquals(true,northBoundRequest.getIsAlacarte() );
+    	Assert.assertEquals("my-custom-cloud-owner", northBoundRequest.getCloudOwner());
+    }
+   
     @Test
     public void testFindServiceRecipeByActionAndServiceModelUUID() {
         ServiceRecipe serviceRecipe = client.findServiceRecipeByActionAndServiceModelUUID("createInstance","4694a55f-58b3-4f17-92a5-796d6f5ffd0d" );
