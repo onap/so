@@ -22,6 +22,7 @@ package org.onap.so.client;
 
 import java.io.FileInputStream;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
@@ -72,7 +73,7 @@ public abstract class RestClientSSL extends RestClient {
 	private KeyStore getKeyStore() {
 		KeyStore ks = null;
 	    char[] password = System.getProperty(RestClientSSL.SSL_KEY_STORE_PASSWORD_KEY).toCharArray();
-	    try(FileInputStream fis = new FileInputStream(System.getProperty(RestClientSSL.SSL_KEY_STORE_KEY))) {
+	    try(FileInputStream fis = new FileInputStream(Paths.get(System.getProperty(RestClientSSL.SSL_KEY_STORE_KEY)).normalize().toString())) {
 	    	ks = KeyStore.getInstance(KeyStore.getDefaultType());
 	        
 	        ks.load(fis, password);
