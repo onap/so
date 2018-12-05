@@ -2,9 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Modifications Copyright 2018 Nokia
+ * Copyright (C) 2018 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +20,18 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-@SuppressWarnings("ALL")
-public class ExecutionVariableNames {
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 
-    private ExecutionVariableNames() {}
+import java.util.UUID;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.springframework.stereotype.Component;
 
-    public final static String CORRELATION_ID = "correlationId";
-    public final static String AAI_CONTAINS_INFO_ABOUT_PNF = "aaiContainsInfoAboutPnf";
-    public final static String AAI_CONTAINS_INFO_ABOUT_IP = "aaiContainsInfoAboutIp";
-    public final static String DMAAP_MESSAGE = "dmaapMessage";
-    public final static String TIMEOUT_FOR_NOTIFICATION = "timeoutForPnfEntryNotification";
-    public final static String PNF_UUID = "pnfUuid";
+@Component
+public class GenerateUuidDelegate implements JavaDelegate {
+    @Override
+    public void execute(DelegateExecution delegateExecution){
+        String uuid = UUID.randomUUID().toString();
+        delegateExecution.setVariable(PNF_UUID, uuid);
+    }
 }
