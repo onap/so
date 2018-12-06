@@ -39,6 +39,8 @@ public class InstanceReferences {
 	protected String networkInstanceId;
 	protected String networkInstanceName;
 	protected String requestorId;
+	protected String instanceGroupId;
+	protected String instanceGroupName;
 
 
 	public String getServiceInstanceId() {
@@ -109,6 +111,18 @@ public class InstanceReferences {
 	public void setRequestorId(String requestorId) {
 		this.requestorId = requestorId;
 	}
+	public String getInstanceGroupId() {
+		return instanceGroupId;
+	}
+	public void setInstanceGroupId(String instanceGroupId) {
+		this.instanceGroupId = instanceGroupId;
+	}
+	public String getInstanceGroupName() {
+		return instanceGroupName;
+	}
+	public void setInstanceGroupName(String instanceGroupName) {
+		this.instanceGroupName = instanceGroupName;
+	}
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).append("serviceInstanceId", serviceInstanceId)
@@ -118,6 +132,7 @@ public class InstanceReferences {
 				.append("volumeGroupInstanceId", volumeGroupInstanceId)
 				.append("volumeGroupInstanceName", volumeGroupInstanceName)
 				.append("networkInstanceId", networkInstanceId).append("networkInstanceName", networkInstanceName)
-				.append("requestorId", requestorId).toString();
+				.append("requestorId", requestorId).append("instanceGroupId", instanceGroupId)
+				.append("instanceGroupName", instanceGroupName).toString();
 	}
 }
