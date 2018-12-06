@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_77f4ed86",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/resources/application-test.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2018-12-06T16:35:11Z",
+      "side": 1,
+      "message": "We already went through an effort to change \"att-aic\" to \"CloudOwner\" everywhere. I don\u0027t think we should be reintroducing this.",
+      "range": {
+        "startLine": 137,
+        "startChar": 22,
+        "endLine": 137,
+        "endChar": 23
+      },
+      "revId": "8af8d646eb4aad131f374ce320eab1717706273f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_37ee65b5",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/resources/application-test.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2018-12-06T16:35:11Z",
+      "side": 1,
+      "message": "We already went through an effort to change \"att-aic\" to \"CloudOwner\" everywhere. I don\u0027t think we should be reintroducing this.",
+      "range": {
+        "startLine": 221,
+        "startChar": 22,
+        "endLine": 221,
+        "endChar": 23
+      },
+      "revId": "8af8d646eb4aad131f374ce320eab1717706273f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
