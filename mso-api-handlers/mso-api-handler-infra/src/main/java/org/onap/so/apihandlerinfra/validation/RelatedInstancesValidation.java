@@ -133,7 +133,7 @@ public class RelatedInstancesValidation implements ValidationRule{
 		          		if(InstanceDirection.source.equals(relatedInstance.getInstanceDirection()) && relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
 		          			isSourceVnfPresent = true;
 		          		} else if(InstanceDirection.destination.equals(relatedInstance.getInstanceDirection()) && 
-		          				(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) || (relatedInstanceModelInfo.getModelType().equals(ModelType.pnf) && reqVersion == 6))) {
+		          				(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) || (relatedInstanceModelInfo.getModelType().equals(ModelType.pnf)))) {
 		          			isDestinationVnfPresent = true;
 		          		}
 		          	}
