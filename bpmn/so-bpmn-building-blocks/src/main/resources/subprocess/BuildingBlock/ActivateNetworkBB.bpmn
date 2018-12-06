@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="ActivateNetworkBB" name="ActivateNetworkBB" isExecutable="true">
     <bpmn2:startEvent id="activateNetwork_startEvent">
       <bpmn2:outgoing>SequenceFlow_05elmhj</bpmn2:outgoing>
@@ -9,15 +9,24 @@
     </bpmn2:endEvent>
     <bpmn2:serviceTask id="Activate_Network_SDNC_ServiceTask" name="&#10;SDNC&#10;Activate&#10;(network)&#10;" camunda:expression="${SDNCActivateTasks.activateNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_05elmhj</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0xbvwsu</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_0zzlwi7</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:serviceTask id="Activate_Network_AAI_ServiceTask" name="&#10;AAI&#10;Update&#10;(network)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusActiveNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn2:incoming>SequenceFlow_0xbvwsu</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_0wb238v</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_18atf08</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_05elmhj" sourceRef="activateNetwork_startEvent" targetRef="Activate_Network_SDNC_ServiceTask" />
-    <bpmn2:sequenceFlow id="SequenceFlow_0xbvwsu" sourceRef="Activate_Network_SDNC_ServiceTask" targetRef="Activate_Network_AAI_ServiceTask" />
     <bpmn2:sequenceFlow id="SequenceFlow_18atf08" sourceRef="Activate_Network_AAI_ServiceTask" targetRef="activateNetwork_EndEvent" />
+    <bpmn2:callActivity id="CallActivity_sdncHandler" name="SDNC Activate (network)" calledElement="SDNCHandler">
+      <bpmn2:extensionElements>
+        <camunda:in source="SDNCRequest" target="SDNCRequest" />
+        <camunda:out source="SDNCResponse" target="SDNCResponse" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_0zzlwi7</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0wb238v</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_0zzlwi7" sourceRef="Activate_Network_SDNC_ServiceTask" targetRef="CallActivity_sdncHandler" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0wb238v" sourceRef="CallActivity_sdncHandler" targetRef="Activate_Network_AAI_ServiceTask" />
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -30,16 +39,16 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_10l9a3s_di" bpmnElement="activateNetwork_EndEvent">
-        <dc:Bounds x="975" y="-55" width="36" height="36" />
+        <dc:Bounds x="1115" y="-55" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="971" y="-19" width="46" height="12" />
+          <dc:Bounds x="1089" y="-19" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1k7d8ih_di" bpmnElement="Activate_Network_SDNC_ServiceTask">
         <dc:Bounds x="653" y="-77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1911vum_di" bpmnElement="Activate_Network_AAI_ServiceTask">
-        <dc:Bounds x="802" y="-77" width="100" height="80" />
+        <dc:Bounds x="969" y="-77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_05elmhj_di" bpmnElement="SequenceFlow_05elmhj">
         <di:waypoint xsi:type="dc:Point" x="581" y="-37" />
@@ -48,22 +57,28 @@
           <dc:Bounds x="617" y="-62" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0xbvwsu_di" bpmnElement="SequenceFlow_0xbvwsu">
-        <di:waypoint xsi:type="dc:Point" x="753" y="-37" />
-        <di:waypoint xsi:type="dc:Point" x="778" y="-37" />
-        <di:waypoint xsi:type="dc:Point" x="778" y="-37" />
-        <di:waypoint xsi:type="dc:Point" x="802" y="-37" />
+      <bpmndi:BPMNEdge id="SequenceFlow_18atf08_di" bpmnElement="SequenceFlow_18atf08">
+        <di:waypoint xsi:type="dc:Point" x="1069" y="-37" />
+        <di:waypoint xsi:type="dc:Point" x="1115" y="-37" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="793" y="-37" width="0" height="0" />
+          <dc:Bounds x="1047" y="-52" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_18atf08_di" bpmnElement="SequenceFlow_18atf08">
-        <di:waypoint xsi:type="dc:Point" x="902" y="-37" />
-        <di:waypoint xsi:type="dc:Point" x="939" y="-37" />
-        <di:waypoint xsi:type="dc:Point" x="939" y="-37" />
-        <di:waypoint xsi:type="dc:Point" x="975" y="-37" />
+      <bpmndi:BPMNShape id="CallActivity_0g1zk8g_di" bpmnElement="CallActivity_sdncHandler">
+        <dc:Bounds x="802" y="-77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zzlwi7_di" bpmnElement="SequenceFlow_0zzlwi7">
+        <di:waypoint xsi:type="dc:Point" x="753" y="-37" />
+        <di:waypoint xsi:type="dc:Point" x="802" y="-37" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="954" y="-37" width="0" height="0" />
+          <dc:Bounds x="777.5" y="-58" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wb238v_di" bpmnElement="SequenceFlow_0wb238v">
+        <di:waypoint xsi:type="dc:Point" x="902" y="-37" />
+        <di:waypoint xsi:type="dc:Point" x="969" y="-37" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="935.5" y="-58" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

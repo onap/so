@@ -33,14 +33,16 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class ActivateNetworkBBTest extends BaseBPMNTest{
     @Test
     public void sunnyDayActivateNetwork_Test() throws InterruptedException {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateNetworkBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("activateNetwork_startEvent","Activate_Network_SDNC_ServiceTask","Activate_Network_AAI_ServiceTask","activateNetwork_EndEvent");     
+        assertThat(pi).isStarted().hasPassedInOrder("activateNetwork_startEvent","Activate_Network_SDNC_ServiceTask","CallActivity_sdncHandler","Activate_Network_AAI_ServiceTask","activateNetwork_EndEvent");     
         assertThat(pi).isEnded();
     }
 
 	@Test	
 	public void rainyDayActivateNetwork_Test() throws Exception {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks).updateOrchestrationStatusActiveNetwork(any(BuildingBlockExecution.class));
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateNetworkBB", variables);
 		assertThat(pi).isStarted()

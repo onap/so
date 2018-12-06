@@ -21,7 +21,7 @@
 package org.onap.so.client.orchestration;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -30,121 +30,100 @@ import static org.mockito.Mockito.verify;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
-import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
-import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.onap.so.client.sdnc.mapper.ServiceTopologyOperationMapper;
-
-import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
-import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class SDNCServiceInstanceResourcesTest  extends TestDataSetup{
+	
 	@InjectMocks
     private SDNCServiceInstanceResources sdncServiceInstanceResources;
-	
-
 	@Mock
 	protected ServiceTopologyOperationMapper MOCK_serviceTopologyOperationMapper;
-	
 	private RequestContext requestContext;
 	private ServiceInstance serviceInstance;
 	private Customer customer;
 	
-	@Mock
-	protected SDNCClient MOCK_sdncClient;
-	
 	@Before
 	public void before() {
 		requestContext = buildRequestContext();
-		
 		serviceInstance = buildServiceInstance();
-
 		customer = buildCustomer();
-
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 	}
 	
 	@Test
 	public void assignServiceInstanceSuccessTest() throws Exception {
 		doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.ASSIGN), eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
-		doReturn("test").when(MOCK_sdncClient).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
 		sdncServiceInstanceResources.assignServiceInstance(serviceInstance, customer, requestContext);
-		verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
+		verify(MOCK_serviceTopologyOperationMapper, times(1)).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.ASSIGN), eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
 	}
 	
 	@Test
 	public void assignServiceInstanceExceptionTest() throws Exception {
 		expectedException.expect(Exception.class);
-		doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.ASSIGN), eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
-		doThrow(Exception.class).when(MOCK_sdncClient).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
+		doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.ASSIGN), eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
 		sdncServiceInstanceResources.assignServiceInstance(serviceInstance, customer, requestContext);
 	}
 	
 	@Test
 	public void deleteServiceInstanceSuccessTest() throws Exception {
 		doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE), eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
-		doReturn("test").when(MOCK_sdncClient).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
 		sdncServiceInstanceResources.deleteServiceInstance(serviceInstance, customer, requestContext);
-		verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
+		verify(MOCK_serviceTopologyOperationMapper, times(1)).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE), eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
 	}
 	
 	@Test
 	public void deleteServiceInstanceExceptionTest() throws Exception {
 		expectedException.expect(Exception.class);
-		doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE), eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
-		doThrow(Exception.class).when(MOCK_sdncClient).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
+		doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE), eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
 		sdncServiceInstanceResources.deleteServiceInstance(serviceInstance, customer, requestContext);
 	}
 	
 	@Test
 	public void unassignServiceInstanceSuccessTest() throws Exception {
 		doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE), eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
-		doReturn("test").when(MOCK_sdncClient).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
 		sdncServiceInstanceResources.unassignServiceInstance(serviceInstance, customer, requestContext);
-		verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
+		verify(MOCK_serviceTopologyOperationMapper, times(1)).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE), eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
 	}
 	
 	@Test
 	public void unassignServiceInstanceExceptionTest() throws Exception {
 		expectedException.expect(Exception.class);
-		doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE), eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
-		doThrow(Exception.class).when(MOCK_sdncClient).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
+		doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE), eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
 		sdncServiceInstanceResources.unassignServiceInstance(serviceInstance,customer, requestContext);
 	}
 
 	@Test
 	public void deactivateServiceInstanceSuccessTest() throws Exception {
-		doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE), eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
-		doReturn("test").when(MOCK_sdncClient).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
+		doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE), eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
 		sdncServiceInstanceResources.deactivateServiceInstance(serviceInstance, customer, requestContext);
-		verify(MOCK_sdncClient, times(1)).post(ArgumentMatchers.isNull(), eq(SDNCTopology.SERVICE));
+		verify(MOCK_serviceTopologyOperationMapper, times(1)).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE), eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
 	}
 	
 	@Test
 	public void deactivateServiceInstanceExceptionTest() throws Exception {
 		expectedException.expect(Exception.class);
-		doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE), eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
-		doThrow(Exception.class).when(MOCK_sdncClient).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
+		doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE), eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
 		sdncServiceInstanceResources.deactivateServiceInstance(serviceInstance, customer, requestContext);
 	}
 
 	@Test
 	public void test_changeModelServiceInstance() throws MapperException, BadResponseException {
 		doReturn(new GenericResourceApiServiceOperationInformation()).when(MOCK_serviceTopologyOperationMapper).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.CHANGE_ASSIGN), eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
-		doReturn("test").when(MOCK_sdncClient).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
 		sdncServiceInstanceResources.changeModelServiceInstance(serviceInstance, customer, requestContext);
-		verify(MOCK_sdncClient, times(1)).post(any(GenericResourceApiServiceOperationInformation.class), eq(SDNCTopology.SERVICE));
+		verify(MOCK_serviceTopologyOperationMapper, times(1)).reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.CHANGE_ASSIGN), eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE), any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
 	}
 }

@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
   <bpmn:process id="UnassignNetworkBB" name="UnassignNetworkBB" isExecutable="true">
     <bpmn:startEvent id="Start_UnassignNetworkBB" name="start">
       <bpmn:outgoing>SequenceFlow_0zaz9o2</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:serviceTask id="Task_SNDCUnAssign" name="&#10;SDNC&#10;Unassign&#10;(network)&#10;" camunda:expression="${SDNCUnassignTasks.unassignNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0le4vrj</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1ks8kmt</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1woj6rc</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="End_UnassignNetworkBB" name="end">
       <bpmn:incoming>SequenceFlow_0csh9dc</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0zaz9o2" sourceRef="Start_UnassignNetworkBB" targetRef="Task_VfModuleRelatioship" />
-    <bpmn:sequenceFlow id="SequenceFlow_1ks8kmt" sourceRef="Task_SNDCUnAssign" targetRef="Task_DeleteNetwork" />
     <bpmn:sequenceFlow id="SequenceFlow_0csh9dc" sourceRef="Task_DeleteNetwork" targetRef="End_UnassignNetworkBB" />
     <bpmn:serviceTask id="Task_DeleteNetwork" name="&#10;AAI&#10;Delete&#10;(network)&#10;" camunda:expression="${AAIDeleteTasks.deleteNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_1ks8kmt</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_15oc7ot</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0csh9dc</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_VfModuleRelatioship" name="Veriyf &#39;vf-module&#39; relationship exists" camunda:expression="${UnassignNetworkBB.checkRelationshipRelatedTo(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)), &#34;vf-module&#34;)}">
@@ -28,6 +27,16 @@
       <bpmn:incoming>SequenceFlow_0mxe1a7</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0le4vrj</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:callActivity id="CallActivity_sdncHandlerCall" name="SDNC Unassign (network)" calledElement="SDNCHandler">
+      <bpmn:extensionElements>
+        <camunda:in source="SDNCRequest" target="SDNCRequest" />
+        <camunda:out source="SDNCResponse" target="SDNCResponse" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1woj6rc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_15oc7ot</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_1woj6rc" sourceRef="Task_SNDCUnAssign" targetRef="CallActivity_sdncHandlerCall" />
+    <bpmn:sequenceFlow id="SequenceFlow_15oc7ot" sourceRef="CallActivity_sdncHandlerCall" targetRef="Task_DeleteNetwork" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="UnassignNetworkBB">
@@ -41,9 +50,9 @@
         <dc:Bounds x="665" y="97" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1h93h9d_di" bpmnElement="End_UnassignNetworkBB">
-        <dc:Bounds x="946" y="119" width="36" height="36" />
+        <dc:Bounds x="1084" y="119" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="955" y="159" width="18" height="12" />
+          <dc:Bounds x="1093" y="159" width="18" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0zaz9o2_di" bpmnElement="SequenceFlow_0zaz9o2">
@@ -53,22 +62,15 @@
           <dc:Bounds x="295" y="122" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1ks8kmt_di" bpmnElement="SequenceFlow_1ks8kmt">
-        <di:waypoint xsi:type="dc:Point" x="765" y="137" />
-        <di:waypoint xsi:type="dc:Point" x="804" y="137" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="785" y="122" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0csh9dc_di" bpmnElement="SequenceFlow_0csh9dc">
-        <di:waypoint xsi:type="dc:Point" x="904" y="137" />
-        <di:waypoint xsi:type="dc:Point" x="946" y="137" />
+        <di:waypoint xsi:type="dc:Point" x="1054" y="137" />
+        <di:waypoint xsi:type="dc:Point" x="1084" y="137" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="925" y="122" width="0" height="0" />
+          <dc:Bounds x="1024" y="122" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0s6d1be_di" bpmnElement="Task_DeleteNetwork">
-        <dc:Bounds x="804" y="97" width="100" height="80" />
+        <dc:Bounds x="954" y="97" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_194x6el_di" bpmnElement="Task_VfModuleRelatioship">
         <dc:Bounds x="375" y="97" width="100" height="80" />
@@ -90,6 +92,25 @@
       <bpmndi:BPMNShape id="ServiceTask_1ev9w69_di" bpmnElement="Task_GetCloudRegionVersion">
         <dc:Bounds x="524" y="97" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_172bbje_di" bpmnElement="CallActivity_sdncHandlerCall">
+        <dc:Bounds x="813" y="97" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1woj6rc_di" bpmnElement="SequenceFlow_1woj6rc">
+        <di:waypoint xsi:type="dc:Point" x="765" y="137" />
+        <di:waypoint xsi:type="dc:Point" x="787" y="137" />
+        <di:waypoint xsi:type="dc:Point" x="787" y="137" />
+        <di:waypoint xsi:type="dc:Point" x="813" y="137" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="802" y="131" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_15oc7ot_di" bpmnElement="SequenceFlow_15oc7ot">
+        <di:waypoint xsi:type="dc:Point" x="913" y="137" />
+        <di:waypoint xsi:type="dc:Point" x="954" y="137" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="933.5" y="116" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

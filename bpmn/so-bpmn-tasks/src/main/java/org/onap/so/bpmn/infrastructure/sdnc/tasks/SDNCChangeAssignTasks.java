@@ -20,6 +20,10 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
+import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -36,6 +40,8 @@ import org.onap.so.client.orchestration.SDNCNetworkResources;
 import org.onap.so.client.orchestration.SDNCServiceInstanceResources;
 import org.onap.so.client.orchestration.SDNCVfModuleResources;
 import org.onap.so.client.orchestration.SDNCVnfResources;
+import org.onap.so.client.sdnc.beans.SDNCRequest;
+import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,9 +64,11 @@ public class SDNCChangeAssignTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			
-			String response = sdncServiceInstanceResources.changeModelServiceInstance(serviceInstance, gBBInput.getCustomer(), gBBInput.getRequestContext());
-			execution.setVariable("SDNCChangeAssignTasks.changeModelServiceInstance.response", response);
+			GenericResourceApiServiceOperationInformation req = sdncServiceInstanceResources.changeModelServiceInstance(serviceInstance, gBBInput.getCustomer(), gBBInput.getRequestContext());
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.SERVICE);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch(Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
@@ -71,9 +79,11 @@ public class SDNCChangeAssignTasks {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			
-			String response = sdncVnfResources.changeModelVnf(genericVnf, serviceInstance, gBBInput.getCustomer(), gBBInput.getCloudRegion(), gBBInput.getRequestContext());
-			execution.setVariable("SDNCChangeModelVnfResponse", response);
+			GenericResourceApiVnfOperationInformation req = sdncVnfResources.changeModelVnf(genericVnf, serviceInstance, gBBInput.getCustomer(), gBBInput.getCloudRegion(), gBBInput.getRequestContext());
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.VNF);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch(Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
@@ -84,9 +94,11 @@ public class SDNCChangeAssignTasks {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			L3Network network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			
-			String sdncResponse = sdncNetworkResources.changeAssignNetwork(network, serviceInstance, gBBInput.getCustomer(), gBBInput.getRequestContext(), gBBInput.getCloudRegion());
-			execution.setVariable("SDNCChangeAssignNetworkResponse", sdncResponse);
+			GenericResourceApiNetworkOperationInformation req = sdncNetworkResources.changeAssignNetwork(network, serviceInstance, gBBInput.getCustomer(), gBBInput.getRequestContext(), gBBInput.getCloudRegion());
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.NETWORK);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch(Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
@@ -101,8 +113,11 @@ public class SDNCChangeAssignTasks {
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
 			Customer customer = gBBInput.getCustomer();
-			String response = sdncVfModuleResources.changeAssignVfModule(vfModule, vnf, serviceInstance, customer, cloudRegion, requestContext);
-			execution.setVariable("SDNCChangeAssignVfModuleResponse", response);
+			GenericResourceApiVfModuleOperationInformation req = sdncVfModuleResources.changeAssignVfModule(vfModule, vnf, serviceInstance, customer, cloudRegion, requestContext);
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.VFMODULE);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}

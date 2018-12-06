@@ -20,6 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
+import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -36,6 +39,8 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.SDNCNetworkResources;
 import org.onap.so.client.orchestration.SDNCVfModuleResources;
 import org.onap.so.client.orchestration.SDNCVnfResources;
+import org.onap.so.client.sdnc.beans.SDNCRequest;
+import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -63,8 +68,11 @@ public class SDNCActivateTasks {
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			Customer customer = gBBInput.getCustomer();
-			String response = sdncVnfResources.activateVnf(vnf, serviceInstance, customer, cloudRegion, requestContext);
-			execution.setVariable("SDNCResponse", response);
+			GenericResourceApiVnfOperationInformation req = sdncVnfResources.activateVnf(vnf, serviceInstance, customer, cloudRegion, requestContext);
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.VNF);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
@@ -76,18 +84,18 @@ public class SDNCActivateTasks {
 	 * @throws BBObjectNotFoundException 
 	 */
 	public void activateNetwork(BuildingBlockExecution execution) throws BBObjectNotFoundException {
-		execution.setVariable("sdncNetworkActivateRollback", false);
-		GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-		
-		L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
-		ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-
-		Customer customer = gBBInput.getCustomer();
-		RequestContext requestContext = gBBInput.getRequestContext();
-		CloudRegion cloudRegion = gBBInput.getCloudRegion();
-		try {
-			sdncNetworkResources.activateNetwork(l3network, serviceInstance, customer, requestContext, cloudRegion);
-			execution.setVariable("sdncNetworkActivateRollback", true);
+		try{
+			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			Customer customer = gBBInput.getCustomer();
+			RequestContext requestContext = gBBInput.getRequestContext();
+			CloudRegion cloudRegion = gBBInput.getCloudRegion();
+			GenericResourceApiNetworkOperationInformation req = sdncNetworkResources.activateNetwork(l3network, serviceInstance, customer, requestContext, cloudRegion);
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.NETWORK);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
@@ -108,12 +116,12 @@ public class SDNCActivateTasks {
 					execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
 			Customer customer = gBBInput.getCustomer();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
-			execution.setVariable("sdncActivateVfModuleRollback", false);
-
-			String response = sdncVfModuleResources.activateVfModule(vfModule, vnf, serviceInstance, customer,
+			GenericResourceApiVfModuleOperationInformation req = sdncVfModuleResources.activateVfModule(vfModule, vnf, serviceInstance, customer,
 					cloudRegion, requestContext);
-			execution.setVariable("SDNCActivateVfModuleResponse", response);
-			execution.setVariable("sdncActivateVfModuleRollback", true);
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.VFMODULE);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}

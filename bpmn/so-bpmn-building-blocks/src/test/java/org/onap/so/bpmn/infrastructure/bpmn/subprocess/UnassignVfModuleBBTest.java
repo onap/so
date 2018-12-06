@@ -32,10 +32,12 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class UnassignVfModuleBBTest extends BaseBPMNTest{
 	@Test
 	public void sunnyDayUnassignVfModule_Test() throws InterruptedException {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVfModuleBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted().hasPassedInOrder("UnassignVfModuleBB_Start", 
 				"UnassignVfModule",
+				"CallActivity_sdncHandler",
 				"DeleteVfModule",				
 				"UnassignVfModuleBB_End");
 		assertThat(pi).isEnded();
@@ -43,6 +45,7 @@ public class UnassignVfModuleBBTest extends BaseBPMNTest{
 
 	@Test
 	public void rainyDayUnassignVfModuleAAIDeleteFailed_Test() throws Exception {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiDeleteTasks).deleteVfModule(any(BuildingBlockExecution.class));
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVfModuleBB", variables);
 		assertThat(pi).isNotNull();

@@ -34,15 +34,17 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class DeactivateVfModuleBBTest extends BaseBPMNTest{
 	@Test
 	public void sunnyDay() throws InterruptedException, IOException {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVfModuleBB", variables);
 		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("DeactivateVfModuleBB_Start", "DeactivateVfModule",
+		assertThat(pi).isStarted().hasPassedInOrder("DeactivateVfModuleBB_Start", "DeactivateVfModule", "CallActivity_sdncHandler",
 				"UpdateVfModuleDeactivateStatus", "DeactivateVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}	
 	
 	@Test
 	public void rainyDay() throws Exception {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		doThrow(BpmnError.class).when(aaiUpdateTasks).updateOrchestrationStatusDeactivateVfModule(any(BuildingBlockExecution.class));
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVfModuleBB", variables);
 		assertThat(pi).isNotNull();

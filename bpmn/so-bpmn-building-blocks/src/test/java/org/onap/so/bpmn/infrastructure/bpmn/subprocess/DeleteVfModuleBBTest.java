@@ -33,6 +33,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class DeleteVfModuleBBTest extends BaseBPMNTest{
 	@Test
 	public void sunnyDay() throws InterruptedException, IOException {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVfModuleBB", variables);
 		assertThat(pi).isNotNull();

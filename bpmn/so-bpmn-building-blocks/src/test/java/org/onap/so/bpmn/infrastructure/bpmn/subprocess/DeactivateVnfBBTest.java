@@ -34,10 +34,11 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class DeactivateVnfBBTest extends BaseBPMNTest{
 	@Test
 	public void sunnyDay() throws InterruptedException, IOException {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVnfBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted().hasPassedInOrder("Start_DeactivateVnfBB","Task_SDNCAdapterVnfTopologyDeactivate",
-				"Task_DeactivateOrchestrationStatusVnf", "End_DeactivateVnfBB");
+				"CallActivity_sdncHandler", "Task_DeactivateOrchestrationStatusVnf", "End_DeactivateVnfBB");
 		assertThat(pi).isEnded();
 	}
 
@@ -54,6 +55,7 @@ public class DeactivateVnfBBTest extends BaseBPMNTest{
 
 	@Test
 	public void rainyDayDeactivateVnfAAIError_Test() throws Exception {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks).updateOrchestrationStatusAssignedVnf(any(BuildingBlockExecution.class));
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVnfBB", variables);
 		assertThat(pi).isNotNull();

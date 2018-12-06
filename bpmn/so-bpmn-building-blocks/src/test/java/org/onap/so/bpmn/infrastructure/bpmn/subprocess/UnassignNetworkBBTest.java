@@ -33,14 +33,16 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class UnassignNetworkBBTest  extends BaseBPMNTest {
     @Test
     public void sunnyDayAssignNetwork_Test() throws InterruptedException {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignNetworkBB",variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_UnassignNetworkBB","Task_VfModuleRelatioship","Task_GetCloudRegionVersion","Task_SNDCUnAssign","Task_DeleteNetwork","End_UnassignNetworkBB");     
+        assertThat(pi).isStarted().hasPassedInOrder("Start_UnassignNetworkBB","Task_VfModuleRelatioship","Task_GetCloudRegionVersion","Task_SNDCUnAssign","CallActivity_sdncHandlerCall","Task_DeleteNetwork","End_UnassignNetworkBB");     
         assertThat(pi).isEnded();
     }
 
 	@Test
 	public void rainyDayAssignNetwork_Test() throws Exception {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(unassignNetworkBB).checkRelationshipRelatedTo(any(BuildingBlockExecution.class), eq("vf-module"));
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignNetworkBB", variables);
 		assertThat(pi).isNotNull();

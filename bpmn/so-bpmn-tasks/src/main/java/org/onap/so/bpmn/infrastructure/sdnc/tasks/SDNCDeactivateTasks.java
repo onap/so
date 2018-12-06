@@ -20,6 +20,10 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
+import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -36,6 +40,8 @@ import org.onap.so.client.orchestration.SDNCNetworkResources;
 import org.onap.so.client.orchestration.SDNCServiceInstanceResources;
 import org.onap.so.client.orchestration.SDNCVfModuleResources;
 import org.onap.so.client.orchestration.SDNCVnfResources;
+import org.onap.so.client.sdnc.beans.SDNCRequest;
+import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -61,23 +67,17 @@ public class SDNCDeactivateTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			RequestContext requestContext = gBBInput.getRequestContext();
-
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID,
-					execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID,
-					execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID,
-					execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
 			Customer customer = gBBInput.getCustomer();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
-			execution.setVariable("sdncDeactivateVfModuleRollback", false);
-
-			String response = sdncVfModuleResources.deactivateVfModule(vfModule, vnf, serviceInstance, customer,
+			GenericResourceApiVfModuleOperationInformation req = sdncVfModuleResources.deactivateVfModule(vfModule, vnf, serviceInstance, customer,
 					cloudRegion, requestContext);
-			execution.setVariable("SDNCDeactivateVfModuleResponse", response);
-			execution.setVariable("sdncDeactivateVfModuleRollback", true);
-		} catch (Exception ex) {
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.VFMODULE);
+			execution.setVariable("SDNCRequest", sdncRequest);		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
 	}
@@ -93,15 +93,15 @@ public class SDNCDeactivateTasks {
 			RequestContext requestContext = gBBInput.getRequestContext();
 			ServiceInstance serviceInstance = null;
 			GenericVnf vnf = null;
-					
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID,
-					execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID,
-					execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			Customer customer = gBBInput.getCustomer();
-			String response = sdncVnfResources.deactivateVnf(vnf, serviceInstance, customer, cloudRegion, requestContext);
-			execution.setVariable("SDNCDeactivateVnfResponse", response);
+			GenericResourceApiVnfOperationInformation req = sdncVnfResources.deactivateVnf(vnf, serviceInstance, customer, cloudRegion, requestContext);
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.VNF);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
@@ -119,10 +119,11 @@ public class SDNCDeactivateTasks {
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID,
 					execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 			Customer customer = gBBInput.getCustomer();
-			execution.setVariable("sdncServiceInstanceRollback", false);
-			String response = sdncSIResources.deactivateServiceInstance(serviceInstance, customer, requestContext);
-			execution.setVariable("deactivateServiceInstanceSDNCResponse", response);
-			execution.setVariable("sdncServiceInstanceRollback", true);
+			GenericResourceApiServiceOperationInformation req = sdncSIResources.deactivateServiceInstance(serviceInstance, customer, requestContext);
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.SERVICE);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
@@ -134,7 +135,6 @@ public class SDNCDeactivateTasks {
 	 * @param execution
 	 */
 	public void deactivateNetwork(BuildingBlockExecution execution) {
-		execution.setVariable("SDNCDeactivateTasks.deactivateNetwork.rollback", false);
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
@@ -142,11 +142,12 @@ public class SDNCDeactivateTasks {
 			Customer customer = gBBInput.getCustomer();
 			RequestContext requestContext = gBBInput.getRequestContext();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
-
-			String response = sdncNetworkResources.deactivateNetwork(l3Network, serviceInstance, customer,
+			GenericResourceApiNetworkOperationInformation req = sdncNetworkResources.deactivateNetwork(l3Network, serviceInstance, customer,
 					requestContext, cloudRegion);
-			execution.setVariable("SDNCDeactivateTasks.deactivateNetwork.response", response);
-			execution.setVariable("SDNCDeactivateTasks.deactivateNetwork.rollback", true);
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.NETWORK);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}

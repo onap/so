@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
   <bpmn:process id="DeactivateVfModuleBB" name="DeactivateVfModuleBB" isExecutable="true">
     <bpmn:startEvent id="DeactivateVfModuleBB_Start" name="Start">
       <bpmn:outgoing>SequenceFlow_0m379r2</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:serviceTask id="DeactivateVfModule" name="&#10;SDNC &#10;Deactivate&#10;(vf module)&#10;" camunda:expression="${SDNCDeactivateTasks.deactivateVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0m379r2</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_01bdpek</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_15ep3y7</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0m379r2" sourceRef="DeactivateVfModuleBB_Start" targetRef="DeactivateVfModule" />
     <bpmn:serviceTask id="UpdateVfModuleDeactivateStatus" name="&#10;AAI &#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusDeactivateVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_01bdpek</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1gx4xce</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1y1c7fh</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_01bdpek" sourceRef="DeactivateVfModule" targetRef="UpdateVfModuleDeactivateStatus" />
     <bpmn:endEvent id="DeactivateVfModuleBB_End" name="End">
       <bpmn:incoming>SequenceFlow_1y1c7fh</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1y1c7fh" sourceRef="UpdateVfModuleDeactivateStatus" targetRef="DeactivateVfModuleBB_End" />
+    <bpmn:callActivity id="CallActivity_sdncHandler" name="SDNC Deactivate (vf module)" calledElement="SDNCHandler">
+      <bpmn:extensionElements>
+        <camunda:in source="SDNCRequest" target="SDNCRequest" />
+        <camunda:out source="SDNCResponse" target="SDNCResponse" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_15ep3y7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1gx4xce</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_15ep3y7" sourceRef="DeactivateVfModule" targetRef="CallActivity_sdncHandler" />
+    <bpmn:sequenceFlow id="SequenceFlow_1gx4xce" sourceRef="CallActivity_sdncHandler" targetRef="UpdateVfModuleDeactivateStatus" />
   </bpmn:process>
   <bpmn:error id="Error_0qg4xhp" name="gDelegateError" errorCode="7000" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -29,40 +38,46 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0rz90rp_di" bpmnElement="DeactivateVfModule">
-        <dc:Bounds x="275" y="80" width="100" height="80" />
+        <dc:Bounds x="261" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0m379r2_di" bpmnElement="SequenceFlow_0m379r2">
         <di:waypoint xsi:type="dc:Point" x="209" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="275" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="261" y="120" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="242" y="99" width="0" height="12" />
+          <dc:Bounds x="190" y="99" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0lyevan_di" bpmnElement="UpdateVfModuleDeactivateStatus">
-        <dc:Bounds x="432" y="80" width="100" height="80" />
+        <dc:Bounds x="550" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_01bdpek_di" bpmnElement="SequenceFlow_01bdpek">
-        <di:waypoint xsi:type="dc:Point" x="375" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="401" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="401" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="432" y="120" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="416" y="114" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_1h4ik86_di" bpmnElement="DeactivateVfModuleBB_End">
-        <dc:Bounds x="589" y="102" width="36" height="36" />
+        <dc:Bounds x="686" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="598" y="142" width="19" height="12" />
+          <dc:Bounds x="695" y="142" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1y1c7fh_di" bpmnElement="SequenceFlow_1y1c7fh">
-        <di:waypoint xsi:type="dc:Point" x="532" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="557" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="557" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="589" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="650" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="686" y="120" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="572" y="114" width="0" height="12" />
+          <dc:Bounds x="623" y="99" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0pp1hlz_di" bpmnElement="CallActivity_sdncHandler">
+        <dc:Bounds x="401" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_15ep3y7_di" bpmnElement="SequenceFlow_15ep3y7">
+        <di:waypoint xsi:type="dc:Point" x="361" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="401" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="381" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gx4xce_di" bpmnElement="SequenceFlow_1gx4xce">
+        <di:waypoint xsi:type="dc:Point" x="501" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="550" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="525.5" y="99" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
