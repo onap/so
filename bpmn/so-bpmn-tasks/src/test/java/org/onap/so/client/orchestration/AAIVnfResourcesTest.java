@@ -40,12 +40,15 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.common.InjectionHelper;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
@@ -55,6 +58,9 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 	private GenericVnf genericVnf;
 
 	private ServiceInstance serviceInstance;
+	
+	private CloudRegion cloudRegion;
+	
 	@Mock
 	protected AAIResourcesClient MOCK_aaiResourcesClient;
 
@@ -71,6 +77,7 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 	public void before() {
 		serviceInstance = buildServiceInstance();
 		genericVnf = buildGenericVnf();
+		cloudRegion = buildCloudRegion();
 		 doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
 	}
 
@@ -158,5 +165,20 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 		boolean inMaintFlag = aaiVnfResources.checkInMaintFlag("vnfId");
 		verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.GenericVnf.class),isA(AAIResourceUri.class));
 		assertEquals(inMaintFlag, true);
+	}
+	
+	@Test
+	public void connectVnfToTenantTest() throws Exception {
+		aaiVnfResources.connectVnfToTenant(genericVnf, cloudRegion);
+		verify(MOCK_aaiResourcesClient, times(1)).connect(eq(AAIUriFactory.createResourceUri(AAIObjectType.TENANT, 
+				cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), cloudRegion.getTenantId())), 
+				eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnf.getVnfId())));
+	}
+	
+	@Test
+	public void connectVnfToCloudRegionTest() throws Exception {
+		aaiVnfResources.connectVnfToCloudRegion(genericVnf, cloudRegion);
+		verify(MOCK_aaiResourcesClient, times(1)).connect(eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, 
+				cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())), eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnf.getVnfId())));
 	}
 }

@@ -354,6 +354,34 @@ public class AAICreateTasks {
 	 * @param execution
 	 * @throws Exception
 	 */
+	public void connectVnfToCloudRegion(BuildingBlockExecution execution) {
+		try {
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			aaiVnfResources.connectVnfToCloudRegion(vnf, execution.getGeneralBuildingBlock().getCloudRegion());
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}	
+	}
+	
+	/**
+	 * BPMN access method to establish relationships in AAI
+	 * @param execution
+	 * @throws Exception
+	 */
+	public void connectVnfToTenant(BuildingBlockExecution execution) {
+		try {
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			aaiVnfResources.connectVnfToTenant(vnf, execution.getGeneralBuildingBlock().getCloudRegion());
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}	
+	}
+	
+	/**
+	 * BPMN access method to establish relationships in AAI
+	 * @param execution
+	 * @throws Exception
+	 */
 	public void connectNetworkToNetworkCollectionServiceInstance(BuildingBlockExecution execution) {
 		try {
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));

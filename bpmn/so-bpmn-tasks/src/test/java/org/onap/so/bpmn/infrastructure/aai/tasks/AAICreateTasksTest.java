@@ -417,4 +417,20 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		aaiCreateTasks.createConfiguration(execution);
 		verify(aaiConfigurationResources, times(1)).createConfiguration(configuration);
 	}
+	
+	@Test
+	public void connectVnfToCloudRegionTest() throws Exception {
+		gBBInput = execution.getGeneralBuildingBlock();
+		doNothing().when(aaiVnfResources).connectVnfToCloudRegion(genericVnf, gBBInput.getCloudRegion());
+		aaiCreateTasks.connectVnfToCloudRegion(execution);
+		verify(aaiVnfResources, times(1)).connectVnfToCloudRegion(genericVnf, gBBInput.getCloudRegion());
+	}
+	
+	@Test
+	public void connectVnfTenantTest() throws Exception {
+		gBBInput = execution.getGeneralBuildingBlock();
+		doNothing().when(aaiVnfResources).connectVnfToTenant(genericVnf, gBBInput.getCloudRegion());
+		aaiCreateTasks.connectVnfToTenant(execution);
+		verify(aaiVnfResources, times(1)).connectVnfToTenant(genericVnf, gBBInput.getCloudRegion());
+	}
 }

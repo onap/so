@@ -38,7 +38,7 @@ public class AssignVnfBBTest extends BaseBPMNTest {
 		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVnfBB", variables);
 		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf", "Task_createPlatform", "Task_createLineOfBusiness", "Task_createInstanceGroups",
+		assertThat(pi).isStarted().hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf", "ServiceTask_ConnectVnfToCloudRegion", "ServiceTask_ConnectVnfToTenant", "Task_createPlatform", "Task_createLineOfBusiness", "Task_createInstanceGroups",
 				"Task_callHoming", "Task_SDNCAdapterVnfTopologyAssign","CallActivity_sdncAssign", "Task_UpdateVnfOrchestrationStatusAssigned",
 				"End_AssignVnfBB");
 		assertThat(pi).isEnded();

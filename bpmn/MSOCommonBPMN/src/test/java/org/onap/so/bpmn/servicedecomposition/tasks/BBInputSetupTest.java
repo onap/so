@@ -84,6 +84,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.Relationships;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.constants.Defaults;
@@ -137,7 +138,7 @@ public class BBInputSetupTest {
 		SPY_bbInputSetup.setBbInputSetupUtils(SPY_bbInputSetupUtils);
 		SPY_bbInputSetup.setMapperLayer(bbInputSetupMapperLayer);
 	}
-
+	
 	@Test
 	public void testGetAlaCarteServiceInstance() throws Exception {
 		ServiceInstance expected = mapper.readValue(

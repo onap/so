@@ -110,4 +110,18 @@ public class AAIVnfResources {
 				.orElse(new org.onap.aai.domain.yang.GenericVnf());
 		return vnf.isInMaint();
 	}
+	
+	public void connectVnfToCloudRegion(GenericVnf vnf, CloudRegion cloudRegion) {
+		AAIResourceUri cloudRegionURI = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION,
+				cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId());
+		AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
+		injectionHelper.getAaiClient().connect(cloudRegionURI, vnfURI);
+	}
+	
+	public void connectVnfToTenant(GenericVnf vnf, CloudRegion cloudRegion) {
+		AAIResourceUri tenantURI = AAIUriFactory.createResourceUri(AAIObjectType.TENANT,
+				cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), cloudRegion.getTenantId());
+		AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
+		injectionHelper.getAaiClient().connect(tenantURI, vnfURI);
+	}
 }

@@ -90,6 +90,7 @@ import org.onap.so.serviceinstancebeans.Vnfs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -112,6 +113,9 @@ public class BBInputSetup implements JavaDelegate {
 
 	@Autowired
 	private BBInputSetupMapperLayer mapperLayer;
+	
+	@Autowired
+	private CloudInfoFromAAI bbInputSetupHelper;
 
 	@Autowired
 	private ExceptionBuilder exceptionUtil;
@@ -981,11 +985,18 @@ public class BBInputSetup implements JavaDelegate {
 			Map<ResourceKey, String> lookupKeyMap, String bbName, GeneralBuildingBlock gBB, Service service,
 			String requestAction, CloudConfiguration cloudConfiguration) throws Exception {
 		ServiceInstance serviceInstance = gBB.getServiceInstance();
+		CloudRegion cloudRegion = null;
+		if(cloudConfiguration == null) {
+			Optional<CloudRegion> cloudRegionOp = bbInputSetupHelper.getCloudInfoFromAAI(serviceInstance);
+			if(cloudRegionOp.isPresent()) {
+				cloudRegion = cloudRegionOp.get();
+			}
+		}
 		if (cloudConfiguration != null && requestAction.equalsIgnoreCase("deleteInstance")) {
 			org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfiguration);
-			CloudRegion cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
-			gBB.setCloudRegion(cloudRegion);
+			cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
 		}
+		gBB.setCloudRegion(cloudRegion);
 		if (bbName.contains(VNF)) {
 			for (GenericVnf genericVnf : serviceInstance.getVnfs()) {
 				if (lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID) != null
