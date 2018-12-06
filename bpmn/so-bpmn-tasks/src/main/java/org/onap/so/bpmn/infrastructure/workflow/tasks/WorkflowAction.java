@@ -62,6 +62,7 @@ import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.Networks;
@@ -72,6 +73,7 @@ import org.onap.so.serviceinstancebeans.VfModules;
 import org.onap.so.serviceinstancebeans.Vnfs;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -89,7 +91,6 @@ public class WorkflowAction {
 	private static final String G_REQUEST_ID = "mso-request-id";
 	private static final String G_BPMN_REQUEST = "bpmnRequest";
 	private static final String G_ALACARTE = "aLaCarte";
-	private static final String CLOUD_OWNER = "cloudOwner";
 	private static final String G_APIVERSION = "apiVersion";
 	private static final String G_URI = "requestUri";
 	private static final String G_ISTOPLEVELFLOW = "isTopLevelFlow";
@@ -119,6 +120,9 @@ public class WorkflowAction {
 	private CatalogDbClient catalogDbClient;
 	@Autowired
 	private AAIConfigurationResources aaiConfigurationResources;
+	@Autowired
+    private Environment environment;
+	private String defaultCloudOwner = "org.onap.so.cloud-owner";
 
 	public void setBbInputSetupUtils(BBInputSetupUtils bbInputSetupUtils) {
 		this.bbInputSetupUtils = bbInputSetupUtils;
@@ -134,7 +138,6 @@ public class WorkflowAction {
 		final String bpmnRequest = (String) execution.getVariable(G_BPMN_REQUEST);
 		final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
 		final String apiVersion = (String) execution.getVariable(G_APIVERSION);
-		final String cloudOwner = (String) execution.getVariable(CLOUD_OWNER);
 		final String uri = (String) execution.getVariable(G_URI);
 		final String vnfType = (String) execution.getVariable(VNF_TYPE);
 		List<OrchestrationFlow> orchFlows = (List<OrchestrationFlow>) execution.getVariable(G_ORCHESTRATION_FLOW);
@@ -151,6 +154,12 @@ public class WorkflowAction {
 			execution.setVariable(G_ISTOPLEVELFLOW, true);
 			ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
 			RequestDetails requestDetails = sIRequest.getRequestDetails();
+			String cloudOwner = "";
+			try{
+				cloudOwner = requestDetails.getCloudConfiguration().getCloudOwner();
+			} catch (Exception ex) {
+				cloudOwner = environment.getProperty(defaultCloudOwner);
+			}
 			Resource resource = extractResourceIdAndTypeFromUri(uri);
 			WorkflowType resourceType = resource.getResourceType();
 			execution.setVariable("resourceName", resourceType.toString());

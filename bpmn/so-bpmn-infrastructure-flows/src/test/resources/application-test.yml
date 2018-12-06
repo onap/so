@@ -215,6 +215,10 @@ mso:
         callback: http://localhost:30253/mso/vnfAdapterNotify
       rollback:
         callback: http://localhost:30253/mso/vnfAdapterNotify
+org:
+  onap:
+    so:
+      cloud-owner: CloudOwner
 policy:
   auth: Basic dGVzdHBkcDphbHBoYTEyMw==
   client:

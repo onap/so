@@ -131,6 +131,10 @@ mso:
   service-plugin:
     third-sp-endpoint:
     oof-calc-endpoint:
+org:
+  onap:
+    so:
+      cloud-owner: CloudOwner
 policy:
   auth: Basic dGVzdHBkcDphbHBoYTEyMw==
   client:

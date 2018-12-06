@@ -185,6 +185,10 @@ oof:
   host: http://localhost:${wiremock.server.port}
   uri: /api/oof/v1/placement
   headers.auth: Basic dGVzdDp0ZXN0cHdk
+org:
+  onap:
+    so:
+      cloud-owner: att-aic
 spring:
   datasource:
     jdbc-url: jdbc:mariadb://localhost:3307/camundabpmn
