@@ -293,6 +293,36 @@
                "statusMessage":"Error parsing request.\n\tNo valid instanceName is specified"
             }
          }
+      },
+            {
+         "request":{
+            "requestId":"00032ab7-na18-42e5-965d-8ea592502018",
+            "requestScope":"instanceGroup",
+            "requestType":"addMembers",
+            "requestDetails":{
+               "modelInfo":{
+                  "modelType":"vfModule",
+                  "modelName":"test::base::module-0"
+               },
+               "requestInfo":{
+                  "source":"VID",
+                  "suppressRollback":false
+               },
+               "cloudConfiguration":{
+                  "tenantId":"6accefef3cb442ff9e644d589fb04107",
+                  "lcpCloudRegionId":"n6"
+               }
+            },
+            "instanceReferences":{
+               "instanceGroupId": "00032ab7-na18-42e5-965d-8ea592502019",
+  			   "instanceGroupName": "testInstanceGroup"
+            },
+            "requestStatus":{
+               "requestState":"PENDING",
+               "statusMessage":"STATUS: Adding members./FLOW STATUS: Building blocks 1 of 3 completed./RETRY STATUS: Retry 2/5 will be started in 8 min./ROLLBACK STATUS: Rollback has been completed successfully.",
+               "percentProgress":0
+            }
+         }
       }
    ]
 }
