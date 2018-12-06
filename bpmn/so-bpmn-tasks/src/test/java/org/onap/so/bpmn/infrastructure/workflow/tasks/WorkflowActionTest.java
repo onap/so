@@ -27,6 +27,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -52,15 +53,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.L3Network;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VfModules;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
+import org.onap.so.client.aai.entities.Relationships;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
@@ -83,6 +88,7 @@ import org.springframework.core.env.Environment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WorkflowActionTest extends BaseTaskTest {
+	
 	
 	@Mock
 	protected Environment environment;
@@ -683,6 +689,104 @@ public class WorkflowActionTest extends BaseTaskTest {
 		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
 		assertEqualsBulkFlowName(ebbs,"DeactivateNetworkBB","DeleteNetworkBB","UnassignNetworkBB","DeactivateNetworkBB","DeleteNetworkBB","UnassignNetworkBB","DeleteNetworkCollectionBB"
 				,"DeactivateServiceInstanceBB","UnassignServiceInstanceBB");
+	}
+	
+	@Test
+	public void selectExecutionListVnfMacroRecreateTest() throws Exception{
+		String gAction = "recreateInstance";
+		String resource = "Vnf";
+		execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+		execution.setVariable("requestAction", gAction);
+		String bpmnRequest = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/VnfMacroReplace.json")));
+		execution.setVariable("bpmnRequest", bpmnRequest);			
+		execution.setVariable("aLaCarte", false);
+		execution.setVariable("apiVersion", "7");
+		execution.setVariable("requestUri", "v7/serviceInstances/123/vnfs/1234/recreate");
+		execution.setVariable("serviceInstanceId", "123");
+		execution.setVariable("vnfId", "1234");
+		
+		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+		List<OrchestrationFlow> orchFlows = createFlowList("AAICheckVnfInMaintBB","AAISetVnfInMaintBB","DeactivateFabricConfigurationBB", "UnassignFabricConfigurationBB", "DeactivateVfModuleBB","DeleteVfModuleBB","DeactivateVnfBB","CreateVfModuleBB"
+				,"ActivateVfModuleBB","AssignFabricConfigurationBB","ActivateFabricConfigurationBB","ActivateVnfBB","SDNOVnfHealthCheckBB","AAIUnsetVnfInMaintBB");
+		northBoundRequest.setOrchestrationFlowList(orchFlows);	
+		
+		ServiceInstance serviceInstanceAAI = new ServiceInstance();
+		serviceInstanceAAI.setServiceInstanceId("123");
+		org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO = new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
+		org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf = new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
+		vnf.setVnfId("1234");
+		
+		org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+		vfModule.setVfModuleId("vfModule1");
+		vnf.getVfModules().add(vfModule);
+		org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 = new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+		vfModule2.setVfModuleId("vfModule2");
+		vnf.getVfModules().add(vfModule2);
+		
+		serviceInstanceMSO.getVnfs().add(vnf);
+		
+		doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("123");
+		doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
+		when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScope(gAction,resource,false)).thenReturn(northBoundRequest);
+		workflowAction.selectExecutionList(execution);
+		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+		assertEqualsBulkFlowName(ebbs,"AAICheckVnfInMaintBB","AAISetVnfInMaintBB","DeactivateVfModuleBB","DeactivateVfModuleBB","DeleteVfModuleBB","DeleteVfModuleBB","DeactivateVnfBB"
+				,"CreateVfModuleBB","CreateVfModuleBB","ActivateVfModuleBB","ActivateVfModuleBB","ActivateVnfBB","SDNOVnfHealthCheckBB","AAIUnsetVnfInMaintBB");
+	}
+	
+	@Test
+	public void selectExecutionListVnfMacroReplaceTest() throws Exception{
+		String gAction = "replaceInstance";
+		String resource = "Vnf";
+		execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+		execution.setVariable("requestAction", gAction);
+		String bpmnRequest = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/VnfMacroReplace.json")));
+		execution.setVariable("bpmnRequest", bpmnRequest);			
+		execution.setVariable("aLaCarte", false);
+		execution.setVariable("apiVersion", "7");
+		execution.setVariable("requestUri", "v7/serviceInstances/123/vnfs/1234/replace");
+		execution.setVariable("serviceInstanceId", "123");
+		execution.setVariable("vnfId", "1234");
+		
+		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+		List<OrchestrationFlow> orchFlows = createFlowList("AAICheckVnfInMaintBB","AAISetVnfInMaintBB","DeactivateFabricConfigurationBB","UnassignFabricConfigurationBB","DeactivateVfModuleBB","DeleteVfModuleBB"
+				,"DeactivateVnfBB","ChangeModelVfModuleBB","CreateVfModuleBB","ActivateVfModuleBB","AssignFabricConfigurationBB","ActivateFabricConfigurationBB","ChangeModelVnfBB","ActivateVnfBB","ChangeModelServiceInstanceBB","SDNOVnfHealthCheckBB","AAIUnsetVnfInMaintBB");
+		northBoundRequest.setOrchestrationFlowList(orchFlows);	
+
+		ServiceInstance serviceInstanceAAI = new ServiceInstance();
+		serviceInstanceAAI.setServiceInstanceId("123");
+		org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO = new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
+		org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf = new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
+		vnf.setVnfId("1234");
+		org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+		vfModule.setVfModuleId("vfModule1");
+		vnf.getVfModules().add(vfModule);
+		org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 = new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+		vfModule2.setVfModuleId("vfModule2");
+		vnf.getVfModules().add(vfModule2);
+		serviceInstanceMSO.getVnfs().add(vnf);
+		VfModule vfModuleAAI = new VfModule();
+		vfModuleAAI.setVfModuleId("vfModule2");
+		RelationshipList relationshipList = new RelationshipList();
+		Relationship relationship = new Relationship();
+		relationshipList.getRelationship().add(relationship);
+		vfModuleAAI.setRelationshipList(relationshipList);
+		Relationships relationships = new Relationships("abc");
+		Configuration config = new Configuration();
+		config.setConfigurationId("configId");
+		Optional<Configuration> configOp = Optional.of(config);
+		Optional<Relationships> relationshipsOp = Optional.of(relationships);
+		
+		doReturn(relationshipsOp).when(workflowActionUtils).extractRelationshipsVnfc(isA(Relationships.class));
+		doReturn(configOp).when(workflowActionUtils).extractRelationshipsConfiguration(isA(Relationships.class));
+		doReturn(vfModuleAAI).when(bbSetupUtils).getAAIVfModule("1234", "vfModule2");
+		doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById("123");
+		doReturn(serviceInstanceMSO).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
+		when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScope(gAction,resource,false)).thenReturn(northBoundRequest);
+		workflowAction.selectExecutionList(execution);
+		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+		assertEqualsBulkFlowName(ebbs,"AAICheckVnfInMaintBB","AAISetVnfInMaintBB", "DeactivateFabricConfigurationBB", "UnassignFabricConfigurationBB", "DeactivateVfModuleBB","DeactivateVfModuleBB","DeleteVfModuleBB","DeleteVfModuleBB","DeactivateVnfBB"
+				,"ChangeModelVfModuleBB" ,"ChangeModelVfModuleBB" , "CreateVfModuleBB","CreateVfModuleBB", "ActivateVfModuleBB","ActivateVfModuleBB", "AssignFabricConfigurationBB", "ActivateFabricConfigurationBB", "ChangeModelVnfBB", "ActivateVnfBB","ChangeModelServiceInstanceBB","SDNOVnfHealthCheckBB","AAIUnsetVnfInMaintBB");
 	}
 	
 	@Ignore
