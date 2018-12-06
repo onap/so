@@ -1152,7 +1152,7 @@ public class ToscaResourceInstaller {
 	}
 	
 	protected VnfcInstanceGroupCustomization createVNFCInstanceGroup(NodeTemplate vnfcNodeTemplate, Group group,
-			VnfResourceCustomization vnfResourceCustomization) {
+			VnfResourceCustomization vnfResourceCustomization, ToscaResourceStructure toscaResourceStructure) {
 
 			Metadata instanceMetadata = group.getMetadata();
 			// Populate InstanceGroup
@@ -1172,7 +1172,17 @@ public class ToscaResourceInstaller {
 			vfcInstanceGroupCustom.setModelCustomizationUUID(vnfResourceCustomization.getModelCustomizationUUID());
 			vfcInstanceGroupCustom.setModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 			vfcInstanceGroupCustom.setDescription(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
-			vfcInstanceGroupCustom.setFunction("FUNCTION");
+						
+			String getInputName = null;
+			String groupProperty = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group, "vfc_instance_group_function"); 
+			if (groupProperty != null) { 
+			int getInputIndex = groupProperty.indexOf("{get_input="); 
+				if (getInputIndex > -1) { 
+					getInputName = groupProperty.substring(getInputIndex+11, groupProperty.length()-1); 
+				} 
+			}
+			vfcInstanceGroupCustom.setFunction(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vnfcNodeTemplate, getInputName));
+			
 			vfcInstanceGroupCustom.setInstanceGroup(vfcInstanceGroup);
 			vfcInstanceGroupCustom.setVnfResourceCust(vnfResourceCustomization);		
 			
@@ -1595,7 +1605,7 @@ public class ToscaResourceInstaller {
 				
 			for (Group group : groupList) { 
 				
-					VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization = createVNFCInstanceGroup(vfNodeTemplate, group, vnfResourceCustomization);
+					VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization = createVNFCInstanceGroup(vfNodeTemplate, group, vnfResourceCustomization, toscaResourceStructure);
 					
 					vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);				
 			}			
