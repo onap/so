@@ -22,8 +22,10 @@ package org.onap.so.asdc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = { "org.onap.so" })
+@EnableScheduling
 public class Application {
 
 	private static final String MSO_CONFIG_PATH = "mso.config.path";
