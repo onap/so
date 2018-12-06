@@ -820,7 +820,7 @@ public class ServiceInstances {
                     .errorInfo(errorLoggerInfo).build();
         }
 		
-		if(!requestScope.equalsIgnoreCase(ModelType.service.name())){
+		if(!requestScope.equalsIgnoreCase(ModelType.service.name()) && action != Action.recreateInstance){
 			aLaCarte = true;
 		}else if(aLaCarte == null){
 			aLaCarte = false;
