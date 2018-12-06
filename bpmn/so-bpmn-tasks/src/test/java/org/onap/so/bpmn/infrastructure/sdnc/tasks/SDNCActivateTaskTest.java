@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -34,6 +35,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -45,8 +49,8 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.exception.BBObjectNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-
+import org.onap.so.client.sdnc.beans.SDNCRequest;
+import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 
 public class SDNCActivateTaskTest extends BaseTaskTest{
 	
@@ -83,47 +87,48 @@ public class SDNCActivateTaskTest extends BaseTaskTest{
 
 	@Test
 	public void activateVnfTest() throws Exception {
-		doReturn("success").when(sdncVnfResources).activateVnf(genericVnf,serviceInstance, customer, cloudRegion,requestContext);
+		doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).activateVnf(genericVnf,serviceInstance, customer, cloudRegion,requestContext);
 		sdncActivateTasks.activateVnf(execution);
 		verify(sdncVnfResources, times(1)).activateVnf(genericVnf,serviceInstance, customer,cloudRegion,requestContext);
+		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+		assertEquals(SDNCTopology.VNF,sdncRequest.getTopology());
 	}
 	
 	@Test
 	public void activateVnfTestException() throws Exception {
 		expectedException.expect(BpmnError.class);
-		
 		doThrow(RuntimeException.class).when(sdncVnfResources).activateVnf(genericVnf,serviceInstance, customer,cloudRegion,requestContext);
 		sdncActivateTasks.activateVnf(execution);
 	}
 	
 	@Test
 	public void activateNetworkTest() throws Exception {
-		doReturn("response").when(sdncNetworkResources).activateNetwork(isA(L3Network.class), isA(ServiceInstance.class), isA(Customer.class), isA(RequestContext.class), isA(CloudRegion.class));
+		doReturn(new GenericResourceApiNetworkOperationInformation()).when(sdncNetworkResources).activateNetwork(isA(L3Network.class), isA(ServiceInstance.class), isA(Customer.class), isA(RequestContext.class), isA(CloudRegion.class));
 		sdncActivateTasks.activateNetwork(execution);
 		verify(sdncNetworkResources, times(1)).activateNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
+		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+		assertEquals(SDNCTopology.NETWORK,sdncRequest.getTopology());
 	}
 	
 	@Test
 	public void activateNetworkExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
-		
 		doThrow(RuntimeException.class).when(sdncNetworkResources).activateNetwork(isA(L3Network.class), isA(ServiceInstance.class), isA(Customer.class), isA(RequestContext.class), isA(CloudRegion.class));
 		sdncActivateTasks.activateNetwork(execution);
 	}
 	
 	@Test
 	public void activateVfModuleTest() throws Exception {
-		doReturn("success").when(sdncVfModuleResources).activateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-
+		doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources).activateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
 		sdncActivateTasks.activateVfModule(execution);
-
 		verify(sdncVfModuleResources, times(1)).activateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+		assertEquals(SDNCTopology.VFMODULE,sdncRequest.getTopology());
 	}
 	
 	@Test
 	public void activateVfModuleTestException() throws Exception {
 		expectedException.expect(BpmnError.class);
-		
 		doThrow(RuntimeException.class).when(sdncVfModuleResources).activateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
 		sdncActivateTasks.activateVfModule(execution);
 	}

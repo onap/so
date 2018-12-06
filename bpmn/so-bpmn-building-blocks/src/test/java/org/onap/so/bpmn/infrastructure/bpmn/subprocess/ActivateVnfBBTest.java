@@ -30,10 +30,11 @@ import org.onap.so.bpmn.BaseBPMNTest;
 public class ActivateVnfBBTest extends BaseBPMNTest{
 	@Test
 	public void sunnyDay() throws InterruptedException, IOException {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateVnfBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted().hasPassedInOrder("Start_ActivateVnfBB", "Task_SDNCAdapterVnfTopologyActivate",
-				"Task_ActivateOrchestrationStatusVnf", "End_ActivateVnfBB");
+				"CallActivity_sdncHandler", "Task_ActivateOrchestrationStatusVnf", "End_ActivateVnfBB");
 		assertThat(pi).isEnded();
 	}
 

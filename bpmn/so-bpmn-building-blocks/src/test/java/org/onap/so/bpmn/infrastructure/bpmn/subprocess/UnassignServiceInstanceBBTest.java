@@ -31,13 +31,12 @@ import org.onap.so.bpmn.common.DelegateExecutionImpl;
 public class UnassignServiceInstanceBBTest extends BaseBPMNTest{ 
 	@Test
 	public void sunnyDayUnassignServiceInstanceSDNC() throws InterruptedException {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		BuildingBlockExecution bbe = new DelegateExecutionImpl(new ExecutionImpl());
-		
 		variables.put("gBuildingBlockExecution", bbe);
-
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignServiceInstanceBB", variables);
 		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("Start_UnassignServiceInstanceBB", "Task_SdncUnassignServiceInstance", "Task_AAIDeleteServiceInstance", "End_UnassignServiceInstanceBB");
+		assertThat(pi).isStarted().hasPassedInOrder("Start_UnassignServiceInstanceBB", "Task_SdncUnassignServiceInstance", "CallActivity_sdncHandlerCall", "Task_AAIDeleteServiceInstance", "End_UnassignServiceInstanceBB");
 		assertThat(pi).isEnded();
 	}
 }

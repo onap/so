@@ -32,9 +32,10 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class ChangeModelVnfBBTest extends BaseBPMNTest{
 	@Test
 	public void changeModelVnfBBTest() {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("ChangeModelVnfBB", variables);
 		assertThat(processInstance).isNotNull();
-		assertThat(processInstance).isStarted().hasPassedInOrder("ChangeModelVnf_Start" ,"SDNCChangeModel", "AAIUpdateModel", "ChangeModelVnf_End");
+		assertThat(processInstance).isStarted().hasPassedInOrder("ChangeModelVnf_Start" ,"SDNCChangeModel", "CallActivity_sdncHandlerCall", "AAIUpdateModel", "ChangeModelVnf_End");
 		assertThat(processInstance).isEnded();
 	}
 	

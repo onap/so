@@ -32,9 +32,10 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class ChangeModelVfModuleBBTest extends BaseBPMNTest{
 	@Test
 	public void sunnyDayChangeModelVfModuleTest() throws InterruptedException {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("ChangeModelVfModuleBB", variables);
 		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("ChangeModelVfModuleBB_Start", "ChangeModelVfModule", "UpdateVfModuleModel", "ChangeModelVfModuleBB_End");
+		assertThat(pi).isStarted().hasPassedInOrder("ChangeModelVfModuleBB_Start", "ChangeModelVfModule", "CallActivity_sdncHandler", "UpdateVfModuleModel", "ChangeModelVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}
 

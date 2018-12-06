@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
   <bpmn:process id="ActivateVnfBB" name="ActivateVnfBB" isExecutable="true">
     <bpmn:startEvent id="Start_ActivateVnfBB">
       <bpmn:outgoing>SequenceFlow_0k9qnoi</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0k9qnoi" sourceRef="Start_ActivateVnfBB" targetRef="Task_SDNCAdapterVnfTopologyActivate" />
-    <bpmn:sequenceFlow id="SequenceFlow_0r6pzwt" sourceRef="Task_SDNCAdapterVnfTopologyActivate" targetRef="Task_ActivateOrchestrationStatusVnf" />
     <bpmn:endEvent id="End_ActivateVnfBB">
       <bpmn:incoming>SequenceFlow_0vnitwg</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0vnitwg" sourceRef="Task_ActivateOrchestrationStatusVnf" targetRef="End_ActivateVnfBB" />
     <bpmn:serviceTask id="Task_SDNCAdapterVnfTopologyActivate" name="&#10;SDNC&#10;Activate&#10;(vnf)&#10;" camunda:expression="${SDNCActivateTasks.activateVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0k9qnoi</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0r6pzwt</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0wk5e4o</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_ActivateOrchestrationStatusVnf" name="&#10;AAI&#10;Update&#10;(vnf)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusActiveVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_0r6pzwt</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0ho00ja</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0vnitwg</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:callActivity id="CallActivity_sdncHandler" name="SDNC Activate (vnf)" calledElement="SDNCHandler">
+      <bpmn:extensionElements>
+        <camunda:in source="SDNCRequest" target="SDNCRequest" />
+        <camunda:out source="SDNCResponse" target="SDNCResponse" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0wk5e4o</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ho00ja</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_0wk5e4o" sourceRef="Task_SDNCAdapterVnfTopologyActivate" targetRef="CallActivity_sdncHandler" />
+    <bpmn:sequenceFlow id="SequenceFlow_0ho00ja" sourceRef="CallActivity_sdncHandler" targetRef="Task_ActivateOrchestrationStatusVnf" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ActivateVnfBB">
@@ -34,32 +43,42 @@
           <dc:Bounds x="199" y="99" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0r6pzwt_di" bpmnElement="SequenceFlow_0r6pzwt">
-        <di:waypoint xsi:type="dc:Point" x="379" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="411" y="120" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="350" y="99" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_1ad7eym_di" bpmnElement="End_ActivateVnfBB">
-        <dc:Bounds x="580" y="102" width="36" height="36" />
+        <dc:Bounds x="726" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="589" y="142" width="18" height="12" />
+          <dc:Bounds x="699" y="142" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0vnitwg_di" bpmnElement="SequenceFlow_0vnitwg">
-        <di:waypoint xsi:type="dc:Point" x="511" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="580" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="663" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="726" y="120" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="500.5" y="99" width="90" height="12" />
+          <dc:Bounds x="649.5" y="99" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1k98q3r_di" bpmnElement="Task_SDNCAdapterVnfTopologyActivate">
         <dc:Bounds x="279" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1vg25fs_di" bpmnElement="Task_ActivateOrchestrationStatusVnf">
-        <dc:Bounds x="411" y="80" width="100" height="80" />
+        <dc:Bounds x="563" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1j8aadu_di" bpmnElement="CallActivity_sdncHandler">
+        <dc:Bounds x="418" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wk5e4o_di" bpmnElement="SequenceFlow_0wk5e4o">
+        <di:waypoint xsi:type="dc:Point" x="379" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="418" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="398.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ho00ja_di" bpmnElement="SequenceFlow_0ho00ja">
+        <di:waypoint xsi:type="dc:Point" x="518" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="563" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="540.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

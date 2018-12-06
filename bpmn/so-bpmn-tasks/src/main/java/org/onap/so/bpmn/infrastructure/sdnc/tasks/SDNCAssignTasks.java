@@ -20,6 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
+import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -67,8 +70,11 @@ public class SDNCAssignTasks {
 			RequestContext requestContext = gBBInput.getRequestContext();
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 			Customer customer = gBBInput.getCustomer();
-			String response = sdncSIResources.assignServiceInstance(serviceInstance, customer, requestContext);
-			execution.setVariable("SDNCResponse", response);
+			GenericResourceApiServiceOperationInformation req = sdncSIResources.assignServiceInstance(serviceInstance, customer, requestContext);
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.SERVICE);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
@@ -107,9 +113,11 @@ public class SDNCAssignTasks {
 			}
 			Customer customer = gBBInput.getCustomer();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
-
-			String response = sdncVfModuleResources.assignVfModule(vfModule, volumeGroup, vnf, serviceInstance, customer, cloudRegion, requestContext);
-			execution.setVariable("SDNCAssignResponse_"+ vfModule.getVfModuleId(), response);
+			GenericResourceApiVfModuleOperationInformation req = sdncVfModuleResources.assignVfModule(vfModule, volumeGroup, vnf, serviceInstance, customer, cloudRegion, requestContext);
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.VFMODULE);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
@@ -123,15 +131,16 @@ public class SDNCAssignTasks {
 	public void assignNetwork(BuildingBlockExecution execution) {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-
 			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-
 			Customer customer = gBBInput.getCustomer();
 			RequestContext requestContext = gBBInput.getRequestContext();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
-
-			sdncNetworkResources.assignNetwork(l3network, serviceInstance, customer, requestContext, cloudRegion);
+			GenericResourceApiNetworkOperationInformation req = sdncNetworkResources.assignNetwork(l3network, serviceInstance, customer, requestContext, cloudRegion);
+			SDNCRequest sdncRequest = new SDNCRequest();
+			sdncRequest.setSDNCPayload(req);
+			sdncRequest.setTopology(SDNCTopology.NETWORK);
+			execution.setVariable("SDNCRequest", sdncRequest);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}

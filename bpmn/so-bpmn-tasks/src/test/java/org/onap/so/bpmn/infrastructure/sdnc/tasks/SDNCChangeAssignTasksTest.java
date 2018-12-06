@@ -20,7 +20,6 @@
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -34,6 +33,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -44,7 +45,8 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.exception.BBObjectNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.onap.so.client.sdnc.beans.SDNCRequest;
+import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 
 public class SDNCChangeAssignTasksTest extends BaseTaskTest{
 	@InjectMocks
@@ -74,15 +76,11 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void changeModelVnfTest() throws Exception {
-		String response = "sdncChangeModelServiceInstance";
-		
-		doReturn(response).when(sdncServiceInstanceResources).changeModelServiceInstance(serviceInstance, customer, requestContext);
-		
-		sdncChangeAssignTasks.changeModelServiceInstance(execution);
-		
-		verify(sdncServiceInstanceResources, times(1)).changeModelServiceInstance(serviceInstance, customer, requestContext);
-		
-		assertEquals(response, execution.getVariable("SDNCChangeAssignTasks.changeModelServiceInstance.response"));
+		doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).changeModelVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+		sdncChangeAssignTasks.changeModelVnf(execution);
+		verify(sdncVnfResources, times(1)).changeModelVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+		assertEquals(SDNCTopology.VNF,sdncRequest.getTopology());
 	}
 	
 	@Test
@@ -94,13 +92,11 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void changeAssignModelVfModuleTest() throws Exception {
-		String response = "response";
-		doReturn(response).when(sdncVfModuleResources).changeAssignVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		
+		doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources).changeAssignVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
 		sdncChangeAssignTasks.changeAssignModelVfModule(execution);
-		
 		verify(sdncVfModuleResources, times(1)).changeAssignVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		assertTrue(execution.getVariable("SDNCChangeAssignVfModuleResponse").equals(response));
+		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+		assertEquals(SDNCTopology.VFMODULE,sdncRequest.getTopology());
 	}
 	
 	@Test
