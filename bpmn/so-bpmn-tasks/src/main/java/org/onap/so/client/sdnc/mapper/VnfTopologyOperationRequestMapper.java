@@ -123,7 +123,7 @@ public class VnfTopologyOperationRequestMapper {
 		List<GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds> networkInstanceGroupIdList = new ArrayList<GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds>();
 
 		for (InstanceGroup instanceGroup : instanceGroups) {
-			if (ModelInfoInstanceGroup.TYPE_NETWORK_INSTANCE_GROUP
+			if (ModelInfoInstanceGroup.TYPE_L3_NETWORK
 					.equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {
 				GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds instanceGroupId = new GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds();
 				instanceGroupId.setVnfNetworkInstanceGroupId(instanceGroup.getId());

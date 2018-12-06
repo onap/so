@@ -67,7 +67,7 @@ public class VnfTopologyOperationRequestMapperTest {
 		genericVnf.setModelCustomizationUuid("vnfModelCustomizationUUID");
 
 		ModelInfoInstanceGroup modelL3Network = new ModelInfoInstanceGroup();
-		modelL3Network.setType("networkInstanceGroup");
+		modelL3Network.setType("L3-NETWORK");
 
 		InstanceGroup instanceGroup1 = new InstanceGroup();
 		instanceGroup1.setId("l3-network-ig-111");

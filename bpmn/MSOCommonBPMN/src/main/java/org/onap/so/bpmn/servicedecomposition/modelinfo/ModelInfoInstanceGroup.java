@@ -28,7 +28,6 @@ public class ModelInfoInstanceGroup  implements Serializable {
 	private static final long serialVersionUID = -8279040393230356226L;
 	
 	public static final String TYPE_L3_NETWORK = "L3-NETWORK";
-	public static final String TYPE_NETWORK_INSTANCE_GROUP = "networkInstanceGroup";
 	public static final String TYPE_VNFC = "VNFC";
 		
 	@JsonProperty("model-uuid")
