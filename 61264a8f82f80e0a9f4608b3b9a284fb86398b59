@@ -62,6 +62,29 @@
       "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9e840ed5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-12-06T14:23:05Z",
+      "side": 1,
+      "message": "I don\u0027t like that action you\u0027re testing is performed in separate method. Especially when you pass testedObject via field, not parameter.\n\nI think the best solution would be something like this:\nassertThatThrownBy(() -\u003e testedObject.execute(delegateExecution)).isInstanceOf(Bpmn.class);\n\nAlternatively you can wrtie method assertThatThrowsBpmnError that takes lamba, runs it and checks if correct exception is thrown.",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 133,
+        "endChar": 48
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
