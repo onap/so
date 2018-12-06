@@ -21,7 +21,6 @@
 package org.onap.so.client.grm;
 
 import java.net.URI;
-import java.util.Base64;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -34,11 +33,8 @@ public class GRMRestInvoker {
 	
 	public GRMRestInvoker(GRMAction action) {
 		GRMProperties props = GRMPropertiesLoader.getInstance().getImpl();
-		if (props == null) {
-			props = new GRMDefaultPropertiesImpl();
-		}
 		this.properties = props;
-		this.client = new GRMRestClient(this.properties, this.createURI(action), this.properties.getUsername(), this.decode(this.properties.getPassword()));
+		this.client = new GRMRestClient(properties, this.createURI(action));
 	}
 	
 	private URI createURI(GRMAction action) {
@@ -47,15 +43,6 @@ public class GRMRestInvoker {
 				.path("serviceEndPoint")
 				.path(action.getAction())
 				.build();
-	}
-	
-	private String decode(String cred) {
-		try {
-			return new String(Base64.getDecoder().decode(cred.getBytes()));
-		} 
-		catch(IllegalArgumentException iae) {
-			return cred;
-		}
 	}
 	
 	private RestClient getClient() {

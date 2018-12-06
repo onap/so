@@ -32,13 +32,11 @@ import org.onap.so.utils.TargetEntity;
 
 public class GRMRestClient extends RestClient {
 
-	private final String username;
-	private final String password;
+	private final GRMProperties properties;
 	
-	public GRMRestClient(RestProperties props, URI path, String username, String password) {
-		super(props, Optional.of(path));
-		this.username = username;
-		this.password = password;
+	public GRMRestClient(GRMProperties props, URI path) {
+		super(props, Optional.of(path));		
+		this.properties = props;
 	}
 
     @Override
@@ -48,7 +46,12 @@ public class GRMRestClient extends RestClient {
 
 	@Override
 	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		headerMap.put("Authorization", "Basic " + Base64.getEncoder().encodeToString(new String(username + ":" + password).getBytes()));
+		String auth = properties.getAuth();
+		String key = properties.getKey();
+
+		if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
+			addBasicAuthHeader(auth, key);
+		}	
 	}
 
 }

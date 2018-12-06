@@ -1,5 +1,5 @@
 /*-
- * ============LICENSE_START=======================================================
+  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
@@ -25,10 +25,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -40,29 +40,26 @@ import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
-
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.apihandlerinfra.BaseTest;
+import org.onap.so.apihandlerinfra.TestAppender;
+import org.onap.so.client.grm.GRMClient;
 import org.onap.so.client.grm.beans.ServiceEndPoint;
 import org.onap.so.client.grm.beans.ServiceEndPointList;
 import org.onap.so.client.grm.beans.ServiceEndPointLookupRequest;
 import org.onap.so.client.grm.beans.ServiceEndPointRequest;
 import org.onap.so.client.grm.exceptions.GRMClientCallFailed;
-import org.onap.so.utils.TestAppender;
 import org.slf4j.MDC;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
-public class GRMClientTest {
+
+public class GRMClientTest extends BaseTest{
 	
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(47389));
 	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -78,7 +75,7 @@ public class GRMClientTest {
 	public void testFind() throws Exception {
         TestAppender.events.clear();
 		String endpoints = getFileContentsAsString("__files/grm/endpoints.json");
-		wireMockRule.stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
+		stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
 			.willReturn(aResponse()
 				.withStatus(200)
 				.withHeader("Content-Type", MediaType.APPLICATION_JSON)
@@ -94,7 +91,7 @@ public class GRMClientTest {
 		boolean foundInvokeReturn = false;
         for(ILoggingEvent logEvent : TestAppender.events)
             if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.JaxRsClientLogging") &&
-                    logEvent.getMarker().getName().equals("INVOKE")
+            		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("INVOKE")
                     ){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
@@ -124,9 +121,8 @@ public class GRMClientTest {
 	}
 	
 	@Test 
-	public void testFindFail() throws Exception {
-		
-		wireMockRule.stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
+	public void testFindFail() throws Exception {		
+		stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
 			.willReturn(aResponse()
 				.withStatus(400)
 				.withHeader("Content-Type", MediaType.APPLICATION_JSON)
@@ -139,7 +135,7 @@ public class GRMClientTest {
 	
 	@Test
 	public void testAddFail() throws Exception {
-		wireMockRule.stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/add"))
+		stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/add"))
 				.willReturn(aResponse()
 					.withStatus(404)
 					.withHeader("Content-Type", MediaType.APPLICATION_JSON)
