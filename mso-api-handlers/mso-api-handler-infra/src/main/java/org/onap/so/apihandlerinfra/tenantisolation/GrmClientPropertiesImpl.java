@@ -32,15 +32,14 @@ import org.springframework.context.ApplicationContext;
 public class GrmClientPropertiesImpl implements GRMProperties {
 
 	private String grmEndpoint;
-	private String grmUsername;
-	private String grmPassword;
+	private String grmAuth;
+	private String grmKey;
 	
 	public GrmClientPropertiesImpl() {
-		ApplicationContext context = SpringContextHelper.getAppContext();
-		
+		ApplicationContext context = SpringContextHelper.getAppContext();		
 		grmEndpoint = context.getEnvironment().getProperty("mso.grm.endpoint");
-		grmUsername = context.getEnvironment().getProperty("mso.grm.username");
-		grmPassword = context.getEnvironment().getProperty("mso.grm.password");
+		grmAuth = context.getEnvironment().getProperty("mso.grm.auth");
+		grmKey = context.getEnvironment().getProperty("mso.msoKey");
 	}
 	
 	@Override
@@ -59,13 +58,13 @@ public class GrmClientPropertiesImpl implements GRMProperties {
 	}
 
 	@Override
-	public String getUsername() {
-		return grmUsername;
+	public String getAuth() {
+		return grmAuth;
 	}
 
 	@Override
-	public String getPassword() {
-		return grmPassword;
+	public String getKey() {
+		return grmKey;
 	}
 
 	@Override

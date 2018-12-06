@@ -70,8 +70,7 @@ mso:
     auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
   grm:
     endpoint: http://localhost:${wiremock.server.port}
-    username: gmruser
-    password: test
+    auth: 6AAD26000E278148A0B987436D9696A5B2D99BBF0DC545F9E64D6DF05298FFA987A6CF565F6F274EBC085678
   so:
     operational-environment:
       dmaap:

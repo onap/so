@@ -53,7 +53,7 @@ public class GRMClient {
 		}
 	}
 	
-	protected ServiceEndPointLookupRequest buildServiceEndPointlookupRequest(String name, int majorVersion, String env) {
+	public ServiceEndPointLookupRequest buildServiceEndPointlookupRequest(String name, int majorVersion, String env) {
 		VersionLookup version = new VersionLookup();
 		version.setMajor(majorVersion);
 		

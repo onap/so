@@ -24,7 +24,7 @@ import org.onap.so.client.RestProperties;
 
 public interface GRMProperties extends RestProperties {
 	public String getDefaultVersion();
-	public String getUsername();
-	public String getPassword();
+	public String getAuth();
+	public String getKey();
 	public String getContentType();
 }
