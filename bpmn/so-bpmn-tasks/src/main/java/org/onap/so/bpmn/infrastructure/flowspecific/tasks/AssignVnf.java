@@ -58,7 +58,7 @@ public class AssignVnf {
 					aaiInstanceGroupResources.createInstanceGroup(instanceGroup);
 					aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.BELONGS_TO);
 				}
-				else if(ModelInfoInstanceGroup.TYPE_NETWORK_INSTANCE_GROUP.equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {
+				else if(ModelInfoInstanceGroup.TYPE_L3_NETWORK.equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {
 					aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.USES);
 				}
 			}

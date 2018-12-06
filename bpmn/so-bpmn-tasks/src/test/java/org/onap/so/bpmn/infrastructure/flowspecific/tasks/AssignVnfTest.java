@@ -67,7 +67,7 @@ public class AssignVnfTest extends BaseTaskTest {
 		modelVnfc.setFunction("function");
 		
 		ModelInfoInstanceGroup modelNetworkInstanceGroup = new ModelInfoInstanceGroup();
-		modelNetworkInstanceGroup.setType("networkInstanceGroup");
+		modelNetworkInstanceGroup.setType("L3-NETWORK");
 		modelNetworkInstanceGroup.setFunction("function");
 		
 		instanceGroup1 = new InstanceGroup();
