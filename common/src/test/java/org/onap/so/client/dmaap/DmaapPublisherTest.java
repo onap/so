@@ -45,7 +45,7 @@ public class DmaapPublisherTest {
 
         @Override
         public Optional<String> getHost() {
-            return Optional.of("http://localhost:8080");
+            return Optional.of("http://test");
         }
     };
 
