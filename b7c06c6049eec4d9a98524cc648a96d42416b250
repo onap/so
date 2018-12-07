@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_eda56eb5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-07T12:11:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_8db5c2ef",
+      "range": {
+        "startLine": 62,
+        "startChar": 34,
+        "endLine": 62,
+        "endChar": 81
+      },
+      "revId": "b7c06c6049eec4d9a98524cc648a96d42416b250",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_cdbbcae3",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2018-12-07T11:17:01Z",
       "side": 1,
       "message": "If you test exception only for resulting type you can use @Test annotation and get rid of this helper method.",
+      "range": {
+        "startLine": 137,
+        "startChar": 8,
+        "endLine": 137,
+        "endChar": 50
+      },
+      "revId": "b7c06c6049eec4d9a98524cc648a96d42416b250",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_8dace2a1",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-07T12:11:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_cdbbcae3",
       "range": {
         "startLine": 137,
         "startChar": 8,
