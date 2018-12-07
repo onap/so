@@ -29,6 +29,8 @@ import org.onap.so.client.HttpClient
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.utils.TargetEntity
+import java.util.UUID
+
 
 
 
@@ -311,7 +313,10 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 			HttpClient httpClient = new HttpClient(url, "application/xml", TargetEntity.VNF_ADAPTER)
 			httpClient.addAdditionalHeader("Authorization", execution.getVariable(prefix + "basicAuthHeaderValue"))
-
+			
+			httpClient.addAdditionalHeader("X-ONAP-RequestID", execution.getVariable("mso-request-id"))
+			httpClient.addAdditionalHeader("X-ONAP-InvocationID", UUID.randomUUID().toString())
+			httpClient.addAdditionalHeader("X-ONAP-PartnerName", "SO-VNFAdapter")
 			Response response;
 
 			if ("GET".equals(vnfAdapterMethod)) {
