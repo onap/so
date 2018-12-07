@@ -148,6 +148,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_6d9f3e51",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreatePnfEntryInAaiDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-12-07T13:02:22Z",
+      "side": 1,
+      "message": "Yes, that is why I did not -1, the change.",
+      "parentUuid": "9adffdf1_ad868611",
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_17dc8111",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
         "patchSetId": 1
