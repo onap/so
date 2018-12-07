@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Before;
@@ -130,6 +131,9 @@ public class BBInputSetupTest {
 	@Mock
 	private BBInputSetupUtils SPY_bbInputSetupUtils;
 	
+	@Mock
+	private CloudInfoFromAAI SPY_cloudInfoFromAAI;
+	
 	@Spy
 	private BBInputSetupMapperLayer bbInputSetupMapperLayer; 
 	
@@ -137,6 +141,7 @@ public class BBInputSetupTest {
 	public void setup(){
 		SPY_bbInputSetup.setBbInputSetupUtils(SPY_bbInputSetupUtils);
 		SPY_bbInputSetup.setMapperLayer(bbInputSetupMapperLayer);
+		SPY_bbInputSetup.setCloudInfoFromAAI(SPY_cloudInfoFromAAI);
 	}
 	
 	@Test
@@ -2270,19 +2275,22 @@ public class BBInputSetupTest {
 		verify(SPY_bbInputSetup, times(1)).mapCatalogVfModule(any(VfModule.class), any(ModelInfo.class),
 				any(Service.class), any(String.class));
 
-		org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = Mockito.mock(org.onap.aai.domain.yang.CloudRegion.class);
+		CloudRegion cloudRegion = new CloudRegion();
+		cloudRegion.setLcpCloudRegionId("cloudRegionId");
+		cloudRegion.setCloudOwner("CloudOwner");
+		doReturn(Optional.of(cloudRegion)).when(SPY_cloudInfoFromAAI).getCloudInfoFromAAI(gBB.getServiceInstance());
 		VolumeGroup volumeGroup = new VolumeGroup();
 		volumeGroup.setVolumeGroupId("volumeGroupId");
 		gBB.getServiceInstance().getVnfs().get(0).getVolumeGroups().add(volumeGroup);
 		org.onap.aai.domain.yang.VolumeGroup aaiVolumeGroup = new org.onap.aai.domain.yang.VolumeGroup();
 		aaiVolumeGroup.setModelCustomizationId("modelCustId");
-		doReturn(aaiVolumeGroup).when(SPY_bbInputSetupUtils).getAAIVolumeGroup(Defaults.CLOUD_OWNER.toString(),
-				cloudConfiguration.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+		doReturn(aaiVolumeGroup).when(SPY_bbInputSetupUtils).getAAIVolumeGroup(cloudRegion.getCloudOwner(),
+				cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
 
 		executeBB.getBuildingBlock().setBpmnFlowName("UnassignVolumeGroupBB");
 		executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
 		SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap,
-				executeBB.getBuildingBlock().getBpmnFlowName(), gBB, service, requestAction, cloudConfiguration);
+				executeBB.getBuildingBlock().getBpmnFlowName(), gBB, service, requestAction, null);
 		verify(SPY_bbInputSetup, times(3)).mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class),
 				any(Service.class));
 		verify(SPY_bbInputSetup, times(1)).mapCatalogVolumeGroup(isA(VolumeGroup.class), isA(ModelInfo.class),
