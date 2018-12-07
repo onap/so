@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_52dc57e4",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-07T12:11:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_de7a96f0",
+      "range": {
+        "startLine": 53,
+        "startChar": 32,
+        "endLine": 53,
+        "endChar": 70
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_fe7d1ae8",
         "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
         "patchSetId": 1
@@ -53,6 +77,30 @@
       "writtenOn": "2018-12-05T14:52:18Z",
       "side": 1,
       "message": "Same as in line 53. External definition of UUID?",
+      "range": {
+        "startLine": 81,
+        "startChar": 32,
+        "endLine": 81,
+        "endChar": 70
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_72d71bc0",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-07T12:11:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_fe7d1ae8",
       "range": {
         "startLine": 81,
         "startChar": 32,
@@ -88,6 +136,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_12e6cfb4",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-07T12:11:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_17dc8111",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 137
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_b739f542",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GenerateUuidDelegateTest.java",
         "patchSetId": 1
@@ -99,6 +171,30 @@
       "writtenOn": "2018-12-07T06:33:16Z",
       "side": 1,
       "message": "Reuse already defined regex from production",
+      "range": {
+        "startLine": 16,
+        "startChar": 32,
+        "endLine": 16,
+        "endChar": 42
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_32e1939a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GenerateUuidDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-07T12:11:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_b739f542",
       "range": {
         "startLine": 16,
         "startChar": 32,
@@ -134,6 +230,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_d2efe785",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-07T12:11:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_b7ba556c",
+      "range": {
+        "startLine": 43,
+        "startChar": 32,
+        "endLine": 43,
+        "endChar": 47
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_97e95182",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
         "patchSetId": 1
@@ -157,6 +277,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_32a67354",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-07T12:11:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_97e95182",
+      "range": {
+        "startLine": 59,
+        "startChar": 8,
+        "endLine": 60,
+        "endChar": 26
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_9e840ed5",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
         "patchSetId": 1
@@ -168,6 +312,30 @@
       "writtenOn": "2018-12-06T14:23:05Z",
       "side": 1,
       "message": "I don\u0027t like that action you\u0027re testing is performed in separate method. Especially when you pass testedObject via field, not parameter.\n\nI think the best solution would be something like this:\nassertThatThrownBy(() -\u003e testedObject.execute(delegateExecution)).isInstanceOf(Bpmn.class);\n\nAlternatively you can wrtie method assertThatThrowsBpmnError that takes lamba, runs it and checks if correct exception is thrown.",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 133,
+        "endChar": 48
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d2bda769",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-07T12:11:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_9e840ed5",
       "range": {
         "startLine": 132,
         "startChar": 0,
