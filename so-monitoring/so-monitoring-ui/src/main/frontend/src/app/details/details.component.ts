@@ -138,7 +138,20 @@ export class DetailsComponent implements OnInit {
   getVarInst(procInstId) {
     this.data.getVariableInstance(procInstId).subscribe(
       (data: VarInstance[]) => {
-        this.variableInstance = data;
+        this.variableInstance = [];
+        for (let i = 0; i < data.length; i++) {
+          var value = data[i]['value'];
+          var type = data[i]['type'];
+          if ((type == 'Object') && !(value == null)) {
+            try {
+              data[i]['value'] = JSON.stringify(value, null, 2);
+            }
+            catch (error) {
+              console.log("Unable to \nError Code: " + error);
+            }
+          }
+          this.variableInstance[i] = data[i];
+        }
         console.log(data);
       }, error => {
         console.log(error);
