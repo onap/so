@@ -311,8 +311,14 @@ public class WorkflowActionBBTasks {
 			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
 			String errorMsg = null;
 			String rollbackErrorMsg = null;
-			boolean rollbackCompleted = (boolean) execution.getVariable("isRollbackComplete");
-			boolean isRollbackFailure = (boolean) execution.getVariable("isRollback");
+			Boolean rollbackCompleted = (Boolean) execution.getVariable("isRollbackComplete");
+			Boolean isRollbackFailure = (Boolean) execution.getVariable("isRollback");
+			
+			if(rollbackCompleted==null)
+				rollbackCompleted = false;
+			
+			if(isRollbackFailure==null)
+				isRollbackFailure = false;
 			
 			if(rollbackCompleted){
 				rollbackErrorMsg = "Rollback has been completed successfully.";

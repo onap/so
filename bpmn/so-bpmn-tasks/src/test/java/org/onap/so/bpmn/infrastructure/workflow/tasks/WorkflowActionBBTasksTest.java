@@ -39,8 +39,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -53,6 +55,9 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	@InjectMocks
 	@Spy
 	protected WorkflowActionBBTasks workflowActionBBTasks;
+	
+	@Mock
+	InfraActiveRequests reqMock;
 	
 	private DelegateExecution execution;
 	
@@ -283,5 +288,24 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
 		workflowActionBBTasks.checkRetryStatus(execution);
 		assertEquals(0,execution.getVariable("retryCount"));
+	}
+	
+	
+	@Test
+	public void updateRequestStatusToFailed_Null_Rollback(){
+		String reqId = "reqId123";
+		execution.setVariable("mso-request-id", reqId);
+		execution.setVariable("retryCount", 3);
+		execution.setVariable("handlingCode","Success");
+		execution.setVariable("gCurrentSequence",1);
+		WorkflowException we = new WorkflowException("WorkflowAction",1231,"Error Case");
+		execution.setVariable("WorkflowException",we);
+		
+		doReturn(reqMock).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
+		workflowActionBBTasks.updateRequestStatusToFailed(execution);
+		Mockito.verify( reqMock, Mockito.times(1)).setStatusMessage("Error Case");
+		Mockito.verify( reqMock, Mockito.times(1)).setRequestStatus("FAILED");
+		Mockito.verify( reqMock, Mockito.times(1)).setProgress(Long.valueOf(100));
+		Mockito.verify( reqMock, Mockito.times(1)).setLastModifiedBy("CamundaBPMN");
 	}
 }
