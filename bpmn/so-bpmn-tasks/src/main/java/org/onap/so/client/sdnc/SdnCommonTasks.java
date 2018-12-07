@@ -105,12 +105,20 @@ public class SdnCommonTasks {
         	responseCode = (String) embeddedResponse.get(RESPONSE_CODE);
             responseMessage = (String) embeddedResponse.get(RESPONSE_MESSAGE);
         }
-        
+        ObjectMapper objMapper = new ObjectMapper();
+        String jsonResponse;
+		try {
+			jsonResponse = objMapper.writeValueAsString(output);
+			msoLogger.debug(jsonResponse);
+		} catch (JsonProcessingException e) {
+			msoLogger.warnSimple("Could not convert SDNC Response to String", e);
+			jsonResponse = "";
+		}
 		msoLogger.info("ResponseCode: " + responseCode + " ResponseMessage: " + responseMessage);
 		int code = StringUtils.isNotEmpty(responseCode) ? Integer.parseInt(responseCode) : 0;
 		if (isHttpCodeSuccess(code)) {
 			msoLogger.info("Successful Response from SDNC");
-			return responseMessage;
+			return jsonResponse;
 		} else {
 			String errorMessage = String.format(SDNC_CODE_NOT_0_OR_IN_200_299, responseMessage);
 			msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, errorMessage, "BPMN", MsoLogger.getServiceName(),

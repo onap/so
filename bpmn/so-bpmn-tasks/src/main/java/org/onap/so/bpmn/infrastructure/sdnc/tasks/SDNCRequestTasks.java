@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
  
 @Component
 public class SDNCRequestTasks {
@@ -61,6 +62,9 @@ public class SDNCRequestTasks {
 			String response = sdncClient.post(request.getSDNCPayload(),request.getTopology());
 			String finalMessageIndicator = JsonPath.read(response, "$.output.ack-final-indicator");		
 			execution.setVariable("isSDNCCompleted", convertIndicatorToBoolean(finalMessageIndicator));
+		} catch(PathNotFoundException e) {
+			logger.error("Error Parsing SDNC Response", e);
+			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,"Error Parsing SDNC Response");
 		} catch (MapperException e) {
 			logger.error("Error Parsing SDNC Response", e);
 			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,"Error Parsing SDNC Response");
