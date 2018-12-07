@@ -65,6 +65,98 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_17dc8111",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-12-07T06:33:16Z",
+      "side": 1,
+      "message": "Did you check if regex has support for case insensitivity? It will be simpler than listing both upper and lower case letters.\n\nAlso you could highlight version in name: UUID_V4_REGEX",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 137
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b739f542",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GenerateUuidDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-12-07T06:33:16Z",
+      "side": 1,
+      "message": "Reuse already defined regex from production",
+      "range": {
+        "startLine": 16,
+        "startChar": 32,
+        "endLine": 16,
+        "endChar": 42
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b7ba556c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-12-07T06:33:16Z",
+      "side": 1,
+      "message": "But this looks very random :)\n\n\nBetter name would be NOT_V4_UUID. I think it would be good idea to avoid \"random\" word in UUID-related scope.",
+      "range": {
+        "startLine": 43,
+        "startChar": 32,
+        "endLine": 43,
+        "endChar": 47
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_97e95182",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-12-07T06:33:16Z",
+      "side": 1,
+      "message": "Not sure how this looks in IDE but on gerrit it doesn\u0027t leave any clue what is tested and what these functions do. \n\n\nFirst, bad use of void functions. Function returning void effectively hides what is done. Looking only on call site I can\u0027t say anything about what *some* action is done here.\n\nInstead of void prepareExecution()-family should return tested object.\n\n\nSecond, it should be obvious what triggers test. Here I could point which line is trigger but still don\u0027t have any idea about *when* I should expect exception because important method call is hidden behind not important wrapper method.",
+      "range": {
+        "startLine": 59,
+        "startChar": 8,
+        "endLine": 60,
+        "endChar": 26
+      },
+      "revId": "61264a8f82f80e0a9f4608b3b9a284fb86398b59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_9e840ed5",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
         "patchSetId": 1
