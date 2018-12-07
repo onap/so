@@ -386,16 +386,10 @@ public class BBInputSetup implements JavaDelegate {
 				ModelInfo vnfModelInfo = new ModelInfo();
 				vnfModelInfo.setModelCustomizationUuid(vnfModelCustomizationUUID);
 				this.mapCatalogVnf(tempVnf, vnfModelInfo, service);
-				if (lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID) == null) {
-					for(VolumeGroup volumeGroup : tempVnf.getVolumeGroups()) {
-						String volumeGroupCustId = 
-								this.bbInputSetupUtils.getAAIVolumeGroup(cloudConfiguration.getCloudOwner(), 
-										cloudConfiguration.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId()).getModelCustomizationId();
-						if(modelInfo.getModelCustomizationId().equalsIgnoreCase(volumeGroupCustId)) {
-							lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, volumeGroup.getVolumeGroupId());
-							break;
-						}
-					}
+				Optional<String> volumeGroupIdOp = getVolumeGroupIdRelatedToVfModule(tempVnf, modelInfo, cloudConfiguration.getCloudOwner(), 
+						cloudConfiguration.getLcpCloudRegionId(), lookupKeyMap);
+				if(volumeGroupIdOp.isPresent()) {
+					lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, volumeGroupIdOp.get());
 				}
 				break;
 			}
@@ -423,6 +417,21 @@ public class BBInputSetup implements JavaDelegate {
 			msoLogger.debug("Related VNF instance Id not found:  " + lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
 			throw new Exception("Could not find relevant information for related VNF");
 		}
+	}
+	
+	protected Optional<String> getVolumeGroupIdRelatedToVfModule(GenericVnf vnf, ModelInfo modelInfo, 
+			String cloudOwner, String cloudRegionId, Map<ResourceKey, String> lookupKeyMap) {
+		if (lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID) == null) {
+			for(VolumeGroup volumeGroup : vnf.getVolumeGroups()) {
+				String volumeGroupCustId = 
+						bbInputSetupUtils.getAAIVolumeGroup(cloudOwner, 
+								cloudRegionId, volumeGroup.getVolumeGroupId()).getModelCustomizationId();
+				if(modelInfo.getModelCustomizationId().equalsIgnoreCase(volumeGroupCustId)) {
+					return Optional.of(volumeGroup.getVolumeGroupId());
+				}
+			}
+		}
+		return Optional.empty();
 	}
 
 	protected void mapCatalogVfModule(VfModule vfModule, ModelInfo modelInfo, Service service,
@@ -1025,6 +1034,13 @@ public class BBInputSetup implements JavaDelegate {
 						ModelInfo vfModuleModelInfo = new ModelInfo();
 						vfModuleModelInfo.setModelCustomizationId(vfModuleCustomizationUUID);
 						this.mapCatalogVfModule(vfModule, vfModuleModelInfo, service, vnfModelCustomizationUUID);
+						if(cloudRegion != null) {
+							Optional<String> volumeGroupIdOp = getVolumeGroupIdRelatedToVfModule(vnf, vfModuleModelInfo, cloudRegion.getCloudOwner(), 
+									cloudRegion.getLcpCloudRegionId(), lookupKeyMap);
+							if(volumeGroupIdOp.isPresent()) {
+								lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, volumeGroupIdOp.get());
+							}
+						}
 						break;
 					}
 				}

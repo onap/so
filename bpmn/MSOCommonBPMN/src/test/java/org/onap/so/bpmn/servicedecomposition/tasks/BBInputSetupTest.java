@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Before;
@@ -137,6 +138,30 @@ public class BBInputSetupTest {
 	public void setup(){
 		SPY_bbInputSetup.setBbInputSetupUtils(SPY_bbInputSetupUtils);
 		SPY_bbInputSetup.setMapperLayer(bbInputSetupMapperLayer);
+	}
+	
+	@Test
+	public void testGetVolumeGroupIdRelatedToVfModule() {
+		String expected = "volumeGroupId";
+		String modelCustomizationId = "modelCustomizationId";
+		ModelInfo modelInfo = new ModelInfo();
+		modelInfo.setModelCustomizationId(modelCustomizationId);
+		String cloudOwner = "cloudOwner";
+		String cloudRegionId = "cloudRegionId";
+		String volumeGroupId = "volumeGroupId";
+		GenericVnf vnf = new GenericVnf();
+		VolumeGroup volumeGroup = new VolumeGroup();
+		volumeGroup.setVolumeGroupId(expected);
+		vnf.getVolumeGroups().add(volumeGroup);
+		Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+		lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, null);
+		org.onap.aai.domain.yang.VolumeGroup aaiVolumeGroup = new org.onap.aai.domain.yang.VolumeGroup();
+		aaiVolumeGroup.setModelCustomizationId(modelCustomizationId);
+		doReturn(aaiVolumeGroup).when(SPY_bbInputSetupUtils).getAAIVolumeGroup(cloudOwner, cloudRegionId, volumeGroupId);
+		
+		Optional<String> actual = SPY_bbInputSetup.getVolumeGroupIdRelatedToVfModule(vnf, modelInfo, cloudOwner, cloudRegionId, lookupKeyMap);
+		
+		assertEquals(expected, actual.get());
 	}
 	
 	@Test
