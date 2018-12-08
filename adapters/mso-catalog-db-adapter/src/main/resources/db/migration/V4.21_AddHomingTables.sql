@@ -1,3 +1,5 @@
+use catalogdb;
+
 CREATE TABLE IF NOT EXISTS `homing_instances` (
 `SERVICE_INSTANCE_ID` varchar(50) NOT NULL,
 `CLOUD_OWNER` VARCHAR(200) NOT NULL,
