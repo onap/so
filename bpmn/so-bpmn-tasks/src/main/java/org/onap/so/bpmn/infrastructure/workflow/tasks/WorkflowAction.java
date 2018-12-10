@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,7 +50,6 @@ import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
-import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.Relationships;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -147,6 +145,7 @@ public class WorkflowAction {
 		final String apiVersion = (String) execution.getVariable(G_APIVERSION);
 		final String uri = (String) execution.getVariable(G_URI);
 		final String vnfType = (String) execution.getVariable(VNF_TYPE);
+		final String serviceInstanceId = (String) execution.getVariable("serviceInstanceId");
 		List<OrchestrationFlow> orchFlows = (List<OrchestrationFlow>) execution.getVariable(G_ORCHESTRATION_FLOW);
 		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
 		WorkflowResourceIds workflowResourceIds = populateResourceIdsFromApiHandler(execution);
@@ -261,7 +260,6 @@ public class WorkflowAction {
 				} else {
 					buildAndThrowException(execution, "Current Macro Request is not supported");
 				}
-
 				String foundObjects = "";
 				for(WorkflowType type : WorkflowType.values()){
 					foundObjects = foundObjects + type + " - " + resourceCounter.stream().filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList()).size() + "    ";
@@ -285,9 +283,9 @@ public class WorkflowAction {
 					execution.setVariable("calledHoming", false);
 				}
 				if (resourceType == WorkflowType.SERVICE && (requestAction.equalsIgnoreCase(ASSIGNINSTANCE) || requestAction.equalsIgnoreCase(CREATEINSTANCE))){
-					generateResourceIds(flowsToExecute, resourceCounter);
+					generateResourceIds(flowsToExecute, resourceCounter, serviceInstanceId);
 				}else{
-					updateResourceIdsFromAAITraversal(flowsToExecute, resourceCounter, aaiResourceIds);
+					updateResourceIdsFromAAITraversal(flowsToExecute, resourceCounter, aaiResourceIds, serviceInstanceId);
 				}
 			}
 
@@ -338,7 +336,7 @@ public class WorkflowAction {
 	}
 
 	private void updateResourceIdsFromAAITraversal(List<ExecuteBuildingBlock> flowsToExecute,
-			List<Resource> resourceCounter, List<Pair<WorkflowType, String>> aaiResourceIds) {
+			List<Resource> resourceCounter, List<Pair<WorkflowType, String>> aaiResourceIds, String serviceInstanceId) {
 		for(Pair<WorkflowType,String> pair : aaiResourceIds){
 			logger.debug(pair.getValue0() + ", " + pair.getValue1());
 		}
@@ -346,7 +344,7 @@ public class WorkflowAction {
 		Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE)).forEach(type -> {
 			List<Resource> resources = resourceCounter.stream().filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList());
 			for(int i = 0; i < resources.size(); i++){
-				updateWorkflowResourceIds(flowsToExecute, type, resources.get(i).getResourceId(), retrieveAAIResourceId(aaiResourceIds,type), null);
+				updateWorkflowResourceIds(flowsToExecute, type, resources.get(i).getResourceId(), retrieveAAIResourceId(aaiResourceIds,type), null, serviceInstanceId);
 		}
 		});
 	}
@@ -362,17 +360,18 @@ public class WorkflowAction {
 		}
 		return id;
 	}
-	private void generateResourceIds(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceCounter) {
+	private void generateResourceIds(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceCounter, String serviceInstanceId) {
 		Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE)).forEach(type -> {
 			List<Resource> resources = resourceCounter.stream().filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList());
 			for(int i = 0; i < resources.size(); i++){
 				Resource resource = resourceCounter.stream().filter(x -> type.equals(x.getResourceType()))
 						.collect(Collectors.toList()).get(i);
-				updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(), null, resource.getVirtualLinkKey());			}
+				updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(), null, resource.getVirtualLinkKey(),serviceInstanceId);
+			}
 		});
 	}	
 	
-	protected void updateWorkflowResourceIds(List<ExecuteBuildingBlock> flowsToExecute, WorkflowType resource, String key, String id, String virtualLinkKey){
+	protected void updateWorkflowResourceIds(List<ExecuteBuildingBlock> flowsToExecute, WorkflowType resource, String key, String id, String virtualLinkKey, String serviceInstanceId){
 		String resourceId = id;
 		if(resourceId==null){
 			resourceId = UUID.randomUUID().toString();
@@ -380,6 +379,7 @@ public class WorkflowAction {
 		for(ExecuteBuildingBlock ebb : flowsToExecute){
 			if(key != null && key.equalsIgnoreCase(ebb.getBuildingBlock().getKey()) && ebb.getBuildingBlock().getBpmnFlowName().contains(resource.toString())){
 				WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
+				workflowResourceIds.setServiceInstanceId(serviceInstanceId);
 				if(resource == WorkflowType.VNF){
 					workflowResourceIds.setVnfId(resourceId);
 				}else if(resource == WorkflowType.VFMODULE){
