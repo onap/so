@@ -34,6 +34,24 @@
       "revId": "7d6e1ae492d91b74c6db995f42ef665d9e375245",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_2372a749",
+        "filename": "common/src/main/java/org/onap/so/client/HttpClientFactory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-12-10T10:37:39Z",
+      "side": 1,
+      "message": "Hi Rob,\nplease respond to the Michal comment, do you agree for these changes? As Michal wrote, if we want to test ExternalApiUtil class, we need to make HttpClient as class field to mock it. In other hand we can not create HttpClient in constructor because HttpClient is used more than once, with different arguments. This is the point for introducing factory, it creates HttpClient on demand, and we can mock this factory to mock HttpClient. Please re-think it.",
+      "parentUuid": "9adffdf1_97d728ed",
+      "revId": "7d6e1ae492d91b74c6db995f42ef665d9e375245",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
