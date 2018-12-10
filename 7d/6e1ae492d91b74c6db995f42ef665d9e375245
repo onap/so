@@ -1,0 +1,10 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Krzysztof Kurczewski <krzysztof.kurczewski@nokia.com>
+Code-Review+1: Lukasz Biniek <lukasz.biniek@nokia.com>
+Code-Review+1: Lukasz Muszkieta <lukasz.muszkieta@nokia.com>
+Code-Review+2: Rob Daugherty <rd472p@att.com>
+Submitted-by: Rob Daugherty <rd472p@att.com>
+Submitted-at: Mon, 10 Dec 2018 13:54:18 +0000
+Reviewed-on: https://gerrit.onap.org/r/72645
+Project: so
+Branch: refs/heads/master
