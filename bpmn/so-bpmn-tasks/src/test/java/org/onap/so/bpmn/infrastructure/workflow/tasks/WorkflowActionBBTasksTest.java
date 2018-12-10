@@ -308,4 +308,17 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		Mockito.verify( reqMock, Mockito.times(1)).setProgress(Long.valueOf(100));
 		Mockito.verify( reqMock, Mockito.times(1)).setLastModifiedBy("CamundaBPMN");
 	}
+	
+	@Test
+	public void updateInstanceId(){
+		String reqId = "req123";
+		String instanceId = "123123123";
+		execution.setVariable("mso-request-id", reqId);
+		execution.setVariable("resourceId", instanceId);
+		execution.setVariable("resourceType", WorkflowType.SERVICE);
+		doReturn(reqMock).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
+		doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
+		workflowActionBBTasks.updateInstanceId(execution);
+		Mockito.verify( reqMock, Mockito.times(1)).setServiceInstanceId(instanceId);
+	}
 }

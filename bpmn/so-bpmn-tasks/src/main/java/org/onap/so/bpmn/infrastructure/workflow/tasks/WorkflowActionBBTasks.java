@@ -152,6 +152,7 @@ public class WorkflowActionBBTasks {
 		WorkflowContextHolder.getInstance().processCallback(processKey, execution.getProcessInstanceId(), requestId,
 				callbackResponse);
 		logger.info("Successfully sent sync ack.");
+		updateInstanceId(execution);
 	}
 
 	public void sendErrorSyncAck(DelegateExecution execution) {
@@ -283,6 +284,33 @@ public class WorkflowActionBBTasks {
 		}
 	}
 
+	protected void updateInstanceId(DelegateExecution execution){
+		try{
+			String requestId = (String) execution.getVariable(G_REQUEST_ID);
+			String resourceId = (String) execution.getVariable("resourceId");
+			WorkflowType resourceType = (WorkflowType) execution.getVariable("resourceType");
+			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
+			if(resourceType == WorkflowType.SERVICE){
+				request.setServiceInstanceId(resourceId);
+			}else if(resourceType == WorkflowType.VNF){
+				request.setVnfId(resourceId);
+			}else if(resourceType == WorkflowType.VFMODULE){
+				request.setVfModuleId(resourceId);
+			}else if(resourceType == WorkflowType.VOLUMEGROUP){
+				request.setVolumeGroupId(resourceId);
+			}else if(resourceType == WorkflowType.NETWORK){
+				request.setNetworkId(resourceId);
+			}else if(resourceType == WorkflowType.CONFIGURATION){
+				request.setConfigurationId(resourceId);
+			}else if(resourceType == WorkflowType.INSTANCE_GROUP){
+				request.setInstanceGroupId(resourceId);
+			}
+			requestDbclient.updateInfraActiveRequests(request);
+		}catch(Exception ex){
+			workflowAction.buildAndThrowException(execution, "Failed to update Request db with instanceId");
+		}
+	}
+	
 	protected void updateRequestErrorStatusMessage(DelegateExecution execution) {
 		try {
 			String requestId = (String) execution.getVariable(G_REQUEST_ID);
