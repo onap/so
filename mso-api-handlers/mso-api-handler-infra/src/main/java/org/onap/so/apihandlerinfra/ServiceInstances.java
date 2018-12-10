@@ -692,7 +692,7 @@ public class ServiceInstances {
 		
 		sir = convertJsonToServiceInstanceRequest(requestJSON, action, startTime, sir, msoRequest, requestId, requestUri);
 		String requestScope = deriveRequestScope(action, sir, requestUri);
-		InfraActiveRequests currentActiveReq =  msoRequest.createRequestObject (sir,  action, requestId, Status.PENDING, requestJSON, requestScope);
+		InfraActiveRequests currentActiveReq =  msoRequest.createRequestObject (sir,  action, requestId, Status.IN_PROGRESS, requestJSON, requestScope);
 		if(sir.getRequestDetails().getRequestParameters() != null){
 			aLaCarte = sir.getRequestDetails().getRequestParameters().getALaCarte();
 		}
@@ -864,7 +864,7 @@ public class ServiceInstances {
 		sir.setInstanceGroupId(instanceGroupId);
 	
 		String requestScope = ModelType.instanceGroup.toString();
-		InfraActiveRequests currentActiveReq =  msoRequest.createRequestObject (sir,  action, requestId, Status.PENDING, null, requestScope);
+		InfraActiveRequests currentActiveReq =  msoRequest.createRequestObject (sir,  action, requestId, Status.IN_PROGRESS, null, requestScope);
 		setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
 		try {
 			validateHeaders(requestContext);
@@ -1018,19 +1018,7 @@ public class ServiceInstances {
 			                    .errorInfo(errorLoggerInfo).build();
 					updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
 					throw validateException;
-				}
-			
-				currentActiveReq.setRequestStatus(Status.IN_PROGRESS.name());
-				setInstanceId(currentActiveReq, requestScope, jsonResponse.getRequestReferences().getInstanceId(), new HashMap<>());
-				
-				try{
-					infraActiveRequestsClient.save(currentActiveReq);
-				}catch(Exception e){
-					ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-		            throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
-		                    .errorInfo(errorLoggerInfo).build();
-				}
-				
+				}	
 				return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestClientParameter.getRequestId(), jsonResponse, requestClientParameter.getApiVersion());
 			} 
 		}
