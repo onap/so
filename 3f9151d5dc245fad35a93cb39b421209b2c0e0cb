@@ -135,6 +135,24 @@
       "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_231ce7c0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-12-10T13:26:35Z",
+      "side": 1,
+      "message": "I found assertJ to break the BPMN Mockito dependency, please be cautious if you plan on re-introducing  it.",
+      "parentUuid": "9adffdf1_a3b8d7e5",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
