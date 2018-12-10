@@ -46,7 +46,7 @@ spring:
       role: ACTUATOR
 flyway:
   baseline-on-migrate: false
-  jdbc-url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+  url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
   user: ${DB_ADMIN_USERNAME}
   password: ${DB_ADMIN_PASSWORD}
 

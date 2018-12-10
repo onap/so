@@ -14,7 +14,6 @@ mso:
     max-pool-size: 50
     queue-capacity: 500
     
-# CatalogDB
 spring:
   datasource:
     jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
@@ -34,7 +33,7 @@ spring:
       fail-on-empty-beans: false
 flyway:
   baseline-on-migrate: false
-  jdbc-url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
+  url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
   user: ${DB_ADMIN_USERNAME}
   password: ${DB_ADMIN_PASSWORD}
   outOfOrder: true
