@@ -145,6 +145,30 @@ public class BBInputSetupTest {
 	}
 	
 	@Test
+	public void testGetVolumeGroupIdRelatedToVfModule() {
+		String expected = "volumeGroupId";
+		String modelCustomizationId = "modelCustomizationId";
+		ModelInfo modelInfo = new ModelInfo();
+		modelInfo.setModelCustomizationId(modelCustomizationId);
+		String cloudOwner = "cloudOwner";
+		String cloudRegionId = "cloudRegionId";
+		String volumeGroupId = "volumeGroupId";
+		GenericVnf vnf = new GenericVnf();
+		VolumeGroup volumeGroup = new VolumeGroup();
+		volumeGroup.setVolumeGroupId(expected);
+		vnf.getVolumeGroups().add(volumeGroup);
+		Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+		lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, null);
+		org.onap.aai.domain.yang.VolumeGroup aaiVolumeGroup = new org.onap.aai.domain.yang.VolumeGroup();
+		aaiVolumeGroup.setModelCustomizationId(modelCustomizationId);
+		doReturn(aaiVolumeGroup).when(SPY_bbInputSetupUtils).getAAIVolumeGroup(cloudOwner, cloudRegionId, volumeGroupId);
+		
+		Optional<String> actual = SPY_bbInputSetup.getVolumeGroupIdRelatedToVfModule(vnf, modelInfo, cloudOwner, cloudRegionId, lookupKeyMap);
+		
+		assertEquals(expected, actual.get());
+	}
+	
+	@Test
 	public void testGetAlaCarteServiceInstance() throws Exception {
 		ServiceInstance expected = mapper.readValue(
 				new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
