@@ -55,7 +55,9 @@ import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
+import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.RequestError;
+import org.onap.so.serviceinstancebeans.RequestInfo;
 import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.RequestReferences;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
@@ -70,6 +72,7 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.http.Fault;
@@ -2581,5 +2584,94 @@ public class ServiceInstancesTest extends BaseTest{
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
+    @Test
+    public void setServiceTypeTestALaCarte() throws JsonProcessingException{
+    	String requestScope = ModelType.service.toString();
+    	Boolean aLaCarteFlag = true;
+    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
+    	RequestDetails requestDetails = new RequestDetails();
+    	RequestInfo requestInfo = new RequestInfo();
+    	requestInfo.setSource("VID");
+    	requestDetails.setRequestInfo(requestInfo);
+    	sir.setRequestDetails(requestDetails);
+		Service defaultService = new Service();
+		defaultService.setServiceType("testServiceTypeALaCarte");
+    	
+    	stubFor(get(urlMatching(".*/service/search/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
+    	
+    	String serviceType = servInstances.getServiceType(requestScope, sir, aLaCarteFlag);
+    	assertEquals(serviceType, "testServiceTypeALaCarte");
+    }
+    @Test
+    public void setServiceTypeTest() throws JsonProcessingException{
+    	String requestScope = ModelType.service.toString();
+    	Boolean aLaCarteFlag = false;
+    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
+    	RequestDetails requestDetails = new RequestDetails();
+    	RequestInfo requestInfo = new RequestInfo();
+    	ModelInfo modelInfo = new ModelInfo();
+    	modelInfo.setModelVersionId("0dd91181-49da-446b-b839-cd959a96f04a");
+    	requestInfo.setSource("VID");
+    	requestDetails.setModelInfo(modelInfo);
+    	requestDetails.setRequestInfo(requestInfo);
+    	sir.setRequestDetails(requestDetails);
+		Service defaultService = new Service();
+		defaultService.setServiceType("testServiceType");
+    	
+    	stubFor(get(urlMatching(".*/service/0dd91181-49da-446b-b839-cd959a96f04a"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
+    	
+    	String serviceType = servInstances.getServiceType(requestScope, sir, aLaCarteFlag);
+    	assertEquals(serviceType, "testServiceType");
+    }
+    @Test
+    public void setServiceTypeTestDefault() throws JsonProcessingException{
+    	String requestScope = ModelType.service.toString();
+    	Boolean aLaCarteFlag = false;
+    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
+    	RequestDetails requestDetails = new RequestDetails();
+    	RequestInfo requestInfo = new RequestInfo();
+    	ModelInfo modelInfo = new ModelInfo();
+    	modelInfo.setModelVersionId("0dd91181-49da-446b-b839-cd959a96f04a");
+    	requestInfo.setSource("VID");
+    	requestDetails.setModelInfo(modelInfo);
+    	requestDetails.setRequestInfo(requestInfo);
+    	sir.setRequestDetails(requestDetails);
+		Service defaultService = new Service();
+		defaultService.setServiceType("testServiceType");
+    	
+    	stubFor(get(urlMatching(".*/service/0dd91181-49da-446b-b839-cd959a96f04a"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_NOT_FOUND)));
+    	stubFor(get(urlMatching(".*/service/search/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
+    	
+    	String serviceType = servInstances.getServiceType(requestScope, sir, aLaCarteFlag);
+    	assertEquals(serviceType, "testServiceType");
+    }
+    @Test
+    public void setServiceTypeTestNetwork() throws JsonProcessingException{
+    	String requestScope = ModelType.network.toString();
+    	Boolean aLaCarteFlag = null;
+    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
+    	RequestDetails requestDetails = new RequestDetails();
+    	RequestInfo requestInfo = new RequestInfo();
+    	ModelInfo modelInfo = new ModelInfo();
+    	modelInfo.setModelName("networkModelName");
+    	requestInfo.setSource("VID");
+    	requestDetails.setModelInfo(modelInfo);
+    	requestDetails.setRequestInfo(requestInfo);
+    	sir.setRequestDetails(requestDetails);
+    	
+    	String serviceType = servInstances.getServiceType(requestScope, sir, aLaCarteFlag);
+    	assertEquals(serviceType, "networkModelName");
     }
 }

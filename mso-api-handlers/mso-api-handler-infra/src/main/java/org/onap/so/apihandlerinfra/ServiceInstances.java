@@ -705,7 +705,6 @@ public class ServiceInstances {
 		String vnfType = msoRequest.getVnfType(sir,requestScope,action,requestVersion);
 		String networkType = msoRequest.getNetworkType(sir,requestScope);
 		String sdcServiceModelVersion = msoRequest.getSDCServiceModelVersion(sir);
-		String serviceInstanceType = msoRequest.getServiceInstanceType(sir,requestScope);
 		String vfModuleType = msoRequest.getVfModuleType(sir,requestScope,action,requestVersion);
 		
 		if(requestScope.equalsIgnoreCase(ModelType.vnf.name()) && vnfType != null){
@@ -732,7 +731,7 @@ public class ServiceInstances {
 		Boolean isBaseVfModule = false;
 
         RecipeLookupResult recipeLookupResult = getServiceInstanceOrchestrationURI(sir, action, alaCarteFlag, currentActiveReq);
-								
+        String serviceInstanceType = getServiceType(requestScope, sir, alaCarteFlag);						
 			ModelType modelType;
 			ModelInfo modelInfo =  sir.getRequestDetails().getModelInfo();
 			if (action == Action.applyUpdatedConfig || action == Action.inPlaceSoftwareUpdate) {
@@ -1856,5 +1855,31 @@ public class ServiceInstances {
 	                    .errorInfo(errorLoggerInfo).build();
 			}
 		}
+	}
+	protected String getServiceType(String requestScope, ServiceInstancesRequest sir, Boolean aLaCarteFlag){
+		String serviceType = null;
+		if(requestScope.equalsIgnoreCase(ModelType.service.toString())){
+			String defaultServiceModelName = getDefaultModel(sir);
+			org.onap.so.db.catalog.beans.Service serviceRecord;
+			if(aLaCarteFlag){
+				 serviceRecord = catalogDbClient.getFirstByModelNameOrderByModelVersionDesc(defaultServiceModelName);
+				 if(serviceRecord != null){
+					 serviceType = serviceRecord.getServiceType();
+				 }
+			}else{
+				serviceRecord = catalogDbClient.getServiceByID(sir.getRequestDetails().getModelInfo().getModelVersionId());
+				if(serviceRecord != null){
+					 serviceType = serviceRecord.getServiceType();
+				 }else{
+					 serviceRecord = catalogDbClient.getFirstByModelNameOrderByModelVersionDesc(defaultServiceModelName);
+					 if(serviceRecord != null){
+						 serviceType = serviceRecord.getServiceType();
+					 }
+				 }
+			}
+		}else{
+			serviceType = msoRequest.getServiceInstanceType(sir, requestScope);
+		}
+		return serviceType;
 	}
 }
