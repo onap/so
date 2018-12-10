@@ -223,7 +223,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			AAIResourcesClient client = new AAIResourcesClient()
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
 			client.update(uri, vfModule)
-
+			execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', 200)
 			// Set the output for this flow.  The updated VfModule is an output, the generic VNF name, and for
 			// backward compatibilty, the heat-stack-id is an output
 			execution.setVariable('PUAAIVfMod_outVfModule', vfModule)
@@ -238,9 +238,11 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 
 			msoLogger.trace('Exited ' + method)
 		} catch (BpmnError e) {
+			execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', 500)
 			throw e;
 		} catch (Exception e) {
 			msoLogger.error(e)
+			execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', 500)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
 		}
 	}

@@ -184,11 +184,17 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
             try {
                 AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
                 getAAIClient().update(resourceUri, payload)
+				execution.setVariable('UAAIVfMod_updateVfModuleResponseCode', 200)
+				execution.setVariable('UAAIVfMod_updateVfModuleResponse', "Success")
             }catch(NotFoundException ignored){
                 msoLogger.debug("VF-Module not found!!")
+				execution.setVariable('UAAIVfMod_updateVfModuleResponseCode', 404)
+                execution.setVariable('UAAIVfMod_updateVfModuleResponse', ignored.getMessage())
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "vf-module " + vfModuleId + " not found for under vnf " + vnfId + " in A&AI!")
             }
             catch(Exception ex){
+				execution.setVariable('UAAIVfMod_updateVfModuleResponseCode', 500)
+				execution.setVariable('UAAIVfMod_updateVfModuleResponse', 'AAI PATCH Failed:' + ex.getMessage())
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, 'Exception occurred while executing AAI PATCH:' + ex.getMessage())
             }
 		} catch (BpmnError e) {
