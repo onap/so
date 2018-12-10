@@ -1,0 +1,25 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelType": "vnf",
+      "modelInvariantId": "2b80014c-851a-4051-a2f0-2994fcf26164",
+      "modelVersionId": "038111e7-dfb6-4875-ba06-d1fc1306b471",
+      "modelName": "Resource",
+      "modelVersion": "4.0",
+      "modelCustomizationName": "Resource 0",
+      "modelCustomizationId": "5769aaa9-84f0-4b9d-bf8a-d891e5c461e1"
+    },
+    "cloudConfiguration": {
+      "cloudOwner": "cloud-owner",
+      "lcpCloudRegionId": "abc3",
+      "tenantId": "ab33582f8d3948078dc8c18d6834bf75"
+    },
+    "requestInfo": {
+      "source": "VID",
+      "requestorId": "test"
+    },
+    "requestParameters": {
+      "testApi": "GR_API"
+    }
+  }
+}
