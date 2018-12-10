@@ -609,14 +609,25 @@ public class BBInputSetup implements JavaDelegate {
 			vnf = createGenericVnf(lookupKeyMap, instanceName, platform, lineOfBusiness,
 					resourceId, generatedVnfType, instanceParams);
 			serviceInstance.getVnfs().add(vnf);
+			mapVnfcCollectionInstanceGroup(vnf, modelInfo, service);
 		}
 		if(vnf != null) {
 			mapCatalogVnf(vnf, modelInfo, service);
-			mapVnfcCollectionInstanceGroup(vnf, modelInfo, service);
-			if (instanceGroupId != null && instanceGroupModelInfo != null) {
+			if (instanceGroupId != null && instanceGroupModelInfo != null
+					&& instanceGroupModelInfo.getModelType().equals(ModelType.networkInstanceGroup)
+					&& !instanceGroupInList(vnf, instanceGroupId)) {
 				mapNetworkCollectionInstanceGroup(vnf, instanceGroupId);
 			}
 		}
+	}
+
+	protected boolean instanceGroupInList(GenericVnf vnf, String instanceGroupId) {
+		for(InstanceGroup instanceGroup : vnf.getInstanceGroups()) {
+			if(instanceGroup.getId() != null && instanceGroup.getId().equalsIgnoreCase(instanceGroupId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected void mapVnfcCollectionInstanceGroup(GenericVnf genericVnf, ModelInfo modelInfo, Service service) {
