@@ -174,14 +174,12 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 				personaModelVersionEntry = updateVfModuleNode(origRequest,  'persona-model-version')
 			}
 			String contrailServiceInstanceFqdnEntry = updateVfModuleNode(origRequest,  'contrail-service-instance-fqdn')
-			def payload = """
-					{	${orchestrationStatusEntry}
-						${heatStackIdEntry}
-						${personaModelVersionEntry}
-						${contrailServiceInstanceFqdnEntry}
-						"vf-module-id": "${vfModuleId}"						
-					}
-			"""
+			org.onap.aai.domain.yang.VfModule payload = new org.onap.aai.domain.yang.VfModule();
+			payload.setVfModuleId(vfModuleId)
+			payload.setOrchestrationStatus(orchestrationStatusEntry)
+			payload.setHeatStackId(heatStackIdEntry)
+			payload.setPersonaModelVersion(personaModelVersionEntry)
+			payload.setContrailServiceInstanceFqdn(contrailServiceInstanceFqdnEntry)
 
             try {
                 AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
@@ -210,16 +208,16 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 	private String updateVfModuleNode(String origRequest, String elementName) {
 
 		if (!utils.nodeExists(origRequest, elementName)) {
-			return "" 
+			return null
 		}
 		def elementValue = utils.getNodeText(origRequest, elementName)
 
 		if (elementValue.equals('DELETE')) {
-			// Set the element being deleted to null
-			return """"${elementName}": null,"""
+			// Set the element being deleted to empty string
+			return ""
 		}
 		else {
-			return """"${elementName}": "${elementValue}","""
+			return elementValue
 		}		
 	}
 
