@@ -77,6 +77,6 @@ public class SDNCClientIT extends BaseIntegrationTest {
                         .withHeader("Content-Type", "application/json").withBody(responseJson)));
     	
         String response = SPY_sdncClient.post("", SDNCTopology.NETWORK);
-        JSONAssert.assertEquals("", response, false);
+        JSONAssert.assertEquals(responseJson, response, true);
     }
 }

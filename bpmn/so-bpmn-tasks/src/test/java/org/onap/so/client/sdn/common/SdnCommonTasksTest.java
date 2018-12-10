@@ -60,12 +60,13 @@ public class SdnCommonTasksTest{
 
     @Test
     public void validateSDNResponseTest() throws BadResponseException {
+    	String jsonResponse = "{\"output\":{\"response-code\":\"0\",\"response-message\":\"success\"}}";
         LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
         LinkedHashMap<String, Object> output = new LinkedHashMap<>();
         output.put("response-code", "0");
         output.put("response-message", "success");
         responseMap.put("output", output);
-        assertEquals("success", sdnCommonTasks.validateSDNResponse(responseMap));
+        assertEquals(jsonResponse, sdnCommonTasks.validateSDNResponse(responseMap));
     }
 
     @Test
