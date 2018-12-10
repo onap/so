@@ -70,6 +70,7 @@ falloutHandler.postProcessResponse(execution)]]></bpmn2:script>
               <camunda:map>
                 <camunda:entry key="content-type">application/soap+xml</camunda:entry>
                 <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
+                <camunda:entry key="X-ONAP-RequestID">#{FH_request_id}</camunda:entry>
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="payload">

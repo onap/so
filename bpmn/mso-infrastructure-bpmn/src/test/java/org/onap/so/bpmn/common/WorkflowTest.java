@@ -56,6 +56,7 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.history.HistoricProcessInstance;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.runtime.ProcessInstanceQuery;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.custommonkey.xmlunit.DetailedDiff;
@@ -884,11 +885,20 @@ public abstract class WorkflowTest {
 				return null;
 			}
 
+			ProcessInstanceQuery processInstanceQuery = null;
 			if (processInstance == null) {
-				processInstance = runtimeService
+				processInstanceQuery = runtimeService
 					.createProcessInstanceQuery()
-					.processDefinitionKey(processKey)
-					.singleResult();
+					.processDefinitionKey(processKey);
+			}
+
+			if(processInstanceQuery.count() <= 1){
+				processInstance = processInstanceQuery.singleResult();
+			}else{
+				//TODO There shouldnt be more than one in the list but seems to be happening, need to figure out why happening and best way to get correct one from list
+				msoLogger.debug("Process Instance Query returned " + processInstanceQuery.count() + " instance. Getting the last instance in the list");
+				List<ProcessInstance> processList = processInstanceQuery.list();
+				processInstance = processList.get((processList.size() - 1));
 			}
 
 			if (processInstance != null) {
@@ -927,7 +937,7 @@ public abstract class WorkflowTest {
 	protected boolean injectSDNCRestCallback(String contentType, String content, long timeout) {
 		String sdncRequestId = (String) getProcessVariable("SDNCAdapterRestV1",
 			"SDNCAResponse_CORRELATOR", timeout);
-		
+
 		if (sdncRequestId == null) {
 			sdncRequestId = (String) getProcessVariable("SDNCAdapterRestV2",
 				"SDNCAResponse_CORRELATOR", timeout);
@@ -1693,7 +1703,7 @@ public abstract class WorkflowTest {
 
 	/**
 	 * Checks to see if the specified process is ended.
-	 * 
+	 *
 	 * @param processInstanceId the process Instance Id
 	 * @return true if the process is ended
 	 */
@@ -1705,7 +1715,7 @@ public abstract class WorkflowTest {
 
 	/**
 	 * Checks to see if the specified process is ended.
-	 * 
+	 *
 	 * @author cb645j
 	 */
 	//TODO combine into 1
