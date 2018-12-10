@@ -881,8 +881,20 @@ public class BBInputSetup implements JavaDelegate {
 			throws Exception {
 		String bbName = executeBB.getBuildingBlock().getBpmnFlowName();
 		String key = executeBB.getBuildingBlock().getKey();
+		
+		if (requestAction.equalsIgnoreCase("deleteInstance")
+				|| requestAction.equalsIgnoreCase("unassignInstance")
+				|| requestAction.equalsIgnoreCase("activateInstance")
+				|| requestAction.equalsIgnoreCase("activateFabricConfiguration")
+				|| requestAction.equalsIgnoreCase("recreateInstance")
+				|| requestAction.equalsIgnoreCase("replaceInstance")) {
+			return getGBBMacroExistingService(executeBB, lookupKeyMap, bbName, requestAction,
+					requestDetails.getCloudConfiguration());
+		}
+
+		String serviceInstanceId = lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID);
 		GeneralBuildingBlock gBB = this.getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction,
-				resourceId);
+				serviceInstanceId);
 		RequestParameters requestParams = requestDetails.getRequestParameters();
 		Service service = null;
 		if (gBB != null && gBB.getServiceInstance() != null
@@ -905,16 +917,10 @@ public class BBInputSetup implements JavaDelegate {
 		if (requestAction.equalsIgnoreCase("deactivateInstance")) {
 			return gBB;
 		} else if (requestAction.equalsIgnoreCase("createInstance")) {
-		return getGBBMacroNoUserParamsCreate(executeBB, lookupKeyMap, bbName, key, gBB, service);
-		} else if (requestAction.equalsIgnoreCase("deleteInstance")
-				|| requestAction.equalsIgnoreCase("unassignInstance")
-				|| requestAction.equalsIgnoreCase("activateInstance")
-				|| requestAction.equalsIgnoreCase("activateFabricConfiguration")) {
-			return getGBBMacroExistingService(executeBB, lookupKeyMap, bbName, gBB, service, requestAction,
-					requestDetails.getCloudConfiguration());
+			return getGBBMacroNoUserParamsCreate(executeBB, lookupKeyMap, bbName, key, gBB, service);
 		} else {
-		throw new IllegalArgumentException(
-				"No user params on requestAction: assignInstance. Please specify user params.");
+			throw new IllegalArgumentException(
+					"No user params on requestAction: assignInstance. Please specify user params.");
 		}
 	}
 
@@ -986,8 +992,27 @@ public class BBInputSetup implements JavaDelegate {
 	}
 
 	protected GeneralBuildingBlock getGBBMacroExistingService(ExecuteBuildingBlock executeBB,
-			Map<ResourceKey, String> lookupKeyMap, String bbName, GeneralBuildingBlock gBB, Service service,
-			String requestAction, CloudConfiguration cloudConfiguration) throws Exception {
+			Map<ResourceKey, String> lookupKeyMap, String bbName, String requestAction, CloudConfiguration cloudConfiguration) throws Exception {
+		org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = null;
+		String serviceInstanceId = lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID);
+		RequestDetails requestDetails = executeBB.getRequestDetails();
+		GeneralBuildingBlock gBB = null;
+		if (serviceInstanceId != null) {
+			aaiServiceInstance = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
+		}
+		Service service = null;
+		if (aaiServiceInstance != null) {
+			service = bbInputSetupUtils.getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
+		}
+		if (aaiServiceInstance != null && service != null) {
+			ServiceInstance serviceInstance = this.getExistingServiceInstance(aaiServiceInstance);
+			serviceInstance.setModelInfoServiceInstance(this.mapperLayer.mapCatalogServiceIntoServiceInstance(service));
+			gBB = populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
+		} else {
+			msoLogger.debug("Related Service Instance from AAI: " + aaiServiceInstance);
+			msoLogger.debug("Related Service Instance Model Info from AAI: " + service);
+			throw new Exception("Could not find relevant information for related Service Instance");
+		}
 		ServiceInstance serviceInstance = gBB.getServiceInstance();
 		CloudRegion cloudRegion = null;
 		if(cloudConfiguration == null) {
@@ -996,7 +1021,7 @@ public class BBInputSetup implements JavaDelegate {
 				cloudRegion = cloudRegionOp.get();
 			}
 		}
-		if (cloudConfiguration != null && requestAction.equalsIgnoreCase("deleteInstance")) {
+		if (cloudConfiguration != null) {
 			org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfiguration);
 			cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
 		}
