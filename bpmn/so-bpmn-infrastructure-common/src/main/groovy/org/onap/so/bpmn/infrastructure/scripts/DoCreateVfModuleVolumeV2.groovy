@@ -298,6 +298,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 			getAAIClient().create(volumeGroupUri, volumeGroup)
 			getAAIClient().connect(volumeGroupUri, vnfUri)
 			getAAIClient().connect(volumeGroupUri, tenantUri)
+			execution.setVariable("queriedVolumeGroupId", volumeGroupId)
 			RollbackData rollbackData = execution.getVariable("rollbackData")
 			rollbackData.put("DCVFMODULEVOL", "isAAIRollbackNeeded", "true")
 		} catch (NotFoundException ignored) {

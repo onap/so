@@ -250,6 +250,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		when(mockExecution.getVariable(cloudOwner)).thenReturn(cloudOwner)
 		when(mockExecution.getVariable("rollbackData")).thenReturn(new RollbackData())
 		doCreateVfModuleVolumeV2.callRESTCreateAAIVolGrpName(mockExecution,null)
+		verify(mockExecution).setVariable("queriedVolumeGroupId", "volumeGroupId")
 	}
 
 	@Test
