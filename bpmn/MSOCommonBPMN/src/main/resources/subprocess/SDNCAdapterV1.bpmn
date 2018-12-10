@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_l2hJ8CccEeW3d--PaFJMbg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.1" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_l2hJ8CccEeW3d--PaFJMbg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="sdncAdapter" name="SDNC Adapter" isExecutable="true">
     <bpmn2:exclusiveGateway id="isResponseOK" name="is Response Ok?" default="badSynchronousResponse">
       <bpmn2:incoming>SequenceFlow_15</bpmn2:incoming>
@@ -30,7 +30,7 @@ exceptionUtil.buildWorkflowException(execution, 7000, "Could not communicate wit
               <camunda:map>
                 <camunda:entry key="content-type">application/soap+xml</camunda:entry>
                 <camunda:entry key="Authorization">#{BasicAuthHeaderValue}</camunda:entry>
-                <camunda:entry key="X-ONAP-RequestID">#{mso-request-id}</camunda:entry>
+                <camunda:entry key="X-ONAP-RequestID"><![CDATA[#{execution.getVariable("mso-request-id")}]]></camunda:entry>
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="payload">${sdncAdapterRequest}</camunda:inputParameter>
@@ -227,6 +227,24 @@ sdnc.assignError(execution)]]></bpmn2:script>
       <bpmn2:script><![CDATA[execution.setVariable("SDNCA_InterimNotify", false)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1w1za5m" sourceRef="ResetInterimNotificationFlag" targetRef="toggleSuccessIndicator" />
+    <bpmn2:subProcess id="SubProcess_1j2zu8s" name="Java Exception Handling Sub Process" triggeredByEvent="true">
+      <bpmn2:startEvent id="StartEvent_10rxj2o">
+        <bpmn2:outgoing>SequenceFlow_1cnxq0j</bpmn2:outgoing>
+        <bpmn2:errorEventDefinition errorRef="Error_2" camunda:errorCodeVariable="BPMN_javaExpCode" camunda:errorMessageVariable="BPMN_javaExpMsg" />
+      </bpmn2:startEvent>
+      <bpmn2:endEvent id="EndEvent_0tzire9">
+        <bpmn2:incoming>SequenceFlow_1j9sip1</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:sequenceFlow id="SequenceFlow_1cnxq0j" sourceRef="StartEvent_10rxj2o" targetRef="Task_1damf23" />
+      <bpmn2:sequenceFlow id="SequenceFlow_1j9sip1" sourceRef="Task_1damf23" targetRef="EndEvent_0tzire9" />
+      <bpmn2:scriptTask id="Task_1damf23" name="Process Error" scriptFormat="groovy">
+        <bpmn2:incoming>SequenceFlow_1cnxq0j</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_1j9sip1</bpmn2:outgoing>
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processJavaException(execution)]]></bpmn2:script>
+      </bpmn2:scriptTask>
+    </bpmn2:subProcess>
   </bpmn2:process>
   <bpmn2:message id="Message_1" name="sdncAdapterWorkflowRequest" />
   <bpmn2:message id="Message_2" name="sdncAdapterCallbackRequest" />
@@ -467,35 +485,35 @@ sdnc.assignError(execution)]]></bpmn2:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_SubProcess_19" bpmnElement="errorHandlingSubProcess" isExpanded="true">
-        <dc:Bounds x="207" y="692" width="353" height="193" />
+        <dc:Bounds x="250" y="598" width="353" height="193" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_63" bpmnElement="catchErrors">
-        <dc:Bounds x="242" y="771" width="36" height="36" />
+        <dc:Bounds x="285" y="677" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="245" y="812" width="29" height="12" />
+          <dc:Bounds x="288" y="718" width="29" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_EndEvent_213" bpmnElement="EndEvent_5">
-        <dc:Bounds x="482" y="771" width="36" height="36" />
+        <dc:Bounds x="525" y="677" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="455" y="812" width="90" height="0" />
+          <dc:Bounds x="498" y="718" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_249" bpmnElement="assignError">
-        <dc:Bounds x="326" y="749" width="100" height="80" />
+        <dc:Bounds x="369" y="655" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_29" bpmnElement="SequenceFlow_22" sourceElement="_BPMNShape_StartEvent_63" targetElement="_BPMNShape_ScriptTask_249">
-        <di:waypoint xsi:type="dc:Point" x="278" y="789" />
-        <di:waypoint xsi:type="dc:Point" x="326" y="789" />
+        <di:waypoint xsi:type="dc:Point" x="321" y="695" />
+        <di:waypoint xsi:type="dc:Point" x="369" y="695" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="263" y="789" width="90" height="0" />
+          <dc:Bounds x="306" y="695" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_34" bpmnElement="SequenceFlow_27" sourceElement="_BPMNShape_ScriptTask_249" targetElement="_BPMNShape_EndEvent_213">
-        <di:waypoint xsi:type="dc:Point" x="426" y="789" />
-        <di:waypoint xsi:type="dc:Point" x="482" y="789" />
+        <di:waypoint xsi:type="dc:Point" x="469" y="695" />
+        <di:waypoint xsi:type="dc:Point" x="525" y="695" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="409" y="789" width="90" height="0" />
+          <dc:Bounds x="452" y="695" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1eciucn_di" bpmnElement="SequenceFlow_1eciucn">
@@ -575,6 +593,38 @@ sdnc.assignError(execution)]]></bpmn2:script>
           <dc:Bounds x="1513" y="369.5" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_009jbzr_di" bpmnElement="SubProcess_1j2zu8s" isExpanded="true">
+        <dc:Bounds x="252" y="817" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1cwwku2_di" bpmnElement="StartEvent_10rxj2o">
+        <dc:Bounds x="288" y="904" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="306" y="944" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0tzire9_di" bpmnElement="EndEvent_0tzire9">
+        <dc:Bounds x="530" y="904" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="548" y="944" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1cnxq0j_di" bpmnElement="SequenceFlow_1cnxq0j">
+        <di:waypoint xsi:type="dc:Point" x="324" y="922" />
+        <di:waypoint xsi:type="dc:Point" x="378" y="922" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="351" y="901" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1j9sip1_di" bpmnElement="SequenceFlow_1j9sip1">
+        <di:waypoint xsi:type="dc:Point" x="478" y="922" />
+        <di:waypoint xsi:type="dc:Point" x="530" y="922" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="504" y="901" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1n6d3r0_di" bpmnElement="Task_1damf23">
+        <dc:Bounds x="378" y="882" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn2:definitions>
