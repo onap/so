@@ -115,7 +115,7 @@ public class BBInputSetup implements JavaDelegate {
 	private BBInputSetupMapperLayer mapperLayer;
 	
 	@Autowired
-	private CloudInfoFromAAI bbInputSetupHelper;
+	private CloudInfoFromAAI cloudInfoFromAAI;
 
 	@Autowired
 	private ExceptionBuilder exceptionUtil;
@@ -124,6 +124,10 @@ public class BBInputSetup implements JavaDelegate {
 
 	public BBInputSetupUtils getBbInputSetupUtils() {
 		return bbInputSetupUtils;
+	}
+	
+	public void setCloudInfoFromAAI(CloudInfoFromAAI cloudInfoFromAAI) {
+		this.cloudInfoFromAAI = cloudInfoFromAAI;
 	}
 
 	public void setBbInputSetupUtils(BBInputSetupUtils bbInputSetupUtils) {
@@ -987,7 +991,7 @@ public class BBInputSetup implements JavaDelegate {
 		ServiceInstance serviceInstance = gBB.getServiceInstance();
 		CloudRegion cloudRegion = null;
 		if(cloudConfiguration == null) {
-			Optional<CloudRegion> cloudRegionOp = bbInputSetupHelper.getCloudInfoFromAAI(serviceInstance);
+			Optional<CloudRegion> cloudRegionOp = cloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
 			if(cloudRegionOp.isPresent()) {
 				cloudRegion = cloudRegionOp.get();
 			}
@@ -1040,9 +1044,9 @@ public class BBInputSetup implements JavaDelegate {
 						vnfModelInfo.setModelCustomizationUuid(vnfModelCustomizationUUID);
 						this.mapCatalogVnf(vnf, vnfModelInfo, service);
 						lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, vnf.getVnfId());
-						if (cloudConfiguration != null) {
-							String volumeGroupCustomizationUUID = this.bbInputSetupUtils.getAAIVolumeGroup(cloudConfiguration.getCloudOwner(),
-									cloudConfiguration.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId())
+						if (cloudRegion != null) {
+							String volumeGroupCustomizationUUID = this.bbInputSetupUtils.getAAIVolumeGroup(cloudRegion.getCloudOwner(),
+									cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId())
 									.getModelCustomizationId();
 							ModelInfo volumeGroupModelInfo = new ModelInfo();
 							volumeGroupModelInfo.setModelCustomizationId(volumeGroupCustomizationUUID);
