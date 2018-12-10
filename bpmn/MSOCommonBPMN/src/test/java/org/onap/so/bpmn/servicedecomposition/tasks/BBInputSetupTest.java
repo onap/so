@@ -1319,7 +1319,7 @@ public class BBInputSetupTest {
 				serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType, null);
 		verify(SPY_bbInputSetup, times(2)).mapCatalogVnf(vnf2, modelInfo, service);
 		verify(SPY_bbInputSetup, times(2)).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
-		verify(SPY_bbInputSetup, times(2)).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
+		verify(SPY_bbInputSetup, times(1)).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
 	}
 
 	@Test
