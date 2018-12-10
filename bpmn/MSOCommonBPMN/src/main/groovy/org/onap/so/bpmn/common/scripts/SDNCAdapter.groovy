@@ -28,11 +28,10 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
-
+import static org.apache.commons.lang3.StringUtils.*
 
 
 // SDNC Adapter Request/Response processing
-
 public class SDNCAdapter extends AbstractServiceTaskProcessor {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SDNCAdapter.class);
 
@@ -58,6 +57,12 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			execution.setVariable("SDNCA_SuccessIndicator", false)
 			execution.setVariable("SDNCA_InterimNotify", false)
 
+			String requestId = execution.getVariable("mso-request-id")
+			if(isNotBlank(requestId)){
+				execution.setVariable(Prefix + "requestId", requestId)
+			}else{
+				exceptionUtil.buildAndThrowWorkflowException(execution, 400, 'mso-request-id not provided by calling flow')
+			}
 			// Authorization Info
 			String basicAuthValue = UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
 
@@ -118,8 +123,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			msoLogger.debug("source: " + source)
 
 			//calling process should pass a generated uuid if sending multiple sdnc requests
-			def requestId = utils.getNodeText(requestHeader, "RequestId")
-			execution.setVariable(Prefix + "requestId", requestId)
+			def sdncRequestId = utils.getNodeText(requestHeader, "RequestId")
 
 			// Prepare SDNC Request to the SDNC Adapter
 			String sdncAdapterRequest = """
@@ -127,7 +131,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			<SOAP-ENV:Body>
 			<aetgt:SDNCAdapterRequest xmlns:aetgt="http://org.onap/workflow/sdnc/adapter/schema/v1" xmlns:sdncadaptersc="http://org.onap/workflow/sdnc/adapter/schema/v1">
 			<sdncadapter:RequestHeader xmlns:sdncadapter="http://org.onap/workflow/sdnc/adapter/schema/v1">
-			<sdncadapter:RequestId>${MsoUtils.xmlEscape(requestId)}</sdncadapter:RequestId>"""
+			<sdncadapter:RequestId>${MsoUtils.xmlEscape(sdncRequestId)}</sdncadapter:RequestId>"""
 
 			if (sdnca_svcInstanceId != null) {
 				sdncAdapterRequest += """
@@ -180,7 +184,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 				callbackHeader = callbackHeader.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "")
 
 				callbackRequestData = callbackRequestData.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "")
-				
+
 				msoLogger.trace("EnhancedCallbackRequestData:\n" + callbackRequestData)
 				execution.setVariable("enhancedCallbackRequestData", callbackRequestData)
 

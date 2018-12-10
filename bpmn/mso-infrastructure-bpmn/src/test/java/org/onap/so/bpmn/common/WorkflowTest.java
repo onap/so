@@ -892,7 +892,7 @@ public abstract class WorkflowTest {
 					.processDefinitionKey(processKey);
 			}
 
-			if(processInstanceQuery.count() <= 1){
+			if(processInstanceQuery.count() == 1 || processInstanceQuery.count() == 0){
 				processInstance = processInstanceQuery.singleResult();
 			}else{
 				//TODO There shouldnt be more than one in the list but seems to be happening, need to figure out why happening and best way to get correct one from list
@@ -900,6 +900,7 @@ public abstract class WorkflowTest {
 				List<ProcessInstance> processList = processInstanceQuery.list();
 				processInstance = processList.get((processList.size() - 1));
 			}
+
 
 			if (processInstance != null) {
 				value = runtimeService

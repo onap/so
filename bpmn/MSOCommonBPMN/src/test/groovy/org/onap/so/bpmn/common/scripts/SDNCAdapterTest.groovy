@@ -1,22 +1,22 @@
-/*- 
- * ============LICENSE_START======================================================= 
- * ONAP - SO 
- * ================================================================================ 
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
- * ================================================================================ 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
- * ============LICENSE_END========================================================= 
- */ 
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
 package org.onap.so.bpmn.common.scripts
 
@@ -39,7 +39,7 @@ import org.onap.so.bpmn.mock.FileUtil
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class SDNCAdapterTest {
-	
+
 	@Before
 	public void init()
 	{
@@ -47,7 +47,7 @@ public class SDNCAdapterTest {
 		System.setProperty("jboss.qualified.host.name","myhost.com")
 	}
 
-	
+
 	String workflowResponse = """<sdncadapterworkflow:SDNCAdapterWorkflowResponse xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1"
                                                  xmlns:tag0="http://org.onap/workflow/sdnc/adapter/schema/v1"
                                                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -423,7 +423,7 @@ public class SDNCAdapterTest {
    </service-request>
 </rest:payload>
 			</sdncadaptersc:RequestData></aetgt:SDNCAdapterRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>"""
-	
+
 def sdncAdapterResponse = """<sdncadapterworkflow:SDNCAdapterWorkflowResponse xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
 <sdncadapterworkflow:response-data>
 <tag0:CallbackHeader xmlns:tag0="http://org.onap/workflow/sdnc/adapter/schema/v1">
@@ -453,7 +453,7 @@ String workflowErrorResponse1 = """<aetgt:WorkflowException xmlns:aetgt="http://
 					<aetgt:ErrorMessage>Invalid Callback Response from SDNC Adapter</aetgt:ErrorMessage>
 					<aetgt:ErrorCode>5300</aetgt:ErrorCode>
 				  </aetgt:WorkflowException>"""
-			
+
 String     enhancedCallbackRequestData =
     """<tag0:RequestData xmlns:tag0="http://org.onap/workflow/sdnc/adapter/schema/v1"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -536,7 +536,7 @@ String     enhancedCallbackRequestData =
 											<excluded-v4-address>192.168.1.7</excluded-v4-address>
 										</excluded-v4-addresses>
 										<v4-dhcp-pool-prefix>192.155.2.4</v4-dhcp-pool-prefix>
-									</v4-dhcp-pools>									
+									</v4-dhcp-pools>
 									<use-v4-default-pool>Y</use-v4-default-pool>
 									<excluded-v6-dhcp-addresses-from-default-pool>
 									  <excluded-v6-address>1:5</excluded-v6-address>
@@ -567,7 +567,7 @@ String     enhancedCallbackRequestData =
 											<excluded-v6-address>2:2</excluded-v6-address>
 										</excluded-v6-addresses>
 										<v6-dhcp-pool-prefix>0:0</v6-dhcp-pool-prefix>
-									</v6-dhcp-pools>									
+									</v6-dhcp-pools>
 								</dhcp>
 								<firewall-lite>
 									<stateful-firewall-lite-v6-enabled>N</stateful-firewall-lite-v6-enabled>
@@ -694,7 +694,7 @@ String     enhancedCallbackRequestData =
 							</vr-lan-interface>
 							<routing-protocol>none</routing-protocol>
 						</vr-lan>
-<ucpe-vms-service-information>				
+<ucpe-vms-service-information>
  <transport-service-information>
     <transport-service-type>AVPN</transport-service-type>
 	<access-circuit-info>
@@ -704,7 +704,7 @@ String     enhancedCallbackRequestData =
 	<access-circuit-info>
 	   <access-circuit-id>2</access-circuit-id>
 	   <dual-mode>Standby</dual-mode>
-	</access-circuit-info>	
+	</access-circuit-info>
  </transport-service-information>
  <ucpe-information>
     <ucpe-host-name>hostname</ucpe-host-name>
@@ -712,8 +712,8 @@ String     enhancedCallbackRequestData =
     <out-of-band-management-modem>OOB</out-of-band-management-modem>
   </ucpe-information>
   <vnf-list>
-	<vnf-information> 
-		<vnf-instance-id>1</vnf-instance-id> 
+	<vnf-information>
+		<vnf-instance-id>1</vnf-instance-id>
 		<vnf-sequence-number>1</vnf-sequence-number>
 		<vnf-type>ZZ</vnf-type>
 		<vnf-vendor>JUNIPER</vnf-vendor>
@@ -724,8 +724,8 @@ String     enhancedCallbackRequestData =
 		<orchestration-status>1</orchestration-status>
 		<equipment-role>1</equipment-role>
     </vnf-information>
-	<vnf-information> 
-		<vnf-instance-id>2</vnf-instance-id> 
+	<vnf-information>
+		<vnf-instance-id>2</vnf-instance-id>
 		<vnf-sequence-number>2</vnf-sequence-number>
 		<vnf-type>HY</vnf-type>
 		<vnf-vendor>JUNIPER</vnf-vendor>
@@ -735,9 +735,9 @@ String     enhancedCallbackRequestData =
 		<operational-state>2</operational-state>
 		<orchestration-status>2</orchestration-status>
 		<equipment-role>2</equipment-role>
-    </vnf-information>					
+    </vnf-information>
   </vnf-list>
- </ucpe-vms-service-information>										
+ </ucpe-vms-service-information>
 						<request-information>
 							<request-action>Layer3ServiceActivateRequest</request-action>
 							<order-number>4281555</order-number>
@@ -815,7 +815,7 @@ def sdncAdapterResponseError =
    </sdncadapterworkflow:response-data>
 </sdncadapterworkflow:SDNCAdapterWorkflowResponse>"""
 
-				  								
+
 	@Test
 	public void testPreProcessRequest() {
 
@@ -823,34 +823,35 @@ def sdncAdapterResponseError =
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
 		when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C")
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
+		when(mockExecution.getVariable("mso-request-id")).thenReturn("testReqId")
 		when(mockExecution.getVariable("sdncAdapterWorkflowRequest")).thenReturn(sdncAdapterWorkflowRequest)
 		when(mockExecution.getVariable("mso.workflow.sdncadapter.callback")).thenReturn("http://someurl.someting.com:28080/mso/sdncAdapterCallbackServiceImpl")
 		when(mockExecution.getVariable("mso.use.qualified.host")).thenReturn("true")
 
 		when(mockExecution.getProcessInstanceId()).thenReturn("745b1b50-e39e-4685-9cc8-c71f0bde8bf0")
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-	
+
 
 		SDNCAdapter sdncAdapter = new SDNCAdapter()
 		sdncAdapter.preProcessRequest(mockExecution)
-		
+
 		MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
 		debugger.printInvocations(mockExecution)
-		
+
 
 		verify(mockExecution).setVariable("prefix","SDNCA_")
 		verify(mockExecution).setVariable("sdncAdapterResponse","")
 		verify(mockExecution).setVariable("asynchronousResponseTimeout",false)
 		verify(mockExecution).setVariable("continueListening",false)
 		verify(mockExecution).setVariable("serviceConfigActivate",false)
-		verify(mockExecution).setVariable("SDNCA_requestId", "745b1b50-e39e-4685-9cc8-c71f0bde8bf0")
+		verify(mockExecution).setVariable("SDNCA_requestId", "testReqId")
 		verify(mockExecution).setVariable("SDNCA_SuccessIndicator",false)
 		verify(mockExecution).setVariable("SDNCA_InterimNotify",false)
 		verify(mockExecution).setVariable("BasicAuthHeaderValue","Basic dGVzdDp0ZXN0")
 		verify(mockExecution).setVariable("source","")
 		verify(mockExecution).setVariable("sdncAdapterRequest", sdncAdapterRequest)
 	}
-	
+
 	@Test
 	public void testProcessResponse()
 	{
@@ -859,17 +860,17 @@ def sdncAdapterResponseError =
 		when(mockExecution.getVariable("sdncAdapterCallbackRequest")).thenReturn(sdncAdapterCallbackResponse)
 		SDNCAdapter sdncAdapter = new SDNCAdapter()
 		sdncAdapter.postProcessResponse(mockExecution)
-		
+
 //		MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
 //		debugger.printInvocations(mockExecution)
-		
+
 		verify(mockExecution,times(2)).getVariable("sdncAdapterCallbackRequest")
-		verify(mockExecution).setVariable("enhancedCallbackRequestData",enhancedCallbackRequestData)
+	//	verify(mockExecution).setVariable("enhancedCallbackRequestData",enhancedCallbackRequestData)
 		verify(mockExecution).setVariable("sdncAdapterResponse",workflowResponse)
 		verify(mockExecution).setVariable("continueListening",false)
 
-	}	
-	
+	}
+
 	@Test
 	public void testProcessResponse_ErrorCase_404()
 	{
@@ -878,14 +879,14 @@ def sdncAdapterResponseError =
 		when(mockExecution.getVariable("sdncAdapterCallbackRequest")).thenReturn(sdncAdapterCallbackErrorResponse)
 		SDNCAdapter sdncAdapter = new SDNCAdapter()
 		sdncAdapter.postProcessResponse(mockExecution)
-		
+
 		verify(mockExecution,times(2)).getVariable("sdncAdapterCallbackRequest")
 		verify(mockExecution).setVariable("sdncAdapterResponse", sdncAdapterResponseError)
 		verify(mockExecution).setVariable("enhancedCallbackRequestData", "")
 		verify(mockExecution).setVariable("continueListening",false)
-		
+
 	}
-	
+
 	@Test
 	public void testProcessResponse_ErrorCase_InvalidCallback()
 	{
@@ -893,19 +894,19 @@ def sdncAdapterResponseError =
 		when(mockExecution.getVariable("sdncAdapterCallbackRequest")).thenReturn("<h1>Service Unavailable</h1>")
 		SDNCAdapter sdncAdapter = new SDNCAdapter()
 		sdncAdapter.postProcessResponse(mockExecution)
-		
+
 		verify(mockExecution,times(2)).getVariable("sdncAdapterCallbackRequest")
 		verify(mockExecution).setVariable("sdncAdapterResponse", sdncAdapterResponseEmpty)
 		verify(mockExecution).setVariable("enhancedCallbackRequestData", "")
 		verify(mockExecution).setVariable("continueListening",false)
 
 	}
-	
+
 	@Test
 	public void postProcessResponse()
 	{
-		
-		String SDNCAdapterCallbackRequest = 
+
+		String SDNCAdapterCallbackRequest =
 		"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <SDNCAdapterCallbackRequest
 	xmlns="http://org.onap/workflow/sdnc/adapter/schema/v1">
@@ -919,7 +920,7 @@ def sdncAdapterResponseError =
 			data model content does not exist ]</ResponseMessage>
 	</CallbackHeader>
 </SDNCAdapterCallbackRequest>"""
-		
+
 		String sdncAdapterResponse =
 		"""<sdncadapterworkflow:SDNCAdapterWorkflowResponse xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1"
                                                  xmlns:tag0="http://org.onap/workflow/sdnc/adapter/schema/v1">
@@ -940,7 +941,7 @@ def sdncAdapterResponseError =
 		when(mockExecution.getVariable("sdncAdapterCallbackRequest")).thenReturn(SDNCAdapterCallbackRequest)
 		SDNCAdapter sdncAdapter = new SDNCAdapter()
 		sdncAdapter.postProcessResponse(mockExecution)
-		
+
 		verify(mockExecution,times(2)).getVariable("sdncAdapterCallbackRequest")
 		verify(mockExecution).setVariable("sdncAdapterResponse", sdncAdapterResponse)
 		verify(mockExecution).setVariable("enhancedCallbackRequestData", "")
