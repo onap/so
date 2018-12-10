@@ -153,6 +153,24 @@
       "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3f2f178a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-10T14:43:40Z",
+      "side": 1,
+      "message": "Yes it is true that there is a conflict. The main problem is with the camunda-bpm-assert artifact. The latest version 2.0-alpha is based on an old assertJ version: 1.7 which has some API incompatibilities with assertj 2/3. It is possible to use newest version of assertJ, but only in modules that do not require the camunda-bpm-assert depdendency. I\u0027ve done some cleanup in poms with the assertj artifacts as part of the change https://gerrit.onap.org/r/#/c/72645/.\nBasically the main assertj version is 3.11.1, but it is overridden in modules using the camunda-bpm-assert with 1.7.0. This module requires 1.7.0.",
+      "parentUuid": "9adffdf1_231ce7c0",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
