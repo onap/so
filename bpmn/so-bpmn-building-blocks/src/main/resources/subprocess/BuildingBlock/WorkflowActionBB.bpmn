@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
   <bpmn:process id="WorkflowActionBB" name="WorkflowActionBB" isExecutable="true">
     <bpmn:startEvent id="Start_WorkflowActionBB" name="start">
       <bpmn:outgoing>SequenceFlow_15s0okp</bpmn:outgoing>
@@ -79,7 +79,7 @@
       <bpmn:endEvent id="ErrorEnd" name="end">
         <bpmn:incoming>SequenceFlow_0wvzfgf</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:serviceTask id="Task_UpdateDb" name="Update Request To Failed" camunda:expression="${WorkflowActionBBTasks.updateRequestStatusToFailed(execution)}">
+      <bpmn:serviceTask id="Task_UpdateDb" name="Update Request To Failed" camunda:expression="${WorkflowActionBBFailure.updateRequestStatusToFailed(execution)}">
         <bpmn:incoming>SequenceFlow_024g0d1</bpmn:incoming>
         <bpmn:incoming>SequenceFlow_0eana0l</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_0wvzfgf</bpmn:outgoing>
@@ -116,7 +116,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_11530ei" name="Abort = true" sourceRef="ExclusiveGateway_Finished" targetRef="ExclusiveGateway_isTopLevelFlowAbort">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("handlingCode")=="Abort"}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:serviceTask id="Task_AbortAndCallErrorHandling" name="Update Request To Failed" camunda:expression="${WorkflowActionBBTasks.updateRequestStatusToFailed(execution)}">
+    <bpmn:serviceTask id="Task_AbortAndCallErrorHandling" name="Update Request To Failed" camunda:expression="${WorkflowActionBBFailure.updateRequestStatusToFailed(execution)}">
       <bpmn:incoming>SequenceFlow_02ksbt0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1p8yxu6</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -164,7 +164,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_11dlyzt" name="Rollback Not Needed" sourceRef="Task_RollbackExecutionPath" targetRef="Task_UpdateRequestToFailed">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("isRollbackNeeded")==false}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:serviceTask id="Task_UpdateRequestToFailed" name="Update Request To Failed" camunda:expression="${WorkflowActionBBTasks.updateRequestStatusToFailedWithRollback(execution)}">
+    <bpmn:serviceTask id="Task_UpdateRequestToFailed" name="Update Request To Failed" camunda:expression="${WorkflowActionBBFailure.updateRequestStatusToFailedWithRollback(execution)}">
       <bpmn:incoming>SequenceFlow_11dlyzt</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0l7kaba</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ui67mc</bpmn:outgoing>

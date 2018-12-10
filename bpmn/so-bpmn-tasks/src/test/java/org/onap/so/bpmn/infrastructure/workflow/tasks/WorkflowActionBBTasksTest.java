@@ -52,6 +52,9 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	@Mock
 	protected WorkflowAction workflowAction;
 	
+	@Mock
+	protected WorkflowActionBBFailure workflowActionBBFailure;
+	
 	@InjectMocks
 	@Spy
 	protected WorkflowActionBBTasks workflowActionBBTasks;
@@ -146,8 +149,8 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		
 		execution.setVariable("flowsToExecute", flowsToExecute);
 		execution.setVariable("gCurrentSequence", 3);
-		doNothing().when(workflowActionBBTasks).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
-
+		doNothing().when(workflowActionBBFailure).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
+		
 		workflowActionBBTasks.rollbackExecutionPath(execution);
 		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
 		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"DeactivateVfModuleBB");
@@ -179,8 +182,8 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		
 		execution.setVariable("flowsToExecute", flowsToExecute);
 		execution.setVariable("gCurrentSequence", 2);
-		doNothing().when(workflowActionBBTasks).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
-
+		doNothing().when(workflowActionBBFailure).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
+		
 		workflowActionBBTasks.rollbackExecutionPath(execution);
 		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
 		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"DeleteVfModuleBB");
@@ -217,8 +220,8 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		
 		execution.setVariable("flowsToExecute", flowsToExecute);
 		execution.setVariable("gCurrentSequence", 3);
-		doNothing().when(workflowActionBBTasks).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
-
+		doNothing().when(workflowActionBBFailure).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
+		
 		workflowActionBBTasks.rollbackExecutionPath(execution);
 		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
 		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"UnassignNetworkBB");
@@ -267,7 +270,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	public void checkRetryStatusTest(){
 		String reqId = "reqId123";
 		execution.setVariable("mso-request-id", reqId);
-		doNothing().when(workflowActionBBTasks).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
+		doNothing().when(workflowActionBBFailure).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
 		execution.setVariable("handlingCode","Retry");
 		execution.setVariable("retryCount", 1);
 		execution.setVariable("gCurrentSequence",1);
@@ -288,24 +291,5 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
 		workflowActionBBTasks.checkRetryStatus(execution);
 		assertEquals(0,execution.getVariable("retryCount"));
-	}
-	
-	
-	@Test
-	public void updateRequestStatusToFailed_Null_Rollback(){
-		String reqId = "reqId123";
-		execution.setVariable("mso-request-id", reqId);
-		execution.setVariable("retryCount", 3);
-		execution.setVariable("handlingCode","Success");
-		execution.setVariable("gCurrentSequence",1);
-		WorkflowException we = new WorkflowException("WorkflowAction",1231,"Error Case");
-		execution.setVariable("WorkflowException",we);
-		
-		doReturn(reqMock).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
-		workflowActionBBTasks.updateRequestStatusToFailed(execution);
-		Mockito.verify( reqMock, Mockito.times(1)).setStatusMessage("Error Case");
-		Mockito.verify( reqMock, Mockito.times(1)).setRequestStatus("FAILED");
-		Mockito.verify( reqMock, Mockito.times(1)).setProgress(Long.valueOf(100));
-		Mockito.verify( reqMock, Mockito.times(1)).setLastModifiedBy("CamundaBPMN");
 	}
 }

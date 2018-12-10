@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -57,6 +58,8 @@ public class WorkflowActionBBTasks {
 	private RequestsDbClient requestDbclient;
 	@Autowired
 	private WorkflowAction workflowAction;
+	@Autowired
+	private WorkflowActionBBFailure workflowActionBBFailure;
 	
 	public void selectBB(DelegateExecution execution) {
 		List<ExecuteBuildingBlock> flowsToExecute = (List<ExecuteBuildingBlock>) execution
@@ -207,7 +210,7 @@ public class WorkflowActionBBTasks {
 		String retryDuration = (String) execution.getVariable("RetryDuration");
 		int retryCount = (int) execution.getVariable(RETRY_COUNT);
 		if (handlingCode.equals("Retry")){
-			updateRequestErrorStatusMessage(execution);
+			workflowActionBBFailure.updateRequestErrorStatusMessage(execution);
 			try{
 				InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
 				request.setRetryStatusMessage("Retry " + retryCount+1 + "/5 will be started in " + retryDuration);
@@ -267,7 +270,7 @@ public class WorkflowActionBBTasks {
 				}
 			}
 			
-			updateRequestErrorStatusMessage(execution);
+			workflowActionBBFailure.updateRequestErrorStatusMessage(execution);
 			
 			if (rollbackFlows.isEmpty())
 				execution.setVariable("isRollbackNeeded", false);
@@ -281,100 +284,5 @@ public class WorkflowActionBBTasks {
 		}else{
 			workflowAction.buildAndThrowException(execution, "Rollback has already been called. Cannot rollback a request that is currently in the rollback state.");
 		}
-	}
-
-	protected void updateRequestErrorStatusMessage(DelegateExecution execution) {
-		try {
-			String requestId = (String) execution.getVariable(G_REQUEST_ID);
-			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
-			String errorMsg = retrieveErrorMessage(execution);
-			if(errorMsg == null || errorMsg.equals("")){
-				errorMsg = "Failed to determine error message";
-			}
-			request.setStatusMessage(errorMsg);
-			logger.debug("Updating RequestDB to failed: errorMsg = " + errorMsg);
-			requestDbclient.updateInfraActiveRequests(request);
-		} catch (Exception e) {
-			logger.error("Failed to update Request db with the status message after retry or rollback has been initialized.",e);
-		}
-	}
-
-	public void abortCallErrorHandling(DelegateExecution execution) {
-		String msg = "Flow has failed. Rainy day handler has decided to abort the process.";
-		logger.error(msg);
-		throw new BpmnError(msg);
-	}
-	
-	public void updateRequestStatusToFailed(DelegateExecution execution) {
-		try {
-			String requestId = (String) execution.getVariable(G_REQUEST_ID);
-			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
-			String errorMsg = null;
-			String rollbackErrorMsg = null;
-			Boolean rollbackCompleted = (Boolean) execution.getVariable("isRollbackComplete");
-			Boolean isRollbackFailure = (Boolean) execution.getVariable("isRollback");
-			
-			if(rollbackCompleted==null)
-				rollbackCompleted = false;
-			
-			if(isRollbackFailure==null)
-				isRollbackFailure = false;
-			
-			if(rollbackCompleted){
-				rollbackErrorMsg = "Rollback has been completed successfully.";
-				request.setRollbackStatusMessage(rollbackErrorMsg);
-				logger.debug("Updating RequestDB to failed: Rollback has been completed successfully");
-			}else{
-				if(isRollbackFailure){
-					rollbackErrorMsg = retrieveErrorMessage(execution);
-					if(rollbackErrorMsg == null || rollbackErrorMsg.equals("")){
-						rollbackErrorMsg = "Failed to determine rollback error message.";
-					}
-					request.setRollbackStatusMessage(rollbackErrorMsg);
-					logger.debug("Updating RequestDB to failed: rollbackErrorMsg = " + rollbackErrorMsg);
-				}else{
-					errorMsg = retrieveErrorMessage(execution);
-					if(errorMsg == null || errorMsg.equals("")){
-						errorMsg = "Failed to determine error message";
-					}
-					request.setStatusMessage(errorMsg);
-					logger.debug("Updating RequestDB to failed: errorMsg = " + errorMsg);
-				}
-			}
-			request.setProgress(Long.valueOf(100));
-			request.setRequestStatus("FAILED");
-			request.setLastModifiedBy("CamundaBPMN");
-			requestDbclient.updateInfraActiveRequests(request);
-		} catch (Exception e) {
-			workflowAction.buildAndThrowException(execution, "Error Updating Request Database", e);
-		}
-	}
-	
-	private String retrieveErrorMessage (DelegateExecution execution){
-		String errorMsg = "";
-		try {
-			WorkflowException exception = (WorkflowException) execution.getVariable("WorkflowException");
-			if(exception != null && (exception.getErrorMessage()!=null || !exception.getErrorMessage().equals(""))){
-				errorMsg = exception.getErrorMessage();
-			}
-		} catch (Exception ex) {
-			//log error and attempt to extact WorkflowExceptionMessage
-			logger.error("Failed to extract workflow exception from execution.",ex);
-		}
-		
-		if (errorMsg == null){
-			try {
-				errorMsg = (String) execution.getVariable("WorkflowExceptionErrorMessage");
-			} catch (Exception ex) {
-				logger.error("Failed to extract workflow exception message from WorkflowException",ex);
-				errorMsg = "Unexpected Error in BPMN.";
-			}
-		}
-		return errorMsg;
-	}
-	
-	public void updateRequestStatusToFailedWithRollback(DelegateExecution execution) {
-		execution.setVariable("isRollbackComplete", true);
-		updateRequestStatusToFailed(execution);
 	}
 }
