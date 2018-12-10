@@ -19,28 +19,29 @@
  */
 
 package org.onap.so.bpmn.common.scripts
-import org.camunda.bpm.engine.delegate.BpmnError
+
+
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
+import org.onap.logging.ref.slf4j.ONAPLogConstants
 import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
 import org.onap.so.logger.MsoLogger
-import org.apache.commons.lang3.StringEscapeUtils
-import java.util.regex.Matcher
-import java.util.regex.Pattern
+import org.onap.so.utils.TargetEntity
 
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
-import org.onap.so.utils.TargetEntity
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class ExternalAPIUtil {
 
 	String Prefix="EXTAPI_"
 
-	public MsoUtils utils = new MsoUtils()
-
-	ExceptionUtil exceptionUtil = new ExceptionUtil()
-
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExternalAPIUtil.class)
+
+	private final HttpClientFactory httpClientFactory;
+	private final MsoUtils utils;
+	private final ExceptionUtil exceptionUtil;
 
 	public static final String PostServiceOrderRequestsTemplate =
 	"{\n" +
@@ -85,7 +86,10 @@ class ExternalAPIUtil {
     "\t} \n" +
     "}"
 
-	public ExternalAPIUtil() {
+	ExternalAPIUtil(HttpClientFactory httpClientFactory, MsoUtils utils, ExceptionUtil exceptionUtil) {
+		this.httpClientFactory = httpClientFactory
+		this.utils = utils
+		this.exceptionUtil = exceptionUtil
 	}
 
 //	public String getUri(DelegateExecution execution, resourceName) {
@@ -137,8 +141,7 @@ class ExternalAPIUtil {
 			msoLogger.debug( "Generated uuid is: " + uuid)
 			msoLogger.debug( "URL to be used is: " + url)
 
-			URL Url = new URL(url)
-			HttpClient client = new HttpClient(Url, MediaType.APPLICATION_JSON, TargetEntity.EXTERNAL)
+			HttpClient client = httpClientFactory.create(new URL(url), MediaType.APPLICATION_JSON, TargetEntity.EXTERNAL)
 			client.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
 			client.addAdditionalHeader("X-FromAppId", "MSO")
 			client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, uuid)
@@ -166,17 +169,15 @@ class ExternalAPIUtil {
 	 * @return Response
 	 *
 	 */
-	public Response executeExternalAPIPostCall(DelegateExecution execution, String urlString, String payload){
+	public Response executeExternalAPIPostCall(DelegateExecution execution, String url, String payload){
 		msoLogger.debug( " ======== Started Execute ExternalAPI Post Process ======== ")
 		Response apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
 			msoLogger.debug( "Generated uuid is: " + uuid)
-			msoLogger.debug( "URL to be used is: " + urlString)
+			msoLogger.debug( "URL to be used is: " + url)
 
-			URL url = new URL(urlString);
-
-			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.AAI)
+			HttpClient httpClient = httpClientFactory.create(new URL(url), MediaType.APPLICATION_JSON, TargetEntity.AAI)
 			httpClient.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
 			httpClient.addAdditionalHeader("X-FromAppId", "MSO")
 			httpClient.addAdditionalHeader("X-TransactionId", uuid)

@@ -23,6 +23,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 import org.json.JSONArray
 import org.json.JSONObject
 import org.json.XML
+import org.onap.so.bpmn.common.scripts.ExternalAPIUtilFactory
 
 import static org.apache.commons.lang3.StringUtils.*
 import groovy.xml.XmlUtil
@@ -381,7 +382,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		valueMap.put("serviceName", '"' + serviceName + '"')
 		valueMap.put("serviceUuId", '"' + serviceUuId + '"')
 
-		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil()
+		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtilFactory().create()
 
 		// insert CallSource='ExternalAPI' to uuiRequest
 		Map<String, String> requestInputsMap = new HashMap<>()
@@ -426,7 +427,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		msoLogger.debug("doCreateE2ESIin3rdONAP externalAPIURL is: " + extAPIPath)
 		msoLogger.debug("doCreateE2ESIin3rdONAP payload is: " + payload)
 
-		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil()
+		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtilFactory().create()
 		execution.setVariable("ServiceOrderId", "")
 
 		Response response = externalAPIUtil.executeExternalAPIPostCall(execution, extAPIPath, payload)
@@ -471,7 +472,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		extAPIPath += "/" + execution.getVariable("ServiceOrderId")
 		msoLogger.debug("getE2ESIProgressin3rdONAP create externalAPIURL is: " + extAPIPath)
 
-		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil()
+		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtilFactory().create()
 
 		Response response = externalAPIUtil.executeExternalAPIGetCall(execution, extAPIPath)
 
