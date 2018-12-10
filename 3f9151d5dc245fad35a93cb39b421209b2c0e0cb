@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_23ff07ac",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/AaiConnectionTestImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-10T10:25:23Z",
+      "side": 1,
+      "message": "1. Broken encapsulation - The added UUID_V4 is never used in this class, but referenced from CreateAndActivatePnfResourceTest. It should be defined there.\nSuggestion: also consider improving the definition of the other two constants by moving into the classes they are used in.\n\n2. While there is nothing wrong with having the UUID hardcoded as a String, I\u0027d avoid specifying the version - a String is too fragile and susceptible to change. Consider generating the UUID deterministically for testing purposes",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_83835303",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GenerateUuidDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-10T10:25:23Z",
+      "side": 1,
+      "message": "Suggestions - maybe it would be a good idea to indicate that the generated UUID is for PNF. Consider a small rename - GeneratePnfUuidDelegate or GenerateUuidForPnfDelegate. A similar change in the bpmn would also be required.",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a3af7793",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-10T10:25:23Z",
+      "side": 1,
+      "message": "Is this really a good choice to limit the UUID format verification only to V4 ?\nHave you tried implementing a validation approach that is more generic? Have you analyzed if UUID.fromString() would suffice (by catching IllegalArgumentsException) ?",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_03a0c39d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-10T10:25:23Z",
+      "side": 1,
+      "message": "Suggestion - extract each validation into separate private methods. This will improve readability and better convey the intent.",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_23edc7ef",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreatePnfEntryInAaiDelegateTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-10T10:25:23Z",
+      "side": 1,
+      "message": "1. Lack of consistency in mockito API usage. Since the sections are marked as given/when/then comments, do not use Mockito.when, but rather opt to use a pure BDD approach by using BDDMockito.given\n\n2. Suggestion - instead of harcoding the UUID test value, consider generating it deterministically. Also avoid duplication.",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c3bb9be3",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GenerateUuidDelegateTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-10T10:25:23Z",
+      "side": 1,
+      "message": "This can be inlined, no need to have a @Before setUp method since, nothing is prepared here :)",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_83b593ef",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-10T10:25:23Z",
+      "side": 1,
+      "message": "Suggestion - while nothing wrong with hardcoding UUIDs for testing purposes - as previously mentioned - I\u0027d recommend generating the UUIDs deterministically. This approach would be less prone to errors",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a3b8d7e5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-10T10:25:23Z",
+      "side": 1,
+      "message": "Avoid using the \"expected\" keyword for verifying thrown exceptions - this type of error assertion is not thorough enough - detailed information like message/error codes cannot be verified.\nRecommendation: use assertJ to assert the exceptions in a fluent way. This applies to all instances of BpmnErrors tests.",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
