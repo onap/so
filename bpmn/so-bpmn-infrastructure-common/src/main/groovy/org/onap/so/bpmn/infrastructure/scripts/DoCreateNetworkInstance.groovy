@@ -868,7 +868,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String source    = execution.getVariable(Prefix + "source")
 
 			String requestInput = execution.getVariable(Prefix + "networkRequest")
-			String queryIdResponse = execution.getVariable(Prefix + "queryIdAAIResponse")
+			L3Network queryIdResponse = execution.getVariable(Prefix + "queryIdAAIResponse")
 			String cloudRegionId = execution.getVariable(Prefix + "cloudRegionPo")
 			String backoutOnFailure = execution.getVariable(Prefix + "rollbackEnabled")
 
