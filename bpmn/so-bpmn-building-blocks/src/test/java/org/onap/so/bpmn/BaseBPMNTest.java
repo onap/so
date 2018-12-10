@@ -68,6 +68,7 @@ import org.onap.so.bpmn.infrastructure.sdnc.tasks.SDNCUnassignTasks;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.FlowCompletionTasks;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.OrchestrationStatusValidator;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowAction;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionBBFailure;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionBBTasks;
 import org.onap.so.bpmn.sdno.tasks.SDNOHealthCheckTasks;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
@@ -219,6 +220,9 @@ public abstract class BaseBPMNTest {
 
 	@MockBean
 	protected SniroHomingV2 sniroHoming;
+	
+	@MockBean
+	protected WorkflowActionBBFailure workflowActionBBFailure;
 
 	@LocalServerPort
 	protected int port;
