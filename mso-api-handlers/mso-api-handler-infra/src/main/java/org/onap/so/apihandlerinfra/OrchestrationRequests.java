@@ -363,6 +363,10 @@ public class OrchestrationRequests {
     	   String endTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getEndTime()) + " GMT";
     	   status.setFinishTime(endTimeStamp);
        }
+       if(iar.getModifyTime() != null){
+    	   String timeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getModifyTime()) + " GMT";
+    	   status.setTimeStamp(timeStamp);
+       }
 
 
        if(iar.getRequestStatus() != null){
