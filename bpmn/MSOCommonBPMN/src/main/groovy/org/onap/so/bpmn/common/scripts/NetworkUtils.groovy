@@ -22,7 +22,9 @@ package org.onap.so.bpmn.common.scripts
 
 import groovy.xml.XmlUtil
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.HostRoute
 import org.onap.aai.domain.yang.L3Network
+import org.onap.aai.domain.yang.SegmentationAssignment
 import org.onap.aai.domain.yang.Subnet
 import org.onap.aai.domain.yang.Subnets
 import org.onap.so.bpmn.core.UrnPropertiesReader
@@ -304,34 +306,6 @@ class NetworkUtils {
 	}
 
 	/**
-	 * This method returns the name of param if found/match with paramName.
-	 *   Ex:   <network-params>
-	 *            <param name="shared">1</param>
-	 *            <param name="external">0</external>
-	 *         </network-params>
-	 *
-	 * @param xmlInput the XML document
-	 * @param paramName the param name (ex: 'shared', )
-	 * @return a param name for 'shared' (ex: 'shared' if found)
-	 */
-	def getParameterName(xmlInput, paramName) {
-		def rtn=""
-		if(xmlInput!=null){
-			def xml= new XmlSlurper().parseText(xmlInput)
-			try {
-				rtn= xml.'**'.find {param->param.'@name' == paramName}.'@name'
-			} catch (Exception ex) {
-			    rtn=""
-			}
-		}
-		if (rtn==null || rtn=="") {
-			return ""
-		} else {
-		   return rtn
-		}
-	}
-
-	/**
 	 * This method returns the networkParams xml string.
 	 *   Ex: input:
 	 *         <network-params>
@@ -369,172 +343,8 @@ class NetworkUtils {
 		return build
 	}
 
-	def getVlans(xmlInput) {
-		def rtn = ""
-		if (xmlInput!=null) {
-			def vlansList = getListWithElements(xmlInput, 'vlans')
-			def vlansListSize = vlansList.size()
-			if (vlansListSize > 0) {
-				for (i in 0..vlansListSize-1) {
-				   rtn += '<vlans>'+vlansList[i]+'</vlans>'
-				}
-			}
-		}
-		return rtn
-
-
-	}
-
-	/**
-	 * similar to VNF bindings method
-	* @param xmlInput the XML document
-	* @return a list of network policy values
-	*            ex: ['aai/v$/network/network-policies/network-policy/cee6d136-e378-4678-a024-2cd15f0ee0cg', 'aai/v$/network/network-policies/network-policy/cee6d136-e378-4678-a024-2cd15f0ee0cg']
-	*
-	**/
-	def getNetworkPolicyObject(xmlInput) {
-		//def rtn = null
-		List rtn = []
-		if (xmlInput!=null) {
-			def relationshipList = getListWithElements(xmlInput, 'relationship')
-			def relationshipListSize = relationshipList.size()
-			if (relationshipListSize > 0) {
-				for (i in 0..relationshipListSize-1) {
-				   def relationshipXml = XmlUtil.serialize(relationshipList[i])
-				   if (utils.getNodeText(relationshipXml, 'related-to') == "network-policy") {
-					  def relatedLink = utils.getNodeText(relationshipXml, 'related-link')
-					  if (relatedLink != null || relatedLink != "") {
-						 rtn.add(relatedLink.substring(relatedLink.indexOf("/aai/"), relatedLink.length()))
-					  }
-				   }
-				}
-			}
-		}
-		return rtn
-	}
-
-	/**
-	 * similar to network policymethod
-	* @param xmlInput the XML document
-	* @return a list of network policy values
-	*            ex: ['aai/v$/network/route-table-references/route-table-reference/refFQDN1', 'aai/v$/network/route-table-references/route-table-reference/refFQDN2']
-	*
-	**/
-	def getNetworkTableRefObject(xmlInput) {
-		//def rtn = null
-		List rtn = []
-		if (xmlInput!=null) {
-			def relationshipList = getListWithElements(xmlInput, 'relationship')
-			def relationshipListSize = relationshipList.size()
-			if (relationshipListSize > 0) {
-				for (i in 0..relationshipListSize-1) {
-				   def relationshipXml = XmlUtil.serialize(relationshipList[i])
-				   if (utils.getNodeText(relationshipXml, 'related-to') == "route-table-reference") {
-					  def relatedLink = utils.getNodeText(relationshipXml, 'related-link')
-					  if (relatedLink != null || relatedLink != "") {
-						 rtn.add(relatedLink.substring(relatedLink.indexOf("/aai/"), relatedLink.length()))
-					  }
-				   }
-				}
-			}
-		}
-		return rtn
-	}
-
-	/**
-	 * similar to network policymethod
-	* @param xmlInput the XML document
-	* @return a list of IDs for related VNF instances
-	*
-	**/
-	def getRelatedVnfIdList(xmlInput) {
-		//def rtn = null
-		List rtn = []
-		if (xmlInput!=null) {
-			def relationshipList = getListWithElements(xmlInput, 'relationship')
-			def relationshipListSize = relationshipList.size()
-			if (relationshipListSize > 0) {
-				for (i in 0..relationshipListSize-1) {
-				   def relationshipXml = XmlUtil.serialize(relationshipList[i])
-				   if (utils.getNodeText(relationshipXml, 'related-to') == "generic-vnf") {
-					  def relatedLink = utils.getNodeText(relationshipXml, 'related-link')
-					  if (relatedLink != null || relatedLink != "") {
-						 if (relatedLink.substring(relatedLink.indexOf("/generic-vnf/")+13, relatedLink.length()).contains('/')) {
-							 rtn.add(relatedLink.substring(relatedLink.indexOf("/generic-vnf/")+13, relatedLink.length()-1))
-						 } else {
-						     rtn.add(relatedLink.substring(relatedLink.indexOf("/generic-vnf/")+13, relatedLink.length()))
-						 }
-					  }
-				   }
-				}
-			}
-		}
-		return rtn
-	}
-
-	/**
-	 * similar to network policymethod
-	* @param xmlInput the XML document
-	* @return a list of IDs for related Network instances
-	*
-	**/
-	def getRelatedNetworkIdList(xmlInput) {
-		//def rtn = null
-		List rtn = []
-		if (xmlInput!=null) {
-			def relationshipList = getListWithElements(xmlInput, 'relationship')
-			def relationshipListSize = relationshipList.size()
-			if (relationshipListSize > 0) {
-				for (i in 0..relationshipListSize-1) {
-				   def relationshipXml = XmlUtil.serialize(relationshipList[i])
-				   if (utils.getNodeText(relationshipXml, 'related-to') == "l3-network") {
-					  def relatedLink = utils.getNodeText(relationshipXml, 'related-link')
-					  if (relatedLink != null || relatedLink != "") {
-						 if (relatedLink.substring(relatedLink.indexOf("/l3-network/")+12, relatedLink.length()).contains('/')) {
-							 rtn.add(relatedLink.substring(relatedLink.indexOf("/l3-network/")+12, relatedLink.length()-1))
-						 } else {
-						     rtn.add(relatedLink.substring(relatedLink.indexOf("/l3-network/")+12, relatedLink.length()))
-						 }
-					  }
-				   }
-				}
-			}
-		}
-		return rtn
-	}
-
-
-	def isInstanceValueMatch(linkResource, globalSubscriberId, serviceType) {
-		Boolean rtn = false
-		try {
-			String globalSubscriberIdLink = linkResource.substring(linkResource.indexOf("/customer/")+10, linkResource.indexOf("/service-subscriptions"))
-			String serviceTypeLink = linkResource.substring(linkResource.indexOf("/service-subscription/")+22, linkResource.indexOf("/service-instances"))
-			if (globalSubscriberIdLink == globalSubscriberId) {
-					rtn = true
-			} else {
-				if (serviceTypeLink == serviceType) {
-					rtn = true
-				}
-			}
-
-		} catch (Exception ex) {
-		    println 'Exception - ' + ex.getMessage()
-			return false
-		}
-        return rtn
-	}
-
-	def getListWithElements(xmlInput, groupName) {
-		def rtn = ""
-		if (xmlInput != null) {
-			def relationshipData = new XmlSlurper().parseText(xmlInput)
-			rtn = relationshipData.'**'.findAll {it.name() == groupName}
-		}
-		return rtn
-
-	}
-
 	// build network single elements
+	@Deprecated //TODO remove if not used anywhere
 	def buildNetworkElements(l3Network, createNetworkContrailResponse, networkList) {
 		def replaceNetworkId = ""
 		def replaceNeutronNetworkId = ""
@@ -633,57 +443,6 @@ class NetworkUtils {
 		return rebuildingSubnets
 	}
 
-
-	// build subnet sub-network single elements
-	def buildSubNetworkElements(subnetXml, createNetworkResponse, elementList, parentName) {
-		String var = ""
-		def xmlBuild = ""
-		if (parentName != "") {
-		   xmlBuild += "<"+parentName+">"
-		}
-		if (subnetXml != null) {
-			for (element in elementList) {
-			  def xml= new XmlSlurper().parseText(subnetXml)
-			  var = xml.'**'.find {it.name() == element}
-			  if (var != null) {
-			  	 if (element=="orchestration-status") {
-					if(var.toString() == 'pending-create' || var.toString() == 'PendingCreate') {
-						xmlBuild += "<"+element+">"+"Created"+"</"+element+">"
-					} else { // pending-update or PendingUpdate'
-					   xmlBuild += "<"+element+">"+"Active"+"</"+element+">"
-					}
-				 } else { // "subnet-id", "neutron-subnet-id"
-					 if (element=="subnet-id") {
-						 if (utils.nodeExists(createNetworkResponse, "subnetMap")) {
-							 xmlBuild += "<"+element+">"+var.toString()+"</"+element+">"
-							 String neutronSubnetId = extractNeutSubId(createNetworkResponse, var.toString())
-							 xmlBuild += "<neutron-subnet-id>"+neutronSubnetId+"</neutron-subnet-id>"
-						 }
-					 } else {
-					     if (element=="neutron-subnet-id") {
-                               // skip
-						 } else {
-						 	 if (element=="host-routes") {
-								 if (subnetXml.contains("host-routes")) {
-									 List elementRoute = ["host-route-id", "route-prefix", "next-hop", "next-hop-type", "resource-version"]
-									 xmlBuild += buildXMLElements(subnetXml, "host-routes", "host-route", elementRoute)
-								 }
-						 	 } else {
-							  	xmlBuild += "<"+element+">"+var.toString()+"</"+element+">"
-						 	 }
-						 }
-					 }
-				 }
-			  }
-			}
-
-		}
-		if (parentName != "") {
-		   xmlBuild += "</"+parentName+">"
-		}
-		return xmlBuild
-	}
-
 	// build subnet sub-network single elements
 	def buildSubNetworkElements(Subnet subnet, elementList, parentName) {
 
@@ -757,168 +516,40 @@ class NetworkUtils {
 	}
 
 	// rebuild host-routes
-	def buildHostRoutes(subnetXml) {
-		List  routeElementList = ["host-route-id", "route-prefix", "next-hop", "next-hop-type", "resource-version"]
-		def hostRoutes = buildXMLElements(subnetXml, "host-routes", "host-route", routeElementList)
+	def buildHostRoutes(Subnet subnet) {
 		def buildHostRoutes = ""
-		def var = ""
-		if (hostRoutes!=null) {
-			def routesData = new XmlSlurper().parseText(hostRoutes)
-			def routes = routesData.'**'.findAll {it.name() == "host-route"}
-			def routesSize = routes.size()
-			for (i in 0..routesSize-1) {
-			   buildHostRoutes += "<hostRoutes>"
-			   def route = routes[i]
-			   def routeXml = XmlUtil.serialize(route)
-			   List  elementList = ["route-prefix", "next-hop"]
-			   for (element in elementList) {
-				   def xml= new XmlSlurper().parseText(routeXml)
-				   var = xml.'**'.find {it.name() == element}
-				   if (element == "route-prefix") {
-					   buildHostRoutes += "<prefix>"+var.toString()+"</prefix>"
-				   }
-				   if (element == "next-hop") {
-					   buildHostRoutes += "<nextHop>"+var.toString()+"</nextHop>"
-				   }
-			   }
-			   buildHostRoutes += "</hostRoutes>"
+		List<HostRoute> routes = subnet.getHostRoutes().getHostRoute()
+		if(!routes.isEmpty()){
+			for(HostRoute route:routes){
+				buildHostRoutes += "<hostRoutes>"
+				buildHostRoutes += "<prefix>" + route.getRoutePrefix() + "</prefix>"
+				buildHostRoutes += "<nextHop>" + route.getNextHop() + "</nextHop>"
+				buildHostRoutes += "</hostRoutes>"
 			}
 		}
+
 		return buildHostRoutes
-
 	}
 
-	def buildVlans(queryIdResponse) {
-		def rebuildingSubnets = "<vlans>"
-		def subnetsData = new XmlSlurper().parseText(queryIdResponse)
-
-		try {
-			def subnets = subnetsData.'**'.findAll {it.name() == "segmentation-assignments"}
-			def subnetsSize = subnets.size()
-			for (i in 0..subnetsSize-1) {
-			   def subnet = subnets[i]
-			   def subnetXml = XmlUtil.serialize(subnet)
-
-			   String vlan = utils.getNodeText(subnetXml, "segmentation-id")
-			   if (i>0){
-				   rebuildingSubnets += ","
-			   }
-			   rebuildingSubnets += vlan
-			}
-		} catch (Exception ex) {
-		   //
-		} finally {
-		  //rebuildingSubnets += "</subnets>"
-		rebuildingSubnets += "</vlans>"
-		}
-		return rebuildingSubnets
-	}
-
-	/* Utility code to rebuild xml/elements in a list:
-	 * rebuild xml with 1) unbounded groups of elements; or
-	 *                  2) one group of elements; or
-	 *                  3) just one or more elements (in a list as argument)
-	 * @param xmlInput the XML document
-	 * @param parentName the parent name  (ex: 'inputs')
-	 * @param childrenName the chilrendName (ex: 'entry' as unbounded/occurs>1)
-	 * @param elementList the element list of children (ex: 'key', 'value')
-	 * @return a string of rebuild xml
-	 *
-	 * Ex 1: xmlInput:
-	 *    <ws:inputs>
-	 *       <ws:entry>
-	 *          <ws:key>name</ws:key>
-	 *          <ws:value>Edward</ws:value>
-	 *       </ws:entry>
-	 *       <ws:entry>
-	 *          <ws:key>age</ws:key>
-	 *          <ws:value>30</ws:value>
-	 *       </ws:entry>
-	 *       <ws:entry>
-	 *          <ws:key>age</ws:key>
-	 *          <ws:value>30</ws:value>
-	 *       </ws:entry>
-	 *    <ws:/inputs>
-	 * Usage:
-	 * List elementList = ["key", "value"]
-	 * String rebuild =  buildXMLElements(xmlInput, "inputs", "entry", elementList)
-	 *
-	 * Ex 2: xmlInput // no parent tag
-	 *   <ws:sdnc-request-header>
-	 *    <ws:svc-request-id>fec8ec88-151a-45c9-ad60-8233e0fc8ff2</ws:svc-request-id>
-	 *    <ws:svc-notification-url>https://localhost:8443/adapters/rest/SDNCNotify</ws:svc-notification-url>
-	 *    <ws:svc-action>assign</ws:svc-action>
-	 *   </ws:sdnc-request-header>
-	 * Usage:
-	 * List elementList = ["svc-request-id", "svc-notification-url", "svc-action"]
-	 * String rebuild =  buildXMLElements(xmlInput, ""      , "sdnc-request-header", elementList)  // no parent tag
-	 *
-	 * Ex 3: xmlInput // elements one after another (with no parent & children tag)
-	 * <ws:test-id>myTestid</ws:test-id>
-	 * <ws:test-user>myUser</ws:test-user>
-	 * Usage:
-	 * List elementList = ["test-id", "test-user"]
-	 * String rebuild =  buildXMLElements(xmlInput, ""      , "", elementList)
-	 *
-	 */
-	def buildXMLElements(xmlInput, parentName, childrenName, elementList) {
-		def varChildren = ""
-		def var = ""
-		def xmlBuildUnbounded = ""
-		if (parentName!="") {xmlBuildUnbounded += "<"+parentName+">" +'\n'}
-		if (xmlInput != null) {
-			def xml= new XmlSlurper().parseText(xmlInput)
-			if (childrenName!="") {
-				varChildren = xml.'**'.findAll {it.name() == childrenName}
-				for (i in 0..varChildren.size()-1) {
-					xmlBuildUnbounded += "<"+childrenName+">" +'\n'
-					for (element in elementList) {
-						var = varChildren[i].'*'.find {it.name() == element}
-					   if (var != null) {
-						  xmlBuildUnbounded += "<"+element+">"+var.toString()+"</"+element+">" +'\n'
-					   }
-					}
-					xmlBuildUnbounded += "</"+childrenName+">" +'\n'
-				}
-			} else {
-				for (element in elementList) {
-					var = xml.'*'.find {it.name() == element}
-					if (var != null) {
-						xmlBuildUnbounded += "<"+element+">"+var.toString()+"</"+element+">" +'\n'
-					}
+	private String buildVlans(L3Network queryIdResponse) { // get seg ids in put in vlan tags
+		String vlans = "<vlans>"
+		if(queryIdResponse.getSegmentationAssignments() != null){
+			List<SegmentationAssignment> segmentations = queryIdResponse.getSegmentationAssignments().getSegmentationAssignment()
+			if(!segmentations.isEmpty()){
+				for(SegmentationAssignment seg:segmentations){
+					String vlan = seg.getSegmentationId() + ","
+					vlans += vlan
 				}
 			}
-
 		}
-		if (parentName!="") {xmlBuildUnbounded += "</"+parentName+">" +'\n'}
-		return xmlBuildUnbounded
-	 }
 
-	def getFirstNodeXml(xmlInput, element){
-		def nodeAsText = ""
-		def nodeToSerialize =  ""
-		if (xmlInput != null) {
-			def fxml= new XmlSlurper().parseText(xmlInput)
-			if (utils.nodeExists(xmlInput, "payload")) {
-				nodeToSerialize = fxml.'payload'.'l3-network'.'*'.find {it.name() == element}
-				if (nodeToSerialize!=null) {
-					nodeAsText = XmlUtil.serialize(nodeToSerialize)
-				} else {
-				    nodeAsText = ""
-				}
-
-			} else {
-				nodeToSerialize = fxml.'*'.find {it.name() == element}
-				if (nodeToSerialize!=null) {
-					nodeAsText = XmlUtil.serialize(nodeToSerialize)
-				} else {
-					nodeAsText = ""
-				}
-
-			}
+		if(vlans.endsWith(",")){
+			vlans = vlans.substring(0, vlans.length() - 1)
 		}
-		return nodeAsText
 
+		vlans += "</vlans>"
+
+		return vlans
 	}
 
 //TODO: This method still needs to be tested before using.
