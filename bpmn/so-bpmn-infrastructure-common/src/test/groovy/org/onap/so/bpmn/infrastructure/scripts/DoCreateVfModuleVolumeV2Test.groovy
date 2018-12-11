@@ -35,6 +35,7 @@ import org.mockito.runners.MockitoJUnitRunner
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.Volume
 import org.onap.aai.domain.yang.VolumeGroup
+import org.onap.aai.domain.yang.VolumeGroups
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.client.aai.AAIObjectPlurals
@@ -160,9 +161,11 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		when(mockExecution.getVariable(volumeGroupName)).thenReturn(volumeGroupName)
 		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), lcpCloudRegionId).queryParam("volume-group-name", volumeGroupName)
+		VolumeGroups volumeGroups = new VolumeGroups();
 		VolumeGroup volumeGroup = new  VolumeGroup()
 		volumeGroup.setVolumeGroupId("volumeGroupId")
-		when(client.get(VolumeGroup.class,uri)).thenReturn(Optional.of(volumeGroup))
+		volumeGroups.getVolumeGroup().add(volumeGroup);
+		when(client.get(VolumeGroups.class,uri)).thenReturn(Optional.of(volumeGroups))
 		doCreateVfModuleVolumeV2.callRESTQueryAAIVolGrpName(mockExecution,null)
 		verify(mockExecution).setVariable("DCVFMODVOLV2_AaiReturnCode",200)
 	}
