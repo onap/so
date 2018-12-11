@@ -427,6 +427,18 @@ public class AAICreateTasksTest extends BaseTaskTest{
 	}
 	
 	@Test
+	public void connectNoneToVnfToCloudRegionTest() throws Exception {
+		String[] arr = new String[1];
+		arr[0] = "test25Region2";
+		doReturn(arr).when(env).getProperty("mso.bpmn.cloudRegionIdsToSkipAddingVnfEdgesTo", String[].class);
+		gBBInput = execution.getGeneralBuildingBlock();
+		gBBInput.getCloudRegion().setLcpCloudRegionId("test25Region2");
+		doNothing().when(aaiVnfResources).connectVnfToCloudRegion(genericVnf, gBBInput.getCloudRegion());
+		aaiCreateTasks.connectVnfToCloudRegion(execution);
+		verify(aaiVnfResources, times(0)).connectVnfToCloudRegion(genericVnf, gBBInput.getCloudRegion());
+	}
+	
+	@Test
 	public void connectVnfTenantTest() throws Exception {
 		gBBInput = execution.getGeneralBuildingBlock();
 		doNothing().when(aaiVnfResources).connectVnfToTenant(genericVnf, gBBInput.getCloudRegion());

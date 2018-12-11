@@ -60,6 +60,7 @@ import org.onap.so.db.request.client.RequestsDbClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.core.env.Environment;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class BaseTaskTest extends TestDataSetup {
@@ -150,7 +151,9 @@ public abstract class BaseTaskTest extends TestDataSetup {
 	@Mock
 	protected ExceptionBuilder exceptionUtil;
 
-    @Mock
-    protected WorkflowActionExtractResourcesAAI workflowActionUtils;
-
+	@Mock
+	protected WorkflowActionExtractResourcesAAI workflowActionUtils;
+	
+	@Mock
+	protected Environment env;
 }
