@@ -113,6 +113,7 @@ class UpdateAAIVfModuleTest  extends MsoGroovyTest {
         when(mockExecution.getVariable(prefix + "getVfModuleResponse")).thenReturn(vfModule)
         doNothing().when(client).update(isA(AAIResourceUri.class), anyObject())
         updateAAIVfModule.updateVfModule(mockExecution)
+		verify(mockExecution).setVariable("UAAIVfMod_updateVfModuleResponseCode", 200)
     }
 
     @Test
@@ -128,6 +129,7 @@ class UpdateAAIVfModuleTest  extends MsoGroovyTest {
         doThrow(new NotFoundException("Vf Module not found")).when(client).update(isA(AAIResourceUri.class), anyObject())
         thrown.expect(BpmnError.class)
         updateAAIVfModule.updateVfModule(mockExecution)
+		verify(mockExecution).setVariable("UAAIVfMod_updateVfModuleResponseCode", 404)
     }
 
 
@@ -144,6 +146,7 @@ class UpdateAAIVfModuleTest  extends MsoGroovyTest {
         doThrow(new IllegalStateException("Error in AAI client")).when(client).update(isA(AAIResourceUri.class), anyObject())
         thrown.expect(BpmnError.class)
         updateAAIVfModule.updateVfModule(mockExecution)
+		verify(mockExecution).setVariable("UAAIVfMod_updateVfModuleResponseCode", 500)
 
     }
 }
