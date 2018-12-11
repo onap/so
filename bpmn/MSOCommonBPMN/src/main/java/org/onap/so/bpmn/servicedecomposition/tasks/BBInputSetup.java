@@ -865,8 +865,13 @@ public class BBInputSetup implements JavaDelegate {
 			String serviceInstanceId, boolean aLaCarte, String bbName) throws Exception {
 		ServiceInstance serviceInstance = this.getServiceInstanceHelper(requestDetails, customer, project, owningEntity,
 				lookupKeyMap, serviceInstanceId, aLaCarte, service, bbName);
-		org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = this.bbInputSetupUtils
-				.getAAIServiceInstanceById(serviceInstanceId);
+		org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI = null;
+		if(customer != null && customer.getServiceSubscription() != null) {
+			serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceByIdAndCustomer(customer.getGlobalCustomerId(), 
+					customer.getServiceSubscription().getServiceType(), serviceInstanceId);
+		} else {
+			serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
+		}
 		if (serviceInstanceAAI != null
 				&& !serviceInstanceAAI.getModelVersionId().equalsIgnoreCase(service.getModelUUID())) {
 			Service tempService = this.bbInputSetupUtils
