@@ -27,7 +27,8 @@
             "requestStatus":{
                "requestState":"COMPLETE",
                "statusMessage":"STATUS: Vf Module has been deleted successfully.",
-               "percentProgress":100
+               "percentProgress":100,
+               "timeStamp": "Thu, 22 Dec 2016 08:30:28 GMT"
             }
          }
       },
@@ -58,7 +59,8 @@
             "requestStatus":{
                "requestState":"PENDING",
                "statusMessage":"STATUS: Vf Module deletion pending./FLOW STATUS: Building blocks 1 of 3 completed./RETRY STATUS: Retry 2/5 will be started in 8 min./ROLLBACK STATUS: Rollback has been completed successfully.",
-               "percentProgress":0
+               "percentProgress":0,
+               "timeStamp": "Thu, 22 Dec 2016 08:30:28 GMT"
             }
          }
       },
@@ -320,7 +322,8 @@
             "requestStatus":{
                "requestState":"PENDING",
                "statusMessage":"STATUS: Adding members./FLOW STATUS: Building blocks 1 of 3 completed./RETRY STATUS: Retry 2/5 will be started in 8 min./ROLLBACK STATUS: Rollback has been completed successfully.",
-               "percentProgress":0
+               "percentProgress":0,
+               "timeStamp": "Thu, 22 Dec 2016 08:30:28 GMT"
             }
          }
       }

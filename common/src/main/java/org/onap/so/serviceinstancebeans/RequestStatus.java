@@ -31,6 +31,7 @@ public class RequestStatus {
     protected String statusMessage;
     protected Integer percentProgress;
     protected String finishTime;
+    protected String timeStamp;
 
 
 	public String getRequestState() {
@@ -57,9 +58,15 @@ public class RequestStatus {
 	public void setFinishTime(String finishTime) {
 		this.finishTime = finishTime;
 	}
+	public String getTimeStamp() {
+		return timeStamp;
+	}
+	public void setTimeStamp(String timeStamp) {
+		this.timeStamp = timeStamp;
+	}
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).append("requestState", requestState).append("statusMessage", statusMessage)
-				.append("percentProgress", percentProgress).append("finishTime", finishTime).toString();
+				.append("percentProgress", percentProgress).append("finishTime", finishTime).append("timeStamp", timeStamp).toString();
 	}
 }
