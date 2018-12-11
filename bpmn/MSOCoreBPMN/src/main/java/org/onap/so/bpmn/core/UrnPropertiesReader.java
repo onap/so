@@ -87,6 +87,20 @@ public class UrnPropertiesReader {
         }
     }
     
+    /**
+     * Return the String array URN property value from the environment object
+     * @param variableName URN property name
+     * @return URN property value
+     */
+
+    public static String[] getVariablesArray(String variableName){
+        if (environment != null) {
+            return environment.getProperty(variableName, String[].class);
+        } else {
+            return null;
+        }
+    }
+    
     public static String getVariable(String variableName, String defaultValue) {
     	return Optional.ofNullable(getVariable(variableName)).orElse(defaultValue); 
     }

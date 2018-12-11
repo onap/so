@@ -20,8 +20,13 @@
 
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -52,6 +57,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -78,6 +84,8 @@ public class AAICreateTasks {
 	private AAIVpnBindingResources aaiVpnBindingResources;
 	@Autowired
 	private AAIConfigurationResources aaiConfigurationResources;
+	@Autowired
+	private Environment env;
 
 	public void createServiceInstance(BuildingBlockExecution execution) {
 		try {
@@ -356,8 +364,15 @@ public class AAICreateTasks {
 	 */
 	public void connectVnfToCloudRegion(BuildingBlockExecution execution) {
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-			aaiVnfResources.connectVnfToCloudRegion(vnf, execution.getGeneralBuildingBlock().getCloudRegion());
+			boolean cloudRegionsToSkip = false;
+			String[] cloudRegions = env.getProperty("mso.bpmn.cloudRegionIdsToSkipAddingVnfEdgesTo", String[].class);
+			if (cloudRegions != null){
+				cloudRegionsToSkip = Arrays.stream(cloudRegions).anyMatch(execution.getGeneralBuildingBlock().getCloudRegion().getLcpCloudRegionId()::equals);
+			}
+			if(!cloudRegionsToSkip) {
+				GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				aaiVnfResources.connectVnfToCloudRegion(vnf, execution.getGeneralBuildingBlock().getCloudRegion());
+			}
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}	
