@@ -58,11 +58,10 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			execution.setVariable("SDNCA_InterimNotify", false)
 
 			String requestId = execution.getVariable("mso-request-id")
-			if(isNotBlank(requestId)){
-				execution.setVariable(Prefix + "requestId", requestId)
-			}else{
+			if(isBlank(requestId)){
 				exceptionUtil.buildAndThrowWorkflowException(execution, 400, 'mso-request-id not provided by calling flow')
 			}
+
 			// Authorization Info
 			String basicAuthValue = UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
 
@@ -124,6 +123,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 
 			//calling process should pass a generated uuid if sending multiple sdnc requests
 			def sdncRequestId = utils.getNodeText(requestHeader, "RequestId")
+			execution.setVariable(Prefix + "requestId", sdncRequestId)
 
 			// Prepare SDNC Request to the SDNC Adapter
 			String sdncAdapterRequest = """

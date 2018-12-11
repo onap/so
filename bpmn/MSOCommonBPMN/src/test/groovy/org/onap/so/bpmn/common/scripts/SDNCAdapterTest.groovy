@@ -844,11 +844,11 @@ def sdncAdapterResponseError =
 		verify(mockExecution).setVariable("asynchronousResponseTimeout",false)
 		verify(mockExecution).setVariable("continueListening",false)
 		verify(mockExecution).setVariable("serviceConfigActivate",false)
-		verify(mockExecution).setVariable("SDNCA_requestId", "testReqId")
 		verify(mockExecution).setVariable("SDNCA_SuccessIndicator",false)
 		verify(mockExecution).setVariable("SDNCA_InterimNotify",false)
 		verify(mockExecution).setVariable("BasicAuthHeaderValue","Basic dGVzdDp0ZXN0")
 		verify(mockExecution).setVariable("source","")
+		verify(mockExecution).setVariable("SDNCA_requestId", "745b1b50-e39e-4685-9cc8-c71f0bde8bf0")
 		verify(mockExecution).setVariable("sdncAdapterRequest", sdncAdapterRequest)
 	}
 
