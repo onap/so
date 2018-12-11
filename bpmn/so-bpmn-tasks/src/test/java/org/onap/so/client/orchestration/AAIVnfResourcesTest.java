@@ -178,7 +178,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 	@Test
 	public void connectVnfToCloudRegionTest() throws Exception {
 		aaiVnfResources.connectVnfToCloudRegion(genericVnf, cloudRegion);
-		verify(MOCK_aaiResourcesClient, times(1)).connect(eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, 
-				cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())), eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnf.getVnfId())));
+		verify(MOCK_aaiResourcesClient, times(1)).connect(eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnf.getVnfId())),
+				eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, 
+						cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())));
 	}
 }
