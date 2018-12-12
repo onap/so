@@ -124,7 +124,7 @@ public class AAINetworkResources {
 		AAIResourceUri cloudRegionURI = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION,
 				cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId());
 		AAIResourceUri networkURI = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, l3network.getNetworkId());
-		injectionHelper.getAaiClient().connect(cloudRegionURI, networkURI);
+		injectionHelper.getAaiClient().connect(networkURI,cloudRegionURI);
 	}
 
 	public void connectNetworkToNetworkCollectionInstanceGroup(L3Network l3network, InstanceGroup instanceGroup) {

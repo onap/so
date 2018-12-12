@@ -115,7 +115,7 @@ public class AAIVnfResources {
 		AAIResourceUri cloudRegionURI = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION,
 				cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId());
 		AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
-		injectionHelper.getAaiClient().connect(cloudRegionURI, vnfURI);
+		injectionHelper.getAaiClient().connect(vnfURI,cloudRegionURI);
 	}
 	
 	public void connectVnfToTenant(GenericVnf vnf, CloudRegion cloudRegion) {

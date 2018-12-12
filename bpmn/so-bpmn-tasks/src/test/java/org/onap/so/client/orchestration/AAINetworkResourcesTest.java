@@ -283,8 +283,8 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 	@Test
 	public void connectNetworkToCloudRegionTest() throws Exception {
 		aaiNetworkResources.connectNetworkToCloudRegion(network, cloudRegion);
-		verify(MOCK_aaiResourcesClient, times(1)).connect(eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, 
-				cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())), eq(AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, network.getNetworkId())));
+		verify(MOCK_aaiResourcesClient, times(1)).connect(eq(AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, network.getNetworkId())),eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, 
+				cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())));
 	}
 	
 	@Test
