@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_eeeb1f11",
+        "filename": "bpmn/MSOCommonBPMN/src/test/groovy/org/onap/so/bpmn/common/scripts/ConfirmVolumeGroupNameTest.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-12-12T10:24:26Z",
+      "side": 1,
+      "message": "change import to: import static org.assertj.core.api.Assertions.catchThrowableOfType",
+      "range": {
+        "startLine": 46,
+        "startChar": 51,
+        "endLine": 46,
+        "endChar": 71
+      },
+      "revId": "c68e34ec2c04757d6923d7a03bcf5e7afb638d20",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
