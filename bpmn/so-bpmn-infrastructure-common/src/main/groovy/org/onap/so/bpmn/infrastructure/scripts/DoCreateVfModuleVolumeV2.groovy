@@ -24,6 +24,7 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.VolumeGroup
+import org.onap.aai.domain.yang.VolumeGroups
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -216,10 +217,11 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 
 		try {
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion).queryParam("volume-group-name", volumeGroupName)
-			Optional<VolumeGroup> volumeGroup = getAAIClient().get(VolumeGroup.class,uri)
-			if(volumeGroup.isPresent()){
+			Optional<VolumeGroups> volumeGroups = getAAIClient().get(VolumeGroups.class,uri)
+			if(volumeGroups.isPresent()){
+				VolumeGroup volumeGroup = volumeGroups.get().getVolumeGroup().get(0);
 				execution.setVariable(prefix+'AaiReturnCode', 200)
-				execution.setVariable("queriedVolumeGroupId",volumeGroup.get().getVolumeGroupId())
+				execution.setVariable("queriedVolumeGroupId",volumeGroup.getVolumeGroupId())
 				msoLogger.debug("Volume Group Name $volumeGroupName exists in AAI.")
 			}else{
 				execution.setVariable(prefix+'AaiReturnCode', 404)
