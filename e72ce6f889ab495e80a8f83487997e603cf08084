@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_2e6047ce",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 141
+      },
+      "writtenOn": "2018-12-12T09:37:03Z",
+      "side": 1,
+      "message": "responce is spelling mistake. Suggest to correct it.",
+      "range": {
+        "startLine": 565,
+        "startChar": 22,
+        "endLine": 565,
+        "endChar": 30
+      },
+      "revId": "e72ce6f889ab495e80a8f83487997e603cf08084",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
