@@ -262,6 +262,9 @@ public class ResourceRequestBuilder {
 		String catalogEndPoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint");
     	HttpClient client = new HttpClient(UriBuilder.fromUri(catalogEndPoint).path(SERVICE_URL_TOSCA_CSAR).queryParam("serviceModelUuid", uuid).build().toURL(), "application/json", TargetEntity.CATALOG_DB);
     	
+    	client.addAdditionalHeader("Accept", "application/json");
+//    	client.addBasicAuthHeader (UrnPropertiesReader.getVariable("mso.adapters.db.auth"), UrnPropertiesReader.getVariable("mso.msoKey"));
+    	client.addAdditionalHeader("Authorization", UrnPropertiesReader.getVariable("mso.db.auth"));
         Response response = client.get();
         String value = response.readEntity(String.class);
 
@@ -272,7 +275,7 @@ public class ResourceRequestBuilder {
         File csarFile = new File(filePath);
 
         if(!csarFile.exists()) {
-            throw new Exception("csar file does not exist.");
+            throw new Exception("csar file does not exist in filePath:" + csarFile.getAbsolutePath());
         }
 
         return csarFile.getAbsolutePath();
@@ -284,7 +287,7 @@ public class ResourceRequestBuilder {
         try {
             return mapper.readValue(jsonstr, type);
         } catch(IOException e) {
-            LOGGER.error(MessageEnum.RA_NS_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "fail to unMarshal json", e);
+            LOGGER.error("fail to unMarshal json" + e.getMessage ());
         }
         return null;
     }

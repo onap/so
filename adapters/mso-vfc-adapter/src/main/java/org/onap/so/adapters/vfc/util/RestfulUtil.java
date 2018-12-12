@@ -43,7 +43,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.vfc.model.RestfulResponse;
 import org.onap.so.logger.MessageEnum;
-
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -66,8 +65,6 @@ public class RestfulUtil {
      */
     private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, RestfulUtil.class);
 
-
-
     private static final int DEFAULT_TIME_OUT = 60000;
 
     private static final String ONAP_IP = "ONAP_IP";
@@ -82,15 +79,18 @@ public class RestfulUtil {
    private Environment env;
 
     public String getMsbHost() {
-        // MSB_IP will be set as ONAP_IP environment parameter in install flow.
-        String msbIp = System.getenv().get(ONAP_IP);
-	// if ONAP IP is not set. get it from config file.
-        if(null == msbIp || msbIp.isEmpty()) {
-		msbIp = env.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
-	}
+		// MSB_IP will be set as ONAP_IP environment parameter in install flow.
+		String msbIp = System.getenv().get(ONAP_IP);
+		// if ONAP IP is not set. get it from config file.
+		if (null == msbIp || msbIp.isEmpty()) {
+			msbIp = env.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
+		}
     	Integer msbPort = env.getProperty("mso.msb-port", Integer.class, DEFAULT_MSB_PORT);
     	
-    	return UriBuilder.fromPath("").host(msbIp).port(msbPort).scheme("http").build().toString();
+    	String msbEndpoint = UriBuilder.fromPath("").host(msbIp).port(msbPort).scheme("http").build().toString();
+    	LOGGER.debug("msbEndpoint in vfc adapter: " + msbEndpoint);
+    	
+    	return msbEndpoint;
     }
 
     private RestfulUtil() {
@@ -99,7 +99,7 @@ public class RestfulUtil {
 
     public RestfulResponse send(String url, String methodType, String content) {
         String msbUrl = getMsbHost() + url;
-        LOGGER.info(MessageEnum.RA_NS_EXC, "Begin to sent message " + methodType +": " + msbUrl, "org.onap.so.adapters.vfc.util.RestfulUtil",VFC_ADAPTER);
+        LOGGER.debug("Begin to sent message " + methodType +": " + msbUrl);
 
         HttpRequestBase method = null;
         HttpResponse httpResponse = null;
@@ -201,12 +201,10 @@ public class RestfulUtil {
 
     private static void logError(String errMsg, Throwable t) {
         LOGGER.error(MessageEnum.RA_NS_EXC, VFC_ADAPTER, "", MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
-
     }
 
     private static void logError(String errMsg) {
         LOGGER.error(MessageEnum.RA_NS_EXC, VFC_ADAPTER, "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
-
     }
 
     private static RestfulResponse createResponse(int statusCode, String content) {
