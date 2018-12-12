@@ -563,6 +563,10 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/:
                 val = resp."connection-attachment-response-information"."instance-id"
                 break
+
+            default:
+                val = resp."network-response-information"."instance-id"
+                break
         }
 
         return val.toString()
