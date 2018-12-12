@@ -145,7 +145,7 @@ public class WorkflowAction {
 		final String apiVersion = (String) execution.getVariable(G_APIVERSION);
 		final String uri = (String) execution.getVariable(G_URI);
 		final String vnfType = (String) execution.getVariable(VNF_TYPE);
-		final String serviceInstanceId = (String) execution.getVariable("serviceInstanceId");
+		String serviceInstanceId = (String) execution.getVariable("serviceInstanceId");
 		List<OrchestrationFlow> orchFlows = (List<OrchestrationFlow>) execution.getVariable(G_ORCHESTRATION_FLOW);
 		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
 		WorkflowResourceIds workflowResourceIds = populateResourceIdsFromApiHandler(execution);
@@ -176,6 +176,9 @@ public class WorkflowAction {
 						workflowResourceIds);
 			} else {
 				resourceId = resource.getResourceId();
+			}
+			if((serviceInstanceId == null || serviceInstanceId.equals("")) && resourceType == WorkflowType.SERVICE){
+				serviceInstanceId = resourceId;
 			}
 			execution.setVariable("resourceId", resourceId);
 			execution.setVariable("resourceType", resourceType);

@@ -93,6 +93,7 @@ mso:
   bpmn:
     optimisticlockingexception:
       retrycount: '3'
+    cloudRegionIdsToSkipAddingVnfEdgesTo: test25Region1,test25Region2,test25Region99
   callbackRetryAttempts: '5'
   catalog:
     db:

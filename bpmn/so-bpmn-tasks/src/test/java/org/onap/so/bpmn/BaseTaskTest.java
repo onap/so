@@ -21,9 +21,7 @@ package org.onap.so.bpmn;
 
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.buildingblock.SniroHomingV2;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetworkBBUtils;
@@ -53,13 +51,9 @@ import org.onap.so.client.orchestration.SDNCVfModuleResources;
 import org.onap.so.client.orchestration.SDNCVnfResources;
 import org.onap.so.client.orchestration.VnfAdapterVfModuleResources;
 import org.onap.so.client.orchestration.VnfAdapterVolumeGroupResources;
-import org.onap.so.client.sdnc.SDNCClient;
-import org.onap.so.client.sniro.SniroClient;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.core.env.Environment;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class BaseTaskTest extends TestDataSetup {
@@ -150,7 +144,9 @@ public abstract class BaseTaskTest extends TestDataSetup {
 	@Mock
 	protected ExceptionBuilder exceptionUtil;
 
-    @Mock
-    protected WorkflowActionExtractResourcesAAI workflowActionUtils;
-
+	@Mock
+	protected WorkflowActionExtractResourcesAAI workflowActionUtils;
+	
+	@Mock
+	protected Environment env;
 }
