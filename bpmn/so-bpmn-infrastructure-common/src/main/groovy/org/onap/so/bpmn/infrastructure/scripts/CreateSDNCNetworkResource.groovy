@@ -538,7 +538,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     private def getInstnaceId(DelegateExecution execution) {
-        def responce  = new XmlSlurper().parseText(execution.getVariable("CRENWKI_createSDNCResponse"))
+        def response  = new XmlSlurper().parseText(execution.getVariable("CRENWKI_createSDNCResponse"))
 
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String modelName = resourceInputObj.getResourceModelInfo().getModelName()
@@ -547,18 +547,22 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         switch (modelName) {
             case  ~/[\w\s\W]*SOTNConnectivity[\w\s\W]*/ :
             case ~/[\w\s\W]*SDWANConnectivity[\w\s\W]*/ :
-                val = responce."response-data"."RequestData"."output"."network-response-information"."instance-id"
+                val = response."response-data"."RequestData"."output"."network-response-information"."instance-id"
                 break
 
             case ~/[\w\s\W]*deviceVF[\w\s\W]*/ :
             case ~/[\w\s\W]*SiteWANVF[\w\s\W]*/ :
             case ~/[\w\s\W]*Site[\w\s\W]*/:
-                val = responce."response-data"."RequestData"."output"."vnf-response-information"."instance-id"
+                val = response."response-data"."RequestData"."output"."vnf-response-information"."instance-id"
                 break
 
             case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
             case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/:
-                val = responce."response-data"."RequestData"."output"."connection-attachment-response-information"."instance-id"
+                val = response."response-data"."RequestData"."output"."connection-attachment-response-information"."instance-id"
+                break
+
+            default:
+                val = response."response-data"."RequestData"."output"."network-response-information"."instance-id"
                 break
         }
 
