@@ -1314,12 +1314,11 @@ public class BBInputSetupTest {
 		doReturn(vnf2AAI).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf2.getVnfId());
 		doNothing().when(SPY_bbInputSetup).mapCatalogVnf(vnf2, modelInfo, service);
 		doNothing().when(SPY_bbInputSetup).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
-		doNothing().when(SPY_bbInputSetup).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
 		SPY_bbInputSetup.populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness, service, bbName,
 				serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType, null);
 		verify(SPY_bbInputSetup, times(2)).mapCatalogVnf(vnf2, modelInfo, service);
 		verify(SPY_bbInputSetup, times(2)).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
-		verify(SPY_bbInputSetup, times(2)).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
+		verify(SPY_bbInputSetup, times(1)).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
 	}
 
 	@Test
