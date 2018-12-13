@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_43d24b01",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/AaiConnectionTestImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-13T09:34:23Z",
+      "side": 1,
+      "message": "1. I moved UUID constant to the test file. However I left the other two where they are. ID_WITH_ENTRY is used in this file and both are referenced from two different test files.\n2. Done.",
+      "parentUuid": "9adffdf1_23ff07ac",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_83835303",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GenerateUuidDelegate.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2018-12-10T10:25:23Z",
       "side": 1,
       "message": "Suggestions - maybe it would be a good idea to indicate that the generated UUID is for PNF. Consider a small rename - GeneratePnfUuidDelegate or GenerateUuidForPnfDelegate. A similar change in the bpmn would also be required.",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_03ae8385",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GenerateUuidDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-13T09:34:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_83835303",
       "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_a258d08a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-13T09:34:23Z",
+      "side": 1,
+      "message": "I extended the verification to versions 1-5.\nUnfortunatelly we cannot rely on catching IllegalArgumentException, as it doesn\u0027t catch reserved UUIDs.",
+      "parentUuid": "9adffdf1_a3af7793",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_03a0c39d",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2018-12-10T10:25:23Z",
       "side": 1,
       "message": "Suggestion - extract each validation into separate private methods. This will improve readability and better convey the intent.",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_43cb2b53",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-13T09:34:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_03a0c39d",
       "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_23c06729",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreatePnfEntryInAaiDelegateTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-13T09:34:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_23edc7ef",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_c3bb9be3",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GenerateUuidDelegateTest.java",
         "patchSetId": 4
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_23a9477b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GenerateUuidDelegateTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-13T09:34:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_c3bb9be3",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_83b593ef",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
         "patchSetId": 4
@@ -115,6 +223,24 @@
       "writtenOn": "2018-12-10T10:25:23Z",
       "side": 1,
       "message": "Suggestion - while nothing wrong with hardcoding UUIDs for testing purposes - as previously mentioned - I\u0027d recommend generating the UUIDs deterministically. This approach would be less prone to errors",
+      "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_0268bc1b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-13T09:34:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_83b593ef",
       "revId": "3f9151d5dc245fad35a93cb39b421209b2c0e0cb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
