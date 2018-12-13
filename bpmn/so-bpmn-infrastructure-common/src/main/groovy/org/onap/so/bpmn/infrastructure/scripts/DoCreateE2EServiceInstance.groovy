@@ -24,12 +24,10 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 import javax.ws.rs.NotFoundException
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.CatalogDbUtils;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.RollbackData
@@ -37,7 +35,6 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.Resource
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.bpmn.infrastructure.workflow.service.ServicePluginFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper
@@ -49,10 +46,6 @@ import org.onap.so.logger.MsoLogger
 
 import org.springframework.web.util.UriUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
-
-import groovy.json.*
-
-
 
 /**
  * This groovy class supports the <class>DoCreateServiceInstance.bpmn</class> process.
@@ -86,7 +79,6 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	String Prefix="DCRESI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	CatalogDbUtils cutils = new CatalogDbUtils()
 
 	public void preProcessRequest (DelegateExecution execution) {
 		String msg = ""

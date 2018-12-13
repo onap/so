@@ -20,14 +20,11 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import java.util.UUID;
-
-import java.util.List
-
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
+import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.RollbackData
@@ -59,7 +56,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
    ExceptionUtil exceptionUtil = new ExceptionUtil()
    JsonUtils jsonUtil = new JsonUtils()
    VidUtils vidUtils = new VidUtils(this)
-   CatalogDbUtils cutils = new CatalogDbUtils()
+   CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
    /**
 	* This method gets and validates the incoming
@@ -189,8 +186,8 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 			   }
 			   msoLogger.debug("querying Catalog DB by vnfModelCustomizationUuid: " + vnfModelCustomizationUuid)
 			  
-			   JSONArray vnfs = cutils.getAllVnfsByVnfModelCustomizationUuid(execution,
-							   vnfModelCustomizationUuid)
+			   JSONArray vnfs = catalogDbUtils.getAllVnfsByVnfModelCustomizationUuid(execution,
+							   vnfModelCustomizationUuid, "v1")
 			   msoLogger.debug("obtained VNF list")
 			   // Only one match here
 			   JSONObject vnfObject = vnfs[0]

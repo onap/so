@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
+
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.xml.parsers.DocumentBuilder
@@ -44,7 +46,6 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.DecomposeJsonUtil
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.client.HttpClient
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType;
@@ -59,7 +60,6 @@ import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
 import org.onap.so.utils.TargetEntity
-import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.NamedNodeMap
@@ -78,8 +78,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
-	CatalogDbUtils catalog = new CatalogDbUtils()
-	DecomposeJsonUtil decomposeJsonUtils = new DecomposeJsonUtil()
+	CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
 	/**
 	 * Validates the request message and sets up the workflow.
@@ -261,7 +260,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				String serviceType =""
 
 				try{
-					String json = catalog.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
+					String json = catalogDbUtils.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
 					serviceType = jsonUtil.getJsonValue(json, "serviceResources.serviceType")
 				}catch(BpmnError e){
 					throw e
@@ -2004,7 +2003,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 		   msoLogger.debug("vnfModelCustomizationUuid: " + vnfModelCustomizationUuid)
 
-		   JSONArray vnfs = catalog.getAllVnfsByVnfModelCustomizationUuid(execution, vnfModelCustomizationUuid, "v2")
+		   JSONArray vnfs = catalogDbUtils.getAllVnfsByVnfModelCustomizationUuid(execution, vnfModelCustomizationUuid, "v2")
 
 		   msoLogger.debug("Incoming Query Catalog DB for Vnf Response is: " + vnfModelCustomizationUuid)
 		   // Only one match here
