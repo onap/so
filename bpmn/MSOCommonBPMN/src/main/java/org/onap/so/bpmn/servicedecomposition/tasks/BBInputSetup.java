@@ -1301,7 +1301,12 @@ public class BBInputSetup implements JavaDelegate {
 					.getAAIServiceInstanceByName(requestDetails.getRequestInfo().getInstanceName(), customer);
 			}
 			if (serviceInstanceId != null && serviceInstanceAAI == null) {
-				serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
+				if(customer != null && customer.getServiceSubscription() != null) {
+					serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceByIdAndCustomer(customer.getGlobalCustomerId(), 
+							customer.getServiceSubscription().getServiceType(), serviceInstanceId);
+				} else {
+					serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
+				}
 			}
 			if (serviceInstanceAAI != null) {
 				lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstanceId);
