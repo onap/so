@@ -24,7 +24,6 @@ import static org.apache.commons.lang3.StringUtils.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.CatalogDbUtils
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.VidUtils
@@ -55,7 +54,6 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
     VidUtils vidUtils = new VidUtils()
-    CatalogDbUtils catalogDbUtils = new CatalogDbUtils()
 
     /**
      * This method is executed during the preProcessRequest task of the <class>CreateServiceInstance.bpmn</class> process.

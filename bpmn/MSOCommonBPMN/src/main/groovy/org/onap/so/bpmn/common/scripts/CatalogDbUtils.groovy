@@ -20,24 +20,22 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.json.JSONObject;
-import org.json.JSONArray;
+import org.apache.commons.lang3.StringUtils
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.json.JSONArray
+import org.json.JSONObject
 import org.onap.logging.ref.slf4j.ONAPLogConstants
-import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.springframework.web.util.UriUtils;
-
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
+import org.onap.so.logger.MessageEnum
+import org.onap.so.logger.MsoLogger
+import org.onap.so.utils.TargetEntity
+import org.springframework.web.util.UriUtils
 
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
-import org.camunda.bpm.engine.delegate.DelegateExecution
-
-import org.onap.so.logger.MsoLogger;
-import org.onap.so.utils.TargetEntity
-import org.onap.so.logger.MessageEnum
-
-
 
 /***
  * Utilities for accessing Catalog DB Adapter to retrieve Networks, VNF/VFModules, AllottedResources and complete ServiceResources information
@@ -47,29 +45,15 @@ import org.onap.so.logger.MessageEnum
 class CatalogDbUtils {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CatalogDbUtils.class);
 
-
-	MsoUtils utils = new MsoUtils()
-	JsonUtils jsonUtils = new JsonUtils()
+	private HttpClientFactory httpClientFactory
+	private MsoUtils msoUtils
+	private  JsonUtils jsonUtils
 	static private String defaultDbAdapterVersion = "v2"
 
-	public JSONArray getAllVnfsByVnfModelCustomizationUuid(DelegateExecution execution, String vnfModelCustomizationUuid) {
-		JSONArray vnfsList = null
-		String endPoint = "/serviceVnfs?vnfModelCustomizationUuid=" + UriUtils.encode(vnfModelCustomizationUuid, "UTF-8")
-		try {
-			msoLogger.debug("ENDPOINT: " + endPoint)
-			String catalogDbResponse = getResponseFromCatalogDb(execution, endPoint)
-
-			if (catalogDbResponse != null) {
-				vnfsList = parseVnfsJson(catalogDbResponse, "serviceVnfs", "v1")
-			}
-
-		}
-		catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
-			throw e
-		}
-
-		return vnfsList
+	CatalogDbUtils(HttpClientFactory httpClientFactory, MsoUtils msoUtils, JsonUtils jsonUtils) {
+		this.httpClientFactory = httpClientFactory
+		this.msoUtils = msoUtils
+		this.jsonUtils = jsonUtils
 	}
 
 	public JSONArray getAllVnfsByVnfModelCustomizationUuid(DelegateExecution execution, String vnfModelCustomizationUuid, String catalogUtilsVersion) {
@@ -114,7 +98,7 @@ class CatalogDbUtils {
 			}
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoUtils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
 			throw e
 		}
 
@@ -122,23 +106,14 @@ class CatalogDbUtils {
 	}
 
 	public String getServiceResourcesByServiceModelInvariantUuidString(DelegateExecution execution, String serviceModelInvariantUuid) {
-		String resources = null
 		String endPoint = "/serviceResources?serviceModelInvariantUuid=" + UriUtils.encode(serviceModelInvariantUuid, "UTF-8")
 		try {
-			String catalogDbResponse = getResponseFromCatalogDb(execution, endPoint)
-
-			if (catalogDbResponse != null) {
-
-				resources = catalogDbResponse
-			}
-
+			return getResponseFromCatalogDb(execution, endPoint)
 		}
 		catch (Exception e) {
 			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
 			throw e
 		}
-
-		return resources
 	}
 
 	public JSONObject getServiceResourcesByServiceModelInvariantUuid(DelegateExecution execution, String serviceModelInvariantUuid, String catalogUtilsVersion) {
@@ -443,19 +418,12 @@ class CatalogDbUtils {
 			String catalogDbEndpoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint",execution)
 			String queryEndpoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + endPoint
 			def responseData = ''
-			def bpmnRequestId = UUID.randomUUID().toString()
-
-			URL url = new URL(queryEndpoint)
-			HttpClient client = new HttpClient(url, MediaType.APPLICATION_JSON, TargetEntity.CATALOG_DB)
-			client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, bpmnRequestId)
+			HttpClient client = httpClientFactory.create(new URL(queryEndpoint), MediaType.APPLICATION_JSON, TargetEntity.CATALOG_DB)
+			client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, UUID.randomUUID().toString())
 			client.addAdditionalHeader('X-FromAppId', "BPMN")
 			client.addAdditionalHeader('Accept', MediaType.APPLICATION_JSON)
 			String basicAuthCred = execution.getVariable("BasicAuthHeaderValueDB")
-			if (basicAuthCred != null && !"".equals(basicAuthCred)) {
-				client.addAdditionalHeader("Authorization", basicAuthCred)
-			}else {
-				client.addAdditionalHeader("Authorization", getBasicDBAuthHeader(execution))
-			}
+			client.addAdditionalHeader("Authorization", StringUtils.defaultIfEmpty(basicAuthCred, getBasicDBAuthHeader(execution)))
 
 			msoLogger.debug('sending GET to Catalog DB endpoint: ' + endPoint)
 			Response response = client.get()
@@ -497,7 +465,7 @@ class CatalogDbUtils {
 			}
 		}
 		catch (Exception e) {
-			utils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			msoUtils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
 			throw e
 		}
 
@@ -509,13 +477,13 @@ class CatalogDbUtils {
 		String encodedString = null
 		try {
 			String basicAuthValueDB = UrnPropertiesReader.getVariable("mso.adapters.db.auth", execution)
-			utils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB)
+			msoUtils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB)
 
-			encodedString = utils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
+			encodedString = msoUtils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
 			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
 		} catch (IOException ex) {
 			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			utils.log("ERROR", dataErrorMessage)
+			msoUtils.log("ERROR", dataErrorMessage)
 		}
 		return encodedString
 	}

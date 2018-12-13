@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -55,8 +57,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils(this)
-	CatalogDbUtils cutils = new CatalogDbUtils()
-	AAICreateResources aaiCR = new AAICreateResources()
+	CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
 	/**
 	 * This method gets and validates the incoming
@@ -448,7 +449,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 			String vnfModelCustomizationUuid = jsonUtil.getJsonValueForKey(vnfModelInfo, "modelCustomizationUuid")
 			msoLogger.debug("querying Catalog DB by vnfModelCustomizationUuid: " + vnfModelCustomizationUuid)
 						
-			JSONArray vnfs = cutils.getAllVnfsByVnfModelCustomizationUuid(execution,
+			JSONArray vnfs = catalogDbUtils.getAllVnfsByVnfModelCustomizationUuid(execution,
 							vnfModelCustomizationUuid, "v2")
 			msoLogger.debug("obtained VNF list: " + vnfs)
 			
