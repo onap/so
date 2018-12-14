@@ -50,6 +50,7 @@ public class QueryServiceNetworks extends CatalogQuery {
 			"\t\t\"toscaNodeType\"            : <TOSCA_NODE_TYPE>,\n"+
 			"\t\t\"networkType\"              : <NETWORK_TYPE>,\n"+
 			"\t\t\"networkTechnology\"        : <NETWORK_TECHNOLOGY>,\n"+
+			"\t\t\"resourceInput\"            : <RESOURCE_INPUT>,\n"+
 			"\t\t\"networkRole\"              : <NETWORK_ROLE>,\n"+
 			"\t\t\"networkScope\"             : <NETWORK_SCOPE>\n"+
 		"\t}";
@@ -116,6 +117,7 @@ public class QueryServiceNetworks extends CatalogQuery {
 		    put(valueMap, "NETWORK_ROLE",             o.getNetworkRole());
 		    put(valueMap, "NETWORK_SCOPE",             o.getNetworkScope());
 		    put(valueMap, "NETWORK_TECHNOLOGY",             o.getNetworkTechnology());
+			put(valueMap, "RESOURCE_INPUT",     o.getResourceInput());
 
             sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
             sep = ",\n";

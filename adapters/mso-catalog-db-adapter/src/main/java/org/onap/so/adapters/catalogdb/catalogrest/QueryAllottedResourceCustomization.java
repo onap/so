@@ -52,7 +52,8 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 	        "\t\t\"nfFunction\"                         : <NF_FUNCTION>,\n"+ 
 	        "\t\t\"nfType\"                             : <NF_TYPE>,\n"+ 
 	        "\t\t\"nfRole\"                             : <NF_ROLE>,\n"+ 
-	        "\t\t\"nfNamingCode\"                       : <NF_NAMING_CODE>\n"+ 
+	        "\t\t\"nfNamingCode\"                       : <NF_NAMING_CODE>\n"+
+			"\t\t\"resourceInput\"                      : <RESOURCE_INPUT>,\n"+
 	    "\t}";
 
 	public QueryAllottedResourceCustomization() {
@@ -125,6 +126,7 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 			    put(valueMap, "PROVIDING_SERVICE_MODEL_INVARIANT_UUID",     o.getProvidingServiceModelInvariantUUID());
 			    put(valueMap, "PROVIDING_SERVICE_MODEL_UUID",     o.getProvidingServiceModelUUID());
 			    put(valueMap, "PROVIDING_SERVICE_MODEL_NAME",     o.getProvidingServiceModelName());
+			    put(valueMap, "RESOURCE_INPUT",     o.getResourceInput());
 
             sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
             sep = ",\n";
