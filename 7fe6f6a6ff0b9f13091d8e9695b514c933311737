@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_7eccb86a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-12-14T11:34:07Z",
+      "side": 1,
+      "message": "you can merge case 1 and default to avoid code repetition.",
+      "range": {
+        "startLine": 566,
+        "startChar": 0,
+        "endLine": 569,
+        "endChar": 21
+      },
+      "revId": "7fe6f6a6ff0b9f13091d8e9695b514c933311737",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
