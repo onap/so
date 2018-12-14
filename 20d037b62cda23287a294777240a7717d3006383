@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_beaea07f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2018-12-14T11:31:56Z",
+      "side": 1,
+      "message": "this is same as case 1",
+      "range": {
+        "startLine": 564,
+        "startChar": 11,
+        "endLine": 565,
+        "endChar": 114
+      },
+      "revId": "20d037b62cda23287a294777240a7717d3006383",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
