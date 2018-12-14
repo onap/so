@@ -2216,6 +2216,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 				vfModuleId = vnfName.substring(vnfName.indexOf('/') + 1);
 			} catch (Exception e) {
 				// do nothing - send what we got for vnfName for both to valet
+				LOGGER.error("An exception occurred trying to call MsoVnfAdapterImpl.valetDeleteRequest() method", e);
 			}
 			GenericValetResponse<ValetDeleteResponse> deleteReq = this.vci.callValetDeleteRequest(msoRequest.getRequestId(),
 					cloudSiteId, tenantId, vfModuleId, vfModuleName);
