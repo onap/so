@@ -116,6 +116,7 @@ public class QueryServiceNetworks extends CatalogQuery {
 		    put(valueMap, "NETWORK_ROLE",             o.getNetworkRole());
 		    put(valueMap, "NETWORK_SCOPE",             o.getNetworkScope());
 		    put(valueMap, "NETWORK_TECHNOLOGY",             o.getNetworkTechnology());
+			put(valueMap, "RESOURCE_INPUT",     o.getResourceInput());
 
             sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
             sep = ",\n";

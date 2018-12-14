@@ -97,6 +97,9 @@ public class VnfResourceCustomization implements Serializable {
 	@Column(name = "MULTI_STAGE_DESIGN")
 	private String multiStageDesign;
 
+	@Column(name = "RESOURCE_INPUT")
+	private String resourceInput;
+
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "VNF_RESOURCE_MODEL_UUID")
 	private VnfResource vnfResources;
@@ -282,5 +285,13 @@ public class VnfResourceCustomization implements Serializable {
 
 	public void setCvnfcCustomization(List<CvnfcCustomization> cvnfcCustomization) {
 		this.cvnfcCustomization = cvnfcCustomization;
+	}
+
+	public String getResourceInput() {
+		return resourceInput;
+	}
+
+	public void setResourceInput(String resourceInput) {
+		this.resourceInput = resourceInput;
 	}
 }
