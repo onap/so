@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_5e721412",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/bpmn/BpmnInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2018-12-14T13:46:15Z",
+      "side": 1,
+      "message": "Log the error in the catch please",
+      "revId": "976e17cbe75823a398eff3a24e8b2ed844f7c7cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
