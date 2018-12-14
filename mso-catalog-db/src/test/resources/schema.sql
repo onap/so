@@ -245,6 +245,7 @@ create table `service` (
   `environment_context` varchar(200) default null,
   `workload_context` varchar(200) default null,
   `service_category` varchar(200) default null,
+  `resource_order` varchar(20000) default null,
   primary key (`model_uuid`),
   key `fk_service__tosca_csar1_idx` (`tosca_csar_artifact_uuid`),
   constraint `fk_service__tosca_csar1` foreign key (`tosca_csar_artifact_uuid`) references `tosca_csar` (`artifact_uuid`) on delete cascade on update cascade
