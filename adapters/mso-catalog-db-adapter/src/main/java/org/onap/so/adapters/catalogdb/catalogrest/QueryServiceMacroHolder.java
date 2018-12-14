@@ -45,6 +45,7 @@ public class QueryServiceMacroHolder extends CatalogQuery {
             "\t\"serviceType\"        : <SERVICE_TYPE>,\n"+
             "\t\"serviceRole\"        : <SERVICE_ROLE>,\n"+
             "\t\"environmentContext\" : <ENVIRONMENT_CONTEXT>,\n"+
+			"\t\"resourceOrder\"      : <RESOURCE_ORDER>,\n"+
             "\t\"workloadContext\"    : <WORKLOAD_CONTEXT>,\n"+
             "<_SERVICEVNFS_>,\n"+
             "<_SERVICENETWORKS_>,\n"+
@@ -81,6 +82,7 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 		put(valueMap, "SERVICE_ROLE",               service.getServiceRole());
 		put(valueMap, "ENVIRONMENT_CONTEXT",        service.getEnvironmentContext());
 		put(valueMap, "WORKLOAD_CONTEXT",           service.getWorkloadContext());
+		put(valueMap, "RESOURCE_ORDER",                  service.getResourceOrder());
 
 	    String subitem;
 	    subitem = new QueryServiceVnfs(service.getVnfCustomizations()).JSON2(true, true); 
