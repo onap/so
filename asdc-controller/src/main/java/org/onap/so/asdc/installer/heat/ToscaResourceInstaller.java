@@ -25,16 +25,22 @@ package org.onap.so.asdc.installer.heat;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.api.notification.IStatusData;
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.tosca.parser.impl.SdcTypes;
 import org.onap.sdc.toscaparser.api.CapabilityAssignment;
@@ -42,8 +48,12 @@ import org.onap.sdc.toscaparser.api.CapabilityAssignments;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Policy;
+import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.RequirementAssignment;
+import org.onap.sdc.toscaparser.api.RequirementAssignments;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
+import org.onap.sdc.toscaparser.api.functions.GetInput;
+import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.sdc.utils.DistributionStatusEnum;
 import org.onap.so.asdc.client.ASDCConfiguration;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
@@ -284,6 +294,7 @@ public class ToscaResourceInstaller {
 			createService(toscaResourceStruct, vfResourceStruct);			
 			Service service = toscaResourceStruct.getCatalogService();				
 
+			processResourceSequence(toscaResourceStruct, service);
 			processVFResources(toscaResourceStruct, service, vfResourceStructure);
 			processAllottedResources(toscaResourceStruct, service);
 			processNetworks(toscaResourceStruct, service);	
@@ -332,6 +343,122 @@ public class ToscaResourceInstaller {
 		}
 	}
 
+
+	List<NodeTemplate> getRequirementList(List<NodeTemplate> resultList, List<NodeTemplate> nodeTemplates,
+														 ISdcCsarHelper iSdcCsarHelper) {
+
+		List<NodeTemplate> nodes = new ArrayList<NodeTemplate>();
+		nodes.addAll(nodeTemplates);
+
+		for (NodeTemplate nodeTemplate : nodeTemplates) {
+			RequirementAssignments requirement = iSdcCsarHelper.getRequirementsOf(nodeTemplate);
+			List<RequirementAssignment> reqAs = requirement.getAll();
+			for (RequirementAssignment ra : reqAs) {
+				String reqNode = ra.getNodeTemplateName();
+				for (NodeTemplate rNode : resultList) {
+					if (rNode.getName().equals(reqNode)) {
+						if(!resultList.contains(nodeTemplate)) {
+							resultList.add(nodeTemplate);
+						}
+						if(nodes.contains(nodeTemplate)) {
+							nodes.remove(nodeTemplate);
+						}
+						break;
+					}
+				}
+			}
+		}
+
+		if (!nodes.isEmpty()) {
+			getRequirementList(resultList, nodes, iSdcCsarHelper);
+		}
+
+		return resultList;
+	}
+
+	// This method retrieve resource sequence from csar file
+	void processResourceSequence(ToscaResourceStructure toscaResourceStructure, Service service) {
+		List<String> resouceSequence = new ArrayList<String>();
+		List<NodeTemplate> resultList = new ArrayList<NodeTemplate>();
+
+		ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
+		List<NodeTemplate> nodeTemplates = iSdcCsarHelper.getServiceNodeTemplates();
+		List<NodeTemplate> nodes = new ArrayList<NodeTemplate>();
+		nodes.addAll(nodeTemplates);
+
+		for (NodeTemplate nodeTemplate : nodeTemplates) {
+			RequirementAssignments requirement = iSdcCsarHelper.getRequirementsOf(nodeTemplate);
+
+			if (requirement == null || requirement.getAll() == null || requirement.getAll().isEmpty()) {
+				resultList.add(nodeTemplate);
+				nodes.remove(nodeTemplate);
+			}
+		}
+
+		resultList = getRequirementList(resultList, nodes, iSdcCsarHelper);
+
+		for (NodeTemplate node : resultList) {
+			String templateName = node.getMetaData().getValue("name");
+			if (!resouceSequence.contains(templateName)) {
+				resouceSequence.add(templateName);
+			}
+		}
+
+		String resourceSeqStr = resouceSequence.stream().collect(Collectors.joining(","));
+		service.setResourceOrder(resourceSeqStr);
+		logger.debug(" resourceSeq for service uuid(" + service.getModelUUID() + ") : " + resourceSeqStr);
+	}
+
+	private static String CUSTOMIZATION_UUID = "customizationUUID";
+
+	private static String getValue(Object value, List<Input> servInputs) {
+		String output = null;
+		if(value instanceof Map) {
+			// currently this logic handles only one level of nesting.
+			return ((LinkedHashMap) value).values().toArray()[0].toString();
+		} else if(value instanceof GetInput) {
+			String inputName = ((GetInput)value).getInputName();
+
+			for(Input input : servInputs) {
+				if(input.getName().equals(inputName)) {
+					// keep both input name and default value
+					// if service input does not supplies value the use default value
+					String defaultValue = input.getDefault() != null ? (String) input.getDefault() : "";
+					output =  inputName + "|" + defaultValue;// return default value
+				}
+			}
+
+		} else {
+			output = value != null ? value.toString() : "";
+		}
+		return output; // return property value
+	}
+
+	String getResourceInput(ToscaResourceStructure toscaResourceStructure, String resourceCustomizationUuid) {
+		Map<String, String> resouceRequest = new HashMap<>();
+		ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
+
+		List<Input> serInput = iSdcCsarHelper.getServiceInputs();
+		Optional<NodeTemplate> nodeTemplateOpt = iSdcCsarHelper.getServiceNodeTemplates().stream()
+				.filter(e -> e.getMetaData().getValue(CUSTOMIZATION_UUID).equals(resourceCustomizationUuid)).findFirst();
+		if(nodeTemplateOpt.isPresent()) {
+			NodeTemplate nodeTemplate = nodeTemplateOpt.get();
+			LinkedHashMap<String, Property> resourceProperties = nodeTemplate.getProperties();
+
+			for(String key : resourceProperties.keySet()) {
+				Property property = resourceProperties.get(key);
+
+				String value = getValue(property.getValue(), serInput);
+				resouceRequest.put(key, value);
+			}
+		}
+		Gson gson = new Gson();
+		String jsonStr = gson.toJson(resouceRequest);
+
+		logger.debug("resource request for resource customization id (" + resourceCustomizationUuid + ") : " + jsonStr);
+		return jsonStr;
+	}
+
     protected void processNetworks (ToscaResourceStructure toscaResourceStruct,
                                     Service service) throws ArtifactInstallerException {
         List <NodeTemplate> nodeTemplatesVLList = toscaResourceStruct.getSdcCsarHelper ().getServiceVlList ();
@@ -366,7 +493,8 @@ public class ToscaResourceInstaller {
                                                                                        null,
                                                                                        null,
                                                                                        service);
-                    service.getNetworkCustomizations().add (networkCustomization);
+					networkCustomization.setResourceInput(getResourceInput(toscaResourceStruct, networkCustomization.getModelCustomizationUUID()));
+					service.getNetworkCustomizations().add (networkCustomization);
                     logger.debug ("No NetworkResourceName found in TempNetworkHeatTemplateLookup for "
                                   + networkResourceModelName);
                 }
@@ -379,9 +507,10 @@ public class ToscaResourceInstaller {
 		List<NodeTemplate> allottedResourceList = toscaResourceStruct.getSdcCsarHelper().getAllottedResources();
 		
 		if (allottedResourceList != null) {
-			for (NodeTemplate allottedNode : allottedResourceList) {									
-				service.getAllottedCustomizations()
-						.add(createAllottedResource(allottedNode, toscaResourceStruct, service));				
+			for (NodeTemplate allottedNode : allottedResourceList) {
+				AllottedResourceCustomization allottedResource = createAllottedResource(allottedNode, toscaResourceStruct, service);
+				allottedResource.setResourceInput(getResourceInput(toscaResourceStruct, allottedResource.getModelCustomizationUUID()));
+				service.getAllottedCustomizations().add(allottedResource);
 			}
 		}
 	}
@@ -528,6 +657,7 @@ public class ToscaResourceInstaller {
 			}
 		}
 
+		vnfResource.setResourceInput(getResourceInput(toscaResourceStruct, vnfResource.getModelCustomizationUUID()));
 		service.getVnfCustomizations().add(vnfResource);
 	}
 
@@ -1713,6 +1843,8 @@ public class ToscaResourceInstaller {
 			allottedResourceCustomization.setAllottedResource(allottedResource);
 			allottedResource.getAllotedResourceCustomization().add(allottedResourceCustomization);
 		}
+
+		allottedResourceCustomization.setResourceInput(getResourceInput(toscaResourceStructure, allottedResourceCustomization.getModelCustomizationUUID()));
 		return allottedResourceCustomization;
 	}
 	
