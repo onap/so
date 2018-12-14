@@ -93,6 +93,9 @@ public class AllottedResourceCustomization implements Serializable {
 	@Column(name = "MAX_INSTANCES")
 	private Integer maxInstances;
 
+	@Column(name = "RESOURCE_INPUT")
+	private String resourceInput;
+
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "AR_MODEL_UUID")
 	private AllottedResource allottedResource;
@@ -240,5 +243,13 @@ public class AllottedResourceCustomization implements Serializable {
 
 	public void setMaxInstances(Integer maxInstances) {
 		this.maxInstances = maxInstances;
+	}
+
+	public String getResourceInput() {
+		return resourceInput;
+	}
+
+	public void setResourceInput(String resourceInput) {
+		this.resourceInput = resourceInput;
 	}
 }

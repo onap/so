@@ -69,6 +69,7 @@ create table `allotted_resource_customization` (
   `min_instances` int(11) default null,
   `max_instances` int(11) default null,
   `ar_model_uuid` varchar(200) not null,
+  `resource_input` varchar(2000) default null,
   `creation_timestamp` datetime not null default current_timestamp,
   primary key (`model_customization_uuid`),
   key `fk_allotted_resource_customization__allotted_resource1_idx` (`ar_model_uuid`),
@@ -245,6 +246,7 @@ create table `service` (
   `environment_context` varchar(200) default null,
   `workload_context` varchar(200) default null,
   `service_category` varchar(200) default null,
+  `resource_order` varchar(20000) default null,
   primary key (`model_uuid`),
   key `fk_service__tosca_csar1_idx` (`tosca_csar_artifact_uuid`),
   constraint `fk_service__tosca_csar1` foreign key (`tosca_csar_artifact_uuid`) references `tosca_csar` (`artifact_uuid`) on delete cascade on update cascade
@@ -434,6 +436,7 @@ create table `vnf_resource_customization` (
   `creation_timestamp` datetime not null default current_timestamp,
   `vnf_resource_model_uuid` varchar(200) not null,
   `multi_stage_design` varchar(20) default null,
+  `resource_input` varchar(2000) default null,
   primary key (`model_customization_uuid`),
   key `fk_vnf_resource_customization__vnf_resource1_idx` (`vnf_resource_model_uuid`),
   constraint `fk_vnf_resource_customization__vnf_resource1` foreign key (`vnf_resource_model_uuid`) references `vnf_resource` (`model_uuid`) on delete cascade on update cascade
@@ -744,6 +747,7 @@ create table if not exists `collection_network_resource_customization` (
 `network_type` varchar(45) null,
 `network_role` varchar(200) null,
 `network_scope` varchar(45) null,
+`resource_input` varchar(2000) default null,
 `creation_timestamp` datetime not null default current_timestamp, 
 `network_resource_model_uuid` varchar(200) not null, `instance_group_model_uuid` varchar(200) null,
 `crc_model_customization_uuid` varchar(200) not null, primary key
