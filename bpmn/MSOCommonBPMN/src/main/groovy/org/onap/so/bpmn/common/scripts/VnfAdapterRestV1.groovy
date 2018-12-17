@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import org.onap.so.client.HttpClientFactory
+
 import javax.ws.rs.core.Response
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -311,7 +313,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 			URL url = new URL(vnfAdapterUrl);
 
-			HttpClient httpClient = new HttpClient(url, "application/xml", TargetEntity.VNF_ADAPTER)
+			HttpClient httpClient = new HttpClientFactory().newXmlClient(url, TargetEntity.VNF_ADAPTER)
 			httpClient.addAdditionalHeader("Authorization", execution.getVariable(prefix + "basicAuthHeaderValue"))
 			
 			httpClient.addAdditionalHeader("X-ONAP-RequestID", execution.getVariable("mso-request-id"))

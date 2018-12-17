@@ -47,11 +47,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class RestClientTest {
 
-	
+
+	private final HttpClientFactory httpClientFactory = new HttpClientFactory();
 	@Mock
 	private RestProperties props;
-	
-	
+
+
 	@Test
 	public void retries() throws Exception {
 		RestClient spy = buildSpy();
@@ -82,7 +83,8 @@ public class RestClientTest {
 		
 	}
 	private RestClient buildSpy() throws MalformedURLException, IllegalArgumentException, UriBuilderException {
-		RestClient client = new HttpClient(UriBuilder.fromUri("http://localhost/test").build().toURL(), "application/json", TargetEntity.BPMN);
+		RestClient client = httpClientFactory
+			.newJsonClient(UriBuilder.fromUri("http://localhost/test").build().toURL(), TargetEntity.BPMN);
 		
 		return spy(client);
 	}

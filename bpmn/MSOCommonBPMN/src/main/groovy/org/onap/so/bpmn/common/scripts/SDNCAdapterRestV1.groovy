@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import org.onap.so.client.HttpClientFactory
+
 import java.text.SimpleDateFormat
 import javax.ws.rs.core.Response
 import java.net.URLEncoder
@@ -207,7 +209,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 			URL url = new URL(sdncAdapterUrl);
 
-			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.SDNC_ADAPTER)			
+			HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.SDNC_ADAPTER)
 			httpClient.addAdditionalHeader("X-ONAP-RequestID", execution.getVariable("mso-request-id"))
 			httpClient.addAdditionalHeader("X-ONAP-InvocationID", UUID.randomUUID().toString())
 			httpClient.addAdditionalHeader("X-ONAP-PartnerName", "SO-SDNCAdapter")

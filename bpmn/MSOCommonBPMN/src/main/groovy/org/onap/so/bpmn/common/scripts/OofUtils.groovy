@@ -34,6 +34,7 @@ import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
 import org.onap.so.db.catalog.beans.CloudSite
 import org.onap.so.utils.TargetEntity
 import org.springframework.http.HttpEntity
@@ -507,10 +508,10 @@ class OofUtils {
         String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution)
         String uri = "/cloudSite"
 
-	URL url = new URL(endpoint + uri)
-	HttpClient client = new HttpClient(url, MediaType.APPLICATION_JSON, TargetEntity.EXTERNAL)
-	client.addAdditionalHeader(HttpHeaders.AUTHORIZATION, auth)
-	client.addAdditionalHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+	    URL url = new URL(endpoint + uri)
+        HttpClient client = new HttpClientFactory().newJsonClient(url, TargetEntity.EXTERNAL)
+        client.addAdditionalHeader(HttpHeaders.AUTHORIZATION, auth)
+	    client.addAdditionalHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
 
         Response response = client.post(request.getBody().toString())
 

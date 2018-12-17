@@ -21,16 +21,17 @@
 package org.onap.so.openstack.utils;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 import javax.ws.rs.core.Response;
 
+import org.onap.so.client.HttpClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.onap.so.adapters.vdu.CloudInfo;
@@ -48,7 +49,6 @@ import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
-import org.onap.so.client.HttpClient;
 import org.onap.so.client.RestClient;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.logger.MessageEnum;
@@ -56,13 +56,8 @@ import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.TargetEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.heat.model.CreateStackParam;
 
@@ -80,10 +75,10 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     private static final Logger logger = LoggerFactory.getLogger(MsoMulticloudUtils.class);
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private final HttpClientFactory httpClientFactory = new HttpClientFactory();
 
     @Autowired
     private Environment environment;
-
 
     /******************************************************************************
      *
@@ -603,8 +598,9 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     private RestClient getMulticloudClient(String endpoint) {
         RestClient client = null;
         try {
-            client = new HttpClient(UriBuilder.fromUri(endpoint).build().toURL(),
-                    MediaType.APPLICATION_JSON.toString(), TargetEntity.MULTICLOUD);
+            client = httpClientFactory.newJsonClient(
+                new URL(endpoint),
+                TargetEntity.MULTICLOUD);
         } catch (MalformedURLException e) {
             logger.debug(String.format("Encountered malformed URL error getting multicloud rest client %s", e.getMessage()));
         } catch (IllegalArgumentException e) {
