@@ -538,8 +538,8 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     private def getInstnaceId(DelegateExecution execution) {
-        def responce  = new XmlSlurper().parseText(execution.getVariable("CRENWKI_createSDNCResponse"))
-        def data = responce.toString()
+        def response  = new XmlSlurper().parseText(execution.getVariable("CRENWKI_createSDNCResponse"))
+        def data = response.toString()
         data = data.substring(data.indexOf("<"))
 
         def resp = new XmlSlurper().parseText(data)
@@ -548,11 +548,6 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         def val = ""
 
         switch (modelName) {
-            case  ~/[\w\s\W]*SOTNConnectivity[\w\s\W]*/ :
-            case ~/[\w\s\W]*SDWANConnectivity[\w\s\W]*/ :
-                val = resp."network-response-information"."instance-id"
-                break
-
             case ~/[\w\s\W]*deviceVF[\w\s\W]*/ :
             case ~/[\w\s\W]*SiteWANVF[\w\s\W]*/ :
             case ~/[\w\s\W]*Site[\w\s\W]*/:
@@ -562,6 +557,11 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
             case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/:
                 val = resp."connection-attachment-response-information"."instance-id"
+                break
+
+            // for SDWANConnectivity and SOTNConnectivity and default:
+            default:
+                val = resp."network-response-information"."instance-id"
                 break
         }
 
