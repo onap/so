@@ -418,7 +418,7 @@ class CatalogDbUtils {
 			String catalogDbEndpoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint",execution)
 			String queryEndpoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + endPoint
 			def responseData = ''
-			HttpClient client = httpClientFactory.create(new URL(queryEndpoint), MediaType.APPLICATION_JSON, TargetEntity.CATALOG_DB)
+			HttpClient client = httpClientFactory.newJsonClient(new URL(queryEndpoint), TargetEntity.CATALOG_DB)
 			client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, UUID.randomUUID().toString())
 			client.addAdditionalHeader('X-FromAppId', "BPMN")
 			client.addAdditionalHeader('Accept', MediaType.APPLICATION_JSON)

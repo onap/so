@@ -19,6 +19,8 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.client.HttpClientFactory
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 import javax.ws.rs.core.Response
@@ -44,9 +46,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
-import org.w3c.dom.Element
 import org.w3c.dom.Node
-import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 
 import groovy.json.*
@@ -425,7 +425,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 		String serviceAaiPath = "${aai_endpoint}${urlLink}"
 
 		URL url = new URL(serviceAaiPath)
-		HttpClient client = new HttpClient(url, "application/xml", TargetEntity.AAI)
+		HttpClient client = new HttpClientFactory().newXmlClient(url, TargetEntity.AAI)
 
 
 		Response response = client.get()

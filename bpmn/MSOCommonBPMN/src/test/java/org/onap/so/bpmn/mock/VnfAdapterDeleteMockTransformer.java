@@ -23,6 +23,7 @@ package org.onap.so.bpmn.mock;
 import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.client.HttpClient;
+import org.onap.so.client.HttpClientFactory;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.TargetEntity;
 
@@ -132,7 +133,9 @@ public class VnfAdapterDeleteMockTransformer extends ResponseDefinitionTransform
 			}
 
 			try {
-				HttpClient client = new HttpClient(UriBuilder.fromUri(callbackUrl).build().toURL(), "text/xml", TargetEntity.VNF_ADAPTER);
+				HttpClient client = new HttpClientFactory().newTextXmlClient(
+					UriBuilder.fromUri(callbackUrl).build().toURL(),
+					TargetEntity.VNF_ADAPTER);
 				client.post(payLoad);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
