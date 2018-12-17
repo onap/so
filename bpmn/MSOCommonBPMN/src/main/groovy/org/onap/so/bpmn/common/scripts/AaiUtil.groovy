@@ -19,6 +19,9 @@
  */
 
 package org.onap.so.bpmn.common.scripts
+
+import org.onap.so.client.HttpClientFactory
+
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -88,7 +91,7 @@ class AaiUtil {
 		String regionId = ""
 		try{
 			URL Url = new URL(url)
-			HttpClient client = new HttpClient(Url, MediaType.APPLICATION_XML, TargetEntity.AAI)
+			HttpClient client = new HttpClientFactory().newXmlClient(Url, TargetEntity.AAI)
 			client.addBasicAuthHeader(UrnPropertiesReader.getVariable("aai.auth", execution), UrnPropertiesReader.getVariable("mso.msoKey", execution))
 			client.addAdditionalHeader("X-FromAppId", "MSO")
 			client.addAdditionalHeader("X-TransactionId", utils.getRequestID())

@@ -20,11 +20,20 @@
 package org.onap.so.client;
 
 import java.net.URL;
+import javax.ws.rs.core.MediaType;
 import org.onap.so.utils.TargetEntity;
 
 public class HttpClientFactory {
 
-    public HttpClient create(URL host, String contentType, TargetEntity targetEntity) {
-        return new HttpClient(host, contentType, targetEntity);
+    public HttpClient newJsonClient(URL host, TargetEntity targetEntity) {
+        return new HttpClient(host, MediaType.APPLICATION_JSON, targetEntity);
+    }
+
+    public HttpClient newXmlClient(URL host, TargetEntity targetEntity) {
+        return new HttpClient(host, MediaType.APPLICATION_XML, targetEntity);
+    }
+
+    public HttpClient newTextXmlClient(URL host, TargetEntity targetEntity) {
+        return new HttpClient(host, MediaType.TEXT_XML, targetEntity);
     }
 }

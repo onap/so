@@ -34,6 +34,7 @@ import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
 import org.onap.so.utils.TargetEntity
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 
@@ -133,7 +134,7 @@ class SniroHomingV1 extends AbstractServiceTaskProcessor{
 				msoLogger.debug("Sniro Url is: " + urlString)
 
 				URL url = new URL(urlString);
-				HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.SNIRO)
+				HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.SNIRO)
 				httpClient.addAdditionalHeader("Authorization", authHeader)
 				Response httpResponse = httpClient.post(sniroRequest)
 

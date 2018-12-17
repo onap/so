@@ -34,6 +34,7 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.Relationships
@@ -449,7 +450,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			String vnfAdapterRequest = execution.getVariable(Prefix + "deleteNetworkRequest")
 
 			URL url = new URL(vnfAdapterUrl)
-			HttpClient httpClient = new HttpClient(url, "application/xml", TargetEntity.OPENSTACK_ADAPTER)
+			HttpClient httpClient = new HttpClientFactory().newXmlClient(url, TargetEntity.OPENSTACK_ADAPTER)
 			httpClient.addAdditionalHeader("Authorization", execution.getVariable("BasicAuthHeaderValuePO"))
 			Response response = httpClient.delete(vnfAdapterRequest)
 

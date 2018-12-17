@@ -20,9 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import org.onap.so.client.HttpClientFactory
 
-import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -30,21 +29,18 @@ import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ModuleResource
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.client.HttpClient
-import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.utils.TargetEntity
-import org.springframework.web.util.UriUtils;
 
 /**
  * This class supports the VID Flow
@@ -163,7 +159,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			msoLogger.debug("AAI endPoint: " + endPoint)
 
 			try {
-				HttpClient client = new HttpClient(new URL(endPoint), MediaType.APPLICATION_XML, TargetEntity.AAI)
+				HttpClient client = new HttpClientFactory().newXmlClient(new URL(endPoint), TargetEntity.AAI)
 				client.addAdditionalHeader('X-TransactionId', UUID.randomUUID().toString())
 				client.addAdditionalHeader('X-FromAppId', 'MSO')
 				client.addAdditionalHeader('Content-Type', 'application/xml')

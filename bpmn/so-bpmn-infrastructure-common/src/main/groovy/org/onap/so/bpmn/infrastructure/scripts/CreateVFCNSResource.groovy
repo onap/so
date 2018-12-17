@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.client.HttpClientFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -29,11 +30,9 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
-import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
-import groovy.json.*
 import javax.ws.rs.core.Response
 import org.onap.so.utils.TargetEntity
 
@@ -271,7 +270,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
             // Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
             // user 'bepl' authHeader is the same with mso.db.auth
             String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
-            HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
+            HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.VNF_ADAPTER)
             httpClient.addAdditionalHeader("Accept", "application/json")
             httpClient.addAdditionalHeader("Authorization", basicAuthValuedb)
 

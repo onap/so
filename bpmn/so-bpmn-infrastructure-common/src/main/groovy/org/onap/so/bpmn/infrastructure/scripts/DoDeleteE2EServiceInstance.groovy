@@ -19,39 +19,35 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import org.apache.commons.lang3.StringUtils
+import org.camunda.bpm.engine.delegate.BpmnError
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.json.JSONArray
+import org.json.JSONObject
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.MsoUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.bpmn.core.domain.Resource
+import org.onap.so.bpmn.core.domain.ServiceDecomposition
+import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
 import org.onap.so.logger.MsoLogger
-
-import static org.apache.commons.lang3.StringUtils.*;
+import org.onap.so.utils.TargetEntity
+import org.springframework.web.util.UriUtils
+import org.w3c.dom.Document
+import org.w3c.dom.Node
+import org.xml.sax.InputSource
 
 import javax.ws.rs.core.Response
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
-import org.apache.commons.lang3.*
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.json.JSONArray
-import org.json.JSONObject
-
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.domain.Resource
-import org.onap.so.bpmn.core.domain.ServiceDecomposition
-import org.onap.so.bpmn.core.UrnPropertiesReader
-
-import org.onap.so.utils.TargetEntity
-import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.HttpClient
-import org.springframework.web.util.UriUtils
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
-import org.xml.sax.InputSource
-
-import groovy.json.*
+import static org.apache.commons.lang3.StringUtils.isBlank
 
 /**
  * This groovy class supports the <class>DoDeleteE2EServiceInstance.bpmn</class> process.
@@ -347,7 +343,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 		String serviceAaiPath = "${aai_endpoint}${urlLink}"
 
 		URL url = new URL(serviceAaiPath)
-		HttpClient client = new HttpClient(url, "application/xml", TargetEntity.AAI)
+		HttpClient client = new HttpClientFactory().newXmlClient(url, TargetEntity.AAI)
 
 
 		Response response = client.get()

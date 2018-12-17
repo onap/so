@@ -31,6 +31,7 @@ import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
 import org.onap.so.logger.MsoLogger
 import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
@@ -159,8 +160,8 @@ class OofHoming extends AbstractServiceTaskProcessor {
 
 
 				URL url = new URL(urlString);
-				HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.SNIRO)
-				httpClient.addAdditionalHeader("Authorization", authHeader)
+                HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.SNIRO)
+                httpClient.addAdditionalHeader("Authorization", authHeader)
 				Response httpResponse = httpClient.post(oofRequest)
 
 				int responseCode = httpResponse.getStatus()

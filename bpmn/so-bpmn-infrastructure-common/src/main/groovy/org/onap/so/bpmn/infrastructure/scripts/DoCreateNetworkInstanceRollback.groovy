@@ -18,17 +18,14 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.scripts;
+package org.onap.so.bpmn.infrastructure.scripts
 
-import groovy.xml.XmlUtil
 
-import groovy.json.*
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
 import org.onap.so.logger.MsoLogger
-import org.onap.so.logger.MessageEnum
-
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.NetworkUtils
@@ -37,13 +34,9 @@ import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.utils.TargetEntity
 
-import java.util.UUID;
 import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.apache.commons.lang3.*
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.web.util.UriUtils
 
 /**
  * This groovy class supports the <class>DoCreateNetworkInstance.bpmn</class> process.
@@ -203,7 +196,7 @@ public class DoCreateNetworkInstanceRollback extends AbstractServiceTaskProcesso
 			execution.setVariable(Prefix + "urlRollbackPoNetwork", urlRollbackPoNetwork)
 
 			URL url = new URL(urlRollbackPoNetwork)
-			HttpClient httpClient = new HttpClient(url, "application/xml", TargetEntity.OPENSTACK_ADAPTER)
+			HttpClient httpClient = new HttpClientFactory().newXmlClient(url, TargetEntity.OPENSTACK_ADAPTER)
 			httpClient.addAdditionalHeader("Authorization", execution.getVariable("BasicAuthHeaderValuePO"))
 			Response response = httpClient.delete(rollbackNetworkRequest)
 

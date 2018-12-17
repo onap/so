@@ -127,7 +127,7 @@ class CatalogDbUtilsTest {
     private void mockGetResponseFromCatalogDb(String queryEndpoint) {
         Environment environmentMock = createEnvironmentMock()
         when(environmentMock.getProperty("mso.catalog.db.endpoint")).thenReturn("http://testUrl")
-        when(httpClientFactoryMock.create(new URL(queryEndpoint), MediaType.APPLICATION_JSON, TargetEntity.CATALOG_DB)).thenReturn(httpClientMock)
+        when(httpClientFactoryMock.newJsonClient(new URL(queryEndpoint), TargetEntity.CATALOG_DB)).thenReturn(httpClientMock)
 
         Response responseMock = mock(Response.class)
         when(httpClientMock.get()).thenReturn(responseMock)

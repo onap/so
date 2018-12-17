@@ -23,6 +23,7 @@ package org.onap.so.bpmn.mock;
 import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.client.HttpClient;
+import org.onap.so.client.HttpClientFactory;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.TargetEntity;
 
@@ -131,7 +132,9 @@ public class SDNCAdapterMockTransformer extends ResponseDefinitionTransformer {
 			}
 			LOGGER.debug("Sending callback response:" + callbackUrl);
 			try {
-				HttpClient client = new HttpClient(UriBuilder.fromUri(callbackUrl).build().toURL(), "text/xml", TargetEntity.SDNC_ADAPTER);
+				HttpClient client = new HttpClientFactory().newTextXmlClient(
+					UriBuilder.fromUri(callbackUrl).build().toURL(),
+					TargetEntity.SDNC_ADAPTER);
 				client.post(payLoad);
 			} catch (Exception e) {
 				LOGGER.debug("Exception :",e);

@@ -46,7 +46,7 @@ import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.client.HttpClient;
-import org.onap.so.logger.MessageEnum;
+import org.onap.so.client.HttpClientFactory;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.TargetEntity;
 
@@ -260,7 +260,9 @@ public class ResourceRequestBuilder {
 
     private static String getCsarFromUuid(String uuid) throws Exception {
 		String catalogEndPoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint");
-    	HttpClient client = new HttpClient(UriBuilder.fromUri(catalogEndPoint).path(SERVICE_URL_TOSCA_CSAR).queryParam("serviceModelUuid", uuid).build().toURL(), "application/json", TargetEntity.CATALOG_DB);
+    	HttpClient client = new HttpClientFactory().newJsonClient(
+    	    UriBuilder.fromUri(catalogEndPoint).path(SERVICE_URL_TOSCA_CSAR).queryParam("serviceModelUuid", uuid).build().toURL(),
+            TargetEntity.CATALOG_DB);
     	
     	client.addAdditionalHeader("Accept", "application/json");
 //    	client.addBasicAuthHeader (UrnPropertiesReader.getVariable("mso.adapters.db.auth"), UrnPropertiesReader.getVariable("mso.msoKey"));

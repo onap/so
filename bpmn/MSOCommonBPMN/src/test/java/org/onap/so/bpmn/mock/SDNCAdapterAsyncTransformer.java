@@ -23,6 +23,7 @@ package org.onap.so.bpmn.mock;
 import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.client.HttpClient;
+import org.onap.so.client.HttpClientFactory;
 import org.onap.so.utils.TargetEntity;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -141,7 +142,9 @@ public class SDNCAdapterAsyncTransformer extends ResponseDefinitionTransformer {
 				e1.printStackTrace();
 			}
 			try {
-				HttpClient client = new HttpClient(UriBuilder.fromUri(callbackUrl).build().toURL(), "text/xml", TargetEntity.SDNC_ADAPTER);
+				HttpClient client = new HttpClientFactory().newTextXmlClient(
+					UriBuilder.fromUri(callbackUrl).build().toURL(),
+					TargetEntity.SDNC_ADAPTER);
 				client.post(payLoad);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

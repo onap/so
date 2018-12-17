@@ -53,7 +53,7 @@ class ExternalAPIUtilTest {
         HttpClient httpClient = mock(HttpClient.class)
         given(httpClient.get()).willReturn(expectedResponse)
         HttpClientFactory httpClientFactory = mock(HttpClientFactory.class)
-        given(httpClientFactory.create(new URL(URL), MediaType.APPLICATION_JSON, TargetEntity.EXTERNAL)).willReturn(httpClient)
+        given(httpClientFactory.newJsonClient(new URL(URL), TargetEntity.EXTERNAL)).willReturn(httpClient)
 
         // WHEN
         ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil(httpClientFactory, new DummyMsoUtils(UUID_STR), new ExceptionUtil())
@@ -75,13 +75,14 @@ class ExternalAPIUtilTest {
         HttpClient httpClient = mock(HttpClient.class)
         willThrow(new RuntimeException("error occurred")).given(httpClient).get()
         HttpClientFactory httpClientFactory = mock(HttpClientFactory.class)
-        given(httpClientFactory.create(new URL(URL), MediaType.APPLICATION_JSON, TargetEntity.EXTERNAL)).willReturn(httpClient)
+        given(httpClientFactory.newJsonClient(new URL(URL), TargetEntity.EXTERNAL)).willReturn(httpClient)
         DelegateExecution delegateExecution = createDelegateExecution()
         DummyExceptionUtil exceptionUtil = new DummyExceptionUtil()
 
         // WHEN
         ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil(httpClientFactory, new DummyMsoUtils(UUID_STR), exceptionUtil)
-        BpmnError bpmnError = catchThrowableOfType({ -> externalAPIUtil.executeExternalAPIGetCall(delegateExecution, URL)
+        BpmnError bpmnError = catchThrowableOfType({ ->
+            externalAPIUtil.executeExternalAPIGetCall(delegateExecution, URL)
         }, BpmnError.class)
 
         // THEN
@@ -96,7 +97,7 @@ class ExternalAPIUtilTest {
         HttpClient httpClient = mock(HttpClient.class)
         willThrow(new RuntimeException("error occurred")).given(httpClient).post(BODY_PAYLOAD)
         HttpClientFactory httpClientFactory = mock(HttpClientFactory.class)
-        given(httpClientFactory.create(new URL(URL), MediaType.APPLICATION_JSON, TargetEntity.AAI)).willReturn(httpClient)
+        given(httpClientFactory.newJsonClient(new URL(URL), TargetEntity.AAI)).willReturn(httpClient)
         DelegateExecution delegateExecution = createDelegateExecution()
         DummyExceptionUtil exceptionUtil = new DummyExceptionUtil()
 
@@ -119,7 +120,7 @@ class ExternalAPIUtilTest {
         HttpClient httpClient = mock(HttpClient.class)
         given(httpClient.post(BODY_PAYLOAD)).willReturn(expectedResponse)
         HttpClientFactory httpClientFactory = mock(HttpClientFactory.class)
-        given(httpClientFactory.create(new URL(URL), MediaType.APPLICATION_JSON, TargetEntity.AAI)).willReturn(httpClient)
+        given(httpClientFactory.newJsonClient(new URL(URL), TargetEntity.AAI)).willReturn(httpClient)
 
         // WHEN
         ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil(httpClientFactory, new DummyMsoUtils(UUID_STR), new ExceptionUtil())

@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.client.HttpClient;
+import org.onap.so.client.HttpClientFactory;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.TargetEntity;
 
@@ -131,7 +132,9 @@ public class VnfAdapterCreateMockTransformer extends ResponseDefinitionTransform
 			}
 			LOGGER.debug("Sending callback response to url: " + callbackUrl);
 			try {
-				HttpClient client = new HttpClient(UriBuilder.fromUri(callbackUrl).build().toURL(), "text/xml", TargetEntity.VNF_ADAPTER);
+				HttpClient client = new HttpClientFactory().newTextXmlClient(
+					UriBuilder.fromUri(callbackUrl).build().toURL(),
+					TargetEntity.VNF_ADAPTER);
 				Response response = client.post(payLoad);
 				LOGGER.debug("Successfully posted callback? Status: " + response.getStatus());
 				//System.err.println("Successfully posted callback:" + result.getStatus());

@@ -141,7 +141,7 @@ class ExternalAPIUtil {
 			msoLogger.debug( "Generated uuid is: " + uuid)
 			msoLogger.debug( "URL to be used is: " + url)
 
-			HttpClient client = httpClientFactory.create(new URL(url), MediaType.APPLICATION_JSON, TargetEntity.EXTERNAL)
+			HttpClient client = httpClientFactory.newJsonClient(new URL(url), TargetEntity.EXTERNAL)
 			client.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
 			client.addAdditionalHeader("X-FromAppId", "MSO")
 			client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, uuid)
@@ -177,7 +177,7 @@ class ExternalAPIUtil {
 			msoLogger.debug( "Generated uuid is: " + uuid)
 			msoLogger.debug( "URL to be used is: " + url)
 
-			HttpClient httpClient = httpClientFactory.create(new URL(url), MediaType.APPLICATION_JSON, TargetEntity.AAI)
+			HttpClient httpClient = httpClientFactory.newJsonClient(new URL(url), TargetEntity.AAI)
 			httpClient.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
 			httpClient.addAdditionalHeader("X-FromAppId", "MSO")
 			httpClient.addAdditionalHeader("X-TransactionId", uuid)
