@@ -42,10 +42,11 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 public class HttpClientTest{
 
 
+	private final HttpClientFactory httpClientFactory = new HttpClientFactory();
 	@Rule
 	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicHttpsPort());
 
-    @Test(expected = Test.None.class)
+	@Test(expected = Test.None.class)
 	public void testPost_success() throws MalformedURLException{
 
         stubFor(post(urlEqualTo("/services/sdnc/post"))
@@ -54,7 +55,7 @@ public class HttpClientTest{
                 .withBody("")));
 
       URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
-      HttpClient client = new HttpClient(url, "application/json", TargetEntity.BPMN);
+      HttpClient client = httpClientFactory.createWithJsonMediaType(url, TargetEntity.BPMN);
 
 	  client.addBasicAuthHeader("97FF88AB352DA16E00DDD81E3876431DEF8744465DACA489EB3B3BE1F10F63EDA1715E626D0A4827A3E19CD88421BF", "123");
 	  client.addAdditionalHeader("Accept", "application/json");
@@ -73,7 +74,7 @@ public class HttpClientTest{
                 .withBody("")));
 
       URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
-      HttpClient client = new HttpClient(url, "application/json", TargetEntity.BPMN);
+      HttpClient client = httpClientFactory.createWithJsonMediaType(url, TargetEntity.BPMN);
 
 	  client.addAdditionalHeader("Accept", "application/json");
 	  client.addAdditionalHeader("id", null);
@@ -93,7 +94,7 @@ public class HttpClientTest{
                 .withBody("")));
 
       URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
-      HttpClient client = new HttpClient(url, "application/json", TargetEntity.BPMN);
+      HttpClient client = httpClientFactory.createWithJsonMediaType(url, TargetEntity.BPMN);
 
       client.addBasicAuthHeader("", "12345");
 	  client.addAdditionalHeader("Accept", "application/json");

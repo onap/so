@@ -31,6 +31,8 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.runtime.Execution
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.onap.so.client.HttpClientFactory
+
 import javax.ws.rs.core.Response
 
 import org.onap.so.bpmn.infrastructure.vfcmodel.ScaleResource
@@ -201,7 +203,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         try{
 			URL url = new URL(urlString);
 
-			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.VNF_ADAPTER)
+            HttpClient httpClient = new HttpClientFactory().createWithJsonMediaType(url, TargetEntity.VNF_ADAPTER)
 			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
 
 			apiResponse = httpClient.post(requestBody)

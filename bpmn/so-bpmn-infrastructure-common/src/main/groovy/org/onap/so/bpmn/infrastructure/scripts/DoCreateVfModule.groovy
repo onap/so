@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
+import org.onap.so.client.HttpClientFactory
 
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -79,6 +80,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	JsonUtils jsonUtil = new JsonUtils()
 	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 	CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
+	private final HttpClientFactory httpClientFactory = new HttpClientFactory()
 
 	/**
 	 * Validates the request message and sets up the workflow.
@@ -641,7 +643,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			String endPoint = aaiUriUtil.createAaiUri(uri)
 
 			try {
-				HttpClient client = new HttpClient(new URL(endPoint), MediaType.APPLICATION_XML, TargetEntity.AAI)
+				HttpClient client = httpClientFactory.createWithXmlMediaType(new URL(endPoint), TargetEntity.AAI)
 				client.addAdditionalHeader('X-TransactionId', UUID.randomUUID().toString())
 				client.addAdditionalHeader('X-FromAppId', 'MSO')
 				client.addAdditionalHeader('Content-Type', MediaType.APPLICATION_XML)
@@ -723,7 +725,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, vnfId).queryParam("vf-module-name",vfModuleName)
 			String endPoint = aaiUriUtil.createAaiUri(uri)
 
-			HttpClient client = new HttpClient(new URL(endPoint), MediaType.APPLICATION_XML, TargetEntity.AAI)
+			HttpClient client = httpClientFactory.createWithXmlMediaType(new URL(endPoint), TargetEntity.AAI)
 			client.addAdditionalHeader('X-TransactionId', UUID.randomUUID().toString())
 			client.addAdditionalHeader('X-FromAppId', 'MSO')
 			client.addAdditionalHeader('Content-Type', MediaType.APPLICATION_XML)

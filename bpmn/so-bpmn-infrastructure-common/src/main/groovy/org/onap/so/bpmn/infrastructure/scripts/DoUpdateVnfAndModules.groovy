@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.client.HttpClientFactory
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 import javax.ws.rs.core.MediaType
@@ -163,7 +165,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			msoLogger.debug("AAI endPoint: " + endPoint)
 
 			try {
-				HttpClient client = new HttpClient(new URL(endPoint), MediaType.APPLICATION_XML, TargetEntity.AAI)
+				HttpClient client = new HttpClientFactory().createWithXmlMediaType(new URL(endPoint), TargetEntity.AAI)
 				client.addAdditionalHeader('X-TransactionId', UUID.randomUUID().toString())
 				client.addAdditionalHeader('X-FromAppId', 'MSO')
 				client.addAdditionalHeader('Content-Type', 'application/xml')

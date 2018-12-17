@@ -34,10 +34,10 @@ public class HttpClient extends RestClient {
 
 	protected final Logger log = LoggerFactory.getLogger(HttpClient.class);
     private TargetEntity targetEntity;
-	public HttpClient(URL host, String contentType, TargetEntity targetEntity) {
+
+    HttpClient(URL host, String contentType, TargetEntity targetEntity) {
 		super(host, contentType);
 		this.targetEntity = targetEntity;
-
 	}
 
     @Override

@@ -19,6 +19,8 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.client.HttpClientFactory
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 import javax.ws.rs.core.Response
@@ -425,7 +427,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 		String serviceAaiPath = "${aai_endpoint}${urlLink}"
 
 		URL url = new URL(serviceAaiPath)
-		HttpClient client = new HttpClient(url, "application/xml", TargetEntity.AAI)
+		HttpClient client = new HttpClientFactory().createWithXmlMediaType(url, TargetEntity.AAI)
 
 
 		Response response = client.get()

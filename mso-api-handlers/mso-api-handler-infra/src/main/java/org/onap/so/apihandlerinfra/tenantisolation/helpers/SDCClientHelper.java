@@ -36,6 +36,7 @@ import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.client.HttpClient;
+import org.onap.so.client.HttpClientFactory;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.CryptoUtils;
@@ -53,6 +54,7 @@ public class SDCClientHelper {
 
 	private static String MESSAGE_UNDEFINED_ERROR = "Undefined Error Message!";
 	private static String MESSAGE_UNEXPECTED_FORMAT = "Unexpected response format from SDC.";
+	private final HttpClientFactory httpClientFactory = new HttpClientFactory();
 
 	@Value("${mso.sdc.endpoint}")
 	private String sdcEndpoint;
@@ -91,7 +93,7 @@ public class SDCClientHelper {
 
 			URL url = new URL(urlString);
 
-			HttpClient httpClient = new HttpClient(url, "application/json", TargetEntity.SDC);
+			HttpClient httpClient = httpClientFactory.createWithJsonMediaType(url, TargetEntity.SDC);
 			httpClient.addBasicAuthHeader(sdcClientAuth, msoKey);
 
 			Response apiResponse = setHttpPostResponse(httpClient, jsonPayload);

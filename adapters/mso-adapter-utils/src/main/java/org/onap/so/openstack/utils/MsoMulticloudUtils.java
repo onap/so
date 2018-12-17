@@ -31,6 +31,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 import javax.ws.rs.core.Response;
 
+import org.onap.so.client.HttpClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.onap.so.adapters.vdu.CloudInfo;
@@ -80,10 +81,10 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     private static final Logger logger = LoggerFactory.getLogger(MsoMulticloudUtils.class);
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private final HttpClientFactory httpClientFactory = new HttpClientFactory();
 
     @Autowired
     private Environment environment;
-
 
     /******************************************************************************
      *
@@ -603,8 +604,9 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     private RestClient getMulticloudClient(String endpoint) {
         RestClient client = null;
         try {
-            client = new HttpClient(UriBuilder.fromUri(endpoint).build().toURL(),
-                    MediaType.APPLICATION_JSON.toString(), TargetEntity.MULTICLOUD);
+            client = httpClientFactory.createWithJsonMediaType(
+                UriBuilder.fromUri(endpoint).build().toURL(),
+                TargetEntity.MULTICLOUD);
         } catch (MalformedURLException e) {
             logger.debug(String.format("Encountered malformed URL error getting multicloud rest client %s", e.getMessage()));
         } catch (IllegalArgumentException e) {
