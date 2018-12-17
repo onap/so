@@ -158,14 +158,19 @@ public class BpmnInstaller {
 		 return requestEntity;
 	}
 	
-	protected void extractBpmnFileFromCsar(ZipInputStream zipIn, String fileName) throws IOException {
+	/* protected void extractBpmnFileFromCsar(ZipInputStream zipIn, String fileName) throws IOException */
+        protected void extractBpmnFileFromCsar(ZipInputStream zipIn, String fileName)	{
 		String filePath = Paths.get(System.getProperty("mso.config.path"), "ASDC", fileName).normalize().toString();
-		BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath));
+		/* BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath)); */
+		try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath))){
 		byte[] bytesIn = new byte[4096];
 		int read = 0;
 		while ((read = zipIn.read(bytesIn)) != -1) {
 			outputStream.write(bytesIn, 0, read);
 		}
-		outputStream.close();
+		/* outputStream.close(); */
+		} catch (IOException e) {
+              LOGGER.error("Unable to open file.", e);
+        }
 	}
 }
