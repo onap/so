@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_5ce3fca3",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-17T13:05:15Z",
+      "side": 1,
+      "message": "There are some issues with this code as there is no benefit with this type of extracted method validators. At first you should approach from the domain perspective (what you want to validate) and consider the how(empty String, pattern matching) as the second step. \nAlso I think there is too much fragmentation on how the execution object is used between different method invocations. Parameters are access from the execution only to be passed separately to the validating method along with the execution object itself.\nMy recommendation: simply have validating methods for each parameter: validateCorrelationId(execution), validatePnfUuId(execution) etc and access the required values from those methods. It will be a lot more readable since when someone starts reading this class, it\u0027ll be clear at a glance what type of validations are done, while the \"how\" will be hidden inside:)",
+      "revId": "fd8c9a29a49287f3e8d57b70026ab94d75f96991",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3cf63864",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-17T13:05:15Z",
+      "side": 1,
+      "message": "Consider a similar approach for the timeout validation + maybe solve this using lambdas and Optional ? :) The idea is to have a consistent approach.",
+      "revId": "fd8c9a29a49287f3e8d57b70026ab94d75f96991",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
