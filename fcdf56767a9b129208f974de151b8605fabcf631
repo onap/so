@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_b141eeaa",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GeneratePnfUuidDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-18T11:09:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_31073e84",
+      "revId": "fcdf56767a9b129208f974de151b8605fabcf631",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_d1f7d289",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2018-12-18T10:36:38Z",
       "side": 1,
       "message": "Use DelegateExecutionFake instead of mocking Execution.",
+      "revId": "fcdf56767a9b129208f974de151b8605fabcf631",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_711e26bd",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-18T11:09:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_d1f7d289",
       "revId": "fcdf56767a9b129208f974de151b8605fabcf631",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
