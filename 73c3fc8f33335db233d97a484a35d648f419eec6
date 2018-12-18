@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_cd6bb8ef",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/catalogrest/QueryAllottedResourceCustomization.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 3357
+      },
+      "writtenOn": "2018-12-18T01:34:35Z",
+      "side": 1,
+      "message": "need to add this new column in above TEMPLATE,if not so,it view take no effect after put.",
+      "range": {
+        "startLine": 128,
+        "startChar": 22,
+        "endLine": 128,
+        "endChar": 36
+      },
+      "revId": "73c3fc8f33335db233d97a484a35d648f419eec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_ed70fcdd",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/catalogrest/QueryServiceMacroHolder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 3357
+      },
+      "writtenOn": "2018-12-18T01:34:35Z",
+      "side": 1,
+      "message": "need to add this new column in above TEMPLATE,if not so,it view take no effect after put.",
+      "range": {
+        "startLine": 84,
+        "startChar": 17,
+        "endLine": 84,
+        "endChar": 31
+      },
+      "revId": "73c3fc8f33335db233d97a484a35d648f419eec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_8d7930ca",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/catalogrest/QueryServiceNetworks.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 3357
+      },
+      "writtenOn": "2018-12-18T01:34:35Z",
+      "side": 1,
+      "message": "need to add this new column in above TEMPLATE,if not so,it view take no effect after put.",
+      "range": {
+        "startLine": 119,
+        "startChar": 18,
+        "endLine": 119,
+        "endChar": 32
+      },
+      "revId": "73c3fc8f33335db233d97a484a35d648f419eec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_ad7674d5",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/catalogrest/QueryServiceVnfs.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 3357
+      },
+      "writtenOn": "2018-12-18T01:34:35Z",
+      "side": 1,
+      "message": "need to add this new column in above TEMPLATE,if not so,it view take no effect after put.",
+      "range": {
+        "startLine": 122,
+        "startChar": 21,
+        "endLine": 122,
+        "endChar": 35
+      },
+      "revId": "73c3fc8f33335db233d97a484a35d648f419eec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_4d7fc8ab",
+        "filename": "mso-catalog-db/src/test/resources/schema.sql",
+        "patchSetId": 5
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 3357
+      },
+      "writtenOn": "2018-12-18T01:34:35Z",
+      "side": 1,
+      "message": "20000 or 2000?",
+      "range": {
+        "startLine": 249,
+        "startChar": 27,
+        "endLine": 249,
+        "endChar": 32
+      },
+      "revId": "73c3fc8f33335db233d97a484a35d648f419eec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
