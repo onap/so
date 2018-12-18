@@ -45,6 +45,6 @@ public class CreateAaiEntryWithPnfIdDelegateTest {
         Pnf createdEntry = aaiConnection.getCreated().get("testCorrelationId");
         assertThat(createdEntry.getPnfId()).isEqualTo("testCorrelationId");
         assertThat(createdEntry.getPnfName()).isEqualTo("testCorrelationId");
-        assertThat(createdEntry.isInMaint()).isTrue();
+        assertThat(createdEntry.isInMaint()).isNull();
     }
 }

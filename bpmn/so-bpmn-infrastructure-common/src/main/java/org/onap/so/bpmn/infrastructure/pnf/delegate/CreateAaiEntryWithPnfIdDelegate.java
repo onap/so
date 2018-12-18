@@ -52,7 +52,6 @@ public class CreateAaiEntryWithPnfIdDelegate implements JavaDelegate {
     public void execute(DelegateExecution execution) throws Exception {
         String correlationId = (String) execution.getVariable(CORRELATION_ID);
         Pnf pnf = new Pnf();
-        pnf.setInMaint(true);
         pnf.setPnfId(correlationId);
         pnf.setPnfName(correlationId);
         aaiConnection.createEntry(correlationId, pnf);
