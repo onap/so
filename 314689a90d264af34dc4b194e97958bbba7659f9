@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_5acf772a",
+        "filename": "common/src/test/java/org/onap/so/client/HttpClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2018-12-19T08:16:08Z",
+      "side": 1,
+      "message": "expected param is redundant here",
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
