@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "9adffdf1_8567c4b6",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-12-19T13:11:48Z",
+      "side": 1,
+      "message": "It\u0027s better to create Pattern from string once and use it, if you plan to use regex more than once. Method .matches() must create regex parser each time it is called.",
+      "range": {
+        "startLine": 70,
+        "startChar": 13,
+        "endLine": 70,
+        "endChar": 40
+      },
+      "revId": "88a4d1d8c039b1257856edfd89a24c462d33ded6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_e57a5076",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GeneratePnfUuidDelegateTest.java",
         "patchSetId": 9
