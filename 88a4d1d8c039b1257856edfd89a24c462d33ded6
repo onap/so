@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_45c23c5a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-19T13:44:43Z",
+      "side": 1,
+      "message": "Do I use it more than once? I think it\u0027s called just here. But if you still want me to change that for potential future usages I can do it.",
+      "parentUuid": "9adffdf1_8567c4b6",
+      "range": {
+        "startLine": 70,
+        "startChar": 13,
+        "endLine": 70,
+        "endChar": 40
+      },
+      "revId": "88a4d1d8c039b1257856edfd89a24c462d33ded6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_e57a5076",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GeneratePnfUuidDelegateTest.java",
         "patchSetId": 9
@@ -36,6 +60,30 @@
       "writtenOn": "2018-12-19T12:09:38Z",
       "side": 1,
       "message": "I don\u0027t like that test for one class is dependent on implementation of another class. In addition there are no dependency between those classes in code, you added that dependency with test.",
+      "range": {
+        "startLine": 40,
+        "startChar": 69,
+        "endLine": 40,
+        "endChar": 94
+      },
+      "revId": "88a4d1d8c039b1257856edfd89a24c462d33ded6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6553c0e2",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GeneratePnfUuidDelegateTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2018-12-19T13:44:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_e57a5076",
       "range": {
         "startLine": 40,
         "startChar": 69,
