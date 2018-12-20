@@ -2,6 +2,98 @@
   "comments": [
     {
       "key": {
+        "uuid": "9adffdf1_201b6682",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-12-20T07:14:19Z",
+      "side": 1,
+      "message": "Consider simplifying this expression. Builder could take just String. Now, if we can\u0027t drop URL then that conversion could be done inside method.",
+      "range": {
+        "startLine": 608,
+        "startChar": 16,
+        "endLine": 608,
+        "endChar": 60
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_00ce62b4",
+        "filename": "common/src/main/java/org/onap/so/client/HttpClientFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-12-20T07:14:19Z",
+      "side": 1,
+      "message": "Maybe just \u0027jsonClient\u0027?",
+      "range": {
+        "startLine": 28,
+        "startChar": 22,
+        "endLine": 28,
+        "endChar": 45
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a0c67698",
+        "filename": "common/src/main/java/org/onap/so/client/HttpClientFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-12-20T07:14:19Z",
+      "side": 1,
+      "message": "Maybe just \u0027xmlClient\u0027?",
+      "range": {
+        "startLine": 32,
+        "startChar": 22,
+        "endLine": 32,
+        "endChar": 44
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c0c37a87",
+        "filename": "common/src/main/java/org/onap/so/client/HttpClientFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-12-20T07:14:19Z",
+      "side": 1,
+      "message": "Maybe just \u0027textXmlClient\u0027?\n\nAlso I\u0027m afraid that two xml methods will be source of confusion.\nIt will bring questions like \"which one should I use?\".",
+      "range": {
+        "startLine": 36,
+        "startChar": 22,
+        "endLine": 36,
+        "endChar": 48
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_5acf772a",
         "filename": "common/src/test/java/org/onap/so/client/HttpClientTest.java",
         "patchSetId": 1
@@ -13,6 +105,29 @@
       "writtenOn": "2018-12-19T08:16:08Z",
       "side": 1,
       "message": "expected param is redundant here",
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_60bc0e07",
+        "filename": "common/src/test/java/org/onap/so/client/HttpClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2731
+      },
+      "writtenOn": "2018-12-20T07:14:19Z",
+      "side": 1,
+      "message": "Why? We already created json client?",
+      "range": {
+        "startLine": 61,
+        "startChar": 3,
+        "endLine": 61,
+        "endChar": 60
+      },
       "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
