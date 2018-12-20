@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Michal Kabaj <michal.kabaj@nokia.com>
+Code-Review+1: Lukasz Biniek <lukasz.biniek@nokia.com>
+Code-Review+2: Lukasz Muszkieta <lukasz.muszkieta@nokia.com>
+Submitted-by: Lukasz Muszkieta <lukasz.muszkieta@nokia.com>
+Submitted-at: Thu, 20 Dec 2018 11:57:17 +0000
+Reviewed-on: https://gerrit.onap.org/r/74262
+Project: so
+Branch: refs/heads/master
