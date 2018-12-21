@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_b1fa4e73",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/AaiUtil.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-12-21T14:07:49Z",
+      "side": 1,
+      "message": "Why are you creating new factory here instead of having a field?",
+      "range": {
+        "startLine": 94,
+        "startChar": 23,
+        "endLine": 94,
+        "endChar": 92
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_00ce62b4",
         "filename": "common/src/main/java/org/onap/so/client/HttpClientFactory.java",
         "patchSetId": 1
@@ -105,6 +128,29 @@
       "writtenOn": "2018-12-19T08:16:08Z",
       "side": 1,
       "message": "expected param is redundant here",
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9d6074d0",
+        "filename": "common/src/test/java/org/onap/so/client/HttpClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2018-12-21T14:07:49Z",
+      "side": 1,
+      "message": "uhhh...",
+      "range": {
+        "startLine": 60,
+        "startChar": 30,
+        "endLine": 60,
+        "endChar": 124
+      },
       "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
