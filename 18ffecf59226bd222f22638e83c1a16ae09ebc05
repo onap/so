@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_5cbc5c06",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/resource/ResourceRequestBuilder.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 3357
+      },
+      "writtenOn": "2018-12-24T01:05:23Z",
+      "side": 1,
+      "message": "If moved to asdc, no use in this java,pls delete it.",
+      "range": {
+        "startLine": 91,
+        "startChar": 35,
+        "endLine": 91,
+        "endChar": 53
+      },
+      "revId": "18ffecf59226bd222f22638e83c1a16ae09ebc05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
