@@ -52,7 +52,6 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DeleteCustomE2EServiceInstance.class);
 	
 	public void preProcessRequest (DelegateExecution execution) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
 		
@@ -111,7 +110,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			
 			execution.setVariable("operationType", "DELETE") 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			msoLogger.info(msg)
@@ -121,7 +120,6 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	}
 
 	public void sendSyncResponse (DelegateExecution execution) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		msoLogger.trace("Staring sendSyncResponse")
 
 		try {
@@ -166,7 +164,6 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	}
 	
 	public void prepareCompletionRequest (DelegateExecution execution) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		msoLogger.trace("Starting prepareCompletion")
 
 		try {
@@ -339,8 +336,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	 * Init the service Operation Status
 	 */
 	public void prepareInitServiceOperationStatus(DelegateExecution execution){
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " ======== STARTED prepareInitServiceOperationStatus Process ======== ", isDebugEnabled)
+		msoLogger.debug("======== STARTED prepareInitServiceOperationStatus Process ======== ")
 		try{
 			String serviceId = execution.getVariable("serviceInstanceId")
 			String operationId = execution.getVariable("operationId")
@@ -349,12 +345,12 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String progress = "0"
 			String reason = ""
 			String operationContent = "Prepare service creation"
-			utils.log("DEBUG", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId, isDebugEnabled)
+			msoLogger.debug("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId)
 			serviceId = UriUtils.encode(serviceId,"UTF-8")
 
 			def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
 			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-			utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+			msoLogger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
 			String payload =
 					"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -376,12 +372,12 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			payload = utils.formatXml(payload)
 			execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
-			utils.log("DEBUG", "Outgoing updateServiceOperStatusRequest: \n" + payload, isDebugEnabled)
+			msoLogger.debug("Outgoing updateServiceOperStatusRequest: \n" + payload)
 
 		}catch(Exception e){
-			utils.log("ERROR", "Exception Occured Processing prepareInitServiceOperationStatus. Exception is:\n" + e, isDebugEnabled)
+			msoLogger.error("Exception Occured Processing prepareInitServiceOperationStatus. Exception is:\n" + e)
 			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
 		}
-		utils.log("DEBUG", "======== COMPLETED prepareInitServiceOperationStatus Process ======== ", isDebugEnabled)
+		msoLogger.debug("======== COMPLETED prepareInitServiceOperationStatus Process ======== ")
 	}
 }
