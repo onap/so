@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_736b81f2",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoMulticloudUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-27T13:06:15Z",
+      "side": 1,
+      "message": "It is better to rely on the URL object instead of a raw String to represent the endpoint, since a String type is too generic by itself.\nI have made a different simplification by getting rid of the UriBuilder and just relying on simple new URL() from java.net. There is no need to have a builder since it is not even fully utilized.",
+      "parentUuid": "9adffdf1_201b6682",
+      "range": {
+        "startLine": 608,
+        "startChar": 16,
+        "endLine": 608,
+        "endChar": 60
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_b1fa4e73",
         "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/AaiUtil.groovy",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-12-21T14:07:49Z",
       "side": 1,
       "message": "Why are you creating new factory here instead of having a field?",
+      "range": {
+        "startLine": 94,
+        "startChar": 23,
+        "endLine": 94,
+        "endChar": 92
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_53667d2b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/AaiUtil.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-27T13:06:15Z",
+      "side": 1,
+      "message": "The goal was to change method of construction (from \"new\" to factory based) and not fix all encapsulation problems. Considering how many classes were affected by the change I wanted to avoid any additional changes that were not required.",
+      "parentUuid": "9adffdf1_b1fa4e73",
       "range": {
         "startLine": 94,
         "startChar": 23,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_136c7507",
+        "filename": "common/src/main/java/org/onap/so/client/HttpClientFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-27T13:06:15Z",
+      "side": 1,
+      "message": "true, the names are too long, changed to newJsonClient :)",
+      "parentUuid": "9adffdf1_00ce62b4",
+      "range": {
+        "startLine": 28,
+        "startChar": 22,
+        "endLine": 28,
+        "endChar": 45
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_a0c67698",
         "filename": "common/src/main/java/org/onap/so/client/HttpClientFactory.java",
         "patchSetId": 1
@@ -82,6 +154,30 @@
       "writtenOn": "2018-12-20T07:14:19Z",
       "side": 1,
       "message": "Maybe just \u0027xmlClient\u0027?",
+      "range": {
+        "startLine": 32,
+        "startChar": 22,
+        "endLine": 32,
+        "endChar": 44
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_337179e0",
+        "filename": "common/src/main/java/org/onap/so/client/HttpClientFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-27T13:06:15Z",
+      "side": 1,
+      "message": "true, the names are too long, changed to newXmlClient :)",
+      "parentUuid": "9adffdf1_a0c67698",
       "range": {
         "startLine": 32,
         "startChar": 22,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_d3790dc9",
+        "filename": "common/src/main/java/org/onap/so/client/HttpClientFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-27T13:06:15Z",
+      "side": 1,
+      "message": "true, the names are too long, changed to newTextXmlClient :)",
+      "parentUuid": "9adffdf1_c0c37a87",
+      "range": {
+        "startLine": 36,
+        "startChar": 22,
+        "endLine": 36,
+        "endChar": 48
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_5acf772a",
         "filename": "common/src/test/java/org/onap/so/client/HttpClientTest.java",
         "patchSetId": 1
@@ -128,6 +248,24 @@
       "writtenOn": "2018-12-19T08:16:08Z",
       "side": 1,
       "message": "expected param is redundant here",
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f37691d6",
+        "filename": "common/src/test/java/org/onap/so/client/HttpClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-27T13:06:15Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "9adffdf1_5acf772a",
       "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -157,6 +295,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_937f05ab",
+        "filename": "common/src/test/java/org/onap/so/client/HttpClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-27T13:06:15Z",
+      "side": 1,
+      "message": ":)",
+      "parentUuid": "9adffdf1_9d6074d0",
+      "range": {
+        "startLine": 60,
+        "startChar": 30,
+        "endLine": 60,
+        "endChar": 124
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_60bc0e07",
         "filename": "common/src/test/java/org/onap/so/client/HttpClientTest.java",
         "patchSetId": 1
@@ -168,6 +330,30 @@
       "writtenOn": "2018-12-20T07:14:19Z",
       "side": 1,
       "message": "Why? We already created json client?",
+      "range": {
+        "startLine": 61,
+        "startChar": 3,
+        "endLine": 61,
+        "endChar": 60
+      },
+      "revId": "314689a90d264af34dc4b194e97958bbba7659f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b37c89b6",
+        "filename": "common/src/test/java/org/onap/so/client/HttpClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2018-12-27T13:06:15Z",
+      "side": 1,
+      "message": "The JsonClient in current implementation sets Content Type header, not the accept header. Content type states the type of request content being sent, while the accept header is the type of expected response content.",
+      "parentUuid": "9adffdf1_60bc0e07",
       "range": {
         "startLine": 61,
         "startChar": 3,
