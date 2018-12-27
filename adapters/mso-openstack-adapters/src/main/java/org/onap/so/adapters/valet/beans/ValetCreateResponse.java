@@ -33,7 +33,7 @@ public class ValetCreateResponse implements Serializable {
 	@JsonProperty("status")
 	private ValetStatus status;
 	@JsonProperty("parameters")
-	private Map<String, Object> parameters;
+	private transient Map<String, Object> parameters;
 	
 	public ValetCreateResponse() {
 		super();
