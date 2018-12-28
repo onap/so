@@ -68,8 +68,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
     CatalogDbUtils cutils = new CatalogDbUtils()
 
     public void preProcessRequest (DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** preProcessRequest *****",  isDebugEnabled)
+        msoLogger.debug(" ***** preProcessRequest *****")
         String msg = ""
 
         try {
@@ -79,8 +78,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
             //Inputs
             //requestDetails.subscriberInfo. for AAI GET & PUT & SDNC assignToplology
             String globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
-            if (globalSubscriberId == null)
-            {
+            if (globalSubscriberId == null) {
                 execution.setVariable("globalSubscriberId", "")
             }
 
@@ -95,18 +93,18 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
             if (isBlank(serviceInstanceId)){
                 msg = "Input serviceInstanceId is null"
-                utils.log("INFO", msg, isDebugEnabled)
+                msoLogger.error(msg)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             }
 
-            String sdncCallbackUrl = execution.getVariable('URN_mso_workflow_sdncadapter_callback')
+            String sdncCallbackUrl = UrnPropertiesReader.getVariable('URN_mso_workflow_sdncadapter_callback', execution)
             if (isBlank(sdncCallbackUrl)) {
                 msg = "URN_mso_workflow_sdncadapter_callback is null"
-                utils.log("INFO", msg, isDebugEnabled)
+                msoLogger.error(msg)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             }
             execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
-            utils.log("INFO","SDNC Callback URL: " + sdncCallbackUrl, isDebugEnabled)
+            msoLogger.debug("SDNC Callback URL: " + sdncCallbackUrl)
 
             StringBuilder sbParams = new StringBuilder()
             Map<String, String> paramsMap = execution.getVariable("serviceInputParams")
@@ -136,16 +134,14 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
             throw e;
         } catch (Exception ex){
             msg = "Exception in preProcessRequest " + ex.getMessage()
-            utils.log("INFO", msg, isDebugEnabled)
+            msoLogger.error(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
+        msoLogger.debug(" ***** Exit preProcessRequest *****",)
     }
 
     public void sequenceResource(DelegateExecution execution){
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-
-        utils.log("INFO", " ======== STARTED sequenceResource Process ======== ", isDebugEnabled)
+        msoLogger.debug(" ======== STARTED sequenceResource Process ======== ")
         List<Resource> sequencedResourceList = new ArrayList<Resource>()
         List<Resource> wanResources = new ArrayList<Resource>()
 
@@ -198,18 +194,15 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         execution.setVariable("isContainsWanResource", isContainsWanResource)
         execution.setVariable("currentResourceIndex", 0)
         execution.setVariable("sequencedResourceList", sequencedResourceList)
-        utils.log("INFO", "resourceSequence: " + resourceSequence, isDebugEnabled)
-        utils.log("INFO", " ======== END sequenceResource Process ======== ", isDebugEnabled)
+        msoLogger.debug("resourceSequence: " + resourceSequence)
+        msoLogger.debug(" ======== END sequenceResource Process ======== ")
     }
 
     /**
      * prepare delete parameters
      */
     public void preResourceDelete(DelegateExecution execution){
-
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-
-        utils.log("INFO", " ======== STARTED preResourceDelete Process ======== ", isDebugEnabled)
+        msoLogger.debug(" ======== STARTED preResourceDelete Process ======== ")
 
         List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
 
@@ -221,14 +214,14 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
             String resourceTemplateUUID = curResource.getModelInfo().getModelUuid()
             execution.setVariable("resourceInstanceId", resourceInstanceUUID)
             execution.setVariable("currentResource", curResource)
-            utils.log("INFO", "Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: "
-                    + resourceInstanceUUID + " resourceModelName: " + curResource.getModelInfo().getModelName(), isDebugEnabled)
+            msoLogger.debug("Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: "
+                    + resourceInstanceUUID + " resourceModelName: " + curResource.getModelInfo().getModelName())
         }
         else {
             execution.setVariable("resourceInstanceId", "")
         }
 
-        utils.log("INFO", " ======== END preResourceDelete Process ======== ", isDebugEnabled)
+        msoLogger.debug(" ======== END preResourceDelete Process ======== ")
     }
 
 
@@ -236,8 +229,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
      * Execute delete workflow for resource
      */
     public void executeResourceDelete(DelegateExecution execution) {
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO", "======== Start executeResourceDelete Process ======== ", isDebugEnabled)
+        msoLogger.debug("======== Start executeResourceDelete Process ======== ")
 		try {
 	        String requestId = execution.getVariable("msoRequestId")
 	        String serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -269,20 +261,19 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 	        String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + recipeUri
 	
 	        HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeout, action, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
-	        utils.log("INFO", " ======== END executeResourceDelete Process ======== ", isDebugEnabled)
+	        msoLogger.debug(" ======== END executeResourceDelete Process ======== ")
 		}catch(BpmnError b){
-			 msoLogger.debug("Rethrowing MSOWorkflowException")
+			 msoLogger.error("Rethrowing MSOWorkflowException")
 			 throw b
 		 }catch(Exception e){
-			 msoLogger.debug("Error occured within DoDeleteResourcesV1 executeResourceDelete method: " + e)
+			 msoLogger.error("Error occured within DoDeleteResourcesV1 executeResourceDelete method: " + e)
 			 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured during DoDeleteResourcesV1 executeResourceDelete Catalog")
 		 }
     }
 
 
     public void parseNextResource(DelegateExecution execution){
-        def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO", "======== Start parseNextResource Process ======== ", isDebugEnabled)
+        msoLogger.debug("======== Start parseNextResource Process ======== ")
         def currentIndex = execution.getVariable("currentResourceIndex")
         def nextIndex =  currentIndex + 1
         execution.setVariable("currentResourceIndex", nextIndex)
@@ -292,7 +283,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         }else{
             execution.setVariable("allResourceFinished", "false")
         }
-        utils.log("INFO", "======== COMPLETED parseNextResource Process ======== ", isDebugEnabled)
+        msoLogger.debug("======== COMPLETED parseNextResource Process ======== ")
     }
     
     public void prepareFinishedProgressForResource(DelegateExecution execution) {
@@ -340,8 +331,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
     }
     
     public void prepareSDNCServiceRequest (DelegateExecution execution, String svcAction) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** Started prepareSDNCServiceRequest for " + svcAction +  "*****",  isDebugEnabled)
+        msoLogger.debug(" ***** Started prepareSDNCServiceRequest for " + svcAction +  "*****")
 
         try {
             // get variables
@@ -399,16 +389,16 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
             
             String sndcTopologyDeleteRequesAsString = utils.formatXml(sndcTopologyDeleteRequest)
-            utils.logAudit(sndcTopologyDeleteRequesAsString)
+            msoLogger.debug(sndcTopologyDeleteRequesAsString)
             execution.setVariable("sdncAdapterWorkflowRequest", sndcTopologyDeleteRequesAsString)
-            utils.log("INFO","sdncAdapterWorkflowRequest - " + "\n" +  sndcTopologyDeleteRequesAsString, isDebugEnabled)
+            msoLogger.debug("sdncAdapterWorkflowRequest - " + "\n" +  sndcTopologyDeleteRequesAsString)
 
         } catch (Exception ex) {
             String exceptionMessage = " Bpmn error encountered in DoDeleteResourcesV1 flow. prepareSDNCServiceRequest() - " + ex.getMessage()
-            utils.log("DEBUG", exceptionMessage, isDebugEnabled)
+            msoLogger.debug(exceptionMessage)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
         }
-       utils.log("INFO","***** Exit prepareSDNCServiceRequest for " + svcAction +  "*****",  isDebugEnabled)
+       msoLogger.debug("***** Exit prepareSDNCServiceRequest for " + svcAction +  "*****")
 	}
 }
