@@ -27,9 +27,9 @@ public class CompareModelsResult  extends JsonWrapper implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	
-	List<ResourceModelInfo> addedResourceList;	
-	List<ResourceModelInfo> deletedResourceList;
-	List<String> requestInputs;
+	private List<ResourceModelInfo> addedResourceList;	
+	private List<ResourceModelInfo> deletedResourceList;
+	private List<String> requestInputs;
 	
 	public List<ResourceModelInfo> getAddedResourceList() {
 		return addedResourceList;
