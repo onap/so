@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_7b7b53f5",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/valet/beans/ValetUpdateResponse.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-01-03T14:40:37Z",
+      "side": 1,
+      "message": "Why make this transient?",
+      "revId": "67c6f456b6c63d02fbc328b2416b1646443deacd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
