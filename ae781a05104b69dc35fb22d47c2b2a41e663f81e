@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_be48c95c",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/valet/beans/HeatRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-01-03T17:00:38Z",
+      "side": 1,
+      "message": "I think the more appropriate fix here would be to mark this as a hashMap not a Map, to ensure it is serialized properly, not remove the serialization.",
+      "revId": "ae781a05104b69dc35fb22d47c2b2a41e663f81e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
