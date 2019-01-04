@@ -460,6 +460,7 @@ public class ToscaResourceInstaller {
 			String jsonStr = objectMapper.writeValueAsString(resouceRequest);
 
 			logger.debug("resource request for resource customization id (" + resourceCustomizationUuid + ") : " + jsonStr);
+			jsonStr = jsonStr.replace("\"", "\\\"");
 			return jsonStr;
 		} catch (JsonProcessingException e) {
 			logger.error("resource input could not be deserialized for resource customization id ("
