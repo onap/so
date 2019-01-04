@@ -477,7 +477,7 @@ class NetworkUtils {
 						networkStartAddress = subnet.getNetworkStartAddress()
 					}
 					if (element == "cidr-mask") {
-						xmlBuild += "<cidr>"+networkStartAddress+"/"+var+"</cidr>"
+						xmlBuild += "<cidr>"+networkStartAddress+"/"+ subnet.getCidrMask() +"</cidr>"
 					}
 				}
 				if (element == "dhcp-enabled") {

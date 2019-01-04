@@ -166,6 +166,13 @@ public class WorkflowAction {
 			} catch (Exception ex) {
 				cloudOwner = environment.getProperty(defaultCloudOwner);
 			}
+			boolean suppressRollback = false;
+			try{
+				suppressRollback = requestDetails.getRequestInfo().getSuppressRollback();
+			} catch (Exception ex) {
+				suppressRollback = false;
+			}
+			execution.setVariable("suppressRollback", suppressRollback);
 			Resource resource = extractResourceIdAndTypeFromUri(uri);
 			WorkflowType resourceType = resource.getResourceType();
 			execution.setVariable("resourceName", resourceType.toString());
@@ -401,6 +408,7 @@ public class WorkflowAction {
 			if(virtualLinkKey != null && ebb.getBuildingBlock().getIsVirtualLink() 
 					&& virtualLinkKey.equalsIgnoreCase(ebb.getBuildingBlock().getVirtualLinkKey())) {
 				WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
+				workflowResourceIds.setServiceInstanceId(serviceInstanceId);
 				workflowResourceIds.setNetworkId(resourceId);
 				ebb.setWorkflowResourceIds(workflowResourceIds);
 			}

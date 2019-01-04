@@ -340,21 +340,24 @@ public class OrchestrationRequests {
        }
        if(flowStatusMessage != null){
     	   if(statusMessages != null){
-    		   statusMessages = statusMessages + "/";
+    		   statusMessages = statusMessages + " " + "FLOW STATUS: " + flowStatusMessage;
+    	   }else{
+    		   statusMessages = "FLOW STATUS: " + flowStatusMessage;
     	   }
-    	   statusMessages = statusMessages + "FLOW STATUS: " + flowStatusMessage;
        }
        if(retryStatusMessage != null){
     	   if(statusMessages != null){
-    		   statusMessages = statusMessages + "/";
+    		   statusMessages = statusMessages + " " + "RETRY STATUS: " + retryStatusMessage;
+    	   }else{
+    		   statusMessages = "RETRY STATUS: " + retryStatusMessage;
     	   }
-    	   statusMessages = statusMessages + "RETRY STATUS: " + retryStatusMessage;
        }
        if(rollbackStatusMessage != null){
     	   if(statusMessages != null){
-    		   statusMessages = statusMessages + "/";
+    		   statusMessages = statusMessages + " " + "ROLLBACK STATUS: " + rollbackStatusMessage;
+    	   }else{
+    		   statusMessages = "ROLLBACK STATUS: " + rollbackStatusMessage;
     	   }
-    	   statusMessages = statusMessages + "ROLLBACK STATUS: " + rollbackStatusMessage;
        }
        if(statusMessages != null){
     	   status.setStatusMessage(statusMessages);

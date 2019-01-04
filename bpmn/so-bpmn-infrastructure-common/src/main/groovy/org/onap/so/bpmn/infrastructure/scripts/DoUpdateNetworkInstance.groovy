@@ -721,9 +721,9 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 			String status = utils.getNodeText(updateNetworkResponse, 'orchestration-status')
 			if(status.equals("pending-create") || status.equals("PendingCreate")){
-				l3Network.setOperationalStatus("Created")
+				l3Network.setOrchestrationStatus("Created")
 			}else{
-				l3Network.setOperationalStatus("Active")
+				l3Network.setOrchestrationStatus("Active")
 			}
 
 			AAIResourcesClient client = new AAIResourcesClient()

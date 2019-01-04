@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,14 +34,14 @@ import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VnfAdapterRestV1Test {
-	
+
 	@Before
 	public void init()
 	{
 		MockitoAnnotations.initMocks(this)
 	}
 
-				  								
+
 	@Test
 	public void testPreProcessRequest() {
 
@@ -59,11 +59,11 @@ public class VnfAdapterRestV1Test {
 
 		when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 		when(mockExecution.getVariable("testProcessKey")).thenReturn("testProcessKey")
-	
+
 
 		VnfAdapterRestV1 vnfAdapterRestV1 = new VnfAdapterRestV1()
 		vnfAdapterRestV1.preProcessRequest(mockExecution)
-		
+
 		MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
 		//debugger.printInvocations(mockExecution)
 
@@ -78,7 +78,7 @@ public class VnfAdapterRestV1Test {
 		verify(mockExecution).setVariable("VNFREST_vnfAdapterUrl","http://localhost:18080/vnfs/rest/v1/vnfs/6d2e2469-8708-47c3-a0d4-73fa28a8a50b/vf-modules")
 
 	}
-	
+
 	def rollbackReq = """
 <rollbackVolumeGroupRequest>
    <volumeGroupRollback>
@@ -97,7 +97,7 @@ public class VnfAdapterRestV1Test {
    <notificationUrl>http://localhost:8080/mso/WorkflowMessage/VNFAResponse/683ca1ac-2145-4a00-9484-20d48bd701aa</notificationUrl>
 </rollbackVolumeGroupRequest>
 """
-		
+
 	@Test
 	public void testGetVolumeGroupId() {
 		Node root = new XmlParser().parseText(rollbackReq)
@@ -106,13 +106,29 @@ public class VnfAdapterRestV1Test {
 		assertEquals('8a07b246-155e-4b08-b56e-76e98a3c2d66', volGrpId)
 	}
 
-	
+
 	@Test
 	public void testGetMessageId() {
 		Node root = new XmlParser().parseText(rollbackReq)
-		
+
 		VnfAdapterRestV1 p = new VnfAdapterRestV1()
 		def messageId = p.getMessageIdForVolumeGroupRollback(root)
 		assertEquals('683ca1ac-2145-4a00-9484-20d48bd701aa', messageId)
+	}
+
+	@Test
+	public void testProcessCallback() {
+
+		String sdncAdapterWorkflowRequest = FileUtil.readResourceFile("__files/vnfAdapterMocks/vnfAdapterCallback.xml");
+		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
+
+		when(mockExecution.getVariable("VNFAResponse_MESSAGE")).thenReturn(sdncAdapterWorkflowRequest)
+		when(mockExecution.getVariable("testProcessKey")).thenReturn("testProcessKey")
+
+		VnfAdapterRestV1 vnfAdapterRestV1 = new VnfAdapterRestV1()
+		vnfAdapterRestV1.processCallback(mockExecution)
+
+		verify(mockExecution).setVariable("testProcessKeyResponse" ,sdncAdapterWorkflowRequest)
+
 	}
 }

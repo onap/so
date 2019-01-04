@@ -144,7 +144,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		List<Subnet> subnetList = new ArrayList<Subnet>();
 		subnetList.add(openstackSubnet);
 		l3Network.getSubnets().add(openstackSubnet);
-		l3Network.getModelInfoNetwork().setNetworkTechnology("Contrail");
+		l3Network.setNetworkTechnology("Contrail");
 
 		CreateNetworkRequest createNetworkRequest  = SPY_networkAdapterObjectMapper.createNetworkRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, customer);
 		

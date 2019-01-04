@@ -76,43 +76,54 @@ public class ExecuteBuildingBlockRainyDay {
 			Map<ResourceKey, String> lookupKeyMap = (Map<ResourceKey, String>) execution.getVariable("lookupKeyMap");
 			String serviceType = ASTERISK;
 			boolean aLaCarte = (boolean) execution.getVariable("aLaCarte");
-			try {
-				serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0).getModelInfoServiceInstance().getServiceType();
-			} catch (Exception ex) {
-				// keep default serviceType value
-			}
-			String vnfType = ASTERISK;
-			try {
-				for(GenericVnf vnf : gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0).getVnfs()) {
-					if(vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
-						vnfType = vnf.getVnfType();
-					}
-				}
-			} catch (Exception ex) {
-				// keep default vnfType value
-			}
-			WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
-			String errorCode = ASTERISK;
-			try {
-				errorCode = "" + workflowException.getErrorCode();
-			} catch (Exception ex) {
-				// keep default errorCode value
-			}
-			String workStep = ASTERISK;
-			try {
-				workStep = workflowException.getWorkStep();
-			} catch (Exception ex) {
-				// keep default workStep value
-			}
-			//Extract error data to be returned to WorkflowAction
-			execution.setVariable("WorkflowExceptionErrorMessage", workflowException.getErrorMessage());
-			RainyDayHandlerStatus rainyDayHandlerStatus;
+			boolean suppressRollback = (boolean) execution.getVariable("suppressRollback");
 			String handlingCode = "";
-			rainyDayHandlerStatus = catalogDbClient.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,serviceType,vnfType,errorCode,workStep);
-			if(rainyDayHandlerStatus==null){
-				rainyDayHandlerStatus = catalogDbClient.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,ASTERISK,ASTERISK,ASTERISK,ASTERISK);
+			if(suppressRollback){
+				handlingCode = "Abort";
+			}else{
+				try {
+					serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0).getModelInfoServiceInstance().getServiceType();
+				} catch (Exception ex) {
+					// keep default serviceType value
+				}
+				String vnfType = ASTERISK;
+				try {
+					for(GenericVnf vnf : gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0).getVnfs()) {
+						if(vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
+							vnfType = vnf.getVnfType();
+						}
+					}
+				} catch (Exception ex) {
+					// keep default vnfType value
+				}
+				WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
+				String errorCode = ASTERISK;
+				try {
+					errorCode = "" + workflowException.getErrorCode();
+				} catch (Exception ex) {
+					// keep default errorCode value
+				}
+				String workStep = ASTERISK;
+				try {
+					workStep = workflowException.getWorkStep();
+				} catch (Exception ex) {
+					// keep default workStep value
+				}
+				//Extract error data to be returned to WorkflowAction
+				execution.setVariable("WorkflowExceptionErrorMessage", workflowException.getErrorMessage());
+				RainyDayHandlerStatus rainyDayHandlerStatus;
+				rainyDayHandlerStatus = catalogDbClient.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,serviceType,vnfType,errorCode,workStep);
 				if(rainyDayHandlerStatus==null){
-					handlingCode = "Abort";
+					rainyDayHandlerStatus = catalogDbClient.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,ASTERISK,ASTERISK,ASTERISK,ASTERISK);
+					if(rainyDayHandlerStatus==null){
+						handlingCode = "Abort";
+					}else{
+						if(primaryPolicy){
+							handlingCode = rainyDayHandlerStatus.getPolicy();
+						}else{
+							handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
+						}
+					}
 				}else{
 					if(primaryPolicy){
 						handlingCode = rainyDayHandlerStatus.getPolicy();
@@ -120,25 +131,19 @@ public class ExecuteBuildingBlockRainyDay {
 						handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
 					}
 				}
-			}else{
-				if(primaryPolicy){
-					handlingCode = rainyDayHandlerStatus.getPolicy();
-				}else{
-					handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
+				if(!primaryPolicy){
+					try{
+						InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
+						request.setRetryStatusMessage("Retries have been exhausted.");
+						requestDbclient.updateInfraActiveRequests(request);
+					} catch(Exception ex){
+						msoLogger.debug(ex.toString());
+						msoLogger.error("Failed to update Request Db Infra Active Requests with Retry Status");
+					}
 				}
-			}
-			if(!primaryPolicy){
-				try{
-					InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
-					request.setRetryStatusMessage("Retries have been exhausted.");
-					requestDbclient.updateInfraActiveRequests(request);
-				} catch(Exception ex){
-					msoLogger.debug(ex.toString());
-					msoLogger.error("Failed to update Request Db Infra Active Requests with Retry Status");
+				if(handlingCode.equals("RollbackToAssigned")&&!aLaCarte){
+					handlingCode = "Rollback";
 				}
-			}
-			if(handlingCode.equals("RollbackToAssigned")&&!aLaCarte){
-				handlingCode = "Rollback";
 			}
 			msoLogger.debug("RainyDayHandler Status Code is: " + handlingCode);
 			execution.setVariable(HANDLING_CODE, handlingCode);

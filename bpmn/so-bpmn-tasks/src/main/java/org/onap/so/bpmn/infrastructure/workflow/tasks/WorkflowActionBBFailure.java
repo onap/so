@@ -100,7 +100,7 @@ public class WorkflowActionBBFailure {
 		} catch (Exception ex) {
 			logger.error("Failed to extract workflow exception from execution.",ex);
 		}
-		return Optional.of(errorMsg);
+		return Optional.empty();
 	}
 	
 	public void updateRequestStatusToFailedWithRollback(DelegateExecution execution) {

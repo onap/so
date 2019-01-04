@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -292,6 +293,17 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 	}
 	
 	@Test
+	public void updateHeatStackIdVfModuleToNullTest() throws Exception {
+		execution.setVariable("heatStackId", null);
+		doNothing().when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
+
+		aaiUpdateTasks.updateHeatStackIdVfModule(execution);
+
+		verify(aaiVfModuleResources, times(1)).updateHeatStackIdVfModule(vfModule, genericVnf);
+		assertEquals(vfModule.getHeatStackId(), "");
+	}
+	
+	@Test
 	public void updateHeatStackIdVfModuleExceptionTest() throws Exception {
 		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
 		
@@ -357,6 +369,16 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 
 		verify(aaiVolumeGroupResources, times(1)).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
 		assertEquals("newHeatStackId", volumeGroup.getHeatStackId());
+	}
+	@Test
+	public void updateHeatStackIdVolumeGroupToNullTest() throws Exception {
+		execution.setVariable("heatStackId", null);
+		doNothing().when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+
+		aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
+
+		verify(aaiVolumeGroupResources, times(1)).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+		assertEquals(volumeGroup.getHeatStackId(), "");
 	}
 	
 	@Test

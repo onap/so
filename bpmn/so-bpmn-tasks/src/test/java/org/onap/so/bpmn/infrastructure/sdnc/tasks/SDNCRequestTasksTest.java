@@ -129,15 +129,6 @@ public class SDNCRequestTasksTest extends SDNCRequestTasks{
 		sndcRequestTasks.handleTimeOutException(delegateExecution);		
 	}
 	
-	
-	@Test
-	public void HandleSyncError_Test() throws MapperException, BadResponseException{		
-		delegateExecution.setVariable("SDNCSyncError", "Error in SDNC Request");    	
-		doReturn("processKey").when(exceptionBuilder).getProcessKey(delegateExecution);
-		expectedException.expect(BpmnError.class);
-		sndcRequestTasks.handleSyncError(delegateExecution);		
-	}
-	
 	@Test
 	public void processCallBack_Final_Test() throws MapperException, BadResponseException, IOException{
 		final String sdncResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/SDNC_ASYNC_Request.json")));	

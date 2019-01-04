@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
   <bpmn:process id="SDNCHandler" name="SDNC" isExecutable="true">
     <bpmn:startEvent id="SDNC_Start">
       <bpmn:outgoing>SequenceFlow_1n0j3hz</bpmn:outgoing>
@@ -12,11 +12,6 @@
       <bpmn:incoming>SequenceFlow_0flbj8a</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_07vnhri</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="BoundaryEvent_1lv4854" attachedToRef="Call_SDNC">
-      <bpmn:outgoing>SequenceFlow_0valp88</bpmn:outgoing>
-      <bpmn:errorEventDefinition camunda:errorCodeVariable="SDNCSyncError" />
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_0valp88" sourceRef="BoundaryEvent_1lv4854" targetRef="Task_1o29lpk" />
     <bpmn:subProcess id="SubProcess_0y8yozw" name="Wait for Callback" camunda:asyncAfter="true" camunda:exclusive="false">
       <bpmn:incoming>SequenceFlow_0rh24pq</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0yve6l6</bpmn:incoming>
@@ -76,9 +71,6 @@
     <bpmn:serviceTask id="Task_1un0flc" name="Handle Timeout" camunda:expression="${SDNCRequestTasks.handleTimeOutException(execution)}">
       <bpmn:incoming>SequenceFlow_1yifu46</bpmn:incoming>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_1o29lpk" name="Handle Error" camunda:expression="${SDNCRequestTasks.handleSyncError(execution)}">
-      <bpmn:incoming>SequenceFlow_0valp88</bpmn:incoming>
-    </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:message id="Message_06oc4iz" name="SDNCCallbackMessage" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -98,21 +90,6 @@
       <bpmndi:BPMNShape id="ServiceTask_1i5x1m6_di" bpmnElement="Call_SDNC">
         <dc:Bounds x="15" y="112" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BoundaryEvent_1wxlsn8_di" bpmnElement="BoundaryEvent_1lv4854">
-        <dc:Bounds x="97" y="174" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="452" y="520" width="90" height="13" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0valp88_di" bpmnElement="SequenceFlow_0valp88">
-        <di:waypoint xsi:type="dc:Point" x="115" y="210" />
-        <di:waypoint xsi:type="dc:Point" x="115" y="278" />
-        <di:waypoint xsi:type="dc:Point" x="115" y="278" />
-        <di:waypoint xsi:type="dc:Point" x="115" y="312" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="85" y="271.5" width="90" height="13" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="SubProcess_0y8yozw_di" bpmnElement="SubProcess_0y8yozw" isExpanded="true">
         <dc:Bounds x="278" y="-144" width="340" height="153" />
       </bpmndi:BPMNShape>
@@ -250,9 +227,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_08b89dm_di" bpmnElement="Task_1un0flc">
         <dc:Bounds x="748" y="-185" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1cyot3r_di" bpmnElement="Task_1o29lpk">
-        <dc:Bounds x="65" y="312" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

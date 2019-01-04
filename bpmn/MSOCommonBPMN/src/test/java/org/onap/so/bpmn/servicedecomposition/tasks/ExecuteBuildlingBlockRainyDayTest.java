@@ -91,7 +91,9 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
 		vnf.setVnfType("vnft1");
-		delegateExecution.setVariable("aLaCarte", true);
+		delegateExecution.setVariable("aLaCarte", true);		
+		delegateExecution.setVariable("suppressRollback", false);
+
 		RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
 		rainyDayHandlerStatus.setErrorCode("7000");
 		rainyDayHandlerStatus.setFlowName("AssignServiceInstanceBB");
@@ -113,6 +115,8 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
 		vnf.setVnfType("vnft1");
 		delegateExecution.setVariable("aLaCarte", true);
+		delegateExecution.setVariable("suppressRollback", false);
+		
 		RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
 		rainyDayHandlerStatus.setErrorCode(ASTERISK);
 		rainyDayHandlerStatus.setFlowName("AssignServiceInstanceBB");
@@ -136,7 +140,8 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		vnf.setVnfType("vnft1");
 		delegateExecution.setVariable("aLaCarte", true);
 		doReturn(null).when(MOCK_catalogDbClient).getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(isA(String.class), isA(String.class), isA(String.class), isA(String.class), isA(String.class));
-
+		delegateExecution.setVariable("suppressRollback", false);
+		
 		executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution,true);
 		
 		assertEquals("Abort", delegateExecution.getVariable("handlingCode"));
@@ -147,6 +152,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		doThrow(RuntimeException.class).when(MOCK_catalogDbClient).getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(isA(String.class), isA(String.class), isA(String.class), isA(String.class), isA(String.class));
 		delegateExecution.setVariable("aLaCarte", true);
 		executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution,true);
+		delegateExecution.setVariable("suppressRollback", false);
 		
 		assertEquals("Abort", delegateExecution.getVariable("handlingCode"));
 	}
@@ -157,6 +163,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
 		vnf.setVnfType("vnft1");
 		delegateExecution.setVariable("aLaCarte", true);
+		delegateExecution.setVariable("suppressRollback", false);
 		
 		RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
 		rainyDayHandlerStatus.setErrorCode("7000");
@@ -180,6 +187,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
 		vnf.setVnfType("vnft1");
 		delegateExecution.setVariable("aLaCarte", false);
+		delegateExecution.setVariable("suppressRollback", false);
 		
 		RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
 		rainyDayHandlerStatus.setErrorCode("7000");
@@ -203,6 +211,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
 		vnf.setVnfType("vnft1");
 		delegateExecution.setVariable("aLaCarte", true);
+		delegateExecution.setVariable("suppressRollback", false);
 		
 		RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
 		rainyDayHandlerStatus.setErrorCode("7000");
@@ -218,6 +227,14 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution,true);
 		
 		assertEquals("RollbackToAssigned", delegateExecution.getVariable("handlingCode"));
+	}
+	
+	@Test
+	public void suppressRollbackTest() throws Exception {
+		delegateExecution.setVariable("suppressRollback", true);
+		delegateExecution.setVariable("aLaCarte", true);
+		executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution,true);
+		assertEquals("Abort", delegateExecution.getVariable("handlingCode"));
 	}
 	
 }

@@ -46,11 +46,10 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
 		Map<String, String> map = new HashMap<>();
 		map.put("handlingCode", "Success");
 		mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
-		mockSubprocess("CompleteMsoProcess", "Mocked CompleteMsoProcess", "GenericStub");
 		
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
 		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SendSync",
-				"Task_SelectBB", "Call_ExecuteBB", "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowCompleted", "Task_SetupCompleteMsoProcess", "Call_CompleteMsoProcess",
+				"Task_SelectBB", "Call_ExecuteBB", "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowCompleted", "Task_UpdateRequestComplete",
 				"End_WorkflowActionBB");
 	
 	}

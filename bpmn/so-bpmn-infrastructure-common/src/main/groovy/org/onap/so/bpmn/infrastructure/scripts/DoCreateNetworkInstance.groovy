@@ -527,6 +527,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			L3Network network = client.get(uri, NotFoundException.class).asBean(L3Network.class).get()
 
 			execution.setVariable(Prefix + "aaiRequeryIdReturnCode", "200")
+			execution.setVariable(Prefix + "requeryIdAAIResponse", network)
 
 			String netName = network.getNetworkName()
 			String networkOutputs =
@@ -764,29 +765,26 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.debug(" ***** Inside callRESTUpdateContrailAAINetwork() of DoCreateNetworkInstance ***** " )
+		msoLogger.trace(" ***** Inside callRESTUpdateContrailAAINetwork() of DoCreateNetworkInstance ***** " )
 
 		try {
 			// get variables
 			String networkId   = execution.getVariable(Prefix + "networkId")
-			String requeryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse")
+			L3Network requeryIdAAIResponse   = execution.getVariable(Prefix + "requeryIdAAIResponse")
 			String createNetworkResponse   = execution.getVariable(Prefix + "createNetworkResponse")
 
 			L3Network l3Network = new L3Network()
-			if (utils.nodeExists(requeryIdAAIResponse, 'heat-stack-id')) {
-			} else {
+			if (StringUtils.isBlank(requeryIdAAIResponse.getHeatStackId())) {
 				if (utils.nodeExists(createNetworkResponse, 'networkStackId')) {
 					l3Network.setHeatStackId(utils.getNodeText(createNetworkResponse, 'networkStackId'))
 				}
 			}
-			if (utils.nodeExists(requeryIdAAIResponse, 'neutron-network-id')) {
-			} else {
+			if (StringUtils.isBlank(requeryIdAAIResponse.getNeutronNetworkId())) {
 				if (utils.nodeExists(createNetworkResponse, 'neutronNetworkId')) {
 					l3Network.setNeutronNetworkId(utils.getNodeText(createNetworkResponse, 'neutronNetworkId'))
 				}
 			}
-			if (utils.nodeExists(requeryIdAAIResponse, 'contrail-network-fqdn')) {
-			} else {
+			if (StringUtils.isBlank(requeryIdAAIResponse.getContrailNetworkFqdn())) {
 				if (utils.nodeExists(createNetworkResponse, 'networkFqdn')) {
 					l3Network.setContrailNetworkFqdn(utils.getNodeText(createNetworkResponse, 'networkFqdn'))
 				}
@@ -794,39 +792,33 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 			String status = utils.getNodeText(createNetworkResponse, 'orchestration-status')
 			if(status.equals("pending-create") || status.equals("PendingCreate")){
-				l3Network.setOperationalStatus("Created")
+				l3Network.setOrchestrationStatus("Created")
 			}else{
-				l3Network.setOperationalStatus("Active")
+				l3Network.setOrchestrationStatus("Active")
 			}
+
+			msoLogger.debug("Updating l3-network in AAI" )
 
 			AAIResourcesClient client = new AAIResourcesClient()
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId)
 			client.update(uri, l3Network)
 
-			String subnetsXml = utils.getNodeXml(requeryIdAAIResponse, "subnets")
-			InputSource source = new InputSource(new StringReader(subnetsXml));
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			docFactory.setNamespaceAware(true)
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-			Document xml = docBuilder.parse(source)
-			NodeList nodeList = xml.getElementsByTagNameNS("*", "subnet")
-			for (int x = 0; x < nodeList.getLength(); x++) {
-				Node node = nodeList.item(x)
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element eElement = (Element) node
-					String subnetOrchStatus = eElement.getElementsByTagNameNS("*", "orchestration-status").item(0).getTextContent()
-					String subnetId = eElement.getElementsByTagNameNS("*", "subnet-id").item(0).getTextContent()
+			if(requeryIdAAIResponse.getSubnets() != null){
+				for(Subnet s:requeryIdAAIResponse.getSubnets().getSubnet()){
+					String subnetOrchStatus = s.getOrchestrationStatus()
+					String subnetId = s.getSubnetId()
 					Subnet subnet = new Subnet()
-					String neutronSubnetId = networkUtils.extractNeutSubId(createNetworkResponse, subnetId)
-					subnet.setNeutronSubnetId(neutronSubnetId)
+					subnet.setNeutronSubnetId(networkUtils.extractNeutSubId(createNetworkResponse, subnetId))
 					if(subnetOrchStatus.equals("pending-create") || subnetOrchStatus.equals("PendingCreate") ){
 						subnet.setOrchestrationStatus("Created")
 					}else{
 						subnet.setOrchestrationStatus("Active")
 					}
 
+					msoLogger.debug("Updating subnet in AAI" )
 					AAIResourceUri subUri = AAIUriFactory.createResourceUri(AAIObjectType.SUBNET, networkId, subnetId)
 					client.update(subUri, subnet)
+
 				}
 			}
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,9 +43,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
+import org.onap.aai.domain.yang.L3Network
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
-
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.apache.commons.lang3.*
@@ -480,7 +482,7 @@ class DoCreateNetworkInstanceTest  {
                    <host-route-id>string</host-route-id>
                    <route-prefix>192.10.16.0/24</route-prefix>
                    <next-hop>192.10.16.100/24</next-hop>
-                   <next-hop-type>ip-address</next-hop-type> 
+                   <next-hop-type>ip-address</next-hop-type>
 	  			   <resource-version>1505857301954</resource-version>
                  </host-route>
                  <host-route>
@@ -508,7 +510,7 @@ class DoCreateNetworkInstanceTest  {
                    <host-route-id>string</host-route-id>
                    <route-prefix>192.10.16.0/24</route-prefix>
                    <next-hop>192.10.16.100/24</next-hop>
-                   <next-hop-type>ip-address</next-hop-type> 
+                   <next-hop-type>ip-address</next-hop-type>
 	  			  <resource-version>1505857301954</resource-version>
                  </host-route>
                </host-routes>
@@ -1669,7 +1671,7 @@ String createNetworkRequest_Ipv4 =
    <notificationUrl/>
 </createNetworkRequest>"""
 
-String createNetworkRequestAlaCarte = 
+String createNetworkRequestAlaCarte =
 """<createNetworkRequest>
    <cloudSiteId>RDM2WAGPLCP</cloudSiteId>
    <tenantId>7dd5365547234ee8937416c65507d266</tenantId>
@@ -1874,8 +1876,8 @@ String createNetworkRequest_SRIOV =
          <serviceInstanceId/>
       </msoRequest>
    </networkRollback>
-</rollbackNetworkRequest>"""	
-	  
+</rollbackNetworkRequest>"""
+
 	  String createNetworkResponse =
 	  """<ns2:createNetworkResponse xmlns:ns2="http://org.onap.so/network"
                                     xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -3053,7 +3055,7 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("bpmnRequest")).thenReturn(jsonIncomingRequest)                      // JSON format
 			when(mockExecution.getVariable("sdncVersion")).thenReturn("1610")                      // 1610 default
 			when(mockExecution.getVariable("disableRollback")).thenReturn(true)
-			
+
 			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("3141634BF7E070AA289CF2892C986C0B")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
@@ -3182,8 +3184,8 @@ String sdncAdapterWorkflowAssignResponse =
 			verify(mockExecution).setVariable(Prefix + "createNetworkRequest", createNetworkRequest)
 
 		}
-		
-		
+
+
 		@Test
 		//@Ignore
 		public void prepareCreateNetworkRequest_Ipv4() {
@@ -3220,7 +3222,7 @@ String sdncAdapterWorkflowAssignResponse =
 			verify(mockExecution).setVariable(Prefix + "createNetworkRequest", createNetworkRequest_Ipv4)
 
 		}
-		
+
 		@Test
 		//@Ignore
 		public void prepareCreateNetworkRequest_AlaCarte() {
@@ -3712,7 +3714,7 @@ String sdncAdapterWorkflowAssignResponse =
 			//MockitoDebuggerImpl preDebugger = new MockitoDebuggerImpl()
 			//preDebugger.printInvocations(mockExecution)
 
-			verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)		
+			verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
 			verify(mockExecution, atLeast(1)).setVariable(Prefix + "queryCloudRegionReturnCode", "404")
 			verify(mockExecution).setVariable(Prefix + "cloudRegionPo", "MDTWNJ21")
 			verify(mockExecution).setVariable(Prefix + "cloudRegionSdnc", "AAIAIC25")
@@ -3791,7 +3793,7 @@ String sdncAdapterWorkflowAssignResponse =
 			verify(mockExecution, atLeast(2)).setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
 
 		}
-		
+
 		@Test
 		//@Ignore
 		public void callRESTQueryAAINetworkVpnBinding_TestScenario01_200() {
@@ -4025,26 +4027,25 @@ String sdncAdapterWorkflowAssignResponse =
 		@Test
 		//@Ignore
 		public void callRESTUpdateContrailAAINetworkREST_200() {
-
-			println "************ callRESTUpdateContrailAAINetwork ************* "
-
+			AAIResourcesClient mockClient = mock(AAIResourcesClient.class)
 			WireMock.reset();
-			MockPutNetworkIdWithDepth("CreateNetworkV2/createNetwork_updateContrail_AAIResponse_Success.xml", "49c86598-f766-46f8-84f8-8d1c1b10f9b4", "all");
+			L3Network network = new L3Network()
 
+			//TODO need to inject mock
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "networkId")).thenReturn("49c86598-f766-46f8-84f8-8d1c1b10f9b4")
-			when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(queryIdAIIResponse)
+			when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(network)
 			when(mockExecution.getVariable(Prefix + "createNetworkResponse")).thenReturn(createNetworkResponseREST)
 			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
-			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
+
 			// old: when(mockExecution.getVariable("mso.workflow.DoCreateNetworkInstance.aai.network.l3-network.uri")).thenReturn("/aai/v8/network/l3-networks/l3-network")
 			when(mockExecution.getVariable("mso.workflow.DoCreateNetworkInstance.aai.l3-network.uri")).thenReturn("/aai/v9/network/l3-networks/l3-network")
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable(Prefix + "rollbackEnabled")).thenReturn("false")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
+			doNothing().when(mockClient).update(isA(AAIResourceUri.class), isA(L3Network.class))
 			// preProcessRequest(DelegateExecution execution)
 			DoCreateNetworkInstance DoCreateNetworkInstance = new DoCreateNetworkInstance()
 			DoCreateNetworkInstance.callRESTUpdateContrailAAINetwork(mockExecution)
@@ -4102,7 +4103,7 @@ String sdncAdapterWorkflowAssignResponse =
 
 		}
 
-		
+
 
 		@Test
 		//@Ignore

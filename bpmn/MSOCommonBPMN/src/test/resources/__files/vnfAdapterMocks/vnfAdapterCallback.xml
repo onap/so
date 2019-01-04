@@ -1,0 +1,21 @@
+
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<createVfModuleResponse>
+    <messageId>255ca199-7f53-4800-8ab0-c55954b3ff0f</messageId>
+    <rollback>
+        <cloudSiteId>mtwnj1a</cloudSiteId>
+        <messageId>255ca199-7f53-4800-8ab0-c55954b3ff0f</messageId>
+        <msoRequest/>
+        <tenantId>c2141e3fcae940fcb4797ec9115e5a7a</tenantId>
+        <vfModuleCreated>true</vfModuleCreated>
+        <vfModuleId>b70a3ba5-d172-4e9e-98f6-39516446b25b</vfModuleId>
+        <vfModuleStackId>USISTDMTWNJVVHP529_migrated.base.module-0/hnportal-1902-1214-1217-144843702565</vfModuleStackId>
+        <vnfId>USISTDMTWNJVVHP529_migrated.base.module-0/hnportal-1902-1214-1217-144843702565</vnfId>
+    </rollback>
+    <vfModuleCreated>true</vfModuleCreated>
+    <vfModuleId>b70a3ba5-d172-4e9e-98f6-39516446b25b</vfModuleId>
+    <vfModuleOutputs/>
+    <vfModuleStackId>USISTDMTWNJVVHP529_migrated.base.module-0/hnportal-1902-1214-1217-144843702565</vfModuleStackId>
+    <vnfId>e64e62e1-7c02-4148-ad9c-e51406da508a</vnfId>
+</createVfModuleResponse>

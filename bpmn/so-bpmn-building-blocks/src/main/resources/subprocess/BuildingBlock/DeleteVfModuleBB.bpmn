@@ -10,14 +10,13 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_1537yw5" sourceRef="DeleteVfModuleBB_Start" targetRef="DeleteVfModuleVnfAdapter" />
     <bpmn:serviceTask id="UpdateVfModuleDeleteStatus" name="&#10;AAI &#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusDeleteVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_02lpx87</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1mxrfqv</bpmn:outgoing>
+      <bpmn:incoming>SequenceFlow_01vfwtp</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_09l7pcg</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_08tvhtf" sourceRef="DeleteVfModuleVnfAdapter" targetRef="VnfAdapter" />
     <bpmn:endEvent id="DeleteVfModuleBB_End">
-      <bpmn:incoming>SequenceFlow_1mxrfqv</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_09l7pcg</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1mxrfqv" sourceRef="UpdateVfModuleDeleteStatus" targetRef="DeleteVfModuleBB_End" />
     <bpmn:callActivity id="VnfAdapter" name="Vnf Adapter" calledElement="VnfAdapter">
       <bpmn:extensionElements>
         <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
@@ -29,7 +28,7 @@
       <bpmn:incoming>SequenceFlow_08tvhtf</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_02lpx87</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:sequenceFlow id="SequenceFlow_02lpx87" sourceRef="VnfAdapter" targetRef="UpdateVfModuleDeleteStatus" />
+    <bpmn:sequenceFlow id="SequenceFlow_02lpx87" sourceRef="VnfAdapter" targetRef="UpdateVfModuleHeatStackId" />
     <bpmn:subProcess id="SubProcess_11p7mrh" name="Error Handling&#10;&#10;" triggeredByEvent="true">
       <bpmn:startEvent id="StartEvent_1xp6ewt">
         <bpmn:outgoing>SequenceFlow_0h607z0</bpmn:outgoing>
@@ -41,6 +40,12 @@
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="SequenceFlow_0h607z0" sourceRef="StartEvent_1xp6ewt" targetRef="EndEvent_0guhjau" />
     </bpmn:subProcess>
+    <bpmn:serviceTask id="UpdateVfModuleHeatStackId" name="&#10;AAI&#10;Update&#10; (vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateHeatStackIdVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_02lpx87</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_01vfwtp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_01vfwtp" sourceRef="UpdateVfModuleHeatStackId" targetRef="UpdateVfModuleDeleteStatus" />
+    <bpmn:sequenceFlow id="SequenceFlow_09l7pcg" sourceRef="UpdateVfModuleDeleteStatus" targetRef="DeleteVfModuleBB_End" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DeleteVfModuleBB">
@@ -61,7 +66,7 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0pbhsub_di" bpmnElement="UpdateVfModuleDeleteStatus">
-        <dc:Bounds x="593" y="80" width="100" height="80" />
+        <dc:Bounds x="762" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_08tvhtf_di" bpmnElement="SequenceFlow_08tvhtf">
         <di:waypoint xsi:type="dc:Point" x="361" y="120" />
@@ -71,26 +76,19 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_1rn6yvh_di" bpmnElement="DeleteVfModuleBB_End">
-        <dc:Bounds x="746" y="102" width="36" height="36" />
+        <dc:Bounds x="922" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="754" y="142" width="19" height="12" />
+          <dc:Bounds x="940" y="142" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1mxrfqv_di" bpmnElement="SequenceFlow_1mxrfqv">
-        <di:waypoint xsi:type="dc:Point" x="693" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="746" y="120" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="674.5" y="99" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_0whogn3_di" bpmnElement="VnfAdapter">
         <dc:Bounds x="427" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_02lpx87_di" bpmnElement="SequenceFlow_02lpx87">
         <di:waypoint xsi:type="dc:Point" x="527" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="593" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="604" y="120" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="560" y="99" width="0" height="12" />
+          <dc:Bounds x="566" y="105" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="SubProcess_11p7mrh_di" bpmnElement="SubProcess_11p7mrh" isExpanded="true">
@@ -113,6 +111,23 @@
         <di:waypoint xsi:type="dc:Point" x="433" y="356" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="386.5" y="335" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0vlgqod_di" bpmnElement="UpdateVfModuleHeatStackId">
+        <dc:Bounds x="604" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_01vfwtp_di" bpmnElement="SequenceFlow_01vfwtp">
+        <di:waypoint xsi:type="dc:Point" x="704" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="762" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="733" y="95" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_09l7pcg_di" bpmnElement="SequenceFlow_09l7pcg">
+        <di:waypoint xsi:type="dc:Point" x="862" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="922" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="892" y="95" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

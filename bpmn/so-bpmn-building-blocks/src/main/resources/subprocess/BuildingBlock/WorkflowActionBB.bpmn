@@ -5,8 +5,8 @@
       <bpmn:outgoing>SequenceFlow_15s0okp</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:endEvent id="End_WorkflowActionBB" name="end">
-      <bpmn:incoming>SequenceFlow_1rscv7d</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0x4urgp</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1pz6edz</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_15s0okp" sourceRef="Start_WorkflowActionBB" targetRef="Task_RetrieveBBExectuionList" />
     <bpmn:callActivity id="Call_ExecuteBB" name="Execute BB" camunda:asyncBefore="true" calledElement="ExecuteBuildingBlock">
@@ -21,6 +21,7 @@
         <camunda:in source="orchestrationStatusValidationResult" target="orchestrationStatusValidationResult" />
         <camunda:out source="orchestrationStatusValidationResult" target="orchestrationStatusValidationResult" />
         <camunda:out source="RetryDuration" target="RetryDuration" />
+        <camunda:in source="suppressRollback" target="suppressRollback" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0mew9im</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_07h9d4y</bpmn:outgoing>
@@ -53,24 +54,11 @@
       <bpmn:incoming>SequenceFlow_0sckerv</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1wb59ic</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_SetupCompleteMsoProcess" name="Setup Complete MSO Process" camunda:expression="${WorkflowActionBBTasks.setupCompleteMsoProcess(execution)}">
+    <bpmn:serviceTask id="Task_UpdateRequestComplete" name="Update Request To Complete" camunda:expression="${WorkflowActionBBTasks.updateRequestStatusToComplete(execution)}">
       <bpmn:incoming>SequenceFlow_0kf5sen</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1pz6edz</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:callActivity id="Call_CompleteMsoProcess" name="Call CompleteMsoProcess" calledElement="CompleteMsoProcess">
-      <bpmn:extensionElements>
-        <camunda:in source="CompleteMsoProcessRequest" target="CompleteMsoProcessRequest" />
-        <camunda:in source="mso-request-id" target="mso-request-id" />
-        <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
-        <camunda:out source="CMSO_ResponseCode" target="CMSO_ResponseCode" />
-        <camunda:out source="CompleteMsoProcessResponse" target="CompleteMsoProcessResponse" />
-        <camunda:out source="CMSO_ErrorResponse" target="CMSO_ErrorResponse" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_1pz6edz</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1rscv7d</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:sequenceFlow id="SequenceFlow_1pz6edz" sourceRef="Task_SetupCompleteMsoProcess" targetRef="Call_CompleteMsoProcess" />
-    <bpmn:sequenceFlow id="SequenceFlow_1rscv7d" sourceRef="Call_CompleteMsoProcess" targetRef="End_WorkflowActionBB" />
+    <bpmn:sequenceFlow id="SequenceFlow_1pz6edz" sourceRef="Task_UpdateRequestComplete" targetRef="End_WorkflowActionBB" />
     <bpmn:subProcess id="SubProcess_18226x4" name="Error Handling" triggeredByEvent="true">
       <bpmn:startEvent id="ErrorStart" name="error">
         <bpmn:outgoing>SequenceFlow_1edjl5x</bpmn:outgoing>
@@ -193,7 +181,7 @@
       <bpmn:outgoing>SequenceFlow_0mew9im</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0mew9im" sourceRef="ServiceTask_0e2p0xs" targetRef="Call_ExecuteBB" />
-    <bpmn:sequenceFlow id="SequenceFlow_0kf5sen" name="yes" sourceRef="ExclusiveGateway_isTopLevelFlowC" targetRef="Task_SetupCompleteMsoProcess" />
+    <bpmn:sequenceFlow id="SequenceFlow_0kf5sen" name="yes" sourceRef="ExclusiveGateway_isTopLevelFlowC" targetRef="Task_UpdateRequestComplete" />
   </bpmn:process>
   <bpmn:error id="Error_0kd2o2a" name="java.lang.Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -205,9 +193,9 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1uv6erv_di" bpmnElement="End_WorkflowActionBB">
-        <dc:Bounds x="1281" y="147" width="36" height="36" />
+        <dc:Bounds x="1085" y="147" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1291" y="186" width="18" height="12" />
+          <dc:Bounds x="1094" y="127" width="18" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_15s0okp_di" bpmnElement="SequenceFlow_15s0okp">
@@ -257,26 +245,15 @@
       <bpmndi:BPMNShape id="ServiceTask_0654g3m_di" bpmnElement="Task_SendSync">
         <dc:Bounds x="46" y="-7" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0wzh11j_di" bpmnElement="Task_SetupCompleteMsoProcess">
-        <dc:Bounds x="900" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_1jxi5jq_di" bpmnElement="Call_CompleteMsoProcess">
-        <dc:Bounds x="1027" y="210" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_0wzh11j_di" bpmnElement="Task_UpdateRequestComplete">
+        <dc:Bounds x="942" y="206" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1pz6edz_di" bpmnElement="SequenceFlow_1pz6edz">
-        <di:waypoint xsi:type="dc:Point" x="1000" y="250" />
-        <di:waypoint xsi:type="dc:Point" x="1027" y="250" />
+        <di:waypoint xsi:type="dc:Point" x="1042" y="246" />
+        <di:waypoint xsi:type="dc:Point" x="1103" y="246" />
+        <di:waypoint xsi:type="dc:Point" x="1103" y="183" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="969" y="229" width="90" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1rscv7d_di" bpmnElement="SequenceFlow_1rscv7d">
-        <di:waypoint xsi:type="dc:Point" x="1127" y="250" />
-        <di:waypoint xsi:type="dc:Point" x="1147" y="250" />
-        <di:waypoint xsi:type="dc:Point" x="1147" y="165" />
-        <di:waypoint xsi:type="dc:Point" x="1281" y="165" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1117" y="208" width="90" height="0" />
+          <dc:Bounds x="1027.5" y="231" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="SubProcess_18226x4_di" bpmnElement="SubProcess_18226x4" isExpanded="true">
@@ -424,9 +401,11 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0x4urgp_di" bpmnElement="SequenceFlow_0x4urgp">
         <di:waypoint xsi:type="dc:Point" x="891" y="165" />
-        <di:waypoint xsi:type="dc:Point" x="1281" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="1001" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="1001" y="165" />
+        <di:waypoint xsi:type="dc:Point" x="1085" y="165" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1081" y="140" width="12" height="12" />
+          <dc:Bounds x="1037.2153846153847" y="140" width="12" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_1q8eh5e_di" bpmnElement="End_RollbackFailed">
@@ -558,10 +537,10 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0kf5sen_di" bpmnElement="SequenceFlow_0kf5sen">
         <di:waypoint xsi:type="dc:Point" x="866" y="190" />
-        <di:waypoint xsi:type="dc:Point" x="866" y="250" />
-        <di:waypoint xsi:type="dc:Point" x="900" y="250" />
+        <di:waypoint xsi:type="dc:Point" x="866" y="246" />
+        <di:waypoint xsi:type="dc:Point" x="942" y="246" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="872" y="220" width="18" height="12" />
+          <dc:Bounds x="872" y="217.6" width="18" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

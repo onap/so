@@ -154,6 +154,6 @@ public class SDNOHealthCheckDmaapConsumer extends DmaapConsumer {
 	
 	@Override
 	public int getMaximumElapsedTime() {
-		return 300000;
+		return 600000;
 	}
 }

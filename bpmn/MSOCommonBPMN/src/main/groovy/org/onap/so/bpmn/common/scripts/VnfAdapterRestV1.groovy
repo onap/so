@@ -365,16 +365,15 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead.
 			execution.setVariable("WorkflowResponse", callback)
 
+			callback = utils.removeXmlPreamble(callback)
+
 			Node root = new XmlParser().parseText(callback)
 			if (root.name().endsWith('Exception')) {
 				vnfAdapterWorkflowException(execution, callback)
 			}
 		} catch (Exception e) {
-			e.printStackTrace()
-			callback = callback == null || String.valueOf(callback).isEmpty() ? "NONE" : callback
-			String msg = "Received error from VnfAdapter: " + callback
-			msoLogger.debug(getProcessKey(execution) + ': ' + msg)
-			exceptionUtil.buildWorkflowException(execution, 7020, msg)
+			msoLogger.debug("Error encountered within VnfAdapterRest ProcessCallback method", e)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7020, "Error encountered within VnfAdapterRest ProcessCallback method")
 		}
 	}
 

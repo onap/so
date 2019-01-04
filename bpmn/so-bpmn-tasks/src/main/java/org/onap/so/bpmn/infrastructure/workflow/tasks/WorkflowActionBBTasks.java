@@ -20,7 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -181,27 +183,30 @@ public class WorkflowActionBBTasks {
 		}
 	}
 
-	public void setupCompleteMsoProcess(DelegateExecution execution) {
-		final String requestId = (String) execution.getVariable(G_REQUEST_ID);
-		final String action = (String) execution.getVariable(G_ACTION);
-		final String resourceId = (String) execution.getVariable("resourceId");
-		final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
-		final String resourceName = (String) execution.getVariable("resourceName");
-		final String source = (String) execution.getVariable("source");
-		String macroAction = "";
-		if (aLaCarte) {
-			macroAction = "ALaCarte-" + resourceName + "-" + action;
-		} else {
-			macroAction = "Macro-" + resourceName + "-" + action;
+	public void updateRequestStatusToComplete(DelegateExecution execution) {
+		try{
+			final String requestId = (String) execution.getVariable(G_REQUEST_ID);
+			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
+			final String action = (String) execution.getVariable(G_ACTION);
+			final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
+			final String resourceName = (String) execution.getVariable("resourceName");
+			String macroAction = "";
+			if (aLaCarte) {
+				macroAction = "ALaCarte-" + resourceName + "-" + action + " request was executed correctly.";
+			} else {
+				macroAction = "Macro-" + resourceName + "-" + action + " request was executed correctly.";
+			}
+			execution.setVariable("finalStatusMessage", macroAction);
+			Timestamp endTime = new Timestamp(System.currentTimeMillis());
+			request.setEndTime(endTime);
+			request.setStatusMessage(macroAction);
+			request.setProgress(Long.valueOf(100));
+			request.setRequestStatus("COMPLETE");
+			request.setLastModifiedBy("CamundaBPMN");
+			requestDbclient.updateInfraActiveRequests(request);
+		}catch (Exception ex) {
+			workflowAction.buildAndThrowException(execution, "Error Updating Request Database", ex);
 		}
-		String msoCompletionRequest = "<aetgt:MsoCompletionRequest xmlns:aetgt=\"http://org.onap/so/workflow/schema/v1\" xmlns:ns=\"http://org.onap/so/request/types/v1\"><request-info xmlns=\"http://org.onap/so/infra/vnf-request/v1\"><request-id>"
-				+ requestId + "</request-id><action>" + action + "</action><source>" + source
-				+ "</source></request-info><status-message>" + macroAction
-				+ " request was executed correctly.</status-message><serviceInstanceId>" + resourceId
-				+ "</serviceInstanceId><mso-bpel-name>WorkflowActionBB</mso-bpel-name></aetgt:MsoCompletionRequest>";
-		execution.setVariable("CompleteMsoProcessRequest", msoCompletionRequest);
-		execution.setVariable("mso-request-id", requestId);
-		execution.setVariable("mso-service-instance-id", resourceId);
 	}
 
 	public void checkRetryStatus(DelegateExecution execution) {
@@ -209,11 +214,12 @@ public class WorkflowActionBBTasks {
 		String requestId = (String) execution.getVariable(G_REQUEST_ID);
 		String retryDuration = (String) execution.getVariable("RetryDuration");
 		int retryCount = (int) execution.getVariable(RETRY_COUNT);
+		int nextCount = retryCount +1;
 		if (handlingCode.equals("Retry")){
 			workflowActionBBFailure.updateRequestErrorStatusMessage(execution);
 			try{
 				InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
-				request.setRetryStatusMessage("Retry " + retryCount+1 + "/5 will be started in " + retryDuration);
+				request.setRetryStatusMessage("Retry " + nextCount + "/5 will be started in " + retryDuration);
 				requestDbclient.updateInfraActiveRequests(request); 
 			} catch(Exception ex){
 				logger.warn("Failed to update Request Db Infra Active Requests with Retry Status",ex);
@@ -221,7 +227,7 @@ public class WorkflowActionBBTasks {
 			if(retryCount<5){
 				int currSequence = (int) execution.getVariable("gCurrentSequence");
 				execution.setVariable("gCurrentSequence", currSequence-1);
-				execution.setVariable(RETRY_COUNT, retryCount + 1);
+				execution.setVariable(RETRY_COUNT, nextCount);
 			}else{
 				workflowAction.buildAndThrowException(execution, "Exceeded maximum retries. Ending flow with status Abort");
 			}
@@ -284,5 +290,101 @@ public class WorkflowActionBBTasks {
 		}else{
 			workflowAction.buildAndThrowException(execution, "Rollback has already been called. Cannot rollback a request that is currently in the rollback state.");
 		}
+	}
+
+	protected void updateRequestErrorStatusMessage(DelegateExecution execution) {
+		try {
+			String requestId = (String) execution.getVariable(G_REQUEST_ID);
+			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
+			String errorMsg = retrieveErrorMessage(execution);
+			if(errorMsg == null || errorMsg.equals("")){
+				errorMsg = "Failed to determine error message";
+			}
+			request.setStatusMessage(errorMsg);
+			logger.debug("Updating RequestDB to failed: errorMsg = " + errorMsg);
+			requestDbclient.updateInfraActiveRequests(request);
+		} catch (Exception e) {
+			logger.error("Failed to update Request db with the status message after retry or rollback has been initialized.",e);
+		}
+	}
+
+	public void abortCallErrorHandling(DelegateExecution execution) {
+		String msg = "Flow has failed. Rainy day handler has decided to abort the process.";
+		logger.error(msg);
+		throw new BpmnError(msg);
+	}
+	
+	public void updateRequestStatusToFailed(DelegateExecution execution) {
+		try {
+			String requestId = (String) execution.getVariable(G_REQUEST_ID);
+			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
+			String errorMsg = null;
+			String rollbackErrorMsg = null;
+			boolean rollbackCompleted = (boolean) execution.getVariable("isRollbackComplete");
+			boolean isRollbackFailure = (boolean) execution.getVariable("isRollback");
+			ExecuteBuildingBlock ebb = (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
+			
+			if(rollbackCompleted){
+				rollbackErrorMsg = "Rollback has been completed successfully.";
+				request.setRollbackStatusMessage(rollbackErrorMsg);
+				logger.debug("Updating RequestDB to failed: Rollback has been completed successfully");
+			}else{
+				if(isRollbackFailure){
+					rollbackErrorMsg = retrieveErrorMessage(execution);
+					if(rollbackErrorMsg == null || rollbackErrorMsg.equals("")){
+						rollbackErrorMsg = "Failed to determine rollback error message.";
+					}
+					request.setRollbackStatusMessage(rollbackErrorMsg);
+					logger.debug("Updating RequestDB to failed: rollbackErrorMsg = " + rollbackErrorMsg);
+				}else{
+					errorMsg = retrieveErrorMessage(execution);
+					if(errorMsg == null || errorMsg.equals("")){
+						errorMsg = "Failed to determine error message";
+					}
+					request.setStatusMessage(errorMsg);
+					logger.debug("Updating RequestDB to failed: errorMsg = " + errorMsg);
+				}
+			}
+			if(ebb!=null && ebb.getBuildingBlock()!=null){
+				String flowStatus = ebb.getBuildingBlock().getBpmnFlowName() + " has failed.";
+				request.setFlowStatus(flowStatus);
+				execution.setVariable("flowStatus", flowStatus);
+			}
+
+			request.setProgress(Long.valueOf(100));
+			request.setRequestStatus("FAILED");
+			request.setLastModifiedBy("CamundaBPMN");
+			requestDbclient.updateInfraActiveRequests(request);
+		} catch (Exception e) {
+			workflowAction.buildAndThrowException(execution, "Error Updating Request Database", e);
+		}
+	}
+	
+	private String retrieveErrorMessage (DelegateExecution execution){
+		String errorMsg = "";
+		try {
+			WorkflowException exception = (WorkflowException) execution.getVariable("WorkflowException");
+			if(exception != null && (exception.getErrorMessage()!=null || !exception.getErrorMessage().equals(""))){
+				errorMsg = exception.getErrorMessage();
+			}
+		} catch (Exception ex) {
+			//log error and attempt to extact WorkflowExceptionMessage
+			logger.error("Failed to extract workflow exception from execution.",ex);
+		}
+		
+		if (errorMsg == null || errorMsg.equals("")){
+			try {
+				errorMsg = (String) execution.getVariable("WorkflowExceptionErrorMessage");
+			} catch (Exception ex) {
+				logger.error("Failed to extract workflow exception message from WorkflowException",ex);
+				errorMsg = "Unexpected Error in BPMN.";
+			}
+		}
+		return errorMsg;
+	}
+	
+	public void updateRequestStatusToFailedWithRollback(DelegateExecution execution) {
+		execution.setVariable("isRollbackComplete", true);
+		updateRequestStatusToFailed(execution);
 	}
 }

@@ -2,7 +2,7 @@
   "clientRequestId": "00032ab7-fake-42e5-965d-8ea592502018",
   "action": "deleteInstance",
   "requestStatus": "PENDING",
-  "statusMessage": "Vf Module deletion pending.",
+  "statusMessage": null,
   "progress": 0,
   "startTime": "2016-12-22T13:29:54.000+0000",
   "endTime": "2016-12-22T13:30:28.000+0000",

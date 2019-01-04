@@ -33,6 +33,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.MessageEnum;
 
@@ -40,6 +41,7 @@ import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.onap.so.utils.CryptoUtils;
+import org.slf4j.MDC;
 import org.springframework.core.env.Environment;
 
 /**
@@ -123,6 +125,9 @@ public class BPRestCallback {
 					env.getProperty(Constants.ENCRYPTION_KEY_PROP));
 				String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 				method.setHeader("Authorization", authorization);
+				method.setHeader(ONAPLogConstants.Headers.REQUEST_ID,MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
+				method.setHeader(ONAPLogConstants.Headers.INVOCATION_ID,MDC.get(ONAPLogConstants.MDCs.INVOCATION_ID));
+				method.setHeader(ONAPLogConstants.Headers.PARTNER_NAME,"SO-SDNCAdapter");
 			} catch (Exception e) {
 				LOGGER.error(MessageEnum.RA_SET_CALLBACK_AUTH_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError,
 					"Unable to set authorization in callback request", e);			

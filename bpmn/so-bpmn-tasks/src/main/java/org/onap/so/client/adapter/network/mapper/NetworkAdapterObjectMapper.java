@@ -49,9 +49,12 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
 import org.onap.so.entity.MsoRequest;
+import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.NetworkRollback;
 import org.onap.so.openstack.beans.RouteTarget;
 import org.onap.so.openstack.beans.Subnet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
@@ -59,6 +62,7 @@ import org.springframework.web.util.UriUtils;
 public class NetworkAdapterObjectMapper {
 	private static final ModelMapper modelMapper = new ModelMapper();
 	private static String FORWARD_SLASH = "/";
+	private static final Logger logger = LoggerFactory.getLogger(NetworkAdapterObjectMapper.class);
 
 	public CreateNetworkRequest createNetworkRequestMapper(RequestContext requestContext, CloudRegion cloudRegion, OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, L3Network l3Network, Map<String, String> userInput, String cloudRegionPo, Customer customer) throws UnsupportedEncodingException {
 		CreateNetworkRequest createNetworkRequest = new CreateNetworkRequest();
@@ -82,8 +86,12 @@ public class NetworkAdapterObjectMapper {
 		//build and set provider Vlan Network
 		ProviderVlanNetwork providerVlanNetwork = buildProviderVlanNetwork(l3Network);
 		createNetworkRequest.setProviderVlanNetwork(providerVlanNetwork);
-		
-		createNetworkRequest.setNetworkTechnology(setNetworkTechnology(l3Network.getModelInfoNetwork().getNetworkTechnology()));
+		String networkTechnology = l3Network.getModelInfoNetwork().getNetworkTechnology();
+		if(networkTechnology == null) {
+			networkTechnology = l3Network.getNetworkTechnology();
+			logger.warn("NetworkTechnology was null in CatalogDB. Using field from AAI: " + networkTechnology);
+		}
+		createNetworkRequest.setNetworkTechnology(setNetworkTechnology(networkTechnology));
 		
 		//build and set Contrail Network
 		ContrailNetwork contrailNetwork = buildContrailNetwork(l3Network, customer);

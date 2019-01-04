@@ -35,7 +35,7 @@ public class DeleteVolumeGroupBBTest extends BaseBPMNTest {
 		mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVolumeGroupBB", variables);
 		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter", "VnfAdapter", "UpdateVolumeGroupAAI", "DeleteVolumeGroupBB_End");
+		assertThat(pi).isStarted().hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter", "VnfAdapter", "UpdateVolumeGroupHeatStackId", "UpdateVolumeGroupAAI", "DeleteVolumeGroupBB_End");
 		assertThat(pi).isEnded();
 	}
 
@@ -46,7 +46,7 @@ public class DeleteVolumeGroupBBTest extends BaseBPMNTest {
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVolumeGroupBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
-				.hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter", "VnfAdapter", "UpdateVolumeGroupAAI")
+				.hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter", "VnfAdapter", "UpdateVolumeGroupHeatStackId", "UpdateVolumeGroupAAI")
 				.hasNotPassed("DeleteVolumeGroupBB_End");
 		assertThat(pi).isEnded();
 	}

@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.exception.MapperException;
@@ -89,11 +90,6 @@ public class SDNCRequestTasks {
 	
 	public void handleTimeOutException (DelegateExecution execution) {		
 		exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, "Error timed out waiting on SDNC Async-Response");
-	}
-	
-	public void handleSyncError (DelegateExecution execution) {
-		String msg = (String) execution.getVariable("SDNCSyncError");		
-		exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
 	}
 
 	protected boolean convertIndicatorToBoolean(String finalMessageIndicator) {

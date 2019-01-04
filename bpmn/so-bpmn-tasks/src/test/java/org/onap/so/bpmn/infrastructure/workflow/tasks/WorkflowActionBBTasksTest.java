@@ -114,16 +114,37 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	}
 	
 	@Test
-	public void msoCompleteProcessTest() throws Exception{
-		execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+	public void updateRequestStatusToCompleteTest() throws Exception{
+		String reqId = "reqId123";
+		execution.setVariable("mso-request-id", reqId);
 		execution.setVariable("requestAction", "createInstance");
-		execution.setVariable("resourceId", "123");
-		execution.setVariable("source","MSO");
 		execution.setVariable("resourceName", "Service");
 		execution.setVariable("aLaCarte", true);
-		workflowActionBBTasks.setupCompleteMsoProcess(execution);
-		String response = (String) execution.getVariable("CompleteMsoProcessRequest");
-		assertEquals(response,"<aetgt:MsoCompletionRequest xmlns:aetgt=\"http://org.onap/so/workflow/schema/v1\" xmlns:ns=\"http://org.onap/so/request/types/v1\"><request-info xmlns=\"http://org.onap/so/infra/vnf-request/v1\"><request-id>00f704ca-c5e5-4f95-a72c-6889db7b0688</request-id><action>createInstance</action><source>MSO</source></request-info><status-message>ALaCarte-Service-createInstance request was executed correctly.</status-message><serviceInstanceId>123</serviceInstanceId><mso-bpel-name>WorkflowActionBB</mso-bpel-name></aetgt:MsoCompletionRequest>");
+		InfraActiveRequests req = new InfraActiveRequests();
+		doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
+		doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
+		workflowActionBBTasks.updateRequestStatusToComplete(execution);
+		assertEquals("ALaCarte-Service-createInstance request was executed correctly.",execution.getVariable("finalStatusMessage"));
+	}
+	
+	@Test
+	public void updateRequestStatusToFailedFlowStatusTest() {
+		String reqId = "reqId123";
+		execution.setVariable("mso-request-id", reqId);
+		execution.setVariable("isRollbackComplete", false);
+		execution.setVariable("isRollback", false);
+		ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
+		BuildingBlock buildingBlock = new BuildingBlock();
+		buildingBlock.setBpmnFlowName("CreateNetworkBB");
+		ebb.setBuildingBlock(buildingBlock);
+		execution.setVariable("buildingBlock", ebb);
+		WorkflowException wfe = new WorkflowException("failure", 1, "failure");
+		execution.setVariable("WorkflowException", wfe);
+		InfraActiveRequests req = new InfraActiveRequests();
+		doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
+		doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
+		workflowActionBBTasks.updateRequestStatusToFailed(execution);
+		assertEquals("CreateNetworkBB has failed.",execution.getVariable("flowStatus"));
 	}
 	
 	@Test

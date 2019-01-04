@@ -75,7 +75,9 @@ public class SDNCQueryTasks {
 				+ genericVnf.getVnfId() + "/vnf-data/vf-modules/vf-module/"
 				+ vfModule.getVfModuleId() + "/vf-module-data/vf-module-topology/";
 		try {
-			vfModule.setSelflink(selfLink);
+			if(vfModule.getSelflink() == null || (vfModule.getSelflink() != null && vfModule.getSelflink().isEmpty())) {
+				vfModule.setSelflink(selfLink);
+			}
 			if(vfModule.getSelflink() != null && !vfModule.getSelflink().isEmpty()) {	
 				String response = sdncVfModuleResources.queryVfModule(vfModule);		
 				execution.setVariable("SDNCQueryResponse_" + vfModule.getVfModuleId(), response);			
