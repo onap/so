@@ -104,7 +104,7 @@ public class ToscaResourceInputTest {
         when(property.getValue()).thenReturn("value1");
 
         String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
-        assertEquals(resourceInput, "{\"prop1\":\"value1\"}");
+        assertEquals("{\\\"prop1\\\":\\\"value1\\\"}", resourceInput);
     }
 
     @Test
@@ -131,6 +131,6 @@ public class ToscaResourceInputTest {
         when(input.getDefault()).thenReturn("default_value");
 
         String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
-        assertEquals(resourceInput, "{\"prop1\":\"res_key|default_value\"}");
+        assertEquals("{\\\"prop1\\\":\\\"res_key|default_value\\\"}", resourceInput);
     }
 }
