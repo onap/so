@@ -21,8 +21,10 @@ package org.onap.so.bpmn.core.domain;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 public class ServiceInstanceTest {
@@ -56,6 +58,14 @@ public class ServiceInstanceTest {
 		assertEquals(si.getWorkloadContext(), "workloadContext");
 		
 		
+	}
+
+	@Test
+	public void serviceInstanceMapperTest() throws IOException {
+		String jsonStr = "{\"workloadContext\": \"code123\", \"resourceOrder\": \"sample\"}";
+		ObjectMapper objectMapper = new ObjectMapper();
+		ServiceInstance serviceInstance = objectMapper.readValue(jsonStr, ServiceInstance.class);
+		assertTrue(serviceInstance != null);
 	}
 
 }
