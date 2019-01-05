@@ -33,4 +33,8 @@ The list of APIs that SO offerers for monitroing the BPMN flows could be found i
    ":download:`link <swagger/SO_MONITORING_SWAGGER.json>`", ":download:`link <swagger/SO_MONITORING_SWAGGER.yaml>`"
    
 Detailed documentation can be found here:
-   SO_Interface.rst
+
+.. toctree::
+   :maxdepth: 1
+   
+   apis/SO_Interface.rst
