@@ -1,31 +1,33 @@
-ssl-enable: false
+
+catalog:
+  db:
+    endpoint: http://localhost:8090
+
+ssl-enable: false 
 mso:
   site-name: localDevEnv
   logPath: logs
   catalog:
     db:
       spring:
-        endpoint: "http://localhost:8090"
+        endpoint: http://localhost:8090
   db:
     auth: Basic YnBlbDptc28tZGItMTUwNyE=
-# H2
+
 spring:
   datasource:
     jdbc-url: jdbc:mariadb://localhost:3306/catalogdb
     username: catalog
     password: catalog123
     driver-class-name: org.mariadb.jdbc.Driver
-    initialization-mode: always
+    initialization-mode: never
 
-  jpa:
-      show-sql: true
-      hibernate:
-        ddl-auto: validate
-        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        enable-lazy-load-no-trans: true
-      database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   security:
     usercredentials:
+    -  
+      username: test
+      password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
+      role: BPEL-Client
     -
       username: bpel
       password: '$2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO'
@@ -33,15 +35,13 @@ spring:
     -  
       username: mso_admin
       password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
-      role: ACTUATOR      
+      role: ACTUATOR  
+  
 server:
     port: 8090
-    tomcat:
-        max-threads: 50
 
-      
 flyway:
-  baseline-on-migrate: true
-  url: jdbc:mariadb://localhost:3306/catalogdb
+  baseline-on-migrate: false
+  jdbc-url: jdbc:mariadb://localhost:3306/catalogdb
   user: catalog
   password: catalog123
