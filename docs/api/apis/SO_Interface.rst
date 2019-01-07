@@ -5,7 +5,7 @@
 SO Interfaces
 ================================
 
-.. image:: ../images/SO_1.png
+.. image:: ../../images/SO_1.png
 
 SO APIs
 ----------------
