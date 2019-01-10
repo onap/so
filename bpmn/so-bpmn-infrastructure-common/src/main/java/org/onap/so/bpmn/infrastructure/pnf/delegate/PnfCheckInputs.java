@@ -24,6 +24,7 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION;
 
 import com.google.common.base.Strings;
@@ -53,6 +54,7 @@ public class PnfCheckInputs implements JavaDelegate {
         validateCorrelationId(execution);
         validatePnfUuid(execution);
         validateTimeout(execution);
+        validateServiceInstanceId(execution);
     }
 
     private void validateCorrelationId(DelegateExecution execution) {
@@ -81,6 +83,13 @@ public class PnfCheckInputs implements JavaDelegate {
                     "default timeoutForPnfEntryNotification value not defined");
             }
             execution.setVariable(TIMEOUT_FOR_NOTIFICATION, defaultTimeout);
+        }
+    }
+
+    private void validateServiceInstanceId(DelegateExecution execution) {
+        String serviceInstanceId = (String) execution.getVariable(SERVICE_INSTANCE_ID);
+        if (Strings.isNullOrEmpty(serviceInstanceId)) {
+            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "serviceInstanceId variable not defined");
         }
     }
 }
