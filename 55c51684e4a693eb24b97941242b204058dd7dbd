@@ -68,6 +68,30 @@
       "revId": "55c51684e4a693eb24b97941242b204058dd7dbd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_70712075",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/monitoring/configuration/rest/CorsConfigurer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-01-10T12:45:31Z",
+      "side": 1,
+      "message": "or use following\n\n @Bean\n    public CorsFilter corsFilter() {\n        final UrlBasedCorsConfigurationSource source \u003d new UrlBasedCorsConfigurationSource();\n        final CorsConfiguration config \u003d new CorsConfiguration();\n        config.applyPermitDefaultValues();\n        source.registerCorsConfiguration(\"/**\", config);\n        return new CorsFilter(source);\n    }",
+      "parentUuid": "9adffdf1_d039eca4",
+      "range": {
+        "startLine": 39,
+        "startChar": 3,
+        "endLine": 49,
+        "endChar": 5
+      },
+      "revId": "55c51684e4a693eb24b97941242b204058dd7dbd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
