@@ -25,6 +25,7 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
 
     private static final String TIMEOUT_10_S = "PT10S";
     private static final String VALID_UUID = UUID.nameUUIDFromBytes("testUuid".getBytes()).toString();
+    private static final String SERVICE_INSTANCE_ID_VALUE = "da7d07d9-b71c-4128-809d-2ec01c807169";
 
     @Autowired
     private AaiConnectionTestImpl aaiConnection;
@@ -55,6 +57,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITH_ENTRY);
         variables.put(PNF_UUID, VALID_UUID);
+        variables.put(SERVICE_INSTANCE_ID, SERVICE_INSTANCE_ID_VALUE);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -83,6 +86,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
         variables.put(PNF_UUID, VALID_UUID);
+        variables.put(SERVICE_INSTANCE_ID, SERVICE_INSTANCE_ID_VALUE);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
