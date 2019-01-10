@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_10bc5405",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/monitoring/configuration/rest/CorsConfigurer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-01-10T12:39:11Z",
+      "side": 1,
+      "message": "2019",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "55c51684e4a693eb24b97941242b204058dd7dbd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_30b95815",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/monitoring/configuration/rest/CorsConfigurer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-01-10T12:39:11Z",
+      "side": 1,
+      "message": "use your est email",
+      "range": {
+        "startLine": 34,
+        "startChar": 33,
+        "endLine": 34,
+        "endChar": 56
+      },
+      "revId": "55c51684e4a693eb24b97941242b204058dd7dbd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d039eca4",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/monitoring/configuration/rest/CorsConfigurer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-01-10T12:39:11Z",
+      "side": 1,
+      "message": "make variables final and extract * to constant variable\n\ni.e. use following\n\n private static final String ANY \u003d \"*\";\n\n @Bean\n    public CorsFilter corsFilter() {\n        final UrlBasedCorsConfigurationSource source \u003d new UrlBasedCorsConfigurationSource();\n        final CorsConfiguration config \u003d new CorsConfiguration();\n        config.setAllowCredentials(true);\n        config.addAllowedOrigin(ANY);\n        config.addAllowedHeader(ANY);\n        config.addAllowedMethod(ANY);\n        source.registerCorsConfiguration(\"/**\", config);\n        return new CorsFilter(source);\n    }",
+      "range": {
+        "startLine": 39,
+        "startChar": 3,
+        "endLine": 49,
+        "endChar": 5
+      },
+      "revId": "55c51684e4a693eb24b97941242b204058dd7dbd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
