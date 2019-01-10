@@ -33,4 +33,7 @@ public class ExecutionVariableNames {
     public final static String DMAAP_MESSAGE = "dmaapMessage";
     public final static String TIMEOUT_FOR_NOTIFICATION = "timeoutForPnfEntryNotification";
     public final static String PNF_UUID = "pnfUuid";
+    public final static String GLOBAL_CUSTOMER_ID = "globalCustomerId";
+    public final static String SERVICE_TYPE = "serviceType";
+    public final static String SERVICE_INSTANCE_ID = "serviceInstanceId";
 }

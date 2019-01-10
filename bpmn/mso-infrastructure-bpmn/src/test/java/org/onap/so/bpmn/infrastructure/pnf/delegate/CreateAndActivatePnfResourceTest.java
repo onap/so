@@ -24,7 +24,10 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.GLOBAL_CUSTOMER_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_TYPE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +43,9 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
 
     private static final String TIMEOUT_10_S = "PT10S";
     private static final String VALID_UUID = UUID.nameUUIDFromBytes("testUuid".getBytes()).toString();
+    private static final String DEFAULT_GLOBAL_CUSTOMER_ID = "id123";
+    private static final String DEFAULT_SERVICE_TYPE = "service1";
+    private static final String DEFAULT_SERVICE_INSTANCE_ID = "instance123";
 
     @Autowired
     private AaiConnectionTestImpl aaiConnection;
@@ -55,6 +61,9 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITH_ENTRY);
         variables.put(PNF_UUID, VALID_UUID);
+        variables.put(GLOBAL_CUSTOMER_ID, DEFAULT_GLOBAL_CUSTOMER_ID);
+        variables.put(SERVICE_TYPE, DEFAULT_SERVICE_TYPE);
+        variables.put(SERVICE_INSTANCE_ID, DEFAULT_SERVICE_INSTANCE_ID);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -83,6 +92,9 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
         variables.put(PNF_UUID, VALID_UUID);
+        variables.put(GLOBAL_CUSTOMER_ID, DEFAULT_GLOBAL_CUSTOMER_ID);
+        variables.put(SERVICE_TYPE, DEFAULT_SERVICE_TYPE);
+        variables.put(SERVICE_INSTANCE_ID, DEFAULT_SERVICE_INSTANCE_ID);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
