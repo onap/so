@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION;
 
 import java.util.UUID;
@@ -40,83 +41,127 @@ public class PnfCheckInputsTest {
     private static final String DEFAULT_TIMEOUT = "P1D";
     private static final String VALID_UUID = UUID.nameUUIDFromBytes("testUuid".getBytes()).toString();
     private static final String RESERVED_UUID = new UUID(0, 0).toString();
+    private static final String DEFAULT_SERVICE_INSTANCE_ID = "da7d07d9-b71c-4128-809d-2ec01c807169";
+    private static final String DEFAULT_CORRELATION_ID = "testCorrelationId";
 
-    private DelegateExecution delegateExecution;
+    private DelegateExecutionBuilder delegateExecutionBuilder;
+    private PnfCheckInputs testedObject;
 
     @Before
     public void setUp() {
-        delegateExecution = new DelegateExecutionFake();
-        delegateExecution.setVariable("testProcessKey", "testProcessKeyValue");
+        delegateExecutionBuilder = new DelegateExecutionBuilder();
     }
 
     @Test
     public void shouldThrowException_whenCorrelationIdNotSet() {
-        PnfCheckInputs testedObject = prepareExecutionForCorrelationId(null);
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        DelegateExecution execution = prepareExecutionForCorrelationId(null);
+        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
     }
 
     @Test
     public void shouldThrowException_whenCorrelationIdIsEmptyString() {
-        PnfCheckInputs testedObject = prepareExecutionForCorrelationId("");
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        DelegateExecution execution = prepareExecutionForCorrelationId("");
+        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
     }
 
     @Test
     public void shouldThrowException_whenTimeoutIsNotSetAndDefaultIsNotDefined() {
-        PnfCheckInputs testedObject = prepareExecutionForTimeout(null, null);
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        DelegateExecution execution = prepareExecutionForTimeout(null, null);
+        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
     }
 
     @Test
     public void shouldThrowException_whenTimeoutIsEmptyStringAndDefaultIsNotDefined() {
-        PnfCheckInputs testedObject = prepareExecutionForTimeout(null, "");
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        DelegateExecution execution = prepareExecutionForTimeout(null, "");
+        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
     }
 
     @Test
     public void shouldSetDefaultTimeout_whenTimeoutIsNotSet() {
-        PnfCheckInputs testedObject = prepareExecutionForTimeout(DEFAULT_TIMEOUT, null);
-        testedObject.execute(delegateExecution);
-        assertThat(delegateExecution.getVariable(TIMEOUT_FOR_NOTIFICATION)).isEqualTo(DEFAULT_TIMEOUT);
+        DelegateExecution execution = prepareExecutionForTimeout(DEFAULT_TIMEOUT, null);
+        testedObject.execute(execution);
+        assertThat(execution.getVariable(TIMEOUT_FOR_NOTIFICATION)).isEqualTo(DEFAULT_TIMEOUT);
     }
 
     @Test
     public void shouldThrowException_whenPnfUuidIsNotSet() {
-        PnfCheckInputs testedObject = prepareExecutionForUuid(null);
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        DelegateExecution execution = prepareExecutionForUuid(null);
+        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
     }
 
     @Test
     public void shouldThrowException_whenPnfUuidIsEmptyString() {
-        PnfCheckInputs testedObject = prepareExecutionForUuid("");
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        DelegateExecution execution = prepareExecutionForUuid("");
+        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
     }
 
     @Test
     public void shouldThrowException_whenPnfUuidIsReservedUuid() {
-        PnfCheckInputs testedObject = prepareExecutionForUuid(RESERVED_UUID);
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
+        DelegateExecution execution = prepareExecutionForUuid(RESERVED_UUID);
+        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
     }
 
-    private PnfCheckInputs prepareExecutionForCorrelationId(String correlationId) {
-        PnfCheckInputs testedObject = new PnfCheckInputs(DEFAULT_TIMEOUT);
-        delegateExecution.setVariable(CORRELATION_ID, correlationId);
-        delegateExecution.setVariable(PNF_UUID, VALID_UUID);
-        return testedObject;
+    @Test
+    public void shouldThrowException_whenServiceInstanceIdIsNotSet() {
+        DelegateExecution execution = prepareExecutionForPnfRelationParams(null);
+        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
     }
 
-    private PnfCheckInputs prepareExecutionForTimeout(String defaultTimeout, String timeout) {
-        PnfCheckInputs testedObject = new PnfCheckInputs(defaultTimeout);
-        delegateExecution.setVariable(CORRELATION_ID, "testCorrelationId");
-        delegateExecution.setVariable(PNF_UUID, VALID_UUID);
-        delegateExecution.setVariable(TIMEOUT_FOR_NOTIFICATION, timeout);
-        return testedObject;
+    private DelegateExecution prepareExecutionForCorrelationId(String correlationId) {
+        testedObject = new PnfCheckInputs(DEFAULT_TIMEOUT);
+        delegateExecutionBuilder.setCorrelationId(correlationId);
+        delegateExecutionBuilder.setPnfUuid(VALID_UUID);
+        return delegateExecutionBuilder.build();
     }
 
-    private PnfCheckInputs prepareExecutionForUuid(String uuid) {
-        PnfCheckInputs testedObject = new PnfCheckInputs(DEFAULT_TIMEOUT);
-        delegateExecution.setVariable(CORRELATION_ID, "testCorrelationId");
-        delegateExecution.setVariable(PNF_UUID, uuid);
-        return testedObject;
+    private DelegateExecution prepareExecutionForTimeout(String defaultTimeout, String timeout) {
+        testedObject = new PnfCheckInputs(defaultTimeout);
+        delegateExecutionBuilder.setTimeoutForNotification(timeout);
+        return delegateExecutionBuilder.build();
+    }
+
+    private DelegateExecution prepareExecutionForUuid(String uuid) {
+        testedObject = new PnfCheckInputs(DEFAULT_TIMEOUT);
+        delegateExecutionBuilder.setPnfUuid(uuid);
+        return delegateExecutionBuilder.build();
+    }
+
+    private DelegateExecution prepareExecutionForPnfRelationParams(String serviceInstanceId) {
+        testedObject = new PnfCheckInputs(DEFAULT_TIMEOUT);
+        delegateExecutionBuilder.setServiceInstanceId(serviceInstanceId);
+        return delegateExecutionBuilder.build();
+    }
+
+    private static class DelegateExecutionBuilder {
+        private String correlationId = DEFAULT_CORRELATION_ID;
+        private String pnfUuid = VALID_UUID;
+        private String serviceInstanceId = DEFAULT_SERVICE_INSTANCE_ID;
+        private String timeoutForNotification;
+
+        public void setCorrelationId(String correlationId) {
+            this.correlationId = correlationId;
+        }
+
+        public void setPnfUuid(String pnfUuid) {
+            this.pnfUuid = pnfUuid;
+        }
+
+        public void setServiceInstanceId(String serviceInstanceId) {
+            this.serviceInstanceId = serviceInstanceId;
+        }
+
+        public void setTimeoutForNotification(String timeoutForNotification) {
+            this.timeoutForNotification = timeoutForNotification;
+        }
+
+        public DelegateExecution build() {
+            DelegateExecution execution = new DelegateExecutionFake();
+            execution.setVariable("testProcessKey", "testProcessKeyValue");
+            execution.setVariable(CORRELATION_ID, this.correlationId);
+            execution.setVariable(PNF_UUID, this.pnfUuid);
+            execution.setVariable(SERVICE_INSTANCE_ID, this.serviceInstanceId);
+            execution.setVariable(TIMEOUT_FOR_NOTIFICATION, this.timeoutForNotification);
+            return execution;
+        }
     }
 }
