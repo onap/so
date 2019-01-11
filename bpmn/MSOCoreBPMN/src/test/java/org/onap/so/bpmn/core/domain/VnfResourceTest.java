@@ -21,8 +21,10 @@ package org.onap.so.bpmn.core.domain;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 public class VnfResourceTest {
@@ -50,6 +52,15 @@ public class VnfResourceTest {
 		assertEquals(vnf.getMultiStageDesign(), "multiStageDesign");
 		
 		
+	}
+
+	@Test
+	public void vnfResourceMapperTest() throws IOException {
+		String jsonStr = "{\"vnfHostname\": \"home\", \"resourceInput\": \"sample\"}";
+		ObjectMapper objectMapper = new ObjectMapper();
+		VnfResource vnfResource = objectMapper.readValue(jsonStr, VnfResource.class);
+
+		assertTrue(vnfResource != null);
 	}
 
 }

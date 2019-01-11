@@ -23,6 +23,8 @@ package org.onap.so.bpmn.core.domain;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
@@ -32,6 +34,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * @author cb645j
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ServiceInstance extends JsonWrapper implements Serializable {
 
 	private static final long serialVersionUID = 1L;

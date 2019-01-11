@@ -459,6 +459,7 @@ public class ToscaResourceInstaller {
 			ObjectMapper objectMapper = new ObjectMapper();
 			String jsonStr = objectMapper.writeValueAsString(resouceRequest);
 
+			jsonStr = jsonStr.replace("\"", "\\\"");
 			logger.debug("resource request for resource customization id (" + resourceCustomizationUuid + ") : " + jsonStr);
 			return jsonStr;
 		} catch (JsonProcessingException e) {

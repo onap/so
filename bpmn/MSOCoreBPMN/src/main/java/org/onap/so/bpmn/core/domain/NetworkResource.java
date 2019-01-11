@@ -22,6 +22,8 @@ package org.onap.so.bpmn.core.domain;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 
@@ -47,7 +49,10 @@ public class NetworkResource extends Resource {
 	private String networkRole;
 	private String networkTechnology;
 	private String networkScope;
-	
+
+	@JsonIgnore
+	private String resourceInput;
+
 	/*
 	 * GET and SET
 	 */
@@ -74,5 +79,13 @@ public class NetworkResource extends Resource {
 	}
 	public void setNetworkScope(String networkScope) {
 		this.networkScope = networkScope;
+	}
+
+	public String getResourceInput() {
+		return resourceInput;
+	}
+
+	public void setResourceInput(String resourceInput) {
+		this.resourceInput = resourceInput;
 	}
 }
