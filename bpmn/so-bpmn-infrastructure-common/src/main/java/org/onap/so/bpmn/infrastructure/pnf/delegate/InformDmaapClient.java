@@ -25,7 +25,6 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -46,7 +45,6 @@ public class InformDmaapClient implements JavaDelegate {
     }
 
     @Autowired
-    @Qualifier("PnfEventReadyDmaapClient")
     public void setDmaapClient(DmaapClient dmaapClient) {
         this.dmaapClient = dmaapClient;
     }
