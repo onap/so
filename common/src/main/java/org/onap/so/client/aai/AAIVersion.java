@@ -23,13 +23,9 @@ package org.onap.so.client.aai;
 import org.onap.so.client.graphinventory.GraphInventoryVersion;
 
 public enum AAIVersion implements GraphInventoryVersion {
-	V8("v8"),
-	V9("v9"), 
-	V10("v10"), 
-	V11("v11"), 
-	V12("v12"),
 	V13("v13"),
-	V14("v14");
+	V14("v14"),
+	V15("v15");
 	
 	public final static AAIVersion LATEST = AAIVersion.values()[AAIVersion.values().length - 1];
 	private final String value;
