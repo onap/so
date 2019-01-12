@@ -22,14 +22,19 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -52,7 +57,7 @@ public class ServiceProxyResourceCustomization implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -2822457299134903084L;
-
+	
 	@BusinessKey
 	@Id
 	@Column(name = "MODEL_CUSTOMIZATION_UUID")
@@ -60,9 +65,24 @@ public class ServiceProxyResourceCustomization implements Serializable {
 
 	@Column(name = "MODEL_INSTANCE_NAME")
 	private String modelInstanceName;
+	
+	@Column(name = "MODEL_UUID")
+	private String modelUUID;
+	
+	@Column(name = "MODEL_INVARIANT_UUID")
+	private String modelInvariantUUID;
+	
+	@Column(name = "MODEL_VERSION")
+	private String modelVersion;
+	
+	@Column(name = "MODEL_NAME")
+	private String modelName;
 
 	@Column(name = "TOSCA_NODE_TYPE")
 	private String toscaNodeType;
+	
+	@Column(name = "DESCRIPTION")
+	private String description;
 
 	@Column(name = "CREATION_TIMESTAMP", updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -71,19 +91,12 @@ public class ServiceProxyResourceCustomization implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "SOURCE_SERVICE_MODEL_UUID")
 	private Service sourceService;
-
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "SERVICE_PROXY_MODEL_UUID")
-	private ServiceProxyResource serviceProxyResource;
-
-	@OneToOne(mappedBy = "serviceProxyResourceCustomization")
-	private ConfigurationResourceCustomization configResourceCustomization;
-
+					
 	@PrePersist
 	protected void onCreate() {
 		this.created = new Date();
 	}
-
+	
 	public String getModelCustomizationUUID() {
 		return modelCustomizationUUID;
 	}
@@ -120,32 +133,56 @@ public class ServiceProxyResourceCustomization implements Serializable {
 	public void setSourceService(Service sourceService) {
 		this.sourceService = sourceService;
 	}
-
-	@LinkedResource
-	public ServiceProxyResource getServiceProxyResource() {
-		return serviceProxyResource;
+	
+	public String getModelUUID() {
+		return modelUUID;
 	}
 
-	public void setServiceProxyResource(ServiceProxyResource serviceProxyResource) {
-		this.serviceProxyResource = serviceProxyResource;
+	public void setModelUUID(String modelUUID) {
+		this.modelUUID = modelUUID;
 	}
 
-	@LinkedResource
-	public ConfigurationResourceCustomization getConfigResourceCustomization() {
-		return configResourceCustomization;
+	public String getModelInvariantUUID() {
+		return modelInvariantUUID;
 	}
 
-	public void setConfigResourceCustomization(ConfigurationResourceCustomization configResourceCustomization) {
-		this.configResourceCustomization = configResourceCustomization;
+	public void setModelInvariantUUID(String modelInvariantUUID) {
+		this.modelInvariantUUID = modelInvariantUUID;
 	}
 
+	public String getModelVersion() {
+		return modelVersion;
+	}
+
+	public void setModelVersion(String modelVersion) {
+		this.modelVersion = modelVersion;
+	}
+
+	public String getModelName() {
+		return modelName;
+	}
+
+	public void setModelName(String modelName) {
+		this.modelName = modelName;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
 				.append("modelInstanceName", modelInstanceName).append("toscaNodeType", toscaNodeType)
-				.append("created", created).append("sourceService", sourceService)
-				.append("serviceProxyResource", serviceProxyResource)
-				.append("configResourceCustomization", configResourceCustomization).toString();
+				.append("modelUUID", modelUUID)
+				.append("modelInvariantUUID",modelInvariantUUID).append("modelName",modelName)
+				.append("description",description)
+				.append("created", created).append("sourceService", sourceService).toString();
 	}
 
 	@Override

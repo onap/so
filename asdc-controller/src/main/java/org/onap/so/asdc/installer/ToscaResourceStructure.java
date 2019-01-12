@@ -42,7 +42,6 @@ import org.onap.so.db.catalog.beans.NetworkInstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.ServiceProxyResource;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.beans.TempNetworkHeatTemplateLookup;
 import org.onap.so.db.catalog.beans.ToscaCsar;
@@ -83,9 +82,7 @@ public class ToscaResourceStructure {
 	private CollectionResourceCustomization catalogCollectionResourceCustomization;
 	
 	private NetworkCollectionResourceCustomization catalogNetworkCollectionResourceCustomization;
-	
-	private ServiceProxyResource catalogServiceProxyResource;
-	
+		
 	private ServiceProxyResourceCustomization catalogServiceProxyResourceCustomization;
 	
 	private ConfigurationResource catalogConfigurationResource;
@@ -441,14 +438,6 @@ public class ToscaResourceStructure {
 	public void setCatalogNetworkCollectionResourceCustomization(
 			NetworkCollectionResourceCustomization catalogNetworkCollectionResourceCustomization) {
 		this.catalogNetworkCollectionResourceCustomization = catalogNetworkCollectionResourceCustomization;
-	}
-
-	public ServiceProxyResource getCatalogServiceProxyResource() {
-		return catalogServiceProxyResource;
-	}
-
-	public void setCatalogServiceProxyResource(ServiceProxyResource catalogServiceProxyResource) {
-		this.catalogServiceProxyResource = catalogServiceProxyResource;
 	}
 
 	public ServiceProxyResourceCustomization getCatalogServiceProxyResourceCustomization() {

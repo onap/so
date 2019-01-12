@@ -22,6 +22,7 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,6 +31,8 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -74,10 +77,9 @@ public class ConfigurationResourceCustomization implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date created;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "SERVICE_PROXY_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID")
-	private ServiceProxyResourceCustomization serviceProxyResourceCustomization;
-
+	@Column(name = "SERVICE_PROXY_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID")
+	private String serviceProxyResourceCustomizationUUID;
+		
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID")
 	private ConfigurationResourceCustomization configResourceCustomization;
@@ -134,22 +136,20 @@ public class ConfigurationResourceCustomization implements Serializable {
 	public Date getCreated() {
 		return created;
 	}
-
-	@LinkedResource
-	public ServiceProxyResourceCustomization getServiceProxyResourceCustomization() {
-		return serviceProxyResourceCustomization;
+		
+	public String getServiceProxyResourceCustomizationUUID() {
+		return serviceProxyResourceCustomizationUUID;
 	}
 
-	public void setServiceProxyResourceCustomization(
-			ServiceProxyResourceCustomization serviceProxyResourceCustomization) {
-		this.serviceProxyResourceCustomization = serviceProxyResourceCustomization;
+	public void setServiceProxyResourceCustomizationUUID(String serviceProxyResourceCustomizationUUID) {
+		this.serviceProxyResourceCustomizationUUID = serviceProxyResourceCustomizationUUID;
 	}
 
 	@LinkedResource
 	public ConfigurationResourceCustomization getConfigResourceCustomization() {
 		return configResourceCustomization;
 	}
-
+	
 	public void setConfigResourceCustomization(ConfigurationResourceCustomization configResourceCustomization) {
 		this.configResourceCustomization = configResourceCustomization;
 	}
@@ -168,7 +168,7 @@ public class ConfigurationResourceCustomization implements Serializable {
 		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
 				.append("modelInstanceName", modelInstanceName).append("nfFunction", nfFunction)
 				.append("nfType", nfType).append("nfRole", nfRole).append("created", created)
-				.append("serviceProxyResourceCustomization", serviceProxyResourceCustomization)
+				//.append("serviceProxyResourceCustomization", serviceProxyResourceCustomization)
 				.append("configResourceCustomization", configResourceCustomization)
 				.append("configurationResource", configurationResource).toString();
 	}
