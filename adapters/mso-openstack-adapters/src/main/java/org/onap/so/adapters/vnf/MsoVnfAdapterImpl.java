@@ -803,7 +803,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
                     throw new VnfException(error, MsoExceptionCategory.USERDATA);
                 } else {
-        			LOGGER.debug("Found vfModuleCust entry " + vfmc.toString());
+        			LOGGER.trace("Found vfModuleCust entry " + vfmc.toString());
                 }
                 if (vf.getIsBase()) {
                     isBaseRequest = true;

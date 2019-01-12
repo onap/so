@@ -68,6 +68,15 @@ public class AAIPatchConverterTest {
 	}
 	
 	@Test
+	public void convertStringToPatchFormatNull_Test() throws URISyntaxException, JsonParseException, JsonMappingException, IOException {
+		AAIPatchConverter validator = new AAIPatchConverter();
+		String payload = "{\"ipv4-loopback0-address\": null}";
+		String result = validator.marshallObjectToPatchFormat(payload);
+		System.out.println(result);
+		assertEquals("expect no change", payload, result);
+	}
+	
+	@Test
 	public void convertMapToPatchFormatTest() throws URISyntaxException, JsonParseException, JsonMappingException, IOException {
 		AAIPatchConverter validator = new AAIPatchConverter();
 		HashMap<String, String> map = new HashMap<>();

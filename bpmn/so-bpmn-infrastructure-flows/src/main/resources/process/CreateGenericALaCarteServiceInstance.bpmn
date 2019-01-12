@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.1" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CreateGenericALaCarteServiceInstance" name="CreateGenericALaCarteServiceInstance" isExecutable="true">
     <bpmn2:startEvent id="createSI_startEvent" name="Create SI Start Flow">
       <bpmn2:outgoing>SequenceFlow_0lp2z7l</bpmn2:outgoing>
@@ -38,6 +38,7 @@ ex.processJavaException(execution)]]></bpmn2:script>
         <camunda:in sourceExpression="1610" target="sdncVersion" />
         <camunda:in source="serviceDecomposition" target="serviceDecomposition" />
         <camunda:in source="bpmnRequest" target="requestJson" />
+        <camunda:in source="msoRequestId" target="mso-request-id" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1fv5tk6</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1lj31zp</bpmn2:outgoing>
@@ -169,6 +170,7 @@ csi.prepareDecomposeService(execution)]]></bpmn2:script>
         <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
         <camunda:out source="serviceDecomposition" target="serviceDecomposition" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="msoRequestId" target="mso-request-id" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0xhu1k3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1o3ihrh</bpmn2:outgoing>
@@ -185,7 +187,7 @@ csi.prepareCreateServiceInstance(execution)]]></bpmn2:script>
     <bpmn2:sequenceFlow id="SequenceFlow_1tfe975" sourceRef="IntermediateCatchEvent_00tv706" targetRef="ScriptTask_1vr3ks5" />
     <bpmn2:sequenceFlow id="SequenceFlow_14ajbme" sourceRef="CallActivity_1y1p4bd" targetRef="IntermediateThrowEvent_1tbopzu" />
     <bpmn2:sequenceFlow id="SequenceFlow_1hjh5zy" sourceRef="IntermediateCatchEvent_1aouco1" targetRef="ScriptTask_04zaa1o" />
-    <bpmn2:callActivity id="CallActivity_1y1p4bd" name="Call Homing Service" camunda:modelerTemplate="homingBlock" calledElement="Homing">
+    <bpmn2:callActivity id="CallActivity_1y1p4bd" name="Call Homing Service" calledElement="Homing" camunda:modelerTemplate="homingBlock">
       <bpmn2:extensionElements>
         <camunda:in source="true" target="isDebugLogEnabled" />
         <camunda:in source="null" target="timeout" />
@@ -204,6 +206,7 @@ csi.prepareCreateServiceInstance(execution)]]></bpmn2:script>
         <camunda:in source="serviceInstanceName" target="serviceInstanceName" />
         <camunda:in source="homingModelIds" target="homingModelIds" />
         <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
+        <camunda:in source="mso-request-id" target="mso-request-d" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0bng27u</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_14ajbme</bpmn2:outgoing>
