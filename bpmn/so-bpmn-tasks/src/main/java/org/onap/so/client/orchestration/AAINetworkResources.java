@@ -84,6 +84,10 @@ public class AAINetworkResources {
 	public Optional<NetworkPolicy> getNetworkPolicy(AAIResourceUri netPolicyUri) {
 		return injectionHelper.getAaiClient().get(netPolicyUri).asBean(NetworkPolicy.class);
 	}
+	
+	public Optional<org.onap.aai.domain.yang.Subnet> getSubnet(AAIResourceUri subnetUri) {
+		return injectionHelper.getAaiClient().get(subnetUri).asBean(org.onap.aai.domain.yang.Subnet.class);
+	}
 
 	public Optional<RouteTableReference> getRouteTable(AAIResourceUri rTableUri) {
 		return injectionHelper.getAaiClient().get(rTableUri).asBean(RouteTableReference.class);

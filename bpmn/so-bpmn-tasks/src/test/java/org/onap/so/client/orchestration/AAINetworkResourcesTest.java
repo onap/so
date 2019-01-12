@@ -340,4 +340,21 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 				eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())),
 				eq(AAIEdgeLabel.USES));
 	}
+	
+	@Test
+	public void getSubnetTest() throws Exception {
+		final String content = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiSubnetsMapped_to_aai.json")));
+		AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
+		Optional<org.onap.aai.domain.yang.Subnet> oSubnet = Optional.empty();
+		AAIResourceUri subnetUri = AAIUriFactory.createResourceUri(AAIObjectType.SUBNET, "ModelInvariantUUID", "serviceModelVersionId");
+		
+		doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
+		oSubnet = aaiNetworkResources.getSubnet(subnetUri);
+		verify(MOCK_aaiResourcesClient, times(1)).get(any(AAIResourceUri.class));
+		
+		if (oSubnet.isPresent()) {
+			org.onap.aai.domain.yang.Subnet subnet = oSubnet.get();
+			assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.Subnet.class).get(), sameBeanAs(subnet));
+		}
+	}
 }
