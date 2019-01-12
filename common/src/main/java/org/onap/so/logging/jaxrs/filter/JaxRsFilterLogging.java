@@ -40,6 +40,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.logger.LogConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -77,6 +78,7 @@ public class JaxRsFilterLogging implements ContainerRequestFilter,ContainerRespo
             mdcSetup.setInstanceUUID();
             mdcSetup.setEntryTimeStamp();
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.INPROGRESS.toString());
+            MDC.put(LogConstants.URI_BASE, containerRequest.getUriInfo().getBaseUri().toString());            
             logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
         } catch (Exception e) {
             logger.warn("Error in incoming JAX-RS Inteceptor", e);

@@ -61,7 +61,6 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
         setRequestId(headers);
         setInvocationId(headers);
         setServiceName(request);
-        setHttpUrl(request);
         setMDCPartnerName(headers);
         mdcSetup.setClientIPAddress(request);
         mdcSetup.setEntryTimeStamp();
@@ -111,14 +110,6 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
 	protected void setServiceName(HttpServletRequest request) {
         MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, request.getRequestURI());
     }
-	
-	protected void setHttpUrl(HttpServletRequest request) {
-		String queryParams = "";
-		if (request.getQueryString() != null) {
-			queryParams = "?" + request.getQueryString();
-		}
-        MDC.put(LogConstants.HTTP_URL, request.getRequestURL() + queryParams);
-    }	
 	
 	protected void setRequestId(Map<String, String> headers) {
         String requestId=headers.get(ONAPLogConstants.Headers.REQUEST_ID.toLowerCase());      

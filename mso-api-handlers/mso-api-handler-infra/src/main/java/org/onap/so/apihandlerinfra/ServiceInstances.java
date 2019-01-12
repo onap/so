@@ -62,6 +62,7 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
+import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
@@ -79,6 +80,7 @@ import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
 import org.onap.so.serviceinstancebeans.VfModules;
 import org.onap.so.serviceinstancebeans.Vnfs;
 import org.onap.so.utils.UUIDChecker;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -666,6 +668,8 @@ public class ServiceInstances {
 
 	public String getRequestUri(ContainerRequestContext context){
 		String requestUri = context.getUriInfo().getPath();
+		String httpUrl = MDC.get(LogConstants.URI_BASE).concat(requestUri);
+		MDC.put(LogConstants.HTTP_URL, httpUrl);
 		requestUri = requestUri.substring(requestUri.indexOf("/serviceInstantiation/") + 22);
 		return requestUri;
 	}

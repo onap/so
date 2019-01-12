@@ -68,6 +68,10 @@ public abstract class BaseTest {
 		return "http://localhost:" + port + uri;
 	}
 	
+	protected String createURLWithPort(String uri, int iPort) {
+		return "http://localhost:" + iPort + uri;
+	}	
+	
 	@After
 	public void tearDown(){
 		WireMock.reset();
