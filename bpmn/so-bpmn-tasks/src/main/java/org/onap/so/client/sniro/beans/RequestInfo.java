@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,6 +36,14 @@ public class RequestInfo implements Serializable{
 	String transactionId;
 	@JsonProperty("requestId")
 	String requestId;
+	@JsonProperty("callbackUrl")
+	String callbackUrl;
+	@JsonProperty("sourceId")
+	String sourceId = "mso";
+	@JsonProperty("requestType")
+	String requestType;
+	@JsonProperty("timeout")
+	long timeout;
 
 	public String getTransactionId(){
 		return transactionId;
@@ -51,6 +59,38 @@ public class RequestInfo implements Serializable{
 
 	public void setRequestId(String requestId){
 		this.requestId = requestId;
+	}
+
+	public String getCallbackUrl(){
+		return callbackUrl;
+	}
+
+	public void setCallbackUrl(String callbackUrl){
+		this.callbackUrl = callbackUrl;
+	}
+
+	public String getSourceId(){
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId){
+		this.sourceId = sourceId;
+	}
+
+	public String getRequestType(){
+		return requestType;
+	}
+
+	public void setRequestType(String requestType){
+		this.requestType = requestType;
+	}
+
+	public long getTimeout(){
+		return timeout;
+	}
+
+	public void setTimeout(long timeout){
+		this.timeout = timeout;
 	}
 
 

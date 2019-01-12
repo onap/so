@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,42 +37,38 @@ public class SniroManagerRequest implements Serializable{
 	private static final long serialVersionUID = -1541132882892163132L;
 	private static final MsoLogger log = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SniroManagerRequest.class);
 
-	@JsonRawValue
 	@JsonProperty("requestInfo")
-	private String requestInformation;
-	@JsonRawValue
+	private RequestInfo requestInformation;
 	@JsonProperty("serviceInfo")
-	private String serviceInformation;
-	@JsonRawValue
+	private ServiceInfo serviceInformation;
 	@JsonProperty("placementInfo")
-	private String placementInformation;
-	@JsonRawValue
+	private PlacementInfo placementInformation;
 	@JsonProperty("licenseInfo")
-	private String licenseInformation;
+	private LicenseInfo licenseInformation;
 
 
-	public String getRequestInformation() {
+	public RequestInfo getRequestInformation() {
 		return requestInformation;
 	}
-	public void setRequestInformation(String requestInformation) {
+	public void setRequestInformation(RequestInfo requestInformation) {
 		this.requestInformation = requestInformation;
 	}
-	public String getServiceInformation() {
+	public ServiceInfo getServiceInformation() {
 		return serviceInformation;
 	}
-	public void setServiceInformation(String serviceInformation) {
+	public void setServiceInformation(ServiceInfo serviceInformation) {
 		this.serviceInformation = serviceInformation;
 	}
-	public String getPlacementInformation() {
+	public PlacementInfo getPlacementInformation() {
 		return placementInformation;
 	}
-	public void setPlacementInformation(String placementInformation) {
+	public void setPlacementInformation(PlacementInfo placementInformation) {
 		this.placementInformation = placementInformation;
 	}
-	public String getLicenseInformation() {
+	public LicenseInfo getLicenseInformation() {
 		return licenseInformation;
 	}
-	public void setLicenseInformation(String licenseInformation) {
+	public void setLicenseInformation(LicenseInfo licenseInformation) {
 		this.licenseInformation = licenseInformation;
 	}
 

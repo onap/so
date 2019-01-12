@@ -20,7 +20,9 @@
 
 package org.onap.so.bpmn.servicedecomposition.homingobjects;
 
-public enum CandidateType {
+public enum CandidateType{
+
+
 	SERVICE_INSTANCE_ID("serviceInstanceId"),
 	CLOUD_REGION_ID("cloudRegionId"),
 	VNF_ID("vnfId"),

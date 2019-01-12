@@ -1,6 +1,59 @@
 {
-  "requestInfo" : {"sourceId":"mso","requestType":"create","requestId":"testRequestId","callbackUrl":"http://localhost:28080/mso/WorkflowMesssage/SNIROResponse/testRequestId","transactionId":"testRequestId","timeout":1800},
-  "serviceInfo" : {"modelInfo":{"modelName":"testModelName1","modelVersionId":"testModelUUID1","modelVersion":"testModelVersion1","modelInvariantId":"testModelInvariantUUID1"},"serviceRole":"testServiceRole1","serviceInstanceId":"testServiceInstanceId1","serviceName":"testServiceType1"},
-  "placementInfo" : {"subscriberInfo":{"subscriberName":"testCustomerName","globalSubscriberId":"testCustomerId"},"placementDemands":[{"resourceModelInfo":{"modelName":"testAllottedModelName1","modelVersionId":"testAllottedModelUuid1","modelVersion":"testAllottedModelVersion1","modelInvariantId":"testAllottedModelInvariantUuid1"},"resourceModuleName":"testAllottedModelInstanceName1","serviceResourceId":"testAllottedResourceId1"},{"resourceModelInfo":{"modelName":"testAllottedModelName2","modelVersionId":"testAllottedModelUuid2","modelVersion":"testAllottedModelVersion2","modelInvariantId":"testAllottedModelInvariantUuid2"},"resourceModuleName":"testAllottedModelInstanceName2","serviceResourceId":"testAllottedResourceId2"},{"resourceModelInfo":{"modelName":"testAllottedModelName3","modelVersionId":"testAllottedModelUuid3","modelVersion":"testAllottedModelVersion3","modelInvariantId":"testAllottedModelInvariantUuid3"},"resourceModuleName":"testAllottedModelInstanceName3","serviceResourceId":"testAllottedResourceId3"}],"requestParameters":{"aLaCarte":false,"subscriptionServiceType":"iptollfree"}},
-  "licenseInfo" : {"licenseDemands":[]}
+  "requestInfo" : {
+    "transactionId" : "testRequestId",
+    "requestId" : "testRequestId",
+    "callbackUrl" : "http://localhost:28080/mso/WorkflowMesssage/SNIROResponse/testRequestId",
+    "sourceId" : "mso",
+    "requestType" : "create",
+    "timeout" : 1800
+  },
+  "serviceInfo" : {
+    "modelInfo" : {
+      "modelName" : "testModelName1",
+      "modelVersionId" : "testModelUUID1",
+      "modelVersion" : "testModelVersion1",
+      "modelInvariantId" : "testModelInvariantUUID1"
+    },
+    "serviceRole" : "testServiceRole1",
+    "serviceInstanceId" : "testServiceInstanceId1",
+    "serviceName" : "testServiceType1"
+  },
+  "placementInfo" : {
+    "subscriberInfo" : {
+      "globalSubscriberId" : "testCustomerId",
+      "subscriberName" : "testCustomerName"
+    },
+    "placementDemands" : [ {
+      "serviceResourceId" : "testAllottedResourceId1",
+      "resourceModuleName" : "testAllottedModelInstanceName1",
+      "resourceModelInfo" : {
+        "modelName" : "testAllottedModelName1",
+        "modelVersionId" : "testAllottedModelUuid1",
+        "modelVersion" : "testAllottedModelVersion1",
+        "modelInvariantId" : "testAllottedModelInvariantUuid1"
+      }
+    }, {
+      "serviceResourceId" : "testAllottedResourceId2",
+      "resourceModuleName" : "testAllottedModelInstanceName2",
+      "resourceModelInfo" : {
+        "modelName" : "testAllottedModelName2",
+        "modelVersionId" : "testAllottedModelUuid2",
+        "modelVersion" : "testAllottedModelVersion2",
+        "modelInvariantId" : "testAllottedModelInvariantUuid2"
+      }
+    }, {
+      "serviceResourceId" : "testAllottedResourceId3",
+      "resourceModuleName" : "testAllottedModelInstanceName3",
+      "resourceModelInfo" : {
+        "modelName" : "testAllottedModelName3",
+        "modelVersionId" : "testAllottedModelUuid3",
+        "modelVersion" : "testAllottedModelVersion3",
+        "modelInvariantId" : "testAllottedModelInvariantUuid3"
+      }
+    } ],
+    "requestParameters" : {"subscriptionServiceType":"iptollfree","aLaCarte":false}
+  },
+  "licenseInfo" : {
+    "licenseDemands" : [ ]
+  }
 }
