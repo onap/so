@@ -1,5 +1,6 @@
 package org.onap.so.bpmn.common.validation;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -14,10 +15,11 @@ public interface FlowValidator {
 	
 	/**
 	 * Determines whether or not the workflow should be executed
+
 	 * 
 	 * @param execution
 	 * @return
 	 */
-	public boolean validate(BuildingBlockExecution execution);
+	public Optional<String> validate(BuildingBlockExecution execution);
 	
 }

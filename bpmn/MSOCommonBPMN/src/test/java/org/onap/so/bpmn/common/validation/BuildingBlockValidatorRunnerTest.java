@@ -76,7 +76,7 @@ public class BuildingBlockValidatorRunnerTest {
 			fail("exception not thrown");
 		} catch (BpmnError e) {
 			WorkflowException workflowException = (WorkflowException)execution.getVariable("WorkflowException");
-			assertEquals("Failed Validations:\norg.onap.so.bpmn.common.validation.MyPreValidatorTwo\norg.onap.so.bpmn.common.validation.MyPreValidatorOne", workflowException.getErrorMessage());
+			assertEquals("Failed Validations:\norg.onap.so.bpmn.common.validation.MyPreValidatorTwo: my-error-two\norg.onap.so.bpmn.common.validation.MyPreValidatorOne: my-error-one", workflowException.getErrorMessage());
 		}
 		runner.preValidate("test2", mock(BuildingBlockExecution.class));
 	}

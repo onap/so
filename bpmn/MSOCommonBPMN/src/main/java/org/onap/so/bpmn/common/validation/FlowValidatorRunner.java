@@ -99,24 +99,24 @@ public abstract class FlowValidatorRunner<S extends FlowValidator, E extends Flo
 	}
 	
 	protected boolean validate(List<? extends FlowValidator> validators, String bbName, BuildingBlockExecution execution) {
-		List<Pair<String, Boolean>> results = runValidations(validators, bbName, execution);
+		List<Pair<String, Optional<String>>> results = runValidations(validators, bbName, execution);
 		
 		if (!results.isEmpty()) {
 			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
-					"Failed Validations:\n" + results.stream().map(item -> item.getValue0()).collect(Collectors.joining("\n")));
+					"Failed Validations:\n" + results.stream().map(item -> String.format("%s: %s", item.getValue0(), item.getValue1().get())).collect(Collectors.joining("\n")));
 		}
 		
 		return true;
 		
 	}
-	protected List<Pair<String, Boolean>> runValidations(List<? extends FlowValidator> validators, String bbName, BuildingBlockExecution execution) {
+	protected List<Pair<String, Optional<String>>> runValidations(List<? extends FlowValidator> validators, String bbName, BuildingBlockExecution execution) {
 		
 		List<FlowValidator> filtered = filterValidators(validators, bbName);
 		
-		List<Pair<String,Boolean>> results = new ArrayList<>();
+		List<Pair<String,Optional<String>>> results = new ArrayList<>();
 		filtered.forEach(item -> results.add(new Pair<>(item.getClass().getName(), item.validate(execution))));
 		
-		return results.stream().filter(item -> item.getValue1().equals(false)).collect(Collectors.toList());
+		return results.stream().filter(item -> item.getValue1().isPresent()).collect(Collectors.toList());
 	}
 	
 	protected List<FlowValidator> filterValidators(List<? extends FlowValidator> validators, String bbName) {

@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.common.validation;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Priority;
@@ -38,8 +39,8 @@ public class WorkflowPreValidatorTwo implements PreWorkflowValidator {
 	}
 
 	@Override
-	public boolean validate(BuildingBlockExecution execution) {
-		return false;
+	public Optional<String> validate(BuildingBlockExecution exeuction) {
+		return Optional.of("my-error-two");
 	}
 
 }

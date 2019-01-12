@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.common.validation;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -35,8 +36,8 @@ public class MyPreValidatorFour implements PreBuildingBlockValidator {
 	}
 
 	@Override
-	public boolean validate(BuildingBlockExecution exeuction) {
-		return true;
+	public Optional<String> validate(BuildingBlockExecution exeuction) {
+		return Optional.of("my-error-four");
 	}
 
 }
