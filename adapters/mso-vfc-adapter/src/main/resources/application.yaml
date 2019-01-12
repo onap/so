@@ -27,12 +27,11 @@ management:
   endpoints:
     web:
       base-path: /manage
-  server:
-    servlet:
-      context-path: /manage
+      exposure:
+        include: "*"
   metrics:
     se-global-registry: false
     export:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
-        step: 1m # Step size (i.e. reporting frequency) to use.  
+        step: 1m # Step size (i.e. reporting frequency) to use.

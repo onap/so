@@ -34,9 +34,8 @@ management:
   endpoints:
     web:
       base-path: /manage
-  server:
-    servlet:
-      context-path: /manage
+      exposure:
+        include: "*"
   metrics:
     se-global-registry: false
     export:

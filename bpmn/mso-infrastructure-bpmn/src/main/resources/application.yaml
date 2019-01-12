@@ -23,8 +23,12 @@ camunda:
     job-execution:
       deployment-aware: true
 #Actuator
-management: 
-  context-path: /manage
+management:
+  endpoints:
+    web:
+      base-path: /manage
+      exposure:
+        include: "*"
   metrics:
     se-global-registry: false
     export:
