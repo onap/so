@@ -26,11 +26,11 @@ public class NamingRequestObjectBuilderTest {
 	public void elementMapperTest(){
 		// Expected element
 		Element expected = new Element();
-		expected.setExternalKey(instanceGroupId);
-		expected.setPolicyInstanceName(policyInstanceName);
-		expected.setNamingType(namingType);
-		expected.setResourceName(instanceGroupName);
-		expected.setNamingIngredientsZeroOrMore(nfNamingCode);
+		expected.put("external-key", instanceGroupId);
+		expected.put("policy-instance-name", policyInstanceName);
+		expected.put("naming-type", namingType);
+		expected.put("resource-name", instanceGroupName);
+		expected.put("nf-naming-code", nfNamingCode);
 		
 		// Actual element
 		Element actual = mapper.elementMapper(instanceGroupId, policyInstanceName, namingType, nfNamingCode, instanceGroupName);

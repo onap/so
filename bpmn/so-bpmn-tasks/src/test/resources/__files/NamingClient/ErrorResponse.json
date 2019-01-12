@@ -1,0 +1,6 @@
+{
+    "error": {
+        "errorId": "NELGEN-0003",
+        "message": "External Key is required and must be unique"
+    }
+}
