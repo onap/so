@@ -21,6 +21,8 @@
       <bpmn:extensionElements>
         <camunda:in source="SDNCRequest" target="SDNCRequest" />
         <camunda:out source="SDNCResponse" target="SDNCResponse" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1j9qa4p</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ck1p4o</bpmn:outgoing>
