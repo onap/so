@@ -57,11 +57,11 @@ public class BuildingBlockValidatorRunnerTest {
 		MyPreValidatorOne one = new MyPreValidatorOne();
 		MyPreValidatorTwo two = new MyPreValidatorTwo();
 		MyPreValidatorThree three = new MyPreValidatorThree();
-		List<BuildingBlockValidator> validators = Arrays.asList(one, two, three);
+		List<FlowValidator> validators = Arrays.asList(one, two, three);
 
-		List<BuildingBlockValidator> result = runner.filterValidators(validators, "test");
+		List<FlowValidator> result = runner.filterValidators(validators, "test");
 
-		List<BuildingBlockValidator> expected = Arrays.asList(two, one);
+		List<FlowValidator> expected = Arrays.asList(two, one);
 		
 		assertEquals(expected, result);
 	}
@@ -75,7 +75,7 @@ public class BuildingBlockValidatorRunnerTest {
 			runner.preValidate("test", execution);
 			fail("exception not thrown");
 		} catch (BpmnError e) {
-			WorkflowException workflowException = execution.getVariable("WorkflowException");
+			WorkflowException workflowException = (WorkflowException)execution.getVariable("WorkflowException");
 			assertEquals("Failed Validations:\norg.onap.so.bpmn.common.validation.MyPreValidatorTwo\norg.onap.so.bpmn.common.validation.MyPreValidatorOne", workflowException.getErrorMessage());
 		}
 		runner.preValidate("test2", mock(BuildingBlockExecution.class));

@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 public class MyPreValidatorTwo implements PreBuildingBlockValidator {
 
 	@Override
-	public Set<String> forBuildingBlock() {
+	public Set<String> forItems() {
 		return Collections.singleton("test");
 	}
 

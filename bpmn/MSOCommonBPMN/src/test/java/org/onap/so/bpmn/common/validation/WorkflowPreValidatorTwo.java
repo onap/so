@@ -25,7 +25,7 @@ import java.util.Set;
 
 import javax.annotation.Priority;
 
-import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.springframework.stereotype.Component;
 
 @Priority(1)
@@ -33,12 +33,12 @@ import org.springframework.stereotype.Component;
 public class WorkflowPreValidatorTwo implements PreWorkflowValidator {
 
 	@Override
-	public Set<String> forWorkflowAction() {
+	public Set<String> forItems() {
 		return Collections.singleton("test");
 	}
 
 	@Override
-	public boolean validate(DelegateExecution execution) {
+	public boolean validate(BuildingBlockExecution execution) {
 		return false;
 	}
 
