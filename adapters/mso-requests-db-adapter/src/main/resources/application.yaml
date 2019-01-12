@@ -50,13 +50,13 @@ flyway:
   user: ${DB_ADMIN_USERNAME}
   password: ${DB_ADMIN_PASSWORD}
 
+#Actuator
 management:
   endpoints:
     web:
       base-path: /manage
-  server:
-    servlet:
-      context-path: /manage
+      exposure:
+        include: "*"
   metrics:
     se-global-registry: false
     export:
