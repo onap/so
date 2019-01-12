@@ -53,7 +53,7 @@ import org.junit.Test;
 
 class VidUtilsTest {
 
-	def vfModuleReqJson = """
+	String vfModuleReqJson = """
 {
   "requestDetails": {
     "modelInfo": {
@@ -153,7 +153,7 @@ class VidUtilsTest {
   }
 }
 """
-	def bpmnReq1 = """
+	String bpmnReq1 = """
 {
 	"requestDetails": {
 		"modelInfo": {
@@ -220,7 +220,7 @@ class VidUtilsTest {
 }
 """
 
-	def vidUtilResp1 = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
+	String vidUtilResp1 = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
    <request-info>
       <action>CREATE_VF_MODULE_VOL</action>
       <source>VID</source>
@@ -256,7 +256,7 @@ class VidUtilsTest {
 </volume-request>
 """
 	
-	def bpmnReq2 = """
+	String bpmnReq2 = """
 {
 	"requestDetails": {
 		"modelInfo": {
@@ -305,7 +305,7 @@ class VidUtilsTest {
 }
 """
 	
-	def bpmnReqJsonVolumeSuppressRollbackTrue = """
+	String bpmnReqJsonVolumeSuppressRollbackTrue = """
 {
 	"requestDetails": {
 		"modelInfo": {
@@ -354,7 +354,7 @@ class VidUtilsTest {
 }
 """
 
-def bpmnReqJsonVolumeSuppressRollbackFalse = """
+String bpmnReqJsonVolumeSuppressRollbackFalse = """
 {
 	"requestDetails": {
 		"modelInfo": {
@@ -403,7 +403,7 @@ def bpmnReqJsonVolumeSuppressRollbackFalse = """
 }
 """
 
-def bpmnReqJsonVolumeSuppressRollbackNone = """
+String bpmnReqJsonVolumeSuppressRollbackNone = """
 {
 	"requestDetails": {
 		"modelInfo": {
@@ -451,7 +451,7 @@ def bpmnReqJsonVolumeSuppressRollbackNone = """
 }
 """
 
-	def bpmnReqJsonVfModuleSuppressRollbackTrue = """
+	String bpmnReqJsonVfModuleSuppressRollbackTrue = """
 {
 "requestDetails": {
 "modelInfo": {
@@ -518,7 +518,7 @@ def bpmnReqJsonVolumeSuppressRollbackNone = """
 }
 """
 
-def bpmnReqJsonVfModuleSuppressRollbackFalse = """
+String bpmnReqJsonVfModuleSuppressRollbackFalse = """
 {
 "requestDetails": {
 "modelInfo": {
@@ -585,7 +585,7 @@ def bpmnReqJsonVfModuleSuppressRollbackFalse = """
 }
 """
 
-def bpmnReqJsonVfModuleSuppressRollbackNone = """
+String bpmnReqJsonVfModuleSuppressRollbackNone = """
 {
 "requestDetails": {
 "modelInfo": {
@@ -650,7 +650,7 @@ def bpmnReqJsonVfModuleSuppressRollbackNone = """
 }
 }
 """
-	def vidUtilResp2 = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
+	String vidUtilResp2 = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
    <request-info>
       <action>CREATE_VF_MODULE_VOL</action>
       <source>VID</source>
@@ -672,7 +672,7 @@ def bpmnReqJsonVfModuleSuppressRollbackNone = """
 </volume-request>
 """
 	
-def vidUtilVolumeRespBackoutOnFailureFalse = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
+String vidUtilVolumeRespBackoutOnFailureFalse = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
    <request-info>
       <action>CREATE_VF_MODULE_VOL</action>
       <source>VID</source>
@@ -694,7 +694,7 @@ def vidUtilVolumeRespBackoutOnFailureFalse = """<volume-request xmlns="http://ww
 </volume-request>
 """
 
-def vidUtilVolumeRespBackoutOnFailureTrue = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
+String vidUtilVolumeRespBackoutOnFailureTrue = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
    <request-info>
       <action>CREATE_VF_MODULE_VOL</action>
       <source>VID</source>
@@ -716,7 +716,7 @@ def vidUtilVolumeRespBackoutOnFailureTrue = """<volume-request xmlns="http://www
 </volume-request>
 """
 
-def vidUtilVolumeRespBackoutOnFailureEmpty = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
+String vidUtilVolumeRespBackoutOnFailureEmpty = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
    <request-info>
       <action>CREATE_VF_MODULE_VOL</action>
       <source>VID</source>
@@ -738,7 +738,7 @@ def vidUtilVolumeRespBackoutOnFailureEmpty = """<volume-request xmlns="http://ww
 </volume-request>
 """
 
-def vidUtilVfModuleRespBackoutOnFailureFalse = """<vnf-request>
+String vidUtilVfModuleRespBackoutOnFailureFalse = """<vnf-request>
    <request-info>
       <request-id>test-request-id-123</request-id>
       <action>CREATE_VF_MODULE</action>
@@ -767,7 +767,7 @@ def vidUtilVfModuleRespBackoutOnFailureFalse = """<vnf-request>
 </vnf-request>
 """
 
-def vidUtilVfModuleRespBackoutOnFailureTrue = """<vnf-request>
+String vidUtilVfModuleRespBackoutOnFailureTrue = """<vnf-request>
    <request-info>
       <request-id>test-request-id-123</request-id>
       <action>CREATE_VF_MODULE</action>
@@ -796,7 +796,7 @@ def vidUtilVfModuleRespBackoutOnFailureTrue = """<vnf-request>
 </vnf-request>
 """
 
-def vidUtilVfModuleRespBackoutOnFailureEmpty = """<vnf-request>
+String vidUtilVfModuleRespBackoutOnFailureEmpty = """<vnf-request>
    <request-info>
       <request-id>test-request-id-123</request-id>
       <action>CREATE_VF_MODULE</action>

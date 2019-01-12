@@ -1003,7 +1003,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			svcInstId = serviceInstanceId
 		}
 
-		def createVnfARequest = """
+		String createVnfARequest = """
 		<createVfModuleRequest>
 		<cloudSiteId>${MsoUtils.xmlEscape(cloudSiteId)}</cloudSiteId>
 		<tenantId>${MsoUtils.xmlEscape(tenantId)}</tenantId>

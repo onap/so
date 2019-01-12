@@ -2954,7 +2954,7 @@ String sdncAdapterWorkflowAssignResponse =
 
 			println "************ preProcessRequest_Payload ************* "
 
-		  def networkModelInfo = """{"modelUuid": "sn5256d1-5a33-55df-13ab-12abad84e111",
+		  String networkModelInfo = """{"modelUuid": "sn5256d1-5a33-55df-13ab-12abad84e111",
                                      "modelName": "CONTRAIL_EXTERNAL",
 									 "modelType": "CONTRAIL_EXTERNAL",
 									 "modelVersion": "1",
@@ -2962,7 +2962,7 @@ String sdncAdapterWorkflowAssignResponse =
 									 "modelInvariantUuid": "sn5256d1-5a33-55df-13ab-12abad84e764"
 									}""".trim()
 
-		 def serviceModelInfo = """{"modelUuid": "36a3a8ea-49a6-4ac8-b06c-89a54544b9b6",
+		 String serviceModelInfo = """{"modelUuid": "36a3a8ea-49a6-4ac8-b06c-89a54544b9b6",
                                      "modelName": "HNGW Protected OAM",
 									 "modelType": "service",
 									 "modelVersion": "1.0",

@@ -424,7 +424,7 @@ public class SDNCAdapterTest {
 </rest:payload>
 			</sdncadaptersc:RequestData></aetgt:SDNCAdapterRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>"""
 
-def sdncAdapterResponse = """<sdncadapterworkflow:SDNCAdapterWorkflowResponse xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
+String sdncAdapterResponse = """<sdncadapterworkflow:SDNCAdapterWorkflowResponse xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
 <sdncadapterworkflow:response-data>
 <tag0:CallbackHeader xmlns:tag0="http://org.onap/workflow/sdnc/adapter/schema/v1">
    <tag0:RequestId>39542e39-ccc3-4d1a-8b79-04ce88526613</tag0:RequestId>
@@ -439,7 +439,7 @@ def sdncAdapterResponse = """<sdncadapterworkflow:SDNCAdapterWorkflowResponse xm
 </sdncadapterworkflow:SDNCAdapterWorkflowResponse>
 """
 
-def workflowErrorResponse = """<aetgt:WorkflowException xmlns:aetgt="http://org.onap/so/workflow/schema/v1">
+String workflowErrorResponse = """<aetgt:WorkflowException xmlns:aetgt="http://org.onap/so/workflow/schema/v1">
 								<aetgt:ErrorMessage>Received error from SDN-C: Error processing request to SDNC. Not Found.
 			https://localhost:8443/restconf/config/L3SDN-API:services/layer3-service-list/MVM%2FVLXP%2F000855%2F%2FShakeout.
 			SDNC Returned-[error-type:application, error-tag:data-missing,

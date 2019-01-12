@@ -41,7 +41,7 @@ import org.junit.Test
 
 class TrinityExceptionUtilTest {
 	
-	def aotsFault ="""<n1:Fault xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:n1="http://csi.cingular.com/CSI/Namespaces/OneTicketingSystem/InfrastructureCommon/Types/Public/SoapFault.xsd" xmlns:cer="http://csi.cingular.com/CSI/Namespaces/OneTicketingSystem/InfrastructureCommon/Types/Public/ErrorResponse.xsd" xsi:schemaLocation="http://csi.cingular.com/CSI/Namespaces/OneTicketingSystem/InfrastructureCommon/Types/Public/SoapFault.xsd SoapFault-CDM.xsd">
+	String aotsFault ="""<n1:Fault xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:n1="http://csi.cingular.com/CSI/Namespaces/OneTicketingSystem/InfrastructureCommon/Types/Public/SoapFault.xsd" xmlns:cer="http://csi.cingular.com/CSI/Namespaces/OneTicketingSystem/InfrastructureCommon/Types/Public/ErrorResponse.xsd" xsi:schemaLocation="http://csi.cingular.com/CSI/Namespaces/OneTicketingSystem/InfrastructureCommon/Types/Public/SoapFault.xsd SoapFault-CDM.xsd">
 	<n1:faultcode>xml:space</n1:faultcode>
 	<n1:faultstring>String</n1:faultstring>
 	<n1:faultactor>http://test.com</n1:faultactor>
@@ -113,7 +113,7 @@ class TrinityExceptionUtilTest {
 </requestError>
 </Fault>
 			"""	
-		def errorString = """<requestError>
+		String errorString = """<requestError>
 <serviceException>
 <messageId>SVC3002</messageId>
 <text>Error writing output performing %1 on %2 (msg=%3) (ec=%4)</text>

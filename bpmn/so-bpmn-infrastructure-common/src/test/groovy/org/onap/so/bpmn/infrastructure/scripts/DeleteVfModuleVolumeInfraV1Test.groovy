@@ -65,7 +65,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 		when(deleteVfModuleVolumeInfraV1.getAAIClient()).thenReturn(client)
 	}
 
-	def deleteVnfAdapterRequestXml = """<deleteVolumeGroupRequest>
+	String deleteVnfAdapterRequestXml = """<deleteVolumeGroupRequest>
    <cloudSiteId>RDM2WAGPLCP</cloudSiteId>
    <tenantId>fba1bd1e195a404cacb9ce17a9b2b421</tenantId>
    <volumeGroupId>78987</volumeGroupId>
@@ -79,7 +79,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
    <notificationUrl>http://localhost:28080/mso/WorkflowMessage/VNFAResponse/ebb9ef7b-a6a5-40e6-953e-f868f1767677</notificationUrl>
 </deleteVolumeGroupRequest>"""
 	
-	def dbRequestXml = """<soapenv:Envelope xmlns:req="http://org.onap.so/requestsdb"
+	String dbRequestXml = """<soapenv:Envelope xmlns:req="http://org.onap.so/requestsdb"
                   xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -94,7 +94,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
    </soapenv:Body>
 </soapenv:Envelope>"""
 	
-	def completionRequestXml = """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+	String completionRequestXml = """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                             xmlns:ns="http://org.onap/so/request/types/v1"
                             xmlns="http://org.onap/so/infra/vnf-request/v1">
    <request-info>
@@ -106,7 +106,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
    <aetgt:mso-bpel-name>BPMN VF Module Volume action: DELETE</aetgt:mso-bpel-name>
 </aetgt:MsoCompletionRequest>"""
 	
-	def falloutHandlerRequestXml = """<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+	String falloutHandlerRequestXml = """<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                              xmlns:ns="http://org.onap/so/request/types/v1"
                              xmlns="http://org.onap/so/infra/vnf-request/v1">
    <request-info>

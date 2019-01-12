@@ -79,7 +79,7 @@ public class VnfAdapterRestV1Test {
 
 	}
 
-	def rollbackReq = """
+	String rollbackReq = """
 <rollbackVolumeGroupRequest>
    <volumeGroupRollback>
       <volumeGroupId>8a07b246-155e-4b08-b56e-76e98a3c2d66</volumeGroupId>

@@ -180,7 +180,7 @@ public class SDNCAdapterUtilsTest {
 		def rc = respcode
 		def rm = respmsg
 		
-		def output = """
+		String output = """
 <output xmlns="org:onap:sdnc:northbound:generic-resource">
 		<svc-request-id>8b46e36e-b44f-4085-9404-427be1bc8a3</svc-request-id>
 		<response-code>${MsoUtils.xmlEscape(rc)}</response-code>

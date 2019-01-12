@@ -355,7 +355,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			Boolean success = (Boolean) execution.getVariable("FH_success")
 			String out = success ? "Fallout Handler Succeeded" : "Fallout Handler Failed";
 	
-			def falloutHandlerResponse = """
+			String falloutHandlerResponse = """
 					<workflow:FalloutHandlerResponse xmlns:workflow="http://org.onap/so/workflow/schema/v1">
 					   <workflow:out>${MsoUtils.xmlEscape(out)}</workflow:out>
 					</workflow:FalloutHandlerResponse>

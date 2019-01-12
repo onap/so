@@ -210,7 +210,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 				orchestrationStatusEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'orchestration-status')
 			}
 
-			def payload = """
+			String payload = """
 					{	${personaModelVersionEntry}
 						${ipv4OamAddressEntry}
 						${managementV6AddressEntry}

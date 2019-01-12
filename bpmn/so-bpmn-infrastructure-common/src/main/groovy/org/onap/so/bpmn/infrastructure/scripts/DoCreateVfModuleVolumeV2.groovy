@@ -445,7 +445,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 
 	public String buildRollbackVolumeGroupRequestXml(volumeGroupId, cloudSiteId, tenantId, requestId, serviceId, messageId, notificationUrl) {
 
-		def request = """
+		String request = """
 		<rollbackVolumeGroupRequest>
 			<volumeGroupRollback>
 			   <volumeGroupId>${MsoUtils.xmlEscape(volumeGroupId)}</volumeGroupId>

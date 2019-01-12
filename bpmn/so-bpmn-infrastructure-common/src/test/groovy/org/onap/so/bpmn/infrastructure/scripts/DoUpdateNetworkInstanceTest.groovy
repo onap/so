@@ -1795,7 +1795,7 @@ String rollbackNetworkRequest =
 		//@Ignore
 		public void preProcessRequest_vPERNetworkRequest() {
 
-			def networkModelInfo = """{"modelUuid": "sn5256d1-5a33-55df-13ab-12abad84e111",
+			String networkModelInfo = """{"modelUuid": "sn5256d1-5a33-55df-13ab-12abad84e111",
                                      "modelName": "CONTRAIL_EXTERNAL",
 									 "modelType": "CONTRAIL_EXTERNAL",
 									 "modelVersion": "1",
