@@ -144,7 +144,7 @@ class SDNCAdapterUtils {
 		def prefix = execution.getVariable('prefix')
 		def request = taskProcessor.getVariable(execution, prefix+'Request')
 
-		def requestInformation = """<request-information>
+		String requestInformation = """<request-information>
 										<request-id>${MsoUtils.xmlEscape(execution.getVariable("mso-request-id"))}</request-id>
 										<request-action>torepl</request-action>
 										<source>${MsoUtils.xmlEscape(execution.getVariable(prefix+"source"))}</source>
@@ -172,7 +172,7 @@ class SDNCAdapterUtils {
 
 		//Build Service Information
 		// Send serviceName from CANOPI to sdnc for service-type
-		def serviceInformation = """<service-information>
+		String serviceInformation = """<service-information>
 									      <service-type>${MsoUtils.xmlEscape(execution.getVariable(prefix+"serviceName"))}</service-type>
 									      <service-instance-id>${MsoUtils.xmlEscape(svcInstanceId)}</service-instance-id>
 									      <subscriber-name>${MsoUtils.xmlEscape(execution.getVariable(prefix+"subscriberName"))}</subscriber-name>

@@ -60,7 +60,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 	@Captor
 	static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
-	def String volumeRollbackRequest = """
+	String volumeRollbackRequest = """
 <rollbackVolumeGroupRequest>
    <volumeGroupRollback>
       <volumeGroupId>171907d6-cdf0-4e08-953d-81ee104005a7</volumeGroupId>
@@ -79,7 +79,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 </rollbackVolumeGroupRequest>
 	"""
 	
-	def String volumeRollbackRequestWithStackId = """
+	String volumeRollbackRequestWithStackId = """
 <rollbackVolumeGroupRequest>
    <volumeGroupRollback>
       <volumeGroupId>171907d6-cdf0-4e08-953d-81ee104005a7</volumeGroupId>

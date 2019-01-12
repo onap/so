@@ -116,7 +116,7 @@ class VidUtils {
 		}
 		def modelCustomizationId = requestMap.requestDetails?.modelInfo?.modelCustomizationUuid ?: ''
 		
-		def xmlReq = """
+		String xmlReq = """
 		<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
 			<request-info>
 				<action>${MsoUtils.xmlEscape(action)}</action>
@@ -251,7 +251,7 @@ class VidUtils {
 			//'sdncVersion' = current, '1610' (non-RPC SDNC) or '1702' (RPC SDNC)
 			def sdncVersion =  execution.getVariable("sdncVersion")
 			
-			def xmlReq = """
+			String xmlReq = """
 			<network-request xmlns="http://www.w3.org/2001/XMLSchema"> 
 			 <request-info> 
 	            <request-id>${MsoUtils.xmlEscape(requestId)}</request-id>
@@ -393,7 +393,7 @@ class VidUtils {
 		   userParamsNode = buildUserParams(userParams)
 		}
 		
-		def xmlReq = """
+		String xmlReq = """
 		<network-request xmlns="http://www.w3.org/2001/XMLSchema"> 
 		 <request-info> 
             <request-id>${MsoUtils.xmlEscape(requestId)}</request-id>
@@ -512,7 +512,7 @@ class VidUtils {
 		def personaModelVersion = requestMap.requestDetails?.modelInfo?.modelUuid ?: ''
 		def modelCustomizationId = requestMap.requestDetails?.modelInfo?.modelCustomizationUuid ?: ''
 		
-		def xmlReq = """
+		String xmlReq = """
 		<vnf-request>
 			<request-info>
 				<request-id>${MsoUtils.xmlEscape(requestId)}</request-id>

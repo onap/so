@@ -30,7 +30,7 @@ import org.junit.Test;
 
 class NetworkUtilsTest {
 
-	def volumeRequestXml = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
+	String volumeRequestXml = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
    <request-info>
       <action>CREATE_VF_MODULE_VOL</action>
       <source>VID</source>

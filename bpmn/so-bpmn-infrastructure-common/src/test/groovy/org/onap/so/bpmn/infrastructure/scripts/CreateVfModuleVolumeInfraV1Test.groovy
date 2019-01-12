@@ -47,7 +47,7 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	
-	def jsonRequest = """
+	String jsonRequest = """
 {
 	"requestDetails": {
 		"modelInfo": {
@@ -114,7 +114,7 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 }
 """
 	
-	def volumeRequestXml = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
+	String volumeRequestXml = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
    <request-info>
       <action>CREATE_VF_MODULE_VOL</action>
       <source>VID</source>
@@ -149,7 +149,7 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
    </volume-params>
 </volume-request>"""
 	 	
-	def completeMsoRequestXml = """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+	String completeMsoRequestXml = """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                             xmlns:ns="http://org.onap/so/request/types/v1"
                             xmlns="http://org.onap/so/infra/vnf-request/v1">
    <request-info>

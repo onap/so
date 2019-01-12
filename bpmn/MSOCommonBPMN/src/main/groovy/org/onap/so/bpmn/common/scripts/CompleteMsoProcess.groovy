@@ -243,7 +243,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 		msoLogger.trace('Entered ' + method)
 		try {
 
-			def msoCompletionResponse = """
+			String msoCompletionResponse = """
 			<sdncadapterworkflow:MsoCompletionResponse xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
 			   <sdncadapterworkflow:out>BPEL ${execution.getVariable("CMSO_mso-bpel-name")} FAILED</sdncadapterworkflow:out>
 			</sdncadapterworkflow:MsoCompletionResponse>
@@ -275,7 +275,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 		//		msoLogger.trace("Started CompleteMsoProcess PostProcessRequest Method ");
 				try {
 
-					def msoCompletionResponse = """
+					String msoCompletionResponse = """
 			<sdncadapterworkflow:MsoCompletionResponse xmlns:sdncadapterworkflow="http://ecomp.com/mso/workflow/schema/v1">
 			   <sdncadapterworkflow:out>BPEL ${execution.getVariable("CMSO_mso-bpel-name")} completed</sdncadapterworkflow:out>
 			</sdncadapterworkflow:MsoCompletionResponse>
