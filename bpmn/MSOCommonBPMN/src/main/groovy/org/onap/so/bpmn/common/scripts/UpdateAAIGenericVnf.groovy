@@ -183,7 +183,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 				}
 
 				// Construct payload
-				personaModelVersionEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'model-version-id')
+				personaModelVersionEntry = updateGenericVnfNode(origRequest, 'model-version-id')
 			}
 
 			// Handle ipv4-oam-address
@@ -191,7 +191,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			String ipv4OamAddressEntry = ""
 			if (ipv4OamAddress != null) {
 				// Construct payload
-				ipv4OamAddressEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'ipv4-oam-address')
+				ipv4OamAddressEntry = updateGenericVnfNode(origRequest, 'ipv4-oam-address')
 			}
 
 			// Handle management-v6-address
@@ -199,7 +199,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			String managementV6AddressEntry = ""
 			if (managementV6Address != null) {
 				// Construct payload
-				managementV6AddressEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'management-v6-address')
+				managementV6AddressEntry = updateGenericVnfNode(origRequest, 'management-v6-address')
 			}
 			
 			// Handle orchestration-status
@@ -207,7 +207,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			String orchestrationStatusEntry = ""
 			if (orchestrationStatus != null) {
 				// Construct payload
-				orchestrationStatusEntry = updateGenericVnfNode(origRequest, genericVnfNode, 'orchestration-status')
+				orchestrationStatusEntry = updateGenericVnfNode(origRequest, 'orchestration-status')
 			}
 
 			String payload = """
@@ -243,7 +243,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 	 * @param genericVnf Current Generic VNF retrieved from AAI.
 	 * @param element Name of element to be inserted.
 	 */
-	public String updateGenericVnfNode(String origRequest, Node genericVnfNode, String elementName) {
+	public String updateGenericVnfNode(String origRequest, String elementName) {
 
 		if (!utils.nodeExists(origRequest, elementName)) {
 			return ""

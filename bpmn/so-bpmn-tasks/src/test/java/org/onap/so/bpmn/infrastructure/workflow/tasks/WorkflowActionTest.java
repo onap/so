@@ -1200,6 +1200,24 @@ public class WorkflowActionTest extends BaseTaskTest {
 		assertEquals("111",result.get(2).getResourceId());
 	}
 	
+	@Test
+	public void sortVfModulesByBaseLastTest(){
+		List<Resource> resources = new ArrayList<>();
+		Resource resource1 = new Resource(WorkflowType.VFMODULE,"111",false);
+		resource1.setBaseVfModule(true);
+		resources.add(resource1);
+		Resource resource2 = new Resource(WorkflowType.VFMODULE,"222",false);
+		resource2.setBaseVfModule(false);
+		resources.add(resource2);
+		Resource resource3 = new Resource(WorkflowType.VFMODULE,"333",false);
+		resource3.setBaseVfModule(false);
+		resources.add(resource3);
+		List<Resource> result = workflowAction.sortVfModulesByBaseLast(resources);
+		assertEquals("333",result.get(0).getResourceId());
+		assertEquals("222",result.get(1).getResourceId());
+		assertEquals("111",result.get(2).getResourceId());
+	}
+	
 	private List<OrchestrationFlow> createFlowList (String... flowNames){
 		List<OrchestrationFlow> result = new ArrayList<>();
 		for(String flowName : flowNames){

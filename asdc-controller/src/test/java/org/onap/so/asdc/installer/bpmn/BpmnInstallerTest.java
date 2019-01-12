@@ -28,6 +28,9 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.transaction.Transactional;
 
@@ -40,23 +43,31 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 @Transactional
 public class BpmnInstallerTest {
 	
     private BpmnInstaller bpmnInstaller = new BpmnInstaller();
     
+    @Rule
+	public TemporaryFolder folder= new TemporaryFolder();
+
     @Before
     public void init() throws Exception {
-    	System.setProperty("mso.config.path", "src/test/resources");
+    	System.setProperty("mso.config.path", folder.getRoot().toString());
     }
     
     @Test
     public void buildMimeMultiPart_Test() throws Exception {
-    	
+    	Path tempDirectoryPath = Paths.get(folder.getRoot().toString(), "ASDC");
+    	Path tempFilePath = Paths.get(tempDirectoryPath.toAbsolutePath().toString(), "TestBB.bpmn");
+    	Files.createDirectories(tempDirectoryPath);
+    	Files.createFile(tempFilePath);
     	HttpEntity entity = bpmnInstaller.buildMimeMultipart("TestBB.bpmn");    	
-    	String mimeMultipartBodyFilePath = System.getProperty("mso.config.path") + "/mime-multipart-body.txt";
+    	String mimeMultipartBodyFilePath = "src/test/resources" + "/mime-multipart-body.txt";
     	
     	File mimeMultipartBody = new File(mimeMultipartBodyFilePath);
     	InputStream expectedContent = new FileInputStream(mimeMultipartBody);
@@ -70,7 +81,7 @@ public class BpmnInstallerTest {
     public void installBpmn_Test() throws Exception {
     	HttpResponse response = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, ""));
     	HttpClient httpClient = mock(HttpClient.class);
-    	String csarPath = System.getProperty("mso.config.path") + "/resource-examples/WorkflowBpmn/service-CxSvc-csar.csar";
+    	String csarPath = "src/test/resources" + "/resource-examples/WorkflowBpmn/service-CxSvc-csar.csar";
     	doReturn(response).when(httpClient).execute(any(HttpPost.class));
     	bpmnInstaller.installBpmn(csarPath);
     }

@@ -344,6 +344,18 @@ public class WorkflowAction {
 		}
 		return vfModuleResources;
 	}
+	
+	protected List<Resource> sortVfModulesByBaseLast(List<Resource> vfModuleResources) {
+		int count = 0;
+		for(Resource resource : vfModuleResources){
+			if(resource.isBaseVfModule()){
+				Collections.swap(vfModuleResources, vfModuleResources.size()-1, count);
+				break;
+		}
+			count++;
+		}
+		return vfModuleResources;
+	}
 
 	private void updateResourceIdsFromAAITraversal(List<ExecuteBuildingBlock> flowsToExecute,
 			List<Resource> resourceCounter, List<Pair<WorkflowType, String>> aaiResourceIds, String serviceInstanceId) {
@@ -969,8 +981,14 @@ public class WorkflowAction {
 							requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, true, resource.getVirtualLinkKey(), false));
 				}
 			} else if (orchFlow.getFlowName().contains(VFMODULE)) {
-				List<Resource> vfModuleResourcesSorted = sortVfModulesByBaseFirst(resourceCounter.stream().filter(x -> WorkflowType.VFMODULE == x.getResourceType())
+				List<Resource> vfModuleResourcesSorted = null;
+				if(requestAction.equals("createInstance")||requestAction.equals("assignInstance")||requestAction.equals("activateInstance")){
+					vfModuleResourcesSorted = sortVfModulesByBaseFirst(resourceCounter.stream().filter(x -> WorkflowType.VFMODULE == x.getResourceType())
 						.collect(Collectors.toList()));
+				}else{
+					vfModuleResourcesSorted = sortVfModulesByBaseLast(resourceCounter.stream().filter(x -> WorkflowType.VFMODULE == x.getResourceType())
+							.collect(Collectors.toList()));
+				}
 				for (int i = 0; i < vfModuleResourcesSorted.size(); i++) {
 					flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, vfModuleResourcesSorted.get(i), apiVersion, resourceId,
 							requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, false, null, false));
