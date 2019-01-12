@@ -21,23 +21,24 @@
 package org.onap.so.bpmn.common.validation;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
-import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WorkflowPreValidatorOne implements PreWorkflowValidator {
 
 	@Override
-	public Set<String> forWorkflowAction() {
+	public Set<String> forItems() {
 		
 		return Collections.singleton("test");
 	}
 
 	@Override
-	public boolean validate(DelegateExecution exeuction) {
-		return false;
+	public Optional<String> validate(BuildingBlockExecution exeuction) {
+		return Optional.of("my-error-one");
 	}
 
 }

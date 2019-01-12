@@ -36,7 +36,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -57,11 +56,11 @@ public class WorkflowValidatorRunnerTest {
 		
 		WorkflowPreValidatorOne one = new WorkflowPreValidatorOne();
 		WorkflowPreValidatorTwo two = new WorkflowPreValidatorTwo();		
-		List<WorkflowValidator> validators = Arrays.asList(one, two);
+		List<FlowValidator> validators = Arrays.asList(one, two);
 
-		List<WorkflowValidator> result = runner.filterValidators(validators, "test");
+		List<FlowValidator> result = runner.filterValidators(validators, "test");
 
-		List<WorkflowValidator> expected = Arrays.asList(two, one);
+		List<FlowValidator> expected = Arrays.asList(two, one);
 		
 		assertEquals(expected, result);
 	}
@@ -76,7 +75,7 @@ public class WorkflowValidatorRunnerTest {
 			fail("exception not thrown");
 		} catch (BpmnError e) {
 			WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
-			assertEquals("Failed Validations:\norg.onap.so.bpmn.common.validation.WorkflowPreValidatorTwo\norg.onap.so.bpmn.common.validation.WorkflowPreValidatorOne", workflowException.getErrorMessage());
+			assertEquals("Failed Validations:\norg.onap.so.bpmn.common.validation.WorkflowPreValidatorTwo: my-error-two\norg.onap.so.bpmn.common.validation.WorkflowPreValidatorOne: my-error-one", workflowException.getErrorMessage());
 		}
 		runner.preValidate("test2", mock(DelegateExecution.class));
 	}

@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.common.validation;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -30,14 +31,14 @@ import org.springframework.stereotype.Component;
 public class MyPreValidatorOne implements PreBuildingBlockValidator {
 
 	@Override
-	public Set<String> forBuildingBlock() {
+	public Set<String> forItems() {
 		
 		return Collections.singleton("test");
 	}
 
 	@Override
-	public boolean validate(BuildingBlockExecution exeuction) {
-		return false;
+	public Optional<String> validate(BuildingBlockExecution exeuction) {
+		return Optional.of("my-error-one");
 	}
 
 }

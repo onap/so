@@ -20,6 +20,6 @@
 
 package org.onap.so.bpmn.common.validation;
 
-public interface PreWorkflowValidator extends WorkflowValidator {
+public interface PreWorkflowValidator extends FlowValidator {
 
 }
