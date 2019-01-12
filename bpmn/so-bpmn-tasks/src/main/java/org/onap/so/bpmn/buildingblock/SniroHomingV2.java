@@ -23,6 +23,7 @@ package org.onap.so.bpmn.buildingblock;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -57,7 +58,14 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.sniro.SniroClient;
 import static org.onap.so.client.sniro.SniroValidator.*;
 
+import org.onap.so.client.sniro.beans.Demand;
+import org.onap.so.client.sniro.beans.LicenseInfo;
+import org.onap.so.client.sniro.beans.ModelInfo;
+import org.onap.so.client.sniro.beans.PlacementInfo;
+import org.onap.so.client.sniro.beans.RequestInfo;
+import org.onap.so.client.sniro.beans.ServiceInfo;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
+import org.onap.so.client.sniro.beans.SubscriberInfo;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,27 +130,27 @@ public class SniroHomingV2 {
 				timeout = env.getProperty("sniro.manager.timeout", "PT30M");
 			}
 
-			SniroManagerRequest request = new SniroManagerRequest(); //TODO Add additional pojos for each section
+			SniroManagerRequest request = new SniroManagerRequest();
 
-			JSONObject requestInfo = buildRequestInfo(requestId, timeout);
-			request.setRequestInformation(requestInfo.toString());
+			RequestInfo requestInfo = buildRequestInfo(requestId, timeout);
+			request.setRequestInformation(requestInfo);
 
-			JSONObject serviceInfo = buildServiceInfo(serviceInstance);
-			request.setServiceInformation(serviceInfo.toString());
+			ServiceInfo serviceInfo = buildServiceInfo(serviceInstance);
+			request.setServiceInformation(serviceInfo);
 
-			JSONObject placementInfo = buildPlacementInfo(customer, requestParams);
+			PlacementInfo placementInfo = buildPlacementInfo(customer, requestParams);
 
-			JSONArray placementDemands = buildPlacementDemands(serviceInstance);
-			placementInfo.put("placementDemands", placementDemands);
-			request.setPlacementInformation(placementInfo.toString());
+			List<Demand> placementDemands = buildPlacementDemands(serviceInstance);
+			placementInfo.setDemands(placementDemands);
+			request.setPlacementInformation(placementInfo);
 
-			JSONObject licenseInfo = new JSONObject();
+			LicenseInfo licenseInfo = new LicenseInfo();
 
-			JSONArray licenseDemands = buildLicenseDemands(serviceInstance);
-			licenseInfo.put("licenseDemands", licenseDemands);
-			request.setLicenseInformation(licenseInfo.toString());
+			List<Demand> licenseDemands = buildLicenseDemands(serviceInstance);
+			licenseInfo.setDemands(licenseDemands);
+			request.setLicenseInformation(licenseInfo);
 
-			if(placementDemands.length() > 0 || licenseDemands.length() > 0){
+			if(placementDemands.size() > 0 || licenseDemands.size() > 0){
 				client.postDemands(request);
 			}else{
 				log.debug(SERVICE_MISSING_DATA + "resources eligible for homing or licensing");
@@ -222,18 +230,21 @@ public class SniroHomingV2 {
 	 *
 	 * @throws Exception
 	 */
-	private JSONObject buildRequestInfo(String requestId, String timeout) throws Exception{
+	private RequestInfo buildRequestInfo(String requestId, String timeout) throws Exception{
 		log.trace("Building request information");
-		JSONObject requestInfo = new JSONObject();
+		RequestInfo requestInfo = new RequestInfo();
 		if(requestId != null){
 			String host = env.getProperty("mso.workflow.message.endpoint");
 			String callbackUrl = host + "/" + UriUtils.encodePathSegment("SNIROResponse", "UTF-8") + "/" + UriUtils.encodePathSegment(requestId, "UTF-8");
 
 			Duration d = Duration.parse(timeout);
-			long timeoutSeconds = d.getSeconds();
 
-			requestInfo.put("transactionId", requestId).put("requestId", requestId).put("callbackUrl", callbackUrl).put("sourceId", "mso").put("requestType", "create")
-					.put("timeout", timeoutSeconds);
+			requestInfo.setTransactionId(requestId);
+			requestInfo.setRequestId(requestId);
+			requestInfo.setCallbackUrl(callbackUrl);
+			requestInfo.setRequestType("create");
+			requestInfo.setTimeout(d.getSeconds());
+
 		} else{
 			throw new BpmnError(UNPROCESSABLE, "Request Context does not contain: requestId");
 		}
@@ -244,19 +255,19 @@ public class SniroHomingV2 {
 	 * Builds the request information section for the homing/licensing request
 	 *
 	 */
-	private JSONObject buildServiceInfo(ServiceInstance serviceInstance){
+	private ServiceInfo buildServiceInfo(ServiceInstance serviceInstance){
 		log.trace("Building service information");
-		JSONObject info = new JSONObject();
+		ServiceInfo info = new ServiceInfo();
 		ModelInfoServiceInstance modelInfo = serviceInstance.getModelInfoServiceInstance();
 		if(isNotBlank(modelInfo.getModelInvariantUuid()) && isNotBlank(modelInfo.getModelUuid())){
-			info.put("serviceInstanceId", serviceInstance.getServiceInstanceId());
+			info.setServiceInstanceId(serviceInstance.getServiceInstanceId());
 			if(modelInfo.getServiceType() != null && modelInfo.getServiceType().length() > 0){ //temp solution
-				info.put("serviceName", modelInfo.getServiceType());
+				info.setServiceName(modelInfo.getServiceType());
 			}
 			if(modelInfo.getServiceRole() != null){
-				info.put("serviceRole", modelInfo.getServiceRole());
+				info.setServiceRole(modelInfo.getServiceRole());
 			}
-			info.put("modelInfo", buildModelInfo(serviceInstance.getModelInfoServiceInstance()));
+			info.setModelInfo(buildModelInfo(modelInfo));
 		}else{
 			throw new BpmnError(UNPROCESSABLE, SERVICE_MISSING_DATA + MODEL_VERSION_ID + ", " + MODEL_INVARIANT_ID);
 		}
@@ -267,14 +278,18 @@ public class SniroHomingV2 {
 	 * Builds initial section of placement info for the homing/licensing request
 	 *
 	 */
-	private JSONObject buildPlacementInfo(Customer customer, RequestParameters requestParams){
-		JSONObject placementInfo = new JSONObject();
+	private PlacementInfo buildPlacementInfo(Customer customer, RequestParameters requestParams){
+		PlacementInfo placementInfo = new PlacementInfo();
 		if(customer != null){
 			log.debug("Adding subscriber to placement information");
-			placementInfo.put("subscriberInfo", new JSONObject().put("globalSubscriberId", customer.getGlobalCustomerId()).put("subscriberName", customer.getSubscriberName()).put("subscriberCommonSiteId", customer.getSubscriberCommonSiteId()));
+			SubscriberInfo subscriber = new SubscriberInfo();
+			subscriber.setGlobalSubscriberId(customer.getGlobalCustomerId());
+			subscriber.setSubscriberName(customer.getSubscriberName());
+			subscriber.setSubscriberCommonSiteId(customer.getSubscriberCommonSiteId());
+			placementInfo.setSubscriberInfo(subscriber);
 			if(requestParams != null){
 				log.debug("Adding request parameters to placement information");
-				placementInfo.put("requestParameters", new JSONObject(requestParams.toJsonString()));
+				placementInfo.setRequestParameters(requestParams.toJsonString());
 			}
 		}else{
 			throw new BpmnError(UNPROCESSABLE, SERVICE_MISSING_DATA + "customer");
@@ -287,9 +302,9 @@ public class SniroHomingV2 {
 	 * Builds the placement demand list for the homing/licensing request
 	 *
 	 */
-	private JSONArray buildPlacementDemands(ServiceInstance serviceInstance){
+	private List<Demand> buildPlacementDemands(ServiceInstance serviceInstance){
 		log.trace("Building placement information demands");
-		JSONArray placementDemands = new JSONArray();
+		List<Demand> placementDemands = new ArrayList<Demand>();
 
 		List<AllottedResource> allottedResourceList = serviceInstance.getAllottedResources();
 		if(!allottedResourceList.isEmpty()){
@@ -298,9 +313,9 @@ public class SniroHomingV2 {
 				if(isBlank(ar.getId())){
 					ar.setId(UUID.randomUUID().toString());
 				}
-				JSONObject demand = buildDemand(ar.getId(), ar.getModelInfoAllottedResource());
+				Demand demand = buildDemand(ar.getId(), ar.getModelInfoAllottedResource());
 				addCandidates(ar, demand);
-				placementDemands.put(demand);
+				placementDemands.add(demand);
 			}
 		}
 		List<VpnBondingLink> vpnBondingLinkList = serviceInstance.getVpnBondingLinks();
@@ -312,9 +327,9 @@ public class SniroHomingV2 {
 					if(isBlank(sp.getId())){
 						sp.setId(UUID.randomUUID().toString());
 					}
-					JSONObject demand = buildDemand(sp.getId(), sp.getModelInfoServiceProxy());
+					Demand demand = buildDemand(sp.getId(), sp.getModelInfoServiceProxy());
 					addCandidates(sp, demand);
-					placementDemands.put(demand);
+					placementDemands.add(demand);
 				}
 			}
 		}
@@ -325,15 +340,15 @@ public class SniroHomingV2 {
 	 * Builds the license demand list for the homing/licensing request
 	 *
 	 */
-	private JSONArray buildLicenseDemands(ServiceInstance serviceInstance){
+	private List<Demand> buildLicenseDemands(ServiceInstance serviceInstance){
 		log.trace("Building license information");
-		JSONArray licenseDemands = new JSONArray();
+		List<Demand> licenseDemands = new ArrayList<Demand>();
 		List<GenericVnf> vnfList = serviceInstance.getVnfs();
 		if(!vnfList.isEmpty()){
 			log.debug("Adding vnfs to license demands list");
 			for(GenericVnf vnf : vnfList){
-				JSONObject demand = buildDemand(vnf.getVnfId(), vnf.getModelInfoGenericVnf());
-				licenseDemands.put(demand);
+				Demand demand = buildDemand(vnf.getVnfId(), vnf.getModelInfoGenericVnf());
+				licenseDemands.add(demand);
 			}
 		}
 		return licenseDemands;
@@ -343,13 +358,13 @@ public class SniroHomingV2 {
 	 * Builds a single demand object
 	 *
 	 */
-	private JSONObject buildDemand(String id, ModelInfoMetadata metadata){
+	private Demand buildDemand(String id, ModelInfoMetadata metadata){
 		log.debug("Building demand for service or resource: " + id);
-		JSONObject demand = new JSONObject();
+		Demand demand = new Demand();
 		if(isNotBlank(id) && isNotBlank(metadata.getModelInstanceName())){
-			demand.put(SERVICE_RESOURCE_ID, id);
-			demand.put(RESOURCE_MODULE_NAME, metadata.getModelInstanceName());
-			demand.put(RESOURCE_MODEL_INFO, buildModelInfo(metadata));
+			demand.setServiceResourceId(id);
+			demand.setResourceModuleName(metadata.getModelInstanceName());
+			demand.setModelInfo(buildModelInfo(metadata));
 		}else{
 			throw new BpmnError(UNPROCESSABLE, RESOURCE_MISSING_DATA + "modelInstanceName");
 		}
@@ -360,12 +375,15 @@ public class SniroHomingV2 {
 	 * Builds the resource model info section
 	 *
 	 */
-	private JSONObject buildModelInfo(ModelInfoMetadata metadata){
-		JSONObject object = new JSONObject();
+	private ModelInfo buildModelInfo(ModelInfoMetadata metadata){
+		ModelInfo object = new ModelInfo();
 		String invariantUuid = metadata.getModelInvariantUuid();
 		String modelUuid = metadata.getModelUuid();
 		if(isNotBlank(invariantUuid) && isNotBlank(modelUuid)){
-			object.put(MODEL_INVARIANT_ID, invariantUuid).put(MODEL_VERSION_ID, modelUuid).put(MODEL_NAME, metadata.getModelName()).put(MODEL_VERSION, metadata.getModelVersion());
+			object.setModelInvariantId(invariantUuid);
+			object.setModelVersionId(modelUuid);
+			object.setModelName(metadata.getModelName());
+			object.setModelVersion(metadata.getModelVersion());
 		}else if(isNotBlank(invariantUuid)){
 			throw new BpmnError(UNPROCESSABLE, RESOURCE_MISSING_DATA + MODEL_VERSION_ID);
 		}else{
@@ -378,14 +396,34 @@ public class SniroHomingV2 {
 	 * Adds required, excluded, and existing candidates to a demand
 	 *
 	 */
-	private void addCandidates(SolutionCandidates candidates, JSONObject demand){
+	private void addCandidates(SolutionCandidates candidates, Demand demand){
 		List<Candidate> required = candidates.getRequiredCandidates();
 		List<Candidate> excluded = candidates.getExcludedCandidates();
 		if(!required.isEmpty()){
-			demand.put("requiredCandidates", required);
+			List<org.onap.so.client.sniro.beans.Candidate> cans = new ArrayList<org.onap.so.client.sniro.beans.Candidate>();
+			for(Candidate c:required){
+				org.onap.so.client.sniro.beans.Candidate can = new org.onap.so.client.sniro.beans.Candidate();
+				org.onap.so.client.sniro.beans.CandidateType type = new org.onap.so.client.sniro.beans.CandidateType();
+				type.setName(c.getCandidateType().getName());
+				can.setCandidateType(type);
+				can.setCandidates(c.getCandidates());
+				can.setCloudOwner(c.getCloudOwner());
+				cans.add(can);
+			}
+			demand.setRequiredCandidates(cans);
 		}
 		if(!excluded.isEmpty()){
-			demand.put("excludedCandidates", excluded);
+			List<org.onap.so.client.sniro.beans.Candidate> cans = new ArrayList<org.onap.so.client.sniro.beans.Candidate>();
+			for(Candidate c:excluded){
+				org.onap.so.client.sniro.beans.Candidate can = new org.onap.so.client.sniro.beans.Candidate();
+				org.onap.so.client.sniro.beans.CandidateType type = new org.onap.so.client.sniro.beans.CandidateType();
+				type.setName(c.getCandidateType().getName());
+				can.setCandidateType(type);
+				can.setCandidates(c.getCandidates());
+				can.setCloudOwner(c.getCloudOwner());
+				cans.add(can);
+			}
+			demand.setExcludedCandidates(cans);
 		}
 		//TODO support existing candidates
 	}
