@@ -156,10 +156,13 @@ public class SniroHomingV2 {
 
 			log.trace("Completed Sniro Homing Call Sniro");
 		}catch(BpmnError e){
+			log.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
 		}catch(BadResponseException e){
+			log.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
 		}catch(Exception e){
+			log.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL, "Internal Error - occurred while preparing sniro request: " + e.getMessage());
 		}
 	}
@@ -203,10 +206,13 @@ public class SniroHomingV2 {
 
 			log.trace("Completed Sniro Homing Process Solution");
 		}catch(BpmnError e){
+			log.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
 		}catch(BadResponseException e){
+			log.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
 		}catch(Exception e){
+			log.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL, "Internal Error - occurred while processing sniro asynchronous response: " + e.getMessage());
 		}
 	}

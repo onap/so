@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.1" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="DeleteGenericALaCarteServiceInstance" name="DeleteGenericALaCarteServiceInstance" isExecutable="true">
     <bpmn2:startEvent id="deleteSI_startEvent" name="Delete SI Start Flow">
       <bpmn2:outgoing>SequenceFlow_0lp2z7l</bpmn2:outgoing>
@@ -36,6 +36,7 @@ ex.processJavaException(execution)]]></bpmn2:script>
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="subscriptionServiceType" target="subscriptionServiceType" />
         <camunda:in sourceExpression="1610" target="sdncVersion" />
+        <camunda:in source="msoRequestId" target="mso-request-id" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0eto8sn</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1lj31zp</bpmn2:outgoing>
