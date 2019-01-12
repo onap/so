@@ -1,5 +1,6 @@
 package org.onap.so.client.namingservice;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.http.HttpStatus;
@@ -12,6 +13,9 @@ import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class NamingClientResponseValidator {
@@ -99,5 +103,20 @@ public class NamingClientResponseValidator {
 	private boolean isHttpCodeSuccess(int code) {
         return code >= HttpStatus.SC_OK && code < HttpStatus.SC_MULTIPLE_CHOICES || code == 0;
     }
+	
+	protected String formatError(HttpStatusCodeException e) throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		NameGenResponse errorResponse = mapper.readValue(e.getResponseBodyAsString(), NameGenResponse.class);
+		NameGenResponseError error = errorResponse.getError();
+		
+		String errorMessageString = null;
+		if (error != null) {
+			errorMessageString = error.getMessage();
+		}
+		String errorMessage = String.format(NAMING_SERVICE_ERROR, errorMessageString);
+		msoLogger.error(MessageEnum.RA_GENERAL_EXCEPTION, errorMessage, "BPMN", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.DataError, errorMessage);
+		return errorMessage;
+	}
 
 }

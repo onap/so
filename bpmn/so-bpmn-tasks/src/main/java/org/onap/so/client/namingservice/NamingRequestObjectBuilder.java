@@ -13,11 +13,11 @@ public class NamingRequestObjectBuilder{
 	
 	public Element elementMapper(String instanceGroupId, String policyInstanceName, String namingType, String nfNamingCode, String instanceGroupName){
 		Element element = new Element();
-		element.setExternalKey(instanceGroupId);
-		element.setPolicyInstanceName(policyInstanceName);
-		element.setNamingType(namingType);
-		element.setResourceName(instanceGroupName);
-		element.setNamingIngredientsZeroOrMore(nfNamingCode);
+		element.put("external-key", instanceGroupId);
+		element.put("policy-instance-name", policyInstanceName);
+		element.put("naming-type", namingType);
+		element.put("resource-name", instanceGroupName);
+		element.put("nf-naming-code", nfNamingCode);
 		return element;
 	}
 	public Deleteelement deleteElementMapper(String instanceGroupId){

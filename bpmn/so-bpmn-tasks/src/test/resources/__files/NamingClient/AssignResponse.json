@@ -1,0 +1,14 @@
+{
+  "elements": [
+    {
+      "external-key": "$vnf-id",
+      "resource-name": "instance-group-name",
+      "resource-value": "$vnf-name"
+    },
+    {
+      "external-key": "$vnf-id",
+      "resource-name": "vm-name",
+      "resource-value": "$vm-name"
+    }
+  ]
+}

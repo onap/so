@@ -1,5 +1,6 @@
 package org.onap.so.client.namingservice;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -34,21 +36,31 @@ public class NamingClient{
 	@Autowired
 	private NamingClientResponseValidator namingClientResponseValidator;
 	
-	public String postNameGenRequest(NameGenRequest request) throws BadResponseException {
+	public String postNameGenRequest(NameGenRequest request) throws BadResponseException, IOException {
 		String targetUrl = env.getProperty(ENDPOINT);
 		HttpHeaders headers = setHeaders(env.getProperty(AUTH)); 
 		msoLogger.info("Sending postNameGenRequest to url: " + targetUrl);
 		HttpEntity<NameGenRequest> requestEntity = new HttpEntity<>(request, headers);
-		ResponseEntity<NameGenResponse> response = restTemplate.postForEntity(targetUrl, requestEntity, NameGenResponse.class);
+		ResponseEntity<NameGenResponse> response;
+		try{
+			 response = restTemplate.postForEntity(targetUrl, requestEntity, NameGenResponse.class);
+		}catch(HttpStatusCodeException e){
+			throw new BadResponseException(namingClientResponseValidator.formatError(e));
+		}
 		return namingClientResponseValidator.validateNameGenResponse(response);
 	}
 
-	public String deleteNameGenRequest(NameGenDeleteRequest request) throws BadResponseException {
+	public String deleteNameGenRequest(NameGenDeleteRequest request) throws BadResponseException, IOException {
 		String targetUrl = env.getProperty(ENDPOINT);
 		HttpHeaders headers = setHeaders(env.getProperty(AUTH)); 
 		msoLogger.info("Sending deleteNameGenRequest to url: " + targetUrl);
 		HttpEntity<NameGenDeleteRequest> requestEntity = new HttpEntity<>(request, headers);
-		ResponseEntity<NameGenDeleteResponse> response = restTemplate.exchange(targetUrl, HttpMethod.DELETE, requestEntity, NameGenDeleteResponse.class);
+		ResponseEntity<NameGenDeleteResponse> response;
+		try{
+			response = restTemplate.exchange(targetUrl, HttpMethod.DELETE, requestEntity, NameGenDeleteResponse.class);
+		}catch(HttpStatusCodeException e){
+			throw new BadResponseException(namingClientResponseValidator.formatError(e));
+		}
 		return namingClientResponseValidator.validateNameGenDeleteResponse(response);
 	}
 

@@ -20,6 +20,7 @@
 
 package org.onap.so.client.orchestration;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,14 +45,14 @@ public class NamingServiceResources {
 	@Autowired
 	private NamingRequestObjectBuilder namingRequestObjectBuilder;	
 	
-	public String generateInstanceGroupName(InstanceGroup instanceGroup, String policyInstanceName, String nfNamingCode) throws BadResponseException {
+	public String generateInstanceGroupName(InstanceGroup instanceGroup, String policyInstanceName, String nfNamingCode) throws BadResponseException, IOException {
 		Element element = namingRequestObjectBuilder.elementMapper(instanceGroup.getId(), policyInstanceName, NAMING_TYPE, nfNamingCode, instanceGroup.getInstanceGroupName());
 		List<Element> elements = new ArrayList<Element>();
 		elements.add(element);		
 		return(namingClient.postNameGenRequest(namingRequestObjectBuilder.nameGenRequestMapper(elements)));		
 	}
 	
-	public String deleteInstanceGroupName(InstanceGroup instanceGroup) throws BadResponseException {		
+	public String deleteInstanceGroupName(InstanceGroup instanceGroup) throws BadResponseException, IOException {		
 		Deleteelement deleteElement = namingRequestObjectBuilder.deleteElementMapper(instanceGroup.getId());
 		List<Deleteelement> deleteElements = new ArrayList<Deleteelement>();
 		deleteElements.add(deleteElement);		
