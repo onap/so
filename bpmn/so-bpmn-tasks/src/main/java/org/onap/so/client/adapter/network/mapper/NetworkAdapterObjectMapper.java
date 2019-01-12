@@ -260,6 +260,7 @@ public class NetworkAdapterObjectMapper {
 				    map(source.getGatewayAddress(), destination.getGatewayIp());
 				    map(source.getIpVersion(), destination.getIpVersion());
 				    map(source.isDhcpEnabled(), destination.getEnableDHCP());
+				    map(source.getSubnetSequence(), destination.getSubnetSequence());
 				  }
 				};
 			modelMapper.addMappings(personMap);

@@ -35,7 +35,7 @@ public class CreateNetworkBBTest extends BaseBPMNTest{
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateNetworkBB",variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("createNetwork_startEvent", "ServiceTask_get_cloud_region", "QueryVpnBinding_ServiceTask", "QueryNetworkPolicy_ServiceTask", "QueryNetworkTableRef_ServiceTask", "Create_Network_ServiceTask", "Update_Network_AAI_ServiceTask", "createNetwork_EndEvent");     
+        assertThat(pi).isStarted().hasPassedInOrder("createNetwork_startEvent", "ServiceTask_get_cloud_region", "QueryVpnBinding_ServiceTask", "QueryNetworkPolicy_ServiceTask", "QueryNetworkTableRef_ServiceTask", "QueryNetworkSubnet_ServiceTask", "Create_Network_ServiceTask", "Update_Network_AAI_ServiceTask", "createNetwork_EndEvent");     
         assertThat(pi).isEnded();
     }
 

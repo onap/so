@@ -29,6 +29,7 @@ import org.modelmapper.PropertyMap;
 import org.onap.aai.domain.yang.NetworkPolicy;
 import org.onap.aai.domain.yang.RouteTableReference;
 import org.onap.aai.domain.yang.RouteTargets;
+import org.onap.aai.domain.yang.Subnet;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -221,5 +222,29 @@ public class AAIQueryTasks {
 			}
 		}
 		return mappedRouteTargets;
+	}
+	
+	public void querySubnet(BuildingBlockExecution execution) {
+		try {
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
+					execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
+			Optional<Relationships> networkRelationships = aaiResultWrapper.getRelationships();
+			if (!networkRelationships.isPresent()) {
+				throw (new Exception(ERROR_MSG));
+			}
+			List<AAIResourceUri> subnetsUriList = networkRelationships.get().getRelatedAAIUris(AAIObjectType.SUBNET);
+			
+			if(!subnetsUriList.isEmpty()) {
+				for(AAIResourceUri subnetUri : subnetsUriList) {
+					Optional<Subnet> oSubnet = aaiNetworkResources.getSubnet(subnetUri);
+					if(oSubnet.isPresent()) {
+						l3network.getSubnets().add(modelMapper.map(oSubnet.get(), org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet.class));
+					}
+				}
+			}
+		} catch(Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
 	}
 }

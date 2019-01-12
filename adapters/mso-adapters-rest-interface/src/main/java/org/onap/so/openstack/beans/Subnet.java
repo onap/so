@@ -55,8 +55,18 @@ public class Subnet implements Serializable {
     private List<Pool> allocationPools;
 
     private List<String> dnsNameServers;
+    
+    private Integer subnetSequence;
 
-    public Subnet () {
+    public Integer getSubnetSequence() {
+		return subnetSequence;
+	}
+
+	public void setSubnetSequence(Integer subnetSequence) {
+		this.subnetSequence = subnetSequence;
+	}
+
+	public Subnet () {
     }
 
 	public String getSubnetName() {
