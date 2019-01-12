@@ -39,14 +39,13 @@ import org.onap.so.client.graphinventory.Format;
 
 public class AAIRestClientImpl implements AAIRestClientI {
 
-    private static final AAIVersion ENDPOINT_VERSION = AAIVersion.V10;
     private static final String PSERVER_VNF_QUERY = "pservers-fromVnf";
 
     @Override
     public List<Pserver> getPhysicalServerByVnfId(String vnfId) throws IOException {
         List<AAIResourceUri> startNodes = new ArrayList<>();
         startNodes.add(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId));
-        String jsonInput = new AAIQueryClient(ENDPOINT_VERSION)
+        String jsonInput = new AAIQueryClient()
                 .query(Format.RESOURCE, new CustomQuery(startNodes, PSERVER_VNF_QUERY));
 
         return this.getListOfPservers(jsonInput);
@@ -69,20 +68,20 @@ public class AAIRestClientImpl implements AAIRestClientI {
     public void updateMaintenceFlagVnfId(String vnfId, boolean inMaint, String transactionLoggingUuid) {
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setInMaint(inMaint);
-        new AAIResourcesClient(ENDPOINT_VERSION)
+        new AAIResourcesClient()
                 .update(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId), genericVnf);
 
     }
 
     @Override
     public GenericVnf getVnfByName(String vnfId) {
-        return new AAIResourcesClient(ENDPOINT_VERSION)
+        return new AAIResourcesClient()
                 .get(GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)).orElse(null);
     }
 
     @Override
     public Optional<Pnf> getPnfByName(String pnfId, String transactionLoggingUuid) {
-        Response response = new AAIResourcesClient(ENDPOINT_VERSION)
+        Response response = new AAIResourcesClient()
                 .getFullResponse(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId));
         if (response.getStatus() != 200) {
             return Optional.empty();
@@ -93,7 +92,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
 
     @Override
     public void createPnf(String pnfId, String transactionLoggingUuid, Pnf pnf) {
-        new AAIResourcesClient(ENDPOINT_VERSION)
+        new AAIResourcesClient()
                 .createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId), Optional.of(pnf));
     }
 }

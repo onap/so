@@ -57,7 +57,7 @@ class CreateAAIVfModuleTest extends MsoGroovyTest{
 	private static final String VNF_PERSONAL_MODEL_VER = "14"
 	private static final String VF_MODULE_NAME = "modTestName"
 	private static final String VF_MODULE_MODEL_NAME = "modModelNameTest"
-	private static final String DEFAULT_AAI_VERSION = "9"
+	private static final String DEFAULT_AAI_VERSION = "14"
 	private static final String DEFAULT_AAI_NAMESPACE = "defaultTestNamespace"
 
     @Spy

@@ -53,7 +53,7 @@ public class SDNOValidatorImpl implements SDNOValidator {
 	public boolean healthDiagnostic(String vnfId, UUID uuid, String requestingUserId) throws IOException, Exception {
 		
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
-		AAIResourcesClient client = new AAIResourcesClient(AAIVersion.V10);
+		AAIResourcesClient client = new AAIResourcesClient();
 		GenericVnf vnf = client.get(GenericVnf.class, uri).orElseThrow(() -> new NotFoundException(vnfId + " not found in A&AI"));
 		
 		SDNO requestDiagnostic = buildRequestDiagnostic(vnf, uuid, requestingUserId);

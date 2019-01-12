@@ -101,38 +101,14 @@ mso:
     default:
       aai:
         cloud-region:
-          version: '9'
+          version: '14'
         generic-vnf:
-          version: '9'
-        v8:
-          customer:
-            uri: /aai/v8/business/customers/customer
-          generic-query:
-            uri: /aai/v8/search/generic-query
-          l3-network:
-            uri: /aai/v8/network/l3-networks/l3-network
-          network-policy:
-            uri: /aai/v8/network/network-policies/network-policy
-          nodes-query:
-            uri: /aai/v8/search/nodes-query
-          route-table-reference:
-            uri: /aai/v8/network/route-table-references/route-table-reference
-          tenant:
-            uri: /aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/tenants/tenant
-          vce:
-            uri: /aai/v8/network/vces/vce
-          vpn-binding:
-            uri: /aai/v8/network/vpn-bindings/vpn-binding
-        v9:
-          cloud-region:
-            uri: /aai/v9/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner
-          generic-vnf:
-            uri: /aai/v9/network/generic-vnfs/generic-vnf
+          version: '14'
     global:
       default:
         aai:
           namespace: http://org.openecomp.aai.inventory/
-          version: '8'
+          version: '14'
     message:
       endpoint: http://localhost:${wiremock.server.port}/mso/WorkflowMesssage
     notification:
