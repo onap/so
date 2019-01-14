@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_c22efe42",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-14T10:53:59Z",
+      "side": 1,
+      "message": "I think the \"VALUE\" suffix is redundant since it does not provide any additional value to readability :)",
+      "revId": "e887aaa66780868418759bcf324d5af04ce241fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_62f872c3",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-14T10:53:59Z",
+      "side": 1,
+      "message": "1. since only one parameter is left for validation, plural \"Params\" is misleading. Suggestion: just rename to validateServiceInstanceId :)\n2. Be careuful or avoid the \"forPnfRelation\" or similar clauses that would indicate a use case that this particular piece of code is not responsible for. At this point it is not known how the values will be used and the usage itself can be subject to change.",
+      "revId": "e887aaa66780868418759bcf324d5af04ce241fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_62e63217",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-14T10:53:59Z",
+      "side": 1,
+      "message": "The prepare methods do too much and hide some of its functionalities. Besides preparing the delegateExecution object they also create the instance of the tested class under the hood. Suggested fix - just create the PnfCheckInputs instance inside the test methods explicitly. The private methods do not improve that much -\u003e you still end up with the same ammount of code specific to each variable and in addition have to jump inside the \u0027prepare\u0027 methods to see what it is being set. Some of this can just be be inlined.",
+      "revId": "e887aaa66780868418759bcf324d5af04ce241fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_02ef26ea",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-14T10:53:59Z",
+      "side": 1,
+      "message": "A builder implementation should have each setter method return a reference to the builder to allow a fluent style of building :)",
+      "revId": "e887aaa66780868418759bcf324d5af04ce241fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
