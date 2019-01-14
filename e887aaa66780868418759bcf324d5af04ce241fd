@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_029de665",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2019-01-14T12:19:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_62f872c3",
+      "revId": "e887aaa66780868418759bcf324d5af04ce241fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_62e63217",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
         "patchSetId": 3
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_62a2b29a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2019-01-14T12:19:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_62e63217",
+      "revId": "e887aaa66780868418759bcf324d5af04ce241fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_02ef26ea",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
         "patchSetId": 3
@@ -64,6 +100,24 @@
       "writtenOn": "2019-01-14T10:53:59Z",
       "side": 1,
       "message": "A builder implementation should have each setter method return a reference to the builder to allow a fluent style of building :)",
+      "revId": "e887aaa66780868418759bcf324d5af04ce241fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_229a6a6e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2019-01-14T12:19:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_02ef26ea",
       "revId": "e887aaa66780868418759bcf324d5af04ce241fd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
