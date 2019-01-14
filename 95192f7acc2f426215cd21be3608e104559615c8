@@ -22,6 +22,30 @@
       "revId": "95192f7acc2f426215cd21be3608e104559615c8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b64f7b6a",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/onap/so/openstack/utils/MsoTenantUtilsFactoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-14T14:32:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_4279aec6",
+      "range": {
+        "startLine": 70,
+        "startChar": 44,
+        "endLine": 70,
+        "endChar": 83
+      },
+      "revId": "95192f7acc2f426215cd21be3608e104559615c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
