@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_4279aec6",
+        "filename": "adapters/mso-adapter-utils/src/test/java/org/onap/so/openstack/utils/MsoTenantUtilsFactoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-01-14T14:08:24Z",
+      "side": 1,
+      "message": "This \"assert\" is actually entire test, not an assert. I would rename it, or change the test to test with parameters. (Maybe https://github.com/Pragmatists/JUnitParams ?)",
+      "range": {
+        "startLine": 70,
+        "startChar": 44,
+        "endLine": 70,
+        "endChar": 83
+      },
+      "revId": "95192f7acc2f426215cd21be3608e104559615c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
