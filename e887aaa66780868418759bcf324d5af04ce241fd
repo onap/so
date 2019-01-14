@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_02d96621",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-14T12:57:51Z",
+      "side": 1,
+      "message": "Ok, haven\u0027t noticed this issue. Agree, let\u0027s keep the suffix :)",
+      "parentUuid": "9adffdf1_c2dfde0b",
+      "revId": "e887aaa66780868418759bcf324d5af04ce241fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_62f872c3",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
         "patchSetId": 3
