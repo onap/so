@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_c2dfde0b",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-01-14T12:38:39Z",
+      "side": 1,
+      "message": "We had discussion about this. Problem is SERVICE_INSTANCE_ID is already imported (static) and previous DEFAULT_SERVICE_INSTANCE_ID is super misleading (I thought there was an option to provide default value for id). In my opinion _VALUE is best solution here.",
+      "parentUuid": "9adffdf1_c22efe42",
+      "revId": "e887aaa66780868418759bcf324d5af04ce241fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_62f872c3",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
         "patchSetId": 3
