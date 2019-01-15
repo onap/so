@@ -8,6 +8,55 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
 
+Version: 1.3.6
+--------------
+
+:Release Date: 2018-01-10
+
+This is the official release package that released for the Casablanca Maintenance.
+
+Casablanca Release branch
+
+**New Features**
+
+This release is supporting the features of Casablanca and their defect fixes.
+- `SO-1336 <https://jira.onap.org/browse/SO-1336>`_
+- `SO-1249 <https://jira.onap.org/browse/SO-1249>`_
+- `SO-1257 <https://jira.onap.org/browse/SO-1257>`_
+- `SO-1258 <https://jira.onap.org/browse/SO-1258>`_
+- `SO-1256 <https://jira.onap.org/browse/SO-1256>`_
+- `SO-1194 <https://jira.onap.org/browse/SO-1256>`_
+- `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
+- `SO-1184 <https://jira.onap.org/browse/SO-1184>`_
+
+**Docker Images**
+
+Dockers released for SO:
+
+ - onap/so/api-handler-infra,1.3.6
+ - onap/so/bpmn-infra,1.3.6
+ - onap/so/catalog-db-adapter,1.3.6
+ - onap/so/openstack-adapter,1.3.6
+ - onap/so/request-db-adapter,1.3.6
+ - onap/so/sdc-controller,1.3.6
+ - onap/so/sdnc-adapter,1.3.6
+ - onap/so/so-monitoring,1.3.6
+ - onap/so/vfc-adapter,1.3.6
+
+**Known Issues**
+
+
+**Security Notes**
+
+	SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_.
+
+	Quick Links:
+
+ - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
+ - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+ - `Project Vulnerability Review Table for SO <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_
+
+
 Version: 1.3.3
 --------------
 
