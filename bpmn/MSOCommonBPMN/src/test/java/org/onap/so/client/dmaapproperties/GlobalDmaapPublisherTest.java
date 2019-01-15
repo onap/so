@@ -32,17 +32,12 @@ public class GlobalDmaapPublisherTest extends BaseTest{
 	@Autowired
 	private GlobalDmaapPublisher globalDmaapPublisher;
 
-//TODO: To be deleted, apologies really going ahead with a crude method will correct it asap...
-	@Test
-	public void testDummy() {
-           assertTrue(true);
-        }	
 
-	/*@Test
+	@Test
 	public void testGetters() {
 		assertEquals("dmaapUsername", globalDmaapPublisher.getUserName());
 		assertEquals("ZG1hYXBQYXNzd29yZA==", globalDmaapPublisher.getPassword());
 		assertEquals("com.att.mso.asyncStatusUpdate", globalDmaapPublisher.getTopic());
 		assertEquals("http://localhost:" + wireMockPort, globalDmaapPublisher.getHost().get());
-	}*/
+	}
 }
