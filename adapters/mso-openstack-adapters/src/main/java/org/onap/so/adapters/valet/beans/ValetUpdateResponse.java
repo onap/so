@@ -21,7 +21,7 @@
 package org.onap.so.adapters.valet.beans;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,7 +34,7 @@ public class ValetUpdateResponse implements Serializable {
 	@JsonProperty("status")
 	private ValetStatus status;
 	@JsonProperty("parameters")
-	private Map<String, Object> parameters;
+	private HashMap<String, Object> parameters;
 	
 	public ValetUpdateResponse() {
 		super();
@@ -46,10 +46,10 @@ public class ValetUpdateResponse implements Serializable {
 	public void setStatus(ValetStatus status) {
 		this.status = status;
 	}
-	public Map<String, Object> getParameters() {
+	public HashMap<String, Object> getParameters() {
 		return this.parameters;
 	}
-	public void setParameters(Map<String, Object> parameters) {
+	public void setParameters(HashMap<String, Object> parameters) {
 		this.parameters = parameters;
 	}
 
