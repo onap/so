@@ -23,7 +23,6 @@ package org.onap.so.client.aai;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 public class AAIUpdatorImpl implements AAIUpdator {
 	
 	@Autowired
@@ -39,13 +38,13 @@ public class AAIUpdatorImpl implements AAIUpdator {
 	}
 
 	@Override
-	public void updateVnfToLocked(String vnfId, String uuid) throws Exception {
-		client.updateMaintenceFlagVnfId(vnfId, true, uuid);
+	public void updateVnfToLocked(String vnfId) throws Exception {
+		client.updateMaintenceFlagVnfId(vnfId, true);
 	}
 
 	@Override
-	public void updateVnfToUnLocked(String vnfId, String uuid) throws Exception {
-		client.updateMaintenceFlagVnfId(vnfId, false, uuid);
+	public void updateVnfToUnLocked(String vnfId) throws Exception {
+		client.updateMaintenceFlagVnfId(vnfId, false);
 	}
 
 }

@@ -36,7 +36,6 @@ public class AAIUpdatorTest {
 	@Mock
 	protected AAIRestClientI client;
 	String vnfName = "testVnf";
-	String uuid = "UUID";
 	AAIUpdatorImpl updator;
 	
 	@Before
@@ -47,15 +46,15 @@ public class AAIUpdatorTest {
 
 	@Test
 	public void testUpdateVnfToLocked() throws Exception{		
-		doNothing().when(client).updateMaintenceFlagVnfId(isA(String.class), isA(Boolean.class), isA(String.class));	
-		updator.updateVnfToLocked(vnfName, uuid);
-		verify(client, times(1)).updateMaintenceFlagVnfId(vnfName, true, uuid);
+		doNothing().when(client).updateMaintenceFlagVnfId(isA(String.class), isA(Boolean.class));
+		updator.updateVnfToLocked(vnfName);
+		verify(client, times(1)).updateMaintenceFlagVnfId(vnfName, true);
 	}
 	
 	@Test
 	public void testUpdateVnfToUnLocked() throws Exception {
-		doNothing().when(client).updateMaintenceFlagVnfId(isA(String.class), isA(Boolean.class), isA(String.class));	
-		updator.updateVnfToUnLocked(vnfName, uuid);
-		verify(client, times(1)).updateMaintenceFlagVnfId(vnfName, false, uuid);
+		doNothing().when(client).updateMaintenceFlagVnfId(isA(String.class), isA(Boolean.class));
+		updator.updateVnfToUnLocked(vnfName);
+		verify(client, times(1)).updateMaintenceFlagVnfId(vnfName, false);
 	}
 }

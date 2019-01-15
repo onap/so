@@ -41,13 +41,13 @@ public class AAIUpdatorImplTest {
 
     @Test(expected = NullPointerException.class)
     public void updateVnfToLockedTest() throws Exception {
-        test.updateVnfToLocked("vnfId","uuId");
+        test.updateVnfToLocked("vnfId");
     }
 
 
     @Test(expected = NullPointerException.class)
     public void updateVnfToUnLockedTest() throws Exception {
-        test.updateVnfToUnLocked("vnfId","uuId");
+        test.updateVnfToUnLocked("vnfId");
     }
 
 }
