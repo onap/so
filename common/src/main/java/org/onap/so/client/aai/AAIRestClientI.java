@@ -31,7 +31,7 @@ public interface AAIRestClientI {
 
 	List<Pserver> getPhysicalServerByVnfId(String vnfId) throws IOException;
 	
-	void updateMaintenceFlagVnfId(String vnfId, boolean inMaint, String transactionLoggingUuid) throws Exception;
+	void updateMaintenceFlagVnfId(String vnfId, boolean inMaint) throws Exception;
 	
 	GenericVnf getVnfByName(String vnfId);
 

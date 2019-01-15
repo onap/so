@@ -20,12 +20,10 @@
 
 package org.onap.so.client.aai;
 
-import java.io.IOException;
-
 public interface AAIUpdator {
 	
-	void updateVnfToLocked(String vnfName, String uuid) throws IOException, Exception;
+	void updateVnfToLocked(String vnfName) throws Exception;
 	
-	void updateVnfToUnLocked(String vnfName, String uuid) throws IOException, Exception;
+	void updateVnfToUnLocked(String vnfName) throws Exception;
 
 }

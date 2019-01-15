@@ -65,7 +65,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
     }
 
     @Override
-    public void updateMaintenceFlagVnfId(String vnfId, boolean inMaint, String transactionLoggingUuid) {
+    public void updateMaintenceFlagVnfId(String vnfId, boolean inMaint) {
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setInMaint(inMaint);
         new AAIResourcesClient()

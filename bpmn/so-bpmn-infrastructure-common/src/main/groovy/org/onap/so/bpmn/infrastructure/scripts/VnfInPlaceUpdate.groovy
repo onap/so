@@ -330,17 +330,16 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 		execution.setVariable("failedActivity", "AAI")
 
 		try {
-			def transactionLoggingUuid = UUID.randomUUID().toString()
 			AAIRestClientImpl client = new AAIRestClientImpl()
 			AAIUpdatorImpl aaiUpdator = new AAIUpdatorImpl()
 			aaiUpdator.setClient(client)
 			def vnfId = execution.getVariable("vnfId")
 			if (inMaint) {
-				aaiUpdator.updateVnfToLocked(vnfId, transactionLoggingUuid)
+				aaiUpdator.updateVnfToLocked(vnfId)
 				execution.setVariable("rollbackSetVnfInMaintenanceFlag", true)
 			}
 			else {
-				aaiUpdator.updateVnfToUnLocked(vnfId, transactionLoggingUuid)
+				aaiUpdator.updateVnfToUnLocked(vnfId)
 			}
 
 			msoLogger.trace('Exited ' + method)
@@ -350,7 +349,6 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
-			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in setVnfInMaintFlagInAAI(): ' + e.getMessage())
 		}
 	}
 
