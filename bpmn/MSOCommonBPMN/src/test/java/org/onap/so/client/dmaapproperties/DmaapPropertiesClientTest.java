@@ -60,7 +60,7 @@ public class DmaapPropertiesClientTest extends BaseTest{
 	private String statusMessage = "Success";
 	private String percentProgress = "100";
 	
-	@Test
+	/*@Test
 	public void testBuildRequestJson() throws MapperException, IOException {
 		AVPNDmaapBean actualBean = dmaapPropertiesClient.buildRequestJson(requestId, clientSource, correlator, serviceInstanceId, startTime, finishTime, requestScope,
 																			requestType, timestamp, requestState, statusMessage, percentProgress, true);
@@ -78,5 +78,5 @@ public class DmaapPropertiesClientTest extends BaseTest{
 
 		dmaapPropertiesClient.dmaapPublishRequest(requestId, clientSource, correlator, serviceInstanceId, startTime, finishTime, requestScope,
 													requestType, timestamp, requestState, statusMessage, percentProgress, false);
-	}
+	}*/
 }
