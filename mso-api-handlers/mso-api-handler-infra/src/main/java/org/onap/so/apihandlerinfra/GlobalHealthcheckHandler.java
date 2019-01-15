@@ -178,7 +178,7 @@ public class GlobalHealthcheckHandler {
     		return processResponseFromSubsystem(result,subsystem);
     		
     	}catch(Exception ex){
-    		msoLogger.error(ex.getMessage());
+			msoLogger.error("Exception occured in GlobalHealthcheckHandler.querySubsystemHealth() "+ ex);
     		return HealthcheckStatus.DOWN.toString();
     	}
     }
