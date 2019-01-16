@@ -90,7 +90,8 @@ public class DistributionClientEmulator implements IDistributionClient {
 		byte[] inputStream=null;
 		try {
 			inputStream = getData(filename);
-		} catch (IOException e) {			
+		} catch (IOException e) {	
+			logger.error("IOException in DistributionClientEmulator.download (IArtifactInfo arg0):"+e);
 			logger.debug("InputStream is NULL for:"+ resourcePath + filename);
 		}		
 	
