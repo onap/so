@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_651e3761",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/resource/ResourceRequestBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 4453
+      },
+      "writtenOn": "2019-01-16T13:15:22Z",
+      "side": 1,
+      "message": "As a part of the E2E flow (DoCreateE2EServiceInstanceV3), it calls DecomposeService which queries for the service resources using v2 and stores the response into DDS_catalogDbResponse and serviceDecomposition. Why not reuse the DDS_catalogDbResponse rather than running the same query again?",
+      "range": {
+        "startLine": 69,
+        "startChar": 58,
+        "endLine": 69,
+        "endChar": 76
+      },
+      "revId": "a5d213aa479f5ae16b57563caf7801220baf5bec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
