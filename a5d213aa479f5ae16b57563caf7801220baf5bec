@@ -46,6 +46,30 @@
       "revId": "a5d213aa479f5ae16b57563caf7801220baf5bec",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_608065f7",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/resource/ResourceRequestBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-01-16T19:00:59Z",
+      "side": 1,
+      "message": "Hello Ronan,\n\nI analyzed the current code, the scope of DDS_catalogDbResponse variable is not available in DoCreateE2EServiceInstance as CallDecopmpose Service is subactivity.\n\nThe returned value from the \"serviceDecomposition\" actually does not have information for the resource input and resource sequence as they are marked @Ignored.\n\nThis require further analysis, I think current approach will work, but not optimized.",
+      "parentUuid": "9adffdf1_65a39700",
+      "range": {
+        "startLine": 69,
+        "startChar": 58,
+        "endLine": 69,
+        "endChar": 76
+      },
+      "revId": "a5d213aa479f5ae16b57563caf7801220baf5bec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
