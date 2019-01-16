@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_855b1bf5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/aai/AaiConnectionImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-01-16T15:23:11Z",
+      "side": 1,
+      "message": "AaiConnectionImpl is a spring component that can be injected via autowired annotation into CreateRelation component, it is much clear because the important dependency is visible and it is easy for testing, because it can be mocked in easy way. \nAAIResourcesClient is not a bean, so if we use it directly in method of CreateRelation component, it would hidden dependency, what causes difficult testing for example.",
+      "parentUuid": "9adffdf1_25434f43",
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_4ada20e9",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelation.java",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2019-01-16T13:44:21Z",
       "side": 1,
       "message": "Because this is only your code change copyrights to just nokia.",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 37
+      },
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_2574af66",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-01-16T15:23:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_4ada20e9",
       "range": {
         "startLine": 5,
         "startChar": 0,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_4571b374",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-01-16T15:23:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_c5892376",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 37
+      },
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_657ab778",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelationTest.java",
         "patchSetId": 2
@@ -88,6 +154,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_05672bb8",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-01-16T15:23:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_657ab778",
+      "range": {
+        "startLine": 69,
+        "startChar": 90,
+        "endLine": 69,
+        "endChar": 92
+      },
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_25982fbf",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelationTest.java",
         "patchSetId": 2
@@ -99,6 +189,30 @@
       "writtenOn": "2019-01-16T13:44:21Z",
       "side": 1,
       "message": "add spaces between + and strings to improve readability",
+      "range": {
+        "startLine": 70,
+        "startChar": 82,
+        "endLine": 70,
+        "endChar": 83
+      },
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a5073fc9",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-01-16T15:23:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_25982fbf",
       "range": {
         "startLine": 70,
         "startChar": 82,
