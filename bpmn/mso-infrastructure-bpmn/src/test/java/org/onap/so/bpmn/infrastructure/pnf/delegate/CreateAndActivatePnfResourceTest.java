@@ -70,8 +70,11 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
                 "AaiEntryExists",
                 "InformDmaapClient",
                 "WaitForDmaapPnfReadyNotification",
+                "CreateRelationId",
                 "AaiEntryUpdated"
         );
+        Assertions.assertThat(aaiConnection.getPnfURIPathForRelations()).containsOnly("/network/pnfs/pnf/"
+                + AaiConnectionTestImpl.ID_WITH_ENTRY);
     }
 
     @Test
@@ -99,8 +102,11 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
                 "AaiEntryExists",
                 "InformDmaapClient",
                 "WaitForDmaapPnfReadyNotification",
+                "CreateRelationId",
                 "AaiEntryUpdated"
         );
         Assertions.assertThat(aaiConnection.getCreated()).containsOnlyKeys(AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
+        Assertions.assertThat(aaiConnection.getPnfURIPathForRelations()).
+                containsOnly("/network/pnfs/pnf/" + AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
     }
 }

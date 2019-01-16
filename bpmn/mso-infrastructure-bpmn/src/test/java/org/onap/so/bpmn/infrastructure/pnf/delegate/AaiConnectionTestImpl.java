@@ -21,13 +21,16 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +42,7 @@ public class AaiConnectionTestImpl implements AaiConnection {
     public static final String ID_WITH_ENTRY = "idWithEntryNoIp";
 
     private Map<String, Pnf> created = new HashMap<>();
+    private List<String> pnfURIPathForRelations = new ArrayList<>();
 
     @Override
     public Optional<Pnf> getEntryFor(String correlationId) throws IOException {
@@ -54,11 +58,21 @@ public class AaiConnectionTestImpl implements AaiConnection {
         created.put(correlationId, entry);
     }
 
+    @Override
+    public void createRelation(AAIResourceUri serviceUri, AAIResourceUri pnfUri) {
+        pnfURIPathForRelations.add(pnfUri.build().getPath());
+    }
+
     public Map<String, Pnf> getCreated() {
         return created;
     }
 
+    public List<String> getPnfURIPathForRelations() {
+        return pnfURIPathForRelations;
+    }
+
     public void reset() {
         created.clear();
+        pnfURIPathForRelations.clear();
     }
 }

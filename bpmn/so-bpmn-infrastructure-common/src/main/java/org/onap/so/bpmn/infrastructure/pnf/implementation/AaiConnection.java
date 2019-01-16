@@ -23,10 +23,13 @@ package org.onap.so.bpmn.infrastructure.pnf.implementation;
 import java.io.IOException;
 import java.util.Optional;
 import org.onap.aai.domain.yang.Pnf;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 
 public interface AaiConnection {
 
     Optional<Pnf> getEntryFor(String correlationId) throws IOException;
 
     void createEntry(String correlationId, Pnf entry) throws IOException;
+
+    void createRelation(AAIResourceUri serviceUri, AAIResourceUri pnfUri) throws IOException;
 }

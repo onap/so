@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 
 public class AaiConnectionTestImpl implements AaiConnection {
 
@@ -48,6 +49,10 @@ public class AaiConnectionTestImpl implements AaiConnection {
     @Override
     public void createEntry(String correlationId, Pnf entry) throws IOException {
         created.put(correlationId, entry);
+    }
+
+    @Override
+    public void createRelation(AAIResourceUri serviceUri, AAIResourceUri pnfUri) {
     }
 
     public Map<String, Pnf> getCreated() {
