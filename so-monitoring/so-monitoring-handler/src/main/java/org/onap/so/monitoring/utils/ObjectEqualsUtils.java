@@ -17,28 +17,20 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.monitoring.configuration;
-
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-import org.onap.so.monitoring.configuration.camunda.CamundaConfiguration;
-import org.onap.so.monitoring.configuration.camunda.CamundaRestUrlProvider;
-
+package org.onap.so.monitoring.utils;
 
 /**
  * @author waqas.ikram@ericsson.com
- *
  */
-public class CamundaConfigurationTest {
+public class ObjectEqualsUtils {
 
-    @Test
-    public void test_CamundaRestURIConfiguration_ValidUrl() {
-        final CamundaConfiguration objUnderTest = new CamundaConfiguration();
-        final CamundaRestUrlProvider provider = objUnderTest.camundaRestUrlProvider("http://localhost:8080", "default");
-        assertEquals(
-                "http://localhost:8080/default/history/activity-instance?processInstanceId=Deadpool&sortBy=startTime&sortOrder=asc",
-                provider.getActivityInstanceUrl("Deadpool"));
+    private ObjectEqualsUtils() {}
+
+    public static boolean isEqual(final Object objectA, final Object objectB) {
+        if (objectA == null) {
+            return objectB == null;
+        }
+        return objectA.equals(objectB);
     }
 
 }

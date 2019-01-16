@@ -17,13 +17,13 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.montoring.configuration;
+package org.onap.so.monitoring.configuration;
 
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
-import org.onap.so.montoring.configuration.rest.HttpServiceProviderConfiguration;
-import org.onap.so.montoring.rest.service.HttpRestServiceProvider;
+import org.onap.so.monitoring.configuration.rest.HttpServiceProviderConfiguration;
+import org.onap.so.monitoring.rest.service.HttpRestServiceProvider;
 import org.springframework.web.client.RestTemplate;
 
 /**

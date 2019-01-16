@@ -17,28 +17,31 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.monitoring.configuration;
+package org.onap.so.monitoring.rest.service;
 
-import static org.junit.Assert.assertEquals;
+import java.util.List;
 
-import org.junit.Test;
-import org.onap.so.monitoring.configuration.camunda.CamundaConfiguration;
-import org.onap.so.monitoring.configuration.camunda.CamundaRestUrlProvider;
+import org.onap.so.monitoring.model.ActivityInstanceDetail;
+import org.onap.so.monitoring.model.ProcessDefinitionDetail;
+import org.onap.so.monitoring.model.ProcessInstanceDetail;
+import org.onap.so.monitoring.model.ProcessInstanceIdDetail;
+import org.onap.so.monitoring.model.ProcessInstanceVariableDetail;
 
+import com.google.common.base.Optional;
 
 /**
  * @author waqas.ikram@ericsson.com
- *
  */
-public class CamundaConfigurationTest {
+public interface CamundaProcessDataServiceProvider {
 
-    @Test
-    public void test_CamundaRestURIConfiguration_ValidUrl() {
-        final CamundaConfiguration objUnderTest = new CamundaConfiguration();
-        final CamundaRestUrlProvider provider = objUnderTest.camundaRestUrlProvider("http://localhost:8080", "default");
-        assertEquals(
-                "http://localhost:8080/default/history/activity-instance?processInstanceId=Deadpool&sortBy=startTime&sortOrder=asc",
-                provider.getActivityInstanceUrl("Deadpool"));
-    }
+    Optional<ProcessInstanceIdDetail> getProcessInstanceIdDetail(final String requestId);
+    
+    Optional<ProcessInstanceDetail> getSingleProcessInstanceDetail(final String processInstanceId);
+
+    Optional<ProcessDefinitionDetail> getProcessDefinition(final String processDefinitionId);
+    
+    List<ActivityInstanceDetail> getActivityInstance(final String processInstanceId);
+    
+    List<ProcessInstanceVariableDetail> getProcessInstanceVariable(final String processInstanceId);
 
 }

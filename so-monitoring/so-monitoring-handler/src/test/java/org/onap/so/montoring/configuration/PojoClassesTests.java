@@ -17,7 +17,7 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.montoring.configuration;
+package org.onap.so.monitoring.configuration;
 
 import static org.junit.Assert.assertFalse;
 
@@ -46,14 +46,14 @@ public class PojoClassesTests {
 
     @Test
     public void test_camunda_module_pojo_classes() throws ClassNotFoundException {
-        test("org.onap.so.montoring.camunda.model");
-        assertEqualMethod("org.onap.so.montoring.camunda.model");
+        test("org.onap.so.monitoring.camunda.model");
+        assertEqualMethod("org.onap.so.monitoring.camunda.model");
     }
 
     @Test
     public void test_so_monitoring_pojo_classes() throws ClassNotFoundException {
-        test("org.onap.so.montoring.model");
-        assertEqualMethod("org.onap.so.montoring.model");
+        test("org.onap.so.monitoring.model");
+        assertEqualMethod("org.onap.so.monitoring.model");
     }
 
     public void assertEqualMethod(final String pojoPackage) throws ClassNotFoundException {

@@ -17,28 +17,33 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.monitoring.configuration;
+package org.onap.so.monitoring.configuration.rest;
 
-import static org.junit.Assert.assertEquals;
+import java.io.IOException;
 
-import org.junit.Test;
-import org.onap.so.monitoring.configuration.camunda.CamundaConfiguration;
-import org.onap.so.monitoring.configuration.camunda.CamundaRestUrlProvider;
-
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 
 /**
  * @author waqas.ikram@ericsson.com
  *
  */
-public class CamundaConfigurationTest {
+public class BasicAuthorizationHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-    @Test
-    public void test_CamundaRestURIConfiguration_ValidUrl() {
-        final CamundaConfiguration objUnderTest = new CamundaConfiguration();
-        final CamundaRestUrlProvider provider = objUnderTest.camundaRestUrlProvider("http://localhost:8080", "default");
-        assertEquals(
-                "http://localhost:8080/default/history/activity-instance?processInstanceId=Deadpool&sortBy=startTime&sortOrder=asc",
-                provider.getActivityInstanceUrl("Deadpool"));
+    private final String authorization;
+
+    public BasicAuthorizationHttpRequestInterceptor(final String authorization) {
+        this.authorization = authorization;
     }
 
+    @Override
+    public ClientHttpResponse intercept(final HttpRequest request, final byte[] body,
+            final ClientHttpRequestExecution execution) throws IOException {
+        final HttpHeaders headers = request.getHeaders();
+        headers.add("Authorization", authorization);
+        return execution.execute(request, body);
+    }
 }

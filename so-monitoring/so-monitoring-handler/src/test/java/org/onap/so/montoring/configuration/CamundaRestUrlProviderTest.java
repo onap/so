@@ -17,14 +17,14 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.montoring.configuration;
+package org.onap.so.monitoring.configuration;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.UUID;
 
 import org.junit.Test;
-import org.onap.so.montoring.configuration.camunda.CamundaRestUrlProvider;
+import org.onap.so.monitoring.configuration.camunda.CamundaRestUrlProvider;
 
 /**
  * @author waqas.ikram@ericsson.com

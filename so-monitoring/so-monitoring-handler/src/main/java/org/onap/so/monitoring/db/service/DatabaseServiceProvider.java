@@ -17,28 +17,20 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.monitoring.configuration;
+package org.onap.so.monitoring.db.service;
 
-import static org.junit.Assert.assertEquals;
+import java.util.List;
+import java.util.Map;
 
-import org.junit.Test;
-import org.onap.so.monitoring.configuration.camunda.CamundaConfiguration;
-import org.onap.so.monitoring.configuration.camunda.CamundaRestUrlProvider;
+import org.onap.so.monitoring.model.SoInfraRequest;
 
 
 /**
  * @author waqas.ikram@ericsson.com
- *
  */
-public class CamundaConfigurationTest {
+public interface DatabaseServiceProvider {
 
-    @Test
-    public void test_CamundaRestURIConfiguration_ValidUrl() {
-        final CamundaConfiguration objUnderTest = new CamundaConfiguration();
-        final CamundaRestUrlProvider provider = objUnderTest.camundaRestUrlProvider("http://localhost:8080", "default");
-        assertEquals(
-                "http://localhost:8080/default/history/activity-instance?processInstanceId=Deadpool&sortBy=startTime&sortOrder=asc",
-                provider.getActivityInstanceUrl("Deadpool"));
-    }
+    List<SoInfraRequest> getSoInfraRequest(final Map<String, String[]> filters, final long startTime,
+            final long endTime, final Integer maxResult);
 
 }
