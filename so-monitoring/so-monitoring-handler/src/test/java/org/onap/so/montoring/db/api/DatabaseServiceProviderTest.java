@@ -17,7 +17,7 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.montoring.db.api;
+package org.onap.so.monitoring.db.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -33,12 +33,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Test;
-import org.onap.so.montoring.camunda.model.SoActiveInfraRequests;
-import org.onap.so.montoring.configuration.database.DatabaseUrlProvider;
-import org.onap.so.montoring.db.service.DatabaseServiceProvider;
-import org.onap.so.montoring.db.service.DatabaseServiceProviderImpl;
-import org.onap.so.montoring.model.SoInfraRequest;
-import org.onap.so.montoring.rest.service.HttpRestServiceProvider;
+import org.onap.so.monitoring.camunda.model.SoActiveInfraRequests;
+import org.onap.so.monitoring.configuration.database.DatabaseUrlProvider;
+import org.onap.so.monitoring.db.service.DatabaseServiceProvider;
+import org.onap.so.monitoring.db.service.DatabaseServiceProviderImpl;
+import org.onap.so.monitoring.model.SoInfraRequest;
+import org.onap.so.monitoring.rest.service.HttpRestServiceProvider;
 
 import com.google.common.base.Optional;
 

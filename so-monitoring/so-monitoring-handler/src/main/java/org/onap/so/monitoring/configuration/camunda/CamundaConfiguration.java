@@ -17,28 +17,22 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.monitoring.configuration;
+package org.onap.so.monitoring.configuration.camunda;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-import org.onap.so.monitoring.configuration.camunda.CamundaConfiguration;
-import org.onap.so.monitoring.configuration.camunda.CamundaRestUrlProvider;
-
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author waqas.ikram@ericsson.com
- *
  */
-public class CamundaConfigurationTest {
 
-    @Test
-    public void test_CamundaRestURIConfiguration_ValidUrl() {
-        final CamundaConfiguration objUnderTest = new CamundaConfiguration();
-        final CamundaRestUrlProvider provider = objUnderTest.camundaRestUrlProvider("http://localhost:8080", "default");
-        assertEquals(
-                "http://localhost:8080/default/history/activity-instance?processInstanceId=Deadpool&sortBy=startTime&sortOrder=asc",
-                provider.getActivityInstanceUrl("Deadpool"));
+@Configuration
+public class CamundaConfiguration {
+
+    @Bean
+    public CamundaRestUrlProvider camundaRestUrlProvider(@Value(value = "${camunda.rest.api.url}") final String httpURL,
+            @Value(value = "${camunda.rest.api.engine:default}") final String engineName) {
+        return new CamundaRestUrlProvider(httpURL, engineName);
     }
-
 }

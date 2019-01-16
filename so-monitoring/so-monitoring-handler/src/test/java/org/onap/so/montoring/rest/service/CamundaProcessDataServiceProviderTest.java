@@ -17,7 +17,7 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.montoring.rest.service;
+package org.onap.so.monitoring.rest.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,15 +29,15 @@ import java.util.List;
 import java.util.UUID;
 
 import org.junit.Test;
-import org.onap.so.montoring.camunda.model.ActivityInstance;
-import org.onap.so.montoring.camunda.model.ProcessDefinition;
-import org.onap.so.montoring.camunda.model.ProcessInstance;
-import org.onap.so.montoring.camunda.model.ProcessInstanceVariable;
-import org.onap.so.montoring.configuration.camunda.CamundaRestUrlProvider;
-import org.onap.so.montoring.model.ActivityInstanceDetail;
-import org.onap.so.montoring.model.ProcessDefinitionDetail;
-import org.onap.so.montoring.model.ProcessInstanceIdDetail;
-import org.onap.so.montoring.model.ProcessInstanceVariableDetail;
+import org.onap.so.monitoring.camunda.model.ActivityInstance;
+import org.onap.so.monitoring.camunda.model.ProcessDefinition;
+import org.onap.so.monitoring.camunda.model.ProcessInstance;
+import org.onap.so.monitoring.camunda.model.ProcessInstanceVariable;
+import org.onap.so.monitoring.configuration.camunda.CamundaRestUrlProvider;
+import org.onap.so.monitoring.model.ActivityInstanceDetail;
+import org.onap.so.monitoring.model.ProcessDefinitionDetail;
+import org.onap.so.monitoring.model.ProcessInstanceIdDetail;
+import org.onap.so.monitoring.model.ProcessInstanceVariableDetail;
 
 import com.google.common.base.Optional;
 

@@ -32,16 +32,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.onap.so.montoring.db.service.DatabaseServiceProvider;
-import org.onap.so.montoring.exception.InvalidRestRequestException;
-import org.onap.so.montoring.exception.RestProcessingException;
-import org.onap.so.montoring.model.ActivityInstanceDetail;
-import org.onap.so.montoring.model.ProcessDefinitionDetail;
-import org.onap.so.montoring.model.ProcessInstanceDetail;
-import org.onap.so.montoring.model.ProcessInstanceIdDetail;
-import org.onap.so.montoring.model.ProcessInstanceVariableDetail;
-import org.onap.so.montoring.model.SoInfraRequest;
-import org.onap.so.montoring.rest.service.CamundaProcessDataServiceProvider;
+import org.onap.so.monitoring.db.service.DatabaseServiceProvider;
+import org.onap.so.monitoring.exception.InvalidRestRequestException;
+import org.onap.so.monitoring.exception.RestProcessingException;
+import org.onap.so.monitoring.model.ActivityInstanceDetail;
+import org.onap.so.monitoring.model.ProcessDefinitionDetail;
+import org.onap.so.monitoring.model.ProcessInstanceDetail;
+import org.onap.so.monitoring.model.ProcessInstanceIdDetail;
+import org.onap.so.monitoring.model.ProcessInstanceVariableDetail;
+import org.onap.so.monitoring.model.SoInfraRequest;
+import org.onap.so.monitoring.rest.service.CamundaProcessDataServiceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -19,34 +19,30 @@
  */
 package org.onap.so.monitoring.configuration.database;
 
-import static org.junit.Assert.assertEquals;
+import java.net.URI;
 
-import org.junit.Test;
-
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author waqas.ikram@ericsson.com
+ *
  */
-public class DatabaseUrlProviderTest {
+public class DatabaseUrlProvider {
 
-    private static final int MAX_RESULT = 1;
-    private static final String URL = "http://localhost:8081/infraActiveRequests/";
-    private final DatabaseUrlProvider objUnderTest = new DatabaseUrlProvider(URL);
+    private final URI baseUri;
 
-    @Test
-    public void test_maxResultNull() {
-        final long from = System.currentTimeMillis();
-        final long to = System.currentTimeMillis();
-        final String actualUrl = objUnderTest.getSearchUrl(from, to, null);
-        assertEquals(URL + "v1/getInfraActiveRequests?from=" + from + "&to=" + to, actualUrl);
+    public DatabaseUrlProvider(final String baseUrl) {
+        this.baseUri = UriComponentsBuilder.fromHttpUrl(baseUrl).build().toUri();
     }
 
-    @Test
-    public void test_maxResultNotNull() {
-        final long from = System.currentTimeMillis();
-        final long to = System.currentTimeMillis();
-        final String actualUrl = objUnderTest.getSearchUrl(from, to, MAX_RESULT);
-        assertEquals(URL + "v1/getInfraActiveRequests?from=" + from + "&to=" + to + "&maxResult=" + MAX_RESULT,
-                actualUrl);
+    public String getSearchUrl(final long from, final long to, final Integer maxResult) {
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUri(baseUri).pathSegment("v1")
+                .pathSegment("getInfraActiveRequests").queryParam("from", from).queryParam("to", to);
+        if (maxResult != null) {
+            return builder.queryParam("maxResult", maxResult).build().toString();
+        }
+
+        return builder.build().toString();
     }
+
 }

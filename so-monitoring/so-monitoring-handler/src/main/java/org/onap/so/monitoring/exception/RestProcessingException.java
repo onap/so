@@ -17,28 +17,21 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.monitoring.configuration;
-
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-import org.onap.so.monitoring.configuration.camunda.CamundaConfiguration;
-import org.onap.so.monitoring.configuration.camunda.CamundaRestUrlProvider;
-
+package org.onap.so.monitoring.exception;
 
 /**
  * @author waqas.ikram@ericsson.com
  *
  */
-public class CamundaConfigurationTest {
+public class RestProcessingException extends RuntimeException {
 
-    @Test
-    public void test_CamundaRestURIConfiguration_ValidUrl() {
-        final CamundaConfiguration objUnderTest = new CamundaConfiguration();
-        final CamundaRestUrlProvider provider = objUnderTest.camundaRestUrlProvider("http://localhost:8080", "default");
-        assertEquals(
-                "http://localhost:8080/default/history/activity-instance?processInstanceId=Deadpool&sortBy=startTime&sortOrder=asc",
-                provider.getActivityInstanceUrl("Deadpool"));
+    private static final long serialVersionUID = 16862313537198441L;
+
+    public RestProcessingException(final String message) {
+        super(message);
     }
 
+    public RestProcessingException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }
