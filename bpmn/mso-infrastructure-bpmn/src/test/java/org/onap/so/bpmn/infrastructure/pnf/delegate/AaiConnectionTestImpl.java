@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -52,6 +53,11 @@ public class AaiConnectionTestImpl implements AaiConnection {
     @Override
     public void createEntry(String correlationId, Pnf entry) throws IOException {
         created.put(correlationId, entry);
+    }
+
+    @Override
+    public void createRelation(AAIResourceUri serviceUri, AAIResourceUri pnfUri) {
+        throw new UnsupportedOperationException();
     }
 
     public Map<String, Pnf> getCreated() {
