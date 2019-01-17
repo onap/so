@@ -50,10 +50,10 @@ public class ResourceRequestBuilderTest {
         UrnPropertiesReader reader = new UrnPropertiesReader();
         Environment env = mock(Environment.class);
 
-        when(env.getProperty(eq("mso.catalog.db.endpoint"))).thenReturn("http://localhost:8080");
+        when(env.getProperty(eq("mso.catalog.db.endpoint"))).thenReturn("http://localhost:8080/ecomp/mso/catalog");
         reader.setEnvironment(env);
 
-        WireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/v3/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+        WireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
                 .willReturn(WireMock.ok("{ \"serviceResources\"    : {\n" +
                         "\t\"modelInfo\"       : {\n" +
                         "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
@@ -148,10 +148,10 @@ public class ResourceRequestBuilderTest {
         UrnPropertiesReader reader = new UrnPropertiesReader();
         Environment env = mock(Environment.class);
 
-        when(env.getProperty(eq("mso.catalog.db.endpoint"))).thenReturn("http://localhost:8080");
+        when(env.getProperty(eq("mso.catalog.db.endpoint"))).thenReturn("http://localhost:8080/ecomp/mso/catalog");
         reader.setEnvironment(env);
 
-        WireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/v3/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+        WireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
                 .willReturn(WireMock.ok("{ \"serviceResources\"    : {\n" +
                         "\t\"modelInfo\"       : {\n" +
                         "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
@@ -245,10 +245,10 @@ public class ResourceRequestBuilderTest {
         UrnPropertiesReader reader = new UrnPropertiesReader();
         Environment env = mock(Environment.class);
 
-        when(env.getProperty(eq("mso.catalog.db.endpoint"))).thenReturn("http://localhost:8080");
+        when(env.getProperty(eq("mso.catalog.db.endpoint"))).thenReturn("http://localhost:8080/ecomp/mso/catalog");
         reader.setEnvironment(env);
 
-        WireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/v3/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+        WireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
                 .willReturn(WireMock.ok("{ \"serviceResources\"    : {\n" +
                         "\t\"modelInfo\"       : {\n" +
                         "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
@@ -342,10 +342,10 @@ public class ResourceRequestBuilderTest {
         UrnPropertiesReader reader = new UrnPropertiesReader();
         Environment env = mock(Environment.class);
 
-        when(env.getProperty(eq("mso.catalog.db.endpoint"))).thenReturn("http://localhost:8080");
+        when(env.getProperty(eq("mso.catalog.db.endpoint"))).thenReturn("http://localhost:8080/ecomp/mso/catalog");
         reader.setEnvironment(env);
 
-        WireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/v3/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+        WireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
                 .willReturn(WireMock.ok("{ \"serviceResources\"    : {\n" +
                         "\t\"modelInfo\"       : {\n" +
                         "\t\t\"modelName\"          : \"demoVFWCL\",\n" +

@@ -66,8 +66,7 @@ public class ResourceRequestBuilder {
 
     private static String CUSTOMIZATION_UUID = "cuserviceResourcesstomizationUUID";
 
-    private static String SERVICE_URL_TOSCA_CSAR = "/v3/serviceToscaCsar";
-    private static String SERVICE_URL_SERVICE_INSTANCE = "/v3/serviceResources";
+    private static String SERVICE_URL_SERVICE_INSTANCE = "/v2/serviceResources";
 
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, ResourceRequestBuilder.class);
 
