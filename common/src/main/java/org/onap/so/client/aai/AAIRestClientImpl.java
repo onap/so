@@ -80,7 +80,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
     }
 
     @Override
-    public Optional<Pnf> getPnfByName(String pnfId, String transactionLoggingUuid) {
+    public Optional<Pnf> getPnfByName(String pnfId) {
         Response response = new AAIResourcesClient()
                 .getFullResponse(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId));
         if (response.getStatus() != 200) {
@@ -91,7 +91,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
     }
 
     @Override
-    public void createPnf(String pnfId, String transactionLoggingUuid, Pnf pnf) {
+    public void createPnf(String pnfId, Pnf pnf) {
         new AAIResourcesClient()
                 .createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId), Optional.of(pnf));
     }
