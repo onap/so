@@ -32,6 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.cxf.common.i18n.Exception;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
 import org.slf4j.LoggerFactory;
@@ -431,8 +432,7 @@ public class WorkflowAction {
 		CollectionResourceCustomization networkCollection = null;
 		int count = 0;
 		for(CollectionResourceCustomization collectionCust : service.getCollectionResourceCustomizations()){
-			if(catalogDbClient.getNetworkCollectionResourceCustomizationByID(collectionCust.getModelCustomizationUUID()) 
-					instanceof NetworkCollectionResourceCustomization) {
+			if(catalogDbClient.getNetworkCollectionResourceCustomizationByID(collectionCust.getModelCustomizationUUID()) != null) {
 				networkCollection = collectionCust;
 				count++;
 			}
