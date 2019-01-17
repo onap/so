@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_d7aa3484",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/aai/AaiConnectionImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-01-17T10:19:29Z",
+      "side": 1,
+      "message": "I just looked at InjectionHelper - unfortunately this solution introduces several issues.\n\n1. If class depends on InjectionHelper it automatically (indirectly) depends on all classes that InjectionHelper provides. That\u0027s one thing that a dependency injection framework should avoid.\n\n2. Problem that is connected to previous one is that a central point of constructing unrelated objects impacts the readability negatively. The class dependencies are not known during its instantiation, but only after looking into all the usages inside.\n\n3. Another problem InjectionHelper has is that it \"Enforces acquisition of a new copy of these classes every time to help with picking up properties files changes, etc\" - that indicates that those classes have logic in constructors, especially reading files. That shouldn\u0027t be the case.\n\nAll those classes - AAIResourcesClient, AAIQueryClient, ... could be beans. Actually there is even a mechanism in spring that allows to update beans when configuration changes. That way you wouldn\u0027t need to read configuration files every time you want to send a rest message.",
+      "parentUuid": "9adffdf1_8501db6b",
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_4ada20e9",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelation.java",
         "patchSetId": 2
