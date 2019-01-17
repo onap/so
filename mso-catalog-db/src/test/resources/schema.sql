@@ -69,7 +69,7 @@ create table `allotted_resource_customization` (
   `min_instances` int(11) default null,
   `max_instances` int(11) default null,
   `ar_model_uuid` varchar(200) not null,
-  `resource_input` varchar(2000) default null,
+  `resource_input` varchar(20000) default null,
   `creation_timestamp` datetime not null default current_timestamp,
   primary key (`model_customization_uuid`),
   key `fk_allotted_resource_customization__allotted_resource1_idx` (`ar_model_uuid`),
@@ -210,7 +210,7 @@ create table `network_resource_customization` (
   `network_scope` varchar(45) default null,
   `creation_timestamp` datetime not null default current_timestamp,
   `network_resource_model_uuid` varchar(200) not null,
-  `resource_input` varchar(2000) default null,
+  `resource_input` varchar(20000) default null,
   primary key (`model_customization_uuid`),
   key `fk_network_resource_customization__network_resource1_idx` (`network_resource_model_uuid`),
   constraint `fk_network_resource_customization__network_resource1` foreign key (`network_resource_model_uuid`) references `network_resource` (`model_uuid`) on delete cascade on update cascade
@@ -437,7 +437,7 @@ create table `vnf_resource_customization` (
   `creation_timestamp` datetime not null default current_timestamp,
   `vnf_resource_model_uuid` varchar(200) not null,
   `multi_stage_design` varchar(20) default null,
-  `resource_input` varchar(2000) default null,
+  `resource_input` varchar(20000) default null,
   primary key (`model_customization_uuid`),
   key `fk_vnf_resource_customization__vnf_resource1_idx` (`vnf_resource_model_uuid`),
   constraint `fk_vnf_resource_customization__vnf_resource1` foreign key (`vnf_resource_model_uuid`) references `vnf_resource` (`model_uuid`) on delete cascade on update cascade
