@@ -431,8 +431,7 @@ public class WorkflowAction {
 		CollectionResourceCustomization networkCollection = null;
 		int count = 0;
 		for(CollectionResourceCustomization collectionCust : service.getCollectionResourceCustomizations()){
-			if(catalogDbClient.getNetworkCollectionResourceCustomizationByID(collectionCust.getModelCustomizationUUID()) 
-					instanceof NetworkCollectionResourceCustomization) {
+			if(catalogDbClient.getNetworkCollectionResourceCustomizationByID(collectionCust.getModelCustomizationUUID()) != null) {
 				networkCollection = collectionCust;
 				count++;
 			}
