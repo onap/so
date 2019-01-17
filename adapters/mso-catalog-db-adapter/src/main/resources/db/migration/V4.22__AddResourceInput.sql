@@ -11,3 +11,5 @@ ADD RESOURCE_INPUT varchar(2000);
 
 ALTER TABLE allotted_resource_customization
 ADD RESOURCE_INPUT varchar(2000);
+
+ALTER TABLE allotted_resource_customization MODIFY IF EXISTS RESOURCE_INPUT varchar(20000);
