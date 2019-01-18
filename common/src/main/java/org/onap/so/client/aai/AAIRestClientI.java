@@ -31,11 +31,11 @@ public interface AAIRestClientI {
 
 	List<Pserver> getPhysicalServerByVnfId(String vnfId) throws IOException;
 	
-	void updateMaintenceFlagVnfId(String vnfId, boolean inMaint) throws Exception;
+	void updateMaintenceFlagVnfId(String vnfId, boolean inMaint);
 	
 	GenericVnf getVnfByName(String vnfId);
 
-	Optional<Pnf> getPnfByName(String pnfId,  String transactionLoggingUuid) throws Exception;
+	Optional<Pnf> getPnfByName(String pnfId);
 
-    void createPnf(String pnfId, String transactionLoggingUuid, Pnf pnf) throws IOException;
+	void createPnf(String pnfId, Pnf pnf);
 }
