@@ -13,7 +13,7 @@ tags:
   - name: onapsoinfracloudResourcesRequests
   - name: onapsoinframodelDistributions
 schemes:
-  - https
+  - http
 paths:
   '/onap/so/infra/e2eServiceInstances/{version}':
     post:

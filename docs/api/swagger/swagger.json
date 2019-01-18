@@ -34,10 +34,10 @@
     }
   ],
   "schemes": [
-    "https"
+    "http"
   ],
   "paths": {
-    "/e2eServiceInstances/{version}": {
+    "/onap/so/infra/e2eServiceInstances/{version}": {
       "post": {
         "tags": [
           "e2eServiceInstances"
@@ -75,7 +75,7 @@
         }
       }
     },
-    "/e2eServiceInstances/{version}/{serviceId}": {
+    "/onap/so/infra/e2eServiceInstances/{version}/{serviceId}": {
       "put": {
         "tags": [
           "e2eServiceInstances"
@@ -161,7 +161,7 @@
         }
       }
     },
-    "/e2eServiceInstances/{version}/{serviceId}/operations/{operationId}": {
+    "/onap/so/infra/e2eServiceInstances/{version}/{serviceId}/operations/{operationId}": {
       "get": {
         "tags": [
           "e2eServiceInstances"
@@ -200,7 +200,7 @@
         }
       }
     },
-    "/e2eServiceInstances/{version}/{serviceId}/scale": {
+    "/onap/so/infra/e2eServiceInstances/{version}/{serviceId}/scale": {
       "post": {
         "tags": [
           "e2eServiceInstances"
@@ -244,7 +244,7 @@
         }
       }
     },
-    "/e2eServiceInstances/{version}/{serviceId}/modeldifferences": {
+    "/onap/so/infra/e2eServiceInstances/{version}/{serviceId}/modeldifferences": {
       "post": {
         "tags": [
           "e2eServiceInstances"
