@@ -61,19 +61,19 @@ public class ServiceTopologyOperationMapper{
 		servOpInput.setServiceInformation(servInfo);
 		servOpInput.setServiceRequestInput(servReqInfo);
 		
-		if(requestContext.getUserParams()!=null){
-			for (Map.Entry<String, String> entry : requestContext.getUserParams().entrySet()) {
-				GenericResourceApiServicerequestinputServiceRequestInput serviceRequestInput = new GenericResourceApiServicerequestinputServiceRequestInput(); 
-				serviceRequestInput.setServiceInstanceName(serviceInstance.getServiceInstanceName()); 
-				GenericResourceApiParam serviceInputParameters = new GenericResourceApiParam(); 
-				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam(); 
-				paramItem.setName(entry.getKey()); 
-				paramItem.setValue(entry.getValue()); 
-				serviceInputParameters.addParamItem(paramItem ); 
-				serviceRequestInput.serviceInputParameters(serviceInputParameters); 
-				servOpInput.setServiceRequestInput(serviceRequestInput ); 
-			}
-		}
+        if (requestContext.getUserParams() != null) {
+            GenericResourceApiServicerequestinputServiceRequestInput serviceRequestInput = new GenericResourceApiServicerequestinputServiceRequestInput();
+            serviceRequestInput.setServiceInstanceName(serviceInstance.getServiceInstanceName());
+            GenericResourceApiParam serviceInputParameters = new GenericResourceApiParam();
+            for (Map.Entry<String, String> entry : requestContext.getUserParams().entrySet()) {
+                GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
+                paramItem.setName(entry.getKey());
+                paramItem.setValue(entry.getValue());
+                serviceInputParameters.addParamItem(paramItem);
+            }
+            serviceRequestInput.serviceInputParameters(serviceInputParameters);
+            servOpInput.setServiceRequestInput(serviceRequestInput);
+        }
 		return servOpInput;		
 	}
 }

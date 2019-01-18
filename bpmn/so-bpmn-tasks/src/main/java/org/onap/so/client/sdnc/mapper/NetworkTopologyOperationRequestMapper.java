@@ -68,14 +68,14 @@ public class NetworkTopologyOperationRequestMapper {
 		req.setNetworkInformation(networkInformation);
 
 		if (requestContext.getUserParams() != null) {
+			GenericResourceApiParam networkInputParameters = new GenericResourceApiParam();
 			for (Map.Entry<String, String> entry : requestContext.getUserParams().entrySet()) {
-				GenericResourceApiParam networkInputParameters = new GenericResourceApiParam();
 				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
 				paramItem.setName(entry.getKey()); 
 				paramItem.setValue(entry.getValue()); 
 				networkInputParameters.addParamItem(paramItem);
-				networkRequestInput.setNetworkInputParameters(networkInputParameters);
 			}
+			networkRequestInput.setNetworkInputParameters(networkInputParameters);
 		}
 
 		req.setNetworkRequestInput(networkRequestInput);
