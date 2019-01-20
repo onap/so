@@ -20,24 +20,16 @@
 
 package org.onap.so.client.aai;
 
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import javax.ws.rs.core.Response;
 
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.RestClientSSL;
-import org.onap.so.client.graphinventory.exceptions.GraphInventoryPatchDepthExceededException;
 import org.onap.so.client.policy.CommonObjectMapperProvider;
-import org.onap.so.jsonpath.JsonPathUtil;
 import org.onap.so.utils.TargetEntity;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class AAIRestClient extends RestClientSSL {
 
@@ -58,7 +50,7 @@ public class AAIRestClient extends RestClientSSL {
 
 	@Override
 	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		headerMap.put("X-FromAppId", "MSO");
+		headerMap.put("X-FromAppId", aaiProperties.getSystemName());
 		headerMap.put("X-TransactionId", requestId);
 		String auth = aaiProperties.getAuth();
 		String key = aaiProperties.getKey();

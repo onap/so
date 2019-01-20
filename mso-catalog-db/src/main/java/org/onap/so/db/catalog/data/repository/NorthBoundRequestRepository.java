@@ -28,4 +28,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface NorthBoundRequestRepository extends JpaRepository<NorthBoundRequest, Integer> {
 	NorthBoundRequest findOneByActionAndRequestScopeAndIsAlacarte(String action, String requestScope, Boolean isALaCarte);
 	NorthBoundRequest findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner(String action, String requestScope, Boolean isALaCarte, String cloudOwner);
+	NorthBoundRequest findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType(String action, String requestScope, Boolean isALaCarte, String cloudOwner, String serviceType);
 }

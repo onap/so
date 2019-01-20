@@ -174,7 +174,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 
 			String newPersonaModelId = execution.getVariable('UAAIGenVnf_personaModelId')
 			String newPersonaModelVersion = execution.getVariable('UAAIGenVnf_personaModelVersion')
-			String personaModelVersionEntry = ""
+			String personaModelVersionEntry = null
 			if (newPersonaModelId != null || newPersonaModelVersion != null) {
 				if (newPersonaModelId != genericVnf.getModelInvariantId()) {
 					def msg = 'Can\'t update Generic VNF ' + vnfId + ' since there is \'persona-model-id\' mismatch between the current and new values'
@@ -188,7 +188,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 
 			// Handle ipv4-oam-address
 			String ipv4OamAddress = execution.getVariable('UAAIGenVnf_ipv4OamAddress')
-			String ipv4OamAddressEntry = ""
+			String ipv4OamAddressEntry = null
 			if (ipv4OamAddress != null) {
 				// Construct payload
 				ipv4OamAddressEntry = updateGenericVnfNode(origRequest, 'ipv4-oam-address')
@@ -196,7 +196,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 
 			// Handle management-v6-address
 			String managementV6Address = execution.getVariable('UAAIGenVnf_managementV6Address')
-			String managementV6AddressEntry = ""
+			String managementV6AddressEntry = null
 			if (managementV6Address != null) {
 				// Construct payload
 				managementV6AddressEntry = updateGenericVnfNode(origRequest, 'management-v6-address')
@@ -204,21 +204,19 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			
 			// Handle orchestration-status
 			String orchestrationStatus = execution.getVariable('UAAIGenVnf_orchestrationStatus')
-			String orchestrationStatusEntry = ""
+			String orchestrationStatusEntry = null
 			if (orchestrationStatus != null) {
 				// Construct payload
 				orchestrationStatusEntry = updateGenericVnfNode(origRequest, 'orchestration-status')
 			}
-
-			String payload = """
-					{	${personaModelVersionEntry}
-						${ipv4OamAddressEntry}
-						${managementV6AddressEntry}
-						${orchestrationStatusEntry}
-						"vnf-id": "${vnfId}"					
-					}
-			"""
-
+			
+			org.onap.aai.domain.yang.GenericVnf payload = new org.onap.aai.domain.yang.GenericVnf();
+			payload.setVnfId(vnfId)
+			payload.setPersonaModelVersion(personaModelVersionEntry)
+			payload.setIpv4OamAddress(ipv4OamAddressEntry)
+			payload.setManagementV6Address(managementV6AddressEntry)
+			payload.setOrchestrationStatus(orchestrationStatusEntry)
+			
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
 
 			try {
@@ -246,16 +244,16 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 	public String updateGenericVnfNode(String origRequest, String elementName) {
 
 		if (!utils.nodeExists(origRequest, elementName)) {
-			return ""
+			return null
 		}
 		def elementValue = utils.getNodeText(origRequest, elementName)
 
 		if (elementValue == 'DELETE') {
-			// Set the element being deleted to null
-			return """"${elementName}": null,"""
+			// Set the element being deleted to empty string
+			return ""
 		}
 		else {
-			return """"${elementName}": "${elementValue}","""		
+			return elementValue		
 		}
 		
 	}

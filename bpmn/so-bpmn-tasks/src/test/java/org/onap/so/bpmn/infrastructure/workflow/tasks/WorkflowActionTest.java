@@ -982,6 +982,17 @@ public class WorkflowActionTest extends BaseTaskTest {
 		assertEquals(flows.get(8).getFlowName(),"SDNOVnfHealthCheckBB");
 		assertEquals(flows.get(9).getFlowName(),"AAIUnsetVnfInMaintBB");
 	}	
+	
+	@Test
+	public void queryNorthBoundRequestCatalogDbTransportTest() throws MalformedURLException {
+		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+		List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB");
+		northBoundRequest.setOrchestrationFlowList(orchFlows);
+		when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwnerAndServiceType("createInstance","Service",true,"my-custom-cloud-owner","TRANSPORT")).thenReturn(northBoundRequest);
+
+		List<OrchestrationFlow> flows = workflowAction.queryNorthBoundRequestCatalogDb(execution, "createInstance", WorkflowType.SERVICE, true,"my-custom-cloud-owner","TRANSPORT");
+		assertEquals(flows.get(0).getFlowName(),"AssignServiceInstanceBB");
+	}
 
 	@Test
 	public void extractResourceIdAndTypeFromUriTest(){
