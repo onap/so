@@ -20,10 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -31,7 +29,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Optional;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
@@ -39,17 +36,16 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.onap.so.adapters.nwrest.DeleteNetworkResponse;
+import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
-import org.onap.so.client.adapter.network.NetworkAdapterClientException;
-import org.onap.so.client.exception.BBObjectNotFoundException;
-import org.onap.so.client.orchestration.NetworkAdapterResources;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.adapter.network.NetworkAdapterClientException;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 
 
 public class NetworkAdapterDeleteTasksTest extends BaseTaskTest{	
@@ -77,25 +73,19 @@ public class NetworkAdapterDeleteTasksTest extends BaseTaskTest{
 
 	@Test
 	public void test_deleteNetwork() throws UnsupportedEncodingException, NetworkAdapterClientException {		
-		DeleteNetworkResponse deleteNetworkResponse = new DeleteNetworkResponse();
-		deleteNetworkResponse.setNetworkDeleted(true);
-		deleteNetworkResponse.setNetworkId(l3Network.getNetworkId());
-		Optional<DeleteNetworkResponse> oDeleteNetworkResponse = Optional.of(deleteNetworkResponse);
-		
-		when(networkAdapterResources.deleteNetwork(any(RequestContext.class), any(CloudRegion.class), eq(serviceInstance), eq(l3Network))).thenReturn(oDeleteNetworkResponse);
+		DeleteNetworkRequest deleteNetworkRequest = new DeleteNetworkRequest();
+		doReturn(deleteNetworkRequest).when(networkAdapterObjectMapper).deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
 
 		networkAdapterDeleteTasks.deleteNetwork(execution);
-
-		verify(networkAdapterResources, times(1)).deleteNetwork(requestContext, cloudRegion, serviceInstance, l3Network);
-		assertEquals(deleteNetworkResponse, execution.getVariable("deleteNetworkResponse"));
+		verify(networkAdapterObjectMapper, times(1)).deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
 	}
 
 	@Test
 	public void test_deleteNetwork_exception() throws UnsupportedEncodingException, NetworkAdapterClientException {
 		expectedException.expect(BpmnError.class);
 
-		doThrow(NetworkAdapterClientException.class).when(networkAdapterResources).
-		deleteNetwork(any(RequestContext.class), any(CloudRegion.class), any(ServiceInstance.class), eq(l3Network));
+		doThrow(RuntimeException.class).when(networkAdapterObjectMapper).
+		deleteNetworkRequestMapper(any(RequestContext.class), any(CloudRegion.class), any(ServiceInstance.class), eq(l3Network));
 		networkAdapterDeleteTasks.deleteNetwork(execution);
 	}
 }

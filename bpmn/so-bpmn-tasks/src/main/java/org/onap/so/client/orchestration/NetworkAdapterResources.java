@@ -24,6 +24,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.ws.rs.core.Response;
+
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
@@ -78,5 +80,30 @@ public class NetworkAdapterResources {
 		
 		DeleteNetworkRequest deleteNetworkRequest = networkAdapterObjectMapper.deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
 		return Optional.of(networkAdapterClient.deleteNetwork(l3Network.getNetworkId(), deleteNetworkRequest));
+	}
+	
+	public Optional<Response> createNetworkAsync(CreateNetworkRequest createNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
+
+		return Optional.of(networkAdapterClient.createNetworkAsync(createNetworkRequest));
+	}
+	
+	public Optional<Response> deleteNetworkAsync(DeleteNetworkRequest deleteNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
+
+		return Optional.of(networkAdapterClient.deleteNetworkAsync(deleteNetworkRequest.getNetworkId(), deleteNetworkRequest));
+	}
+
+	public Optional<RollbackNetworkResponse> rollbackCreateNetwork(String networkId, RollbackNetworkRequest rollbackNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
+
+		return Optional.of(networkAdapterClient.rollbackNetwork(networkId, rollbackNetworkRequest));
+	}
+	
+	public Optional<UpdateNetworkResponse> updateNetwork(UpdateNetworkRequest updateNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
+		
+		return Optional.of(networkAdapterClient.updateNetwork(updateNetworkRequest.getNetworkId(), updateNetworkRequest));
+	}
+	
+	public Optional<DeleteNetworkResponse> deleteNetwork(DeleteNetworkRequest deleteNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
+		
+		return Optional.of(networkAdapterClient.deleteNetwork(deleteNetworkRequest.getNetworkId(), deleteNetworkRequest));
 	}
 }

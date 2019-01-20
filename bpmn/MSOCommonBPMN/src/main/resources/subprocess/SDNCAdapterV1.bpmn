@@ -20,7 +20,7 @@ ExceptionUtil exceptionUtil = new ExceptionUtil()
 exceptionUtil.buildWorkflowException(execution, 7000, "Could not communicate with the SDNC Adapter" )]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="Exception" name="Exception" sourceRef="setBadResponse" targetRef="badResponseEndFlow" />
-    <bpmn2:serviceTask id="invokeSDNCAdapter" name="Invoke SDNC Adapter" camunda:asyncAfter="true" camunda:class="">
+    <bpmn2:serviceTask id="invokeSDNCAdapter" name="Invoke SDNC Adapter" camunda:class="">
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
