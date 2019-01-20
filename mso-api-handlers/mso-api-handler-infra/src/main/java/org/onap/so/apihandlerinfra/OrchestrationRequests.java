@@ -333,6 +333,10 @@ public class OrchestrationRequests {
 	       String startTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getStartTime()) + " GMT";
 	       request.setStartTime(startTimeStamp);
        }
+       if(iar.getEndTime() != null){
+    	   String endTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getEndTime()) + " GMT";
+    	   request.setFinishTime(endTimeStamp);
+       }
        String statusMessages = null;
        RequestStatus status = new RequestStatus();
        if(iar.getStatusMessage() != null){
@@ -361,10 +365,6 @@ public class OrchestrationRequests {
        }
        if(statusMessages != null){
     	   status.setStatusMessage(statusMessages);
-       }
-       if(iar.getEndTime() != null){
-    	   String endTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getEndTime()) + " GMT";
-    	   status.setFinishTime(endTimeStamp);
        }
        if(iar.getModifyTime() != null){
     	   String timeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getModifyTime()) + " GMT";

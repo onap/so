@@ -97,6 +97,17 @@ public class WorkflowActionBBFailure {
 				request.setStatusMessage(errorMsg);
 				execution.setVariable("ErrorMessage", errorMsg);
 			}
+			if(ebb!=null && ebb.getBuildingBlock()!=null){
+				String flowStatus = "";
+				if(rollbackCompletedSuccessfully){
+					flowStatus = "All Rollback flows have completed successfully";
+				}else{
+					flowStatus = ebb.getBuildingBlock().getBpmnFlowName() + " has failed.";
+				}
+				request.setFlowStatus(flowStatus);
+				execution.setVariable("flowStatus", flowStatus);
+			}
+
 			request.setProgress(Long.valueOf(100));
 			request.setRequestStatus("FAILED");
 			request.setLastModifiedBy("CamundaBPMN");

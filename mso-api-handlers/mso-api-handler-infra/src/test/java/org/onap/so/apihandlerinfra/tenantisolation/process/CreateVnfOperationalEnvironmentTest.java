@@ -52,6 +52,7 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 	
 	private CloudOrchestrationRequest request;
 	private ServiceEndPointList serviceEndpoints;
+	private ServiceEndPointList serviceEndpoints2;
 	
 	@Autowired
 	private CreateVnfOperationalEnvironment createVnfOpEnv;
@@ -63,6 +64,8 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 		request = mapper.readValue(jsonRequest, CloudOrchestrationRequest.class);
 		String jsonServiceEndpoints = getFileContentsAsString("__files/vnfoperenv/endpoints.json");
 		serviceEndpoints = mapper.readValue(jsonServiceEndpoints, ServiceEndPointList.class);
+		String jsonServiceEndpoints2 = getFileContentsAsString("__files/vnfoperenv/endpoints2.json");
+		serviceEndpoints2 = mapper.readValue(jsonServiceEndpoints2, ServiceEndPointList.class);
 	}
 	@Test
 	public void testGetEcompManagingEnvironmentId() throws Exception { 
@@ -80,6 +83,13 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 	public void testGetEnvironmentName() {
 		createVnfOpEnv.setRequest(request);
 		List<Property> props = serviceEndpoints.getServiceEndPointList().get(0).getProperties();
+		assertEquals("DEV", createVnfOpEnv.getEnvironmentName(props));
+	}
+	
+	@Test
+	public void testGetEnvironmentNameEndpointListBeginWithUpperCase() {
+		createVnfOpEnv.setRequest(request);
+		List<Property> props = serviceEndpoints2.getServiceEndPointList().get(0).getProperties();
 		assertEquals("DEV", createVnfOpEnv.getEnvironmentName(props));
 	}
 	
@@ -118,6 +128,36 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
 		stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/findRunning"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/endpoints.json").withStatus(HttpStatus.SC_ACCEPTED)));
+		stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/add"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
+		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
+		String requestId = UUID.randomUUID().toString();
+		InfraActiveRequests iar = new InfraActiveRequests();
+		iar.setRequestId(requestId);
+		iar.setOperationalEnvName("myOpEnv");
+		iar.setRequestScope("create");
+		iar.setRequestStatus("PENDING");
+		iar.setRequestAction("UNKNOWN");
+		ObjectMapper mapper = new ObjectMapper();
+		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+				.withRequestBody(containing("{\"requestId\":\""+ requestId+"\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withStatus(HttpStatus.SC_OK)));
+
+		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
+				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+						.withBody(mapper.writeValueAsString(iar))
+						.withStatus(HttpStatus.SC_OK)));
+		createVnfOpEnv.execute(requestId, request);
+	}
+	
+	@Test
+	public void testExecuteEndpointsListBeginWithUppercase() throws ApiException, JsonProcessingException {
+		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
+		stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/findRunning"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/endpoints2.json").withStatus(HttpStatus.SC_ACCEPTED)));
 		stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/add"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))

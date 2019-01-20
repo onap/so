@@ -20,8 +20,6 @@
 
 package org.onap.so.bpmn.common.scripts;
 
-import groovy.json.JsonSlurper
-
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.variable.VariableMap
@@ -30,10 +28,12 @@ import org.camunda.bpm.engine.variable.Variables.SerializationDataFormats
 import org.camunda.bpm.engine.variable.impl.value.ObjectValueImpl
 import org.onap.so.bpmn.common.workflow.context.WorkflowCallbackResponse
 import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder
-import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.client.aai.AAIResourcesClient
 import org.springframework.web.util.UriUtils
+
+import groovy.json.JsonSlurper
 
 public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcessor {
 	public MsoUtils utils = new MsoUtils()

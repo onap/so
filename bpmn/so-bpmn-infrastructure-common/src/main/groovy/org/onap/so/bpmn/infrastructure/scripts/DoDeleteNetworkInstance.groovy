@@ -451,10 +451,11 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 			URL url = new URL(vnfAdapterUrl)
 			HttpClient httpClient = new HttpClientFactory().newXmlClient(url, TargetEntity.OPENSTACK_ADAPTER)
+			httpClient.accept = "application/xml"
 			httpClient.addAdditionalHeader("Authorization", execution.getVariable("BasicAuthHeaderValuePO"))
 			Response response = httpClient.delete(vnfAdapterRequest)
 
-
+			execution.setVariable(Prefix + "deleteNetworkResponse", response.readEntity(String.class))
 			execution.setVariable(Prefix + "networkReturnCode", response.getStatus())
 
 		} catch (Exception ex) {

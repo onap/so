@@ -31,6 +31,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,13 +119,14 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(),
-                sameBeanAs(testResponse).ignoring("request.startTime").ignoring("request.requestStatus.finishTime")
+            sameBeanAs(testResponse).ignoring("request.startTime").ignoring("request.finishTime")
                 .ignoring("request.requestStatus.timeStamp"));
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
         assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
         assertEquals("00032ab7-na18-42e5-965d-8ea592502018", response.getHeaders().get("X-TransactionID").get(0));
+        assertNotNull(response.getBody().getRequest().getFinishTime());
     }
     
     @Test
@@ -149,8 +151,7 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(),
-                sameBeanAs(testResponse).ignoring("request.startTime")
-                .ignoring("request.requestStatus.finishTime")
+            sameBeanAs(testResponse).ignoring("request.startTime").ignoring("request.finishTime")
                 .ignoring("request.requestStatus.timeStamp"));
     }
 
@@ -177,8 +178,7 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(),
-                sameBeanAs(testResponse).ignoring("request.startTime")
-                .ignoring("request.requestStatus.finishTime")
+            sameBeanAs(testResponse).ignoring("request.startTime").ignoring("request.finishTime")
                 .ignoring("request.requestStatus.timeStamp"));
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
@@ -227,9 +227,8 @@ public class OrchestrationRequestsTest extends BaseTest {
         ResponseEntity<GetOrchestrationListResponse> response = restTemplate.exchange(builder.toUriString(),
                 HttpMethod.GET, entity, GetOrchestrationListResponse.class);
         assertThat(response.getBody(),
-                sameBeanAs(testResponse).ignoring("requestList.request.startTime")
-                .ignoring("requestList.request.requestStatus.finishTime")
-                .ignoring("requestList.request.requestStatus.timeStamp"));
+            sameBeanAs(testResponse).ignoring("request.startTime").ignoring("request.finishTime")
+                .ignoring("request.requestStatus.timeStamp"));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertEquals(requests.size(), response.getBody().getRequestList().size());
         

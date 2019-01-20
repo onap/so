@@ -199,6 +199,7 @@ public class WorkflowActionBBTasks {
 			execution.setVariable("finalStatusMessage", macroAction);
 			Timestamp endTime = new Timestamp(System.currentTimeMillis());
 			request.setEndTime(endTime);
+			request.setFlowStatus("Successfully completed all Building Blocks");
 			request.setStatusMessage(macroAction);
 			request.setProgress(Long.valueOf(100));
 			request.setRequestStatus("COMPLETE");
@@ -269,7 +270,7 @@ public class WorkflowActionBBTasks {
 			int flowSize = rollbackFlows.size();
 			String handlingCode = (String) execution.getVariable("handlingCode");
 			if(handlingCode.equals("RollbackToAssigned")){
-				for(int i = 0; i<flowSize -1; i++){
+				for(int i = 0; i<flowSize; i++){
 					if(rollbackFlows.get(i).getBuildingBlock().getBpmnFlowName().contains("Unassign")){
 						rollbackFlows.remove(i);
 					}

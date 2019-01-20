@@ -87,6 +87,10 @@ public class NorthBoundRequest implements Serializable {
 	@Column(name = "CLOUD_OWNER")
 	private String cloudOwner;
 	
+	@BusinessKey
+	@Column(name = "SERVICE_TYPE")
+	private String serviceType;
+	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "northBoundRequest")
 	private List<OrchestrationFlow> orchestrationFlowList;
 
@@ -95,7 +99,7 @@ public class NorthBoundRequest implements Serializable {
 		return new ToStringBuilder(this).append("id", id).append("action", action).append("requestScope", requestScope)
 				.append("isAlacarte", isAlacarte).append("isToplevelflow", isToplevelflow)
 				.append("minApiVersion", minApiVersion).append("maxApiVersion", maxApiVersion)
-				.append("cloudOwner",cloudOwner).toString();
+				.append("cloudOwner",cloudOwner).append("serviceType",serviceType).toString();
 	}
 
 	@Override
@@ -107,14 +111,14 @@ public class NorthBoundRequest implements Serializable {
 		return new EqualsBuilder().append(action, castOther.action).append(requestScope, castOther.requestScope)
 				.append(isAlacarte, castOther.isAlacarte).append(isToplevelflow, castOther.isToplevelflow)
 				.append(minApiVersion, castOther.minApiVersion).append(maxApiVersion, castOther.maxApiVersion)
-				.append(cloudOwner, castOther.cloudOwner)
+				.append(cloudOwner, castOther.cloudOwner).append(serviceType, castOther.serviceType)
 				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().append(action).append(requestScope).append(isAlacarte).append(isToplevelflow)
-				.append(minApiVersion).append(maxApiVersion).append(cloudOwner).toHashCode();
+				.append(minApiVersion).append(maxApiVersion).append(cloudOwner).append(serviceType).toHashCode();
 	}
 
 	public Integer getId() {
@@ -187,6 +191,14 @@ public class NorthBoundRequest implements Serializable {
 
 	public void setCloudOwner(String cloudOwner) {
 		this.cloudOwner = cloudOwner;
+	}
+	
+	public String getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
 	}
 
 	@LinkedResource

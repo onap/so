@@ -211,9 +211,15 @@ VALUES
 ('volumeGroup', 'createInstance', '1', 'Gr api recipe to create volume-group', '/mso/async/services/WorkflowActionBB', 180, '20c4431c-246d-11e7-93ae-92361f002671');
 
 
-INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, CLOUD_OWNER) VALUES
-('Service-Create', 'createInstance', 'Service', true, '7','7', 'my-custom-cloud-owner');
+INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, CLOUD_OWNER, SERVICE_TYPE) VALUES
+('Service-Create', 'createInstance', 'Service', true, '7','7', 'my-custom-cloud-owner','*');
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
 ('Service-Create', '1', 'AssignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Create' and CLOUD_OWNER = 'my-custom-cloud-owner'));
+
+INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, CLOUD_OWNER, SERVICE_TYPE) VALUES
+('Service-Create', 'createInstance', 'Service', true, '7','7', 'my-custom-cloud-owner','TRANSPORT');
+
+INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
+('Service-Create', '1', 'AssignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Create' and CLOUD_OWNER = 'my-custom-cloud-owner' and SERVICE_TYPE = 'TRANSPORT'));
