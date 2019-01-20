@@ -53,6 +53,7 @@ public class ExecuteBuildingBlockRainyDay {
 	@Autowired
     private Environment environment;
 	protected String retryDurationPath = "mso.rainyDay.retryDurationMultiplier";
+	protected String defaultCode = "mso.rainyDay.defaultCode";
 
 	public void setRetryTimer(DelegateExecution execution) {
 		try {
@@ -149,7 +150,8 @@ public class ExecuteBuildingBlockRainyDay {
 			execution.setVariable(HANDLING_CODE, handlingCode);
 		} catch (Exception e) {
 			msoLogger.error("Failed to determine RainyDayHandler Status. Seting handlingCode = Abort");
-			execution.setVariable(HANDLING_CODE, "Abort");
+			String code = this.environment.getProperty(defaultCode);
+			execution.setVariable(HANDLING_CODE, code);
 		}
 	}
 	

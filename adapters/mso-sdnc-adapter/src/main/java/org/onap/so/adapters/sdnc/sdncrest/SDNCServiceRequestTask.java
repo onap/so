@@ -60,7 +60,7 @@ public class SDNCServiceRequestTask {
 	private BPRestCallback bpRestCallback;
 
 	@Async
-	public void runRequest(SDNCServiceRequest request,String msoRequestId,String msoServiceInstanceId,String myUrlSuffix) throws SDNCAdapterException
+	public void runRequest(SDNCServiceRequest request,String msoRequestId,String msoServiceInstanceId,String myUrlSuffix)
 	{
 		MsoLogger.setLogContext(msoRequestId, msoServiceInstanceId);
 		MsoLogger.setServiceName(getClass().getSimpleName());
@@ -71,7 +71,13 @@ public class SDNCServiceRequestTask {
 
 		TypedRequestTunables rt = new TypedRequestTunables(sdncRequestId, myUrlSuffix);
 		rt.setServiceKey(sdncService, sdncOperation);
-		TypedRequestTunables mappedTunables = mapTunables.setTunables(rt);
+		TypedRequestTunables mappedTunables;
+		try {
+			mappedTunables = mapTunables.setTunables(rt);
+		} catch(SDNCAdapterException e) {
+			bpRestCallback.send(request.getBPNotificationUrl(), e.getMessage());
+			return;
+		}
 		if (!mappedTunables.getError().isEmpty()) {
 			// Note that the error was logged and alarmed by setTunables()
 			SDNCServiceError error = new SDNCServiceError(request.getSdncRequestId(),

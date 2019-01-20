@@ -128,6 +128,7 @@ public class CatalogDbClient {
 	private static final String CLOUD_VERSION = "cloudVersion";
 	
 	private static final String TARGET_ENTITY = "SO:CatalogDB";
+	private static final String ASTERISK = "*";
 
 	private String findExternalToInternalServiceByServiceName = "/findByServiceName";
 	private String findServiceByModelName = "/findOneByModelName";
@@ -153,6 +154,7 @@ public class CatalogDbClient {
 	private String findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID = "/findByModelCustomizationUUID";
 	private String findOneByActionAndRequestScopeAndIsAlacarte = "/findOneByActionAndRequestScopeAndIsAlacarte";
 	private String findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner = "/findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner";
+	private String findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType = "/findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType";
 	private String findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = "/findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep";
 	private String findByClliAndCloudVersion = "/findByClliAndCloudVersion";
 
@@ -251,6 +253,7 @@ public class CatalogDbClient {
 		findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID = endpoint + COLLECTION_RESOURCE_INSTANCE_GROUP_CUSTOMIZATION + SEARCH + findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID;
 		findOneByActionAndRequestScopeAndIsAlacarte = endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH + findOneByActionAndRequestScopeAndIsAlacarte;
 		findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner = endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH + findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner;
+		findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType = endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH + findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType;
 		findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH + findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep;
 		findByClliAndCloudVersion = endpoint + CLOUD_SITE + SEARCH + findByClliAndCloudVersion;
 
@@ -484,10 +487,21 @@ public class CatalogDbClient {
 	public NorthBoundRequest getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(String requestAction,
 			String resourceName, boolean aLaCarte, String cloudOwner) {
 		return this.getSingleResource(northBoundRequestClient, getUri(UriBuilder
-				.fromUri(findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner)
+				.fromUri(findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType)
 				.queryParam(ACTION, requestAction).queryParam(REQUEST_SCOPE, resourceName)
 				.queryParam(IS_ALACARTE, aLaCarte)
-				.queryParam(CLOUD_OWNER, cloudOwner).build().toString()));
+				.queryParam(CLOUD_OWNER, cloudOwner)
+				.queryParam(SERVICE_TYPE, ASTERISK).build().toString()));
+	}
+	
+	public NorthBoundRequest getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwnerAndServiceType(String requestAction,
+			String resourceName, boolean aLaCarte, String cloudOwner, String serviceType) {
+		return this.getSingleResource(northBoundRequestClient, getUri(UriBuilder
+				.fromUri(findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType)
+				.queryParam(ACTION, requestAction).queryParam(REQUEST_SCOPE, resourceName)
+				.queryParam(IS_ALACARTE, aLaCarte)
+				.queryParam(CLOUD_OWNER, cloudOwner)
+				.queryParam(SERVICE_TYPE, serviceType).build().toString()));
 	}
 
 	public RainyDayHandlerStatus getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(

@@ -144,7 +144,7 @@ public class WorkflowActionUnitTest {
 		flow.setFlowName("flow x");
 		
 		List<OrchestrationFlow> flows = Arrays.asList(flow);
-		doReturn(Arrays.asList(flow)).when(workflowAction).queryNorthBoundRequestCatalogDb(any(), any(), any(), anyBoolean(), any());
+		doReturn(Arrays.asList(flow)).when(workflowAction).queryNorthBoundRequestCatalogDb(any(), any(), any(), anyBoolean(), any(), any());
 		workflowAction.selectExecutionList(execution);
 		
 		verify(workflowAction, times(1)).filterOrchFlows(eq(flows), any(), any());

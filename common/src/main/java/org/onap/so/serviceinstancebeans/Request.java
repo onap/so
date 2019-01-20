@@ -22,6 +22,8 @@ package org.onap.so.serviceinstancebeans;
 
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -31,6 +33,7 @@ public class Request {
 
     protected String requestId;
     protected String startTime;
+    protected String finishTime;
     protected String requestScope;
     protected String requestType;
     protected RequestDetails requestDetails;
@@ -50,6 +53,12 @@ public class Request {
 	}
 	public void setStartTime(String startTime) {
 		this.startTime = startTime;
+	}
+	public String getFinishTime() {
+		return finishTime;
+	}
+	public void setFinishTime(String finishTime) {
+		this.finishTime = finishTime;
 	}
 	public String getRequestScope() {
 		return requestScope;
@@ -89,11 +98,9 @@ public class Request {
 	}
 	@Override
 	public String toString() {
-		return "Request [requestId=" + requestId + ", startTime=" + startTime 
-				+ ", requestScope=" + requestScope + ", requestType=" + requestType 
-				+ ", requestDetails=" + requestDetails + ", instanceReferences=" + instanceReferences 
-				+ ", requestStatus=" + requestStatus + ", requestProcessingData=" + requestProcessingData + "]";
+		return new ToStringBuilder(this).append("requestId", requestId).append("startTime", startTime)
+				.append("finishTime", finishTime).append("requestScope", requestScope).append("requestType", requestType)
+				.append("requestDetails", requestDetails).append("instanceReferences", instanceReferences)
+				.append("requestStatus", requestStatus).append("requestProcessingData", requestProcessingData).toString();
 	}
-	
-
 }

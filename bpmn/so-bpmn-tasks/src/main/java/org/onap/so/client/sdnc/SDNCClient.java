@@ -21,7 +21,6 @@
 package org.onap.so.client.sdnc;
 
 import java.util.LinkedHashMap;
-import java.util.Optional;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -36,9 +35,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Component
 public class SDNCClient {
 
@@ -49,6 +45,7 @@ public class SDNCClient {
 	private SDNCProperties properties;
 	@Autowired
 	private SdnCommonTasks sdnCommonTasks;
+	
 	/**
 	 * 
 	 * @param request
@@ -59,13 +56,13 @@ public class SDNCClient {
 	 * @throws BadResponseException 
 	 */
 	public String post(Object request, SDNCTopology topology) throws MapperException, BadResponseException {
-			String jsonRequest = sdnCommonTasks.buildJsonRequest(request);
-			String targetUrl = properties.getHost() + properties.getPath() + ":" + topology.toString() + "/";
-			STOClient.setTargetUrl(targetUrl);
-			HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
-			STOClient.setHttpHeader(httpHeader);
-			LinkedHashMap<String, Object> output = STOClient.post(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
-			return sdnCommonTasks.validateSDNResponse(output);
+		String jsonRequest = sdnCommonTasks.buildJsonRequest(request);
+		String targetUrl = properties.getHost() + properties.getPath() + ":" + topology.toString() + "/";
+		STOClient.setTargetUrl(targetUrl);
+		HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
+		STOClient.setHttpHeader(httpHeader);
+		LinkedHashMap<String, Object> output = STOClient.post(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
+		return sdnCommonTasks.validateSDNResponse(output);
 	}
 	
 	
@@ -76,9 +73,8 @@ public class SDNCClient {
 		STOClient.setHttpHeader(httpHeader);
 		LinkedHashMap<String, Object> output = STOClient.post(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
 		return sdnCommonTasks.validateSDNResponse(output);
-}
+	}
 	
-
 	/**
 	 * 
 	 * @param queryLink
@@ -90,15 +86,14 @@ public class SDNCClient {
 	 * @throws BadResponseException 
 	 */
 	public String get(String queryLink) throws MapperException, BadResponseException {
-			
-			String request = "";
-			String jsonRequest = sdnCommonTasks.buildJsonRequest(request);
-			String targetUrl = UriBuilder.fromUri(properties.getHost()).path(queryLink).build().toString();			
-			STOClient.setTargetUrl(targetUrl);
-			HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
-			STOClient.setHttpHeader(httpHeader);
-			LinkedHashMap<String, Object> output = STOClient.get(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
-			return sdnCommonTasks.validateSDNGetResponse(output);
+		String request = "";
+		String jsonRequest = sdnCommonTasks.buildJsonRequest(request);
+		String targetUrl = UriBuilder.fromUri(properties.getHost()).path(queryLink).build().toString();			
+		STOClient.setTargetUrl(targetUrl);
+		HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
+		STOClient.setHttpHeader(httpHeader);
+		LinkedHashMap<String, Object> output = STOClient.get(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
+		return sdnCommonTasks.validateSDNGetResponse(output);
 	}
 
 }

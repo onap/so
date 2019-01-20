@@ -110,6 +110,7 @@ mso:
   rollback: 'true'
   rainyDay:
     retryDurationMultiplier: '2'
+    defaultCode: Abort
   site-name: localDevEnv
   workflow:    
     default:

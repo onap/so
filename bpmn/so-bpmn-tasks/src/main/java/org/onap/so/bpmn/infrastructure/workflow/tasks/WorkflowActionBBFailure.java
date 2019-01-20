@@ -25,6 +25,7 @@ import java.util.Optional;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.core.WorkflowException;
+import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.slf4j.Logger;
@@ -67,7 +68,7 @@ public class WorkflowActionBBFailure {
 			String errorMsg = "";
 			Boolean rollbackCompletedSuccessfully = (Boolean) execution.getVariable("isRollbackComplete");
 			Boolean isRollbackFailure = (Boolean) execution.getVariable("isRollback");
-			
+			ExecuteBuildingBlock ebb = (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
 			if(rollbackCompletedSuccessfully==null)
 				rollbackCompletedSuccessfully = false;
 			
@@ -97,6 +98,17 @@ public class WorkflowActionBBFailure {
 				request.setStatusMessage(errorMsg);
 				execution.setVariable("ErrorMessage", errorMsg);
 			}
+			if(ebb!=null && ebb.getBuildingBlock()!=null){
+				String flowStatus = "";
+				if(rollbackCompletedSuccessfully){
+					flowStatus = "All Rollback flows have completed successfully";
+				}else{
+					flowStatus = ebb.getBuildingBlock().getBpmnFlowName() + " has failed.";
+				}
+				request.setFlowStatus(flowStatus);
+				execution.setVariable("flowStatus", flowStatus);
+			}
+
 			request.setProgress(Long.valueOf(100));
 			request.setRequestStatus("FAILED");
 			request.setLastModifiedBy("CamundaBPMN");
