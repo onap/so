@@ -196,13 +196,13 @@
 		<dependency>
   			<groupId>org.onap.sdc.sdc-tosca</groupId>
 			<artifactId>sdc-tosca</artifactId>
-			<version>1.4.4</version>
+			<version>1.4.62</version>
 		</dependency> 
-		<dependency>
+		<!--dependency>
   			<groupId>org.onap.sdc.jtosca</groupId>
   			<artifactId>jtosca</artifactId>
   			<version>1.4.4</version>
-		</dependency> 
+		</dependency--> 
 		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>common</artifactId>
