@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_5792c4f6",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-21T10:31:11Z",
+      "side": 1,
+      "message": "Class names should be nouns and verbs should be avoided. The current name sounds like a method declaration instead. Please rename the class.\nhttps://google.github.io/styleguide/javaguide.html#s5.2.2-class-names",
+      "revId": "ccffd2c2d9d630b85e95b2b266ef755b24828a8b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
