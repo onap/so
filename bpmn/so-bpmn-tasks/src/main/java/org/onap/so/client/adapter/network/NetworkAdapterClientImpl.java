@@ -22,6 +22,7 @@ package org.onap.so.client.adapter.network;
 
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
@@ -54,6 +55,15 @@ public class NetworkAdapterClientImpl implements NetworkAdapterClient {
 			throw new NetworkAdapterClientException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public Response createNetworkAsync(CreateNetworkRequest req) throws NetworkAdapterClientException{
+		try {
+			return new AdapterRestClient(this.props, this.getUri("").build()).post(req);
+		} catch (InternalServerErrorException e) {
+			throw new NetworkAdapterClientException(e.getMessage());
+		}
+	}
 
 	@Override
 	public DeleteNetworkResponse deleteNetwork(String aaiNetworkId, DeleteNetworkRequest req) throws NetworkAdapterClientException {
@@ -64,12 +74,30 @@ public class NetworkAdapterClientImpl implements NetworkAdapterClient {
 			throw new NetworkAdapterClientException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public Response deleteNetworkAsync(String aaiNetworkId, DeleteNetworkRequest req) throws NetworkAdapterClientException {
+		try {
+			return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).delete(req);
+		} catch (InternalServerErrorException e) {
+			throw new NetworkAdapterClientException(e.getMessage());
+		}
+	}
 
 	@Override
 	public RollbackNetworkResponse rollbackNetwork(String aaiNetworkId, RollbackNetworkRequest req) throws NetworkAdapterClientException {
 		try {
 			return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).delete(req,
 					RollbackNetworkResponse.class);
+		} catch (InternalServerErrorException e) {
+			throw new NetworkAdapterClientException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public Response rollbackNetworkAsync(String aaiNetworkId, RollbackNetworkRequest req) throws NetworkAdapterClientException {
+		try {
+			return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).delete(req);
 		} catch (InternalServerErrorException e) {
 			throw new NetworkAdapterClientException(e.getMessage());
 		}

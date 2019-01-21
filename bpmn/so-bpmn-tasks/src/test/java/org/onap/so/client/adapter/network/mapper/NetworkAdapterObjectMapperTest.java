@@ -22,6 +22,7 @@ package org.onap.so.client.adapter.network.mapper;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doReturn;
 
 import java.io.UnsupportedEncodingException;
@@ -135,6 +136,8 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		expectedCreateNetworkRequest.setMsoRequest(msoRequest);
 		expectedCreateNetworkRequest.setSkipAAI(true);
 		
+		expectedCreateNetworkRequest.setNotificationUrl("endpoint/NetworkAResponse/messageId");
+		
 		Subnet openstackSubnet = new Subnet();
 		HostRoute hostRoute = new HostRoute();
 		hostRoute.setHostRouteId("hostRouteId");
@@ -146,6 +149,9 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		l3Network.getSubnets().add(openstackSubnet);
 		l3Network.setNetworkTechnology("Contrail");
 
+		doReturn("endpoint/").when(SPY_networkAdapterObjectMapper).getEndpoint();
+		doReturn("messageId").when(SPY_networkAdapterObjectMapper).getRandomUuid();
+		
 		CreateNetworkRequest createNetworkRequest  = SPY_networkAdapterObjectMapper.createNetworkRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, customer);
 		
 		assertThat(createNetworkRequest, sameBeanAs(expectedCreateNetworkRequest).ignoring("contrailRequest").ignoring("contrailNetwork").ignoring("providerVlanNetwork").ignoring("subnets").ignoring("networkParams").ignoring("messageId"));
@@ -295,6 +301,51 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		
 		expectedDeleteNetworkRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
 		
+		expectedDeleteNetworkRequest.setNotificationUrl("endpoint/NetworkAResponse/messageId");
+
+		doReturn("endpoint/").when(SPY_networkAdapterObjectMapper).getEndpoint();
+		doReturn("messageId").when(SPY_networkAdapterObjectMapper).getRandomUuid();
+		
+		DeleteNetworkRequest deleteNetworkRequest = SPY_networkAdapterObjectMapper.deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
+		
+		assertThat(expectedDeleteNetworkRequest, sameBeanAs(deleteNetworkRequest));
+	}
+	
+	@Test
+	public void deleteNetworkRequestNoHeatIdMapperTest() throws Exception {
+		DeleteNetworkRequest expectedDeleteNetworkRequest = new DeleteNetworkRequest();
+		
+		String messageId = "messageId";
+		expectedDeleteNetworkRequest.setMessageId(messageId);
+		doReturn(messageId).when(SPY_networkAdapterObjectMapper).getRandomUuid();
+		
+		ModelInfoNetwork modelInfoNetwork = new ModelInfoNetwork();
+		l3Network.setModelInfoNetwork(modelInfoNetwork);
+		modelInfoNetwork.setModelCustomizationUUID("modelCustomizationUuid");
+		expectedDeleteNetworkRequest.setModelCustomizationUuid(modelInfoNetwork.getModelCustomizationUUID());
+		
+		MsoRequest msoRequest = new MsoRequest();
+		msoRequest.setRequestId(requestContext.getMsoRequestId());
+		msoRequest.setServiceInstanceId(serviceInstance.getServiceInstanceId());
+		expectedDeleteNetworkRequest.setMsoRequest(msoRequest);
+		
+		expectedDeleteNetworkRequest.setNetworkId(l3Network.getNetworkId());
+		
+		l3Network.setNetworkName("heatStackId");
+		expectedDeleteNetworkRequest.setNetworkStackId("heatStackId");
+		
+		expectedDeleteNetworkRequest.setNetworkType(l3Network.getNetworkType());
+				
+		expectedDeleteNetworkRequest.setSkipAAI(true);
+		
+		expectedDeleteNetworkRequest.setTenantId(cloudRegion.getTenantId());
+		
+		expectedDeleteNetworkRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
+		
+		expectedDeleteNetworkRequest.setNotificationUrl("endpoint/NetworkAResponse/messageId");
+
+		doReturn("endpoint/").when(SPY_networkAdapterObjectMapper).getEndpoint();
+		doReturn("messageId").when(SPY_networkAdapterObjectMapper).getRandomUuid();
 		DeleteNetworkRequest deleteNetworkRequest = SPY_networkAdapterObjectMapper.deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
 		
 		assertThat(expectedDeleteNetworkRequest, sameBeanAs(deleteNetworkRequest));
@@ -316,6 +367,11 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 				org.onap.so.adapters.nwrest.CreateNetworkRequest.class);		
 		
 		String cloudRegionPo = "cloudRegionPo";
+		
+		expectedCreateNetworkRequest.setNotificationUrl("endpoint/NetworkAResponse/messageId");
+
+		doReturn("endpoint/").when(SPY_networkAdapterObjectMapper).getEndpoint();
+		doReturn("messageId").when(SPY_networkAdapterObjectMapper).getRandomUuid();
 		CreateNetworkRequest createNetworkRequest  = SPY_networkAdapterObjectMapper.createNetworkRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, myNetwork, userInput, cloudRegionPo, customer);
 		//ignoring dynamic fields and networkParams that throws parsing exception on json file load
 		assertThat(createNetworkRequest, sameBeanAs(expectedCreateNetworkRequest).ignoring("messageId").ignoring("msoRequest.requestId").ignoring("networkParams"));

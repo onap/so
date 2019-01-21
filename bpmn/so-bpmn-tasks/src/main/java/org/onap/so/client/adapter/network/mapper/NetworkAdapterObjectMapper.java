@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.onap.so.adapters.nwrest.ContrailNetwork;
@@ -106,8 +107,7 @@ public class NetworkAdapterObjectMapper {
 		
 		String messageId = getRandomUuid();
 		createNetworkRequest.setMessageId(messageId);
-		//TODO clarify callback URL build process
-		//createNetworkRequest.setNotificationUrl(createCallbackUrl("NetworkAResponse", messageId));
+		createNetworkRequest.setNotificationUrl(createCallbackUrl("NetworkAResponse", messageId));
 
 		return createNetworkRequest;
 	}
@@ -137,10 +137,17 @@ public class NetworkAdapterObjectMapper {
 		
 		deleteNetworkRequest.setMsoRequest(createMsoRequest(requestContext, serviceInstance));
 		deleteNetworkRequest.setNetworkId(l3Network.getNetworkId());
-		deleteNetworkRequest.setNetworkStackId(l3Network.getHeatStackId());
+		if (!StringUtils.isEmpty(l3Network.getHeatStackId())){
+			deleteNetworkRequest.setNetworkStackId(l3Network.getHeatStackId());
+		}
+		else {
+			deleteNetworkRequest.setNetworkStackId(l3Network.getNetworkName());
+		}
 		deleteNetworkRequest.setNetworkType(l3Network.getNetworkType());
 		deleteNetworkRequest.setSkipAAI(true);
 		deleteNetworkRequest.setTenantId(cloudRegion.getTenantId());
+		
+		deleteNetworkRequest.setNotificationUrl(createCallbackUrl("NetworkAResponse", messageId));
 		
 		return deleteNetworkRequest;
 	}
@@ -187,11 +194,10 @@ public class NetworkAdapterObjectMapper {
 		return updateNetworkRequest;
 	}
 	
-	private RollbackNetworkRequest setCommonRollbackRequestFields(RollbackNetworkRequest request,RequestContext requestContext){
-		//TODO confirm flag value
+	private RollbackNetworkRequest setCommonRollbackRequestFields(RollbackNetworkRequest request,RequestContext requestContext) throws UnsupportedEncodingException{
 		request.setSkipAAI(true);
-		request.setMessageId(requestContext.getMsoRequestId());
-		//TODO clarify callback URL build process. This will also set SYNC flag
+		String messageId = requestContext.getMsoRequestId();
+		request.setMessageId(messageId);
 		//request.setNotificationUrl(createCallbackUrl("NetworkAResponse", messageId));
 		return request;
 	}

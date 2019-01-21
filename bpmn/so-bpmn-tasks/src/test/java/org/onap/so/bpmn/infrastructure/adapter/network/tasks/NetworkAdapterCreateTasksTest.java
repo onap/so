@@ -20,7 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -33,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -76,17 +79,14 @@ public class NetworkAdapterCreateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void createNetworkTest() throws Exception {
-		CreateNetworkResponse createNetworkResponse = new CreateNetworkResponse();
-		createNetworkResponse.setNetworkStackId("networkStackId");
-		createNetworkResponse.setNetworkCreated(true);
-		Optional<CreateNetworkResponse> oCreateNetworkResponse = Optional.of(createNetworkResponse);
-
 		String cloudRegionPo = "cloudRegionPo";
+		CreateNetworkRequest createNetworkRequest = new CreateNetworkRequest();
 		execution.setVariable("cloudRegionPo", cloudRegionPo);
 
-		doReturn(oCreateNetworkResponse).when(networkAdapterResources).createNetwork(requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo,customer);
+		doReturn(createNetworkRequest).when(networkAdapterObjectMapper).createNetworkRequestMapper(isA(RequestContext.class), isA(CloudRegion.class), isA(OrchestrationContext.class), isA(ServiceInstance.class), isA(L3Network.class), isA(Map.class), isA(String.class), isA(Customer.class));
 		networkAdapterCreateTasks.createNetwork(execution);
-		verify(networkAdapterResources, times(1)).createNetwork(requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo,customer);
+		verify(networkAdapterObjectMapper, times(1)).createNetworkRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, customer);
+		assertEquals(createNetworkRequest, execution.getVariable("networkAdapterRequest"));	
 	}
 	
 	@Test

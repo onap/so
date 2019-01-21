@@ -20,18 +20,15 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
-import java.util.Optional;
-
-import org.onap.so.adapters.nwrest.DeleteNetworkResponse;
+import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.onap.so.client.orchestration.NetworkAdapterResources;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,7 +39,7 @@ public class NetworkAdapterDeleteTasks {
 	@Autowired
 	private ExtractPojosForBB extractPojosForBB;
 	@Autowired
-	private NetworkAdapterResources networkAdapterResources;
+	private NetworkAdapterObjectMapper networkAdapterObjectMapper;
 	@Autowired
 	private ExceptionBuilder exceptionUtil;
 	
@@ -53,14 +50,9 @@ public class NetworkAdapterDeleteTasks {
 			L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 			
-			Optional<DeleteNetworkResponse> oDeleteNetworkResponse = networkAdapterResources.deleteNetwork(gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, l3Network);
+			DeleteNetworkRequest deleteNetworkRequest = networkAdapterObjectMapper.deleteNetworkRequestMapper(gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, l3Network);	
 			
-			if (oDeleteNetworkResponse.isPresent()){
-				DeleteNetworkResponse deleteNetworkResponse = oDeleteNetworkResponse.get();
-				if (deleteNetworkResponse.getNetworkDeleted()) {
-					execution.setVariable("deleteNetworkResponse", deleteNetworkResponse);
-				}
-			}			
+			execution.setVariable("networkAdapterRequest", deleteNetworkRequest);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}

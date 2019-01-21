@@ -20,6 +20,8 @@
 
 package org.onap.so.client.adapter.network;
 
+import javax.ws.rs.core.Response;
+
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
@@ -44,4 +46,10 @@ public interface NetworkAdapterClient {
 
 	UpdateNetworkResponse updateNetwork(String aaiNetworkId, UpdateNetworkRequest req)
 			throws NetworkAdapterClientException;
+
+	Response createNetworkAsync(CreateNetworkRequest req) throws NetworkAdapterClientException;
+
+	Response deleteNetworkAsync(String aaiNetworkId, DeleteNetworkRequest req) throws NetworkAdapterClientException;
+
+	Response rollbackNetworkAsync(String aaiNetworkId, RollbackNetworkRequest req) throws NetworkAdapterClientException;
 }
