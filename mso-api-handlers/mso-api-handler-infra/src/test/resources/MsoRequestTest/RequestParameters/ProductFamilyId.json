@@ -34,9 +34,11 @@
         { 
           "service": { 
             "modelInfo": { 
-              "modelName": "MOW vMX BV 1 Service", 
-              "modelVersionId": "3c40d244-808e-42ca-b09a-256d83d19d0a",
-              "modelCustomizationId": "3c40d244-808e-42ca-b09a-256d83d19d0b" 
+              "modelType": "service", 
+		      "modelInvariantId": "5d48acb5-097d-4982-aeb2-f4a3bd87d31b", 
+		      "modelVersionId": "3c40d244-808e-42ca-b09a-256d83d19d0a", 
+		      "modelName": "MOW vMX BV 1 Service", 
+		      "modelVersion": "10" 
             }, 
             "instanceParams": [], 
             "resources": { 

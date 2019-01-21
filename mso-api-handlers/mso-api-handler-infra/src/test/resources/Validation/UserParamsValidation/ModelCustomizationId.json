@@ -1,0 +1,137 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelInvariantId": "282bdcd2-34ed-4665-9ab2-63455814531d",
+      "modelType": "service",
+      "modelName": "MOW_ADIG_test_BV_IST",
+      "modelVersion": "1.0",
+      "modelVersionId": "109a153e-325f-4df5-8161-edd91314daee",
+      "modelUuid": "109a153e-325f-4df5-8161-edd91314daee",
+      "modelInvariantUuid": "282bdcd2-34ed-4665-9ab2-63455814531d",
+      "modelCustomizationId": "31d41ef2-0a3e-43bf-a4f0-0b1f31b1cbad"
+    },
+    "requestInfo": {
+      "productFamilyId": "testaaS",
+      "source": "VID",
+      "suppressRollback": false,
+      "requestorId": "ss616y",
+      "instanceName": "instanceName"
+    },
+    "subscriberInfo": {
+      "globalSubscriberId": "21014aa2-526b-11e6-beb8-9e71128cae77"
+    },
+    "requestParameters": {
+      "subscriptionServiceType": "test",
+      "userParams": [
+        {
+          "service": {
+            "modelInfo": {
+              "modelInvariantId": "282bdcd2-34ed-4665-9ab2-63455814531d",
+		      "modelType": "service",
+		      "modelName": "MOW_ADIG_test_BV_IST",
+		      "modelVersion": "1.0",
+		      "modelVersionId": "109a153e-325f-4df5-8161-edd91314daee",
+		      "modelUuid": "109a153e-325f-4df5-8161-edd91314daee",
+		      "modelInvariantUuid": "282bdcd2-34ed-4665-9ab2-63455814531d",
+		      "modelCustomizationId": "31d41ef2-0a3e-43bf-a4f0-0b1f31b1cbae"
+            },
+            "instanceName" : "test",
+            "instanceParams": [
+              {
+                "mow_adig_test_bv_ist0_bandwidth": "10",
+                "mow_adig_test_bv_ist0_ASN": "2685",
+                "mow_adig_test_bv_ist0_availability_zone_0": "mdt25b-kvm-az01",
+                "mow_adig_test_bv_ist0_AIC_CLLI": "MTSNJA4LCP1",
+                "mow_adig_test_bv_ist0_vnf_config_template_version": "17.2",
+                "mow_adig_test_bv_ist0_vnf_instance_name": "wswdc403me6",
+                "mow_adig_test_bv_ist0_bandwidth_units": "Gbps"
+              }
+            ],
+            "resources": {
+              "vnfs": [
+                {
+                  "modelInfo": {
+                    "modelCustomizationName": "MOW_ADIG_test_BV_IST 0",
+                    "modelCustomizationId": "31d41ef2-0a3e-43bf-a4f0-0b1f31b1cbac",
+                    "modelInvariantId": "33fb95d0-5f18-4dfb-8e7d-0c8ac8d743c5",
+                    "modelVersionId": "bdf50902-4b07-4dcf-a2e2-ec6cfe568798",
+                    "modelName": "MOW_ADIG_test_BV_IST",
+                    "modelType": "service",
+                    "modelVersion": "2.0"
+                  },
+                  "cloudConfiguration": {
+                    "lcpCloudRegionId": "mdt25b",
+                    "tenantId": "aefb697db6524ddebfe4915591b0a347"
+                  },
+                  "platform": {
+                    "platformName": "AIC"
+                  },
+                  "lineOfBusiness": {},
+                  "productFamilyId": "testaaS",
+                  "instanceParams": [
+	                  {
+	                  	"mow_adig_test_bv_ist0_vnf_config_template": "17.2",
+		                "mow_adig_test_bv_ist0_vnf_instance": "wswdc403me6",
+		                "mow_adig_test_bv_ist0_bandwidth": "Gbps"
+	                  }
+                  ],
+                  "vfModules": [
+                    {
+                      "modelInfo": {
+                        "modelCustomizationName": "MowAdigtestBvIst..ADIG_vRE_BV_v2..module-1",
+                        "modelCustomizationId": "34c57c2d-cf19-4926-9296-acde6a967f70",
+                        "modelInvariantId": "f3093158-a609-41d5-a2fb-07dbc0ca8096",
+                        "modelVersionId": "2507f79d-6e1b-413b-b2a8-c434113ff862",
+                        "modelName": "MowAdigtestBvIst..ADIG_vRE_BV_v2..module-1",
+                        "modelType": "service",
+                        "modelVersion": "1"
+                      },
+                      "instanceParams": [
+                      	{
+		                  	"mow_adig_test_ist0_vnf_config_template_version": "17.2",
+			                "mow_adig_test_ist0_vnf_instance_name": "wswdc403me6",
+			                "mow_adig_test_ist0_bandwidth_units": "Gbps"
+	                  	}
+                      ]
+                    },
+                    {
+                      "modelInfo": {
+                        "modelCustomizationName": "MowAdigtestBvIst..ADIG_base_test_BV_v2..module-0",
+                        "modelCustomizationId": "f4a414c4-b71a-43ed-82be-51478d7e154f",
+                        "modelInvariantId": "af867fdc-3808-4b62-ae76-bdb1b9ae7ee8",
+                        "modelVersionId": "3fcf6cb6-2ef2-4154-99a6-06ce889c79f1",
+                        "modelName": "MowAdigtestBvIst..ADIG_base_test_BV_v2..module-0",
+                        "modelType": "service",
+                        "modelVersion": "1"
+                      },
+                      "instanceParams": []
+                    },
+                    {
+                      "modelInfo": {
+                        "modelCustomizationName": "MowAdigtestBvIst..ADIG_vPFE_BV_v2..module-2",
+                        "modelCustomizationId": "583c2280-23d9-4338-a607-69c238d4899d",
+                        "modelInvariantId": "90c2be4f-cb6f-4e75-9c65-04fdc5c30cef",
+                        "modelVersionId": "7c8a69e0-6612-4b7b-8e9c-fb8b9f31cb4f",
+                        "modelName": "MowAdigtestBvIst..ADIG_vPFE_BV_v2..module-2",
+                        "modelType": "service",
+                        "modelVersion": "1"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "aLaCarte": false
+    },
+    "project": {
+      "projectName": "GigaPower"
+    },
+    "owningEntity": {
+      "owningEntityId": "2811e2fb-005e-40de-990b-c0794f362399",
+      "owningEntityName": "PACKET-CORE"
+    }
+  }
+}

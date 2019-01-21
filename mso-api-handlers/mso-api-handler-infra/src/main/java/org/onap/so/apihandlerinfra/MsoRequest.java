@@ -162,7 +162,7 @@ public class MsoRequest {
     public void parse (ServiceInstancesRequest sir, HashMap<String,String> instanceIdMap, Actions action, String version,
     		String originalRequestJSON, int reqVersion, Boolean aLaCarteFlag) throws ValidationException, IOException {
     	
-        msoLogger.debug ("Validating the Service Instance request");       
+        msoLogger.debug ("Validating the Service Instance request");
         List<ValidationRule> rules = new ArrayList<>();
         msoLogger.debug ("Incoming version is: " + version + " coverting to int: " + reqVersion);
 	    RequestParameters requestParameters = sir.getRequestDetails().getRequestParameters();

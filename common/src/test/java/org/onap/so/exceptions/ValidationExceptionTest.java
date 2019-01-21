@@ -47,7 +47,7 @@ public class ValidationExceptionTest {
 
     @Test
     public void validationExceptionVersion(){
-        ValidationException e = new ValidationException("testMessage", "1.0");
-        Assert.assertEquals("testMessage is not valid in the 1.0 version", e.getMessage());
+        ValidationException e = new ValidationException("testMessage", "secondTestMessage");
+        Assert.assertEquals("testMessage does not match secondTestMessage", e.getMessage());
     }
 }

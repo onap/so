@@ -32,9 +32,9 @@ public class ValidationException extends Exception {
 
     private static final long serialVersionUID = 1L;
     private static final String VALIDATION_FAIL = "No valid $ELEMENT is specified";
-    private static final String INVALID_ELEMENT = "$ELEMENT is not valid in the $VERSION version";
+    private static final String UNMATCHED_ELEMENTS = "$ELEMENT does not match $SECOND_ELEMENT";
     private static final String REPLACE_ELEMENT_KEY = "\\$ELEMENT";
-    private static final String REPLACE_VERSION_KEY = "\\$VERSION";
+    private static final String REPLACE_SECOND_ELEMENT_KEY = "\\$SECOND_ELEMENT";
 
     @Deprecated
     public ValidationException (String msg) {
@@ -48,7 +48,7 @@ public class ValidationException extends Exception {
     public ValidationException (String msg, Exception cause) {
         super (VALIDATION_FAIL.replaceAll (REPLACE_ELEMENT_KEY, msg), cause);
     }
-    public ValidationException(String msg, String version) {
-        super(INVALID_ELEMENT.replaceAll(REPLACE_ELEMENT_KEY, msg).replaceAll(REPLACE_VERSION_KEY, version));
+    public ValidationException(String firstElement, String secondElement) {
+        super(UNMATCHED_ELEMENTS.replaceAll(REPLACE_ELEMENT_KEY, firstElement).replaceAll(REPLACE_SECOND_ELEMENT_KEY, secondElement));
     }
 }
