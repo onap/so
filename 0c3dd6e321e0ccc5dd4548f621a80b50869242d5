@@ -91,6 +91,41 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_ece687e7",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/aai/AaiConnectionImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-21T10:31:11Z",
+      "side": 1,
+      "message": "Hi Steve, to give you some insight into our approach - we want to have the PNFPnP implementation encapsulated as much as possible, with clearly defined i/o. Because the impl obviously has external dependencies (here only AAI) we do not want to have them declared and used explicitly, but rather have the intent separated from its concrete implementation by using a simple adapter as a layer. Currently this man-in-the-middle layer is the AAIConnection (name is misleading as I\u0027ve pointed it out elsewhere). This interface declares all the logic that the PnfPnP flow needs to perform, but cannot do it by itself (AAI dep). The flow should only state what it wants to do, not how. The \"how\" (through AAI,Rest etc) part is the implementation detail that should be on the other side of the flow\u0027s dependency boundary.\nAs Lukasz mentioned the InjectionHelper class introduces some issues. It breaks the interface segregation principle because it forces dependencies upon the clients they do not require. The class usage is also misleading. \"InjectionHelper\" suggests that it indeed performs some kind of injection of dependencies, but the implementation is simply a factory class implemented as a facade (hence the centralized point for all dependencies).",
+      "parentUuid": "9adffdf1_3aa285fd",
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_0c018b69",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/aai/AaiConnectionImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-21T10:31:11Z",
+      "side": 1,
+      "message": "This method should actually be responsible for constructing the AAIResourceUri objects and performing the connection (which is now done in CreateRelation) Since this class is the implementation of the AAIConnection interface it should not contain any AAI-specific code. Please refer to my comment to AAIConnection for more details.",
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_4ada20e9",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelation.java",
         "patchSetId": 2
@@ -132,6 +167,57 @@
         "endLine": 7,
         "endChar": 37
       },
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_8cd57be6",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-21T10:31:11Z",
+      "side": 1,
+      "message": "All of the AAIResourceUri references and logic should be part of the AAIConnectionImpl class to hide the dependency to AAI.",
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_acd4ffeb",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/implementation/AaiConnection.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-21T10:31:11Z",
+      "side": 1,
+      "message": "Please rename this interface so that the functionality it provides is better represented - from the flow\u0027s requirements it should only represent and state what the functional requirements are(create pnf entry, fetch pfn entry, create relation between SI and Pnf) \"AAIConnection\" name does not provide any value, but it clearly suggests what the implementation will be based on and is a mismatch from what has already been declared.\nThe rename may also impact the implementation class name.",
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6cda9718",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/implementation/AaiConnection.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-01-21T10:31:11Z",
+      "side": 1,
+      "message": "the createRelation method declaration should not have any depedencies to the AAIResourceUri (or to any other AAI specific classes). This is an implementation detail. Rather consider passing the SI ID and Pnf ID only as the mandatory parameters. The idea is to cut off on a high level from the \"low level\" details. The flow states \"what\" it needs to do, not the \"how\".",
       "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
