@@ -109,7 +109,9 @@ public class WorkflowAction {
 	private static final String USERPARAMSERVICE = "service";
 	private static final String supportedTypes = "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances";
 	private static final String HOMINGSOLUTION = "Homing_Solution";
-	private static final String FABRIC_CONFIGURATION = "FabricConfiguration";	
+	private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
+	private static final String G_SERVICE_TYPE = "serviceType";
+	private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
 	private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
 	
 	@Autowired
@@ -146,6 +148,8 @@ public class WorkflowAction {
 		final String uri = (String) execution.getVariable(G_URI);
 		final String vnfType = (String) execution.getVariable(VNF_TYPE);
 		String serviceInstanceId = (String) execution.getVariable("serviceInstanceId");
+		final String serviceType = Optional.ofNullable((String) execution.getVariable(G_SERVICE_TYPE)).orElse("");
+
 		List<OrchestrationFlow> orchFlows = (List<OrchestrationFlow>) execution.getVariable(G_ORCHESTRATION_FLOW);
 		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
 		WorkflowResourceIds workflowResourceIds = populateResourceIdsFromApiHandler(execution);
@@ -192,7 +196,7 @@ public class WorkflowAction {
 
 			if (aLaCarte) {
 				if (orchFlows == null || orchFlows.isEmpty()) {
-					orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte, cloudOwner);
+						orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte, cloudOwner, serviceType);
 				}
 				orchFlows = filterOrchFlows(orchFlows, resourceType, execution);
 				String key = "";
@@ -277,7 +281,7 @@ public class WorkflowAction {
 				logger.info("Found {}", foundObjects);
 
 				if (orchFlows == null || orchFlows.isEmpty()) {
-					orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte, cloudOwner);
+					orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte, cloudOwner, serviceType);
 				}
 				flowsToExecute = buildExecuteBuildingBlockList(orchFlows, resourceCounter, requestId, apiVersion, resourceId,
 						resourceType, requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails);
@@ -1054,9 +1058,21 @@ public class WorkflowAction {
 
 	protected List<OrchestrationFlow> queryNorthBoundRequestCatalogDb(DelegateExecution execution, String requestAction,
 			WorkflowType resourceName, boolean aLaCarte, String cloudOwner) {
+		return this.queryNorthBoundRequestCatalogDb(execution, requestAction, resourceName, aLaCarte, cloudOwner, "");
+	}
+	
+	protected List<OrchestrationFlow> queryNorthBoundRequestCatalogDb(DelegateExecution execution, String requestAction,
+			WorkflowType resourceName, boolean aLaCarte, String cloudOwner, String serviceType) {
 		List<OrchestrationFlow> listToExecute = new ArrayList<>();
-		NorthBoundRequest northBoundRequest = catalogDbClient
-				.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(requestAction, resourceName.toString(), aLaCarte, cloudOwner);
+		NorthBoundRequest northBoundRequest = null;
+		if (serviceType.equalsIgnoreCase(SERVICE_TYPE_TRANSPORT)) {
+			northBoundRequest = catalogDbClient
+					.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwnerAndServiceType(requestAction,
+							resourceName.toString(), aLaCarte, cloudOwner, serviceType);
+		} else {
+			northBoundRequest = catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(
+					requestAction, resourceName.toString(), aLaCarte, cloudOwner);
+		}
 		if(northBoundRequest == null){
 			if(aLaCarte){
 				buildAndThrowException(execution,"The request: ALaCarte " + resourceName + " " + requestAction + " is not supported by GR_API.");

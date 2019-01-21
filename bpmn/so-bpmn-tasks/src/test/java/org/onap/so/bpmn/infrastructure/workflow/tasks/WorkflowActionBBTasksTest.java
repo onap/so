@@ -21,9 +21,9 @@
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -258,33 +258,28 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
 		ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
 		BuildingBlock bb1 = new BuildingBlock();
-		bb1.setBpmnFlowName("AssignServiceInstanceBB");
+		bb1.setBpmnFlowName("AssignVfModuleBB");
 		ebb1.setBuildingBlock(bb1);
 		flowsToExecute.add(ebb1);
 		ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
 		BuildingBlock bb2 = new BuildingBlock();
-		bb2.setBpmnFlowName("CreateNetworkCollectionBB");
+		bb2.setBpmnFlowName("CreateVfModuleBB");
 		ebb2.setBuildingBlock(bb2);
 		flowsToExecute.add(ebb2);
 		ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
 		BuildingBlock bb3 = new BuildingBlock();
-		bb3.setBpmnFlowName("AssignNetworkBB");
+		bb3.setBpmnFlowName("ActivateVfModuleBB");
 		ebb3.setBuildingBlock(bb3);
 		flowsToExecute.add(ebb3);
-		ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
-		BuildingBlock bb4 = new BuildingBlock();
-		bb4.setBpmnFlowName("CreateNetworkBB");
-		ebb4.setBuildingBlock(bb4);
-		flowsToExecute.add(ebb4);
 		
 		execution.setVariable("flowsToExecute", flowsToExecute);
-		execution.setVariable("gCurrentSequence", 3);
-		doNothing().when(workflowActionBBFailure).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
-
+		execution.setVariable("gCurrentSequence", 2);
+		
 		workflowActionBBTasks.rollbackExecutionPath(execution);
 		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-		assertEquals(ebbs.get(0).getBuildingBlock().getBpmnFlowName(),"DeleteNetworkCollectionBB");
+		assertEquals("DeleteVfModuleBB",ebbs.get(0).getBuildingBlock().getBpmnFlowName());
 		assertEquals(0,execution.getVariable("gCurrentSequence"));
+		assertEquals(1,ebbs.size());
 	}
 	
 	@Test

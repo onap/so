@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.exception.MapperException;
@@ -31,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -64,15 +64,18 @@ public class SDNCRequestTasks {
 			String finalMessageIndicator = JsonPath.read(response, "$.output.ack-final-indicator");		
 			execution.setVariable("isSDNCCompleted", convertIndicatorToBoolean(finalMessageIndicator));
 		} catch(PathNotFoundException e) {
-			logger.error("Error Parsing SDNC Response", e);
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,"Error Parsing SDNC Response");
+			logger.error("Error Parsing SDNC Response. Could not find read final ack indicator from JSON.", e);
+			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,"Recieved invalid response from SDNC, unable to read message content.");
 		} catch (MapperException e) {
-			logger.error("Error Parsing SDNC Response", e);
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,"Error Parsing SDNC Response");
+			logger.error("Failed to map SDNC object to JSON prior to POST.", e);
+			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,"Failed to map SDNC object to JSON prior to POST.");
 		} catch (BadResponseException e) {
-			logger.error("Error Reading SDNC Response", e);
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, "Error Reading SDNC Response");
-		}		
+			logger.error("Did not receive a successful response from SDNC.", e);
+			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getLocalizedMessage());
+		} catch (HttpClientErrorException e){
+			logger.error("HttpClientErrorException: 404 Not Found, Failed to contact SDNC", e);
+			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,  "SDNC cannot be contacted.");
+		}
 	}
 	
 	public void processCallback (DelegateExecution execution) {

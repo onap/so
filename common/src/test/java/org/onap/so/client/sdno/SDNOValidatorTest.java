@@ -100,7 +100,7 @@ public class SDNOValidatorTest {
 		GenericVnf vnf = new GenericVnf();
 		vnf.setVnfId("test");
 		vnf.setIpv4OamAddress("1.2.3.4");
-		vnf.setVnfType("VPE");
+		vnf.setNfRole("VPE");
 		SDNO request = validator.buildRequestDiagnostic(vnf, uuid, "mechid");
 		ObjectMapper mapper = new ObjectMapper();
 		String json = mapper.writeValueAsString(request);

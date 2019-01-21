@@ -77,17 +77,17 @@ public class SDNOValidatorImpl implements SDNOValidator {
 
 	protected SDNO buildRequestDiagnostic(GenericVnf vnf, UUID uuid, String requestingUserId) {
 		
-		Optional<String> vnfType;
-		if (vnf.getVnfType() == null) {
-			vnfType = Optional.empty();
+		Optional<String> nfRole;
+		if (vnf.getNfRole() == null) {
+			nfRole = Optional.empty();
 		} else {
-			vnfType = Optional.of(vnf.getVnfType());
+			nfRole = Optional.of(vnf.getNfRole());
 		}
 		Input input = new Input();
 		SDNO parentRequest = new SDNO();
 		Body body = new Body();
 		parentRequest.setBody(body);
-		parentRequest.setNodeType(vnfType.orElse("NONE").toUpperCase());
+		parentRequest.setNodeType(nfRole.orElse("NONE").toUpperCase());
 		parentRequest.setOperation("health-diagnostic");
 		
 		body.setInput(input);
@@ -97,6 +97,7 @@ public class SDNOValidatorImpl implements SDNOValidator {
 		request.setRequestClientName(clientName);
 		request.setRequestNodeName(vnf.getVnfName());
 		request.setRequestNodeUuid(vnf.getVnfId());
+		request.setRequestNodeType(nfRole.orElse("NONE").toUpperCase());
 		request.setRequestNodeIp(vnf.getIpv4OamAddress()); //generic-vnf oam ip
 		request.setRequestUserId(requestingUserId); //mech id?
 		request.setRequestId(uuid.toString()); //something to identify this request by for polling
