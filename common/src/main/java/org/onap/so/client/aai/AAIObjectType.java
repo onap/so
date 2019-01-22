@@ -47,7 +47,7 @@ import org.onap.aai.domain.yang.PhysicalLink;
 import org.onap.aai.domain.yang.Platform;
 import org.onap.aai.domain.yang.Project;
 import org.onap.aai.domain.yang.Pserver;
-import org.onap.aai.domain.yang.RouteTableReferences;
+import org.onap.aai.domain.yang.RouteTableReference;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.ServiceSubscription;
 import org.onap.aai.domain.yang.SpPartner;
@@ -80,7 +80,7 @@ public enum AAIObjectType implements GraphInventoryObjectType {
 	NETWORK_POLICY(AAINamespaceConstants.NETWORK, NetworkPolicy.class),
 	NODES_QUERY("/search", "/nodes-query"),
 	CUSTOM_QUERY("/query", ""),
-	ROUTE_TABLE_REFERENCE(AAINamespaceConstants.NETWORK, RouteTableReferences.class),
+	ROUTE_TABLE_REFERENCE(AAINamespaceConstants.NETWORK, RouteTableReference.class),
 	DEFAULT_TENANT(AAINamespaceConstants.CLOUD_INFRASTRUCTURE + "/cloud-regions/cloud-region/" + Defaults.CLOUD_OWNER + "/AAIAIC25", "/tenants/tenant/{tenant-id}"),
 	VCE(AAINamespaceConstants.NETWORK, Vce.class),
 	VPN_BINDING(AAINamespaceConstants.NETWORK, VpnBinding.class),
