@@ -44,6 +44,7 @@ import org.onap.so.apihandler.common.ResponseHandler;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ClientConnectionException;
+import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
 import org.onap.so.apihandlerinfra.exceptions.DuplicateRequestException;
 import org.onap.so.apihandlerinfra.exceptions.RecipeNotFoundException;
 import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
@@ -51,6 +52,7 @@ import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.exceptions.VfModuleNotFoundException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.db.catalog.beans.NetworkResource;
+import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.Recipe;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.catalog.beans.VfModule;
@@ -82,8 +84,17 @@ import org.onap.so.serviceinstancebeans.Vnfs;
 import org.onap.so.utils.UUIDChecker;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
+import org.camunda.bpm.engine.history.HistoricProcessInstance;
+import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
@@ -134,6 +145,9 @@ public class ServiceInstances {
 	
 	@Autowired
 	private MsoRequest msoRequest;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 	
 	@POST
     @Path("/{version:[vV][5-7]}/serviceInstances")
@@ -718,11 +732,15 @@ public class ServiceInstances {
 		}
 		
 		InfraActiveRequests dup = null;
-				
+		boolean inProgress = false;		
 
 		dup = duplicateCheck(action, instanceIdMap, startTime, msoRequest, instanceName,requestScope, currentActiveReq);
 
-		if (dup != null) {
+		if(dup != null){
+			inProgress = camundaHistoryCheck(dup, currentActiveReq);
+		}
+		
+		if (dup != null && inProgress) {
             buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, startTime, msoRequest, instanceName, requestScope, dup);
 		}
 		ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();
@@ -881,8 +899,13 @@ public class ServiceInstances {
 		}
 		
 		InfraActiveRequests dup = duplicateCheck(action, instanceIdMap, startTime, msoRequest, null, requestScope, currentActiveReq);
-
-		if (dup != null) {
+		boolean inProgress = false;
+		
+		if(dup != null){
+			inProgress = camundaHistoryCheck(dup, currentActiveReq);
+		}
+		
+		if (dup != null && inProgress) {
             buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, startTime, msoRequest, null, requestScope, dup);
 		}
 		
@@ -1148,6 +1171,42 @@ public class ServiceInstances {
             throw requestDbFailureException;
 		}
 		return dup;
+	}
+    protected boolean camundaHistoryCheck(InfraActiveRequests duplicateRecord, InfraActiveRequests currentActiveReq) throws RequestDbFailureException, ContactCamundaException{
+    	String requestId = duplicateRecord.getRequestId();
+    	String path = env.getProperty("mso.camunda.rest.history.uri") + requestId;
+    	String targetUrl = env.getProperty("mso.camundaURL") + path;
+    	HttpHeaders headers = setHeaders(env.getProperty("mso.camundaAuth")); 
+    	HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+    	ResponseEntity<List<HistoricProcessInstanceEntity>> response = null;
+    	try{
+    		response = restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity, new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>(){});
+    	}catch(HttpStatusCodeException e){
+    		ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ContactCamundaException contactCamundaException= new ContactCamundaException.Builder(requestId, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
+                    .errorInfo(errorLoggerInfo).build();
+            updateStatus(currentActiveReq, Status.FAILED, contactCamundaException.getMessage());
+            throw contactCamundaException;
+		}
+    	if(response.getBody().isEmpty()){
+    		updateStatus(duplicateRecord, Status.COMPLETE, "Request Completed");
+    	}
+		for(HistoricProcessInstance instance : response.getBody()){
+			if(instance.getState().equals("ACTIVE")){
+				return true;
+			}else{
+				updateStatus(duplicateRecord, Status.COMPLETE, "Request Completed");
+			}
+    	}	
+		return false;
+	}
+    private HttpHeaders setHeaders(String auth) {
+		HttpHeaders headers = new HttpHeaders();
+		List<org.springframework.http.MediaType> acceptableMediaTypes = new ArrayList<>();
+		acceptableMediaTypes.add(org.springframework.http.MediaType.APPLICATION_JSON);
+		headers.setAccept(acceptableMediaTypes);
+		headers.add(HttpHeaders.AUTHORIZATION, auth);
+		return headers;
 	}
 
 	private ServiceInstancesRequest convertJsonToServiceInstanceRequest(String requestJSON, Actions action, long startTime,
@@ -1672,7 +1731,9 @@ public class ServiceInstances {
 		Recipe recipe = null;
 
 		if(modelInfo.getModelCustomizationId()!=null){
-            NetworkResource networkResource = catalogDbClient.getNetworkResourceCustomizationByModelCustomizationUUID(modelInfo.getModelCustomizationId()).getNetworkResource();
+            NetworkResourceCustomization networkResourceCustomization = catalogDbClient.getNetworkResourceCustomizationByModelCustomizationUUID(modelInfo.getModelCustomizationId());
+			if(networkResourceCustomization != null){
+				NetworkResource networkResource = networkResourceCustomization.getNetworkResource();
 			if(networkResource!=null){
 				if(modelInfo.getModelVersionId() == null) {
 					modelInfo.setModelVersionId(networkResource.getModelUUID());
@@ -1680,6 +1741,9 @@ public class ServiceInstances {
 				recipe = catalogDbClient.getFirstNetworkRecipeByModelNameAndAction(networkResource.getModelName(), action.toString());
 			}else{
 				throw new ValidationException("no catalog entry found");
+			}
+			}else if(action != Action.deleteInstance){
+				throw new ValidationException("modelCustomizationId for networkResourceCustomization lookup", true);
 			}
 		}else{
 			//ok for version < 3 and action delete
@@ -1733,6 +1797,7 @@ public class ServiceInstances {
 		String serviceInstanceId = (instanceIdMap ==null)? null:instanceIdMap.get("serviceInstanceId");
 		Boolean aLaCarte = null;
 		String apiVersion = version.substring(1);
+		boolean inProgress = false;
 		
 		long startTime = System.currentTimeMillis ();
 		ServiceInstancesRequest sir = null;		
@@ -1750,8 +1815,12 @@ public class ServiceInstances {
 		InfraActiveRequests dup = null;
 		
 		dup = duplicateCheck(action, instanceIdMap, startTime, msoRequest, instanceName,requestScope, currentActiveReq);
+		
+		if(dup != null){
+			inProgress = camundaHistoryCheck(dup, currentActiveReq);
+		}
 
-		if (instanceIdMap != null && dup != null) {
+		if (instanceIdMap != null && dup != null && inProgress) {
             buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, startTime, msoRequest, instanceName, requestScope, dup);
 		}
 		
@@ -1829,7 +1898,7 @@ public class ServiceInstances {
 			return postBPELRequest(currentActiveReq, requestClientParameter, orchestrationUri, requestScope);
 	}
 
-    public String getRequestId(ContainerRequestContext requestContext) throws ValidateException {
+	public String getRequestId(ContainerRequestContext requestContext) throws ValidateException {
     	String requestId = null;
     	if (requestContext.getProperty("requestId") != null) {
     		requestId = requestContext.getProperty("requestId").toString();
