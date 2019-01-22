@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_367db9e8",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/test/emulators/DistributionClientEmulator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-01-22T12:28:27Z",
+      "side": 1,
+      "message": "Could you please confirm if resourcepath and filename is preserved in exception message, I think it will be useful if we have resourcepath and filename in message.",
+      "range": {
+        "startLine": 95,
+        "startChar": 3,
+        "endLine": 95,
+        "endChar": 82
+      },
+      "revId": "4b5ae55f6bfbd79a6e213bef75461fb9d2871dfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
