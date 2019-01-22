@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.core.internal;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.contains;
+import static org.mockito.ArgumentMatchers.contains;
 
 import java.util.Optional;
 import org.junit.Test;

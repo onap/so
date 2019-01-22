@@ -25,7 +25,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.contains;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
 
 import java.io.Serializable;

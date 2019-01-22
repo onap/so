@@ -40,8 +40,8 @@ import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.bpmn.mock.StubResponseAAI
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
-import static org.mockito.Matchers.any
-import static org.mockito.Matchers.refEq
+import static org.mockito.ArgumentMatchers.any
+import static org.mockito.ArgumentMatchers.refEq
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)

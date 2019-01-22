@@ -33,7 +33,7 @@ import org.onap.so.bpmn.core.WorkflowException
 
 import static org.assertj.core.api.Assertions.assertThat
 import static org.assertj.core.api.Assertions.assertThatThrownBy
-import static org.mockito.Matchers.eq
+import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)
