@@ -23,7 +23,8 @@ mso:
     rest:
       task:
         uri: /sobpmnengine/task
-    
+      history:
+        uri: /sobpmnengine/history/process-instance?variables=mso-request-id_eq_
                 
 spring:
   datasource:
