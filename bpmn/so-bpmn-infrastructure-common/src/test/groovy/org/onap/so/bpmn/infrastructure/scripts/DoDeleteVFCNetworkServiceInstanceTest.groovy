@@ -34,7 +34,7 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 
-import static org.mockito.Matchers.isA
+import static org.mockito.ArgumentMatchers.isA
 import static org.mockito.Mockito.doThrow
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.when

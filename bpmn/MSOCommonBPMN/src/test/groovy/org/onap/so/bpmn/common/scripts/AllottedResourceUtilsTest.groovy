@@ -34,9 +34,9 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import javax.ws.rs.core.UriBuilder
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue
-import static org.mockito.Matchers.any
-import static org.mockito.Matchers.anyObject
-import static org.mockito.Matchers.isA
+import static org.mockito.ArgumentMatchers.any
+import static org.mockito.ArgumentMatchers.anyObject
+import static org.mockito.ArgumentMatchers.isA
 import static org.mockito.Mockito.atLeastOnce
 import static org.mockito.Mockito.doNothing
 import static org.mockito.Mockito.doThrow

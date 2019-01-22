@@ -23,6 +23,8 @@ package org.onap.so.client.adapter.vnf.mapper;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,7 +34,13 @@ import org.junit.Test;
 
 public class VnfAdapterVfModuleObjectMapperTest{
 
+	@Spy
 	private VnfAdapterVfModuleObjectMapper mapper = new VnfAdapterVfModuleObjectMapper();
+
+	@Before
+	public void before() {
+		MockitoAnnotations.initMocks(this);
+	}
 	
 	@Test
 	public void createVnfcSubInterfaceKeyTest() {
@@ -62,6 +70,44 @@ public class VnfAdapterVfModuleObjectMapperTest{
 		
 		assertEquals("myVal", map.get("test_key3"));
 		
+	}
+	
+	@Test
+	public void test_deleteVfModuleNoHeatIdRequestMapper() throws Exception {
+		DeleteVfModuleRequest expectedDeleteVfModuleRequest = new DeleteVfModuleRequest();
+		
+		CloudRegion cloudRegion = new CloudRegion();
+		cloudRegion.setLcpCloudRegionId("lcpCloudRegionId");
+		expectedDeleteVfModuleRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
+		
+		cloudRegion.setTenantId("tenantId");
+		expectedDeleteVfModuleRequest.setTenantId(cloudRegion.getTenantId());
+		
+		GenericVnf genericVnf = new GenericVnf();
+		VfModule vfModule = new VfModule();
+		vfModule.setHeatStackId("heatStackId");
+		expectedDeleteVfModuleRequest.setVfModuleStackId("heatStackId");
+		expectedDeleteVfModuleRequest.setSkipAAI(true);
+		
+		MsoRequest msoRequest = new MsoRequest();
+		RequestContext requestContext = new RequestContext();
+		requestContext.setMsoRequestId("msoRequestId");
+		msoRequest.setRequestId(requestContext.getMsoRequestId());
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setServiceInstanceId("serviceInstanceId");
+		msoRequest.setServiceInstanceId(serviceInstance.getServiceInstanceId());
+		expectedDeleteVfModuleRequest.setMsoRequest(msoRequest);
+		
+		String messageId = "messageId";
+		String endpoint = "endpoint";
+		doNothing().when(mapper).setIdAndUrl(any());
+		expectedDeleteVfModuleRequest.setMessageId(messageId);
+		expectedDeleteVfModuleRequest.setNotificationUrl(endpoint + "/VNFAResponse/" + messageId);
+		
+		DeleteVfModuleRequest actualDeleteVfModuleRequest = mapper.deleteVfModuleRequestMapper(requestContext, cloudRegion, 
+				serviceInstance, genericVnf, vfModule);
+		
+		assertThat(actualDeleteVfModuleRequest, sameBeanAs(expectedDeleteVfModuleRequest).ignoring("messageId").ignoring("notificationUrl"));
 	}
 	
 }
