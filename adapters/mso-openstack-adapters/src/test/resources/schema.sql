@@ -139,11 +139,11 @@ create table `network_resource` (
   `model_name` varchar(200) not null,
   `model_invariant_uuid` varchar(200) default null,
   `description` varchar(1200) default null,
-  `heat_template_artifact_uuid` varchar(200) not null,
+  `heat_template_artifact_uuid` varchar(200) null,
   `neutron_network_type` varchar(20) default null,
   `model_version` varchar(20) default null,
   `tosca_node_type` varchar(200) default null,
-  `aic_version_min` varchar(20) not null,
+  `aic_version_min` varchar(20) null,
   `aic_version_max` varchar(20) default null,
   `orchestration_mode` varchar(20) default 'heat',
   `resource_category` varchar(20) default null,
@@ -152,8 +152,7 @@ create table `network_resource` (
   primary key (`model_uuid`),
   key `fk_network_resource__temp_network_heat_template_lookup1_idx` (`model_name`),
   key `fk_network_resource__heat_template1_idx` (`heat_template_artifact_uuid`),
-  constraint `fk_network_resource__heat_template1` foreign key (`heat_template_artifact_uuid`) references `heat_template` (`artifact_uuid`) on delete no action on update cascade,
-  constraint `fk_network_resource__temp_network_heat_template_lookup__mod_nm1` foreign key (`model_name`) references `temp_network_heat_template_lookup` (`network_resource_model_name`) on delete no action on update no action
+  constraint `fk_network_resource__heat_template1` foreign key (`heat_template_artifact_uuid`) references `heat_template` (`artifact_uuid`) on delete no action on update cascade
 ) engine=innodb default charset=latin1;
 
 
