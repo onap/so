@@ -425,7 +425,7 @@ public class ToscaResourceInstaller {
 				if(input.getName().equals(inputName)) {
 					// keep both input name and default value
 					// if service input does not supplies value the use default value
-					String defaultValue = input.getDefault() != null ? (String) input.getDefault() : "";
+					String defaultValue = input.getDefault() != null ? (String) input.getDefault().toString() : "";
 					output =  inputName + "|" + defaultValue;// return default value
 				}
 			}

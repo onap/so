@@ -133,4 +133,53 @@ public class ToscaResourceInputTest {
         String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
         assertEquals("{\\\"prop1\\\":\\\"res_key|default_value\\\"}", resourceInput);
     }
+
+    @Test
+    public void resouceInputGetInputDefaultIntegerTest() throws ArtifactInstallerException {
+        ToscaResourceInstaller toscaResourceInstaller = new ToscaResourceInstaller();
+        ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
+
+        toscaResourceStructure.setSdcCsarHelper(sdcCsarHelper);
+
+        HashMap hashMap = new HashMap();
+        hashMap.put("customizationUUID", "id1");
+        Metadata metadata = new Metadata(hashMap);
+
+        LinkedHashMap propertyMap = new LinkedHashMap();
+        propertyMap.put("prop1", property);
+
+        when(sdcCsarHelper.getServiceNodeTemplates()).thenReturn(Arrays.asList(nodeTemplate));
+        when(sdcCsarHelper.getServiceInputs()).thenReturn(Arrays.asList(input));
+        when(nodeTemplate.getMetaData()).thenReturn(metadata);
+        when(nodeTemplate.getProperties()).thenReturn(propertyMap);
+        when(property.getValue()).thenReturn(getInput);
+        when(getInput.getInputName()).thenReturn("res_key");
+        when(input.getName()).thenReturn("res_key");
+        when(input.getDefault()).thenReturn(new Integer(10));
+
+        String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
+        assertEquals("{\\\"prop1\\\":\\\"res_key|10\\\"}", resourceInput);
+    }
+
+    @Test
+    public void resouceInputGetInputNoPropertyTest() throws ArtifactInstallerException {
+        ToscaResourceInstaller toscaResourceInstaller = new ToscaResourceInstaller();
+        ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
+
+        toscaResourceStructure.setSdcCsarHelper(sdcCsarHelper);
+
+        HashMap hashMap = new HashMap();
+        hashMap.put("customizationUUID", "id1");
+        Metadata metadata = new Metadata(hashMap);
+
+        LinkedHashMap propertyMap = new LinkedHashMap();
+
+        when(sdcCsarHelper.getServiceNodeTemplates()).thenReturn(Arrays.asList(nodeTemplate));
+        when(sdcCsarHelper.getServiceInputs()).thenReturn(Arrays.asList(input));
+        when(nodeTemplate.getMetaData()).thenReturn(metadata);
+        when(nodeTemplate.getProperties()).thenReturn(propertyMap);
+
+        String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
+        assertEquals("{}", resourceInput);
+    }
 }
