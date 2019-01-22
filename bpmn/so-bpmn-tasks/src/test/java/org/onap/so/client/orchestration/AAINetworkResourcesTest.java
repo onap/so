@@ -159,7 +159,7 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 		final String content = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "queryAaiVpnBinding.json")));
 		AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
 		Optional<VpnBinding> oVpnBinding = Optional.empty();
-		AAIResourceUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, "ModelInvariantUUID", "serviceModelVersionId");
+		AAIResourceUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, "ModelInvariantUUID");
 		
 		doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
 		oVpnBinding = aaiNetworkResources.getVpnBinding(aaiUri);
@@ -176,7 +176,7 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 		final String content = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "queryAaiNetworkPolicy.json")));
 		AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
 		Optional<NetworkPolicy> oNetPolicy = Optional.empty();
-		AAIResourceUri netPolicyUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, "ModelInvariantUUID", "serviceModelVersionId");
+		AAIResourceUri netPolicyUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, "ModelInvariantUUID");
 		
 		doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
 		oNetPolicy = aaiNetworkResources.getNetworkPolicy(netPolicyUri);
@@ -193,7 +193,7 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 		final String content = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "queryAaiNetworkTableRefs.json")));
 		AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
 		Optional<RouteTableReference> oRtref = Optional.empty();
-		AAIResourceUri rTRefUri = AAIUriFactory.createResourceUri(AAIObjectType.ROUTE_TABLE_REFERENCE, "ModelInvariantUUID", "serviceModelVersionId");
+		AAIResourceUri rTRefUri = AAIUriFactory.createResourceUri(AAIObjectType.ROUTE_TABLE_REFERENCE, "ModelInvariantUUID");
 		
 		doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
 		oRtref = aaiNetworkResources.getRouteTable(rTRefUri);

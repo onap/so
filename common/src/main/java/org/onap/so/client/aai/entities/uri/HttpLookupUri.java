@@ -22,7 +22,6 @@ package org.onap.so.client.aai.entities.uri;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,6 +37,7 @@ import org.onap.so.client.graphinventory.entities.uri.HttpAwareUri;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPayloadException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriNotFoundException;
+import org.onap.so.client.graphinventory.exceptions.IncorrectNumberOfUriKeys;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -118,6 +118,18 @@ public abstract class HttpLookupUri extends AAISimpleUri implements HttpAwareUri
 	@Override
 	public abstract HttpLookupUri clone();
 	
+	@Override
+	public void validateValuesSize(String template, Object... values) {
+		try {
+			super.validateValuesSize(template, values);
+		} catch (IncorrectNumberOfUriKeys e) {
+			if (values.length == 1) {
+				//Special case where we perform an http look up
+			} else {
+				throw e;
+			}
+		}
+	}
 	public AAIResourcesClient getResourcesClient() {
 		return new AAIResourcesClient();
 	}

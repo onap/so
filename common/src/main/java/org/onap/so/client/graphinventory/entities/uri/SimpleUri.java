@@ -24,11 +24,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -39,6 +39,7 @@ import org.onap.so.client.graphinventory.GraphInventoryObjectPlurals;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 import org.onap.so.client.graphinventory.entities.uri.parsers.UriParser;
 import org.onap.so.client.graphinventory.entities.uri.parsers.UriParserSpringImpl;
+import org.onap.so.client.graphinventory.exceptions.IncorrectNumberOfUriKeys;
 import org.springframework.web.util.UriUtils;
 
 public class SimpleUri implements GraphInventoryResourceUri, Serializable {
@@ -56,6 +57,7 @@ public class SimpleUri implements GraphInventoryResourceUri, Serializable {
 		this.pluralType = null;
 		this.internalURI = UriBuilder.fromPath(this.getTemplate(type));
 		this.values = values;
+		validateValuesSize(this.getTemplate(type), values);
 	}
 	protected SimpleUri(GraphInventoryObjectType type, URI uri) {
 		this.type = type;
@@ -86,12 +88,14 @@ public class SimpleUri implements GraphInventoryResourceUri, Serializable {
 		this.pluralType = type;
 		this.internalURI = UriBuilder.fromPath(this.getTemplate(type));
 		this.values = values;
+		validateValuesSize(this.getTemplate(type), values);
 	}
 	protected SimpleUri(GraphInventoryResourceUri parentUri, GraphInventoryObjectType childType, Object... childValues) {
 		this.type = childType;
 		this.pluralType = null;
 		this.internalURI = UriBuilder.fromUri(parentUri.build()).path(childType.partialUri());
 		this.values = childValues;
+		validateValuesSize(childType.partialUri(), values);
 	}
 	
 	protected void setInternalURI(UriBuilder builder) {
@@ -230,6 +234,14 @@ public class SimpleUri implements GraphInventoryResourceUri, Serializable {
 	public SimpleUri format(Format format) {
 		this.internalURI.replaceQueryParam("format", format);
 		return this;
+	}
+	
+	public void validateValuesSize(String template, Object... values) {
+		UriParser parser = new UriParserSpringImpl(template);
+		Set<String> variables = parser.getVariables();
+		if (variables.size() != values.length) {
+			throw new IncorrectNumberOfUriKeys(String.format("Expected %s variables: %s", variables.size(), variables));
+		}
 	}
 	
 	protected String getTemplate(GraphInventoryObjectType type) {
