@@ -117,11 +117,11 @@ CREATE TABLE `network_resource` (
   `MODEL_NAME` varchar(200) NOT NULL,
   `MODEL_INVARIANT_UUID` varchar(200) DEFAULT NULL,
   `DESCRIPTION` varchar(1200) DEFAULT NULL,
-  `HEAT_TEMPLATE_ARTIFACT_UUID` varchar(200) NOT NULL,
+  `HEAT_TEMPLATE_ARTIFACT_UUID` varchar(200) NULL,
   `NEUTRON_NETWORK_TYPE` varchar(20) DEFAULT NULL,
   `MODEL_VERSION` varchar(20) DEFAULT NULL,
   `TOSCA_NODE_TYPE` varchar(200) DEFAULT NULL,
-  `AIC_VERSION_MIN` varchar(20) NOT NULL,
+  `AIC_VERSION_MIN` varchar(20) NULL,
   `AIC_VERSION_MAX` varchar(20) DEFAULT NULL,
   `ORCHESTRATION_MODE` varchar(20) DEFAULT 'HEAT',
   `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -129,7 +129,6 @@ CREATE TABLE `network_resource` (
   KEY `fk_network_resource__temp_network_heat_template_lookup1_idx` (`MODEL_NAME`),
   KEY `fk_network_resource__heat_template1_idx` (`HEAT_TEMPLATE_ARTIFACT_UUID`),
   CONSTRAINT `fk_network_resource__heat_template1` FOREIGN KEY (`HEAT_TEMPLATE_ARTIFACT_UUID`) REFERENCES `heat_template` (`ARTIFACT_UUID`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_network_resource__temp_network_heat_template_lookup__mod_nm1` FOREIGN KEY (`MODEL_NAME`) REFERENCES `temp_network_heat_template_lookup` (`NETWORK_RESOURCE_MODEL_NAME`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `network_resource_customization` (
