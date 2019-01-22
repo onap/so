@@ -34,7 +34,7 @@ import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.bpmn.vcpe.scripts.GroovyTestBase
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy
-import static org.mockito.Matchers.anyString
+import static org.mockito.ArgumentMatchers.anyString
 import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
 import static org.mockito.Mockito.eq

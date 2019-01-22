@@ -48,7 +48,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
@@ -158,7 +158,7 @@ public class ServiceInstanceUriTest {
 		ServiceInstanceUri spy = spy(instance);
 		AAIResourcesClient mockResourcesClient = mock(AAIResourcesClient.class);
 		AAIResultWrapper wrapper = mock(AAIResultWrapper.class);
-		when(mockResourcesClient.get(Matchers.<AAIResourceUri>any(AAIResourceUri.class), Matchers.<Class<NotFoundException>>any())).thenReturn(wrapper);
+		when(mockResourcesClient.get(ArgumentMatchers.<AAIResourceUri>any(AAIResourceUri.class), ArgumentMatchers.<Class<NotFoundException>>any())).thenReturn(wrapper);
 		when(wrapper.getJson()).thenReturn(content);
 		when(spy.getResourcesClient()).thenReturn(mockResourcesClient);
 		exception.expect(GraphInventoryUriComputationException.class);
