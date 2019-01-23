@@ -84,7 +84,10 @@ public class AppcRunTasks {
 			} catch (BBObjectNotFoundException e) {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "No valid VNF exists");
 			}
-			String vnfId = vnf.getVnfId();
+			String vnfId=null;
+			if(null!=vnf) {
+				vnfId=vnf.getVnfId();
+			}
 			String msoRequestId = gBBInput.getRequestContext().getMsoRequestId();
 			String vnfName = vnf.getVnfName();
 			String vnfType = vnf.getVnfType();
