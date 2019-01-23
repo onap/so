@@ -22,6 +22,7 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onap.so.db.catalog.beans.Recipe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,12 +57,18 @@ public class QueryResourceRecipe extends CatalogQuery{
     @Override
     public String JSON2(boolean isArray, boolean isEmbed) {
        Map<String, String> valueMap = new HashMap<>();
-        valueMap.put("id",  null == resourceRecipe ? null :String.valueOf(resourceRecipe.getId()));
-        valueMap.put("action",  null == resourceRecipe ? null :resourceRecipe.getAction());
-        valueMap.put("orchestrationUri", null == resourceRecipe ? null : resourceRecipe.getOrchestrationUri());
-        valueMap.put("recipeTimeout", null == resourceRecipe ? null : String.valueOf(resourceRecipe.getRecipeTimeout()));
-        valueMap.put("paramXSD", null == resourceRecipe ? null : resourceRecipe.getParamXsd());
-        valueMap.put("description", null == resourceRecipe ? null : resourceRecipe.getDescription());
+        valueMap.put("id",  null == resourceRecipe || null == resourceRecipe.getId()
+                ? StringUtils.EMPTY :String.valueOf(resourceRecipe.getId()));
+        valueMap.put("action",  null == resourceRecipe || null == resourceRecipe.getAction()
+                ? StringUtils.EMPTY :resourceRecipe.getAction());
+        valueMap.put("orchestrationUri", null == resourceRecipe || null == resourceRecipe.getOrchestrationUri()
+                ? StringUtils.EMPTY : resourceRecipe.getOrchestrationUri());
+        valueMap.put("recipeTimeout", null == resourceRecipe || null == resourceRecipe.getRecipeTimeout()
+                ? StringUtils.EMPTY : String.valueOf(resourceRecipe.getRecipeTimeout()));
+        valueMap.put("paramXSD", null == resourceRecipe || null == resourceRecipe.getParamXsd()
+                ? StringUtils.EMPTY : resourceRecipe.getParamXsd());
+        valueMap.put("description", null == resourceRecipe || null == resourceRecipe.getDescription()
+                ? StringUtils.EMPTY : resourceRecipe.getDescription());
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         String jsonStr = "";
