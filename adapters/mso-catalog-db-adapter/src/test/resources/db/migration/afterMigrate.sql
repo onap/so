@@ -216,3 +216,11 @@ VALUES
 insert into homing_instances (service_instance_id, cloud_owner, cloud_region_id, oof_directives) values
 ('5df8b6de-2083-11e7-93ae-92361f232671', 'CloudOwner', 'CloudRegionId', '{"directives": [{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "firewall_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vfw"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor33","attribute_name": "packetgen_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vgenerator"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "sink_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vsink"}]}'),
 ('5df8b6de-2083-11e7-93ae-92361f562672', 'CloudOwner', 'CloudRegionId', '{"directives": [{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "firewall_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vfw"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor33","attribute_name": "packetgen_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vgenerator"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "sink_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vsink"}]}');
+
+-- for query resource receipe
+INSERT INTO allotted_resource
+(MODEL_UUID, MODEL_INVARIANT_UUID, MODEL_VERSION, MODEL_NAME, TOSCA_NODE_TYPE, SUBCATEGORY, DESCRIPTION, CREATION_TIMESTAMP)
+VALUES('25e2d69b-3b22-47b8-b4c9-7b14fd4a80df', '8f5fe343-9a3a-4d31-a829-49b27bbfc1c4', '2.0', 'sotnvpnattachmentvF', 'org.openecomp.resource.vf.Sdwanvpnattachmentvf', 'Allotted Resource', 'sdwanvpnattachmentVF', '2019-01-24 09:59:16.000');
+
+INSERT INTO ar_recipe(ID, MODEL_NAME, ACTION, VERSION_STR, SERVICE_TYPE, DESCRIPTION, ORCHESTRATION_URI, AR_PARAM_XSD, RECIPE_TIMEOUT, CREATION_TIMESTAMP)
+VALUES(1, 'sotnvpnattachmentvF', 'createInstance', '2.0', 'VF', 'sotnvpnattachmentvF', '/mso/async/services/CreateSDNCNetworkResource', '', 180, '2019-01-24 09:59:16.000');
