@@ -50,6 +50,7 @@ import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterCreateTasks;
 import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterDeleteTasks;
 import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterImpl;
 import org.onap.so.bpmn.infrastructure.appc.tasks.AppcRunTasks;
+import org.onap.so.bpmn.infrastructure.flowspecific.tasks.ActivateVfModule;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetwork;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetworkBBUtils;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignVnf;
@@ -170,6 +171,9 @@ public abstract class BaseBPMNTest {
 	@MockBean
 	protected AAICommonTasks aaiCommonTasks;
 
+	@MockBean
+	protected ActivateVfModule activateVfModule;
+	
 	@MockBean
 	protected AssignVnf assignVnf;
 

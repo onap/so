@@ -38,13 +38,4 @@ public class NetworkRequestTest {
 		assertEquals(true, networkResponse.isSynchronous());
 	}
 	
-	@Test
-	public void isContrailRequest() {
-		CreateNetworkRequest networkResponse = new CreateNetworkRequest();
-		assertEquals(false, networkResponse.isContrailRequest());
-		networkResponse.setNetworkTechnology(NetworkTechnology.CONTRAIL);
-		assertEquals(false, networkResponse.isContrailRequest());
-		networkResponse.setContrailNetwork(new ContrailNetwork());
-		assertEquals(true, networkResponse.isContrailRequest());
-	}
 }

@@ -21,6 +21,7 @@
 package org.onap.so.apihandlerinfra.tenantisolation.helpers;
 
 import java.net.URL;
+import java.util.UUID;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -92,6 +93,11 @@ public class SDCClientHelper {
 
 			HttpClient httpClient = httpClientFactory.newJsonClient(url, TargetEntity.SDC);
 			httpClient.addBasicAuthHeader(sdcClientAuth, msoKey);
+			httpClient.addAdditionalHeader("X-ECOMP-InstanceID", sdcActivateInstanceId);
+			httpClient.addAdditionalHeader("X-ECOMP-RequestID", UUID.randomUUID().toString());
+			httpClient.addAdditionalHeader("Content-Type", SDCClientHelper.SDC_CONTENT_TYPE);
+			httpClient.addAdditionalHeader("Accept", SDCClientHelper.SDC_ACCEPT_TYPE);
+			httpClient.addAdditionalHeader("USER_ID", sdcActivateUserId);
 
 			Response apiResponse = setHttpPostResponse(httpClient, jsonPayload);
 			int statusCode = apiResponse.getStatus();;

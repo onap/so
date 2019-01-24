@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
   <bpmn:process id="ActivateVfModuleBB" name="ActivateVfModuleBB" isExecutable="true">
     <bpmn:startEvent id="ActivateVfModuleBB_Start">
       <bpmn:outgoing>SequenceFlow_0ieafii</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_0ieafii" sourceRef="ActivateVfModuleBB_Start" targetRef="ActivateVfModule" />
+    <bpmn:sequenceFlow id="SequenceFlow_0ieafii" sourceRef="ActivateVfModuleBB_Start" targetRef="SetTimerDuration" />
     <bpmn:endEvent id="ActivateVfModuleBB_End">
       <bpmn:incoming>SequenceFlow_0xsp0pv</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:serviceTask id="ActivateVfModule" name="&#10;SDNC&#10;Activate&#10;(vf module)&#10;" camunda:expression="${SDNCActivateTasks.activateVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_0ieafii</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1a495wm</bpmn:outgoing>
+      <bpmn:incoming>SequenceFlow_0e44ywc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1yzril6</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="UpdateVfModuleActiveStatus" name="&#10;AAI&#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusActivateVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1j4x1ej</bpmn:incoming>
@@ -24,11 +24,24 @@
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_1a495wm</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1yzril6</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1j4x1ej</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:sequenceFlow id="SequenceFlow_1a495wm" sourceRef="ActivateVfModule" targetRef="CallActivity_sdncHandler" />
     <bpmn:sequenceFlow id="SequenceFlow_1j4x1ej" sourceRef="CallActivity_sdncHandler" targetRef="UpdateVfModuleActiveStatus" />
+    <bpmn:serviceTask id="SetTimerDuration" name="Set Timer Duration" camunda:expression="${ActivateVfModule.setTimerDuration(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0ieafii</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0qc2sao</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateCatchEvent id="Timer" name="Timer">
+      <bpmn:incoming>SequenceFlow_0qc2sao</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0e44ywc</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${execution.getVariable("vfModuleActivateTimerDuration")}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0qc2sao" sourceRef="SetTimerDuration" targetRef="Timer" />
+    <bpmn:sequenceFlow id="SequenceFlow_0e44ywc" sourceRef="Timer" targetRef="ActivateVfModule" />
+    <bpmn:sequenceFlow id="SequenceFlow_1yzril6" sourceRef="ActivateVfModule" targetRef="CallActivity_sdncHandler" />
   </bpmn:process>
   <bpmn:error id="Error_0q258vt" name="gDelegateError" errorCode="7000" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -40,47 +53,61 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ieafii_di" bpmnElement="SequenceFlow_0ieafii">
-        <di:waypoint xsi:type="dc:Point" x="209" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="262" y="120" />
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="274" y="120" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="190.5" y="99" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_1v967li_di" bpmnElement="ActivateVfModuleBB_End">
-        <dc:Bounds x="736" y="102" width="36" height="36" />
+        <dc:Bounds x="956" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="710" y="142" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0hawa84_di" bpmnElement="ActivateVfModule">
-        <dc:Bounds x="262" y="80" width="100" height="80" />
+        <dc:Bounds x="490" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_175e9ul_di" bpmnElement="UpdateVfModuleActiveStatus">
-        <dc:Bounds x="600" y="80" width="100" height="80" />
+        <dc:Bounds x="770" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0xsp0pv_di" bpmnElement="SequenceFlow_0xsp0pv">
-        <di:waypoint xsi:type="dc:Point" x="700" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="736" y="120" />
+        <di:waypoint x="870" y="120" />
+        <di:waypoint x="956" y="120" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="673" y="99" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_03jkesd_di" bpmnElement="CallActivity_sdncHandler">
-        <dc:Bounds x="420" y="80" width="100" height="80" />
+        <dc:Bounds x="639" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1a495wm_di" bpmnElement="SequenceFlow_1a495wm">
-        <di:waypoint xsi:type="dc:Point" x="362" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="420" y="120" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="391" y="99" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1j4x1ej_di" bpmnElement="SequenceFlow_1j4x1ej">
-        <di:waypoint xsi:type="dc:Point" x="520" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="600" y="120" />
+        <di:waypoint x="739" y="120" />
+        <di:waypoint x="770" y="120" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="560" y="99" width="0" height="12" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0tg4hn9_di" bpmnElement="SetTimerDuration">
+        <dc:Bounds x="274" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_17kjdjp_di" bpmnElement="Timer">
+        <dc:Bounds x="417" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="421" y="145" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qc2sao_di" bpmnElement="SequenceFlow_0qc2sao">
+        <di:waypoint x="374" y="120" />
+        <di:waypoint x="417" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0e44ywc_di" bpmnElement="SequenceFlow_0e44ywc">
+        <di:waypoint x="453" y="120" />
+        <di:waypoint x="490" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yzril6_di" bpmnElement="SequenceFlow_1yzril6">
+        <di:waypoint x="590" y="120" />
+        <di:waypoint x="639" y="120" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

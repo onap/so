@@ -22,6 +22,7 @@ package org.onap.so.adapters.network;
 
 
 import java.util.List;
+import java.util.Map;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
@@ -56,6 +57,7 @@ public interface MsoNetworkAdapterAsync
 							@WebParam(name="failIfExists") Boolean failIfExists,
 							@WebParam(name="backout") Boolean backout,
 							@WebParam(name="subnets") List<Subnet> subnets,
+							@WebParam(name="networkParams") Map<String, String> networkParams,
 							@WebParam(name="messageId") @XmlElement(required=true) String messageId,
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name="notificationUrl") @XmlElement(required=true) String notificationUrl );
@@ -71,6 +73,7 @@ public interface MsoNetworkAdapterAsync
 						@WebParam(name="physicalNetworkName") @XmlElement(required=true) String physicalNetworkName,
 						@WebParam(name="vlans") @XmlElement(required=true) List<Integer> vlans,
 						@WebParam(name="subnets") List<Subnet> subnets,
+						@WebParam(name="networkParams") Map<String, String> networkParams,
 						@WebParam(name="messageId") @XmlElement(required=true) String messageId,
 						@WebParam(name="request") MsoRequest msoRequest,
 						@WebParam(name="notificationUrl") @XmlElement(required=true) String notificationUrl );

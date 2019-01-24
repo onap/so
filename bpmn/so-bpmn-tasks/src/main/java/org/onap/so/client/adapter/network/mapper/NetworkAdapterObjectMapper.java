@@ -22,6 +22,7 @@ package org.onap.so.client.adapter.network.mapper;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -92,14 +93,19 @@ public class NetworkAdapterObjectMapper {
 			networkTechnology = l3Network.getNetworkTechnology();
 			logger.warn("NetworkTechnology was null in CatalogDB. Using field from AAI: " + networkTechnology);
 		}
-		createNetworkRequest.setNetworkTechnology(setNetworkTechnology(networkTechnology));
+		if (networkTechnology != null) {
+			createNetworkRequest.setNetworkTechnology(networkTechnology.toUpperCase());
+			if (createNetworkRequest.getNetworkTechnology().contains("CONTRAIL")) {
+				createNetworkRequest.setContrailRequest(true);
+			}
+		}
 		
 		//build and set Contrail Network
 		ContrailNetwork contrailNetwork = buildContrailNetwork(l3Network, customer);
 		createNetworkRequest.setContrailNetwork(contrailNetwork);
 		
-		//set Network Parameters from VID request
-		createNetworkRequest.setNetworkParams(userInput);
+		//set Network Parameters from VID request, add "shared" and "external" to this map
+		createNetworkRequest.setNetworkParams(addSharedAndExternal(userInput, l3Network));
 		
 		createNetworkRequest = setFlowFlags(createNetworkRequest, orchestrationContext);
 
@@ -112,16 +118,6 @@ public class NetworkAdapterObjectMapper {
 		return createNetworkRequest;
 	}
 
-	protected NetworkTechnology setNetworkTechnology(String networkTechnology) {
-		if(networkTechnology.equalsIgnoreCase("Contrail")) {
-			return NetworkTechnology.CONTRAIL;
-		} else if(networkTechnology.equalsIgnoreCase("Neutron")){
-			return NetworkTechnology.NEUTRON;
-		} else {
-			return NetworkTechnology.VMWARE;
-		}
-	}
-	
 	public DeleteNetworkRequest deleteNetworkRequestMapper(RequestContext requestContext, CloudRegion cloudRegion, ServiceInstance serviceInstance, L3Network l3Network) throws UnsupportedEncodingException {
 		DeleteNetworkRequest deleteNetworkRequest = new DeleteNetworkRequest();
 		
@@ -182,7 +178,7 @@ public class NetworkAdapterObjectMapper {
 		updateNetworkRequest.setSubnets(buildOpenstackSubnetList(l3Network));
 		updateNetworkRequest.setProviderVlanNetwork(buildProviderVlanNetwork(l3Network));
 		updateNetworkRequest.setContrailNetwork(buildContrailNetwork(l3Network, customer));
-		updateNetworkRequest.setNetworkParams(userInput);
+		updateNetworkRequest.setNetworkParams(addSharedAndExternal(userInput, l3Network));
 		updateNetworkRequest.setMsoRequest(createMsoRequest(requestContext, serviceInstance));
 		
 		setFlowFlags(updateNetworkRequest, orchestrationContext);
@@ -370,5 +366,17 @@ public class NetworkAdapterObjectMapper {
 		updateNetworkRequest.setSkipAAI(true);		
 		updateNetworkRequest.setBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
 		//NetworkTechnology(NetworkTechnology.NEUTRON); NOOP - default
+	}
+	
+	private Map<String, String> addSharedAndExternal(Map<String, String> userInput, L3Network l3Network) {
+		if (userInput == null)
+			userInput = new HashMap<String, String>();
+		if (!userInput.containsKey("shared")) {
+			userInput.put("shared", Optional.ofNullable(l3Network.isIsSharedNetwork()).orElse(false).toString());
+		}
+		if (!userInput.containsKey("external")) {
+			userInput.put("external", Optional.ofNullable(l3Network.isIsExternalNetwork()).orElse(false).toString());
+		}
+		return userInput;
 	}
 }

@@ -52,7 +52,7 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 	private String networkType;
 	private String networkTypeVersion;
 	private String modelCustomizationUuid;
-	private NetworkTechnology networkTechnology = NetworkTechnology.NEUTRON;
+	private String networkTechnology = "NEUTRON";
 	private List<Subnet> subnets;
 	private ProviderVlanNetwork providerVlanNetwork;
 	private ContrailNetwork contrailNetwork;
@@ -130,13 +130,12 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 		this.networkTypeVersion = networkTypeVersion;
 	}
 
-	public NetworkTechnology getNetworkTechnology() {
+	public String getNetworkTechnology() {
 		return networkTechnology;
 	}
 
-	public void setNetworkTechnology(NetworkTechnology networkTechnology) {
+	public void setNetworkTechnology(String networkTechnology) {
 		this.networkTechnology = networkTechnology;
-		this.contrailRequest = determineContrail();
 	}
 
 	public List<Subnet> getSubnets() {
@@ -161,7 +160,6 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 
 	public void setContrailNetwork(ContrailNetwork contrailNetwork) {
 		this.contrailNetwork = contrailNetwork;
-		this.contrailRequest = determineContrail();
 	}
 
 	public Boolean getBackout() {
@@ -193,10 +191,6 @@ public class UpdateNetworkRequest extends NetworkRequestCommon {
 	}
 	public boolean isContrailRequest() {
 		return contrailRequest;
-	}
-	
-	private boolean determineContrail() {
-		return (networkTechnology == NetworkTechnology.CONTRAIL && (contrailNetwork != null));
 	}
 	
 }

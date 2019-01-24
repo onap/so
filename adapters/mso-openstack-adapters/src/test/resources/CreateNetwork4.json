@@ -1,0 +1,46 @@
+{
+	"createNetworkRequest": {
+		"skipAAI": true,
+		"messageId": "c4c44af4-4310-4d8b-a1eb-656fc99fe709",
+		"synchronous": true,
+		"cloudSiteId": "mtn13",
+		"tenantId": "ba38bc24a2ef4fb2ad2810c894f1938f",
+		"networkId": "da886914-efb2-4917-b335-c8381528d90b",
+		"networkName": "APP-C-24595-T-IST-04AShared_untrusted_vDBE_net_3",
+		"networkType": "CONTRAIL30_BASIC",
+		"modelCustomizationUuid": "3bdbb104-ffff-483e-9f8b-c095b3d30844",
+		"networkTechnology": "NEUTRON",
+		"subnets": [{
+			"subnetName": "APP-C-24595-T-IST-04AShared_untrusted_vDBE_net_3_subnet_1",
+			"subnetId": "da60501d-9aa8-48d2-99b7-26644fa01093",
+			"cidr": "20",
+			"gatewayIp": "",
+			"ipVersion": "4",
+			"enableDHCP": false,
+			"addrFromStart": true,
+			"hostRoutes": []
+		}],
+		"providerVlanNetwork": {
+			"physicalNetworkName": "FALSE",
+			"vlans": []
+		},
+		"contrailNetwork": {
+			"shared": "false",
+			"external": "false",
+			"routeTargets": [],
+			"policyFqdns": [],
+			"routeTableFqdns": []
+		},
+		"failIfExists": true,
+		"backout": false,
+		"networkParams": {
+			"shared": "true",
+			"external": "false"
+		},
+		"msoRequest": {
+			"requestId": "5349f419-b3e9-4546-b3a1-094bd568d6b7",
+			"serviceInstanceId": "cf965caf-a003-4189-abf9-e0ed77056dd6"
+		},
+		"contrailRequest": false
+	}
+}

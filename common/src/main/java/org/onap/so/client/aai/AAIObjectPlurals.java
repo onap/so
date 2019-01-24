@@ -30,6 +30,7 @@ public enum AAIObjectPlurals implements GraphInventoryObjectPlurals {
 
 	CUSTOMER(AAINamespaceConstants.BUSINESS, "/customers"),
 	GENERIC_VNF(AAINamespaceConstants.NETWORK, "/generic-vnfs"),
+	PORT_GROUP(AAIObjectType.VCE.uriTemplate(), "/port-groups"),
 	PSERVER(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/pservers"),
 	P_INTERFACE(AAIObjectType.PSERVER.uriTemplate(), "/p-interfaces"),
 	L3_NETWORK(AAINamespaceConstants.NETWORK, "/l3-networks"),

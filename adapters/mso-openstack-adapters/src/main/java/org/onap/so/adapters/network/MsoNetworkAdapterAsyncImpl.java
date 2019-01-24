@@ -122,6 +122,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                 Boolean failIfExists,
                                 Boolean backout,
                                 List <Subnet> subnets,
+                                Map<String,String> networkParams,
                                 String messageId,
                                 MsoRequest msoRequest,
                                 String notificationUrl) {
@@ -145,6 +146,16 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         Holder <String> neutronNetworkId = new Holder <> ();
         Holder <NetworkRollback> networkRollback = new Holder <> ();
         Holder <Map <String, String>> subnetIdMap = new Holder <> ();
+        
+        HashMap<String, String> params = (HashMap<String,String>) networkParams;
+        if (params == null)
+        	params = new HashMap<String,String>();
+        String shared = null;
+        String external = null;
+        if (params.containsKey("shared"))
+        	shared = params.get("shared");
+        if (params.containsKey("external"))
+        	external = params.get("external");
 
         try {
             networkAdapter.createNetwork (cloudSiteId,
@@ -154,9 +165,12 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                           networkName,
                                           physicalNetworkName,
                                           vlans,
+                                          shared,
+                                          external,
                                           failIfExists,
                                           backout,
                                           subnets,
+                                          params,
                                           msoRequest,
                                           networkId,
                                           neutronNetworkId,
@@ -239,6 +253,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                 String physicalNetworkName,
                                 List <Integer> vlans,
                                 List <Subnet> subnets,
+                                Map <String,String> networkParams,
                                 String messageId,
                                 MsoRequest msoRequest,
                                 String notificationUrl) {
@@ -261,6 +276,16 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         // Synchronous Web Service Outputs
         Holder <NetworkRollback> networkRollback = new Holder <> ();
         Holder <Map <String, String>> subnetIdMap = new Holder <> ();
+        
+        HashMap<String, String> params = (HashMap<String,String>) networkParams;
+        if (params == null)
+        	params = new HashMap<String,String>();
+        String shared = null;
+        String external = null;
+        if (params.containsKey("shared"))
+        	shared = params.get("shared");
+        if (params.containsKey("external"))
+        	external = params.get("external");
 
         try {
             networkAdapter.updateNetwork (cloudSiteId,
@@ -271,7 +296,10 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                           networkName,
                                           physicalNetworkName,
                                           vlans,
+                                          shared,
+                                          external,
                                           subnets,
+                                          params,
                                           msoRequest,
                                           subnetIdMap,
                                           networkRollback);

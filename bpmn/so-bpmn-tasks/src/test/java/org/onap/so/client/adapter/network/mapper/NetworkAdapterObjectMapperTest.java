@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -99,24 +100,6 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 	}
 	
 	@Test
-	public void testSetNetworkTechnology() {
-		String networkTechnology = "Contrail";
-		NetworkTechnology expectedNetworkTechnology = NetworkTechnology.CONTRAIL;
-		NetworkTechnology actualNetworkTechnology = SPY_networkAdapterObjectMapper.setNetworkTechnology(networkTechnology);
-		assertEquals("NetworkTechnology matches", expectedNetworkTechnology, actualNetworkTechnology);
-		
-		networkTechnology = "Neutron";
-		expectedNetworkTechnology = NetworkTechnology.NEUTRON;
-		actualNetworkTechnology = SPY_networkAdapterObjectMapper.setNetworkTechnology(networkTechnology);
-		assertEquals("NetworkTechnology matches", expectedNetworkTechnology, actualNetworkTechnology);
-		
-		networkTechnology = "Vmware";
-		expectedNetworkTechnology = NetworkTechnology.VMWARE;
-		actualNetworkTechnology = SPY_networkAdapterObjectMapper.setNetworkTechnology(networkTechnology);
-		assertEquals("NetworkTechnology matches", expectedNetworkTechnology, actualNetworkTechnology);
-		
-	}
-	@Test
 	public void buildCreateNetworkRequestFromBbobjectTest() throws Exception {
 
 		String cloudRegionPo = "cloudRegionPo";
@@ -129,12 +112,17 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		expectedCreateNetworkRequest.setNetworkType(l3Network.getNetworkType());
 		expectedCreateNetworkRequest.setBackout(false);
 		expectedCreateNetworkRequest.setFailIfExists(true);
-		expectedCreateNetworkRequest.setNetworkTechnology(NetworkTechnology.CONTRAIL);
+		expectedCreateNetworkRequest.setNetworkTechnology("CONTRAIL");
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId(requestContext.getMsoRequestId());
 		msoRequest.setServiceInstanceId(serviceInstance.getServiceInstanceId());
 		expectedCreateNetworkRequest.setMsoRequest(msoRequest);
 		expectedCreateNetworkRequest.setSkipAAI(true);
+		HashMap<String, String> networkParams = new HashMap<String, String>();
+		networkParams.put("shared", "true");
+		networkParams.put("external", "false");
+		networkParams.put("testUserInputKey", "testUserInputValue");
+		expectedCreateNetworkRequest.setNetworkParams(networkParams);
 		
 		expectedCreateNetworkRequest.setNotificationUrl("endpoint/NetworkAResponse/messageId");
 		
@@ -148,13 +136,15 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		subnetList.add(openstackSubnet);
 		l3Network.getSubnets().add(openstackSubnet);
 		l3Network.setNetworkTechnology("Contrail");
+		l3Network.setIsSharedNetwork(true);
+		l3Network.setIsExternalNetwork(false);
 
 		doReturn("endpoint/").when(SPY_networkAdapterObjectMapper).getEndpoint();
 		doReturn("messageId").when(SPY_networkAdapterObjectMapper).getRandomUuid();
 		
 		CreateNetworkRequest createNetworkRequest  = SPY_networkAdapterObjectMapper.createNetworkRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, customer);
 		
-		assertThat(createNetworkRequest, sameBeanAs(expectedCreateNetworkRequest).ignoring("contrailRequest").ignoring("contrailNetwork").ignoring("providerVlanNetwork").ignoring("subnets").ignoring("networkParams").ignoring("messageId"));
+		assertThat(createNetworkRequest, sameBeanAs(expectedCreateNetworkRequest).ignoring("contrailRequest").ignoring("contrailNetwork").ignoring("providerVlanNetwork").ignoring("subnets").ignoring("messageId"));
 	}
 	
 	@Test
@@ -243,6 +233,12 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		l3Network.getSubnets().add(actualSubnet);
 		l3Network.getNetworkPolicies().add(networkPolicy);
 		l3Network.getContrailNetworkRouteTableReferences().add(routeTableReference);
+		l3Network.setIsSharedNetwork(false);
+		l3Network.setIsExternalNetwork(false);
+		HashMap<String, String> networkParams = new HashMap<String, String>();
+		networkParams.put("shared", "false");
+		networkParams.put("external", "false");
+		networkParams.put("testUserInputKey", "testUserInputValue");
 				
 		UpdateNetworkRequest expectedUpdateNetworkRequest = new UpdateNetworkRequest();
 		expectedUpdateNetworkRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
@@ -256,7 +252,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup{
 		expectedUpdateNetworkRequest.setSubnets(subnets);
 		expectedUpdateNetworkRequest.setProviderVlanNetwork(providerVlanNetwork);
 		expectedUpdateNetworkRequest.setContrailNetwork(contrailNetwork);
-		expectedUpdateNetworkRequest.setNetworkParams(userInput);
+		expectedUpdateNetworkRequest.setNetworkParams(networkParams);
 		expectedUpdateNetworkRequest.setMsoRequest(msoRequest);
 		expectedUpdateNetworkRequest.setSkipAAI(true);
 		expectedUpdateNetworkRequest.setBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));

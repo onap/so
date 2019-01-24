@@ -54,7 +54,7 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 	private String networkType;
 	private String networkTypeVersion;
 	private String modelCustomizationUuid;
-	private NetworkTechnology networkTechnology = NetworkTechnology.NEUTRON;
+	private String networkTechnology = "NEUTRON";
 	private List<Subnet> subnets;
 	private ProviderVlanNetwork providerVlanNetwork;
 	private ContrailNetwork contrailNetwork;
@@ -62,7 +62,6 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 	private Boolean backout = true;
 	private Map<String,String> networkParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
-	@JsonProperty
 	private boolean contrailRequest;
 
 	public CreateNetworkRequest() {
@@ -125,13 +124,12 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 		this.networkTypeVersion = networkTypeVersion;
 	}
 
-	public NetworkTechnology getNetworkTechnology() {
+	public String getNetworkTechnology() {
 		return networkTechnology;
 	}
 
-	public void setNetworkTechnology(NetworkTechnology networkTechnology) {
+	public void setNetworkTechnology(String networkTechnology) {
 		this.networkTechnology = networkTechnology;
-		this.contrailRequest = determineContrail();
 	}
 
 	public List<Subnet> getSubnets() {
@@ -156,7 +154,6 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 
 	public void setContrailNetwork(ContrailNetwork contrailNetwork) {
 		this.contrailNetwork = contrailNetwork;
-		this.contrailRequest = determineContrail();
 	}
 
 	public Boolean getFailIfExists() {
@@ -195,12 +192,8 @@ public class CreateNetworkRequest extends NetworkRequestCommon {
 		return this.contrailRequest;
 	}
 	
-	@JsonIgnore
-	protected void setContrailRequest(boolean contrailRequest) {
+	public void setContrailRequest(boolean contrailRequest) {
 		this.contrailRequest = contrailRequest;
 	}
 	
-	private boolean determineContrail() {
-		return (networkTechnology == NetworkTechnology.CONTRAIL && (contrailNetwork != null));
-	}
 }

@@ -61,6 +61,35 @@ public class ExceptionBuilder {
 			msg = msg.concat(exception.getMessage());
 		buildAndThrowWorkflowException(execution, errorCode, msg);
 	}
+	
+	public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, Exception exception) {
+		String msg = "Exception in %s.%s ";
+		try{
+			msoLogger.error(exception);
+
+			String errorVariable = "Error%s%s";
+
+			StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+			for (StackTraceElement traceElement : trace) {
+				if (!traceElement.getClassName().equals(this.getClass().getName()) && !traceElement.getClassName().equals(Thread.class.getName())) {
+					msg = String.format(msg, traceElement.getClassName(), traceElement.getMethodName());
+					String shortClassName = traceElement.getClassName().substring(traceElement.getClassName().lastIndexOf(".") + 1);
+					errorVariable = String.format(errorVariable,  shortClassName, traceElement.getMethodName());
+					break;
+				}
+			}
+
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, msg.toString());
+			execution.setVariable(errorVariable, exception.getMessage());
+		} catch (Exception ex){
+			//log trace, allow process to complete gracefully
+			msoLogger.error(ex);
+		}
+
+		if (exception.getMessage() != null)
+			msg = msg.concat(exception.getMessage());
+		buildAndThrowWorkflowException(execution, errorCode, msg);
+	}
 
 	public void buildAndThrowWorkflowException(BuildingBlockExecution execution, int errorCode, String errorMessage) {
 		if (execution instanceof DelegateExecutionImpl) {
@@ -74,6 +103,7 @@ public class ExceptionBuilder {
 
 		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
 		execution.setVariable("WorkflowException", exception);
+		execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
 		msoLogger.info("Outgoing WorkflowException is " + exception);
 		msoLogger.info("Throwing MSOWorkflowException");
 		throw new BpmnError("MSOWorkflowException");

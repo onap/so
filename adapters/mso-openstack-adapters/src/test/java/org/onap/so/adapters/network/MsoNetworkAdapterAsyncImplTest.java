@@ -25,10 +25,12 @@ import org.junit.Test;
 import org.onap.so.adapters.vnf.BaseRestTestUtils;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.NetworkRollback;
+import org.onap.so.openstack.beans.Subnet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -184,8 +186,11 @@ public class MsoNetworkAdapterAsyncImplTest extends BaseRestTestUtils {
 								"   </soapenv:Body>\n" +
 								"</soapenv:Envelope>")
 						.withStatus(HttpStatus.SC_OK)));
+		HashMap<String,String> networkParams = new HashMap<String,String>();
+		networkParams.put("shared", "true");
+		networkParams.put("external", "false");
 		impl.updateNetworkA("mtn13", "tenantId", "networkType", "3bdbb104-476c-483e-9f8b-c095b3d3068c", "dvspg-VCE_VPE-mtjnj40avbc",
-				"dvspg-VCE_VPE-mtjnj40avbc", "physicalNetworkName", new ArrayList<>(), new ArrayList<>(), "messageId",
+				"dvspg-VCE_VPE-mtjnj40avbc", "physicalNetworkName", new ArrayList<>(), new ArrayList<Subnet>(), networkParams, "messageId",
 				new MsoRequest(), "http://localhost:"+wireMockPort+"/notificationUrl");
 	}
 
@@ -199,14 +204,17 @@ public class MsoNetworkAdapterAsyncImplTest extends BaseRestTestUtils {
 		mockOpenStackGetStackCreated_200("OpenstackResponse_Stack_Created.json", "dvspg-VCE_VPE-mtjnj40avbc");
 		mockOpenStackGetStackDeleteOrUpdateComplete_200("OpenstackResponse_Stack_UpdateComplete.json");
 		mockOpenStackPutPublicUrlStackByNameAndID_NETWORK2_200();
+		HashMap<String,String> networkParams = new HashMap<String,String>();
+		networkParams.put("shared", "true");
+		networkParams.put("external", "false");
 		impl.updateNetworkA("mtn13", "tenantId", "networkType", "3bdbb104-476c-483e-9f8b-c095b3d3068c", "dvspg-VCE_VPE-mtjnj40avbc",
-				"dvspg-VCE_VPE-mtjnj40avbc", "physicalNetworkName", new ArrayList<>(), new ArrayList<>(), "messageId",
+				"dvspg-VCE_VPE-mtjnj40avbc", "physicalNetworkName", new ArrayList<>(), new ArrayList<>(), networkParams, "messageId",
 				new MsoRequest(), "http://localhost:"+wireMockPort+"/notificationUrl");	}
 
 	@Test
 	public void updateNetworkATest_NetworkException() {
 		impl.updateNetworkA("cloudSiteId", "tenantId", "networkType", "3bdbb104-476c-483e-9f8b-c095b3d3068c", "networkId",
-				"dvspg-VCE_VPE-mtjnj40avbc", "physicalNetworkName", new ArrayList<>(), new ArrayList<>(), "messageId",
+				"dvspg-VCE_VPE-mtjnj40avbc", "physicalNetworkName", new ArrayList<>(), new ArrayList<>(), new HashMap<String,String>(), "messageId",
 				new MsoRequest(), "http://localhost:"+wireMockPort+"/notificationUrl");
 	}
 
@@ -237,8 +245,10 @@ public class MsoNetworkAdapterAsyncImplTest extends BaseRestTestUtils {
 						.withStatus(HttpStatus.SC_OK)));
 		mockOpenStackGetStackCreatedVUSP_200();
 		mockOpenStackPostStacks_200();
+		mockOpenStackPostStacks_200();
+		HashMap<String,String> networkParams = new HashMap<String,String>();
 		impl.createNetworkA("mtn13", "tenantId", "networkType", "3bdbb104-476c-483e-9f8b-c095b3d3068c", "vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0",
-				"physicalNetworkName", new ArrayList<>(), false, false, new ArrayList<>(), "messageId",
+				"physicalNetworkName", new ArrayList<>(), false, false, new ArrayList<>(), networkParams, "messageId",
 				new MsoRequest(), "http://localhost:"+wireMockPort+"/notificationUrl");
 	}
 
@@ -251,15 +261,18 @@ public class MsoNetworkAdapterAsyncImplTest extends BaseRestTestUtils {
 						.withStatus(HttpStatus.SC_OK)));
 		mockOpenStackGetStackCreatedVUSP_200();
 		mockOpenStackPostStacks_200();
+		HashMap<String,String> networkParams = new HashMap<String,String>();
+		networkParams.put("shared", "true");
+		networkParams.put("external", "false");
 		impl.createNetworkA("mtn13", "tenantId", "networkType", "3bdbb104-476c-483e-9f8b-c095b3d3068c", "vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0",
-				"physicalNetworkName", new ArrayList<>(), false, false, new ArrayList<>(), "messageId",
+				"physicalNetworkName", new ArrayList<>(), false, false, new ArrayList<>(), networkParams, "messageId",
 				new MsoRequest(), "http://localhost:"+wireMockPort+"/notificationUrl");
 	}
 
 	@Test
 	public void createNetworkATest_NetworkException()  {
 		impl.createNetworkA("mtn13", "tenantId", "networkType", "3bdbb104-476c-483e-9f8b-c095b3d3068c", "vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0",
-				"physicalNetworkName", new ArrayList<>(), false, false, new ArrayList<>(), "messageId",
+				"physicalNetworkName", new ArrayList<>(), false, false, new ArrayList<>(), new HashMap<String,String>(), "messageId",
 				new MsoRequest(), "http://localhost:"+wireMockPort+"/notificationUrl");
 	}
 }

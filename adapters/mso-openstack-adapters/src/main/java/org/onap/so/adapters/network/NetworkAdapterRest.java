@@ -168,6 +168,13 @@ public class NetworkAdapterRest {
 				Holder<String> networkFqdn = new Holder<>();
 				Holder<Map<String, String>> subnetIdMap = new Holder<>();
 				Holder<NetworkRollback> rollback = new Holder<>();
+				
+				HashMap<String, String> params = (HashMap<String, String>) req.getNetworkParams();
+				if (params == null) {
+					params = new HashMap<String,String>();
+				}
+				String shared = null;
+				String external = null;
 
 				String cloudsite = req.getCloudSiteId();
 				if (cloudsite != null && cloudsite.equals(TESTING_KEYWORD)) {
@@ -186,6 +193,20 @@ public class NetworkAdapterRest {
 						ctn = new ContrailNetwork();
 						req.setContrailNetwork(ctn);
 					}
+					if (params.containsKey("shared")) {
+						shared = params.get("shared");
+					} else {
+						if (ctn.getShared() != null) {
+							shared = ctn.getShared();
+						}
+					}
+					if (params.containsKey("external")) {
+						external = params.get("external");
+					} else {
+						if (ctn.getExternal() != null) {
+							external = ctn.getExternal();
+						}
+					}
 					adapter.createNetworkContrail(
 						req.getCloudSiteId(),
 						req.getTenantId(),
@@ -193,11 +214,12 @@ public class NetworkAdapterRest {
 						req.getModelCustomizationUuid(),
 						req.getNetworkName(),
                         req.getContrailNetwork().getRouteTargets(),
-                        req.getContrailNetwork().getShared(),
-                        req.getContrailNetwork().getExternal(),
+                        shared,
+                        external,
                         req.getFailIfExists(),
                         req.getBackout(),
                         req.getSubnets(),
+                        params,
                         req.getContrailNetwork().getPolicyFqdns(),
                         req.getContrailNetwork().getRouteTableFqdns(),
               			req.getMsoRequest(),
@@ -212,6 +234,10 @@ public class NetworkAdapterRest {
 						pvn = new ProviderVlanNetwork();
 						req.setProviderVlanNetwork(pvn);
 					}
+					if (params.containsKey("shared"))
+						shared = params.get("shared");
+					if (params.containsKey("external"))
+						external = params.get("external");
 					adapter.createNetwork(
 						req.getCloudSiteId(),
 						req.getTenantId(),
@@ -220,9 +246,12 @@ public class NetworkAdapterRest {
 						req.getNetworkName(),
 						req.getProviderVlanNetwork().getPhysicalNetworkName(),
 						req.getProviderVlanNetwork().getVlans(),
+						shared,
+						external,
                         req.getFailIfExists(),
                         req.getBackout(),
                         req.getSubnets(),
+                        params,
                         req.getMsoRequest(),
     					networkId,
     					neutronNetworkId,
@@ -593,6 +622,12 @@ public class NetworkAdapterRest {
 			try {
 				Holder<Map<String, String>> subnetIdMap = new Holder<>();
 				Holder<NetworkRollback> rollback = new Holder<> ();
+				HashMap<String, String> params = (HashMap<String, String>) req.getNetworkParams();
+				if (params == null) {
+					params = new HashMap<String,String>();
+				}
+				String shared = null;
+				String external = null;
 
 				if (req.getCloudSiteId().equals(TESTING_KEYWORD)) {
 					subnetIdMap.value = testMap();
@@ -607,6 +642,20 @@ public class NetworkAdapterRest {
 						ctn = new ContrailNetwork();
 						req.setContrailNetwork(ctn);
 					}
+					if (params.containsKey("shared")) {
+						shared = params.get("shared");
+					} else {
+						if (ctn.getShared() != null) {
+							shared = ctn.getShared();
+						}
+					}
+					if (params.containsKey("external")) {
+						external = params.get("external");
+					} else {
+						if (ctn.getExternal() != null) {
+							external = ctn.getExternal();
+						}
+					}
 					adapter.updateNetworkContrail(
 						req.getCloudSiteId(),
 						req.getTenantId(),
@@ -615,9 +664,10 @@ public class NetworkAdapterRest {
 						req.getNetworkStackId(),
 						req.getNetworkName(),
 						req.getContrailNetwork().getRouteTargets(),
-	                    req.getContrailNetwork().getShared(),
-	                    req.getContrailNetwork().getExternal(),
+						shared,
+						external,
 	                    req.getSubnets(),
+	                    params,
 	                    req.getContrailNetwork().getPolicyFqdns(),
 	                    req.getContrailNetwork().getRouteTableFqdns(),
 	                    req.getMsoRequest(),
@@ -629,6 +679,12 @@ public class NetworkAdapterRest {
 						pvn = new ProviderVlanNetwork();
 						req.setProviderVlanNetwork(pvn);
 					}
+					if (params.containsKey("shared")) {
+						shared = params.get("shared");
+					} 
+					if (params.containsKey("external")) {
+						external = params.get("external");
+					} 
 					adapter.updateNetwork(
 						req.getCloudSiteId(),
 						req.getTenantId(),
@@ -638,7 +694,10 @@ public class NetworkAdapterRest {
 						req.getNetworkName(),
 						req.getProviderVlanNetwork().getPhysicalNetworkName(),
 						req.getProviderVlanNetwork().getVlans(),
+						shared,
+						external,
 						req.getSubnets(),
+						params,
 						req.getMsoRequest(),
 						subnetIdMap,
 						rollback);

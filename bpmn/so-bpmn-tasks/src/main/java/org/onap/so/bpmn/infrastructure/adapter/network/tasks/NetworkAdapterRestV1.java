@@ -68,8 +68,8 @@ public class NetworkAdapterRestV1 {
 				throw new Exception("No Network Request was created. networkAdapterRequest was null.");
 			}
 		} catch (Exception ex) {
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex.getStackTrace().toString());
-		}	
+			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
 	}
 	
 	public void processCallback (DelegateExecution execution) {

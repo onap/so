@@ -22,22 +22,30 @@ package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import java.io.IOException;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class ActivateVfModuleBBTest extends BaseBPMNTest{
+	
+	@Before
+	public void before() {
+		variables.put("vfModuleActivateTimerDuration", "PT2S");
+	}
+
 	@Test
 	public void sunnyDay() throws InterruptedException, IOException {
 		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateVfModuleBB", variables);
+		while(runtimeService.createProcessInstanceQuery().processInstanceId(pi.getId()).singleResult() != null) {
+			Thread.sleep(1000);
+		}
 		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("ActivateVfModuleBB_Start", "ActivateVfModule", "CallActivity_sdncHandler",
+		assertThat(pi).isStarted().hasPassedInOrder("ActivateVfModuleBB_Start", "SetTimerDuration", "Timer", "ActivateVfModule", "CallActivity_sdncHandler",
 				"UpdateVfModuleActiveStatus", "ActivateVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}
@@ -47,8 +55,11 @@ public class ActivateVfModuleBBTest extends BaseBPMNTest{
 		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		doThrow(BpmnError.class).when(aaiUpdateTasks).updateOrchestrationStatusActivateVfModule(any(BuildingBlockExecution.class));
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateVfModuleBB", variables);
+		while(runtimeService.createProcessInstanceQuery().processInstanceId(pi.getId()).singleResult() != null) {
+			Thread.sleep(1000);
+		}
 		assertThat(pi).isNotNull().isStarted()
-				.hasPassedInOrder("ActivateVfModuleBB_Start", "ActivateVfModule", "UpdateVfModuleActiveStatus")
+				.hasPassedInOrder("ActivateVfModuleBB_Start", "SetTimerDuration", "Timer", "ActivateVfModule", "UpdateVfModuleActiveStatus")
 				.hasNotPassed("ActivateVfModuleBB_End");
 	}
 }

@@ -303,8 +303,9 @@ public class WorkflowAction {
 				}
 			}
 
-			// If the user set "Homing_Solution" to "none", disable homing, else if "Homing_Solution" is specified, enable it.
-			if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
+			// If the user set "Homing_Solution" to "none", disable homing, else if "Homing_Solution" is specified, enable it.			
+			if (sIRequest.getRequestDetails().getRequestParameters() != null && 
+					sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
 				List<Map<String, Object>> userParams = sIRequest.getRequestDetails().getRequestParameters().getUserParams();
 				for (Map<String, Object> params : userParams) {
 					if (params.containsKey(HOMINGSOLUTION)) {

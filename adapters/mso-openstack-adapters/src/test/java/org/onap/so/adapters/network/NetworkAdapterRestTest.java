@@ -88,7 +88,7 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 		request.setSkipAAI(true);
 		request.setFailIfExists(false);
 		MsoRequest msoReq = new MsoRequest();
-		NetworkTechnology networkTechnology = NetworkTechnology.CONTRAIL;
+		String networkTechnology = "CONTRAIL";
 
 		msoReq.setRequestId(MSO_REQUEST_ID);
 		msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
@@ -291,6 +291,33 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 
 		CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
 				new File("src/test/resources/__files/CreateNetworkResponse3.json"), CreateNetworkResponse.class);
+		
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+		assertThat(response.getBody(), sameBeanAs(expectedResponse));
+	}
+	
+	@Test
+	public void testCreateNetworkNC_Shared_JSON() throws JSONException, JsonParseException, JsonMappingException, IOException {
+		
+		mockOpenStackResponseAccess(wireMockPort);
+
+		mockOpenStackPostPublicUrlWithBodyFile_200();
+
+		mockOpenStackGetStackCreatedAppC_200();
+		
+		mockOpenStackGetStackAppC_404();
+		
+		headers.add("Content-Type", MediaType.APPLICATION_JSON);
+		headers.add("Accept", MediaType.APPLICATION_JSON);
+		
+		String request = readJsonFileAsString("src/test/resources/CreateNetwork4.json");
+		HttpEntity<String> entity = new HttpEntity<String>(request, headers);
+
+		ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
+				createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
+
+		CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
+				new File("src/test/resources/__files/CreateNetworkResponse4.json"), CreateNetworkResponse.class);
 		
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 		assertThat(response.getBody(), sameBeanAs(expectedResponse));
