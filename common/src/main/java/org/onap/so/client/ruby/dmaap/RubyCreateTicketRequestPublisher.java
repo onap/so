@@ -32,13 +32,13 @@ public class RubyCreateTicketRequestPublisher extends DmaapPublisher{
 	}
 	
 	@Override
-	public String getUserName() {
-		return msoProperties.get("ruby.create-ticket-request.dmaap.username");
+	public String getAuth() {
+		return msoProperties.get("ruby.create-ticket-request.dmaap.auth");
 	}
 
 	@Override
-	public String getPassword() {
-		return msoProperties.get("ruby.create-ticket-request.dmaap.password");
+	public String getKey() {
+		return msoProperties.get("mso.msoKey");
 	}
 
 	@Override

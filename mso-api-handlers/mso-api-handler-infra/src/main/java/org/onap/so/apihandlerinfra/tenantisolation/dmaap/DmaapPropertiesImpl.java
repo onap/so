@@ -31,8 +31,8 @@ public class DmaapPropertiesImpl implements DmaapProperties {
 
 	private final Map<String, String> props  = new HashMap<>();
 	private static final String[] propertyNames = {
-			"mso.so.operational-environment.dmaap.username",
-			"mso.so.operational-environment.dmaap.password",
+			"mso.so.operational-environment.dmaap.auth",
+			"mso.msoKey",
 			"mso.so.operational-environment.publisher.topic",
 			"mso.so.operational-environment.dmaap.host"
 	};

@@ -37,7 +37,7 @@ public class RestConsumer implements Consumer {
 	private final RestClient client;
 	public RestConsumer(Properties properties) {
 		PropertiesBean bean = new PropertiesBean(properties);
-		client = new DMaaPRestClient(this.createURL(bean), bean.getContentType(), bean.getUsername(), bean.getPassword());
+		client = new DMaaPRestClient(this.createURL(bean), bean.getContentType(), bean.getAuth(), bean.getKey());
 	}
 	
 	private URL createURL(PropertiesBean properties) {
