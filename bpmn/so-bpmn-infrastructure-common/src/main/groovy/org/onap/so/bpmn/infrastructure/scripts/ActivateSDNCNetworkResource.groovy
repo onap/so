@@ -420,7 +420,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String operationStatus = "finished"
             // RESTResponse for main flow
             String resourceOperationResp = """{"operationStatus":"${operationStatus}"}""".trim()
-            msoLogger.dubug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
+            msoLogger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
             sendWorkflowResponse(execution, 202, resourceOperationResp)
             execution.setVariable("sentSyncResponse", true)
 
@@ -429,6 +429,6 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             msoLogger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.info("exited sendsyncResp")
+        msoLogger.info("exited send sync Resp")
     }
 }
