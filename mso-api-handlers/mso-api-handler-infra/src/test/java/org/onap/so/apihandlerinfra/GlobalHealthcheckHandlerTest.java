@@ -24,10 +24,10 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +46,7 @@ import org.json.JSONException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
@@ -74,10 +74,10 @@ public class GlobalHealthcheckHandlerTest {
     	ReflectionTestUtils.setField(globalhealth, "actuatorContextPath", "/manage");
     	ReflectionTestUtils.setField(globalhealth, "endpointBpmn", "http://localhost:8080");
     	
-		Mockito.when(restTemplate.exchange(Matchers.any(URI.class), 
-				Matchers.any(HttpMethod.class), 
-				Matchers.<HttpEntity<?>> any(), 
-				Matchers.<Class<Object>> any())).thenReturn(null);
+		Mockito.when(restTemplate.exchange(ArgumentMatchers.any(URI.class), 
+				ArgumentMatchers.any(HttpMethod.class), 
+				ArgumentMatchers.<HttpEntity<?>> any(), 
+				ArgumentMatchers.<Class<Object>> any())).thenReturn(null);
 		
 		String result = globalhealth.querySubsystemHealth(MsoSubsystems.BPMN);
 		System.out.println(result);
@@ -93,10 +93,10 @@ public class GlobalHealthcheckHandlerTest {
 		subSystemResponse.setStatus("UP");
 		ResponseEntity<Object> r = new ResponseEntity<>(subSystemResponse,HttpStatus.OK);
 		
-		Mockito.when(restTemplate.exchange(Matchers.any(URI.class), 
-				Matchers.any(HttpMethod.class), 
-				Matchers.<HttpEntity<?>> any(), 
-				Matchers.<Class<Object>> any())).thenReturn(r);
+		Mockito.when(restTemplate.exchange(ArgumentMatchers.any(URI.class), 
+				ArgumentMatchers.any(HttpMethod.class), 
+				ArgumentMatchers.<HttpEntity<?>> any(), 
+				ArgumentMatchers.<Class<Object>> any())).thenReturn(r);
 		
 		String result = globalhealth.querySubsystemHealth(MsoSubsystems.ASDC);
 		System.out.println(result);
@@ -117,10 +117,10 @@ public class GlobalHealthcheckHandlerTest {
 
 		subSystemResponse.setStatus(status);
 		ResponseEntity<Object> r = new ResponseEntity<>(subSystemResponse,HttpStatus.OK);		
-		Mockito.when(restTemplate.exchange(Matchers.any(URI.class), 
-				Matchers.any(HttpMethod.class), 
-				Matchers.<HttpEntity<?>> any(), 
-				Matchers.<Class<Object>> any())).thenReturn(r);
+		Mockito.when(restTemplate.exchange(ArgumentMatchers.any(URI.class), 
+				ArgumentMatchers.any(HttpMethod.class), 
+				ArgumentMatchers.<HttpEntity<?>> any(), 
+				ArgumentMatchers.<Class<Object>> any())).thenReturn(r);
 		
 		Mockito.when(requestContext.getProperty(anyString())).thenReturn("1234567890");
 		Response response = globalhealth.globalHealthcheck(true, requestContext);

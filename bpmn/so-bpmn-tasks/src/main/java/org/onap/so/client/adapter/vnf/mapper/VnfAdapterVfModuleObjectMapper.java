@@ -23,6 +23,7 @@ package org.onap.so.client.adapter.vnf.mapper;
 import static java.util.Arrays.asList;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +36,7 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiSubInterfaceNetworkData;
@@ -443,7 +445,6 @@ public class VnfAdapterVfModuleObjectMapper {
 				}
 			}
 		}
-		
 	}
 	
 	private void buildVfModuleNetworkInformation(Map<String,String> paramsMap, GenericResourceApiVmNetworkData network, String key, String networkKey) {
@@ -780,14 +781,24 @@ public class VnfAdapterVfModuleObjectMapper {
 		deleteVfModuleRequest.setTenantId(cloudRegion.getTenantId());
 		deleteVfModuleRequest.setVnfId(genericVnf.getVnfId());
 		deleteVfModuleRequest.setVfModuleId(vfModule.getVfModuleId());
-		deleteVfModuleRequest.setVfModuleStackId(vfModule.getHeatStackId());//DoDVfMod_heatStackId
-		deleteVfModuleRequest.setSkipAAI(true);			
-		String messageId = vnfAdapterObjectMapperUtils.getRandomUuid();
-		deleteVfModuleRequest.setMessageId(messageId);		
-		deleteVfModuleRequest.setNotificationUrl(vnfAdapterObjectMapperUtils.createCallbackUrl("VNFAResponse", messageId));
+		if (!StringUtils.isEmpty(vfModule.getHeatStackId())){
+			deleteVfModuleRequest.setVfModuleStackId(vfModule.getHeatStackId());//DoDVfMod_heatStackId
+		} else
+		{
+			deleteVfModuleRequest.setVfModuleStackId(vfModule.getVfModuleName());
+		}
+		
+		deleteVfModuleRequest.setSkipAAI(true);
+		setIdAndUrl(deleteVfModuleRequest);
 		MsoRequest msoRequest = buildMsoRequest(requestContext, serviceInstance);	
 		deleteVfModuleRequest.setMsoRequest(msoRequest);
 		return deleteVfModuleRequest;
+	}
+	
+	protected void setIdAndUrl(DeleteVfModuleRequest deleteVfModuleRequest) throws UnsupportedEncodingException{
+		String messageId = vnfAdapterObjectMapperUtils.getRandomUuid();
+		deleteVfModuleRequest.setMessageId(messageId);		
+		deleteVfModuleRequest.setNotificationUrl(vnfAdapterObjectMapperUtils.createCallbackUrl("VNFAResponse", messageId));
 	}
 	
 	private String convertToString(Object obj) {

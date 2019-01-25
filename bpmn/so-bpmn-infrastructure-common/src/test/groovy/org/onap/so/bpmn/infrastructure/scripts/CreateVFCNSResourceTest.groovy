@@ -34,7 +34,7 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import javax.ws.rs.NotFoundException
 
 import static org.junit.Assert.assertEquals
-import static org.mockito.Matchers.isA
+import static org.mockito.ArgumentMatchers.isA
 import static org.mockito.Mockito.doNothing
 import static org.mockito.Mockito.doThrow
 import static org.mockito.Mockito.when

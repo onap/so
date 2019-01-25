@@ -2,7 +2,8 @@
 		"cloudSiteId" : "cloudRegionId",
 		"tenantId" : "tenantId",		
 		"vnfId"	:	"vnfId",
-		"vfModuleId" : "vfModuleId",      		
+		"vfModuleId" : "vfModuleId",
+		"vfModuleStackId" : "vfModuleName",
 		"skipAAI" : true,
 		"msoRequest" : {
 			"requestId" : "requestId",
