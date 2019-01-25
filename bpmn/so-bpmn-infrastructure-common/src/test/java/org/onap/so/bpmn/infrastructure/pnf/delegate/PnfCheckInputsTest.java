@@ -4,8 +4,6 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
- * Modifications Copyright 2018 Nokia
- * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +21,7 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION;
@@ -52,18 +50,6 @@ public class PnfCheckInputsTest {
     @Test
     public void shouldThrowException_whenCorrelationIdNotSet() {
         PnfCheckInputs testedObject = prepareExecutionForCorrelationId(null);
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
-    }
-
-    @Test
-    public void shouldThrowException_whenCorrelationIdIsEmptyString() {
-        PnfCheckInputs testedObject = prepareExecutionForCorrelationId("");
-        assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
-    }
-
-    @Test
-    public void shouldThrowException_whenTimeoutIsNotSetAndDefaultIsNotDefined() {
-        PnfCheckInputs testedObject = prepareExecutionForTimeout(null, null);
         assertThatThrownBy(() -> testedObject.execute(delegateExecution)).isInstanceOf(BpmnError.class);
     }
 

@@ -92,6 +92,9 @@ public class Service implements Serializable {
 	@Column(name = "SERVICE_CATEGORY")
 	private String category;
 
+	@Column(name = "RESOURCE_ORDER")
+	private String resourceOrder;
+
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "network_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
 	private List<NetworkResourceCustomization> networkCustomizations;
@@ -331,5 +334,13 @@ public class Service implements Serializable {
 
 	public void setWorkloadContext(String workloadContext) {
 		this.workloadContext = workloadContext;
+	}
+
+	public String getResourceOrder() {
+		return resourceOrder;
+	}
+
+	public void setResourceOrder(String resourceOrder) {
+		this.resourceOrder = resourceOrder;
 	}
 }

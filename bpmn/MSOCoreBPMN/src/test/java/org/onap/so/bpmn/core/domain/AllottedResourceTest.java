@@ -21,7 +21,10 @@ package org.onap.so.bpmn.core.domain;
 
 import static org.junit.Assert.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
+
+import java.io.IOException;
 
 public class AllottedResourceTest {
 	private AllottedResource ar = new AllottedResource();
@@ -49,6 +52,15 @@ public class AllottedResourceTest {
 		assertEquals(ar.getNfNamingCode(), "nfNamingCode");
 		assertEquals(ar.getOrchestrationStatus(), "orchestrationStatus");
 
+	}
+
+	@Test
+	public void allottedResourceMapperTest() throws IOException {
+		String jsonStr = "{\"allottedResourceType\": \"code123\", \"resourceInput\": \"sample\"}";
+		ObjectMapper objectMapper = new ObjectMapper();
+		AllottedResource vnfResource = objectMapper.readValue(jsonStr, AllottedResource.class);
+
+		assertTrue(vnfResource != null);
 	}
 
 }

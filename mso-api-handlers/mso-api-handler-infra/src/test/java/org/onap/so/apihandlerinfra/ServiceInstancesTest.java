@@ -1657,7 +1657,7 @@ public class ServiceInstancesTest extends BaseTest{
 
         stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac/networkResource"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
+                		.withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
                         .withStatus(HttpStatus.SC_OK)));
 
         stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]" +

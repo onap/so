@@ -994,10 +994,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 						}
 					}
 				}
-				if (multicloudInputs) {
-                    goldenInputs.put(MsoMulticloudUtils.GENERIC_VNF_ID, genericVnfId);
-                    goldenInputs.put(MsoMulticloudUtils.VF_MODULE_ID, vfModuleId);
-				}
 				LOGGER.debug("Ignoring extra inputs: " + extraInputs);
 			}
 

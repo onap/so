@@ -931,7 +931,8 @@ class MsoUtils {
 		 if (moduleIndexList == null || moduleIndexList.size() == 0) {			
 			 return "0"
 		 }
-		 def sortedModuleIndexList = moduleIndexList.sort { a, b -> a.compareTo b }
+		 
+		 def sortedModuleIndexList = moduleIndexList.sort{ a, b -> a as Integer <=> b as Integer}
 		
 		 for (i in 0..sortedModuleIndexList.size()-1) {
 			 if (Integer.parseInt(sortedModuleIndexList[i]) != i) {

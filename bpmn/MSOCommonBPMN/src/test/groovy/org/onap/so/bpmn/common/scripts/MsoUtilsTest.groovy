@@ -277,5 +277,13 @@ class MsoUtilsTest {
 			}
 		}
 				
-
+		@Test
+		public void testGetLowestUnusedIndex() {
+			def responseAsString = getFile("vfModuleCount.xml")
+			def index = utils.getLowestUnusedIndex(responseAsString)
+			println " lowest module count test: "
+			println "  actual    - " + index
+			println "  expected  - " + "14"
+			assertEquals("expected vs actual", "14", index)
+		}
 }

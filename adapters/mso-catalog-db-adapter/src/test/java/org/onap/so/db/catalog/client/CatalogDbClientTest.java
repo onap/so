@@ -39,6 +39,7 @@ import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.ExternalServiceToInternalService;
+import org.onap.so.db.catalog.beans.HomingInstance;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.ServerType;
@@ -425,6 +426,81 @@ public class CatalogDbClientTest {
         Assert.assertEquals("regionId", getCloudSite.getRegionId());
         Assert.assertEquals("RANDOMID", getCloudSite.getIdentityServiceId());
     }
+
+    @Test
+    public void testGetHomingInstance() {
+        HomingInstance homingInstance = client.getHomingInstance("5df8b6de-2083-11e7-93ae-92361f232671");
+        Assert.assertNotNull(homingInstance);
+        Assert.assertNotNull(homingInstance.getCloudOwner());
+        Assert.assertNotNull(homingInstance.getCloudRegionId());
+        Assert.assertNotNull(homingInstance.getOofDirectives());
+    }
+
+    @Test
+    public void testPostHomingInstance() {
+        CatalogDbClientPortChanger localClient = new CatalogDbClientPortChanger("http://localhost:" + client.wiremockPort, msoAdaptersAuth, client.wiremockPort);
+        HomingInstance homingInstance = new HomingInstance();
+        homingInstance.setServiceInstanceId("5df8d6be-2083-11e7-93ae-92361f232671");
+        homingInstance.setCloudOwner("CloudOwner-1");
+        homingInstance.setCloudRegionId("CloudRegionOne");
+        homingInstance.setOofDirectives("{\n" +
+                "\"directives\": [\n" +
+                "{\n" +
+                "\"directives\": [\n" +
+                "{\n" +
+                "\"attributes\": [\n" +
+                "{\n" +
+                "\"attribute_value\": \"onap.hpa.flavor31\",\n" +
+                "\"attribute_name\": \"firewall_flavor_name\"\n" +
+                "}\n" +
+                "],\n" +
+                "\"type\": \"flavor_directives\"\n" +
+                "}\n" +
+                "],\n" +
+                "\"type\": \"vnfc\",\n" +
+                "\"id\": \"vfw\"\n" +
+                "},\n" +
+                "{\n" +
+                "\"directives\": [\n" +
+                "{\n" +
+                "\"attributes\": [\n" +
+                "{\n" +
+                "\"attribute_value\": \"onap.hpa.flavor32\",\n" +
+                "\"attribute_name\": \"packetgen_flavor_name\"\n" +
+                "}\n" +
+                "],\n" +
+                "\"type\": \"flavor_directives\"\n" +
+                "}\n" +
+                "],\n" +
+                "\"type\": \"vnfc\",\n" +
+                "\"id\": \"vgenerator\"\n" +
+                "},\n" +
+                "{\n" +
+                "\"directives\": [\n" +
+                "{\n" +
+                "\"attributes\": [\n" +
+                "{\n" +
+                "\"attribute_value\": \"onap.hpa.flavor31\",\n" +
+                "\"attribute_name\": \"sink_flavor_name\"\n" +
+                "}\n" +
+                "],\n" +
+                "\"type\": \"flavor_directives\"\n" +
+                "}\n" +
+                "],\n" +
+                "\"type\": \"vnfc\",\n" +
+                "\"id\": \"vsink\"\n" +
+                "}\n" +
+                "]\n" +
+                "}");
+        localClient.postHomingInstance(homingInstance);
+        HomingInstance getHomingInstance = this.client.getHomingInstance("5df8d6be-2083-11e7-93ae-92361f232671");
+        Assert.assertNotNull(getHomingInstance);
+        Assert.assertNotNull(getHomingInstance.getCloudRegionId());
+        Assert.assertNotNull(getHomingInstance.getCloudOwner());
+        Assert.assertEquals("CloudOwner-1", getHomingInstance.getCloudOwner());
+        Assert.assertEquals("CloudRegionOne", getHomingInstance.getCloudRegionId());
+    }
+
    @Test
     public void testGetServiceByModelName() {
         Service service = client.getServiceByModelName("MSOTADevInfra_Test_Service");

@@ -36,6 +36,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.onap.so.db.catalog.beans.CloudSite
+import org.onap.so.db.catalog.beans.HomingInstance
 import org.onap.so.utils.TargetEntity
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -495,6 +496,7 @@ class OofUtils {
         if (candidatesJson != "") {candidatesJson = candidatesJson.substring(0, candidatesJson.length() - 1)}
         return candidatesJson
     }
+
     /**
      * This method creates a cloudsite in catalog database.
      *
@@ -524,9 +526,19 @@ class OofUtils {
             exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from CatalogDB.")
         }
     }
-
+    
+    /**
+     * This method creates a HomingInstance in catalog database.
+     *
+     * @param HomingInstance homingInstance
+     *
+     * @return void
+     */
+    Void createHomingInstance(HomingInstance homingInstance, DelegateExecution execution) {
+        oofInfraUtils.createHomingInstance(homingInstance, execution)
+    }
      String getMsbHost(DelegateExecution execution) {
-         msbHost = UrnPropertiesReader.getVariable("mso.msb.host", execution, "msb-iag.onap")
+         String msbHost = UrnPropertiesReader.getVariable("mso.msb.host", execution, "msb-iag.onap")
 
          Integer msbPort = UrnPropertiesReader.getVariable("mso.msb.port", execution, "80").toInteger()
 

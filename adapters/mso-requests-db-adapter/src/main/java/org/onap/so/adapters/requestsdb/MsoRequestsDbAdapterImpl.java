@@ -220,6 +220,38 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 	}
 
 	/**
+	 * Init operation status <br>
+	 *
+	 * @param serviceId
+	 * @param operationId
+	 * @param operationType
+	 * @param userId
+	 * @param result
+	 * @param operationContent
+	 * @param progress
+	 * @param reason
+	 * @throws MsoRequestsDbException
+	 * @since ONAP Casablanca Release
+	 */
+	@Override
+	@Transactional
+	public void initServiceOperationStatus(String serviceId, String operationId, String operationType, String userId,
+											 String result, String operationContent, String progress, String reason) throws MsoRequestsDbException {
+		OperationStatus operStatus = new OperationStatus();
+
+		operStatus.setOperationId(operationId);
+		operStatus.setServiceId(serviceId);
+		operStatus.setUserId(userId);
+		operStatus.setOperation(operationType);
+		operStatus.setReason(reason);
+		operStatus.setProgress(progress);
+		operStatus.setResult(result);
+		operStatus.setOperationContent(operationContent);
+		operStatus.setResult(result);
+		operationStatusRepository.save(operStatus);
+	}
+
+	/**
 	 * init the operation status of all the resources <br>
 	 * 
 	 * @param serviceId
@@ -306,7 +338,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 		resStatus.setErrorCode(errorCode);
 		resStatus.setStatusDescription(statusDescription);
 		resourceOperationStatusRepository.save(resStatus);
-
+		
 		updateOperationStatusBasedOnResourceStatus(resStatus);
 	}
 	

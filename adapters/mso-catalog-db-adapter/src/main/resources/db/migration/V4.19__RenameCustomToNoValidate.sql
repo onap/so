@@ -1,0 +1,2 @@
+update building_block_detail set RESOURCE_TYPE = "NO_VALIDATE" where RESOURCE_TYPE = "CUSTOM";
+update orchestration_status_state_transition_directive set RESOURCE_TYPE = "NO_VALIDATE" where RESOURCE_TYPE = "CUSTOM";

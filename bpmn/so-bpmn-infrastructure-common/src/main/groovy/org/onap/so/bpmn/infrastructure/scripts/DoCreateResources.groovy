@@ -104,7 +104,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 
         // get Sequence from csar(model)  
         if(resourceSequence == null) {
-            resourceSequence = ResourceRequestBuilder.getResourceSequence(execution, serviceModelUuid)
+            resourceSequence = ResourceRequestBuilder.getResourceSequence(serviceModelUuid)
             msoLogger.info("Get Sequence from csar : " + resourceSequence)
         }
 

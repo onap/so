@@ -54,8 +54,8 @@ public class CreateVfModuleRequest extends VfRequestCommon {
 	private String modelCustomizationUuid;
 
 	private String requestType;
-	private Boolean failIfExists;
-	private Boolean backout;
+	private Boolean failIfExists = false;
+	private Boolean backout = true;
 	private Boolean enableBridge;
 
 	private Map<String, String> vfModuleParams = new HashMap<>();

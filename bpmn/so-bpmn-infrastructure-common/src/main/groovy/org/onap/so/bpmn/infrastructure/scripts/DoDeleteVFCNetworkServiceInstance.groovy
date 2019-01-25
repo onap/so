@@ -149,7 +149,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     }
 
     /**
-     * instantiate NS task
+     *  terminate NS task
      */
     public void terminateNetworkService(DelegateExecution execution) {
 
@@ -247,19 +247,19 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
 
         msoLogger.trace("Started Execute VFC adapter Delete Process ")
         msoLogger.info("url:"+url +"\nrequestBody:"+ requestBody)
-		Response r
+	Response r
         try{
 
-			URL Url = new URL(url)
+		URL Url = new URL(url)
             // Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
             // user 'bepl' authHeader is the same with mso.db.auth
             String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
             HttpClient httpClient = httpClientFactory.newJsonClient(url, TargetEntity.VNF_ADAPTER)
             httpClient.addAdditionalHeader("Accept", "application/json")
             httpClient.addAdditionalHeader("Authorization", basicAuthValuedb)
-
-			r = httpClient.delete(requestBody)
-
+            httpClient.addAdditionalHeader("Content-Type", "application/json")
+            r = httpClient.delete(requestBody)
+		
             msoLogger.trace("Completed Execute VF-C adapter Delete Process ")
         }catch(Exception e){
             msoLogger.error("Exception occured while executing VF-C Post Call. Exception is: \n" + e.getMessage());

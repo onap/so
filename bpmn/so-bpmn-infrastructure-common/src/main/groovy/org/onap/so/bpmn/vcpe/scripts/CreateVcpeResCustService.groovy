@@ -97,7 +97,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             InitializeProcessVariables(execution)
 
             //Config Inputs
-            String aaiDistDelay = UrnPropertiesReader.getVariable("aai.workflowAaiDistributionDelay")
+            String aaiDistDelay = UrnPropertiesReader.getVariable("aai.workflowAaiDistributionDelay", execution)
             if (isBlank(aaiDistDelay)) {
                 String msg = "workflowAaiDistributionDelay is null"
                 msoLogger.debug(msg)
@@ -209,14 +209,13 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             def userParams = reqMap.requestDetails?.requestParameters?.userParams
 
             Map<String, String> inputMap = [:]
-          if (userParams) {
+            if (userParams) {
                 userParams.each {
-                                userParam ->
+                    userParam ->
                         if ("Customer_Location".equals(userParam?.name)) {
                             Map<String, String> customerMap = [:]
                             userParam.value.each {
                                 param ->
-
                                     inputMap.put(param.key, param.value)
                                     customerMap.put(param.key, param.value)
                                     }
@@ -238,7 +237,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
                                             param.getClass() , isDebugEnabled)
                                     }
                             execution.setVariable("homingModelIds", modelIdLst)
-                                }
+                        }
                         if ("BRG_WAN_MAC_Address".equals(userParam?.name)) {
                             execution.setVariable("brgWanMacAddress", userParam.value)
                             inputMap.put("BRG_WAN_MAC_Address", userParam.value)
@@ -247,7 +246,34 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
                                     execution.setVariable("homingService", userParam.value)
                                     execution.setVariable("callHoming", true)
                                     inputMap.put("Homing_Solution", userParam.value)
-                                }
+                        }
+                        if ("Orchestrator".equalsIgnoreCase(userParam?.name)) {
+                            execution.setVariable("orchestrator", userParam.value)
+                            inputMap.put("orchestrator", userParam.value)
+                        }
+                        if ("VfModuleNames".equals(userParam?.name)) {
+                            utils.log("DEBUG", "VfModuleNames: " + userParam.value.toString(), isDebugEnabled)
+                            def vfModuleNames = [:]
+                            userParam.value.each {
+                                entry ->
+                                    String vfModuleModelInvariantUuid = null;
+                                    String vfModuleName = null;
+                                    entry.each {
+                                        param ->
+                                            if ("VfModuleModelInvariantUuid".equals(param.key)) {
+                                                vfModuleModelInvariantUuid = param.value;
+                                            } else if ("VfModuleName".equals(param.key)) {
+                                                vfModuleName = param.value;
+                                            }
+                                    }
+
+                                    if (vfModuleModelInvariantUuid != null && !vfModuleModelInvariantUuid.isEmpty() && vfModuleName != null && !vfModuleName.isEmpty()) {
+                                        vfModuleNames.put(vfModuleModelInvariantUuid, vfModuleName)
+                                        utils.log("DEBUG", "VfModuleModelInvariantUuid: " + vfModuleModelInvariantUuid + " VfModuleName: " + vfModuleName, isDebugEnabled)
+                               	    }
+                            }
+                            execution.setVariable("vfModuleNames", vfModuleNames)
+                        }
                 }
             }
 
@@ -257,7 +283,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             }
 
             msoLogger.debug("User Input Parameters map: " + userParams.toString())
-            execution.setVariable("serviceInputParams", inputMap)
+            execution.setVariable("serviceInputParams", inputMap) // DOES NOT SEEM TO BE USED
 
             msoLogger.debug("Incoming brgWanMacAddress is: " + execution.getVariable('brgWanMacAddress'))
 

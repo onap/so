@@ -129,10 +129,7 @@ class CreateSDNCNetworkResourceTest extends GroovyTestCase {
 
     private getInstanceId() {
         def response = new XmlSlurper().parseText(sdncAdapterWorkflowResponse)
-        def data = response.toString()
-        data = data.substring(data.indexOf("<"))
-        def resp = new XmlSlurper().parseText(data)
-        def instanceId = resp."network-response-information"."instance-id"
+        def instanceId = response."response-data"."RequestData"."output"."network-response-information"."instance-id"
         return instanceId
     }
 }

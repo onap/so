@@ -21,7 +21,7 @@
 package org.onap.so.client.exception;
 
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertTrue;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Test;
 import org.onap.so.bpmn.mock.FileUtil;
@@ -31,6 +31,7 @@ public class ExceptionBuilderTest extends BaseTest {
 
 	private static final String RESOURCE_PATH = "__files/";
 	private static final String VALID_ERROR_MESSAGE = "{test error message}";
+
 
 	@Test
 	public void buildAndThrowWorkflowExceptionTest() {

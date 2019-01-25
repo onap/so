@@ -53,7 +53,6 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     MsoUtils msoUtils = new MsoUtils()
 
     public void preProcessRequest(DelegateExecution execution) {
-        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         msoLogger.info(" ***** Started preProcessRequest *****")
 
         try {
@@ -64,7 +63,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String resourceInput = execution.getVariable("resourceInput")
             //Get ResourceInput Object
             ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
-            execution.setVariable(Prefix + "resourceInput", resourceInputObj)
+            execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
 
             //Deal with recipeParams
             String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
@@ -125,8 +124,8 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         } catch (BpmnError e) {
             throw e;
         } catch (Exception ex){
-            msg = "Exception in preProcessRequest " + ex.getMessage()
-            msoLogger.debug( msg)
+            String msg = "Exception in preProcessRequest " + ex.getMessage()
+            msoLogger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
@@ -398,7 +397,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
         } catch (Exception ex) {
             String exceptionMessage = " Bpmn error encountered in CreateSDNCCNetworkResource flow. prepareSDNCRequest() - " + ex.getMessage()
-            msoLogger.debug( exceptionMessage)
+            msoLogger.debug(exceptionMessage)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
         }
@@ -415,21 +414,21 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void sendSyncResponse(DelegateExecution execution) {
-        msoLogger.dubug(" *** sendSyncResponse *** ")
+        msoLogger.info("started sendsyncResp")
 
         try {
             String operationStatus = "finished"
             // RESTResponse for main flow
             String resourceOperationResp = """{"operationStatus":"${operationStatus}"}""".trim()
-            msoLogger.dubug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
+            msoLogger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
             sendWorkflowResponse(execution, 202, resourceOperationResp)
             execution.setVariable("sentSyncResponse", true)
 
         } catch (Exception ex) {
             String msg = "Exception in sendSyncResponse:" + ex.getMessage()
-            msoLogger.debug( msg)
+            msoLogger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.dubug(" ***** Exit sendSyncResponse *****")
+        msoLogger.info("exited send sync Resp")
     }
 }

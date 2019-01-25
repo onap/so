@@ -41,10 +41,12 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.NetworkUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.common.scripts.VfModuleBase
+import org.onap.so.bpmn.common.util.OofInfraUtils
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.VnfResource
+import org.onap.so.bpmn.core.json.DecomposeJsonUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.aai.AAIObjectPlurals
@@ -56,6 +58,7 @@ import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
+import org.onap.so.db.catalog.beans.HomingInstance
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
 
@@ -78,7 +81,9 @@ public class DoCreateVfModule extends VfModuleBase {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+	OofInfraUtils oofInfraUtils = new OofInfraUtils()
 	CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
+	DecomposeJsonUtil decomposeJsonUtils = new DecomposeJsonUtil()
 	private final HttpClientFactory httpClientFactory = new HttpClientFactory()
 
 	/**
@@ -235,12 +240,37 @@ public class DoCreateVfModule extends VfModuleBase {
 				String globalSubscriberId = execution.getVariable("globalSubscriberId")
 				execution.setVariable("DCVFM_globalSubscriberId", globalSubscriberId)
 				msoLogger.debug("globalSubsrciberId: " + globalSubscriberId)
-				//OofDirectives
-				String oofDirectives = execution.getVariable("oofDirectives")
+
+				// Set Homing Info
+				String oofDirectives = null
+				try {
+					HomingInstance homingInstance = oofInfraUtils.getHomingInstance(serviceInstanceId, execution)
+					if (homingInstance != null) {
+						execution.setVariable("DCVFM_cloudSiteId", homingInstance.getCloudRegionId())
+						rollbackData.put("VFMODULE", "aiccloudregion", homingInstance.getCloudRegionId())
+						msoLogger.debug("Overwriting cloudSiteId with homing cloudSiteId: " +
+								homingInstance.getCloudRegionId())
+						execution.setVariable("DCVFM_cloudOwner", homingInstance.getCloudOwner())
+						rollbackData.put("VFMODULE", "cloudOwner", homingInstance.getCloudOwner())
+						msoLogger.debug("Overwriting cloudOwner with homing cloudOwner: " +
+								homingInstance.getCloudOwner())
+						oofDirectives = homingInstance.getOofDirectives()
+						execution.setVariable("DCVFM_oofDirectives", oofDirectives)
+					}
+				} catch (Exception exception) {
+					msoLogger.debug("Could not find homing information for service instance: " + serviceInstanceId +
+							"... continuing")
+					msoLogger.debug("Could not find homing information for service instance error: " + exception)
+				}
+				//OofDirectives to Input Params
 				Map<String,String> vfModuleInputParams = execution.getVariable("vfModuleInputParams")
-				if (oofDirectives != null) {
-					vfModuleInputParams.put("oofDirectives", oofDirectives)
-					logDebug("OofDirectives are: " + oofDirectives, isDebugLogEnabled)
+				if (oofDirectives != null && vfModuleInputParams != null) {
+					vfModuleInputParams.put("oof_directives", oofDirectives)
+					vfModuleInputParams.put("sdnc_directives", "{}")
+					msoLogger.debug("OofDirectives are: " + oofDirectives)
+				} else if (vfModuleInputParams != null) {
+					vfModuleInputParams.put("oof_directives", "{}")
+					vfModuleInputParams.put("sdnc_directives", "{}")
 				}
 				if (vfModuleInputParams != null) {
 					execution.setVariable("DCVFM_vnfParamsMap", vfModuleInputParams)
@@ -467,11 +497,30 @@ public class DoCreateVfModule extends VfModuleBase {
 							}
 
 				//OofDirectives
-				String oofDirectives = execution.getVariable("oofDirectives")
+				String oofDirectives = null
+				try {
+					HomingInstance homingInstance = oofInfraUtils.getHomingInstance(serviceInstanceId, execution)
+					if (homingInstance != null) {
+						execution.setVariable("DCVFM_cloudSiteId", homingInstance.getCloudRegionId())
+						rollbackData.put("VFMODULE", "aiccloudregion", homingInstance.getCloudRegionId())
+						msoLogger.debug("Overwriting cloudSiteId with homing cloudSiteId: " +
+								homingInstance.getCloudRegionId())
+						execution.setVariable("DCVFM_cloudOwner", homingInstance.getCloudOwner())
+						rollbackData.put("VFMODULE", "cloudOwner", homingInstance.getCloudOwner())
+						msoLogger.debug("Overwriting cloudOwner with homing cloudOwner: " +
+								homingInstance.getCloudOwner())
+						oofDirectives = homingInstance.getOofDirectives()
+						execution.setVariable("DCVFM_oofDirectives", oofDirectives)
+					}
+				} catch (Exception exception) {
+					msoLogger.debug("Could not find homing information for service instance: " + serviceInstanceId +
+							"... continuing")
+					msoLogger.debug("Could not find homing information for service instance error: " + exception)
+				}
 				if (oofDirectives != null) {
 					Map<String, String> paramsMap = execution.getVariable("DCVFM_vnfParamsMap")
 					paramsMap.put("oofDirectives", oofDirectives)
-					logDebug("OofDirectives are: " + oofDirectives, isDebugLogEnabled)
+					msoLogger.debug("OofDirectives are: " + oofDirectives)
 					execution.setVariable("DCVFM_vnfParamsMap", paramsMap)
 				}
 			}

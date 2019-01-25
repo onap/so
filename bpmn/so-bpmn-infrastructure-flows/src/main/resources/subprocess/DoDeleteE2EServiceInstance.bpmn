@@ -66,7 +66,7 @@ ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
             <camunda:inputParameter name="headers">
               <camunda:map>
                 <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic QlBFTENsaWVudDpwYXNzd29yZDEk</camunda:entry>
+                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="payload">${CVFMI_initResOperStatusRequest}</camunda:inputParameter>
@@ -206,12 +206,12 @@ dcsi.postDecomposeService(execution)]]></bpmn:script>
     <bpmn:scriptTask id="ScriptTask_0f3tjbn" name="prepare update service operation status" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0h5c1bd</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ab3vex</bpmn:outgoing>
-      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+      <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 execution.setVariable("progress", "100")
 execution.setVariable("result", "finished")
 execution.setVariable("operationContent", "No actual resoure in service instance")
 def csi= new DoDeleteE2EServiceInstance()
-csi.prepareUpdateServiceOperationStatus(execution)</bpmn:script>
+csi.prepareUpdateServiceOperationStatus(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_0hrkmxb" name="End Delete Process">
       <bpmn:outgoing>SequenceFlow_0h5c1bd</bpmn:outgoing>

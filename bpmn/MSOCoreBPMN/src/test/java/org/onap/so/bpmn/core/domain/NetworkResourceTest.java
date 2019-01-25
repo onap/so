@@ -21,7 +21,10 @@ package org.onap.so.bpmn.core.domain;
 
 import static org.junit.Assert.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
+
+import java.io.IOException;
 
 public class NetworkResourceTest {
 	private NetworkResource nr = new NetworkResource();
@@ -37,6 +40,15 @@ public class NetworkResourceTest {
 		assertEquals(nr.getNetworkTechnology(), "networkTechnology");
 		assertEquals(nr.getNetworkScope(), "networkScope");
 		
+	}
+
+	@Test
+	public void networkResourceMapperTest() throws IOException {
+		String jsonStr = "{\"networkScope\": \"code123\", \"resourceInput\": \"sample\"}";
+		ObjectMapper objectMapper = new ObjectMapper();
+		NetworkResource networkResource = objectMapper.readValue(jsonStr, NetworkResource.class);
+
+		assertTrue(networkResource != null);
 	}
 
 }

@@ -72,7 +72,7 @@ public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask 
     private void send2SdncDirectly(String defaulAuth,
                                    RpcServiceTopologyOperationInputEntity inputEntity) throws RouteException {
         sdncLogger.info("SdncServiceTopologyOperationTask.send2SdncDirectly begin!");
-        String url = "http://" + getSdncIp() + ":" + getSdncPort() + URL;
+        String url = getSdncHost() + URL;
         HttpPost httpPost = new HttpPost(url);
         httpPost.addHeader("Authorization", defaulAuth);
         httpPost.addHeader("Content-type", "application/json");

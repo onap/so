@@ -57,7 +57,7 @@ public abstract class CatalogQuery {
 		while (m.find()) {
 			String key = template.substring(m.start() + 1, m.end() - 1);
 			logger.debug("CatalogQuery key: {} contains key? {}", key , valueMap.containsKey(key));
-			m.appendReplacement(result, valueMap.getOrDefault(key, "\"TBD\""));
+			m.appendReplacement(result, Matcher.quoteReplacement(valueMap.getOrDefault(key, "\"TBD\"")));
 		}
 		m.appendTail(result);
 		logger.debug("CatalogQuery return: {}", result.toString());

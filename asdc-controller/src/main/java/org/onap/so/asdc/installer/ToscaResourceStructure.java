@@ -132,7 +132,7 @@ public class ToscaResourceStructure {
 			LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, "***PATH", "ASDC", spoolFile.getAbsolutePath());
 			
 
-			sdcCsarHelper = factory.getSdcCsarHelper(spoolFile.getAbsolutePath());
+			sdcCsarHelper = factory.getSdcCsarHelper(spoolFile.getAbsolutePath(),false);
 
 		}catch(Exception e){
 			System.out.println("System out " + e.getMessage());

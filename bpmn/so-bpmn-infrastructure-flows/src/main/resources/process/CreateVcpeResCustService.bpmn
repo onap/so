@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CreateVcpeResCustService" name="CreateVcpeResCustService" isExecutable="true">
     <bpmn2:scriptTask id="sendSyncAckResponse_ScriptTask" name="Send Sync Ack Response" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
@@ -518,6 +518,7 @@ CreateVcpeResCustService.prepareCreateAllottedResourceBRG(execution)]]></bpmn2:s
         <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
         <camunda:in source="serviceDecomposition" target="serviceDecomposition" />
+        <camunda:in source="vfModuleNames" target="vfModuleNames" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0ws7fjn</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1mkdhw9</bpmn2:outgoing>
