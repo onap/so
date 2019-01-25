@@ -13,9 +13,13 @@
       "cidr": "107.244.64.2/20",
       "gatewayIp": "107.244.64.1",
       "ipVersion": "4",
-      "enableDHCP": false,
+      "enableDHCP": true,
       "addrFromStart": true,
-      "hostRoutes": []
+      "hostRoutes": [],
+      "allocationPools": [{
+		"start": "107.244.64.2",
+		"end": "107.244.64.16"
+		}]      
     }
   ],
   "providerVlanNetwork": {

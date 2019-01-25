@@ -283,6 +283,14 @@ public class NetworkAdapterObjectMapper {
 				//add host route to the list
 				openstackHostRouteList.add(openstackHostRoute);
 			}
+			if (subnet.getDhcpStart() != null && !subnet.getDhcpStart().equals("")) {
+				org.onap.so.openstack.beans.Pool openstackAllocationPool = new org.onap.so.openstack.beans.Pool();
+				openstackAllocationPool.setStart(subnet.getDhcpStart());
+				openstackAllocationPool.setEnd(subnet.getDhcpEnd());
+				List<org.onap.so.openstack.beans.Pool> allocationPools = new ArrayList<>();
+				allocationPools.add(openstackAllocationPool);
+				openstackSubnet.setAllocationPools(allocationPools);
+			}
 			openstackSubnet.setHostRoutes(openstackHostRouteList);
 			//add subnet to the list
 			subnetList.add(openstackSubnet);
