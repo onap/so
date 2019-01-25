@@ -29,6 +29,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -52,6 +53,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
+import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -87,6 +90,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 public class ServiceInstancesTest extends BaseTest{
 
 	private final ObjectMapper mapper = new ObjectMapper();
+	private ObjectMapper errorMapper = new ObjectMapper();
 	
     @Autowired
     private ServiceInstances servInstances;
@@ -104,6 +108,9 @@ public class ServiceInstancesTest extends BaseTest{
 
 	@Before
 	public  void beforeClass() {
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		errorMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		errorMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
         // set headers
 		headers = new HttpHeaders();
         headers.set(ONAPLogConstants.Headers.PARTNER_NAME, "test_name");        
@@ -218,9 +225,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         //then		
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -289,9 +293,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceUriPrev7 + "v5";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstancePrev7.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         //then		
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
@@ -461,9 +462,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/activate";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceActivate.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -508,9 +506,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/deactivate";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDeactivate.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -553,9 +548,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a8868/";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDelete.json"), uri, HttpMethod.DELETE, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -597,9 +589,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/assign";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceAssign.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -644,9 +633,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/ff305d54-75b4-431b-adb2-eb6b9e5ff000/unassign";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceUnassign.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -664,9 +650,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstancePortConfiguration.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -695,9 +678,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations/f7ce78bb-423b-11e7-93f8-0050569a7970";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstance.json"), uri, HttpMethod.DELETE, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));		
@@ -715,9 +695,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations/f7ce78bb-423b-11e7-93f8-0050569a7970/enablePort";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceEnablePort.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -737,9 +714,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations/f7ce78bb-423b-11e7-93f8-0050569a7970/disablePort";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDisablePort.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
@@ -757,9 +731,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations/f7ce78bb-423b-11e7-93f8-0050569a7970/activate";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceActivatePort.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -779,9 +750,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations/f7ce78bb-423b-11e7-93f8-0050569a7970/deactivate";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDeactivatePort.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
@@ -800,9 +768,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/addRelationships";
         ResponseEntity<String> response = sendRequest(inputStream("/AddRelationships.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -820,9 +785,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/removeRelationships";
         ResponseEntity<String> response = sendRequest(inputStream("/RemoveRelationships.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -858,9 +820,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/49585b36-2b5a-443a-8b10-c75d34bb5e46/vnfs";
         ResponseEntity<String> response = sendRequest(inputStream("/VnfCreateDefault.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -901,9 +860,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vnfs";
         ResponseEntity<String> response = sendRequest(inputStream("/VnfWithServiceRelatedInstance.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -920,13 +876,9 @@ public class ServiceInstancesTest extends BaseTest{
     public void createVnfInstanceInvalidVnfResource() throws IOException {		
         uri = servInstanceuri + "v7" + "/serviceInstances/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vnfs";
         ResponseEntity<String> response = sendRequest(inputStream("/NoVnfResource.json"), uri, HttpMethod.POST);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
+        
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals("No valid vnfResource is specified", realResponse.getServiceException().getText());
     }
     @Test
@@ -957,9 +909,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/replace";
         ResponseEntity<String> response = sendRequest(inputStream("/ReplaceVnf.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -995,8 +944,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/replace";
         ResponseEntity<String> response = sendRequest(inputStream("/ReplaceVnfRecreate.json"), uri, HttpMethod.POST, headers);
         logger.debug(response.getBody());
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -1032,8 +979,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/recreate";
         ResponseEntity<String> response = sendRequest(inputStream("/VnfRecreate.json"), uri, HttpMethod.POST, headers);
         logger.debug(response.getBody());
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -1070,9 +1015,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000";
         ResponseEntity<String> response = sendRequest(inputStream("/UpdateVnf.json"), uri, HttpMethod.PUT, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -1099,9 +1041,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/applyUpdatedConfig";
         ResponseEntity<String> response = sendRequest(inputStream("/ApplyUpdatedConfig.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -1125,17 +1064,13 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v5" + "/serviceInstances/e446b97d-9c35-437a-95a2-6b4c542c4507/vnfs/49befbfe-fccb-421d-bb4c-0734a43f5ea0";
         ResponseEntity<String> response = sendRequest(inputStream("/DeleteVnfV5.json"), uri, HttpMethod.DELETE, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
+        
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
     @Test
     public void createVfModuleInstance() throws IOException {
-
         stubFor(get(urlMatching(".*/vfModuleCustomization/cb82ffd8-252a-11e7-93ae-92361f002671"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vfModuleCustomization_Response.json"))
@@ -1168,9 +1103,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/7a88cbeb-0ec8-4765-a271-4f9e90c3da7b/vnfs/cbba721b-4803-4df7-9347-307c9a955426/vfModules";
         ResponseEntity<String> response = sendRequest(inputStream("/VfModuleWithRelatedInstances.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -1285,6 +1217,7 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v6" + "/serviceInstances/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vfModules/ff305d54-75b4-431b-adb2-eb6b9e5ff000";
         ResponseEntity<String> response = sendRequest(inputStream("/VfModuleNoMatchingModelUUID.json"), uri, HttpMethod.DELETE, headers);
+        
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ObjectMapper mapper = new ObjectMapper();
@@ -1318,11 +1251,9 @@ public class ServiceInstancesTest extends BaseTest{
 	    
 	    uri = servInstanceuri + "v6" + "/serviceInstances/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vfModules";
         ResponseEntity<String> response = sendRequest(inputStream("/VfModuleInvalid.json"), uri, HttpMethod.POST, headers);
-
+        
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE,  true);
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals("No valid vfModuleCustomization is specified", realResponse.getServiceException().getText());
     }
     @Test
@@ -1350,9 +1281,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vfModules/ff305d54-75b4-431b-adb2-eb6b9e5ff000/replace";
         ResponseEntity<String> response = sendRequest(inputStream("/ReplaceVfModule.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -1394,9 +1322,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vfModules/ff305d54-75b4-431b-adb2-eb6b9e5ff000";
         ResponseEntity<String> response = sendRequest(inputStream("/UpdateVfModule.json"), uri, HttpMethod.PUT, headers);
         logger.debug(response.getBody());
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -1447,9 +1372,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/inPlaceSoftwareUpdate";
         ResponseEntity<String> response = sendRequest(inputStream("/InPlaceSoftwareUpdate.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -1482,9 +1404,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vfModules/ff305d54-75b4-431b-adb2-eb6b9e5ff000";
         ResponseEntity<String> response = sendRequest(inputStream("/DeleteVfModule.json"), uri, HttpMethod.DELETE, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -1509,9 +1428,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/196b4a84-0858-4317-a1f6-497e2e52ae43/vnfs/36e4f902-ec32-451e-8d53-e3edc19e40a4/vfModules/09f3a38d-933f-450a-8784-9e6c4dec3f72";
         ResponseEntity<String> response = sendRequest(inputStream("/DeleteVfModuleNoModelInvariantId.json"), uri, HttpMethod.DELETE, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -1543,10 +1459,7 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vfModules/ff305d54-75b4-431b-adb2-eb6b9e5ff000/deactivateAndCloudDelete";
         ResponseEntity<String> response = sendRequest(inputStream("/DeactivateAndCloudDeleteVfModule.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
+        
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -1581,9 +1494,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/volumeGroups";
         ResponseEntity<String> response = sendRequest(inputStream("/VolumeGroup.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -1620,9 +1530,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/volumeGroups/ff305d54-75b4-431b-adb2-eb6b9e5ff000";
         ResponseEntity<String> response = sendRequest(inputStream("/UpdateVolumeGroup.json"), uri, HttpMethod.PUT, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -1662,10 +1569,7 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/volumeGroups/ff305d54-75b4-431b-adb2-eb6b9e5ff000";
         ResponseEntity<String> response = sendRequest(inputStream("/DeleteVolumeGroup.json"), uri, HttpMethod.DELETE, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
+        
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -1701,9 +1605,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks";
         ResponseEntity<String> response = sendRequest(inputStream("/NetworkCreate.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -1737,9 +1638,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks/1710966e-097c-4d63-afda-e0d3bb7015fb";
         ResponseEntity<String> response = sendRequest(inputStream("/UpdateNetwork.json"), uri, HttpMethod.PUT, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -1777,9 +1675,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks/1710966e-097c-4d63-afda-e0d3bb7015fb";
         ResponseEntity<String> response = sendRequest(inputStream("/NetworkInstance.json"), uri, HttpMethod.DELETE, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -1805,9 +1700,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v6" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks/1710966e-097c-4d63-afda-e0d3bb7015fb";
         ResponseEntity<String> response = sendRequest(inputStream("/NetworkInstanceNoReqParams.json"), uri, HttpMethod.DELETE, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -1876,9 +1768,6 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setRequestSelfLink(createExpectedSelfLink("v7","32807a28-1a14-4b88-b7b3-2950918aa76d"));        
         expectedResponse.setRequestReferences(requestReferences);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -1916,9 +1805,6 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setRequestSelfLink(createExpectedSelfLink("v7","32807a28-1a14-4b88-b7b3-2950918aa76d"));        
         expectedResponse.setRequestReferences(requestReferences);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -1938,9 +1824,6 @@ public class ServiceInstancesTest extends BaseTest{
         RequestReferences requestReferences = new RequestReferences();
         requestReferences.setInstanceId("1882939");
         expectedResponse.setRequestReferences(requestReferences);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
     }
@@ -1976,9 +1859,6 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setInstanceId("1882939");
         requestReferences.setRequestSelfLink(createExpectedSelfLink("v7","32807a28-1a14-4b88-b7b3-2950918aa76d"));        
         expectedResponse.setRequestReferences(requestReferences);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -2016,9 +1896,6 @@ public class ServiceInstancesTest extends BaseTest{
         requestReferences.setInstanceId("1882939");
         requestReferences.setRequestSelfLink(createExpectedSelfLink("v7","32807a28-1a14-4b88-b7b3-2950918aa76d"));
         expectedResponse.setRequestReferences(requestReferences);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -2058,9 +1935,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7999/activate";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstancePrev8.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -2106,13 +1980,9 @@ public class ServiceInstancesTest extends BaseTest{
         
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
+        
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Request Failed due to BPEL error with HTTP Status = 202{\"instanceId\": \"1882939\"}", realResponse.getServiceException().getText());
     }
     @Test
@@ -2144,12 +2014,8 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Exception caught mapping Camunda JSON response to object", realResponse.getServiceException().getText());
     }
 
@@ -2180,13 +2046,9 @@ public class ServiceInstancesTest extends BaseTest{
                         .withStatus(HttpStatus.SC_OK)));
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
+    
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertTrue(realResponse.getServiceException().getText().contains("<aetgt:ErrorMessage>Exception in create execution list 500"));
     }
 
@@ -2227,9 +2089,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceUriPrev7 + "v5";
         ResponseEntity<String> response = sendRequest(inputStream("/MacroServiceInstance.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         //then		
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
@@ -2311,9 +2170,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v7" + "/serviceInstances/7a88cbeb-0ec8-4765-a271-4f9e90c3da7b/vnfs/cbba721b-4803-4df7-9347-307c9a955426/vfModules/scaleOut";
         ResponseEntity<String> response = sendRequest(inputStream("/ScaleOutRequest.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
@@ -2346,13 +2202,9 @@ public class ServiceInstancesTest extends BaseTest{
           
           uri = servInstanceuri + "v5/serviceInstances";
           ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
-
-          ObjectMapper mapper = new ObjectMapper();
-          mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-          mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
+          
           assertEquals(Response.Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode().value());
-          RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+          RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
           assertEquals("Exception caught mapping Camunda JSON response to object", realResponse.getServiceException().getText());
     }
     @Test
@@ -2363,15 +2215,59 @@ public class ServiceInstancesTest extends BaseTest{
           
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
+       
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error", realResponse.getServiceException().getText());
     }
+    @Test
+    public void createServiceInstanceDuplicateHistoryCheck() throws IOException{
+		stubFor(post(urlMatching(".*/infraActiveRequests/checkInstanceNameDuplicate"))
+  				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+  						.withBodyFile("InfraActiveRequests/createInfraActiveRequests.json")
+  						.withStatus(HttpStatus.SC_ACCEPTED)));
+		stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/HistoryCheckResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+          
+        uri = servInstanceuri + "v5/serviceInstances";
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
+        
+        assertEquals(Response.Status.CONFLICT.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        assertEquals("Error: Locked instance - This service (testService9) already has a request being worked with a status of UNLOCKED (RequestId - f0a35706-efc4-4e27-80ea-a995d7a2a40f). The existing request must finish or be cleaned up before proceeding.", realResponse.getServiceException().getText());
+    }
+    @Test
+    public void createServiceInstanceDuplicateHistoryCheckException() throws IOException{
+		stubFor(post(urlMatching(".*/infraActiveRequests/checkInstanceNameDuplicate"))
+  				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+  						.withBodyFile("InfraActiveRequests/createInfraActiveRequests.json")
+  						.withStatus(HttpStatus.SC_ACCEPTED)));
+		stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR)));
+          
+        uri = servInstanceuri + "v5/serviceInstances";
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
+  
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        assertEquals("Unable to get process-instance history from Camunda for requestId: f0a35706-efc4-4e27-80ea-a995d7a2a40f due to error: org.springframework.web.client.HttpServerErrorException: 500 Server Error", realResponse.getServiceException().getText());
+    }
+    @Test
+    public void createServiceInstanceDuplicate() throws IOException{
+		stubFor(post(urlMatching(".*/infraActiveRequests/checkInstanceNameDuplicate"))
+  				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+  						.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
+          
+        uri = servInstanceuri + "v5/serviceInstances";
+        ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
+
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        assertEquals("Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error", realResponse.getServiceException().getText());
+    }
+    
     @Test
     public void createServiceInstanceSaveError() throws IOException{
     	ServiceRecipe serviceRecipe = new ServiceRecipe();
@@ -2398,12 +2294,8 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error", realResponse.getServiceException().getText());
     }
     @Test
@@ -2417,13 +2309,9 @@ public class ServiceInstancesTest extends BaseTest{
         
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstancePortConfiguration.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
+ 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error", realResponse.getServiceException().getText());
     }
     @Test
@@ -2434,13 +2322,9 @@ public class ServiceInstancesTest extends BaseTest{
     	
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceParseFail.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
+  
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error", realResponse.getServiceException().getText());
     }
     @Test
@@ -2474,9 +2358,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "v7/serviceInstances/e05864f0-ab35-47d0-8be4-56fd9619ba3c/vnfs/f501ce76-a9bc-4601-9837-74fd9f4d5eca";
         ResponseEntity<String> response = sendRequest(inputStream("/VnfwithNeteworkInstanceGroup.json"), uri, HttpMethod.PUT, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         //then		
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -2506,9 +2387,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "/v7/instanceGroups";
         ResponseEntity<String> response = sendRequest(inputStream("/CreateInstanceGroup.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         //then		
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -2529,9 +2407,6 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c";
         ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         //then		
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -2541,14 +2416,9 @@ public class ServiceInstancesTest extends BaseTest{
     public void deleteInstanceGroupNoRequestIdHeader() throws IOException{
         uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c";
         ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
         //then		
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals(realResponse.getServiceException().getText(), "No valid X-ONAP-RequestID header is specified");	
     }
     @Test
@@ -2557,14 +2427,9 @@ public class ServiceInstancesTest extends BaseTest{
     	noPartnerHeaders.set(ONAPLogConstants.Headers.REQUEST_ID, "eca3a1b1-43ab-457e-ab1c-367263d148b4");
         uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c";
         ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE, noPartnerHeaders);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
         //then		
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals(realResponse.getServiceException().getText(), "No valid X-ONAP-PartnerName header is specified");	
     }
     @Test
@@ -2579,14 +2444,10 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c";
         ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE, noRequestorIdHheaders);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-
+        
         //then		
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals(realResponse.getServiceException().getText(), "No valid X-RequestorID header is specified");	
     }
     @Test
@@ -2602,9 +2463,6 @@ public class ServiceInstancesTest extends BaseTest{
         expectedResponse.setRequestReferences(requestReferences);
         uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c/addMembers";
         ResponseEntity<String> response = sendRequest(inputStream("/AddMembers.json"), uri, HttpMethod.POST, headers);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         //then		
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
@@ -2625,14 +2483,54 @@ public class ServiceInstancesTest extends BaseTest{
         uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c/removeMembers";
         ResponseEntity<String> response = sendRequest(inputStream("/RemoveMembers.json"), uri, HttpMethod.POST, headers);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         //then		
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
     }
+    @Test
+    public void deleteNetworkInstanceNoCustomizationEntry() throws IOException {
+        stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_NOT_FOUND)));
+
+        stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]" +
+                "modelName=VNF-API-DEFAULT&action=deleteInstance"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        
+        //expected response
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        requestReferences.setRequestSelfLink(createExpectedSelfLink("v7","32807a28-1a14-4b88-b7b3-2950918aa76d"));        
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks/1710966e-097c-4d63-afda-e0d3bb7015fb";
+        ResponseEntity<String> response = sendRequest(inputStream("/NetworkInstance.json"), uri, HttpMethod.DELETE, headers);
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
+    @Test
+    public void updateNetworkInstanceNoCustomizationEntry() throws IOException {
+    	stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_NOT_FOUND)));
+    	
+        uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks/1710966e-097c-4d63-afda-e0d3bb7015fb";
+        ResponseEntity<String> response = sendRequest(inputStream("/UpdateNetwork.json"), uri, HttpMethod.PUT, headers);
+        
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        assertEquals(realResponse.getServiceException().getText(), "No valid modelCustomizationId for networkResourceCustomization lookup is specified");
+    }
+    
     @Test
     public void setServiceTypeTestALaCarte() throws JsonProcessingException{
     	String requestScope = ModelType.service.toString();
