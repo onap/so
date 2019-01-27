@@ -91,11 +91,7 @@ public class Relationships {
 				final String relatedTo = (String)relationship.get("related-to");
 				if (p.test(relatedTo)) {
 					AAIObjectType type;
-					try {
-						type = AAIObjectType.valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, relatedTo));
-					} catch (IllegalArgumentException e) {
-						type = AAIObjectType.UNKNOWN;
-					}
+					type = AAIObjectType.fromTypeName(relatedTo);
 					final String relatedLink = (String)relationship.get("related-link");
 					
 					result.add(AAIUriFactory.createResourceFromExistingURI(type, UriBuilder.fromPath(relatedLink).build()));

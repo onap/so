@@ -28,6 +28,20 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 
 public class AAIObjectTypeTest {
 
+	
+	@Test
+	public void fromTypeNameTest() throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+		AAIObjectType type = AAIObjectType.fromTypeName("allotted-resource");
+		assertEquals("allotted-resource", type.typeName());
+		
+	}
+	
+	@Test
+	public void customTypeTest() throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+		AAIObjectType type = AAIObjectType.fromTypeName("my-custom-name");
+		assertEquals("my-custom-name", type.typeName());
+
+	}
 	@Test
 	public void verifyDefaultCase() {
 		assertEquals("default removed for tenant", "tenant", AAIObjectType.DEFAULT_TENANT.typeName());
