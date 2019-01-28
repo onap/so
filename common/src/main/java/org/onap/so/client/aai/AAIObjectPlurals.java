@@ -20,38 +20,43 @@
 
 package org.onap.so.client.aai;
 
-import org.onap.aai.domain.yang.NetworkTechnologies;
+import java.io.Serializable;
+
 import org.onap.so.client.graphinventory.GraphInventoryObjectPlurals;
 import org.onap.so.constants.Defaults;
 
 import com.google.common.base.CaseFormat;
 
-public enum AAIObjectPlurals implements GraphInventoryObjectPlurals {
+public class AAIObjectPlurals implements GraphInventoryObjectPlurals, Serializable {
 
-	CUSTOMER(AAINamespaceConstants.BUSINESS, "/customers"),
-	GENERIC_VNF(AAINamespaceConstants.NETWORK, "/generic-vnfs"),
-	PORT_GROUP(AAIObjectType.VCE.uriTemplate(), "/port-groups"),
-	PSERVER(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/pservers"),
-	P_INTERFACE(AAIObjectType.PSERVER.uriTemplate(), "/p-interfaces"),
-	L3_NETWORK(AAINamespaceConstants.NETWORK, "/l3-networks"),
-	NETWORK_POLICY(AAINamespaceConstants.NETWORK, "/network-policies"),
-	VPN_BINDING(AAINamespaceConstants.NETWORK, "/vpn-bindings"),
-	SERVICE_SUBSCRIPTION(AAIObjectType.CUSTOMER.uriTemplate(), "/service-subscriptions"),
-	SERVICE_INSTANCE(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), "/service-instances"),
-	OWNING_ENTITY(AAINamespaceConstants.BUSINESS, "/owning-entities"),
-	VOLUME_GROUP(AAIObjectType.CLOUD_REGION.uriTemplate(), "/volume-groups"),
-	AVAILIBILITY_ZONE(AAIObjectType.CLOUD_REGION.uriTemplate(), "/availability-zones"),
-	VF_MODULE(AAIObjectType.GENERIC_VNF.uriTemplate(), "/vf-modules"),
-	CONFIGURATION(AAINamespaceConstants.NETWORK, "/configurations"),
-	DEFAULT_TENANT(AAINamespaceConstants.CLOUD_INFRASTRUCTURE + "/cloud-regions/cloud-region/" + Defaults.CLOUD_OWNER + "/AAIAIC25", "/tenants"),
-	NETWORK_TECHNOLOGY(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/network-technologies"),
-	LOGICAL_LINK(AAINamespaceConstants.NETWORK, "/logical-links");
+	private static final long serialVersionUID = 5312713297525740746L;
+	
+	public static final AAIObjectPlurals CUSTOMER = new AAIObjectPlurals(AAINamespaceConstants.BUSINESS, "/customers", "customer");
+	public static final AAIObjectPlurals GENERIC_VNF = new AAIObjectPlurals(AAINamespaceConstants.NETWORK, "/generic-vnfs", "generic-vnf");
+	public static final AAIObjectPlurals PORT_GROUP = new AAIObjectPlurals(AAIObjectType.VCE.uriTemplate(), "/port-groups", "port-group");
+	public static final AAIObjectPlurals PSERVER = new AAIObjectPlurals(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/pservers", "pserver");
+	public static final AAIObjectPlurals P_INTERFACE = new AAIObjectPlurals(AAIObjectType.PSERVER.uriTemplate(), "/p-interfaces", "p-interface");
+	public static final AAIObjectPlurals L3_NETWORK = new AAIObjectPlurals(AAINamespaceConstants.NETWORK, "/l3-networks", "l3-network");
+	public static final AAIObjectPlurals NETWORK_POLICY = new AAIObjectPlurals(AAINamespaceConstants.NETWORK, "/network-policies", "network-policy");
+	public static final AAIObjectPlurals VPN_BINDING = new AAIObjectPlurals(AAINamespaceConstants.NETWORK, "/vpn-bindings", "vpn-binding");
+	public static final AAIObjectPlurals SERVICE_SUBSCRIPTION = new AAIObjectPlurals(AAIObjectType.CUSTOMER.uriTemplate(), "/service-subscriptions", "service-subscription");
+	public static final AAIObjectPlurals SERVICE_INSTANCE = new AAIObjectPlurals(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), "/service-instances", "service-instance");
+	public static final AAIObjectPlurals OWNING_ENTITY = new AAIObjectPlurals(AAINamespaceConstants.BUSINESS, "/owning-entities", "owning-entity");
+	public static final AAIObjectPlurals VOLUME_GROUP = new AAIObjectPlurals(AAIObjectType.CLOUD_REGION.uriTemplate(), "/volume-groups", "volume-group");
+	public static final AAIObjectPlurals AVAILIBILITY_ZONE = new AAIObjectPlurals(AAIObjectType.CLOUD_REGION.uriTemplate(), "/availability-zones", "availability-zone");
+	public static final AAIObjectPlurals VF_MODULE = new AAIObjectPlurals(AAIObjectType.GENERIC_VNF.uriTemplate(), "/vf-modules", "vf-module");
+	public static final AAIObjectPlurals CONFIGURATION = new AAIObjectPlurals(AAINamespaceConstants.NETWORK, "/configurations", "configuration");
+	public static final AAIObjectPlurals DEFAULT_TENANT = new AAIObjectPlurals(AAINamespaceConstants.CLOUD_INFRASTRUCTURE + "/cloud-regions/cloud-region/" + Defaults.CLOUD_OWNER + "/AAIAIC25", "/tenants", "default-tenant");
+	public static final AAIObjectPlurals NETWORK_TECHNOLOGY = new AAIObjectPlurals(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/network-technologies", "network-technology");
+	public static final AAIObjectPlurals LOGICAL_LINK = new AAIObjectPlurals(AAINamespaceConstants.NETWORK, "/logical-links", "logical-link");
 
 	private final String uriTemplate;
 	private final String partialUri;
-	private AAIObjectPlurals(String parentUri, String partialUri) {
+	private final String name;
+	protected AAIObjectPlurals(String parentUri, String partialUri, String name) {
 		this.uriTemplate = parentUri + partialUri;
 		this.partialUri = partialUri;
+		this.name = name;
 	}
 
 	@Override
@@ -75,6 +80,6 @@ public enum AAIObjectPlurals implements GraphInventoryObjectPlurals {
 	}
 	@Override
 	public String typeName(CaseFormat format) {
-		return CaseFormat.UPPER_UNDERSCORE.to(format, this.name());
+		return CaseFormat.LOWER_HYPHEN.to(format, this.name);
 	}
 }

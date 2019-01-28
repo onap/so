@@ -22,10 +22,10 @@ package org.onap.so.client.aai;
 
 public class AAINamespaceConstants {
 
-	protected static final String CLOUD_INFRASTRUCTURE = "/cloud-infrastructure";
-	protected static final String NETWORK = "/network";
-	protected static final String BUSINESS = "/business";
-	protected static final String SERVICE_DESIGN_AND_CREATION = "/service-design-and-creation";
+	public static final String CLOUD_INFRASTRUCTURE = "/cloud-infrastructure";
+	public static final String NETWORK = "/network";
+	public static final String BUSINESS = "/business";
+	public static final String SERVICE_DESIGN_AND_CREATION = "/service-design-and-creation";
 
 
 }
