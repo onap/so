@@ -118,7 +118,10 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 			   }
 		   }
 		   execution.setVariable("vnfId", vnfId)
-		   
+
+		   Map<String,String> vfModuleNames = execution.getVariable("vfModuleNames")
+		   msoLogger.debug("Incoming vfModuleNames: " + vfModuleNames)
+
 		   // Set aLaCarte to false
 		   execution.setVariable("aLaCarte", false)
 
@@ -137,9 +140,17 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   rollbackData.put("VNFANDMODULES", "numOfCreatedAddOnModules", "0")
 		   execution.setVariable("rollbackData", rollbackData)
 
-		   sleep (20000)
+		   String delayMS = execution.getVariable("delayMS")
+		   long longDelayMS = 20000;
 
+		   if (delayMS != null && !delayMS.isEmpty()) {
+			   longDelayMS = Long.parseLong(delayMS);
+		   }
 
+		   if (longDelayMS > 0) {
+			   msoLogger.debug("Delaying workflow " + longDelayMS + "ms");
+			   sleep(longDelayMS)
+		   }
 	   }catch(BpmnError b){
 		   msoLogger.debug("Rethrowing MSOWorkflowException")
 		   throw b
@@ -151,7 +162,6 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   msoLogger.trace("COMPLETED DoCreateVnfAndModules PreProcessRequest Process")
    }
 
-
    public void queryCatalogDB (DelegateExecution execution) {
 	 
 	   execution.setVariable("prefix",Prefix)
@@ -159,8 +169,8 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   msoLogger.trace("STARTED DoCreateVnfAndModules QueryCatalogDB Process")
 	   try {
 		   VnfResource vnf = null
-		   ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 		   // if serviceDecomposition is specified, get info from serviceDecomposition
+		   ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 		   if (serviceDecomposition != null) {
 			   msoLogger.debug("Getting Catalog DB data from ServiceDecomposition object: " + serviceDecomposition.toJsonString())
 			   List<VnfResource> vnfs = serviceDecomposition.getVnfResources()
@@ -208,6 +218,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   }
 			   			  
 		   ModuleResource baseVfModule = null
+		   Map<String,String> vfModuleNames = execution.getVariable("vfModuleNames")
 
 		   for (int i = 0; i < vfModules.size; i++) {
 			   msoLogger.debug("handling VF Module ")
@@ -222,6 +233,8 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 					   execution.setVariable("baseVfModuleLabel", baseVfModuleLabel)
 					   String basePersonaModelId = baseVfModuleModelInfoObject.getModelInvariantUuid()
 					   execution.setVariable("basePersonaModelId", basePersonaModelId)
+					   String baseVfModuleName = getPredefinedVfModuleName(execution, basePersonaModelId)
+					   execution.setVariable("baseVfModuleName", baseVfModuleName)
 					   baseVfModule = vfModule
 					   break
 			   }		   
@@ -284,6 +297,8 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   execution.setVariable("addOnVfModuleLabel", addOnVfModuleLabel)
 		   String addOnPersonaModelId = addOnVfModuleModelInfoObject.getModelInvariantUuid()
 		   execution.setVariable("addOnPersonaModelId", addOnPersonaModelId)
+		   String addOnVfModuleName = getPredefinedVfModuleName(execution, addOnPersonaModelId)
+		   execution.setVariable("addOnVfModuleName", addOnVfModuleName)
 		   int addOnInitialCount = addOnModule.getInitialCount()
 		   execution.setVariable("initialCount", addOnInitialCount)
 
@@ -460,5 +475,19 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   msoLogger.trace("Exit createLineOfBusiness")
    }
 
+   public String getPredefinedVfModuleName(DelegateExecution execution, String vfModuleModelInvariantUuid) {
+	   Map<String,String> vfModuleNames = execution.getVariable("vfModuleNames")
+		   
+	   if (vfModuleNames == null) {
+		   return null
+	   }
 
+	   String vfModuleName = vfModuleNames.get(vfModuleModelInvariantUuid)
+
+	   if (vfModuleName != null) {
+		   msoLogger.debug("Using vfModuleName='" + vfModuleName + "' for vfModuleModelInvariantUuid=" + vfModuleModelInvariantUuid)
+	   }
+
+	   return vfModuleName
+   }
 }

@@ -203,7 +203,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                     uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.access-ltp-id", inputParameters.get("local-access-ltp-id"))
                     uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.access-node-id", inputParameters.get("local-access-node-id"))
                     resourceInputObj.setResourceParameters(uResourceInput)
-                    execution.setVariable(Prefix + "resourceInput", resourceInputObj)
+                    execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
                 }
 
                 break
@@ -539,10 +539,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
     private def getInstnaceId(DelegateExecution execution) {
         def response  = new XmlSlurper().parseText(execution.getVariable("CRENWKI_createSDNCResponse"))
-        def data = response.toString()
-        data = data.substring(data.indexOf("<"))
 
-        def resp = new XmlSlurper().parseText(data)
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String modelName = resourceInputObj.getResourceModelInfo().getModelName()
         def val = ""
@@ -551,17 +548,17 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             case ~/[\w\s\W]*deviceVF[\w\s\W]*/ :
             case ~/[\w\s\W]*SiteWANVF[\w\s\W]*/ :
             case ~/[\w\s\W]*Site[\w\s\W]*/:
-                val = resp."vnf-response-information"."instance-id"
+                val = response."response-data"."RequestData"."output"."vnf-response-information"."instance-id"
                 break
 
             case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
             case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/:
-                val = resp."connection-attachment-response-information"."instance-id"
+                val = response."response-data"."RequestData"."output"."connection-attachment-response-information"."instance-id"
                 break
 
             // for SDWANConnectivity and SOTNConnectivity and default:
             default:
-                val = resp."network-response-information"."instance-id"
+                val = response."response-data"."RequestData"."output"."network-response-information"."instance-id"
                 break
         }
 

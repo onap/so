@@ -28,12 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import javax.ws.rs.core.UriBuilderException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilderException;
 
-import org.onap.so.client.HttpClientFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
 import org.onap.so.adapters.vdu.VduArtifact;
@@ -44,20 +41,25 @@ import org.onap.so.adapters.vdu.VduModelInfo;
 import org.onap.so.adapters.vdu.VduPlugin;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
-import org.onap.so.openstack.beans.HeatStatus;
-import org.onap.so.openstack.beans.StackInfo;
-import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
-import org.onap.so.openstack.exceptions.MsoException;
-import org.onap.so.openstack.exceptions.MsoOpenstackException;
+import org.onap.so.client.HttpClientFactory;
 import org.onap.so.client.RestClient;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.onap.so.openstack.beans.HeatStatus;
+import org.onap.so.openstack.beans.StackInfo;
+import org.onap.so.openstack.exceptions.MsoAdapterException;
+import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
+import org.onap.so.openstack.exceptions.MsoException;
+import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.onap.so.utils.TargetEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.heat.model.CreateStackParam;
 
@@ -66,7 +68,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
     public static final String OOF_DIRECTIVES = "oof_directives";
     public static final String SDNC_DIRECTIVES = "sdnc_directives";
-    public static final String GENERIC_VNF_ID = "generic_vnf_id";
+    public static final String VNF_ID = "vnf_id";
     public static final String VF_MODULE_ID = "vf_module_id";
     public static final String TEMPLATE_TYPE = "template_type";
     public static final List<String> MULTICLOUD_INPUTS =
@@ -143,8 +145,8 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         logger.trace("Started MsoMulticloudUtils.createStack");
 
         // Get the directives, if present.
-        String oofDirectives = "";
-        String sdncDirectives = "";
+        String oofDirectives = "{}";
+        String sdncDirectives = "{}";
         String genericVnfId = "";
         String vfModuleId = "";
         String templateType = "";
@@ -167,11 +169,11 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             }
         }
 
-        if (!stackInputs.isEmpty() && stackInputs.containsKey("VF_MODULE_ID")){
-            vfModuleId = (String) stackInputs.get("VF_MODULE_ID");
+        if (!stackInputs.isEmpty() && stackInputs.containsKey(VF_MODULE_ID)){
+            vfModuleId = (String) stackInputs.get(VF_MODULE_ID);
         }
-        if (!stackInputs.isEmpty() && stackInputs.containsKey("GENERIC_VNF_ID")){
-            genericVnfId = (String) stackInputs.get("GENERIC_VNF_ID");
+        if (!stackInputs.isEmpty() && stackInputs.containsKey(VNF_ID)){
+            genericVnfId = (String) stackInputs.get(VNF_ID);
         }
 
         // create the multicloud payload
@@ -179,26 +181,17 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
         MulticloudRequest multicloudRequest= new MulticloudRequest();
 
-        try {
-            multicloudRequest.setGenericVnfId(genericVnfId);
-            multicloudRequest.setVfModuleId(vfModuleId);
-            multicloudRequest.setOofDirectives(JSON_MAPPER.readTree(oofDirectives));
-            multicloudRequest.setSdncDirectives(JSON_MAPPER.readTree(sdncDirectives));
-            multicloudRequest.setTemplateType(templateType);
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Stack Template Data is: %s", stack.toString().substring(16)));
-            }
-            multicloudRequest.setTemplateData(stack);
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Multicloud Request is: %s", multicloudRequest.toString()));
-            }
-        } catch (Exception e) {
-            logger.debug("ERROR making multicloud JSON body ", e);
-        }
-        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, null);
+        multicloudRequest.setGenericVnfId(genericVnfId);
+        multicloudRequest.setVfModuleId(vfModuleId);
+        multicloudRequest.setTemplateType(templateType);
+        multicloudRequest.setTemplateData(stack);
+        multicloudRequest.setOofDirectives(getDirectiveNode(oofDirectives));
+        multicloudRequest.setSdncDirectives(getDirectiveNode(sdncDirectives));
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Multicloud Endpoint is: %s", multicloudEndpoint));
+            logger.debug(String.format("Multicloud Request is: %s", multicloudRequest.toString()));
         }
+
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, null);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
         Response response = multicloudClient.post(multicloudRequest);
@@ -207,17 +200,23 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         createInfo.setName(stackName);
 
         MulticloudCreateResponse multicloudResponseBody = null;
-        if (response.getStatus() == Response.Status.CREATED.getStatusCode() && response.hasEntity()) {
+        if (response.hasEntity()) {
             multicloudResponseBody = getCreateBody((java.io.InputStream)response.getEntity());
+        }
+        if (response.getStatus() == Response.Status.CREATED.getStatusCode() && response.hasEntity()) {
             createInfo.setCanonicalName(stackName + "/" + multicloudResponseBody.getWorkloadId());
             if (logger.isDebugEnabled()) {
                 logger.debug("Multicloud Create Response Body: " + multicloudResponseBody);
             }
             return getStackStatus(cloudSiteId, tenantId, createInfo.getCanonicalName(), pollForCompletion, timeoutMinutes, backout);
         } else {
-            createInfo.setStatus(HeatStatus.FAILED);
-            createInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
-            return createInfo;
+            StringBuilder stackErrorStatusReason = new StringBuilder(response.getStatusInfo().getReasonPhrase());
+            if (null != multicloudResponseBody) {
+                stackErrorStatusReason.append(multicloudResponseBody.toString());
+            }
+            MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
+            me.addContext(CREATE_STACK);
+            throw me;
         }
     }
 
@@ -385,7 +384,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                         if (pollTimeout <= 0) {
                             // Note that this should not occur, since there is a timeout specified
                             // in the Openstack (multicloud?) call.
-                            logger.error(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, instanceId, stackInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError, "Create stack timeout"));
+                            logger.error(String.format("%s %s %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT.toString(), cloudSiteId, tenantId, instanceId, stackInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError.getValue(), "Create stack timeout"));
                             createTimedOut = true;
                             break;
                         }
@@ -403,7 +402,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                     // Cannot query the stack status. Something is wrong.
                     // Try to roll back the stack
                     if (!backout) {
-                        logger.warn(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack, stack deletion suppressed"));
+                        logger.warn(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(), "Create Stack error, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in Create Stack, stack deletion suppressed"));
                     } else {
                         try {
                             logger.debug("Create Stack error - unable to query for stack status - attempting to delete stack: " + instanceId + " - This will likely fail and/or we won't be able to query to see if delete worked");
@@ -417,8 +416,8 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                                     logger.debug("Deleting " + instanceId + ", status: " + queryInfo.getStatus());
                                     if (HeatStatus.DELETING.equals(queryInfo.getStatus())) {
                                         if (deletePollTimeout <= 0) {
-                                            logger.error(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, instanceId,
-                                                    queryInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError,
+                                            logger.error(String.format("%s %s %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT.toString(), cloudSiteId, tenantId, instanceId,
+                                                    queryInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError.getValue(),
                                                     "Rollback: DELETE stack timeout"));
                                             break;
                                         } else {
@@ -435,12 +434,12 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                                     }
                                 } catch (Exception e3) {
                                     // Just log this one. We will report the original exception.
-                                    logger.error(String.format("%d %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e3, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back stack on error on query"));
+                                    logger.error(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(), "Create Stack: Nested exception rolling back stack: " + e3, "", "", MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Create Stack: Nested exception rolling back stack on error on query"));
                                 }
                             }
                         } catch (Exception e2) {
                             // Just log this one. We will report the original exception.
-                            logger.error(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back stack"));
+                            logger.error(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(), "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Create Stack: Nested exception rolling back stack"));
                         }
                     }
 
@@ -451,12 +450,12 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             }
 
             if (!HeatStatus.CREATED.equals(stackInfo.getStatus())) {
-                logger.error(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack error:  Polling complete with non-success status: "
-                              + stackInfo.getStatus () + ", " + stackInfo.getStatusMessage(), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error"));
+                logger.error(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(), "Create Stack error:  Polling complete with non-success status: "
+                              + stackInfo.getStatus () + ", " + stackInfo.getStatusMessage(), "", "", MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Create Stack error"));
 
                 // Rollback the stack creation, since it is in an indeterminate state.
                 if (!backout) {
-                    logger.warn(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error, stack deletion suppressed"));
+                    logger.warn(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(), "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Create Stack error, stack deletion suppressed"));
                 }
                 else
                 {
@@ -471,8 +470,8 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                                 logger.debug("Deleting " + instanceId + ", status: " + queryInfo.getStatus());
                                 if (HeatStatus.DELETING.equals(queryInfo.getStatus())) {
                                     if (deletePollTimeout <= 0) {
-                                        logger.error(String.format("%d %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, instanceId,
-                                                queryInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError,
+                                        logger.error(String.format("%s %s %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT.toString(), cloudSiteId, tenantId, instanceId,
+                                                queryInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError.getValue(),
                                                 "Rollback: DELETE stack timeout"));
                                         break;
                                     } else {
@@ -485,14 +484,14 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                                     continue;
                                 } else {
                                     //got a status other than DELETE_IN_PROGRESS or DELETE_COMPLETE - so break and evaluate
-                                    logger.warn(String.format("%d %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion FAILED", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error, stack deletion FAILED"));
+                                    logger.warn(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(), "Create Stack errored, stack deletion FAILED", "", "", MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Create Stack error, stack deletion FAILED"));
                                     logger.debug("Stack deletion FAILED on a rollback of a create - " + instanceId + ", status=" + queryInfo.getStatus() + ", reason=" + queryInfo.getStatusMessage());
                                     break;
                                 }
                             } catch (MsoException me2) {
                                 // Just log this one. We will report the original exception.
                                 logger.debug("Exception thrown trying to delete " + instanceId + " on a create->rollback: " + me2.getContextMessage(), me2);
-                                logger.warn(String.format("%d %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, then stack deletion FAILED - exception thrown", "", "", MsoLogger.ErrorCode.BusinessProcesssError, me2.getContextMessage()));
+                                logger.warn(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(), "Create Stack errored, then stack deletion FAILED - exception thrown", "", "", MsoLogger.ErrorCode.BusinessProcesssError.getValue(), me2.getContextMessage()));
                             }
                         }
                         StringBuilder errorContextMessage;
@@ -508,7 +507,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                         }
                     } catch (MsoException e2) {
                         // shouldn't happen - but handle
-                        logger.error(String.format("%d %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack: rolling back stack"));
+                        logger.error(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(), "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in Create Stack: rolling back stack"));
                     }
                 }
                 MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
@@ -609,6 +608,21 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             logger.debug(String.format("Encountered URI builder error getting multicloud rest client %s", e.getMessage()));
         }
         return client;
+    }
+
+    private JsonNode getDirectiveNode(String directives) throws MsoException {
+        try {
+            return JSON_MAPPER.readTree(directives);
+        } catch (Exception e) {
+            logger.error(String.format("%s %s %s %s %d %s",
+                    MessageEnum.RA_CREATE_STACK_ERR.toString(),
+                    "Create Stack: " + e, "", "",
+                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+                    "Exception in Create Stack: Invalid JSON format of directives" + directives));
+            MsoException me = new MsoAdapterException("Invalid JSON format of directives parameter: " + directives);
+            me.addContext(CREATE_STACK);
+            throw me;
+        }
     }
 
     /**

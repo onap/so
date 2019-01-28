@@ -21,6 +21,7 @@ package org.onap.so.bpmn.infrastructure.properties;
 
 import java.util.Arrays;
 import java.util.List;
+import org.onap.so.bpmn.core.UrnPropertiesReader;
 
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.logger.MsoLogger;
@@ -37,7 +38,7 @@ public class BPMNProperties {
     }
 
     public static List<String> getResourceSequenceProp(String input) {
-        String resourceSequence = getProperty("mso.workflow.custom." + input + ".resource.sequence", null);
+        String resourceSequence = UrnPropertiesReader.getVariable("mso.workflow.custom."+ input + ".resource.sequence");
         if (resourceSequence != null) {
             return Arrays.asList(resourceSequence.split(","));
         }

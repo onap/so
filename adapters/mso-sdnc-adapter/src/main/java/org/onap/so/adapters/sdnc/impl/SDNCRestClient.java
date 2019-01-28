@@ -84,6 +84,14 @@ public class SDNCRestClient{
 		
 		msoLogger.debug("BPEL Request:" + bpelRequest.toString());
 
+		// Added delay to allow completion of create request to SDNC
+		// before executing activate of create request.
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		String action = bpelRequest.getRequestHeader().getSvcAction();
 		String operation = bpelRequest.getRequestHeader().getSvcOperation();
 		String bpelReqId = bpelRequest.getRequestHeader().getRequestId();

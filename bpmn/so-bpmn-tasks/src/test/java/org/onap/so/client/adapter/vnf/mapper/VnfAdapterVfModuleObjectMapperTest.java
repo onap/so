@@ -43,7 +43,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.entity.MsoRequest;
 
-public class VnfAdapterVfModuleObjectMapperTest{
+public class VnfAdapterVfModuleObjectMapperTest {
 
 	@Spy
 	private VnfAdapterVfModuleObjectMapper mapper = new VnfAdapterVfModuleObjectMapper();

@@ -51,6 +51,14 @@ CREATE TABLE IF NOT EXISTS `cloud_sites` (
   CONSTRAINT `FK_cloud_sites_identity_services` FOREIGN KEY (`IDENTITY_SERVICE_ID`) REFERENCES `identity_services` (`ID`)
 ) ;
 
+CREATE TABLE IF NOT EXISTS `homing_instances` (
+`SERVICE_INSTANCE_ID` varchar(50) NOT NULL,
+`CLOUD_OWNER` VARCHAR(200) NOT NULL,
+`CLOUD_REGION_ID` VARCHAR(200) NOT NULL,
+`OOF_DIRECTIVES` longtext NULL DEFAULT NULL,
+PRIMARY KEY (`SERVICE_INSTANCE_ID`)
+) ;
+
 insert into heat_files(artifact_uuid, name, version, description, body, artifact_checksum, creation_timestamp) values
 ('00535bdd-0878-4478-b95a-c575c742bfb0', 'nimbus-ethernet-gw', '1', 'created from csar', 'DEVICE=$dev\nBOOTPROTO=none\nNM_CONTROLLED=no\nIPADDR=$ip\nNETMASK=$netmask\nGATEWAY=$gateway\n', 'MANUAL RECORD', '2017-01-21 23:56:43');
 
@@ -105,8 +113,8 @@ insert into heat_environment(artifact_uuid, name, version, description, body, ar
 insert into vnf_resource(orchestration_mode, description, creation_timestamp, model_uuid, aic_version_min, aic_version_max, model_invariant_uuid, model_version, model_name, tosca_node_type, heat_template_artifact_uuid) values
 ('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002671', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '1.0', 'vSAMP10a', 'VF', 'ff874603-4222-11e7-9252-005056850d2e');
 
-insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design) values
-('68dc9a92-214c-11e7-93ae-92361f002671', 'vSAMP10a 1', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002671', null);
+insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design, resource_input) values
+('68dc9a92-214c-11e7-93ae-92361f002671', 'vSAMP10a 1', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002671', null, "{\\\"vf_module_id\\\":\\\"vFirewall\\\",\\\"vfw_private_ip_1\\\":\\\"192.168.20.100\\\",\\\"public_net_id\\\":\\\"PUBLIC NET ID\\\",\\\"vfw_private_ip_0\\\":\\\"192.168.10.100\\\",\\\"onap_private_subnet_id\\\":\\\"PRIVATE NETWORK\\\",\\\"sec_group\\\":\\\"SECURITY GROUP\\\",\\\"vfw_private_ip_2\\\":\\\"10.0.100.1\\\",\\\"vfw_name_0\\\":\\\"zdfw1fwl01fwl01\\\",\\\"nexus_artifact_repo\\\":\\\"https://nexus.onap.org\\\",\\\"onap_private_net_cidr\\\":\\\"10.0.0.0/16\\\",\\\"dcae_collector_ip\\\":\\\"10.0.4.1\\\",\\\"vnf_id\\\":\\\"vFirewall_demo_app\\\",\\\"dcae_collector_port\\\":\\\"8081\\\",\\\"vpg_name_0\\\":\\\"zdfw1fwl01pgn01\\\",\\\"vsn_private_ip_0\\\":\\\"192.168.20.250\\\",\\\"vpg_private_ip_1\\\":\\\"10.0.100.2\\\",\\\"vsn_private_ip_1\\\":\\\"10.0.100.3\\\",\\\"vpg_private_ip_0\\\":\\\"192.168.10.200\\\",\\\"protected_private_net_cidr\\\":\\\"192.168.20.0/24\\\",\\\"unprotected_private_net_cidr\\\":\\\"192.168.10.0/24\\\",\\\"nf_naming\\\":\\\"true\\\",\\\"vsn_name_0\\\":\\\"zdfw1fwl01snk01\\\",\\\"multi_stage_design\\\":\\\"false\\\",\\\"onap_private_net_id\\\":\\\"PRIVATE NETWORK\\\",\\\"unprotected_private_net_id\\\":\\\"zdfw1fwl01_unprotected\\\",\\\"availability_zone_max_count\\\":\\\"1\\\",\\\"vfw_flavor_name\\\":\\\"(m1.medium suggested)\\\",\\\"demo_artifacts_version\\\":\\\"1.3.0-SNAPSHOT\\\",\\\"pub_key\\\":\\\"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQXYJYYi3/OUZXUiCYWdtc7K0m5C0dJKVxPG0eI8EWZrEHYdfYe6WoTSDJCww+1qlBSpA5ac/Ba4Wn9vh+lR1vtUKkyIC/nrYb90ReUd385Glkgzrfh5HdR5y5S2cL/Frh86lAn9r6b3iWTJD8wBwXFyoe1S2nMTOIuG4RPNvfmyCTYVh8XTCCE8HPvh3xv2r4egawG1P4Q4UDwk+hDBXThY2KS8M5/8EMyxHV0ImpLbpYCTBA6KYDIRtqmgS6iKyy8v2D1aSY5mc9J0T5t9S2Gv+VZQNWQDDKNFnxqYaAo1uEoq/i1q63XC5AD3ckXb2VT6dp23BQMdDfbHyUWfJN\\\",\\\"key_name\\\":\\\"vfw_key\\\",\\\"install_script_version\\\":\\\"1.3.0-SNAPSHOT\\\",\\\"vfw_image_name\\\":\\\"(UBUNTU 1404 required)\\\",\\\"protected_private_net_id\\\":\\\"zdfw1fwl01_protected\\\",\\\"cloud_env\\\":\\\"openstack\\\"}");
 
 
 insert into vf_module(model_uuid, model_invariant_uuid, model_version, model_name, description, is_base, heat_template_artifact_uuid, vol_heat_template_artifact_uuid, creation_timestamp, vnf_resource_model_uuid) values
@@ -210,7 +218,17 @@ INSERT INTO vnf_components_recipe (VNF_COMPONENT_TYPE, ACTION, VERSION, DESCRIPT
 VALUES
 ('volumeGroup', 'createInstance', '1', 'Gr api recipe to create volume-group', '/mso/async/services/WorkflowActionBB', 180, '20c4431c-246d-11e7-93ae-92361f002671');
 
+insert into homing_instances (service_instance_id, cloud_owner, cloud_region_id, oof_directives) values
+('5df8b6de-2083-11e7-93ae-92361f232671', 'CloudOwner', 'CloudRegionId', '{"directives": [{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "firewall_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vfw"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor33","attribute_name": "packetgen_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vgenerator"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "sink_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vsink"}]}'),
+('5df8b6de-2083-11e7-93ae-92361f562672', 'CloudOwner', 'CloudRegionId', '{"directives": [{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "firewall_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vfw"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor33","attribute_name": "packetgen_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vgenerator"},{"directives": [{"attributes": [{"attribute_value": "onap.hpa.flavor32","attribute_name": "sink_flavor_name"}],"type": "flavor_directives"}],"type": "vnfc","id": "vsink"}]}');
 
+-- for query resource receipe
+INSERT INTO allotted_resource
+(MODEL_UUID, MODEL_INVARIANT_UUID, MODEL_VERSION, MODEL_NAME, TOSCA_NODE_TYPE, SUBCATEGORY, DESCRIPTION, CREATION_TIMESTAMP)
+VALUES('25e2d69b-3b22-47b8-b4c9-7b14fd4a80df', '8f5fe343-9a3a-4d31-a829-49b27bbfc1c4', '2.0', 'sotnvpnattachmentvF', 'org.openecomp.resource.vf.Sdwanvpnattachmentvf', 'Allotted Resource', 'sdwanvpnattachmentVF', '2019-01-24 09:59:16.000');
+
+INSERT INTO ar_recipe(ID, MODEL_NAME, ACTION, VERSION_STR, SERVICE_TYPE, DESCRIPTION, ORCHESTRATION_URI, AR_PARAM_XSD, RECIPE_TIMEOUT, CREATION_TIMESTAMP)
+VALUES(1, 'sotnvpnattachmentvF', 'createInstance', '2.0', 'VF', 'sotnvpnattachmentvF', '/mso/async/services/CreateSDNCNetworkResource', '', 180, '2019-01-24 09:59:16.000');
 INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, CLOUD_OWNER, SERVICE_TYPE) VALUES
 ('Service-Create', 'createInstance', 'Service', true, '7','7', 'my-custom-cloud-owner','*');
 

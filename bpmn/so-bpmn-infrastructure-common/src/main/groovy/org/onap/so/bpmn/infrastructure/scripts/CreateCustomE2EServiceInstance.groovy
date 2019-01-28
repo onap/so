@@ -302,7 +302,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
                         xmlns:ns="http://org.onap.so/requestsdb">
                         <soapenv:Header/>
                         <soapenv:Body>
-                            <ns:updateServiceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
+                            <ns:initServiceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
                             <serviceId>${MsoUtils.xmlEscape(serviceId)}</serviceId>
                             <operationId>${MsoUtils.xmlEscape(operationId)}</operationId>
                             <operationType>${MsoUtils.xmlEscape(operationType)}</operationType>
@@ -311,7 +311,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
                             <operationContent>${MsoUtils.xmlEscape(operationContent)}</operationContent>
                             <progress>${MsoUtils.xmlEscape(progress)}</progress>
                             <reason>${MsoUtils.xmlEscape(reason)}</reason>
-                        </ns:updateServiceOperationStatus>
+                        </ns:initServiceOperationStatus>
                     </soapenv:Body>
                 </soapenv:Envelope>"""
 

@@ -687,6 +687,13 @@ public class ASDCController {
     	try {
     		
    			this.processCsarServiceArtifacts(iNotif, toscaResourceStructure);
+   			IArtifactInfo iArtifact = toscaResourceStructure.getToscaArtifact();
+   			String filePath = System.getProperty("mso.config.path") + "/ASDC/" + iArtifact.getArtifactVersion() + "/" + iArtifact.getArtifactName();
+   			File csarFile = new File(filePath);
+   			String csarFilePath = csarFile.getAbsolutePath();
+   			if (bpmnInstaller.containsWorkflows(csarFilePath)) {
+   				bpmnInstaller.installBpmn(csarFilePath);
+   			}   			
    			   		 	
     		for (IResourceInstance resource : iNotif.getResources()){
     			

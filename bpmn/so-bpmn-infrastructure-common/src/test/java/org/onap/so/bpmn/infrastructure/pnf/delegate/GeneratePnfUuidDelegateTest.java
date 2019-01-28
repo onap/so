@@ -28,8 +28,6 @@ import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Test;
 
 public class GeneratePnfUuidDelegateTest {
-    private static final String UUID_REGEX = "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5]{1}[0-9a-f]{3}-[89ab]{1}[0-9a-f]{3}-[0-9a-f]{12}$";
-
     @Test
     public void execute_shouldSetValidUuidAsPnfUuid() {
         // given
@@ -38,6 +36,6 @@ public class GeneratePnfUuidDelegateTest {
         // when
         delegate.execute(execution);
         // then
-        assertThat((String) execution.getVariable(PNF_UUID)).matches(UUID_REGEX);
+        assertThat((String) execution.getVariable(PNF_UUID)).matches(PnfCheckInputs.UUID_REGEX);
     }
 }

@@ -99,6 +99,9 @@ public class NetworkResourceCustomization implements Serializable {
 	@Column(name = "NETWORK_ROLE")
 	private String networkRole;
 
+	@Column(name = "RESOURCE_INPUT")
+	private String resourceInput;
+
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "NETWORK_RESOURCE_MODEL_UUID")
 	private NetworkResource networkResource = null;
@@ -167,5 +170,13 @@ public class NetworkResourceCustomization implements Serializable {
 
 	public String getNetworkRole() {
 		return this.networkRole;
+	}
+
+	public String getResourceInput() {
+		return resourceInput;
+	}
+
+	public void setResourceInput(String resourceInput) {
+		this.resourceInput = resourceInput;
 	}
 }

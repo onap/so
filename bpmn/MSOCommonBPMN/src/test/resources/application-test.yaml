@@ -84,7 +84,7 @@ mso:
   callbackRetryAttempts: '5'
   catalog:
     db:
-      endpoint: http://localhost:${wiremock.server.port}/
+      endpoint: http://localhost:${wiremock.server.port}/ecomp/mso/catalog
       spring:
         endpoint: http://localhost:${wiremock.server.port} 
   correlation:

@@ -69,6 +69,7 @@ create table `allotted_resource_customization` (
   `min_instances` int(11) default null,
   `max_instances` int(11) default null,
   `ar_model_uuid` varchar(200) not null,
+  `resource_input` varchar(20000) default null,
   `creation_timestamp` datetime not null default current_timestamp,
   primary key (`model_customization_uuid`),
   key `fk_allotted_resource_customization__allotted_resource1_idx` (`ar_model_uuid`),
@@ -164,8 +165,8 @@ create table `network_recipe` (
 
 create table `temp_network_heat_template_lookup` (
   `network_resource_model_name` varchar(200) not null,
-  `heat_template_artifact_uuid` varchar(200) not null,
-  `aic_version_min` varchar(20) not null,
+  `heat_template_artifact_uuid` varchar(200) null,
+  `aic_version_min` varchar(20) null,
   `aic_version_max` varchar(20) default null,
   primary key (`network_resource_model_name`),
   key `fk_temp_network_heat_template_lookup__heat_template1_idx` (`heat_template_artifact_uuid`),
@@ -179,11 +180,11 @@ create table `network_resource` (
   `model_name` varchar(200) not null,
   `model_invariant_uuid` varchar(200) default null,
   `description` varchar(1200) default null,
-  `heat_template_artifact_uuid` varchar(200) not null,
+  `heat_template_artifact_uuid` varchar(200) null,
   `neutron_network_type` varchar(20) default null,
   `model_version` varchar(20) default null,
   `tosca_node_type` varchar(200) default null,
-  `aic_version_min` varchar(20) not null,
+  `aic_version_min` varchar(20) null,
   `aic_version_max` varchar(20) default null,
   `orchestration_mode` varchar(20) default 'heat',
   `resource_category` varchar(20) default null,
@@ -192,8 +193,7 @@ create table `network_resource` (
   primary key (`model_uuid`),
   key `fk_network_resource__temp_network_heat_template_lookup1_idx` (`model_name`),
   key `fk_network_resource__heat_template1_idx` (`heat_template_artifact_uuid`),
-  constraint `fk_network_resource__heat_template1` foreign key (`heat_template_artifact_uuid`) references `heat_template` (`artifact_uuid`) on delete no action on update cascade,
-  constraint `fk_network_resource__temp_network_heat_template_lookup__mod_nm1` foreign key (`model_name`) references `temp_network_heat_template_lookup` (`network_resource_model_name`) on delete no action on update no action
+  constraint `fk_network_resource__heat_template1` foreign key (`heat_template_artifact_uuid`) references `heat_template` (`artifact_uuid`) on delete no action on update cascade
 ) engine=innodb default charset=latin1;
 
 
@@ -209,6 +209,7 @@ create table `network_resource_customization` (
   `network_scope` varchar(45) default null,
   `creation_timestamp` datetime not null default current_timestamp,
   `network_resource_model_uuid` varchar(200) not null,
+  `resource_input` varchar(20000) default null,
   primary key (`model_customization_uuid`),
   key `fk_network_resource_customization__network_resource1_idx` (`network_resource_model_uuid`),
   constraint `fk_network_resource_customization__network_resource1` foreign key (`network_resource_model_uuid`) references `network_resource` (`model_uuid`) on delete cascade on update cascade
@@ -245,6 +246,7 @@ create table `service` (
   `environment_context` varchar(200) default null,
   `workload_context` varchar(200) default null,
   `service_category` varchar(200) default null,
+  `resource_order` varchar(200) default null,
   primary key (`model_uuid`),
   key `fk_service__tosca_csar1_idx` (`tosca_csar_artifact_uuid`),
   constraint `fk_service__tosca_csar1` foreign key (`tosca_csar_artifact_uuid`) references `tosca_csar` (`artifact_uuid`) on delete cascade on update cascade
@@ -434,6 +436,7 @@ create table `vnf_resource_customization` (
   `creation_timestamp` datetime not null default current_timestamp,
   `vnf_resource_model_uuid` varchar(200) not null,
   `multi_stage_design` varchar(20) default null,
+  `resource_input` varchar(20000) default null,
   primary key (`model_customization_uuid`),
   key `fk_vnf_resource_customization__vnf_resource1_idx` (`vnf_resource_model_uuid`),
   constraint `fk_vnf_resource_customization__vnf_resource1` foreign key (`vnf_resource_model_uuid`) references `vnf_resource` (`model_uuid`) on delete cascade on update cascade
@@ -737,7 +740,7 @@ create table if not exists `collection_network_resource_customization` (
 `network_type` varchar(45) null,
 `network_role` varchar(200) null,
 `network_scope` varchar(45) null,
-`creation_timestamp` datetime not null default current_timestamp, 
+`creation_timestamp` datetime not null default current_timestamp,
 `network_resource_model_uuid` varchar(200) not null, `instance_group_model_uuid` varchar(200) null,
 `crc_model_customization_uuid` varchar(200) not null, primary key
 (`model_customization_uuid`, `crc_model_customization_uuid`),

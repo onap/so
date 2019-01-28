@@ -520,6 +520,7 @@ public class CatalogDbAdapterRest {
         try {
             if (smUuid != null && !"".equals(smUuid)) {
                 logger.debug("Query Csar by service model uuid: {}",smUuid);
+
                 Service service = serviceRepo.findFirstOneByModelUUIDOrderByModelVersionDesc(smUuid);
 
                 if (service != null) {
@@ -587,18 +588,22 @@ public class CatalogDbAdapterRest {
 
                 if (null == recipe) {
                     NetworkResource nResource = networkResourceRepo.findResourceByModelUUID(rmUuid);
-                    if(null!=vnf) {
-                    	recipe = networkRecipeRepo.findFirstByModelNameAndActionAndVersionStr(nResource.getModelName(), action, vnf.getModelVersion());
-                    }
-                    // for network fetch the default recipe
-                    if (recipe == null) {
-                        recipe = networkRecipeRepo.findFirstByModelNameAndAction("SDNC_DEFAULT", action);
+
+                    if(nResource != null) {
+                        recipe = networkRecipeRepo.findFirstByModelNameAndActionAndVersionStr(nResource.getModelName(), action, nResource.getModelVersion());
+
+                        // for network fetch the default recipe
+                        if (recipe == null) {
+                            recipe = networkRecipeRepo.findFirstByModelNameAndAction("SDNC_DEFAULT", action);
+                        }
                     }
                 }
 
                 if (null == recipe) {
                     AllottedResource arResource = arResourceRepo.findResourceByModelUUID(rmUuid);
-                    recipe = arRecipeRepo.findByModelNameAndActionAndVersion(arResource.getModelName(), action, arResource.getModelVersion());
+                    if (arResource != null) {
+                        recipe = arRecipeRepo.findByModelNameAndActionAndVersion(arResource.getModelName(), action, arResource.getModelVersion());
+                    }
                 }
                 if (recipe != null) {
                     QueryResourceRecipe resourceRecipe = new QueryResourceRecipe(recipe);

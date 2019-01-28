@@ -22,7 +22,7 @@ package org.onap.so.db.catalog.beans;
 
 //TODO find this file a new location?
 public enum OrchestrationStatusValidationDirective {
-	SILENT_SUCCESS("SilentSuccess"), CONTINUE("Continue"), FAIL("Fail");
+	SILENT_SUCCESS("SilentSuccess"), CONTINUE("Continue"), FAIL("Fail"), VALIDATION_SKIPPED("ValidationSkiPped");
 
 	private final String name;
 

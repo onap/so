@@ -21,6 +21,7 @@
 package org.onap.so.client.dmaapproperties;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.onap.so.BaseTest;
@@ -30,7 +31,8 @@ public class GlobalDmaapPublisherTest extends BaseTest{
 
 	@Autowired
 	private GlobalDmaapPublisher globalDmaapPublisher;
-	
+
+
 	@Test
 	public void testGetters() {
 		assertEquals("dmaapUsername", globalDmaapPublisher.getUserName());

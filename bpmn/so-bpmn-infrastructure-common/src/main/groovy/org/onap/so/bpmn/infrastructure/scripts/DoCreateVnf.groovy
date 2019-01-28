@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.db.catalog.beans.HomingInstance
+
 import static org.apache.commons.lang3.StringUtils.*
 
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -31,6 +33,7 @@ import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.common.scripts.VidUtils
+import org.onap.so.bpmn.common.util.OofInfraUtils
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
@@ -61,6 +64,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils(this)
 	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+	OofInfraUtils oofInfraUtils = new OofInfraUtils()
 
 	/**
 	 * This method gets and validates the incoming
@@ -237,6 +241,21 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			String nfFunction = vnfResource.getNfFunction()
 			execution.setVariable("DoCVNF_nfFunction", nfFunction)
 			msoLogger.debug("NF Function is: " + nfFunction)
+
+			// Set Homing Info
+			try {
+				HomingInstance homingInstance = oofInfraUtils.getHomingInstance(serviceInstanceId, execution)
+				if (homingInstance != null) {
+					execution.setVariable("DoCVNF_cloudSiteId", homingInstance.getCloudRegionId())
+					rollbackData.put("VNF", "cloudSiteId", homingInstance.getCloudRegionId())
+					msoLogger.debug("Overwriting cloudSiteId with homing cloudSiteId: " +
+							homingInstance.getCloudRegionId())
+				}
+			} catch (Exception exception) {
+				msoLogger.debug("Could not find homing information for service instance: " + serviceInstanceId +
+						"... continuing")
+				msoLogger.debug("Could not find homing information for service instance error: " + exception)
+			}
 
 			rollbackData.put("VNF", "rollbackSDNCAssign", "false")
 			rollbackData.put("VNF", "rollbackSDNCActivate", "false")

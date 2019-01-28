@@ -19,24 +19,390 @@
  */
 package org.onap.so.bpmn.common.resource;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class ResourceRequestBuilderTest {
+import org.junit.Rule;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.onap.so.BaseTest;
+import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.springframework.core.env.Environment;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+
+
+public class ResourceRequestBuilderTest extends BaseTest {
 
     @Test
-    public void buildResouceRequestTest() throws Exception {
+    public void getResourceInputTest() throws Exception {
 
-        ResourceRequestBuilder.buildResouceRequest("xxxxxx",
-                "a1074969-944f-4ddc-b687-9550b0c8cd57", new HashMap<>());
+
+
+        stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+                .willReturn(ok("{ \"serviceResources\"    : {\n" +
+                        "\t\"modelInfo\"       : {\n" +
+                        "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
+                        "\t\t\"modelUuid\"          : \"c3954379-4efe-431c-8258-f84905b158e5\",\n" +
+                        "\t\t\"modelInvariantUuid\" : \"0cbff61e-3b0a-4eed-97ce-b1b4faa03493\",\n" +
+                        "\t\t\"modelVersion\"       : \"1.0\"\n" +
+                        "\t},\n" +
+                        "\t\"serviceType\"        : \"\",\n" +
+                        "\t\"serviceRole\"        : \"\",\n" +
+                        "\t\"environmentContext\" : null,\n" +
+                        "\t\"resourceOrder\"       : \"res1,res2\",\n" +
+                        "\t\"workloadContext\"    : \"Production\",\n" +
+                        "\t\"serviceVnfs\": [\n" +
+                        "\t\n" +
+                        "\t\t{ \"modelInfo\"                    : {\n" +
+                        "\t\t\t\"modelName\"              : \"15968a6e-2fe5-41bf-a481\",\n" +
+                        "\t\t\t\"modelUuid\"              : \"808abda3-2023-4105-92d2-e62644b61d53\",\n" +
+                        "\t\t\t\"modelInvariantUuid\"     : \"6e4ffc7c-497e-4a77-970d-af966e642d31\",\n" +
+                        "\t\t\t\"modelVersion\"           : \"1.0\",\n" +
+                        "\t\t\t\"modelCustomizationUuid\" : \"a00404d5-d7eb-4c46-b6b6-9cf2d087e545\",\n" +
+                        "\t\t\t\"modelInstanceName\"      : \"15968a6e-2fe5-41bf-a481 0\"\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.15968a6e2fe541bfA481\",\n" +
+                        "\t\t\"nfFunction\"           \t: null,\n" +
+                        "\"resourceInput\":\"{\\\"a\\\":\\\"b\\\"}\"," +
+                        "\t\t\"nfType\"              \t\t: null,\n" +
+                        "\t\t\"nfRole\"              \t\t: null,\n" +
+                        "\t\t\"nfNamingCode\"         \t: null,\n" +
+                        "\t\t\"multiStageDesign\"         : \"false\",\n" +
+                        "\t\t\t\"vfModules\": [\n" +
+                        "\t\t\t\t{\n" +
+                        "\t\t\t\t\t\"modelInfo\"               : { \n" +
+                        "\t\t\t\t\t\t\"modelName\"              : \"15968a6e2fe541bfA481..base_vfw..module-0\",\n" +
+                        "\t\t\t\t\t\t\"modelUuid\"              : \"ec7fadde-1e5a-42f7-8255-cb19e475ff45\",\n" +
+                        "\t\t\t\t\t\t\"modelInvariantUuid\"     : \"61ab8b64-a014-4cf3-8a5a-b5ef388f8819\",\n" +
+                        "\t\t\t\t\t\t\"modelVersion\"           : \"1\",\n" +
+                        "\t\t\t\t\t\t\"modelCustomizationUuid\" : \"123aff6b-854f-4026-ae1e-cc74a3924576\"\n" +
+                        "\t\t\t\t\t},\t\t\"isBase\"                 : true,\n" +
+                        "\t\t\t\t\t\"vfModuleLabel\"          : \"base_vfw\",\n" +
+                        "\t\t\t\t\t\"initialCount\"           : 1,\n" +
+                        "\t\t\t\t\t\"hasVolumeGroup\"           : true\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t]\n" +
+                        "\t\t},\n" +
+                        "\t\n" +
+                        "\t\t{ \"modelInfo\"                    : {\n" +
+                        "\t\t\t\"modelName\"              : \"f971106a-248f-4202-9d1f\",\n" +
+                        "\t\t\t\"modelUuid\"              : \"4fbc08a4-35ed-4a59-9e47-79975e4add7e\",\n" +
+                        "\t\t\t\"modelInvariantUuid\"     : \"c669799e-adf1-46ae-8c70-48b326fe89f3\",\n" +
+                        "\t\t\t\"modelVersion\"           : \"1.0\",\n" +
+                        "\t\t\t\"modelCustomizationUuid\" : \"e776449e-2b10-45c5-9217-2775c88ca1a0\",\n" +
+                        "\t\t\t\"modelInstanceName\"      : \"f971106a-248f-4202-9d1f 0\"\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.F971106a248f42029d1f\",\n" +
+                        "\t\t\"nfFunction\"           \t: null,\n" +
+                        "\t\t\"nfType\"              \t\t: null,\n" +
+                        "\t\t\"nfRole\"              \t\t: null,\n" +
+                        "\"resourceInput\":\"{\\\"a\\\":\\\"key|default_value\\\"}\"," +
+                        "\t\t\"nfNamingCode\"         \t: null,\n" +
+                        "\t\t\"multiStageDesign\"         : \"false\",\n" +
+                        "\t\t\t\"vfModules\": [\n" +
+                        "\t\t\t\t{\n" +
+                        "\t\t\t\t\t\"modelInfo\"               : { \n" +
+                        "\t\t\t\t\t\t\"modelName\"              : \"F971106a248f42029d1f..base_vpkg..module-0\",\n" +
+                        "\t\t\t\t\t\t\"modelUuid\"              : \"47d5273a-7456-4786-9035-b3911944cc35\",\n" +
+                        "\t\t\t\t\t\t\"modelInvariantUuid\"     : \"0ea3e57e-ac7a-425a-928b-b4aee8806c15\",\n" +
+                        "\t\t\t\t\t\t\"modelVersion\"           : \"1\",\n" +
+                        "\t\t\t\t\t\t\"modelCustomizationUuid\" : \"9ed9fef6-d3f8-4433-9807-7e23393a16bc\"\n" +
+                        "\t\t\t\t\t},\t\t\"isBase\"                 : true,\n" +
+                        "\t\t\t\t\t\"vfModuleLabel\"          : \"base_vpkg\",\n" +
+                        "\t\t\t\t\t\"initialCount\"           : 1,\n" +
+                        "\t\t\t\t\t\"hasVolumeGroup\"           : true\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t]\n" +
+                        "\t\t}\n" +
+                        "\t],\n" +
+                        "\t\"serviceNetworks\": [],\n" +
+                        "\t\"serviceAllottedResources\": []\n" +
+                        "\t}}")));
+
+//        when(UrnPropertiesReader.getVariable(anyString())).thenReturn("http://localhost:8080");
+        HashMap serviceInput = new HashMap();
+        serviceInput.put("key", "value");
+        Map<String, Object> stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "e776449e-2b10-45c5-9217-2775c88ca1a0", serviceInput);
+        assertEquals(stringObjectMap.get("a"), "value");
     }
 
     @Test
-    public void buildResouceRequestParametersTest() throws Exception {
+    public void getResourceInputDefaultValueTest() throws Exception {
 
-        String parameters =
-                "{            \"locationConstraints\":[            ],            \"resources\":[                {                    \"resourceName\":\"vEPC_ONAP01\",                    \"resourceInvariantUuid\":\"36ebe421-283a-4ee8-92f1-d09e7c44b911\",                    \"resourceUuid\":\"27a0e235-b67a-4ea4-a0cf-25761afed111\",                    \"resourceCustomizationUuid\":\"27a0e235-b67a-4ea4-a0cf-25761afed231\",                    \"parameters\":{                        \"locationConstraints\":[                            {                                \"vnfProfileId\":\"b244d433-8c9c-49ad-9c70-8e34b8dc8328\",                                \"locationConstraints\":{                                    \"vimId\":\"vmware_vio\"                                }                            },                            {                                \"vnfProfileId\":\"8a9f7c48-21ce-41b7-95b8-a8ac61ccb1ff\",                                \"locationConstraints\":{                                    \"vimId\":\"core-dc_RegionOne\"                                }                            }                        ],                        \"resources\":[                        ],                        \"requestInputs\":{                            \"sdncontroller\":\"\"                        }                    }                },                {                    \"resourceName\":\"VL OVERLAYTUNNEL\",                    \"resourceInvariantUuid\":\"184494cf-472f-436f-82e2-d83dddde21cb\",                    \"resourceUuid\":\"95bc3e59-c9c5-458f-ad6e-78874ab4b3cc\",                    \"resourceCustomizationUuid\":\"27a0e235-b67a-4ea4-a0cf-25761afed232\",                    \"parameters\":{                        \"locationConstraints\":[                        ],                        \"resources\":[                        ],                        \"requestInputs\":{                        }                    }                }            ],            \"requestInputs\":{                \"vlunderlayvpn0_name\":\"l3connect\",                \"vlunderlayvpn0_site1_id\":\"IP-WAN-Controller-1\",                \"vlunderlayvpn0_site2_id\":\"SPTNController\",                \"vlunderlayvpn0_site1_networkName\":\"network1,network2\",                \"vlunderlayvpn0_site2_networkName\":\"network3,network4\",                \"vlunderlayvpn0_site1_routerId\":\"a8098c1a-f86e-11da-bd1a-00112444be1a\",                \"vlunderlayvpn0_site2_routerId\":\"a8098c1a-f86e-11da-bd1a-00112444be1e\",                \"vlunderlayvpn0_site2_importRT1\":\"200:1,200:2\",                \"vlunderlayvpn0_site1_exportRT1\":\"300:1,300:2\",                \"vlunderlayvpn0_site2_exportRT1\":\"400:1,400:2\",                \"vlunderlayvpn0_site1_vni\":\"2000\",                \"vlunderlayvpn0_site2_vni\":\"3000\",                \"vlunderlayvpn0_tunnelType\":\"L3-DCI\"            }        }";
-        ResourceRequestBuilder.buildResourceRequestParameters(null, "1bd0eae6-2dcc-4461-9ae6-56d641f369d6", "27a0e235-b67a-4ea4-a0cf-25761afed231", parameters);
+        stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+                .willReturn(ok("{ \"serviceResources\"    : {\n" +
+                        "\t\"modelInfo\"       : {\n" +
+                        "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
+                        "\t\t\"modelUuid\"          : \"c3954379-4efe-431c-8258-f84905b158e5\",\n" +
+                        "\t\t\"modelInvariantUuid\" : \"0cbff61e-3b0a-4eed-97ce-b1b4faa03493\",\n" +
+                        "\t\t\"modelVersion\"       : \"1.0\"\n" +
+                        "\t},\n" +
+                        "\t\"serviceType\"        : \"\",\n" +
+                        "\t\"serviceRole\"        : \"\",\n" +
+                        "\t\"environmentContext\" : null,\n" +
+                        "\t\"workloadContext\"    : \"Production\",\n" +
+                        "\t\"serviceVnfs\": [\n" +
+                        "\t\n" +
+                        "\t\t{ \"modelInfo\"                    : {\n" +
+                        "\t\t\t\"modelName\"              : \"15968a6e-2fe5-41bf-a481\",\n" +
+                        "\t\t\t\"modelUuid\"              : \"808abda3-2023-4105-92d2-e62644b61d53\",\n" +
+                        "\t\t\t\"modelInvariantUuid\"     : \"6e4ffc7c-497e-4a77-970d-af966e642d31\",\n" +
+                        "\t\t\t\"modelVersion\"           : \"1.0\",\n" +
+                        "\t\t\t\"modelCustomizationUuid\" : \"a00404d5-d7eb-4c46-b6b6-9cf2d087e545\",\n" +
+                        "\t\t\t\"modelInstanceName\"      : \"15968a6e-2fe5-41bf-a481 0\"\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.15968a6e2fe541bfA481\",\n" +
+                        "\t\t\"nfFunction\"           \t: null,\n" +
+                        "\"resourceInput\":\"{\\\"a\\\":\\\"b\\\"}\"," +
+                        "\t\t\"nfType\"              \t\t: null,\n" +
+                        "\t\t\"nfRole\"              \t\t: null,\n" +
+                        "\t\t\"nfNamingCode\"         \t: null,\n" +
+                        "\t\t\"multiStageDesign\"         : \"false\",\n" +
+                        "\t\t\t\"vfModules\": [\n" +
+                        "\t\t\t\t{\n" +
+                        "\t\t\t\t\t\"modelInfo\"               : { \n" +
+                        "\t\t\t\t\t\t\"modelName\"              : \"15968a6e2fe541bfA481..base_vfw..module-0\",\n" +
+                        "\t\t\t\t\t\t\"modelUuid\"              : \"ec7fadde-1e5a-42f7-8255-cb19e475ff45\",\n" +
+                        "\t\t\t\t\t\t\"modelInvariantUuid\"     : \"61ab8b64-a014-4cf3-8a5a-b5ef388f8819\",\n" +
+                        "\t\t\t\t\t\t\"modelVersion\"           : \"1\",\n" +
+                        "\t\t\t\t\t\t\"modelCustomizationUuid\" : \"123aff6b-854f-4026-ae1e-cc74a3924576\"\n" +
+                        "\t\t\t\t\t},\t\t\"isBase\"                 : true,\n" +
+                        "\t\t\t\t\t\"vfModuleLabel\"          : \"base_vfw\",\n" +
+                        "\t\t\t\t\t\"initialCount\"           : 1,\n" +
+                        "\t\t\t\t\t\"hasVolumeGroup\"           : true\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t]\n" +
+                        "\t\t},\n" +
+                        "\t\n" +
+                        "\t\t{ \"modelInfo\"                    : {\n" +
+                        "\t\t\t\"modelName\"              : \"f971106a-248f-4202-9d1f\",\n" +
+                        "\t\t\t\"modelUuid\"              : \"4fbc08a4-35ed-4a59-9e47-79975e4add7e\",\n" +
+                        "\t\t\t\"modelInvariantUuid\"     : \"c669799e-adf1-46ae-8c70-48b326fe89f3\",\n" +
+                        "\t\t\t\"modelVersion\"           : \"1.0\",\n" +
+                        "\t\t\t\"modelCustomizationUuid\" : \"e776449e-2b10-45c5-9217-2775c88ca1a0\",\n" +
+                        "\t\t\t\"modelInstanceName\"      : \"f971106a-248f-4202-9d1f 0\"\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.F971106a248f42029d1f\",\n" +
+                        "\t\t\"nfFunction\"           \t: null,\n" +
+                        "\t\t\"nfType\"              \t\t: null,\n" +
+                        "\t\t\"nfRole\"              \t\t: null,\n" +
+                        "\"resourceInput\":\"{\\\"a\\\":\\\"key|default_value\\\"}\"," +
+                        "\t\t\"nfNamingCode\"         \t: null,\n" +
+                        "\t\t\"multiStageDesign\"         : \"false\",\n" +
+                        "\t\t\t\"vfModules\": [\n" +
+                        "\t\t\t\t{\n" +
+                        "\t\t\t\t\t\"modelInfo\"               : { \n" +
+                        "\t\t\t\t\t\t\"modelName\"              : \"F971106a248f42029d1f..base_vpkg..module-0\",\n" +
+                        "\t\t\t\t\t\t\"modelUuid\"              : \"47d5273a-7456-4786-9035-b3911944cc35\",\n" +
+                        "\t\t\t\t\t\t\"modelInvariantUuid\"     : \"0ea3e57e-ac7a-425a-928b-b4aee8806c15\",\n" +
+                        "\t\t\t\t\t\t\"modelVersion\"           : \"1\",\n" +
+                        "\t\t\t\t\t\t\"modelCustomizationUuid\" : \"9ed9fef6-d3f8-4433-9807-7e23393a16bc\"\n" +
+                        "\t\t\t\t\t},\t\t\"isBase\"                 : true,\n" +
+                        "\t\t\t\t\t\"vfModuleLabel\"          : \"base_vpkg\",\n" +
+                        "\t\t\t\t\t\"initialCount\"           : 1,\n" +
+                        "\t\t\t\t\t\"hasVolumeGroup\"           : true\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t]\n" +
+                        "\t\t}\n" +
+                        "\t],\n" +
+                        "\t\"serviceNetworks\": [],\n" +
+                        "\t\"serviceAllottedResources\": []\n" +
+                        "\t}}")));
+
+//        when(UrnPropertiesReader.getVariable(anyString())).thenReturn("http://localhost:8080");
+        HashMap serviceInput = new HashMap();
+        serviceInput.put("key1", "value");
+        Map<String, Object> stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "e776449e-2b10-45c5-9217-2775c88ca1a0", serviceInput);
+        assertEquals(stringObjectMap.get("a"), "default_value");
+    }
+
+    @Test
+    public void getResourceInputValueNoDefaultTest() throws Exception {
+
+        stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+                .willReturn(ok("{ \"serviceResources\"    : {\n" +
+                        "\t\"modelInfo\"       : {\n" +
+                        "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
+                        "\t\t\"modelUuid\"          : \"c3954379-4efe-431c-8258-f84905b158e5\",\n" +
+                        "\t\t\"modelInvariantUuid\" : \"0cbff61e-3b0a-4eed-97ce-b1b4faa03493\",\n" +
+                        "\t\t\"modelVersion\"       : \"1.0\"\n" +
+                        "\t},\n" +
+                        "\t\"serviceType\"        : \"\",\n" +
+                        "\t\"serviceRole\"        : \"\",\n" +
+                        "\t\"environmentContext\" : null,\n" +
+                        "\t\"workloadContext\"    : \"Production\",\n" +
+                        "\t\"serviceVnfs\": [\n" +
+                        "\t\n" +
+                        "\t\t{ \"modelInfo\"                    : {\n" +
+                        "\t\t\t\"modelName\"              : \"15968a6e-2fe5-41bf-a481\",\n" +
+                        "\t\t\t\"modelUuid\"              : \"808abda3-2023-4105-92d2-e62644b61d53\",\n" +
+                        "\t\t\t\"modelInvariantUuid\"     : \"6e4ffc7c-497e-4a77-970d-af966e642d31\",\n" +
+                        "\t\t\t\"modelVersion\"           : \"1.0\",\n" +
+                        "\t\t\t\"modelCustomizationUuid\" : \"a00404d5-d7eb-4c46-b6b6-9cf2d087e545\",\n" +
+                        "\t\t\t\"modelInstanceName\"      : \"15968a6e-2fe5-41bf-a481 0\"\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.15968a6e2fe541bfA481\",\n" +
+                        "\t\t\"nfFunction\"           \t: null,\n" +
+                        "\"resourceInput\":\"{\\\"a\\\":\\\"b\\\"}\"," +
+                        "\t\t\"nfType\"              \t\t: null,\n" +
+                        "\t\t\"nfRole\"              \t\t: null,\n" +
+                        "\t\t\"nfNamingCode\"         \t: null,\n" +
+                        "\t\t\"multiStageDesign\"         : \"false\",\n" +
+                        "\t\t\t\"vfModules\": [\n" +
+                        "\t\t\t\t{\n" +
+                        "\t\t\t\t\t\"modelInfo\"               : { \n" +
+                        "\t\t\t\t\t\t\"modelName\"              : \"15968a6e2fe541bfA481..base_vfw..module-0\",\n" +
+                        "\t\t\t\t\t\t\"modelUuid\"              : \"ec7fadde-1e5a-42f7-8255-cb19e475ff45\",\n" +
+                        "\t\t\t\t\t\t\"modelInvariantUuid\"     : \"61ab8b64-a014-4cf3-8a5a-b5ef388f8819\",\n" +
+                        "\t\t\t\t\t\t\"modelVersion\"           : \"1\",\n" +
+                        "\t\t\t\t\t\t\"modelCustomizationUuid\" : \"123aff6b-854f-4026-ae1e-cc74a3924576\"\n" +
+                        "\t\t\t\t\t},\t\t\"isBase\"                 : true,\n" +
+                        "\t\t\t\t\t\"vfModuleLabel\"          : \"base_vfw\",\n" +
+                        "\t\t\t\t\t\"initialCount\"           : 1,\n" +
+                        "\t\t\t\t\t\"hasVolumeGroup\"           : true\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t]\n" +
+                        "\t\t},\n" +
+                        "\t\n" +
+                        "\t\t{ \"modelInfo\"                    : {\n" +
+                        "\t\t\t\"modelName\"              : \"f971106a-248f-4202-9d1f\",\n" +
+                        "\t\t\t\"modelUuid\"              : \"4fbc08a4-35ed-4a59-9e47-79975e4add7e\",\n" +
+                        "\t\t\t\"modelInvariantUuid\"     : \"c669799e-adf1-46ae-8c70-48b326fe89f3\",\n" +
+                        "\t\t\t\"modelVersion\"           : \"1.0\",\n" +
+                        "\t\t\t\"modelCustomizationUuid\" : \"e776449e-2b10-45c5-9217-2775c88ca1a0\",\n" +
+                        "\t\t\t\"modelInstanceName\"      : \"f971106a-248f-4202-9d1f 0\"\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.F971106a248f42029d1f\",\n" +
+                        "\t\t\"nfFunction\"           \t: null,\n" +
+                        "\t\t\"nfType\"              \t\t: null,\n" +
+                        "\t\t\"nfRole\"              \t\t: null,\n" +
+                        "\"resourceInput\":\"{\\\"a\\\":\\\"value\\\"}\"," +
+                        "\t\t\"nfNamingCode\"         \t: null,\n" +
+                        "\t\t\"multiStageDesign\"         : \"false\",\n" +
+                        "\t\t\t\"vfModules\": [\n" +
+                        "\t\t\t\t{\n" +
+                        "\t\t\t\t\t\"modelInfo\"               : { \n" +
+                        "\t\t\t\t\t\t\"modelName\"              : \"F971106a248f42029d1f..base_vpkg..module-0\",\n" +
+                        "\t\t\t\t\t\t\"modelUuid\"              : \"47d5273a-7456-4786-9035-b3911944cc35\",\n" +
+                        "\t\t\t\t\t\t\"modelInvariantUuid\"     : \"0ea3e57e-ac7a-425a-928b-b4aee8806c15\",\n" +
+                        "\t\t\t\t\t\t\"modelVersion\"           : \"1\",\n" +
+                        "\t\t\t\t\t\t\"modelCustomizationUuid\" : \"9ed9fef6-d3f8-4433-9807-7e23393a16bc\"\n" +
+                        "\t\t\t\t\t},\t\t\"isBase\"                 : true,\n" +
+                        "\t\t\t\t\t\"vfModuleLabel\"          : \"base_vpkg\",\n" +
+                        "\t\t\t\t\t\"initialCount\"           : 1,\n" +
+                        "\t\t\t\t\t\"hasVolumeGroup\"           : true\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t]\n" +
+                        "\t\t}\n" +
+                        "\t],\n" +
+                        "\t\"serviceNetworks\": [],\n" +
+                        "\t\"serviceAllottedResources\": []\n" +
+                        "\t}}")));
+
+//        when(UrnPropertiesReader.getVariable(anyString())).thenReturn("http://localhost:8080");
+        HashMap serviceInput = new HashMap();
+        serviceInput.put("key1", "value");
+        Map<String, Object> stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "e776449e-2b10-45c5-9217-2775c88ca1a0", serviceInput);
+        assertEquals(stringObjectMap.get("a"), "value");
+    }
+
+    @Test
+    public void getResourceSequenceTest() throws Exception {
+
+        stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+                .willReturn(ok("{ \"serviceResources\"    : {\n" +
+                        "\t\"modelInfo\"       : {\n" +
+                        "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
+                        "\t\t\"modelUuid\"          : \"c3954379-4efe-431c-8258-f84905b158e5\",\n" +
+                        "\t\t\"modelInvariantUuid\" : \"0cbff61e-3b0a-4eed-97ce-b1b4faa03493\",\n" +
+                        "\t\t\"modelVersion\"       : \"1.0\"\n" +
+                        "\t},\n" +
+                        "\t\"serviceType\"        : \"\",\n" +
+                        "\t\"serviceRole\"        : \"\",\n" +
+                        "\t\"environmentContext\" : null,\n" +
+                        "\t\"resourceOrder\"       : \"res1,res2\",\n" +
+                        "\t\"workloadContext\"    : \"Production\",\n" +
+                        "\t\"serviceVnfs\": [\n" +
+                        "\t\n" +
+                        "\t\t{ \"modelInfo\"                    : {\n" +
+                        "\t\t\t\"modelName\"              : \"15968a6e-2fe5-41bf-a481\",\n" +
+                        "\t\t\t\"modelUuid\"              : \"808abda3-2023-4105-92d2-e62644b61d53\",\n" +
+                        "\t\t\t\"modelInvariantUuid\"     : \"6e4ffc7c-497e-4a77-970d-af966e642d31\",\n" +
+                        "\t\t\t\"modelVersion\"           : \"1.0\",\n" +
+                        "\t\t\t\"modelCustomizationUuid\" : \"a00404d5-d7eb-4c46-b6b6-9cf2d087e545\",\n" +
+                        "\t\t\t\"modelInstanceName\"      : \"15968a6e-2fe5-41bf-a481 0\"\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.15968a6e2fe541bfA481\",\n" +
+                        "\t\t\"nfFunction\"           \t: null,\n" +
+                        "\"resourceInput\":\"{\\\"a\\\":\\\"b\\\"}\"," +
+                        "\t\t\"nfType\"              \t\t: null,\n" +
+                        "\t\t\"nfRole\"              \t\t: null,\n" +
+                        "\t\t\"nfNamingCode\"         \t: null,\n" +
+                        "\t\t\"multiStageDesign\"         : \"false\",\n" +
+                        "\t\t\t\"vfModules\": [\n" +
+                        "\t\t\t\t{\n" +
+                        "\t\t\t\t\t\"modelInfo\"               : { \n" +
+                        "\t\t\t\t\t\t\"modelName\"              : \"15968a6e2fe541bfA481..base_vfw..module-0\",\n" +
+                        "\t\t\t\t\t\t\"modelUuid\"              : \"ec7fadde-1e5a-42f7-8255-cb19e475ff45\",\n" +
+                        "\t\t\t\t\t\t\"modelInvariantUuid\"     : \"61ab8b64-a014-4cf3-8a5a-b5ef388f8819\",\n" +
+                        "\t\t\t\t\t\t\"modelVersion\"           : \"1\",\n" +
+                        "\t\t\t\t\t\t\"modelCustomizationUuid\" : \"123aff6b-854f-4026-ae1e-cc74a3924576\"\n" +
+                        "\t\t\t\t\t},\t\t\"isBase\"                 : true,\n" +
+                        "\t\t\t\t\t\"vfModuleLabel\"          : \"base_vfw\",\n" +
+                        "\t\t\t\t\t\"initialCount\"           : 1,\n" +
+                        "\t\t\t\t\t\"hasVolumeGroup\"           : true\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t]\n" +
+                        "\t\t},\n" +
+                        "\t\n" +
+                        "\t\t{ \"modelInfo\"                    : {\n" +
+                        "\t\t\t\"modelName\"              : \"f971106a-248f-4202-9d1f\",\n" +
+                        "\t\t\t\"modelUuid\"              : \"4fbc08a4-35ed-4a59-9e47-79975e4add7e\",\n" +
+                        "\t\t\t\"modelInvariantUuid\"     : \"c669799e-adf1-46ae-8c70-48b326fe89f3\",\n" +
+                        "\t\t\t\"modelVersion\"           : \"1.0\",\n" +
+                        "\t\t\t\"modelCustomizationUuid\" : \"e776449e-2b10-45c5-9217-2775c88ca1a0\",\n" +
+                        "\t\t\t\"modelInstanceName\"      : \"f971106a-248f-4202-9d1f 0\"\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.F971106a248f42029d1f\",\n" +
+                        "\t\t\"nfFunction\"           \t: null,\n" +
+                        "\t\t\"nfType\"              \t\t: null,\n" +
+                        "\t\t\"nfRole\"              \t\t: null,\n" +
+                        "\"resourceInput\":\"{\\\"a\\\":\\\"key|default_value\\\"}\"," +
+                        "\t\t\"nfNamingCode\"         \t: null,\n" +
+                        "\t\t\"multiStageDesign\"         : \"false\",\n" +
+                        "\t\t\t\"vfModules\": [\n" +
+                        "\t\t\t\t{\n" +
+                        "\t\t\t\t\t\"modelInfo\"               : { \n" +
+                        "\t\t\t\t\t\t\"modelName\"              : \"F971106a248f42029d1f..base_vpkg..module-0\",\n" +
+                        "\t\t\t\t\t\t\"modelUuid\"              : \"47d5273a-7456-4786-9035-b3911944cc35\",\n" +
+                        "\t\t\t\t\t\t\"modelInvariantUuid\"     : \"0ea3e57e-ac7a-425a-928b-b4aee8806c15\",\n" +
+                        "\t\t\t\t\t\t\"modelVersion\"           : \"1\",\n" +
+                        "\t\t\t\t\t\t\"modelCustomizationUuid\" : \"9ed9fef6-d3f8-4433-9807-7e23393a16bc\"\n" +
+                        "\t\t\t\t\t},\t\t\"isBase\"                 : true,\n" +
+                        "\t\t\t\t\t\"vfModuleLabel\"          : \"base_vpkg\",\n" +
+                        "\t\t\t\t\t\"initialCount\"           : 1,\n" +
+                        "\t\t\t\t\t\"hasVolumeGroup\"           : true\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t]\n" +
+                        "\t\t}\n" +
+                        "\t],\n" +
+                        "\t\"serviceNetworks\": [],\n" +
+                        "\t\"serviceAllottedResources\": []\n" +
+                        "\t}}")));
+
+        List<String> resourceSequence = ResourceRequestBuilder.getResourceSequence("c3954379-4efe-431c-8258-f84905b158e5");
+        assertEquals(resourceSequence.size(), 2);
+        assertEquals(resourceSequence.get(0), "res1");
+        assertEquals(resourceSequence.get(1), "res2");
     }
 }

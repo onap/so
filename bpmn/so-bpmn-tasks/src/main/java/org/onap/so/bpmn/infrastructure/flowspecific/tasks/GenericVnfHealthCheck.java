@@ -21,7 +21,10 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import java.util.HashMap;
 import java.util.Optional;
-
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -105,10 +108,22 @@ public class GenericVnfHealthCheck {
 			appCClient.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
 			appcCode = appCClient.getErrorCode();
 			appcMessage = appCClient.getErrorMessage();
-		
+        } catch (BpmnError ex) {
+			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Caught exception in GenericVnfHealthCheck", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + ex);
+            appcMessage = ex.getMessage();
+            exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "Caught exception in runAppcCommand in GenericVnfHealthCheck", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "APPC Error", e);
-			appcMessage = e.getMessage();
+			if (e instanceof java.util.concurrent.TimeoutException )
+			{
+				appcMessage = "Request to APPC timed out. ";
+				msoLogger.error(MessageEnum.RA_CONNECTION_EXCEPTION, "Caught timedOut exception in runAppcCommand in GenericVnfHealthCheck", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "APPC Error", e);
+				throw e;
+			}
+			else {
+				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "Caught exception in runAppcCommand in GenericVnfHealthCheck", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "APPC Error", e);
+				appcMessage = e.getMessage();
+				exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
+			}
 		}
 		msoLogger.error("Error Message: " + appcMessage);
 		msoLogger.error("ERROR CODE: " + appcCode);

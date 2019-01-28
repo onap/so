@@ -430,14 +430,19 @@ public class ServicePluginFactory {
 		
 		Map<String, String> keys = uri.getURIKeys();
 		String uriString = uri.build().toString();
-		AAIResourceUri parent = AAIUriFactory.createResourceUri(AAIObjectType.PNF, keys.get("pnf-name"));
-		
-		AAIResultWrapper wrapper = client.get(parent);
-		Optional<Relationships> optRelationships = wrapper.getRelationships();
-		if (optRelationships.isPresent()) {
-			Relationships relationships = optRelationships.get();
-			
-			return !relationships.getRelatedAAIUris(AAIObjectType.EXT_AAI_NETWORK).isEmpty();
+
+		if (uriString != null) {
+			// get the pnfname
+			String[] token = uriString.split("/");
+			AAIResourceUri parent = AAIUriFactory.createResourceUri(AAIObjectType.PNF, token[4]);
+
+			AAIResultWrapper wrapper = client.get(parent);
+			Optional<Relationships> optRelationships = wrapper.getRelationships();
+			if (optRelationships.isPresent()) {
+				Relationships relationships = optRelationships.get();
+
+				return !relationships.getRelatedAAIUris(AAIObjectType.EXT_AAI_NETWORK).isEmpty();
+			}
 		}
 		
 		return false;

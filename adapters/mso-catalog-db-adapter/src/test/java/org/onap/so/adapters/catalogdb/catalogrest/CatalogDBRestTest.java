@@ -25,6 +25,8 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -65,6 +67,8 @@ public class CatalogDBRestTest {
 
 	private static final String ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES = "ecomp/mso/catalog/v2/serviceAllottedResources";
 
+	private static final String ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE = "ecomp/mso/catalog/v2/resourceRecipe";
+
 	private static final String ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS = "ecomp/mso/catalog/v2/serviceNetworks";
 
 	private static final String ECOMP_MSO_CATALOG_V2_SERVICE_VNFS = "ecomp/mso/catalog/v2/serviceVnfs";
@@ -94,6 +98,8 @@ public class CatalogDBRestTest {
 	private final String expectedAllottedResponse = "{\r\n\"serviceAllottedResources\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}\r\n]\r\n}";
 	
 	private final String serviceUUID = "5df8b6de-2083-11e7-93ae-92361f002671";
+
+	private final String arResourceUUID = "25e2d69b-3b22-47b8-b4c9-7b14fd4a80df";
 	
 	private final String serviceInvariantUUID = "9647dfc4-2083-11e7-93ae-92361f002671";
 	
@@ -647,6 +653,42 @@ public class CatalogDBRestTest {
 		
 		assertEquals(Response.Status.OK.getStatusCode(),response.getStatusCode().value());
 		JSONAssert.assertEquals(expectedAllottedResponse, response.getBody().toString(), false);
+	}
+
+	@Test
+	public void testResourceReceipe() throws JSONException {
+		String expectedResourceRecipe = "{\"orchestrationUri\":\"/mso/async/services/CreateSDNCNetworkResource\",\"action\":\"createInstance\",\"description\":\"sotnvpnattachmentvF\",\"id\":\"1\",\"recipeTimeout\":\"180\",\"paramXSD\":\"\"}";
+
+		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE))
+				.queryParam("resourceModelUuid", arResourceUUID)
+				.queryParam("action", "createInstance");
+
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.GET, entity, String.class);
+
+		assertEquals(Response.Status.OK.getStatusCode(),response.getStatusCode().value());
+		JSONAssert.assertEquals(expectedResourceRecipe, response.getBody().toString(), false);
+	}
+
+	@Test
+	public void testResourceReceipeNotMatched() throws JSONException {
+
+		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE))
+				.queryParam("resourceModelUuid", arResourceUUID)
+				.queryParam("action", "invalid_action");
+
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.GET, entity, String.class);
+
+		assertEquals(Response.Status.NOT_FOUND.getStatusCode(),response.getStatusCode().value());
 	}
 	
 	@Test

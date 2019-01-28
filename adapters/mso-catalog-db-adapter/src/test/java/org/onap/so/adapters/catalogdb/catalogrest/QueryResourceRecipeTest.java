@@ -21,11 +21,16 @@
 package org.onap.so.adapters.catalogdb.catalogrest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.so.db.catalog.beans.ArRecipe;
+import org.onap.so.db.catalog.beans.NetworkRecipe;
 import org.onap.so.db.catalog.beans.Recipe;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
+import org.onap.so.db.catalog.beans.VnfRecipe;
 import org.onap.so.jsonpath.JsonPathUtil;
 
 public class QueryResourceRecipeTest {
@@ -65,6 +70,26 @@ public class QueryResourceRecipeTest {
         recipe.setParamXsd(RECIPE_PARAMS_XSD);
         recipe.setDescription(RECIPE_DESCRIPTION);
         return recipe;
+    }
+
+    @Test
+    public void convertToJson() {
+        Recipe recipe = createRecipe();
+        QueryResourceRecipe queryResourceRecipe = new QueryResourceRecipe(recipe);
+        assertEquals("{\"orchestrationUri\":\"uriTest\",\"action\":\"actionTest\",\"description\":\"descrTest\",\"id\":\"123\",\"recipeTimeout\":\"100\",\"paramXSD\":\"paramsXsdTest\"}",
+                queryResourceRecipe.JSON2(false,false));
+    }
+
+    @Test
+    public void convertToJsonEmptyRecipe() {
+        QueryResourceRecipe vnfQueryRR = new QueryResourceRecipe(new VnfRecipe());
+        QueryResourceRecipe networkQueryRR = new QueryResourceRecipe(new NetworkRecipe());
+        QueryResourceRecipe arQueryRR = new QueryResourceRecipe(new ArRecipe());
+
+        String expected = "{\"orchestrationUri\":\"\",\"action\":\"\",\"description\":\"\",\"id\":\"\",\"recipeTimeout\":\"\",\"paramXSD\":\"\"}";
+        assertEquals(expected, vnfQueryRR.JSON2(false, false));
+        assertEquals(expected, networkQueryRR.JSON2(false,false));
+        assertEquals(expected, arQueryRR.JSON2(false,false));
     }
 
 }

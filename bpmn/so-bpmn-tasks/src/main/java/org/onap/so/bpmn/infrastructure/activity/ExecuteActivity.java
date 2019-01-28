@@ -84,6 +84,7 @@ public class ExecuteActivity implements JavaDelegate {
 			variables.put("buildingBlock", executeBuildingBlock);
 			variables.put("mso-request-id", requestId);
 			variables.put("retryCount", 1);	
+			variables.put("aLaCarte", true);	
 		
 		    ProcessInstanceWithVariables buildingBlockResult = runtimeService.createProcessInstanceByKey("ExecuteBuildingBlock").setVariables(variables).executeWithVariablesInReturn();
 			VariableMap variableMap = buildingBlockResult.getVariables();

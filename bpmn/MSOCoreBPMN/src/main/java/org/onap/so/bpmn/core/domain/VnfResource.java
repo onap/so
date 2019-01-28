@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -58,6 +59,9 @@ public class VnfResource extends Resource {
 	private String nfNamingCode;
 	private String multiStageDesign;
 	private String orchestrationStatus;
+
+	@JsonIgnore
+	private String resourceInput;
 
 	/*
 	 * GET and SET
@@ -123,6 +127,15 @@ public class VnfResource extends Resource {
 	public void setOrchestrationStatus(String orchestrationStatus){
 		this.orchestrationStatus = orchestrationStatus;
 	}
+
+	public String getResourceInput() {
+		return resourceInput;
+	}
+
+	public void setResourceInput(String resourceInput) {
+		this.resourceInput = resourceInput;
+	}
+
 	/**
 	 * Returns a list of all VfModule objects.
 	 * Base module is first entry in the list

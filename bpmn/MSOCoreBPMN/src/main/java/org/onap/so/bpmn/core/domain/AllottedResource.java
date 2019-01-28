@@ -22,6 +22,8 @@ package org.onap.so.bpmn.core.domain;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
@@ -54,6 +56,9 @@ public class AllottedResource extends Resource {
 	private String nfRole;
 	private String nfNamingCode;
 	private String orchestrationStatus;
+
+	@JsonIgnore
+	private String resourceInput;
 
 	/*
 	 * GET and SET
@@ -118,5 +123,14 @@ public class AllottedResource extends Resource {
 	}
 	public void setOrchestrationStatus(String orchestrationStatus) {
 		this.orchestrationStatus = orchestrationStatus;
+	}
+
+
+	public String getResourceInput() {
+		return resourceInput;
+	}
+
+	public void setResourceInput(String resourceInput) {
+		this.resourceInput = resourceInput;
 	}
 }

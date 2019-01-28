@@ -27,7 +27,6 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION;
 
 import com.google.common.base.Strings;
-import java.util.regex.Pattern;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
@@ -39,8 +38,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PnfCheckInputs implements JavaDelegate {
 
-    private static final Pattern UUID_PATTERN = Pattern
-        .compile("(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5]{1}[0-9a-f]{3}-[89ab]{1}[0-9a-f]{3}-[0-9a-f]{12}$");
+    public static final String UUID_REGEX = "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5]{1}[0-9a-f]{3}-[89ab]{1}[0-9a-f]{3}-[0-9a-f]{12}$";
     private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, PnfCheckInputs.class);
 
     private String defaultTimeout;
@@ -69,7 +67,7 @@ public class PnfCheckInputs implements JavaDelegate {
         if (Strings.isNullOrEmpty(pnfUuid)) {
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid variable not defined");
         }
-        if (!UUID_PATTERN.matcher(pnfUuid).matches()) {
+        if (!pnfUuid.matches(UUID_REGEX)) {
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid is not a valid UUID");
         }
     }

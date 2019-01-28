@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
@@ -137,6 +138,36 @@ public class GenericVnfHealthCheckTest extends BaseTaskTest {
 		
 		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1002), eq("APPC Client Failed"));	
 		doThrow(new RuntimeException("APPC Client Failed")).when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
+		
+		
+		genericVnfHealthCheck.callAppcClient(execution);
+		verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
+	}
+	
+	@Test
+	@Ignore //The runAppCCommand method in not capable of throwing this exception
+	public void callAppcClientTimeOutExceptionTest() {
+		expectedException.expect(java.util.concurrent.TimeoutException.class);
+		Action action = Action.HealthCheck;
+		String vnfId = genericVnf.getVnfId();
+		String payload = "{\"testName\":\"testValue\",}";
+		String controllerType = "testType";
+		HashMap<String, String> payloadInfo = new HashMap<String, String>();
+		payloadInfo.put("vnfName", "testVnfName");
+		payloadInfo.put("vfModuleId", "testVfModuleId");
+		payloadInfo.put("oamIpAddress", "testOamIpAddress");
+		payloadInfo.put("vnfHostIpAddress", "testOamIpAddress");
+		execution.setVariable("action", Action.HealthCheck.toString());
+		execution.setVariable("msoRequestId", msoRequestId);
+		execution.setVariable("controllerType", controllerType);
+		execution.setVariable("vnfId", "testVnfId1");
+		execution.setVariable("vnfName", "testVnfName");
+		execution.setVariable("vfModuleId", "testVfModuleId");
+		execution.setVariable("oamIpAddress", "testOamIpAddress");
+		execution.setVariable("vnfHostIpAddress", "testOamIpAddress");
+		execution.setVariable("payload", payload);
+		
+		doThrow(java.util.concurrent.TimeoutException.class).when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
 		
 		
 		genericVnfHealthCheck.callAppcClient(execution);

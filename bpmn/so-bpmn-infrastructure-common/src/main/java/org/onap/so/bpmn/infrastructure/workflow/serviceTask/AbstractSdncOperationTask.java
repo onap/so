@@ -93,7 +93,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         logger.info("AbstractSdncOperationTask.updateResOperStatus begin!");
 		String requestsdbEndPoint = env.getProperty("mso.adapters.openecomp.db.endpoint");
         HttpPost httpPost = new HttpPost(requestsdbEndPoint);
-        httpPost.addHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
+        httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
         httpPost.addHeader("Content-type", "application/soap+xml");
         String postBody = getPostStringBody(resourceOperationStatus);
         httpPost.setEntity(new StringEntity(postBody, ContentType.APPLICATION_XML));
@@ -174,7 +174,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         logger.info("AbstractSdncOperationTask.getResourceOperationStatus begin!");
 		String requestsdbEndPoint = env.getProperty("mso.adapters.openecomp.db.endpoint");
         HttpPost httpPost = new HttpPost(requestsdbEndPoint);
-        httpPost.addHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk");
+        httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
         httpPost.addHeader("Content-type", "application/soap+xml");
         String getBody = getGetStringBody(serviceId, operationId, resourceTemplateUUID);
         httpPost.setEntity(new StringEntity(getBody, ContentType.APPLICATION_XML));
@@ -289,9 +289,8 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
 
     protected boolean isSend2SdncDirectly() {
         logger.info("AbstractSdncOperationTask.isSend2SdncDirectly begin!");
-            String sdncIp = UrnPropertiesReader.getVariable("sdnc-ip");
-            String sdncPort = UrnPropertiesReader.getVariable("sdnc-port");
-            if (!StringUtils.isBlank(sdncIp) && isIp(sdncIp) && !StringUtils.isBlank(sdncPort)) {
+        String sdncHost = UrnPropertiesReader.getVariable("sdnc.host");
+            if (!StringUtils.isBlank(sdncHost)) {
                 logger.info("AbstractSdncOperationTask.isSend2SdncDirectly = true.");
                 return true;
             }
@@ -315,6 +314,12 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         String returnPort = StringUtils.isBlank(sdncPort) ? null : sdncPort;
         logger.info("AbstractSdncOperationTask.getSdncPort: returnPort = {}", sdncPort);
         return returnPort;
+    }
+
+    protected String getSdncHost() {
+        String sdncHost = UrnPropertiesReader.getVariable("sdnc.host");
+        logger.info("AbstractSdncOperationTask.getSdncPort: returnPort = {}", sdncHost);
+        return sdncHost;
     }
 
     private GenericResourceApi getGenericResourceApiClient() {
