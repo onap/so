@@ -53,15 +53,31 @@ Dockers released for SO:
 **Known Issues**
 
 There are some issues around the HPA and CCVPN that have been resolved in the patch release of 1.3.5
+
 - `SO-1249 <https://jira.onap.org/browse/SO-1249>`_
+  The workflow for resource processing use the wrong default value.
+
 - `SO-1257 <https://jira.onap.org/browse/SO-1257>`_
+  Authorization header added to multicloud adapter breaks communication.
+  
 - `SO-1258 <https://jira.onap.org/browse/SO-1258>`_
+  OOF Directives are not passed through flows to Multicloud Adapter.
+
 - `SO-1256 <https://jira.onap.org/browse/SO-1256>`_
-- `SO-1194 <https://jira.onap.org/browse/SO-1256>`_
+  Permission support for Vfcadapter is missing.
+
+- `SO-1194 <https://jira.onap.org/browse/SO-1194>`_
+  Unable to find TOSCA CSAR location using ServiceModelUUID in DoCreateResource BPMN flow.
+  
 	
 Below issues will be resolved in the next release:
+
 - `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
+  Csar needs to be manually placed into the bpmn corresponding directory.
+
 - `SO-1184 <https://jira.onap.org/browse/SO-1184>`_
+  Database table is not populated for Generic NeutronNet resource.
+
 
 **Security Notes**
 
