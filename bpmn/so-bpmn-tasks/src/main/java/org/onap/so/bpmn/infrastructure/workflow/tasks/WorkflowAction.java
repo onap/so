@@ -321,12 +321,13 @@ public class WorkflowAction {
 			if (flowsToExecute.isEmpty()) {
 				throw new IllegalStateException("Macro did not come up with a valid execution path.");
 			}
-
+			List<String> flowNames = new ArrayList<>();
 			logger.info("List of BuildingBlocks to execute:");
 			for (ExecuteBuildingBlock ebb : flowsToExecute) {
 				logger.info(ebb.getBuildingBlock().getBpmnFlowName());
+				flowNames.add(ebb.getBuildingBlock().getBpmnFlowName());
 			}
-
+			execution.setVariable("flowNames", flowNames);
 			execution.setVariable(G_CURRENT_SEQUENCE, 0);
 			execution.setVariable("retryCount", 0);
 			execution.setVariable("isRollback", false);
