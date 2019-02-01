@@ -31,10 +31,12 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @SpringBootApplication(scanBasePackages = { "org.onap.so" })
 @EnableAsync
+@EnableScheduling
 @EnableJpaRepositories({ "org.onap.so.db.catalog.data.repository",
 		"org.onap.so.db.request.data.repository"})
 @EntityScan({ "org.onap.so.db.catalog.beans", "org.onap.so.db.request.beans"})

@@ -2,7 +2,9 @@ server:
   port: 8080  
   tomcat:
     max-threads: 50
-
+mso:
+  infra:
+    auditInventory: true
 spring: 
   datasource:
      driver-class-name: org.mariadb.jdbc.Driver 

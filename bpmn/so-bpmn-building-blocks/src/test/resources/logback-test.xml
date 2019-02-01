@@ -26,5 +26,5 @@
   </root>
 
   <logger name="wiremock.org" level="DEBUG" />
-<logger name="org.camunda" level="DEBUG" />
+
 </configuration>

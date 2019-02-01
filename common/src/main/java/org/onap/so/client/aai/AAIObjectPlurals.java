@@ -49,6 +49,8 @@ public class AAIObjectPlurals implements GraphInventoryObjectPlurals, Serializab
 	public static final AAIObjectPlurals DEFAULT_TENANT = new AAIObjectPlurals(AAINamespaceConstants.CLOUD_INFRASTRUCTURE + "/cloud-regions/cloud-region/" + Defaults.CLOUD_OWNER + "/AAIAIC25", "/tenants", "default-tenant");
 	public static final AAIObjectPlurals NETWORK_TECHNOLOGY = new AAIObjectPlurals(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, "/network-technologies", "network-technology");
 	public static final AAIObjectPlurals LOGICAL_LINK = new AAIObjectPlurals(AAINamespaceConstants.NETWORK, "/logical-links", "logical-link");
+	public static final AAIObjectPlurals L_INTERFACE = new AAIObjectPlurals(AAIObjectType.VSERVER.uriTemplate(), "/l-interfaces", "l-interface");
+	public static final AAIObjectPlurals SUB_L_INTERFACE = new AAIObjectPlurals(AAIObjectType.L_INTERFACE.uriTemplate(), "/l-interfaces", "l-interface");
 
 	private final String uriTemplate;
 	private final String partialUri;

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.onap.so.adapters.vdu.CloudInfo;
@@ -79,6 +80,7 @@ import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.heat.Heat;
 import com.woorea.openstack.heat.model.CreateStackParam;
+import com.woorea.openstack.heat.model.Resources;
 import com.woorea.openstack.heat.model.Stack;
 import com.woorea.openstack.heat.model.Stack.Output;
 import com.woorea.openstack.heat.model.Stacks;
@@ -311,37 +313,23 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
         Stack heatStack = null;
         try {
-            // Execute the actual Openstack command to create the Heat stack
             OpenStackRequest <Stack> request = heatClient.getStacks ().create (stack);
-            // Begin X-Auth-User
-            // Obtain an MSO token for the tenant
             CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-            // cloudIdentity.getMsoId(), cloudIdentity.getMsoPass()
-            //req
             request.header ("X-Auth-User", cloudIdentity.getMsoId ());
             request.header ("X-Auth-Key", CryptoUtils.decryptCloudConfigPassword(cloudIdentity.getMsoPass ()));
-            LOGGER.debug ("headers added, about to executeAndRecordOpenstackRequest");
-            //LOGGER.debug(this.requestToStringBuilder(stack).toString());
-            // END - try to fix X-Auth-User
             heatStack = executeAndRecordOpenstackRequest (request);
         } catch (OpenStackResponseException e) {
-            // Since this came on the 'Create Stack' command, nothing was changed
-            // in the cloud. Return the error as an exception.
-            if (e.getStatus () == 409) {
-                // Stack already exists. Return a specific error for this case
+            if (e.getStatus () == 409) {                
                 MsoStackAlreadyExists me = new MsoStackAlreadyExists (stackName, tenantId, cloudSiteId);
                 me.addContext (CREATE_STACK);
                 throw me;
-            } else {
-                // Convert the OpenStackResponseException to an MsoOpenstackException
+        } else {
                 LOGGER.debug("ERROR STATUS = " + e.getStatus() + ",\n" + e.getMessage() + "\n" + e.getLocalizedMessage());
                 throw heatExceptionToMsoException (e, CREATE_STACK);
             }
-        } catch (OpenStackConnectException e) {
-            // Error connecting to Openstack instance. Convert to an MsoException
+        } catch (OpenStackConnectException e) {          
             throw heatExceptionToMsoException (e, CREATE_STACK);
-        } catch (RuntimeException e) {
-            // Catch-all
+        } catch (RuntimeException e) {           
             throw runtimeExceptionToMsoException (e, CREATE_STACK);
         }
 
@@ -349,210 +337,196 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         // Otherwise, simple query by name returns a 302 redirect.
         // NOTE: This is specific to the v1 Orchestration API.
         String canonicalName = stackName + "/" + heatStack.getId ();
-
-        // If client has requested a final response, poll for stack completion
+       
         if (pollForCompletion) {
-            // Set a time limit on overall polling.
-            // Use the resource (template) timeout for Openstack (expressed in minutes)
-            // and add one poll interval to give Openstack a chance to fail on its own.s
-
-            int createPollInterval = Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
-            int pollTimeout = (timeoutMinutes * 60) + createPollInterval;
-            // New 1610 - poll on delete if we rollback - use same values for now
-            int deletePollInterval = createPollInterval;
-            int deletePollTimeout = pollTimeout;
-            boolean createTimedOut = false;
-            StringBuilder stackErrorStatusReason = new StringBuilder("");
-            LOGGER.debug("createPollInterval=" + createPollInterval + ", pollTimeout=" + pollTimeout);
-
-            while (true) {
-                try {
-                    heatStack = queryHeatStack (heatClient, canonicalName);
-                    LOGGER.debug (heatStack.getStackStatus () + " (" + canonicalName + ")");
-                    try {
-                        LOGGER.debug("Current stack " + this.getOutputsAsStringBuilder(heatStack).toString());
-                    } catch (Exception e) {
-                        LOGGER.debug("an error occurred trying to print out the current outputs of the stack", e);
-                    }
-
-                    if ("CREATE_IN_PROGRESS".equals (heatStack.getStackStatus ())) {
-                        // Stack creation is still running.
-                        // Sleep and try again unless timeout has been reached
-                        if (pollTimeout <= 0) {
-                            // Note that this should not occur, since there is a timeout specified
-                            // in the Openstack call.
-                            LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName, heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError, "Create stack timeout");
-                            createTimedOut = true;
-                            break;
-                        }
-
-                        sleep(createPollInterval * 1000L);
-
-                        pollTimeout -= createPollInterval;
-                		LOGGER.debug("pollTimeout remaining: " + pollTimeout);
-                    } else {
-                    	//save off the status & reason msg before we attempt delete
-                    	stackErrorStatusReason.append("Stack error (" + heatStack.getStackStatus() + "): " + heatStack.getStackStatusReason());
-                        break;
-                    }
-                } catch (MsoException me) {
-                	// Cannot query the stack status. Something is wrong.
-                	// Try to roll back the stack
-                	if (!backout)
-                	{
-                		LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack, stack deletion suppressed");
-                	}
-                	else
-                	{
-                		try {
-                			LOGGER.debug("Create Stack error - unable to query for stack status - attempting to delete stack: " + canonicalName + " - This will likely fail and/or we won't be able to query to see if delete worked");
-                			OpenStackRequest <Void> request = heatClient.getStacks ().deleteByName (canonicalName);
-                			executeAndRecordOpenstackRequest (request);
-                			// this may be a waste of time - if we just got an exception trying to query the stack - we'll just
-                			// get another one, n'est-ce pas?
-                			boolean deleted = false;
-                			while (!deleted) {
-                				try {
-                					heatStack = queryHeatStack(heatClient, canonicalName);
-                					if (heatStack != null) {
-                    					LOGGER.debug(heatStack.getStackStatus());
-                    					if ("DELETE_IN_PROGRESS".equals(heatStack.getStackStatus())) {
-                    						if (deletePollTimeout <= 0) {
-                    							LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
-                    									heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError,
-                    									"Rollback: DELETE stack timeout");
-                    							break;
-                    						} else {
-                    							sleep(deletePollInterval * 1000L);
-                    							deletePollTimeout -= deletePollInterval;
-                    						}
-                    					} else if ("DELETE_COMPLETE".equals(heatStack.getStackStatus())){
-                    						LOGGER.debug("DELETE_COMPLETE for " + canonicalName);
-                    						deleted = true;
-                    						continue;
-                    					} else {
-                    						//got a status other than DELETE_IN_PROGRESS or DELETE_COMPLETE - so break and evaluate
-                    						break;
-                    					}
-                    				} else {
-                    					// assume if we can't find it - it's deleted
-                    					LOGGER.debug("heatStack returned null - assume the stack " + canonicalName + " has been deleted");
-                    					deleted = true;
-                    					continue;
-                					}
-
-                				} catch (Exception e3) {
-                					// Just log this one. We will report the original exception.
-                					LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e3, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back stack on error on query");
-
-                				}
-                			}
-                		} catch (Exception e2) {
-                			// Just log this one. We will report the original exception.
-                			LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back stack");
-                		}
-                	}
-
-                    // Propagate the original exception from Stack Query.
-                    me.addContext (CREATE_STACK);
-                    throw me;
-                }
-            }
-
-            if (!"CREATE_COMPLETE".equals (heatStack.getStackStatus ())) {
-                LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack error:  Polling complete with non-success status: "
-                              + heatStack.getStackStatus () + ", " + heatStack.getStackStatusReason (), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error");
-
-                // Rollback the stack creation, since it is in an indeterminate state.
-                if (!backout)
-                {
-                	LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error, stack deletion suppressed");
-                }
-                else
-                {
-                	try {
-                		LOGGER.debug("Create Stack errored - attempting to DELETE stack: " + canonicalName);
-                		LOGGER.debug("deletePollInterval=" + deletePollInterval + ", deletePollTimeout=" + deletePollTimeout);
-                		OpenStackRequest <Void> request = heatClient.getStacks ().deleteByName (canonicalName);
-                		executeAndRecordOpenstackRequest (request);
-                		boolean deleted = false;
-                		while (!deleted) {
-                			try {
-                				heatStack = queryHeatStack(heatClient, canonicalName);
-                				if (heatStack != null) {
-                					LOGGER.debug(heatStack.getStackStatus() + " (" + canonicalName + ")");
-                					if ("DELETE_IN_PROGRESS".equals(heatStack.getStackStatus())) {
-                						if (deletePollTimeout <= 0) {
-                							LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
-                									heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError,
-                									"Rollback: DELETE stack timeout");
-                							break;
-                						} else {
-                							sleep(deletePollInterval * 1000L);
-                							deletePollTimeout -= deletePollInterval;
-                							LOGGER.debug("deletePollTimeout remaining: " + deletePollTimeout);
-                						}
-                					} else if ("DELETE_COMPLETE".equals(heatStack.getStackStatus())){
-                						LOGGER.debug("DELETE_COMPLETE for " + canonicalName);
-                						deleted = true;
-                						continue;
-                					} else if ("DELETE_FAILED".equals(heatStack.getStackStatus())) {
-                						// Warn about this (?) - but still throw the original exception
-                						LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion FAILED", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error, stack deletion FAILED");
-                						LOGGER.debug("Stack deletion FAILED on a rollback of a create - " + canonicalName + ", status=" + heatStack.getStackStatus() + ", reason=" + heatStack.getStackStatusReason());
-                						break;
-                					} else {
-                						//got a status other than DELETE_IN_PROGRESS or DELETE_COMPLETE - so break and evaluate
-                						break;
-                					}
-                				} else {
-                					// assume if we can't find it - it's deleted
-                					LOGGER.debug("heatStack returned null - assume the stack " + canonicalName + " has been deleted");
-                					deleted = true;
-                					continue;
-                				}
-
-                			} catch (MsoException me2) {
-                				// We got an exception on the delete - don't throw this exception - throw the original - just log.
-                				LOGGER.debug("Exception thrown trying to delete " + canonicalName + " on a create->rollback: " + me2.getContextMessage(), me2);
-                				LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, then stack deletion FAILED - exception thrown", "", "", MsoLogger.ErrorCode.BusinessProcesssError, me2.getContextMessage());
-                			}
-
-                		} // end while !deleted
-                		StringBuilder errorContextMessage;
-                		if (createTimedOut) {
-                			errorContextMessage = new StringBuilder("Stack Creation Timeout");
-                		} else {
-                			errorContextMessage  = stackErrorStatusReason;
-                		}
-                		if (deleted) {
-                			errorContextMessage.append(" - stack successfully deleted");
-                		} else {
-                			errorContextMessage.append(" - encountered an error trying to delete the stack");
-                		}
-//                		MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
- //               		me.addContext(CREATE_STACK);
-
-   //             		throw me;
-                	} catch (Exception e2) {
-                		// shouldn't happen - but handle
-                		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack: rolling back stack");
-                	}
-                }
-                MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
-                me.addContext(CREATE_STACK);
-
-                throw me;
-            }
-
+            heatStack = pollStackForCompletion(cloudSiteId, tenantId, stackName, timeoutMinutes, backout, heatClient,
+					heatStack, canonicalName);
         } else {
             // Get initial status, since it will have been null after the create.
             heatStack = queryHeatStack (heatClient, canonicalName);
             LOGGER.debug (heatStack.getStackStatus ());
         }
-
         return new StackInfoMapper(heatStack).map();
     }
+
+	private Stack pollStackForCompletion(String cloudSiteId, String tenantId, String stackName, int timeoutMinutes,
+			boolean backout, Heat heatClient, Stack heatStack, String canonicalName)
+			throws MsoException, MsoOpenstackException {
+		int createPollInterval = Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
+		int pollTimeout = (timeoutMinutes * 60) + createPollInterval;
+		int deletePollInterval = createPollInterval;
+		int deletePollTimeout = pollTimeout;
+		boolean createTimedOut = false;
+		StringBuilder stackErrorStatusReason = new StringBuilder("");
+		LOGGER.debug("createPollInterval=" + createPollInterval + ", pollTimeout=" + pollTimeout);
+
+		while (true) {
+		    try {
+		        heatStack = queryHeatStack (heatClient, canonicalName);
+		        LOGGER.debug (heatStack.getStackStatus () + " (" + canonicalName + ")");
+		        try {
+		            LOGGER.debug("Current stack " + this.getOutputsAsStringBuilder(heatStack).toString());
+		        } catch (Exception e) {
+		            LOGGER.debug("an error occurred trying to print out the current outputs of the stack", e);
+		        }
+
+		        if ("CREATE_IN_PROGRESS".equals (heatStack.getStackStatus ())) {                       
+		            if (pollTimeout <= 0) {
+		                LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName, heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError, "Create stack timeout");
+		                createTimedOut = true;
+		                break;
+		            }
+		            sleep(createPollInterval * 1000L);
+		            pollTimeout -= createPollInterval;
+		    		LOGGER.debug("pollTimeout remaining: " + pollTimeout);
+		        } else {                    
+		        	stackErrorStatusReason.append("Stack error (" + heatStack.getStackStatus() + "): " + heatStack.getStackStatusReason());
+		            break;
+		        }
+		    } catch (MsoException me) {
+		    	// Cannot query the stack status. Something is wrong.
+		    	// Try to roll back the stack
+		    	if (!backout)
+		    	{
+		    		LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack, stack deletion suppressed");
+		    	}
+		    	else
+		    	{
+		    		try {
+		    			LOGGER.debug("Create Stack error - unable to query for stack status - attempting to delete stack: " + canonicalName + " - This will likely fail and/or we won't be able to query to see if delete worked");
+		    			OpenStackRequest <Void> request = heatClient.getStacks ().deleteByName (canonicalName);
+		    			executeAndRecordOpenstackRequest (request);
+		    			boolean deleted = false;
+		    			while (!deleted) {
+		    				try {
+		    					heatStack = queryHeatStack(heatClient, canonicalName);
+		    					if (heatStack != null) {
+		        					LOGGER.debug(heatStack.getStackStatus());
+		        					if ("DELETE_IN_PROGRESS".equals(heatStack.getStackStatus())) {
+		        						if (deletePollTimeout <= 0) {
+		        							LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
+		        									heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError,
+		        									"Rollback: DELETE stack timeout");
+		        							break;
+		        						} else {
+		        							sleep(deletePollInterval * 1000L);
+		        							deletePollTimeout -= deletePollInterval;
+		        						}
+		        					} else if ("DELETE_COMPLETE".equals(heatStack.getStackStatus())){
+		        						LOGGER.debug("DELETE_COMPLETE for " + canonicalName);
+		        						deleted = true;
+		        						continue;
+		        					} else {
+		        						//got a status other than DELETE_IN_PROGRESS or DELETE_COMPLETE - so break and evaluate
+		        						break;
+		        					}
+		        				} else {
+		        					// assume if we can't find it - it's deleted
+		        					LOGGER.debug("heatStack returned null - assume the stack " + canonicalName + " has been deleted");
+		        					deleted = true;
+		        					continue;
+		    					}
+
+		    				} catch (Exception e3) {
+		    					// Just log this one. We will report the original exception.
+		    					LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e3, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back stack on error on query");
+
+		    				}
+		    			}
+		    		} catch (Exception e2) {
+		    			// Just log this one. We will report the original exception.
+		    			LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back stack");
+		    		}
+		    	}
+
+		        // Propagate the original exception from Stack Query.
+		        me.addContext (CREATE_STACK);
+		        throw me;
+		    }
+		}
+
+		if (!"CREATE_COMPLETE".equals (heatStack.getStackStatus ())) {
+		    LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack error:  Polling complete with non-success status: "
+		                  + heatStack.getStackStatus () + ", " + heatStack.getStackStatusReason (), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error");
+
+		    // Rollback the stack creation, since it is in an indeterminate state.
+		    if (!backout)
+		    {
+		    	LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error, stack deletion suppressed");
+		    }
+		    else
+		    {
+		    	try {
+		    		LOGGER.debug("Create Stack errored - attempting to DELETE stack: " + canonicalName);
+		    		LOGGER.debug("deletePollInterval=" + deletePollInterval + ", deletePollTimeout=" + deletePollTimeout);
+		    		OpenStackRequest <Void> request = heatClient.getStacks ().deleteByName (canonicalName);
+		    		executeAndRecordOpenstackRequest (request);
+		    		boolean deleted = false;
+		    		while (!deleted) {
+		    			try {
+		    				heatStack = queryHeatStack(heatClient, canonicalName);
+		    				if (heatStack != null) {
+		    					LOGGER.debug(heatStack.getStackStatus() + " (" + canonicalName + ")");
+		    					if ("DELETE_IN_PROGRESS".equals(heatStack.getStackStatus())) {
+		    						if (deletePollTimeout <= 0) {
+		    							LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
+		    									heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError,
+		    									"Rollback: DELETE stack timeout");
+		    							break;
+		    						} else {
+		    							sleep(deletePollInterval * 1000L);
+		    							deletePollTimeout -= deletePollInterval;
+		    							LOGGER.debug("deletePollTimeout remaining: " + deletePollTimeout);
+		    						}
+		    					} else if ("DELETE_COMPLETE".equals(heatStack.getStackStatus())){
+		    						LOGGER.debug("DELETE_COMPLETE for " + canonicalName);
+		    						deleted = true;
+		    						continue;
+		    					} else if ("DELETE_FAILED".equals(heatStack.getStackStatus())) {
+		    						// Warn about this (?) - but still throw the original exception
+		    						LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion FAILED", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error, stack deletion FAILED");
+		    						LOGGER.debug("Stack deletion FAILED on a rollback of a create - " + canonicalName + ", status=" + heatStack.getStackStatus() + ", reason=" + heatStack.getStackStatusReason());
+		    						break;
+		    					} else {
+		    						//got a status other than DELETE_IN_PROGRESS or DELETE_COMPLETE - so break and evaluate
+		    						break;
+		    					}
+		    				} else {
+		    					// assume if we can't find it - it's deleted
+		    					LOGGER.debug("heatStack returned null - assume the stack " + canonicalName + " has been deleted");
+		    					deleted = true;
+		    					continue;
+		    				}
+
+		    			} catch (MsoException me2) {
+		    				// We got an exception on the delete - don't throw this exception - throw the original - just log.
+		    				LOGGER.debug("Exception thrown trying to delete " + canonicalName + " on a create->rollback: " + me2.getContextMessage(), me2);
+		    				LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, then stack deletion FAILED - exception thrown", "", "", MsoLogger.ErrorCode.BusinessProcesssError, me2.getContextMessage());
+		    			}
+
+		    		} // end while !deleted
+		    		StringBuilder errorContextMessage;
+		    		if (createTimedOut) {
+		    			errorContextMessage = new StringBuilder("Stack Creation Timeout");
+		    		} else {
+		    			errorContextMessage  = stackErrorStatusReason;
+		    		}
+		    		if (deleted) {
+		    			errorContextMessage.append(" - stack successfully deleted");
+		    		} else {
+		    			errorContextMessage.append(" - encountered an error trying to delete the stack");
+		    		}
+		    	} catch (Exception e2) {
+		    		// shouldn't happen - but handle
+		    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack: rolling back stack");
+		    	}
+		    }
+		    MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
+		    me.addContext(CREATE_STACK);
+		    throw me;
+		}
+		return heatStack;
+	}
 
     /**
      * Query for a single stack (by Name) in a tenant. This call will always return a
@@ -1231,7 +1205,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		sb.append("[END]");
 		return sb;
 	}
-
+ 
 
 	public void copyBaseOutputsToInputs(Map<String, Object> inputs,
 			Map<String, Object> otherStackOutputs, List<String> paramNames, Map<String, String> aliases) {
@@ -1727,6 +1701,22 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     	return vduStatus;
     }
+    
+	public Resources queryStackResources(String cloudSiteId, String tenantId, String stackName) throws MsoException {
+		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId)
+				.orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
+		Heat heatClient = getHeatClient(cloudSite, tenantId);
+		OpenStackRequest<Resources> request = heatClient.getResources().listResources(stackName);
+		return executeAndRecordOpenstackRequest(request);
+	}
+
+	public <R> R executeHeatClientRequest(String url, String cloudSiteId, String tenantId, Class<R> returnType) throws MsoException {
+		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId)
+				.orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
+		Heat heatClient = getHeatClient(cloudSite, tenantId);
+		OpenStackRequest<R> request = heatClient.get(url, returnType);
+		return executeAndRecordOpenstackRequest(request);
+	}
 
     protected void sleep(long time) {
     	try {
