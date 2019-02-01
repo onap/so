@@ -65,7 +65,22 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         LOGGER.debug("Starting migration for CloudConfig");
         
         CloudConfig cloudConfig = null;
-
+        
+        String tableQuery = "SELECT * FROM identity_services";
+        int totalRetries = 20;
+        boolean tableExists = false;
+        int count = 1;
+        while(!tableExists && count != totalRetries) {
+        	try(Statement stmt = connection.createStatement();) {
+            	stmt.executeQuery(tableQuery);
+            	tableExists = true;
+            } catch (SQLException e) {
+            	count++;
+            	// Wait 5 mintues
+            	Thread.sleep(300000);
+            }
+        }
+        
         // Try the override file
         String configLocation = System.getProperty("spring.config.additional-location");
         if (configLocation != null) {
