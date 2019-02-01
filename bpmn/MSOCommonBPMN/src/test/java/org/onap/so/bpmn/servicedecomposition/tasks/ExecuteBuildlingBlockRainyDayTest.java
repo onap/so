@@ -93,7 +93,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		vnf.setVnfType("vnft1");
 		delegateExecution.setVariable("aLaCarte", true);		
 		delegateExecution.setVariable("suppressRollback", false);
-
+		delegateExecution.setVariable("WorkflowExceptionCode", "7000");
 		RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
 		rainyDayHandlerStatus.setErrorCode("7000");
 		rainyDayHandlerStatus.setFlowName("AssignServiceInstanceBB");
@@ -116,7 +116,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		vnf.setVnfType("vnft1");
 		delegateExecution.setVariable("aLaCarte", true);
 		delegateExecution.setVariable("suppressRollback", false);
-		
+		delegateExecution.setVariable("WorkflowExceptionCode", ASTERISK);
 		RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
 		rainyDayHandlerStatus.setErrorCode(ASTERISK);
 		rainyDayHandlerStatus.setFlowName("AssignServiceInstanceBB");
@@ -164,7 +164,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		vnf.setVnfType("vnft1");
 		delegateExecution.setVariable("aLaCarte", true);
 		delegateExecution.setVariable("suppressRollback", false);
-		
+		delegateExecution.setVariable("WorkflowExceptionCode", "7000");
 		RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
 		rainyDayHandlerStatus.setErrorCode("7000");
 		rainyDayHandlerStatus.setFlowName("AssignServiceInstanceBB");
@@ -188,7 +188,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		vnf.setVnfType("vnft1");
 		delegateExecution.setVariable("aLaCarte", false);
 		delegateExecution.setVariable("suppressRollback", false);
-		
+		delegateExecution.setVariable("WorkflowExceptionCode", "7000");
 		RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
 		rainyDayHandlerStatus.setErrorCode("7000");
 		rainyDayHandlerStatus.setFlowName("AssignServiceInstanceBB");
@@ -212,7 +212,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		vnf.setVnfType("vnft1");
 		delegateExecution.setVariable("aLaCarte", true);
 		delegateExecution.setVariable("suppressRollback", false);
-		
+		delegateExecution.setVariable("WorkflowExceptionCode", "7000");
 		RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
 		rainyDayHandlerStatus.setErrorCode("7000");
 		rainyDayHandlerStatus.setFlowName("AssignServiceInstanceBB");

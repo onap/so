@@ -40,18 +40,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ExecuteBuildingBlockRainyDay {
-	
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExecuteBuildingBlockRainyDay.class);
+
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,
+			ExecuteBuildingBlockRainyDay.class);
 	public static final String HANDLING_CODE = "handlingCode";
-	
+
 	@Autowired
 	private CatalogDbClient catalogDbClient;
 	@Autowired
 	private RequestsDbClient requestDbclient;
 	private static final String ASTERISK = "*";
-	
+
 	@Autowired
-    private Environment environment;
+	private Environment environment;
 	protected String retryDurationPath = "mso.rainyDay.retryDurationMultiplier";
 	protected String defaultCode = "mso.rainyDay.defaultCode";
 
@@ -67,7 +68,7 @@ public class ExecuteBuildingBlockRainyDay {
 			throw new BpmnError("Unknown error incrementing retry counter");
 		}
 	}
-	
+
 	public void queryRainyDayTable(DelegateExecution execution, boolean primaryPolicy) {
 		try {
 			ExecuteBuildingBlock ebb = (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
@@ -79,18 +80,20 @@ public class ExecuteBuildingBlockRainyDay {
 			boolean aLaCarte = (boolean) execution.getVariable("aLaCarte");
 			boolean suppressRollback = (boolean) execution.getVariable("suppressRollback");
 			String handlingCode = "";
-			if(suppressRollback){
+			if (suppressRollback) {
 				handlingCode = "Abort";
-			}else{
+			} else {
 				try {
-					serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0).getModelInfoServiceInstance().getServiceType();
+					serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
+							.getModelInfoServiceInstance().getServiceType();
 				} catch (Exception ex) {
 					// keep default serviceType value
 				}
 				String vnfType = ASTERISK;
 				try {
-					for(GenericVnf vnf : gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0).getVnfs()) {
-						if(vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
+					for (GenericVnf vnf : gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
+							.getVnfs()) {
+						if (vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
 							vnfType = vnf.getVnfType();
 						}
 					}
@@ -104,58 +107,78 @@ public class ExecuteBuildingBlockRainyDay {
 				} catch (Exception ex) {
 					// keep default errorCode value
 				}
+				try {
+					errorCode = "" + (String) execution.getVariable("WorkflowExceptionCode");
+				} catch (Exception ex) {
+					// keep default errorCode value
+				}
+
 				String workStep = ASTERISK;
 				try {
 					workStep = workflowException.getWorkStep();
 				} catch (Exception ex) {
 					// keep default workStep value
 				}
-				//Extract error data to be returned to WorkflowAction
-				execution.setVariable("WorkflowExceptionErrorMessage", workflowException.getErrorMessage());
+				
+				try {
+					// Extract error data to be returned to WorkflowAction
+					execution.setVariable("WorkflowExceptionErrorMessage", workflowException.getErrorMessage());
+				} catch (Exception e) {
+					msoLogger.error("No WorkflowException Found",e);
+				}
 				RainyDayHandlerStatus rainyDayHandlerStatus;
-				rainyDayHandlerStatus = catalogDbClient.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,serviceType,vnfType,errorCode,workStep);
-				if(rainyDayHandlerStatus==null){
-					rainyDayHandlerStatus = catalogDbClient.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,ASTERISK,ASTERISK,ASTERISK,ASTERISK);
-					if(rainyDayHandlerStatus==null){
+				rainyDayHandlerStatus = catalogDbClient
+						.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
+								serviceType, vnfType, errorCode, workStep);
+				if (rainyDayHandlerStatus == null) {
+					rainyDayHandlerStatus = catalogDbClient
+							.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
+									ASTERISK, ASTERISK, errorCode, ASTERISK);
+				}
+				
+				if (rainyDayHandlerStatus == null) {
+					rainyDayHandlerStatus = catalogDbClient
+							.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
+									ASTERISK, ASTERISK, ASTERISK, ASTERISK);
+					if (rainyDayHandlerStatus == null) {
 						handlingCode = "Abort";
-					}else{
-						if(primaryPolicy){
+					} else {
+						if (primaryPolicy) {
 							handlingCode = rainyDayHandlerStatus.getPolicy();
-						}else{
+						} else {
 							handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
 						}
 					}
-				}else{
-					if(primaryPolicy){
+				} else {
+					if (primaryPolicy) {
 						handlingCode = rainyDayHandlerStatus.getPolicy();
-					}else{
+					} else {
 						handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
 					}
 				}
-				if(!primaryPolicy){
-					try{
+				if (!primaryPolicy) {
+					try {
 						InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
 						request.setRetryStatusMessage("Retries have been exhausted.");
 						requestDbclient.updateInfraActiveRequests(request);
-					} catch(Exception ex){
-						msoLogger.debug(ex.toString());
-						msoLogger.error("Failed to update Request Db Infra Active Requests with Retry Status");
+					} catch (Exception ex) {
+						msoLogger.error("Failed to update Request Db Infra Active Requests with Retry Status",ex);
 					}
 				}
-				if(handlingCode.equals("RollbackToAssigned")&&!aLaCarte){
+				if (handlingCode.equals("RollbackToAssigned") && !aLaCarte) {
 					handlingCode = "Rollback";
 				}
 			}
 			msoLogger.debug("RainyDayHandler Status Code is: " + handlingCode);
 			execution.setVariable(HANDLING_CODE, handlingCode);
 		} catch (Exception e) {
-			msoLogger.error("Failed to determine RainyDayHandler Status. Seting handlingCode = Abort");
+			msoLogger.error("Failed to determine RainyDayHandler Status. Seting handlingCode = Abort", e);
 			String code = this.environment.getProperty(defaultCode);
 			execution.setVariable(HANDLING_CODE, code);
 		}
 	}
-	
-	public void setHandlingStatusSuccess(DelegateExecution execution){
+
+	public void setHandlingStatusSuccess(DelegateExecution execution) {
 		execution.setVariable(HANDLING_CODE, "Success");
 	}
 }

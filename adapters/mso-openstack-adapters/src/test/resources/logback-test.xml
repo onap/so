@@ -41,7 +41,11 @@
     <appender-ref ref="STDOUT" />
   </logger> 
   
-    <logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
+ <logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+  
+   <logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger> 
 
