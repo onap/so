@@ -19,6 +19,7 @@
  */
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -47,6 +48,8 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
@@ -268,9 +271,17 @@ public class AAICreateTasksTest extends BaseTaskTest{
 
 	@Test
 	public void createVfModuleTest() throws Exception {
-		doNothing().when(aaiVfModuleResources).createVfModule(vfModule, genericVnf);
+		
+		VfModule newVfModule = setVfModule(false);
+		newVfModule.setModuleIndex(null);
+		newVfModule.getModelInfoVfModule().setModelInvariantUUID("testModelInvariantUUID1");
+		doNothing().when(aaiVfModuleResources).createVfModule(newVfModule, genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(newVfModule);
+
+		assertEquals(null, newVfModule.getModuleIndex());
 		aaiCreateTasks.createVfModule(execution);
-		verify(aaiVfModuleResources, times(1)).createVfModule(vfModule, genericVnf);
+		assertEquals(1, newVfModule.getModuleIndex().intValue());
+		verify(aaiVfModuleResources, times(1)).createVfModule(newVfModule, genericVnf);
 	}
 
 	@Test
@@ -444,5 +455,75 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		doNothing().when(aaiVnfResources).connectVnfToTenant(genericVnf, gBBInput.getCloudRegion());
 		aaiCreateTasks.connectVnfToTenant(execution);
 		verify(aaiVnfResources, times(1)).connectVnfToTenant(genericVnf, gBBInput.getCloudRegion());
+	}
+	@Test
+	public void createVfModuleGetLowestIndexTest() throws Exception {
+		GenericVnf vnf = new GenericVnf();
+		ModelInfoGenericVnf vnfInfo = new ModelInfoGenericVnf();
+		vnf.setModelInfoGenericVnf(vnfInfo);
+		vnfInfo.setModelInvariantUuid("my-uuid");
+		
+		ModelInfoVfModule infoA = new ModelInfoVfModule();
+		infoA.setIsBaseBoolean(false);
+		infoA.setModelInvariantUUID("A");
+
+		ModelInfoVfModule infoB = new ModelInfoVfModule();
+		infoB.setIsBaseBoolean(false);
+		infoB.setModelInvariantUUID("B");
+		
+		ModelInfoVfModule infoC = new ModelInfoVfModule();
+		infoB.setIsBaseBoolean(false);
+		infoB.setModelInvariantUUID("C");
+
+		VfModule newVfModuleA = new VfModule();
+		VfModule newVfModuleB = new VfModule();
+		VfModule newVfModuleC = new VfModule();
+		
+		VfModule vfModule = new VfModule();
+		vnf.getVfModules().add(vfModule);
+
+		VfModule vfModule2 = new VfModule();
+		vnf.getVfModules().add(vfModule2);
+
+		VfModule vfModule3 = new VfModule();
+		vnf.getVfModules().add(vfModule3);
+
+		VfModule vfModule4 = new VfModule();
+		vnf.getVfModules().add(vfModule4);
+
+		VfModule vfModule5 = new VfModule();
+		vnf.getVfModules().add(vfModule5);
+		
+		//A
+		newVfModuleA.setModelInfoVfModule(infoA);
+		vfModule.setModelInfoVfModule(infoA);
+		vfModule2.setModelInfoVfModule(infoA);
+		vfModule3.setModelInfoVfModule(infoA);
+
+		//B
+		newVfModuleB.setModelInfoVfModule(infoB);
+		vfModule4.setModelInfoVfModule(infoB);
+		vfModule5.setModelInfoVfModule(infoB);
+
+		//C
+		newVfModuleC.setModelInfoVfModule(infoC);
+
+		
+		//A
+		vfModule.setModuleIndex(2);
+		vfModule2.setModuleIndex(0);
+		vfModule3.setModuleIndex(3);
+		
+		//B
+		vfModule4.setModuleIndex(0);
+		vfModule5.setModuleIndex(1);
+
+		assertEquals(aaiCreateTasks.getLowestUnusedVfModuleIndexFromAAIVnfResponse(vnf, newVfModuleA), 1);
+
+		assertEquals(aaiCreateTasks.getLowestUnusedVfModuleIndexFromAAIVnfResponse(vnf, newVfModuleB), 2);
+		
+		assertEquals(aaiCreateTasks.getLowestUnusedVfModuleIndexFromAAIVnfResponse(vnf, newVfModuleC), 0);
+
+		
 	}
 }

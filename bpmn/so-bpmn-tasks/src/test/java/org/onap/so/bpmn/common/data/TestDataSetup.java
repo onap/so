@@ -516,7 +516,7 @@ public class TestDataSetup{
 		VfModule vfModule = new VfModule();
 		vfModule.setVfModuleId("testVfModuleId" + vfModuleCounter);
 		vfModule.setVfModuleName("testVfModuleName" + vfModuleCounter);
-
+		vfModule.setModuleIndex(0);
 		ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
 		modelInfoVfModule.setModelInvariantUUID("testModelInvariantUUID" + vfModuleCounter);
 		modelInfoVfModule.setModelVersion("testModelVersion" + vfModuleCounter);
@@ -529,6 +529,10 @@ public class TestDataSetup{
 	}
 
 	public VfModule setVfModule() {
+		return setVfModule(true);
+	}
+	
+	public VfModule setVfModule(boolean addToGenericVnf) {
 		VfModule vfModule = buildVfModule();
 
 		GenericVnf genericVnf = null;
@@ -539,7 +543,9 @@ public class TestDataSetup{
 			genericVnf = setGenericVnf();
 		}
 
-		genericVnf.getVfModules().add(vfModule);
+		if (addToGenericVnf) {
+			genericVnf.getVfModules().add(vfModule);
+		}
 		lookupKeyMap.put(ResourceKey.VF_MODULE_ID, vfModule.getVfModuleId());
 
 		return vfModule;

@@ -21,12 +21,11 @@
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -53,7 +52,6 @@ import org.onap.so.client.orchestration.AAIVfModuleResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.client.orchestration.AAIVolumeGroupResources;
 import org.onap.so.client.orchestration.AAIVpnBindingResources;
-import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -233,6 +231,11 @@ public class AAICreateTasks {
 		try {
 			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			int moduleIndex = 0;
+			if (vfModule.getModelInfoVfModule() != null && !Boolean.TRUE.equals(vfModule.getModelInfoVfModule().getIsBaseBoolean())) {
+				moduleIndex = this.getLowestUnusedVfModuleIndexFromAAIVnfResponse(vnf, vfModule);
+			}
+			vfModule.setModuleIndex(moduleIndex);
 			aaiVfModuleResources.createVfModule(vfModule, vnf);
 		} catch (Exception ex) {			
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -430,6 +433,42 @@ public class AAICreateTasks {
 			aaiConfigurationResources.createConfiguration(configuration);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	/**
+	 * Groups existing vf modules by the model uuid of our new vf module and returns the lowest unused index
+	 * 
+	 * if we have a module type A, and there are 3 instances of those, 
+	 * and then module type B has 2 instances, if we are adding a new module type A, 
+	 * the vf-module-index should be 3 assuming contiguous indices (not 5, or 2)
+	 * 
+	 */
+	protected int getLowestUnusedVfModuleIndexFromAAIVnfResponse(GenericVnf genericVnf, VfModule newVfModule) {
+		
+		String newVfModuleModelInvariantUUID = null;
+		if (newVfModule.getModelInfoVfModule() != null) {
+			newVfModuleModelInvariantUUID = newVfModule.getModelInfoVfModule().getModelInvariantUUID();
+		}
+		
+		
+		if (genericVnf != null && genericVnf.getVfModules() != null && !genericVnf.getVfModules().isEmpty()) {
+			Set<Integer> moduleIndices = new TreeSet<>();
+			for (VfModule vfModule : genericVnf.getVfModules()) {
+				if (vfModule.getModelInfoVfModule() != null) {
+					if (vfModule.getModelInfoVfModule().getModelInvariantUUID().equals(newVfModuleModelInvariantUUID)) {
+						moduleIndices.add(vfModule.getModuleIndex());
+					}
+				}
+			}
+			Object[] array = moduleIndices.toArray();
+			for (int i=0; i < array.length; i++) {
+				if ((int) array[i] != i) {
+					return i;
+				}
+			}
+			return array.length;
+		} else {
+			return 0;
 		}
 	}
 }
