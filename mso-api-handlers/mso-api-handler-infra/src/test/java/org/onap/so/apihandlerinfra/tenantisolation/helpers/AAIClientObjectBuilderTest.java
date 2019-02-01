@@ -35,7 +35,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AAIClientObjectBuilderTest extends BaseTest{
 
-	private String expectedAAIObject = "{\"operational-environment-name\":\"TEST_ECOMP_ENVIRONMENT\",\"operational-environment-type\":\"ECOMP\",\"operational-environment-status\":\"Active\",\"tenant-context\":\"TEST\",\"workload-context\":\"ECOMP_TEST\"}";
 	private CloudOrchestrationRequest request;
 	private ObjectMapper mapper = new ObjectMapper();
 	
@@ -62,8 +61,12 @@ public class AAIClientObjectBuilderTest extends BaseTest{
 	@Test
 	public void testGetAaiClientObjectBuilder() throws Exception {
 		AAIClientObjectBuilder builder = new AAIClientObjectBuilder();
-		assertEquals(expectedAAIObject, mapper.writeValueAsString(builder.buildAAIOperationalEnvironment("Active", request)));
+		org.onap.aai.domain.yang.OperationalEnvironment operEnv = builder.buildAAIOperationalEnvironment("Active", request);
+		assertEquals("TEST", operEnv.getTenantContext());
+		assertEquals("ECOMP_TEST", operEnv.getWorkloadContext());
+		assertEquals("TEST_ECOMP_ENVIRONMENT", operEnv.getOperationalEnvironmentName());
+		assertEquals(OperationalEnvironment.ECOMP.toString(), operEnv.getOperationalEnvironmentType());
 	}
-	
-	
+
+
 }

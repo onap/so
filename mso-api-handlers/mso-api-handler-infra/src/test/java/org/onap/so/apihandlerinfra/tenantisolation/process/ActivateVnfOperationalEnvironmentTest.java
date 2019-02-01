@@ -42,6 +42,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
@@ -54,7 +55,6 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.RecoveryAction;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Manifest;
 import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.onap.so.client.aai.objects.AAIOperationalEnvironment;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -99,16 +99,17 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest{
 	@Test
 	public void getAAIOperationalEnvironmentTest() {
 
-		AAIOperationalEnvironment aaiOpEnv;
+		OperationalEnvironment aaiOpEnv;
 
 		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironmentWithRelationship.json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		AAIResultWrapper wrapper = clientHelper.getAaiOperationalEnvironment("EMOE-001");
-		aaiOpEnv = wrapper.asBean(AAIOperationalEnvironment.class).get();
+		aaiOpEnv = wrapper.asBean(OperationalEnvironment.class).get();
 		assertEquals("EMOE-001", aaiOpEnv.getOperationalEnvironmentId());			
+		assertEquals("1dfe7154-eae0-44f2-8e7a-8e5e7882e55d", aaiOpEnv.getRelationshipList().getRelationship().get(0).getRelationshipData().get(0).getRelationshipValue());
 		assertNotNull(activateVnf.getAAIOperationalEnvironment(operationalEnvironmentId));	
-		assertEquals( "EMOE-001", activateVnf.getAAIOperationalEnvironment(operationalEnvironmentId).getOperationalEnvironmentId());		
+		assertEquals( "EMOE-001", activateVnf.getAAIOperationalEnvironment(operationalEnvironmentId).asBean(OperationalEnvironment.class).get().getOperationalEnvironmentId());		
 		
 	}	
 		
@@ -138,7 +139,7 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest{
 		jsonObject.put("distributionId", sdcDistributionId);
 		
 		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironmentWithRelationship.json").withStatus(HttpStatus.SC_ACCEPTED)));
 		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
 		activateVnf.execute(requestId, request);

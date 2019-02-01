@@ -41,10 +41,10 @@ import java.util.Optional;
 
 import org.apache.http.HttpStatus;
 import org.junit.Test;
+import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.onap.so.client.aai.objects.AAIOperationalEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -60,7 +60,7 @@ public class AAIClientHelperTest extends BaseTest{
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		AAIResultWrapper wrapper = clientHelper.getAaiOperationalEnvironment("EMOE-001");
-		Optional<AAIOperationalEnvironment> aaiOpEnv = wrapper.asBean(AAIOperationalEnvironment.class);
+		Optional<OperationalEnvironment> aaiOpEnv = wrapper.asBean(OperationalEnvironment.class);
 		assertEquals("EMOE-001", aaiOpEnv.get().getOperationalEnvironmentId());
 	}
 	
@@ -69,13 +69,13 @@ public class AAIClientHelperTest extends BaseTest{
 		stubFor(post(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
-		AAIOperationalEnvironment ecompEnv = new AAIOperationalEnvironment();
+		OperationalEnvironment ecompEnv = new OperationalEnvironment();
 		ecompEnv.setTenantContext("Test");
 		ecompEnv.setWorkloadContext("ECOMPL_PSL");
 		
 		try {
 			AAIClientHelper clientHelper = mock(AAIClientHelper.class);
-			doNothing().when(clientHelper).updateAaiOperationalEnvironment(any(String.class), any(AAIOperationalEnvironment.class));
+			doNothing().when(clientHelper).updateAaiOperationalEnvironment(any(String.class), any(OperationalEnvironment.class));
 			clientHelper.updateAaiOperationalEnvironment("EMOE-001", ecompEnv);
 			
 			verify(clientHelper, times(1)).updateAaiOperationalEnvironment("EMOE-001", ecompEnv);
@@ -109,14 +109,14 @@ public class AAIClientHelperTest extends BaseTest{
 		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
-		AAIOperationalEnvironment ecompEnv = new AAIOperationalEnvironment();
+		OperationalEnvironment ecompEnv = new OperationalEnvironment();
 		ecompEnv.setOperationalEnvironmentId("opeEvnId");
 		ecompEnv.setTenantContext("Test");
 		ecompEnv.setWorkloadContext("ECOMPL_PSL");
 		
 		try {
 			AAIClientHelper clientHelper = mock(AAIClientHelper.class);
-			doNothing().when(clientHelper).createOperationalEnvironment(any(AAIOperationalEnvironment.class));
+			doNothing().when(clientHelper).createOperationalEnvironment(any(OperationalEnvironment.class));
 			clientHelper.createOperationalEnvironment(ecompEnv);
 			
 			verify(clientHelper, times(1)).createOperationalEnvironment(ecompEnv);
@@ -130,7 +130,7 @@ public class AAIClientHelperTest extends BaseTest{
 		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
-		AAIOperationalEnvironment ecompEnv = new AAIOperationalEnvironment();
+		OperationalEnvironment ecompEnv = new OperationalEnvironment();
 		ecompEnv.setTenantContext("Test");
 		ecompEnv.setWorkloadContext("ECOMPL_PSL");
 		

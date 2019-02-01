@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
@@ -31,7 +32,6 @@ import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.onap.so.client.aai.objects.AAIOperationalEnvironment;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
@@ -51,7 +51,7 @@ public class DeactivateVnfOperationalEnvironment {
 	public void execute(String requestId, CloudOrchestrationRequest request) throws ApiException {
 		String operationalEnvironmentId = request.getOperationalEnvironmentId();
 		
-		AAIOperationalEnvironment aaiOpEnv = getAAIOperationalEnvironment(operationalEnvironmentId);
+		OperationalEnvironment aaiOpEnv = getAAIOperationalEnvironment(operationalEnvironmentId);
 		if (aaiOpEnv != null) {
 			String operationalEnvironmentStatus = aaiOpEnv.getOperationalEnvironmentStatus();
 	
@@ -81,9 +81,9 @@ public class DeactivateVnfOperationalEnvironment {
 		}
 	}
 	
-	private AAIOperationalEnvironment getAAIOperationalEnvironment(String operationalEnvironmentId) {
+	private OperationalEnvironment getAAIOperationalEnvironment(String operationalEnvironmentId) {
 		AAIResultWrapper aaiResult = aaiHelper.getAaiOperationalEnvironment(operationalEnvironmentId);
-		Optional<AAIOperationalEnvironment> operationalEnvironmentOpt = aaiResult.asBean(AAIOperationalEnvironment.class);
+		Optional<OperationalEnvironment> operationalEnvironmentOpt = aaiResult.asBean(OperationalEnvironment.class);
 		return operationalEnvironmentOpt.isPresent() ? operationalEnvironmentOpt.get() : null;
 	}
 }

@@ -1,0 +1,27 @@
+{
+	"operational-environment-id": "EMOE-001",
+	"operational-environment-name": "Test Managing ECOMP Environment",
+	"operational-environment-type": "ECOMP",
+	"operational-environment-status": "ACTIVE",
+	"tenant-context": "Test",
+	"workload-context": "PVT",
+	"resource-version": "1505228226913",
+	"relationship-list": {
+		"relationship": [{
+				"related-to": "operational-environment",
+				"relationship-label": "org.onap.relationships.inventory.Uses",
+				"related-link": "/aai/v13/cloud-infrastructure/operational-environments/operational-environment/1dfe7154-eae0-44f2-8e7a-8e5e7882e55d",
+				"relationship-data": [{
+						"relationship-key": "operational-environment.operational-environment-id",
+						"relationship-value": "1dfe7154-eae0-44f2-8e7a-8e5e7882e55d"
+					}
+				],
+				"related-to-property": [{
+						"property-key": "operational-environment.operational-environment-name",
+						"property-value": "myOpEnv_IST_un577h_0119"
+					}
+				]
+			}
+		]
+	}
+}

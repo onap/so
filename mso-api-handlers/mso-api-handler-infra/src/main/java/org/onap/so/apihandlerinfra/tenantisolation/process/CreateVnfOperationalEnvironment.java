@@ -27,6 +27,7 @@ import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
@@ -37,7 +38,6 @@ import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientObjectBuilder;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RelatedInstanceList;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.onap.so.client.aai.objects.AAIOperationalEnvironment;
 import org.onap.so.client.grm.GRMClient;
 import org.onap.so.client.grm.beans.OperationalInfo;
 import org.onap.so.client.grm.beans.Property;
@@ -75,7 +75,7 @@ public class CreateVnfOperationalEnvironment {
 			if (aaiResultWrapper.isEmpty()) {
 				throw new NotFoundException(getEcompManagingEnvironmentId() + " not found in A&AI");
 			}
-			AAIOperationalEnvironment aaiEnv = objectMapper.readValue(aaiResultWrapper.getJson(), AAIOperationalEnvironment.class);
+			OperationalEnvironment aaiEnv = aaiResultWrapper.asBean(OperationalEnvironment.class).get();
 
 			//Find ECOMP environments in GRM
 			msoLogger.debug(" Start of GRM findRunningServicesAsString");
@@ -209,7 +209,7 @@ public class CreateVnfOperationalEnvironment {
 		return tenantContext + "." + workloadContext + "." + serviceName;
 	}
 	
-	protected String getSearchKey(AAIOperationalEnvironment aaiEnv)  {
+	protected String getSearchKey(OperationalEnvironment aaiEnv)  {
 		return aaiEnv.getTenantContext() + "." + aaiEnv.getWorkloadContext() + ".*";
 	}
 

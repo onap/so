@@ -63,7 +63,6 @@ public class BeansTest {
 
 	@Test
 	public void pojoStructure() {	
-		test("org.onap.so.client.aai.objects");	
 		test("org.onap.so.client.policy.entities");
 		test("org.onap.so.client.grm.beans");
 		test("org.onap.so.client.ruby.beans");

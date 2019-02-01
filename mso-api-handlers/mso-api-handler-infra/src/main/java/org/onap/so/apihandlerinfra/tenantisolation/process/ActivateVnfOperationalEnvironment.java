@@ -21,11 +21,16 @@
 package org.onap.so.apihandlerinfra.tenantisolation.process;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
+import org.onap.aai.domain.yang.OperationalEnvironment;
+import org.onap.aai.domain.yang.RelationshipList;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
@@ -36,8 +41,10 @@ import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.ActivateVnfDBHelper;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.SDCClientHelper;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.ServiceModelList;
+import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.onap.so.client.aai.objects.AAIOperationalEnvironment;
+import org.onap.so.client.aai.entities.Relationships;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.onap.so.logger.MessageEnum;
@@ -54,6 +61,7 @@ public class ActivateVnfOperationalEnvironment {
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, ActivateVnfOperationalEnvironment.class);
 	private static final int DEFAULT_ACTIVATE_RETRY_COUNT = 3;
 	private static final String DISTRIBUTION_STATUS_SENT = "SENT";	
+	private static final String OPER_ENVIRONMENT_ID_KEY = "operational-environment-id";
 	
 	@Autowired
 	private ActivateVnfDBHelper dbHelper;	
@@ -77,24 +85,39 @@ public class ActivateVnfOperationalEnvironment {
 	 * @return void - nothing
 	 */		
 	public void execute(String requestId, CloudOrchestrationRequest request) throws ApiException{
-		String operationalEnvironmentId = request.getOperationalEnvironmentId();
+		String vnfOperationalEnvironmentId = request.getOperationalEnvironmentId();
 
 		String vidWorkloadContext = request.getRequestDetails().getRequestParameters().getWorkloadContext();
 		List<ServiceModelList> serviceModelVersionIdList = request.getRequestDetails().getRequestParameters().getManifest().getServiceModelList();
-			
+		
+		String ecompOperationalEnvironmentId = null;
+		AAIResultWrapper wrapper = getAAIOperationalEnvironment(vnfOperationalEnvironmentId);
+		Optional<Relationships> optRelationships = wrapper.getRelationships();
+		if (optRelationships.isPresent()) {
+		   Relationships relationships = optRelationships.get();
+		   List<AAIResourceUri> operationalEnvironments = relationships.getRelatedAAIUris(AAIObjectType.OPERATIONAL_ENVIRONMENT);
+		   if (!operationalEnvironments.isEmpty()) {
+			   ecompOperationalEnvironmentId = operationalEnvironments.get(0).getURIKeys().get(OPER_ENVIRONMENT_ID_KEY);
+		   }
+		}
+		msoLogger.debug("  vnfOperationalEnvironmentId   : " + vnfOperationalEnvironmentId);		
+		msoLogger.debug("  ecompOperationalEnvironmentId : " + ecompOperationalEnvironmentId);
 
-		AAIOperationalEnvironment operationalEnv = getAAIOperationalEnvironment(operationalEnvironmentId);
+		OperationalEnvironment operationalEnv = wrapper.asBean(OperationalEnvironment.class).get();
 		String workloadContext = operationalEnv.getWorkloadContext();
 		msoLogger.debug("  aai workloadContext: " + workloadContext);
 		if (!vidWorkloadContext.equals(workloadContext)) {
-
-
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
 			throw new ValidateException.Builder(" The vid workloadContext did not match from aai record. " + " vid workloadContext:" + vidWorkloadContext + " aai workloadContext:" + workloadContext,
 					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
 		}
+		if (ecompOperationalEnvironmentId==null) {
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
+			throw new ValidateException.Builder(" The ECOMP OE was not in aai record; the value of relationship.relationship-data key: " + OPER_ENVIRONMENT_ID_KEY,
+					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+		}		
 
-			processActivateSDCRequest(requestId, operationalEnvironmentId, serviceModelVersionIdList, workloadContext);
+		processActivateSDCRequest(requestId, ecompOperationalEnvironmentId, serviceModelVersionIdList, workloadContext);
 
 	}	
 	
@@ -171,9 +194,8 @@ public class ActivateVnfOperationalEnvironment {
 	 * @param  operationalEnvironmentId - String 
 	 * @return operationalEnv - AAIOperationalEnvironment object
 	 */
-	public AAIOperationalEnvironment getAAIOperationalEnvironment(String operationalEnvironmentId) {
-		AAIResultWrapper aaiResult = aaiHelper.getAaiOperationalEnvironment(operationalEnvironmentId);
-		return aaiResult.asBean(AAIOperationalEnvironment.class).orElse(new AAIOperationalEnvironment());		
+	public AAIResultWrapper getAAIOperationalEnvironment(String operationalEnvironmentId) {
+		return aaiHelper.getAaiOperationalEnvironment(operationalEnvironmentId);
 	}
 
 }

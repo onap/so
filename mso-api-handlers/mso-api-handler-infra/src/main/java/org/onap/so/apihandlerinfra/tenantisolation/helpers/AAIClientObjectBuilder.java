@@ -20,15 +20,15 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation.helpers;
 
+import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
-import org.onap.so.client.aai.objects.AAIOperationalEnvironment;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AAIClientObjectBuilder {
 	
-	public AAIOperationalEnvironment buildAAIOperationalEnvironment(String status, CloudOrchestrationRequest cloudOrchestrationRequest) {
-		AAIOperationalEnvironment env = new AAIOperationalEnvironment();
+	public OperationalEnvironment buildAAIOperationalEnvironment(String status, CloudOrchestrationRequest cloudOrchestrationRequest) {
+		OperationalEnvironment env = new OperationalEnvironment();
 		env.setOperationalEnvironmentId(cloudOrchestrationRequest.getOperationalEnvironmentId());
 		env.setOperationalEnvironmentName(cloudOrchestrationRequest.getRequestDetails().getRequestInfo().getInstanceName());
 		env.setOperationalEnvironmentType(cloudOrchestrationRequest.getRequestDetails().getRequestParameters().getOperationalEnvironmentType().toString());

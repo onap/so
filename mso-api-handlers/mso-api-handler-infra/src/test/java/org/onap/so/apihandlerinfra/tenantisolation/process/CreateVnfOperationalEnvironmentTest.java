@@ -32,11 +32,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
 import org.onap.so.client.aai.AAIVersion;
-import org.onap.so.client.aai.objects.AAIOperationalEnvironment;
 import org.onap.so.client.grm.beans.Property;
 import org.onap.so.client.grm.beans.ServiceEndPointList;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -102,7 +102,7 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 	@Test
 	public void testGetSearchKey() {
 		createVnfOpEnv.setRequest(request);
-		AAIOperationalEnvironment ecompEnv = new AAIOperationalEnvironment();
+		OperationalEnvironment ecompEnv = new OperationalEnvironment();
 		ecompEnv.setTenantContext("Test");
 		ecompEnv.setWorkloadContext("ECOMPL_PSL");
 		assertEquals("Test.ECOMPL_PSL.*", createVnfOpEnv.getSearchKey(ecompEnv));
