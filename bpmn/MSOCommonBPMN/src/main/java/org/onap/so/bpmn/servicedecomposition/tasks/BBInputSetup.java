@@ -107,6 +107,7 @@ public class BBInputSetup implements JavaDelegate {
 	private static final String NETWORK = "Network";
 	private static final String VNF = "Vnf";
 	private static final String NETWORK_COLLECTION = "NetworkCollection";
+	private static final String PREPROV = "PREPROV";
 
 	@Autowired
 	private BBInputSetupUtils bbInputSetupUtils;
@@ -273,10 +274,11 @@ public class BBInputSetup implements JavaDelegate {
 			throws Exception {
 		ModelInfo modelInfo = requestDetails.getModelInfo();
 		String instanceName = requestDetails.getRequestInfo().getInstanceName();
+		String productFamilyId = requestDetails.getRequestInfo().getProductFamilyId();
 		ModelType modelType = modelInfo.getModelType();
 		RelatedInstanceList[] relatedInstanceList = requestDetails.getRelatedInstanceList();
 
-		org.onap.so.serviceinstancebeans.Platform platform = requestDetails.getPlatform();
+		org.onap.so.serviceinstancebeans.Platform platform = requestDetails.getPlatform();		
 		org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness = requestDetails.getLineOfBusiness();
 
 		if (modelType.equals(ModelType.network)) {
@@ -285,7 +287,7 @@ public class BBInputSetup implements JavaDelegate {
 		} else if (modelType.equals(ModelType.vnf)) {
 			lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, resourceId);
 			this.populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness, service, bbName, serviceInstance,
-					lookupKeyMap, relatedInstanceList, resourceId, vnfType, null);
+					lookupKeyMap, relatedInstanceList, resourceId, vnfType, null, productFamilyId);
 		} else if (modelType.equals(ModelType.volumeGroup)) {
 			lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, resourceId);
 			this.populateVolumeGroup(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
@@ -579,7 +581,8 @@ public class BBInputSetup implements JavaDelegate {
 			org.onap.so.serviceinstancebeans.Platform platform,
 			org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness, Service service, String bbName,
 			ServiceInstance serviceInstance, Map<ResourceKey, String> lookupKeyMap,
-			RelatedInstanceList[] relatedInstanceList, String resourceId, String vnfType, List<Map<String, String>> instanceParams) {
+			RelatedInstanceList[] relatedInstanceList, String resourceId, String vnfType, List<Map<String, String>> instanceParams,
+			String productFamilyId) {
 		GenericVnf vnf = null;
 		ModelInfo instanceGroupModelInfo = null;
 		String instanceGroupId = null;
@@ -607,7 +610,7 @@ public class BBInputSetup implements JavaDelegate {
 		}
 		if (vnf == null && bbName.equalsIgnoreCase(AssignFlows.VNF.toString())) {
 			vnf = createGenericVnf(lookupKeyMap, instanceName, platform, lineOfBusiness,
-					resourceId, generatedVnfType, instanceParams);
+					resourceId, generatedVnfType, instanceParams, productFamilyId);
 			serviceInstance.getVnfs().add(vnf);
 			mapVnfcCollectionInstanceGroup(vnf, modelInfo, service);
 		}
@@ -658,13 +661,16 @@ public class BBInputSetup implements JavaDelegate {
 
 	protected GenericVnf createGenericVnf(Map<ResourceKey, String> lookupKeyMap, String instanceName,
 			org.onap.so.serviceinstancebeans.Platform platform,
-			org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness, String vnfId, String vnfType, List<Map<String, String>> instanceParams) {
+			org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness, String vnfId, String vnfType, List<Map<String, String>> instanceParams,
+			String productFamilyId) {
 		lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, vnfId);
 		GenericVnf genericVnf = new GenericVnf();
 		genericVnf.setVnfId(vnfId);
 		genericVnf.setVnfName(instanceName);
 		genericVnf.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 		genericVnf.setVnfType(vnfType);
+		genericVnf.setProvStatus(PREPROV);
+		genericVnf.setServiceId(productFamilyId);
 		if (platform != null) {
 			genericVnf.setPlatform(this.mapperLayer.mapRequestPlatform(platform));
 		}
@@ -1169,8 +1175,10 @@ public class BBInputSetup implements JavaDelegate {
 			if (request != null) {
 				this.bbInputSetupUtils.updateInfraActiveRequestVnfId(request, vnfId);
 			}
+			String productFamilyId = requestDetails.getRequestInfo().getProductFamilyId();
 			this.populateGenericVnf(vnfs.getModelInfo(), vnfs.getInstanceName(), vnfs.getPlatform(),
-					vnfs.getLineOfBusiness(), service, bbName, serviceInstance, lookupKeyMap, null, vnfId, vnfType, vnfs.getInstanceParams());
+					vnfs.getLineOfBusiness(), service, bbName, serviceInstance, lookupKeyMap, null, vnfId, vnfType, vnfs.getInstanceParams(),
+					productFamilyId);
 		} else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP)) {
 			Pair<Vnfs, VfModules> vnfsAndVfModules = getVfModulesAndItsVnfsByKey(key, resources);
 			vfModules = vnfsAndVfModules.getValue1();
