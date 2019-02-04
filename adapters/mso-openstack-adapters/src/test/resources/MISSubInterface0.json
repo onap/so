@@ -1,0 +1,41 @@
+{
+    "stack": {
+        "parent": "447a9b41-714e-434b-b1d0-6cce8d9f0f0c",
+        "disable_rollback": true,
+        "description": "HOT template to instantiate a single Contrail VLAN sub-interface with associated instance IP addresses and allowed address pairs\n",
+        "links": [
+            {
+                "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_mis_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81",
+                "rel": "self"
+            }
+        ],
+        "stack_status_reason": "Stack CREATE completed successfully",
+        "stack_name": "tsbc0005vm002ssc001-ssc_1_subint_mis_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y",
+        "stack_user_project_id": "dfffe8b2401b45368ca6e21f19796ce1",
+        "stack_owner": "m08699",
+        "creation_time": "2019-01-23T19:34:56Z",
+        "capabilities": [],
+        "notification_topics": [],
+        "updated_time": null,
+        "timeout_mins": 120,
+        "stack_status": "CREATE_COMPLETE",
+        "parameters": {
+            "OS::project_id": "ea2d13cc98b44d60a6f94bdcb2738f9e",
+            "port_interface": "0594a2f2-7ea4-42eb-abc2-48ea49677fca",
+            "OS::stack_id": "f711be16-2654-4a09-b89d-0511fda20e81",
+            "OS::stack_name": "tsbc0005vm002ssc001-ssc_1_subint_mis_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y",
+            "vip_v6_address": "2001:1890:1001:4a32::3",
+            "network_id": "8be20e92-68d6-4aec-ae66-0fc0fc933546",
+            "subinterface_name_prefix": "tsbc0005v_tsbc0005vm002_subint_untrusted_mis",
+            "counter": "0",
+            "mac_address": "02:05:94:a2:f2:7e",
+            "vip_address": "32.68.12.91",
+            "vlan_tag": "81",
+            "ip_address": "32.68.12.92",
+            "ip_v6_address": "2001:1890:1001:4a32::4"
+        },
+        "id": "f711be16-2654-4a09-b89d-0511fda20e81",
+        "outputs": [],
+        "template_description": "HOT template to instantiate a single Contrail VLAN sub-interface with associated instance IP addresses and allowed address pairs\n"
+    }
+}

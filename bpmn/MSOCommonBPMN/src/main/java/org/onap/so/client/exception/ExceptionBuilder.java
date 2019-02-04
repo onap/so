@@ -78,7 +78,6 @@ public class ExceptionBuilder {
 					break;
 				}
 			}
-
 			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, msg.toString());
 			execution.setVariable(errorVariable, exception.getMessage());
 		} catch (Exception ex){
@@ -107,6 +106,11 @@ public class ExceptionBuilder {
 		msoLogger.info("Outgoing WorkflowException is " + exception);
 		msoLogger.info("Throwing MSOWorkflowException");
 		throw new BpmnError("MSOWorkflowException");
+	}
+	
+	public void buildAndThrowWorkflowException(DelegateExecution execution, String errorCode, String errorMessage) {
+		execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
+		throw new BpmnError(errorCode,errorMessage);
 	}
 
 	public String getProcessKey(DelegateExecution execution) {

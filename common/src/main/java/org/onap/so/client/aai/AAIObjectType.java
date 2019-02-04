@@ -43,6 +43,7 @@ import org.onap.aai.domain.yang.ExtAaiNetwork;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.InstanceGroup;
 import org.onap.aai.domain.yang.L3Network;
+import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.LineOfBusiness;
 import org.onap.aai.domain.yang.ModelVer;
 import org.onap.aai.domain.yang.NetworkPolicy;
@@ -131,6 +132,7 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
 	public static final AAIObjectType DEVICE = new AAIObjectType(AAINamespaceConstants.NETWORK, Device.class);
 	public static final AAIObjectType EXT_AAI_NETWORK = new AAIObjectType(AAINamespaceConstants.NETWORK, ExtAaiNetwork.class);
 	public static final AAIObjectType AGGREGATE_ROUTE = new AAIObjectType(AAINamespaceConstants.NETWORK, AggregateRoute.class);
+	public static final AAIObjectType L_INTERFACE = new AAIObjectType(AAIObjectType.VSERVER.uriTemplate(), LInterface.class);
 	public static final AAIObjectType UNKNOWN = new AAIObjectType("", "", "unknown");
 
 	private final String uriTemplate;

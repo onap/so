@@ -121,6 +121,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.onap.so.adapters</groupId>
+			<artifactId>mso-adapter-utils</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.onap.sdnc.northbound</groupId>
 			<artifactId>generic-resource-api-client</artifactId>
 			<version>1.5.0-SNAPSHOT</version>

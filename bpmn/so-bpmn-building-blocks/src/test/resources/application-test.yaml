@@ -31,6 +31,10 @@ log:
     vnfAdapterCreateV1: 'true'
     vnfAdapterRestV1: 'true'
 mso:
+  infra:
+    auditInventory: true
+    customer:
+      id: testCustIdInfra
   adapters:
     completemsoprocess:
       endpoint: http://localhost:28090/CompleteMsoProcess
@@ -96,9 +100,6 @@ mso:
   healthcheck:
     log:
       debug: 'false'
-  infra:
-    customer:
-      id: testCustIdInfra
   logPath: logs
   msoKey: 07a7159d3bf51a0e53be7a8f89699be7
   po:

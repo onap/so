@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.camunda.bpm.engine.ExternalTaskService;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.extension.mockito.mock.FluentJavaDelegateMock;
@@ -50,6 +50,7 @@ import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterCreateTasks;
 import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterDeleteTasks;
 import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterImpl;
 import org.onap.so.bpmn.infrastructure.appc.tasks.AppcRunTasks;
+import org.onap.so.bpmn.infrastructure.audit.AuditTasks;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.ActivateVfModule;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetwork;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetworkBBUtils;
@@ -93,6 +94,9 @@ public abstract class BaseBPMNTest {
 	@Autowired
 	protected RuntimeService runtimeService;
 
+	@Autowired
+	protected ExternalTaskService externalTaskService;
+	
 	@Autowired
 	private RepositoryService repositoryService;
 
@@ -227,6 +231,9 @@ public abstract class BaseBPMNTest {
 	
 	@MockBean
 	protected WorkflowActionBBFailure workflowActionBBFailure;
+	
+	@MockBean
+	protected AuditTasks auditTasks;
 
 	@LocalServerPort
 	protected int port;
