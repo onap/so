@@ -1054,7 +1054,21 @@ public class ToscaResourceInstaller {
 			ToscaResourceStructure toscaResourceStructure, HeatTemplate heatTemplate, String aicMax, String aicMin,Service service) {
 		
 		NetworkResourceCustomization networkResourceCustomization=networkCustomizationRepo.findOneByModelCustomizationUUID(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
-				if(networkResourceCustomization==null){
+				
+		boolean networkUUIDsMatch = true;
+		// Check to make sure the NetworkResourceUUID on the Customization record matches the NetworkResourceUUID from the distribution.  
+		// If not we'll update the Customization record with latest from the distribution
+		if(networkResourceCustomization != null){
+			String existingNetworkModelUUID = networkResourceCustomization.getNetworkResource().getModelUUID();
+			String latestNetworkModelUUID = networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID);
+			
+			if(!existingNetworkModelUUID.equals(latestNetworkModelUUID)){
+				networkUUIDsMatch = false;
+			}
+		
+		}
+
+		if(networkResourceCustomization==null || !networkUUIDsMatch){
 			networkResourceCustomization = createNetworkResourceCustomization(networkNodeTemplate,
 					toscaResourceStructure);
 					
@@ -1066,7 +1080,8 @@ public class ToscaResourceInstaller {
 
 					networkResource.addNetworkResourceCustomization(networkResourceCustomization);		
 					networkResourceCustomization.setNetworkResource(networkResource);
-				}
+		}
+		
 		return networkResourceCustomization;
 	}
 	
