@@ -1,3 +1,5 @@
+
+
 {
     "stack": {
         "parent": "31d0647a-6043-49a4-81b6-ccab29380672",
@@ -5,12 +7,12 @@
         "description": "HOT template to instantiate a single Contrail VLAN sub-interface with associated instance IP addresses and allowed address pairs\n",
         "links": [
             {
-                "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbtsbc0005vm002ssc001-ssc_1_subint_avpn_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv/bd0fc728-cbde-4301-a581-db56f494675cc0005vm002ssc001-ssc_1_subint_avpn_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv/bd0fc728-cbde-4301-a581-db56f494675c",
+                "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m/b7019dd0-2ee9-4447-bdef-ac25676b205a",
                 "rel": "self"
             }
         ],
         "stack_status_reason": "Stack CREATE completed successfully",
-        "stack_name": "tsbc0005vm002ssc001-ssc_1_subint_avpn_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv",
+        "stack_name": "tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m",
         "stack_user_project_id": "dfffe8b2401b45368ca6e21f19796ce1",
         "stack_owner": "m08699",
         "creation_time": "2019-01-23T19:34:57Z",
@@ -22,19 +24,19 @@
         "parameters": {
             "OS::project_id": "ea2d13cc98b44d60a6f94bdcb2738f9e",
             "port_interface": "27391d94-33af-474a-927d-d409249e8fd3",
-            "OS::stack_id": "bd0fc728-cbde-4301-a581-db56f494675c",
-            "OS::stack_name": "tsbc0005vm002ssc001-ssc_1_subint_avpn_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv",
+            "OS::stack_id": "b7019dd0-2ee9-4447-bdef-ac25676b205a",
+            "OS::stack_name": "tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m",
             "vip_v6_address": "2001:1890:e005:1403::",
             "network_id": "1bc1c5fe-896f-4629-b499-a5a36ece4253,c2f4ad4a-0089-41fa-aba7-a80963def29b,70bc637c-ea0f-4452-8aca-01e90c842ff1",
-            "subinterface_name_prefix": "tsbc0005v_tsbc0005vm002_subint_untrusted_avpn",
-            "counter": "2",
+            "subinterface_name_prefix": "tsbc0005v_tsbc0005vm002_subint_untrusted_service1",
+            "counter": "0",
             "mac_address": "02:27:39:1d:94:33",
             "vip_address": "12.251.1.8",
             "vlan_tag": "101,102,103",
             "ip_address": "12.251.1.5",
             "ip_v6_address": "2001:1890:e005:1402:8000::"
         },
-        "id": "bd0fc728-cbde-4301-a581-db56f494675c",
+        "id": "b7019dd0-2ee9-4447-bdef-ac25676b205a",
         "outputs": [],
         "template_description": "HOT template to instantiate a single Contrail VLAN sub-interface with associated instance IP addresses and allowed address pairs\n"
     }
