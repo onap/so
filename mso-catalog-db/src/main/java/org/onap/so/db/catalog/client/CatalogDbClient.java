@@ -223,7 +223,7 @@ public class CatalogDbClient {
 
 	private final Client<CloudifyManager> cloudifyManagerClient;
 	
-	private Client<CvnfcCustomization> cvnfcCustomizationClient;
+	private final Client<CvnfcCustomization> cvnfcCustomizationClient;
 
 	private final Client<ControllerSelectionReference> controllerSelectionReferenceClient;
 
@@ -695,18 +695,11 @@ public class CatalogDbClient {
 	}
 	
 	public List<CvnfcCustomization> getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(String vnfCustomizationUUID, String vfModuleCustomizationUUID){
-		return this.getMultipleVnfcCustomizations(
-				UriBuilder.fromUri(endpoint + "/vnfcCustomization/search/findByVnfCustomizationUUIDAndVfModuleCustomizationUUID")
-						.queryParam("VNF_CUSTOMIZATION_UUID", vnfCustomizationUUID)
-						.queryParam("VFMODULE_CUSTOMIZATION_UUID", vfModuleCustomizationUUID).build());
-	}
-	
-	private List<CvnfcCustomization> getMultipleVnfcCustomizations(URI uri) {
-		Iterable<CvnfcCustomization> vnfcIterator = cvnfcCustomizationClient.getAll(uri);
-		List<CvnfcCustomization> vnfcList = new ArrayList<>();
-		Iterator<CvnfcCustomization> it = vnfcIterator.iterator();
-		it.forEachRemaining(vnfcList::add);
-		return vnfcList;
+
+		return this.getMultipleResources(cvnfcCustomizationClient,getUri(UriBuilder
+						.fromUri(endpoint + "/cvnfcCustomization/search/findByVnfResourceCustomizationAndVfModuleCustomization")
+						.queryParam("VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID", vnfCustomizationUUID)
+						.queryParam("VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID", vfModuleCustomizationUUID).build().toString()));
 	}
 
 }

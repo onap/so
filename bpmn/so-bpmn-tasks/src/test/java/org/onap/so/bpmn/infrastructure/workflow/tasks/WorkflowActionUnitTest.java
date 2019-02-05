@@ -57,6 +57,10 @@ import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.serviceinstancebeans.ModelInfo;
+import org.onap.so.serviceinstancebeans.RelatedInstance;
+import org.onap.so.serviceinstancebeans.RequestDetails;
+import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WorkflowActionUnitTest {
@@ -87,9 +91,16 @@ public class WorkflowActionUnitTest {
 				"flow y",
 				"ActivateFabricConfigurationBB",
 				"flow z");
-		doReturn(Arrays.asList("yes", "yes")).when(workflowAction).traverseCatalogDbForConfiguration(ArgumentMatchers.isNull(), ArgumentMatchers.isNull());
+		doReturn(Arrays.asList("yes", "yes")).when(workflowAction).traverseCatalogDbForConfiguration(ArgumentMatchers.any(String.class), ArgumentMatchers.isNull());
 		
-		List<OrchestrationFlow> result = workflowAction.filterOrchFlows(flows, WorkflowType.VFMODULE, mock(DelegateExecution.class));
+		ServiceInstancesRequest sIRequest = new ServiceInstancesRequest();
+		RequestDetails requestDetails = new RequestDetails();
+		ModelInfo modelInfo = new ModelInfo();
+		requestDetails.setModelInfo(modelInfo);
+		RelatedInstance relatedInstance = new RelatedInstance();
+		sIRequest.setRequestDetails(requestDetails);
+		
+		List<OrchestrationFlow> result = workflowAction.filterOrchFlows(sIRequest, flows, WorkflowType.VFMODULE, mock(DelegateExecution.class));
 		
 		assertThat(result, is(flows));
 	}
@@ -103,7 +114,14 @@ public class WorkflowActionUnitTest {
 				"ActivateFabricConfigurationBB",
 				"flow z");
 		
-		List<OrchestrationFlow> result = workflowAction.filterOrchFlows(flows, WorkflowType.VFMODULE, mock(DelegateExecution.class));
+		ServiceInstancesRequest sIRequest = new ServiceInstancesRequest();
+		RequestDetails requestDetails = new RequestDetails();
+		ModelInfo modelInfo = new ModelInfo();
+		modelInfo.setModelCustomizationUuid("");
+		requestDetails.setModelInfo(modelInfo);
+		sIRequest.setRequestDetails(requestDetails);
+		
+		List<OrchestrationFlow> result = workflowAction.filterOrchFlows(sIRequest, flows, WorkflowType.VFMODULE, mock(DelegateExecution.class));
 		List<OrchestrationFlow> expected = createFlowList(
 				"flow x",
 				"flow y",
@@ -147,7 +165,7 @@ public class WorkflowActionUnitTest {
 		doReturn(Arrays.asList(flow)).when(workflowAction).queryNorthBoundRequestCatalogDb(any(), any(), any(), anyBoolean(), any(), any());
 		workflowAction.selectExecutionList(execution);
 		
-		verify(workflowAction, times(1)).filterOrchFlows(eq(flows), any(), any());
+		verify(workflowAction, times(1)).filterOrchFlows(any(), eq(flows), any(), any());
 		
 		flow = new OrchestrationFlow();
 		flow.setFlowName("flow y");
@@ -155,7 +173,7 @@ public class WorkflowActionUnitTest {
 		when(execution.getVariable(eq("aLaCarte"))).thenReturn(false);
 		workflowAction.selectExecutionList(execution);
 		
-		verify(workflowAction, never()).filterOrchFlows(eq(flows), any(), any());
+		verify(workflowAction, never()).filterOrchFlows(any(), eq(flows), any(), any());
 
 	}
 	

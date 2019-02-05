@@ -51,7 +51,7 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
     
     @Test
     @Transactional
-    public void createAndGetTest() throws Exception {
+    public void createAndGetAllTest() throws Exception {
     			
     	CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
     	cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
@@ -84,6 +84,157 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
     	cvnfcCustomizationRepository.save(cvnfcCustomization);
     	
     	List<CvnfcCustomization> cvnfcCustomizationList = cvnfcCustomizationRepository.findAll();
+    	boolean matchFound = false;
+    	for (CvnfcCustomization foundCvnfcCustomization : cvnfcCustomizationList) {
+    		if (foundCvnfcCustomization.getDescription().equalsIgnoreCase(cvnfcCustomization.getDescription())) {
+    	        
+    	        assertThat(cvnfcCustomization, sameBeanAs(foundCvnfcCustomization)
+    	        		.ignoring("id")
+    	        		.ignoring("created")
+    	        		.ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
+    	        		.ignoring("vnfResourceCusteModelCustomizationUUID"));
+    	        
+    	        matchFound = true;
+    	        break;
+    		}
+    	}
+    	Assert.assertTrue(matchFound);
+    }
+    
+    @Test
+    @Transactional
+    public void createAndGetCvnfcCustomizationListTest() throws Exception {
+    			
+    	CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
+    	cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+
+    	VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+    	vfModuleCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+    	
+    	VfModule vFModule = setUpVfModule();
+    	VnfResource vnfResource = setUpVnfResource();
+
+    	vFModule.setVnfResources(vnfResource);
+    	vfModuleCustomization.setVfModule(vFModule);
+    	cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
+    	
+    	VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
+    	vnfResourceCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459"); 
+    	vnfResourceCustomization.setModelInstanceName("testModelInstanceName");
+    	
+    	List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList();
+    	vnfResourceCustomizations.add(vnfResourceCustomization);
+    	vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
+    	vnfResourceCustomization.setVnfResources(vnfResource);
+    	
+    	cvnfcCustomization.setVnfResourceCustomization(vnfResourceCustomization);
+    	
+    	VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
+    	vnfcCustomization.setModelCustomizationUUID("d95d704a-9ff2-11e8-98d0-529269fb1459");
+    	cvnfcCustomization.setVnfcCustomization(vnfcCustomization);
+    	
+
+    	
+    	cvnfcCustomizationRepository.save(cvnfcCustomization);
+    	
+    	List<CvnfcCustomization> cvnfcCustomizationList = cvnfcCustomizationRepository.findByModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+    	boolean matchFound = false;
+    	for (CvnfcCustomization foundCvnfcCustomization : cvnfcCustomizationList) {
+    		if (foundCvnfcCustomization.getDescription().equalsIgnoreCase(cvnfcCustomization.getDescription())) {
+    	        
+    	        assertThat(cvnfcCustomization, sameBeanAs(foundCvnfcCustomization)
+    	        		.ignoring("id")
+    	        		.ignoring("created")
+    	        		.ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
+    	        		.ignoring("vnfResourceCusteModelCustomizationUUID"));
+    	        
+    	        matchFound = true;
+    	        break;
+    		}
+    	}
+    	Assert.assertTrue(matchFound);
+    }
+    
+    
+    @Test
+    @Transactional
+    public void createAndGetCvnfcCustomizationTest() throws Exception {
+    			
+    	CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
+    	cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+
+    	VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+    	vfModuleCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+    	
+    	VfModule vFModule = setUpVfModule();
+    	VnfResource vnfResource = setUpVnfResource();
+
+    	vFModule.setVnfResources(vnfResource);
+    	vfModuleCustomization.setVfModule(vFModule);
+    	cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
+    	
+    	VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
+    	vnfResourceCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459"); 
+    	vnfResourceCustomization.setModelInstanceName("testModelInstanceName");
+    	
+    	List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList();
+    	vnfResourceCustomizations.add(vnfResourceCustomization);
+    	vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
+    	vnfResourceCustomization.setVnfResources(vnfResource);
+    	
+    	cvnfcCustomization.setVnfResourceCustomization(vnfResourceCustomization);
+    	
+    	VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
+    	vnfcCustomization.setModelCustomizationUUID("d95d704a-9ff2-11e8-98d0-529269fb1459");
+    	cvnfcCustomization.setVnfcCustomization(vnfcCustomization);
+    	
+    	cvnfcCustomizationRepository.save(cvnfcCustomization);
+    	
+    	CvnfcCustomization cvnfcCustomizationList = cvnfcCustomizationRepository.findOneByModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+
+    	        assertThat(cvnfcCustomization, sameBeanAs(cvnfcCustomizationList)
+    	        		.ignoring("id")
+    	        		.ignoring("created")
+    	        		.ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
+    	        		.ignoring("vnfResourceCusteModelCustomizationUUID"));
+
+    }
+    
+    @Test
+    @Transactional
+    public void createAndGetCvnfcCustomizationsTest() throws Exception {
+    			
+    	CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
+    	cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+
+    	VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+    	vfModuleCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+    	
+    	VfModule vFModule = setUpVfModule();
+    	VnfResource vnfResource = setUpVnfResource();
+
+    	vFModule.setVnfResources(vnfResource);
+    	vfModuleCustomization.setVfModule(vFModule);
+    	cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
+    	
+    	VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
+    	vnfResourceCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459"); 
+    	vnfResourceCustomization.setModelInstanceName("testModelInstanceName");
+    	
+    	List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList();
+    	vnfResourceCustomizations.add(vnfResourceCustomization);
+    	vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
+    	vnfResourceCustomization.setVnfResources(vnfResource);
+    	
+    	cvnfcCustomization.setVnfResourceCustomization(vnfResourceCustomization);
+    	
+    	VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
+    	vnfcCustomization.setModelCustomizationUUID("d95d704a-9ff2-11e8-98d0-529269fb1459");
+    	cvnfcCustomization.setVnfcCustomization(vnfcCustomization);
+    	
+    	cvnfcCustomizationRepository.save(cvnfcCustomization);
+    	
+    	List<CvnfcCustomization> cvnfcCustomizationList = cvnfcCustomizationRepository.findByVnfResourceCustomizationAndVfModuleCustomization("cf9f6efc-9f14-11e8-98d0-529269fb1459","cf9f6efc-9f14-11e8-98d0-529269fb1459");
     	boolean matchFound = false;
     	for (CvnfcCustomization foundCvnfcCustomization : cvnfcCustomizationList) {
     		if (foundCvnfcCustomization.getDescription().equalsIgnoreCase(cvnfcCustomization.getDescription())) {
