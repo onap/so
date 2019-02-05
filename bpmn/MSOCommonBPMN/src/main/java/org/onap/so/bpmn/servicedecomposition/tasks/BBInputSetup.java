@@ -406,17 +406,16 @@ public class BBInputSetup implements JavaDelegate {
 				if (lookupKeyMap.get(ResourceKey.VF_MODULE_ID) != null
 						&& vfModuleTemp.getVfModuleId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.VF_MODULE_ID))) {
 					vfModule = vfModuleTemp;
-					String vfModuleCustId = bbInputSetupUtils.getAAIVfModule(vnf.getVnfId(), vfModule.getVfModuleId()).getModelCustomizationId();
-					modelInfo.setModelCustomizationId(vfModuleCustId);
-					break;
 				}
+				String vfModuleCustId = bbInputSetupUtils.getAAIVfModule(vnf.getVnfId(), vfModuleTemp.getVfModuleId()).getModelCustomizationId();
+				ModelInfo modelInfoVfModule = new ModelInfo();
+				modelInfoVfModule.setModelCustomizationId(vfModuleCustId);
+				mapCatalogVfModule(vfModuleTemp, modelInfoVfModule, service, vnfModelCustomizationUUID);
 			}
 			if (vfModule == null && bbName.equalsIgnoreCase(AssignFlows.VF_MODULE.toString())) {
 				vfModule = createVfModule(lookupKeyMap,
 						resourceId, instanceName, instanceParams);
 				vnf.getVfModules().add(vfModule);
-			}
-			if(vfModule != null) {
 				mapCatalogVfModule(vfModule, modelInfo, service, vnfModelCustomizationUUID);
 			}
 		} else {
