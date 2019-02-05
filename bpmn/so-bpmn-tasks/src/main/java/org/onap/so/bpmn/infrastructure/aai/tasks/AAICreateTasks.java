@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import java.util.Arrays;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -54,6 +53,8 @@ import org.onap.so.client.orchestration.AAIVolumeGroupResources;
 import org.onap.so.client.orchestration.AAIVpnBindingResources;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -62,6 +63,8 @@ import org.springframework.stereotype.Component;
 public class AAICreateTasks {
 
 	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AAICreateTasks.class);
+	private static final Logger logger = LoggerFactory.getLogger(AAICreateTasks.class.getName());
+	
 	private static final String networkTypeProvider = "PROVIDER";
 	private static String NETWORK_COLLECTION_NAME = "networkCollectionName";
 	@Autowired
@@ -452,23 +455,45 @@ public class AAICreateTasks {
 		
 		
 		if (genericVnf != null && genericVnf.getVfModules() != null && !genericVnf.getVfModules().isEmpty()) {
-			Set<Integer> moduleIndices = new TreeSet<>();
+			TreeSet<Integer> moduleIndices = new TreeSet<>();
+			int nullIndexFound = 0;
 			for (VfModule vfModule : genericVnf.getVfModules()) {
 				if (vfModule.getModelInfoVfModule() != null) {
 					if (vfModule.getModelInfoVfModule().getModelInvariantUUID().equals(newVfModuleModelInvariantUUID)) {
-						moduleIndices.add(vfModule.getModuleIndex());
+						if (vfModule.getModuleIndex() != null) {
+							moduleIndices.add(vfModule.getModuleIndex());
+						} else {
+							nullIndexFound++;
+							logger.warn("Found null index for vf-module-id {} and model-invariant-uuid {}", vfModule.getVfModuleId(), vfModule.getModelInfoVfModule().getModelInvariantUUID());
+						}
 					}
 				}
 			}
-			Object[] array = moduleIndices.toArray();
-			for (int i=0; i < array.length; i++) {
-				if ((int) array[i] != i) {
-					return i;
-				}
-			}
-			return array.length;
+			
+			return calculateUnusedIndex(moduleIndices, nullIndexFound);
 		} else {
 			return 0;
 		}
+	}
+	
+	protected int calculateUnusedIndex(TreeSet<Integer> moduleIndices, int nullIndexFound) {
+		//pad array with nulls
+		Integer[] temp = new Integer[moduleIndices.size() + nullIndexFound];
+		Integer[] array = moduleIndices.toArray(temp);
+		int result = 0;
+		//when a null is found skip that potential value
+		//effectively creates something like, [0,1,3,null,null] -> [0,1,null(2),3,null(4)]
+		for (int i=0; i < array.length; i++, result++) {
+			if (Integer.valueOf(result) != array[i]) {
+				if (nullIndexFound > 0) {
+					nullIndexFound--;
+					i--;
+				} else {
+					break;
+				}
+			}
+		}
+		
+		return result;
 	}
 }
