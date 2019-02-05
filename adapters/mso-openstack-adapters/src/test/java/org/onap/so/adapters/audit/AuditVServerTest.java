@@ -79,7 +79,7 @@ public class AuditVServerTest extends AuditVServer {
 	private AAIResourceUri ssc_1_trusted_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.L_INTERFACE,
 			cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db").queryParam("interface-id", "dec8bdc7-5718-41dc-bfbb-561ff6eeb81c");
 
-	private AAIResourceUri ssc_1_avpn_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.L_INTERFACE,
+	private AAIResourceUri ssc_1_service1_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.L_INTERFACE,
 			cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db").queryParam("interface-id", "1c56a24b-5f03-435a-850d-31cd4252de56");
 
 	private AAIResourceUri ssc_1_mgmt_port_1_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.L_INTERFACE,
@@ -88,7 +88,7 @@ public class AuditVServerTest extends AuditVServer {
 	private AAIResourceUri ssc_1_mgmt_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.L_INTERFACE,
 			cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db").queryParam("interface-id", "80baec42-ffae-425f-ad8c-3f7b2c24bfff");
 
-	private AAIResourceUri ssc_1_mis_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.L_INTERFACE,
+	private AAIResourceUri ssc_1_service2_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.L_INTERFACE,
 			cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db").queryParam("interface-id", "13eddf95-4cf3-45f2-823a-2d890a6549b4");
 
 	private AAIResourceUri ssc_1_int_ha_port_0_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.L_INTERFACE,
@@ -103,13 +103,13 @@ public class AuditVServerTest extends AuditVServer {
 
 	
 	
-	private AAIResourceUri mis_sub_1_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SUB_L_INTERFACE,
+	private AAIResourceUri service2_sub_1_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SUB_L_INTERFACE,
 			cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db","interface-name").queryParam("interface-id", "f711be16-2654-4a09-b89d-0511fda20e81");
 
-	private AAIResourceUri avpn_sub_0_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SUB_L_INTERFACE,
+	private AAIResourceUri service1_sub_0_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SUB_L_INTERFACE,
 			cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db","interface-name").queryParam("interface-id", "0d9cd813-2ae1-46c0-9ebb-48081f6cffbb");
 
-	private AAIResourceUri avpn_sub_1_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SUB_L_INTERFACE,
+	private AAIResourceUri service1_sub_1_uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SUB_L_INTERFACE,
 			cloudOwner, cloudRegion, tenantId, "3a4c2ca5-27b3-4ecc-98c5-06804867c4db","interface-name").queryParam("interface-id", "b7019dd0-2ee9-4447-bdef-ac25676b205a");
 
 	
@@ -120,25 +120,25 @@ public class AuditVServerTest extends AuditVServer {
 	LInterface test_port_1 = new LInterface();
 	LInterface test_port_2 = new LInterface();
 	LInterface ssc_1_int_ha_port_0 = new LInterface();
-	LInterface mis_sub_interface_1 = new LInterface();
-	LInterface ssc_1_mis_port_0 = new LInterface();
+	LInterface service2_sub_interface_1 = new LInterface();
+	LInterface ssc_1_service2_port_0 = new LInterface();
 	LInterface ssc_1_mgmt_port_0 = new LInterface();
 	LInterface ssc_1_mgmt_port_1 = new LInterface();
-	LInterface avpn_sub_interface_2 = new LInterface();
-	LInterface avpn_sub_interface_1 = new LInterface();
-	LInterface ssc_1_avpn_port_0 = new LInterface();
+	LInterface service1_sub_interface_2 = new LInterface();
+	LInterface service1_sub_interface_1 = new LInterface();
+	LInterface ssc_1_service1_port_0 = new LInterface();
 	LInterface ssc_1_trusted_port_0 = new LInterface();
 	
 	LInterfaces test_port_1_plural = new LInterfaces();	
 	LInterfaces test_port_2_plural = new LInterfaces();
 	LInterfaces ssc_1_int_ha_port_0_plural = new LInterfaces();
-	LInterfaces mis_sub_interface_1_plural = new LInterfaces();
-	LInterfaces ssc_1_mis_port_0_plural = new LInterfaces();
+	LInterfaces service2_sub_interface_1_plural = new LInterfaces();
+	LInterfaces ssc_1_service2_port_0_plural = new LInterfaces();
 	LInterfaces ssc_1_mgmt_port_0_plural = new LInterfaces();
 	LInterfaces ssc_1_mgmt_port_1_plural = new LInterfaces();
-	LInterfaces avpn_sub_interface_2_plural = new LInterfaces();
-	LInterfaces avpn_sub_interface_1_plural = new LInterfaces();
-	LInterfaces ssc_1_avpn_port_0_plural = new LInterfaces();
+	LInterfaces service1_sub_interface_2_plural = new LInterfaces();
+	LInterfaces service1_sub_interface_1_plural = new LInterfaces();
+	LInterfaces ssc_1_service1_port_0_plural = new LInterfaces();
 	LInterfaces ssc_1_trusted_port_0_plural = new LInterfaces();
 	
 	
@@ -156,18 +156,18 @@ public class AuditVServerTest extends AuditVServer {
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_trusted_port_0);
 		
 		
-		ssc_1_avpn_port_0.setInterfaceId("1c56a24b-5f03-435a-850d-31cd4252de56");
-		ssc_1_avpn_port_0.setInterfaceName("interface-name");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_avpn_port_0);
-		ssc_1_avpn_port_0.setLInterfaces(new LInterfaces());	
+		ssc_1_service1_port_0.setInterfaceId("1c56a24b-5f03-435a-850d-31cd4252de56");
+		ssc_1_service1_port_0.setInterfaceName("interface-name");
+		vServer1.getLInterfaces().getLInterface().add(ssc_1_service1_port_0);
+		ssc_1_service1_port_0.setLInterfaces(new LInterfaces());	
 		
 		
-		avpn_sub_interface_1.setInterfaceId("0d9cd813-2ae1-46c0-9ebb-48081f6cffbb");
-		ssc_1_avpn_port_0.getLInterfaces().getLInterface().add(avpn_sub_interface_1);
+		service1_sub_interface_1.setInterfaceId("0d9cd813-2ae1-46c0-9ebb-48081f6cffbb");
+		ssc_1_service1_port_0.getLInterfaces().getLInterface().add(service1_sub_interface_1);
 		
 		
-		avpn_sub_interface_2.setInterfaceId("b7019dd0-2ee9-4447-bdef-ac25676b205a");
-		ssc_1_avpn_port_0.getLInterfaces().getLInterface().add(avpn_sub_interface_2);
+		service1_sub_interface_2.setInterfaceId("b7019dd0-2ee9-4447-bdef-ac25676b205a");
+		ssc_1_service1_port_0.getLInterfaces().getLInterface().add(service1_sub_interface_2);
 		
 		
 		ssc_1_mgmt_port_1.setInterfaceId("12afcd28-929f-4d80-8a5a-0833bfd5e20b");
@@ -179,14 +179,14 @@ public class AuditVServerTest extends AuditVServer {
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_mgmt_port_0);
 		
 	
-		ssc_1_mis_port_0.setLInterfaces(new LInterfaces());
-		ssc_1_mis_port_0.setInterfaceId("13eddf95-4cf3-45f2-823a-2d890a6549b4");
-		ssc_1_mis_port_0.setInterfaceName("interface-name");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_mis_port_0);
+		ssc_1_service2_port_0.setLInterfaces(new LInterfaces());
+		ssc_1_service2_port_0.setInterfaceId("13eddf95-4cf3-45f2-823a-2d890a6549b4");
+		ssc_1_service2_port_0.setInterfaceName("interface-name");
+		vServer1.getLInterfaces().getLInterface().add(ssc_1_service2_port_0);
 		
 
-		mis_sub_interface_1.setInterfaceId("f711be16-2654-4a09-b89d-0511fda20e81");	
-		ssc_1_mis_port_0.getLInterfaces().getLInterface().add(mis_sub_interface_1);
+		service2_sub_interface_1.setInterfaceId("f711be16-2654-4a09-b89d-0511fda20e81");	
+		ssc_1_service2_port_0.getLInterfaces().getLInterface().add(service2_sub_interface_1);
 		
 
 		ssc_1_int_ha_port_0.setInterfaceId("9cab2903-70f7-44fd-b681-491d6ae2adb8");	
@@ -215,10 +215,10 @@ public class AuditVServerTest extends AuditVServer {
 		test_port_1_plural.getLInterface().add(test_port_1);
 		test_port_2_plural.getLInterface().add(test_port_2);
 		ssc_1_int_ha_port_0_plural.getLInterface().add(ssc_1_int_ha_port_0);
-		ssc_1_mis_port_0_plural.getLInterface().add(ssc_1_mis_port_0);
+		ssc_1_service2_port_0_plural.getLInterface().add(ssc_1_service2_port_0);
 		ssc_1_mgmt_port_0_plural.getLInterface().add(ssc_1_mgmt_port_0);
 		ssc_1_mgmt_port_1_plural.getLInterface().add(ssc_1_mgmt_port_1);
-		ssc_1_avpn_port_0_plural.getLInterface().add(ssc_1_avpn_port_0);
+		ssc_1_service1_port_0_plural.getLInterface().add(ssc_1_service1_port_0);
 		ssc_1_trusted_port_0_plural.getLInterface().add(ssc_1_trusted_port_0);
 
 	} 
@@ -234,17 +234,17 @@ public class AuditVServerTest extends AuditVServer {
 		doReturn(true).when(aaiResourcesMock).exists(vserverURI);
 		doReturn(true).when(aaiResourcesMock).exists(vserverURI2);
 		doReturn(Optional.of(ssc_1_trusted_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_trusted_port_0_uri);
-		doReturn(Optional.of(ssc_1_avpn_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_avpn_port_0_uri);
+		doReturn(Optional.of(ssc_1_service1_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_service1_port_0_uri);
 		doReturn(Optional.of(ssc_1_mgmt_port_1_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_mgmt_port_1_uri);
 		doReturn(Optional.of(ssc_1_mgmt_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_mgmt_port_0_uri);
-		doReturn(Optional.of(ssc_1_mis_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_mis_port_0_uri);
+		doReturn(Optional.of(ssc_1_service2_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_service2_port_0_uri);
 		doReturn(Optional.of(ssc_1_int_ha_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_int_ha_port_0_uri);
 		doReturn(Optional.of(test_port_1_plural)).when(aaiResourcesMock).get(LInterfaces.class,test_port_1_uri);
 		doReturn(Optional.of(test_port_2_plural)).when(aaiResourcesMock).get(LInterfaces.class,test_port_2_uri);
 		
-		doReturn(true).when(aaiResourcesMock).exists(mis_sub_1_uri);
-		doReturn(true).when(aaiResourcesMock).exists(avpn_sub_0_uri);
-		doReturn(true).when(aaiResourcesMock).exists(avpn_sub_1_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service2_sub_1_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service1_sub_0_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service1_sub_1_uri);
 
 		boolean exists = auditNova.auditVservers(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
 		assertEquals(true, exists);
@@ -256,17 +256,17 @@ public class AuditVServerTest extends AuditVServer {
 		doReturn(true).when(aaiResourcesMock).exists(vserverURI);
 		doReturn(true).when(aaiResourcesMock).exists(vserverURI2);
 		doReturn(Optional.of(ssc_1_trusted_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_trusted_port_0_uri);
-		doReturn(Optional.of(ssc_1_avpn_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_avpn_port_0_uri);
+		doReturn(Optional.of(ssc_1_service1_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_service1_port_0_uri);
 		doReturn(Optional.of(ssc_1_mgmt_port_1_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_mgmt_port_1_uri);
 		doReturn(Optional.empty()).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_mgmt_port_0_uri);
-		doReturn(Optional.of(ssc_1_mis_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_mis_port_0_uri);
+		doReturn(Optional.of(ssc_1_service2_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_service2_port_0_uri);
 		doReturn(Optional.of(ssc_1_int_ha_port_0_plural)).when(aaiResourcesMock).get(LInterfaces.class,ssc_1_int_ha_port_0_uri);
 		doReturn(Optional.of(test_port_1_plural)).when(aaiResourcesMock).get(LInterfaces.class,test_port_1_uri);
 		doReturn(Optional.of(test_port_2_plural)).when(aaiResourcesMock).get(LInterfaces.class,test_port_2_uri);
 		
-		doReturn(true).when(aaiResourcesMock).exists(mis_sub_1_uri);
-		doReturn(true).when(aaiResourcesMock).exists(avpn_sub_0_uri);
-		doReturn(true).when(aaiResourcesMock).exists(avpn_sub_1_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service2_sub_1_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service1_sub_0_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service1_sub_1_uri);
 
 		boolean exists = auditNova.auditVservers(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
 		assertEquals(false, exists);
@@ -278,16 +278,16 @@ public class AuditVServerTest extends AuditVServer {
 		doReturn(true).when(aaiResourcesMock).exists(vserverURI);
 		doReturn(true).when(aaiResourcesMock).exists(vserverURI2);
 		doReturn(Optional.of(ssc_1_trusted_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_trusted_port_0_uri);
-		doReturn(Optional.of(ssc_1_avpn_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_avpn_port_0_uri);
+		doReturn(Optional.of(ssc_1_service1_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_service1_port_0_uri);
 		doReturn(Optional.of(ssc_1_mgmt_port_1_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_mgmt_port_1_uri);
 		doReturn(Optional.of(ssc_1_mgmt_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_mgmt_port_0_uri);
-		doReturn(Optional.of(ssc_1_mis_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_mis_port_0_uri);
+		doReturn(Optional.of(ssc_1_service2_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_service2_port_0_uri);
 		doReturn(Optional.of(ssc_1_int_ha_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_int_ha_port_0_uri);
 		doReturn(Optional.of(test_port_1_plural)).when(aaiResourcesMock).get(LInterface.class,test_port_1_uri);
 		doReturn(Optional.empty()).when(aaiResourcesMock).get(LInterface.class,test_port_2_uri);		
-		doReturn(true).when(aaiResourcesMock).exists(mis_sub_1_uri);
-		doReturn(true).when(aaiResourcesMock).exists(avpn_sub_0_uri);
-		doReturn(true).when(aaiResourcesMock).exists(avpn_sub_1_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service2_sub_1_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service1_sub_0_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service1_sub_1_uri);
 		boolean exists = auditNova.auditVservers(vserversToAudit, tenantId, cloudOwner, cloudRegion);
 		assertEquals(false, exists);
 	}
@@ -314,16 +314,16 @@ public class AuditVServerTest extends AuditVServer {
 	public void audit_Vserver_Second_Not_Found_Test() throws JsonParseException, JsonMappingException, IOException {
 		doReturn(true).when(aaiResourcesMock).exists(vserverURI);
 		doReturn(Optional.of(ssc_1_trusted_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_trusted_port_0_uri);
-		doReturn(Optional.of(ssc_1_avpn_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_avpn_port_0_uri);
+		doReturn(Optional.of(ssc_1_service1_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_service1_port_0_uri);
 		doReturn(Optional.of(ssc_1_mgmt_port_1_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_mgmt_port_1_uri);
 		doReturn(Optional.of(ssc_1_mgmt_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_mgmt_port_0_uri);
-		doReturn(Optional.of(ssc_1_mis_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_mis_port_0_uri);
+		doReturn(Optional.of(ssc_1_service2_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_service2_port_0_uri);
 		doReturn(Optional.of(ssc_1_int_ha_port_0_plural)).when(aaiResourcesMock).get(LInterface.class,ssc_1_int_ha_port_0_uri);
 		doReturn(Optional.of(test_port_1_plural)).when(aaiResourcesMock).get(LInterface.class,test_port_1_uri);
 		doReturn(Optional.of(test_port_2_plural)).when(aaiResourcesMock).get(LInterface.class,test_port_2_uri);
-		doReturn(true).when(aaiResourcesMock).exists(mis_sub_1_uri);
-		doReturn(true).when(aaiResourcesMock).exists(avpn_sub_0_uri);
-		doReturn(true).when(aaiResourcesMock).exists(avpn_sub_1_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service2_sub_1_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service1_sub_0_uri);
+		doReturn(true).when(aaiResourcesMock).exists(service1_sub_1_uri);
 		doReturn(false).when(aaiResourcesMock).exists(vserverURI2);
 		boolean exists = auditNova.auditVservers(vserversToAudit, tenantId, cloudOwner, cloudRegion);
 		assertEquals(false, exists);

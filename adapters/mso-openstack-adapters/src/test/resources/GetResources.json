@@ -4,11 +4,11 @@
             "resource_name": "ssc_1_trusted_port_0",
             "links": [
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_trusted_port_0",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_trusted_port_0",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
                     "rel": "stack"
                 }
             ],
@@ -23,22 +23,22 @@
             "resource_type": "OS::Neutron::Port"
         },
         {
-            "resource_name": "ssc_1_avpn_port_0",
+            "resource_name": "ssc_1_service1_port_0",
             "links": [
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_avpn_port_0",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_service1_port_0",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
                     "rel": "stack"
                 }
             ],
-            "logical_resource_id": "ssc_1_avpn_port_0",
+            "logical_resource_id": "ssc_1_service1_port_0",
             "resource_status": "CREATE_COMPLETE",
             "updated_time": "2019-01-23T19:34:15Z",
             "required_by": [
-                "ssc_1_subint_avpn_port_0_subinterfaces",
+                "ssc_1_subint_service1_port_0_subinterfaces",
                 "ssc_server_1"
             ],
             "resource_status_reason": "state changed",
@@ -46,22 +46,22 @@
             "resource_type": "OS::Neutron::Port"
         },
         {
-            "resource_name": "ssc_1_subint_mis_port_0_subinterfaces",
+            "resource_name": "ssc_1_subint_service2_port_0_subinterfaces",
             "links": [
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_subint_mis_port_0_subinterfaces",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_subint_service2_port_0_subinterfaces",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
                     "rel": "stack"
                 },
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_mis_port_0_subinterfaces-hlzdigtimzst/447a9b41-714e-434b-b1d0-6cce8d9f0f0c",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst/447a9b41-714e-434b-b1d0-6cce8d9f0f0c",
                     "rel": "nested"
                 }
             ],
-            "logical_resource_id": "ssc_1_subint_mis_port_0_subinterfaces",
+            "logical_resource_id": "ssc_1_subint_service2_port_0_subinterfaces",
             "resource_status": "CREATE_COMPLETE",
             "updated_time": "2019-01-23T19:34:15Z",
             "required_by": [],
@@ -73,11 +73,11 @@
             "resource_name": "ssc_1_mgmt_port_1",
             "links": [
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_mgmt_port_1",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_mgmt_port_1",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
                     "rel": "stack"
                 }
             ],
@@ -95,11 +95,11 @@
             "resource_name": "ssc_1_mgmt_port_0",
             "links": [
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_mgmt_port_0",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_mgmt_port_0",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
                     "rel": "stack"
                 }
             ],
@@ -114,22 +114,22 @@
             "resource_type": "OS::Neutron::Port"
         },
         {
-            "resource_name": "ssc_1_mis_port_0",
+            "resource_name": "ssc_1_service2_port_0",
             "links": [
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_mis_port_0",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_service2_port_0",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
                     "rel": "stack"
                 }
             ],
-            "logical_resource_id": "ssc_1_mis_port_0",
+            "logical_resource_id": "ssc_1_service2_port_0",
             "resource_status": "CREATE_COMPLETE",
             "updated_time": "2019-01-23T19:34:15Z",
             "required_by": [
-                "ssc_1_subint_mis_port_0_subinterfaces",
+                "ssc_1_subint_service2_port_0_subinterfaces",
                 "ssc_server_1"
             ],
             "resource_status_reason": "state changed",
@@ -140,11 +140,11 @@
             "resource_name": "ssc_1_int_ha_port_0",
             "links": [
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_int_ha_port_0",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_int_ha_port_0",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
                     "rel": "stack"
                 }
             ],
@@ -162,11 +162,11 @@
             "resource_name": "ssc_server_1",
             "links": [
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_server_1",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_server_1",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
                     "rel": "stack"
                 }
             ],
@@ -179,22 +179,22 @@
             "resource_type": "OS::Nova::Server"
         },
         {
-            "resource_name": "ssc_1_subint_avpn_port_0_subinterfaces",
+            "resource_name": "ssc_1_subint_service1_port_0_subinterfaces",
             "links": [
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_subint_avpn_port_0_subinterfaces",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34/resources/ssc_1_subint_service1_port_0_subinterfaces",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001/75e046b1-cf7d-4590-91e7-a6079f83fd34",
                     "rel": "stack"
                 },
                 {
-                    "href": "https://orchestration-aic.dyh3b.cci.att.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_avpn_port_0_subinterfaces-dtmxjmny7yjz/31d0647a-6043-49a4-81b6-ccab29380672",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz/31d0647a-6043-49a4-81b6-ccab29380672",
                     "rel": "nested"
                 }
             ],
-            "logical_resource_id": "ssc_1_subint_avpn_port_0_subinterfaces",
+            "logical_resource_id": "ssc_1_subint_service1_port_0_subinterfaces",
             "resource_status": "CREATE_COMPLETE",
             "updated_time": "2019-01-23T19:34:15Z",
             "required_by": [],
