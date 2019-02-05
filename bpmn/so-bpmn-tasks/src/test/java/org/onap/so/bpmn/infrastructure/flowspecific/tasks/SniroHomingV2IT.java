@@ -84,7 +84,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 		requestContext.setMsoRequestId("testRequestId");
 		RequestParameters params = new RequestParameters();
 		params.setaLaCarte(false);
-		params.setSubscriptionServiceType("iptollfree");
+		params.setSubscriptionServiceType("testSubscriptionServiceType");
 		requestContext.setRequestParameters(params);
 	}
 
@@ -94,10 +94,10 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 		bondingLink.getServiceProxies().add(setServiceProxy("1", "transport"));
 		ServiceProxy sp2 = setServiceProxy("2", "infrastructure");
 		Candidate requiredCandidate = new Candidate();
-		requiredCandidate.setCandidateType(CandidateType.VNF_ID);
+		requiredCandidate.setIdentifierType(CandidateType.VNF_ID);
 		List<String> c = new ArrayList<String>();
 		c.add("testVnfId");
-		requiredCandidate.setCandidates(c);
+		requiredCandidate.setIdentifiers(c);
 		sp2.addRequiredCandidates(requiredCandidate);
 		bondingLink.getServiceProxies().add(sp2);
 		serviceInstance.getVpnBondingLinks().add(bondingLink);

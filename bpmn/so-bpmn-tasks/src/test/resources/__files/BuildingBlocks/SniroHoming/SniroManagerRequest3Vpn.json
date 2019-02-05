@@ -42,10 +42,10 @@
         "modelInvariantId" : "testProxyModelInvariantUuid2"
       },
       "requiredCandidates" : [ {
-        "candidateType" : {
+        "identifierType" : {
           "name" : "vnfId"
         },
-        "candidates" : [ "testVnfId" ]
+        "identifiers" : [ "testVnfId" ]
       } ]
     }, {
       "serviceResourceId" : "testProxyId1",
@@ -66,10 +66,10 @@
         "modelInvariantId" : "testProxyModelInvariantUuid2"
       },
       "requiredCandidates" : [ {
-        "candidateType" : {
+        "identifierType" : {
           "name" : "vnfId"
         },
-        "candidates" : [ "testVnfId" ]
+        "identifiers" : [ "testVnfId" ]
       } ]
     }, {
       "serviceResourceId" : "testProxyId1",
@@ -90,13 +90,13 @@
         "modelInvariantId" : "testProxyModelInvariantUuid2"
       },
       "requiredCandidates" : [ {
-        "candidateType" : {
+        "identifierType" : {
           "name" : "vnfId"
         },
-        "candidates" : [ "testVnfId" ]
+        "identifiers" : [ "testVnfId" ]
       } ]
     } ],
-    "requestParameters" : {"subscriptionServiceType":"iptollfree","aLaCarte":false}
+    "requestParameters" : {"subscriptionServiceType":"testSubscriptionServiceType","aLaCarte":false}
   },
   "licenseInfo" : {
     "licenseDemands" : [ ]
