@@ -13,13 +13,17 @@ mso:
     core-pool-size: 50
     max-pool-size: 50
     queue-capacity: 500
-
+  workflow:
+    topics:
+      retryMultiplier: 60000
 spring:
   datasource:
-    jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
+    initialization-mode: never
   jpa:
       show-sql: true
       hibernate:
@@ -41,18 +45,4 @@ management:
     export:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
-        step: 1m # Step size (i.e. reporting frequency) to use.  
-
-
-flyway:
-  outOfOrder: true
-  ignoreMissingMigrations: true
-  baseline-on-migrate: true
-  validate-on-migrate: false
-
-org:
-  onap:
-    so:
-      adapters:
-        network:
-          encryptionKey: aa3871669d893c7fb8abbcda31b88b4f
+        step: 1m # Step size (i.e. reporting frequency) to use.

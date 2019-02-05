@@ -108,8 +108,3 @@ spring:
       password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
       role: ACTUATOR
 
-
-flyway:
-  outOfOrder: true
-  ignoreMissingMigrations: true
-

@@ -65,7 +65,7 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         LOGGER.debug("Starting migration for CloudConfig");
         
         CloudConfig cloudConfig = null;
-
+        
         // Try the override file
         String configLocation = System.getProperty("spring.config.additional-location");
         if (configLocation != null) {
