@@ -404,9 +404,9 @@ public class SniroHomingV2 {
 			for(Candidate c:required){
 				org.onap.so.client.sniro.beans.Candidate can = new org.onap.so.client.sniro.beans.Candidate();
 				org.onap.so.client.sniro.beans.CandidateType type = new org.onap.so.client.sniro.beans.CandidateType();
-				type.setName(c.getCandidateType().getName());
-				can.setCandidateType(type);
-				can.setCandidates(c.getCandidates());
+				type.setName(c.getIdentifierType().getName());
+				can.setIdentifierType(type);
+				can.setIdentifiers(c.getIdentifiers());
 				can.setCloudOwner(c.getCloudOwner());
 				cans.add(can);
 			}
@@ -417,9 +417,9 @@ public class SniroHomingV2 {
 			for(Candidate c:excluded){
 				org.onap.so.client.sniro.beans.Candidate can = new org.onap.so.client.sniro.beans.Candidate();
 				org.onap.so.client.sniro.beans.CandidateType type = new org.onap.so.client.sniro.beans.CandidateType();
-				type.setName(c.getCandidateType().getName());
-				can.setCandidateType(type);
-				can.setCandidates(c.getCandidates());
+				type.setName(c.getIdentifierType().getName());
+				can.setIdentifierType(type);
+				can.setIdentifiers(c.getIdentifiers());
 				can.setCloudOwner(c.getCloudOwner());
 				cans.add(can);
 			}

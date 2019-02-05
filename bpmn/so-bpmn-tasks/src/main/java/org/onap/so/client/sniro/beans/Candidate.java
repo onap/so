@@ -29,28 +29,28 @@ public class Candidate implements Serializable{
 
 	private static final long serialVersionUID = -5474502255533410907L;
 
-	@JsonProperty("candidateType")
-	private CandidateType candidateType;
-	@JsonProperty("candidates")
-	private List<String> candidates;
+	@JsonProperty("identifierType")
+	private CandidateType identifierType;
+	@JsonProperty("identifiers")
+	private List<String> identifiers;
 	@JsonProperty("cloudOwner")
 	private String cloudOwner;
 
 
-	public CandidateType getCandidateType(){
-		return candidateType;
+	public CandidateType getIdentifierType(){
+		return identifierType;
 	}
 
-	public void setCandidateType(CandidateType candidateType){
-		this.candidateType = candidateType;
+	public void setIdentifierType(CandidateType identifierType){
+		this.identifierType = identifierType;
 	}
 
-	public List<String> getCandidates(){
-		return candidates;
+	public List<String> getIdentifiers(){
+		return identifiers;
 	}
 
-	public void setCandidates(List<String> candidates){
-		this.candidates = candidates;
+	public void setIdentifiers(List<String> identifiers){
+		this.identifiers = identifiers;
 	}
 
 	public String getCloudOwner(){

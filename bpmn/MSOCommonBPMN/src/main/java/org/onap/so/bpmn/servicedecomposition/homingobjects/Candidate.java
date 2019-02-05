@@ -31,10 +31,10 @@ public class Candidate implements Serializable {
 
 	private static final long serialVersionUID = -3959572501582849328L;
 
-	@JsonProperty("candidateType")
-	private CandidateType candidateType;
-	@JsonProperty("candidates")
-	private List<String> candidates;
+	@JsonProperty("identifierType")
+	private CandidateType identifierType;
+	@JsonProperty("identifiers")
+	private List<String> identifiers;
 	@JsonProperty("cloudOwner")
 	private String cloudOwner;
 
@@ -42,32 +42,32 @@ public class Candidate implements Serializable {
 	 * list of candidates
 	 * i.e. actual serviceInstanceId, actual vnfName, actual cloudRegionId, etc.
 	 */
-	public List<String> getCandidates() {
-		return candidates;
+	public List<String> getIdentifiers() {
+		return identifiers;
 	}
 
 	/**
 	 * list of candidates
 	 * i.e. actual serviceInstanceId, actual vnfName, actual cloudRegionId, etc.
 	 */
-	public void setCandidates(List<String> candidates) {
-		this.candidates = candidates;
+	public void setIdentifiers(List<String> identifiers) {
+		this.identifiers = identifiers;
 	}
 
 	/**
 	 * Way to identify the type of candidate
 	 * i.e. "serviceInstanceId", "vnfName", "cloudRegionId", etc.
 	 */
-	public CandidateType getCandidateType(){
-		return candidateType;
+	public CandidateType getIdentifierType(){
+		return identifierType;
 	}
 
 	/**
 	 * Way to identify the type of candidate
 	 * i.e. "serviceInstanceId", "vnfName", "cloudRegionId", etc.
 	 */
-	public void setCandidateType(CandidateType candidateType){
-		this.candidateType = candidateType;
+	public void setIdentifierType(CandidateType identifierType){
+		this.identifierType = identifierType;
 	}
 
 	/**

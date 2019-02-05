@@ -51,7 +51,7 @@
         "modelInvariantId" : "testAllottedModelInvariantUuid3"
       }
     } ],
-    "requestParameters" : {"subscriptionServiceType":"iptollfree","aLaCarte":false}
+    "requestParameters" : {"subscriptionServiceType":"testSubscriptionServiceType","aLaCarte":false}
   },
   "licenseInfo" : {
     "licenseDemands" : [ ]
