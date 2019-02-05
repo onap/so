@@ -23,7 +23,7 @@ package org.onap.so.apihandlerinfra;
 /*
  * Enum for Status values returned by API Handler to Tail-F
 */
-public enum Action {
+public enum Action implements Actions{
 	createInstance,
 	updateInstance,
 	deleteInstance,
@@ -44,7 +44,7 @@ public enum Action {
 	scaleInstance,
 	deactivateAndCloudDelete,
 	scaleOut,
-	recreateInstance,
+	recreateInstance, 
 	addMembers,
 	removeMembers
 }
