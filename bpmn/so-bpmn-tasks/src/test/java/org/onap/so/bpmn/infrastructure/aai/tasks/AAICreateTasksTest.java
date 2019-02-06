@@ -30,6 +30,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.TreeSet;
+
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Rule;
@@ -515,15 +518,32 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		vfModule3.setModuleIndex(3);
 		
 		//B
-		vfModule4.setModuleIndex(0);
+		vfModule4.setModuleIndex(null);
 		vfModule5.setModuleIndex(1);
 
-		assertEquals(aaiCreateTasks.getLowestUnusedVfModuleIndexFromAAIVnfResponse(vnf, newVfModuleA), 1);
+		assertEquals(1, aaiCreateTasks.getLowestUnusedVfModuleIndexFromAAIVnfResponse(vnf, newVfModuleA));
 
-		assertEquals(aaiCreateTasks.getLowestUnusedVfModuleIndexFromAAIVnfResponse(vnf, newVfModuleB), 2);
+		assertEquals(2, aaiCreateTasks.getLowestUnusedVfModuleIndexFromAAIVnfResponse(vnf, newVfModuleB));
 		
-		assertEquals(aaiCreateTasks.getLowestUnusedVfModuleIndexFromAAIVnfResponse(vnf, newVfModuleC), 0);
+		assertEquals(0, aaiCreateTasks.getLowestUnusedVfModuleIndexFromAAIVnfResponse(vnf, newVfModuleC));
+		
+	}
+	
+	@Test
+	public void calculateUnusedIndexTest() {
+		
+		TreeSet<Integer> a = new TreeSet<>(Arrays.asList(0,1,3));
+		TreeSet<Integer> b = new TreeSet<>(Arrays.asList(0,1,8));
+		TreeSet<Integer> c = new TreeSet<>(Arrays.asList(0,2,4));
+		assertEquals(2, aaiCreateTasks.calculateUnusedIndex(a, 0));
+		assertEquals(5, aaiCreateTasks.calculateUnusedIndex(a, 2));
+		
+		assertEquals(4, aaiCreateTasks.calculateUnusedIndex(b, 2));
+		assertEquals(3, aaiCreateTasks.calculateUnusedIndex(b, 1));
+		
+		assertEquals(5, aaiCreateTasks.calculateUnusedIndex(c, 2));
+		assertEquals(9, aaiCreateTasks.calculateUnusedIndex(c, 6));
+		assertEquals(1, aaiCreateTasks.calculateUnusedIndex(c, 0));
 
-		
 	}
 }
