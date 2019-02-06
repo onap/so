@@ -312,7 +312,10 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         Stack heatStack = null;
         try {
             // Execute the actual Openstack command to create the Heat stack
-            OpenStackRequest <Stack> request = heatClient.getStacks ().create (stack);
+        	OpenStackRequest <Stack> request = null;
+        	if(null!=heatClient) {
+        		request=heatClient.getStacks ().create (stack);
+        	}
             // Begin X-Auth-User
             // Obtain an MSO token for the tenant
             CloudIdentity cloudIdentity = cloudSite.getIdentityService();
