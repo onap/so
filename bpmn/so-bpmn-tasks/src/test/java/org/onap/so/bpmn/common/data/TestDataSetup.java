@@ -45,6 +45,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
@@ -707,5 +708,13 @@ public class TestDataSetup{
         subnet.setOrchestrationStatus(OrchestrationStatus.PENDING);
         subnet.setNeutronSubnetId("testNeutronSubnetId");
 		return subnet;
+	}
+	
+	public NetworkPolicy buildNetworkPolicy() {
+		NetworkPolicy networkPolicy = new NetworkPolicy();
+		networkPolicy.setNetworkPolicyId("testNetworkPolicyId");
+		networkPolicy.setNetworkPolicyFqdn("testNetworkPolicyFqdn");
+		networkPolicy.setHeatStackId("testHeatStackId");		
+		return networkPolicy;
 	}
 }

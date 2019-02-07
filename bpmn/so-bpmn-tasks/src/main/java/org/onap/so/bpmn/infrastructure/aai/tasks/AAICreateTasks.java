@@ -22,7 +22,9 @@ package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -35,6 +37,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
@@ -44,6 +47,9 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.aai.AAIObjectPlurals;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
@@ -69,6 +75,9 @@ public class AAICreateTasks {
 	
 	private static final String networkTypeProvider = "PROVIDER";
 	private static String NETWORK_COLLECTION_NAME = "networkCollectionName";
+	private static String CONTRAIL_NETWORK_POLICY_FQDN_LIST = "contrailNetworkPolicyFqdnList";
+	private static String HEAT_STACK_ID = "heatStackId";
+	private static String NETWORK_POLICY_FQDN_PARAM = "network-policy-fqdn";
 	@Autowired
 	private AAIServiceInstanceResources aaiSIResources;
 	@Autowired
@@ -440,6 +449,38 @@ public class AAICreateTasks {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
 	}
+	
+	public void createNetworkPolicies(BuildingBlockExecution execution) {
+		try{			
+			String fqdns = execution.getVariable(CONTRAIL_NETWORK_POLICY_FQDN_LIST);
+			if (fqdns != null && !fqdns.isEmpty()) {
+				String fqdnList[] = fqdns.split(",");
+				int fqdnCount = fqdnList.length;
+				if (fqdnCount > 0) {
+					for (int i=0; i < fqdnCount; i++) {
+						String fqdn = fqdnList[i];
+						AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY);
+						uri.queryParam(NETWORK_POLICY_FQDN_PARAM, fqdn);
+						Optional<org.onap.aai.domain.yang.NetworkPolicy> oNetPolicy = aaiNetworkResources.getNetworkPolicy(uri);
+						if(!oNetPolicy.isPresent()) {								
+							msoLogger.debug("This network policy FQDN is not in AAI yet: " + fqdn);									
+							String networkPolicyId = UUID.randomUUID().toString();
+							msoLogger.debug("Adding network-policy with network-policy-id " + networkPolicyId);
+							NetworkPolicy networkPolicy = new NetworkPolicy();
+							networkPolicy.setNetworkPolicyId(networkPolicyId);
+							networkPolicy.setNetworkPolicyFqdn(fqdn);
+							networkPolicy.setHeatStackId(execution.getVariable(HEAT_STACK_ID));
+									
+							aaiNetworkResources.createNetworkPolicy(networkPolicy);
+						}
+					}
+				}
+			}			
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}		
+	}
+	
 	/**
 	 * Groups existing vf modules by the model uuid of our new vf module and returns the lowest unused index
 	 * 

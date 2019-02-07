@@ -45,7 +45,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.aai.domain.yang.NetworkPolicy;
 import org.onap.aai.domain.yang.RouteTableReference;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.so.bpmn.common.InjectionHelper;
@@ -54,6 +53,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.client.aai.AAIObjectType;
@@ -77,6 +77,7 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 	private ServiceInstance serviceInstance;
 	private CloudRegion cloudRegion;
 	private Subnet subnet;
+	private NetworkPolicy networkPolicy;
 	
 	@Mock
 	protected AAIResourcesClient MOCK_aaiResourcesClient;
@@ -106,6 +107,8 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 		cloudRegion = buildCloudRegion();
 		
 		subnet = buildSubnet();
+		
+		networkPolicy = buildNetworkPolicy();
 		
 		doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
 	}
@@ -175,16 +178,15 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 	public void getNetworkPolicyTest() throws Exception {
 		final String content = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "queryAaiNetworkPolicy.json")));
 		AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
-		Optional<NetworkPolicy> oNetPolicy = Optional.empty();
+		Optional<org.onap.aai.domain.yang.NetworkPolicy> oNetPolicy = Optional.empty();
 		AAIResourceUri netPolicyUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, "ModelInvariantUUID");
 		
 		doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
 		oNetPolicy = aaiNetworkResources.getNetworkPolicy(netPolicyUri);
-		verify(MOCK_aaiResourcesClient, times(1)).get(any(AAIResourceUri.class));
-		
+		verify(MOCK_aaiResourcesClient, times(1)).get(any(AAIResourceUri.class));		
 		if (oNetPolicy.isPresent()) {
-			NetworkPolicy networkPolicy = oNetPolicy.get();
-			assertThat(aaiResultWrapper.asBean(NetworkPolicy.class).get(), sameBeanAs(networkPolicy));
+			org.onap.aai.domain.yang.NetworkPolicy networkPolicy = oNetPolicy.get();
+			assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.NetworkPolicy.class).get(), sameBeanAs(networkPolicy));
 		}
 	}
 	
@@ -357,4 +359,20 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 			assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.Subnet.class).get(), sameBeanAs(subnet));
 		}
 	}
+	
+	@Test
+	public void createNetworkPolicyTest() throws Exception {
+		doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.NetworkPolicy.class));		
+		doReturn(new org.onap.aai.domain.yang.NetworkPolicy()).when(MOCK_aaiObjectMapper).mapNetworkPolicy(networkPolicy);
+		aaiNetworkResources.createNetworkPolicy(networkPolicy);		
+		verify(MOCK_aaiResourcesClient, times(1)).create(any(AAIResourceUri.class), isA(org.onap.aai.domain.yang.NetworkPolicy.class));
+	}
+	
+	@Test
+	public void deleteNetworkPolicyTest() throws Exception {
+		doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
+		aaiNetworkResources.deleteNetworkPolicy(networkPolicy.getNetworkPolicyId());
+		verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
+	}
+	
 }

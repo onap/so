@@ -586,4 +586,49 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 
 		verify(aaiConfigurationResources, times(1)).updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ACTIVE);
 	}
+	@Test
+	public void updateContrailServiceInstanceFqdnVfModuleTest() throws Exception {
+		execution.setVariable("contrailServiceInstanceFqdn", "newContrailServiceInstanceFqdn");
+		doNothing().when(aaiVfModuleResources).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);
+
+		aaiUpdateTasks.updateContrailServiceInstanceFqdnVfModule(execution);
+
+		verify(aaiVfModuleResources, times(1)).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);
+		assertEquals("newContrailServiceInstanceFqdn", vfModule.getContrailServiceInstanceFqdn());
+	}
+	@Test
+	public void updateContrailServiceInstanceFqdnVfModuleNoUpdateTest() throws Exception {		
+		aaiUpdateTasks.updateContrailServiceInstanceFqdnVfModule(execution);
+		verify(aaiVfModuleResources, times(0)).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);		
+	}
+	@Test
+	public void updateIpv4OamAddressVnfTest() throws Exception {
+		execution.setVariable("oamManagementV4Address", "newIpv4OamAddress");
+		doNothing().when(aaiVnfResources).updateObjectVnf(genericVnf);
+
+		aaiUpdateTasks.updateIpv4OamAddressVnf(execution);
+
+		verify(aaiVnfResources, times(1)).updateObjectVnf(genericVnf);
+		assertEquals("newIpv4OamAddress", genericVnf.getIpv4OamAddress());
+	}
+	@Test
+	public void updateIpv4OamAddressVnfNoUpdateTest() throws Exception {		
+		aaiUpdateTasks.updateIpv4OamAddressVnf(execution);
+		verify(aaiVnfResources, times(0)).updateObjectVnf(genericVnf);
+	}
+	@Test
+	public void updateManagementV6AddressVnfTest() throws Exception {
+		execution.setVariable("oamManagementV6Address", "newManagementV6Address");
+		doNothing().when(aaiVnfResources).updateObjectVnf(genericVnf);
+
+		aaiUpdateTasks.updateManagementV6AddressVnf(execution);
+
+		verify(aaiVnfResources, times(1)).updateObjectVnf(genericVnf);
+		assertEquals("newManagementV6Address", genericVnf.getManagementV6Address());
+	}
+	@Test
+	public void updateManagementV6AddressVnfNoUpdateTest() throws Exception {		
+		aaiUpdateTasks.updateManagementV6AddressVnf(execution);
+		verify(aaiVnfResources, times(0)).updateObjectVnf(genericVnf);
+	}
 }

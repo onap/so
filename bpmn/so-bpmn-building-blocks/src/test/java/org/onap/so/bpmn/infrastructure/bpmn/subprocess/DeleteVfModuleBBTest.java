@@ -38,6 +38,8 @@ public class DeleteVfModuleBBTest extends BaseBPMNTest{
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVfModuleBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted().hasPassedInOrder("DeleteVfModuleBB_Start", "DeleteVfModuleVnfAdapter", "VnfAdapter",
+				"DeleteNetworkPolicies", "UpdateVnfIpv4OamAddress", "UpdateVnfManagementV6Address",
+				"UpdateVfModuleContrailServiceInstanceFqdn",
 				"UpdateVfModuleHeatStackId", "UpdateVfModuleDeleteStatus", "DeleteVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}
@@ -49,7 +51,9 @@ public class DeleteVfModuleBBTest extends BaseBPMNTest{
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
 				.hasPassedInOrder("DeleteVfModuleBB_Start", "DeleteVfModuleVnfAdapter")
-				.hasNotPassed("VnfAdapter", "UpdateVfModuleHeatStackId", "UpdateVfModuleDeleteStatus", "DeleteVfModuleBB_End");
+				.hasNotPassed("VnfAdapter", "DeleteNetworkPolicies", "UpdateVnfIpv4OamAddress", "UpdateVnfManagementV6Address", 
+						"UpdateVfModuleContrailServiceInstanceFqdn","UpdateVfModuleHeatStackId", "UpdateVfModuleDeleteStatus",
+						"DeleteVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}
 }

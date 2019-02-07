@@ -21,16 +21,23 @@
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.aai.AAIObjectPlurals;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAINetworkResources;
@@ -38,11 +45,16 @@ import org.onap.so.client.orchestration.AAIServiceInstanceResources;
 import org.onap.so.client.orchestration.AAIVfModuleResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.client.orchestration.AAIVolumeGroupResources;
+import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AAIDeleteTasks {
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AAIDeleteTasks.class);
+	
+	private static String CONTRAIL_NETWORK_POLICY_FQDN_LIST = "contrailNetworkPolicyFqdnList";
+	private static String NETWORK_POLICY_FQDN_PARAM = "network-policy-fqdn";
 	
 	@Autowired
 	private ExceptionBuilder exceptionUtil;
@@ -144,5 +156,31 @@ public class AAIDeleteTasks {
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
+	}
+	
+	public void deleteNetworkPolicies(BuildingBlockExecution execution) {
+		try{			
+			String fqdns = execution.getVariable(CONTRAIL_NETWORK_POLICY_FQDN_LIST);
+			if (fqdns != null && !fqdns.isEmpty()) {
+				String fqdnList[] = fqdns.split(",");
+				int fqdnCount = fqdnList.length;
+				if (fqdnCount > 0) {
+					for (int i=0; i < fqdnCount; i++) {
+						String fqdn = fqdnList[i];
+						AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY);
+						uri.queryParam(NETWORK_POLICY_FQDN_PARAM, fqdn);
+						Optional<org.onap.aai.domain.yang.NetworkPolicy> oNetPolicy = aaiNetworkResources.getNetworkPolicy(uri);
+						if(oNetPolicy.isPresent()) {
+							String networkPolicyId = oNetPolicy.get().getNetworkPolicyId();
+							msoLogger.debug("Deleting network-policy with network-policy-id " + networkPolicyId);							
+							
+							aaiNetworkResources.deleteNetworkPolicy(networkPolicyId);
+						}
+					}
+				}
+			}			
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}		
 	}
 }

@@ -20,22 +20,26 @@
 
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
+import org.onap.aai.domain.yang.NetworkPolicy;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -46,6 +50,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 
 
@@ -61,6 +66,9 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 	private VolumeGroup volumeGroup;
 	private CloudRegion cloudRegion;
 	private Configuration configuration;
+	
+	@Captor
+	ArgumentCaptor<String> stringCaptor;	
 	
 	@Before
 	public void before() throws BBObjectNotFoundException {
@@ -178,5 +186,35 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 		doNothing().when(aaiConfigurationResources).deleteConfiguration(configuration);
 		aaiDeleteTasks.deleteConfiguration(execution);
 		verify(aaiConfigurationResources, times(1)).deleteConfiguration(configuration);
+	}
+	
+	@Test
+	public void deleteNetworkPolicyNeedToDeleteAllTest() throws Exception {		
+		execution.setVariable("contrailNetworkPolicyFqdnList", "ABC123,DEF456");
+		NetworkPolicy networkPolicy0 = new NetworkPolicy();
+		networkPolicy0.setNetworkPolicyId("testNetworkPolicyId0");
+		NetworkPolicy networkPolicy1 = new NetworkPolicy();
+		networkPolicy1.setNetworkPolicyId("testNetworkPolicyId1");
+		doReturn(Optional.of(networkPolicy0),Optional.of(networkPolicy1)).when(aaiNetworkResources).getNetworkPolicy(any(AAIResourceUri.class));
+		doNothing().when(aaiNetworkResources).deleteNetworkPolicy(any(String.class));
+		aaiDeleteTasks.deleteNetworkPolicies(execution);
+		verify(aaiNetworkResources, times(2)).deleteNetworkPolicy(stringCaptor.capture());
+		assertEquals("testNetworkPolicyId0", stringCaptor.getAllValues().get(0));
+		assertEquals("testNetworkPolicyId1", stringCaptor.getAllValues().get(1));
+	}
+	
+	@Test
+	public void deleteNetworkPolicyNeedToDeleteNoneTest() throws Exception {		
+		execution.setVariable("contrailNetworkPolicyFqdnList", "ABC123");
+		Optional<NetworkPolicy> networkPolicy = Optional.empty();		
+		doReturn(networkPolicy).when(aaiNetworkResources).getNetworkPolicy(any(AAIResourceUri.class));
+		aaiDeleteTasks.deleteNetworkPolicies(execution);
+		verify(aaiNetworkResources, times(0)).deleteNetworkPolicy(any(String.class));
+	}
+	
+	@Test
+	public void deleteNetworkPolicyNoNetworkPoliciesTest() throws Exception {			
+		aaiDeleteTasks.deleteNetworkPolicies(execution);
+		verify(aaiNetworkResources, times(0)).deleteNetworkPolicy(any(String.class));
 	}
 }

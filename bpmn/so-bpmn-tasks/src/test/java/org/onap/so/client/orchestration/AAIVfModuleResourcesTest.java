@@ -138,4 +138,17 @@ public class AAIVfModuleResourcesTest extends TestDataSetup{
 		
 		assertEquals("testHeatStackId", vfModule.getHeatStackId());
 	}
+	
+	@Test
+	public void updateContrailServiceInstanceFqdnVfModuleTest() throws Exception {
+		vfModule.setContrailServiceInstanceFqdn("testContrailServiceInstanceFqdn");
+		
+		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VfModule.class));
+		
+		aaiVfModuleResources.updateContrailServiceInstanceFqdnVfModule(vfModule, vnf);
+
+		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class),ArgumentMatchers.isNull());
+		
+		assertEquals("testContrailServiceInstanceFqdn", vfModule.getContrailServiceInstanceFqdn());
+	}
 }

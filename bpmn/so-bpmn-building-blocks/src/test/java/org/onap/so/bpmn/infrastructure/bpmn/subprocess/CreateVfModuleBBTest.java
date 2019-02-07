@@ -40,6 +40,10 @@ public class CreateVfModuleBBTest extends BaseBPMNTest{
 				"QueryVfModule",
 				"CreateVfModule",
 				"VnfAdapter",
+				"CreateNetworkPolicies",
+				"UpdateVnfIpv4OamAddress",
+				"UpdateVnfManagementV6Address",
+				"UpdateVfModuleContrailServiceInstanceFqdn",
 				"UpdateVfModuleHeatStackId",
 				"UpdateVfModuleStatus",
 				"CreateVfModuleBB_End");
@@ -53,7 +57,9 @@ public class CreateVfModuleBBTest extends BaseBPMNTest{
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
 				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf")
-				.hasNotPassed("QueryVfModule", "CreateVfModule", "VnfAdapter", "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
+				.hasNotPassed("QueryVfModule", "CreateVfModule", "VnfAdapter", "CreateNetworkPolicies",	"UpdateVnfIpv4OamAddress",
+						"UpdateVnfManagementV6Address","UpdateVfModuleContrailServiceInstanceFqdn","UpdateVfModuleHeatStackId", 
+						"UpdateVfModuleStatus", "CreateVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}
 
@@ -64,7 +70,8 @@ public class CreateVfModuleBBTest extends BaseBPMNTest{
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
 				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule")
-				.hasNotPassed("CreateVfModule", "VnfAdapter", "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
+				.hasNotPassed("CreateVfModule", "VnfAdapter", "CreateNetworkPolicies", "UpdateVnfIpv4OamAddress", "UpdateVnfManagementV6Address",
+						"UpdateVfModuleContrailServiceInstanceFqdn","UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}
 	
@@ -75,7 +82,8 @@ public class CreateVfModuleBBTest extends BaseBPMNTest{
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
 				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule", "CreateVfModule")
-				.hasNotPassed("VnfAdapter", "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
+				.hasNotPassed("VnfAdapter", "CreateNetworkPolicies","UpdateVnfIpv4OamAddress", "UpdateVnfManagementV6Address",
+						"UpdateVfModuleContrailServiceInstanceFqdn","UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}
 	
@@ -87,7 +95,8 @@ public class CreateVfModuleBBTest extends BaseBPMNTest{
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVfModuleBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
-				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule", "CreateVfModule", "VnfAdapter", "UpdateVfModuleHeatStackId")
+				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule", "CreateVfModule", "VnfAdapter", "CreateNetworkPolicies",
+						"UpdateVnfIpv4OamAddress", "UpdateVnfManagementV6Address", "UpdateVfModuleContrailServiceInstanceFqdn","UpdateVfModuleHeatStackId")
 				.hasNotPassed("UpdateVfModuleStatus", "CreateVfModuleBB_End");
 		assertThat(pi).isEnded();
 		
@@ -100,7 +109,9 @@ public class CreateVfModuleBBTest extends BaseBPMNTest{
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVfModuleBB", variables);
 		assertThat(pi).isNotNull();
 		assertThat(pi).isStarted()
-				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule", "CreateVfModule", "VnfAdapter", "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus")
+				.hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule", "CreateVfModule", "VnfAdapter", "CreateNetworkPolicies",
+						"UpdateVnfIpv4OamAddress", "UpdateVnfManagementV6Address", "UpdateVfModuleContrailServiceInstanceFqdn","UpdateVfModuleHeatStackId", 
+						"UpdateVfModuleStatus")
 				.hasNotPassed("CreateVfModuleBB_End");
 		assertThat(pi).isEnded();
 	}

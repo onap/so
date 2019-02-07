@@ -302,4 +302,8 @@ public class AAIObjectMapper {
 	public org.onap.aai.domain.yang.Subnet mapSubnet (Subnet subnet){
 		return modelMapper.map(subnet,org.onap.aai.domain.yang.Subnet.class);
 	}
+	
+	public org.onap.aai.domain.yang.NetworkPolicy mapNetworkPolicy (NetworkPolicy networkPolicy){
+		return modelMapper.map(networkPolicy,org.onap.aai.domain.yang.NetworkPolicy.class);
+	}
 }

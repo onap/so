@@ -41,6 +41,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.HostRoute;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTarget;
@@ -671,5 +672,22 @@ public class AAIObjectMapperTest {
         org.onap.aai.domain.yang.Subnet actualSubnet = aaiObjectMapper.mapSubnet(subnet);
 
         assertThat(actualSubnet, sameBeanAs(expectedSubnet));
+    }
+    
+    @Test
+    public void mapNetworkPolicyTest() {
+        NetworkPolicy networkPolicy = new NetworkPolicy();
+        networkPolicy.setNetworkPolicyId("testNetworkPolicyId");
+        networkPolicy.setNetworkPolicyFqdn("testNetworkPolicyFqdn");
+        networkPolicy.setHeatStackId("testHeatStackId");        
+
+        org.onap.aai.domain.yang.NetworkPolicy expectedNetworkPolicy = new org.onap.aai.domain.yang.NetworkPolicy();
+        expectedNetworkPolicy.setNetworkPolicyId("testNetworkPolicyId");
+        expectedNetworkPolicy.setNetworkPolicyFqdn("testNetworkPolicyFqdn");
+        expectedNetworkPolicy.setHeatStackId("testHeatStackId");        
+        
+        org.onap.aai.domain.yang.NetworkPolicy actualNetworkPolicy = aaiObjectMapper.mapNetworkPolicy(networkPolicy);
+
+        assertThat(actualNetworkPolicy, sameBeanAs(expectedNetworkPolicy));
     }
 }

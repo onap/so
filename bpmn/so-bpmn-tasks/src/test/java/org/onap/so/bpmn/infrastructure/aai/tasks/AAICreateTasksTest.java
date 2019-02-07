@@ -31,6 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.TreeSet;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -38,7 +39,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -47,6 +50,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
@@ -55,6 +59,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 
 public class AAICreateTasksTest extends BaseTaskTest{
 	
@@ -70,6 +75,9 @@ public class AAICreateTasksTest extends BaseTaskTest{
 	private VfModule vfModule;
 	private Customer customer;
 	private Configuration configuration;
+	
+	@Captor
+	ArgumentCaptor<NetworkPolicy> networkPolicyCaptor;
 	
 	@Rule
 	public final ExpectedException exception = ExpectedException.none();
@@ -459,6 +467,39 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		aaiCreateTasks.connectVnfToTenant(execution);
 		verify(aaiVnfResources, times(1)).connectVnfToTenant(genericVnf, gBBInput.getCloudRegion());
 	}
+	@Test
+	public void createNetworkPolicyNeedToCreateAllTest() throws Exception {	
+		execution.setVariable("heatStackId", "testHeatStackId");
+		execution.setVariable("contrailNetworkPolicyFqdnList", "ABC123,ED456");
+		Optional<NetworkPolicy> networkPolicy = Optional.empty();
+		doReturn(networkPolicy).when(aaiNetworkResources).getNetworkPolicy(any(AAIResourceUri.class));
+		doNothing().when(aaiNetworkResources).createNetworkPolicy(any(NetworkPolicy.class));
+		aaiCreateTasks.createNetworkPolicies(execution);
+		verify(aaiNetworkResources, times(2)).createNetworkPolicy(networkPolicyCaptor.capture());
+		assertEquals("ABC123", networkPolicyCaptor.getAllValues().get(0).getNetworkPolicyFqdn());
+		assertEquals("ED456", networkPolicyCaptor.getAllValues().get(1).getNetworkPolicyFqdn());
+		assertEquals("testHeatStackId", networkPolicyCaptor.getAllValues().get(0).getHeatStackId());
+		assertEquals("testHeatStackId", networkPolicyCaptor.getAllValues().get(1).getHeatStackId());
+	}
+	
+	@Test
+	public void createNetworkPolicyNeedToCreateNoneTest() throws Exception {
+		execution.setVariable("heatStackId", "testHeatStackId");
+		execution.setVariable("contrailNetworkPolicyFqdnList", "ABC123");
+		NetworkPolicy networkPolicy = new NetworkPolicy();		
+		doReturn(Optional.of(networkPolicy)).when(aaiNetworkResources).getNetworkPolicy(any(AAIResourceUri.class));
+		doNothing().when(aaiNetworkResources).createNetworkPolicy(any(NetworkPolicy.class));
+		aaiCreateTasks.createNetworkPolicies(execution);
+		verify(aaiNetworkResources, times(0)).createNetworkPolicy(any(NetworkPolicy.class));
+	}
+	
+	@Test
+	public void createNetworkPolicyNoNetworkPoliciesTest() throws Exception {
+		execution.setVariable("heatStackId", "testHeatStackId");	
+		aaiCreateTasks.createNetworkPolicies(execution);
+		verify(aaiNetworkResources, times(0)).createNetworkPolicy(any(NetworkPolicy.class));
+	}
+	
 	@Test
 	public void createVfModuleGetLowestIndexTest() throws Exception {
 		GenericVnf vnf = new GenericVnf();

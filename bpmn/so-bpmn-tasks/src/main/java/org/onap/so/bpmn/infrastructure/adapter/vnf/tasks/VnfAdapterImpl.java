@@ -26,6 +26,7 @@ import org.onap.so.adapters.vnfrest.CreateVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleResponse;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
@@ -47,10 +48,18 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class VnfAdapterImpl {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VnfAdapterCreateTasks.class);
+	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VnfAdapterImpl.class);
+	private static final String CONTRAIL_SERVICE_INSTANCE_FQDN = "contrailServiceInstanceFqdn";
+	private static final String OAM_MANAGEMENT_V4_ADDRESS = "oamManagementV4Address";
+	private static final String OAM_MANAGEMENT_V6_ADDRESS = "oamManagementV6Address";
+	private static final String CONTRAIL_NETWORK_POLICY_FQDN_LIST = "contrailNetworkPolicyFqdnList";
 	
 	@Autowired
 	private ExtractPojosForBB extractPojosForBB;
@@ -65,6 +74,10 @@ public class VnfAdapterImpl {
 			execution.setVariable("mso-request-id", gBBInput.getRequestContext().getMsoRequestId());
 			execution.setVariable("mso-service-instance-id", serviceInstance.getServiceInstanceId());
 			execution.setVariable("heatStackId", null);
+			execution.setVariable(CONTRAIL_SERVICE_INSTANCE_FQDN, null);
+			execution.setVariable(OAM_MANAGEMENT_V4_ADDRESS, null);
+			execution.setVariable(OAM_MANAGEMENT_V6_ADDRESS, null);
+			execution.setVariable(CONTRAIL_NETWORK_POLICY_FQDN_LIST, null);			
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
@@ -79,15 +92,36 @@ public class VnfAdapterImpl {
                     VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
                     String heatStackId = ((CreateVfModuleResponse) vnfRestResponse).getVfModuleStackId();
                     if(!StringUtils.isEmpty(heatStackId)) {
-                        vfModule.setHeatStackId(heatStackId);
+                        vfModule.setHeatStackId(heatStackId);                        
                         execution.setVariable("heatStackId", heatStackId);
+                    }
+                    Map<String,String> vfModuleOutputs = ((CreateVfModuleResponse) vnfRestResponse).getVfModuleOutputs();
+                    if (vfModuleOutputs != null) {
+                    	processVfModuleOutputs(execution, vfModuleOutputs);
                     }
                 } else if(vnfRestResponse instanceof DeleteVfModuleResponse) {
                     VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+                    GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
                     Boolean vfModuleDelete = ((DeleteVfModuleResponse) vnfRestResponse).getVfModuleDeleted();
                     if(null!= vfModuleDelete && vfModuleDelete) {
                         vfModule.setHeatStackId(null);
                         execution.setVariable("heatStackId", null);
+                        Map<String,String> vfModuleOutputs = ((DeleteVfModuleResponse) vnfRestResponse).getVfModuleOutputs();
+                        if (vfModuleOutputs != null) {
+                        	processVfModuleOutputs(execution, vfModuleOutputs);
+                        	if (execution.getVariable(OAM_MANAGEMENT_V4_ADDRESS) != null) {
+                        		genericVnf.setIpv4OamAddress("");
+                        		execution.setVariable(OAM_MANAGEMENT_V4_ADDRESS, "");                        		
+                        	}
+                        	if (execution.getVariable(OAM_MANAGEMENT_V6_ADDRESS) != null) {
+                        		genericVnf.setManagementV6Address("");
+                        		execution.setVariable(OAM_MANAGEMENT_V6_ADDRESS, "");                        		
+                        	}
+                        	if (execution.getVariable(CONTRAIL_SERVICE_INSTANCE_FQDN) != null) {
+                        		vfModule.setContrailServiceInstanceFqdn("");
+                        		execution.setVariable(CONTRAIL_SERVICE_INSTANCE_FQDN, "");
+                        	}                        	
+                        }
                     }
                 } else if(vnfRestResponse instanceof CreateVolumeGroupResponse) {
                     VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
@@ -108,7 +142,7 @@ public class VnfAdapterImpl {
                 }
             }
 		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);			
 		}
 	}
 
@@ -132,5 +166,50 @@ public class VnfAdapterImpl {
             msoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", "", "", MsoLogger.ErrorCode.SchemaError, e.getMessage(), e);
             throw new MarshallerException("Error parsing VNF Adapter response. " + e.getMessage(), MsoLogger.ErrorCode.SchemaError.getValue(), e);
         }
+    }
+    
+    private void processVfModuleOutputs(BuildingBlockExecution execution, Map<String,String> vfModuleOutputs) {
+    	if (vfModuleOutputs == null) {
+    		return;
+    	}
+    	try {
+	    	VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+	    	GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+	    	List<String> contrailNetworkPolicyFqdnList = new ArrayList<String>();
+	    	Iterator<String> keys = vfModuleOutputs.keySet().iterator();
+	    	while (keys.hasNext()) {
+	    		String key = keys.next();	    		
+	    		if (key.equals("contrail-service-instance-fqdn")) {
+					String contrailServiceInstanceFqdn = vfModuleOutputs.get(key);				
+					msoLogger.debug("Obtained contrailServiceInstanceFqdn: " + contrailServiceInstanceFqdn);
+					vfModule.setContrailServiceInstanceFqdn(contrailServiceInstanceFqdn);
+					execution.setVariable(CONTRAIL_SERVICE_INSTANCE_FQDN, contrailServiceInstanceFqdn);
+				}
+				else if (key.endsWith("contrail_network_policy_fqdn")) {
+					String contrailNetworkPolicyFqdn = vfModuleOutputs.get(key);
+					msoLogger.debug("Obtained contrailNetworkPolicyFqdn: " + contrailNetworkPolicyFqdn);
+					contrailNetworkPolicyFqdnList.add(contrailNetworkPolicyFqdn);
+				}
+				else if (key.equals("oam_management_v4_address")) {
+					String oamManagementV4Address = vfModuleOutputs.get(key);
+					msoLogger.debug("Obtained oamManagementV4Address: " + oamManagementV4Address);
+					genericVnf.setIpv4OamAddress(oamManagementV4Address);
+					execution.setVariable(OAM_MANAGEMENT_V4_ADDRESS, oamManagementV4Address);
+				}
+				else if (key.equals("oam_management_v6_address")) {
+					String oamManagementV6Address = vfModuleOutputs.get(key);
+					msoLogger.debug("Obtained oamManagementV6Address: " + oamManagementV6Address);
+					genericVnf.setManagementV6Address(oamManagementV6Address);
+					execution.setVariable(OAM_MANAGEMENT_V6_ADDRESS, oamManagementV6Address);
+				}
+	    		
+	    		if (!contrailNetworkPolicyFqdnList.isEmpty()) {
+					execution.setVariable(CONTRAIL_NETWORK_POLICY_FQDN_LIST, String.join(",", contrailNetworkPolicyFqdnList));
+				}
+	    	}
+    	} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+    	
     }
 }

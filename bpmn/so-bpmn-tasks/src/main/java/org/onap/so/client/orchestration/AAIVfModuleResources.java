@@ -76,6 +76,15 @@ public class AAIVfModuleResources {
 		injectionHelper.getAaiClient().update(vfModuleURI, aaiVfModule);
 	}
 	
+	public void updateContrailServiceInstanceFqdnVfModule(VfModule vfModule, GenericVnf vnf) {
+		AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+		VfModule copiedVfModule = vfModule.shallowCopyId();
+		
+		copiedVfModule.setContrailServiceInstanceFqdn(vfModule.getContrailServiceInstanceFqdn());
+		org.onap.aai.domain.yang.VfModule aaiVfModule = aaiObjectMapper.mapVfModule(copiedVfModule);
+		injectionHelper.getAaiClient().update(vfModuleURI, aaiVfModule);
+	}
+	
 	public void changeAssignVfModule(VfModule vfModule, GenericVnf vnf) {
 		AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
 		org.onap.aai.domain.yang.VfModule AAIVfModule = aaiObjectMapper.mapVfModule(vfModule);

@@ -449,4 +449,53 @@ public class AAIUpdateTasks {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
 	}
+	
+	public void updateIpv4OamAddressVnf(BuildingBlockExecution execution) {
+		try {
+			String ipv4OamAddress = execution.getVariable("oamManagementV4Address");
+			if (ipv4OamAddress != null) {
+				GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				GenericVnf copiedGenericVnf = genericVnf.shallowCopyId();
+			
+				genericVnf.setIpv4OamAddress(ipv4OamAddress);	
+				copiedGenericVnf.setIpv4OamAddress(ipv4OamAddress);		
+
+				aaiVnfResources.updateObjectVnf(copiedGenericVnf);
+			}
+		} catch(Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	
+	public void updateManagementV6AddressVnf(BuildingBlockExecution execution) {
+		try {
+			String managementV6Address = execution.getVariable("oamManagementV6Address");
+			if (managementV6Address != null) {
+				GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				GenericVnf copiedGenericVnf = genericVnf.shallowCopyId();
+			
+				genericVnf.setManagementV6Address(managementV6Address);	
+				copiedGenericVnf.setManagementV6Address(managementV6Address);		
+
+				aaiVnfResources.updateObjectVnf(copiedGenericVnf);
+			}
+		} catch(Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	
+	public void updateContrailServiceInstanceFqdnVfModule(BuildingBlockExecution execution) {		
+		try {
+			String contrailServiceInstanceFqdn = execution.getVariable("contrailServiceInstanceFqdn");
+			if (contrailServiceInstanceFqdn != null) {
+				VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+				GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				vfModule.setContrailServiceInstanceFqdn(contrailServiceInstanceFqdn);
+				aaiVfModuleResources.updateContrailServiceInstanceFqdnVfModule(vfModule, vnf);
+			}
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	
 }

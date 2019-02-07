@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.adapter.vnf.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -35,6 +36,7 @@ import org.mockito.InjectMocks;
 import org.onap.so.FileUtil;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
@@ -50,6 +52,7 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 
 	private RequestContext requestContext;
 	private ServiceInstance serviceInstance;
+	private GenericVnf genericVnf;
 	private VfModule vfModule;
     private VolumeGroup volumeGroup;
 	
@@ -58,12 +61,17 @@ public class VnfAdapterImplTest extends BaseTaskTest {
     private static final String VNF_ADAPTER_VOLUME_CREATE_RESPONSE =  FileUtil.readResourceFile("__files/VfModularity/CreateVfModuleVolumeCallbackResponse.xml");
     private static final String VNF_ADAPTER_VOLUME_DELETE_RESPONSE =  FileUtil.readResourceFile("__files/VfModularity/DeleteVfModuleVolumeCallbackResponse.xml");
 	private static final String TEST_VFMODULE_HEATSTACK_ID = "slowburn";
-    private static final String TEST_VOLUME_HEATSTACK_ID = "testHeatStackId1";   
+    private static final String TEST_VOLUME_HEATSTACK_ID = "testHeatStackId1";
+    private static final String TEST_CONTRAIL_SERVICE_INSTANCE_FQDN = "default-domain:MSOTest:MsoNW-RA";
+    private static final String TEST_OAM_MANAGEMENT_V4_ADDRESS = "127.0.0.1";
+    private static final String TEST_OAM_MANAGEMENT_V6_ADDRESS = "2000:abc:bce:1111";
+    private static final String TEST_CONTRAIL_NETWORK_POLICY_FQDNS = "MSOTest:DefaultPolicyFQDN2,MSOTest:DefaultPolicyFQDN1";
 
 	@Before
 	public void before() throws BBObjectNotFoundException {
 		requestContext = setRequestContext();
 		serviceInstance = setServiceInstance();
+		genericVnf = setGenericVnf();
 		vfModule = setVfModule();
         volumeGroup = setVolumeGroup();
 		vfModule.setHeatStackId(null);
@@ -72,6 +80,7 @@ public class VnfAdapterImplTest extends BaseTaskTest {
         doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
     	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
     	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
+    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
     	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
 	}
 
@@ -86,8 +95,15 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 	@Test
 	public void postProcessVnfAdapter_CreateResponseTest() {
 		execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_CREATE_RESPONSE);
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
+		vnfAdapterImpl.postProcessVnfAdapter(execution);		
 		assertEquals(TEST_VFMODULE_HEATSTACK_ID, vfModule.getHeatStackId());
+		assertEquals(TEST_CONTRAIL_SERVICE_INSTANCE_FQDN, vfModule.getContrailServiceInstanceFqdn());
+		assertEquals(TEST_CONTRAIL_SERVICE_INSTANCE_FQDN, execution.getVariable("contrailServiceInstanceFqdn"));
+		assertEquals(TEST_OAM_MANAGEMENT_V4_ADDRESS, genericVnf.getIpv4OamAddress());
+		assertEquals(TEST_OAM_MANAGEMENT_V4_ADDRESS, execution.getVariable("oamManagementV4Address"));
+		assertEquals(TEST_OAM_MANAGEMENT_V6_ADDRESS, genericVnf.getManagementV6Address());
+		assertEquals(TEST_OAM_MANAGEMENT_V6_ADDRESS, execution.getVariable("oamManagementV6Address"));
+		assertEquals(TEST_CONTRAIL_NETWORK_POLICY_FQDNS, execution.getVariable("contrailNetworkPolicyFqdnList"));		
 	}
 	
 
@@ -111,6 +127,20 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 		vnfAdapterImpl.postProcessVnfAdapter(execution);
 		assertNull(vfModule.getHeatStackId());
 	}
+	
+	@Test
+	public void postProcessVnfAdapter_CreateResponseTest_EmptyVfModuleOutputs() {
+		execution.setVariable("vnfAdapterRestV1Response", "<createVfModuleResponse><vfModuleOutputs></vfModuleOutputs></createVfModuleResponse>");
+		vnfAdapterImpl.postProcessVnfAdapter(execution);
+		assertNull(vfModule.getHeatStackId());
+		assertNull(vfModule.getContrailServiceInstanceFqdn());
+		assertNull(execution.getVariable("contrailServiceInstanceFqdn"));
+		assertNotEquals(TEST_OAM_MANAGEMENT_V4_ADDRESS, genericVnf.getIpv4OamAddress());		
+		assertNull(execution.getVariable("oamManagementV4Address"));
+		assertNull(genericVnf.getManagementV6Address());
+		assertNull(execution.getVariable("oamManagementV6Address"));
+		assertNull(execution.getVariable("contrailNetworkPolicyFqdnList"));
+	}
 
 	@Test
 	public void postProcessVnfAdapter_DeleteResponseTest() {
@@ -118,6 +148,25 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 		execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_DELETE_RESPONSE);
 		vnfAdapterImpl.postProcessVnfAdapter(execution);
 		assertNull(vfModule.getHeatStackId());
+		assertEquals(vfModule.getContrailServiceInstanceFqdn(), "");
+		assertEquals(execution.getVariable("contrailServiceInstanceFqdn"), "");
+		assertEquals(genericVnf.getIpv4OamAddress(), "");
+		assertEquals(execution.getVariable("oamManagementV4Address"), "");
+		assertEquals(genericVnf.getManagementV6Address(), "");
+		assertEquals(execution.getVariable("oamManagementV6Address"), "");				
+		assertEquals(TEST_CONTRAIL_NETWORK_POLICY_FQDNS, execution.getVariable("contrailNetworkPolicyFqdnList"));
+	}
+	
+	@Test
+	public void postProcessVnfAdapter_DeleteResponseTest_EmptyVfModuleOutputs() {
+		execution.setVariable("vnfAdapterRestV1Response", "<createVfModuleResponse><vfModuleOutputs></vfModuleOutputs></createVfModuleResponse>");
+		vnfAdapterImpl.postProcessVnfAdapter(execution);
+		assertNull(vfModule.getHeatStackId());
+		assertNull(vfModule.getContrailServiceInstanceFqdn());
+		assertNull(execution.getVariable("contrailServiceInstanceFqdn"));				
+		assertNull(execution.getVariable("oamManagementV4Address"));		
+		assertNull(execution.getVariable("oamManagementV6Address"));
+		assertNull(execution.getVariable("contrailNetworkPolicyFqdnList"));
 	}
 	
 	@Test

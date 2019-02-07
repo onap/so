@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
   <bpmn:process id="CreateVfModuleBB" name="CreateVfModuleBB" isExecutable="true">
     <bpmn:startEvent id="CreateVfModuleBB_Start">
       <bpmn:outgoing>SequenceFlow_1xr6chl</bpmn:outgoing>
@@ -23,13 +23,17 @@
       <bpmn:outgoing>SequenceFlow_1s4rpyp</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_16g4dz0" sourceRef="CreateVfModule" targetRef="VnfAdapter" />
-    <bpmn:sequenceFlow id="SequenceFlow_0ecr393" sourceRef="VnfAdapter" targetRef="UpdateVfModuleHeatStackId" />
+    <bpmn:sequenceFlow id="SequenceFlow_0ecr393" sourceRef="VnfAdapter" targetRef="CreateNetworkPolicies" />
     <bpmn:callActivity id="VnfAdapter" name="Vnf Adapter" calledElement="VnfAdapter">
       <bpmn:extensionElements>
         <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="VNFREST_Request" target="VNFREST_Request" />
         <camunda:out source="heatStackId" target="heatStackId" />
+        <camunda:out source="contrailServiceInstanceFqdn" target="contrailServiceInstanceFqdn" />
+        <camunda:out source="oamManagementV4Address" target="oamManagementV4Address" />
+        <camunda:out source="oamManagementV6Address" target="oamManagementV6Address" />
+        <camunda:out source="contrailNetworkPolicyFqdnList" target="contrailNetworkPolicyFqdnList" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_16g4dz0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ecr393</bpmn:outgoing>
@@ -39,7 +43,7 @@
       <bpmn:outgoing>SequenceFlow_1vbwdaw</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="UpdateVfModuleHeatStackId" name="&#10;AAI&#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateHeatStackIdVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_0ecr393</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_15do1tu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0rds4rj</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:subProcess id="SubProcess_1getwnf" name="Error Handling&#10;&#10;" triggeredByEvent="true">
@@ -55,29 +59,49 @@
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_0rds4rj" sourceRef="UpdateVfModuleHeatStackId" targetRef="UpdateVfModuleStatus" />
     <bpmn:sequenceFlow id="SequenceFlow_1vbwdaw" sourceRef="UpdateVfModuleStatus" targetRef="CreateVfModuleBB_End" />
+    <bpmn:serviceTask id="CreateNetworkPolicies" name="AAI Create (network policies)" camunda:expression="${AAICreateTasks.createNetworkPolicies(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0ecr393</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0xqhep5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0xqhep5" sourceRef="CreateNetworkPolicies" targetRef="UpdateVnfIpv4OamAddress" />
+    <bpmn:serviceTask id="UpdateVnfIpv4OamAddress" name="AAI Update (VNF) " camunda:expression="${AAIUpdateTasks.updateIpv4OamAddressVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0xqhep5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1yo6mvv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1yo6mvv" sourceRef="UpdateVnfIpv4OamAddress" targetRef="UpdateVnfManagementV6Address" />
+    <bpmn:serviceTask id="UpdateVnfManagementV6Address" name="AAI Update (VNF)" camunda:expression="${AAIUpdateTasks.updateManagementV6AddressVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1yo6mvv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1i03uy2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1i03uy2" sourceRef="UpdateVnfManagementV6Address" targetRef="UpdateVfModuleContrailServiceInstanceFqdn" />
+    <bpmn:serviceTask id="UpdateVfModuleContrailServiceInstanceFqdn" name="AAI&#10;Update&#10;(vf module)&#10;" camunda:expression="${AAIUpdateTasks.updateContrailServiceInstanceFqdnVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1i03uy2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_15do1tu</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_15do1tu" sourceRef="UpdateVfModuleContrailServiceInstanceFqdn" targetRef="UpdateVfModuleHeatStackId" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateVfModuleBB">
       <bpmndi:BPMNShape id="StartEvent_0kxwniy_di" bpmnElement="CreateVfModuleBB_Start">
-        <dc:Bounds x="100" y="88" width="36" height="36" />
+        <dc:Bounds x="59" y="88" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="106" y="124" width="24" height="12" />
+          <dc:Bounds x="77" y="124" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_13t22km_di" bpmnElement="QueryVfModule">
         <dc:Bounds x="416" y="66" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1xr6chl_di" bpmnElement="SequenceFlow_1xr6chl">
-        <di:waypoint xsi:type="dc:Point" x="136" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="95" y="106" />
         <di:waypoint xsi:type="dc:Point" x="216" y="106" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="131" y="91" width="90" height="0" />
+          <dc:Bounds x="156" y="91" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_0qdq7wj_di" bpmnElement="CreateVfModuleBB_End">
-        <dc:Bounds x="1299" y="88" width="36" height="36" />
+        <dc:Bounds x="1118" y="293" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1272" y="128" width="90" height="12" />
+          <dc:Bounds x="1136" y="333" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1dgenhy_di" bpmnElement="CreateVfModule">
@@ -102,61 +126,107 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_16g4dz0_di" bpmnElement="SequenceFlow_16g4dz0">
         <di:waypoint xsi:type="dc:Point" x="712" y="106" />
-        <di:waypoint xsi:type="dc:Point" x="777" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="790" y="106" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="700" y="85" width="90" height="12" />
+          <dc:Bounds x="751" y="91" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0ecr393_di" bpmnElement="SequenceFlow_0ecr393">
-        <di:waypoint xsi:type="dc:Point" x="877" y="107" />
-        <di:waypoint xsi:type="dc:Point" x="931" y="107" />
+        <di:waypoint xsi:type="dc:Point" x="890" y="107" />
+        <di:waypoint xsi:type="dc:Point" x="994" y="107" />
+        <di:waypoint xsi:type="dc:Point" x="994" y="209" />
+        <di:waypoint xsi:type="dc:Point" x="73" y="209" />
+        <di:waypoint xsi:type="dc:Point" x="73" y="306" />
+        <di:waypoint xsi:type="dc:Point" x="142" y="306" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="859" y="92" width="90" height="0" />
+          <dc:Bounds x="534" y="194" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1i1pfzb_di" bpmnElement="VnfAdapter">
-        <dc:Bounds x="777" y="66" width="100" height="80" />
+        <dc:Bounds x="790" y="66" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0fpfn71_di" bpmnElement="UpdateVfModuleStatus">
-        <dc:Bounds x="1117" y="66" width="100" height="80" />
+        <dc:Bounds x="942" y="271" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_04k1b85_di" bpmnElement="UpdateVfModuleHeatStackId">
-        <dc:Bounds x="931" y="68" width="100" height="80" />
+        <dc:Bounds x="777" y="271" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_1getwnf_di" bpmnElement="SubProcess_1getwnf" isExpanded="true">
-        <dc:Bounds x="172" y="276" width="231" height="135" />
+        <dc:Bounds x="136" y="439" width="231" height="135" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_1c8o652_di" bpmnElement="StartEvent_1c8o652">
-        <dc:Bounds x="211" y="334" width="36" height="36" />
+        <dc:Bounds x="175" y="497" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="184" y="370" width="0" height="12" />
+          <dc:Bounds x="148" y="533" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1emam1w_di" bpmnElement="EndEvent_1emam1w">
-        <dc:Bounds x="348" y="334" width="36" height="36" />
+        <dc:Bounds x="312" y="497" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="321" y="370" width="0" height="12" />
+          <dc:Bounds x="285" y="533" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0gcots6_di" bpmnElement="SequenceFlow_0gcots6">
-        <di:waypoint xsi:type="dc:Point" x="247" y="352" />
-        <di:waypoint xsi:type="dc:Point" x="348" y="352" />
+        <di:waypoint xsi:type="dc:Point" x="211" y="515" />
+        <di:waypoint xsi:type="dc:Point" x="312" y="515" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="297.5" y="331" width="0" height="12" />
+          <dc:Bounds x="262" y="494" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0rds4rj_di" bpmnElement="SequenceFlow_0rds4rj">
-        <di:waypoint xsi:type="dc:Point" x="1031" y="107" />
-        <di:waypoint xsi:type="dc:Point" x="1117" y="107" />
+        <di:waypoint xsi:type="dc:Point" x="877" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="942" y="311" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1074" y="85" width="0" height="13" />
+          <dc:Bounds x="910" y="296" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1vbwdaw_di" bpmnElement="SequenceFlow_1vbwdaw">
-        <di:waypoint xsi:type="dc:Point" x="1217" y="106" />
-        <di:waypoint xsi:type="dc:Point" x="1299" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="1042" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="1083" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="1083" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="1118" y="311" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1258" y="84" width="0" height="13" />
+          <dc:Bounds x="1098" y="311" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1v8zx4s_di" bpmnElement="CreateNetworkPolicies">
+        <dc:Bounds x="142" y="271" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xqhep5_di" bpmnElement="SequenceFlow_0xqhep5">
+        <di:waypoint xsi:type="dc:Point" x="242" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="295" y="311" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="269" y="296" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_015ayw5_di" bpmnElement="UpdateVnfIpv4OamAddress">
+        <dc:Bounds x="295" y="271" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yo6mvv_di" bpmnElement="SequenceFlow_1yo6mvv">
+        <di:waypoint xsi:type="dc:Point" x="395" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="464" y="311" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="430" y="296" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0mlfsc9_di" bpmnElement="UpdateVnfManagementV6Address">
+        <dc:Bounds x="464" y="271" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1i03uy2_di" bpmnElement="SequenceFlow_1i03uy2">
+        <di:waypoint xsi:type="dc:Point" x="564" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="612" y="311" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="588" y="296" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0wctnhw_di" bpmnElement="UpdateVfModuleContrailServiceInstanceFqdn">
+        <dc:Bounds x="612" y="271" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_15do1tu_di" bpmnElement="SequenceFlow_15do1tu">
+        <di:waypoint xsi:type="dc:Point" x="712" y="311" />
+        <di:waypoint xsi:type="dc:Point" x="777" y="311" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="745" y="286" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

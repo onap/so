@@ -45,6 +45,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAINetworkResources {
+	
 	@Autowired
 	private InjectionHelper injectionHelper;
 
@@ -171,6 +172,16 @@ public class AAINetworkResources {
 		AAIResourceUri instanceGroupURI = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
 		injectionHelper.getAaiClient().delete(instanceGroupURI);
 	}
-
-
+	
+	public void createNetworkPolicy(org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy networkPolicy) {
+		NetworkPolicy aaiNetworkPolicy = aaiObjectMapper.mapNetworkPolicy(networkPolicy);
+		String networkPolicyId = networkPolicy.getNetworkPolicyId();
+		AAIResourceUri netUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId);
+		injectionHelper.getAaiClient().create(netUri, aaiNetworkPolicy);
+	}
+	
+	public void deleteNetworkPolicy(String networkPolicyId) {
+		AAIResourceUri networkPolicyURI = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId);
+		injectionHelper.getAaiClient().delete(networkPolicyURI);
+	}
 }
