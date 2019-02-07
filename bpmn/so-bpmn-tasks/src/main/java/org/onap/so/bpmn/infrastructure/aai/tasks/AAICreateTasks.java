@@ -21,7 +21,9 @@
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -455,9 +457,10 @@ public class AAICreateTasks {
 		
 		
 		if (genericVnf != null && genericVnf.getVfModules() != null && !genericVnf.getVfModules().isEmpty()) {
+			List<VfModule> modules = genericVnf.getVfModules().stream().filter(item -> !item.getVfModuleId().equals(newVfModule.getVfModuleId())).collect(Collectors.toList());
 			TreeSet<Integer> moduleIndices = new TreeSet<>();
 			int nullIndexFound = 0;
-			for (VfModule vfModule : genericVnf.getVfModules()) {
+			for (VfModule vfModule : modules) {
 				if (vfModule.getModelInfoVfModule() != null) {
 					if (vfModule.getModelInfoVfModule().getModelInvariantUUID().equals(newVfModuleModelInvariantUUID)) {
 						if (vfModule.getModuleIndex() != null) {

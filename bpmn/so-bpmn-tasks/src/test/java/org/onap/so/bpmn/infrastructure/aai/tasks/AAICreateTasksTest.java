@@ -475,28 +475,41 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		infoB.setModelInvariantUUID("B");
 		
 		ModelInfoVfModule infoC = new ModelInfoVfModule();
-		infoB.setIsBaseBoolean(false);
-		infoB.setModelInvariantUUID("C");
+		infoC.setIsBaseBoolean(false);
+		infoC.setModelInvariantUUID("C");
 
 		VfModule newVfModuleA = new VfModule();
+		newVfModuleA.setVfModuleId("a");
 		VfModule newVfModuleB = new VfModule();
+		newVfModuleB.setVfModuleId("b");
 		VfModule newVfModuleC = new VfModule();
+		newVfModuleC.setVfModuleId("c");
 		
 		VfModule vfModule = new VfModule();
 		vnf.getVfModules().add(vfModule);
-
+		vfModule.setVfModuleId("1");
+		
 		VfModule vfModule2 = new VfModule();
 		vnf.getVfModules().add(vfModule2);
-
+		vfModule2.setVfModuleId("2");
+		
 		VfModule vfModule3 = new VfModule();
 		vnf.getVfModules().add(vfModule3);
-
+		vfModule3.setVfModuleId("3");
+		
 		VfModule vfModule4 = new VfModule();
 		vnf.getVfModules().add(vfModule4);
-
+		vfModule4.setVfModuleId("4");
+		
 		VfModule vfModule5 = new VfModule();
 		vnf.getVfModules().add(vfModule5);
+		vfModule5.setVfModuleId("5");
 		
+		//modules are included in the vnf already
+		vnf.getVfModules().add(newVfModuleA);
+		vnf.getVfModules().add(newVfModuleB);
+		vnf.getVfModules().add(newVfModuleC);
+
 		//A
 		newVfModuleA.setModelInfoVfModule(infoA);
 		vfModule.setModelInfoVfModule(infoA);
@@ -504,6 +517,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		vfModule3.setModelInfoVfModule(infoA);
 
 		//B
+
 		newVfModuleB.setModelInfoVfModule(infoB);
 		vfModule4.setModelInfoVfModule(infoB);
 		vfModule5.setModelInfoVfModule(infoB);
