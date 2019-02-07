@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
@@ -55,10 +56,15 @@ import org.onap.so.asdc.util.ASDCNotificationLogging;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
 import org.onap.so.logger.MessageEnum;
-
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class ASDCController {
@@ -555,6 +561,22 @@ public class ASDCController {
     	LOGGER.recordMetricEvent (subStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully sent Final notification to ASDC", "ASDC", null, null);
     }
 
+	private Optional<String> getNotificationJson(INotificationData iNotif) {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.setSerializationInclusion(Include.NON_EMPTY);
+		mapper.setSerializationInclusion(Include.NON_ABSENT);
+        mapper.enable(MapperFeature.USE_ANNOTATIONS);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		Optional<String> returnValue = Optional.empty();
+		try {
+			returnValue = Optional.of(mapper.writeValueAsString(iNotif));
+		} catch (JsonProcessingException e) {
+			LOGGER.error("Error converting incoming ASDC notification to JSON" , e);
+		}
+		return returnValue;
+	}
+	
     public void treatNotification (INotificationData iNotif) {
 
     	int noOfArtifacts = 0;
@@ -571,7 +593,9 @@ public class ASDCController {
         	LOGGER.debug(ASDCNotificationLogging.dumpASDCNotification(iNotif));
 			LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, iNotif.getServiceUUID(), "ASDC", "treatNotification");
 			this.changeControllerStatus(ASDCControllerStatus.BUSY);
-			toscaInstaller.processWatchdog(iNotif.getDistributionID(),iNotif.getServiceUUID());	
+			Optional<String> notificationMessage = getNotificationJson(iNotif);
+			toscaInstaller.processWatchdog(iNotif.getDistributionID(), iNotif.getServiceUUID(), notificationMessage,
+					asdcConfig.getConsumerID());
 			
 			// Process only the Resource artifacts in MSO				
 			this.processResourceNotification(iNotif);

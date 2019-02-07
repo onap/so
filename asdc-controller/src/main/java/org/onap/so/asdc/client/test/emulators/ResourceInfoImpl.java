@@ -23,8 +23,12 @@ package org.onap.so.asdc.client.test.emulators;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.IResourceInstance;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ResourceInfoImpl implements IResourceInstance{
 	ResourceInfoImpl (){}
@@ -120,7 +124,8 @@ public class ResourceInfoImpl implements IResourceInstance{
 		this.artifacts = artifacts;
 	}
 	
-	public List<ArtifactInfoImpl> getArtifactsImpl(){
+	@JsonIgnore
+	public List<ArtifactInfoImpl> getArtifactsImpl() {
 		return artifacts;
 	}
 	
@@ -154,5 +159,22 @@ public class ResourceInfoImpl implements IResourceInstance{
 
 	public void setSubcategory(String subcategory) {
 		this.subcategory = subcategory;
+	}
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof ResourceInfoImpl)) {
+			return false;
+		}
+		ResourceInfoImpl castOther = (ResourceInfoImpl) other;
+		return new EqualsBuilder().append(resourceUUID, castOther.resourceUUID)
+				.append(resourceVersion, castOther.resourceVersion).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(resourceInstanceName).append(resourceCustomizationUUID).append(resourceName)
+				.append(resourceVersion).append(resourceType).append(resourceUUID).append(resourceInvariantUUID)
+				.append(category).append(subcategory).append(artifacts).toHashCode();
 	}
 }

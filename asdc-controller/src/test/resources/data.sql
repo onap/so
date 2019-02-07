@@ -59,6 +59,6 @@ insert into requestdb.watchdog_per_component_distribution_status(DISTRIBUTION_ID
 ('testStatusExceptionTosca', 'AAI', 'COMPONENT_MALFORMED'),
 ('testStatusExceptionTosca', 'SDNC', 'COMPONENT_MALFORMED');
 
-insert into requestdb.watchdog_service_mod_ver_id_lookup(DISTRIBUTION_ID, SERVICE_MODEL_VERSION_ID) values
-('watchdogTestStatusSuccess', '5df8b6de-2083-11e7-93ae-92361f002671'),
-('watchdogTestStatusNull', '00000000-0000-0000-0000-000000000000');
+insert into requestdb.watchdog_service_mod_ver_id_lookup(DISTRIBUTION_ID, SERVICE_MODEL_VERSION_ID, DISTRIBUTION_NOTIFICATION, CONSUMER_ID) values
+('watchdogTestStatusSuccess', '5df8b6de-2083-11e7-93ae-92361f002671', NULL, NULL),
+('watchdogTestStatusNull', '00000000-0000-0000-0000-000000000000', NULL, NULL);
