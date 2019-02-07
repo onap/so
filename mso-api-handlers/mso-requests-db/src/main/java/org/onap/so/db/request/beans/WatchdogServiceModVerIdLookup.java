@@ -22,6 +22,8 @@ package org.onap.so.db.request.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +33,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.util.Objects;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @IdClass(WatchdogServiceModVerIdLookupId.class)
@@ -50,6 +52,10 @@ public class WatchdogServiceModVerIdLookup implements Serializable {
 	@Id
 	@Column(name = "SERVICE_MODEL_VERSION_ID", length=45)
 	private String serviceModelVersionId;
+	@Column(name = "DISTRIBUTION_NOTIFICATION")
+	private String distributionNotification;
+	@Column(name = "CONSUMER_ID", length=200)
+	private String consumerId;	
 	@Column(name = "CREATE_TIME", updatable=false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createTime;
@@ -57,9 +63,19 @@ public class WatchdogServiceModVerIdLookup implements Serializable {
 	public WatchdogServiceModVerIdLookup() {
 		
 	}
-	public WatchdogServiceModVerIdLookup(String distributionId, String serviceModelVersionId) {
+	/**
+	 * 
+	 * @param distributionId - Distribution ID
+	 * @param serviceModelVersionId -- service UUID 
+	 * @param distributionNotification -- Notification content from ASDC
+	 * @param consumerId -- Consumer ID associated with subscription.
+	 */
+	public WatchdogServiceModVerIdLookup(String distributionId, String serviceModelVersionId,
+			Optional<String> distributionNotification, String consumerId) {
 		this.distributionId = distributionId;
 		this.serviceModelVersionId = serviceModelVersionId;
+		this.distributionNotification= distributionNotification.orElse(null);
+		this.consumerId = consumerId;		
 	}
 
 	public String getDistributionId() {
@@ -104,8 +120,24 @@ public class WatchdogServiceModVerIdLookup implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append("distributionId", getDistributionId())
-				.append("serviceModelVersionId", getServiceModelVersionId()).append("createTime", getCreateTime())
+		return new ToStringBuilder(this)
+				.append("distributionId", getDistributionId())
+				.append("serviceModelVersionId", getServiceModelVersionId())
+				.append("createTime", getCreateTime())
+				.append("distributionNotification", getDistributionNotification())
+				.append("consumerId", getConsumerId())
 				.toString();
+	}
+	public String getDistributionNotification() {
+		return distributionNotification;
+	}
+	public void setDistributionNotification(String distributionNotification) {
+		this.distributionNotification = distributionNotification;
+	}
+	public String getConsumerId() {
+		return consumerId;
+	}
+	public void setConsumerId(String consumerId) {
+		this.consumerId = consumerId;
 	}
 }

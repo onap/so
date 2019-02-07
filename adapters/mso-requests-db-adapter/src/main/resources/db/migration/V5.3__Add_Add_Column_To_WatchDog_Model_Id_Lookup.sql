@@ -1,0 +1,6 @@
+use requestdb;
+
+ALTER TABLE watchdog_service_mod_ver_id_lookup ADD DISTRIBUTION_NOTIFICATION LONGTEXT NULL AFTER SERVICE_MODEL_VERSION_ID;
+ALTER TABLE watchdog_service_mod_ver_id_lookup ADD CONSUMER_ID varchar(200) NULL AFTER DISTRIBUTION_NOTIFICATION;
+
+CREATE INDEX watchdog_service_mod_ver_id_lookup_serv_mod_ver_id_idx ON watchdog_service_mod_ver_id_lookup (SERVICE_MODEL_VERSION_ID ASC);

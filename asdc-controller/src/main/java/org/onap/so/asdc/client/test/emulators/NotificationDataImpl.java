@@ -23,10 +23,14 @@ package org.onap.so.asdc.client.test.emulators;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.INotificationData;
 import org.onap.sdc.api.notification.IResourceInstance;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Component
 public class NotificationDataImpl implements INotificationData {
@@ -114,6 +118,7 @@ public class NotificationDataImpl implements INotificationData {
 		return ret;
 	}
 	
+	@JsonIgnore
 	public List<ResourceInfoImpl> getResourcesImpl(){
 		return resources;
 	}
@@ -172,4 +177,22 @@ public class NotificationDataImpl implements INotificationData {
 		}
 		return ret;
 	}
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof NotificationDataImpl)) {
+			return false;
+		}
+		NotificationDataImpl castOther = (NotificationDataImpl) other;
+		return new EqualsBuilder().append(serviceUUID, castOther.serviceUUID)
+				.append(serviceVersion, castOther.serviceVersion).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(distributionID).append(serviceName).append(serviceVersion)
+				.append(serviceUUID).append(serviceDescription).append(serviceInvariantUUID).append(resources)
+				.append(serviceArtifacts).append(workloadContext).toHashCode();
+	}
+
 }

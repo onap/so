@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.onap.sdc.api.notification.IArtifactInfo;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 public class ArtifactInfoImpl implements IArtifactInfo {
 
@@ -168,4 +170,23 @@ public class ArtifactInfoImpl implements IArtifactInfo {
 	public void setRelatedArtifacts(List<ArtifactInfoImpl> relatedArtifacts) {
 		this.relatedArtifactsImpl = relatedArtifacts;
 	}
+
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof ArtifactInfoImpl)) {
+			return false;
+		}
+		ArtifactInfoImpl castOther = (ArtifactInfoImpl) other;
+		return new EqualsBuilder().append(artifactUUID, castOther.artifactUUID)
+				.append(artifactVersion, castOther.artifactVersion).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(artifactName).append(artifactType).append(artifactURL)
+				.append(artifactChecksum).append(artifactDescription).append(artifactTimeout).append(artifactVersion)
+				.append(artifactUUID).append(generatedFromUUID).append(generatedArtifact).append(relatedArtifactsInfo)
+				.append(relatedArtifactsImpl).toHashCode();
+	}
+
 }

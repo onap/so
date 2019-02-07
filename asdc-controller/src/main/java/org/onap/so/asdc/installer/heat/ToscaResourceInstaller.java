@@ -689,8 +689,10 @@ public class ToscaResourceInstaller {
 		}
 	}
 
-	public void processWatchdog(String distributionId, String servideUUID) {
-		WatchdogServiceModVerIdLookup modVerIdLookup = new WatchdogServiceModVerIdLookup(distributionId,servideUUID);
+	public void processWatchdog(String distributionId, String servideUUID, Optional<String> distributionNotification,
+			String consumerId) {
+		WatchdogServiceModVerIdLookup modVerIdLookup = new WatchdogServiceModVerIdLookup(distributionId, servideUUID,
+				distributionNotification, consumerId);
 		watchdogModVerIdLookupRepository.saveAndFlush(modVerIdLookup);
 		
 		WatchdogDistributionStatus distributionStatus = new WatchdogDistributionStatus(distributionId);
