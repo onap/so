@@ -134,6 +134,7 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
 	public static final AAIObjectType AGGREGATE_ROUTE = new AAIObjectType(AAINamespaceConstants.NETWORK, AggregateRoute.class);
 	public static final AAIObjectType L_INTERFACE = new AAIObjectType(AAIObjectType.VSERVER.uriTemplate(), LInterface.class);
 	public static final AAIObjectType UNKNOWN = new AAIObjectType("", "", "unknown");
+	public static final AAIObjectType DSL = new AAIObjectType("/dsl", "", "dsl");
 
 	private final String uriTemplate;
 	private final String parentUri;
