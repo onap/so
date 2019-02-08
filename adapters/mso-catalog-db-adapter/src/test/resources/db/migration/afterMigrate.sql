@@ -279,7 +279,7 @@ INSERT INTO `cvnfc_customization`
              `vf_module_cust_model_customization_uuid`,
              `vnfc_cust_model_customization_uuid`)
 VALUES      ( '1',
-              '9bcce658-9b37-11e8-98d0-529269fb1459',
+              'dadc2c8c-2bab-11e9-b210-d663bd873d93',
               'testModelInstanceName',
               'b25735fe-9b37-11e8-98d0-529269fb1459',
               'ba7e6ef0-9b37-11e8-98d0-529269fb1459',

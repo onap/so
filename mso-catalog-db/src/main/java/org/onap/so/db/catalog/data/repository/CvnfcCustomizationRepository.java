@@ -29,7 +29,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "cvnfcCustomization", path = "cvnfcCustomization")
-public interface CvnfcCustomizationRepository extends JpaRepository<CvnfcCustomization, String> {
+public interface CvnfcCustomizationRepository extends JpaRepository<CvnfcCustomization, Integer> {
 	CvnfcCustomization findOneByModelCustomizationUUID(String modelCustomizationUuid);
 	List<CvnfcCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);
 	
