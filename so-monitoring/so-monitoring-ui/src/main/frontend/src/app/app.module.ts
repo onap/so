@@ -30,16 +30,10 @@ import { TopbarComponent } from './topbar/topbar.component';
 import { HomeComponent } from './home/home.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatTableModule } from '@angular/material';
 import { DetailsComponent } from './details/details.component';
 import { ToastrNotificationService } from './toastr-notification-service.service';
-import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule, MatInputModule } from '@angular/material';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material';
-import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule, MatInputModule, MatTableModule, MatTabsModule, MatSelectModule, MatNativeDateModule, MatDatepickerModule, MatCardModule, MatPaginatorModule, MatSortModule } from '@angular/material';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { RouterModule, Routes } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
@@ -68,6 +62,8 @@ import { APP_BASE_HREF } from '@angular/common';
     MatCardModule,
     NgxSpinnerModule,
     RouterModule,
+    MatPaginatorModule,
+    MatSortModule,
     RouterModule.forRoot([])
   ],
   schemas: [
