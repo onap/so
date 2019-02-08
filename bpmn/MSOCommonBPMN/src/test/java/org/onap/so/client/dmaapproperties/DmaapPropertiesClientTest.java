@@ -75,7 +75,7 @@ public class DmaapPropertiesClientTest extends BaseTest{
 
 	@Test
 	public void testDmaapPublishRequest() throws JsonProcessingException, MapperException {
-		stubFor(post(urlEqualTo("/events/com.att.mso.asyncStatusUpdate?timeout=20000"))
+		stubFor(post(urlEqualTo("/events/com.att.mso.asyncStatusUpdate?timeout=60000"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 
 		dmaapPropertiesClient.dmaapPublishRequest(requestId, clientSource, correlator, serviceInstanceId, startTime, finishTime, requestScope,
