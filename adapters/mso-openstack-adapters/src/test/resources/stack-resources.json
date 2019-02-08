@@ -1,0 +1,441 @@
+{
+  "resources": [
+    {
+      "resource_name": "ge_000",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule/d1431cdc-9b29-44fc-98d0-9b3dc1ac246d/resources/ge_000",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule/d1431cdc-9b29-44fc-98d0-9b3dc1ac246d",
+          "rel": "stack"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-ge_000-t66dxpwq6nb5/deee54a3-08ac-477b-9c09-c798edb40be1",
+          "rel": "nested"
+        }
+      ],
+      "logical_resource_id": "ge_000",
+      "resource_status_reason": "state changed",
+      "updated_time": "2018-04-09T21:09:52Z",
+      "required_by": [
+        "vfw_instance"
+      ],
+      "resource_status": "CREATE_COMPLETE",
+      "physical_resource_id": "deee54a3-08ac-477b-9c09-c798edb40be1",
+      "resource_type": "port.yaml"
+    },
+    {
+      "resource_name": "vfw_instance",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule/d1431cdc-9b29-44fc-98d0-9b3dc1ac246d/resources/vfw_instance",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule/d1431cdc-9b29-44fc-98d0-9b3dc1ac246d",
+          "rel": "stack"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b",
+          "rel": "nested"
+        }
+      ],
+      "logical_resource_id": "vfw_instance",
+      "resource_status_reason": "state changed",
+      "updated_time": "2018-04-09T21:09:52Z",
+      "required_by": [],
+      "resource_status": "CREATE_COMPLETE",
+      "physical_resource_id": "54f93b9e-5138-4f3f-bfe0-ee06e1f0877b",
+      "resource_type": "vfw.yaml"
+    },
+    {
+      "resource_name": "port",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-ge_000-t66dxpwq6nb5/deee54a3-08ac-477b-9c09-c798edb40be1/resources/port",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-ge_000-t66dxpwq6nb5/deee54a3-08ac-477b-9c09-c798edb40be1",
+          "rel": "stack"
+        }
+      ],
+      "logical_resource_id": "port",
+      "resource_status": "CREATE_COMPLETE",
+      "updated_time": "2018-04-09T21:09:52Z",
+      "required_by": [],
+      "resource_status_reason": "state changed",
+      "physical_resource_id": "212a203a-9764-4f42-84ea-731536a8f13a",
+      "resource_type": "OS::Neutron::Port"
+    },
+    {
+      "resource_name": "pfe0",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b/resources/pfe0",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b",
+          "rel": "stack"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-pfe0-kvqmgn7jmiti/1325e04b-e836-4a13-bb2e-f34923d97ad7",
+          "rel": "nested"
+        }
+      ],
+      "logical_resource_id": "pfe0",
+      "resource_status_reason": "state changed",
+      "updated_time": "2018-04-09T21:09:54Z",
+      "required_by": [
+        "re0"
+      ],
+      "resource_status": "CREATE_COMPLETE",
+      "physical_resource_id": "1325e04b-e836-4a13-bb2e-f34923d97ad7",
+      "resource_type": "fpc.yaml"
+    },
+    {
+      "resource_name": "fpc_internal_port",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b/resources/fpc_internal_port",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b",
+          "rel": "stack"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-fpc_internal_port-gbnyc4w7mb5b/4e920f39-9784-417e-9331-d75e2e37cc51",
+          "rel": "nested"
+        }
+      ],
+      "logical_resource_id": "fpc_internal_port",
+      "resource_status_reason": "state changed",
+      "updated_time": "2018-04-09T21:09:54Z",
+      "required_by": [
+        "pfe0"
+      ],
+      "resource_status": "CREATE_COMPLETE",
+      "physical_resource_id": "4e920f39-9784-417e-9331-d75e2e37cc51",
+      "resource_type": "re_pfe_port.yaml"
+    },
+    {
+      "resource_name": "re-fpc-affinity-grp",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b/resources/re-fpc-affinity-grp",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b",
+          "rel": "stack"
+        }
+      ],
+      "logical_resource_id": "re-fpc-affinity-grp",
+      "resource_status": "CREATE_COMPLETE",
+      "updated_time": "2018-04-09T21:09:54Z",
+      "required_by": [
+        "pfe0",
+        "re0"
+      ],
+      "resource_status_reason": "state changed",
+      "physical_resource_id": "3aa37238-f8ff-4c96-b56a-8903bae28a60",
+      "resource_type": "OS::Nova::ServerGroup"
+    },
+    {
+      "resource_name": "re0",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b/resources/re0",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b",
+          "rel": "stack"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re0-73oifso3xntc/0915e27e-428d-4d2c-a67b-abbce18081b2",
+          "rel": "nested"
+        }
+      ],
+      "logical_resource_id": "re0",
+      "resource_status_reason": "state changed",
+      "updated_time": "2018-04-09T21:09:54Z",
+      "required_by": [],
+      "resource_status": "CREATE_COMPLETE",
+      "physical_resource_id": "0915e27e-428d-4d2c-a67b-abbce18081b2",
+      "resource_type": "re.yaml"
+    },
+    {
+      "resource_name": "re_external_port",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b/resources/re_external_port",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b",
+          "rel": "stack"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re_external_port-3okiee3zocr7/f58c65e3-a72e-4b2d-a295-cb40324d6b4c",
+          "rel": "nested"
+        }
+      ],
+      "logical_resource_id": "re_external_port",
+      "resource_status_reason": "state changed",
+      "updated_time": "2018-04-09T21:09:54Z",
+      "required_by": [
+        "re0"
+      ],
+      "resource_status": "CREATE_COMPLETE",
+      "physical_resource_id": "f58c65e3-a72e-4b2d-a295-cb40324d6b4c",
+      "resource_type": "port.yaml"
+    },
+    {
+      "resource_name": "fpc_external_port",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b/resources/fpc_external_port",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b",
+          "rel": "stack"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-fpc_external_port-5vumcqp7hkbn/979e47c9-c15a-428e-ad73-af922029ee37",
+          "rel": "nested"
+        }
+      ],
+      "logical_resource_id": "fpc_external_port",
+      "resource_status_reason": "state changed",
+      "updated_time": "2018-04-09T21:09:54Z",
+      "required_by": [
+        "pfe0",
+        "re0"
+      ],
+      "resource_status": "CREATE_COMPLETE",
+      "physical_resource_id": "979e47c9-c15a-428e-ad73-af922029ee37",
+      "resource_type": "port.yaml"
+    },
+    {
+      "resource_name": "re_internal_port",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b/resources/re_internal_port",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b",
+          "rel": "stack"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re_internal_port-u4txbvemndci/0aebfd9d-ad97-43b1-a67b-b2b5340738d2",
+          "rel": "nested"
+        }
+      ],
+      "logical_resource_id": "re_internal_port",
+      "resource_status_reason": "state changed",
+      "updated_time": "2018-04-09T21:09:54Z",
+      "required_by": [
+        "re0"
+      ],
+      "resource_status": "CREATE_COMPLETE",
+      "physical_resource_id": "0aebfd9d-ad97-43b1-a67b-b2b5340738d2",
+      "resource_type": "re_pfe_port.yaml"
+    },
+    {
+      "resource_name": "re_pfe_network",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b/resources/re_pfe_network",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam/54f93b9e-5138-4f3f-bfe0-ee06e1f0877b",
+          "rel": "stack"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re_pfe_network-2wmjvgzrhtvs/290fc2fd-cd1d-47d0-90eb-2ece7c009b29",
+          "rel": "nested"
+        }
+      ],
+      "logical_resource_id": "re_pfe_network",
+      "resource_status_reason": "state changed",
+      "updated_time": "2018-04-09T21:09:54Z",
+      "required_by": [
+        "fpc_internal_port",
+        "re_internal_port"
+      ],
+      "resource_status": "CREATE_COMPLETE",
+      "physical_resource_id": "290fc2fd-cd1d-47d0-90eb-2ece7c009b29",
+      "resource_type": "bridge_int.yaml"
+    },
+    {
+      "resource_name": "fpc",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-pfe0-kvqmgn7jmiti/1325e04b-e836-4a13-bb2e-f34923d97ad7/resources/fpc",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-pfe0-kvqmgn7jmiti/1325e04b-e836-4a13-bb2e-f34923d97ad7",
+          "rel": "stack"
+        }
+      ],
+      "logical_resource_id": "fpc",
+      "resource_status": "CREATE_COMPLETE",
+      "updated_time": "2018-04-09T21:09:58Z",
+      "required_by": [],
+      "resource_status_reason": "state changed",
+      "physical_resource_id": "43c2159b-2c04-46ac-bda5-594110cae2d3",
+      "resource_type": "OS::Nova::Server"
+    },
+    {
+      "resource_name": "port",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-fpc_internal_port-gbnyc4w7mb5b/4e920f39-9784-417e-9331-d75e2e37cc51/resources/port",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-fpc_internal_port-gbnyc4w7mb5b/4e920f39-9784-417e-9331-d75e2e37cc51",
+          "rel": "stack"
+        }
+      ],
+      "logical_resource_id": "port",
+      "resource_status": "CREATE_COMPLETE",
+      "updated_time": "2018-04-09T21:09:56Z",
+      "required_by": [],
+      "resource_status_reason": "state changed",
+      "physical_resource_id": "387e3904-8948-43d1-8635-b6c2042b54da",
+      "resource_type": "OS::Neutron::Port"
+    },
+    {
+      "resource_name": "re",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re0-73oifso3xntc/0915e27e-428d-4d2c-a67b-abbce18081b2/resources/re",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re0-73oifso3xntc/0915e27e-428d-4d2c-a67b-abbce18081b2",
+          "rel": "stack"
+        }
+      ],
+      "logical_resource_id": "re",
+      "resource_status": "CREATE_COMPLETE",
+      "updated_time": "2018-04-09T21:10:36Z",
+      "required_by": [],
+      "resource_status_reason": "state changed",
+      "physical_resource_id": "7cff109a-b2b7-4933-97b4-ec44a8365568",
+      "resource_type": "OS::Nova::Server"
+    },
+    {
+      "resource_name": "port",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re_external_port-3okiee3zocr7/f58c65e3-a72e-4b2d-a295-cb40324d6b4c/resources/port",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re_external_port-3okiee3zocr7/f58c65e3-a72e-4b2d-a295-cb40324d6b4c",
+          "rel": "stack"
+        }
+      ],
+      "logical_resource_id": "port",
+      "resource_status": "CREATE_COMPLETE",
+      "updated_time": "2018-04-09T21:09:55Z",
+      "required_by": [],
+      "resource_status_reason": "state changed",
+      "physical_resource_id": "70a09dfd-f1c5-4bc8-bd8f-dc539b8d662a",
+      "resource_type": "OS::Neutron::Port"
+    },
+    {
+      "resource_name": "port",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-fpc_external_port-5vumcqp7hkbn/979e47c9-c15a-428e-ad73-af922029ee37/resources/port",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-fpc_external_port-5vumcqp7hkbn/979e47c9-c15a-428e-ad73-af922029ee37",
+          "rel": "stack"
+        }
+      ],
+      "logical_resource_id": "port",
+      "resource_status": "CREATE_COMPLETE",
+      "updated_time": "2018-04-09T21:09:55Z",
+      "required_by": [],
+      "resource_status_reason": "state changed",
+      "physical_resource_id": "12f88b4d-c8a4-4fbd-bcb4-7e36af02430b",
+      "resource_type": "OS::Neutron::Port"
+    },
+    {
+      "resource_name": "port",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re_internal_port-u4txbvemndci/0aebfd9d-ad97-43b1-a67b-b2b5340738d2/resources/port",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re_internal_port-u4txbvemndci/0aebfd9d-ad97-43b1-a67b-b2b5340738d2",
+          "rel": "stack"
+        }
+      ],
+      "logical_resource_id": "port",
+      "resource_status": "CREATE_COMPLETE",
+      "updated_time": "2018-04-09T21:09:56Z",
+      "required_by": [],
+      "resource_status_reason": "state changed",
+      "physical_resource_id": "c54b9f45-b413-4937-bbe4-3c8a5689cfc9",
+      "resource_type": "OS::Neutron::Port"
+    },
+    {
+      "resource_name": "bridge_network_subnet",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re_pfe_network-2wmjvgzrhtvs/290fc2fd-cd1d-47d0-90eb-2ece7c009b29/resources/bridge_network_subnet",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re_pfe_network-2wmjvgzrhtvs/290fc2fd-cd1d-47d0-90eb-2ece7c009b29",
+          "rel": "stack"
+        }
+      ],
+      "logical_resource_id": "bridge_network_subnet",
+      "resource_status": "CREATE_COMPLETE",
+      "updated_time": "2018-04-09T21:09:55Z",
+      "required_by": [],
+      "resource_status_reason": "state changed",
+      "physical_resource_id": "5ffd8c02-6913-4b67-adba-74e78c2bbe40",
+      "resource_type": "OS::Neutron::Subnet"
+    },
+    {
+      "resource_name": "bridge_network",
+      "links": [
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re_pfe_network-2wmjvgzrhtvs/290fc2fd-cd1d-47d0-90eb-2ece7c009b29/resources/bridge_network",
+          "rel": "self"
+        },
+        {
+          "href": "http://10.10.10.10:8004/v1/7320ec4a5b9d4589ba7c4412ccfd290f/stacks/ClosedLoop_vFW_VfModule-vfw_instance-tw3i5ile2nam-re_pfe_network-2wmjvgzrhtvs/290fc2fd-cd1d-47d0-90eb-2ece7c009b29",
+          "rel": "stack"
+        }
+      ],
+      "logical_resource_id": "bridge_network",
+      "resource_status": "CREATE_COMPLETE",
+      "updated_time": "2018-04-09T21:09:55Z",
+      "required_by": [
+        "bridge_network_subnet"
+      ],
+      "resource_status_reason": "state changed",
+      "physical_resource_id": "5ad95036-8daf-4379-a59c-865f35976cd4",
+      "resource_type": "OS::Neutron::Net"
+    }
+  ]
+}
