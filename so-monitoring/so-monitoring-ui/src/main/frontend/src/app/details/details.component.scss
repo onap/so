@@ -19,7 +19,6 @@ SPDX-License-Identifier: Apache-2.0
 
 @authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
 */
-
 #canvas {
   background: white;
   padding: 0;
@@ -64,5 +63,10 @@ SPDX-License-Identifier: Apache-2.0
 }
 
 .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
-   fill: cyan !important; /* color elements as green */
- }
+  fill: cyan !important;
+  /* color elements as green */
+}
+
+.tab-group {
+  word-break: break-all;
+}

@@ -72,7 +72,7 @@ describe('DataService', () => {
   // Test getActivityInstance function making GET request to retrieve activityInstance
   it('test getActivityInstance GET request', async(inject([HttpTestingController, DataService, ToastrNotificationService],
     (httpClient: HttpTestingController, service: DataService, toastr: ToastrNotificationService) => {
-      service.getActivityInstance("").subscribe(data => { });
+      service.getActivityInstance("").then(data => { });
       var url = environment.soMonitoringBackendURL + 'activity-instance/' + "";
       const mockReq = httpClient.expectOne(url);
       expect(mockReq.request.method).toEqual('GET');
