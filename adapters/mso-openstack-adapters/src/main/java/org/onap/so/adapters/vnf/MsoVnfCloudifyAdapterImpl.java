@@ -113,7 +113,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
     /**
      * DO NOT use that constructor to instantiate this class, the msoPropertiesfactory will be NULL.
-     * @see MsoVnfCloudifyAdapterImpl#MsoVnfAdapterImpl(MsoPropertiesFactory, CloudConfigFactory)
+     * @see MsoVnfCloudifyAdapterImpl
      */
     public MsoVnfCloudifyAdapterImpl() {
 
