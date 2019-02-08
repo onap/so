@@ -2551,6 +2551,12 @@ public class BBInputSetupTest {
 		volumeGroup.setVolumeGroupId(volumeGroupId);
 		vnf.getVolumeGroups().add(volumeGroup);
 		serviceInstance.getVnfs().add(vnf);
+		VfModule vfModule1 = new VfModule();
+		vfModule1.setVfModuleId("vfModuleId1");
+		VfModule vfModule2 = new VfModule();
+		vfModule2.setVfModuleId("vfModuleId2");
+		vnf.getVfModules().add(vfModule1);
+		vnf.getVfModules().add(vfModule2);
 		Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 		lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, vnfId);
 		String resourceId = vfModuleId;
@@ -2563,16 +2569,20 @@ public class BBInputSetupTest {
 		vnfAAI.setModelCustomizationId("vnfModelCustId");
 		org.onap.aai.domain.yang.VolumeGroup volumeGroupAAI = new org.onap.aai.domain.yang.VolumeGroup();
 		volumeGroupAAI.setModelCustomizationId(vfModuleCustomizationId);
+		org.onap.aai.domain.yang.VfModule vfModuleAAI = new org.onap.aai.domain.yang.VfModule();
+		vfModuleAAI.setModelCustomizationId(vfModuleCustomizationId);
 		
 		doReturn(vnfAAI).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
 		doReturn(volumeGroupAAI).when(SPY_bbInputSetupUtils).getAAIVolumeGroup(CLOUD_OWNER, 
 				cloudConfiguration.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+		doReturn(vfModuleAAI).when(SPY_bbInputSetupUtils).getAAIVfModule(isA(String.class), isA(String.class));
 		doNothing().when(SPY_bbInputSetup).mapCatalogVnf(isA(GenericVnf.class), isA(ModelInfo.class), isA(Service.class));
 		doNothing().when(SPY_bbInputSetup).mapCatalogVfModule(isA(VfModule.class), isA(ModelInfo.class), isA(Service.class), isA(String.class));
 		
 		SPY_bbInputSetup.populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap, 
 				resourceId, relatedInstanceList, instanceName, instanceParams, cloudConfiguration);
 		
+		verify(SPY_bbInputSetup, times(3)).mapCatalogVfModule(isA(VfModule.class), isA(ModelInfo.class), isA(Service.class), isA(String.class));
 		assertEquals("Lookup Key Map populated with VfModule Id", vfModuleId, lookupKeyMap.get(ResourceKey.VF_MODULE_ID));
 		assertEquals("Lookup Key Map populated with VolumeGroup Id", volumeGroupId, lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID));
 	}
