@@ -21,7 +21,6 @@
 package org.onap.so.client.aai;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +38,9 @@ import org.onap.aai.domain.yang.Connector;
 import org.onap.aai.domain.yang.Customer;
 import org.onap.aai.domain.yang.Device;
 import org.onap.aai.domain.yang.ExtAaiNetwork;
+import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.Image;
 import org.onap.aai.domain.yang.InstanceGroup;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.LInterface;
@@ -134,6 +135,8 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
 	public static final AAIObjectType EXT_AAI_NETWORK = new AAIObjectType(AAINamespaceConstants.NETWORK, ExtAaiNetwork.class);
 	public static final AAIObjectType AGGREGATE_ROUTE = new AAIObjectType(AAINamespaceConstants.NETWORK, AggregateRoute.class);
 	public static final AAIObjectType L_INTERFACE = new AAIObjectType(AAIObjectType.VSERVER.uriTemplate(), LInterface.class);
+	public static final AAIObjectType IMAGE = new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), Image.class);
+	public static final AAIObjectType FLAVOR = new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), Flavor.class);
 	public static final AAIObjectType UNKNOWN = new AAIObjectType("", "", "unknown");
 	public static final AAIObjectType DSL = new AAIObjectType("/dsl", "", "dsl");
 
