@@ -241,3 +241,55 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
 ('Service-Create', '1', 'AssignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Create' and CLOUD_OWNER = 'my-custom-cloud-owner' and SERVICE_TYPE = 'TRANSPORT'));
+
+INSERT INTO `vnfc_customization`
+            (`model_customization_uuid`,
+             `model_instance_name`,
+             `model_uuid`,
+             `model_invariant_uuid`,
+             `model_version`,
+             `model_name`,
+             `tosca_node_type`,
+             `description`,
+             `creation_timestamp`)
+VALUES      ( '9bcce658-9b37-11e8-98d0-529269fb1459',
+              'testModelInstanceName',
+              'b25735fe-9b37-11e8-98d0-529269fb1459',
+              'ba7e6ef0-9b37-11e8-98d0-529269fb1459',
+              'testModelVersion',
+              'testModelName',
+              'toscaNodeType',
+              'testVnfcCustomizationDescription',
+              '2018-07-17 14:05:08');
+              
+INSERT INTO `cvnfc_customization`
+            (`id`,
+             `model_customization_uuid`,
+             `model_instance_name`,
+             `model_uuid`,
+             `model_invariant_uuid`,
+             `model_version`,
+             `model_name`,
+             `tosca_node_type`,
+             `description`,
+             `nfc_function`,
+             `nfc_naming_code`,
+             `creation_timestamp`,
+             `vnf_resource_cust_model_customization_uuid`,
+             `vf_module_cust_model_customization_uuid`,
+             `vnfc_cust_model_customization_uuid`)
+VALUES      ( '1',
+              '9bcce658-9b37-11e8-98d0-529269fb1459',
+              'testModelInstanceName',
+              'b25735fe-9b37-11e8-98d0-529269fb1459',
+              'ba7e6ef0-9b37-11e8-98d0-529269fb1459',
+              'testModelVersion',
+              'testModelName',
+              'testToscaNodeType',
+              'testCvnfcCustomzationDescription',
+              'testNfcFunction',
+              'testNfcNamingCode',
+              '2018-07-17 14:05:08',
+              '68dc9a92-214c-11e7-93ae-92361f002671',
+              'cb82ffd8-252a-11e7-93ae-92361f002671',
+              '9bcce658-9b37-11e8-98d0-529269fb1459');

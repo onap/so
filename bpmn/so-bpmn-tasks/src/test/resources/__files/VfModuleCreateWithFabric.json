@@ -1,0 +1,65 @@
+{
+	"requestDetails": {
+		"modelInfo": {
+			"modelCustomizationName": "model-cust-name",
+			"modelInvariantId": "db86e4a6-c027-452e-a559-3a23b3128367",
+			"modelType": "vfModule",
+			"modelName": "test-model-name",
+			"modelVersion": "1",
+			"modelCustomizationUuid": "9a6d01fd-19a7-490a-9800-460830a12e0b",
+			"modelVersionId": "14c8f313-fb0f-4cf6-8caf-c7cce8137b60",
+			"modelCustomizationId": "9a6d01fd-19a7-490a-9800-460830a12e0b",
+			"modelUuid": "14c8f313-fb0f-4cf6-8caf-c7cce8137b60",
+			"modelInvariantUuid": "db86e4a6-c027-452e-a559-3a23b3128367",
+			"modelInstanceName": "test-model-instance-name"
+		},
+		"requestInfo": {
+			"source": "VID",
+			"instanceName": "instanceName",
+			"suppressRollback": false,
+			"requestorId": "user"
+		},
+		"relatedInstanceList": [
+			{
+				"relatedInstance": {
+					"instanceId": "f647e3ef-6d2e-4cd3-bff4-8df4634208de",
+					"modelInfo": {
+						"modelInvariantId": "86adb376-5303-441a-b50e-96c0cd643b0f",
+						"modelType": "service",
+						"modelName": "model-name",
+						"modelVersion": "1.0",
+						"modelVersionId": "599e21ed-803d-4d1f-83df-20005339b83f",
+						"modelUuid": "599e21ed-803d-4d1f-83df-20005339b83f",
+						"modelInvariantUuid": "86adb376-5303-441a-b50e-96c0cd643b0f"
+					}
+				}
+			},
+			{
+				"relatedInstance": {
+					"instanceId": "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d",
+					"modelInfo": {
+						"modelCustomizationName": "modle-cust-name",
+						"modelInvariantId": "5cca9285-4ed4-4e11-a609-921ed3344811",
+						"modelType": "vnf",
+						"modelName": "modle-name",
+						"modelVersion": "1.0",
+						"modelCustomizationUuid": "fc25201d-36d6-43a3-8d39-fdae88e526ae",
+						"modelVersionId": "7cae703a-b20d-481a-863a-b862236c00f7",
+						"modelCustomizationId": "fc25201d-36d6-43a3-8d39-fdae88e526ae",
+						"modelUuid": "7cae703a-b20d-481a-863a-b862236c00f7",
+						"modelInvariantUuid": "5cca9285-4ed4-4e11-a609-921ed3344811",
+						"modelInstanceName": "model-inst-name"
+					}
+				}
+			}
+		],
+		"cloudConfiguration": {
+			"tenantId": "872f331350c54e59991a8de2cbffb40c",
+			"cloudOwner": "my-custom-cloud-owner",
+			"lcpCloudRegionId": "cloud-region"
+		},
+		"requestParameters": {
+			"usePreload": true
+		}
+	}
+}

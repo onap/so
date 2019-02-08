@@ -37,9 +37,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Set;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -70,6 +72,8 @@ import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.ConfigurationResource;
+import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.InstanceGroup;
@@ -77,6 +81,7 @@ import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.serviceinstancebeans.RequestDetails;
@@ -852,6 +857,63 @@ public class WorkflowActionTest extends BaseTaskTest {
 		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
 		assertEqualsBulkFlowName(ebbs,"DeactivateNetworkBB","DeleteNetworkBB","UnassignNetworkBB","DeactivateNetworkBB","DeleteNetworkBB","UnassignNetworkBB","DeactivateNetworkCollectionBB"
 				,"DeleteNetworkCollectionBB");
+	}
+	
+	@Test
+	public void selectExecutionListALaCarteVfModuleNoFabricCreateTest() throws Exception{
+		String gAction = "createInstance";
+		String resource = "VfModule";
+		execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+		execution.setVariable("requestAction", gAction);
+		String bpmnRequest = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+		execution.setVariable("bpmnRequest", bpmnRequest);		
+		execution.setVariable("aLaCarte", true);
+		execution.setVariable("apiVersion", "7");
+		execution.setVariable("requestUri", "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules");
+		
+		
+		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+		List<OrchestrationFlow> orchFlows = createFlowList("AssignVfModuleBB","CreateVfModuleBB","ActivateVfModuleBB","AssignFabricConfigurationBB","ActivateFabricConfigurationBB");
+		northBoundRequest.setOrchestrationFlowList(orchFlows);	
+		
+		when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction,resource,true,"my-custom-cloud-owner")).thenReturn(northBoundRequest);
+		workflowAction.selectExecutionList(execution);
+		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+		assertEqualsBulkFlowName(ebbs,"AssignVfModuleBB","CreateVfModuleBB","ActivateVfModuleBB");
+	}
+	
+	@Test
+	public void selectExecutionListALaCarteVfModuleFabricCreateTest() throws Exception{
+		String gAction = "createInstance";
+		String resource = "VfModule";
+		execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+		execution.setVariable("requestAction", gAction);
+		String bpmnRequest = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+		execution.setVariable("bpmnRequest", bpmnRequest);		
+		execution.setVariable("aLaCarte", true);
+		execution.setVariable("apiVersion", "7");
+		execution.setVariable("requestUri", "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules");
+		
+		NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+		List<OrchestrationFlow> orchFlows = createFlowList("AssignVfModuleBB","CreateVfModuleBB","ActivateVfModuleBB","AssignFabricConfigurationBB","ActivateFabricConfigurationBB");
+		northBoundRequest.setOrchestrationFlowList(orchFlows);
+		
+		List<CvnfcCustomization> cvnfcCustomizations = new ArrayList<CvnfcCustomization>();
+		CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
+		VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new VnfVfmoduleCvnfcConfigurationCustomization();
+		ConfigurationResource configurationResource = new ConfigurationResource();
+		configurationResource.setToscaNodeType("FabricConfiguration");
+		vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationResource(configurationResource);
+		Set<VnfVfmoduleCvnfcConfigurationCustomization> custSet = new HashSet<VnfVfmoduleCvnfcConfigurationCustomization>();
+		custSet.add(vnfVfmoduleCvnfcConfigurationCustomization);
+		cvnfcCustomization.setVnfVfmoduleCvnfcConfigurationCustomization(custSet);
+		cvnfcCustomizations.add(cvnfcCustomization);
+		
+		when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction,resource,true,"my-custom-cloud-owner")).thenReturn(northBoundRequest);
+		when(catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID("fc25201d-36d6-43a3-8d39-fdae88e526ae", "9a6d01fd-19a7-490a-9800-460830a12e0b")).thenReturn(cvnfcCustomizations);
+		workflowAction.selectExecutionList(execution);
+		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+		assertEqualsBulkFlowName(ebbs,"AssignVfModuleBB","CreateVfModuleBB","ActivateVfModuleBB","AssignFabricConfigurationBB","ActivateFabricConfigurationBB");
 	}
 	
 	/**

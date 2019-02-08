@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
@@ -31,6 +32,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface CvnfcCustomizationRepository extends JpaRepository<CvnfcCustomization, String> {
 	CvnfcCustomization findOneByModelCustomizationUUID(String modelCustomizationUuid);
 	List<CvnfcCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);
-	List<CvnfcCustomization> findByVnfResourceCustomizationAndVfModuleCustomization (@Param("VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID") String vnfResourceCustomization,
-			@Param("VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID") String vfModuleCustomization);
+	
+	@Query(value = "SELECT * FROM cvnfc_customization WHERE VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID = ?1 AND VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID = ?2", nativeQuery = true)
+	List<CvnfcCustomization> findByVnfResourceCustomizationAndVfModuleCustomization (@Param("VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID") String vnfResourceCustomization,@Param("VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID") String vfModuleCustomization);
 }

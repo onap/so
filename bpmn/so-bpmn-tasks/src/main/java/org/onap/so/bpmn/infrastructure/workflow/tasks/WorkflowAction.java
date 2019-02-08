@@ -68,6 +68,8 @@ import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.Networks;
+import org.onap.so.serviceinstancebeans.RelatedInstance;
+import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
@@ -198,7 +200,7 @@ public class WorkflowAction {
 				if (orchFlows == null || orchFlows.isEmpty()) {
 						orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte, cloudOwner, serviceType);
 				}
-				orchFlows = filterOrchFlows(orchFlows, resourceType, execution);
+				orchFlows = filterOrchFlows(sIRequest, orchFlows, resourceType, execution);
 				String key = "";
 				ModelInfo modelInfo = sIRequest.getRequestDetails().getModelInfo();
 				if(modelInfo.getModelType().equals(ModelType.service)) {
@@ -1103,10 +1105,22 @@ public class WorkflowAction {
 		return listToExecute;
 	}
 	
-	protected List<OrchestrationFlow> filterOrchFlows(List<OrchestrationFlow> orchFlows, WorkflowType resourceType, DelegateExecution execution) {
+	protected List<OrchestrationFlow> filterOrchFlows(ServiceInstancesRequest sIRequest, List<OrchestrationFlow> orchFlows, WorkflowType resourceType, DelegateExecution execution) {
 		List<OrchestrationFlow> result = new ArrayList<>(orchFlows);
+		String vnfCustomizationUUID = "";
+		String vfModuleCustomizationUUID = sIRequest.getRequestDetails().getModelInfo().getModelCustomizationUuid();
+		RelatedInstanceList[] relatedInstanceList = sIRequest.getRequestDetails().getRelatedInstanceList();
+		if (relatedInstanceList != null) {
+			for (RelatedInstanceList relatedInstList : relatedInstanceList) {
+				RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
+				if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)) {
+					vnfCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationUuid();
+				}
+			}
+		}
+		
 		if (resourceType.equals(WorkflowType.VFMODULE)) {
-			List<String> fabricCustomizations = traverseCatalogDbForConfiguration((String)execution.getVariable("vnfId"), (String)execution.getVariable("vfModuleId"));
+			List<String> fabricCustomizations = traverseCatalogDbForConfiguration(vnfCustomizationUUID, vfModuleCustomizationUUID);
 			if (fabricCustomizations.isEmpty()) {
 				result = orchFlows.stream().filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION)).collect(Collectors.toList());
 			}
