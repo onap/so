@@ -82,7 +82,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
     /**
      * Create a tenant with the specified name in the given cloud. If the tenant already exists,
      * an Exception will be thrown. The MSO User will also be added to the "member" list of
-     * the new tenant to perform subsequent Nova/Heat commands in the tenant. If the MSO User
+     * the new tenant to perform subsequent Nova/Heat actions in the tenant. If the MSO User
      * association fails, the entire transaction will be rolled back.
      * <p>
      * For the AIC Cloud (DCP/LCP): it is not clear that cloudId is needed, as all admin

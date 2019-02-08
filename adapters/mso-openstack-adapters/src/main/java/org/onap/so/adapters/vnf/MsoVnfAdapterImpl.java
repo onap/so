@@ -39,6 +39,7 @@ import org.onap.so.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
 import org.onap.so.cloud.CloudConfig;
+import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatFiles;
@@ -51,6 +52,10 @@ import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.onap.so.entity.MsoRequest;
+import org.onap.so.heatbridge.HeatBridgeApi;
+import org.onap.so.heatbridge.HeatBridgeImpl;
+import org.onap.so.heatbridge.aai.api.ActiveAndAvailableInventoryImpl;
+import org.onap.so.heatbridge.openstack.api.OpenstackClient;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.logger.MsoLogger;
@@ -58,6 +63,7 @@ import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
+import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.onap.so.openstack.exceptions.MsoHeatNotFoundException;
@@ -81,6 +87,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openstack4j.model.compute.Flavor;
+import org.openstack4j.model.compute.Image;
+import org.openstack4j.model.compute.Server;
+import org.openstack4j.model.heat.Resource;
+import org.apache.commons.collections.CollectionUtils;
 
 @WebService(serviceName = "VnfAdapter", endpointInterface = "org.onap.so.adapters.vnf.MsoVnfAdapter", targetNamespace = "http://org.onap.so/vnf")
 @Component
@@ -120,7 +131,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
     /**
      * DO NOT use that constructor to instantiate this class, the msoPropertiesfactory will be NULL.
-     * @see MsoVnfAdapterImpl#MsoVnfAdapterImpl(MsoPropertiesFactory, CloudConfigFactory)
+     * @see MsoVnfAdapterImpl
      */
     public MsoVnfAdapterImpl() {
 		// Do nothing
@@ -1242,6 +1253,62 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             }
             LOGGER.debug ("VF Module " + vfModuleName + " successfully created");
             LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully create VF Module");
+            //call heatbridge
+            if(enableBridge != null && enableBridge) {
+                CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+                    () -> new MsoCloudSiteNotFound(cloudSiteId));
+                CloudIdentity cloudIdentity = cloudSite.getIdentityService();
+                String heatStackId = heatStack.getCanonicalName().split("/")[1];
+
+                String cloudOwner = "CloudOwner";//cloud owner needs to come from bpmn-adapter
+                List<String> oobMgtNetNames = new ArrayList<>();
+
+                HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(cloudIdentity,
+                    new ActiveAndAvailableInventoryImpl(), cloudOwner, cloudSiteId, tenantId, new ArrayList<>());
+
+                OpenstackClient openstackClient = heatBridgeClient.authenticate();
+                List<Resource> stackResources = heatBridgeClient.queryNestedHeatStackResources(heatStackId);
+
+                List<Server> osServers = heatBridgeClient.getAllOpenstackServers(stackResources);
+
+                List<Image> osImages = heatBridgeClient.extractOpenstackImagesFromServers(osServers);
+
+                List<Flavor> osFlavors = heatBridgeClient.extractOpenstackFlavorsFromServers(osServers);
+
+                LOGGER.debug("Successfully queried heat stack" + heatStackId + " for resources.");
+                //os images
+                if (osImages != null && !osImages.isEmpty()) {
+                    heatBridgeClient.buildAddImagesToAaiAction(osImages);
+                    LOGGER.debug("Successfully built AAI actions to add images.");
+                } else {
+                    LOGGER.debug("No images to update to AAI.");
+                }
+                //flavors
+                if (osFlavors != null && !osFlavors.isEmpty()) {
+                    heatBridgeClient.buildAddFlavorsToAaiAction(osFlavors);
+                    LOGGER.debug("Successfully built AAI actions to add flavors.");
+                } else {
+                    LOGGER.debug("No flavors to update to AAI.");
+                }
+
+                //compute resources
+                heatBridgeClient.buildAddVserversToAaiAction(genericVnfName, vfModuleId, osServers);
+                LOGGER.debug("Successfully queried compute resources and built AAI vserver actions.");
+
+                //neutron resources
+                List<String> oobMgtNetIds = new ArrayList<>();
+
+                //if no network-id list is provided, however network-name list is
+                if (!CollectionUtils.isEmpty(oobMgtNetNames)) {
+                    oobMgtNetIds = heatBridgeClient.extractNetworkIds(oobMgtNetNames);
+                }
+                heatBridgeClient.buildAddVserverLInterfacesToAaiAction(stackResources, oobMgtNetIds);
+                LOGGER.debug(
+                    "Successfully queried neutron resources and built AAI actions to add l-interfaces to vservers.");
+
+                //Update AAI
+                heatBridgeClient.submitToAai();
+            }
             return;
         } catch (Exception e) {
         	LOGGER.debug("unhandled exception in create VF",e);

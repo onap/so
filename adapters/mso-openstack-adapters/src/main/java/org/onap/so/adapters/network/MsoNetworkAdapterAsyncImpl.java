@@ -449,7 +449,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
      * For Neutron-based orchestration, the networkId should be the Neutron network UUID.
      *
      * The method returns nothing on success. Rollback is not possible for delete
-     * commands, so any failure on delete will require manual fallout in the client.
+     * actions, so any failure on delete will require manual fallout in the client.
      */
     @Override
     public void deleteNetworkA (String cloudSiteId,

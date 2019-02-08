@@ -322,7 +322,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             if (NEUTRON_MODE.equals (mode)) {
 
-                // Use an MsoNeutronUtils for all neutron commands
+                // Use an MsoNeutronUtils for all neutron actions
 
                 // See if the Network already exists (by name)
                 NetworkInfo netInfo = null;
@@ -820,7 +820,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             String mode = networkResource.getOrchestrationMode();
             NetworkType neutronNetworkType = NetworkType.valueOf(networkResource.getNeutronNetworkType());
 
-            // Use an MsoNeutronUtils for all Neutron commands
+            // Use an MsoNeutronUtils for all Neutron actions
 
             if (NEUTRON_MODE.equals(mode)) {
 
@@ -1327,7 +1327,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         	throw new NetworkException (error, MsoExceptionCategory.USERDATA);
         }
 
-        // Use MsoNeutronUtils for all NEUTRON commands
+        // Use MsoNeutronUtils for all NEUTRON actions
 
         String mode;
         String neutronId;
@@ -1452,7 +1452,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      * For Neutron-based orchestration, the networkId should be the Neutron network UUID.
      *
      * The method returns nothing on success. Rollback is not possible for delete
-     * commands, so any failure on delete will require manual fallout in the client.
+     * actions, so any failure on delete will require manual fallout in the client.
      */
     @Override
     public void deleteNetwork (String cloudSiteId,
@@ -1506,7 +1506,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             if (NEUTRON_MODE.equals (mode)) {
 
-                // Use MsoNeutronUtils for all NEUTRON commands
+                // Use MsoNeutronUtils for all NEUTRON actions
                 long deleteNetworkStarttime = System.currentTimeMillis ();
                 try {
                     // The deleteNetwork function in MsoNeutronUtils returns success if the network
@@ -1620,7 +1620,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             if (rollback.getNetworkCreated ()) {
                 // Rolling back a newly created network, so delete it.
                 if (NEUTRON_MODE.equals (mode)) {
-                    // Use MsoNeutronUtils for all NEUTRON commands
+                    // Use MsoNeutronUtils for all NEUTRON actions
                     long deleteNetworkStarttime = System.currentTimeMillis ();
                     try {
                         // The deleteNetwork function in MsoNeutronUtils returns success if the network
