@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "70c4aa07_8377fa46",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1603
+      },
+      "writtenOn": "2019-02-11T23:16:08Z",
+      "side": 1,
+      "message": "what specification is being referred to here?",
+      "revId": "743f3d5151cc3f98685563e0297229eaff43dfef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
