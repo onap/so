@@ -20,12 +20,18 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertThat;
+
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
+import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 
 public class NetworkAdapterRestV1Test {
 
@@ -35,5 +41,18 @@ public class NetworkAdapterRestV1Test {
 		CreateNetworkResponse response = (CreateNetworkResponse) new NetworkAdapterRestV1().unmarshalXml(xml, CreateNetworkResponse.class);
 		String returnedXml = response.toXmlString();
 		System.out.println(returnedXml);
+	}
+
+	@Test
+	public void testUnmarshalXmlUpdate() throws IOException, JAXBException {
+		UpdateNetworkResponse expectedResponse = new UpdateNetworkResponse();
+		expectedResponse.setMessageId("ec100bcc-2659-4aa4-b4d8-3255715c2a51");
+		expectedResponse.setNetworkId("80de31e3-cc78-4111-a9d3-5b92bf0a39eb");
+		Map<String,String>subnetMap = new HashMap<String,String>();
+		subnetMap.put("95cd8437-25f1-4238-8720-cbfe7fa81476", "d8d16606-5d01-4822-b160-9a0d257303e0");
+		expectedResponse.setSubnetMap(subnetMap);
+		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><updateNetworkResponse><messageId>ec100bcc-2659-4aa4-b4d8-3255715c2a51</messageId><networkId>80de31e3-cc78-4111-a9d3-5b92bf0a39eb</networkId><subnetMap><entry><key>95cd8437-25f1-4238-8720-cbfe7fa81476</key><value>d8d16606-5d01-4822-b160-9a0d257303e0</value></entry></subnetMap></updateNetworkResponse>";
+		UpdateNetworkResponse response = (UpdateNetworkResponse) new NetworkAdapterRestV1().unmarshalXml(xml, UpdateNetworkResponse.class);
+		assertThat(expectedResponse, sameBeanAs(response));
 	}
 }

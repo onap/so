@@ -35,6 +35,9 @@ import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkError;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
 import org.onap.so.adapters.nwrest.DeleteNetworkResponse;
+import org.onap.so.adapters.nwrest.UpdateNetworkError;
+import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
+import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.NetworkAdapterResources;
 import org.slf4j.Logger;
@@ -114,6 +117,14 @@ public class NetworkAdapterRestV1 {
 					} else {
 						DeleteNetworkResponse deleteNetworkResponse = (DeleteNetworkResponse) unmarshalXml(callback, DeleteNetworkResponse.class);
 						execution.setVariable("deleteNetworkResponse", deleteNetworkResponse);
+					}
+				} else if (networkAdapterRequest instanceof UpdateNetworkRequest) {
+					if (callback.contains("updateNetworkError")) {
+						UpdateNetworkError updateNetworkError = (UpdateNetworkError) unmarshalXml(callback, UpdateNetworkError.class);
+						throw new Exception(updateNetworkError.getMessage());
+					} else {
+						UpdateNetworkResponse updateNetworkResponse = (UpdateNetworkResponse) unmarshalXml(callback, UpdateNetworkResponse.class);
+						execution.setVariable("updateNetworkResponse", updateNetworkResponse);
 					}
 				}
 			}
