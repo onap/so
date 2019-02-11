@@ -55,6 +55,7 @@ public class ExecuteBuildingBlockRainyDay {
 	private Environment environment;
 	protected String retryDurationPath = "mso.rainyDay.retryDurationMultiplier";
 	protected String defaultCode = "mso.rainyDay.defaultCode";
+	protected String maxRetries = "mso.rainyDay.maxRetries";
 
 	public void setRetryTimer(DelegateExecution execution) {
 		try {
@@ -172,9 +173,16 @@ public class ExecuteBuildingBlockRainyDay {
 			msoLogger.debug("RainyDayHandler Status Code is: " + handlingCode);
 			execution.setVariable(HANDLING_CODE, handlingCode);
 		} catch (Exception e) {
-			msoLogger.error("Failed to determine RainyDayHandler Status. Seting handlingCode = Abort", e);
 			String code = this.environment.getProperty(defaultCode);
+			msoLogger.error("Failed to determine RainyDayHandler Status. Seting handlingCode = "+ code, e);
 			execution.setVariable(HANDLING_CODE, code);
+		}
+		try{
+			int envMaxRetries = Integer.parseInt(this.environment.getProperty(maxRetries));
+			execution.setVariable("maxRetries", envMaxRetries);
+		} catch (Exception ex) {
+			msoLogger.error("Could not read maxRetries from config file. Setting max to 5 retries");
+			execution.setVariable("maxRetries", 5);
 		}
 	}
 

@@ -131,6 +131,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
 		executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution,true);
 		
 		assertEquals("Rollback", delegateExecution.getVariable("handlingCode"));
+		assertEquals(5,delegateExecution.getVariable("maxRetries"));
 	}
 	
 	@Test
