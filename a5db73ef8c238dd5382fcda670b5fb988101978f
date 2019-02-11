@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67029dd0_b7857b51",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1258,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-02-11T13:11:04Z",
+      "side": 1,
+      "message": "This should not be part of the openstack call heat bridge should be separate.",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cd268fbc_6b444ba4",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/aai/client/ActiveAndAvailableInventoryClient.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-02-11T13:11:04Z",
+      "side": 1,
+      "message": "Use the existing A\u0026AI Client, do not create a new one.",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "52914f47_0dfae610",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/actions/AddLInterfaceToVserver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-02-11T13:11:04Z",
+      "side": 1,
+      "message": "We have been using raw slf4j loggers in new code.",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
