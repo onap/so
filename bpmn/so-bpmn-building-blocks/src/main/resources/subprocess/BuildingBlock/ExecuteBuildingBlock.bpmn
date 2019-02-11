@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
   <bpmn:process id="ExecuteBuildingBlock" name="ExecuteBuildingBlock" isExecutable="true">
     <bpmn:startEvent id="Start_ExecuteBuildingBlock" name="start">
       <bpmn:outgoing>SequenceFlow_0rq4c5r</bpmn:outgoing>
@@ -73,7 +73,7 @@
       <bpmn:sequenceFlow id="SequenceFlow_0ndt8ft" sourceRef="Task_SetRetryTimer" targetRef="IntermediateCatchEvent_RetryTimer" />
       <bpmn:sequenceFlow id="SequenceFlow_07a1ytc" sourceRef="IntermediateCatchEvent_RetryTimer" targetRef="EndEvent_1sez2lh" />
       <bpmn:sequenceFlow id="SequenceFlow_1wbevp0" name="yes" sourceRef="ExclusiveGateway_0ey4zpt" targetRef="Task_SetRetryTimer">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("retryCount")<5}]]></bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("retryCount")<execution.getVariable("maxRetries")}]]></bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:endEvent id="EndEvent_0mvmk3i">
         <bpmn:incoming>SequenceFlow_0h8v45y</bpmn:incoming>
