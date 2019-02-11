@@ -162,7 +162,8 @@ public class HeatStackAudit {
 			auditVserver.setLInterfaces(new LInterfaces());
 			auditVserver.setVserverId(novaResource.getPhysicalResourceId());
 			Stream<Resource> filteredNeutronNetworks = resources.getList().stream()
-					.filter(network -> network.getRequiredBy().contains(novaResource.getLogicalResourceId()));
+					.filter(resource -> resource.getRequiredBy().contains(novaResource.getLogicalResourceId()))
+					.filter(resource -> "OS::Neutron::Port".equals(resource.getType()));
 			filteredNeutronNetworks.forEach(network -> {
 				LInterface lInterface = new LInterface();
 				lInterface.setInterfaceId(network.getPhysicalResourceId());

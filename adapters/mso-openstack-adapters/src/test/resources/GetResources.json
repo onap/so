@@ -1,5 +1,27 @@
 {
     "resources": [
+      {
+      "links": [
+        {
+          "href": "https://orchestration.com:8004/v1/99cecb7b19dc4690960761abd0fe2413/stacks/zdyh3brlba05_addon/03840be2-7ce6-4e38-a748-dbd59a798732/resources/vlbagent_eph_aff_id", 
+          "rel": "self"
+        }, 
+        {
+          "href": "https://orchestration.com:8004/v1/99cecb7b19dc4690960761abd0fe2413/stacks/zdyh3brlba05_addon/03840be2-7ce6-4e38-a748-dbd59a798732", 
+          "rel": "stack"
+        }
+      ], 
+      "logical_resource_id": "vlbagent_eph_aff_id", 
+      "physical_resource_id": "zdyh3brlba05_addon-vlbagent_eph_aff_id-euhxoicxsgso", 
+      "required_by": [
+        "ssc_server_1"
+      ], 
+      "resource_name": "vlbagent_eph_aff_id", 
+      "resource_status": "CREATE_COMPLETE", 
+      "resource_status_reason": "state changed", 
+      "resource_type": "OS::Heat::RandomString", 
+      "updated_time": "2019-02-07T22:56:12Z"
+    }, 
         {
             "resource_name": "ssc_1_trusted_port_0",
             "links": [
