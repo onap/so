@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "a20c0069_0b12545b",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1258,
+      "author": {
+        "id": 1603
+      },
+      "writtenOn": "2019-02-11T23:16:08Z",
+      "side": 1,
+      "message": "(I\u0027m interested in the target of having multicloud do the AAI update)\n\nSteve - what do you mean by the heat bridge call should be separate?  Do you mean just not part of the create vfmodule method (i.e. call some kind of AAIUpdate / heatbridge method) or a separate workflow step that occurs after the vfmodule is created?",
+      "parentUuid": "6f89fd10_dc893505",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cd268fbc_6b444ba4",
         "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/aai/client/ActiveAndAvailableInventoryClient.java",
         "patchSetId": 4
