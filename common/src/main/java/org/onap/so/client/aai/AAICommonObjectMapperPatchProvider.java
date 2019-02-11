@@ -20,16 +20,12 @@
 
 package org.onap.so.client.aai;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperPatchProvider;
 
-public class AAICommonObjectMapperPatchProvider extends AAICommonObjectMapperProvider {
+public class AAICommonObjectMapperPatchProvider extends GraphInventoryCommonObjectMapperPatchProvider {
 
 	
 	public AAICommonObjectMapperPatchProvider() {
 		super();
-		EmptyStringToNullSerializer sp = new EmptyStringToNullSerializer(); 
-		SimpleModule emptyStringModule = new SimpleModule();
-		emptyStringModule.addSerializer(String.class, sp);
-		mapper.registerModule(emptyStringModule);
 	}
 }

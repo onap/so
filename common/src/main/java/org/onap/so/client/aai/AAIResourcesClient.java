@@ -36,9 +36,10 @@ import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUri;
+import org.onap.so.client.graphinventory.GraphInventoryResourcesClient;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
 
-public class AAIResourcesClient extends AAIClient {
+public class AAIResourcesClient extends AAIClient implements GraphInventoryResourcesClient<AAIResourcesClient, AAIResourceUri, AAIEdgeLabel, AAIResultWrapper, AAITransactionalClient, AAISingleTransactionClient> {
 			
 	public AAIResourcesClient() {
 		super();
@@ -49,37 +50,30 @@ public class AAIResourcesClient extends AAIClient {
 		this.version = version;
 	}
 	
-	/**
-	 * creates a new object in A&AI
-	 * 
-	 * @param obj - can be any object which will marshal into a valid A&AI payload
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#create(org.onap.so.client.aai.entities.uri.AAIResourceUri, java.lang.Object)
 	 */
+	@Override
 	public void create(AAIResourceUri uri, Object obj) {
 		RestClient aaiRC = this.createClient(uri);
 		aaiRC.put(obj);
 		return;
 	}
 	
-	/**
-	 * creates a new object in A&AI with no payload body
-	 * 
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#createEmpty(org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public void createEmpty(AAIResourceUri uri) {
 		RestClient aaiRC = this.createClient(uri);
 		aaiRC.put("");
 		return;
 	}
 	
-	/**
-	 * returns false if the object does not exist in A&AI
-	 * 
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#exists(org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public boolean exists(AAIResourceUri uri) {
 		AAIUri forceMinimal = this.addParams(Optional.of(Depth.ZERO), true, uri);
 		try {
@@ -91,12 +85,10 @@ public class AAIResourcesClient extends AAIClient {
 		}
 	}
 	
-	/**
-	 * Adds a relationship between two objects in A&AI 
-	 * @param uriA
-	 * @param uriB
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#connect(org.onap.so.client.aai.entities.uri.AAIResourceUri, org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public void connect(AAIResourceUri uriA, AAIResourceUri uriB) {
 		AAIResourceUri uriAClone = uriA.clone();
 		RestClient aaiRC = this.createClient(uriAClone.relationshipAPI());
@@ -104,14 +96,10 @@ public class AAIResourcesClient extends AAIClient {
 		return;
 	}
 	
-	/**
-	 * Adds a relationship between two objects in A&AI 
-	 * with a given edge label
-	 * @param uriA
-	 * @param uriB
-	 * @param edge label
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#connect(org.onap.so.client.aai.entities.uri.AAIResourceUri, org.onap.so.client.aai.entities.uri.AAIResourceUri, org.onap.so.client.aai.entities.AAIEdgeLabel)
 	 */
+	@Override
 	public void connect(AAIResourceUri uriA, AAIResourceUri uriB, AAIEdgeLabel label) {
 		AAIResourceUri uriAClone = uriA.clone();
 		RestClient aaiRC = this.createClient(uriAClone.relationshipAPI());
@@ -119,13 +107,10 @@ public class AAIResourcesClient extends AAIClient {
 		return;
 	}
 	
-	/**
-	 * Removes relationship from two objects in A&AI
-	 * 
-	 * @param uriA
-	 * @param uriB
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#disconnect(org.onap.so.client.aai.entities.uri.AAIResourceUri, org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public void disconnect(AAIResourceUri uriA, AAIResourceUri uriB) {
 		AAIResourceUri uriAClone = uriA.clone();
 		RestClient aaiRC = this.createClient(uriAClone.relationshipAPI());
@@ -133,12 +118,10 @@ public class AAIResourcesClient extends AAIClient {
 		return;
 	}
 	
-	/**
-	 * Deletes object from A&AI. Automatically handles resource-version.
-	 * 
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#delete(org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public void delete(AAIResourceUri uri) {
 		AAIResourceUri clone = uri.clone();
 		RestClient aaiRC = this.createClient(clone);
@@ -150,23 +133,20 @@ public class AAIResourcesClient extends AAIClient {
 		return;
 	}
 	
-	/**
-	 * @param obj - can be any object which will marshal into a valid A&AI payload
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#update(org.onap.so.client.aai.entities.uri.AAIResourceUri, java.lang.Object)
 	 */
+	@Override
 	public void update(AAIResourceUri uri, Object obj) {
 		RestClient aaiRC = this.createClient(uri);
 		aaiRC.patch(obj);
 		return;
 	}
 	
-	/**
-	 * Retrieves an object from A&AI and unmarshalls it into the Class specified
-	 * @param clazz
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#get(java.lang.Class, org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public <T> Optional<T> get(Class<T> clazz, AAIResourceUri uri) {
 		try {
 			return this.createClient(uri).get(clazz);
@@ -179,11 +159,10 @@ public class AAIResourcesClient extends AAIClient {
 		}
 	}
 	
-	/**
-	 * Retrieves an object from A&AI and returns complete response
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#getFullResponse(org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public Response getFullResponse(AAIResourceUri uri) {
 		try {
 			return this.createClient(uri).get();
@@ -196,12 +175,10 @@ public class AAIResourcesClient extends AAIClient {
 		}
 	}
 	
-	/**
-	 * Retrieves an object from A&AI and automatically unmarshalls it into a Map or List 
-	 * @param resultClass
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#get(javax.ws.rs.core.GenericType, org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public <T> Optional<T> get(GenericType<T> resultClass, AAIResourceUri uri) {
 		try {
 			return this.createClient(uri).get(resultClass);
@@ -214,12 +191,10 @@ public class AAIResourcesClient extends AAIClient {
 		}
 	}
 	
-	/**
-	 * Retrieves an object from A&AI wrapped in a helper class which offer additional features
-	 * 
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#get(org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public AAIResultWrapper get(AAIResourceUri uri) {
 		String json;
 		try {
@@ -234,13 +209,10 @@ public class AAIResourcesClient extends AAIClient {
 		return new AAIResultWrapper(json);
 	}
 	
-	/**
-	 * Retrieves an object from A&AI wrapped in a helper class which offer additional features
-	 * If the object cannot be found in A&AI the method will throw the runtime exception
-	 * included as an argument
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#get(org.onap.so.client.aai.entities.uri.AAIResourceUri, java.lang.Class)
 	 */
+	@Override
 	public AAIResultWrapper get(AAIResourceUri uri, Class<? extends RuntimeException> c) {
 		String json;
 		try {
@@ -285,13 +257,10 @@ public class AAIResourcesClient extends AAIClient {
 		return result;
 	}
 	
-	/**
-	 * Will automatically create the object if it does not exist
-	 * 
-	 * @param obj - Optional object which serializes to a valid A&AI payload
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#createIfNotExists(org.onap.so.client.aai.entities.uri.AAIResourceUri, java.util.Optional)
 	 */
+	@Override
 	public AAIResourcesClient createIfNotExists(AAIResourceUri uri, Optional<Object> obj) {
 		if(!this.exists(uri)){
 			if (obj.isPresent()) {
@@ -304,20 +273,18 @@ public class AAIResourcesClient extends AAIClient {
 		return this;
 	}
 
-	/**
-	 * Starts a transaction which encloses multiple A&AI mutations
-	 * 
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#beginTransaction()
 	 */
+	@Override
 	public AAITransactionalClient beginTransaction() {
 		return new AAITransactionalClient(this.getVersion());
 	}
 	
-	/**
-	 * Starts a transaction groups multiple A&AI mutations
-	 * 
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#beginSingleTransaction()
 	 */
+	@Override
 	public AAISingleTransactionClient beginSingleTransaction() {
 		return new AAISingleTransactionClient(this.getVersion());
 	}
@@ -333,6 +300,9 @@ public class AAIResourcesClient extends AAIClient {
 		
 		return clone;
 	}
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryResourcesClient#getRestProperties()
+	 */
 	@Override
 	public <T extends RestProperties> T getRestProperties() {
 		return super.getRestProperties();

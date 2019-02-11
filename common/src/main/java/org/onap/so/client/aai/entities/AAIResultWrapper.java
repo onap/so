@@ -20,96 +20,22 @@
 
 package org.onap.so.client.aai.entities;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
-
-import org.onap.so.client.aai.AAICommonObjectMapperProvider;
-import org.onap.so.jsonpath.JsonPathUtil;
+import org.onap.so.client.graphinventory.entities.GraphInventoryResultWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-public class AAIResultWrapper implements Serializable {
+public class AAIResultWrapper extends GraphInventoryResultWrapper implements Serializable {
 
 	private static final long serialVersionUID = 5895841925807816737L;
-	private final String jsonBody;
-	private final ObjectMapper mapper;
-	private final transient Logger logger = LoggerFactory.getLogger(AAIResultWrapper.class);
+	private final static transient Logger logger = LoggerFactory.getLogger(AAIResultWrapper.class);
 	
 	public AAIResultWrapper(String json) {
-		this.jsonBody = json;
-		this.mapper = new AAICommonObjectMapperProvider().getMapper();
+		super(json, logger);
 	}
 	
 	public AAIResultWrapper(Object aaiObject) {
-		this.mapper = new AAICommonObjectMapperProvider().getMapper();
-		this.jsonBody = mapObjectToString(aaiObject);
+		super(aaiObject, logger);
 	}
-	
-	protected String mapObjectToString(Object aaiObject) {
-		try {
-			return mapper.writeValueAsString(aaiObject);
-		} catch (JsonProcessingException e) {
-			logger.warn("could not parse object into json - defaulting to {}");
-			return "{}";
-		}
-	}
-	public Optional<Relationships> getRelationships() {
-		final String path = "$.relationship-list";
-		if (isEmpty()) {
-			return Optional.empty();
-		}
-		Optional<String> result = JsonPathUtil.getInstance().locateResult(jsonBody, path);
-		if (result.isPresent()) {
-			return Optional.of(new Relationships(result.get()));
-		} else {
-			return Optional.empty();
-		}
-	}
-	
-	public String getJson() {
-		if(jsonBody == null) {
-			return "{}";
-		} else {
-			return jsonBody;
-		}
-	}
-	
-	public Map<String, Object> asMap() {
-		if (isEmpty()) {
-			return new HashMap<>();
-		}
-		try {
-			return mapper.readValue(this.jsonBody, new TypeReference<Map<String, Object>>(){});
-		} catch (IOException e) {
-			return new HashMap<>();
-		}
-	}
-	
-	public <T> Optional<T> asBean(Class<T> clazz) {
-		if (isEmpty()) {
-			return Optional.empty();
-		}
-		try {
-			return Optional.of(mapper.readValue(this.jsonBody, clazz));
-		} catch (IOException e) {
-			return Optional.empty();
-		}
-	}
-	
-	public boolean isEmpty() {
-		return jsonBody == null;
-	}
-	@Override
-	public String toString() {
-		return this.getJson();
-	}
-
 }

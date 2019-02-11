@@ -43,6 +43,7 @@ import org.onap.aai.domain.yang.Relationship;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
+import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -143,7 +144,7 @@ public class AAITransactionalClientTest {
 	@Test
 	public void confirmPatchFormat() {
 		AAITransactionalClient client = spy(new AAITransactionalClient(AAIVersion.LATEST));
-		AAIPatchConverter mock = mock(AAIPatchConverter.class);
+		GraphInventoryPatchConverter mock = mock(GraphInventoryPatchConverter.class);
 		doReturn(mock).when(client).getPatchConverter();
 		client.update(uriA, "{}");
 		verify(mock, times(1)).convertPatchFormat(any());

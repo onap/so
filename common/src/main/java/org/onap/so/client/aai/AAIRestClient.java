@@ -28,6 +28,7 @@ import javax.ws.rs.core.Response;
 
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.RestClientSSL;
+import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.so.client.policy.CommonObjectMapperProvider;
 import org.onap.so.utils.TargetEntity;
 
@@ -36,7 +37,7 @@ public class AAIRestClient extends RestClientSSL {
 	private final AAIProperties aaiProperties;
 	private static final AAICommonObjectMapperProvider standardProvider = new AAICommonObjectMapperProvider();
 
-	private final AAIPatchConverter patchConverter = new AAIPatchConverter();
+	private final GraphInventoryPatchConverter patchConverter = new GraphInventoryPatchConverter();
 	
 	protected AAIRestClient(AAIProperties props, URI uri) {
 		super(props, Optional.of(uri));
@@ -81,7 +82,7 @@ public class AAIRestClient extends RestClientSSL {
 		return super.patch(convertToPatchFormat(obj), resultClass);
 	}
 	
-	protected AAIPatchConverter getPatchConverter() {
+	protected GraphInventoryPatchConverter getPatchConverter() {
 		return this.patchConverter;
 	}
 	

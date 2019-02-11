@@ -45,6 +45,7 @@ import org.onap.so.client.aai.entities.singletransaction.SingleTransactionRespon
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
+import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -117,7 +118,7 @@ public class AAISingleTransactionClientTest {
 	@Test
 	public void confirmPatchFormat() {
 		AAISingleTransactionClient singleTransaction = spy(new AAISingleTransactionClient(AAIVersion.LATEST));
-		AAIPatchConverter mock = mock(AAIPatchConverter.class);
+		GraphInventoryPatchConverter mock = mock(GraphInventoryPatchConverter.class);
 		doReturn(mock).when(singleTransaction).getPatchConverter();
 		singleTransaction.update(uriA, "{}");
 		verify(mock, times(1)).convertPatchFormat(any());

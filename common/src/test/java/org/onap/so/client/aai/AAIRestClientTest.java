@@ -41,6 +41,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.client.RestClientSSL;
+import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPatchDepthExceededException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,7 +69,7 @@ public class AAIRestClientTest {
 	public void verifyPatchValidation() throws URISyntaxException {
 		AAIRestClient client = new AAIRestClient(props, new URI(""));
 		AAIRestClient spy = spy(client);
-		AAIPatchConverter patchValidatorMock = mock(AAIPatchConverter.class);
+		GraphInventoryPatchConverter patchValidatorMock = mock(GraphInventoryPatchConverter.class);
 		doReturn(patchValidatorMock).when(spy).getPatchConverter();
 		String payload = "{}";
 		doReturn(Response.ok().build()).when(spy).method(eq("PATCH"), any());

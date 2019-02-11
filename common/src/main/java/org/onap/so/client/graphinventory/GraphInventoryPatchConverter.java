@@ -18,29 +18,31 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.aai;
+package org.onap.so.client.graphinventory;
 
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.onap.so.client.aai.AAICommonObjectMapperPatchProvider;
+import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPatchDepthExceededException;
 import org.onap.so.jsonpath.JsonPathUtil;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-public class AAIPatchConverter {
+public class GraphInventoryPatchConverter {
 
 	private static final AAICommonObjectMapperProvider standardProvider = new AAICommonObjectMapperProvider();
 	private static final AAICommonObjectMapperPatchProvider patchProvider = new AAICommonObjectMapperPatchProvider();
 	private static final Pattern LOCATE_COMPLEX_OBJECT = Pattern.compile("^((?!relationship-list).)+?\\['[^\\[\\]]+?'\\]$");
 
 	
-	protected String convertPatchFormat(Object obj) {
+	public String convertPatchFormat(Object obj) {
 		return validatePatchObject(marshallObjectToPatchFormat(obj));
 	}
 	
-	protected String validatePatchObject(String payload) {
+	public String validatePatchObject(String payload) {
 		if (hasComplexObject(payload)) {
 			throw new GraphInventoryPatchDepthExceededException(payload);
 		}

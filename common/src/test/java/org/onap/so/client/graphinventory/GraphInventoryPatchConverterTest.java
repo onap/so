@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.aai;
+package org.onap.so.client.graphinventory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -35,6 +35,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.so.client.aai.AAICommonObjectMapperProvider;
+import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -42,13 +44,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class AAIPatchConverterTest {
+public class GraphInventoryPatchConverterTest {
 
 	private ObjectMapper mapper = new AAICommonObjectMapperProvider().getMapper();
 
 	@Test
 	public void convertObjectToPatchFormatTest() throws URISyntaxException, JsonParseException, JsonMappingException, IOException {
-		AAIPatchConverter validator = new AAIPatchConverter();
+		GraphInventoryPatchConverter validator = new GraphInventoryPatchConverter();
 		GenericVnf vnf = new GenericVnf();
 		vnf.setIpv4Loopback0Address("");
 		String result = validator.marshallObjectToPatchFormat(vnf);
@@ -60,7 +62,7 @@ public class AAIPatchConverterTest {
 	
 	@Test
 	public void convertStringToPatchFormatTest() throws URISyntaxException, JsonParseException, JsonMappingException, IOException {
-		AAIPatchConverter validator = new AAIPatchConverter();
+		GraphInventoryPatchConverter validator = new GraphInventoryPatchConverter();
 		String payload = "{\"ipv4-loopback0-address\":\"\"}";
 		String result = validator.marshallObjectToPatchFormat(payload);
 		
@@ -69,7 +71,7 @@ public class AAIPatchConverterTest {
 	
 	@Test
 	public void convertStringToPatchFormatNull_Test() throws URISyntaxException, JsonParseException, JsonMappingException, IOException {
-		AAIPatchConverter validator = new AAIPatchConverter();
+		GraphInventoryPatchConverter validator = new GraphInventoryPatchConverter();
 		String payload = "{\"ipv4-loopback0-address\": null}";
 		String result = validator.marshallObjectToPatchFormat(payload);
 		System.out.println(result);
@@ -78,7 +80,7 @@ public class AAIPatchConverterTest {
 	
 	@Test
 	public void convertMapToPatchFormatTest() throws URISyntaxException, JsonParseException, JsonMappingException, IOException {
-		AAIPatchConverter validator = new AAIPatchConverter();
+		GraphInventoryPatchConverter validator = new GraphInventoryPatchConverter();
 		HashMap<String, String> map = new HashMap<>();
 		map.put("ipv4-loopback0-address", "");
 		map.put("ipv4-loopback1-address", "192.168.1.1");
@@ -89,7 +91,7 @@ public class AAIPatchConverterTest {
 	
 	@Test
 	public void hasComplexObjectTest() {
-		AAIPatchConverter validator = new AAIPatchConverter();
+		GraphInventoryPatchConverter validator = new GraphInventoryPatchConverter();
 		String hasNesting = "{ \"hello\" : \"world\", \"nested\" : { \"key\" : \"value\" } }";
 		String noNesting = "{ \"hello\" : \"world\" }";
 		String arrayCase = "{ \"hello\" : \"world\", \"nestedSimple\" : [\"value1\" , \"value2\"], \"nestedComplex\" : [{\"key\" : \"value\"}]}";

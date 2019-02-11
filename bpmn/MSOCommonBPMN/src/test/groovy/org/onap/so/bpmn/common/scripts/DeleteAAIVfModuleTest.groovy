@@ -92,7 +92,7 @@ class DeleteAAIVfModuleTest extends  MsoGroovyTest{
     void testDeleteGenericVnf() {
         ExecutionEntity mockExecution = setupMock()
         when(mockExecution.getVariable("DAAIVfMod_vnfId")).thenReturn("vnfId1")
-        doNothing().when(client).delete(isA(AAIResourceUri.class))
+        doNothing().when(client).delete(isA(AAIResourceUri.class) as AAIResourceUri)
         deleteAAIVfModule.deleteGenericVnf(mockExecution)
         Mockito.verify(mockExecution).setVariable(prefix + "deleteGenericVnfResponseCode", 200)
     }
@@ -169,7 +169,7 @@ class DeleteAAIVfModuleTest extends  MsoGroovyTest{
         ExecutionEntity mockExecution = setupMock()
         when(mockExecution.getVariable("DAAIVfMod_vnfId")).thenReturn("vnfId1")
         try {
-            doThrow(new NotFoundException("Vnf Not Found")).when(client).delete(isA(AAIResourceUri.class))
+            doThrow(new NotFoundException("Vnf Not Found")).when(client).delete(isA(AAIResourceUri.class) as AAIResourceUri)
             deleteAAIVfModule.deleteGenericVnf(mockExecution)
         } catch (Exception ex) {
             println " Test End - Handle catch-throw BpmnError()! "
@@ -186,7 +186,7 @@ class DeleteAAIVfModuleTest extends  MsoGroovyTest{
         ExecutionEntity mockExecution = setupMock()
         when(mockExecution.getVariable("DAAIVfMod_vnfId")).thenReturn("vnfId1")
         when(mockExecution.getVariable("DAAIVfMod_vfModuleId")).thenReturn("vfModuleId1")
-        doNothing().when(client).delete(isA(AAIResourceUri.class))
+        doNothing().when(client).delete(isA(AAIResourceUri.class) as AAIResourceUri)
         deleteAAIVfModule.deleteVfModule(mockExecution)
         Mockito.verify(mockExecution).setVariable(prefix + "deleteVfModuleResponseCode", 200)
     }
@@ -197,7 +197,7 @@ class DeleteAAIVfModuleTest extends  MsoGroovyTest{
         when(mockExecution.getVariable("DAAIVfMod_vnfId")).thenReturn("vnfId1")
         when(mockExecution.getVariable("DAAIVfMod_vfModuleId")).thenReturn("vfModuleId1")
         try {
-            doThrow(new NotFoundException("Vnf Not Found")).when(client).delete(isA(AAIResourceUri.class))
+            doThrow(new NotFoundException("Vnf Not Found")).when(client).delete(isA(AAIResourceUri.class) as AAIResourceUri)
             deleteAAIVfModule.deleteVfModule(mockExecution)
         } catch (Exception ex) {
             println " Test End - Handle catch-throw BpmnError()! "

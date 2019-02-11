@@ -43,19 +43,21 @@ import org.onap.so.client.aai.entities.singletransaction.SingleTransactionRespon
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
+import org.onap.so.client.graphinventory.GraphInventorySingleTransactionClient;
 import org.onap.so.client.graphinventory.exceptions.BulkProcessFailed;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 
-public class AAISingleTransactionClient extends AAIClient {
+public class AAISingleTransactionClient extends AAIClient implements GraphInventorySingleTransactionClient<AAISingleTransactionClient, AAIResourceUri, AAIEdgeLabel> {
 
 	private final SingleTransactionRequest request;
 	private final AAIVersion version;
 	private int actionCount = 0;
 	
-	private final AAIPatchConverter patchConverter = new AAIPatchConverter();
+	private final GraphInventoryPatchConverter patchConverter = new GraphInventoryPatchConverter();
 	
 	protected AAISingleTransactionClient(AAIVersion version) {
 		super();
@@ -63,37 +65,30 @@ public class AAISingleTransactionClient extends AAIClient {
 		this.request = new SingleTransactionRequest();
 	}
 
-	/**
-	 * creates a new object in A&AI
-	 * 
-	 * @param obj - can be any object which will marshal into a valid A&AI payload
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#create(org.onap.so.client.aai.entities.uri.AAIResourceUri, java.lang.Object)
 	 */
+	@Override
 	public AAISingleTransactionClient create(AAIResourceUri uri, Object obj) {
 		request.getOperations().add(new OperationBodyRequest().withAction("put").withUri(uri.build().toString()).withBody(obj));
 		incrementActionAmount();
 		return this;
 	}
 
-	/**
-	 * creates a new object in A&AI with no payload body
-	 * 
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#createEmpty(org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public AAISingleTransactionClient createEmpty(AAIResourceUri uri) {
 		request.getOperations().add(new OperationBodyRequest().withAction("put").withUri(uri.build().toString()).withBody(new HashMap<String, String>()));
 		incrementActionAmount();
 		return this;
 	}
 
-	/**
-	 * Adds a relationship between two objects in A&AI 
-	 * @param uriA
-	 * @param uriB
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#connect(org.onap.so.client.aai.entities.uri.AAIResourceUri, org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public AAISingleTransactionClient connect(AAIResourceUri uriA, AAIResourceUri uriB) {
 		AAIResourceUri uriAClone = uriA.clone();
 		request.getOperations().add(new OperationBodyRequest().withAction("put").withUri(uriAClone.relationshipAPI().build().toString()).withBody(this.buildRelationship(uriB)));
@@ -101,13 +96,10 @@ public class AAISingleTransactionClient extends AAIClient {
 		return this;
 	}
 
-	/**
-	 * relationship between multiple objects in A&AI - connects A to all objects specified in list
-	 * 
-	 * @param uriA
-	 * @param uris
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#connect(org.onap.so.client.aai.entities.uri.AAIResourceUri, java.util.List)
 	 */
+	@Override
 	public AAISingleTransactionClient connect(AAIResourceUri uriA, List<AAIResourceUri> uris) {
 		for (AAIResourceUri uri : uris) {
 			this.connect(uriA, uri);
@@ -115,6 +107,10 @@ public class AAISingleTransactionClient extends AAIClient {
 		return this;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#connect(org.onap.so.client.aai.entities.uri.AAIResourceUri, org.onap.so.client.aai.entities.uri.AAIResourceUri, org.onap.so.client.aai.entities.AAIEdgeLabel)
+	 */
+	@Override
 	public AAISingleTransactionClient connect(AAIResourceUri uriA, AAIResourceUri uriB, AAIEdgeLabel label) {
 		AAIResourceUri uriAClone = uriA.clone();
 		RestClient aaiRC = this.createClient(uriAClone.relationshipAPI());
@@ -122,6 +118,10 @@ public class AAISingleTransactionClient extends AAIClient {
 		return this;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#connect(org.onap.so.client.aai.entities.uri.AAIResourceUri, java.util.List, org.onap.so.client.aai.entities.AAIEdgeLabel)
+	 */
+	@Override
 	public AAISingleTransactionClient connect(AAIResourceUri uriA, List<AAIResourceUri> uris, AAIEdgeLabel label) {
 		for (AAIResourceUri uri : uris) {
 			this.connect(uriA, uri, label);
@@ -129,13 +129,10 @@ public class AAISingleTransactionClient extends AAIClient {
 		return this;
 	}
 
-	/**
-	 * Removes relationship from two objects in A&AI
-	 * 
-	 * @param uriA
-	 * @param uriB
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#disconnect(org.onap.so.client.aai.entities.uri.AAIResourceUri, org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public AAISingleTransactionClient disconnect(AAIResourceUri uriA, AAIResourceUri uriB) {
 		AAIResourceUri uriAClone = uriA.clone();
 		request.getOperations().add(new OperationBodyRequest().withAction("delete").withUri(uriAClone.relationshipAPI().build().toString()).withBody(this.buildRelationship(uriB)));
@@ -143,24 +140,20 @@ public class AAISingleTransactionClient extends AAIClient {
 		return this;
 	}
 
-	/**
-	 * Removes relationship from multiple objects - disconnects A from all objects specified in list
-	 * @param uriA
-	 * @param uris
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#disconnect(org.onap.so.client.aai.entities.uri.AAIResourceUri, java.util.List)
 	 */
+	@Override
 	public AAISingleTransactionClient disconnect(AAIResourceUri uriA, List<AAIResourceUri> uris) {
 		for (AAIResourceUri uri : uris) {
 			this.disconnect(uriA, uri);
 		}
 		return this;
 	}
-	/**
-	 * Deletes object from A&AI. Automatically handles resource-version.
-	 * 
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#delete(org.onap.so.client.aai.entities.uri.AAIResourceUri)
 	 */
+	@Override
 	public AAISingleTransactionClient delete(AAIResourceUri uri) {
 		AAIResourcesClient client = new AAIResourcesClient();
 		AAIResourceUri clone = uri.clone();
@@ -172,11 +165,10 @@ public class AAISingleTransactionClient extends AAIClient {
 		return this;
 	}
 
-	/**
-	 * @param obj - can be any object which will marshal into a valid A&AI payload
-	 * @param uri
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#update(org.onap.so.client.aai.entities.uri.AAIResourceUri, java.lang.Object)
 	 */
+	@Override
 	public AAISingleTransactionClient update(AAIResourceUri uri, Object obj) {
 		
 		final String payload = getPatchConverter().convertPatchFormat(obj);
@@ -188,10 +180,10 @@ public class AAISingleTransactionClient extends AAIClient {
 	private void incrementActionAmount() {
 		actionCount++;
 	}
-	/**
-	 * Executes all created transactions in A&AI
-	 * @throws BulkProcessFailed 
+	/* (non-Javadoc)
+	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#execute()
 	 */
+	@Override
 	public void execute() throws BulkProcessFailed {
 		RestClient client = this.createClient(AAIUriFactory.createResourceUri(AAIObjectType.SINGLE_TRANSACTION));
 		try {
@@ -261,7 +253,7 @@ public class AAISingleTransactionClient extends AAIClient {
 		return this.request;
 	}
 	
-	protected AAIPatchConverter getPatchConverter() {
+	protected GraphInventoryPatchConverter getPatchConverter() {
 		return this.patchConverter;
 	}
 }
