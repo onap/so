@@ -44,6 +44,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
 
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
+
 @Entity
 @Table(name = "vnf_vfmodule_cvnfc_configuration_customization")
 public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable {
@@ -202,6 +204,7 @@ public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable 
 		this.created = created;
 	}
 
+	@LinkedResource
 	public ConfigurationResource getConfigurationResource() {
 		return configurationResource;
 	}

@@ -107,7 +107,7 @@ public class CvnfcCustomization implements Serializable {
 	@JoinColumn(name = "VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID")
 	private VnfResourceCustomization vnfResourceCustomization;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "modelCustomizationUUID")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cvnfcCustomization")
 	private Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomization;
 
 	@Override
