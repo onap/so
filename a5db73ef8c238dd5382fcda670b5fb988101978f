@@ -50,6 +50,57 @@
       "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5de4647b_cab2ed3a",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/actions/AddSriovPfToPServerPif.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-02-11T13:15:41Z",
+      "side": 1,
+      "message": "this should use proper logger substitution",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a0546537_2313c384",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/actions/AddSriovPfToPServerPif.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-02-11T13:15:41Z",
+      "side": 1,
+      "message": "this should use proper logger substitution",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f998bc6e_65cb2ecd",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/factory/MsoCloudClientFactoryImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-02-11T13:15:41Z",
+      "side": 1,
+      "message": "remove commented code please.",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
