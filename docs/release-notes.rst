@@ -20,7 +20,16 @@ Casablanca Release branch
 **New Features**
 
 This release is supporting the features of Casablanca and their defect fixes.
-- `SO-1400 <https://jira.onap.org/browse/SO-1336>`_
+- `SO-1262 <https://jira.onap.org/browse/SO-1262>`_
+- `SO-1306 <https://jira.onap.org/browse/SO-1306>`_
+- `SO-1317 <https://jira.onap.org/browse/SO-1317>`_
+- `SO-1330 <https://jira.onap.org/browse/SO-1330>`_
+- `SO-1331 <https://jira.onap.org/browse/SO-1331>`_
+- `SO-1334 <https://jira.onap.org/browse/SO-1334>`_
+- `SO-1337 <https://jira.onap.org/browse/SO-1337>`_
+- `SO-1358 <https://jira.onap.org/browse/SO-1358>`_
+- `SO-1400 <https://jira.onap.org/browse/SO-1400>`_
+- `SO-1407 <https://jira.onap.org/browse/SO-1407>`_
 - `SO-1408 <https://jira.onap.org/browse/SO-1408>`_
 - `SO-1416 <https://jira.onap.org/browse/SO-1416>`_
 - `SO-1417 <https://jira.onap.org/browse/SO-1417>`_
@@ -41,9 +50,7 @@ Dockers released for SO:
 
 **Known Issues**
 
-- `SO-1419 <https://jira.onap.org/browse/SO-1419>`_ - is a stretch goal that is under examination.
-
-- `SDC-1955 <https://jira.onap.org/browse/SDC-1955>`_ - tested with a workaround to avoid this scenario. To be tested further with updated dockers of SDC, UUI and SO.
+- `SO-1419 <https://jira.onap.org/browse/SO-1419>`_ - is a stretch goal and is not a part of the committed test scenarios and is under examination
 
 **Security Notes**
 
