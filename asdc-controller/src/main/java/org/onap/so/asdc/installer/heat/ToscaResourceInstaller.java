@@ -554,8 +554,14 @@ public class ToscaResourceInstaller {
 						for (RequirementAssignment requirement :  requirementsList) {
 							if (requirement.getNodeTemplateName().equals(spNode.getName())) {
 								ConfigurationResourceCustomization configurationResource = createConfiguration(configNode, toscaResourceStruct, serviceProxy);
-																
-								configurationResourceList.add(configurationResource);
+								
+								Optional<ConfigurationResourceCustomization> matchingObject = configurationResourceList.stream()
+									    .filter(configurationResourceCustomization -> configNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID).equals(configurationResource.getModelCustomizationUUID()))
+									    .findFirst();
+								if(!matchingObject.isPresent()){																	
+									configurationResourceList.add(configurationResource);
+								}
+								
 								break;
 							}
 						}
