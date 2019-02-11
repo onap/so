@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "6f89fd10_dc893505",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1258,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-02-11T13:54:09Z",
+      "side": 1,
+      "message": "When developing this over a year ago the inspiration came from the existing heat bridge implementation that is called from creteVfModule method of this class. Which was calling a python script.\n\n// Put data into A\u0026AI through Heatstack\n        if(enableBridge !\u003d null \u0026\u0026 enableBridge) {\n        \tcallHeatbridge(baseVfHeatStackId);\n        }\n\nWould you be okay to keep this here? given the long term strategy is to move this to multi-cloud.\n\nwe are intentionally catching the exception and not causing the stack creation to fail if some p-server data is missing from AAI.",
+      "parentUuid": "67029dd0_b7857b51",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cd268fbc_6b444ba4",
         "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/aai/client/ActiveAndAvailableInventoryClient.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2019-02-11T13:11:04Z",
       "side": 1,
       "message": "Use the existing A\u0026AI Client, do not create a new one.",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "af106ab9_5ba3aea5",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/aai/client/ActiveAndAvailableInventoryClient.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-02-11T13:54:09Z",
+      "side": 1,
+      "message": "Agreed, I am not sure how difficult it would be port to existing AAI client it will be better if we port this over to dmaap transactional call that you mentioned. please provide an example of this approach.\n\nI can tackle this as part of a separate story given the timelines for M2. Would you be okay with that?",
+      "parentUuid": "cd268fbc_6b444ba4",
       "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "131126ef_6a99c72d",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/actions/AddLInterfaceToVserver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-02-11T13:54:09Z",
+      "side": 1,
+      "message": "This would be easy to swap with slf4j logger can you please point me to an example of this so I am make sure it is inline with what you are looking for.",
+      "parentUuid": "52914f47_0dfae610",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5de4647b_cab2ed3a",
         "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/actions/AddSriovPfToPServerPif.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2019-02-11T13:15:41Z",
       "side": 1,
       "message": "this should use proper logger substitution",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7e56103_1cad3bfc",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/actions/AddSriovPfToPServerPif.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-02-11T13:54:09Z",
+      "side": 1,
+      "message": "sure I will take care of this as part of switching to slf4j",
+      "parentUuid": "5de4647b_cab2ed3a",
       "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "b54ffb5e_d4772c3c",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/actions/AddSriovPfToPServerPif.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-02-11T13:54:09Z",
+      "side": 1,
+      "message": "sure I will take care of this as part of switching to slf4j",
+      "parentUuid": "a0546537_2313c384",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f998bc6e_65cb2ecd",
         "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/factory/MsoCloudClientFactoryImpl.java",
         "patchSetId": 4
@@ -98,6 +188,24 @@
       "writtenOn": "2019-02-11T13:15:41Z",
       "side": 1,
       "message": "remove commented code please.",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "259a45dc_e5897089",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/factory/MsoCloudClientFactoryImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-02-11T13:54:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f998bc6e_65cb2ecd",
       "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
