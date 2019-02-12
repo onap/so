@@ -154,7 +154,7 @@ public class ResourceRequestBuilder {
                 }
             }
 
-           if (null! = resourceInputStr  || !resourceInputStr.equals("")) {
+           if (null != resourceInputStr  || !resourceInputStr.equals("")) {
                 return getResourceInput(resourceInputStr, serviceInputs);
            }
 
