@@ -17,7 +17,7 @@ limitations under the License.
 SPDX-License-Identifier: Apache-2.0
 ============LICENSE_END=========================================================
 
-@authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
+@authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com, andrei.barcovschi@ericsson.com
 -->
 
 <base href="/">
@@ -50,26 +50,26 @@ SPDX-License-Identifier: Apache-2.0
         <input matInput #searchValueRI type="text" [(ngModel)]="searchData.requestId" placeholder="Request Id">
       </mat-form-field>
 
-        <!-- Angular Start Date Picker -->
-        <mat-form-field class="startDate">
-          <input matInput #startDate [matDatepicker]="picker" [(ngModel)]="searchData.startDate" placeholder="Choose a start date">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
+      <!-- Angular Start Date Picker -->
+      <mat-form-field class="startDate">
+        <input matInput #startDate [matDatepicker]="picker" [(ngModel)]="searchData.startDate" placeholder="Choose a start date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
 
-        <!-- Dropdown box for Start Hour selection -->
-        <mat-form-field class="selectHour">
-          <mat-select class="formatBox" [(ngModel)]="searchData.selectedStartHour" name="hourFrom" placeholder="Select Hour">
-            <mat-option *ngFor="let option of hourOptions" [value]="option">{{option}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <!-- Dropdown box for Start Hour selection -->
+      <mat-form-field class="selectHour">
+        <mat-select class="formatBox" [(ngModel)]="searchData.selectedStartHour" name="hourFrom" placeholder="Select Hour">
+          <mat-option *ngFor="let option of hourOptions" [value]="option">{{option}}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <!-- Dropdown box for Start Minute selection -->
-        <mat-form-field class="selectMinute">
-          <mat-select class="formatBox" [(ngModel)]="searchData.selectedStartMinute" name="minuteFrom" placeholder="Select Minute">
-            <mat-option *ngFor="let option of minuteOptions" [value]="option">{{option}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <!-- Dropdown box for Start Minute selection -->
+      <mat-form-field class="selectMinute">
+        <mat-select class="formatBox" [(ngModel)]="searchData.selectedStartMinute" name="minuteFrom" placeholder="Select Minute">
+          <mat-option *ngFor="let option of minuteOptions" [value]="option">{{option}}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
 
     <!-- Dropdown Filter and TextBox for Service Name -->
@@ -83,26 +83,26 @@ SPDX-License-Identifier: Apache-2.0
         <input matInput #searchValueSN type="text" [(ngModel)]="searchData.serviceInstanceName" placeholder="Service Name">
       </mat-form-field>
 
-        <!-- Angular End Date Picker -->
-        <mat-form-field class="endDate">
-          <input matInput #endDate [matDatepicker]="endpicker" [(ngModel)]="searchData.endDate" placeholder="Choose an end date">
-          <mat-datepicker-toggle matSuffix [for]="endpicker"></mat-datepicker-toggle>
-          <mat-datepicker #endpicker></mat-datepicker>
-        </mat-form-field>
+      <!-- Angular End Date Picker -->
+      <mat-form-field class="endDate">
+        <input matInput #endDate [matDatepicker]="endpicker" [(ngModel)]="searchData.endDate" placeholder="Choose an end date">
+        <mat-datepicker-toggle matSuffix [for]="endpicker"></mat-datepicker-toggle>
+        <mat-datepicker #endpicker></mat-datepicker>
+      </mat-form-field>
 
-        <!-- Dropdown box for End Hour selection -->
-        <mat-form-field class="selectHour">
-          <mat-select class="formatBox" [(ngModel)]="searchData.selectedEndHour" name="hourTo" placeholder="Select Hour">
-            <mat-option *ngFor="let option of hourOptions" [value]="option">{{option}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <!-- Dropdown box for End Hour selection -->
+      <mat-form-field class="selectHour">
+        <mat-select class="formatBox" [(ngModel)]="searchData.selectedEndHour" name="hourTo" placeholder="Select Hour">
+          <mat-option *ngFor="let option of hourOptions" [value]="option">{{option}}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <!-- Dropdown box for End Minute selection -->
-        <mat-form-field class="selectMinute">
-          <mat-select class="formatBox" [(ngModel)]="searchData.selectedEndMinute" name="minuteTo" placeholder="Select Minute">
-            <mat-option *ngFor="let option of minuteOptions" [value]="option">{{option}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <!-- Dropdown box for End Minute selection -->
+      <mat-form-field class="selectMinute">
+        <mat-select class="formatBox" [(ngModel)]="searchData.selectedEndMinute" name="minuteTo" placeholder="Select Minute">
+          <mat-option *ngFor="let option of minuteOptions" [value]="option">{{option}}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
 
     <!-- Dropdown Filter for Status -->
@@ -125,42 +125,44 @@ SPDX-License-Identifier: Apache-2.0
   <div class="example-container mat-elevation-z8">
     <mat-tab-group class="tab-group">
       <mat-tab label="Service Instances">
-        <mat-table [dataSource]="processData">
+        <mat-table [dataSource]="processData" matSort>
           <ng-container matColumnDef="requestId">
-            <mat-header-cell *matHeaderCellDef> Request Id </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Request Id </mat-header-cell>
             <mat-cell *matCellDef="let process"><a routerLink="" (click)="getProcessIsntanceId(process.requestId)">{{ process.requestId }}</a></mat-cell>
           </ng-container>
           <ng-container matColumnDef="serviceInstanceId">
-            <mat-header-cell *matHeaderCellDef> Instance Id </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Instance Id </mat-header-cell>
             <mat-cell *matCellDef="let process"> {{ process.serviceInstanceId }} </mat-cell>
           </ng-container>
           <ng-container matColumnDef="serviceIstanceName">
-            <mat-header-cell *matHeaderCellDef> Instance Name </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Instance Name </mat-header-cell>
             <mat-cell *matCellDef="let process"> {{ process.serviceIstanceName }} </mat-cell>
           </ng-container>
           <ng-container matColumnDef="networkId">
-            <mat-header-cell *matHeaderCellDef> Network Id </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Network Id </mat-header-cell>
             <mat-cell *matCellDef="let process"> {{ process.networkId }} </mat-cell>
           </ng-container>
           <ng-container matColumnDef="requestStatus">
-            <mat-header-cell *matHeaderCellDef> Request Status </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Request Status </mat-header-cell>
             <mat-cell *matCellDef="let process"> {{ process.requestStatus }} </mat-cell>
           </ng-container>
           <ng-container matColumnDef="serviceType">
-            <mat-header-cell *matHeaderCellDef> Service Type </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Service Type </mat-header-cell>
             <mat-cell *matCellDef="let process"> {{ process.serviceType }} </mat-cell>
           </ng-container>
           <ng-container matColumnDef="startTime">
-            <mat-header-cell *matHeaderCellDef> Start Time </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Start Time </mat-header-cell>
             <mat-cell *matCellDef="let process"> {{ (process.startTime | date:'yyyy-MM-dd HH:mm:sss Z') }} </mat-cell>
           </ng-container>
           <ng-container matColumnDef="endTime">
-            <mat-header-cell *matHeaderCellDef> End Time </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> End Time </mat-header-cell>
             <mat-cell *matCellDef="let process"> {{ (process.endTime | date:'yyyy-MM-dd HH:mm:sss Z') }} </mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
+        <mat-paginator [pageSizeOptions]="pageSizeOptions" showFirstLastButtons>
+        </mat-paginator>
       </mat-tab>
 
       <mat-tab label="Service Statistics">

@@ -17,27 +17,23 @@ See the License for the specific language governing permissions and
 SPDX-License-Identifier: Apache-2.0
 ============LICENSE_END=========================================================
 
-@authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
+@authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com, andrei.barcovschi@ericsson.com
 */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, ViewEncapsulation } from '@angular/core';
 import { DataService } from '../data.service';
 import { ActivatedRoute, Router } from "@angular/router";
 import { Process } from '../model/process.model';
-
 import { ProcessInstanceId } from '../model/processInstanceId.model';
 import { ToastrNotificationService } from '../toastr-notification-service.service';
 import { MatSelectModule } from '@angular/material/select';
-import { ViewEncapsulation } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule, MatInputModule } from '@angular/material';
+import { FormsModule, FormControl } from '@angular/forms';
 import { SearchData } from '../model/searchData.model';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { FormControl } from '@angular/forms';
 import { SearchRequest } from '../model/SearchRequest.model';
-import { ElementRef } from '@angular/core';
-import { Input } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { MatFormFieldModule, MatInputModule, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { Constants } from './home.constant';
 
 @Component({
   selector: 'app-home',
@@ -60,24 +56,19 @@ export class HomeComponent implements OnInit {
   percentagePending = 0;
   percentageUnlocked = 0;
 
-  options = [{ name: "EQUAL", value: "EQ" }, { name: "NOT EQUAL", value: "NEQ" }, { name: "LIKE", value: "LIKE" }];
-  statusOptions = [{ name: "ALL", value: "ALL" }, { name: "COMPLETE", value: "COMPLETE" }, { name: "IN_PROGRESS", value: "IN_PROGRESS" },
-  { name: "FAILED", value: "FAILED" }, { name: "PENDING", value: "PENDING" }, { name: "UNLOCKED", value: "UNLOCKED" }];
+  options = Constants.OPTIONS;
+  statusOptions = Constants.STATUS_OPTIONS;
+  hourOptions = Constants.HOUR_OPTIONS;
+  minuteOptions = Constants.MINUTE_OPTIONS;
+  displayedColumns = Constants.DISPLAYED_COLUMNS;
+  pageSizeOptions = Constants.DEFAULT_PAGE_SIZE_OPTIONS;
 
-  hourOptions = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
-    "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
-
-  minuteOptions = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15",
-    "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35",
-    "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55",
-    "56", "57", "58", "59"];
-
-  processData: Process[];
   searchData: SearchData;
-
   startingDate: Date;
+  processData: MatTableDataSource<Process>;
 
-  displayedColumns = ['requestId', 'serviceInstanceId', 'serviceIstanceName', 'networkId', 'requestStatus', 'serviceType', 'startTime', 'endTime'];
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(private route: ActivatedRoute, private data: DataService,
     private router: Router, private popup: ToastrNotificationService,
@@ -93,16 +84,21 @@ export class HomeComponent implements OnInit {
       this.data.retrieveInstance(result.getFilters(), result.getStartTimeInMilliseconds(), result.getEndTimeInMilliseconds())
         .subscribe((data: Process[]) => {
           this.spinner.hide();
-          this.processData = data;
+          var processData: Process[] = data;
+          this.processData = new MatTableDataSource<Process>(processData);
+          this.processData.sort = this.sort;
+          this.processData.paginator = this.paginator;
+          this.processData.paginator.firstPage();
+
           this.popup.info("Number of records found: " + data.length)
 
           // Calculate Statistics for Service Statistics tab
-          this.completeVal = this.processData.filter(i => i.requestStatus === "COMPLETE").length;
-          this.inProgressVal = this.processData.filter(i => i.requestStatus === "IN_PROGRESS").length;
-          this.failedVal = this.processData.filter(i => i.requestStatus === "FAILED").length;
-          this.pendingVal = this.processData.filter(i => i.requestStatus === "PENDING").length;
-          this.unlockedVal = this.processData.filter(i => i.requestStatus === "UNLOCKED").length;
-          this.totalVal = this.processData.length;
+          this.completeVal = processData.filter(i => i.requestStatus === "COMPLETE").length;
+          this.inProgressVal = processData.filter(i => i.requestStatus === "IN_PROGRESS").length;
+          this.failedVal = processData.filter(i => i.requestStatus === "FAILED").length;
+          this.pendingVal = processData.filter(i => i.requestStatus === "PENDING").length;
+          this.unlockedVal = processData.filter(i => i.requestStatus === "UNLOCKED").length;
+          this.totalVal = processData.length;
 
           // Calculate percentages to 2 decimal places and compare to 0 to avoid NaN error
           if (this.totalVal != 0) {
@@ -142,7 +138,5 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() { }
 }
