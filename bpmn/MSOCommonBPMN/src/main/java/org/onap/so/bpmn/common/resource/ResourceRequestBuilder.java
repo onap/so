@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -154,7 +156,7 @@ public class ResourceRequestBuilder {
                 }
             }
 
-           if (resourceInputStr != null || !resourceInputStr.equals("")) {
+           if (resourceInputStr != null && !resourceInputStr.isEmpty()) {
                 return getResourceInput(resourceInputStr, serviceInputs);
            }
 
@@ -241,5 +243,12 @@ public class ResourceRequestBuilder {
         	LOGGER.error("SdcToscaParserException", e);
         }
         return jsonStr;
+    }
+
+    public static void main(String[] args) {
+        String resourceInputStr = null;
+        if (resourceInputStr != null || !"".equals(resourceInputStr)) {
+            System.out.println("!");
+        }
     }
 }
