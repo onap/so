@@ -1034,7 +1034,7 @@ public class WorkflowAction {
 		BuildingBlock buildingBlock = new BuildingBlock();
 		buildingBlock.setBpmnFlowName(orchFlow.getFlowName());
 		buildingBlock.setMsoId(UUID.randomUUID().toString());
-		if(resource == null){
+		if(null == resource){
 			buildingBlock.setKey("");
 		}else{
 			buildingBlock.setKey(resource.getResourceId());
@@ -1050,7 +1050,7 @@ public class WorkflowAction {
 		executeBuildingBlock.setRequestId(requestId);
 		executeBuildingBlock.setBuildingBlock(buildingBlock);
 		executeBuildingBlock.setRequestDetails(requestDetails);
-		if(isConfiguration){
+		if(isConfiguration && null!=resource){
 			ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
 			configurationResourceKeys.setCvnfcCustomizationUUID(resource.getCvnfModuleCustomizationId());
 			configurationResourceKeys.setVfModuleCustomizationUUID(resource.getVfModuleCustomizationId());
