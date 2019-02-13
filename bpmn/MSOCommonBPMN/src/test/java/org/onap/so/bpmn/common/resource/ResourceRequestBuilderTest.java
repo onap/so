@@ -405,4 +405,32 @@ public class ResourceRequestBuilderTest extends BaseTest {
         assertEquals(resourceSequence.get(0), "res1");
         assertEquals(resourceSequence.get(1), "res2");
     }
+
+    @Test
+    public void getResourceInputWithEmptyServiceResourcesTest() throws Exception {
+
+        stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+            .willReturn(ok("{ \"serviceResources\"    : {\n" +
+                "\t\"modelInfo\"       : {\n" +
+                "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
+                "\t\t\"modelUuid\"          : \"c3954379-4efe-431c-8258-f84905b158e5\",\n" +
+                "\t\t\"modelInvariantUuid\" : \"0cbff61e-3b0a-4eed-97ce-b1b4faa03493\",\n" +
+                "\t\t\"modelVersion\"       : \"1.0\"\n" +
+                "\t},\n" +
+                "\t\"serviceType\"        : \"\",\n" +
+                "\t\"serviceRole\"        : \"\",\n" +
+                "\t\"environmentContext\" : null,\n" +
+                "\t\"workloadContext\"    : \"Production\",\n" +
+                "\t\"serviceVnfs\": [], \n" +
+                "\t\"serviceNetworks\": [],\n" +
+                "\t\"serviceAllottedResources\": []\n" +
+                "\t}}")));
+
+        HashMap serviceInput = new HashMap();
+        serviceInput.put("key1", "value");
+        Map<String, Object> stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+            "e776449e-2b10-45c5-9217-2775c88ca1a0", serviceInput);
+        assertEquals(0, stringObjectMap.size());
+    }
+
 }
