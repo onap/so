@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -103,9 +105,6 @@ public class EqualsAndHashCodeTester implements Tester {
 			}
 			
 			Affirm.affirmTrue("Equals test failed for [" + classInstanceOne.getClass().getName() + "]", classInstanceOne.equals(classInstanceTwo));
-			
-			Affirm.affirmTrue("Equals test failed for [" + classInstanceOne.getClass().getName() + "]", classInstanceOne.equals(
-					classInstanceOne));
 			
 			Affirm.affirmTrue("HashCode test failed for [" + classInstanceOne.getClass().getName() + "]", classInstanceOne.hashCode() == classInstanceTwo.hashCode());
 			
