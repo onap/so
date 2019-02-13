@@ -29,13 +29,13 @@ public class DmaapPublisherTest {
 
     DmaapPublisher dmaapPublisher = new DmaapPublisher(120) {
         @Override
-        public String getUserName() {
-            return "test";
+        public String getAuth() {
+            return "8F73A1691F6271E769329C176EE3EA48F52786AF12A3E16259007EED2A0F0CC3CB965F4AB5318483015723CCE1C0B48AB6C4DED6E251869393B01E4EC532FC88D4A128B92F4CDB34719B171923";
         }
 
         @Override
-        public String getPassword() {
-            return "test";
+        public String getKey() {
+            return "07a7159d3bf51a0e53be7a8f89699be7";
         }
 
         @Override

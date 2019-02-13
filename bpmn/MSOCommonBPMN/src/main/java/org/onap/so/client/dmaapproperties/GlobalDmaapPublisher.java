@@ -38,22 +38,21 @@ public class GlobalDmaapPublisher extends DmaapPublisher {
 	}
 	
 	@Override
-	public String getUserName() {
+	public String getAuth() {
 
-		return UrnPropertiesReader.getVariable("mso.global.dmaap.username");
+		return UrnPropertiesReader.getVariable("mso.global.dmaap.auth");
 	}
 
 
 
 	@Override
-	public String getPassword() {
+	public String getKey() {
 
-		return UrnPropertiesReader.getVariable("mso.global.dmaap.password");
+		return UrnPropertiesReader.getVariable("mso.msoKey");
 	}
 
 	@Override
 	public String getTopic() {
-		
 		return UrnPropertiesReader.getVariable("mso.global.dmaap.publisher.topic");
 	}
 

@@ -35,8 +35,8 @@ public class GlobalDmaapPublisherTest extends BaseTest{
 
 	@Test
 	public void testGetters() {
-		assertEquals("dmaapUsername", globalDmaapPublisher.getUserName());
-		assertEquals("ZG1hYXBQYXNzd29yZA==", globalDmaapPublisher.getPassword());
+		assertEquals("81B7E3533B91A6706830611FB9A8ECE529BBCCE754B1F1520FA7C8698B42F97235BEFA993A387E664D6352C63A6185D68DA7F0B1D360637CBA102CB166E3E62C11EB1F75386D3506BCECE51E54", globalDmaapPublisher.getAuth());
+		assertEquals("07a7159d3bf51a0e53be7a8f89699be7", globalDmaapPublisher.getKey());
 		assertEquals("com.att.mso.asyncStatusUpdate", globalDmaapPublisher.getTopic());
 		assertEquals("http://localhost:" + wireMockPort, globalDmaapPublisher.getHost().get());
 	}

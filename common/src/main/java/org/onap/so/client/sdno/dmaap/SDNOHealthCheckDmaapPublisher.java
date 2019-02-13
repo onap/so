@@ -33,13 +33,13 @@ public class SDNOHealthCheckDmaapPublisher extends DmaapPublisher {
 	}
 	
 	@Override
-	public String getUserName() {
-		return msoProperties.get("sdno.health-check.dmaap.username");
+	public String getAuth() {
+		return msoProperties.get("sdno.health-check.dmaap.auth");
 	}
 
 	@Override
-	public String getPassword() {
-		return msoProperties.get("sdno.health-check.dmaap.password");
+	public String getKey() {
+		return msoProperties.get("sdno.health-check.dmaap.msoKey");
 	}
 
 	@Override

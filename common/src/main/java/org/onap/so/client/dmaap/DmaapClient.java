@@ -17,10 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
- 
+
 package org.onap.so.client.dmaap;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
@@ -31,13 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
+import org.onap.so.utils.CryptoUtils;
 
 public abstract class DmaapClient {
-	
+
 	protected static Logger logger = LoggerFactory.getLogger(DmaapClient.class);
 	protected final Map<String, String> msoProperties;
 	protected final Properties properties;
+
 	public DmaapClient(String filepath) throws IOException {
 		Resource resource = new ClassPathResource(filepath);
 		DmaapProperties dmaapProperties = DmaapPropertiesLoader.getInstance().getNewImpl();
@@ -48,27 +50,34 @@ public abstract class DmaapClient {
 		this.msoProperties = dmaapProperties.getProperties();
 		this.properties = new Properties();
 		this.properties.load(resource.getInputStream());
-		this.properties.put("password", this.deobfuscatePassword(this.getPassword()));
-		this.properties.put("username", this.getUserName());
+		try {
+			this.properties.put("auth", CryptoUtils.decrypt(this.getAuth(), this.getKey()).getBytes());
+		} catch (GeneralSecurityException e) {
+			logger.error(e.getMessage(), e);
+		}
+		this.properties.put("key", this.getKey());
 		this.properties.put("topic", this.getTopic());
 		Optional<String> host = this.getHost();
 		if (host.isPresent()) {
 			this.properties.put("host", host.get());
 		}
 	}
-	protected String deobfuscatePassword(String password) {
-		
+
+	protected String deobfuscatePassword(String decrypted_key) {
+
 		try {
-			return new String(Base64.getDecoder().decode(password.getBytes()));
-		} catch(IllegalArgumentException iae) {
-			logger.error("llegal Arguments",iae);
-			return password;
+			return new String(Base64.getDecoder().decode(decrypted_key.getBytes()));
+		} catch (IllegalArgumentException iae) {
+			logger.error("llegal Arguments", iae);
+			return decrypted_key;
 		}
 	}
-	
-	
-	public abstract String getUserName();
-	public abstract String getPassword();
+
+	public abstract String getKey();
+
+	public abstract String getAuth();
+
 	public abstract String getTopic();
+
 	public abstract Optional<String> getHost();
 }

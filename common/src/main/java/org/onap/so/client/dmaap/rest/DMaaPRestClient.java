@@ -17,34 +17,37 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
- 
+
 package org.onap.so.client.dmaap.rest;
 
 import java.net.URL;
-import java.util.Base64;
 import java.util.Map;
 
 import org.onap.so.client.RestClient;
+import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.TargetEntity;
 
 public class DMaaPRestClient extends RestClient {
 
-	private final String username;
-	private final String password;
-	public DMaaPRestClient(URL url, String contentType, String username, String password) {
+	private final String auth;
+	private final String key;
+
+	public DMaaPRestClient(URL url, String contentType, String auth, String key) {
 		super(url, contentType);
-		this.username = username;
-		this.password = password;
+		this.auth = auth;
+		this.key = key;
 	}
 
-    @Override
-    public TargetEntity getTargetEntity(){
-        return TargetEntity.DMAAP;
-    }
+	@Override
+	public TargetEntity getTargetEntity() {
+		return TargetEntity.DMAAP;
+	}
 
 	@Override
 	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		headerMap.put("Authorization", "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes()));
+		if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
+			addBasicAuthHeader(auth, key);
+		}	
 	}
 
 }

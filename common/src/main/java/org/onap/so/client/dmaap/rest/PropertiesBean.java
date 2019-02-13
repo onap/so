@@ -24,8 +24,8 @@ import java.util.Properties;
 
 public class PropertiesBean {
 
-	private String username;
-	private String password;
+	private String auth;
+	private String key;
 	private String environment;
 	private String partition;
 	private String contentType;
@@ -35,8 +35,8 @@ public class PropertiesBean {
 	
 	
 	public PropertiesBean(Properties properties) {
-		this.withUsername(properties.getProperty("username"))
-		.withPassword(properties.getProperty("password"))
+		this.withAuth(properties.getProperty("auth"))
+		.withKey(properties.getProperty("key"))
 		.withTopic(properties.getProperty("topic"))
 		.withEnvironment(properties.getProperty("environment"))
 		.withHost(properties.getProperty("host"))
@@ -44,24 +44,24 @@ public class PropertiesBean {
 		.withPartition(properties.getProperty("partition"))
 		.withContentType(properties.getProperty("contentType", "application/json"));
 	}
-	public String getUsername() {
-		return username;
+	public String getAuth() {
+		return auth;
 	}
-	public void setUsername(String username) {
-		this.username = username;
+	public void setAuth(String auth) {
+		this.auth = auth;
 	}
-	public PropertiesBean withUsername(String username) {
-		this.username = username;
+	public PropertiesBean withAuth(String auth) {
+		this.auth = auth;
 		return this;
 	}
-	public String getPassword() {
-		return password;
+	public String getKey() {
+		return key;
 	}
-	public void setPassword(String password) {
-		this.password = password;
+	public void setKey(String key) {
+		this.key = key;
 	}
-	public PropertiesBean withPassword(String password) {
-		this.password = password;
+	public PropertiesBean withKey(String key) {
+		this.key = key;
 		return this;
 	}
 	public String getEnvironment() {

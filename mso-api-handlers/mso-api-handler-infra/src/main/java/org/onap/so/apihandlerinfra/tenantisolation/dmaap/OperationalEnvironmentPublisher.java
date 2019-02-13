@@ -37,15 +37,15 @@ public class OperationalEnvironmentPublisher extends DmaapPublisher {
 	}
 	
 	@Override
-	public String getUserName() {
+	public String getAuth() {
 
-		return this.msoProperties.get("mso.so.operational-environment.dmaap.username");
+		return this.msoProperties.get("mso.so.operational-environment.dmaap.auth");
 	}
 
 	@Override
-	public String getPassword() {
+	public String getKey() {
 
-		return this.msoProperties.get("mso.so.operational-environment.dmaap.password");
+		return this.msoProperties.get("mso.msoKey");
 	}
 
 	@Override

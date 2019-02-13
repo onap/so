@@ -146,6 +146,7 @@ mso:
       host: http://localhost:${wiremock.server.port}
       publisher:
         topic: com.att.mso.asyncStatusUpdate
+      auth: 81B7E3533B91A6706830611FB9A8ECE529BBCCE754B1F1520FA7C8698B42F97235BEFA993A387E664D6352C63A6185D68DA7F0B1D360637CBA102CB166E3E62C11EB1F75386D3506BCECE51E54
   oof:
     auth: test
     timeout: PT10S
@@ -163,6 +164,16 @@ sdnc:
   auth: Basic YWRtaW46YWRtaW4=
   host: http://localhost:8446
   path: /restconf/operations/GENERIC-RESOURCE-API
+sdno:
+  health-check:
+    dmaap:
+      password: alRyMzJ3NUNeakxl
+      publisher:
+        topic: com.att.sdno.test-health-diagnostic-v02
+        host: https://olsd004.wnsnet.attws.com:3905
+      subscriber:
+        topic: com.att.sdno.test-health-diagnostic-v02
+      auth: 81B7E3533B91A6706830611FB9A8ECE529BBCCE754B1F1520FA7C8698B42F97235BEFA993A387E664D6352C63A6185D68DA7F0B1D360637CBA102CB166E3E62C11EB1F75386D3506BCECE51E54
 sniro:
   conductor:
     enabled: true
@@ -178,7 +189,15 @@ sniro:
     headers.patchVersion: 1
     headers.minorVersion: 1
     headers.latestVersion: 2
-
+ruby:
+  create-ticket-request:
+    dmaap:
+      username: m04768@mso.ecomp.att.com
+      password: alRyMzJ3NUNeakxl
+    publisher:
+      topic: com.att.pdas.exp.msoCMFallout-v1
+      host: https://olsd004.wnsnet.attws.com:3905
+      auth: 81B7E3533B91A6706830611FB9A8ECE529BBCCE754B1F1520FA7C8698B42F97235BEFA993A387E664D6352C63A6185D68DA7F0B1D360637CBA102CB166E3E62C11EB1F75386D3506BCECE51E54
 spring:
   datasource:
     jdbc-url: jdbc:mariadb://localhost:3307/camundabpmn
