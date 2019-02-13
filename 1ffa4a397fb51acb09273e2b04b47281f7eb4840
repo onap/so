@@ -52,6 +52,24 @@
       "revId": "1ffa4a397fb51acb09273e2b04b47281f7eb4840",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97f2ae7e_b1b25919",
+        "filename": "common/src/main/java/org/onap/so/openpojo/rules/EqualsAndHashCodeTester.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 4313
+      },
+      "writtenOn": "2019-02-13T15:23:42Z",
+      "side": 0,
+      "message": "@Max Benjamin: you are the author of this line and you put -1. Could you please comment it? Probably I don\u0027t see some bigger picture. For me this looked like a copy-paste error.",
+      "parentUuid": "438c47f1_c442f20a",
+      "revId": "1ffa4a397fb51acb09273e2b04b47281f7eb4840",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
