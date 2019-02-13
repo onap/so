@@ -403,9 +403,7 @@ public class SniroHomingV2 {
 			List<org.onap.so.client.sniro.beans.Candidate> cans = new ArrayList<org.onap.so.client.sniro.beans.Candidate>();
 			for(Candidate c:required){
 				org.onap.so.client.sniro.beans.Candidate can = new org.onap.so.client.sniro.beans.Candidate();
-				org.onap.so.client.sniro.beans.CandidateType type = new org.onap.so.client.sniro.beans.CandidateType();
-				type.setName(c.getIdentifierType().getName());
-				can.setIdentifierType(type);
+				can.setIdentifierType(c.getIdentifierType());
 				can.setIdentifiers(c.getIdentifiers());
 				can.setCloudOwner(c.getCloudOwner());
 				cans.add(can);
@@ -416,9 +414,7 @@ public class SniroHomingV2 {
 			List<org.onap.so.client.sniro.beans.Candidate> cans = new ArrayList<org.onap.so.client.sniro.beans.Candidate>();
 			for(Candidate c:excluded){
 				org.onap.so.client.sniro.beans.Candidate can = new org.onap.so.client.sniro.beans.Candidate();
-				org.onap.so.client.sniro.beans.CandidateType type = new org.onap.so.client.sniro.beans.CandidateType();
-				type.setName(c.getIdentifierType().getName());
-				can.setIdentifierType(type);
+				can.setIdentifierType(c.getIdentifierType());
 				can.setIdentifiers(c.getIdentifiers());
 				can.setCloudOwner(c.getCloudOwner());
 				cans.add(can);

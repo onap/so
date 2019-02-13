@@ -20,6 +20,8 @@
 
 package org.onap.so.bpmn.servicedecomposition.homingobjects;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum CandidateType{
 
 
@@ -35,11 +37,8 @@ public enum CandidateType{
 	}
 
 	@Override
+	@JsonValue
 	public String toString() {
-		return name;
-	}
-
-	public String getName(){
 		return name;
 	}
 }
