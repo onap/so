@@ -35,18 +35,26 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
+import org.onap.so.client.graphinventory.GraphInventoryClient;
 
 import com.github.tomakehurst.wiremock.admin.NotFoundException;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+
+@RunWith(MockitoJUnitRunner.class)
 public class AAIResourcesClientTest {
 
 
@@ -55,6 +63,18 @@ public class AAIResourcesClientTest {
 	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
+	
+	
+	@Spy
+	public AAIClient client;
+	
+	@InjectMocks
+	public AAIResourcesClient aaiClient = new AAIResourcesClient();
+	
+	@Before
+	public void beforeTest() {
+		doReturn(new DefaultAAIPropertiesImpl()).when(client).getRestProperties();
+	}
 	
 	@Test
 	public void verifyNotExists() {
@@ -66,7 +86,7 @@ public class AAIResourcesClientTest {
 					.withHeader("Content-Type", "text/plain")
 					.withBody("hello")
 					.withStatus(404)));
-		AAIResourcesClient client= createClient();
+		AAIResourcesClient client= aaiClient;
 		boolean result = client.exists(path);
 		assertEquals("path not found", false, result);
 	}
@@ -87,7 +107,7 @@ public class AAIResourcesClientTest {
 				.willReturn(
 					aResponse()
 					.withStatus(204)));
-		AAIResourcesClient client= createClient();
+		AAIResourcesClient client= aaiClient;
 		client.delete(path);
 	}
 	
@@ -102,7 +122,7 @@ public class AAIResourcesClientTest {
 					.withHeader("Content-Type", "application/json")
 					.withBodyFile("aai/resources/mockObject.json")
 					.withStatus(200)));
-		AAIResourcesClient client= createClient();
+		AAIResourcesClient client= aaiClient;
 		client.get(path);
 	}
 	
@@ -118,7 +138,7 @@ public class AAIResourcesClientTest {
 					.withStatus(200)));
 		
 		AAIResourceUri pathClone = path.clone();
-		AAIResourcesClient client= createClient();
+		AAIResourcesClient client= aaiClient;
 		client.connect(path, path2);
 		assertEquals("uri not modified", pathClone.build().toString(), path.build().toString());
 	}
@@ -135,7 +155,7 @@ public class AAIResourcesClientTest {
 					.withStatus(204)));
 		
 		AAIResourceUri pathClone = path.clone();
-		AAIResourcesClient client= createClient();
+		AAIResourcesClient client= aaiClient;
 		client.disconnect(path, path2);
 		assertEquals("uri not modified", pathClone.build().toString(), path.build().toString());
 	}
@@ -150,7 +170,7 @@ public class AAIResourcesClientTest {
 					aResponse()
 					.withStatus(200)));
 		
-		AAIResourcesClient client= createClient();
+		AAIResourcesClient client= aaiClient;
 
 		client.update(path, "{}");
 	}
@@ -165,7 +185,7 @@ public class AAIResourcesClientTest {
 					.withHeader("Content-Type", "text/plain")
 					.withBody("hello")
 					.withStatus(404)));
-		AAIResourcesClient client= createClient();
+		AAIResourcesClient client= aaiClient;
 		AAIResultWrapper result = client.get(path);
 		assertEquals("is empty", true, result.isEmpty());
 	}
@@ -180,7 +200,7 @@ public class AAIResourcesClientTest {
 					.withHeader("Content-Type", "text/plain")
 					.withBody("hello")
 					.withStatus(404)));
-		AAIResourcesClient client= createClient();
+		AAIResourcesClient client= aaiClient;
 		thrown.expect(NotFoundException.class);
 		thrown.expectMessage(containsString(path.build() + " not found in A&AI"));
 		AAIResultWrapper result = client.get(path, NotFoundException.class);
@@ -188,7 +208,7 @@ public class AAIResourcesClientTest {
 	
 	@Test
 	public void buildRelationshipTest() {
-		AAIResourcesClient client = createClient();
+		AAIResourcesClient client = aaiClient;
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
 		Relationship relationship = new Relationship();
 		relationship.setRelatedLink(uri.build().toString());
@@ -200,10 +220,5 @@ public class AAIResourcesClientTest {
 		assertThat("expect equal has label", actual, sameBeanAs(relationship));
 		
 	}
-	
-	private AAIResourcesClient createClient() {
-		AAIResourcesClient client = spy(new AAIResourcesClient());
-		doReturn(new DefaultAAIPropertiesImpl()).when(client).getRestProperties();
-		return client;
-	}
+
 }

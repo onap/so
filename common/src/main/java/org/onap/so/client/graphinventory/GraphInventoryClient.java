@@ -37,12 +37,16 @@ public abstract class GraphInventoryClient {
 	}
 	protected abstract URI constructPath(GraphInventoryUri uri);
 	
-	protected abstract RestClient createClient(GraphInventoryUri uri);
+	public abstract RestClient createClient(GraphInventoryUri uri);
 
-	protected <T extends RestProperties> T getRestProperties() {
+	public <T extends RestProperties> T getRestProperties() {
 		if (props == null) {
 			throw new IllegalStateException("No RestProperty implementation found on classpath");
 		}
 		return (T)props;
 	}
+	
+	public abstract GraphInventoryVersion getVersion();
+	
+	public abstract String getGraphDBName();
 }

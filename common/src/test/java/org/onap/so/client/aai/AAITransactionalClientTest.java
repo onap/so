@@ -38,7 +38,10 @@ import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -51,6 +54,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+@RunWith(MockitoJUnitRunner.class)
 public class AAITransactionalClientTest {
 
 	private final static String AAI_JSON_FILE_LOCATION = "src/test/resources/__files/aai/bulkprocess/";
@@ -63,6 +67,10 @@ public class AAITransactionalClientTest {
 	
 	ObjectMapper mapper;
 	
+	public AAIClient client = new AAIClient();
+	
+	public AAIResourcesClient aaiClient = new AAIResourcesClient();
+	
 	@Before
 	public void before() throws JsonParseException, JsonMappingException, IOException {
 		mapper = new AAICommonObjectMapperProvider().getMapper();
@@ -74,7 +82,7 @@ public class AAITransactionalClientTest {
 		final Relationship body = new Relationship();
 		body.setRelatedLink(uriB.build().toString());
 		
-		AAITransactionalClient transactions = createClient().beginTransaction()
+		AAITransactionalClient transactions = aaiClient.beginTransaction()
 				.create(uriA.clone().relationshipAPI(), body);
 		
 		String serializedTransactions = mapper.writeValueAsString(transactions.getTransactions());
@@ -90,7 +98,7 @@ public class AAITransactionalClientTest {
 		uris.add(uriB);
 		
 		AAIResourceUri uriAClone = uriA.clone();
-		AAITransactionalClient transactions = createClient()
+		AAITransactionalClient transactions = aaiClient
 				.beginTransaction().connect(uriA, uris).connect(uriC, uriD)
 				.beginNewTransaction().connect(uriE, uriF);
 		
@@ -107,7 +115,7 @@ public class AAITransactionalClientTest {
 		List<AAIResourceUri> uris = new ArrayList<AAIResourceUri>();
 		uris.add(uriB);
 		
-		AAITransactionalClient transactions = createClient().beginTransaction()
+		AAITransactionalClient transactions = aaiClient.beginTransaction()
 				.disconnect(uriA, uris);
 		
 		String serializedTransactions = mapper.writeValueAsString(transactions.getTransactions());
@@ -123,7 +131,7 @@ public class AAITransactionalClientTest {
 		body.setRelatedLink(uriB.build().toString());
 		
 		AAIResourceUri uriAClone = uriA.clone().relationshipAPI();
-		AAITransactionalClient transactions = createClient().beginTransaction().update(uriAClone, body);
+		AAITransactionalClient transactions = aaiClient.beginTransaction().update(uriAClone, body);
 		
 		String serializedTransactions = mapper.writeValueAsString(transactions.getTransactions());
 		Map<String, Object> actual = mapper.readValue(serializedTransactions, new TypeReference<Map<String, Object>>(){});
@@ -134,7 +142,7 @@ public class AAITransactionalClientTest {
 	
 	@Test
 	public void verifyResponse() throws IOException {
-		AAITransactionalClient transactions = createClient()
+		AAITransactionalClient transactions = aaiClient
 				.beginTransaction();
 	
 		assertEquals("success status", Optional.empty(), transactions.locateErrorMessages(getJson("response-success.json")));
@@ -143,10 +151,10 @@ public class AAITransactionalClientTest {
 	
 	@Test
 	public void confirmPatchFormat() {
-		AAITransactionalClient client = spy(new AAITransactionalClient(AAIVersion.LATEST));
+		AAITransactionalClient transactionClient = spy(new AAITransactionalClient(aaiClient, client));
 		GraphInventoryPatchConverter mock = mock(GraphInventoryPatchConverter.class);
-		doReturn(mock).when(client).getPatchConverter();
-		client.update(uriA, "{}");
+		doReturn(mock).when(transactionClient).getPatchConverter();
+		transactionClient.update(uriA, "{}");
 		verify(mock, times(1)).convertPatchFormat(any());
 	}
 	
@@ -154,9 +162,4 @@ public class AAITransactionalClientTest {
 		 return new String(Files.readAllBytes(Paths.get(AAI_JSON_FILE_LOCATION + filename)));
 	}
 	
-	private AAIResourcesClient createClient() {
-		AAIResourcesClient client = spy(new AAIResourcesClient());
-		doReturn(new DefaultAAIPropertiesImpl()).when(client).getRestProperties();
-		return client;
-	}
 }

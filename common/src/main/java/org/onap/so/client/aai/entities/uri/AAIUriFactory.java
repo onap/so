@@ -85,6 +85,11 @@ public class AAIUriFactory {
 		return new AAISimpleUri(parentUri, childType, childValues);
 	}
 	
+	public static AAIResourceUri createResourceFromParentURI(AAIResourceUri parentUri, AAIObjectPlurals childType) {
+		
+		return new AAISimpleUri(parentUri, childType);
+	}
+	
 	/**
 	 * Creates a uri for a plural type e.g. /cloud-infrastructure/pservers
 	 * 

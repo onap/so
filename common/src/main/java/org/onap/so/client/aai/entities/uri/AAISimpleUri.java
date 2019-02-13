@@ -59,6 +59,10 @@ public class AAISimpleUri extends SimpleUri implements AAIResourceUri {
 		super(parentUri, childType, childValues);
 	}
 	
+	protected AAISimpleUri(AAIResourceUri parentUri, AAIObjectPlurals childType) {
+		super(parentUri, childType);
+	}
+	
 	@Override
 	public AAISimpleUri relationshipAPI() {
 		return (AAISimpleUri) super.relationshipAPI();

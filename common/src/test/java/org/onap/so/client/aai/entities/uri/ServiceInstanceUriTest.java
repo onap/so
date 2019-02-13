@@ -26,7 +26,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,10 +44,16 @@ import java.util.Optional;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.UriBuilder;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.so.client.aai.AAIClient;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
@@ -58,6 +63,7 @@ import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriNotFoundExc
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ServiceInstanceUriTest {
 
 	private final static String AAI_JSON_FILE_LOCATION = "src/test/resources/__files/aai/resources/";
@@ -68,6 +74,16 @@ public class ServiceInstanceUriTest {
 	@Rule
 	public final ExpectedException exception = ExpectedException.none();
 	 
+	@Spy
+	public AAIClient client;
+	
+	@InjectMocks
+	public AAIResourcesClient aaiClient = new AAIResourcesClient();
+	
+	@Before
+	public void beforeTest() {
+		doReturn(new DefaultAAIPropertiesImpl()).when(client).getRestProperties();
+	}
 	@Test
 	public void found() throws IOException {
 		final String content = new String(Files.readAllBytes(Paths.get(AAI_JSON_FILE_LOCATION + "service-instance-pathed-query.json")));
@@ -179,7 +195,7 @@ public class ServiceInstanceUriTest {
 	public void noVertexFound() throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
 		ServiceInstanceUri instance = new ServiceInstanceUri("key3");
 		ServiceInstanceUri spy = spy(instance);
-		AAIResourcesClient client = createClient();
+		AAIResourcesClient client = aaiClient;
 		doReturn(client).when(spy).getResourcesClient();
 		stubFor(get(urlPathMatching("/aai/v[0-9]+/nodes/service-instances/service-instance/key3")) 
 				.willReturn(aResponse() 
@@ -188,11 +204,5 @@ public class ServiceInstanceUriTest {
 					.withBodyFile("")));
 		exception.expect(NotFoundException.class);
 		spy.build();	
-	}
-	
-	private AAIResourcesClient createClient() {
-		AAIResourcesClient client = spy(new AAIResourcesClient());
-		doReturn(new DefaultAAIPropertiesImpl()).when(client).getRestProperties();
-		return client;
 	}
 }

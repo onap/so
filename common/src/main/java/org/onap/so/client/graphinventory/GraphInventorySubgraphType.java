@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,30 +18,21 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.aai.entities;
+package org.onap.so.client.graphinventory;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class DSLQuery {
+public enum GraphInventorySubgraphType {
+	STAR("star"),
+	PRUNE("prune");
 
-	private String dsl;
+	private final String name;
 
-	public DSLQuery() {
-		
-	}
-	
-	public DSLQuery(String dsl) {
-		this.dsl = dsl;
-	}
-	
-	public String getDsl() {
-		return dsl;
+	private GraphInventorySubgraphType(String name) {
+		this.name = name;
 	}
 
-	public void setDsl(String dsl) {
-		this.dsl = dsl;
+	@Override
+	public String toString() {
+		return name;
 	}
-	
-	
 }

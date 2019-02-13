@@ -18,49 +18,43 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.aai;
+package org.onap.so.client.graphinventory;
 
 import java.util.Optional;
 
-import org.onap.so.client.RestClient;
-import org.onap.so.client.aai.entities.DSLQuery;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.client.graphinventory.Format;
+import org.onap.so.client.aai.entities.CustomQuery;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
-public class AAIDSLQuery extends AAIClient {
+public abstract class GraphInventoryQueryClient<S> {
 
 	private Optional<String> depth = Optional.empty();
 	private boolean nodesOnly = false;
-	private Optional<AAISubgraphType> subgraph = Optional.empty();
+	private Optional<GraphInventorySubgraphType> subgraph = Optional.empty();
+	private GraphInventoryClient client;
 	
-	public AAIDSLQuery() {
-		super();
+	public GraphInventoryQueryClient(GraphInventoryClient client) {
+		this.client = client;
 	}
 	
-	public AAIDSLQuery(AAIVersion version) {
-		super();
-		this.version = version;
+	protected abstract GraphInventoryUri getQueryUri();
+	
+	public String query(Format format, CustomQuery query) {
+		return client.createClient(setupQueryParams(getQueryUri().queryParam("format", format.toString()))).put(query, String.class);
 	}
 	
-	public String query(Format format, DSLQuery query) {
-		return this.createClient(AAIUriFactory.createResourceUri(AAIObjectType.DSL).queryParam("format", format.toString()))
-		.put(query, String.class);
-	}
-	
-	public AAIDSLQuery depth (String depth) {
+	public S depth (String depth) {
 		this.depth = Optional.of(depth);
-		return this;
+		return (S) this;
 	}
-	public AAIDSLQuery nodesOnly() {
+	public S nodesOnly() {
 		this.nodesOnly = true;
-		return this;
+		return (S) this;
 	}
-	public AAIDSLQuery subgraph(AAISubgraphType type){
+	public S subgraph(GraphInventorySubgraphType type){
 		
 		subgraph =  Optional.of(type);
 
-		return this;
+		return (S) this;
 	}
 	
 	protected GraphInventoryUri setupQueryParams(GraphInventoryUri uri) {
@@ -75,9 +69,5 @@ public class AAIDSLQuery extends AAIClient {
 			clone.queryParam("subgraph", this.subgraph.get().toString());
 		}
 		return clone;
-	}
-	@Override
-	protected RestClient createClient(GraphInventoryUri uri) {
-		return super.createClient(setupQueryParams(uri));
 	}
 }

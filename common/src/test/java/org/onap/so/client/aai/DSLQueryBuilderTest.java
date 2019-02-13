@@ -23,9 +23,9 @@ package org.onap.so.client.aai;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.onap.so.client.aai.entities.DSLNode;
-import org.onap.so.client.aai.entities.DSLQueryBuilder;
-import org.onap.so.client.aai.entities.__;
+import org.onap.so.client.graphinventory.entities.DSLNode;
+import org.onap.so.client.graphinventory.entities.DSLQueryBuilder;
+import org.onap.so.client.graphinventory.entities.__;
 
 public class DSLQueryBuilderTest {
 
