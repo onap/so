@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.onap.so.adapters.sdnc.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.Assert.assertTrue;
 
 
 public class SDNCRestClientTest extends BaseTest {
@@ -50,5 +51,12 @@ public class SDNCRestClientTest extends BaseTest {
 
         SDNCResponse response = sdncClient.getSdncResp("", rt);
         assertNotNull(response);
+    }
+
+    @Test
+    public void executeRequestInterrupted() {
+        Thread.currentThread().interrupt();
+        sdncClient.executeRequest(null);
+        assertTrue(Thread.interrupted());
     }
 }

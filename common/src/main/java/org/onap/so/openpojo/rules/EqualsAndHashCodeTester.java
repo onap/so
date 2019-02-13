@@ -104,9 +104,6 @@ public class EqualsAndHashCodeTester implements Tester {
 			
 			Affirm.affirmTrue("Equals test failed for [" + classInstanceOne.getClass().getName() + "]", classInstanceOne.equals(classInstanceTwo));
 			
-			Affirm.affirmTrue("Equals test failed for [" + classInstanceOne.getClass().getName() + "]", classInstanceOne.equals(
-					classInstanceOne));
-			
 			Affirm.affirmTrue("HashCode test failed for [" + classInstanceOne.getClass().getName() + "]", classInstanceOne.hashCode() == classInstanceTwo.hashCode());
 			
 			Affirm.affirmFalse("Expected false for comparison of two unlike objects", classInstanceOne.equals("test"));

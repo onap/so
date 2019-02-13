@@ -59,7 +59,7 @@ public class GraphInventoryResultWrapper implements Serializable {
 		try {
 			return mapper.writeValueAsString(aaiObject);
 		} catch (JsonProcessingException e) {
-			logger.warn("could not parse object into json - defaulting to {}");
+			logger.warn("could not parse object into json - defaulting to empty object");
 			return "{}";
 		}
 	}
