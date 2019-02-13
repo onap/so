@@ -34,6 +34,24 @@
       "revId": "1ffa4a397fb51acb09273e2b04b47281f7eb4840",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "438c47f1_c442f20a",
+        "filename": "common/src/main/java/org/onap/so/openpojo/rules/EqualsAndHashCodeTester.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 3949
+      },
+      "writtenOn": "2019-02-13T15:06:36Z",
+      "side": 0,
+      "message": "This looks like a false positive in Sonar - usually such comparison would indicate some sort of error in code, but in this case the purpose of the test is specifically to verify that equals() *does* recognize instance identity correctly.",
+      "parentUuid": "dd5f278a_3ba792e0",
+      "revId": "1ffa4a397fb51acb09273e2b04b47281f7eb4840",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
