@@ -59,12 +59,6 @@ import com.woorea.openstack.keystone.utils.KeystoneUtils;
 @Component
 public class MsoKeystoneUtils extends MsoTenantUtils {
 
-    // Cache the Keystone Clients statically. Since there is just one MSO user, there is no
-    // benefit to re-authentication on every request (or across different flows). The
-    // token will be used until it expires.
-    //
-    // The cache key is "cloudId"
-    private static Map <String, KeystoneCacheEntry> adminClientCache = new HashMap<>();
 
 	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoKeystoneUtils.class);
 	
@@ -316,10 +310,6 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
             OpenStackRequest <Void> request = keystoneAdminClient.tenants ().delete (tenant.getId ());
             executeAndRecordOpenstackRequest (request);
             LOGGER.debug ("Deleted Tenant " + tenant.getId () + " (" + tenant.getName () + ")");
-
-            // Clear any cached clients. Not really needed, ID will not be reused.
-            msoHeatUtils.expireHeatClient (tenant.getId (), cloudSiteId);
-            msoNeutronUtils.expireNeutronClient (tenant.getId (), cloudSiteId);
         } catch (OpenStackBaseException e) {
             // Convert Keystone OpenStackResponseException to MsoOpenstackException
             throw keystoneErrorToMsoException (e, "Delete Tenant");
@@ -369,9 +359,6 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
 
             LOGGER.debug ("Deleted Tenant " + tenant.getId () + " (" + tenant.getName () + ")");
 
-            // Clear any cached clients. Not really needed, ID will not be reused.
-            msoHeatUtils.expireHeatClient (tenant.getId (), cloudSiteId);
-            msoNeutronUtils.expireNeutronClient (tenant.getId (), cloudSiteId);
         } catch (OpenStackBaseException e) {
             // Note: It doesn't seem to matter if tenant doesn't exist, no exception is thrown.
             // Convert Keystone OpenStackResponseException to MsoOpenstackException
@@ -407,16 +394,6 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         String adminTenantName = cloudIdentity.getAdminTenant ();
         String region = cloudSite.getRegionId ();
 
-        // Check first in the cache of previously authorized clients
-        KeystoneCacheEntry entry = adminClientCache.get (cloudId);
-        if (entry != null) {
-            if (!entry.isExpired ()) {
-                return entry.getKeystoneClient ();
-            } else {
-                // Token is expired. Remove it from cache.
-                adminClientCache.remove (cloudId);
-            }
-        }
         MsoTenantUtils tenantUtils = tenantUtilsFactory.getTenantUtilsByServerType(cloudIdentity.getIdentityServerType());
         final String keystoneUrl = tenantUtils.getKeystoneUrl(region, cloudIdentity);
         Keystone keystone = new Keystone(keystoneUrl);
@@ -462,11 +439,6 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         // Note: this doesn't go back to Openstack, it's just a local object.
         keystone = new Keystone (adminUrl);
         keystone.token (token);
-
-        // Cache to avoid re-authentication for every call.
-        KeystoneCacheEntry cacheEntry = new KeystoneCacheEntry (adminUrl, token, access.getToken ().getExpires ());
-        adminClientCache.put (cloudId, cacheEntry);
-
         return keystone;
     }
 
@@ -634,32 +606,6 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         }
 
         return null;
-    }
-
-    private static class KeystoneCacheEntry implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        private String keystoneUrl;
-        private String token;
-        private Calendar expires;
-
-        public KeystoneCacheEntry (String url, String token, Calendar expires) {
-            this.keystoneUrl = url;
-            this.token = token;
-            this.expires = expires;
-        }
-
-        public Keystone getKeystoneClient () {
-            Keystone keystone = new Keystone (keystoneUrl);
-            keystone.token (token);
-            return keystone;
-        }
-
-        public boolean isExpired () {
-            // adding arbitrary guard timer of 5 minutes
-            return expires == null || System.currentTimeMillis() > (expires.getTimeInMillis() - 1800000);
-        }
     }
 
 	@Override
