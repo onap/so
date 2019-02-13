@@ -80,19 +80,19 @@ public class HeatStackAuditTest extends HeatStackAudit {
 	
 	@Test
 	public void extract_proper_path_Test(){
-		Optional<String> actualResult = extractStackPathFromHref("https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/test_stack/f711be16-2654-4a09-b89d-0511fda20e81");
-		assertEquals("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/test_stack/f711be16-2654-4a09-b89d-0511fda20e81", actualResult.get());
+		Optional<String> actualResult = extractStackPathFromHref("https://orchestration.com:8004/v1/stacks/test_stack/f711be16-2654-4a09-b89d-0511fda20e81");
+		assertEquals("/stacks/test_stack/f711be16-2654-4a09-b89d-0511fda20e81", actualResult.get());
 	}
 	
 	@Test
 	public void extract_proper_resources_path_Test(){
-		Optional<String> actualResult = extractResourcePathFromHref("https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/test_stack/f711be16-2654-4a09-b89d-0511fda20e81");
-		assertEquals("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/test_stack/f711be16-2654-4a09-b89d-0511fda20e81/resources", actualResult.get());
+		Optional<String> actualResult = extractResourcePathFromHref("https://orchestration.com:8004/v1/stacks/test_stack/f711be16-2654-4a09-b89d-0511fda20e81");
+		assertEquals("/stacks/test_stack/f711be16-2654-4a09-b89d-0511fda20e81/resources", actualResult.get());
 	}
 	
 	@Test
 	public void extract_invalid_uri_Test(){
-		Optional<String> actualResult = extractStackPathFromHref("orchestrn.com:8004/v18b44d60a6f94bdcb2738f9e/stacks/test_stack/f711be16-2654-4a09-b89d-0511fda20e81");
+		Optional<String> actualResult = extractStackPathFromHref("orchestrn.com:8004/v18b44d60a6f94bdcb2738f9e//stacks/test_stack/f711be16-2654-4a09-b89d-0511fda20e81");
 		assertEquals(false, actualResult.isPresent());
 	}
 
@@ -114,6 +114,8 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		ssc_1_trusted_port_0.setInterfaceId("d2f51f82-0ec2-4581-bd1a-d2a82073e52b");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_trusted_port_0);
 		
+
+		
 		LInterface ssc_1_mgmt_port_1 = new LInterface();
 		ssc_1_mgmt_port_1.setInterfaceId("07f5b14c-147a-4d14-8c94-a9e94dbc097b");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_mgmt_port_1);
@@ -122,67 +124,68 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		ssc_1_mgmt_port_0.setInterfaceId("8d93f63e-e972-48c7-ad98-b2122da47315");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_mgmt_port_0);
 		
-		LInterface ssc_1_service2_port_0 = new LInterface();
-		ssc_1_service2_port_0.setLInterfaces(new LInterfaces());
-		ssc_1_service2_port_0.setInterfaceId("0594a2f2-7ea4-42eb-abc2-48ea49677fca");	
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_service2_port_0);
+		LInterface ssc_1_mis_port_0 = new LInterface();
+		ssc_1_mis_port_0.setLInterfaces(new LInterfaces());
+		ssc_1_mis_port_0.setInterfaceId("0594a2f2-7ea4-42eb-abc2-48ea49677fca");	
+		vServer1.getLInterfaces().getLInterface().add(ssc_1_mis_port_0);
 		
-		LInterface service2_sub_interface_1 = new LInterface();
-		service2_sub_interface_1.setInterfaceId("2bbfa345-33bb-495a-94b2-fb514ee1cffc");	
-		ssc_1_service2_port_0.getLInterfaces().getLInterface().add(service2_sub_interface_1);
+		LInterface mis_sub_interface_1 = new LInterface();
+		mis_sub_interface_1.setInterfaceId("2bbfa345-33bb-495a-94b2-fb514ee1cffc");	
+		ssc_1_mis_port_0.getLInterfaces().getLInterface().add(mis_sub_interface_1);
 		
 		LInterface ssc_1_int_ha_port_0 = new LInterface();
 		ssc_1_int_ha_port_0.setInterfaceId("00bb8407-650e-48b5-b919-33b88d6f8fe3");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_int_ha_port_0);		
 		
 		
-		LInterface ssc_1_service1_port_0 = new LInterface();
-		ssc_1_service1_port_0.setInterfaceId("27391d94-33af-474a-927d-d409249e8fd3");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_service1_port_0);		
-		ssc_1_service1_port_0.setLInterfaces(new LInterfaces());		
+		LInterface ssc_1_avpn_port_0 = new LInterface();
+		ssc_1_avpn_port_0.setInterfaceId("27391d94-33af-474a-927d-d409249e8fd3");
+		vServer1.getLInterfaces().getLInterface().add(ssc_1_avpn_port_0);		
+		ssc_1_avpn_port_0.setLInterfaces(new LInterfaces());		
 		
-		LInterface service1_sub_interface_0 = new LInterface();
-		service1_sub_interface_0.setInterfaceId("d54dfd09-75c6-4e04-b204-909455b8f933");
-		ssc_1_service1_port_0.getLInterfaces().getLInterface().add(service1_sub_interface_0);
+		LInterface avpn_sub_interface_0 = new LInterface();
+		avpn_sub_interface_0.setInterfaceId("d54dfd09-75c6-4e04-b204-909455b8f933");
+		ssc_1_avpn_port_0.getLInterfaces().getLInterface().add(avpn_sub_interface_0);
 		
-		LInterface service1_sub_interface_1 = new LInterface();
-		service1_sub_interface_1.setInterfaceId("f7a998c0-8939-4b07-bf4a-0862e9c325e1");
-		ssc_1_service1_port_0.getLInterfaces().getLInterface().add(service1_sub_interface_1);
+		LInterface avpn_sub_interface_1 = new LInterface();
+		avpn_sub_interface_1.setInterfaceId("f7a998c0-8939-4b07-bf4a-0862e9c325e1");
+		ssc_1_avpn_port_0.getLInterfaces().getLInterface().add(avpn_sub_interface_1);
 		
-		LInterface service1_sub_interface_2 = new LInterface();
-		service1_sub_interface_2.setInterfaceId("621c1fea-60b8-44ee-aede-c01b8b1aaa70");
-		ssc_1_service1_port_0.getLInterfaces().getLInterface().add(service1_sub_interface_2);
+		LInterface avpn_sub_interface_2 = new LInterface();
+		avpn_sub_interface_2.setInterfaceId("621c1fea-60b8-44ee-aede-c01b8b1aaa70");
+		ssc_1_avpn_port_0.getLInterfaces().getLInterface().add(avpn_sub_interface_2);
 
 		
 		expectedVservers.add(vServer1);
 		
+		
 		Resources service1QueryResponse = objectMapper.readValue(new File("src/test/resources/Service1ResourceGroupResponse.json"), Resources.class);
-		doReturn(service1QueryResponse).when(msoHeatUtilsMock).executeHeatClientRequest("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz/31d0647a-6043-49a4-81b6-ccab29380672/resources", cloudRegion,	tenantId, Resources.class);
+		doReturn(service1QueryResponse).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz/31d0647a-6043-49a4-81b6-ccab29380672/resources", cloudRegion,	tenantId, Resources.class);
 		
 		Resources service2QueryResponse =objectMapper.readValue(new File("src/test/resources/Service2ResourceGroupResponse.json"), Resources.class);
-		doReturn(service2QueryResponse).when(msoHeatUtilsMock).executeHeatClientRequest("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst/447a9b41-714e-434b-b1d0-6cce8d9f0f0c/resources", cloudRegion,	tenantId, Resources.class);
+		doReturn(service2QueryResponse).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst/447a9b41-714e-434b-b1d0-6cce8d9f0f0c/resources", cloudRegion,	tenantId, Resources.class);
 		
 		
 		Stack service2StackQuerySubInt = stackObjectMapper.readValue(new File("src/test/resources/Service2SubInterface0.json"), Stack.class);
-		doReturn(service2StackQuerySubInt).when(msoHeatUtilsMock).executeHeatClientRequest("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81", cloudRegion,tenantId, Stack.class);
+		doReturn(service2StackQuerySubInt).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81", cloudRegion,tenantId, Stack.class);
 		Resources service2ResourceQuerySubInt = objectMapper.readValue(new File("src/test/resources/Service2SubInterface1Resources.json"), Resources.class);
-		doReturn(service2ResourceQuerySubInt).when(msoHeatUtilsMock).executeHeatClientRequest("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81/resources", cloudRegion,tenantId, Resources.class);
+		doReturn(service2ResourceQuerySubInt).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81/resources", cloudRegion,tenantId, Resources.class);
 		
 		Stack service1StackQuerySubInt1 =stackObjectMapper.readValue(new File("src/test/resources/Service1SubInterface0.json"), Stack.class);
-		doReturn(service1StackQuerySubInt1).when(msoHeatUtilsMock).executeHeatClientRequest("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-1-fmn5laetg5cs/0d9cd813-2ae1-46c0-9ebb-48081f6cffbb", cloudRegion,tenantId, Stack.class);
+		doReturn(service1StackQuerySubInt1).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-1-fmn5laetg5cs/0d9cd813-2ae1-46c0-9ebb-48081f6cffbb", cloudRegion,tenantId, Stack.class);
 		Resources service1ResourceQuerySubInt1 = objectMapper.readValue(new File("src/test/resources/Service1SubInterface0Resources.json"), Resources.class);
-		doReturn(service1ResourceQuerySubInt1).when(msoHeatUtilsMock).executeHeatClientRequest("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-1-fmn5laetg5cs/0d9cd813-2ae1-46c0-9ebb-48081f6cffbb/resources", cloudRegion,tenantId, Resources.class);
+		doReturn(service1ResourceQuerySubInt1).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-1-fmn5laetg5cs/0d9cd813-2ae1-46c0-9ebb-48081f6cffbb/resources", cloudRegion,tenantId, Resources.class);
 
 	
 		Stack service1StackQuerySubInt2 =stackObjectMapper.readValue(new File("src/test/resources/Service1SubInterface1.json"), Stack.class);
-		doReturn(service1StackQuerySubInt2).when(msoHeatUtilsMock).executeHeatClientRequest("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m/b7019dd0-2ee9-4447-bdef-ac25676b205a", cloudRegion,tenantId, Stack.class);
+		doReturn(service1StackQuerySubInt2).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m/b7019dd0-2ee9-4447-bdef-ac25676b205a", cloudRegion,tenantId, Stack.class);
 		Resources service1ResourceQuerySubInt2 = objectMapper.readValue(new File("src/test/resources/Service1SubInterface1Resources.json"), Resources.class);
-		doReturn(service1ResourceQuerySubInt2).when(msoHeatUtilsMock).executeHeatClientRequest("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m/b7019dd0-2ee9-4447-bdef-ac25676b205a/resources", cloudRegion,tenantId, Resources.class);
+		doReturn(service1ResourceQuerySubInt2).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m/b7019dd0-2ee9-4447-bdef-ac25676b205a/resources", cloudRegion,tenantId, Resources.class);
 
 		Stack service1StackQuerySubInt3 =stackObjectMapper.readValue(new File("src/test/resources/Service1SubInterface2.json"), Stack.class);
-		doReturn(service1StackQuerySubInt3).when(msoHeatUtilsMock).executeHeatClientRequest("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv/bd0fc728-cbde-4301-a581-db56f494675c", cloudRegion,tenantId, Stack.class);
+		doReturn(service1StackQuerySubInt3).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv/bd0fc728-cbde-4301-a581-db56f494675c", cloudRegion,tenantId, Stack.class);
 		Resources service1ResourceQuerySubInt3 = objectMapper.readValue(new File("src/test/resources/Service1SubInterface2Resources.json"), Resources.class);
-		doReturn(service1ResourceQuerySubInt3).when(msoHeatUtilsMock).executeHeatClientRequest("/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv/bd0fc728-cbde-4301-a581-db56f494675c/resources", cloudRegion,tenantId, Resources.class);
+		doReturn(service1ResourceQuerySubInt3).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv/bd0fc728-cbde-4301-a581-db56f494675c/resources", cloudRegion,tenantId, Resources.class);
 	
 		Set<Vserver> vServersToAudit = heatStackAudit.createVserverSet(resources, novaResources);
 		Set<Vserver> vserversWithSubInterfaces = heatStackAudit.processSubInterfaces(cloudRegion,tenantId,resourceGroups, vServersToAudit);
@@ -208,9 +211,9 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		ssc_1_trusted_port_0.setInterfaceId("d2f51f82-0ec2-4581-bd1a-d2a82073e52b");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_trusted_port_0);
 		
-		LInterface ssc_1_service1_port_0 = new LInterface();
-		ssc_1_service1_port_0.setInterfaceId("27391d94-33af-474a-927d-d409249e8fd3");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_service1_port_0);
+		LInterface ssc_1_avpn_port_0 = new LInterface();
+		ssc_1_avpn_port_0.setInterfaceId("27391d94-33af-474a-927d-d409249e8fd3");
+		vServer1.getLInterfaces().getLInterface().add(ssc_1_avpn_port_0);
 		
 		LInterface ssc_1_mgmt_port_1 = new LInterface();
 		ssc_1_mgmt_port_1.setInterfaceId("07f5b14c-147a-4d14-8c94-a9e94dbc097b");
@@ -220,9 +223,9 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		ssc_1_mgmt_port_0.setInterfaceId("8d93f63e-e972-48c7-ad98-b2122da47315");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_mgmt_port_0);
 		
-		LInterface ssc_1_service2_port_0 = new LInterface();
-		ssc_1_service2_port_0.setInterfaceId("0594a2f2-7ea4-42eb-abc2-48ea49677fca");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_service2_port_0);
+		LInterface ssc_1_mis_port_0 = new LInterface();
+		ssc_1_mis_port_0.setInterfaceId("0594a2f2-7ea4-42eb-abc2-48ea49677fca");
+		vServer1.getLInterfaces().getLInterface().add(ssc_1_mis_port_0);
 		
 		LInterface ssc_1_int_ha_port_0 = new LInterface();
 		ssc_1_int_ha_port_0.setInterfaceId("00bb8407-650e-48b5-b919-33b88d6f8fe3");
