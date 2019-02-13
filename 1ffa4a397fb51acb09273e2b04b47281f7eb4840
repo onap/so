@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ee5845ae_784133b3",
+        "filename": "common/src/main/java/org/onap/so/openpojo/rules/EqualsAndHashCodeTester.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-02-13T14:38:12Z",
+      "side": 0,
+      "message": "Why is this removed?",
+      "revId": "1ffa4a397fb51acb09273e2b04b47281f7eb4840",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
