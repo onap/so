@@ -21,23 +21,43 @@
 package org.onap.so.client.dmaapproperties;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.so.BaseTest;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mockito;
 
 public class GlobalDmaapPublisherTest extends BaseTest{
 
-	@Autowired
-	private GlobalDmaapPublisher globalDmaapPublisher;
-
-
+	@BeforeClass
+	public static void setUp() throws Exception {
+		System.setProperty("mso.global.dmaap.username", "testUser");
+		System.setProperty("mso.global.dmaap.password", "testPassword");
+		System.setProperty("mso.global.dmaap.publisher.topic", "com.att.mso.asyncStatusUpdate");
+		System.setProperty("mso.global.dmaap.host", "http://test:1234");
+	}
+    
+    
 	@Test
 	public void testGetters() {
-		assertEquals("dmaapUsername", globalDmaapPublisher.getUserName());
-		assertEquals("ZG1hYXBQYXNzd29yZA==", globalDmaapPublisher.getPassword());
-		assertEquals("com.att.mso.asyncStatusUpdate", globalDmaapPublisher.getTopic());
-		assertEquals("http://localhost:" + wireMockPort, globalDmaapPublisher.getHost().get());
+
+		GlobalDmaapPublisher globalDmaapPublisher = Mockito.spy(GlobalDmaapPublisher.class);
+	
+		String user = globalDmaapPublisher.getUserName();
+		String passWord = globalDmaapPublisher.getPassword();
+		String topic= globalDmaapPublisher.getTopic();
+		String host = globalDmaapPublisher.getHost().get();
+		
+		verify(globalDmaapPublisher, times(1)).getUserName();
+		verify(globalDmaapPublisher, times(1)).getPassword();
+		verify(globalDmaapPublisher, times(1)).getTopic();
+		verify(globalDmaapPublisher, times(1)).getHost();
+		
+		assertEquals("testUser", user);
+		assertEquals("testPassword", passWord);
+		assertEquals("com.att.mso.asyncStatusUpdate", topic);
+		assertEquals("http://test:1234", host);
 	}
 }
