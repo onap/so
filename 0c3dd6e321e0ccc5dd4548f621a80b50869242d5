@@ -190,6 +190,24 @@
     },
     {
       "key": {
+        "uuid": "4a4515ef_1bccd332",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateRelation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-02-13T16:40:11Z",
+      "side": 1,
+      "message": "Done, good comment.",
+      "parentUuid": "9adffdf1_8cd57be6",
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_acd4ffeb",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/implementation/AaiConnection.java",
         "patchSetId": 2
@@ -207,6 +225,24 @@
     },
     {
       "key": {
+        "uuid": "14cd31e3_3f42e8ce",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/implementation/AaiConnection.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-02-13T16:40:11Z",
+      "side": 1,
+      "message": "Agree.",
+      "parentUuid": "9adffdf1_acd4ffeb",
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_6cda9718",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/implementation/AaiConnection.java",
         "patchSetId": 2
@@ -218,6 +254,24 @@
       "writtenOn": "2019-01-21T10:31:11Z",
       "side": 1,
       "message": "the createRelation method declaration should not have any depedencies to the AAIResourceUri (or to any other AAI specific classes). This is an implementation detail. Rather consider passing the SI ID and Pnf ID only as the mandatory parameters. The idea is to cut off on a high level from the \"low level\" details. The flow states \"what\" it needs to do, not the \"how\".",
+      "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "62cd0b45_5dc1e9f1",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/implementation/AaiConnection.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-02-13T16:40:11Z",
+      "side": 1,
+      "message": "Good point.",
+      "parentUuid": "9adffdf1_6cda9718",
       "revId": "0c3dd6e321e0ccc5dd4548f621a80b50869242d5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
