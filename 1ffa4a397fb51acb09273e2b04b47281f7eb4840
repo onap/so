@@ -16,6 +16,24 @@
       "revId": "1ffa4a397fb51acb09273e2b04b47281f7eb4840",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd5f278a_3ba792e0",
+        "filename": "common/src/main/java/org/onap/so/openpojo/rules/EqualsAndHashCodeTester.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 4313
+      },
+      "writtenOn": "2019-02-13T14:45:05Z",
+      "side": 0,
+      "message": "classInstanceOne is being compared to itself - it always returns true, so this affirmation makes no sense\naffirmation classInstanceOne being equal to classInstanceTwo is already checked in previous line",
+      "parentUuid": "ee5845ae_784133b3",
+      "revId": "1ffa4a397fb51acb09273e2b04b47281f7eb4840",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
