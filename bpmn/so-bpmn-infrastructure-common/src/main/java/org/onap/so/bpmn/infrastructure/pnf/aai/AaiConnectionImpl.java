@@ -23,7 +23,11 @@ package org.onap.so.bpmn.infrastructure.pnf.aai;
 import java.util.Optional;
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
+import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.AAIRestClientImpl;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -39,5 +43,13 @@ public class AaiConnectionImpl implements AaiConnection {
     public void createEntry(String correlationId, Pnf entry) {
         AAIRestClientImpl restClient = new AAIRestClientImpl();
         restClient.createPnf(correlationId, entry);
+    }
+
+    @Override
+    public void createRelation(String serviceInstanceId, String pnfName) {
+        AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                serviceInstanceId);
+        AAIResourceUri pnfUri = AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfName);
+        new AAIResourcesClient().connect(serviceInstanceURI, pnfUri);
     }
 }

@@ -20,12 +20,10 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
 import org.springframework.context.annotation.Primary;
@@ -39,9 +37,10 @@ public class AaiConnectionTestImpl implements AaiConnection {
     public static final String ID_WITH_ENTRY = "idWithEntryNoIp";
 
     private Map<String, Pnf> created = new HashMap<>();
+    private Map<String, String> serviceAndPnfRelationMap = new HashMap<>();
 
     @Override
-    public Optional<Pnf> getEntryFor(String correlationId) throws IOException {
+    public Optional<Pnf> getEntryFor(String correlationId) {
         if (Objects.equals(correlationId, ID_WITH_ENTRY)) {
             return Optional.of(new Pnf());
         } else {
@@ -50,15 +49,25 @@ public class AaiConnectionTestImpl implements AaiConnection {
     }
 
     @Override
-    public void createEntry(String correlationId, Pnf entry) throws IOException {
+    public void createEntry(String correlationId, Pnf entry) {
         created.put(correlationId, entry);
+    }
+
+    @Override
+    public void createRelation(String serviceInstanceId, String pnfName) {
+        serviceAndPnfRelationMap.put(serviceInstanceId, pnfName);
     }
 
     public Map<String, Pnf> getCreated() {
         return created;
     }
 
+    public Map<String, String> getServiceAndPnfRelationMap() {
+        return serviceAndPnfRelationMap;
+    }
+
     public void reset() {
         created.clear();
+        serviceAndPnfRelationMap.clear();
     }
 }

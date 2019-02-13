@@ -31,15 +31,19 @@ import java.util.Map;
 
 import java.util.UUID;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.data.MapEntry;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
 
-    private static final String TIMEOUT_10_S = "PT10S";
     private static final String VALID_UUID = UUID.nameUUIDFromBytes("testUuid".getBytes()).toString();
+    private static final String SERVICE_INSTANCE_ID = "serviceForInstance";
+
+    private Map<String, Object> variables;
 
     @Autowired
     private AaiConnectionTestImpl aaiConnection;
@@ -47,14 +51,18 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
     @Autowired
     private DmaapClientTestImpl dmaapClientTestImpl;
 
+    @Before
+    public void setup() {
+        aaiConnection.reset();
+        variables = new HashMap<>();
+        variables.put("serviceInstanceId", SERVICE_INSTANCE_ID);
+        variables.put(PNF_UUID, VALID_UUID);
+    }
+
     @Test
     public void shouldWaitForMessageFromDmaapAndUpdateAaiEntryWhenAaiEntryExists() {
         // given
-        aaiConnection.reset();       
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITH_ENTRY);
-        variables.put(PNF_UUID, VALID_UUID);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -70,19 +78,17 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
                 "AaiEntryExists",
                 "InformDmaapClient",
                 "WaitForDmaapPnfReadyNotification",
+                "CreateRelationId",
                 "AaiEntryUpdated"
         );
+        Assertions.assertThat(aaiConnection.getServiceAndPnfRelationMap()).
+                containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID,AaiConnectionTestImpl.ID_WITH_ENTRY));
     }
 
     @Test
     public void shouldCreateAaiEntryWaitForMessageFromDmaapAndUpdateAaiEntryWhenNoAaiEntryExists() {
         // given
-        aaiConnection.reset();
-       
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("timeoutForPnfEntryNotification", TIMEOUT_10_S);
         variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
-        variables.put(PNF_UUID, VALID_UUID);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -99,8 +105,11 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
                 "AaiEntryExists",
                 "InformDmaapClient",
                 "WaitForDmaapPnfReadyNotification",
+                "CreateRelationId",
                 "AaiEntryUpdated"
         );
         Assertions.assertThat(aaiConnection.getCreated()).containsOnlyKeys(AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
+        Assertions.assertThat(aaiConnection.getServiceAndPnfRelationMap()).
+                containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID,AaiConnectionTestImpl.ID_WITHOUT_ENTRY));
     }
 }

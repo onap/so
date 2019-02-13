@@ -29,4 +29,6 @@ public interface AaiConnection {
     Optional<Pnf> getEntryFor(String correlationId) throws IOException;
 
     void createEntry(String correlationId, Pnf entry) throws IOException;
+
+    void createRelation(String serviceInstanceId, String pnfName) throws IOException;
 }

@@ -36,4 +36,10 @@ public class AaiConnectionThrowingException implements AaiConnection {
     public void createEntry(String correlationId, Pnf entry) throws IOException {
         throw new IOException();
     }
+
+    @Override
+    public void createRelation(String serviceInstanceId, String pnfName) throws IOException {
+        throw new IOException();
+    }
+
 }

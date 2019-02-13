@@ -37,7 +37,7 @@ public class AaiConnectionTestImpl implements AaiConnection {
     private Map<String, Pnf> created = new HashMap<>();
 
     @Override
-    public Optional<Pnf> getEntryFor(String correlationId) throws IOException {
+    public Optional<Pnf> getEntryFor(String correlationId) {
         if (Objects.equals(correlationId, ID_WITH_ENTRY)) {
             return Optional.of(new Pnf());
         } else {
@@ -48,6 +48,10 @@ public class AaiConnectionTestImpl implements AaiConnection {
     @Override
     public void createEntry(String correlationId, Pnf entry) throws IOException {
         created.put(correlationId, entry);
+    }
+
+    @Override
+    public void createRelation(String serviceInstanceId, String pnfName) {
     }
 
     public Map<String, Pnf> getCreated() {
