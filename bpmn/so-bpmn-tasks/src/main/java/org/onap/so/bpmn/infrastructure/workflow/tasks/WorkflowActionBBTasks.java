@@ -41,6 +41,7 @@ import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -54,6 +55,7 @@ public class WorkflowActionBBTasks {
 	private static final String G_ALACARTE = "aLaCarte";
 	private static final String G_ACTION = "requestAction";
 	private static final String RETRY_COUNT = "retryCount";
+	protected String maxRetries = "mso.rainyDay.maxRetries";
 	private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBTasks.class);
 
 	@Autowired
@@ -62,6 +64,8 @@ public class WorkflowActionBBTasks {
 	private WorkflowAction workflowAction;
 	@Autowired
 	private WorkflowActionBBFailure workflowActionBBFailure;
+	@Autowired
+	private Environment environment;
 	
 	public void selectBB(DelegateExecution execution) {
 		List<ExecuteBuildingBlock> flowsToExecute = (List<ExecuteBuildingBlock>) execution
@@ -215,17 +219,24 @@ public class WorkflowActionBBTasks {
 		String requestId = (String) execution.getVariable(G_REQUEST_ID);
 		String retryDuration = (String) execution.getVariable("RetryDuration");
 		int retryCount = (int) execution.getVariable(RETRY_COUNT);
+		int envMaxRetries;
+		try{
+			envMaxRetries = Integer.parseInt(this.environment.getProperty(maxRetries));	
+		} catch (Exception ex) {
+			logger.error("Could not read maxRetries from config file. Setting max to 5 retries");
+			envMaxRetries = 5;
+		}
 		int nextCount = retryCount +1;
 		if (handlingCode.equals("Retry")){
 			workflowActionBBFailure.updateRequestErrorStatusMessage(execution);
 			try{
 				InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
-				request.setRetryStatusMessage("Retry " + nextCount + "/5 will be started in " + retryDuration);
+				request.setRetryStatusMessage("Retry " + nextCount + "/" + envMaxRetries + " will be started in " + retryDuration);
 				requestDbclient.updateInfraActiveRequests(request); 
 			} catch(Exception ex){
 				logger.warn("Failed to update Request Db Infra Active Requests with Retry Status",ex);
 			}
-			if(retryCount<5){
+			if(retryCount<envMaxRetries){
 				int currSequence = (int) execution.getVariable("gCurrentSequence");
 				execution.setVariable("gCurrentSequence", currSequence-1);
 				execution.setVariable(RETRY_COUNT, nextCount);
