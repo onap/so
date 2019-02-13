@@ -313,6 +313,16 @@ public class ASDCNotificationLogging {
          		buffer.append("Description:");
         		buffer.append(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
         		buffer.append(System.lineSeparator());
+        		
+        		List<NodeTemplate> groupMembers = toscaResourceStructure.getSdcCsarHelper().getMembersOfVfModule(vfNodeTemplate, group); 
+         		
+        		for(NodeTemplate node : groupMembers){	
+            		buffer.append("Member Name:");
+            		buffer.append(testNull(node.getName()));
+            		buffer.append(System.lineSeparator());
+        		}
+        		
+        		
     		}
     		
     		List<NodeTemplate> cvfcList = toscaResourceStructure.getSdcCsarHelper().getNodeTemplateBySdcType(vfNodeTemplate, SdcTypes.CVFC);
@@ -341,6 +351,9 @@ public class ASDCNotificationLogging {
          		buffer.append("Description:");
         		buffer.append(testNull(cvfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
         		buffer.append(System.lineSeparator()); 
+        		buffer.append("Template Name:");
+        		buffer.append(testNull(cvfcTemplate.getName()));
+        		buffer.append(System.lineSeparator()); 
         		
         		
         		List<NodeTemplate> vfcList = toscaResourceStructure.getSdcCsarHelper().getNodeTemplateBySdcType(cvfcTemplate, SdcTypes.VFC);
@@ -368,6 +381,9 @@ public class ASDCNotificationLogging {
              		buffer.append("Description:");
             		buffer.append(testNull(vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
             		buffer.append(System.lineSeparator()); 
+             		buffer.append("Sub Category:");
+            		buffer.append(testNull(vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY)));
+            		buffer.append(System.lineSeparator());
         			
         		}  		
         		
