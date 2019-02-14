@@ -103,13 +103,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     protected static final String CREATE_STACK = "CreateStack";
 
-    // Cache Heat Clients statically. Since there is just one MSO user, there is no
-    // benefit to re-authentication on every request (or across different flows). The
-    // token will be used until it expires.
-    //
-    // The cache key is "tenantId:cloudId"
-    private static Map <String, HeatCacheEntry> heatClientCache = new HashMap <> ();
-
     // Fetch cloud configuration each time (may be cached in CloudConfig class)
     @Autowired
     protected CloudConfig cloudConfig;
@@ -859,19 +852,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         String cloudId = cloudSite.getId();
         // For DCP/LCP, the region should be the cloudId.
         String region = cloudSite.getRegionId ();
-        
-        // Check first in the cache of previously authorized clients
-        String cacheKey = cloudId + ":" + tenantId;
-        if (heatClientCache.containsKey (cacheKey)) {
-            if (!heatClientCache.get (cacheKey).isExpired ()) {
-                LOGGER.debug ("Using Cached HEAT Client for " + cacheKey);
-                return heatClientCache.get (cacheKey).getHeatClient ();
-            } else {
-                // Token is expired. Remove it from cache.
-                heatClientCache.remove (cacheKey);
-                LOGGER.debug ("Expired Cached HEAT Client for " + cacheKey);
-            }
-        }
 
         // Obtain an MSO token for the tenant
         CloudIdentity cloudIdentity = cloudSite.getIdentityService();
@@ -946,36 +926,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
             // Catch-all
             throw runtimeExceptionToMsoException (e, TOKEN_AUTH);
         }
-
         Heat heatClient = new Heat (heatUrl);
         heatClient.token (tokenId);
-
-        heatClientCache.put (cacheKey,
-                             new HeatCacheEntry (heatUrl,
-                                                 tokenId,
-                                                 expiration));
-        LOGGER.debug ("Caching HEAT Client for " + cacheKey);
-
         return heatClient;
-    }
-
-    /**
-     * Forcibly expire a HEAT client from the cache. This call is for use by
-     * the KeystoneClient in case where a tenant is deleted. In that case,
-     * all cached credentials must be purged so that fresh authentication is
-     * done if a similarly named tenant is re-created.
-     * <p>
-     * Note: This is probably only applicable to dev/test environments where
-     * the same Tenant Name is repeatedly used for creation/deletion.
-     * <p>
-     *
-     */
-    public void expireHeatClient (String tenantId, String cloudId) {
-        String cacheKey = cloudId + ":" + tenantId;
-        if (heatClientCache.containsKey (cacheKey)) {
-            heatClientCache.remove (cacheKey);
-            LOGGER.debug ("Deleted Cached HEAT Client for " + cacheKey);
-        }
     }
 
     /*

@@ -67,12 +67,6 @@ import com.woorea.openstack.quantum.model.Segment;
 @Component
 public class MsoNeutronUtils extends MsoCommonUtils
 {
-	// Cache Neutron Clients statically.  Since there is just one MSO user, there is no
-	// benefit to re-authentication on every request (or across different flows).  The
-	// token will be used until it expires.
-	//
-	// The cache key is "tenantId:cloudId"
-	private static Map<String,NeutronCacheEntry> neutronClientCache = new HashMap<>();
 
 	// Fetch cloud configuration each time (may be cached in CloudConfig class)
 	@Autowired
@@ -364,24 +358,8 @@ public class MsoNeutronUtils extends MsoCommonUtils
     private Quantum getNeutronClient(CloudSite cloudSite, String tenantId) throws MsoException
 	{
 		String cloudId = cloudSite.getId();
-		String region = cloudSite.getRegionId();
-		
-		// Check first in the cache of previously authorized clients
-		String cacheKey = cloudId + ":" + tenantId;
-		if (neutronClientCache.containsKey(cacheKey)) {
-			if (! neutronClientCache.get(cacheKey).isExpired()) {
-				LOGGER.debug ("Using Cached HEAT Client for " + cacheKey);
-				NeutronCacheEntry cacheEntry = neutronClientCache.get(cacheKey);
-				Quantum neutronClient = new Quantum(cacheEntry.getNeutronUrl());
-				neutronClient.token(cacheEntry.getToken());
-				return neutronClient;
-			}
-			else {
-				// Token is expired.  Remove it from cache.
-				neutronClientCache.remove(cacheKey);
-				LOGGER.debug ("Expired Cached Neutron Client for " + cacheKey);
-			}
-		}
+		String region = cloudSite.getRegionId();	
+
 
 		// Obtain an MSO token for the tenant from the identity service
 		CloudIdentity cloudIdentity = cloudSite.getIdentityService();
@@ -454,30 +432,8 @@ public class MsoNeutronUtils extends MsoCommonUtils
 
 		Quantum neutronClient = new Quantum(neutronUrl);
 		neutronClient.token(tokenId);
-
-		neutronClientCache.put(cacheKey, new NeutronCacheEntry(neutronUrl, tokenId, expiration));
-		LOGGER.debug ("Caching Neutron Client for " + cacheKey);
-
 		return neutronClient;
 	}
-
-	/**
-	 * Forcibly expire a Neutron client from the cache.  This call is for use by
-	 * the KeystoneClient in case where a tenant is deleted.  In that case,
-	 * all cached credentials must be purged so that fresh authentication is
-	 * done on subsequent calls.
-	 * <p>
-	 * @param tenantName
-	 * @param cloudId
-	 */
-	public void expireNeutronClient (String tenantId, String cloudId) {
-		String cacheKey = cloudId + ":" + tenantId;
-		if (neutronClientCache.containsKey(cacheKey)) {
-			neutronClientCache.remove(cacheKey);
-			LOGGER.debug ("Deleted Cached Neutron Client for " + cacheKey);
-		}
-	}
-
 
 	/*
 	 * Find a tenant (or query its existence) by its Name or Id.  Check first against the
