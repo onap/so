@@ -18,12 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.aai.entities;
+package org.onap.so.client.graphinventory.entities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.onap.so.client.aai.entities.QueryStep;
 import org.onap.so.client.graphinventory.GraphInventoryObjectName;
 
 public class DSLNode implements QueryStep {

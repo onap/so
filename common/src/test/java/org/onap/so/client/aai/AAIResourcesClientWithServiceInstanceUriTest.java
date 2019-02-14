@@ -40,6 +40,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.entities.uri.ServiceInstanceUri;
@@ -47,6 +51,7 @@ import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
+@RunWith(MockitoJUnitRunner.class)
 public class AAIResourcesClientWithServiceInstanceUriTest {
 
 	@Rule
@@ -55,9 +60,17 @@ public class AAIResourcesClientWithServiceInstanceUriTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	
+	@Spy
+	public AAIClient client;
+	
+	@InjectMocks
+	public AAIResourcesClient aaiClient = new AAIResourcesClient();
+	
 	private ServiceInstanceUri uri;
 	@Before
 	public void setUp() {
+		
+		doReturn(new DefaultAAIPropertiesImpl()).when(client).getRestProperties();
 		wireMockRule.stubFor(get(urlMatching("/aai/v[0-9]+/nodes.*")) 
 				.willReturn(aResponse() 
 					.withStatus(404) 
@@ -65,12 +78,12 @@ public class AAIResourcesClientWithServiceInstanceUriTest {
 					.withHeader("Mock", "true")));
 		
 		uri = spy((ServiceInstanceUri)AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "id"));
-		doReturn(createClient()).when(uri).getResourcesClient();
+		doReturn(aaiClient).when(uri).getResourcesClient();
 	}
 	
 	@Test
 	public void getWithClass() {
-		AAIResourcesClient client = createClient();
+		AAIResourcesClient client = aaiClient;
 		Optional<String> result = client.get(String.class, uri);
 		
 		assertThat(result.isPresent(), equalTo(false));
@@ -78,42 +91,38 @@ public class AAIResourcesClientWithServiceInstanceUriTest {
 	
 	@Test
 	public void getFullResponse() {
-		AAIResourcesClient client = createClient();
+		AAIResourcesClient client = aaiClient;
 		Response result = client.getFullResponse(uri);
 		assertThat(result.getStatus(), equalTo(Status.NOT_FOUND.getStatusCode()));
 	}
 	
 	@Test
 	public void getWithGenericType() {
-		AAIResourcesClient client = createClient();
+		AAIResourcesClient client = aaiClient;
 		Optional<List<String>> result = client.get(new GenericType<List<String>>() {}, uri);
 		assertThat(result.isPresent(), equalTo(false));
 	}
 	
 	@Test
 	public void getAAIWrapper() {
-		AAIResourcesClient client = createClient();
+		AAIResourcesClient client = aaiClient;
 		AAIResultWrapper result = client.get(uri);
 		assertThat(result.isEmpty(), equalTo(true));
 	}
 	
 	@Test
 	public void getWithException() {
-		AAIResourcesClient client = createClient();
+		AAIResourcesClient client = aaiClient;
 		this.thrown.expect(IllegalArgumentException.class);
 		AAIResultWrapper result = client.get(uri, IllegalArgumentException.class);
 	}
 	
 	@Test
 	public void existsTest() {
-		AAIResourcesClient client = createClient();
+		AAIResourcesClient client = aaiClient;
 		doReturn(uri).when(uri).clone();
 		boolean result = client.exists(uri);
 		assertThat(result, equalTo(false));
 	}
-	private AAIResourcesClient createClient() {
-		AAIResourcesClient client = spy(new AAIResourcesClient());
-		doReturn(new DefaultAAIPropertiesImpl()).when(client).getRestProperties();
-		return client;
-	}
+
 }

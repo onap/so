@@ -20,64 +20,28 @@
 
 package org.onap.so.client.aai;
 
-import java.util.Optional;
-
-import org.onap.so.client.RestClient;
-import org.onap.so.client.aai.entities.CustomQuery;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.client.graphinventory.Format;
+import org.onap.so.client.graphinventory.GraphInventoryQueryClient;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
-public class AAIQueryClient extends AAIClient {
+public class AAIQueryClient extends GraphInventoryQueryClient<AAIQueryClient> {
 
-	private Optional<String> depth = Optional.empty();
-	private boolean nodesOnly = false;
-	private Optional<AAISubgraphType> subgraph = Optional.empty();
-	
 	public AAIQueryClient() {
-		super();
+		super(new AAIClient());
 	}
 	
 	public AAIQueryClient(AAIVersion version) {
-		super();
-		this.version = version;
+		super(new AAIClient(version));
 	}
-	
-	public String query(Format format, CustomQuery query) {
-		return this.createClient(AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY).queryParam("format", format.toString()))
-		.put(query, String.class);
-	}
-	
-	public AAIQueryClient depth (String depth) {
-		this.depth = Optional.of(depth);
-		return this;
-	}
-	public AAIQueryClient nodesOnly() {
-		this.nodesOnly = true;
-		return this;
-	}
-	public AAIQueryClient subgraph(AAISubgraphType type){
-		
-		subgraph =  Optional.of(type);
 
-		return this;
+	@Override
+	protected GraphInventoryUri getQueryUri() {
+		return AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY);
 	}
 	
-	protected GraphInventoryUri setupQueryParams(GraphInventoryUri uri) {
-		GraphInventoryUri clone = uri.clone();
-		if (this.depth.isPresent()) {
-			clone.queryParam("depth", depth.get());
-		}
-		if (this.nodesOnly) {
-			clone.queryParam("nodesOnly", "");
-		}
-		if (this.subgraph.isPresent()) {
-			clone.queryParam("subgraph", this.subgraph.get().toString());
-		}
-		return clone;
-	}
 	@Override
-	protected RestClient createClient(GraphInventoryUri uri) {
-		return super.createClient(setupQueryParams(uri));
+	protected GraphInventoryUri setupQueryParams(GraphInventoryUri uri) {
+		return super.setupQueryParams(uri);
 	}
+	
 }

@@ -20,11 +20,8 @@
 
 package org.onap.so.client.aai;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -36,9 +33,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.aai.entities.CustomQuery;
@@ -46,6 +42,8 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.Format;
+import org.onap.so.client.graphinventory.GraphInventoryClient;
+import org.onap.so.client.graphinventory.GraphInventorySubgraphType;
 
 
 @RunWith(MockitoJUnitRunner.class) 
@@ -57,7 +55,10 @@ public class AAIQueryClientTest {
 	@Mock
 	RestClient restClient;
 	
-	@Spy
+	@Mock
+	GraphInventoryClient client;
+	
+	@InjectMocks
 	AAIQueryClient aaiQueryClient = new AAIQueryClient();
 	
 	@Test
@@ -67,16 +68,16 @@ public class AAIQueryClientTest {
 		Format format = Format.SIMPLE;
 		CustomQuery query = new CustomQuery(uris);
 		
-		doReturn(restClient).when(aaiQueryClient).createClient(isA(AAIUri.class));
+		doReturn(restClient).when(client).createClient(isA(AAIUri.class));
 		aaiQueryClient.query(format, query);
-		verify(aaiQueryClient, times(1)).createClient(AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY).queryParam("format", format.toString()));
+		verify(client, times(1)).createClient(AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY).queryParam("format", format.toString()));
 		verify(restClient, times(1)).put(query, String.class);
 	}
 	
 	@Test
 	public void testCreateClient() {
 		String depth = "testDepth";
-		AAISubgraphType subgraph = AAISubgraphType.STAR;
+		GraphInventorySubgraphType subgraph = GraphInventorySubgraphType.STAR;
 		
 		aaiQueryClient.depth(depth);
 		aaiQueryClient.nodesOnly();

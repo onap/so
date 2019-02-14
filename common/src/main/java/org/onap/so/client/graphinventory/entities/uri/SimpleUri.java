@@ -98,6 +98,13 @@ public class SimpleUri implements GraphInventoryResourceUri, Serializable {
 		validateValuesSize(childType.partialUri(), values);
 	}
 	
+	protected SimpleUri(GraphInventoryResourceUri parentUri, GraphInventoryObjectPlurals childType) {
+		this.type = null;
+		this.pluralType = childType;
+		this.internalURI =  UriBuilder.fromUri(parentUri.build()).path(childType.partialUri());
+		this.values = new Object[0];
+	}
+	
 	protected void setInternalURI(UriBuilder builder) {
 		this.internalURI = builder;
 	}

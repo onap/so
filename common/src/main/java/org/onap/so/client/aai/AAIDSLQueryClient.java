@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,25 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.graphinventory;
+package org.onap.so.client.aai;
 
-public enum Format {
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.client.graphinventory.GraphInventoryQueryClient;
+import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
-	RESOURCE("resource"),
-	RESOURCE_AND_URL("resource_and_url"),
-	SIMPLE("simple"),
-	RAW("raw"),
-	CONSOLE("console"),
-	PATHED("pathed"),
-	GRAPHSON("graphson"),
-	ID("id");
+public class AAIDSLQueryClient extends GraphInventoryQueryClient<AAIDSLQueryClient> {
 
-	private final String name;
-	
-	private Format(String name) {
-		this.name = name;
+	public AAIDSLQueryClient() {
+		super(new AAIClient());
 	}
 	
+	public AAIDSLQueryClient(AAIVersion version) {
+		super(new AAIClient(version));
+	}
+
 	@Override
-	public String toString() {
-		return name;
+	protected GraphInventoryUri getQueryUri() {
+		return AAIUriFactory.createResourceUri(AAIObjectType.DSL);
 	}
+	
 }

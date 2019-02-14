@@ -26,8 +26,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Priority;
+import java.util.regex.Pattern;
 
 import org.onap.aai.annotations.Metadata;
 import org.onap.aai.domain.yang.AggregateRoute;
@@ -61,6 +60,7 @@ import org.onap.aai.domain.yang.RouteTableReference;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.ServiceSubscription;
 import org.onap.aai.domain.yang.SpPartner;
+import org.onap.aai.domain.yang.SriovPf;
 import org.onap.aai.domain.yang.Subnet;
 import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.TunnelXconnect;
@@ -119,6 +119,7 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
 	public static final AAIObjectType MODEL_VER = new AAIObjectType(AAINamespaceConstants.SERVICE_DESIGN_AND_CREATION + "/models/model/{model-invariant-id}", ModelVer.class);
 	public static final AAIObjectType TUNNEL_XCONNECT = new AAIObjectType(AAIObjectType.ALLOTTED_RESOURCE.uriTemplate(), TunnelXconnect.class);
 	public static final AAIObjectType P_INTERFACE = new AAIObjectType(AAIObjectType.PSERVER.uriTemplate(), PInterface.class);
+	public static final AAIObjectType SRIOV_PF = new AAIObjectType(AAIObjectType.P_INTERFACE.uriTemplate(), SriovPf.class);	
 	public static final AAIObjectType PHYSICAL_LINK = new AAIObjectType(AAINamespaceConstants.NETWORK, PhysicalLink.class);
 	public static final AAIObjectType INSTANCE_GROUP = new AAIObjectType(AAINamespaceConstants.NETWORK, InstanceGroup.class);
 	public static final AAIObjectType COLLECTION = new AAIObjectType(AAINamespaceConstants.NETWORK, Collection.class);
@@ -218,6 +219,6 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
 	}
 
 	protected String removeParentUri(Class<?> aaiObjectClass, String parentUri) {
-		 return aaiObjectClass.getAnnotation(Metadata.class).uriTemplate().replace(parentUri, "");
+		return aaiObjectClass.getAnnotation(Metadata.class).uriTemplate().replaceFirst(Pattern.quote(parentUri), "");
 	}
 }

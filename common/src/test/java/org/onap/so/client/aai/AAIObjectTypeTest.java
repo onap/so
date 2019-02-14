@@ -80,4 +80,11 @@ public class AAIObjectTypeTest {
 		assertEquals("/cloud-infrastructure/pservers/pserver/{hostname}/p-interfaces/p-interface/{interface-name}", type.uriTemplate());
 		assertEquals("/p-interfaces/p-interface/{interface-name}", type.partialUri());
 	}
+	
+	@Test
+	public void networkPolicyObjectTypeTest() {
+		final String id = "test1";
+		AAIUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, id);
+		assertEquals("/network/network-policies/network-policy/test1", aaiUri.build().toString());
+	}
 }

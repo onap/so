@@ -27,20 +27,24 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.client.RestClient;
 import org.onap.so.client.graphinventory.GraphInventoryClient;
+import org.onap.so.client.graphinventory.GraphInventoryVersion;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AAIClient extends GraphInventoryClient {
+public class AAIClient extends GraphInventoryClient {
 
 	private static final String AAI_ROOT = "/aai";
 	protected static Logger logger = LoggerFactory.getLogger(AAIClient.class);
 	protected AAIVersion version;
-	public AAIClient() {
+	protected AAIClient() {
 		super(AAIProperties.class);
 	}
-
+	
+	protected AAIClient(AAIVersion version) {
+		super(AAIProperties.class);
+	}
 	@Override
 	protected URI constructPath(GraphInventoryUri uri) {
 		
@@ -48,7 +52,7 @@ public abstract class AAIClient extends GraphInventoryClient {
 	}
 
 	@Override
-	protected RestClient createClient(GraphInventoryUri uri) {
+	public RestClient createClient(GraphInventoryUri uri) {
 		try {
 			return new AAIRestClient(getRestProperties(), constructPath(uri));
 		} catch (GraphInventoryUriComputationException | NotFoundException e) {
@@ -57,11 +61,18 @@ public abstract class AAIClient extends GraphInventoryClient {
 		}
 	}
 	
-	protected AAIVersion getVersion() {
+	@Override
+	public AAIVersion getVersion() {
 		if (version == null) {
 			return this.<AAIProperties>getRestProperties().getDefaultVersion();
 		} else {
 			return this.version;
 		}
+	}
+	
+
+	@Override
+	public String getGraphDBName() {
+		return "A&AI";
 	}
 }
