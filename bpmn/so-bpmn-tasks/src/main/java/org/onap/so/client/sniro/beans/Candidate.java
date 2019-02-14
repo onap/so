@@ -23,6 +23,8 @@ package org.onap.so.client.sniro.beans;
 import java.io.Serializable;
 import java.util.List;
 
+import org.onap.so.bpmn.servicedecomposition.homingobjects.CandidateType;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Candidate implements Serializable{

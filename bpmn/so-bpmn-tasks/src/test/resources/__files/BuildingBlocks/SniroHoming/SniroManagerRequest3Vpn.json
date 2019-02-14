@@ -42,9 +42,7 @@
         "modelInvariantId" : "testProxyModelInvariantUuid2"
       },
       "requiredCandidates" : [ {
-        "identifierType" : {
-          "name" : "vnfId"
-        },
+        "identifierType" : "vnfId",
         "identifiers" : [ "testVnfId" ]
       } ]
     }, {
@@ -66,9 +64,7 @@
         "modelInvariantId" : "testProxyModelInvariantUuid2"
       },
       "requiredCandidates" : [ {
-        "identifierType" : {
-          "name" : "vnfId"
-        },
+        "identifierType" : "vnfId",
         "identifiers" : [ "testVnfId" ]
       } ]
     }, {
@@ -90,9 +86,7 @@
         "modelInvariantId" : "testProxyModelInvariantUuid2"
       },
       "requiredCandidates" : [ {
-        "identifierType" : {
-          "name" : "vnfId"
-        },
+        "identifierType" : "vnfId",
         "identifiers" : [ "testVnfId" ]
       } ]
     } ],
