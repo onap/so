@@ -1,0 +1,10 @@
+{"network-policy":
+	[
+		{
+			"network-policy-id":"testNetworkPolicyId1",
+			"network-policy-fqdn":"DEF456",
+			"heat-stack-id":"InfraMSO-vSAMP12_14_1.0-VF-Base-1902-est01-GR_API-021119-1/9a3be28f-115d-4693-9b17-9291b98b46de",
+			"resource-version":"1550068250015"
+		}
+	]
+}

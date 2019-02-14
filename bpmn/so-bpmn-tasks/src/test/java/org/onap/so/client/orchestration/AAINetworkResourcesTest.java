@@ -56,6 +56,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
@@ -187,6 +188,22 @@ public class AAINetworkResourcesTest extends TestDataSetup{
 		if (oNetPolicy.isPresent()) {
 			org.onap.aai.domain.yang.NetworkPolicy networkPolicy = oNetPolicy.get();
 			assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.NetworkPolicy.class).get(), sameBeanAs(networkPolicy));
+		}
+	}
+	
+	@Test
+	public void getNetworkPoliciesTest() throws Exception {
+		final String content = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "queryAaiNetworkPolicies.json")));
+		AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
+		Optional<org.onap.aai.domain.yang.NetworkPolicies> oNetPolicies = Optional.empty();
+		AAIResourceUri netPoliciesUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY);
+		
+		doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
+		oNetPolicies = aaiNetworkResources.getNetworkPolicies(netPoliciesUri);
+		verify(MOCK_aaiResourcesClient, times(1)).get(any(AAIResourceUri.class));		
+		if (oNetPolicies.isPresent()) {
+			org.onap.aai.domain.yang.NetworkPolicies networkPolicies = oNetPolicies.get();
+			assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.NetworkPolicies.class).get(), sameBeanAs(networkPolicies));
 		}
 	}
 	
