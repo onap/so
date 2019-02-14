@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +25,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyObject;
@@ -31,6 +34,7 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -40,9 +44,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.Set;
-
+import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
@@ -89,8 +92,6 @@ import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.SubscriberInfo;
 import org.springframework.core.env.Environment;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WorkflowActionTest extends BaseTaskTest {
 	
@@ -1290,7 +1291,44 @@ public class WorkflowActionTest extends BaseTaskTest {
 		assertEquals("222",result.get(1).getResourceId());
 		assertEquals("111",result.get(2).getResourceId());
 	}
-	
+
+    @Test
+    public void findCatalogNetworkCollectionTest() {
+        Service service = new Service();
+        NetworkCollectionResourceCustomization networkCustomization = new NetworkCollectionResourceCustomization();
+        networkCustomization.setModelCustomizationUUID("123");
+        service.getCollectionResourceCustomizations().add(networkCustomization);
+        doReturn(networkCustomization).when(catalogDbClient).getNetworkCollectionResourceCustomizationByID("123");
+        CollectionResourceCustomization customization = workflowAction.findCatalogNetworkCollection(execution, service);
+        assertNotNull(customization);
+    }
+
+    @Test
+    public void findCatalogNetworkCollectionEmptyTest() {
+        Service service = new Service();
+        NetworkCollectionResourceCustomization networkCustomization = new NetworkCollectionResourceCustomization();
+        networkCustomization.setModelCustomizationUUID("123");
+        service.getCollectionResourceCustomizations().add(networkCustomization);
+        CollectionResourceCustomization customization = workflowAction.findCatalogNetworkCollection(execution, service);
+        assertNull(customization);
+    }
+
+    @Test
+    public void findCatalogNetworkCollectionMoreThanOneTest() {
+        Service service = new Service();
+        NetworkCollectionResourceCustomization networkCustomization1 = new NetworkCollectionResourceCustomization();
+        networkCustomization1.setModelCustomizationUUID("123");
+        NetworkCollectionResourceCustomization networkCustomization2 = new NetworkCollectionResourceCustomization();
+        networkCustomization2.setModelCustomizationUUID("321");
+        service.getCollectionResourceCustomizations().add(networkCustomization1);
+        service.getCollectionResourceCustomizations().add(networkCustomization2);
+        doReturn(networkCustomization1).when(catalogDbClient).getNetworkCollectionResourceCustomizationByID("123");
+        doReturn(networkCustomization2).when(catalogDbClient).getNetworkCollectionResourceCustomizationByID("321");
+        workflowAction.findCatalogNetworkCollection(execution, service);
+        assertEquals("Found multiple Network Collections in the Service model, only one per Service is supported.",
+            execution.getVariable("WorkflowActionErrorMessage"));
+    }
+
 	private List<OrchestrationFlow> createFlowList (String... flowNames){
 		List<OrchestrationFlow> result = new ArrayList<>();
 		for(String flowName : flowNames){
