@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -174,11 +176,13 @@ public class HeatStackAudit {
 		return vserversToAudit;
 	}
 
-	protected Optional<String> extractResourcePathFromHref(String href) {
-		URI uri;
+	protected Optional<String> extractResourcePathFromHref(String href) {		
 		try {
-			uri = new URI(href);			
-			return Optional.of(uri.getPath().replaceFirst("/v\\d+", "")+RESOURCES);			
+			Optional<String> stackPath = extractStackPathFromHref(href);
+			if (stackPath.isPresent()){						
+				return Optional.of(stackPath.get()+RESOURCES);
+			}else
+				return Optional.empty();
 		} catch (Exception e) {
 			logger.error("Error parsing URI", e);
 		}
@@ -186,10 +190,14 @@ public class HeatStackAudit {
 	}
 	
 	protected Optional<String> extractStackPathFromHref(String href) {
-		URI uri;
 		try {
-			uri = new URI(href);			
-			return Optional.of(uri.getPath().replaceFirst("/v\\d+", ""));			
+			URI uri = new URI(href);	
+			Pattern p = Pattern.compile("/stacks.*");
+			Matcher m = p.matcher(uri.getPath());
+			if (m.find()){						
+				return Optional.of(m.group());
+			}else
+				return Optional.empty();
 		} catch (Exception e) {
 			logger.error("Error parsing URI", e);
 		}
