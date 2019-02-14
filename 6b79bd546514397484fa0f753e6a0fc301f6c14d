@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9d8d3d57_f0cb7e95",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/dmaapproperties/DmaapPropertiesClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-02-14T13:14:51Z",
+      "side": 1,
+      "message": "remove avpn here",
+      "range": {
+        "startLine": 93,
+        "startChar": 11,
+        "endLine": 93,
+        "endChar": 30
+      },
+      "revId": "6b79bd546514397484fa0f753e6a0fc301f6c14d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "73c7b496_9ff1b3b3",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/dmaapproperties/DmaapPropertiesClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-02-14T13:14:51Z",
+      "side": 1,
+      "message": "remove avpn",
+      "revId": "6b79bd546514397484fa0f753e6a0fc301f6c14d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
