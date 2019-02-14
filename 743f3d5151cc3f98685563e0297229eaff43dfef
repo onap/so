@@ -16,6 +16,24 @@
       "revId": "743f3d5151cc3f98685563e0297229eaff43dfef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8235f93e_27a5da0c",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-02-14T17:53:36Z",
+      "side": 1,
+      "message": "Its been corrected to specification that comes from AAI schema but the comment was left out I will remove it",
+      "parentUuid": "70c4aa07_8377fa46",
+      "revId": "743f3d5151cc3f98685563e0297229eaff43dfef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
