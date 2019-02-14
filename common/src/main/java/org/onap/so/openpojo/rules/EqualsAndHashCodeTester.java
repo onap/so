@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -59,6 +61,10 @@ public class EqualsAndHashCodeTester implements Tester {
 		this.onlyDeclaredMethods = true;
 		return this;
 	}
+
+	// Marks sonar warnings about object being compared to itself as false positive
+	// https://sonar.onap.org/coding_rules#rule_key=squid%3AS1764
+	@SuppressWarnings("squid:S1764")
 	@Override
 	public void run(PojoClass pojoClass) {
 		Class<?> clazz = pojoClass.getClazz();
@@ -104,9 +110,9 @@ public class EqualsAndHashCodeTester implements Tester {
 			
 			Affirm.affirmTrue("Equals test failed for [" + classInstanceOne.getClass().getName() + "]", classInstanceOne.equals(classInstanceTwo));
 			
-			Affirm.affirmTrue("Equals test failed for [" + classInstanceOne.getClass().getName() + "]", classInstanceOne.equals(
-					classInstanceOne));
-			
+			Affirm.affirmTrue("Expected true for comparison of the same references [" + classInstanceOne.getClass().getName() + "]",
+				classInstanceOne.equals(classInstanceOne));
+
 			Affirm.affirmTrue("HashCode test failed for [" + classInstanceOne.getClass().getName() + "]", classInstanceOne.hashCode() == classInstanceTwo.hashCode());
 			
 			Affirm.affirmFalse("Expected false for comparison of two unlike objects", classInstanceOne.equals("test"));
