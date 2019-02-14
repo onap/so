@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "b5eb8588_fec28685",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1258,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-02-14T17:53:36Z",
+      "side": 1,
+      "message": "Hi Eric having a separate flow would be ideal and the reason is that you may want to trigger the synchronization of the inventory with cloud without going through the creation again. For example in some of the openstack VMs part of the same heat stack moving to different set of computes would require inventory update.",
+      "parentUuid": "a20c0069_0b12545b",
+      "revId": "a5db73ef8c238dd5382fcda670b5fb988101978f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cd268fbc_6b444ba4",
         "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/aai/client/ActiveAndAvailableInventoryClient.java",
         "patchSetId": 4
