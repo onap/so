@@ -31,6 +31,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
@@ -46,6 +47,7 @@ import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.springframework.core.env.Environment;
 
 public class WorkflowActionBBTasksTest extends BaseTaskTest {
 
@@ -63,6 +65,9 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	InfraActiveRequests reqMock;
 	
 	private DelegateExecution execution;
+	
+	@Mock
+	protected Environment environment;
 	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -287,6 +292,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		String reqId = "reqId123";
 		execution.setVariable("mso-request-id", reqId);
 		doNothing().when(workflowActionBBFailure).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
+		doReturn("6").when(environment).getProperty("mso.rainyDay.maxRetries");
 		execution.setVariable("handlingCode","Retry");
 		execution.setVariable("retryCount", 1);
 		execution.setVariable("gCurrentSequence",1);
@@ -294,6 +300,25 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
 		workflowActionBBTasks.checkRetryStatus(execution);
 		assertEquals(0,execution.getVariable("gCurrentSequence"));
+	}
+	
+	@Test
+	public void checkRetryStatusTestExceededMaxRetries(){
+		String reqId = "reqId123";
+		execution.setVariable("mso-request-id", reqId);
+		doNothing().when(workflowActionBBFailure).updateRequestErrorStatusMessage(isA(DelegateExecution.class));
+		doReturn("6").when(environment).getProperty("mso.rainyDay.maxRetries");
+		execution.setVariable("handlingCode","Retry");
+		execution.setVariable("retryCount", 6);
+		execution.setVariable("gCurrentSequence",1);
+		InfraActiveRequests req = new InfraActiveRequests();
+		doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
+		try{
+			workflowActionBBTasks.checkRetryStatus(execution);
+		} catch (BpmnError e) {
+			WorkflowException exception = (WorkflowException) execution.getVariable("WorkflowException");
+			assertEquals("Exceeded maximum retries. Ending flow with status Abort",exception.getErrorMessage());
+		}
 	}
 	
 	@Test
