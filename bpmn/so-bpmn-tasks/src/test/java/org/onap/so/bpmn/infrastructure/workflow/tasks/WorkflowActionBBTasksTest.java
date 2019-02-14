@@ -96,7 +96,9 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		execution.setVariable("flowsToExecute", flowsToExecute);
 		workflowActionBBTasks.selectBB(execution);
 		boolean success = (boolean) execution.getVariable("completed");
+		int currentSequence = (int) execution.getVariable("gCurrentSequence");
 		assertEquals(true,success);
+		assertEquals(1,currentSequence);
 	}
 	
 	@Test
@@ -115,7 +117,9 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		execution.setVariable("flowsToExecute", flowsToExecute);
 		workflowActionBBTasks.selectBB(execution);
 		boolean success = (boolean) execution.getVariable("completed");
+		int currentSequence = (int) execution.getVariable("gCurrentSequence");
 		assertEquals(false,success);
+		assertEquals(1,currentSequence);
 	}
 	
 	@Test

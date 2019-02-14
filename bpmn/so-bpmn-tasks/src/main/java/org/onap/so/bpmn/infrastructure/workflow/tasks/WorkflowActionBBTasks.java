@@ -89,8 +89,8 @@ public class WorkflowActionBBTasks {
 			execution.setVariable("completed", true);
 		} else {
 			execution.setVariable("completed", false);
-			execution.setVariable(G_CURRENT_SEQUENCE, currentSequence);
 		}
+		execution.setVariable(G_CURRENT_SEQUENCE, currentSequence);
 	}
 	
 	public void updateFlowStatistics(DelegateExecution execution) {
