@@ -1220,16 +1220,32 @@ public class ToscaResourceInstaller {
 			crInstanceGroupCustomization.setModelCustomizationUUID(
 					networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 		
-			String quantityName = instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME);
-			String fixedQuantity = quantityName.replace("NetworkCollection", "Fixed");
-			if (toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
-					fixedQuantity + "_quantity") != null) {
-
-				crInstanceGroupCustomization.setSubInterfaceNetworkQuantity(Integer.parseInt(
-						toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
-								fixedQuantity + "_quantity"))); 
+			// Loop through the template policy to find the subinterface_network_quantity property name.  Then extract the value for it.
+			List<Policy> policyList = toscaResourceStructure.getSdcCsarHelper().getPoliciesOfOriginOfNodeTemplateByToscaPolicyType(networkNodeTemplate, "org.openecomp.policies.scaling.Fixed");
+			
+			if(policyList != null){
+				for(Policy policy : policyList){
+					for(String policyNetworkCollection : policy.getTargets()){
+						
+						if(policyNetworkCollection.equalsIgnoreCase(group.getName())){
+						
+							Map<String, Object> propMap = policy.getPolicyProperties();
+					
+							if(propMap.get("quantity") != null){
+																
+								String quantity = toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate, getPropertyInput(propMap.get("quantity").toString())); 
+					
+								if(quantity != null){
+									crInstanceGroupCustomization.setSubInterfaceNetworkQuantity(Integer.parseInt(quantity));
+								}
+												
+						    }
+					
+				       }
+				    }
+			    }	
 			}
-		
+					
 			crInstanceGroupCustomization.setDescription(
 					toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
 							instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME)
@@ -1246,7 +1262,6 @@ public class ToscaResourceInstaller {
 
 			networkInstanceGroupList.add(networkInstanceGroup);
 
-		//}
 
 		toscaResourceStructure.setCatalogNetworkInstanceGroup(networkInstanceGroupList);
 
@@ -2030,6 +2045,20 @@ public class ToscaResourceInstaller {
 		
 		return createVNFName(vfModuleStructure.getParentVfResource()) + "::"
 				+ vfModuleStructure.getVfModuleMetadata().getVfModuleModelName();
+	}
+	
+	protected String getPropertyInput(String propertyName){
+	
+		String inputName = new String();
+		
+		if (propertyName != null) { 
+			int getInputIndex = propertyName.indexOf("{get_input="); 
+			if (getInputIndex > -1) { 
+				inputName = propertyName.substring(getInputIndex+11, propertyName.length()-1); 
+			} 
+		}
+		
+		return inputName;
 	}
 	
 	
