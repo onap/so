@@ -1,0 +1,10 @@
+{"network-policy":
+	[
+		{
+			"network-policy-id":"1ac71fb8-ad43-4e16-9459-c3f372b8236d",
+			"network-policy-fqdn":"default-domain:enpx-26177-T-E2E-rdm6a:enpx-26177-T-E2E-rdm6a_TIPXH-DBEV-VIF-TDAT0_net_1",
+			"heat-stack-id":"InfraMSO-vSAMP12_14_1.0-VF-Base-1902-est01-GR_API-021119-1/9a3be28f-115d-4693-9b17-9291b98b46de",
+			"resource-version":"1550068250015"
+		}
+	]
+}

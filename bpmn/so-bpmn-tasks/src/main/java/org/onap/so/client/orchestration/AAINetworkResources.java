@@ -22,6 +22,7 @@ package org.onap.so.client.orchestration;
 
 import java.util.Optional;
 
+import org.onap.aai.domain.yang.NetworkPolicies;
 import org.onap.aai.domain.yang.NetworkPolicy;
 import org.onap.aai.domain.yang.RouteTableReference;
 import org.onap.aai.domain.yang.VpnBinding;
@@ -84,6 +85,10 @@ public class AAINetworkResources {
 
 	public Optional<NetworkPolicy> getNetworkPolicy(AAIResourceUri netPolicyUri) {
 		return injectionHelper.getAaiClient().get(netPolicyUri).asBean(NetworkPolicy.class);
+	}
+	
+	public Optional<NetworkPolicies> getNetworkPolicies(AAIResourceUri netPoliciesUri) {
+		return injectionHelper.getAaiClient().get(netPoliciesUri).asBean(NetworkPolicies.class);
 	}
 	
 	public Optional<org.onap.aai.domain.yang.Subnet> getSubnet(AAIResourceUri subnetUri) {

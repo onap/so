@@ -21,15 +21,16 @@
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+import org.onap.aai.domain.yang.NetworkPolicies;
+import org.onap.aai.domain.yang.NetworkPolicy;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
@@ -169,18 +170,22 @@ public class AAIDeleteTasks {
 						String fqdn = fqdnList[i];
 						AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY);
 						uri.queryParam(NETWORK_POLICY_FQDN_PARAM, fqdn);
-						Optional<org.onap.aai.domain.yang.NetworkPolicy> oNetPolicy = aaiNetworkResources.getNetworkPolicy(uri);
-						if(oNetPolicy.isPresent()) {
-							String networkPolicyId = oNetPolicy.get().getNetworkPolicyId();
-							msoLogger.debug("Deleting network-policy with network-policy-id " + networkPolicyId);							
-							
-							aaiNetworkResources.deleteNetworkPolicy(networkPolicyId);
+						Optional<NetworkPolicies> oNetPolicies = aaiNetworkResources.getNetworkPolicies(uri);
+						if(oNetPolicies.isPresent()) {
+							NetworkPolicies networkPolicies = oNetPolicies.get();
+							List<NetworkPolicy> networkPolicyList = networkPolicies.getNetworkPolicy();
+							if (networkPolicyList != null && !networkPolicyList.isEmpty()) {
+								NetworkPolicy networkPolicy = networkPolicyList.get(0);
+								String networkPolicyId = networkPolicy.getNetworkPolicyId();
+								msoLogger.debug("Deleting network-policy with network-policy-id " + networkPolicyId);								
+								aaiNetworkResources.deleteNetworkPolicy(networkPolicyId);								
+							}							
 						}
 					}
 				}
 			}			
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}		
+		}	
 	}
 }

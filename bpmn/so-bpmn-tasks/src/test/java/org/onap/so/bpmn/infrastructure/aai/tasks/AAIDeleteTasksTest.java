@@ -30,6 +30,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -39,6 +41,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
+import org.onap.aai.domain.yang.NetworkPolicies;
 import org.onap.aai.domain.yang.NetworkPolicy;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -50,11 +53,13 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 
 
 public class AAIDeleteTasksTest extends BaseTaskTest {
+	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
 	
 	@InjectMocks
 	private AAIDeleteTasks aaiDeleteTasks = new AAIDeleteTasks();
@@ -191,11 +196,14 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 	@Test
 	public void deleteNetworkPolicyNeedToDeleteAllTest() throws Exception {		
 		execution.setVariable("contrailNetworkPolicyFqdnList", "ABC123,DEF456");
-		NetworkPolicy networkPolicy0 = new NetworkPolicy();
-		networkPolicy0.setNetworkPolicyId("testNetworkPolicyId0");
-		NetworkPolicy networkPolicy1 = new NetworkPolicy();
-		networkPolicy1.setNetworkPolicyId("testNetworkPolicyId1");
-		doReturn(Optional.of(networkPolicy0),Optional.of(networkPolicy1)).when(aaiNetworkResources).getNetworkPolicy(any(AAIResourceUri.class));
+		final String content0 = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "queryAaiNetworkPoliciesForDelete0.json")));
+		AAIResultWrapper aaiResultWrapper0 = new AAIResultWrapper(content0);
+		NetworkPolicies networkPolicies0 = aaiResultWrapper0.asBean(NetworkPolicies.class).get();
+		final String content1 = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "queryAaiNetworkPoliciesForDelete1.json")));
+		AAIResultWrapper aaiResultWrapper1 = new AAIResultWrapper(content1);
+		NetworkPolicies networkPolicies1 = aaiResultWrapper1.asBean(NetworkPolicies.class).get();
+		
+		doReturn(Optional.of(networkPolicies0),Optional.of(networkPolicies1)).when(aaiNetworkResources).getNetworkPolicies(any(AAIResourceUri.class));
 		doNothing().when(aaiNetworkResources).deleteNetworkPolicy(any(String.class));
 		aaiDeleteTasks.deleteNetworkPolicies(execution);
 		verify(aaiNetworkResources, times(2)).deleteNetworkPolicy(stringCaptor.capture());
@@ -206,8 +214,8 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 	@Test
 	public void deleteNetworkPolicyNeedToDeleteNoneTest() throws Exception {		
 		execution.setVariable("contrailNetworkPolicyFqdnList", "ABC123");
-		Optional<NetworkPolicy> networkPolicy = Optional.empty();		
-		doReturn(networkPolicy).when(aaiNetworkResources).getNetworkPolicy(any(AAIResourceUri.class));
+		Optional<NetworkPolicies> networkPolicies = Optional.empty();		
+		doReturn(networkPolicies).when(aaiNetworkResources).getNetworkPolicies(any(AAIResourceUri.class));
 		aaiDeleteTasks.deleteNetworkPolicies(execution);
 		verify(aaiNetworkResources, times(0)).deleteNetworkPolicy(any(String.class));
 	}
