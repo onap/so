@@ -81,6 +81,7 @@ import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
 import org.onap.so.serviceinstancebeans.VfModules;
 import org.onap.so.serviceinstancebeans.Vnfs;
+import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.UUIDChecker;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +112,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1176,7 +1178,7 @@ public class ServiceInstances {
     	String requestId = duplicateRecord.getRequestId();
     	String path = env.getProperty("mso.camunda.rest.history.uri") + requestId;
     	String targetUrl = env.getProperty("mso.camundaURL") + path;
-    	HttpHeaders headers = setHeaders(env.getProperty("mso.camundaAuth")); 
+    	HttpHeaders headers = setHeaders(env.getRequiredProperty("mso.camundaAuth"), env.getRequiredProperty("mso.msoKey")); 
     	HttpEntity<?> requestEntity = new HttpEntity<>(headers);
     	ResponseEntity<List<HistoricProcessInstanceEntity>> response = null;
     	try{
@@ -1200,12 +1202,19 @@ public class ServiceInstances {
     	}	
 		return false;
 	}
-    private HttpHeaders setHeaders(String auth) {
+    private HttpHeaders setHeaders(String auth, String msoKey) {
 		HttpHeaders headers = new HttpHeaders();
 		List<org.springframework.http.MediaType> acceptableMediaTypes = new ArrayList<>();
 		acceptableMediaTypes.add(org.springframework.http.MediaType.APPLICATION_JSON);
 		headers.setAccept(acceptableMediaTypes);
-		headers.add(HttpHeaders.AUTHORIZATION, auth);
+       	try {
+       		String userCredentials = CryptoUtils.decrypt(auth, msoKey);
+       		if(userCredentials != null) {
+       			headers.add(HttpHeaders.AUTHORIZATION, userCredentials);
+       		}
+        } catch(GeneralSecurityException e) {
+                msoLogger.error("Security exception", e);
+        }
 		return headers;
 	}
 
