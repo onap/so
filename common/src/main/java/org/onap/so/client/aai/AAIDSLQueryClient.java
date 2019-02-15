@@ -22,9 +22,10 @@ package org.onap.so.client.aai;
 
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryQueryClient;
+import org.onap.so.client.graphinventory.entities.DSLQuery;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
-public class AAIDSLQueryClient extends GraphInventoryQueryClient<AAIDSLQueryClient> {
+public class AAIDSLQueryClient extends GraphInventoryQueryClient<AAIDSLQueryClient, DSLQuery> {
 
 	public AAIDSLQueryClient() {
 		super(new AAIClient());

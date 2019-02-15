@@ -25,7 +25,7 @@ import java.util.Optional;
 import org.onap.so.client.aai.entities.CustomQuery;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
-public abstract class GraphInventoryQueryClient<S> {
+public abstract class GraphInventoryQueryClient<S, I> {
 
 	private Optional<String> depth = Optional.empty();
 	private boolean nodesOnly = false;
@@ -38,7 +38,7 @@ public abstract class GraphInventoryQueryClient<S> {
 	
 	protected abstract GraphInventoryUri getQueryUri();
 	
-	public String query(Format format, CustomQuery query) {
+	public String query(Format format, I query) {
 		return client.createClient(setupQueryParams(getQueryUri().queryParam("format", format.toString()))).put(query, String.class);
 	}
 	
