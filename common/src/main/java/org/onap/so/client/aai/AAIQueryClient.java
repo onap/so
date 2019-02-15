@@ -20,11 +20,12 @@
 
 package org.onap.so.client.aai;
 
+import org.onap.so.client.aai.entities.CustomQuery;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryQueryClient;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
-public class AAIQueryClient extends GraphInventoryQueryClient<AAIQueryClient> {
+public class AAIQueryClient extends GraphInventoryQueryClient<AAIQueryClient, CustomQuery> {
 
 	public AAIQueryClient() {
 		super(new AAIClient());
