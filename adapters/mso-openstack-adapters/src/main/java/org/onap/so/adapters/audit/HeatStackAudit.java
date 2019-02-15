@@ -65,10 +65,14 @@ public class HeatStackAudit {
 					.filter(p -> "OS::Nova::Server".equals(p.getType())).collect(Collectors.toList());
 			List<Resource> resourceGroups = resources.getList().stream()
 					.filter(p -> "OS::Heat::ResourceGroup".equals(p.getType()) && p.getName().contains("subinterfaces")).collect(Collectors.toList());
-			Set<Vserver> vserversToAudit = createVserverSet(resources, novaResources);
-			Set<Vserver> vserversWithSubInterfaces = processSubInterfaces(cloudRegion, tenantId, resourceGroups,
-					vserversToAudit); 
-			return auditVservers.auditVservers(vserversWithSubInterfaces, tenantId, cloudOwner, cloudRegion);
+			if(novaResources.isEmpty())
+				return true;
+			else{				
+				Set<Vserver> vserversToAudit = createVserverSet(resources, novaResources);
+				Set<Vserver> vserversWithSubInterfaces = processSubInterfaces(cloudRegion, tenantId, resourceGroups,
+					vserversToAudit);
+				return auditVservers.auditVservers(vserversWithSubInterfaces, tenantId, cloudOwner, cloudRegion);
+			}
 		} catch (Exception e) {
 			logger.error("Error during auditing stack resources", e);
 			return false;

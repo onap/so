@@ -196,6 +196,17 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		JSONAssert.assertEquals(expectedValue, actualValue, false);
 	}
 	
+	@Test
+	public void auditHeatStackNoServers_Test() throws Exception{
+
+		
+		Resources getResource = objectMapper.readValue(new File("src/test/resources/Service1ResourceGroupResponse.json"), Resources.class);
+		doReturn(getResource).when(msoHeatUtilsMock).queryStackResources(cloudRegion,	tenantId, "heatStackName");
+		
+		boolean actual = heatStackAudit.auditHeatStack(cloudRegion, "cloudOwner", tenantId, "heatStackName");
+		assertEquals(true, actual);
+	}
+	
 
 	@Test
 	public void findInterfaceInformation_Test(){
