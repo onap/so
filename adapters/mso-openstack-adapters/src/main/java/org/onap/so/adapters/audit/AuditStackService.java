@@ -60,7 +60,7 @@ public class AuditStackService {
 				auth);
 		ExternalTaskClient client = ExternalTaskClient.create()
 				.baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(5).addInterceptor(interceptor)
-				.asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(0, 0, 0)).build();
+				.asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(5000, 2, 30000)).build();
 		client.subscribe("InventoryAudit").lockDuration(5000)
 				.handler(auditStack::executeExternalTask).open();
 	}

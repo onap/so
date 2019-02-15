@@ -24,9 +24,11 @@ import java.util.Collections;
 
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.audit.beans.AuditInventory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -49,6 +51,7 @@ public class AuditStackServiceData {
 
 	protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService){
 		AuditInventory auditInventory = externalTask.getVariable("auditInventory");
+		setupMDC(externalTask);
 		boolean success = false;
 		try {
 			logger.info("Executing External Task Audit Inventory, Retry Number: {} \n {}", auditInventory,externalTask.getRetries());
@@ -77,6 +80,11 @@ public class AuditStackServiceData {
 		}
 		
 		
+	}
+	private void setupMDC(ExternalTask externalTask) {
+		String msoRequestId = (String)externalTask.getVariable("mso-request-id");
+		if(msoRequestId != null && !msoRequestId.isEmpty())
+			MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, msoRequestId);
 	}
 	protected long calculateRetryDelay(int currentRetries){
 		int retrySequence = RETRY_SEQUENCE.length - currentRetries;

@@ -1,0 +1,25 @@
+{
+    "resources": [
+        {
+            "resource_name": "OAMFW_SECURITY_GROUP",
+            "links": [
+                {
+                    "href": "http://orchestration.com:443/v1/872f331350c54e59991a8de2cbffb40c/stacks/zauk51bfrwl03_base_NC_01/08c898a4-ba71-4365-9681-993d4129164a/resources/OAMFW_SECURITY_GROUP",
+                    "rel": "self"
+                },
+                {
+                    "href": "http://orchestration.com:443/v1/872f331350c54e59991a8de2cbffb40c/stacks/zauk51bfrwl03_base_NC_01/08c898a4-ba71-4365-9681-993d4129164a",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "OAMFW_SECURITY_GROUP",
+            "creation_time": "2019-02-13T21:17:03Z",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-02-13T21:17:03Z",
+            "required_by": [],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "420833ff-2733-4043-868c-2f2d5bee8f93",
+            "resource_type": "OS::Neutron::SecurityGroup"
+        }
+    ]
+}
