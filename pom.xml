@@ -65,8 +65,8 @@
 		<siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
 		<cxf.version>3.2.6</cxf.version>
 		<jax.ws.rs>2.1</jax.ws.rs>
-		<springboot.version>2.0.5.RELEASE</springboot.version>	
-		<camunda.springboot.version>3.0.0</camunda.springboot.version>
+		<springboot.version>2.0.5.RELEASE</springboot.version>
+		<camunda.springboot.version>3.2.0</camunda.springboot.version>
 	</properties>
 	<distributionManagement>
 		<repository>
@@ -397,13 +397,13 @@
 						<skip>${docker.skip}</skip>
 						<skipBuild>${docker.skip.build}</skipBuild>
 						<skipPush>${docker.skip.push}</skipPush>
-						<dockerHost>${docker.newHost}</dockerHost> <!-- 1. Update address to your local docker VM. 2. Add IP to your NO_PROXY 
+						<dockerHost>${docker.newHost}</dockerHost> <!-- 1. Update address to your local docker VM. 2. Add IP to your NO_PROXY
 							environment variable -->
-						<certPath>${docker.host.cert.path}</certPath><!-- Add -Ddocker.host.cert.pat="path 
+						<certPath>${docker.host.cert.path}</certPath><!-- Add -Ddocker.host.cert.pat="path
 							to your local certs directory" to maven build command -->
-						<pushRegistry>${dockerPushRepo}</pushRegistry> <!-- Update .m2/settings.xml Add server id settings.dockerRepository, username, 
+						<pushRegistry>${dockerPushRepo}</pushRegistry> <!-- Update .m2/settings.xml Add server id settings.dockerRepository, username,
 							and password -->
-						<pullRegistry>${dockerPullRepo}</pullRegistry> <!-- If docker repo is not public. Update .m2/settings.xml Add server id 
+						<pullRegistry>${dockerPullRepo}</pullRegistry> <!-- If docker repo is not public. Update .m2/settings.xml Add server id
 							settings.dockerRepository, username, and password -->
 						<images>
 							<image>
@@ -522,27 +522,27 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>			
+			<artifactId>jackson-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jaxb-annotations</artifactId>			
+			<artifactId>jackson-module-jaxb-annotations</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>			
+			<artifactId>jackson-databind</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>			
+			<artifactId>jackson-annotations</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-base</artifactId>			
+			<artifactId>jackson-jaxrs-base</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-json-provider</artifactId>			
+			<artifactId>jackson-jaxrs-json-provider</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
@@ -573,7 +573,7 @@
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>		
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -666,7 +666,7 @@
 	<dependencyManagement>
 		<dependencies>
 			<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
-			<!-- force use of version 4.5 everywhere in transient deps, aligned on 
+			<!-- force use of version 4.5 everywhere in transient deps, aligned on
 				WildFly 10 version -->
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
@@ -685,7 +685,7 @@
 				<artifactId>commons-io</artifactId>
 				<version>2.5</version>
 				<scope>compile</scope>
-			</dependency>		
+			</dependency>
 			<dependency>
 				<groupId>com.sun.xml.fastinfoset</groupId>
 				<artifactId>FastInfoset</artifactId>
