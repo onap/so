@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,12 +22,6 @@
 
 package org.onap.so;
 
-import org.apache.http.HttpStatus;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -35,6 +31,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import org.apache.http.HttpStatus;
+
 public class StubOpenStack {
 
     public static void mockOpenStackResponseAccess(int port) throws IOException {
@@ -43,9 +44,25 @@ public class StubOpenStack {
                 .withStatus(HttpStatus.SC_OK)));
     }
 
+    public static void mockOpenStackResponseUnauthorized(int port) throws IOException {
+        stubFor(
+            post(urlPathEqualTo("/v2.0/tokens"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                    .withBody(getBodyFromFile("OpenstackResponse_Access.json", port, "/mockPublicUrl"))
+                    .withStatus(HttpStatus.SC_UNAUTHORIZED)));
+    }
+
     public static void mockOpenStackDelete(String id) {
         stubFor(delete(urlMatching("/mockPublicUrl/stacks/" + id)).willReturn(aResponse()
                 .withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
+    }
+
+    public static void mockOpenStackGet(String id) {
+        stubFor(
+            get(urlPathEqualTo("/mockPublicUrl/stacks/" + id))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                    .withBodyFile("OpenstackResponse_Stack_Created.json")
+                    .withStatus(HttpStatus.SC_OK)));
     }
 
 
