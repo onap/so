@@ -32,7 +32,6 @@ import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.SriovVf;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
-import org.onap.so.logger.MsoLogger;
 import org.openstack4j.model.compute.Server;
 
 /**
@@ -40,8 +39,6 @@ import org.openstack4j.model.compute.Server;
  * transforming into required objects.
  */
 public class AaiHelper {
-
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, AaiHelper.class);
 
     /**
      * Build vserver relationship object to entities: pserver, vf-module, image, flavor

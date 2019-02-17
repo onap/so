@@ -125,9 +125,4 @@ public interface HeatBridgeApi {
      * @throws HeatBridgeException when failing to add openstack resource PoJos to AAI
      */
     void submitToAai() throws HeatBridgeException;
-
-    /**
-     * Rollback Openstack resources from AAI
-     */
-    boolean rollbackFromAai();
 }
