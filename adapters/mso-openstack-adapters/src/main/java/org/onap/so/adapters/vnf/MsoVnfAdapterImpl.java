@@ -35,9 +35,20 @@ import java.util.concurrent.TimeUnit;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.onap.so.adapters.valet.GenericValetResponse;
+import org.onap.so.adapters.valet.ValetClient;
+import org.onap.so.adapters.valet.beans.HeatRequest;
+import org.onap.so.adapters.valet.beans.ValetConfirmResponse;
+import org.onap.so.adapters.valet.beans.ValetCreateResponse;
+import org.onap.so.adapters.valet.beans.ValetDeleteResponse;
+import org.onap.so.adapters.valet.beans.ValetRollbackResponse;
+import org.onap.so.adapters.valet.beans.ValetStatus;
+import org.onap.so.adapters.valet.beans.ValetUpdateResponse;
 import org.onap.so.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
+import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
@@ -54,10 +65,8 @@ import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.heatbridge.HeatBridgeApi;
 import org.onap.so.heatbridge.HeatBridgeImpl;
-import org.onap.so.heatbridge.aai.api.ActiveAndAvailableInventoryImpl;
 import org.onap.so.heatbridge.openstack.api.OpenstackClient;
 import org.onap.so.logger.MessageEnum;
-
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
@@ -70,15 +79,10 @@ import org.onap.so.openstack.exceptions.MsoHeatNotFoundException;
 import org.onap.so.openstack.utils.MsoHeatEnvironmentEntry;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.onap.so.openstack.utils.MsoHeatUtilsWithUpdate;
-import org.onap.so.adapters.valet.ValetClient;
-import org.onap.so.adapters.valet.beans.HeatRequest;
-import org.onap.so.adapters.valet.beans.ValetConfirmResponse;
-import org.onap.so.adapters.valet.beans.ValetCreateResponse;
-import org.onap.so.adapters.valet.beans.ValetDeleteResponse;
-import org.onap.so.adapters.valet.beans.ValetRollbackResponse;
-import org.onap.so.adapters.valet.beans.ValetStatus;
-import org.onap.so.adapters.valet.beans.ValetUpdateResponse;
-import org.onap.so.adapters.valet.GenericValetResponse;
+import org.openstack4j.model.compute.Flavor;
+import org.openstack4j.model.compute.Image;
+import org.openstack4j.model.compute.Server;
+import org.openstack4j.model.heat.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -87,11 +91,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openstack4j.model.compute.Flavor;
-import org.openstack4j.model.compute.Image;
-import org.openstack4j.model.compute.Server;
-import org.openstack4j.model.heat.Resource;
-import org.apache.commons.collections.CollectionUtils;
 
 @WebService(serviceName = "VnfAdapter", endpointInterface = "org.onap.so.adapters.vnf.MsoVnfAdapter", targetNamespace = "http://org.onap.so/vnf")
 @Component
@@ -528,8 +527,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             String cloudOwner = "CloudOwner";//cloud owner needs to come from bpmn-adapter
             List<String> oobMgtNetNames = new ArrayList<>();
 
-            HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(cloudIdentity,
-                new ActiveAndAvailableInventoryImpl(), cloudOwner, cloudSiteId, tenantId, new ArrayList<>());
+            HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
+                 cloudOwner, cloudSiteId, tenantId);
 
             OpenstackClient openstackClient = heatBridgeClient.authenticate();
             List<Resource> stackResources = heatBridgeClient.queryNestedHeatStackResources(heatStackId);

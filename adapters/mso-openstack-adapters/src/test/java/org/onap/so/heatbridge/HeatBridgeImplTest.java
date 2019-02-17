@@ -18,29 +18,14 @@ package org.onap.so.heatbridge;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Ignore;
-import org.onap.so.db.catalog.beans.CloudIdentity;
-import org.onap.so.heatbridge.actions.AddFlavor;
-import org.onap.so.heatbridge.actions.AddImage;
-import org.onap.so.heatbridge.actions.AddLInterfaceToVserver;
-import org.onap.so.heatbridge.actions.AddVserver;
-import org.onap.so.heatbridge.constants.HeatBridgeConstants;
-import org.onap.so.heatbridge.aai.api.ActiveAndAvailableInventoryException;
-import org.onap.so.heatbridge.aai.api.ActiveAndAvailableInventory;
-import org.onap.so.heatbridge.actions.AaiAction;
-import org.onap.so.heatbridge.openstack.api.OpenstackClient;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -49,17 +34,30 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.PInterface;
 import org.onap.aai.domain.yang.SriovPf;
 import org.onap.aai.domain.yang.Vserver;
+import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.AAISingleTransactionClient;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.client.graphinventory.exceptions.BulkProcessFailed;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.heatbridge.constants.HeatBridgeConstants;
+import org.onap.so.heatbridge.openstack.api.OpenstackClient;
 import org.onap.so.heatbridge.openstack.api.OpenstackClientException;
 import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.Image;
@@ -72,32 +70,35 @@ import org.openstack4j.model.network.Port;
 import org.openstack4j.openstack.heat.domain.HeatResource;
 import org.openstack4j.openstack.heat.domain.HeatResource.Resources;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
+
+
+@RunWith(MockitoJUnitRunner.class)
 public class HeatBridgeImplTest {
 
     private static final String CLOUD_OWNER = "CloudOwner";
     private static final String REGION_ID = "RegionOne";
     private static final String TENANT_ID = "7320ec4a5b9d4589ba7c4412ccfd290f";
-    private List<AaiAction<ActiveAndAvailableInventory>> aaiActions = new ArrayList<>();
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Mock
     private OpenstackClient osClient;
 
-    @Mock
-    private ActiveAndAvailableInventory aaiClient;
-
     private CloudIdentity cloudIdentity = new CloudIdentity();
+    
+    @Mock
+    private AAIResourcesClient resourcesClient;
+    @Mock
+    private AAISingleTransactionClient transaction;
 
-    private HeatBridgeImpl heatbridge;
-
-
-
+    private HeatBridgeImpl heatbridge; 
+    
     @Before
-    public void setUp() throws HeatBridgeException, OpenstackClientException {
-        MockitoAnnotations.initMocks(this);
+    public void setUp() throws HeatBridgeException, OpenstackClientException, BulkProcessFailed {
 
-        heatbridge = new HeatBridgeImpl(cloudIdentity, aaiClient, CLOUD_OWNER, REGION_ID, TENANT_ID, aaiActions);
-
+        when(resourcesClient.beginSingleTransaction()).thenReturn(transaction);
+        heatbridge = new HeatBridgeImpl(resourcesClient, cloudIdentity, CLOUD_OWNER, REGION_ID, TENANT_ID);
     }
 
     @Ignore
@@ -201,15 +202,18 @@ public class HeatBridgeImplTest {
     }
 
     @Test
-    public void testUpdateVserversToAai() throws ActiveAndAvailableInventoryException, HeatBridgeException {
+    public void testUpdateVserversToAai() throws HeatBridgeException {
         // Arrange
         Server server1 = mock(Server.class);
+        
+        when(server1.getId()).thenReturn("test-server1-id");
         when(server1.getHypervisorHostname()).thenReturn("test-hypervisor");
         when(server1.getName()).thenReturn("test-server1-name");
         when(server1.getStatus()).thenReturn(Status.ACTIVE);
         when(server1.getLinks()).thenReturn(new ArrayList<>());
 
         Server server2 = mock(Server.class);
+        when(server2.getId()).thenReturn("test-server2-id");
         when(server2.getHypervisorHostname()).thenReturn("test-hypervisor");
         when(server2.getName()).thenReturn("test-server2-name");
         when(server2.getStatus()).thenReturn(Status.ACTIVE);
@@ -221,29 +225,30 @@ public class HeatBridgeImplTest {
         when(server1.getImage()).thenReturn(image);
         when(server2.getImage()).thenReturn(image);
         when(image.getId()).thenReturn("test-image-id");
-        when(image.getName()).thenReturn("test-image-name");
-        when(image.getLinks()).thenReturn(new ArrayList<>());
 
         Flavor flavor = mock(Flavor.class);
         when(server1.getFlavor()).thenReturn(flavor);
         when(server2.getFlavor()).thenReturn(flavor);
         when(flavor.getId()).thenReturn("test-flavor-id");
-        when(flavor.getName()).thenReturn("test-flavor-name");
-        when(flavor.getLinks()).thenReturn(new ArrayList<>());
 
-        Mockito.doNothing().when(aaiClient)
-            .addVserver(any(Vserver.class), eq(CLOUD_OWNER), eq(REGION_ID), eq(TENANT_ID));
 
         // Act
         heatbridge.buildAddVserversToAaiAction("test-genericVnf-id", "test-vfModule-id", servers);
-
+        
         // Assert
-        assertTrue(aaiActions.size() == 2);
-        assertTrue(aaiActions.get(0).getClass().equals(AddVserver.class));
+        ArgumentCaptor<AAIResourceUri> captor = ArgumentCaptor.forClass(AAIResourceUri.class);
+        verify(transaction, times(2)).create(captor.capture(), any(Vserver.class));
+        
+        List<AAIResourceUri> uris = captor.getAllValues();
+        assertEquals(AAIUriFactory.createResourceUri(
+                AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID, server1.getId()), uris.get(0));
+        assertEquals(AAIUriFactory.createResourceUri(
+                AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID, server2.getId()), uris.get(1));
+
     }
 
     @Test
-    public void testUpdateImagesToAai() throws ActiveAndAvailableInventoryException, HeatBridgeException {
+    public void testUpdateImagesToAai() throws HeatBridgeException {
         // Arrange
         Image image1 = mock(Image.class);
         when(image1.getId()).thenReturn("test-image1-id");
@@ -257,33 +262,21 @@ public class HeatBridgeImplTest {
 
         List<Image> images = Arrays.asList(image1, image2);
 
-        Mockito.doNothing().when(aaiClient)
-            .addImage(any(org.onap.aai.domain.yang.Image.class), eq(CLOUD_OWNER), eq(REGION_ID));
-        when(aaiClient.getImageIfPresent(eq(CLOUD_OWNER), eq(REGION_ID), anyString()))
-            .thenReturn(new org.onap.aai.domain.yang.Image())
-            .thenReturn(new org.onap.aai.domain.yang.Image())
-            .thenReturn(null)
-            .thenReturn(null);
-
         // Act #1
         heatbridge.buildAddImagesToAaiAction(images);
 
         // Assert #1
-        verify(aaiClient, times(2)).getImageIfPresent(eq(CLOUD_OWNER), eq(REGION_ID), anyString());
-        reset(aaiClient);
-        assertTrue(aaiActions.size() == 0);
+        verify(transaction, times(2)).create(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.Image.class));
 
         // Act #2
         heatbridge.buildAddImagesToAaiAction(images);
 
         // Assert #2
-        verify(aaiClient, times(2)).getImageIfPresent(eq(CLOUD_OWNER), eq(REGION_ID), anyString());
-        assertTrue(aaiActions.size() == 2);
-        assertTrue(aaiActions.get(0).getClass().equals(AddImage.class));
+        verify(transaction, times(4)).create(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.Image.class));
     }
 
     @Test
-    public void testUpdateFlavorsToAai() throws ActiveAndAvailableInventoryException, HeatBridgeException {
+    public void testUpdateFlavorsToAai() throws HeatBridgeException {
         // Arrange
         Flavor flavor1 = mock(Flavor.class);
         when(flavor1.getId()).thenReturn("test-flavor1-id");
@@ -297,34 +290,22 @@ public class HeatBridgeImplTest {
 
         List<Flavor> flavors = Arrays.asList(flavor1, flavor2);
 
-        Mockito.doNothing().when(aaiClient)
-            .addFlavor(any(org.onap.aai.domain.yang.Flavor.class), eq(CLOUD_OWNER), eq(REGION_ID));
-        when(aaiClient.getFlavorIfPresent(eq(CLOUD_OWNER), eq(REGION_ID), anyString()))
-            .thenReturn(new org.onap.aai.domain.yang.Flavor())
-            .thenReturn(new org.onap.aai.domain.yang.Flavor())
-            .thenReturn(null)
-            .thenReturn(null);
-
         // Act #1
         heatbridge.buildAddFlavorsToAaiAction(flavors);
 
         // Assert #1
-        verify(aaiClient, times(2)).getFlavorIfPresent(eq(CLOUD_OWNER), eq(REGION_ID), anyString());
-        assertTrue(aaiActions.size() == 0);
-        reset(aaiClient);
+        verify(transaction, times(2)).create(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.Flavor.class));
 
         // Act #2
         heatbridge.buildAddFlavorsToAaiAction(flavors);
 
         // Assert #2
-        verify(aaiClient, times(2)).getFlavorIfPresent(eq(CLOUD_OWNER), eq(REGION_ID), anyString());
-        assertTrue(aaiActions.size() == 2);
-        assertTrue(aaiActions.get(0).getClass().equals(AddFlavor.class));
+        verify(transaction, times(4)).create(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.Flavor.class));
     }
 
     @Ignore
     @Test
-    public void testUpdateVserverLInterfacesToAai() throws ActiveAndAvailableInventoryException, HeatBridgeException {
+    public void testUpdateVserverLInterfacesToAai() throws HeatBridgeException {
         // Arrange
         List<Resource> stackResources = (List<Resource>) extractTestStackResources();
         Port port = mock(Port.class);
@@ -356,17 +337,13 @@ public class HeatBridgeImplTest {
         sriovPf.setPfPciId(pfPciId);
         PInterface pIf = mock(PInterface.class);
         when(pIf.getInterfaceName()).thenReturn("test-port-id");
-        when(aaiClient.getPserverPInterfaceByName(anyString(), anyString())).thenReturn(pIf);
-        Mockito.doNothing().when(aaiClient).addSriovPfToPserverPInterface(eq(sriovPf), anyString(), anyString());
-        Mockito.doNothing().when(aaiClient).addLInterfaceToVserver(any(LInterface.class), eq(CLOUD_OWNER), eq
-            (REGION_ID), eq(TENANT_ID), anyString());
+        when(resourcesClient.get(eq(PInterface.class), any(AAIResourceUri.class))).thenReturn(Optional.of(pIf));
 
         // Act
         heatbridge.buildAddVserverLInterfacesToAaiAction(stackResources, Arrays.asList("1", "2"));
 
         // Assert
-        assertTrue(aaiActions.size() == 5);
-        assertTrue(aaiActions.get(0).getClass().equals(AddLInterfaceToVserver.class));
+        verify(transaction, times(5)).create(any(AAIResourceUri.class), any(LInterface.class));
         verify(osClient, times(5)).getPortById(anyString());
         verify(osClient, times(5)).getNetworkById(anyString());
     }
