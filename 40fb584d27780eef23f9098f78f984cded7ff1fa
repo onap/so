@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "98e4f30e_87cd5528",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-02-18T12:22:09Z",
+      "side": 1,
+      "message": "Inline this declaration in each Test and avoid instantiating field objects within methods. This implies that the testedObject is reused between tests and calls.",
+      "revId": "40fb584d27780eef23f9098f78f984cded7ff1fa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c28d1130_e00319bf",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 2815
+      },
+      "writtenOn": "2019-02-18T12:22:09Z",
+      "side": 1,
+      "message": "I\u0027d suggest removing these \"default\" values here. It is better to keep the builder clean without any attachment to concrete values. Also explicitly setting the values in tests is far more readable because it does not require jumping into the builder itself to check where some of the values are actually coming from.",
+      "revId": "40fb584d27780eef23f9098f78f984cded7ff1fa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
