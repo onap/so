@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7effd0d9_00212f60",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2019-02-18T13:39:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "98e4f30e_87cd5528",
+      "revId": "40fb584d27780eef23f9098f78f984cded7ff1fa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c28d1130_e00319bf",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2019-02-18T12:22:09Z",
       "side": 1,
       "message": "I\u0027d suggest removing these \"default\" values here. It is better to keep the builder clean without any attachment to concrete values. Also explicitly setting the values in tests is far more readable because it does not require jumping into the builder itself to check where some of the values are actually coming from.",
+      "revId": "40fb584d27780eef23f9098f78f984cded7ff1fa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8386b885_4520a58c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2019-02-18T13:39:42Z",
+      "side": 1,
+      "message": "The default values are here to focus only on the meaningful params in each test. I\u0027ll leave the current solution as discussed.",
+      "parentUuid": "c28d1130_e00319bf",
       "revId": "40fb584d27780eef23f9098f78f984cded7ff1fa",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
