@@ -44,6 +44,7 @@ public class AAIClient extends GraphInventoryClient {
 	
 	protected AAIClient(AAIVersion version) {
 		super(AAIProperties.class);
+		this.version = version;
 	}
 	@Override
 	protected URI constructPath(GraphInventoryUri uri) {
