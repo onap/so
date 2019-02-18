@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +23,6 @@
 
 package org.onap.so.openstack.utils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -29,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 
 import org.onap.so.adapters.vdu.CloudInfo;
@@ -55,7 +55,6 @@ import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.openstack.beans.HeatCacheEntry;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
@@ -72,7 +71,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.base.client.OpenStackConnectException;
@@ -298,9 +296,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         // This could throw MsoTenantNotFound or MsoOpenstackException (both propagated)
         Heat heatClient = getHeatClient (cloudSite, tenantId);
-        if (heatClient != null) {
-            LOGGER.debug("Found: " + heatClient.toString());
-        }
+        LOGGER.debug("Found: " + heatClient.toString());
 
         LOGGER.debug ("Ready to Create Stack (" + heatTemplate + ") with input params: " + stackInputs);
 

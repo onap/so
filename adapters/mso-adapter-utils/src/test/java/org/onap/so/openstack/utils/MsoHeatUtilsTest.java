@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,17 +28,19 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertNotNull;
 
+import com.woorea.openstack.heat.Heat;
+import com.woorea.openstack.heat.model.CreateStackParam;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.woorea.openstack.heat.model.CreateStackParam;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Test;
+import org.onap.so.BaseTest;
 import org.onap.so.StubOpenStack;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
@@ -46,13 +50,13 @@ import org.onap.so.adapters.vdu.VduInstance;
 import org.onap.so.adapters.vdu.VduModelInfo;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
-import org.onap.so.cloud.CloudConfig;
-import org.onap.so.BaseTest;
+import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
+import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoException;
-
+import org.onap.so.openstack.exceptions.MsoIOException;
+import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MsoHeatUtilsTest extends BaseTest{
@@ -187,6 +191,47 @@ public class MsoHeatUtilsTest extends BaseTest{
 		heatUtils.copyBaseOutputsToInputs(inputs, otherStackOutputs, null, aliases);
 		Assert.assertEquals("str",otherStackOutputs.get("str"));
 	}
-	
 
+    @Test
+    public final void getHeatClientSuccessTest() throws MsoException, IOException {
+        CloudSite cloudSite = getCloudSite(getCloudIdentity());
+        StubOpenStack.mockOpenStackResponseAccess(wireMockPort);
+        Heat heatClient = heatUtils.getHeatClient(cloudSite, "TEST-tenant");
+        assertNotNull(heatClient);
+    }
+
+    @Test(expected = MsoOpenstackException.class)
+    public final void getHeatClientOpenStackResponseException404Test() throws MsoException, IOException {
+        CloudSite cloudSite = getCloudSite(getCloudIdentity());
+        // mo mocks setup will cause 404 response from wiremock
+        heatUtils.getHeatClient(cloudSite, "TEST-tenant");
+    }
+
+    @Test(expected = MsoAdapterException.class)
+    public final void getHeatClientOpenStackResponseException401Test() throws MsoException, IOException {
+        CloudSite cloudSite = getCloudSite(getCloudIdentity());
+        StubOpenStack.mockOpenStackResponseUnauthorized(wireMockPort);
+        heatUtils.getHeatClient(cloudSite, "TEST-tenant");
+    }
+
+    @Test(expected = MsoIOException.class)
+    public final void getHeatClientOpenStackConnectExceptionTest() throws MsoException, IOException {
+        CloudIdentity identity = getCloudIdentity();
+        identity.setIdentityUrl("http://unreachable");
+        CloudSite cloudSite = getCloudSite(identity);
+        // mo mocks setup will cause 404 response from wiremock
+        heatUtils.getHeatClient(cloudSite, "TEST-tenant");
+    }
+
+    @Test
+    public final void createStackSuccessTest() throws MsoException, IOException {
+        CloudSite cloudSite = getCloudSite(getCloudIdentity());
+        StubOpenStack.mockOpenStackResponseAccess(wireMockPort);
+        StubOpenStack.mockOpenStackPostStack_200("OpenstackResponse_Stack_Created.json");
+        StubOpenStack.mockOpenStackGet("TEST-stack/stackId");
+        StackInfo stackInfo = heatUtils.createStack(cloudSite.getId(), "tenantId", "TEST-stack",
+            "TEST-heat", new HashMap<>(), false, 1, "TEST-env",
+            new HashMap<>(), new HashMap<>(), false);
+        assertNotNull(stackInfo);
+    }
 }
