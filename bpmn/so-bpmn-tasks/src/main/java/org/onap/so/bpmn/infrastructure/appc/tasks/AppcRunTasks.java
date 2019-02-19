@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,23 +23,20 @@
 package org.onap.so.bpmn.infrastructure.appc.tasks;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
-
-import org.camunda.bpm.engine.delegate.BpmnError;
+import org.onap.appc.client.lcm.model.Action;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
-import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.so.db.catalog.beans.ControllerSelectionReference;
+import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.onap.appc.client.lcm.model.Action;
-import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.client.appc.ApplicationControllerAction;
+import org.onap.so.db.catalog.beans.ControllerSelectionReference;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,13 +83,20 @@ public class AppcRunTasks {
 			} catch (BBObjectNotFoundException e) {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "No valid VNF exists");
 			}
-			String vnfId = vnf.getVnfId();
+        String vnfId = null;
+        String vnfName = null;
+        String vnfType = null;
+        String vnfHostIpAddress = null;
+
+        if (vnf != null) {
+            vnfId = vnf.getVnfId();
+            vnfName = vnf.getVnfName();
+            vnfType = vnf.getVnfType();
+            vnfHostIpAddress = vnf.getIpv4OamAddress();
+        }
 			String msoRequestId = gBBInput.getRequestContext().getMsoRequestId();
-			String vnfName = vnf.getVnfName();
-			String vnfType = vnf.getVnfType();
-			
+
 			String aicIdentity = execution.getVariable("aicIdentity");
-			String vnfHostIpAddress =  vnf.getIpv4OamAddress();
 			String vmIdList = execution.getVariable("vmIdList");
 			String vserverIdList = execution.getVariable("vserverIdList");
 			String identityUrl =  execution.getVariable("identityUrl");
