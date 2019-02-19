@@ -24,10 +24,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Matchers.isA;
@@ -1327,6 +1324,19 @@ public class WorkflowActionTest extends BaseTaskTest {
         workflowAction.findCatalogNetworkCollection(execution, service);
         assertEquals("Found multiple Network Collections in the Service model, only one per Service is supported.",
             execution.getVariable("WorkflowActionErrorMessage"));
+    }
+
+    @Test
+    public void verifyLackOfNullPointerExceptionForNullResource(){
+      ExecuteBuildingBlock result = null;
+      try {
+        result = workflowAction
+        .buildExecuteBuildingBlock(new OrchestrationFlow(), null, null, null, null, null, false,
+        null, null, null, false, null, true);
+      }catch (NullPointerException e){
+      fail("NullPointerException should not be thrown when 'resource' is null");
+      }
+      assertNotNull(result);
     }
 
 	private List<OrchestrationFlow> createFlowList (String... flowNames){
