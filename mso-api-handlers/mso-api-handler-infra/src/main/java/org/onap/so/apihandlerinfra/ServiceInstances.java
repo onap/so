@@ -110,6 +110,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -1178,7 +1179,7 @@ public class ServiceInstances {
     	String requestId = duplicateRecord.getRequestId();
     	String path = env.getProperty("mso.camunda.rest.history.uri") + requestId;
     	String targetUrl = env.getProperty("mso.camundaURL") + path;
-    	HttpHeaders headers = setHeaders(env.getRequiredProperty("mso.camundaAuth"), env.getRequiredProperty("mso.msoKey")); 
+    	HttpHeaders headers = setCamundaHeaders(env.getRequiredProperty("mso.camundaAuth"), env.getRequiredProperty("mso.msoKey")); 
     	HttpEntity<?> requestEntity = new HttpEntity<>(headers);
     	ResponseEntity<List<HistoricProcessInstanceEntity>> response = null;
     	try{
@@ -1202,7 +1203,7 @@ public class ServiceInstances {
     	}	
 		return false;
 	}
-    private HttpHeaders setHeaders(String auth, String msoKey) {
+    protected HttpHeaders setCamundaHeaders(String auth, String msoKey) {
 		HttpHeaders headers = new HttpHeaders();
 		List<org.springframework.http.MediaType> acceptableMediaTypes = new ArrayList<>();
 		acceptableMediaTypes.add(org.springframework.http.MediaType.APPLICATION_JSON);
@@ -1210,7 +1211,7 @@ public class ServiceInstances {
        	try {
        		String userCredentials = CryptoUtils.decrypt(auth, msoKey);
        		if(userCredentials != null) {
-       			headers.add(HttpHeaders.AUTHORIZATION, userCredentials);
+       			headers.add(HttpHeaders.AUTHORIZATION, "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes()));
        		}
         } catch(GeneralSecurityException e) {
                 msoLogger.error("Security exception", e);
