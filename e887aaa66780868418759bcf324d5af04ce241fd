@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_82a9d691",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-02-19T15:42:09Z",
+      "side": 1,
+      "message": "The point is that we already have\"SERVICE_INSTANCE_ID\" imported from ExecutionVariableNames. The suffix is added to distinction.",
+      "parentUuid": "9adffdf1_c22efe42",
+      "revId": "e887aaa66780868418759bcf324d5af04ce241fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_62f872c3",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
         "patchSetId": 3
