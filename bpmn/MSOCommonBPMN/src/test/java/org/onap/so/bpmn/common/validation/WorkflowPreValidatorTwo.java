@@ -34,8 +34,8 @@ import org.springframework.stereotype.Component;
 public class WorkflowPreValidatorTwo implements PreWorkflowValidator {
 
 	@Override
-	public Set<String> forItems() {
-		return Collections.singleton("test");
+	public boolean shouldRunFor(String bbName) {
+		return Collections.singleton("test").contains(bbName);
 	}
 
 	@Override
