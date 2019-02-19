@@ -362,6 +362,7 @@ CreateVcpeResCustService.processDecomposition(execution)</bpmn2:script>
         <camunda:in source="correlationId" target="correlationId" />
         <camunda:in businessKey="#{execution.processBusinessKey}" />
         <camunda:in source="pnfUuid" target="pnfUuid" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1yojilk</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0clhseq</bpmn2:outgoing>
