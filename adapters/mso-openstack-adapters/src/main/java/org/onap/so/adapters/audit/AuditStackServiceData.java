@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017-2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,8 +21,6 @@
  */
 
 package org.onap.so.adapters.audit;
-
-import java.util.Collections;
 
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -82,7 +82,7 @@ public class AuditStackServiceData {
 		
 	}
 	private void setupMDC(ExternalTask externalTask) {
-		String msoRequestId = (String)externalTask.getVariable("mso-request-id");
+		String msoRequestId = externalTask.getVariable("mso-request-id");
 		if(msoRequestId != null && !msoRequestId.isEmpty())
 			MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, msoRequestId);
 	}
