@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7a19266_4d553fe9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-02-20T12:17:42Z",
+      "side": 1,
+      "message": "I was looking for usage of configurationResourceKeys (cRK) as member of eBB class - as there is not much documentation (in code) regarding contract on it.\n\nLooks like code right now not really guarded against eBB.configurationResourceKeys \u003d\u003d null\nit will cause NPE in other parts of code.\n\nIn that case having cRK created with empty keys (so getters on cRK will return null) should not cause immediate adverse effects.",
+      "range": {
+        "startLine": 1052,
+        "startChar": 29,
+        "endLine": 1052,
+        "endChar": 54
+      },
+      "revId": "7e29927fbc3dabefe9b25b46489144cf0fffef67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
