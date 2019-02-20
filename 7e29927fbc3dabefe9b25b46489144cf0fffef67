@@ -22,6 +22,29 @@
       "revId": "7e29927fbc3dabefe9b25b46489144cf0fffef67",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4acd06ce_bcaf3530",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1330,
+      "author": {
+        "id": 4313
+      },
+      "writtenOn": "2019-02-20T12:37:26Z",
+      "side": 1,
+      "message": "Could you please check that method had successful execution? You can do it in a separate test or here",
+      "range": {
+        "startLine": 1330,
+        "startChar": 14,
+        "endLine": 1330,
+        "endChar": 61
+      },
+      "revId": "7e29927fbc3dabefe9b25b46489144cf0fffef67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
