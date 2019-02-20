@@ -33,7 +33,6 @@ import java.util.Set;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.onap.so.client.aai.entities.uri.AAIUri;
 import org.onap.so.client.graphinventory.Format;
 import org.onap.so.client.graphinventory.GraphInventoryObjectPlurals;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
@@ -212,8 +211,8 @@ public class SimpleUri implements GraphInventoryResourceUri, Serializable {
 	
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof AAIUri) {
-			return this.build().equals(((AAIUri)o).build());
+		if (o instanceof GraphInventoryUri) {
+			return this.build().equals(((GraphInventoryUri)o).build());
 		}
 		return false;
 	}

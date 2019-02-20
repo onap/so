@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.aai;
+package org.onap.so.client.graphinventory;
 
 import java.net.URI;
 import java.util.Map;
@@ -27,45 +27,51 @@ import java.util.Optional;
 import javax.ws.rs.core.Response;
 
 import org.onap.so.client.ResponseExceptionMapper;
-import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
-import org.onap.so.client.graphinventory.GraphInventoryRestClient;
+import org.onap.so.client.RestClientSSL;
+import org.onap.so.client.RestProperties;
 import org.onap.so.client.policy.CommonObjectMapperProvider;
 import org.onap.so.utils.TargetEntity;
 
-public class AAIRestClient extends GraphInventoryRestClient {
+public abstract class GraphInventoryRestClient extends RestClientSSL {
 
-	private final AAIProperties aaiProperties;
+	protected static final GraphInventoryCommonObjectMapperProvider standardProvider = new GraphInventoryCommonObjectMapperProvider();
 
-	protected AAIRestClient(AAIProperties props, URI uri) {
-		super(props, uri);
-		this.aaiProperties = props;
+	protected final GraphInventoryPatchConverter patchConverter = new GraphInventoryPatchConverter();
+	
+	protected GraphInventoryRestClient(RestProperties props, URI uri) {
+		super(props, Optional.of(uri));
 	}
 
 	@Override
-    public TargetEntity getTargetEntity(){
-	    return TargetEntity.AAI;
-    }
+    public abstract TargetEntity getTargetEntity();
 
 	@Override
-	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		headerMap.put("X-FromAppId", aaiProperties.getSystemName());
-		headerMap.put("X-TransactionId", requestId);
-		String auth = aaiProperties.getAuth();
-		String key = aaiProperties.getKey();
+	protected abstract void initializeHeaderMap(Map<String, String> headerMap);
 
-		if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
-			addBasicAuthHeader(auth, key);
-		}
+	@Override
+	protected abstract Optional<ResponseExceptionMapper> addResponseExceptionMapper();
+	
+	@Override
+	protected CommonObjectMapperProvider getCommonObjectMapperProvider() {
+		return standardProvider;
 	}
 
 	@Override
-	protected Optional<ResponseExceptionMapper> addResponseExceptionMapper() {
+	public Response patch(Object obj) {
+		return super.patch(convertToPatchFormat(obj));
+	}
 
-		return Optional.of(new AAIClientResponseExceptionMapper());
+	@Override
+	public <T> T patch(Object obj, Class<T> resultClass) {
+		return super.patch(convertToPatchFormat(obj), resultClass);
 	}
 	
 	protected GraphInventoryPatchConverter getPatchConverter() {
 		return this.patchConverter;
+	}
+	
+	protected String convertToPatchFormat(Object obj) {
+		return getPatchConverter().convertPatchFormat(obj);
 	}
 
 }

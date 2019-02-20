@@ -18,29 +18,37 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.aai.entities;
+package com.att.ecomp.mso.client.narad.entities;
 
-import java.io.Serializable;
+import javax.ws.rs.core.UriBuilder;
 
-import org.onap.so.client.graphinventory.entities.GraphInventoryResultWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onap.so.client.graphinventory.entities.GraphInventoryRelationships;
 
-public class AAIResultWrapper extends GraphInventoryResultWrapper<Relationships> implements Serializable {
+import com.att.ecomp.mso.client.narad.NARADObjectType;
+import com.att.ecomp.mso.client.narad.NARADResourcesClient;
+import com.att.ecomp.mso.client.narad.entities.uri.NARADResourceUri;
+import com.att.ecomp.mso.client.narad.entities.uri.NARADUriFactory;
 
-	private static final long serialVersionUID = 5895841925807816737L;
-	private final static transient Logger logger = LoggerFactory.getLogger(AAIResultWrapper.class);
-	
-	public AAIResultWrapper(String json) {
-		super(json, logger);
+public class Relationships extends GraphInventoryRelationships<NARADResultWrapper, NARADResourceUri, NARADObjectType>{
+
+	public Relationships(String json) {
+		super(json);
 	}
 	
-	public AAIResultWrapper(Object aaiObject) {
-		super(aaiObject, logger);
+	@Override
+	protected NARADResultWrapper get(NARADResourceUri uri) {
+		return new NARADResourcesClient().get(uri);
+		
 	}
 
 	@Override
-	protected Relationships createRelationships(String json) {
-		return new Relationships(json);
+	protected NARADResourceUri createUri(NARADObjectType type, String relatedLink) {
+		
+		return NARADUriFactory.createResourceFromExistingURI(type, UriBuilder.fromPath(relatedLink).build());
+	}
+
+	@Override
+	protected NARADObjectType fromTypeName(String name) {
+		return NARADObjectType.fromTypeName(name);
 	}
 }

@@ -28,17 +28,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.onap.so.client.aai.AAICommonObjectMapperProvider;
-import org.onap.so.client.aai.entities.Relationships;
+import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.jsonpath.JsonPathUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class GraphInventoryResultWrapper implements Serializable {
+public abstract class GraphInventoryResultWrapper<R extends GraphInventoryRelationships<?, ?, ?>> implements Serializable {
 
 	private static final long serialVersionUID = 5895841925807816727L;
 	protected final String jsonBody;
@@ -47,12 +45,12 @@ public class GraphInventoryResultWrapper implements Serializable {
 	
 	protected GraphInventoryResultWrapper(String json, Logger logger) {
 		this.jsonBody = json;
-		this.mapper = new AAICommonObjectMapperProvider().getMapper();
+		this.mapper = new GraphInventoryCommonObjectMapperProvider().getMapper();
 		this.logger = logger;
 	}
 	
 	protected GraphInventoryResultWrapper(Object aaiObject, Logger logger) {
-		this.mapper = new AAICommonObjectMapperProvider().getMapper();
+		this.mapper = new GraphInventoryCommonObjectMapperProvider().getMapper();
 		this.jsonBody = mapObjectToString(aaiObject);
 		this.logger = logger;
 	}
@@ -65,18 +63,19 @@ public class GraphInventoryResultWrapper implements Serializable {
 			return "{}";
 		}
 	}
-	public Optional<Relationships> getRelationships() {
+	public Optional<R> getRelationships() {
 		final String path = "$.relationship-list";
 		if (isEmpty()) {
 			return Optional.empty();
 		}
 		Optional<String> result = JsonPathUtil.getInstance().locateResult(jsonBody, path);
 		if (result.isPresent()) {
-			return Optional.of(new Relationships(result.get()));
+			return Optional.of(createRelationships(result.get()));
 		} else {
 			return Optional.empty();
 		}
 	}
+	protected abstract R createRelationships(String json);
 	
 	public String getJson() {
 		if(jsonBody == null) {
