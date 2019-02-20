@@ -1050,9 +1050,11 @@ public class WorkflowAction {
 		executeBuildingBlock.setRequestDetails(requestDetails);
 		if(isConfiguration){
 			ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
-			configurationResourceKeys.setCvnfcCustomizationUUID(resource.getCvnfModuleCustomizationId());
-			configurationResourceKeys.setVfModuleCustomizationUUID(resource.getVfModuleCustomizationId());
-			configurationResourceKeys.setVnfResourceCustomizationUUID(resource.getVnfCustomizationId());
+			if (resource != null){
+				configurationResourceKeys.setCvnfcCustomizationUUID(resource.getCvnfModuleCustomizationId());
+				configurationResourceKeys.setVfModuleCustomizationUUID(resource.getVfModuleCustomizationId());
+				configurationResourceKeys.setVnfResourceCustomizationUUID(resource.getVnfCustomizationId());
+			}
 			executeBuildingBlock.setConfigurationResourceKeys(configurationResourceKeys);
 		}
 		return executeBuildingBlock;
