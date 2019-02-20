@@ -35,6 +35,7 @@ import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.so.asdc.installer.IVfModuleData;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
+import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 
 public class ASDCNotificationLogging {
 
@@ -426,7 +427,27 @@ public class ASDCNotificationLogging {
     			buffer.append(System.lineSeparator());  
        			buffer.append("Description:");
     			buffer.append(testNull(vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
-    			buffer.append(System.lineSeparator());  
+    			buffer.append(System.lineSeparator()); 
+ 
+    			
+         		buffer.append(System.lineSeparator());
+        		buffer.append("NETWORK Customization Properties:");
+        		buffer.append(System.lineSeparator());
+       			buffer.append("CustomizationUUID:");
+    			buffer.append(vlNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+    			buffer.append(System.lineSeparator()); 
+       			buffer.append("Network Technology:");
+    			buffer.append(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vlNode, SdcPropertyNames.PROPERTY_NAME_NETWORKTECHNOLOGY));
+    			buffer.append(System.lineSeparator()); 
+      			buffer.append("Network Type:");
+    			buffer.append(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vlNode, SdcPropertyNames.PROPERTY_NAME_NETWORKTYPE));
+    			buffer.append(System.lineSeparator()); 
+      			buffer.append("Network Role:");
+    			buffer.append(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vlNode, SdcPropertyNames.PROPERTY_NAME_NETWORKROLE));
+    			buffer.append(System.lineSeparator()); 
+      			buffer.append("Network Scope:");
+    			buffer.append(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vlNode, SdcPropertyNames.PROPERTY_NAME_NETWORKSCOPE));
+    			buffer.append(System.lineSeparator());   			
     		
     		}
     			
