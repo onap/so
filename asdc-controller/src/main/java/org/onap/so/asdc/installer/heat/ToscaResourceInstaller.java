@@ -1060,7 +1060,17 @@ public class ToscaResourceInstaller {
 		
 		}
 
-		if(networkResourceCustomization==null || !networkUUIDsMatch){
+		if (networkResourceCustomization!=null && !networkUUIDsMatch){
+			
+			NetworkResource networkResource = createNetworkResource(networkNodeTemplate, toscaResourceStructure, heatTemplate,
+					aicMax, aicMin);
+			
+			networkResourceCustomization.setNetworkResource(networkResource);			
+					
+			networkCustomizationRepo.saveAndFlush(networkResourceCustomization);
+			
+		}
+		else if(networkResourceCustomization==null){
 			networkResourceCustomization = createNetworkResourceCustomization(networkNodeTemplate,
 					toscaResourceStructure);
 					
