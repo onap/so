@@ -46,6 +46,30 @@
       "revId": "76845918c0e8a7739444ba8333f1581c33385a54",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "acdb8a4d_dafd0883",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/bpmn/BpmnInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-02-20T15:42:37Z",
+      "side": 1,
+      "message": "if you are going to fix logging please remove MSOLogger, and use the plain old SLF4J logger",
+      "parentUuid": "d75f0323_ab706530",
+      "range": {
+        "startLine": 129,
+        "startChar": 12,
+        "endLine": 132,
+        "endChar": 84
+      },
+      "revId": "76845918c0e8a7739444ba8333f1581c33385a54",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
