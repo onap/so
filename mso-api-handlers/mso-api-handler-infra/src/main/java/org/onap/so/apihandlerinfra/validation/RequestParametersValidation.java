@@ -72,9 +72,19 @@ public class RequestParametersValidation implements ValidationRule{
         		}
         	}
         	if(requestScope.equalsIgnoreCase(ModelType.vfModule.name())){
-        		if(action == Action.createInstance || action == Action.updateInstance){
-        			if(requestParameters.isUsePreload() == null){
-        				requestParameters.setUsePreload(true);
+        		if(action == Action.createInstance || action == Action.updateInstance){        			
+        			if(requestParameters.isUsePreload() == null){        				
+        				if(reqVersion >= 4){       					
+        					if (requestParameters.getALaCarte() == false) {        						
+        						requestParameters.setUsePreload(false);
+        					}
+        					else {        						
+        						requestParameters.setUsePreload(true);
+        					}
+        				}
+        				else {        				
+        					requestParameters.setUsePreload(true);
+        				}
         			}
         		}
         	}

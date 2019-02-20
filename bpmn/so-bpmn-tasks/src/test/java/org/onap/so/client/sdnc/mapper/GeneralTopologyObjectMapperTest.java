@@ -22,9 +22,11 @@ package org.onap.so.client.sdnc.mapper;
 
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 
@@ -43,6 +45,7 @@ import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiSdncrequestheaderSdncRequestHeader;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceinformationServiceInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiSvcActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmoduleinformationVfModuleInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfinformationVnfInformation;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -51,10 +54,14 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoConfiguration;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
+import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 
 
@@ -277,5 +284,146 @@ public class GeneralTopologyObjectMapperTest  extends TestDataSetup {
 		
 		assertThat(networkInformation, sameBeanAs(genObjMapper.buildNetworkInformation(network)));
 		
+	}
+	
+
+	@Test
+	public void buildVfModuleInformationTest_withNoModelIsFromPreload() {
+		VfModule vfModule = new VfModule();
+		vfModule.setVfModuleId("TestVfModuleId");
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setServiceInstanceId("serviceInstanceId");
+		GenericVnf genericVnf = new GenericVnf();
+		genericVnf.setVnfId("TestVnfId");
+		RequestContext requestContext = new RequestContext();
+		RequestParameters requestParameters = new RequestParameters();
+		requestParameters.setUsePreload(true);
+		requestContext.setRequestParameters(requestParameters);
+		GenericResourceApiVfmoduleinformationVfModuleInformation gcRequestInput = null;
+		try {
+			gcRequestInput = genObjMapper.buildVfModuleInformation(vfModule, genericVnf, serviceInstance, requestContext, false);
+		}
+		catch (MapperException ex) {
+			
+		}
+		assertNotNull(gcRequestInput);
+		assertNull(vfModule.getModelInfoVfModule());
+		assertNull(gcRequestInput.getOnapModelInformation());
+		assertEquals(vfModule.getVfModuleId(),gcRequestInput.getVfModuleId());
+		assertNotNull(gcRequestInput.getVfModuleId());
+		assertTrue(gcRequestInput.getFromPreload());
+	}
+	
+	@Test
+	public void buildVfModuleInformationTest_withNoModelIsNotFromPreload() {
+		VfModule vfModule = new VfModule();
+		vfModule.setVfModuleId("TestVfModuleId");
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setServiceInstanceId("serviceInstanceId");
+		GenericVnf genericVnf = new GenericVnf();
+		genericVnf.setVnfId("TestVnfId");
+		RequestContext requestContext = new RequestContext();
+		RequestParameters requestParameters = new RequestParameters();
+		requestParameters.setUsePreload(false);
+		requestContext.setRequestParameters(requestParameters);
+		GenericResourceApiVfmoduleinformationVfModuleInformation gcRequestInput = null;
+		try {
+			gcRequestInput = genObjMapper.buildVfModuleInformation(vfModule, genericVnf, serviceInstance, requestContext, false);
+		}
+		catch (MapperException ex) {
+			
+		}
+		assertNotNull(gcRequestInput);
+		assertNull(vfModule.getModelInfoVfModule());
+		assertNull(gcRequestInput.getOnapModelInformation());
+		assertEquals(vfModule.getVfModuleId(),gcRequestInput.getVfModuleId());
+		assertNotNull(gcRequestInput.getVfModuleId());
+		assertFalse(gcRequestInput.getFromPreload());
+	}
+	
+	@Test
+	public void buildVfModuleInformationTest_withNoModelNoRequestContext() {
+		VfModule vfModule = new VfModule();
+		vfModule.setVfModuleId("TestVfModuleId");
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setServiceInstanceId("serviceInstanceId");
+		GenericVnf genericVnf = new GenericVnf();
+		genericVnf.setVnfId("TestVnfId");		
+		GenericResourceApiVfmoduleinformationVfModuleInformation gcRequestInput = null;
+		try {
+			gcRequestInput = genObjMapper.buildVfModuleInformation(vfModule, genericVnf, serviceInstance, null, false);
+		}
+		catch (MapperException ex) {
+			
+		}
+		assertNotNull(gcRequestInput);
+		assertNull(vfModule.getModelInfoVfModule());
+		assertNull(gcRequestInput.getOnapModelInformation());
+		assertEquals(vfModule.getVfModuleId(),gcRequestInput.getVfModuleId());
+		assertNotNull(gcRequestInput.getVfModuleId());
+		assertNull(gcRequestInput.getFromPreload());
+	}
+	
+	@Test
+	public void buildVfModuleInformationTest_withNoModelNoRequestParameters() {
+		VfModule vfModule = new VfModule();
+		vfModule.setVfModuleId("TestVfModuleId");
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setServiceInstanceId("serviceInstanceId");
+		GenericVnf genericVnf = new GenericVnf();
+		genericVnf.setVnfId("TestVnfId");
+		RequestContext requestContext = new RequestContext();		
+		GenericResourceApiVfmoduleinformationVfModuleInformation gcRequestInput = null;
+		try {
+			gcRequestInput = genObjMapper.buildVfModuleInformation(vfModule, genericVnf, serviceInstance, requestContext, false);
+		}
+		catch (MapperException ex) {
+			
+		}
+		assertNotNull(gcRequestInput);
+		assertNull(vfModule.getModelInfoVfModule());
+		assertNull(gcRequestInput.getOnapModelInformation());
+		assertEquals(vfModule.getVfModuleId(),gcRequestInput.getVfModuleId());
+		assertNotNull(gcRequestInput.getVfModuleId());
+		assertNull(gcRequestInput.getFromPreload());
+	}
+	
+	@Test
+	public void buildVfModuleInformationTest_withModel() {
+		VfModule vfModule = new VfModule();
+		vfModule.setVfModuleId("TestVfModuleId");
+		ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
+		modelInfoVfModule.setModelInvariantUUID("testModelInvariantUUID");
+		modelInfoVfModule.setModelName("testModelName");
+		modelInfoVfModule.setModelVersion("testModelVersion");
+		modelInfoVfModule.setModelUUID("testModelUUID");
+		modelInfoVfModule.setModelCustomizationUUID("testModelCustomizationUUID");
+		vfModule.setModelInfoVfModule(modelInfoVfModule);
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setServiceInstanceId("serviceInstanceId");
+		GenericVnf genericVnf = new GenericVnf();
+		genericVnf.setVnfId("TestVnfId");
+		RequestContext requestContext = new RequestContext();
+		RequestParameters requestParameters = new RequestParameters();
+		requestParameters.setUsePreload(true);
+		requestContext.setRequestParameters(requestParameters);
+		GenericResourceApiVfmoduleinformationVfModuleInformation gcRequestInput = null;
+		try {
+			gcRequestInput = genObjMapper.buildVfModuleInformation(vfModule, genericVnf, serviceInstance, requestContext, true);
+		}
+		catch (MapperException ex) {
+			
+		}
+		assertNotNull(gcRequestInput);
+		assertNotNull(vfModule.getModelInfoVfModule());
+		assertNotNull(gcRequestInput.getOnapModelInformation());
+		assertEquals(modelInfoVfModule.getModelInvariantUUID(), gcRequestInput.getOnapModelInformation().getModelInvariantUuid());
+		assertEquals(modelInfoVfModule.getModelName(), gcRequestInput.getOnapModelInformation().getModelName());
+		assertEquals(modelInfoVfModule.getModelVersion(), gcRequestInput.getOnapModelInformation().getModelVersion());
+		assertEquals(modelInfoVfModule.getModelUUID(), gcRequestInput.getOnapModelInformation().getModelUuid());
+		assertEquals(modelInfoVfModule.getModelCustomizationUUID(), gcRequestInput.getOnapModelInformation().getModelCustomizationUuid());
+		assertEquals(vfModule.getVfModuleId(),gcRequestInput.getVfModuleId());
+		assertNotNull(gcRequestInput.getVfModuleId());
+		assertTrue(gcRequestInput.getFromPreload());
 	}
 }

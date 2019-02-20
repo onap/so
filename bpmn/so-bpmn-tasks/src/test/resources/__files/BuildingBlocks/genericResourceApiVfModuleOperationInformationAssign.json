@@ -55,7 +55,7 @@
       "model-invariant-uuid" : "vfModuleModelInvariantUuid"
     },
     "vf-module-id" : "testVfModuleId",
-    "from-preload" : null,
+    "from-preload" : true,
     "vf-module-type": "vfModuleModelName"
    
   },

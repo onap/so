@@ -23,6 +23,7 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -53,6 +54,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoCollection;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoConfiguration;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
@@ -651,6 +653,26 @@ public class BBInputSetupMapperLayerTest {
 		assertTrue(actual.get("name2").equals("value2"));		
 		assertFalse(actual.containsKey("ignore"));
 		assertFalse(actual.containsValue("ignore"));		
+	}
+	
+	@Test
+	public void testMapRequestParameters() throws IOException {		
+		RequestDetails requestDetails = mapper.readValue(new File(RESOURCE_PATH + "RequestDetailsInput_mapReqContext.json"), RequestDetails.class);
+		RequestParameters actual = bbInputSetupMapperLayer.mapRequestParameters(requestDetails.getRequestParameters());
+		
+		assertEquals(actual.getUsePreload(), requestDetails.getRequestParameters().getUsePreload());
+		assertEquals(actual.getSubscriptionServiceType(), requestDetails.getRequestParameters().getSubscriptionServiceType());
+		assertEquals(actual.getPayload(), requestDetails.getRequestParameters().getPayload());				
+	}
+	
+	protected RequestParameters mapRequestParameters(org.onap.so.serviceinstancebeans.RequestParameters requestParameters) {
+		RequestParameters requestParams = new RequestParameters();
+		requestParams.setaLaCarte(requestParameters.getALaCarte());
+		requestParams.setUsePreload(requestParameters.getUsePreload());
+		requestParams.setSubscriptionServiceType(requestParameters.getSubscriptionServiceType());
+		requestParams.setUserParams(requestParameters.getUserParams());
+		requestParams.setPayload(requestParameters.getPayload());
+		return requestParams;
 	}
 	
 }

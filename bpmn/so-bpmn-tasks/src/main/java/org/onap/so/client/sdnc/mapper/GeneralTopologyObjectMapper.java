@@ -115,7 +115,7 @@ public class GeneralTopologyObjectMapper {
 	/*
 	 * Build GenericResourceApiVfModuleinformationVfModuleInformation
 	 */
-	public GenericResourceApiVfmoduleinformationVfModuleInformation buildVfModuleInformation(VfModule vfModule, GenericVnf vnf, ServiceInstance serviceInstance, boolean includeModelInformation) throws MapperException {
+	public GenericResourceApiVfmoduleinformationVfModuleInformation buildVfModuleInformation(VfModule vfModule, GenericVnf vnf, ServiceInstance serviceInstance, RequestContext requestContext, boolean includeModelInformation) throws MapperException {
 		GenericResourceApiVfmoduleinformationVfModuleInformation vfModuleInformation = new GenericResourceApiVfmoduleinformationVfModuleInformation();
 		if (includeModelInformation) {
 			if (vfModule.getModelInfoVfModule() == null) {
@@ -135,7 +135,13 @@ public class GeneralTopologyObjectMapper {
 			vfModuleInformation.setVfModuleType(vfModule.getModelInfoVfModule().getModelName());
 		}
 		vfModuleInformation.setVfModuleId(vfModule.getVfModuleId());
-		vfModuleInformation.setFromPreload(null);
+		if (requestContext != null && requestContext.getRequestParameters() != null) {
+			vfModuleInformation.setFromPreload(requestContext.getRequestParameters().getUsePreload());			
+		}
+		else {
+			vfModuleInformation.setFromPreload(null);
+		}
+		
 		return vfModuleInformation;
 	}
 	

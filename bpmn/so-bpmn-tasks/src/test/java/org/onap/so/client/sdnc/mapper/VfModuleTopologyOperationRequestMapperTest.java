@@ -88,6 +88,9 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		userParams.put("key1", "value1");		
 		requestContext.setUserParams(userParams);
 		requestContext.setProductFamilyId("productFamilyId");
+		RequestParameters requestParameters = new RequestParameters();
+		requestParameters.setUsePreload(true);
+		requestContext.setRequestParameters(requestParameters);
 
 		GenericVnf vnf = new GenericVnf();
 		vnf.setVnfId("testVnfId");

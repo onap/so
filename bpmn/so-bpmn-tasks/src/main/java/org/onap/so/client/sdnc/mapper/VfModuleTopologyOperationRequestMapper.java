@@ -95,7 +95,7 @@ public class VfModuleTopologyOperationRequestMapper {
 				requestAction);
 		GenericResourceApiServiceinformationServiceInformation serviceInformation = generalTopologyObjectMapper.buildServiceInformation(serviceInstance, requestContext, customer, includeModelInformation);
 				GenericResourceApiVnfinformationVnfInformation vnfInformation = generalTopologyObjectMapper.buildVnfInformation(vnf, serviceInstance, includeModelInformation);
-		GenericResourceApiVfmoduleinformationVfModuleInformation vfModuleInformation = generalTopologyObjectMapper.buildVfModuleInformation(vfModule, vnf, serviceInstance, includeModelInformation);
+		GenericResourceApiVfmoduleinformationVfModuleInformation vfModuleInformation = generalTopologyObjectMapper.buildVfModuleInformation(vfModule, vnf, serviceInstance, requestContext, includeModelInformation);
 		GenericResourceApiVfmodulerequestinputVfModuleRequestInput vfModuleRequestInput = buildVfModuleRequestInput(vfModule, volumeGroup, cloudRegion, requestContext);
 		GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader = buildVfModuleSdncRequestHeader(sdncReqId, genericResourceApiSvcAction);		
 		
