@@ -122,7 +122,7 @@ public abstract class FlowValidatorRunner<S extends FlowValidator, E extends Flo
 	protected List<FlowValidator> filterValidators(List<? extends FlowValidator> validators, String bbName) {
 		return validators.stream()
 				.filter(item -> {
-					return item.forItems().contains(bbName);
+					return item.shouldRunFor(bbName);
 				})
 				.sorted(Comparator.comparing(item -> {
 					Priority p = Optional.ofNullable(item.getClass().getAnnotation(Priority.class)).orElse(new Priority() {

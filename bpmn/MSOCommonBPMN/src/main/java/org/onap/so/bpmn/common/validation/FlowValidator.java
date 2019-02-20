@@ -28,10 +28,10 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public interface FlowValidator {
 
 	/**
-	 * Names of items to be validated
+	 * Should this validator run for given bb
 	 * @return
 	 */
-	public Set<String> forItems();
+	public boolean shouldRunFor(String bbName);
 	
 	/**
 	 * Determines whether or not the workflow should be executed

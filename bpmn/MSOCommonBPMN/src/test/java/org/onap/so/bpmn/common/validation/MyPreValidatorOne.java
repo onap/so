@@ -31,9 +31,9 @@ import org.springframework.stereotype.Component;
 public class MyPreValidatorOne implements PreBuildingBlockValidator {
 
 	@Override
-	public Set<String> forItems() {
+	public boolean shouldRunFor(String bbName) {
 		
-		return Collections.singleton("test");
+		return Collections.singleton("test").contains(bbName);
 	}
 
 	@Override
