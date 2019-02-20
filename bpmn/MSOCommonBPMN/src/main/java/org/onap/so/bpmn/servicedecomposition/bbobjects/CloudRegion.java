@@ -45,6 +45,8 @@ public class CloudRegion implements Serializable, ShallowCopy<CloudRegion> {
 	private String complex;
 	@JsonProperty("cloud-region-version")
 	private String cloudRegionVersion;
+	@JsonProperty("orchestration-disabled")
+	private Boolean orchestrationDisabled;
 
 	public String getLcpCloudRegionId() {
 		return lcpCloudRegionId;
@@ -87,6 +89,12 @@ public class CloudRegion implements Serializable, ShallowCopy<CloudRegion> {
 	 */
 	public void setComplex(String complex) {
 		this.complex = complex;
+	}
+	public Boolean getOrchestrationDisabled() {
+		return orchestrationDisabled;
+	}
+	public void setOrchestrationDisabled(Boolean orchestrationDisabled) {
+		this.orchestrationDisabled = orchestrationDisabled;
 	}
 	@Override
 	public boolean equals(final Object other) {
