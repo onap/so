@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,7 +33,6 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -110,32 +111,29 @@ public class BpmnInstaller {
     				ex.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "ASDC reading CSAR with workflows failed");
 		}
 		return;
-	}	
-
-	public boolean containsWorkflows(String csarFilePath) {
-		boolean workflowsInCsar = false;
-		try {
-			ZipFile zipFile = new ZipFile(csarFilePath);
-			Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-			while (zipEntries.hasMoreElements()) {
-				String fileName = ((ZipEntry) zipEntries.nextElement()).getName();
-				if (fileName.endsWith(BPMN_SUFFIX)) {
-					workflowsInCsar = true;
-					break;
-				}				
-			}
-		}
-		catch (Exception e) {
-			LOGGER.debug("Exception :",e);
-            LOGGER.error(MessageEnum.ASDC_ARTIFACT_CHECK_EXC,
-    				csarFilePath,
-    				"",
-    				"",
-    				e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "ASDC Unable to check CSAR entries"); 
-		}
-		return workflowsInCsar;
 	}
-	
+
+    public boolean containsWorkflows(String csarFilePath) {
+        boolean workflowsInCsar = false;
+        try (ZipFile zipFile = new ZipFile(csarFilePath)) {
+            Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+            while (zipEntries.hasMoreElements()) {
+                String fileName = zipEntries.nextElement().getName();
+                if (fileName.endsWith(BPMN_SUFFIX)) {
+                    workflowsInCsar = true;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.debug("Exception :", e);
+            LOGGER.error(MessageEnum.ASDC_ARTIFACT_CHECK_EXC,
+                csarFilePath,"","",
+                e.getMessage(), "", "",
+                MsoLogger.ErrorCode.DataError, "ASDC Unable to check CSAR entries");
+        }
+        return workflowsInCsar;
+    }
+
 	protected HttpResponse sendDeploymentRequest(String bpmnFileName) throws Exception {
 		HttpClient client = HttpClientBuilder.create().build();	
 		URI deploymentUri = new URI(this.env.getProperty(CAMUNDA_URL) + CREATE_DEPLOYMENT_PATH);
