@@ -26,7 +26,7 @@ import org.onap.so.client.graphinventory.entities.GraphInventoryResultWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AAIResultWrapper extends GraphInventoryResultWrapper implements Serializable {
+public class AAIResultWrapper extends GraphInventoryResultWrapper<Relationships> implements Serializable {
 
 	private static final long serialVersionUID = 5895841925807816737L;
 	private final static transient Logger logger = LoggerFactory.getLogger(AAIResultWrapper.class);
@@ -37,5 +37,10 @@ public class AAIResultWrapper extends GraphInventoryResultWrapper implements Ser
 	
 	public AAIResultWrapper(Object aaiObject) {
 		super(aaiObject, logger);
+	}
+
+	@Override
+	protected Relationships createRelationships(String json) {
+		return new Relationships(json);
 	}
 }
