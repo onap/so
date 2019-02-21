@@ -40,15 +40,15 @@ public class CreatePnfEntryInAaiDelegateTest {
         // given
         String pnfUuid = UUID.nameUUIDFromBytes("testUuid".getBytes()).toString();
         CreatePnfEntryInAaiDelegate delegate = new CreatePnfEntryInAaiDelegate();
-        AaiConnectionTestImpl aaiConnection = new AaiConnectionTestImpl();
-        delegate.setAaiConnection(aaiConnection);
+        PnfManagementTestImpl pnfManagementTest = new PnfManagementTestImpl();
+        delegate.setPnfManagement(pnfManagementTest);
         DelegateExecution execution = mock(DelegateExecution.class);
         given(execution.getVariable(eq(CORRELATION_ID))).willReturn("testCorrelationId");
         given(execution.getVariable(eq(PNF_UUID))).willReturn(pnfUuid);
         // when
         delegate.execute(execution);
         // then
-        Pnf createdEntry = aaiConnection.getCreated().get("testCorrelationId");
+        Pnf createdEntry = pnfManagementTest.getCreated().get("testCorrelationId");
         assertThat(createdEntry.getPnfId()).isEqualTo(pnfUuid);
         assertThat(createdEntry.getPnfName()).isEqualTo("testCorrelationId");
         assertThat(createdEntry.isInMaint()).isNull();

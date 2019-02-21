@@ -29,8 +29,7 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.so.bpmn.infrastructure.pnf.aai.AaiConnectionImpl;
-import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
+import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
 
 public class CreateRelationTest {
 
@@ -49,17 +48,17 @@ public class CreateRelationTest {
     @Test
     public void createRelationSuccessful() throws IOException {
         // given
-        AaiConnection aaiConnectionMock = mock(AaiConnectionImpl.class);
-        CreateRelation testedObject = new CreateRelation(aaiConnectionMock);
+        PnfManagement pnfManagementMock = mock(PnfManagement.class);
+        CreateRelation testedObject = new CreateRelation(pnfManagementMock);
         // when
         testedObject.execute(executionFake);
         // then
-        verify(aaiConnectionMock).createRelation(SERVICE_INSTANCE_ID, PNF_NAME);
+        verify(pnfManagementMock).createRelation(SERVICE_INSTANCE_ID, PNF_NAME);
     }
 
     @Test
     public void shouldThrowBpmnErrorWhenExceptionOccurred() {
-        CreateRelation testedObject = new CreateRelation(new AaiConnectionThrowingException());
+        CreateRelation testedObject = new CreateRelation(new PnfManagementThrowingException());
         executionFake.setVariable("testProcessKey", "testProcessKeyValue");
 
         assertThatThrownBy(() -> testedObject.execute(executionFake)).isInstanceOf(BpmnError.class);

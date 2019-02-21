@@ -28,7 +28,7 @@ import java.io.IOException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
-import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
+import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +46,11 @@ public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
 
     private static final Logger logger = LoggerFactory.getLogger(CheckAaiForCorrelationIdDelegate.class);
 
-    private AaiConnection aaiConnection;
+    private PnfManagement pnfManagement;
 
     @Autowired
-    public void setAaiConnection(AaiConnection aaiConnection) {
-        this.aaiConnection = aaiConnection;
+    public void setPnfManagement(PnfManagement pnfManagement) {
+        this.pnfManagement = pnfManagement;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 500, CORRELATION_ID + " is not set");
         }
         try {
-            boolean isEntry = aaiConnection.getEntryFor(correlationId).isPresent();
+            boolean isEntry = pnfManagement.getEntryFor(correlationId).isPresent();
             logger.debug("AAI entry is found for pnf correlation id {}: {}", CORRELATION_ID, isEntry);
             execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, isEntry);
         } catch (IOException e) {

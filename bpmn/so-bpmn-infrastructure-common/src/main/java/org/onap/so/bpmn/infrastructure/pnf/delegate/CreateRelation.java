@@ -23,7 +23,7 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
-import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
+import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +34,11 @@ public class CreateRelation implements JavaDelegate {
 
     private static final Logger logger = LoggerFactory.getLogger(CreateRelation.class);
 
-    private AaiConnection aaiConnectionImpl;
+    private PnfManagement pnfManagementImpl;
 
     @Autowired
-    public CreateRelation(AaiConnection aaiConnectionImpl) {
-        this.aaiConnectionImpl = aaiConnectionImpl;
+    public CreateRelation(PnfManagement pnfManagementImpl) {
+        this.pnfManagementImpl = pnfManagementImpl;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class CreateRelation implements JavaDelegate {
         String serviceInstanceId = (String) delegateExecution.getVariable("serviceInstanceId");
         String pnfName = (String) delegateExecution.getVariable("correlationId");
         try {
-            aaiConnectionImpl.createRelation(serviceInstanceId, pnfName);
+            pnfManagementImpl.createRelation(serviceInstanceId, pnfName);
         } catch (Exception e) {
             new ExceptionUtil().buildAndThrowWorkflowException(delegateExecution, 9999,
                     "An exception occurred when making service and pnf relation. Exception: " + e.getMessage());

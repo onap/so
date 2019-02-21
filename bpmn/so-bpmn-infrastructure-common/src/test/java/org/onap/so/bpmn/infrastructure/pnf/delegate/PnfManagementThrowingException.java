@@ -23,9 +23,9 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 import java.io.IOException;
 import java.util.Optional;
 import org.onap.aai.domain.yang.Pnf;
-import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
+import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
 
-public class AaiConnectionThrowingException implements AaiConnection {
+public class PnfManagementThrowingException implements PnfManagement {
 
     @Override
     public Optional<Pnf> getEntryFor(String correlationId) throws IOException {

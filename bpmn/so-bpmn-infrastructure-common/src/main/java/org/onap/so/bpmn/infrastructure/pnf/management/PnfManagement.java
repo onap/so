@@ -18,13 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.pnf.implementation;
+package org.onap.so.bpmn.infrastructure.pnf.management;
 
 import java.io.IOException;
 import java.util.Optional;
 import org.onap.aai.domain.yang.Pnf;
 
-public interface AaiConnection {
+public interface PnfManagement {
 
     Optional<Pnf> getEntryFor(String correlationId) throws IOException;
 
