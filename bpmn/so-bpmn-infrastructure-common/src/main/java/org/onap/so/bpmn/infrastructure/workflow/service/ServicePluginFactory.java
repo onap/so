@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -127,7 +129,7 @@ public class ServicePluginFactory {
 			return newRequest;
 		}
 
-		List<Resource> addResourceList = new ArrayList<Resource>();
+		List<Resource> addResourceList = new ArrayList<>();
 		addResourceList.addAll(serviceDecomposition.getServiceResources());
 		
 		serviceDecomposition.setVnfResources(null);
@@ -237,7 +239,7 @@ public class ServicePluginFactory {
 		String url = getInventoryOSSEndPoint();
 		url += "/oss/inventory?location=" +  UriUtils.encode(locationAddress,"UTF-8");
 		String responseContent = sendRequest(url, "GET", "");
-		List<Object> accessTPs = new ArrayList<Object>();
+		List<Object> accessTPs = new ArrayList<>();
 		if (null != responseContent) {
 			accessTPs = getJsonObject(responseContent, List.class);
 		}
@@ -246,8 +248,8 @@ public class ServicePluginFactory {
 	
 	@SuppressWarnings("unchecked")
 	private void putResourceRequestInputs(Map<String, Object> resource, Map<String, Object> resourceInputs) {
-		Map<String, Object> resourceParametersObject = new HashMap<String, Object>();
-		Map<String, Object> resourceRequestInputs = new HashMap<String, Object>();
+		Map<String, Object> resourceParametersObject = new HashMap<>();
+		Map<String, Object> resourceRequestInputs = new HashMap<>();
 		resourceRequestInputs.put("requestInputs", resourceInputs);
 		resourceParametersObject.put("parameters", resourceRequestInputs);
 
@@ -428,7 +430,6 @@ public class ServicePluginFactory {
 	// this method check if pInterface is remote
 	private boolean isRemotePInterface(AAIResourcesClient client, AAIResourceUri uri) {
 		
-		Map<String, String> keys = uri.getURIKeys();
 		String uriString = uri.build().toString();
 
 		if (uriString != null) {
@@ -555,14 +556,14 @@ public class ServicePluginFactory {
 	}
 
 	private List<Object> queryTerminalPointsFromServiceProviderSystem(String srcLocation, String dstLocation) {
-		Map<String, String> locationSrc = new HashMap<String, String>();
+		Map<String, String> locationSrc = new HashMap<>();
 		locationSrc.put("location", srcLocation);
-		Map<String, String> locationDst = new HashMap<String, String>();
+		Map<String, String> locationDst = new HashMap<>();
 		locationDst.put("location", dstLocation);
-		List<Map<String, String>> locations = new ArrayList<Map<String, String>>();
+		List<Map<String, String>> locations = new ArrayList<>();
 		locations.add(locationSrc);
 		locations.add(locationDst);
-		List<Object> returnList = new ArrayList<Object>();
+		List<Object> returnList = new ArrayList<>();
 		String reqContent = getJsonString(locations);
 		String url = getThirdSPEndPoint();
 		String responseContent = sendRequest(url, "POST", reqContent);
@@ -604,7 +605,7 @@ public class ServicePluginFactory {
 		Map<String, Object> serviceObject = (Map<String, Object>) uuiObject.get("service");
 		Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject.get("parameters");
 		Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject.get("requestInputs");
-		Map<String, Object> oofQueryObject = new HashMap<String, Object>();
+		Map<String, Object> oofQueryObject = new HashMap<>();
 		List<Object> resources = (List<Object>) serviceParametersObject.get("resources");
 		oofQueryObject.put("src-access-provider-id", serviceRequestInputs.get("inner-src-access-provider-id"));
 		oofQueryObject.put("src-access-client-id", serviceRequestInputs.get("inner-src-access-client-id"));
@@ -620,7 +621,7 @@ public class ServicePluginFactory {
 		String url = getOOFCalcEndPoint();
 		String responseContent = sendRequest(url, "POST", oofRequestReq);
 
-		List<Object> returnList = new ArrayList<Object>();
+		List<Object> returnList = new ArrayList<>();
 		if (null != responseContent) {
 			returnList = getJsonObject(responseContent, List.class);
 		}
@@ -635,7 +636,7 @@ public class ServicePluginFactory {
 	}
 	
 	private Map<String, Object> getReturnRoute(List<Object> returnList){
-		Map<String, Object> returnRoute = new HashMap<String,Object>();
+		Map<String, Object> returnRoute = new HashMap<>();
 		for(Object returnVpn :returnList){
 			Map<String, Object> returnVpnInfo = (Map<String, Object>) returnVpn;
 		    String accessTopoId = (String)returnVpnInfo.get("access-topology-id");
@@ -664,11 +665,11 @@ public class ServicePluginFactory {
 	private Map<String, Object> getResourceParams(Execution execution, String resourceCustomizationUuid,
 			String serviceParameters) {
 		List<String> resourceList = jsonUtil.StringArrayToList(execution,
-				(String) JsonUtils.getJsonValue(serviceParameters, "resources"));
+				JsonUtils.getJsonValue(serviceParameters, "resources"));
 		// Get the right location str for resource. default is an empty array.
 		String resourceInputsFromUui = "";
 		for (String resource : resourceList) {
-			String resCusUuid = (String) JsonUtils.getJsonValue(resource, "resourceCustomizationUuid");
+			String resCusUuid = JsonUtils.getJsonValue(resource, "resourceCustomizationUuid");
 			if (resourceCustomizationUuid.equals(resCusUuid)) {
 				String resourceParameters = JsonUtils.getJsonValue(resource, "parameters");
 				resourceInputsFromUui = JsonUtils.getJsonValue(resourceParameters, "requestInputs");
@@ -737,14 +738,6 @@ public class ServicePluginFactory {
 				httpDelete.setConfig(requestConfig);
 				method = httpDelete;
 			}
-
-			// now have no auth
-			// String userCredentials =
-			// SDNCAdapterProperties.getEncryptedProperty(Constants.SDNC_AUTH_PROP,
-			// Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
-			// String authorization = "Basic " +
-			// DatatypeConverter.printBase64Binary(userCredentials.getBytes());
-			// method.setHeader("Authorization", authorization);
 
 			httpResponse = client.execute(method);
 			String responseContent = null;
