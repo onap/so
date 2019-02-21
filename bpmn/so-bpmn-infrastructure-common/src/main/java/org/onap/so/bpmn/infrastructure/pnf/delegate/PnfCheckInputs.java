@@ -31,7 +31,6 @@ import com.google.common.base.Strings;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
-import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -40,13 +39,12 @@ import org.springframework.stereotype.Component;
 public class PnfCheckInputs implements JavaDelegate {
 
     public static final String UUID_REGEX = "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5]{1}[0-9a-f]{3}-[89ab]{1}[0-9a-f]{3}-[0-9a-f]{12}$";
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, PnfCheckInputs.class);
 
-    private String defaultTimeout;
+    private String pnfEntryNotificationTimeout;
 
     @Autowired
-    public PnfCheckInputs(@Value("${aai.pnfEntryNotificationTimeout}") String defaultTimeout) {
-        this.defaultTimeout = defaultTimeout;
+    public PnfCheckInputs(@Value("${aai.pnfEntryNotificationTimeout}") String pnfEntryNotificationTimeout) {
+        this.pnfEntryNotificationTimeout = pnfEntryNotificationTimeout;
     }
 
     @Override
@@ -75,15 +73,11 @@ public class PnfCheckInputs implements JavaDelegate {
     }
 
     private void validateTimeout(DelegateExecution execution) {
-        String timeout = (String) execution.getVariable(TIMEOUT_FOR_NOTIFICATION);
-        if (Strings.isNullOrEmpty(timeout)) {
-            LOGGER.debug("timeoutForPnfEntryNotification variable not found, setting default");
-            if (defaultTimeout == null) {
-                new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,
-                    "default timeoutForPnfEntryNotification value not defined");
-            }
-            execution.setVariable(TIMEOUT_FOR_NOTIFICATION, defaultTimeout);
+        if (Strings.isNullOrEmpty(pnfEntryNotificationTimeout)) {
+            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,
+                    "timeoutForPnfEntryNotification value not defined");
         }
+        execution.setVariable(TIMEOUT_FOR_NOTIFICATION, pnfEntryNotificationTimeout);
     }
 
     private void validateServiceInstanceId(DelegateExecution execution) {
