@@ -116,6 +116,9 @@ public class ServicePluginFactory {
 		}
 	
 		Map<String, Object> uuiObject = getJsonObject(uuiRequest, Map.class);
+		if(null == uuiObject){
+			return uuiRequest;
+		}
 		Map<String, Object> serviceObject = (Map<String, Object>) uuiObject.get("service");
 		Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject.get("parameters");
 		Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject.get("requestInputs");
