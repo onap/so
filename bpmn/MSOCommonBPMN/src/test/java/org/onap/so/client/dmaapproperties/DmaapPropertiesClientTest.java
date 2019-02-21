@@ -20,27 +20,30 @@
 
 package org.onap.so.client.dmaapproperties;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.http.HttpStatus;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.onap.so.BaseTest;
 import org.onap.so.client.avpn.dmaap.beans.AVPNDmaapBean;
 import org.onap.so.client.exception.MapperException;
-import org.onap.so.BaseTest;
+import org.onap.so.client.dmaapproperties.GlobalDmaapPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class DmaapPropertiesClientTest extends BaseTest{
 	
@@ -75,10 +78,24 @@ public class DmaapPropertiesClientTest extends BaseTest{
 
 	@Test
 	public void testDmaapPublishRequest() throws JsonProcessingException, MapperException {
-		stubFor(post(urlEqualTo("/events/com.att.mso.asyncStatusUpdate?timeout=60000"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
-
-		dmaapPropertiesClient.dmaapPublishRequest(requestId, clientSource, correlator, serviceInstanceId, startTime, finishTime, requestScope,
-													requestType, timestamp, requestState, statusMessage, percentProgress, false);
+		DmaapPropertiesClient client = Mockito.spy(DmaapPropertiesClient.class);
+		GlobalDmaapPublisher mockedClientDmaapPublisher = Mockito.mock(GlobalDmaapPublisher.class);
+		AVPNDmaapBean mockedDmaapBean = Mockito.mock(AVPNDmaapBean.class);
+		String request = "test";
+		
+		doReturn(mockedDmaapBean).when(client).buildRequestJson(requestId, clientSource, correlator, serviceInstanceId, startTime, finishTime, requestScope,
+				requestType, timestamp, requestState, statusMessage, percentProgress, false); 
+		
+		AVPNDmaapBean actualDmaapBean = client.buildRequestJson(requestId, clientSource, correlator, serviceInstanceId, startTime, finishTime, requestScope,
+				requestType, timestamp, requestState, statusMessage, percentProgress, false);
+		mockedClientDmaapPublisher.send(request);
+		
+		doNothing().when(mockedClientDmaapPublisher).send(anyString());
+		
+		verify(client, times(1)).buildRequestJson(requestId, clientSource, correlator, serviceInstanceId, startTime, 
+				finishTime, requestScope, requestType, timestamp, requestState, statusMessage, percentProgress, false);
+		verify(mockedClientDmaapPublisher, times(1)).send(request);
+		   
+		assertNotNull(actualDmaapBean);
 	}
 }

@@ -21,23 +21,27 @@
 package org.onap.so.client.dmaapproperties;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.so.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class GlobalDmaapPublisherTest extends BaseTest{
 
+	@BeforeClass
+	public static void setUp() throws Exception {
+		System.setProperty("mso.global.dmaap.host", "http://test:1234");
+	}
+    
 	@Autowired
 	private GlobalDmaapPublisher globalDmaapPublisher;
-
-
+	
 	@Test
 	public void testGetters() {
 		assertEquals("81B7E3533B91A6706830611FB9A8ECE529BBCCE754B1F1520FA7C8698B42F97235BEFA993A387E664D6352C63A6185D68DA7F0B1D360637CBA102CB166E3E62C11EB1F75386D3506BCECE51E54", globalDmaapPublisher.getAuth());
 		assertEquals("07a7159d3bf51a0e53be7a8f89699be7", globalDmaapPublisher.getKey());
 		assertEquals("com.att.mso.asyncStatusUpdate", globalDmaapPublisher.getTopic());
-		assertEquals("http://localhost:" + wireMockPort, globalDmaapPublisher.getHost().get());
+		assertEquals("http://test:1234", globalDmaapPublisher.getHost().get());
 	}
 }
