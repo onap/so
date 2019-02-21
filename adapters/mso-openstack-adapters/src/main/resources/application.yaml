@@ -18,7 +18,6 @@ mso:
       retryMultiplier: 60000
 spring:
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}

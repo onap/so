@@ -16,7 +16,7 @@ mso:
     
 spring:
   datasource:
-    jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver

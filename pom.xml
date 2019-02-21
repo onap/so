@@ -30,7 +30,6 @@
 		<module>bpmn</module>
 		<module>cloudify-client</module>
 		<module>cxf-logging</module>
-                <module>so-monitoring</module>
 		<module>packages</module>
 	</modules>
 	<properties>

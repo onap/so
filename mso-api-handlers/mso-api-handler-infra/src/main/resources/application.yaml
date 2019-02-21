@@ -29,15 +29,10 @@ mso:
                 
 spring:
   datasource:
-    jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
-    dbcp2: 
-      initial-size: 5
-      max-total: 20 
-      validation-query: select 1
-      test-on-borrow: true 
 
   jpa:
       show-sql: true
@@ -51,15 +46,10 @@ spring:
                        
 request:
   datasource:
-    jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    driver-class-name: org.mariadb.jdbc.Driver  
-    dbcp2: 
-      initial-size: 5
-      max-total: 20 
-      validation-query: select 1
-      test-on-borrow: true
+    driver-class-name: org.mariadb.jdbc.Driver
 
 #Actuator
 management:

@@ -157,7 +157,7 @@ sniro:
     headers.latestVersion: 2
 spring:
   datasource:
-    jdbc-url: jdbc:mariadb://localhost:3307/camundabpmn
+    url: jdbc:mariadb://localhost:3307/camundabpmn
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver

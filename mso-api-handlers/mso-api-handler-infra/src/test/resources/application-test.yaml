@@ -84,7 +84,7 @@ mso:
 
 spring:
   datasource:
-    jdbc-url: jdbc:mariadb://localhost:3307/catalogdb
+    url: jdbc:mariadb://localhost:3307/catalogdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver    
@@ -107,7 +107,7 @@ spring:
       role: InfraPortal-Client
 request:
   datasource:
-    jdbc-url: jdbc:mariadb://localhost:3307/requestdb
+    url: jdbc:mariadb://localhost:3307/requestdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver

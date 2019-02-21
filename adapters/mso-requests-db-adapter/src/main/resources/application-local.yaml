@@ -17,7 +17,7 @@ mso:
       period: 180
 spring:
   datasource:
-    jdbc-url: jdbc:mariadb://localhost:3306/requestdb
+    url: jdbc:mariadb://localhost:3306/requestdb
     username: catalog
     password: catalog123
     driver-class-name: org.mariadb.jdbc.Driver
