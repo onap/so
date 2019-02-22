@@ -35,6 +35,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
+import javax.ws.rs.BadRequestException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -204,6 +205,23 @@ public class AAIResourcesClientTest {
 		thrown.expect(NotFoundException.class);
 		thrown.expectMessage(containsString(path.build() + " not found in A&AI"));
 		AAIResultWrapper result = client.get(path, NotFoundException.class);
+	}
+	
+	@Test
+	public void verifyFailedCallException() {
+		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
+		wireMockRule.stubFor(get(
+				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
+				.willReturn(
+					aResponse()
+					.withHeader("Content-Type", "text/plain")
+					.withBodyFile("aai/error-message.json")
+					.withStatus(400)));
+		AAIResourcesClient client= aaiClient;
+		
+		thrown.expect(BadRequestException.class);
+		thrown.expectMessage(containsString("Invalid input performing PUT on url (msg=Precondition Required:resource-version not passed for update of url"));
+		AAIResultWrapper result = client.get(path);
 	}
 	
 	@Test

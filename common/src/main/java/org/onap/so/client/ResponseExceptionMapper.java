@@ -20,9 +20,6 @@
 
 package org.onap.so.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
@@ -33,29 +30,34 @@ import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.NotSupportedException;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ResponseExceptionMapper {
-
+	private static final Logger logger = LoggerFactory.getLogger(ResponseExceptionMapper.class);
 	public void map(Response response) {
-		
-		response.bufferEntity();
 		if (response.getStatus() >= 300) {
+			String body = "";
 			String message = "empty message";
-			if (response.hasEntity()) {
-				StringWriter writer = new StringWriter();
-				try {
-					IOUtils.copy((InputStream)response.getEntity(), writer, "UTF-8");
-				} catch (IOException e) {
-					writer.append("failed to read entity stream");
+			try {
+				response.bufferEntity();
+				if (response.hasEntity()) {
+					body = response.readEntity(String.class);
 				}
-				Optional<String> result = this.extractMessage(writer.toString());
-				if (result.isPresent()) {
-					message = result.get();
-				}
+			} catch (IllegalStateException e) {
+				body = "failed to read entity stream";
+				logger.error(body, e);
+			} catch (ProcessingException e) {
+				body = "could not buffer stream";
+				logger.error(body, e);
+			}
+			Optional<String> result = this.extractMessage(body);
+			if (result.isPresent()) {
+				message = result.get();
 			}
 			Response.Status status = Response.Status.fromStatusCode(response.getStatus());
 			WebApplicationException webAppException;

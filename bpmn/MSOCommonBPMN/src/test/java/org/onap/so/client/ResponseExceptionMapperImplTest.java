@@ -95,7 +95,7 @@ public class ResponseExceptionMapperImplTest{
         // given
     	Response response = createMockResponse(Status.BAD_REQUEST);
         when(response.hasEntity()).thenReturn(true);
-        when(response.getEntity()).thenReturn(new ByteArrayInputStream("test message".getBytes(StandardCharsets.UTF_8)));
+        when(response.readEntity(String.class)).thenReturn("test message");
         
         expectedExceptionTest.expect(BadRequestException.class);
         expectedExceptionTest.expectMessage("test message");

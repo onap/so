@@ -121,7 +121,6 @@ public class JaxRsClientLogging implements ClientRequestFilter,ClientResponseFil
                 statusCode=ONAPLogConstants.ResponseStatus.ERROR.toString();				
             }
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(responseContext.getStatus()));
-            MDC.put(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION,getStringFromInputStream(responseContext));
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, statusCode);
             logger.info(ONAPLogConstants.Markers.INVOKE_RETURN, "InvokeReturn");
             clearClientMDCs();
@@ -140,23 +139,6 @@ public class JaxRsClientLogging implements ClientRequestFilter,ClientResponseFil
         MDC.remove(ONAPLogConstants.MDCs.PARTNER_NAME);
         MDC.remove(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME);
         MDC.remove(ONAPLogConstants.MDCs.INVOKE_TIMESTAMP);
-    }
-
-    private static String getStringFromInputStream(ClientResponseContext clientResponseContext) {
-
-        InputStream is = clientResponseContext.getEntityStream();
-        ByteArrayOutputStream boas = new ByteArrayOutputStream();
-
-        try {
-            IOUtils.copy(is,boas);
-            InputStream copiedStream = new ByteArrayInputStream(boas.toByteArray());
-            clientResponseContext.setEntityStream(copiedStream);
-            return boas.toString();
-
-        } catch (IOException e) {
-            logger.warn("Failed to read response body", e);
-        }
-        return "Unable to read input stream";
     }
 
 }
