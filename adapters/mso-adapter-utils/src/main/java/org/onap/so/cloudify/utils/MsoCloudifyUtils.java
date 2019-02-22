@@ -84,7 +84,6 @@ import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.onap.so.logger.MessageEnum;
-
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
@@ -94,6 +93,8 @@ import org.onap.so.openstack.exceptions.MsoIOException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.onap.so.openstack.utils.MsoCommonUtils;
 import org.onap.so.utils.CryptoUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -118,7 +119,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     @Autowired
     private PoConfig poConfig;
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoCloudifyUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MsoCloudifyUtils.class);
 
     // Properties names and variables (with default values)
     protected String createPollIntervalProp = "org.onap.so.adapters.po.pollInterval";
@@ -267,8 +268,11 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         		// The workflow completed with errors.  Must try to back it out.
             	if (!backout)
             	{
-            		LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Deployment installation failed, backout deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Deployment Installation, backout suppressed");
-            	}	
+                  LOGGER.warn("{} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR,
+                      "Deployment installation failed, backout deletion suppressed",
+                      MsoLogger.ErrorCode.BusinessProcesssError,
+                      "Exception in Deployment Installation, backout suppressed");
+              }
             	else {
     	        	// Poll on delete if we rollback - use same values for now
     	            int deletePollInterval = createPollInterval;
@@ -286,14 +290,20 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	            	}
     	            	else {
     	            		// Didn't uninstall successfully.  Log this error
-        					LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Deployment: Cloudify error rolling back deployment install: " + installWorkflow.getError(), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Cloudify error rolling back deployment installation");
-    	            	}
+                        LOGGER.error("{} {} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR,
+                            "Create Deployment: Cloudify error rolling back deployment install: ",
+                            installWorkflow.getError(), MsoLogger.ErrorCode.BusinessProcesssError,
+                            "Create Stack: Cloudify error rolling back deployment installation");
+                    }
     	            }
     	            catch (Exception e) {
     	            	// Catch-all for backout errors trying to uninstall/delete
     	            	// Log this error, and return the original exception
-    					LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back deployment install: " + e, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back deployment installation");
-    	            }
+                      LOGGER.error("{} {} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR,
+                          "Create Stack: Nested exception rolling back deployment install: ", e,
+                          MsoLogger.ErrorCode.BusinessProcesssError,
+                          "Create Stack: Nested exception rolling back deployment installation");
+                  }
             	}
     	            
     	        MsoCloudifyException me = new MsoCloudifyException (0, "Workflow Execution Failed", installWorkflow.getError());
@@ -326,9 +336,12 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 	            catch (Exception e) {
 	            	// Catch-all for backout errors trying to uninstall/delete
 	            	// Log this error, and return the original exception
-					LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back deployment install: " + e, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back deployment installation");
-	            	
-	            }
+                  LOGGER.error("{} {} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR,
+                      "Create Stack: Nested exception rolling back deployment install: ", e,
+                      MsoLogger.ErrorCode.BusinessProcesssError,
+                      "Create Stack: Nested exception rolling back deployment installation");
+
+              }
         	}
 
             // Propagate the original exception from Stack Query.
@@ -356,8 +369,10 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	}
     	catch (CloudifyConnectException ce) {
     		// Couldn't connect to Cloudify
-    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "QueryDeploymentOutputs: Cloudify connection failure: " + ce, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "QueryDeploymentOutputs: Cloudify connection failure");
-    		throw new MsoIOException (ce.getMessage(), ce);
+          LOGGER.error("{} {} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR,
+              "QueryDeploymentOutputs: Cloudify connection failure: ", ce, MsoLogger.ErrorCode.BusinessProcesssError,
+              "QueryDeploymentOutputs: Cloudify connection failure");
+          throw new MsoIOException (ce.getMessage(), ce);
     	}
     	catch (CloudifyResponseException re) {
             if (re.getStatus () == 404) {
@@ -383,7 +398,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     private Execution executeWorkflow (Cloudify cloudify, String deploymentId, String workflowId, Map<String,Object> workflowParams, boolean pollForCompletion, int timeout, int pollInterval)
     	throws MsoCloudifyException
     {
-    	LOGGER.debug("Executing '" + workflowId + "' workflow on deployment '" + deploymentId + "'");
+    	LOGGER.debug("Executing '{}' workflow on deployment '{}'", workflowId, deploymentId);
 
 		StartExecutionParams executeParams = new StartExecutionParams();
 		executeParams.setWorkflowId(workflowId);
@@ -420,8 +435,9 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 			{
 				// workflow is still running; check for timeout
 				if (pollTimeout <= 0) {
-					LOGGER.debug ("workflow " + execution.getWorkflowId() + " timed out on deployment " + execution.getDeploymentId());                    
-					timedOut = true;
+            LOGGER.debug("workflow {} timed out on deployment {}", execution.getWorkflowId(),
+                execution.getDeploymentId());
+            timedOut = true;
 					continue;
 				}
 				
@@ -437,36 +453,49 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 			// Broke the loop.  Check again for a terminal state
 			if (status.equals(TERMINATED)){
 				// Success!
-	    		LOGGER.debug ("Workflow '" + workflowId + "' completed successfully on deployment '" + deploymentId + "'");
-				return execution;
+          LOGGER.debug("Workflow '{}' completed successfully on deployment '{}'", workflowId, deploymentId);
+          return execution;
 			}
 			else if (status.equals("failed")){
 				// Workflow failed.  Log it and return the execution object (don't throw exception here)
-	    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Cloudify workflow failure: " + execution.getError(), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow: Failed: " + execution.getError());
-	    		return execution;
+          LOGGER.error("{} {} {} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR, "Cloudify workflow failure: ",
+              execution.getError(), MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow: Failed: ",
+              execution.getError());
+          return execution;
 			}
 			else if (status.equals(CANCELLED)){
 				// Workflow was cancelled, leaving the deployment in an indeterminate state.  Log it and return the execution object (don't throw exception here)
-	    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Cloudify workflow cancelled.  Deployment is in an indeterminate state", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow cancelled: " + workflowId);
-	    		return execution;
+          LOGGER.error("{} {} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR,
+              "Cloudify workflow cancelled.  Deployment is in an indeterminate state",
+              MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow cancelled: ", workflowId);
+          return execution;
 			}
 			else {
 				// Can only get here after a timeout
-	    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Cloudify workflow timeout", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow: Timed Out");
-			}
+          LOGGER.error("{} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR, "Cloudify workflow timeout",
+              MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow: Timed Out");
+      }
 		}
 		catch (CloudifyConnectException ce) {
-    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Execute Workflow (" + command + "): Cloudify connection failure: " + ce, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow (" + command + "): Cloudify connection failure");
-    		savedException = ce;
+        LOGGER.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR,
+            "Execute Workflow (", command, "): Cloudify connection failure: ", ce,
+            MsoLogger.ErrorCode.BusinessProcesssError,
+            "Execute Workflow (", command, "): Cloudify connection failure");
+        savedException = ce;
 		}
 		catch (CloudifyResponseException re) {
-    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Execute Workflow (" + command + "): Cloudify response error: " + re, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow (" + command + "): Cloudify error" + re.getMessage());
-    		savedException = re;
+        LOGGER.error("{} {} {} {} {} {} {} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR, "Execute Workflow (", command,
+            "): Cloudify response error: ", re, MsoLogger.ErrorCode.BusinessProcesssError,
+            "Execute Workflow (", command, "): Cloudify error", re.getMessage());
+        savedException = re;
 		}
 		catch (RuntimeException e) {
 			// Catch-all
-    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Execute Workflow (" + command + "): Unexpected error: " + e, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow (" + command + "): Internal error" + e.getMessage());
-    		savedException = e;
+        LOGGER.error("{} {} {} {} {} {} {} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR,
+            "Execute Workflow (", command, "): Unexpected error: ", e,
+            MsoLogger.ErrorCode.BusinessProcesssError,
+            "Execute Workflow (", command, "): Internal error", e.getMessage());
+        savedException = e;
 		}
 		
 		//  Get to this point ONLY on an error or timeout
@@ -496,39 +525,38 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 			{
 				// workflow is still running; check for timeout
 				if (cancelTimeout <= 0) {
-					LOGGER.debug ("Cancel timeout for workflow " + workflowId + " on deployment " + deploymentId);                    
-					timedOut = true;
+            LOGGER.debug("Cancel timeout for workflow {} on deployment {}", workflowId, deploymentId);
+            timedOut = true;
 					continue;
 				}
 				
 				sleep(pollInterval * 1000L);
 
 				cancelTimeout -= pollInterval;
-				LOGGER.debug("pollTimeout remaining: " + cancelTimeout);
-				
-				execution = queryExecution.execute();
+          LOGGER.debug("pollTimeout remaining: {}", cancelTimeout);
+
+          execution = queryExecution.execute();
 				status = execution.getStatus();
 			}
 
 			// Broke the loop.  Check again for a terminal state
 			if (status.equals(CANCELLED)){
 				// Finished cancelling.  Return the original exception
-				LOGGER.debug ("Cancel workflow " + workflowId + " completed on deployment " + deploymentId);                    
-				throw new MsoCloudifyException (-1, "", "", savedException);
+          LOGGER.debug("Cancel workflow {} completed on deployment {}", workflowId, deploymentId);
+          throw new MsoCloudifyException (-1, "", "", savedException);
 			}
 			else {
 				// Can only get here after a timeout
-				LOGGER.debug ("Cancel workflow " + workflowId + " timeout out on deployment " + deploymentId);                    
-				MsoCloudifyException exception = new MsoCloudifyException (-1, "", "", savedException);
+          LOGGER.debug("Cancel workflow {} timeout out on deployment {}", workflowId, deploymentId);
+          MsoCloudifyException exception = new MsoCloudifyException (-1, "", "", savedException);
 				exception.setPendingWorkflow(true);
 				throw exception;
 			}
 		}
 		catch (Exception e) {
 			// Catch-all.  Log the message and throw the original exception
-//    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Execute Workflow (" + command + "): Unexpected error: " + e, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Execute Workflow (" + command + "): Internal error" + e.getMessage());
-			LOGGER.debug ("Cancel workflow " + workflowId + " failed for deployment " + deploymentId + ": " + e.getMessage());                    
-			MsoCloudifyException exception = new MsoCloudifyException (-1, "", "", savedException);
+        LOGGER.debug("Cancel workflow {} failed for deployment : {} {}", workflowId, deploymentId, e);
+        MsoCloudifyException exception = new MsoCloudifyException (-1, "", "", savedException);
 			exception.setPendingWorkflow(true);
 			throw exception;
 		}
@@ -549,7 +577,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     public DeploymentInfo queryDeployment (String cloudSiteId, String tenantId, String deploymentId)
     	throws MsoException
     {
-        LOGGER.debug ("Query Cloudify Deployment: " + deploymentId + " in tenant " + tenantId);
+        LOGGER.debug ("Query Cloudify Deployment: {} in tenant {}", deploymentId, tenantId);
 
         // Obtain the cloud site information where we will create the stack
         Optional<CloudSite> cloudSite = cloudConfig.getCloudSite (cloudSiteId);
@@ -593,8 +621,10 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	}
     	catch (CloudifyConnectException ce) {
     		// Couldn't connect to Cloudify
-    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "QueryDeployment: Cloudify connection failure: " + ce, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "QueryDeployment: Cloudify connection failure");
-    		throw new MsoIOException (ce.getMessage(), ce);
+          LOGGER.error("{} {} {} {} {}", MessageEnum.RA_CREATE_STACK_ERR,
+              "QueryDeployment: Cloudify connection failure: ", ce, MsoLogger.ErrorCode.BusinessProcesssError,
+              "QueryDeployment: Cloudify connection failure");
+          throw new MsoIOException (ce.getMessage(), ce);
     	}
     	catch (CloudifyResponseException re) {
             if (re.getStatus () == 404) {
@@ -664,15 +694,16 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
             if (e.getStatus () == 404) {
                 // Deployment doesn't exist.  Return a "NOTFOUND" DeploymentInfo object
             	// TODO:  Should return NULL?
-            	LOGGER.debug("Deployment requested for deletion does not exist: " + deploymentId);
-				return new DeploymentInfoBuilder()
+                LOGGER.debug("Deployment requested for deletion does not exist: {}", deploymentId);
+                return new DeploymentInfoBuilder()
 					.withId(deploymentId)
 					.withStatus(DeploymentStatus.NOTFOUND)
 					.build();
            } else {
                 // Convert the CloudifyResponseException to an MsoOpenstackException
-            	LOGGER.debug("ERROR STATUS = " + e.getStatus() + ",\n" + e.getMessage() + "\n" + e.getLocalizedMessage());
-            	MsoException me = cloudifyExceptionToMsoException (e, DELETE_DEPLOYMENT);
+                LOGGER.debug("ERROR STATUS = {}, \n {}\n {}\n {}", e.getStatus(), e.getMessage(),
+                    e.getLocalizedMessage(), e);
+                MsoException me = cloudifyExceptionToMsoException (e, DELETE_DEPLOYMENT);
                 me.setCategory (MsoExceptionCategory.INTERNAL);
                 throw me;
             }
@@ -704,8 +735,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 
         	if (uninstallWorkflow.getStatus().equals(TERMINATED)) {
 	        	//  Successful uninstall.
-        		LOGGER.debug("Uninstall successful for deployment " + deploymentId);
-	        }
+              LOGGER.debug("Uninstall successful for deployment {}", deploymentId);
+          }
         	else {
         		// The uninstall workflow completed with an error.  Must fail the request, but will
         		// leave the deployment in an indeterminate state, as cloud resources may still exist.
@@ -789,8 +820,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	GetBlueprint getRequest = cloudify.blueprints().getMetadataById(blueprintId);
     	try {
     		Blueprint bp = getRequest.execute();
-        	LOGGER.debug("Blueprint exists: " + bp.getId());
-    		return true;
+          LOGGER.debug("Blueprint exists: {}", bp.getId());
+          return true;
     	}
     	catch (CloudifyResponseException ce) {
     		if (ce.getStatus() == 404) {
@@ -846,8 +877,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	GetBlueprint getRequest = cloudify.blueprints().getMetadataById(blueprintId);
     	try {
     		Blueprint bp = getRequest.execute();
-    		LOGGER.debug("Blueprint " + bp.getId() + " already exists.");
-    		return false;
+          LOGGER.debug("Blueprint {} already exists.", bp.getId());
+          return false;
     	}
     	catch (CloudifyResponseException ce) {
     		if (ce.getStatus() == 404) {
@@ -881,9 +912,9 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 		catch (IOException e) {
 			// Since we're writing to a byte array, this should never happen
 		}
-		LOGGER.debug ("Blueprint zip file size: " + zipBuffer.size());
-		
-		// Ready to upload the blueprint zip
+        LOGGER.debug("Blueprint zip file size: {}", zipBuffer.size());
+
+        // Ready to upload the blueprint zip
     	
     	try (InputStream blueprintStream = new ByteArrayInputStream (zipBuffer.toByteArray())) {
     		UploadBlueprint uploadRequest = cloudify.blueprints().uploadFromStream(blueprintId,  mainFileName,  blueprintStream);
