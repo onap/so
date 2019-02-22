@@ -346,6 +346,7 @@ public class BBInputSetupMapperLayer {
 	protected RequestParameters mapRequestParameters(org.onap.so.serviceinstancebeans.RequestParameters requestParameters) {
 		RequestParameters requestParams = new RequestParameters();
 		requestParams.setaLaCarte(requestParameters.getALaCarte());
+		requestParams.setUsePreload(requestParameters.getUsePreload());
 		requestParams.setSubscriptionServiceType(requestParameters.getSubscriptionServiceType());
 		requestParams.setUserParams(requestParameters.getUserParams());
 		requestParams.setPayload(requestParameters.getPayload());

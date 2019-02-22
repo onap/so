@@ -49,6 +49,8 @@ public class RequestParameters implements Serializable {
 	private Boolean aLaCarte;
 	@JsonProperty("payload")
 	private String payload;
+	@JsonProperty("usePreload")
+	private Boolean usePreload;
 
 	public String getSubscriptionServiceType() {
 		return subscriptionServiceType;
@@ -94,6 +96,20 @@ public class RequestParameters implements Serializable {
 			}
 		}
 		return null;
+	}
+	
+	public Boolean isUsePreload() {
+		return usePreload;
+	}
+	
+	@JsonProperty("usePreload")
+	public Boolean getUsePreload() {
+		return usePreload;
+	}
+	
+	@JsonProperty("usePreload")
+	public void setUsePreload(Boolean usePreload) {
+		this.usePreload = usePreload;
 	}
 
 

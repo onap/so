@@ -44,6 +44,8 @@ public class RequestParameters implements Serializable {
 	private Boolean aLaCarte;
 	@JsonProperty("payload")
 	private String payload;
+	@JsonProperty("usePreload")
+	private Boolean usePreload; // usePreload would always be true for Update
 	
 	// DONOT USE. It is intended to handle older VID requests(prior to 1802)
 	@Deprecated
@@ -55,8 +57,6 @@ public class RequestParameters implements Serializable {
 	private Boolean cascadeDelete;
 	@JsonProperty("testApi")
 	private String testApi; // usePreload would always be true for Update
-	@JsonProperty("usePreload")
-	private Boolean usePreload; // usePreload would always be true for Update
 	@JsonProperty("rebuildVolumeGroups")
 	private Boolean rebuildVolumeGroups;	
 
@@ -85,6 +85,20 @@ public class RequestParameters implements Serializable {
 	}
 	public void setPayload(String value){
 		this.payload = value;
+	}
+	
+	public Boolean isUsePreload() {
+		return usePreload;
+	}
+	
+	@JsonProperty("usePreload")
+	public Boolean getUsePreload() {
+		return usePreload;
+	}
+	
+	@JsonProperty("usePreload")
+	public void setUsePreload(Boolean usePreload) {
+		this.usePreload = usePreload;
 	}
 
 	@Deprecated
@@ -141,15 +155,7 @@ public class RequestParameters implements Serializable {
 
 	public void setCascadeDelete(Boolean cascadeDelete) {
 		this.cascadeDelete = cascadeDelete;
-	}
-
-	public Boolean isUsePreload() {
-		return usePreload;
-	}
-
-	public void setUsePreload(Boolean usePreload) {
-		this.usePreload = usePreload;
-	}
+	}	
 	
 	public Boolean getRebuildVolumeGroups() {
 		return rebuildVolumeGroups;
