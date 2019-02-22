@@ -28,7 +28,7 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.aai.domain.yang.Pnf;
-import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
+import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +45,11 @@ import org.springframework.stereotype.Component;
 public class CreatePnfEntryInAaiDelegate implements JavaDelegate {
 
     private static final Logger logger = LoggerFactory.getLogger(CreatePnfEntryInAaiDelegate.class);
-    private AaiConnection aaiConnection;
+    private PnfManagement pnfManagement;
 
     @Autowired
-    public void setAaiConnection(AaiConnection aaiConnection) {
-        this.aaiConnection = aaiConnection;
+    public void setPnfManagement(PnfManagement pnfManagement) {
+        this.pnfManagement = pnfManagement;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class CreatePnfEntryInAaiDelegate implements JavaDelegate {
         Pnf pnf = new Pnf();
         pnf.setPnfId(pnfUuid);
         pnf.setPnfName(correlationId);
-        aaiConnection.createEntry(correlationId, pnf);
+        pnfManagement.createEntry(correlationId, pnf);
         logger.debug("AAI entry is created for pnf correlation id: {}, pnf uuid: {}", correlationId, pnfUuid);
     }
 }

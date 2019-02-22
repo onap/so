@@ -46,14 +46,14 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
     private Map<String, Object> variables;
 
     @Autowired
-    private AaiConnectionTestImpl aaiConnection;
+    private PnfManagementTestImpl pnfManagementTest;
 
     @Autowired
     private DmaapClientTestImpl dmaapClientTestImpl;
 
     @Before
     public void setup() {
-        aaiConnection.reset();
+        pnfManagementTest.reset();
         variables = new HashMap<>();
         variables.put("serviceInstanceId", SERVICE_INSTANCE_ID);
         variables.put(PNF_UUID, VALID_UUID);
@@ -62,7 +62,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
     @Test
     public void shouldWaitForMessageFromDmaapAndUpdateAaiEntryWhenAaiEntryExists() {
         // given
-        variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITH_ENTRY);
+        variables.put(CORRELATION_ID, PnfManagementTestImpl.ID_WITH_ENTRY);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -81,14 +81,14 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
                 "CreateRelationId",
                 "AaiEntryUpdated"
         );
-        Assertions.assertThat(aaiConnection.getServiceAndPnfRelationMap()).
-                containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID,AaiConnectionTestImpl.ID_WITH_ENTRY));
+        Assertions.assertThat(pnfManagementTest.getServiceAndPnfRelationMap()).
+                containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID, PnfManagementTestImpl.ID_WITH_ENTRY));
     }
 
     @Test
     public void shouldCreateAaiEntryWaitForMessageFromDmaapAndUpdateAaiEntryWhenNoAaiEntryExists() {
         // given
-        variables.put(CORRELATION_ID, AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
+        variables.put(CORRELATION_ID, PnfManagementTestImpl.ID_WITHOUT_ENTRY);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -108,8 +108,8 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
                 "CreateRelationId",
                 "AaiEntryUpdated"
         );
-        Assertions.assertThat(aaiConnection.getCreated()).containsOnlyKeys(AaiConnectionTestImpl.ID_WITHOUT_ENTRY);
-        Assertions.assertThat(aaiConnection.getServiceAndPnfRelationMap()).
-                containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID,AaiConnectionTestImpl.ID_WITHOUT_ENTRY));
+        Assertions.assertThat(pnfManagementTest.getCreated()).containsOnlyKeys(PnfManagementTestImpl.ID_WITHOUT_ENTRY);
+        Assertions.assertThat(pnfManagementTest.getServiceAndPnfRelationMap()).
+                containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID, PnfManagementTestImpl.ID_WITHOUT_ENTRY));
     }
 }

@@ -25,8 +25,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl.ID_WITHOUT_ENTRY;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.AaiConnectionTestImpl.ID_WITH_ENTRY;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementTestImpl.ID_WITHOUT_ENTRY;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementTestImpl.ID_WITH_ENTRY;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.AAI_CONTAINS_INFO_ABOUT_PNF;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
 
@@ -53,7 +53,7 @@ public class CheckAaiForCorrelationIdDelegateTest {
         @Before
         public void setUp() {
             delegate = new CheckAaiForCorrelationIdDelegate();
-            delegate.setAaiConnection(new AaiConnectionTestImpl());
+            delegate.setPnfManagement(new PnfManagementTestImpl());
         }
 
         @Test
@@ -101,7 +101,7 @@ public class CheckAaiForCorrelationIdDelegateTest {
         @Before
         public void setUp() {
             delegate = new CheckAaiForCorrelationIdDelegate();
-            delegate.setAaiConnection(new AaiConnectionThrowingException());
+            delegate.setPnfManagement(new PnfManagementThrowingException());
         }
 
         @Test

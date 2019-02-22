@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,38 +18,47 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.pnf.aai;
+package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import java.util.Optional;
 import org.onap.aai.domain.yang.Pnf;
-import org.onap.so.bpmn.infrastructure.pnf.implementation.AaiConnection;
-import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.AAIResourcesClient;
-import org.onap.so.client.aai.AAIRestClientImpl;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.springframework.stereotype.Component;
+import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
 
-@Component
-public class AaiConnectionImpl implements AaiConnection {
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+public class PnfManagementTestImpl implements PnfManagement {
+
+    public static final String ID_WITHOUT_ENTRY = "IdWithoutEntry";
+    public static final String ID_WITH_ENTRY = "idWithEntryNoIp";
+
+    private Map<String, Pnf> created = new HashMap<>();
 
     @Override
     public Optional<Pnf> getEntryFor(String correlationId) {
-        AAIRestClientImpl restClient = new AAIRestClientImpl();
-        return restClient.getPnfByName(correlationId);
+        if (Objects.equals(correlationId, ID_WITH_ENTRY)) {
+            return Optional.of(new Pnf());
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public void createEntry(String correlationId, Pnf entry) {
-        AAIRestClientImpl restClient = new AAIRestClientImpl();
-        restClient.createPnf(correlationId, entry);
+    public void createEntry(String correlationId, Pnf entry) throws IOException {
+        created.put(correlationId, entry);
     }
 
     @Override
     public void createRelation(String serviceInstanceId, String pnfName) {
-        AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-                serviceInstanceId);
-        AAIResourceUri pnfUri = AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfName);
-        new AAIResourcesClient().connect(serviceInstanceURI, pnfUri);
+    }
+
+    public Map<String, Pnf> getCreated() {
+        return created;
+    }
+
+    public void reset() {
+        created.clear();
     }
 }
