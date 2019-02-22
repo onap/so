@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Intel Corp. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +22,9 @@
 
 package org.onap.so.openstack.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.woorea.openstack.heat.model.CreateStackParam;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -27,10 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilderException;
-
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
 import org.onap.so.adapters.vdu.VduArtifact;
@@ -58,10 +61,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.woorea.openstack.heat.model.CreateStackParam;
 
 @Component
 public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
@@ -194,30 +193,35 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, null);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
-        Response response = multicloudClient.post(multicloudRequest);
-
-        StackInfo createInfo = new StackInfo();
-        createInfo.setName(stackName);
-
-        MulticloudCreateResponse multicloudResponseBody = null;
-        if (response.hasEntity()) {
-            multicloudResponseBody = getCreateBody((java.io.InputStream)response.getEntity());
-        }
-        if (response.getStatus() == Response.Status.CREATED.getStatusCode() && response.hasEntity()) {
-            createInfo.setCanonicalName(stackName + "/" + multicloudResponseBody.getWorkloadId());
-            if (logger.isDebugEnabled()) {
-                logger.debug("Multicloud Create Response Body: " + multicloudResponseBody);
-            }
-            return getStackStatus(cloudSiteId, tenantId, createInfo.getCanonicalName(), pollForCompletion, timeoutMinutes, backout);
-        } else {
-            StringBuilder stackErrorStatusReason = new StringBuilder(response.getStatusInfo().getReasonPhrase());
-            if (null != multicloudResponseBody) {
-                stackErrorStatusReason.append(multicloudResponseBody.toString());
-            }
-            MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
+        if (multicloudClient == null) {
+            MsoOpenstackException me = new MsoOpenstackException(0, "", "Multicloud client could not be initialized");
             me.addContext(CREATE_STACK);
             throw me;
         }
+
+        Response response = multicloudClient.post(multicloudRequest);
+
+        MulticloudCreateResponse multicloudResponseBody = null;
+        if (response.hasEntity()) {
+            multicloudResponseBody = getCreateBody((java.io.InputStream) response.getEntity());
+        }
+        if (response.getStatus() == Response.Status.CREATED.getStatusCode() && response.hasEntity()) {
+            String canonicalName = stackName + "/";
+            if (multicloudResponseBody != null) {
+                canonicalName = canonicalName + multicloudResponseBody.getWorkloadId();
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug("Multicloud Create Response Body: {}", multicloudResponseBody);
+            }
+            return getStackStatus(cloudSiteId, tenantId, canonicalName, pollForCompletion, timeoutMinutes, backout);
+        }
+        StringBuilder stackErrorStatusReason = new StringBuilder(response.getStatusInfo().getReasonPhrase());
+        if (null != multicloudResponseBody) {
+            stackErrorStatusReason.append(multicloudResponseBody.toString());
+        }
+        MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
+        me.addContext(CREATE_STACK);
+        throw me;
     }
 
     @Override
