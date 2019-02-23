@@ -13,18 +13,13 @@ Version: 1.3.7
 
 :Release Date: 2019-01-31
 
-This is the official release package that released for the Casablanca Maintenance.
+This is the patch release package that released for the Casablanca Maintenance.
 
 Casablanca Release branch
 
 **New Features**
 
 This release is supporting the features of Casablanca and their defect fixes.
-- `SO-1262 <https://jira.onap.org/browse/SO-1262>`_
-- `SO-1306 <https://jira.onap.org/browse/SO-1306>`_
-- `SO-1317 <https://jira.onap.org/browse/SO-1317>`_
-- `SO-1330 <https://jira.onap.org/browse/SO-1330>`_
-- `SO-1331 <https://jira.onap.org/browse/SO-1331>`_
 - `SO-1334 <https://jira.onap.org/browse/SO-1334>`_
 - `SO-1337 <https://jira.onap.org/browse/SO-1337>`_
 - `SO-1358 <https://jira.onap.org/browse/SO-1358>`_
@@ -76,6 +71,11 @@ Casablanca Release branch
 
 This release is supporting the features of Casablanca and their defect fixes.
 - `SO-1336 <https://jira.onap.org/browse/SO-1336>`_
+- `SO-1331 <https://jira.onap.org/browse/SO-1331>`_
+- `SO-1330 <https://jira.onap.org/browse/SO-1330>`_
+- `SO-1317 <https://jira.onap.org/browse/SO-1317>`_
+- `SO-1306 <https://jira.onap.org/browse/SO-1330>`_
+- `SO-1262 <https://jira.onap.org/browse/SO-1262>`_
 - `SO-1249 <https://jira.onap.org/browse/SO-1249>`_
 - `SO-1257 <https://jira.onap.org/browse/SO-1257>`_
 - `SO-1258 <https://jira.onap.org/browse/SO-1258>`_
