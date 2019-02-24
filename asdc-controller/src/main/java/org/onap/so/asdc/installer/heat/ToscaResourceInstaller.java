@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.hibernate.StaleObjectStateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
 import org.onap.sdc.api.notification.IArtifactInfo;
@@ -124,6 +125,7 @@ import org.onap.so.db.request.data.repository.WatchdogServiceModVerIdLookupRepos
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -701,10 +703,17 @@ public class ToscaResourceInstaller {
 				distributionNotification, consumerId);
 		watchdogModVerIdLookupRepository.saveAndFlush(modVerIdLookup);
 		
-		WatchdogDistributionStatus distributionStatus = new WatchdogDistributionStatus(distributionId);
-		watchdogDistributionStatusRepository.saveAndFlush(distributionStatus);
+		try{
+		
+			WatchdogDistributionStatus distributionStatus = new WatchdogDistributionStatus(distributionId);
+			watchdogDistributionStatusRepository.saveAndFlush(distributionStatus);
+			
+		} catch(ObjectOptimisticLockingFailureException e){
+			logger.debug("ObjectOptimisticLockingFailureException in processWatchdog : " + e.toString());
+			throw e;
+		}
 	}
-
+	
 	protected void extractHeatInformation(ToscaResourceStructure toscaResourceStruct,
 			VfResourceStructure vfResourceStructure) {
 		for (VfModuleArtifact vfModuleArtifact : vfResourceStructure.getArtifactsMapByUUID().values()) {
