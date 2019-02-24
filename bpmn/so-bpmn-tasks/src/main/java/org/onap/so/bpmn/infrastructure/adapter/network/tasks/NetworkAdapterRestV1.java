@@ -75,6 +75,10 @@ public class NetworkAdapterRestV1 {
 					DeleteNetworkRequest deleteNetworkRequest = (DeleteNetworkRequest) networkAdapterRequest;
 					execution.setVariable(NETWORK_CORRELATOR, deleteNetworkRequest.getMessageId());
 					response = networkAdapterResources.deleteNetworkAsync(deleteNetworkRequest);
+				} else if (networkAdapterRequest instanceof UpdateNetworkRequest) {
+					UpdateNetworkRequest updateNetworkRequest = (UpdateNetworkRequest) networkAdapterRequest;
+					execution.setVariable(NETWORK_CORRELATOR, updateNetworkRequest.getMessageId());
+					response = networkAdapterResources.updateNetworkAsync(updateNetworkRequest);
 				}
 				if(response.isPresent()) {
 					String statusCode = Integer.toString(response.get().getStatus());

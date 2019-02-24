@@ -142,6 +142,15 @@ public class NetworkAdapterClientImpl implements NetworkAdapterClient {
 			throw new NetworkAdapterClientException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public Response updateNetworkAsync(String aaiNetworkId, UpdateNetworkRequest req) throws NetworkAdapterClientException{
+		try {
+			return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).put(req);
+		} catch (InternalServerErrorException e) {
+			throw new NetworkAdapterClientException(e.getMessage());
+		}
+	}
 
 	protected UriBuilder getUri(String path) {
 		return UriBuilder.fromPath(path);

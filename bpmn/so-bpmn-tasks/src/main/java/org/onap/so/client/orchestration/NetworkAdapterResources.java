@@ -91,6 +91,11 @@ public class NetworkAdapterResources {
 
 		return Optional.of(networkAdapterClient.deleteNetworkAsync(deleteNetworkRequest.getNetworkId(), deleteNetworkRequest));
 	}
+	
+	public Optional<Response> updateNetworkAsync(UpdateNetworkRequest updateNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
+
+		return Optional.of(networkAdapterClient.updateNetworkAsync(updateNetworkRequest.getNetworkId(), updateNetworkRequest));
+	}
 
 	public Optional<RollbackNetworkResponse> rollbackCreateNetwork(String networkId, RollbackNetworkRequest rollbackNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
 
