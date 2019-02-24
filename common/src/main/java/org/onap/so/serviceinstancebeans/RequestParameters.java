@@ -47,10 +47,6 @@ public class RequestParameters implements Serializable {
 	@JsonProperty("usePreload")
 	private Boolean usePreload; // usePreload would always be true for Update
 	
-	// DONOT USE. It is intended to handle older VID requests(prior to 1802)
-	@Deprecated
-	@JsonProperty("alaCarte")
-	private Boolean alaCarte;
 	@JsonProperty("autoBuildVfModules")
 	private Boolean autoBuildVfModules;
 	@JsonProperty("cascadeDelete")
@@ -99,20 +95,7 @@ public class RequestParameters implements Serializable {
 	@JsonProperty("usePreload")
 	public void setUsePreload(Boolean usePreload) {
 		this.usePreload = usePreload;
-	}
-
-	@Deprecated
-	@Transient
-	@JsonProperty("alaCarte")
-	public Boolean getAlaCarte() {
-		return alaCarte;
-	}
-
-	@Deprecated
-	@JsonProperty("alaCarte")
-	public void setAlaCarte(Boolean alaCarte) {
-		this.alaCarte = alaCarte;
-	}
+	}	
 
 	public String getTestApi() {
 		return testApi;
