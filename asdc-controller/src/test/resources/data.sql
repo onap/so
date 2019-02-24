@@ -24,19 +24,19 @@ INSERT INTO temp_network_heat_template_lookup(NETWORK_RESOURCE_MODEL_NAME, HEAT_
 
 
 --------START Request DB INSERTS --------
-insert into requestdb.watchdog_distributionid_status(DISTRIBUTION_ID, DISTRIBUTION_ID_STATUS) values 
-('watchdogTestStatusSuccess', 'SUCCESS'),
-('watchdogTestStatusFailure', 'FAILURE'),
-('watchdogTestStatusTimeout', 'TIMEOUT'),
-('watchdogTestStatusIncomplete', 'INCOMPLETE'),
-('watchdogTestStatusException', 'EXCEPTION'),
-('watchdogTestStatusNull', 'NULL'),
-('testStatusSuccessTosca', 'SUCCESS'),
-('testStatusFailureTosca', 'FAILURE'),
-('testStatusTimeoutTosca', 'TIMEOUT'),
-('testStatusIncompleteTosca', 'INCOMPLETE'),
-('testStatusExceptionTosca', 'EXCEPTION'),
-('testStatusNullTosca', 'NULL');
+insert into requestdb.watchdog_distributionid_status(DISTRIBUTION_ID, DISTRIBUTION_ID_STATUS,LOCK_VERSION) values 
+('watchdogTestStatusSuccess', 'SUCCESS',0),
+('watchdogTestStatusFailure', 'FAILURE',0),
+('watchdogTestStatusTimeout', 'TIMEOUT',0),
+('watchdogTestStatusIncomplete', 'INCOMPLETE',0),
+('watchdogTestStatusException', 'EXCEPTION',0),
+('watchdogTestStatusNull', 'NULL',0),
+('testStatusSuccessTosca', 'SUCCESS',0),
+('testStatusFailureTosca', 'FAILURE',0),
+('testStatusTimeoutTosca', 'TIMEOUT',0),
+('testStatusIncompleteTosca', 'INCOMPLETE',0),
+('testStatusExceptionTosca', 'EXCEPTION',0),
+('testStatusNullTosca', 'NULL',0);
 
 --WatchdogDistrubutionTest
 insert into requestdb.watchdog_per_component_distribution_status(DISTRIBUTION_ID, COMPONENT_NAME, COMPONENT_DISTRIBUTION_STATUS) values
