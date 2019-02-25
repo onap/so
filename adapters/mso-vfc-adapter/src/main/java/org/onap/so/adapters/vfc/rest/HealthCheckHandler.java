@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,8 +29,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
-import org.onap.so.logger.MsoLogger;
-import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -44,7 +46,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HealthCheckHandler {
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, HealthCheckHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(HealthCheckHandler.class);
 
     
     private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
@@ -57,8 +59,6 @@ public class HealthCheckHandler {
     @Path("/healthcheck")
     @Produces("text/html")
     public Response healthcheck(@QueryParam("requestId") String requestId) {
-        MsoLogger.setServiceName("Healthcheck");
-        UUIDChecker.verifyOldUUID(requestId, msoLogger);
         return HEALTH_CHECK_RESPONSE;
     }
 

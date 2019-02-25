@@ -6,6 +6,7 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +45,8 @@ import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.vfc.model.RestfulResponse;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -63,7 +66,7 @@ public class RestfulUtil {
     /**
      * Log service
      */
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, RestfulUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestfulUtil.class);
 
     private static final int DEFAULT_TIME_OUT = 60000;
 
@@ -88,7 +91,7 @@ public class RestfulUtil {
     	Integer msbPort = env.getProperty("mso.msb-port", Integer.class, DEFAULT_MSB_PORT);
     	
     	String msbEndpoint = UriBuilder.fromPath("").host(msbIp).port(msbPort).scheme("http").build().toString();
-    	LOGGER.debug("msbEndpoint in vfc adapter: " + msbEndpoint);
+    	logger.debug("msbEndpoint in vfc adapter: {}", msbEndpoint);
     	
     	return msbEndpoint;
     }
@@ -99,7 +102,7 @@ public class RestfulUtil {
 
     public RestfulResponse send(String url, String methodType, String content) {
         String msbUrl = getMsbHost() + url;
-        LOGGER.debug("Begin to sent message " + methodType +": " + msbUrl);
+        logger.debug("Begin to sent message {}: {}", methodType, msbUrl);
 
         HttpRequestBase method = null;
         HttpResponse httpResponse = null;
@@ -132,14 +135,6 @@ public class RestfulUtil {
                 method = httpDelete;
             }
 
-            // now VFC have no auth
-            // String userCredentials =
-            // SDNCAdapterProperties.getEncryptedProperty(Constants.SDNC_AUTH_PROP,
-            // Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
-            // String authorization = "Basic " +
-            // DatatypeConverter.printBase64Binary(userCredentials.getBytes());
-            // method.setHeader("Authorization", authorization);
-
             httpResponse = client.execute(method);
 
             String responseContent = null;
@@ -150,7 +145,7 @@ public class RestfulUtil {
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             String statusMessage = httpResponse.getStatusLine().getReasonPhrase();
 
-            LOGGER.debug("VFC Response: " + statusCode + " " + statusMessage
+            logger.debug("VFC Response: {} {}", statusCode, statusMessage
                     + (responseContent == null ? "" : System.lineSeparator() + responseContent));
 
             if(httpResponse.getStatusLine().getStatusCode() >= 300) {
@@ -164,7 +159,7 @@ public class RestfulUtil {
             if(null != method) {
                 method.reset();
             } else {
-                LOGGER.debug("method is NULL:");
+                logger.debug("method is NULL:");
             }
 
             method = null;
@@ -185,7 +180,7 @@ public class RestfulUtil {
                 try {
                     EntityUtils.consume(httpResponse.getEntity());
                 } catch(Exception e) {
-                    LOGGER.debug("Exception :", e);
+                    logger.debug("Exception :", e);
                 }
             }
 
@@ -193,18 +188,20 @@ public class RestfulUtil {
                 try {
                     method.reset();
                 } catch(Exception e) {
-                    LOGGER.debug("Exception :", e);
+                    logger.debug("Exception :", e);
                 }
             }
         }
     }
 
     private static void logError(String errMsg, Throwable t) {
-        LOGGER.error(MessageEnum.RA_NS_EXC, VFC_ADAPTER, "", MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
+        logger.error("{} {} {} {}", MessageEnum.RA_NS_EXC.toString(), VFC_ADAPTER,
+            MsoLogger.ErrorCode.AvailabilityError.getValue(), errMsg, t);
     }
 
     private static void logError(String errMsg) {
-        LOGGER.error(MessageEnum.RA_NS_EXC, VFC_ADAPTER, "", MsoLogger.ErrorCode.AvailabilityError, errMsg);
+        logger.error("{} {} {} {}", MessageEnum.RA_NS_EXC.toString(), VFC_ADAPTER,
+            MsoLogger.ErrorCode.AvailabilityError.toString(), errMsg);
     }
 
     private static RestfulResponse createResponse(int statusCode, String content) {
