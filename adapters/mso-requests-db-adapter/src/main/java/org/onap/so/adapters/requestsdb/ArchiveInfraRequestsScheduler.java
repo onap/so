@@ -5,6 +5,7 @@
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +34,8 @@ import org.onap.so.db.request.data.repository.ArchivedInfraRequestsRepository;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -44,7 +47,7 @@ import net.javacrumbs.shedlock.core.SchedulerLock;
 @Component
 public class ArchiveInfraRequestsScheduler {
 	
-	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, ArchiveInfraRequestsScheduler.class);
+	private static Logger logger = LoggerFactory.getLogger(ArchiveInfraRequestsScheduler.class);
 	
 	@Autowired
 	private InfraActiveRequestsRepository infraActiveRepo;
@@ -76,14 +79,14 @@ public class ArchiveInfraRequestsScheduler {
 		PageRequest pageRequest = new PageRequest(0, 100);
 		do {
 			requestsByEndTime = infraActiveRepo.findByEndTimeLessThan(archivingDate, pageRequest);
-			logger.debug(requestsByEndTime.size() + " requests to be archived based on End Time" );
+			logger.debug("{} requests to be archived based on End Time", requestsByEndTime.size());
 			archiveInfraRequests(requestsByEndTime);
 		} while(!requestsByEndTime.isEmpty());
 		
 		List<InfraActiveRequests> requestsByStartTime = new ArrayList<>();
 		do {
 			requestsByStartTime = infraActiveRepo.findByStartTimeLessThanAndEndTime(archivingDate, null, pageRequest);
-			logger.debug(requestsByEndTime.size() + " requests to be archived based on Start Time" );
+			logger.debug("{} requests to be archived based on Start Time", requestsByEndTime.size());
 			archiveInfraRequests(requestsByStartTime);
 		} while(!requestsByStartTime.isEmpty());
 		
@@ -145,15 +148,15 @@ public class ArchiveInfraRequestsScheduler {
 				newArchivedReqs.add(archivedInfra);
 				oldInfraReqs.add(iar);
 			} catch(Exception e) {
-				logger.error(e);
-				logger.error(MessageEnum.RA_GENERAL_EXCEPTION, "", "", MsoLogger.ErrorCode.UnknownError, e.getMessage());
+				logger.error("{} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), MsoLogger.ErrorCode
+					.UnknownError.getValue(), e);
 			}
 		}
 		
-		logger.info("Creating archivedInfraRequest records: " + newArchivedReqs.size());
+		logger.info("Creating archivedInfraRequest records: {}", newArchivedReqs.size());
 		archivedInfraRepo.saveAll(newArchivedReqs);
 		
-		logger.info("Deleting InfraActiveRequest records:  "+ oldInfraReqs.size());
+		logger.info("Deleting InfraActiveRequest records: {}", oldInfraReqs.size());
 		infraActiveRepo.deleteAll(oldInfraReqs);
 	}
 }
