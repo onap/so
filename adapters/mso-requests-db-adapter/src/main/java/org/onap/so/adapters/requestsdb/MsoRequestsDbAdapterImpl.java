@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +40,8 @@ import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
 import org.onap.so.db.request.data.repository.SiteStatusRepository;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDbConstant;
-import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -49,7 +51,7 @@ import org.springframework.stereotype.Component;
 @Primary
 public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {	
 
-	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, MsoRequestsDbAdapterImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(MsoRequestsDbAdapterImpl.class);
 	
 	@Autowired
 	private InfraActiveRequestsRepository infraActive;
@@ -134,14 +136,14 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 		try {
 			request.setProgress(Long.parseLong(progress));
 		} catch (NumberFormatException e) {
-			logger.warnSimple("UpdateInfraRequest", "Invalid value sent for progress");
+			logger.warn("UpdateInfraRequest", "Invalid value sent for progress");
 		}
 	}
 
 	@Override
 	@Transactional
 	public InfraActiveRequests getInfraRequest(String requestId) throws MsoRequestsDbException {		
-		logger.debug("Call to MSO Infra RequestsDb adapter get method with request Id: " + requestId);
+		logger.debug("Call to MSO Infra RequestsDb adapter get method with request Id: {}", requestId);
 		InfraActiveRequests request = null;
 		try {
 			request = infraActive.findOneByRequestIdOrClientRequestId(requestId, requestId);
@@ -167,9 +169,8 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 	@Override
 	@Transactional
 	public boolean getSiteStatus(String siteName) {
-		UUIDChecker.generateUUID(logger);
 		SiteStatus siteStatus;
-		logger.debug("Request database - get Site Status with Site name:" + siteName);
+		logger.debug("Request database - get Site Status with Site name: {}", siteName);
 		siteStatus = siteRepo.findOneBySiteName(siteName);
 		if (siteStatus == null) {
 			// if not exist in DB, it means the site is not disabled, thus
@@ -203,7 +204,6 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 			String error = "Entity not found. Unable to retrieve OperationStatus Object ServiceId: " + serviceId + " operationId: "
 					+ operationId;
 			logger.error(error);
-//			throw new MsoRequestsDbException(error,MsoLogger.ErrorCode.BusinessProcesssError);
 			operStatus = new OperationStatus();
 			operStatus.setOperationId(operationId);
 			operStatus.setServiceId(serviceId);
@@ -353,12 +353,13 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
     	String serviceId = operStatus.getServiceId();
         String operationId = operStatus.getOperationId();
 
-        logger.debug("Request database - update Operation Status Based On Resource Operation Status with service Id:"
-                + serviceId + ", operationId:" + operationId);
+        logger.debug("Request database - update Operation Status Based On Resource Operation Status with service Id: "
+					+ "{}, operationId: {}", serviceId, operationId);
         
         List<ResourceOperationStatus> lstResourceStatus = resourceOperationStatusRepository.findByServiceIdAndOperationId(serviceId, operationId);
 		if (lstResourceStatus == null) {
-			logger.error("Unable to retrieve resourceOperStatus Object by ServiceId: " + serviceId + " operationId: " + operationId);
+			logger.error("Unable to retrieve resourceOperStatus Object by ServiceId: {} operationId: {}", serviceId,
+				operationId);
 			return;
 		}
 		
