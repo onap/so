@@ -29,11 +29,10 @@ mso:
                 
 spring:
   datasource:
-    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
+    jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
-
   jpa:
       show-sql: true
       hibernate:
@@ -46,7 +45,7 @@ spring:
                        
 request:
   datasource:
-    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+    jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver

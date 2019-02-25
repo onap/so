@@ -8,9 +8,16 @@ mso:
 spring: 
   datasource:
      driver-class-name: org.mariadb.jdbc.Driver 
-     url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/camundabpmn
+     jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/camundabpmn
      username: ${DB_USERNAME}
      password: ${DB_PASSWORD}
+  flyway:
+    baselineOnMigrate: true
+    outOfOrder: true
+    table: FLYWAY_SCHEMA_HISTORY
+    url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/camundabpmn
+    user: ${DB_ADMIN_USERNAME}
+    password: ${DB_ADMIN_PASSWORD}
   http:
     multipart:
       enabled: false
