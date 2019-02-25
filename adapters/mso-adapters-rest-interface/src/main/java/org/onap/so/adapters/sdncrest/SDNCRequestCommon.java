@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,13 +27,14 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import org.onap.so.logger.MsoLogger;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all SDNC adapter requests.
@@ -39,7 +42,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public abstract class SDNCRequestCommon implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, SDNCRequestCommon.class);
+	private static final Logger logger = LoggerFactory.getLogger(SDNCRequestCommon.class);
 
 	// Endpoint on which BPMN can receive notifications from the SDNC adapter.
 	private String bpNotificationUrl;
@@ -107,7 +110,7 @@ public abstract class SDNCRequestCommon implements Serializable {
 			mapper.setSerializationInclusion(Include.NON_NULL);
 			return mapper.writeValueAsString(this);
 		} catch (IOException e) {
-		    LOGGER.debug("Exception:", e);
+			logger.debug("Exception:", e);
 			throw new UnsupportedOperationException("Cannot convert "
 				+ getClass().getSimpleName() + " to JSON", e);
 		}

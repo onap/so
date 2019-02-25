@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +30,11 @@ import java.io.Serializable;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import org.onap.so.logger.MsoLogger;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Everything that is common between all Volume Group Responses, except for QueryVolumeGroupResponse.
  */
@@ -40,7 +42,7 @@ public abstract class NetworkResponseCommon implements Serializable {
 
 	private static final long serialVersionUID = 1233520856935129726L;
 	private String messageId;
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, NetworkResponseCommon.class);
+	private static final Logger logger = LoggerFactory.getLogger(NetworkResponseCommon.class);
 
 	public NetworkResponseCommon() {
 		messageId = null;
@@ -65,7 +67,7 @@ public abstract class NetworkResponseCommon implements Serializable {
 			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
 			jsonString = mapper.writeValueAsString(this);
 		} catch (Exception e) {
-		    LOGGER.debug("Exception:", e);
+			logger.debug("Exception:", e);
 		}
 		return jsonString;
 	}
@@ -79,7 +81,7 @@ public abstract class NetworkResponseCommon implements Serializable {
 			marshaller.marshal(this, bs);
 			return bs.toString();
 		} catch (Exception e) {
-		    LOGGER.debug("Exception:", e);
+			logger.debug("Exception:", e);
 			return "";
 		}
 	}

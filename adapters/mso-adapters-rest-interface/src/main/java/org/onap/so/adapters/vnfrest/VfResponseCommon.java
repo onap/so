@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,17 +28,18 @@ import java.io.ByteArrayOutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import org.onap.so.logger.MsoLogger;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Everything that is common between all VfModule and VolumeGroup Responses,
  * except for QueryVfModuleResponse and QueryVolumeGroupResponse.
  */
 public abstract class VfResponseCommon {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, VfResponseCommon.class);
+	private static final Logger logger = LoggerFactory.getLogger(VfResponseCommon.class);
 	private String messageId;
 
 	public VfResponseCommon() {
@@ -64,7 +66,7 @@ public abstract class VfResponseCommon {
 			jsonString = mapper.writeValueAsString(this);
 			return jsonString;
 		} catch (Exception e) {
-			LOGGER.debug("Exception :",e);
+			logger.debug("Exception :",e);
 			return "";
 		}
 	}
@@ -78,7 +80,7 @@ public abstract class VfResponseCommon {
 			marshaller.marshal(this, bs);
 			return bs.toString();
 		} catch (Exception e) {
-			LOGGER.debug("Exception :",e);
+			logger.debug("Exception :",e);
 			return "";
 		}
 	}
