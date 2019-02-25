@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,7 +33,8 @@ import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -51,7 +54,7 @@ import java.util.Collection;
 public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoProvider, MigrationChecksumProvider {
     public static final String FLYWAY = "FLYWAY";
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, R__CloudConfigMigration.class);
+    private static final Logger logger = LoggerFactory.getLogger(R__CloudConfigMigration.class);
     @JsonProperty("cloud_config")
     private CloudConfig cloudConfig;
     
@@ -62,7 +65,7 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
 
     @Override
     public void migrate(Connection connection) throws Exception {
-        LOGGER.debug("Starting migration for CloudConfig");
+        logger.debug("Starting migration for CloudConfig");
         
         CloudConfig cloudConfig = null;
         
@@ -87,12 +90,12 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
             try (InputStream stream = new FileInputStream(Paths.get(configLocation).normalize().toString())) {
                 cloudConfig = loadCloudConfig(stream);
             }catch(Exception e){
-            	LOGGER.warnSimple("Error Loading override.yaml",e);
+                logger.warn("Error Loading override.yaml", e);
             } 
         }
         
         if (cloudConfig == null) {
-        	LOGGER.debug("No CloudConfig defined in " + configLocation);
+            logger.debug("No CloudConfig defined in {}", configLocation);
 
         	// Try the application.yaml file
             try (InputStream stream = R__CloudConfigMigration.class.getResourceAsStream(getApplicationYamlName())) {
@@ -100,7 +103,7 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
             }
 
             if (cloudConfig == null) {
-            	LOGGER.debug("No CloudConfig defined in " + getApplicationYamlName());
+                logger.debug("No CloudConfig defined in {}", getApplicationYamlName());
             }
         }
  
@@ -138,7 +141,7 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
     }
 
     private void migrateCloudIdentity(Collection<CloudIdentity> entities, Connection connection) throws SQLException  {
-        LOGGER.debug("Starting migration for CloudConfig-->IdentityService");
+        logger.debug("Starting migration for CloudConfig-->IdentityService");
         String insert = "INSERT INTO `identity_services` (`ID`, `IDENTITY_URL`, `MSO_ID`, `MSO_PASS`, `ADMIN_TENANT`, `MEMBER_ROLE`, `TENANT_METADATA`, `IDENTITY_SERVER_TYPE`, `IDENTITY_AUTHENTICATION_TYPE`, `LAST_UPDATED_BY`) " +
                 "VALUES (?,?,?,?,?,?,?,?,?,?);";
 
@@ -168,7 +171,7 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
     }
 
     private void migrateCloudSite(Collection<CloudSite> entities, Connection connection) throws SQLException  {
-        LOGGER.debug("Starting migration for CloudConfig-->CloudSite");
+        logger.debug("Starting migration for CloudConfig-->CloudSite");
         String insert = "INSERT INTO `cloud_sites` (`ID`, `REGION_ID`, `IDENTITY_SERVICE_ID`, `CLOUD_VERSION`, `CLLI`, `CLOUDIFY_ID`, `PLATFORM`, `ORCHESTRATOR`, `LAST_UPDATED_BY`) " +
                 "VALUES (?,?,?,?,?,?,?,?,?);";
 
