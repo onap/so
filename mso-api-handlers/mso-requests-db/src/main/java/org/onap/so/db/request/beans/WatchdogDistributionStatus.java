@@ -31,6 +31,8 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
+
 import java.util.Objects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -54,6 +56,9 @@ public class WatchdogDistributionStatus implements Serializable {
 	@Column(name = "MODIFY_TIME")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifyTime;
+	@Version
+	@Column(name = "LOCK_VERSION")
+    private int version; 
 	
 	public WatchdogDistributionStatus() {
 		
@@ -78,7 +83,15 @@ public class WatchdogDistributionStatus implements Serializable {
 	public void setDistributionIdStatus(String distributionIdStatus) {
 		this.distributionIdStatus = distributionIdStatus;
 	}
-	
+		
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
 	public Date getCreateTime() {
 		return createTime;
 	}

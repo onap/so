@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.StaleObjectStateException;
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
 import org.onap.sdc.api.consumer.IFinalDistrStatusMessage;
@@ -58,6 +59,7 @@ import org.onap.so.db.request.data.repository.WatchdogDistributionStatusReposito
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -592,6 +594,7 @@ public class ASDCController {
         try {
         	LOGGER.debug(ASDCNotificationLogging.dumpASDCNotification(iNotif));
 			LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, iNotif.getServiceUUID(), "ASDC", "treatNotification");
+						
 			this.changeControllerStatus(ASDCControllerStatus.BUSY);
 			Optional<String> notificationMessage = getNotificationJson(iNotif);
 			toscaInstaller.processWatchdog(iNotif.getDistributionID(), iNotif.getServiceUUID(), notificationMessage,
@@ -619,7 +622,7 @@ public class ASDCController {
     				distributionStatus = wd.getOverallDistributionStatus(iNotif.getDistributionID());
     				Thread.sleep(watchDogTimeout / 10);    		
     			}catch(Exception e){
-    				LOGGER.debug ("Exception in Watchdog Loop " + e);
+    				LOGGER.debug ("Exception in Watchdog Loop " + e.getMessage());
     				Thread.sleep(watchDogTimeout / 10);
     			}
     			
@@ -651,7 +654,7 @@ public class ASDCController {
         		LOGGER.debug ("A&AI Updated succefully with Distribution Status!");
         	}
         	catch(Exception e) {
-        		LOGGER.debug ("Exception in Watchdog executePatchAAI(): " + e);
+        		LOGGER.debug ("Exception in Watchdog executePatchAAI(): " + e.getMessage());
         		watchdogError = "Error calling A&AI " + e.getMessage();
         		if(e.getCause() != null) {
         			LOGGER.debug ("Exception caused by: " + e.getCause().getMessage());
@@ -671,8 +674,14 @@ public class ASDCController {
         		wdsRepo.save(wds);
         	}
         	
-        	
 
+        } catch(ObjectOptimisticLockingFailureException e) {
+        	
+        	LOGGER.debug ("OptimisticLockingFailure for DistributionId: " + iNotif.getDistributionID() + " Another process has already altered this distribution, so not going to process it on this site.");
+        	LOGGER.error (MessageEnum.ASDC_GENERAL_EXCEPTION_ARG,
+                    "Database concurrency exception: ",  "ASDC", "treatNotification", MsoLogger.ErrorCode.BusinessProcesssError, "RuntimeException in treatNotification",
+                    e);
+        	
         } catch (Exception e) {
             LOGGER.error (MessageEnum.ASDC_GENERAL_EXCEPTION_ARG,
                           "Unexpected exception caught during the notification processing",  "ASDC", "treatNotification", MsoLogger.ErrorCode.SchemaError, "RuntimeException in treatNotification",

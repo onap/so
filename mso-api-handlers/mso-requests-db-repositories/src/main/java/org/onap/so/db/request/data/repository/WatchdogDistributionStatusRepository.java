@@ -27,5 +27,7 @@ import org.springframework.stereotype.Repository;
 
 @RepositoryRestResource(collectionResourceRel = "watchdogDistributionStatus", path = "watchdogDistributionStatus")
 public interface WatchdogDistributionStatusRepository extends JpaRepository<WatchdogDistributionStatus, String> {
+	
+	public WatchdogDistributionStatus findOneByDistributionId(String distributionId);
 
 }
