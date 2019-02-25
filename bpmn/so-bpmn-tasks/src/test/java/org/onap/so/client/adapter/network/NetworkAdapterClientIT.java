@@ -28,7 +28,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertNotNull;
+import javax.ws.rs.core.Response;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
@@ -209,6 +210,22 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 
 		UpdateNetworkResponse response = client.updateNetwork(AAI_NETWORK_ID, request);
 		assertEquals("Testing UpdateVfModule response", "test1", response.getNetworkId());
+	}
+
+	@Test
+	public void updateNetworkTestAsync() throws NetworkAdapterClientException, JsonProcessingException {
+		UpdateNetworkRequest request = new UpdateNetworkRequest();
+		request.setCloudSiteId(TESTING_ID);
+		request.setNetworkId("test1");
+
+		UpdateNetworkResponse mockResponse = new UpdateNetworkResponse();
+		mockResponse.setNetworkId("test1");
+		stubFor(put(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json")
+						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
+
+		Response response = client.updateNetworkAsync(AAI_NETWORK_ID, request);
+		assertNotNull(response.getEntity());
 	}
 	
 	@Test(expected = NetworkAdapterClientException.class)

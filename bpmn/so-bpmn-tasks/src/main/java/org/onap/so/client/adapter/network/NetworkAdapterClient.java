@@ -52,4 +52,6 @@ public interface NetworkAdapterClient {
 	Response deleteNetworkAsync(String aaiNetworkId, DeleteNetworkRequest req) throws NetworkAdapterClientException;
 
 	Response rollbackNetworkAsync(String aaiNetworkId, RollbackNetworkRequest req) throws NetworkAdapterClientException;
+	
+	Response updateNetworkAsync(String aaiNetworkId, UpdateNetworkRequest req) throws NetworkAdapterClientException;
 }
