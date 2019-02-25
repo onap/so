@@ -18,13 +18,13 @@ mso:
 # H2
 spring:
   datasource:
-    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+    jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
   flyway:
     baseline-on-migrate: false
-    url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+    jdbcUrl:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
     user: ${DB_ADMIN_USERNAME}
     password: ${DB_ADMIN_PASSWORD}
   jpa:

@@ -19,7 +19,7 @@ mso:
       period: 0
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3307/requestdb
+    jdbcUrl: jdbc:mariadb://localhost:3307/requestdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
@@ -27,7 +27,7 @@ spring:
     initialization-mode: never
   flyway:
     baseline-on-migrate: false
-    url: jdbc:mariadb://localhost:3307/requestdb
+    jdbcUrl: jdbc:mariadb://localhost:3307/requestdb
     user: root
     password: password
   jpa:   

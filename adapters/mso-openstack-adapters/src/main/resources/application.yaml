@@ -18,7 +18,7 @@ mso:
       retryMultiplier: 60000
 spring:
   datasource:
-    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
+    jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver

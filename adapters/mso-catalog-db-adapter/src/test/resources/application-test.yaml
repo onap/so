@@ -14,7 +14,7 @@ mso:
 
 spring:
   datasource:
-    jdbc-url: jdbc:mariadb://localhost:3307/catalogdb
+    jdbcUrl: jdbc:mariadb://localhost:3307/catalogdb
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
@@ -22,7 +22,7 @@ spring:
     data: classpath*:data.sql
   flyway:
     baseline-on-migrate: false
-    url: jdbc:mariadb://localhost:3307/catalogdb
+    jdbcUrl: jdbc:mariadb://localhost:3307/catalogdb
     user: root
     password: password
   jpa:   
