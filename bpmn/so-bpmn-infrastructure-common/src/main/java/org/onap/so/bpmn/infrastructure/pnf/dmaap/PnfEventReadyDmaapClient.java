@@ -69,18 +69,18 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
     }
 
     @Override
-    public synchronized void registerForUpdate(String correlationId, Runnable informConsumer) {
-        logger.debug("registering for pnf ready dmaap event for correlation id: {}", correlationId);
-        pnfCorrelationIdToThreadMap.put(correlationId, informConsumer);
+    public synchronized void registerForUpdate(String pnfCorrelationId, Runnable informConsumer) {
+        logger.debug("registering for pnf ready dmaap event for pnf correlation id: {}", pnfCorrelationId);
+        pnfCorrelationIdToThreadMap.put(pnfCorrelationId, informConsumer);
         if (!dmaapThreadListenerIsRunning) {
             startDmaapThreadListener();
         }
     }
 
     @Override
-    public synchronized Runnable unregister(String correlationId) {
-        logger.debug("unregistering from pnf ready dmaap event for correlation id: {}", correlationId);
-        Runnable runnable = pnfCorrelationIdToThreadMap.remove(correlationId);
+    public synchronized Runnable unregister(String pnfCorrelationId) {
+        logger.debug("unregistering from pnf ready dmaap event for pnf correlation id: {}", pnfCorrelationId);
+        Runnable runnable = pnfCorrelationIdToThreadMap.remove(pnfCorrelationId);
         if (pnfCorrelationIdToThreadMap.isEmpty()) {
             stopDmaapThreadListener();
         }
@@ -113,7 +113,7 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             try {
                 logger.debug("dmaap listener starts listening pnf ready dmaap topic");
                 HttpResponse response = httpClient.execute(getRequest);
-                getCorrelationIdListFromResponse(response).forEach(this::informAboutPnfReadyIfCorrelationIdFound);
+                getPnfCorrelationIdListFromResponse(response).forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
             } catch (IOException e) {
                 logger.error("Exception caught during sending rest request to dmaap for listening event topic", e);
             }
@@ -122,20 +122,20 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             }
         }
 
-        private List<String> getCorrelationIdListFromResponse(HttpResponse response) throws IOException {
+        private List<String> getPnfCorrelationIdListFromResponse(HttpResponse response) throws IOException {
             if (response.getStatusLine().getStatusCode() == 200) {
                 String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
                 if (responseString != null) {
-                    return JsonUtilForCorrelationId.parseJsonToGelAllCorrelationId(responseString);
+                    return JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(responseString);
                 }
             }
             return Collections.emptyList();
         }
 
-        private void informAboutPnfReadyIfCorrelationIdFound(String correlationId) {
-            Runnable runnable = unregister(correlationId);
+        private void informAboutPnfReadyIfPnfCorrelationIdFound(String pnfCorrelationId) {
+            Runnable runnable = unregister(pnfCorrelationId);
             if (runnable != null) {
-                logger.debug("dmaap listener gets pnf ready event for correlationId: {}", correlationId);
+                logger.debug("dmaap listener gets pnf ready event for pnfCorrelationId: {}", pnfCorrelationId);
                 runnable.run();
             }
         }

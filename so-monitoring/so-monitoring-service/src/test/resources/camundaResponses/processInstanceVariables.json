@@ -287,7 +287,7 @@
     },
     {
         "type": "String",
-        "value": "{\"requestDetails\":{\"modelInfo\":{\"modelInvariantUuid\":\"8e2be9fa-fffb-4e23-89a5-65497709f507\",\"modelType\":\"service\",\"modelName\":\"PNFSERVICE\",\"modelVersion\":\"1.0\",\"modelUuid\":\"4f7afc34-e475-41ca-be73-40f9a0f7ffa4\"},\"requestInfo\":{\"productFamilyId\":\"c8d92bf2-2c2e-4802-94e0-3f9e0825cc08\",\"source\":\"UUI\",\"instanceName\":\"AFRPOSTMAN51\",\"suppressRollback\":false,\"requestorId\":\"demo\"},\"subscriberInfo\":{\"globalSubscriberId\":\"Demonstration\"},\"cloudConfiguration\":{\"tenantId\":\"3e001881bcb342418ab5f2788a73255d\",\"lcpCloudRegionId\":\"regionOne_aaa_bbb\"},\"requestParameters\":{\"alaCarte\":false,\"subscriptionServiceType\":\"vCPE\",\"userParams\":[{\"name\":\"Homing_Solution\",\"value\":\"dummy\"}],\"aLaCarte\":false},\"project\":{\"projectName\":\"Project-Demonstration\"},\"owningEntity\":{\"owningEntityId\":\"c77274d4-4881-493a-ad46-368ea0996eb3\",\"owningEntityName\":\"OE-Demonstration\"}},\"correlationId\":\"afr\"}",
+        "value": "{\"requestDetails\":{\"modelInfo\":{\"modelInvariantUuid\":\"8e2be9fa-fffb-4e23-89a5-65497709f507\",\"modelType\":\"service\",\"modelName\":\"PNFSERVICE\",\"modelVersion\":\"1.0\",\"modelUuid\":\"4f7afc34-e475-41ca-be73-40f9a0f7ffa4\"},\"requestInfo\":{\"productFamilyId\":\"c8d92bf2-2c2e-4802-94e0-3f9e0825cc08\",\"source\":\"UUI\",\"instanceName\":\"AFRPOSTMAN51\",\"suppressRollback\":false,\"requestorId\":\"demo\"},\"subscriberInfo\":{\"globalSubscriberId\":\"Demonstration\"},\"cloudConfiguration\":{\"tenantId\":\"3e001881bcb342418ab5f2788a73255d\",\"lcpCloudRegionId\":\"regionOne_aaa_bbb\"},\"requestParameters\":{\"alaCarte\":false,\"subscriptionServiceType\":\"vCPE\",\"userParams\":[{\"name\":\"Homing_Solution\",\"value\":\"dummy\"}],\"aLaCarte\":false},\"project\":{\"projectName\":\"Project-Demonstration\"},\"owningEntity\":{\"owningEntityId\":\"c77274d4-4881-493a-ad46-368ea0996eb3\",\"owningEntityName\":\"OE-Demonstration\"}},\"pnfCorrelationId\":\"afr\"}",
         "valueInfo": {
             
         },
@@ -314,7 +314,7 @@
             
         },
         "id": "595745ec-9736-11e8-8caf-022ac9304eeb",
-        "name": "correlationId",
+        "name": "pnfCorrelationId",
         "processDefinitionKey": "AFRFLOW",
         "processDefinitionId": "AFRFLOW:1:c6eea1b7-9722-11e8-8caf-022ac9304eeb",
         "processInstanceId": "5956a99d-9736-11e8-8caf-022ac9304eeb",
@@ -4203,7 +4203,7 @@
     },
     {
         "type": "String",
-        "value": "{\"requestDetails\":{\"modelInfo\":{\"modelInvariantUuid\":\"8e2be9fa-fffb-4e23-89a5-65497709f507\",\"modelType\":\"service\",\"modelName\":\"PNFSERVICE\",\"modelVersion\":\"1.0\",\"modelUuid\":\"4f7afc34-e475-41ca-be73-40f9a0f7ffa4\"},\"requestInfo\":{\"productFamilyId\":\"c8d92bf2-2c2e-4802-94e0-3f9e0825cc08\",\"source\":\"UUI\",\"instanceName\":\"AFRPOSTMAN51\",\"suppressRollback\":false,\"requestorId\":\"demo\"},\"subscriberInfo\":{\"globalSubscriberId\":\"Demonstration\"},\"cloudConfiguration\":{\"tenantId\":\"3e001881bcb342418ab5f2788a73255d\",\"lcpCloudRegionId\":\"regionOne_aaa_bbb\"},\"requestParameters\":{\"alaCarte\":false,\"subscriptionServiceType\":\"vCPE\",\"userParams\":[{\"name\":\"Homing_Solution\",\"value\":\"dummy\"}],\"aLaCarte\":false},\"project\":{\"projectName\":\"Project-Demonstration\"},\"owningEntity\":{\"owningEntityId\":\"c77274d4-4881-493a-ad46-368ea0996eb3\",\"owningEntityName\":\"OE-Demonstration\"}},\"correlationId\":\"afr\"}",
+        "value": "{\"requestDetails\":{\"modelInfo\":{\"modelInvariantUuid\":\"8e2be9fa-fffb-4e23-89a5-65497709f507\",\"modelType\":\"service\",\"modelName\":\"PNFSERVICE\",\"modelVersion\":\"1.0\",\"modelUuid\":\"4f7afc34-e475-41ca-be73-40f9a0f7ffa4\"},\"requestInfo\":{\"productFamilyId\":\"c8d92bf2-2c2e-4802-94e0-3f9e0825cc08\",\"source\":\"UUI\",\"instanceName\":\"AFRPOSTMAN51\",\"suppressRollback\":false,\"requestorId\":\"demo\"},\"subscriberInfo\":{\"globalSubscriberId\":\"Demonstration\"},\"cloudConfiguration\":{\"tenantId\":\"3e001881bcb342418ab5f2788a73255d\",\"lcpCloudRegionId\":\"regionOne_aaa_bbb\"},\"requestParameters\":{\"alaCarte\":false,\"subscriptionServiceType\":\"vCPE\",\"userParams\":[{\"name\":\"Homing_Solution\",\"value\":\"dummy\"}],\"aLaCarte\":false},\"project\":{\"projectName\":\"Project-Demonstration\"},\"owningEntity\":{\"owningEntityId\":\"c77274d4-4881-493a-ad46-368ea0996eb3\",\"owningEntityName\":\"OE-Demonstration\"}},\"pnfCorrelationId\":\"afr\"}",
         "valueInfo": {
             
         },

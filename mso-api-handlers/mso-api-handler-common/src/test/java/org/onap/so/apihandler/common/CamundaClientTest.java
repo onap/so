@@ -148,7 +148,7 @@ public class CamundaClientTest{
     	int recipeTimeout = 10000;
     	String requestAction = "createInstance";
     	String serviceInstanceId = "12345679";
-    	String correlationId = "12345679";
+    	String pnfCorrelationId = "12345679";
     	String vnfId = "234567891";
     	String vfModuleId = "345678912";
     	String volumeGroupId = "456789123";
@@ -164,7 +164,7 @@ public class CamundaClientTest{
     	String requestUri = "v7/serviceInstances/assign";
     	String instanceGroupId = "ff305d54-75b4-431b-adb2-eb6b9e5ff000";
     	
-    	String testResult = testClient.wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction, serviceInstanceId, correlationId,
+    	String testResult = testClient.wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction, serviceInstanceId, pnfCorrelationId,
     						vnfId, vfModuleId, volumeGroupId, networkId, configurationId, serviceType, 
     						vnfType, vfModuleType, networkType, requestDetails, apiVersion, aLaCarte, requestUri, "", instanceGroupId);
     	String expected = inputStream("/WrappedVIDRequest.json");

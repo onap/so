@@ -23,7 +23,7 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
     @Test
     public void shouldWaitForMessageFromDmaapAndUpdateAaiEntryWhenAaiEntryExists() {
         // given
-        variables.put(CORRELATION_ID, PnfManagementTestImpl.ID_WITH_ENTRY);
+        variables.put(PNF_CORRELATION_ID, PnfManagementTestImpl.ID_WITH_ENTRY);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -73,7 +73,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         assertThat(instance).isEnded().hasPassedInOrder(
                 "CreateAndActivatePnf_StartEvent",
                 "CheckInputs",
-                "CheckAiiForCorrelationId",
+                "CheckAiiForPnfCorrelationId",
                 "DoesAaiContainInfoAboutPnf",
                 "AaiEntryExists",
                 "InformDmaapClient",
@@ -88,7 +88,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
     @Test
     public void shouldCreateAaiEntryWaitForMessageFromDmaapAndUpdateAaiEntryWhenNoAaiEntryExists() {
         // given
-        variables.put(CORRELATION_ID, PnfManagementTestImpl.ID_WITHOUT_ENTRY);
+        variables.put(PNF_CORRELATION_ID, PnfManagementTestImpl.ID_WITHOUT_ENTRY);
         // when
         ProcessInstance instance = runtimeService
                 .startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
@@ -99,7 +99,7 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         assertThat(instance).isEnded().hasPassedInOrder(
                 "CreateAndActivatePnf_StartEvent",
                 "CheckInputs",
-                "CheckAiiForCorrelationId",
+                "CheckAiiForPnfCorrelationId",
                 "DoesAaiContainInfoAboutPnf",
                 "CreatePnfEntryInAai",
                 "AaiEntryExists",

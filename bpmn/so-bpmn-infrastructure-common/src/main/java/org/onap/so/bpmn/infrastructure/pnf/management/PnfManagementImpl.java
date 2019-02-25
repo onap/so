@@ -33,15 +33,15 @@ import org.springframework.stereotype.Component;
 public class PnfManagementImpl implements PnfManagement {
 
     @Override
-    public Optional<Pnf> getEntryFor(String correlationId) {
+    public Optional<Pnf> getEntryFor(String pnfCorrelationId) {
         AAIRestClientImpl restClient = new AAIRestClientImpl();
-        return restClient.getPnfByName(correlationId);
+        return restClient.getPnfByName(pnfCorrelationId);
     }
 
     @Override
-    public void createEntry(String correlationId, Pnf entry) {
+    public void createEntry(String pnfCorrelationId, Pnf entry) {
         AAIRestClientImpl restClient = new AAIRestClientImpl();
-        restClient.createPnf(correlationId, entry);
+        restClient.createPnf(pnfCorrelationId, entry);
     }
 
     @Override

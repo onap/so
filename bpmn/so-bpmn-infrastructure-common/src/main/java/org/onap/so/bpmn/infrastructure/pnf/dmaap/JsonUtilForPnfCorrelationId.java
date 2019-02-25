@@ -31,19 +31,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 
-public final class JsonUtilForCorrelationId {
+public final class JsonUtilForPnfCorrelationId {
 
-    private static final String JSON_CORRELATION_ID_FIELD_NAME = "correlationId";
+    private static final String JSON_PNF_CORRELATION_ID_FIELD_NAME = "pnfCorrelationId";
 
-    static List<String> parseJsonToGelAllCorrelationId(String json) {
+    static List<String> parseJsonToGelAllPnfCorrelationId(String json) {
         JsonElement je = new JsonParser().parse(json);
         JsonArray array = je.getAsJsonArray();
         List<String> list = new ArrayList<>();
         Spliterator<JsonElement> spliterator = array.spliterator();
         spliterator.forEachRemaining(jsonElement -> {
             handleEscapedCharacters(jsonElement)
-                    .ifPresent(jsonObject -> getCorrelationId(jsonObject)
-                            .ifPresent(correlationId -> list.add(correlationId)));
+                    .ifPresent(jsonObject -> getPnfCorrelationId(jsonObject)
+                            .ifPresent(pnfCorrelationId -> list.add(pnfCorrelationId)));
         });
         return list;
     }
@@ -55,9 +55,9 @@ public final class JsonUtilForCorrelationId {
         return Optional.ofNullable(new JsonParser().parse(jsonElement.getAsString()).getAsJsonObject());
     }
 
-    private static Optional<String> getCorrelationId(JsonObject jsonObject) {
-        if (jsonObject.has(JSON_CORRELATION_ID_FIELD_NAME)) {
-            return Optional.ofNullable(jsonObject.get(JSON_CORRELATION_ID_FIELD_NAME).getAsString());
+    private static Optional<String> getPnfCorrelationId(JsonObject jsonObject) {
+        if (jsonObject.has(JSON_PNF_CORRELATION_ID_FIELD_NAME)) {
+            return Optional.ofNullable(jsonObject.get(JSON_PNF_CORRELATION_ID_FIELD_NAME).getAsString());
         }
         return Optional.empty();
     }

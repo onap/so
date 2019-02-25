@@ -30,19 +30,19 @@ import org.springframework.stereotype.Component;
 @Primary
 public class DmaapClientTestImpl implements DmaapClient {
 
-    private String correlationId;
+    private String pnfCorrelationId;
     private Runnable informConsumer;
 
     @Override
-    public void registerForUpdate(String correlationId, Runnable informConsumer) {
-        this.correlationId = correlationId;
+    public void registerForUpdate(String pnfCorrelationId, Runnable informConsumer) {
+        this.pnfCorrelationId = pnfCorrelationId;
         this.informConsumer = informConsumer;
     }
 
     @Override
-    public Runnable unregister(String correlationId) {
-        if (Objects.equals(this.correlationId, correlationId)) {
-            this.correlationId = null;
+    public Runnable unregister(String pnfCorrelationId) {
+        if (Objects.equals(this.pnfCorrelationId, pnfCorrelationId)) {
+            this.pnfCorrelationId = null;
             Runnable informConsumer = this.informConsumer;
             this.informConsumer = null;
             return informConsumer;
@@ -50,8 +50,8 @@ public class DmaapClientTestImpl implements DmaapClient {
         return null;
     }
 
-    public String getCorrelationId() {
-        return correlationId;
+    public String getPnfCorrelationId() {
+        return pnfCorrelationId;
     }
 
     public Runnable getInformConsumer() {
@@ -63,6 +63,6 @@ public class DmaapClientTestImpl implements DmaapClient {
     }
 
     public boolean haveRegisteredConsumer() {
-        return correlationId != null;
+        return pnfCorrelationId != null;
     }
 }

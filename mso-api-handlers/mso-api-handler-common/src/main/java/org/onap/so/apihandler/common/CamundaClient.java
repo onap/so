@@ -128,7 +128,7 @@ public class CamundaClient extends RequestClient{
 		HttpPost post = new HttpPost(url);
 		msoLogger.debug(CAMUNDA_URL_MESAGE+ url);
 		String jsonReq = wrapVIDRequest(parameterObject.getRequestId(), parameterObject.isBaseVfModule(), parameterObject.getRecipeTimeout(), parameterObject.getRequestAction(),
-				parameterObject.getServiceInstanceId(), parameterObject.getCorrelationId(), parameterObject.getVnfId(), parameterObject.getVfModuleId(), parameterObject.getVolumeGroupId(), parameterObject.getNetworkId(), parameterObject.getConfigurationId(),
+				parameterObject.getServiceInstanceId(), parameterObject.getPnfCorrelationId(), parameterObject.getVnfId(), parameterObject.getVfModuleId(), parameterObject.getVolumeGroupId(), parameterObject.getNetworkId(), parameterObject.getConfigurationId(),
 				parameterObject.getServiceType(), parameterObject.getVnfType(), parameterObject.getVfModuleType(), parameterObject.getNetworkType(), parameterObject.getRequestDetails(), parameterObject.getApiVersion(), parameterObject.isaLaCarte(), parameterObject.getRequestUri(), parameterObject.getRecipeParamXsd(),
 				parameterObject.getInstanceGroupId());
 
@@ -198,7 +198,7 @@ public class CamundaClient extends RequestClient{
 	
 
 	protected String wrapVIDRequest(String requestId, boolean isBaseVfModule,
-			int recipeTimeout, String requestAction, String serviceInstanceId, String correlationId,
+			int recipeTimeout, String requestAction, String serviceInstanceId, String pnfCorrelationId,
 			String vnfId, String vfModuleId, String volumeGroupId, String networkId, String configurationId,
 			String serviceType, String vnfType, String vfModuleType, String networkType,
 			String requestDetails, String apiVersion, boolean aLaCarte, String requestUri, String paramXsd,
@@ -214,7 +214,7 @@ public class CamundaClient extends RequestClient{
 			CamundaIntegerInput recipeTimeoutInput = new CamundaIntegerInput();
 			CamundaInput requestActionInput = new CamundaInput();
 			CamundaInput serviceInstanceIdInput = new CamundaInput();
-			CamundaInput correlationIdInput = new CamundaInput();
+			CamundaInput pnfCorrelationIdInput = new CamundaInput();
 			CamundaInput vnfIdInput = new CamundaInput();
 			CamundaInput vfModuleIdInput = new CamundaInput();
 			CamundaInput volumeGroupIdInput = new CamundaInput();
@@ -236,7 +236,7 @@ public class CamundaClient extends RequestClient{
 			recipeTimeoutInput.setValue(recipeTimeout);
 			requestActionInput.setValue(StringUtils.defaultString(requestAction));
 			serviceInstanceIdInput.setValue(StringUtils.defaultString(serviceInstanceId));
-			correlationIdInput.setValue(StringUtils.defaultString(correlationId));
+			pnfCorrelationIdInput.setValue(StringUtils.defaultString(pnfCorrelationId));
 			vnfIdInput.setValue(StringUtils.defaultString(vnfId));
 			vfModuleIdInput.setValue(StringUtils.defaultString(vfModuleId));
 			volumeGroupIdInput.setValue(StringUtils.defaultString(volumeGroupId));
@@ -261,7 +261,7 @@ public class CamundaClient extends RequestClient{
 			camundaRequest.setRecipeTimeout(recipeTimeoutInput);
 			camundaRequest.setRequestAction(requestActionInput);
 			camundaRequest.setServiceInstanceId(serviceInstanceIdInput);
-			camundaRequest.setCorrelationId(correlationIdInput);
+			camundaRequest.setPnfCorrelationId(pnfCorrelationIdInput);
 			camundaRequest.setVnfId(vnfIdInput);
 			camundaRequest.setVfModuleId(vfModuleIdInput);
 			camundaRequest.setVolumeGroupId(volumeGroupIdInput);

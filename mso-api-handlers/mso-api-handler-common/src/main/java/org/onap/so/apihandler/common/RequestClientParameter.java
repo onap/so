@@ -28,7 +28,7 @@ public class RequestClientParameter {
     private int recipeTimeout;
     private String requestAction;
     private String serviceInstanceId;
-    private String correlationId;
+    private String pnfCorrelationId;
     private String vnfId;
     private String vfModuleId;
     private String volumeGroupId;
@@ -51,7 +51,7 @@ public class RequestClientParameter {
         recipeTimeout = builder.recipeTimeout;
         requestAction = builder.requestAction;
         serviceInstanceId = builder.serviceInstanceId;
-        correlationId = builder.correlationId;
+        pnfCorrelationId = builder.pnfCorrelationId;
         vnfId = builder.vnfId;
         vfModuleId = builder.vfModuleId;
         volumeGroupId = builder.volumeGroupId;
@@ -90,8 +90,8 @@ public class RequestClientParameter {
         return serviceInstanceId;
     }
 
-    public String getCorrelationId() {
-        return correlationId;
+    public String getPnfCorrelationId() {
+        return pnfCorrelationId;
     }
 
     public String getVnfId() {
@@ -160,7 +160,7 @@ public class RequestClientParameter {
         private int recipeTimeout;
         private String requestAction;
         private String serviceInstanceId;
-        private String correlationId;
+        private String pnfCorrelationId;
         private String vnfId;
         private String vfModuleId;
         private String volumeGroupId;
@@ -202,8 +202,8 @@ public class RequestClientParameter {
             return this;
         }
 
-        public Builder setCorrelationId(String correlationId) {
-            this.correlationId = correlationId;
+        public Builder setPnfCorrelationId(String pnfCorrelationId) {
+            this.pnfCorrelationId = pnfCorrelationId;
             return this;
         }
 

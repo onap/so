@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementTestImpl.ID_WITHOUT_ENTRY;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementTestImpl.ID_WITH_ENTRY;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.AAI_CONTAINS_INFO_ABOUT_PNF;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -41,26 +41,26 @@ import org.junit.runner.RunWith;
 import org.onap.so.bpmn.core.WorkflowException;
 
 @RunWith(Enclosed.class)
-public class CheckAaiForCorrelationIdDelegateTest {
+public class CheckAaiForPnfCorrelationIdDelegateTest {
 
     public static class ConnectionOkTests {
 
-        private CheckAaiForCorrelationIdDelegate delegate;
+        private CheckAaiForPnfCorrelationIdDelegate delegate;
         
         @Rule
     	public ExpectedException expectedException = ExpectedException.none();
 
         @Before
         public void setUp() {
-            delegate = new CheckAaiForCorrelationIdDelegate();
+            delegate = new CheckAaiForPnfCorrelationIdDelegate();
             delegate.setPnfManagement(new PnfManagementTestImpl());
         }
 
         @Test
-        public void shouldThrowExceptionWhenCorrelationIdIsNotSet() throws Exception {
+        public void shouldThrowExceptionWhenPnfCorrelationIdIsNotSet() throws Exception {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
-            when(execution.getVariable(CORRELATION_ID)).thenReturn(null);
+            when(execution.getVariable(PNF_CORRELATION_ID)).thenReturn(null);
             when(execution.getVariable("testProcessKey")).thenReturn("testProcessKeyValue");
             // when, then
             expectedException.expect(BpmnError.class);
@@ -72,7 +72,7 @@ public class CheckAaiForCorrelationIdDelegateTest {
         public void shouldSetCorrectVariablesWhenAaiDoesNotContainInfoAboutPnf() throws Exception {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
-            when(execution.getVariable(CORRELATION_ID)).thenReturn(ID_WITHOUT_ENTRY);
+            when(execution.getVariable(PNF_CORRELATION_ID)).thenReturn(ID_WITHOUT_ENTRY);
             // when
             delegate.execute(execution);
             // then
@@ -83,7 +83,7 @@ public class CheckAaiForCorrelationIdDelegateTest {
         public void shouldSetCorrectVariablesWhenAaiContainsInfoAboutPnfWithoutIp() throws Exception {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
-            when(execution.getVariable(CORRELATION_ID)).thenReturn(ID_WITH_ENTRY);
+            when(execution.getVariable(PNF_CORRELATION_ID)).thenReturn(ID_WITH_ENTRY);
             // when
             delegate.execute(execution);
             // then
@@ -93,14 +93,14 @@ public class CheckAaiForCorrelationIdDelegateTest {
 
     public static class NoConnectionTests {
 
-        private CheckAaiForCorrelationIdDelegate delegate;
+        private CheckAaiForPnfCorrelationIdDelegate delegate;
         
         @Rule
     	public ExpectedException expectedException = ExpectedException.none();
 
         @Before
         public void setUp() {
-            delegate = new CheckAaiForCorrelationIdDelegate();
+            delegate = new CheckAaiForPnfCorrelationIdDelegate();
             delegate.setPnfManagement(new PnfManagementThrowingException());
         }
 
@@ -108,7 +108,7 @@ public class CheckAaiForCorrelationIdDelegateTest {
         public void shouldThrowExceptionWhenIoExceptionOnConnectionToAai() throws Exception {
             // given
             DelegateExecution execution = mock(DelegateExecution.class);
-            when(execution.getVariable(CORRELATION_ID)).thenReturn(ID_WITH_ENTRY);
+            when(execution.getVariable(PNF_CORRELATION_ID)).thenReturn(ID_WITH_ENTRY);
             when(execution.getVariable("testProcessKey")).thenReturn("testProcessKey");
             // when, then
             expectedException.expect(BpmnError.class);

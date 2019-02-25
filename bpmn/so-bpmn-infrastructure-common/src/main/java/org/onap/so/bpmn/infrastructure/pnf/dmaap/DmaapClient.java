@@ -22,7 +22,7 @@ package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
 public interface DmaapClient {
 
-    void registerForUpdate(String correlationId, Runnable informConsumer);
+    void registerForUpdate(String pnfCorrelationId, Runnable informConsumer);
 
-    Runnable unregister(String correlationId);
+    Runnable unregister(String pnfCorrelationId);
 }

@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.AAI_CONTAINS_INFO_ABOUT_PNF;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
 
 import java.io.IOException;
 
@@ -35,16 +35,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Implementation of "Check AAI for correlation_id" task in CreateAndActivatePnfResource.bpmn
+ * Implementation of "Check AAI for pnf_correlation_id" task in CreateAndActivatePnfResource.bpmn
  *
- * Inputs: - correlationId - String
+ * Inputs: - pnfCorrelationId - String
  *
  * Outputs: - aaiContainsInfoAboutPnf - local Boolean
  */
 @Component
-public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
+public class CheckAaiForPnfCorrelationIdDelegate implements JavaDelegate {
 
-    private static final Logger logger = LoggerFactory.getLogger(CheckAaiForCorrelationIdDelegate.class);
+    private static final Logger logger = LoggerFactory.getLogger(CheckAaiForPnfCorrelationIdDelegate.class);
 
     private PnfManagement pnfManagement;
 
@@ -55,13 +55,13 @@ public class CheckAaiForCorrelationIdDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) {
-        String correlationId = (String) execution.getVariable(CORRELATION_ID);
-        if (correlationId == null) {
-            new ExceptionUtil().buildAndThrowWorkflowException(execution, 500, CORRELATION_ID + " is not set");
+        String pnfCorrelationId = (String) execution.getVariable(PNF_CORRELATION_ID);
+        if (pnfCorrelationId == null) {
+            new ExceptionUtil().buildAndThrowWorkflowException(execution, 500, PNF_CORRELATION_ID + " is not set");
         }
         try {
-            boolean isEntry = pnfManagement.getEntryFor(correlationId).isPresent();
-            logger.debug("AAI entry is found for pnf correlation id {}: {}", CORRELATION_ID, isEntry);
+            boolean isEntry = pnfManagement.getEntryFor(pnfCorrelationId).isPresent();
+            logger.debug("AAI entry is found for pnf correlation id {}: {}", PNF_CORRELATION_ID, isEntry);
             execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, isEntry);
         } catch (IOException e) {
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, e.getMessage());

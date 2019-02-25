@@ -26,9 +26,9 @@ import org.onap.aai.domain.yang.Pnf;
 
 public interface PnfManagement {
 
-    Optional<Pnf> getEntryFor(String correlationId) throws IOException;
+    Optional<Pnf> getEntryFor(String pnfCorrelationId) throws IOException;
 
-    void createEntry(String correlationId, Pnf entry) throws IOException;
+    void createEntry(String pnfCorrelationId, Pnf entry) throws IOException;
 
     void createRelation(String serviceInstanceId, String pnfName) throws IOException;
 }

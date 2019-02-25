@@ -41,8 +41,6 @@ public class ServiceInstancesRequest implements Serializable {
 	private String vfModuleInstanceId;
 	@JsonProperty("configurationId")
 	private String configurationId;
-	@JsonProperty("correlationId")
-	private String correlationId;
 	@JsonProperty("instanceGroupId")
 	private String instanceGroupId;
 
@@ -102,14 +100,6 @@ public class ServiceInstancesRequest implements Serializable {
 		this.configurationId = configurationId;
 	}
 
-	public String getCorrelationId() {
-		return correlationId;
-	}
-
-	public void setCorrelationId(String correlationId) {
-		this.correlationId = correlationId;
-	}
-	
 	public String getInstanceGroupId() {
 		return instanceGroupId;
 	}
@@ -128,7 +118,6 @@ public class ServiceInstancesRequest implements Serializable {
 		sb.append(", volumeGroupInstanceId='").append(volumeGroupInstanceId).append('\'');
 		sb.append(", vfModuleInstanceId='").append(vfModuleInstanceId).append('\'');
 		sb.append(", configurationId='").append(configurationId).append('\'');
-		sb.append(", correlationId='").append(correlationId).append('\'');
 		sb.append('}');
 		return sb.toString();
 	}

@@ -5,8 +5,8 @@
     <bpmn:participant id="Participant_0atuyq0" name="AAI" />
     <bpmn:participant id="Participant_19w87ws" name="Workflow Message Service&#10;(communication with DMAAP)&#10;" />
     <bpmn:messageFlow id="MessageFlow_1h3xu88" sourceRef="CreatePnfEntryInAai" targetRef="Participant_0atuyq0" />
-    <bpmn:messageFlow id="MessageFlow_09ibv5a" sourceRef="CheckAiiForCorrelationId" targetRef="Participant_0atuyq0" />
-    <bpmn:messageFlow id="MessageFlow_0vjul4t" sourceRef="Participant_0atuyq0" targetRef="CheckAiiForCorrelationId" />
+    <bpmn:messageFlow id="MessageFlow_09ibv5a" sourceRef="CheckAiiForPnfCorrelationId" targetRef="Participant_0atuyq0" />
+    <bpmn:messageFlow id="MessageFlow_0vjul4t" sourceRef="Participant_0atuyq0" targetRef="CheckAiiForPnfCorrelationId" />
     <bpmn:messageFlow id="MessageFlow_1vrcp2d" sourceRef="Participant_19w87ws" targetRef="WaitForDmaapPnfReadyNotification" />
     <bpmn:messageFlow id="MessageFlow_0tg4hw9" sourceRef="InformDmaapClient" targetRef="Participant_19w87ws" />
     <bpmn:messageFlow id="MessageFlow_1py54jr" sourceRef="CancelDmaapClientSubscription" targetRef="Participant_19w87ws" />
@@ -20,13 +20,13 @@
     <bpmn:sequenceFlow id="SequenceFlow_0p09qgm" sourceRef="WaitForDmaapPnfReadyNotification" targetRef="CreateRelationId" />
     <bpmn:sequenceFlow id="SequenceFlow_17s9025" sourceRef="AaiEntryExists" targetRef="InformDmaapClient" />
     <bpmn:sequenceFlow id="SequenceFlow_1qr6cmf" sourceRef="CreatePnfEntryInAai" targetRef="AaiEntryExists" />
-    <bpmn:sequenceFlow id="SequenceFlow_1j4r3zt" sourceRef="CheckAiiForCorrelationId" targetRef="DoesAaiContainInfoAboutPnf" />
+    <bpmn:sequenceFlow id="SequenceFlow_1j4r3zt" sourceRef="CheckAiiForPnfCorrelationId" targetRef="DoesAaiContainInfoAboutPnf" />
     <bpmn:sequenceFlow id="SequenceFlow_0j5ksz1" sourceRef="CreateAndActivatePnf_StartEvent" targetRef="CheckInputs" />
     <bpmn:sequenceFlow id="SequenceFlow_1miyzfe" sourceRef="CancelDmaapClientSubscription" targetRef="ThrowTimeoutException" />
     <bpmn:sequenceFlow id="SequenceFlow_1l1t6ak" name="Yes" sourceRef="DoesAaiContainInfoAboutPnf" targetRef="AaiEntryExists">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{aaiContainsInfoAboutPnf}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0967g8p" sourceRef="CheckInputs" targetRef="CheckAiiForCorrelationId" />
+    <bpmn:sequenceFlow id="SequenceFlow_0967g8p" sourceRef="CheckInputs" targetRef="CheckAiiForPnfCorrelationId" />
     <bpmn:serviceTask id="CheckInputs" name="Check inputs" camunda:delegateExpression="${PnfCheckInputs}">
       <bpmn:incoming>SequenceFlow_0j5ksz1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0967g8p</bpmn:outgoing>
@@ -48,7 +48,7 @@
       <bpmn:outgoing>SequenceFlow_1l1t6ak</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0v5ffpe</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="CheckAiiForCorrelationId" name="Check AAI for correlation_id" camunda:delegateExpression="${CheckAaiForCorrelationIdDelegate}">
+    <bpmn:serviceTask id="CheckAiiForPnfCorrelationId" name="Check AAI for pnf_correlation_id" camunda:delegateExpression="${CheckAaiForPnfCorrelationIdDelegate}">
       <bpmn:incoming>SequenceFlow_0967g8p</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1j4r3zt</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -86,7 +86,7 @@
     <bpmn:textAnnotation id="TextAnnotation_1eyzes8">
       <bpmn:text><![CDATA[Inputs:
  - timeoutForPnfEntryNotification - String
- - correlationId - String
+ - pnfCorrelationId - String
  - uuid - String]]></bpmn:text>
     </bpmn:textAnnotation>
   </bpmn:process>
@@ -115,7 +115,7 @@
           <dc:Bounds x="-80" y="228" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0a5uk9o_di" bpmnElement="CheckAiiForCorrelationId">
+      <bpmndi:BPMNShape id="ServiceTask_0a5uk9o_di" bpmnElement="CheckAiiForPnfCorrelationId">
         <dc:Bounds x="219" y="167" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0iimk5v_di" bpmnElement="CreatePnfEntryInAai">

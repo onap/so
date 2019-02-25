@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 
 import java.util.UUID;
@@ -43,14 +43,14 @@ public class CreatePnfEntryInAaiDelegateTest {
         PnfManagementTestImpl pnfManagementTest = new PnfManagementTestImpl();
         delegate.setPnfManagement(pnfManagementTest);
         DelegateExecution execution = mock(DelegateExecution.class);
-        given(execution.getVariable(eq(CORRELATION_ID))).willReturn("testCorrelationId");
+        given(execution.getVariable(eq(PNF_CORRELATION_ID))).willReturn("testPnfCorrelationId");
         given(execution.getVariable(eq(PNF_UUID))).willReturn(pnfUuid);
         // when
         delegate.execute(execution);
         // then
-        Pnf createdEntry = pnfManagementTest.getCreated().get("testCorrelationId");
+        Pnf createdEntry = pnfManagementTest.getCreated().get("testPnfCorrelationId");
         assertThat(createdEntry.getPnfId()).isEqualTo(pnfUuid);
-        assertThat(createdEntry.getPnfName()).isEqualTo("testCorrelationId");
+        assertThat(createdEntry.getPnfName()).isEqualTo("testPnfCorrelationId");
         assertThat(createdEntry.isInMaint()).isNull();
     }
 }

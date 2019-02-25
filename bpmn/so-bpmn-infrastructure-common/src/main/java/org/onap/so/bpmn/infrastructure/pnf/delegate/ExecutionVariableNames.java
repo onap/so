@@ -27,7 +27,7 @@ public class ExecutionVariableNames {
 
     private ExecutionVariableNames() {}
 
-    public final static String CORRELATION_ID = "correlationId";
+    public final static String PNF_CORRELATION_ID = "pnfCorrelationId";
     public final static String AAI_CONTAINS_INFO_ABOUT_PNF = "aaiContainsInfoAboutPnf";
     public final static String AAI_CONTAINS_INFO_ABOUT_IP = "aaiContainsInfoAboutIp";
     public final static String DMAAP_MESSAGE = "dmaapMessage";

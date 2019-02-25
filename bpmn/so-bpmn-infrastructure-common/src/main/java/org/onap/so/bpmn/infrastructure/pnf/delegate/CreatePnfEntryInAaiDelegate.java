@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
  * Implementation of "Create Pnf entry in AAI" task in CreateAndActivatePnfResource.bpmn
  *
  * Inputs:
- *  - correlationId - String
+ *  - pnfCorrelationId - String
  *  - pnfUuid - String
  */
 @Component
@@ -54,12 +54,12 @@ public class CreatePnfEntryInAaiDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        String correlationId = (String) execution.getVariable(CORRELATION_ID);
+        String pnfCorrelationId = (String) execution.getVariable(PNF_CORRELATION_ID);
         String pnfUuid = (String) execution.getVariable(PNF_UUID);
         Pnf pnf = new Pnf();
         pnf.setPnfId(pnfUuid);
-        pnf.setPnfName(correlationId);
-        pnfManagement.createEntry(correlationId, pnf);
-        logger.debug("AAI entry is created for pnf correlation id: {}, pnf uuid: {}", correlationId, pnfUuid);
+        pnf.setPnfName(pnfCorrelationId);
+        pnfManagement.createEntry(pnfCorrelationId, pnf);
+        logger.debug("AAI entry is created for pnf correlation id: {}, pnf uuid: {}", pnfCorrelationId, pnfUuid);
     }
 }

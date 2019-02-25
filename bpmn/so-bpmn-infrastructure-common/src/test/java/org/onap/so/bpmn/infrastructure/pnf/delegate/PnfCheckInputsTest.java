@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
 
@@ -39,7 +39,7 @@ public class PnfCheckInputsTest {
     private static final String VALID_UUID = UUID.nameUUIDFromBytes("testUuid".getBytes()).toString();
     private static final String RESERVED_UUID = new UUID(0, 0).toString();
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "da7d07d9-b71c-4128-809d-2ec01c807169";
-    private static final String DEFAULT_CORRELATION_ID = "testCorrelationId";
+    private static final String DEFAULT_PNF_CORRELATION_ID = "testPnfCorrelationId";
 
     private DelegateExecutionBuilder delegateExecutionBuilder;
 
@@ -49,9 +49,9 @@ public class PnfCheckInputsTest {
     }
 
     @Test
-    public void shouldThrowException_whenCorrelationIdNotSet() {
+    public void shouldThrowException_whenPnfCorrelationIdNotSet() {
         PnfCheckInputs testedObject = new PnfCheckInputs(PNF_ENTRY_NOTIFICATION_TIMEOUT);
-        DelegateExecution execution = delegateExecutionBuilder.setCorrelationId(null).setPnfUuid(VALID_UUID).build();
+        DelegateExecution execution = delegateExecutionBuilder.setPnfCorrelationId(null).setPnfUuid(VALID_UUID).build();
         assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
     }
 
@@ -98,12 +98,12 @@ public class PnfCheckInputsTest {
     }
 
     private static class DelegateExecutionBuilder {
-        private String correlationId = DEFAULT_CORRELATION_ID;
+        private String pnfCorrelationId = DEFAULT_PNF_CORRELATION_ID;
         private String pnfUuid = VALID_UUID;
         private String serviceInstanceId = DEFAULT_SERVICE_INSTANCE_ID;
 
-        public DelegateExecutionBuilder setCorrelationId(String correlationId) {
-            this.correlationId = correlationId;
+        public DelegateExecutionBuilder setPnfCorrelationId(String pnfCorrelationId) {
+            this.pnfCorrelationId = pnfCorrelationId;
             return this;
         }
 
@@ -120,7 +120,7 @@ public class PnfCheckInputsTest {
         public DelegateExecution build() {
             DelegateExecution execution = new DelegateExecutionFake();
             execution.setVariable("testProcessKey", "testProcessKeyValue");
-            execution.setVariable(CORRELATION_ID, this.correlationId);
+            execution.setVariable(PNF_CORRELATION_ID, this.pnfCorrelationId);
             execution.setVariable(PNF_UUID, this.pnfUuid);
             execution.setVariable(SERVICE_INSTANCE_ID, this.serviceInstanceId);
             return execution;

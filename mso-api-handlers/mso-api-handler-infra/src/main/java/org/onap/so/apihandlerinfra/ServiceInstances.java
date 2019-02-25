@@ -809,7 +809,7 @@ public class ServiceInstances {
 		String vfModuleId = "";
 		String volumeGroupId = "";
 		String networkId = "";
-		String correlationId = "";
+		String pnfCorrelationId = "";
 		String instanceGroupId = null;
 		if(sir.getServiceInstanceId () != null){
 			serviceInstanceId = sir.getServiceInstanceId ();
@@ -834,7 +834,7 @@ public class ServiceInstances {
 			instanceGroupId = sir.getInstanceGroupId();
 		}
 
-        correlationId = getCorrelationId(sir);
+        pnfCorrelationId = getPnfCorrelationId(sir);
 
         try{
             infraActiveRequestsClient.save(currentActiveReq);
@@ -858,7 +858,7 @@ public class ServiceInstances {
 						.setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
 						.setRequestAction(action.toString())
 						.setServiceInstanceId(serviceInstanceId)
-						.setCorrelationId(correlationId)
+						.setPnfCorrelationId(pnfCorrelationId)
 						.setVnfId(vnfId)
 						.setVfModuleId(vfModuleId)
 						.setVolumeGroupId(volumeGroupId)
@@ -944,7 +944,7 @@ public class ServiceInstances {
 		return postBPELRequest(currentActiveReq, requestClientParameter, recipeLookupResult.getOrchestrationURI(), requestScope);
 	}
 
-	private String getCorrelationId(ServiceInstancesRequest sir) {
+	private String getPnfCorrelationId(ServiceInstancesRequest sir) {
 		return Optional.of(sir)
 				.map(ServiceInstancesRequest::getRequestDetails)
 				.map(RequestDetails::getRequestParameters)
@@ -1860,7 +1860,7 @@ public class ServiceInstances {
 		
 		serviceInstanceId = "";
 		String configurationId = "";
-		String correlationId = "";
+		String pnfCorrelationId = "";
 
 		if(sir.getServiceInstanceId () != null){
 			serviceInstanceId = sir.getServiceInstanceId ();
@@ -1870,7 +1870,7 @@ public class ServiceInstances {
             configurationId = sir.getConfigurationId();
         }
 
-        correlationId = getCorrelationId(sir);
+        pnfCorrelationId = getPnfCorrelationId(sir);
 
 		try{
 			infraActiveRequestsClient.save(currentActiveReq);
@@ -1893,7 +1893,7 @@ public class ServiceInstances {
 				.setRecipeTimeout(Integer.parseInt(timeOut))
 				.setRequestAction(action.toString())
 				.setServiceInstanceId(serviceInstanceId)
-				.setCorrelationId(correlationId)
+				.setPnfCorrelationId(pnfCorrelationId)
 				.setConfigurationId(configurationId)
 				.setRequestDetails(mapJSONtoMSOStyle(requestJSON, sir, aLaCarte, action))
 				.setApiVersion(apiVersion)

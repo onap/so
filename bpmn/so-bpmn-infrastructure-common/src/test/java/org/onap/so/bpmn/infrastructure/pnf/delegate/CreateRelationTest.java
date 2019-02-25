@@ -42,7 +42,7 @@ public class CreateRelationTest {
     public void setUp() {
         executionFake = new DelegateExecutionFake();
         executionFake.setVariable("serviceInstanceId", SERVICE_INSTANCE_ID);
-        executionFake.setVariable("correlationId", PNF_NAME);
+        executionFake.setVariable("pnfCorrelationId", PNF_NAME);
     }
 
     @Test

@@ -44,7 +44,7 @@ public class CreateRelation implements JavaDelegate {
     @Override
     public void execute(DelegateExecution delegateExecution) {
         String serviceInstanceId = (String) delegateExecution.getVariable("serviceInstanceId");
-        String pnfName = (String) delegateExecution.getVariable("correlationId");
+        String pnfName = (String) delegateExecution.getVariable("pnfCorrelationId");
         try {
             pnfManagementImpl.createRelation(serviceInstanceId, pnfName);
         } catch (Exception e) {

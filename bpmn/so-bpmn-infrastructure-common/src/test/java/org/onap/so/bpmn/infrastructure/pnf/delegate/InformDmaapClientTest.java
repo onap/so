@@ -55,7 +55,7 @@ public class InformDmaapClientTest {
         // when
         informDmaapClient.execute(delegateExecution);
         // then
-        assertThat(dmaapClientTest.getCorrelationId()).isEqualTo("testCorrelationId");
+        assertThat(dmaapClientTest.getPnfCorrelationId()).isEqualTo("testPnfCorrelationId");
         assertThat(dmaapClientTest.getInformConsumer()).isNotNull();
         verifyZeroInteractions(messageCorrelationBuilder);
     }
@@ -66,7 +66,7 @@ public class InformDmaapClientTest {
         informDmaapClient.execute(delegateExecution);
         dmaapClientTest.getInformConsumer().run();
         // then
-        assertThat(dmaapClientTest.getCorrelationId()).isEqualTo("testCorrelationId");
+        assertThat(dmaapClientTest.getPnfCorrelationId()).isEqualTo("testPnfCorrelationId");
         InOrder inOrder = inOrder(messageCorrelationBuilder);
         inOrder.verify(messageCorrelationBuilder).processInstanceBusinessKey("testBusinessKey");
         inOrder.verify(messageCorrelationBuilder).correlateWithResult();
@@ -74,7 +74,7 @@ public class InformDmaapClientTest {
 
     private DelegateExecution mockDelegateExecution() {
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
-        when(delegateExecution.getVariable(eq(ExecutionVariableNames.CORRELATION_ID))).thenReturn("testCorrelationId");
+        when(delegateExecution.getVariable(eq(ExecutionVariableNames.PNF_CORRELATION_ID))).thenReturn("testPnfCorrelationId");
         when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
         ProcessEngineServices processEngineServices = mock(ProcessEngineServices.class);
         when(delegateExecution.getProcessEngineServices()).thenReturn(processEngineServices);

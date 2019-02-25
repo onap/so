@@ -28,12 +28,12 @@ import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
 public class PnfManagementThrowingException implements PnfManagement {
 
     @Override
-    public Optional<Pnf> getEntryFor(String correlationId) throws IOException {
+    public Optional<Pnf> getEntryFor(String pnfCorrelationId) throws IOException {
         throw new IOException();
     }
 
     @Override
-    public void createEntry(String correlationId, Pnf entry) throws IOException {
+    public void createEntry(String pnfCorrelationId, Pnf entry) throws IOException {
         throw new IOException();
     }
 

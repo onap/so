@@ -359,7 +359,7 @@ CreateVcpeResCustService.processDecomposition(execution)</bpmn2:script>
     <bpmn2:callActivity id="Task_14l19kv" name="Create And Activate Pnf Resource" calledElement="CreateAndActivatePnfResource">
       <bpmn2:extensionElements>
         <camunda:in source="timeoutForPnfEntryNotification" target="timeoutForPnfEntryNotification" />
-        <camunda:in source="correlationId" target="correlationId" />
+        <camunda:in source="pnfCorrelationId" target="pnfCorrelationId" />
         <camunda:in businessKey="#{execution.processBusinessKey}" />
         <camunda:in source="pnfUuid" target="pnfUuid" />
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />

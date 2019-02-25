@@ -37,9 +37,9 @@ public class CancelDmaapSubscriptionTest {
         DmaapClientTestImpl dmaapClientTest = new DmaapClientTestImpl();
         delegate.setDmaapClient(dmaapClientTest);
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
-        when(delegateExecution.getVariable(eq(ExecutionVariableNames.CORRELATION_ID))).thenReturn("testCorrelationId");
+        when(delegateExecution.getVariable(eq(ExecutionVariableNames.PNF_CORRELATION_ID))).thenReturn("testPnfCorrelationId");
         when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
-        dmaapClientTest.registerForUpdate("testCorrelationId", () -> {
+        dmaapClientTest.registerForUpdate("testPnfCorrelationId", () -> {
         });
         // when
         delegate.execute(delegateExecution);

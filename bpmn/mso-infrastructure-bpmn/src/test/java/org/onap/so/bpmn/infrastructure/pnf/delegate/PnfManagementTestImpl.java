@@ -40,8 +40,8 @@ public class PnfManagementTestImpl implements PnfManagement {
     private Map<String, String> serviceAndPnfRelationMap = new HashMap<>();
 
     @Override
-    public Optional<Pnf> getEntryFor(String correlationId) {
-        if (Objects.equals(correlationId, ID_WITH_ENTRY)) {
+    public Optional<Pnf> getEntryFor(String pnfCorrelationId) {
+        if (Objects.equals(pnfCorrelationId, ID_WITH_ENTRY)) {
             return Optional.of(new Pnf());
         } else {
             return Optional.empty();
@@ -49,8 +49,8 @@ public class PnfManagementTestImpl implements PnfManagement {
     }
 
     @Override
-    public void createEntry(String correlationId, Pnf entry) {
-        created.put(correlationId, entry);
+    public void createEntry(String pnfCorrelationId, Pnf entry) {
+        created.put(pnfCorrelationId, entry);
     }
 
     @Override
