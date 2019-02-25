@@ -21,6 +21,13 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
     initialization-mode: never
+  flyway:
+    baseline-on-migrate: false
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
+    user: ${DB_ADMIN_USERNAME}
+    password: ${DB_ADMIN_PASSWORD}
+    outOfOrder: true
+    validateOnMigrate: false
   jpa:
       show-sql: true
       hibernate:
@@ -31,13 +38,6 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
-flyway:
-  baseline-on-migrate: false
-  url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
-  user: ${DB_ADMIN_USERNAME}
-  password: ${DB_ADMIN_PASSWORD}
-  outOfOrder: true
-  validateOnMigrate: false
 
 #Actuator
 management:
