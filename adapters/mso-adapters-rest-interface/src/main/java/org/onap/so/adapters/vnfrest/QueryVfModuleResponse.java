@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,16 +25,15 @@ package org.onap.so.adapters.vnfrest;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.VnfStatus;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @JsonRootName("queryVfModuleResponse")
 @XmlRootElement(name = "queryVfModuleResponse")
 public class QueryVfModuleResponse extends VfResponseCommon{
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, QueryVfModuleResponse.class);
+	private static final Logger logger = LoggerFactory.getLogger(QueryVfModuleResponse.class);
 	private String vnfId;
 	private String vfModuleId;
 	private String vfModuleStackId;

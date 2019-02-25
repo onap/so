@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,14 +30,14 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onap.so.logger.MsoLogger;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // NOTE: the JAXB (XML) annotations are required with JBoss AS7 and RESTEasy,
 //       even though we are using JSON exclusively.  The @NoJackson annotation
@@ -53,7 +54,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class SDNCEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, SDNCEvent.class);
+	private static final Logger logger = LoggerFactory.getLogger(SDNCEvent.class);
 
 	// Event type
 	private String eventType;
@@ -134,7 +135,7 @@ public class SDNCEvent implements Serializable {
 			mapper.setSerializationInclusion(Include.NON_NULL);
 			return mapper.writeValueAsString(this);
 		} catch (IOException e) {
-		    LOGGER.debug("Exception:", e);
+			logger.debug("Exception:", e);
 			throw new UnsupportedOperationException("Cannot convert "
 				+ getClass().getSimpleName() + " to JSON", e);
 		}
