@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,7 +46,8 @@ import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfcCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClientPortChanger;
 import org.onap.so.db.catalog.data.repository.CvnfcCustomizationRepository;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,7 +64,7 @@ public class CvnfcCatalogDbQueryTest {
     @Autowired
     private CvnfcCustomizationRepository cvnfcCustomizationRepository;
     
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CvnfcCatalogDbQueryTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(CvnfcCatalogDbQueryTest.class);
 
 	@LocalServerPort
 	private int port;
