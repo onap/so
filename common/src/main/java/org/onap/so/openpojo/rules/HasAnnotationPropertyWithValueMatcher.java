@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,19 +23,19 @@
 package org.onap.so.openpojo.rules;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-import org.onap.so.logger.MsoLogger;
 
 import com.openpojo.reflection.PojoField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HasAnnotationPropertyWithValueMatcher<T extends PojoField> extends TypeSafeDiagnosingMatcher<T> {
-	private MsoLogger logger=MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, HasAnnotationPropertyWithValueMatcher.class);
+	private Logger logger = LoggerFactory.getLogger(HasAnnotationPropertyWithValueMatcher.class);
 	private final String attribute;
 	private final Matcher<?> annotationMatcher;
 	private final Class<? extends Annotation> annotationClass;
